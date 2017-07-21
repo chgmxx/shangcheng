@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.freight.MallFreightDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.freight.MallFreight">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="user_id" property="userId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="express_id" property="expressId"/>
+        <result column="express" property="express"/>
+        <result column="create_time" property="createTime"/>
+        <result column="edit_time" property="editTime"/>
+        <result column="money" property="money"/>
+        <result column="is_no_money" property="isNoMoney"/>
+        <result column="no_money_num" property="noMoneyNum"/>
+        <result column="is_result_money" property="isResultMoney"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="no_money" property="noMoney"/>
+        <result column="price_type" property="priceType"/>
+        <result column="first_nums" property="firstNums"/>
+        <result column="add_nums" property="addNums"/>
+        <result column="add_money" property="addMoney"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, user_id AS userId, shop_id AS shopId, express_id AS expressId, express, create_time AS createTime, edit_time AS editTime, money, is_no_money AS isNoMoney,
+        no_money_num AS noMoneyNum, is_result_money AS isResultMoney, is_delete AS isDelete, no_money AS noMoney, price_type AS priceType, first_nums AS firstNums, add_nums AS
+        addNums, add_money AS addMoney
+    </sql>
+
+</mapper>

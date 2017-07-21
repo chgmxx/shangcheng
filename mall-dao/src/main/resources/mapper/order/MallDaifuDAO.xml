@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.basic.MallDaifuDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallDaifu">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="df_order_no" property="dfOrderNo"/>
+        <result column="df_user_id" property="dfUserId"/>
+        <result column="df_pay_way" property="dfPayWay"/>
+        <result column="df_pay_time" property="dfPayTime"/>
+        <result column="df_pay_money" property="dfPayMoney"/>
+        <result column="df_pay_status" property="dfPayStatus"/>
+        <result column="df_return_no" property="dfReturnNo"/>
+        <result column="df_return_time" property="dfReturnTime"/>
+        <result column="df_return_status" property="dfReturnStatus"/>
+        <result column="df_create_time" property="dfCreateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id AS orderId, df_order_no AS dfOrderNo, df_user_id AS dfUserId, df_pay_way AS dfPayWay, df_pay_time AS dfPayTime, df_pay_money AS dfPayMoney, df_pay_status AS
+        dfPayStatus, df_return_no AS dfReturnNo, df_return_time AS dfReturnTime, df_return_status AS dfReturnStatus, df_create_time AS dfCreateTime
+    </sql>
+
+</mapper>

@@ -40,14 +40,11 @@ public class RedisSessionConfig {
      */
     @Bean
     public DefaultCookieSerializer defaultCookieSerializer() {
-        DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-//        cookieSerializer.setDomainName( ".example.com" );
-        cookieSerializer.setCookieName( "JSESSIONID" );
-        cookieSerializer.setCookiePath( "/" );
-        return cookieSerializer;
+	DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
+	//        cookieSerializer.setDomainName( ".example.com" );
+	cookieSerializer.setCookieName( "JSESSIONID" );
+	cookieSerializer.setCookiePath( "/" );
+	return cookieSerializer;
     }
-
-
-
 
 }

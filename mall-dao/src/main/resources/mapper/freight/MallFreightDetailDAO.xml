@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.freight.MallFreightDetailDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.freight.MallFreightDetail">
+        <id column="id" property="id"/>
+        <result column="freight_id" property="freightId"/>
+        <result column="provinces_id" property="provincesId"/>
+        <result column="provinces" property="provinces"/>
+        <result column="money" property="money"/>
+        <result column="express_id" property="expressId"/>
+        <result column="express" property="express"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="no_money_num" property="noMoneyNum"/>
+        <result column="no_money" property="noMoney"/>
+        <result column="first_nums" property="firstNums"/>
+        <result column="add_nums" property="addNums"/>
+        <result column="add_money" property="addMoney"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, freight_id AS freightId, provinces_id AS provincesId, provinces, money, express_id AS expressId, express, is_delete AS isDelete, no_money_num AS noMoneyNum, no_money AS
+        noMoney, first_nums AS firstNums, add_nums AS addNums, add_money AS addMoney
+    </sql>
+
+</mapper>

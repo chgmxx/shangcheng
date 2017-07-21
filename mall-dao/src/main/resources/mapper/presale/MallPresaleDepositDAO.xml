@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.presale.MallPresaleDepositDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.presale.MallPresaleDeposit">
+        <id column="id" property="id"/>
+        <result column="presale_id" property="presaleId"/>
+        <result column="product_id" property="productId"/>
+        <result column="pro_specifica_ids" property="proSpecificaIds"/>
+        <result column="pro_name" property="proName"/>
+        <result column="pro_img_url" property="proImgUrl"/>
+        <result column="deposit_no" property="depositNo"/>
+        <result column="deposit_money" property="depositMoney"/>
+        <result column="order_money" property="orderMoney"/>
+        <result column="deposit_status" property="depositStatus"/>
+        <result column="pay_way" property="payWay"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="pay_no" property="payNo"/>
+        <result column="return_no" property="returnNo"/>
+        <result column="return_time" property="returnTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_submit" property="isSubmit"/>
+        <result column="pro_num" property="proNum"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, presale_id AS presaleId, product_id AS productId, pro_specifica_ids AS proSpecificaIds, pro_name AS proName, pro_img_url AS proImgUrl, deposit_no AS depositNo,
+        deposit_money AS depositMoney, order_money AS orderMoney, deposit_status AS depositStatus, pay_way AS payWay, pay_time AS payTime, pay_no AS payNo, return_no AS returnNo,
+        return_time AS returnTime, user_id AS userId, create_time AS createTime, is_submit AS isSubmit, pro_num AS proNum
+    </sql>
+
+</mapper>

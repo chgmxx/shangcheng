@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.product.MallShopCartDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallShopCart">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="product_specificas" property="productSpecificas"/>
+        <result column="product_num" property="productNum"/>
+        <result column="product_message" property="productMessage"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="product_speciname" property="productSpeciname"/>
+        <result column="price" property="price"/>
+        <result column="primary_price" property="primaryPrice"/>
+        <result column="pro_code" property="proCode"/>
+        <result column="user_type" property="userType"/>
+        <result column="discount" property="discount"/>
+        <result column="pro_spec_str" property="proSpecStr"/>
+        <result column="pro_type" property="proType"/>
+        <result column="sale_member_id" property="saleMemberId"/>
+        <result column="commission" property="commission"/>
+        <result column="is_check" property="isCheck"/>
+        <result column="session_id" property="sessionId"/>
+        <result column="bus_user_id" property="busUserId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id AS productId, shop_id AS shopId, product_specificas AS productSpecificas, product_num AS productNum, product_message AS productMessage, user_id AS userId, create_time AS createTime, product_speciname AS productSpeciname, price, primary_price AS primaryPrice, pro_code AS proCode, user_type AS userType, discount, pro_spec_str AS proSpecStr, pro_type AS proType, sale_member_id AS saleMemberId, commission, is_check AS isCheck, session_id AS sessionId, bus_user_id AS busUserId
+    </sql>
+
+</mapper>

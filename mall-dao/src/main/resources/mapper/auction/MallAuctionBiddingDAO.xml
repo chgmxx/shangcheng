@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.auction.MallAuctionBiddingDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.auction.MallAuctionBidding">
+        <id column="id" property="id"/>
+        <result column="auc_id" property="aucId"/>
+        <result column="pro_id" property="proId"/>
+        <result column="pro_name" property="proName"/>
+        <result column="pro_specifica_ids" property="proSpecificaIds"/>
+        <result column="pro_img_url" property="proImgUrl"/>
+        <result column="auc_price" property="aucPrice"/>
+        <result column="auc_status" property="aucStatus"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_detail_id" property="orderDetailId"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, auc_id AS aucId, pro_id AS proId, pro_name AS proName, pro_specifica_ids AS proSpecificaIds, pro_img_url AS proImgUrl, auc_price AS aucPrice, auc_status AS aucStatus,
+        order_id AS orderId, order_detail_id AS orderDetailId, user_id AS userId, create_time AS createTime
+    </sql>
+
+</mapper>

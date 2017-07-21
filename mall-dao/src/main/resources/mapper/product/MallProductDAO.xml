@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.product.MallProductDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallProduct">
+        <id column="id" property="id"/>
+        <result column="pro_buy_way" property="proBuyWay"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="group_id" property="groupId"/>
+        <result column="pro_type_id" property="proTypeId"/>
+        <result column="is_presell" property="isPresell"/>
+        <result column="pro_presell_end" property="proPresellEnd"/>
+        <result column="pro_delivery_start" property="proDeliveryStart"/>
+        <result column="pro_delivery_end" property="proDeliveryEnd"/>
+        <result column="pro_stock_total" property="proStockTotal"/>
+        <result column="pro_sale_total" property="proSaleTotal"/>
+        <result column="is_show_stock" property="isShowStock"/>
+        <result column="pro_code" property="proCode"/>
+        <result column="pro_name" property="proName"/>
+        <result column="pro_price" property="proPrice"/>
+        <result column="pro_cost_price" property="proCostPrice"/>
+        <result column="pro_freight_set" property="proFreightSet"/>
+        <result column="pro_freight_temp_id" property="proFreightTempId"/>
+        <result column="pro_freight_price" property="proFreightPrice"/>
+        <result column="pro_restriction_num" property="proRestrictionNum"/>
+        <result column="is_timing_sale" property="isTimingSale"/>
+        <result column="pro_time_sale" property="proTimeSale"/>
+        <result column="is_member_discount" property="isMemberDiscount"/>
+        <result column="is_coupons" property="isCoupons"/>
+        <result column="is_invoice" property="isInvoice"/>
+        <result column="is_warranty" property="isWarranty"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="edit_time" property="editTime"/>
+        <result column="is_publish" property="isPublish"/>
+        <result column="check_status" property="checkStatus"/>
+        <result column="check_reason" property="checkReason"/>
+        <result column="check_time" property="checkTime"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="is_specifica" property="isSpecifica"/>
+        <result column="two_code_path" property="twoCodePath"/>
+        <result column="return_day" property="returnDay"/>
+        <result column="is_integral_change_pro" property="isIntegralChangePro"/>
+        <result column="change_integral" property="changeIntegral"/>
+        <result column="views_num" property="viewsNum"/>
+        <result column="is_show_views" property="isShowViews"/>
+        <result column="is_return" property="isReturn"/>
+        <result column="member_type" property="memberType"/>
+        <result column="is_integral_deduction" property="isIntegralDeduction"/>
+        <result column="is_fenbi_deduction" property="isFenbiDeduction"/>
+        <result column="is_fenbi_change_pro" property="isFenbiChangePro"/>
+        <result column="change_fenbi" property="changeFenbi"/>
+        <result column="pro_label" property="proLabel"/>
+        <result column="pro_weight" property="proWeight"/>
+        <result column="sales_base" property="salesBase"/>
+        <result column="card_type" property="cardType"/>
+        <result column="is_mall_show" property="isMallShow"/>
+        <result column="flow_id" property="flowId"/>
+        <result column="flow_record_id" property="flowRecordId"/>
+        <result column="erp_pro_id" property="erpProId"/>
+        <result column="erp_inv_id" property="erpInvId"/>
+        <result column="is_sync_erp" property="isSyncErp"/>
+        <result column="is_merge_pro_erp" property="isMergeProErp"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, pro_buy_way AS proBuyWay, shop_id AS shopId, group_id AS groupId, pro_type_id AS proTypeId, is_presell AS isPresell, pro_presell_end AS proPresellEnd,
+        pro_delivery_start AS proDeliveryStart, pro_delivery_end AS proDeliveryEnd, pro_stock_total AS proStockTotal, pro_sale_total AS proSaleTotal, is_show_stock AS isShowStock,
+        pro_code AS proCode, pro_name AS proName, pro_price AS proPrice, pro_cost_price AS proCostPrice, pro_freight_set AS proFreightSet, pro_freight_temp_id AS proFreightTempId,
+        pro_freight_price AS proFreightPrice, pro_restriction_num AS proRestrictionNum, is_timing_sale AS isTimingSale, pro_time_sale AS proTimeSale, is_member_discount AS
+        isMemberDiscount, is_coupons AS isCoupons, is_invoice AS isInvoice, is_warranty AS isWarranty, user_id AS userId, create_time AS createTime, edit_time AS editTime,
+        is_publish AS isPublish, check_status AS checkStatus, check_reason AS checkReason, check_time AS checkTime, is_delete AS isDelete, is_specifica AS isSpecifica,
+        two_code_path AS twoCodePath, return_day AS returnDay, is_integral_change_pro AS isIntegralChangePro, change_integral AS changeIntegral, views_num AS viewsNum,
+        is_show_views AS isShowViews, is_return AS isReturn, member_type AS memberType, is_integral_deduction AS isIntegralDeduction, is_fenbi_deduction AS isFenbiDeduction,
+        is_fenbi_change_pro AS isFenbiChangePro, change_fenbi AS changeFenbi, pro_label AS proLabel, pro_weight AS proWeight, sales_base AS salesBase, card_type AS cardType,
+        is_mall_show AS isMallShow, flow_id AS flowId, flow_record_id AS flowRecordId, erp_pro_id AS erpProId, erp_inv_id AS erpInvId, is_sync_erp AS isSyncErp, is_merge_pro_erp AS
+        isMergeProErp
+    </sql>
+
+</mapper>

@@ -62,3 +62,4 @@ tmp/
 
 !/mall-dao/mall-dao.iml
 /mall-dao/mall-dao.iml
+/mall-common/src/main/resources/

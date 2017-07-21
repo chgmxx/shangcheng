@@ -9,9 +9,9 @@ spring:
 # profiles: prod
   #redis配置
  redis:
-  host: 14.29.79.226
+  host: 127.0.0.1
   port: 6379
-  password: gt@123456
+  #password: gt@123456
  session:
    store-type: redis
 datasource:
@@ -49,6 +49,11 @@ datasource:
 
 
 
-
+######################## 生产环境配置 ########################
+web:
+  #网页访问路径
+  homeUrl: http://192.168.2.100:8080/
+  #访问图片路径
+  imageUrlPrefix: http://maint.yifriend.net/upload/
 
 

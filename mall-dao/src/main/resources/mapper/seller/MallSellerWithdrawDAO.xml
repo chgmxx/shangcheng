@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.seller.MallSellerWithdrawDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.seller.MallSellerWithdraw">
+        <id column="id" property="id"/>
+        <result column="sale_member_id" property="saleMemberId"/>
+        <result column="applay_time" property="applayTime"/>
+        <result column="withdraw_money" property="withdrawMoney"/>
+        <result column="withdraw_status" property="withdrawStatus"/>
+        <result column="withdraw_order_no" property="withdrawOrderNo"/>
+        <result column="check_status" property="checkStatus"/>
+        <result column="check_pass_reason" property="checkPassReason"/>
+        <result column="check_time" property="checkTime"/>
+        <result column="paysuccess_time" property="paysuccessTime"/>
+        <result column="withdraw_type" property="withdrawType"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sale_member_id AS saleMemberId, applay_time AS applayTime, withdraw_money AS withdrawMoney, withdraw_status AS withdrawStatus, withdraw_order_no AS withdrawOrderNo,
+        check_status AS checkStatus, check_pass_reason AS checkPassReason, check_time AS checkTime, paysuccess_time AS paysuccessTime, withdraw_type AS withdrawType
+    </sql>
+
+</mapper>

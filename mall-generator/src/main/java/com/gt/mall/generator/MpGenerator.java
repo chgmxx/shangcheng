@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * @author zhangmz
+ * @author zhangmz`
  * @create 2017/7/9
  */
 public class MpGenerator {
@@ -26,12 +26,14 @@ public class MpGenerator {
     // 生成*.java 的文件路径
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
-    public static final  String[] generatorTableName = new String[] { "t_mall_applet_image"
-	};
+    public static final  String[] generatorTableName = new String[] {
+		    "t_mall_take_their",
+		    "t_mall_take_their_time"
+    };
     // 作者
     private static final String   author             = "yangqian";
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
-    public static final  String[] tablePrefix        = new String[] {"t"};
+    public static final  String[] tablePrefix        = new String[] { "t" };
     // 生成的包路径
     public static final  String   packagePath        = "com.gt.mall.generator";
     public static final  String   moduleName         = "";
@@ -50,7 +52,7 @@ public class MpGenerator {
     // 驱动
     public static final  String   driverName         = "com.mysql.jdbc.Driver";
     // url
-    public static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt?characterEncoding=utf8";
+    public static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt_mall?characterEncoding=utf8";
     // 数据库用户名
     public static final  String   username           = "root";
     // 密码

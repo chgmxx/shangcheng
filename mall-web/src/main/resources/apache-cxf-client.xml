@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
            http://cxf.apache.org/jaxws
 		   http://cxf.apache.org/schemas/jaxws.xsd">
-		   
-		   
 
-	<jaxws:client id="helloWorld" serviceClass="com.gt.ws.HelloWorld"
-		address="${cxf-url}/helloWorldImpl">
-		<jaxws:outInterceptors>
-			<bean class="com.gt.common.aop.SetHeaderInterceptor">
-				<constructor-arg value="duofriend" />
-				<constructor-arg value="123456" />
-			</bean>
-		</jaxws:outInterceptors>
-	</jaxws:client>
+
+    <jaxws:client id="helloWorld" serviceClass="com.gt.ws.HelloWorld"
+                  address="${cxf-url}/helloWorldImpl">
+        <jaxws:outInterceptors>
+            <bean class="com.gt.common.aop.SetHeaderInterceptor">
+                <constructor-arg value="duofriend"/>
+                <constructor-arg value="123456"/>
+            </bean>
+        </jaxws:outInterceptors>
+    </jaxws:client>
 </beans>

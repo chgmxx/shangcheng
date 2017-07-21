@@ -2,6 +2,7 @@ package com.gt.mall.exception;
 
 /**
  * 业务异常
+ *
  * @author zhangmz
  * @version 1.0.0
  * @date 2017-07-15

@@ -196,7 +196,7 @@
             <version>${dev.lib.commons-lang3}</version>
         </dependency>
         <!-- thymeleaf&Vue 模板 -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
@@ -209,7 +209,7 @@
             <groupId>org.webjars</groupId>
             <artifactId>vue</artifactId>
             <version>${dev.lib.vue}</version>
-        </dependency>
+        </dependency>-->
         <!-- 单元测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

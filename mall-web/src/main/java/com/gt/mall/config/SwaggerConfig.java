@@ -23,15 +23,15 @@ public class SwaggerConfig {
     private static final String  BASEPACKAGE         = "com.gt.mall.controller";
     // 标题
     private static final String  TITLE               = "Mall" +
-            " API";
+		    " API";
     // 描述
-    private static final String  DESC                = "酒店ERP";
+    private static final String  DESC                = "商城行业版";
     // 版本
     private static final String  VERSION             = "1.0.0";
     //
     private static final String  TERMS_OF_SERVICEURL = "NO terms of service";
     // 作者信息
-    private static final Contact CONTACT             = new Contact( "zhangmz", "http://www.zhangmz.me", "3001417980@qq.com" );
+    private static final Contact CONTACT             = new Contact( "yangqian", "http://www.zhangmz.me", "3001372437@qq.com" );
     //
     private static final String  LICENSE             = "";
     //

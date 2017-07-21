@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.auction.MallAuctionDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.auction.MallAuction">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="auc_type" property="aucType"/>
+        <result column="auc_start_price" property="aucStartPrice"/>
+        <result column="auc_lowest_price" property="aucLowestPrice"/>
+        <result column="auc_start_time" property="aucStartTime"/>
+        <result column="auc_lower_price_time" property="aucLowerPriceTime"/>
+        <result column="auc_lower_price" property="aucLowerPrice"/>
+        <result column="auc_end_time" property="aucEndTime"/>
+        <result column="auc_num" property="aucNum"/>
+        <result column="auc_restriction_num" property="aucRestrictionNum"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="is_use" property="isUse"/>
+        <result column="is_margin" property="isMargin"/>
+        <result column="auc_margin" property="aucMargin"/>
+        <result column="auc_add_price" property="aucAddPrice"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id AS productId, shop_id AS shopId, auc_type AS aucType, auc_start_price AS aucStartPrice, auc_lowest_price AS aucLowestPrice, auc_start_time AS aucStartTime,
+        auc_lower_price_time AS aucLowerPriceTime, auc_lower_price AS aucLowerPrice, auc_end_time AS aucEndTime, auc_num AS aucNum, auc_restriction_num AS aucRestrictionNum,
+        user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse, is_margin AS isMargin, auc_margin AS aucMargin, auc_add_price AS aucAddPrice
+    </sql>
+
+</mapper>

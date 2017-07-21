@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.order.MallOrderDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.order.MallOrder">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="wx_order_no" property="wxOrderNo"/>
+        <result column="receive_id" property="receiveId"/>
+        <result column="order_money" property="orderMoney"/>
+        <result column="order_freight_money" property="orderFreightMoney"/>
+        <result column="order_old_money" property="orderOldMoney"/>
+        <result column="order_buyer_message" property="orderBuyerMessage"/>
+        <result column="order_seller_remark" property="orderSellerRemark"/>
+        <result column="order_start" property="orderStart"/>
+        <result column="order_pay_way" property="orderPayWay"/>
+        <result column="delivery_method" property="deliveryMethod"/>
+        <result column="appointment_name" property="appointmentName"/>
+        <result column="appointment_telephone" property="appointmentTelephone"/>
+        <result column="appointment_time" property="appointmentTime"/>
+        <result column="invoice_title" property="invoiceTitle"/>
+        <result column="take_their_id" property="takeTheirId"/>
+        <result column="is_message_notice" property="isMessageNotice"/>
+        <result column="buyer_user_id" property="buyerUserId"/>
+        <result column="seller_user_id" property="sellerUserId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="create_time" property="createTime"/>
+        <result column="order_pay_no" property="orderPayNo"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="express_way" property="expressWay"/>
+        <result column="express_id" property="expressId"/>
+        <result column="express_number" property="expressNumber"/>
+        <result column="express_time" property="expressTime"/>
+        <result column="buyer_cancel_reason" property="buyerCancelReason"/>
+        <result column="seller_cancel_reason" property="sellerCancelReason"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="buyer_user_type" property="buyerUserType"/>
+        <result column="order_pid" property="orderPid"/>
+        <result column="mem_card_type" property="memCardType"/>
+        <result column="give_status" property="giveStatus"/>
+        <result column="group_buy_id" property="groupBuyId"/>
+        <result column="order_type" property="orderType"/>
+        <result column="p_join_id" property="pJoinId"/>
+        <result column="coupon_code" property="couponCode"/>
+        <result column="appointment_start_time" property="appointmentStartTime"/>
+        <result column="appointment_end_time" property="appointmentEndTime"/>
+        <result column="is_wallet" property="isWallet"/>
+        <result column="bus_user_id" property="busUserId"/>
+        <result column="receive_address" property="receiveAddress"/>
+        <result column="receive_name" property="receiveName"/>
+        <result column="receive_phone" property="receivePhone"/>
+        <result column="flow_phone" property="flowPhone"/>
+        <result column="flow_recharge_status" property="flowRechargeStatus"/>
+        <result column="member_name" property="memberName"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_no AS orderNo, wx_order_no AS wxOrderNo, receive_id AS receiveId, order_money AS orderMoney, order_freight_money AS orderFreightMoney, order_old_money AS
+        orderOldMoney, order_buyer_message AS orderBuyerMessage, order_seller_remark AS orderSellerRemark, order_start AS orderStart, order_pay_way AS orderPayWay, delivery_method
+        AS deliveryMethod, appointment_name AS appointmentName, appointment_telephone AS appointmentTelephone, appointment_time AS appointmentTime, invoice_title AS invoiceTitle,
+        take_their_id AS takeTheirId, is_message_notice AS isMessageNotice, buyer_user_id AS buyerUserId, seller_user_id AS sellerUserId, shop_id AS shopId, order_status AS
+        orderStatus, create_time AS createTime, order_pay_no AS orderPayNo, pay_time AS payTime, express_way AS expressWay, express_id AS expressId, express_number AS
+        expressNumber, express_time AS expressTime, buyer_cancel_reason AS buyerCancelReason, seller_cancel_reason AS sellerCancelReason, update_time AS updateTime, buyer_user_type
+        AS buyerUserType, order_pid AS orderPid, mem_card_type AS memCardType, give_status AS giveStatus, group_buy_id AS groupBuyId, order_type AS orderType, p_join_id AS pJoinId,
+        coupon_code AS couponCode, appointment_start_time AS appointmentStartTime, appointment_end_time AS appointmentEndTime, is_wallet AS isWallet, bus_user_id AS busUserId,
+        receive_address AS receiveAddress, receive_name AS receiveName, receive_phone AS receivePhone, flow_phone AS flowPhone, flow_recharge_status AS flowRechargeStatus,
+        member_name AS memberName
+    </sql>
+
+</mapper>
