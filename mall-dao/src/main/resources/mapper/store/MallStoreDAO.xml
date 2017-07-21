@@ -41,5 +41,63 @@
         stoLatitude, sto_picture AS stoPicture, is_delete AS isDelete, sto_area AS stoArea, wx_shop_id AS wxShopId, sto_is_sms AS stoIsSms, sto_sms_telephone AS stoSmsTelephone,
         sto_qq_customer AS stoQqCustomer, sto_head_img AS stoHeadImg
     </sql>
+    <!-- 分页查询结果列 -->
+    <sql id="page_Column_list">
+        o.id,o.sto_linkman,o.sto_phone,o.wx_shop_id,p.id
+
+    </sql>
+    <!-- 分页查询店铺 -->
+    <select id="findByPage" resultType="java.util.Map" parameterType="Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from t_mall_order o
+        left join t_mall_page p on p.pag_sto_id=t.id and p.pag_is_main=1
+        <where>
+            o.is_delete = 0
+            <if test="userId != null">
+                and o.sto_user_id=#{userId}
+            </if>
+            <if test="stoName != null">
+                and t.sto_name like '%${stoName}%'
+            </if>
+        </where>
+    </select>
+    <!--统计商家的店铺 -->
+    <select id="count" resultType="java.lang.Integer">
+        SELECT
+        count(o.id)
+        from t_mall_order o
+        <where>
+            o.is_delete = 0
+            <if test="userId != null">
+                and o.sto_user_id=#{userId}
+            </if>
+            <if test="stoName != null">
+                and t.sto_name like '%${stoName}%'
+            </if>
+        </where>
+    </select>
+    <!-- 逻辑删除店铺id -->
+    <update id="updateByIds">
+        update t_mall_store set is_delete = 1
+        <where>
+            id in
+            <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+
+    <select id="findByUserIds" resultType="com.gt.mall.entity.store.MallStore" parameterType="Map">
+
+
+    </select>
+    <select id="shopIsOpenMall" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(p.id) from t_mall_store s
+        left join t_mall_page p on p.pag_sto_id=s.id
+  	    where s.wx_shop_id=#{wxShopId} and s.is_delete=0
+    </select>
+
 
 </mapper>

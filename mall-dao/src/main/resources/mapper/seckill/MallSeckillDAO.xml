@@ -20,7 +20,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, s_name AS sName, s_price AS sPrice, s_start_time AS sStartTime, s_end_time AS sEndTime, s_max_buy_num AS sMaxBuyNum, user_id AS userId, shop_id AS shopId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse
+        id, product_id AS productId, s_name AS sName, s_price AS sPrice, s_start_time AS sStartTime, s_end_time AS sEndTime, s_max_buy_num AS sMaxBuyNum, user_id AS userId, shop_id
+        AS shopId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse
     </sql>
 
 </mapper>

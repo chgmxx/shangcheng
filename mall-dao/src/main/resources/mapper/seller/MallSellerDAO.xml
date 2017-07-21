@@ -40,7 +40,12 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, member_id AS memberId, referees_member_id AS refereesMemberId, user_name AS userName, company_name AS companyName, telephone, commission, total_commission AS totalCommission, freeze_commission AS freezeCommission, can_presented_commission AS canPresentedCommission, already_presented_commission AS alreadyPresentedCommission, income_integral AS incomeIntegral, sale_money AS saleMoney, user_type AS userType, bus_user_id AS busUserId, apply_time AS applyTime, check_time AS checkTime, check_status AS checkStatus, check_pass_reason AS checkPassReason, qr_code_path AS qrCodePath, add_time AS addTime, remark, is_start_use AS isStartUse, scene_key AS sceneKey, qr_code_ticket AS qrCodeTicket, is_send_focus_integral AS isSendFocusIntegral, is_focus_public AS isFocusPublic, promotion_poster_path AS promotionPosterPath, head_image_path AS headImagePath, is_merge_data AS isMergeData, ucqr_code_path AS ucqrCodePath, ucpromotion_poster_path AS ucpromotionPosterPath
+        id, member_id AS memberId, referees_member_id AS refereesMemberId, user_name AS userName, company_name AS companyName, telephone, commission, total_commission AS
+        totalCommission, freeze_commission AS freezeCommission, can_presented_commission AS canPresentedCommission, already_presented_commission AS alreadyPresentedCommission,
+        income_integral AS incomeIntegral, sale_money AS saleMoney, user_type AS userType, bus_user_id AS busUserId, apply_time AS applyTime, check_time AS checkTime, check_status
+        AS checkStatus, check_pass_reason AS checkPassReason, qr_code_path AS qrCodePath, add_time AS addTime, remark, is_start_use AS isStartUse, scene_key AS sceneKey,
+        qr_code_ticket AS qrCodeTicket, is_send_focus_integral AS isSendFocusIntegral, is_focus_public AS isFocusPublic, promotion_poster_path AS promotionPosterPath,
+        head_image_path AS headImagePath, is_merge_data AS isMergeData, ucqr_code_path AS ucqrCodePath, ucpromotion_poster_path AS ucpromotionPosterPath
     </sql>
 
 </mapper>

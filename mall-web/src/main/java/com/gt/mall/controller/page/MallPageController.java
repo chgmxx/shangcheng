@@ -27,7 +27,7 @@ public class MallPageController extends BaseController {
 
     @ApiOperation( value = "首页", notes = "首页" )
     @GetMapping( "/" )
-    public ModelAndView index( ModelAndView map) {
+    public ModelAndView index( ModelAndView map ) {
 	this.logger.info( "进来啦哈哈哈" );
 	System.out.println( "homeUrl = " + myConfig.getHomeUrl() );
 	map.addObject( "homeUrl", myConfig.getHomeUrl() );
@@ -36,6 +36,7 @@ public class MallPageController extends BaseController {
     }
 
     public static void main( String[] args ) {
-	System.out.println(" = " +ServerResponse.createByError() );;
+	System.out.println( " = " + ServerResponse.createByError() );
+	;
     }
 }

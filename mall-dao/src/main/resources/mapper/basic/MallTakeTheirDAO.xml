@@ -25,7 +25,10 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, visit_name AS visitName, visit_province_id AS visitProvinceId, visit_city_id AS visitCityId, visit_area_id AS visitAreaId, visit_address AS visitAddress, visit_longitude AS visitLongitude, visit_latitude AS visitLatitude, visit_address_detail AS visitAddressDetail, visit_contact_number AS visitContactNumber, visit_remark AS visitRemark, is_store_reception AS isStoreReception, is_store_pay AS isStorePay, images_url AS imagesUrl, user_id AS userId, create_time AS createTime, is_delete AS isDelete
+        id, visit_name AS visitName, visit_province_id AS visitProvinceId, visit_city_id AS visitCityId, visit_area_id AS visitAreaId, visit_address AS visitAddress,
+        visit_longitude AS visitLongitude, visit_latitude AS visitLatitude, visit_address_detail AS visitAddressDetail, visit_contact_number AS visitContactNumber, visit_remark AS
+        visitRemark, is_store_reception AS isStoreReception, is_store_pay AS isStorePay, images_url AS imagesUrl, user_id AS userId, create_time AS createTime, is_delete AS
+        isDelete
     </sql>
 
 </mapper>

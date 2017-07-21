@@ -27,7 +27,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, dataJson, dataBg, dataTransverse, musicurl, addres, musicname, player_style AS playerStyle, bus_user_id AS busUserId, creattime, codeUrl, state, pid, htmlname, reportstate, source_type AS sourceType, modelid, introduce, bakurl
+        id, dataJson, dataBg, dataTransverse, musicurl, addres, musicname, player_style AS playerStyle, bus_user_id AS busUserId, creattime, codeUrl, state, pid, htmlname,
+        reportstate, source_type AS sourceType, modelid, introduce, bakurl
     </sql>
 
 </mapper>

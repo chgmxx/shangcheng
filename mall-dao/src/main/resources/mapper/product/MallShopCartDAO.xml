@@ -29,7 +29,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, shop_id AS shopId, product_specificas AS productSpecificas, product_num AS productNum, product_message AS productMessage, user_id AS userId, create_time AS createTime, product_speciname AS productSpeciname, price, primary_price AS primaryPrice, pro_code AS proCode, user_type AS userType, discount, pro_spec_str AS proSpecStr, pro_type AS proType, sale_member_id AS saleMemberId, commission, is_check AS isCheck, session_id AS sessionId, bus_user_id AS busUserId
+        id, product_id AS productId, shop_id AS shopId, product_specificas AS productSpecificas, product_num AS productNum, product_message AS productMessage, user_id AS userId,
+        create_time AS createTime, product_speciname AS productSpeciname, price, primary_price AS primaryPrice, pro_code AS proCode, user_type AS userType, discount, pro_spec_str
+        AS proSpecStr, pro_type AS proType, sale_member_id AS saleMemberId, commission, is_check AS isCheck, session_id AS sessionId, bus_user_id AS busUserId
     </sql>
 
 </mapper>
