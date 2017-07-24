@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.product.MallProductParamDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallProductParam">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="params_name_id" property="paramsNameId"/>
+        <result column="params_value_id" property="paramsValueId"/>
+        <result column="params_name" property="paramsName"/>
+        <result column="params_value" property="paramsValue"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="sort" property="sort"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id AS productId, params_name_id AS paramsNameId, params_value_id AS paramsValueId, params_name AS paramsName, params_value AS paramsValue, is_delete AS
+        isDelete, sort
+    </sql>
+
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.store.MallStoreDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.store.MallStore">
+        <id column="id" property="id"/>
+        <result column="sto_name" property="stoName"/>
+        <result column="sto_phone" property="stoPhone"/>
+        <result column="sto_linkman" property="stoLinkman"/>
+        <result column="sto_status" property="stoStatus"/>
+        <result column="sto_pid" property="stoPid"/>
+        <result column="sto_user_id" property="stoUserId"/>
+        <result column="sto_is_main" property="stoIsMain"/>
+        <result column="sto_address" property="stoAddress"/>
+        <result column="sto_qr_code" property="stoQrCode"/>
+        <result column="sto_branch_id" property="stoBranchId"/>
+        <result column="sto_is_memberDiscount" property="stoIsMemberDiscount"/>
+        <result column="sto_house_member" property="stoHouseMember"/>
+        <result column="sto_create_time" property="stoCreateTime"/>
+        <result column="sto_create_person" property="stoCreatePerson"/>
+        <result column="sto_province" property="stoProvince"/>
+        <result column="sto_city" property="stoCity"/>
+        <result column="sto_longitude" property="stoLongitude"/>
+        <result column="sto_latitude" property="stoLatitude"/>
+        <result column="sto_picture" property="stoPicture"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="sto_area" property="stoArea"/>
+        <result column="wx_shop_id" property="wxShopId"/>
+        <result column="sto_is_sms" property="stoIsSms"/>
+        <result column="sto_sms_telephone" property="stoSmsTelephone"/>
+        <result column="sto_qq_customer" property="stoQqCustomer"/>
+        <result column="sto_head_img" property="stoHeadImg"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sto_name AS stoName, sto_phone AS stoPhone, sto_linkman AS stoLinkman, sto_status AS stoStatus, sto_pid AS stoPid, sto_user_id AS stoUserId, sto_is_main AS stoIsMain,
+        sto_address AS stoAddress, sto_qr_code AS stoQrCode, sto_branch_id AS stoBranchId, sto_is_memberDiscount AS stoIsMemberDiscount, sto_house_member AS stoHouseMember,
+        sto_create_time AS stoCreateTime, sto_create_person AS stoCreatePerson, sto_province AS stoProvince, sto_city AS stoCity, sto_longitude AS stoLongitude, sto_latitude AS
+        stoLatitude, sto_picture AS stoPicture, is_delete AS isDelete, sto_area AS stoArea, wx_shop_id AS wxShopId, sto_is_sms AS stoIsSms, sto_sms_telephone AS stoSmsTelephone,
+        sto_qq_customer AS stoQqCustomer, sto_head_img AS stoHeadImg
+    </sql>
+    <!-- 分页查询结果列 -->
+    <sql id="page_Column_list">
+        o.id,o.sto_linkman,o.sto_phone,o.wx_shop_id,p.id
+    </sql>
+    <!-- 分页查询店铺 -->
+    <select id="findByPage" resultType="java.util.Map" parameterType="Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from t_mall_order o
+        left join t_mall_page p on p.pag_sto_id=t.id and p.pag_is_main=1
+        <where>
+            o.is_delete = 0
+            <if test="userId != null">
+                and o.sto_user_id=#{userId}
+            </if>
+            <if test="stoName != null">
+                and o.sto_name like '%${stoName}%'
+            </if>
+        </where>
+    </select>
+    <!--统计商家的店铺 -->
+    <select id="count" resultType="java.lang.Integer">
+        select
+        count(o.id)
+        from t_mall_order o
+        <where>
+            o.is_delete = 0
+            <if test="userId != null">
+                and o.sto_user_id=#{userId}
+            </if>
+            <if test="stoName != null">
+                and t.sto_name like '%${stoName}%'
+            </if>
+        </where>
+    </select>
+    <!-- 逻辑删除店铺id -->
+    <update id="updateByIds">
+        update t_mall_store set is_delete = 1
+        <where>
+            id in
+            <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+
+    <!-- 根据门店id查询商品店铺 -->
+    <select id="findByShopIds" resultType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from t_mall_store t
+        <where>
+            is_delete = 0
+            <if test="shopIds != null and shopIds != ''">
+                and wx_shop_id in
+                <foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+                    #{shopId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <!-- 根据商家id查询店铺信息，门店信息  和 店铺页面id -->
+    <select id="findWxStorePageByUser" resultType="java.util.Map">
+        select s.sto_picture as stoPicture ,s.id,mp.id as pageId
+        from t_mall_store s
+        left join t_mall_page mp on mp.pag_sto_id=s.id and pag_is_main=1
+        <where>
+            s.`is_delete` and s.`sto_user_id`=#{userId}
+        </where>
+        order by mp.id desc
+    </select>
+
+    <select id="shopIsOpenMall" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(p.id)
+        from t_mall_store s
+        left join t_mall_page p on p.pag_sto_id=s.id
+        where s.wx_shop_id=#{wxShopId} and s.is_delete=0
+    </select>
+    <!-- 根据商家id查询店铺信息 -->
+    <select id="findByUserId" resultType="java.util.Map">
+        SELECT s.sto_picture AS stoPicture , s.id,mp.id AS pageId
+        FROM t_mall_store s
+        LEFT JOIN t_mall_page mp ON mp.pag_sto_id=s.id AND pag_is_main=1
+        WHERE  is_delete = 0 AND  s.sto_user_id = #{userId}
+        ORDER BY s.id DESC
+    </select>
+
+
+</mapper>

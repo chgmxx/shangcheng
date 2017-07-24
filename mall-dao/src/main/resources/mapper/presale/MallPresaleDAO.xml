@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.presale.MallPresaleDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.presale.MallPresale">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="sale_start_time" property="saleStartTime"/>
+        <result column="sale_end_time" property="saleEndTime"/>
+        <result column="is_deposit" property="isDeposit"/>
+        <result column="deposit_percent" property="depositPercent"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="is_use" property="isUse"/>
+        <result column="order_num" property="orderNum"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id AS productId, shop_id AS shopId, sale_start_time AS saleStartTime, sale_end_time AS saleEndTime, is_deposit AS isDeposit, deposit_percent AS depositPercent,
+        user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse, order_num AS orderNum
+    </sql>
+
+</mapper>

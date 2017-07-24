@@ -12,17 +12,18 @@ public class CommonUtil {
      * 判断对象是否为空
      *
      * @param obj
+     *
      * @return
      */
-    public static boolean isEmpty(Object obj) {
+    public static boolean isEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if (obj == null || "".equals(obj)) {
+	    if ( obj == null || "".equals( obj ) ) {
 		b = true;
 	    } else {
 		b = false;
 	    }
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    b = false;
 	    e.printStackTrace();
 	}
@@ -33,17 +34,18 @@ public class CommonUtil {
      * 判断对象是否不为空
      *
      * @param obj
+     *
      * @return
      */
-    public static boolean isNotEmpty(Object obj) {
+    public static boolean isNotEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if (obj == null || "".equals(obj)) {
+	    if ( obj == null || "".equals( obj ) ) {
 		b = false;
 	    } else {
 		b = true;
 	    }
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    b = false;
 	    e.printStackTrace();
 	}
@@ -55,14 +57,14 @@ public class CommonUtil {
      *
      * @param obj
      */
-    public static Integer toInteger(Object obj) {
+    public static Integer toInteger( Object obj ) {
 	try {
-	    if (!isEmpty(obj)) {
-		return Integer.parseInt(obj.toString());
+	    if ( !isEmpty( obj ) ) {
+		return Integer.parseInt( obj.toString() );
 	    } else {
-		throw new Exception("对象为空，转换失败！");
+		throw new Exception( "对象为空，转换失败！" );
 	    }
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
 	return null;
@@ -73,14 +75,14 @@ public class CommonUtil {
      *
      * @param obj
      */
-    public static String toString(Object obj) {
+    public static String toString( Object obj ) {
 	try {
-	    if (!isEmpty(obj)) {
+	    if ( !isEmpty( obj ) ) {
 		return obj.toString();
 	    } else {
-		throw new Exception("对象为空，转换失败！");
+		throw new Exception( "对象为空，转换失败！" );
 	    }
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
 	return null;
@@ -91,14 +93,14 @@ public class CommonUtil {
      *
      * @param obj
      */
-    public static Double toDouble(Object obj) {
+    public static Double toDouble( Object obj ) {
 	try {
-	    if (!isEmpty(obj)) {
-		return Double.parseDouble(obj.toString());
+	    if ( !isEmpty( obj ) ) {
+		return Double.parseDouble( obj.toString() );
 	    } else {
-		throw new Exception("对象为空，转换失败！");
+		throw new Exception( "对象为空，转换失败！" );
 	    }
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
 	return null;
@@ -106,12 +108,11 @@ public class CommonUtil {
 
     /**
      * 校验是否是double数据
-     *
      */
-    public static boolean isDouble(Object obj) {
+    public static boolean isDouble( Object obj ) {
 	try {
-	    Double.parseDouble(obj.toString());
-	} catch (Exception e) {
+	    Double.parseDouble( obj.toString() );
+	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    return false;
 	}

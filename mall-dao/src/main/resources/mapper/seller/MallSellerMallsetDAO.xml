@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.seller.MallSellerMallsetDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.seller.MallSellerMallset">
+        <id column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="mall_name" property="mallName"/>
+        <result column="contact_number" property="contactNumber"/>
+        <result column="qq" property="qq"/>
+        <result column="mall_head_path" property="mallHeadPath"/>
+        <result column="banner_path" property="bannerPath"/>
+        <result column="mall_introducation" property="mallIntroducation"/>
+        <result column="is_open_optional" property="isOpenOptional"/>
+        <result column="sale_member_id" property="saleMemberId"/>
+        <result column="bus_user_id" property="busUserId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_id AS shopId, mall_name AS mallName, contact_number AS contactNumber, qq, mall_head_path AS mallHeadPath, banner_path AS bannerPath, mall_introducation AS
+        mallIntroducation, is_open_optional AS isOpenOptional, sale_member_id AS saleMemberId, bus_user_id AS busUserId
+    </sql>
+
+</mapper>

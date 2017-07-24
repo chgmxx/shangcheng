@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.presale.MallPresaleTimeDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.presale.MallPresaleTime">
+        <id column="id" property="id"/>
+        <result column="presale_id" property="presaleId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="sale_type" property="saleType"/>
+        <result column="price" property="price"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="price_type" property="priceType"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, presale_id AS presaleId, start_time AS startTime, end_time AS endTime, sale_type AS saleType, price, is_delete AS isDelete, price_type AS priceType
+    </sql>
+
+</mapper>

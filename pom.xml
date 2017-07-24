@@ -1,4 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -196,7 +196,7 @@
             <version>${dev.lib.commons-lang3}</version>
         </dependency>
         <!-- thymeleaf&Vue 模板 -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
@@ -209,7 +209,7 @@
             <groupId>org.webjars</groupId>
             <artifactId>vue</artifactId>
             <version>${dev.lib.vue}</version>
-        </dependency>
+        </dependency>-->
         <!-- 单元测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

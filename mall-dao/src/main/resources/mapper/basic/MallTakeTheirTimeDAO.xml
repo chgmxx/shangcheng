@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.basic.MallTakeTheirTimeDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallTakeTheirTime">
+        <id column="id" property="id"/>
+        <result column="take_id" property="takeId"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="visit_days" property="visitDays"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, take_id AS takeId, start_time AS startTime, end_time AS endTime, visit_days AS visitDays, create_time AS createTime, is_delete AS isDelete
+    </sql>
+
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.product.MallProductInventoryDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallProductInventory">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="specifica_ids" property="specificaIds"/>
+        <result column="inv_price" property="invPrice"/>
+        <result column="inv_num" property="invNum"/>
+        <result column="inv_code" property="invCode"/>
+        <result column="inv_sale_num" property="invSaleNum"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="specifica_img_id" property="specificaImgId"/>
+        <result column="erp_inv_id" property="erpInvId"/>
+        <result column="erp_specvalue_id" property="erpSpecvalueId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id AS productId, specifica_ids AS specificaIds, inv_price AS invPrice, inv_num AS invNum, inv_code AS invCode, inv_sale_num AS invSaleNum, is_delete AS
+        isDelete, is_default AS isDefault, specifica_img_id AS specificaImgId, erp_inv_id AS erpInvId, erp_specvalue_id AS erpSpecvalueId
+    </sql>
+
+</mapper>

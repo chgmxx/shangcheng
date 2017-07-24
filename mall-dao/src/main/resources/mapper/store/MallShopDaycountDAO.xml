@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.store.MallShopDaycountDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.store.MallShopDaycount">
+        <id column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="sale_num" property="saleNum"/>
+        <result column="sale_price" property="salePrice"/>
+        <result column="sale_miprice" property="saleMiprice"/>
+        <result column="sale_minum" property="saleMinum"/>
+        <result column="sale_totalnum" property="saleTotalnum"/>
+        <result column="sale_totalprice" property="saleTotalprice"/>
+        <result column="refund_num" property="refundNum"/>
+        <result column="refund_price" property="refundPrice"/>
+        <result column="count_date" property="countDate"/>
+        <result column="refund_minum" property="refundMinum"/>
+        <result column="refund_miprice" property="refundMiprice"/>
+        <result column="refund_totalnum" property="refundTotalnum"/>
+        <result column="refund_totalprice" property="refundTotalprice"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_id AS shopId, sale_num AS saleNum, sale_price AS salePrice, sale_miprice AS saleMiprice, sale_minum AS saleMinum, sale_totalnum AS saleTotalnum, sale_totalprice AS
+        saleTotalprice, refund_num AS refundNum, refund_price AS refundPrice, count_date AS countDate, refund_minum AS refundMinum, refund_miprice AS refundMiprice, refund_totalnum
+        AS refundTotalnum, refund_totalprice AS refundTotalprice
+    </sql>
+
+</mapper>

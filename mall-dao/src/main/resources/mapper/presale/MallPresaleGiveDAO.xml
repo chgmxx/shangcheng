@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.presale.MallPresaleGiveDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.presale.MallPresaleGive">
+        <id column="id" property="id"/>
+        <result column="give_type" property="giveType"/>
+        <result column="give_name" property="giveName"/>
+        <result column="give_num" property="giveNum"/>
+        <result column="give_ranking" property="giveRanking"/>
+        <result column="user_id" property="userId"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, give_type AS giveType, give_name AS giveName, give_num AS giveNum, give_ranking AS giveRanking, user_id AS userId, is_delete AS isDelete
+    </sql>
+
+</mapper>

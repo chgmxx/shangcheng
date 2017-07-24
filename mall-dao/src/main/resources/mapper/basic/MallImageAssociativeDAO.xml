@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.basic.MallImageAssociativeDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallImageAssociative">
+        <id column="id" property="id"/>
+        <result column="image_url" property="imageUrl"/>
+        <result column="ass_id" property="assId"/>
+        <result column="is_main_images" property="isMainImages"/>
+        <result column="ass_type" property="assType"/>
+        <result column="ass_sort" property="assSort"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, image_url AS imageUrl, ass_id AS assId, is_main_images AS isMainImages, ass_type AS assType, ass_sort AS assSort, is_delete AS isDelete
+    </sql>
+
+</mapper>

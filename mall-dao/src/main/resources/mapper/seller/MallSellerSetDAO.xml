@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.seller.MallSellerSetDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.seller.MallSellerSet">
+        <id column="id" property="id"/>
+        <result column="is_name_required" property="isNameRequired"/>
+        <result column="is_company_required" property="isCompanyRequired"/>
+        <result column="is_telephone_required" property="isTelephoneRequired"/>
+        <result column="is_validate_required" property="isValidateRequired"/>
+        <result column="is_remark_required" property="isRemarkRequired"/>
+        <result column="integral_reward" property="integralReward"/>
+        <result column="consume_money" property="consumeMoney"/>
+        <result column="withdrawal_type" property="withdrawalType"/>
+        <result column="withdrawal_lowest_money" property="withdrawalLowestMoney"/>
+        <result column="withdrawal_multiple" property="withdrawalMultiple"/>
+        <result column="seller_remark" property="sellerRemark"/>
+        <result column="bus_user_id" property="busUserId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, is_name_required AS isNameRequired, is_company_required AS isCompanyRequired, is_telephone_required AS isTelephoneRequired, is_validate_required AS isValidateRequired,
+        is_remark_required AS isRemarkRequired, integral_reward AS integralReward, consume_money AS consumeMoney, withdrawal_type AS withdrawalType, withdrawal_lowest_money AS
+        withdrawalLowestMoney, withdrawal_multiple AS withdrawalMultiple, seller_remark AS sellerRemark, bus_user_id AS busUserId
+    </sql>
+
+</mapper>

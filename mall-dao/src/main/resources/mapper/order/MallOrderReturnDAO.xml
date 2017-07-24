@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.order.MallOrderReturnDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.order.MallOrderReturn">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_detail_id" property="orderDetailId"/>
+        <result column="return_no" property="returnNo"/>
+        <result column="ret_handling_way" property="retHandlingWay"/>
+        <result column="ret_reason_id" property="retReasonId"/>
+        <result column="ret_reason" property="retReason"/>
+        <result column="ret_money" property="retMoney"/>
+        <result column="ret_telephone" property="retTelephone"/>
+        <result column="ret_remark" property="retRemark"/>
+        <result column="images_url" property="imagesUrl"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="status" property="status"/>
+        <result column="user_id" property="userId"/>
+        <result column="no_return_reason" property="noReturnReason"/>
+        <result column="return_address" property="returnAddress"/>
+        <result column="wl_company_id" property="wlCompanyId"/>
+        <result column="wl_company" property="wlCompany"/>
+        <result column="wl_no" property="wlNo"/>
+        <result column="wl_telephone" property="wlTelephone"/>
+        <result column="wl_remark" property="wlRemark"/>
+        <result column="return_fenbi" property="returnFenbi"/>
+        <result column="return_jifen" property="returnJifen"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id AS orderId, order_detail_id AS orderDetailId, return_no AS returnNo, ret_handling_way AS retHandlingWay, ret_reason_id AS retReasonId, ret_reason AS retReason,
+        ret_money AS retMoney, ret_telephone AS retTelephone, ret_remark AS retRemark, images_url AS imagesUrl, shop_id AS shopId, create_time AS createTime, update_time AS
+        updateTime, status, user_id AS userId, no_return_reason AS noReturnReason, return_address AS returnAddress, wl_company_id AS wlCompanyId, wl_company AS wlCompany, wl_no AS
+        wlNo, wl_telephone AS wlTelephone, wl_remark AS wlRemark, return_fenbi AS returnFenbi, return_jifen AS returnJifen
+    </sql>
+
+</mapper>

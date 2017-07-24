@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.html.MallHtmlFromDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.html.MallHtmlFrom">
+        <id column="id" property="id"/>
+        <result column="creattime" property="creattime"/>
+        <result column="category" property="category"/>
+        <result column="categoryname" property="categoryname"/>
+        <result column="genre" property="genre"/>
+        <result column="genrename" property="genrename"/>
+        <result column="family" property="family"/>
+        <result column="familyname" property="familyname"/>
+        <result column="property" property="property"/>
+        <result column="propertyname" property="propertyname"/>
+        <result column="nature" property="nature"/>
+        <result column="naturename" property="naturename"/>
+        <result column="quality" property="quality"/>
+        <result column="qualityname" property="qualityname"/>
+        <result column="attribute" property="attribute"/>
+        <result column="attributename" property="attributename"/>
+        <result column="html_id" property="htmlId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, creattime, category, categoryname, genre, genrename, family, familyname, property, propertyname, nature, naturename, quality, qualityname, attribute, attributename,
+        html_id AS htmlId
+    </sql>
+
+</mapper>

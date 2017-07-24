@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.product.MallProductGroupDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallProductGroup">
+        <id column="id" property="id"/>
+        <result column="product_id" property="productId"/>
+        <result column="group_id" property="groupId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="group_p_id" property="groupPId"/>
+        <result column="sort" property="sort"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id AS productId, group_id AS groupId, shop_id AS shopId, is_delete AS isDelete, group_p_id AS groupPId, sort
+    </sql>
+
+</mapper>

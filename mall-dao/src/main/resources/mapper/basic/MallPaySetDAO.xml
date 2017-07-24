@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.basic.MallPaySetDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallPaySet">
+        <id column="id" property="id"/>
+        <result column="is_delivery_pay" property="isDeliveryPay"/>
+        <result column="is_take_their" property="isTakeTheir"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_daifu" property="isDaifu"/>
+        <result column="is_comment" property="isComment"/>
+        <result column="is_comment_check" property="isCommentCheck"/>
+        <result column="is_comment_give" property="isCommentGive"/>
+        <result column="is_message" property="isMessage"/>
+        <result column="is_presale" property="isPresale"/>
+        <result column="is_presale_give" property="isPresaleGive"/>
+        <result column="message_json" property="messageJson"/>
+        <result column="is_sms_member" property="isSmsMember"/>
+        <result column="sms_message" property="smsMessage"/>
+        <result column="is_pf" property="isPf"/>
+        <result column="is_pf_check" property="isPfCheck"/>
+        <result column="pf_set" property="pfSet"/>
+        <result column="pf_remark" property="pfRemark"/>
+        <result column="pf_apply_remark" property="pfApplyRemark"/>
+        <result column="is_seller" property="isSeller"/>
+        <result column="is_check_seller" property="isCheckSeller"/>
+        <result column="footer_json" property="footerJson"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, is_delivery_pay AS isDeliveryPay, is_take_their AS isTakeTheir, user_id AS userId, create_time AS createTime, is_daifu AS isDaifu, is_comment AS isComment,
+        is_comment_check AS isCommentCheck, is_comment_give AS isCommentGive, is_message AS isMessage, is_presale AS isPresale, is_presale_give AS isPresaleGive, message_json AS
+        messageJson, is_sms_member AS isSmsMember, sms_message AS smsMessage, is_pf AS isPf, is_pf_check AS isPfCheck, pf_set AS pfSet, pf_remark AS pfRemark, pf_apply_remark AS
+        pfApplyRemark, is_seller AS isSeller, is_check_seller AS isCheckSeller, footer_json AS footerJson
+    </sql>
+
+</mapper>

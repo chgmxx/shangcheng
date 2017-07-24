@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.basic.MallGroupDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallGroup">
+        <id column="id" property="id"/>
+        <result column="group_name" property="groupName"/>
+        <result column="group_p_id" property="groupPId"/>
+        <result column="first_priority" property="firstPriority"/>
+        <result column="second_priority" property="secondPriority"/>
+        <result column="is_show_page" property="isShowPage"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="is_first_parents" property="isFirstParents"/>
+        <result column="is_child" property="isChild"/>
+        <result column="sort" property="sort"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="edit_user_id" property="editUserId"/>
+        <result column="edit_time" property="editTime"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, group_name AS groupName, group_p_id AS groupPId, first_priority AS firstPriority, second_priority AS secondPriority, is_show_page AS isShowPage, shop_id AS shopId,
+        is_first_parents AS isFirstParents, is_child AS isChild, sort, user_id AS userId, create_time AS createTime, edit_user_id AS editUserId, edit_time AS editTime, is_delete AS
+        isDelete
+    </sql>
+
+</mapper>

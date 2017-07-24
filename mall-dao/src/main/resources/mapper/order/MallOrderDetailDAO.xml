@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.order.MallOrderDetailDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.order.MallOrderDetail">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="product_id" property="productId"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="product_specificas" property="productSpecificas"/>
+        <result column="product_image_url" property="productImageUrl"/>
+        <result column="det_pro_num" property="detProNum"/>
+        <result column="det_pro_price" property="detProPrice"/>
+        <result column="det_pro_name" property="detProName"/>
+        <result column="det_pro_code" property="detProCode"/>
+        <result column="det_privivilege" property="detPrivivilege"/>
+        <result column="det_pro_message" property="detProMessage"/>
+        <result column="product_speciname" property="productSpeciname"/>
+        <result column="status" property="status"/>
+        <result column="return_day" property="returnDay"/>
+        <result column="discount" property="discount"/>
+        <result column="coupon_code" property="couponCode"/>
+        <result column="discounted_prices" property="discountedPrices"/>
+        <result column="create_time" property="createTime"/>
+        <result column="pro_type_id" property="proTypeId"/>
+        <result column="use_fenbi" property="useFenbi"/>
+        <result column="use_jifen" property="useJifen"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="appraise_status" property="appraiseStatus"/>
+        <result column="pro_spec_str" property="proSpecStr"/>
+        <result column="card_receive_id" property="cardReceiveId"/>
+        <result column="duofen_coupon" property="duofenCoupon"/>
+        <result column="use_card_id" property="useCardId"/>
+        <result column="commission" property="commission"/>
+        <result column="sale_member_id" property="saleMemberId"/>
+        <result column="integral_youhui" property="integralYouhui"/>
+        <result column="fenbi_youhui" property="fenbiYouhui"/>
+        <result column="flow_id" property="flowId"/>
+        <result column="flow_record_id" property="flowRecordId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id AS orderId, product_id AS productId, shop_id AS shopId, product_specificas AS productSpecificas, product_image_url AS productImageUrl, det_pro_num AS
+        detProNum, det_pro_price AS detProPrice, det_pro_name AS detProName, det_pro_code AS detProCode, det_privivilege AS detPrivivilege, det_pro_message AS detProMessage,
+        product_speciname AS productSpeciname, status, return_day AS returnDay, discount, coupon_code AS couponCode, discounted_prices AS discountedPrices, create_time AS
+        createTime, pro_type_id AS proTypeId, use_fenbi AS useFenbi, use_jifen AS useJifen, total_price AS totalPrice, appraise_status AS appraiseStatus, pro_spec_str AS
+        proSpecStr, card_receive_id AS cardReceiveId, duofen_coupon AS duofenCoupon, use_card_id AS useCardId, commission, sale_member_id AS saleMemberId, integral_youhui AS
+        integralYouhui, fenbi_youhui AS fenbiYouhui, flow_id AS flowId, flow_record_id AS flowRecordId
+    </sql>
+
+</mapper>

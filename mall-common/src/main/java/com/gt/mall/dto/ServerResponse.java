@@ -22,7 +22,7 @@ import static com.fasterxml.jackson.databind.annotation.JsonSerialize.Typing.DEF
 public class ServerResponse< T > implements Serializable {
 
     /*状态码*/
-    private int status;
+    private int code;
 
     /*返回消息*/
     private String msg;
@@ -30,22 +30,22 @@ public class ServerResponse< T > implements Serializable {
     /*泛型数据*/
     private T data;
 
-    protected ServerResponse( int status ) {
-	this.status = status;
+    protected ServerResponse( int code ) {
+	this.code = code;
     }
 
-    protected ServerResponse( int status, T data ) {
-	this.status = status;
+    protected ServerResponse( int code, T data ) {
+	this.code = code;
 	this.data = data;
     }
 
-    protected ServerResponse( int status, String msg ) {
-	this.status = status;
+    protected ServerResponse( int code, String msg ) {
+	this.code = code;
 	this.msg = msg;
     }
 
-    protected ServerResponse( int status, String msg, T data ) {
-	this.status = status;
+    protected ServerResponse( int code, String msg, T data ) {
+	this.code = code;
 	this.msg = msg;
 	this.data = data;
     }
@@ -141,11 +141,11 @@ public class ServerResponse< T > implements Serializable {
     //使之不在json序列化结果当中，作用用于判断
     @JsonIgnore
     public boolean isSuccess() {
-	return this.status == ResponseEnums.SUCCESS.getCode();
+	return this.code == ResponseEnums.SUCCESS.getCode();
     }
 
-    public int getStatus() {
-	return status;
+    public int getCode() {
+	return code;
     }
 
     public T getData() {

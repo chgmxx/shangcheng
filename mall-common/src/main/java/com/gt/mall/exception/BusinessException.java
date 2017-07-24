@@ -1,6 +1,7 @@
 package com.gt.mall.exception;
 
 /**
+ * 业务异常
  *
  * @author zhangmz
  * @version 1.0.0

@@ -7,6 +7,14 @@
 # 开发环境配置
 spring:
 # profiles: dev
+ #redis配置
+ redis:
+  host: 14.29.79.226
+  port: 6379
+  password: gt@123456
+#redis session共享
+ session:
+   store-type: redis
 #自动重启默认开发时开启
  devtools:
   restart:
@@ -24,7 +32,7 @@ spring:
 
 datasource:
  druid:
-  url: jdbc:mysql://14.29.79.226:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+  url: jdbc:mysql://14.29.79.226:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
   username: root
   password: gt123456
   driver-class-name: com.mysql.jdbc.Driver
@@ -61,6 +69,11 @@ server:
     timeout: 30
 
 
-
+######################## 开发环境配置 ########################
+web:
+  #网页访问路径
+  homeUrl: http://192.168.2.100:8081/
+  #访问图片路径
+  imageUrlPrefix: http://maint.yifriend.net/upload/
 
 

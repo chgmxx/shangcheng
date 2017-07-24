@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.seller.MallSellerIncomeDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.seller.MallSellerIncome">
+        <id column="id" property="id"/>
+        <result column="sale_member_id" property="saleMemberId"/>
+        <result column="income_commission" property="incomeCommission"/>
+        <result column="income_integral" property="incomeIntegral"/>
+        <result column="income_money" property="incomeMoney"/>
+        <result column="income_time" property="incomeTime"/>
+        <result column="buyer_user_id" property="buyerUserId"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_detail_id" property="orderDetailId"/>
+        <result column="income_type" property="incomeType"/>
+        <result column="is_get" property="isGet"/>
+        <result column="commission_type" property="commissionType"/>
+        <result column="no_receive_commission" property="noReceiveCommission"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sale_member_id AS saleMemberId, income_commission AS incomeCommission, income_integral AS incomeIntegral, income_money AS incomeMoney, income_time AS incomeTime,
+        buyer_user_id AS buyerUserId, order_id AS orderId, order_detail_id AS orderDetailId, income_type AS incomeType, is_get AS isGet, commission_type AS commissionType,
+        no_receive_commission AS noReceiveCommission
+    </sql>
+
+</mapper>

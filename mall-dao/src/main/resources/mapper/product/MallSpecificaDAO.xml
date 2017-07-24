@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.product.MallSpecificaDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallSpecifica">
+        <id column="id" property="id"/>
+        <result column="spec_name" property="specName"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="is_back_end" property="isBackEnd"/>
+        <result column="type" property="type"/>
+        <result column="erp_name_id" property="erpNameId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, spec_name AS specName, shop_id AS shopId, user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_back_end AS isBackEnd, type, erp_name_id AS erpNameId
+    </sql>
+
+</mapper>

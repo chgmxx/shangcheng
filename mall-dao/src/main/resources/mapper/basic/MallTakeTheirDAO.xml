@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.basic.MallTakeTheirDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallTakeTheir">
+        <id column="id" property="id"/>
+        <result column="visit_name" property="visitName"/>
+        <result column="visit_province_id" property="visitProvinceId"/>
+        <result column="visit_city_id" property="visitCityId"/>
+        <result column="visit_area_id" property="visitAreaId"/>
+        <result column="visit_address" property="visitAddress"/>
+        <result column="visit_longitude" property="visitLongitude"/>
+        <result column="visit_latitude" property="visitLatitude"/>
+        <result column="visit_address_detail" property="visitAddressDetail"/>
+        <result column="visit_contact_number" property="visitContactNumber"/>
+        <result column="visit_remark" property="visitRemark"/>
+        <result column="is_store_reception" property="isStoreReception"/>
+        <result column="is_store_pay" property="isStorePay"/>
+        <result column="images_url" property="imagesUrl"/>
+        <result column="user_id" property="userId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, visit_name AS visitName, visit_province_id AS visitProvinceId, visit_city_id AS visitCityId, visit_area_id AS visitAreaId, visit_address AS visitAddress,
+        visit_longitude AS visitLongitude, visit_latitude AS visitLatitude, visit_address_detail AS visitAddressDetail, visit_contact_number AS visitContactNumber, visit_remark AS
+        visitRemark, is_store_reception AS isStoreReception, is_store_pay AS isStorePay, images_url AS imagesUrl, user_id AS userId, create_time AS createTime, is_delete AS
+        isDelete
+    </sql>
+
+</mapper>

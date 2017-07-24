@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.seckill.MallSeckillJoinDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.seckill.MallSeckillJoin">
+        <id column="id" property="id"/>
+        <result column="seckill_id" property="seckillId"/>
+        <result column="seckill_user_id" property="seckillUserId"/>
+        <result column="seckill_price" property="seckillPrice"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_detail_id" property="orderDetailId"/>
+        <result column="product_id" property="productId"/>
+        <result column="seckill_time" property="seckillTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, seckill_id AS seckillId, seckill_user_id AS seckillUserId, seckill_price AS seckillPrice, order_id AS orderId, order_detail_id AS orderDetailId, product_id AS
+        productId, seckill_time AS seckillTime
+    </sql>
+
+</mapper>

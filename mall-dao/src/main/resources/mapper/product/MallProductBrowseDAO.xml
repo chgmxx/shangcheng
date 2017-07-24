@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.product.MallProductBrowseDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallProductBrowse">
+        <id column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="product_id" property="productId"/>
+        <result column="access_time" property="accessTime"/>
+        <result column="group_value_id" property="groupValueId"/>
+        <result column="user_id" property="userId"/>
+        <result column="session_id" property="sessionId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, shop_id AS shopId, product_id AS productId, access_time AS accessTime, group_value_id AS groupValueId, user_id AS userId, session_id AS sessionId
+    </sql>
+
+</mapper>
