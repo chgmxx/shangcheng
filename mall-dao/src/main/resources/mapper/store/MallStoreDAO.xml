@@ -44,7 +44,6 @@
     <!-- 分页查询结果列 -->
     <sql id="page_Column_list">
         o.id,o.sto_linkman,o.sto_phone,o.wx_shop_id,p.id
-
     </sql>
     <!-- 分页查询店铺 -->
     <select id="findByPage" resultType="java.util.Map" parameterType="Map">
@@ -58,13 +57,13 @@
                 and o.sto_user_id=#{userId}
             </if>
             <if test="stoName != null">
-                and t.sto_name like '%${stoName}%'
+                and o.sto_name like '%${stoName}%'
             </if>
         </where>
     </select>
     <!--统计商家的店铺 -->
     <select id="count" resultType="java.lang.Integer">
-        SELECT
+        select
         count(o.id)
         from t_mall_order o
         <where>
@@ -88,15 +87,45 @@
         </where>
     </update>
 
-
-    <select id="findByUserIds" resultType="com.gt.mall.entity.store.MallStore" parameterType="Map">
-
-
+    <!-- 根据门店id查询商品店铺 -->
+    <select id="findByShopIds" resultType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from t_mall_store t
+        <where>
+            is_delete = 0
+            <if test="shopIds != null and shopIds != ''">
+                and wx_shop_id in
+                <foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+                    #{shopId}
+                </foreach>
+            </if>
+        </where>
     </select>
+    <!-- 根据商家id查询店铺信息，门店信息  和 店铺页面id -->
+    <select id="findWxStorePageByUser" resultType="java.util.Map">
+        select s.sto_picture as stoPicture ,s.id,mp.id as pageId
+        from t_mall_store s
+        left join t_mall_page mp on mp.pag_sto_id=s.id and pag_is_main=1
+        <where>
+            s.`is_delete` and s.`sto_user_id`=#{userId}
+        </where>
+        order by mp.id desc
+    </select>
+
     <select id="shopIsOpenMall" resultType="java.lang.Integer" parameterType="java.lang.Integer">
-        select count(p.id) from t_mall_store s
+        select count(p.id)
+        from t_mall_store s
         left join t_mall_page p on p.pag_sto_id=s.id
-  	    where s.wx_shop_id=#{wxShopId} and s.is_delete=0
+        where s.wx_shop_id=#{wxShopId} and s.is_delete=0
+    </select>
+    <!-- 根据商家id查询店铺信息 -->
+    <select id="findByUserId" resultType="java.util.Map">
+        SELECT s.sto_picture AS stoPicture , s.id,mp.id AS pageId
+        FROM t_mall_store s
+        LEFT JOIN t_mall_page mp ON mp.pag_sto_id=s.id AND pag_is_main=1
+        WHERE  is_delete = 0 AND  s.sto_user_id = #{userId}
+        ORDER BY s.id DESC
     </select>
 
 

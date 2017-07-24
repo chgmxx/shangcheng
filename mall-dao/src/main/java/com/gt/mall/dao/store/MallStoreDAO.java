@@ -40,13 +40,29 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
     /**
      * 根据店铺id 逻辑删除店铺
      *
-     * @param ids
+     * @param ids 店铺id
      *
      * @return
      */
     int updateByIds( @Param( "ids" ) String[] ids );
 
-    List< MallStore > findByUserIds( @Param( "ids" ) List< Integer > ids );
+    /**
+     * 根据门店id查询商品店铺信息
+     *
+     * @param shopIds 门店id
+     *
+     * @return
+     */
+    List< Map< String,Object > > findByShopIds( @Param( "shopIds" ) List< Integer > shopIds );
+
+    /**
+     * 根据商家idid查询  店铺信息，门店信息和  店铺页面id   oldParams findByPublicId
+     *
+     * @param userId
+     *
+     * @return 店铺信息，门店信息  和店铺页面
+     */
+    List< Map< String,Object > > findWxStorePageByUser( @Param( "userId" ) Integer userId );
 
     /**
      * 查询门店是否开通商城并拥有页面
@@ -56,4 +72,14 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
      * @return
      */
     Integer shopIsOpenMall( @Param( "wxShopId" ) Integer wxShopId );
+
+    /**
+     * 根据商家id查询店铺信息
+     *
+     * @param userId 商家id
+     *
+     * @return
+     */
+    List< Map< String,Object > > findByUserId( @Param( "userId" ) Integer userId );
+
 }
