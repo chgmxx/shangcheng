@@ -18,12 +18,12 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 @SpringBootApplication
 public class MallApplication extends SpringBootServletInitializer {
 
+    public static void main( String[] args ) {
+	SpringApplication.run( MallApplication.class, args );
+    }
+
     @Override
     protected SpringApplicationBuilder configure( SpringApplicationBuilder application ) {
 	return application.sources( MallApplication.class );
-    }
-
-    public static void main( String[] args ) {
-	SpringApplication.run( MallApplication.class, args );
     }
 }

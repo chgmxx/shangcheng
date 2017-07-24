@@ -30,8 +30,6 @@ public class MpGenerator {
 		    "t_mall_take_their",
 		    "t_mall_take_their_time"
     };
-    // 作者
-    private static final String   author             = "yangqian";
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
     public static final  String[] tablePrefix        = new String[] { "t" };
     // 生成的包路径
@@ -57,8 +55,9 @@ public class MpGenerator {
     public static final  String   username           = "root";
     // 密码
     public static final  String   password           = "gt123456";
-
-    private static Logger logger = LoggerFactory.getLogger( MpGenerator.class );
+    // 作者
+    private static final String   author             = "yangqian";
+    private static       Logger   logger             = LoggerFactory.getLogger( MpGenerator.class );
 
     /**
      * <p>

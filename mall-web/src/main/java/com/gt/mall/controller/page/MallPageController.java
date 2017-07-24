@@ -25,6 +25,11 @@ public class MallPageController extends BaseController {
     @Autowired
     private MyConfig myConfig;
 
+    public static void main( String[] args ) {
+	System.out.println( " = " + ServerResponse.createByError() );
+	;
+    }
+
     @ApiOperation( value = "首页", notes = "首页" )
     @GetMapping( "/" )
     public ModelAndView index( ModelAndView map ) {
@@ -33,10 +38,5 @@ public class MallPageController extends BaseController {
 	map.addObject( "homeUrl", myConfig.getHomeUrl() );
 	map.setViewName( "index" );
 	return map;
-    }
-
-    public static void main( String[] args ) {
-	System.out.println( " = " + ServerResponse.createByError() );
-	;
     }
 }
