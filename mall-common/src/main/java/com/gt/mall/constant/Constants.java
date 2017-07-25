@@ -14,7 +14,7 @@ public class Constants {
     public final static String SESSION_KEY = "Mall-";
 
     /**
-     * 定义 redis key 开头字符串
+     * 定义 redis key 开头字符串 1
      */
     public final static String REDIS_KEY = "Mall:";
 
