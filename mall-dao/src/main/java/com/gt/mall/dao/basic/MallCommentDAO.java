@@ -14,9 +14,10 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallCommentDAO extends BaseMapper< MallComment > {
+public interface MallCommentDAO extends BaseMapper<MallComment> {
     /**
      * 分页查询评论
+     *
      * @param params
      * @return
      */
@@ -25,28 +26,32 @@ public interface MallCommentDAO extends BaseMapper< MallComment > {
 
     /**
      * 获取评论数量
+     *
      * @param param
      * @return
      */
-    int countAppraise(Map<String,Object> param);
+    int countAppraise(Map<String, Object> param);
 
     /**
      * 查询店家回复消息
+     *
      * @param param
      * @return
      */
-    List<Map<String, Object>> ownerResponseList(Map<String,Object> param);
+    List<Map<String, Object>> ownerResponseList(Map<String, Object> param);
 
 
     /**
      * 根据商品id查询评价信息
-     * @param params  商品id
+     *
+     * @param params 商品id
      * @return
      */
     List<Map<String, Object>> selectCommentByProId(Map<String, Object> params);
 
     /**
      * 统计总体评价
+     *
      * @param params
      * @return
      */
@@ -54,6 +59,7 @@ public interface MallCommentDAO extends BaseMapper< MallComment > {
 
     /**
      * 统计评价数量
+     *
      * @param params
      * @return
      */
@@ -61,6 +67,7 @@ public interface MallCommentDAO extends BaseMapper< MallComment > {
 
     /**
      * 查询评价列表
+     *
      * @param params
      * @return
      */
@@ -68,6 +75,7 @@ public interface MallCommentDAO extends BaseMapper< MallComment > {
 
     /**
      * 批量操作评论信息
+     *
      * @param params
      * @return
      */
@@ -75,6 +83,7 @@ public interface MallCommentDAO extends BaseMapper< MallComment > {
 
     /**
      * 查询评价信息
+     *
      * @param comment
      * @return
      */

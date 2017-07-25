@@ -15,10 +15,11 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallGroupJoinDAO extends BaseMapper< MallGroupJoin > {
+public interface MallGroupJoinDAO extends BaseMapper<MallGroupJoin> {
 
     /**
      * 查询团购商品的发起人
+     *
      * @param params
      * @return
      */
@@ -26,6 +27,7 @@ public interface MallGroupJoinDAO extends BaseMapper< MallGroupJoin > {
 
     /**
      * 查询团购参与人、商品信息
+     *
      * @param params
      * @return
      */
@@ -33,6 +35,7 @@ public interface MallGroupJoinDAO extends BaseMapper< MallGroupJoin > {
 
     /**
      * 查询团购参与人
+     *
      * @param params
      * @return
      */
@@ -40,6 +43,7 @@ public interface MallGroupJoinDAO extends BaseMapper< MallGroupJoin > {
 
     /**
      * 查询用户参加团购的数量
+     *
      * @param params
      * @return
      */
@@ -47,6 +51,7 @@ public interface MallGroupJoinDAO extends BaseMapper< MallGroupJoin > {
 
     /**
      * 查询参团信息
+     *
      * @param params
      * @return
      */

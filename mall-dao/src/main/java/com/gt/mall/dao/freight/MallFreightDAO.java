@@ -14,11 +14,12 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallFreightDAO extends BaseMapper< MallFreight > {
+public interface MallFreightDAO extends BaseMapper<MallFreight> {
 
 
     /**
      * 通过 店铺id列表 得到物流总数
+     *
      * @param param
      * @return
      */
@@ -47,6 +48,7 @@ public interface MallFreightDAO extends BaseMapper< MallFreight > {
 
     /**
      * 通过店铺id查询物流信息
+     *
      * @param: shopId
      */
     MallFreight selectFreightByShopId(Integer shopId);

@@ -14,10 +14,11 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallTakeTheirDAO extends BaseMapper< MallTakeTheir > {
+public interface MallTakeTheirDAO extends BaseMapper<MallTakeTheir> {
 
     /**
      * 统计上门自提
+     *
      * @param map
      * @return
      */
@@ -25,6 +26,7 @@ public interface MallTakeTheirDAO extends BaseMapper< MallTakeTheir > {
 
     /**
      * 查询上门自提
+     *
      * @param map
      * @return
      */
@@ -32,6 +34,7 @@ public interface MallTakeTheirDAO extends BaseMapper< MallTakeTheir > {
 
     /**
      * 根据公众号id查询上门自提信息
+     *
      * @param map
      * @return
      */
@@ -39,6 +42,7 @@ public interface MallTakeTheirDAO extends BaseMapper< MallTakeTheir > {
 
     /**
      * 统计上门自提
+     *
      * @param map
      * @return
      */
@@ -46,6 +50,7 @@ public interface MallTakeTheirDAO extends BaseMapper< MallTakeTheir > {
 
     /**
      * 根据id查询上门自提信息
+     *
      * @param map
      * @return
      */

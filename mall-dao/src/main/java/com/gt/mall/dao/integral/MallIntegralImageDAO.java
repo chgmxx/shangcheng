@@ -14,10 +14,11 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallIntegralImageDAO extends BaseMapper< MallIntegralImage > {
+public interface MallIntegralImageDAO extends BaseMapper<MallIntegralImage> {
 
     /**
      * 统计积分商城图片
+     *
      * @param params
      * @return
      */
@@ -25,6 +26,7 @@ public interface MallIntegralImageDAO extends BaseMapper< MallIntegralImage > {
 
     /**
      * 分页查询积分商城图片
+     *
      * @param params
      * @return
      */
@@ -32,6 +34,7 @@ public interface MallIntegralImageDAO extends BaseMapper< MallIntegralImage > {
 
     /**
      * 查询积分商城图片
+     *
      * @param params
      * @return
      */

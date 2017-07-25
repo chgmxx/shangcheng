@@ -13,25 +13,29 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallFreightDetailDAO extends BaseMapper< MallFreightDetail > {
+public interface MallFreightDetailDAO extends BaseMapper<MallFreightDetail> {
 
     /**
      * 通过物流id来删除物流详情
      *
-     * @Title: deleteByFreightId
+     * @param ids
+     * @return
      */
     int deleteByFreightId(Map<String, Object> ids);
 
     /**
      * 通过物流id查询物流详情id
      *
-     * @Title: selectByFreightId
+     * @param freightId
+     * @return
      */
     Map<String, Object> selectByFreightId(Integer freightId);
 
     /**
-     * 查询物流详情细心
-     * @Title: selectFreightByPId
+     * 查询物流详情明细
+     *
+     * @param params
+     * @return
      */
     MallFreightDetail selectFreightByPId(Map<String, Object> params);
 }

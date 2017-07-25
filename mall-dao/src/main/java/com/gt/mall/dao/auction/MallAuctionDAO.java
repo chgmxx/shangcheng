@@ -14,7 +14,7 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallAuctionDAO extends BaseMapper< MallAuction > {
+public interface MallAuctionDAO extends BaseMapper<MallAuction> {
 
     /**
      * 统计拍卖信息
@@ -34,6 +34,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 查询未开团商品
+     *
      * @param params
      * @return
      */
@@ -41,6 +42,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 统计未开团商品
+     *
      * @param params
      * @return
      */
@@ -48,6 +50,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 通过id查询拍卖信息商品信息
+     *
      * @param id
      * @return
      */
@@ -55,6 +58,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 查询是否存在未开始和进行中的商品
+     *
      * @param auc
      * @return
      */
@@ -62,6 +66,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 查询店铺下所有的拍卖商品
+     *
      * @param params
      * @return
      */
@@ -69,6 +74,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 根据id查询拍卖
+     *
      * @param id
      * @return
      */
@@ -76,6 +82,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 根据商品id查询拍卖信息
+     *
      * @param auc
      * @return
      */
@@ -83,6 +90,7 @@ public interface MallAuctionDAO extends BaseMapper< MallAuction > {
 
     /**
      * 统计店铺下所有拍卖商品的数量
+     *
      * @param params
      * @return
      */

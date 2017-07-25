@@ -16,7 +16,7 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
+public interface MallGroupBuyDAO extends BaseMapper<MallGroupBuy> {
 
     /**
      * 统计团购信息
@@ -36,6 +36,7 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 查询未开团商品
+     *
      * @param params
      * @return
      */
@@ -43,6 +44,7 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 统计未开团商品
+     *
      * @param params
      * @return
      */
@@ -50,6 +52,7 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 通过id查询团购信息商品信息
+     *
      * @param id
      * @return
      */
@@ -57,6 +60,7 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 查询是否存在未开始和进行中的商品
+     *
      * @param buy
      * @return
      */
@@ -64,6 +68,7 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 查询店铺下所有的团购商品
+     *
      * @param params
      * @return
      */
@@ -71,6 +76,7 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 根据id查询团购
+     *
      * @param id
      * @return
      */
@@ -78,19 +84,22 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 根据商品id查询团购信息
+     *
      * @param buy
      * @return
      */
     MallGroupBuy selectBuyByProductId(MallGroupBuy buy);
 
     /**
-     *  查询已结束未成团的团购信息
+     * 查询已结束未成团的团购信息
+     *
      * @return
      */
     List<Map<String, Object>> selectEndGroupByAll();
 
     /**
      * 统计团购
+     *
      * @param params
      * @return
      */
@@ -98,8 +107,9 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
 
     /**
      * 通过商品id查询团购信息
+     *
      * @param productId
      * @return
      */
-    Map<String, Object> selectGroupByProId(@Param( "productId" ) String productId);
+    Map<String, Object> selectGroupByProId(@Param("productId") String productId);
 }

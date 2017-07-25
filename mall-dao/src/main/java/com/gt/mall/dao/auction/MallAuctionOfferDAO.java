@@ -13,9 +13,10 @@ import java.util.List;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallAuctionOfferDAO extends BaseMapper< MallAuctionOffer > {
+public interface MallAuctionOfferDAO extends BaseMapper<MallAuctionOffer> {
     /**
      * 查询当前出价最高者
+     *
      * @param id
      * @return
      */
@@ -23,6 +24,7 @@ public interface MallAuctionOfferDAO extends BaseMapper< MallAuctionOffer > {
 
     /**
      * 查询拍卖出价次数
+     *
      * @param off
      * @return
      */

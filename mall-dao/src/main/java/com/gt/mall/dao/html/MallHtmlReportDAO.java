@@ -11,22 +11,24 @@ import com.gt.mall.entity.html.MallHtmlReport;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallHtmlReportDAO extends BaseMapper< MallHtmlReport > {
+public interface MallHtmlReportDAO extends BaseMapper<MallHtmlReport> {
 
 
     /**
      * 统计商城+举报方法 的举报次数
+     *
      * @param html_id
      * @return
      */
-    int countReportNumByHtmlId(Integer html_id,Integer style);
+    int countReportNumByHtmlId(Integer html_id, Integer style);
 
     /**
      * 根据商城id,举报id, 修改举报次数
+     *
      * @param num
      * @param html_id
      * @param style
      * @return
      */
-    int updateReportNumByHtmlId(Integer num,Integer html_id,Integer style);
+    int updateReportNumByHtmlId(Integer num, Integer html_id, Integer style);
 }

@@ -14,7 +14,7 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallAuctionMarginDAO extends BaseMapper< MallAuctionMargin > {
+public interface MallAuctionMarginDAO extends BaseMapper<MallAuctionMargin> {
 
     /**
      * 统计保证金
@@ -34,6 +34,7 @@ public interface MallAuctionMarginDAO extends BaseMapper< MallAuctionMargin > {
 
     /**
      * 根据保证金单号来查询保证金的信息
+     *
      * @param aucNo
      * @return
      */
@@ -41,6 +42,7 @@ public interface MallAuctionMarginDAO extends BaseMapper< MallAuctionMargin > {
 
     /**
      * 查询保证金信息
+     *
      * @param margin
      * @return
      */
@@ -48,6 +50,7 @@ public interface MallAuctionMarginDAO extends BaseMapper< MallAuctionMargin > {
 
     /**
      * 查询保证金的集合信息
+     *
      * @param margin
      * @return
      */
@@ -55,6 +58,7 @@ public interface MallAuctionMarginDAO extends BaseMapper< MallAuctionMargin > {
 
     /**
      * 查询已结束拍卖的保证金信息
+     *
      * @return
      */
     List<Map<String, Object>> selectMarginByEnd();

@@ -13,10 +13,11 @@ import java.util.List;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallTakeTheirTimeDAO extends BaseMapper< MallTakeTheirTime > {
+public interface MallTakeTheirTimeDAO extends BaseMapper<MallTakeTheirTime> {
 
     /**
      * 通过自提点id
+     *
      * @param takeId
      * @return
      */

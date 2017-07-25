@@ -2,6 +2,7 @@ package com.gt.mall.dao.groupbuy;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
+
 import java.util.List;
 
 /**
@@ -12,11 +13,12 @@ import java.util.List;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallGroupBuyPriceDAO extends BaseMapper< MallGroupBuyPrice > {
+public interface MallGroupBuyPriceDAO extends BaseMapper<MallGroupBuyPrice> {
 
 
     /**
      * 通过团购id查询团购价格列表
+     *
      * @param groupBuyId
      * @return
      */
@@ -24,6 +26,7 @@ public interface MallGroupBuyPriceDAO extends BaseMapper< MallGroupBuyPrice > {
 
     /**
      * 通过团购id 修改信息
+     *
      * @param record
      * @return
      */

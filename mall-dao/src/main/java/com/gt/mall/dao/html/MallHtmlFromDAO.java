@@ -14,19 +14,21 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallHtmlFromDAO extends BaseMapper< MallHtmlFrom > {
+public interface MallHtmlFromDAO extends BaseMapper<MallHtmlFrom> {
 
     /**
      * 得到H5模板的表单列表
+     *
      * @param html_id
      * @param firstNum
      * @param pageSize
      * @return
      */
-    List<Map<String,Object>> getHtmlFromByHtmlId(Integer html_id, Integer firstNum, Integer pageSize);
+    List<Map<String, Object>> getHtmlFromByHtmlId(Integer html_id, Integer firstNum, Integer pageSize);
 
     /**
      * 统计5模板的表单数量
+     *
      * @param html_id
      * @return
      */
@@ -34,8 +36,9 @@ public interface MallHtmlFromDAO extends BaseMapper< MallHtmlFrom > {
 
     /**
      * 表单详情
+     *
      * @param id
      * @return
      */
-    Map<String,Object> htmlFromView(Integer id);
+    Map<String, Object> htmlFromView(Integer id);
 }

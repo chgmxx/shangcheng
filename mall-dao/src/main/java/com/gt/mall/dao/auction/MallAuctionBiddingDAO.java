@@ -14,10 +14,11 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallAuctionBiddingDAO extends BaseMapper< MallAuctionBidding > {
+public interface MallAuctionBiddingDAO extends BaseMapper<MallAuctionBidding> {
 
     /**
      * 查询用户参加拍卖的数量
+     *
      * @param params
      * @return
      */
@@ -25,6 +26,7 @@ public interface MallAuctionBiddingDAO extends BaseMapper< MallAuctionBidding > 
 
     /**
      * 查询竞拍信息
+     *
      * @param bidding
      * @return
      */
@@ -32,6 +34,7 @@ public interface MallAuctionBiddingDAO extends BaseMapper< MallAuctionBidding > 
 
     /**
      * 查询竞拍信息
+     *
      * @param bidding
      * @return
      */
@@ -39,6 +42,7 @@ public interface MallAuctionBiddingDAO extends BaseMapper< MallAuctionBidding > 
 
     /**
      * 修改根据拍卖id来修改竞拍信息
+     *
      * @param bidding
      * @return
      */
@@ -46,6 +50,7 @@ public interface MallAuctionBiddingDAO extends BaseMapper< MallAuctionBidding > 
 
     /**
      * 查询我的获拍
+     *
      * @param params
      * @return
      */
@@ -53,6 +58,7 @@ public interface MallAuctionBiddingDAO extends BaseMapper< MallAuctionBidding > 
 
     /**
      * 查询我的竞拍
+     *
      * @param params
      * @return
      */
