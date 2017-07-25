@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
  */
 public abstract class BaseController {
     /**
-     * 日志
+     * 日志3
      */
     protected Logger logger = LoggerFactory.getLogger( this.getClass() );
 
