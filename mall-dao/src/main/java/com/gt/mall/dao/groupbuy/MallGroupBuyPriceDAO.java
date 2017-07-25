@@ -2,7 +2,7 @@ package com.gt.mall.dao.groupbuy;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
-import com.sun.tools.javac.util.List;
+import java.util.List;
 
 /**
  * <p>
