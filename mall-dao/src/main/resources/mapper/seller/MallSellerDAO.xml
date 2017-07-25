@@ -48,4 +48,13 @@
         head_image_path AS headImagePath, is_merge_data AS isMergeData, ucqr_code_path AS ucqrCodePath, ucpromotion_poster_path AS ucpromotionPosterPath
     </sql>
 
+    <update id="updateStatusByUserId">
+        update t_mall_seller
+        set check_status = #{status,jdbcType=INTEGER} ,
+         check_time = now(),
+         add_time=now()
+         where bus_user_id=#{user_id,jdbcType=INTEGER}
+         and  (check_status = 0  or check_status = -1)
+    </update>
+
 </mapper>

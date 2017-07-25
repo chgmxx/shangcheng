@@ -3,6 +3,8 @@ package com.gt.mall.web.service.freight;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.freight.MallFreightDetail;
 
+import java.util.Map;
+
 /**
  * <p>
  * 物流表详情 服务类
@@ -12,5 +14,10 @@ import com.gt.mall.entity.freight.MallFreightDetail;
  * @since 2017-07-20
  */
 public interface MallFreightDetailService extends BaseService< MallFreightDetail > {
-
+    /**
+     * 编辑物流详情
+     *
+     * @Title: editFreightDetail
+     */
+    void editFreightDetail(Map<String, Object> params, int freightId);
 }

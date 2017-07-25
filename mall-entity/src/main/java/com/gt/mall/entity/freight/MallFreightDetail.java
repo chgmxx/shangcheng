@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * <p>
@@ -88,6 +89,8 @@ public class MallFreightDetail extends Model< MallFreightDetail > {
      */
     @TableField( "add_money" )
     private BigDecimal addMoney;
+
+    private List<MallFreightProvinces> provinceList;
 
     @Override
     protected Serializable pkVal() {

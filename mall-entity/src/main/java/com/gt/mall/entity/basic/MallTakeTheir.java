@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -111,6 +112,10 @@ public class MallTakeTheir extends Model< MallTakeTheir > {
      */
     @TableField( "is_delete" )
     private Integer isDelete;
+
+    private List<MallImageAssociative> imageList;
+
+    private List<MallTakeTheirTime> timeList;
 
     @Override
     protected Serializable pkVal() {

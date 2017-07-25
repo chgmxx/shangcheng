@@ -30,5 +30,32 @@
         id, dataJson, dataBg, dataTransverse, musicurl, addres, musicname, player_style AS playerStyle, bus_user_id AS busUserId, creattime, codeUrl, state, pid, htmlname,
         reportstate, source_type AS sourceType, modelid, introduce, bakurl
     </sql>
+    <select id="getHtmlByUserId" resultType="java.util.Map">
+        SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state
+--         ,b.name
+        FROM t_mall_html a
+        <!--TODO 需关连bus_user数据    -->
+--         LEFT JOIN bus_user b ON a.bus_user_id=b.id
+        WHERE  a.source_type=2 and a.bus_user_id=#{user_id}
+        <if test="pid == 0 ">
+            OR a.pid=#{user_id}
+        </if>
+
+        limit #{firstNum},#{pageSize}
+    </select>
+    <select id="countHtmlByUserId" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM t_mall_html a  WHERE a.source_type=2 and a.bus_user_id=#{user_id}
+        <if test="pid == 0 ">
+            OR a.pid=#{user_id}
+        </if>
+    </select>
+    <select id="getHtmlModelList" resultType="java.util.Map">
+      SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state FROM t_mall_html  a
+      WHERE  a.source_type=1 and a.state=0
+       limit #{firstNum},#{pageSize}
+    </select>
+    <select id="countHtmlModelList" resultType="java.lang.Integer">
+       SELECT COUNT(1) FROM t_mall_html a  WHERE a.source_type=1 and a.state=0
+    </select>
 
 </mapper>

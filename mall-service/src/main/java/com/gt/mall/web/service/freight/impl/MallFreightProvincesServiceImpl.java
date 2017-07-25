@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2017-07-20
  */
 @Service
-public class MallFreightProvincesServiceImpl extends BaseServiceImpl< MallFreightProvincesDAO,MallFreightProvinces > implements MallFreightProvincesService {
+public class MallFreightProvincesServiceImpl extends BaseServiceImpl<MallFreightProvincesDAO, MallFreightProvinces> implements MallFreightProvincesService {
 
 }

@@ -18,4 +18,126 @@
         id, image_url AS imageUrl, ass_id AS assId, is_main_images AS isMainImages, ass_type AS assType, ass_sort AS assSort, is_delete AS isDelete
     </sql>
 
+    <!-- 批量删除商品分组 -->
+    <update id="deleteAllByAssId" parameterType="java.lang.Integer">
+        update
+        t_mall_image_associative set is_delete = 1
+        where ass_id =#{id}
+    </update>
+
+    <!-- 根据关联id来查询图片 -->
+    <select id="selectImageByAssId" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_image_associative
+        where is_delete = 0
+        <if test="assId != null">
+            and ass_id = #{assId}
+        </if>
+        <if test="isMainImages != null">
+            and is_main_images=#{isMainImages}
+        </if>
+        <if test="assType != null">
+            and ass_type=#{assType}
+        </if>
+        order by ass_sort
+    </select>
+
+    <!-- 批量添加 -->
+    <insert id="insertBatch" parameterType="java.util.Map">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT
+            @@IDENTITY
+        </selectKey>
+        <foreach collection="list" item="item" index="index" separator=";" >
+            insert into t_mall_image_associative
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    id,
+                </if>
+                <if test="item.imageUrl != null">
+                    image_url,
+                </if>
+                <if test="proId != null">
+                    ass_id,
+                </if>
+                <if test="item.isMainImages != null">
+                    is_main_images,
+                </if>
+                <if test="item.assType != null">
+                    ass_type,
+                </if>
+                <if test="item.assSort != null">
+                    ass_sort,
+                </if>
+                <if test="item.isDelete != null">
+                    is_delete,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    #{item.id,jdbcType=INTEGER},
+                </if>
+                <if test="item.imageUrl != null">
+                    #{item.imageUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="proId != null">
+                    #{proId,jdbcType=INTEGER},
+                </if>
+                <if test="item.isMainImages != null">
+                    #{item.isMainImages,jdbcType=TINYINT},
+                </if>
+                <if test="item.assType != null">
+                    #{item.assType,jdbcType=INTEGER},
+                </if>
+                <if test="item.assSort != null">
+                    #{item.assSort,jdbcType=INTEGER},
+                </if>
+                <if test="item.isDelete != null">
+                    #{item.isDelete,jdbcType=TINYINT},
+                </if>
+            </trim>
+        </foreach>
+    </insert>
+    <!-- 批量修改 -->
+    <update id="updateBatch" parameterType="java.util.List" >
+        <foreach collection="list" index="index" item="item" open="" separator=";" close="">
+            update t_mall_image_associative
+            <set>
+                <if test="item.imageUrl != null">
+                    image_url = #{item.imageUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="item.isMainImages != null">
+                    is_main_images = #{item.isMainImages,jdbcType=TINYINT},
+                </if>
+                <if test="item.assType != null">
+                    ass_type = #{item.assType,jdbcType=INTEGER},
+                </if>
+                <if test="item.assSort != null">
+                    ass_sort = #{item.assSort,jdbcType=INTEGER},
+                </if>
+                <if test="item.isDelete != null">
+                    is_delete = #{item.isDelete,jdbcType=TINYINT},
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+    <!-- 根据关联id来查询图片 -->
+    <select id="selectByAssId" parameterType="map" resultType="Map">
+        select image_url from t_mall_image_associative
+        where is_delete = 0
+        <if test="assId != null">
+            and ass_id = #{assId}
+        </if>
+        <if test="isMainImages != null">
+            and is_main_images=#{isMainImages}
+        </if>
+        <if test="assType != null">
+            and ass_type=#{assType}
+        </if>
+        order by ass_sort
+    </select>
+
 </mapper>

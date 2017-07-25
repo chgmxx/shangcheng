@@ -15,4 +15,15 @@
         id, html_id AS htmlId, style, report_num AS reportNum
     </sql>
 
+    <update id="updateReportNumByHtmlId">
+      UPDATE t_mall_html_report SET report_num=#{num}
+      WHERE html_id=#{html_id}
+      AND style=#{style}
+    </update>
+    <select id="countReportNumByHtmlId" resultType="java.lang.Integer">
+        SELECT count(1) FROM t_mall_html_report
+        WHERE html_id=#{html_id}
+        AND style=#{style}
+    </select>
+
 </mapper>

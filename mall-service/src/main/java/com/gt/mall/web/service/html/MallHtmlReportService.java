@@ -11,6 +11,14 @@ import com.gt.mall.entity.html.MallHtmlReport;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallHtmlReportService extends BaseService< MallHtmlReport > {
+public interface MallHtmlReportService extends BaseService<MallHtmlReport> {
+
+    /**
+     * 举报方法
+     *
+     * @param htmlid
+     * @param style
+     */
+    public void htmlReport(Integer htmlid, Integer style);
 
 }

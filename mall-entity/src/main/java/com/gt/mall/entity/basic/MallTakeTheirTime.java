@@ -62,6 +62,8 @@ public class MallTakeTheirTime extends Model< MallTakeTheirTime > {
     @TableField( "is_delete" )
     private Integer isDelete;
 
+    private String times;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

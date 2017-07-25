@@ -70,4 +70,11 @@
         member_name AS memberName
     </sql>
 
+
+    <select id="selectOrderByAuctId" resultType="java.util.Map">
+        SELECT id,order_status FROM t_mall_order WHERE order_type = 4 AND order_status > 1
+        AND group_buy_id = #{auctId}
+        limit 1
+    </select>
+
 </mapper>

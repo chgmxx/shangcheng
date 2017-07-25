@@ -27,4 +27,10 @@ public class PropertiesUtil {
      * 微商城
      */
     public static final String IMAGE_FOLDER_TYPE_29 = "29";
+
+    /**
+     * 静态资源url
+     */
+    public static final String RESOURCE_URL="";
+
 }

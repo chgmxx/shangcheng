@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -92,6 +93,11 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
      */
     @TableField( "is_use" )
     private Integer    isUse;
+
+    private Integer joinId;
+    private Integer status;//状态id
+    private Long times;//剩余时间
+    private List<MallGroupBuyPrice> priceList;
 
     @Override
     protected Serializable pkVal() {

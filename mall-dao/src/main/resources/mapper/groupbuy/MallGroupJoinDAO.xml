@@ -17,11 +17,89 @@
         <result column="product_id" property="productId"/>
         <result column="p_join_id" property="pJoinId"/>
     </resultMap>
+    <resultMap id="JoinResultMap" type="Map">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="groupBuyId" jdbcType="INTEGER" property="groupBuyId" />
+        <result column="joinUserId" jdbcType="INTEGER" property="joinUserId" />
+        <result column="nickname" property="nickname" typeHandler="com.gt.entity.ConvertBlobTypeHandler" />
+        <result column="joinNum" jdbcType="INTEGER" property="joinNum" />
+        <result column="pelpleNum" jdbcType="INTEGER" property="pelpleNum" />
+        <result column="orderDetailId" jdbcType="INTEGER" property="orderDetailId" />
+        <result column="count" jdbcType="INTEGER" property="count" />
+        <result column="headimgurl" jdbcType="VARCHAR" property="headimgurl"/>
+        <result column="joinType" jdbcType="INTEGER" property="joinType"/>
+        <result column="joinTime" jdbcType="TIMESTAMP" property="joinTime"/>
+        <result column="orderId" jdbcType="INTEGER" property="orderId" />
+        <result column="orderDetailId" jdbcType="INTEGER" property="orderDetailId" />
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, group_buy_id AS groupBuyId, specifica_ids AS specificaIds, join_price AS joinPrice, join_user_id AS joinUserId, join_type AS joinType, order_id AS orderId,
         order_detail_id AS orderDetailId, join_time AS joinTime, join_status AS joinStatus, product_id AS productId, p_join_id AS pJoinId
     </sql>
+
+    <!-- 查询团购的发起人 -->
+    <select id="selectJoinGroupByProId" parameterType="Map" resultMap="JoinResultMap">
+        select j.id,j.group_buy_id as groupBuyId, j.join_user_id as joinUserId,
+--         m.nickname,m.headimgurl,
+        b.g_people_num as pelpleNum,j.order_id as orderId,j.order_detail_id as orderDetailId ,
+        j.join_type as joinType,j.join_time as joinTime,j.order_id as orderId,j.order_detail_id as orderDetailId
+        from t_mall_group_join j
+        left join t_mall_order o on o.id = j.order_id
+        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
+--         left join t_wx_bus_member m on j.join_user_id = m.id
+        left join t_mall_group_buy b on b.id = j.group_buy_id
+        where j.join_type = 1 and o.order_status = 2
+        and j.group_buy_id = #{groupBuyId,jdbcType=INTEGER}
+        <if test="joinUserId != null and joinUserId != ''">
+            and j.join_user_id != #{joinUserId}
+        </if>
+        <if test="buyerUserId != null and buyerUserId != ''">
+            and j.join_user_id = #{buyerUserId}
+        </if>
+    </select>
+    <!-- 查询团购参与人 -->
+    <select id="selectByProJoinId" parameterType="Map" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_group_join j
+        left join t_mall_order o on o.id = j.order_id
+        where o.order_status = 2
+        and j.group_buy_id=#{groupBuyId} and (j.id = #{id} or j.p_join_id=#{id})
+    </select>
+    <!-- 查询团购参与人、商品信息 -->
+    <select id="selectJoinByjoinId" parameterType="Map" resultMap="JoinResultMap">
+        select j.id,j.group_buy_id as groupBuyId, j.join_user_id as joinUserId
+--         ,m.nickname,m.headimgurl
+        ,j.join_type as joinType,j.join_time as joinTime
+        ,j.order_id as orderId,j.order_detail_id as orderDetailId
+        from t_mall_group_join j
+        left join t_mall_order o on o.id = j.order_id
+        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
+--         left join t_wx_bus_member m on j.join_user_id = m.id
+        where o.order_status = 2
+        and j.group_buy_id = #{groupBuyId} and (j.p_join_id = #{joinId} or j.id= #{joinId})
+        order by j.join_type desc , j.join_time
+    </select>
+    <!-- 查询用户参加团购的数量 -->
+    <select id="selectCountByBuyId" resultType="java.lang.Integer" parameterType="Map">
+        select  count(d.det_pro_num) as count
+        from t_mall_group_join j
+        left join t_mall_order_detail d on j.order_detail_id=d.id
+        where j.join_user_id = #{joinUserId}
+        and j.group_buy_id=#{groupBuyId}
+    </select>
+
+    <!-- 查询团购参与人 -->
+    <select id="selectByPJoinId" parameterType="Map" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_group_join j
+        where j.group_buy_id=#{groupBuyId}  and j.join_type = 1
+        <if test="joinId != null and joinId != ''">
+            and  j.id=#{joinId}
+        </if>
+    </select>
 
 </mapper>

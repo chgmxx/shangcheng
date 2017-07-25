@@ -24,11 +24,110 @@
         <result column="add_money" property="addMoney"/>
     </resultMap>
 
+    <resultMap id="FreightResultMap" type="com.gt.mall.entity.freight.MallFreight">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="shop_id" jdbcType="INTEGER" property="shopId" />
+        <result column="express_id" jdbcType="INTEGER" property="expressId" />
+        <result column="express" jdbcType="VARCHAR" property="express" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+        <result column="money" jdbcType="DECIMAL" property="money" />
+        <result column="is_no_money" jdbcType="TINYINT" property="isNoMoney" />
+        <result column="no_money" jdbcType="DECIMAL" property="noMoney" />
+        <result column="no_money_num" jdbcType="INTEGER" property="noMoneyNum" />
+        <result column="is_result_money" jdbcType="TINYINT" property="isResultMoney" />
+        <result column="price_type" jdbcType="TINYINT" property="priceType" />
+        <result column="first_nums" jdbcType="DECIMAL" property="firstNums" />
+        <result column="add_nums" jdbcType="DECIMAL" property="addNums" />
+        <result column="add_money" jdbcType="DECIMAL" property="addMoney" />
+        <collection column="id" ofType="com.gt.mall.entity.freight.MallFreightDetail" property="detailList">
+            <id column="dId" jdbcType="INTEGER" property="id" />
+            <result column="provinces_id" jdbcType="INTEGER" property="provincesId" />
+            <result column="provinces" jdbcType="VARCHAR" property="provinces" />
+            <result column="dMoney" jdbcType="DECIMAL" property="money" />
+            <result column="dExpressId" jdbcType="INTEGER" property="expressId" />
+            <result column="dExpress" jdbcType="VARCHAR" property="express" />
+            <result column="dNoMoneyNum" jdbcType="INTEGER" property="noMoneyNum" />
+            <result column="dNoMoney" jdbcType="DECIMAL" property="noMoney" />
+            <result column="first_nums2" jdbcType="DECIMAL" property="firstNums" />
+            <result column="add_nums2" jdbcType="DECIMAL" property="addNums" />
+            <result column="add_money2" jdbcType="DECIMAL" property="addMoney" />
+            <collection column="id" ofType="com.gt.mall.entity.freight.MallFreightProvinces" property="provinceList">
+                <id column="pId" jdbcType="INTEGER" property="id" />
+                <result column="province_id" jdbcType="INTEGER" property="provinceId" />
+                <result column="province_name" jdbcType="VARCHAR" property="provinceName" />
+            </collection>
+        </collection>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, name, user_id AS userId, shop_id AS shopId, express_id AS expressId, express, create_time AS createTime, edit_time AS editTime, money, is_no_money AS isNoMoney,
         no_money_num AS noMoneyNum, is_result_money AS isResultMoney, is_delete AS isDelete, no_money AS noMoney, price_type AS priceType, first_nums AS firstNums, add_nums AS
         addNums, add_money AS addMoney
     </sql>
+    <sql id="index_Column_List">
+        f.id, f.name, f.user_id, f.shop_id, f.express_id, f.express, f.create_time, f.money, f.is_no_money,
+        f.no_money_num, f.is_delete,f.is_result_money,f.no_money, f.price_type, f.first_nums, f.add_nums,
+        f.add_money,s.sto_name
+    </sql>
+    <sql id="Freight_Column_List">
+        f.id, f.name, f.user_id, f.shop_id, f.express_id, f.express,  f.money, f.is_no_money, f.no_money_num,f.is_result_money,f.no_money,
+        d.id as dId, d.provinces_id, d.provinces, d.money as dMoney, d.express_id as dExpressId, d.express as dExpress, d.no_money_num as dNoMoneyNum,d.no_money as dNoMoney,
+        p.id as pId, p.province_id, p.province_name, p.is_delete, f.price_type, f.first_nums, f.add_nums,  f.add_money
+        , d.first_nums as first_nums2, d.add_nums as add_nums2,  d.add_money as add_money2
+    </sql>
+
+
+    <select id="selectCountByShopId" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(id) from t_mall_freight f where is_delete = 0
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
+                shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectByShopId" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="index_Column_List" />
+        from t_mall_freight f
+        left join t_mall_store s on f.shop_id=s.id
+        where f.is_delete = 0
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
+                f.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by f.create_time desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+    <update id="deleteById" parameterType="java.util.Map">
+        update t_mall_freight set is_delete = 1 , edit_time=now()
+        where id in
+        <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="FreightResultMap">
+        select  <include refid="Freight_Column_List" />
+        from t_mall_freight f
+        left join t_mall_freight_detail d on d.freight_id = f.id and d.is_delete = 0
+        left join t_mall_freight_provinces p on p.freight_id = f.id and p.freight_detail_id = d.id and p.is_delete = 0
+        where f.id = #{id,jdbcType=INTEGER} and f.is_delete = 0
+    </select>
+
+    <select id="selectFreightByShopId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_freight f where f.is_delete = 0 and f.shop_id=#{shopId}
+    </select>
 
 </mapper>

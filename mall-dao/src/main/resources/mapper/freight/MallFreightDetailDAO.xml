@@ -25,4 +25,21 @@
         noMoney, first_nums AS firstNums, add_nums AS addNums, add_money AS addMoney
     </sql>
 
+    <update id="deleteByFreightId" parameterType="java.util.Map">
+        update t_mall_freight_detail is_delete = 1 , edit_time=now()
+        where freight_id in
+        <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    <select id="selectByFreightId" parameterType="java.lang.Integer" resultType="Map">
+        select  id  from t_mall_freight_detail f   where freight_id = #{freightId,jdbcType=INTEGER}
+    </select>
+    <select id="selectFreightByPId" parameterType="Map" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List" />
+        from t_mall_freight_detail d
+        left join t_mall_freight_provinces p on p.freight_detail_id = d.id and p.is_delete = 0
+        where d.freight_id = #{freightId,jdbcType=INTEGER} and p.province_id  = #{provinceId} and d.is_delete = 0
+    </select>
+
 </mapper>

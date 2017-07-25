@@ -16,5 +16,21 @@
     <sql id="Base_Column_List">
         id, auc_id AS aucId, pro_id AS proId, offer_money AS offerMoney, user_id AS userId, create_time AS createTime
     </sql>
+    <sql id="offer_Column_List" >
+        o.id, o.auc_id, o.pro_id, o.offer_money, o.user_id, o.create_time
+--         ,m.nickname
+    </sql>
+    <select id="selectByOffer" resultType="com.gt.mall.entity.auction.MallAuctionOffer">
+        select <include refid="Base_Column_List" />
+        from t_mall_auction_offer where auc_id=#{id} order by offer_money desc limit 1
+    </select>
+    <select id="selectListByOffer" resultType="com.gt.mall.entity.auction.MallAuctionOffer">
+        select <include refid="offer_Column_List" />
+        from t_mall_auction_offer o
+        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
+--         left join t_wx_bus_member m on o.user_id=m.id
+        where o.auc_id=#{aucId}
+        order by o.offer_money desc
+    </select>
 
 </mapper>

@@ -118,6 +118,12 @@ public class MallAuctionMargin extends Model< MallAuctionMargin > {
     @TableField( "create_time" )
     private Date       createTime;
 
+    private Integer aucType;
+
+    private Integer shopId;
+
+    private int auctionStatus;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

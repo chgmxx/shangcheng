@@ -36,5 +36,11 @@
         messageJson, is_sms_member AS isSmsMember, sms_message AS smsMessage, is_pf AS isPf, is_pf_check AS isPfCheck, pf_set AS pfSet, pf_remark AS pfRemark, pf_apply_remark AS
         pfApplyRemark, is_seller AS isSeller, is_check_seller AS isCheckSeller, footer_json AS footerJson
     </sql>
+    <select id="selectByUserId" parameterType="com.gt.mall.entity.basic.MallPaySet" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_pay_set s
+        where s.user_id= #{userId}
+    </select>
 
 </mapper>

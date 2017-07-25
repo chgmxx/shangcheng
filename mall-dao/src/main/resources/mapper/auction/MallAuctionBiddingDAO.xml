@@ -24,4 +24,87 @@
         order_id AS orderId, order_detail_id AS orderDetailId, user_id AS userId, create_time AS createTime
     </sql>
 
+    <update id="updateBidByAucId">
+        UPDATE t_mall_auction_bidding SET auc_status = #{aucStatus,jdbcType=TINYINT},
+            order_id = #{orderId,jdbcType=INTEGER},
+            order_detail_id = #{orderDetailId,jdbcType=INTEGER}
+        WHERE auc_id = #{aucId,jdbcType=INTEGER} AND pro_id = #{proId,jdbcType=INTEGER}
+              AND user_id = #{userId,jdbcType=INTEGER}
+    </update>
+    <select id="selectCountByBuyId" resultType="java.lang.Integer">
+        SELECT count(d.det_pro_num) AS cont
+        FROM t_mall_auction_bidding j
+        LEFT JOIN t_mall_order_detail d ON j.order_detail_id=d.id
+        WHERE j.user_id = #{joinUserId}
+        AND j.auc_id=#{aucId}
+    </select>
+    <select id="selectByBidding" resultType="com.gt.mall.entity.auction.MallAuctionBidding">
+        select
+        <include refid="Base_Column_List"/>
+        from t_mall_auction_bidding b
+        where auc_id = #{aucId} and user_id=#{userId}
+        <if test="orderId != null and orderId != ''">
+            and order_id=#{orderId}
+        </if>
+        <if test="proId != null and proId != ''">
+            and pro_id = #{proId}
+        </if>
+    </select>
+    <select id="selectMyHuoBid" resultType="java.util.Map">
+        select b.*,a.auc_type,a.shop_id
+        from t_mall_auction_bidding b
+        left join t_mall_auction a on a.id=b.auc_id
+        where b.auc_status = 1 and a.auc_type=1
+        <if test="userId != null and userId != ''">
+            and b.user_id=#{userId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds != ''">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                b.user_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        union
+        select b.*,a.auc_type,a.shop_id
+        from t_mall_auction_bidding b
+        left join t_mall_auction a on a.id=b.auc_id
+        where a.auc_type=2 and a.auc_start_time &lt; now() and a.auc_end_time &lt;= now()
+        <if test="userId != null and userId != ''">
+            and b.user_id=#{userId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds != ''">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                b.user_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by create_time desc
+    </select>
+    <select id="selectMyBidding" resultType="java.util.Map">
+        select b.*,a.auc_type,a.shop_id
+        from t_mall_auction_bidding b
+        left join t_mall_auction a on a.id=b.auc_id
+        where a.auc_start_time &lt;= now() and now() &lt; a.auc_end_time
+        <if test="memberId != null and memberId != ''">
+            and b.user_id = #{memberId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds != ''">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                b.user_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectListByBidding" resultType="com.gt.mall.entity.auction.MallAuctionBidding">
+        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
+        select <include refid="Base_Column_List"/>
+        from t_mall_auction_bidding b
+        -- left join t_wx_bus_member m on b.user_id=m.id
+        where b.auc_id = #{aucId}
+        <if test="userId != null and userId != ''">
+            and b.user_id=#{userId}
+        </if>
+        and b.auc_status >= 0
+        order by b.auc_price desc
+    </select>
 </mapper>

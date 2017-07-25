@@ -17,4 +17,7 @@
         id, freight_id AS freightId, freight_detail_id AS freightDetailId, province_id AS provinceId, province_name AS provinceName, is_delete AS isDelete
     </sql>
 
+    <select id="selectByFreightId" resultType="Map" parameterType="java.lang.Integer" >
+        select  id   from t_mall_freight_provinces   where freight_id = #{freightId,jdbcType=INTEGER}
+    </select>
 </mapper>

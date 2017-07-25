@@ -22,5 +22,167 @@
         id, product_id AS productId, money, start_time AS startTime, end_time AS endTime, type, user_id AS userId, shop_id AS shopId, create_time AS createTime, is_delete AS
         isDelete, is_use AS isUse
     </sql>
+    <sql id="page_Column_List">
+        i.id, i.product_id as productId, i.money, i.start_time as startTime, i.end_time as endTime, i.type, i.user_id, i.shop_id, i.create_time as createTime,
+        i.is_delete as isDelete, i.is_use as isUse,
+        case
+        when i.is_use = -1 then -2<!--已失效  -->
+        when i.start_time > now() and   i.end_time > now() then 0<!--未开始  -->
+        when i.start_time &lt;= now() and now() &lt; i.end_time  then 1<!-- 进行中 -->
+        when i.start_time &lt; now()  and i.end_time &lt;= now() then -1<!-- 已结束 -->
+        end status, s.sto_name as shopName,
+--         if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,
+        p.pro_name as proName
+    </sql>
+    <sql id="Base2_Column_List" >
+        id, product_id, money,start_time, end_time as end_time, type, user_id, shop_id, create_time,
+        is_delete, is_use
+    </sql>
+
+    <!-- 统计积分商品-->
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map" >
+        select  count(i.id)
+        from t_mall_integral i
+        left join t_mall_product p on p.id= i.product_id and p.is_delete=0
+        where i.is_delete = 0
+        and p.is_delete=0 and p.is_publish=1 and p.check_status=1
+        <if test="type == -1"><!-- 未开始积分商品-->
+            and i.start_time > now() and   i.end_time > now() and i.is_use=1
+        </if>
+        <if test="type == 1"><!-- 进行中的积分商品-->
+            and i.start_time &lt;= now() and now() &lt; i.end_time  and i.is_use=1
+        </if>
+        <if test="type == 2"><!-- 已结束的积分商品-->
+            and i.start_time &lt; now()  and i.end_time &lt;= now() and i.is_use=1
+        </if>
+        <if test="type == 3"><!-- 已失效的积分商品 -->
+            i.is_use= -1
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                i.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and i.shop_id=#{shopId }
+        </if>
+    </select>
+    <!-- 根据拍卖分页 -->
+    <select id="selectByPage" resultType="Map" parameterType="Map" >
+        select  <include refid="page_Column_List" />
+        from t_mall_integral i
+        left join t_mall_store s on i.shop_id = s.id
+        <!-- TODO 需补充关联 t_wx_shop门店数据 -->
+--         left join t_wx_shop ws on s.wx_shop_id = ws.id
+        left join t_mall_product p on p.id= i.product_id and p.is_delete=0
+        where i.is_delete = 0 and s.is_delete=0 and ws.status!=-1
+        and p.is_delete=0 and p.is_publish=1 and p.check_status=1
+        <if test="type == -1"><!-- 未开始积分商品-->
+            and i.start_time > now() and   i.end_time > now() and i.is_use=1
+        </if>
+        <if test="type == 1"><!-- 进行中的积分商品-->
+            and i.start_time &lt;= now() and now() &lt; i.end_time  and i.is_use=1
+        </if>
+        <if test="type == 2"><!-- 已结束的积分商品-->
+            and i.start_time &lt; now()  and i.end_time &lt;= now() and i.is_use=1
+        </if>
+        <if test="type == 3"><!-- 已失效的积分商品 -->
+            i.is_use= -1
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                i.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and i.shop_id=#{shopId }
+        </if>
+        group by i.id
+        order by i.create_time desc
+        limit #{firstNum},#{maxNum}
+    </select>
+
+    <select id="selectByIds" resultType="Map" parameterType="java.lang.Integer">
+        SELECT
+        i.id, i.product_id, i.money, i.start_time, i.end_time, i.type, i.user_id, i.shop_id, i.create_time,
+        i.is_delete, i.is_use, c.image_url AS imageUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
+        ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice
+        FROM t_mall_integral i
+        LEFT JOIN t_mall_product p ON i.product_id = p.id
+        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON i.product_id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON i.product_id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        WHERE i.id = #{id}
+    </select>
+
+    <select id="selectByIntegral" resultMap="BaseResultMap" parameterType="Map" >
+        select
+        <include refid="Base2_Column_List" />
+        from t_mall_integral
+        <where>
+            and is_delete = 0
+            <if test="productId != null and productId != ''">
+                and product_id=#{productId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id =#{userId}
+            </if>
+            <if test="shopId != null and shopId != ''">
+                and shop_id=#{shopId}
+            </if>
+            <if test="isUse != null and isUse != ''">
+                and is_use=1
+            </if>
+        </where>
+    </select>
+
+    <select id="selectIntegralByShopids" parameterType="Map" resultType="Map">
+        SELECT DISTINCT(a.id),a.pro_name,i.`money`,c.image_url,e.specifica_img_url
+        FROM t_mall_integral i
+        LEFT JOIN t_mall_product a ON i.`product_id`=a.`id` AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
+        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0   AND i.`is_delete`=0 and i.is_use =1
+        and i.start_time &lt;= now() and now() &lt; i.end_time
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                a.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and a.shop_id=#{shopId}
+        </if>
+        order by i.id desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+    <select id="selectCountIntegralByShopids" parameterType="Map" resultType="java.lang.Integer">
+        SELECT count(DISTINCT a.id)
+        FROM t_mall_integral i
+        LEFT JOIN t_mall_product a ON i.`product_id`=a.`id` AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
+        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0  AND i.`is_delete`=0 and i.is_use =1
+        and i.start_time &lt;= now() and now() &lt; i.end_time
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                a.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and a.shop_id=#{shopId}
+        </if>
+    </select>
 
 </mapper>

@@ -30,5 +30,153 @@
         service_start AS serviceStart, speeed_start AS speeedStart, rep_p_id AS repPId, user_id AS userId, user_type AS userType, is_rep AS isRep, shop_id AS shopId, createTime,
         is_delete AS isDelete, check_status AS checkStatus
     </sql>
+    <update id="batchUpdateComment" parameterType="java.util.Map">
+        update t_mall_comment
+        <set>
+            <if test="checkStatus != null">
+                check_status = #{checkStatus},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+        </set>
+        where id in
+        <foreach close=")" collection="ids" index="index" item="item"
+                 open="(" separator=",">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    <select id="findByPage" parameterType="map" resultType="java.util.List">
+        SELECT t.`feel`,t.`content`,t.`createTime`,t.`id`,d.`product_image_url`,d.`product_speciname`,d.`det_pro_name`
+        ,t.is_upload_image ,t.shop_id,t.product_id
+        FROM t_mall_comment t
+        LEFT JOIN t_mall_order_detail d ON d.`id`=t.`order_detail_id`
+        WHERE 1=1
+        <if test="memberId != null and memberId != ''">
+            and t.`user_id` = #{memberId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds != ''">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                t.`user_id` = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="type == 1">and t.is_delete = 0</if>
+        <if test="type == 2">and t.is_delete = 1</if>
+        order by t.createTime desc
+    </select>
+    <select id="countAppraise" parameterType="map" resultType="java.lang.Integer">
+        SELECT COUNT(id) FROM t_mall_comment WHERE is_delete = 0
+        <if test="memberId != null and memberId != ''">
+            and user_id = #{memberId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds != ''">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                user_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="ownerResponseList" parameterType="map" resultType="map">
+        SELECT t.`content`,t.`rep_p_id` FROM t_mall_comment t
+		WHERE t.rep_p_id = #{appraise};
+    </select>
+
+    <!--<resultMap id="commnet_maps" type="java.util.Map">-->
+        <!--<id column="id" jdbcType="INTEGER" property="id" />-->
+        <!--<result column="content" jdbcType="VARCHAR" property="content" />-->
+        <!--<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />-->
+        <!--<result column="is_upload_image" jdbcType="TINYINT" property="is_upload_image" />-->
+        <!--<result column="nickname" property="nickname" typeHandler="com.gt.entity.ConvertBlobTypeHandler" />-->
+        <!--<result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />-->
+        <!--<result column="product_specificas" jdbcType="VARCHAR" property="product_specificas" />-->
+        <!--<result column="is_rep" jdbcType="INTEGER" property="is_rep" />-->
+    <!--</resultMap>-->
+    <select id="selectCommentByProId"  parameterType="map" resultType="Map">
+        select c.id,c.content, date_format(c.createTime,'%Y-%m-%d %H:%i:%s') as createTime,c.is_upload_image,d.product_specificas ,c.is_rep,c.user_id,c.`feel`
+--         m.nickname,m.headimgurl,
+        from t_mall_comment c
+        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
+--         left join t_wx_bus_member m on c.user_id=m.id
+        left join t_mall_order_detail d on d.id = c.order_detail_id
+        where c.product_id= #{productId} and c.is_delete=0  and c.user_type=1
+        <choose>
+            <when test="repPId == null">
+                and c.rep_p_id=0
+            </when>
+            <otherwise>
+                and c.rep_p_id = #{repPId}
+            </otherwise>
+        </choose>
+        <if test="checkStatus != null and checkStatus != ''">
+            and check_status = #{checkStatus}
+        </if>
+        <if test="feel != null and feel != ''">
+            and c.feel = #{feel}
+        </if>
+    </select>
+    <select id="selectCountFeel" parameterType="java.lang.Integer" resultType="Map">
+        select count(id) as count,feel
+        from t_mall_comment
+        where product_id=#{productId} and user_type=1 and rep_p_id = 0 and is_delete=0
+        <if test="checkStatus != null and checkStatus != ''">
+            and check_status = #{checkStatus}
+        </if>
+        <if test="feel != null and feel != ''">
+            and feel = #{feel}
+        </if>
+        group by feel
+    </select>
+    <select id="selectCommentCount" parameterType="Map" resultType="java.lang.Integer">
+        select count(c.id)
+        from t_mall_comment  c
+        left join t_mall_order o on o.id=c.order_id
+        left join t_mall_order_detail d on d.id=c.order_detail_id
+        left join t_mall_store s on s.id=c.shop_id
+        where c.is_delete = 0 and c.rep_p_id = 0
+        <if test="checkStatus != null and checkStatus != ''">
+            and c.check_status = #{checkStatus}
+        </if>
+        <if test="feel != null and feel != ''">
+            and c.feel = #{feel}
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                c.shop_id= #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by c.createTime desc
+    </select>
+    <select id="selectCommentList" parameterType="Map" resultType="Map">
+        select c.*,o.order_no,d.det_pro_name,s.sto_name
+        from t_mall_comment  c
+        left join t_mall_order o on o.id=c.order_id
+        left join t_mall_order_detail d on d.id=c.order_detail_id
+        left join t_mall_store s on s.id=c.shop_id
+        where c.is_delete = 0 and c.rep_p_id = 0
+        <if test="checkStatus != null and checkStatus != ''">
+            and c.check_status = #{checkStatus}
+        </if>
+        <if test="feel != null and feel != ''">
+            and c.feel = #{feel}
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                c.shop_id= #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by c.createTime desc
+        <if test="firstNum != null and maxNum != null">
+          limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+    <select id="selectByComment" parameterType="com.gt.mall.entity.basic.MallComment" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_comment
+        where order_detail_id = #{orderDetailId} and order_id= #{orderId} and user_id = #{userId}
+    </select>
 
 </mapper>

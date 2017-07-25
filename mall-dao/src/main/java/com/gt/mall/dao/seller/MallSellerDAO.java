@@ -13,4 +13,10 @@ import com.gt.mall.entity.seller.MallSeller;
  */
 public interface MallSellerDAO extends BaseMapper< MallSeller > {
 
+    /**
+     * 修改销售员状态
+     * @param user_id
+     * @return
+     */
+    boolean updateStatusByUserId(Integer status, Integer user_id);
 }

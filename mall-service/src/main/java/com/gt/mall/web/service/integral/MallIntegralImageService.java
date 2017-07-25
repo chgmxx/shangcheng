@@ -2,6 +2,10 @@ package com.gt.mall.web.service.integral;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.integral.MallIntegralImage;
+import com.gt.mall.util.PageUtil;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -11,6 +15,35 @@ import com.gt.mall.entity.integral.MallIntegralImage;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallIntegralImageService extends BaseService< MallIntegralImage > {
+public interface MallIntegralImageService extends BaseService<MallIntegralImage> {
 
+    /**
+     * 通过店铺id来查询积分商城图片
+     *
+     * @Title: selectFreightByShopId
+     */
+    PageUtil selectImageByShopId(Map<String, Object> params);
+
+    /**
+     * 通过积分商城图片id查询积分商城图片
+     */
+//    MallIntegralImage selectImageById(Integer id);
+
+    /**
+     * 编辑积分商城图片
+     */
+    boolean editImage(Map<String, Object> params, int userId);
+
+    /**
+     * 删除积分商城图片
+     */
+    boolean deleteImage(Map<String, Object> params);
+
+    /**
+     * 查询积分商城的图片
+     *
+     * @param params
+     * @return
+     */
+    List<MallIntegralImage> getIntegralImageByUser(Map<String, Object> params);
 }

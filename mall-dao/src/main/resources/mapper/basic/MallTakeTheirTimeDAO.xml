@@ -18,4 +18,11 @@
         id, take_id AS takeId, start_time AS startTime, end_time AS endTime, visit_days AS visitDays, create_time AS createTime, is_delete AS isDelete
     </sql>
 
+    <select id="selectByTakeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_take_their_time
+        where take_id = #{takeId,jdbcType=INTEGER} and is_delete = 0
+    </select>
+
 </mapper>

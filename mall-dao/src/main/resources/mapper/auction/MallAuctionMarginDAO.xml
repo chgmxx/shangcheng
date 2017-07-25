@@ -30,5 +30,108 @@
         margin_status AS marginStatus, pay_way AS payWay, pay_time AS payTime, pay_no AS payNo, return_no AS returnNo, return_time AS returnTime, is_return AS isReturn,
         no_return_reason AS noReturnReason, user_id AS userId, create_time AS createTime
     </sql>
+    <sql id="AucShop_Column_List">
+        m.id, m.auc_id, m.pro_id, pro_specifica_ids, pro_name, pro_img_url, auc_no, margin_money,
+        margin_status, pay_way, pay_time, pay_no, return_no, return_time, is_return, no_return_reason,
+        m.user_id, m.create_time,a.shop_id
+    </sql>
+    <sql id="page_Column_List">
+        g.id, auc_id, pro_id, pro_name, pro_img_url, auc_no, margin_money, margin_status, pay_way,
+        pay_time, return_time, is_return,g.user_id,g.create_time,a.auc_type,
+--         if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,
+        s.sto_name as shopName,
+        case
+        when a.is_use = -1 then -2<!--已失效  -->
+        when a.auc_start_time > now() and   a.auc_end_time > now() then 0<!--未开始  -->
+        when a.auc_start_time &lt;= now() and now() &lt; a.auc_end_time  then 1<!-- 进行中 -->
+        when a.auc_start_time &lt; now()  and a.auc_end_time &lt;= now() then -1<!-- 已结束 -->
+        end auctionStatus
+    </sql>
+    <sql id="Margin_Column_List">
+        m.id, m.auc_id, m.pro_id, pro_specifica_ids, pro_name, pro_img_url, auc_no, margin_money,
+        margin_status, pay_way, pay_time, pay_no, return_no, return_time, is_return, no_return_reason,
+        m.user_id, m.create_time,a.auc_type as aucType,a.shop_id as shopId
+    </sql>
+    <select id="selectByCount" resultType="java.lang.Integer">
+        select  count(g.id)
+        from t_mall_auction_margin g
+        LEFT JOIN t_mall_auction a ON g.`auc_id`=a.id
+        <where>
+            <if test="shoplist != null and shoplist != ''">
+                <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
+                    a.shop_id = #{item.id,jdbcType=INTEGER}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectByPage" resultType="com.gt.mall.entity.auction.MallAuctionMargin">
+        select  <include refid="page_Column_List" />
+        from t_mall_auction_margin g
+        LEFT JOIN t_mall_auction a ON g.`auc_id`=a.id
+        LEFT JOIN t_mall_store s ON a.shop_id = s.id
+        <!--TODO 需补充关联 t_wx_shop门店数 -->
+--         LEFT JOIN t_wx_shop ws ON s.wx_shop_id = ws.id
+        <where>
+            1=1
+            <if test="shoplist != null and shoplist != ''">
+                and
+                <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
+                    a.shop_id = #{item.id,jdbcType=INTEGER}
+                </foreach>
+            </if>
+        </where>
+        group by g.id
+        order by g.create_time desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+    <select id="selectByAucNo" resultType="com.gt.mall.entity.auction.MallAuctionMargin">
+        select
+        <include refid="AucShop_Column_List" />
+        from t_mall_auction_margin m
+        LEFT JOIN t_mall_auction a ON  m.auc_id = a.id
+        where m.auc_no = #{aucNo}
+    </select>
+    <select id="selectByMargin" resultType="com.gt.mall.entity.auction.MallAuctionMargin">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_auction_margin m
+        where m.auc_id = #{aucId}
+        <if test="userId != null and userId != ''">
+            and user_id = #{userId}
+        </if>
+    </select>
+    <select id="selectListByMargin" resultType="com.gt.mall.entity.auction.MallAuctionMargin">
+        select <include refid="Margin_Column_List" />
+        from t_mall_auction_margin m
+        left join t_mall_auction a on a.id=m.auc_id
+        where 1=1
+        <if test="userId != null and userId != ''">
+            and m.user_id = #{userId}
+        </if>
+        <if test="oldUserIdList != null and oldUserIdList != ''">
+            and
+            <foreach collection="oldUserIdList" index="index" item="item" open="(" separator="or" close=")">
+                m.user_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="aucId != null and aucId != ''">
+            and m.auc_id = #{aucId}
+        </if>
+        <if test="marginStatus != null and marginStatus != ''">
+            and m.margin_status = #{marginStatus}
+        </if>
+        order by m.create_time desc
+    </select>
+    <select id="selectMarginByEnd" resultType="java.util.Map">
+        select m.id, m.auc_id, m.pro_id, m.pro_name, m.pro_img_url, m.auc_no, m.margin_money, m.margin_status, m.pay_way, m.pay_time, m.return_time, m.is_return,m.user_id,
+		o.id as order_id,o.order_status,a.auc_type,a.auc_end_time,a.shop_id,m.create_time
+        from t_mall_auction_margin m
+        LEFT JOIN t_mall_auction a ON m.`auc_id`=a.id
+        left join t_mall_order o on o.order_type=4 and o.group_buy_id = a.id and o.order_status > 1
+        WHERE a.auc_start_time &lt; now()  and a.auc_end_time &lt;= now()  and m.margin_status=1
+        group by m.id
+    </select>
 
 </mapper>

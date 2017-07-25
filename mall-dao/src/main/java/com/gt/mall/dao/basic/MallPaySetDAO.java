@@ -13,4 +13,6 @@ import com.gt.mall.entity.basic.MallPaySet;
  */
 public interface MallPaySetDAO extends BaseMapper< MallPaySet > {
 
+    MallPaySet selectByUserId(MallPaySet set);
+
 }

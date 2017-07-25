@@ -102,7 +102,7 @@ public class MallComment extends Model< MallComment > {
     /**
      * 创建时间
      */
-    private Date    createTime;
+    private Date createTime;
     /**
      * 是否已经被删除（0未删除   1已删除）
      */

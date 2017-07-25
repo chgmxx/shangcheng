@@ -31,5 +31,219 @@
         auc_lower_price_time AS aucLowerPriceTime, auc_lower_price AS aucLowerPrice, auc_end_time AS aucEndTime, auc_num AS aucNum, auc_restriction_num AS aucRestrictionNum,
         user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse, is_margin AS isMargin, auc_margin AS aucMargin, auc_add_price AS aucAddPrice
     </sql>
+    <sql id="page_Column_List">
+        g.id, g.product_id, g.shop_id, auc_type, auc_start_price, auc_lowest_price, auc_start_time,
+        auc_lower_price_time, auc_lower_price, auc_end_time, auc_num, auc_restriction_num,
+        g.user_id, g.create_time, is_use, is_margin, auc_margin, auc_add_price,
+        case
+        when g.is_use = -1 then -2<!--已失效  -->
+        when g.auc_start_time > now() and   g.auc_end_time > now() then 0<!--未开始  -->
+        when g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time  then 1<!-- 进行中 -->
+        when g.auc_start_time &lt; now()  and g.auc_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status,
+--         if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,
+        s.sto_name as shopName,p.pro_name as proName
+    </sql>
+    <select id="selectByCount" resultType="java.lang.Integer">
+        select  count(g.id)
+        from t_mall_auction g where g.is_delete = 0
+        <if test="type == -1"><!-- 未开始拍卖 -->
+            and g.auc_start_time > now() and   g.auc_end_time > now()
+        </if>
+        <if test="type == 1"><!-- 进行中的拍卖 -->
+            and g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的拍卖 -->
+            and g.auc_start_time &lt; now()  and g.auc_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                g.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectByPage" resultType="com.gt.mall.entity.auction.MallAuction">
+        select  <include refid="page_Column_List" />
+        from t_mall_auction g
+        left join t_mall_store s on g.shop_id = s.id
+         <!-- TODO 需补充关联 t_wx_shop门店数据 -->
+--         left join t_wx_shop ws on s.wx_shop_id = ws.id
+        left join t_mall_product p on p.id= g.product_id and p.is_delete=0
+        where g.is_delete = 0
+        <if test="type == -1"><!-- 未开始拍卖 -->
+            and g.auc_start_time > now() and   g.auc_end_time > now()
+        </if>
+        <if test="type == 1"><!-- 进行中的拍卖 -->
+            and g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的拍卖 -->
+            and g.auc_start_time &lt; now()  and g.auc_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                g.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        group by g.id
+        order by g.create_time desc
+        limit #{firstNum},#{maxNum}
+    </select>
+    <select id="selectProByAuction" resultType="java.util.Map">
+        SELECT distinct(a.id),a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_price,
+        if(((gb.auc_start_time &lt;= now() and now() &lt; gb.auc_end_time) or (gb.auc_start_time > now() and gb.auc_end_time > now()))  and gb.is_delete = 0 and gb.is_use = 1
+        <if test="defaultProId != null and defaultProId != ''">
+            and a.id != #{defaultProId}
+        </if>,1,-1) as groupStatus,a.create_time as createTime,d.id as invenId
+        from t_mall_product a
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        LEFT JOIN t_mall_auction gb on gb.product_id = a.id and ((gb.auc_start_time &lt;= now() and now() &lt; gb.auc_end_time) or (gb.auc_start_time > now() and gb.auc_end_time > now()))  and gb.is_delete = 0 and gb.is_use = 1
+        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            AND a.shop_id = #{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            AND  a.pro_name like  '%${proName}%'
+        </if>
+        <if test="groupId != null and groupId != ''">
+            AND a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
+        </if>
+        order by a.id desc
+        limit #{firstNum},#{maxNum}
+    </select>
+    <select id="selectCountProByAuction" resultType="java.lang.Integer">
+        SELECT count(distinct(a.id))
+        from t_mall_product a
+        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            AND a.shop_id = #{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            AND  a.pro_name like  '%${proName}%'
+        </if>
+        <if test="groupId != null and groupId != ''">
+            AND a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
+        </if>
+    </select>
+    <select id="selectByAuctionId" resultType="java.util.Map">
+        select
+        b.id, b.product_id as productId,  b.auc_start_price as aucStartPrice,b.auc_lowest_price as aucLowestPrice,
+        b.auc_start_time as aucStartTime, b.auc_end_time as aucEndTime, b.auc_lower_price_time as aucLowerPriceTime,b.auc_lower_price as aucLowerPrice,
+        b.auc_restriction_num as aucRestrictionNum,b.auc_num as aucNum,b.auc_type as aucType,
+        b.shop_id as shopId, c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice,
+        b.is_margin as isMargin, b.auc_margin as aucMargin, b.auc_add_price as aucAddPrice
+        from t_mall_auction b
+        left join t_mall_product p on b.product_id = p.id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON b.product_id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        where b.id =#{id}
+    </select>
+    <select id="selectAuctionByProId" resultType="com.gt.mall.entity.auction.MallAuction">
+        SELECT <include refid="Base_Column_List"></include>
+        from t_mall_auction  g
+        left join t_mall_auction_bidding j on g.id=j.auc_id
+        WHERE g.is_delete = 0 and g.is_use  =1
+        <if test="productId != null and productId != ''">
+            and g.product_id = #{productId}
+        </if>
+        and ((g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time ) or
+        (
+        g.auc_start_time > now() and  g.auc_end_time > now())
+        <if test="id != null and id != ''">
+            and g.id != #{id}
+        </if>
+        ) and j.id>0
+    </select>
+    <select id="selectgbProductByShopId" resultType="java.util.Map">
+    SELECT a.id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,
+    gb.id as aucId,gb.auc_start_time as startTime ,gb.auc_end_time as endTime,a.shop_id as shopId,d.id as inv_id,gb.auc_lower_price as lowerPrice,
+    gb.auc_lower_price_time as lowerPriceTime,gb.auc_lowest_price as lowestPrice,gb.auc_start_price as startPrice,
+    a.pro_stock_total as stockTotal,
+    gb.is_margin as isMargin, gb.auc_margin as aucMargin, gb.auc_add_price as aucAddPrice,gb.auc_type as aucType
+    from t_mall_auction gb
+    left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+    LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+    LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
+    LEFT JOIN  t_mall_product_specifica e ON d.specifica_img_id=e.id
+    left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+    left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
+    WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and gb.is_delete=0 and gb.is_use=1
+    <if test="status != null and status != ''">
+        and ((gb.auc_start_time &lt;= now() and now() &lt; gb.auc_end_time )  or (gb.auc_start_time > now() and   gb.auc_end_time > now()))
+    </if>
+    <if test="id != null and id != ''">
+        and gb.id=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="shopId != null and shopId != ''">
+        and gb.shop_id=#{shopId,jdbcType=INTEGER}
+    </if>
+    <if test="proName != null and proName != ''">
+        and ( a.pro_name like CONCAT("%","${proName}","%")  or g.group_name like CONCAT("%","${proName}","%") )
+    </if>
+    <if test="productId != null and productId != ''">
+        and gb.product_id=#{productId,jdbcType=INTEGER}
+    </if>
+    <if test="groupId != null and groupId != ''">
+        and pg.group_id = #{groupId,jdbcType=INTEGER}
+    </if>
+    GROUP BY a.id
+    <if test="type != null and type != ''">
+        <if test="type == 1"><!-- 最新排序 -->
+            order by gb.id
+        </if>
+        <if test="type == 2"><!-- 销量排序 -->
+            order by a.pro_sale_total+a.sales_base
+        </if>
+        <if test="type == 3"><!-- 价格排序 -->
+            order by gb.auc_start_price
+        </if>
+    </if>
+    <if test="desc != null and desc != ''">
+        desc
+    </if>
+    </select>
+
+    <select id="selectAuctionByIds" resultType="com.gt.mall.entity.auction.MallAuction">
+        SELECT <include refid="page_Column_List"></include>
+        from t_mall_auction  g
+        left join t_mall_store s on g.shop_id = s.id
+        <!--TODO 需补充关联 t_wx_shop门店数 -->
+--         left join t_wx_shop ws on s.wx_shop_id = ws.id
+        left join t_mall_product p on p.id= g.product_id and p.is_delete=0
+        WHERE g.is_delete = 0 and g.is_use  =1 and g.id = #{id}
+        group by g.id
+    </select>
+    <select id="selectBuyByProductId" resultType="com.gt.mall.entity.auction.MallAuction">
+        select <include refid="Base_Column_List"></include>
+        from t_mall_auction g
+        where g.is_delete = 0 and g.is_use = 1
+        and g.product_id=#{productId}
+        and g.shop_id=#{shopId}
+        and g.id=#{id}
+        limit 1
+    </select>
+    <select id="selectCountByShopId" resultType="java.lang.Integer">
+        SELECT count(gb.id)
+        from t_mall_auction gb
+        left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        WHERE  gb.is_delete=0 and gb.is_use=1
+        <if test="isPublic != 1">
+            and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        </if>
+        <if test="status != null and status != ''">
+            and ((gb.auc_start_time &lt;= now() and now() &lt; gb.auc_end_time )  or (gb.auc_start_time > now() and   gb.auc_end_time > now()))
+        </if>
+        <if test="productId != null and productId != ''">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+    </select>
 
 </mapper>

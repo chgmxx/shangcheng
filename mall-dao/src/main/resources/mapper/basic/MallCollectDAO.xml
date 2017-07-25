@@ -16,5 +16,26 @@
     <sql id="Base_Column_List">
         id, product_id AS productId, user_id AS userId, create_time AS createTime, is_collect AS isCollect, is_delete AS isDelete
     </sql>
+    <update id="batchUpdateCollect" parameterType="java.util.Map">
+        update t_mall_collect
+        <set>
+            <if test="isCollect != null">
+                is_collect = #{isCollect},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+        </set>
+        where id in
+        <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    <select id="selectByCollect" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_collect
+        where user_id = #{userId} and product_id = #{productId}
+    </select>
 
 </mapper>

@@ -1,9 +1,13 @@
 package com.gt.mall.web.service.html.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.dao.html.MallHtmlDAO;
+import com.gt.mall.dao.html.MallHtmlFromDAO;
 import com.gt.mall.dao.html.MallHtmlReportDAO;
 import com.gt.mall.entity.html.MallHtmlReport;
 import com.gt.mall.web.service.html.MallHtmlReportService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +19,25 @@ import org.springframework.stereotype.Service;
  * @since 2017-07-20
  */
 @Service
-public class MallHtmlReportServiceImpl extends BaseServiceImpl< MallHtmlReportDAO,MallHtmlReport > implements MallHtmlReportService {
+public class MallHtmlReportServiceImpl extends BaseServiceImpl<MallHtmlReportDAO, MallHtmlReport> implements MallHtmlReportService {
 
+    private Logger log = Logger.getLogger(MallHtmlReportServiceImpl.class);
+
+    @Autowired
+    private MallHtmlReportDAO htmlReportDAO;
+
+    @Override
+    public void htmlReport(Integer htmlid, Integer style) {
+        int num = htmlReportDAO.countReportNumByHtmlId(htmlid, style);
+        if (num > 0) {
+            num += 1;
+            htmlReportDAO.updateReportNumByHtmlId(num, htmlid, style);
+        } else {
+            MallHtmlReport obj = new MallHtmlReport();
+            obj.setReportNum(1);
+            obj.setStyle(style);
+            obj.setHtmlId(htmlid);
+            htmlReportDAO.insert(obj);
+        }
+    }
 }
