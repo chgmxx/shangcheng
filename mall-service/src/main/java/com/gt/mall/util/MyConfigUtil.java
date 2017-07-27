@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * Time : 15:11
  */
 @Component      //不加这个注解的话, 使用@Autowired 就不能注入进去了
-@ConfigurationProperties( prefix = "web" )  // 配置文件中的前缀
+@ConfigurationProperties(prefix = "web")  // 配置文件中的前缀
 @Setter
 @Getter
 public class MyConfigUtil {
@@ -26,5 +26,15 @@ public class MyConfigUtil {
     private String jxcAccount;//进销存token用户名
 
     private String jxcPwd;//进销存token密码
+
+    private String articleUrl;//访问文章资源URL
+
+    private String staticSourceFtpIp;//图片资源Ftp IP
+
+    private String staticSourceFtpPort;//图片资源Ftp 端口
+
+    private String staticSourceFtpUser;//图片资源Ftp 用户
+
+    private String staticSourceFtpPwd;  //图片资源Ftp 密码
 
 }
