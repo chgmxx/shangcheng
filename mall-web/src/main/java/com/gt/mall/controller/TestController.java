@@ -35,7 +35,7 @@ public class TestController extends BaseController {
      */
     @ApiOperation( value = "首页", notes = "首页" )
     @GetMapping( { "", "/index", "/" } )
-    public ModelAndView index( ModelAndView map ) {
+    public ModelAndView index( ModelAndView map ) throws Exception {
 	map.addObject( "homeUrl", myConfig.getHomeUrl() );
 
 	map.addObject( "test", "hello zhangmz!" );
