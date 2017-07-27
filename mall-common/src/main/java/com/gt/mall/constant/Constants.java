@@ -22,5 +22,25 @@ public class Constants {
      * 定义 socke key 开头字符串
      */
     public final static String SOCKEY_KEY = "Mall-";
+    
+    /**
+     * 微商城
+     */
+    public static final String IMAGE_FOLDER_TYPE_15 = "15";
+
+    /**
+     * h5商城
+     */
+    public static final String IMAGE_FOLDER_TYPE_20 = "20";
+
+    /**
+     * 微商城
+     */
+    public static final String IMAGE_FOLDER_TYPE_28 = "28";
+
+    /**
+     * 微商城
+     */
+    public static final String IMAGE_FOLDER_TYPE_29 = "29";
 
 }

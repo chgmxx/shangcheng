@@ -195,6 +195,17 @@
             <artifactId>commons-lang3</artifactId>
             <version>${dev.lib.commons-lang3}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.6</version>
+        </dependency>
+        <!-- 二维码 工具包 -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.2.1</version>
+        </dependency>
         <!-- thymeleaf&Vue 模板 -->
         <!--<dependency>
             <groupId>org.springframework.boot</groupId>
