@@ -19,7 +19,7 @@ public class CxfSmsServiceTest extends BasicTest {
     private SmsService smsService;
 
    @Test
-    public void test(){
+    public void test() throws Exception {
        OldApiSms oldApiSms = new OldApiSms();
        oldApiSms.setModel( 0 );
        oldApiSms.setMobiles( "15017934717" );
