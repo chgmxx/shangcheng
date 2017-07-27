@@ -5,66 +5,49 @@ import com.gt.mall.bean.param.BaseParam;
 import com.gt.mall.bean.param.GetById;
 import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.cxf.service.WxShopService;
+import com.gt.mall.util.CxfConfigUtil;
 import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.CxfFactoryBeanUtil;
 import com.gt.webservice.service.WxmpApiSerivce;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Created with IntelliJ IDEA
+ * 微信门店调用的业务实现  调用CXF接口
  * User : yangqian
  * Date : 2017/7/27 0027
  * Time : 10:19
  */
-@Configuration
 @Service
 public class WxShopServiceImpl implements WxShopService {
 
-    @Value( "${project.shop.cxf-url}" )
-    private String shopUrl;
+    private static Logger logger = LoggerFactory.getLogger( WxShopServiceImpl.class );
 
-    @Value( "${wxmp.token}" )
-    private String wxmpToken;
-
-    private WxmpApiSerivce wxmpApiSerivce;
-
-    public WxShopServiceImpl() {
-
-	JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
-	jaxWsProxyFactoryBean.setServiceClass( WxmpApiSerivce.class );
-	jaxWsProxyFactoryBean.setAddress( shopUrl );
-	wxmpApiSerivce = (WxmpApiSerivce) jaxWsProxyFactoryBean.create();
-
-    }
+    @Autowired
+    private CxfConfigUtil cxfConfigUtil;
 
     @Override
-    public WsWxShopInfo getShopById( int id ) {
-
-	JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
-	jaxWsProxyFactoryBean.setServiceClass( WxmpApiSerivce.class );
-	jaxWsProxyFactoryBean.setAddress( shopUrl );
-	wxmpApiSerivce = (WxmpApiSerivce) jaxWsProxyFactoryBean.create();
-
-	BaseParam baseParam = new BaseParam<>();
-
-	baseParam.setAction( "getShopById" );
-
-	baseParam.setRequestToken( wxmpToken );
+    public WsWxShopInfo getShopById( int id ) throws Exception {
 	GetById getById = new GetById();
 	getById.setId( id );
+
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce" , cxfConfigUtil.getShopUrl() );
+
+	BaseParam baseParam = new BaseParam<>();
+	baseParam.setAction( "getShopById" );
+	baseParam.setRequestToken( cxfConfigUtil.getWxmpToken() );
 	baseParam.setReqdata( getById );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );
-	if ( CommonUtil.isNotEmpty( json ) ) {
-	    JSONObject resultObj = JSONObject.parseObject( json );
-	    if ( resultObj.getInteger( "code" ) == 0 ) {//请求成功
-		WsWxShopInfo wxShopInfo = JSONObject.parseObject( resultObj.getString( "data" ), WsWxShopInfo.class );
-		return wxShopInfo;
-	    }
-	}
+	logger.info( "根据门店id查询门店信息的接口 getShopById 返回的结果：" + json );
 
+	String data = CxfFactoryBeanUtil.getStringResultByJson( json );
+	if(CommonUtil.isNotEmpty( data )){
+	    WsWxShopInfo wxShopInfo = JSONObject.parseObject( data, WsWxShopInfo.class );
+	    return wxShopInfo;
+	}
 	return null;
     }
 
