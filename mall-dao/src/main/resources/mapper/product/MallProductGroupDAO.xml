@@ -17,5 +17,13 @@
     <sql id="Base_Column_List">
         id, product_id AS productId, group_id AS groupId, shop_id AS shopId, is_delete AS isDelete, group_p_id AS groupPId, sort
     </sql>
+    <select id="selectgroupsByProductId" resultType="java.util.Map">
+        select  pg.id, pg.product_id as productId, pg.group_id as groupId, pg.shop_id as shopId,pg.sort,
+  		pg.group_p_id as groupPId,g.group_name as groupName,g.is_child,g.is_first_parents
+		from t_mall_product_group pg
+		left join t_mall_group g on g.id=pg.group_id
+		where pg.product_id = #{proId} and pg.is_delete= 0 AND g.`is_delete`=0
+		order by pg.sort
+    </select>
 
 </mapper>

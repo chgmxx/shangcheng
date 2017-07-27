@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -123,6 +124,24 @@ public class MallPresaleDeposit extends Model< MallPresaleDeposit > {
     @TableField( "pro_num" )
     private Integer    proNum;
 
+    @TableField(exist = false)
+    private String shopName;
+
+    @TableField(exist = false)
+    private Integer shopId;
+
+    @TableField(exist = false)
+    private int invId;
+
+    @TableField(exist = false)
+    private String orderNo;
+
+    @TableField(exist = false)
+    private List<String> oldUserIdList;
+
+    @TableField(exist = false)
+    private int presaleStatus;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;
@@ -130,6 +149,7 @@ public class MallPresaleDeposit extends Model< MallPresaleDeposit > {
 
     @Override
     public String toString() {
+
 	return "MallPresaleDeposit{" +
 			"id=" + id +
 			", presaleId=" + presaleId +

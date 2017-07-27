@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gt.mall.dao.basic.MallDaifuDAO">
+<mapper namespace="com.gt.mall.dao.order.MallDaifuDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallDaifu">
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.order.MallDaifu">
         <id column="id" property="id"/>
         <result column="order_id" property="orderId"/>
         <result column="df_order_no" property="dfOrderNo"/>
@@ -23,5 +23,29 @@
         id, order_id AS orderId, df_order_no AS dfOrderNo, df_user_id AS dfUserId, df_pay_way AS dfPayWay, df_pay_time AS dfPayTime, df_pay_money AS dfPayMoney, df_pay_status AS
         dfPayStatus, df_return_no AS dfReturnNo, df_return_time AS dfReturnTime, df_return_status AS dfReturnStatus, df_create_time AS dfCreateTime
     </sql>
+
+    <select id="selectByDfOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_daifu where df_order_no = #{dfOrderNo}
+    </select>
+    <select id="selectBydf" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallDaifu" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_daifu where 1=1
+        <if test="dfUserId != null">
+            and df_user_id = #{dfUserId}
+        </if>
+        <if test="orderId != null">
+            and order_id = #{orderId}
+        </if>
+    </select>
+    <!-- 查询订单是否已经有人代付了 -->
+    <select id="selectByPayDaifu" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallDaifu">
+        select <include refid="Base_Column_List" />
+        from t_mall_daifu
+        where 1=1 and order_id = #{orderId} and df_pay_status=1
+    </select>
+
 
 </mapper>

@@ -23,5 +23,192 @@
         id, product_id AS productId, specifica_ids AS specificaIds, inv_price AS invPrice, inv_num AS invNum, inv_code AS invCode, inv_sale_num AS invSaleNum, is_delete AS
         isDelete, is_default AS isDefault, specifica_img_id AS specificaImgId, erp_inv_id AS erpInvId, erp_specvalue_id AS erpSpecvalueId
     </sql>
+    <select id="selectByUserId" resultType="java.util.Map">
+        select distinct p.id as id, i.image_url as imageUrl,p.pro_name as proName,p.pro_price,p.pro_stock_total as stockTotal,
+        p.pro_sale_total as  saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as checkStatus,
+        p.check_reason as checkReason,p.shop_id as shopId,p.two_code_path as twoCodePath
+        from t_mall_product_inventory inv
+        right join t_mall_product p on inv.product_id = p.id
+        left join t_mall_image_associative i on	p.id=i.ass_id
+        left join t_mall_store s on p.shop_id = s.id
+        where i.is_main_images=1 and( inv.inv_num = 0 or  p.pro_stock_total=0 )
+        and i.is_delete=0 and i.ass_type = 1 and p.is_delete = 0  and p.is_mall_show=0
+        <if test="userId != null and userId != ''">
+            and p.user_id = #{userId,jdbcType=INTEGER}
+        </if>
+        <if test="isPublish != null">
+            and p.is_publish = #{isPublish}
+        </if>
+        <if test="proStockTotal != null">
+            and p.pro_stock_total = #{proStockTotal}
+        </if>
+        <if test="proName != null">
+            and p.pro_name like '%${proName}%'
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                p.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by p.create_time desc
+        <if test="firstNum != null and maxNum != null"> limit #{firstNum},#{maxNum} </if>
+    </select>
+    <select id="selectCountByUserId" resultType="java.lang.Integer">
+        select count(distinct p.id) from t_mall_product_inventory inv
+        left join t_mall_product p on inv.product_id = p.id
+        left join t_mall_image_associative i on p.id=i.ass_id
+        where i.is_main_images=1 and inv.inv_num = 0 and i.is_delete=0 and p.is_delete=0 and i.ass_type = 1  and p.is_mall_show=0
+        <if test="userId != null and userId != ''">
+            and p.user_id =	#{userId,jdbcType=INTEGER}
+        </if>
+        <if test="isPublish != null and isPublish != ''">
+            and p.is_publish = #{isPublish}
+        </if>
+        <if test="proStockTotal != null">
+            and p.pro_stock_total = #{proStockTotal}
+        </if>
+        <if test="proName != null">
+            and p.pro_name like '%${proName}%'
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                p.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by p.create_time desc
+
+    </select>
+    <!-- 批量添加 -->
+    <insert id="insertBatch" parameterType="java.util.Map">
+        <foreach collection="list" index="index" item="item" separator=";">
+            insert into t_mall_product_inventory
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    id,
+                </if>
+                <if test="proId != null">
+                    product_id,
+                </if>
+                <if test="item.specificaIds != null">
+                    specifica_ids,
+                </if>
+                <if test="item.invPrice != null">
+                    inv_price,
+                </if>
+                <if test="item.invNum != null">
+                    inv_num,
+                </if>
+                <if test="item.invCode != null">
+                    inv_code,
+                </if>
+                <if test="item.invSaleNum != null">
+                    inv_sale_num,
+                </if>
+                <if test="item.isDelete != null">
+                    is_delete,
+                </if>
+                <if test="item.isDefault != null">
+                    is_default,
+                </if>
+                <if test="item.specificaImgId != null">
+                    specifica_img_id,
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">
+                    #{item.id,jdbcType=INTEGER},
+                </if>
+                <if test="proId != null">
+                    #{proId,jdbcType=INTEGER},
+                </if>
+                <if test="item.specificaIds != null">
+                    #{item.specificaIds,jdbcType=VARCHAR},
+                </if>
+                <if test="item.invPrice != null">
+                    #{item.invPrice,jdbcType=DECIMAL},
+                </if>
+                <if test="item.invNum != null">
+                    #{item.invNum,jdbcType=INTEGER},
+                </if>
+                <if test="item.invCode != null">
+                    #{item.invCode,jdbcType=VARCHAR},
+                </if>
+                <if test="item.invSaleNum != null">
+                    #{item.invSaleNum,jdbcType=INTEGER},
+                </if>
+                <if test="item.isDelete != null">
+                    #{item.isDelete,jdbcType=TINYINT},
+                </if>
+                <if test="item.isDefault != null">
+                    #{item.isDefault,jdbcType=TINYINT},
+                </if>
+                <if test="item.specificaImgId != null">
+                    #{item.specificaImgId,jdbcType=INTEGER},
+                </if>
+            </trim>
+        </foreach>
+    </insert>
+    <!-- 批量修改 -->
+    <update id="updateBatch" parameterType="java.util.List">
+        <foreach collection="list" index="index" item="item"
+                 separator=";">
+            update t_mall_product_inventory
+            <set>
+                <if test="item.productId != null">
+                    product_id = #{item.productId,jdbcType=INTEGER},
+                </if>
+                <if test="item.specificaIds != null">
+                    specifica_ids = #{item.specificaIds,jdbcType=VARCHAR},
+                </if>
+                <if test="item.invPrice != null">
+                    inv_price = #{item.invPrice,jdbcType=DECIMAL},
+                </if>
+                <if test="item.invNum != null">
+                    inv_num = #{item.invNum,jdbcType=INTEGER},
+                </if>
+                <if test="item.invCode != null">
+                    inv_code = #{item.invCode,jdbcType=VARCHAR},
+                </if>
+                <if test="item.invSaleNum != null">
+                    inv_sale_num = #{item.invSaleNum,jdbcType=INTEGER},
+                </if>
+                <if test="item.isDelete != null">
+                    is_delete = #{item.isDelete,jdbcType=TINYINT},
+                </if>
+                <if test="item.isDefault != null">
+                    is_default=#{item.isDefault,jdbcType=TINYINT},
+                </if>
+                <if test="item.specificaImgId != null">
+                    specifica_img_id=#{item.specificaImgId,jdbcType=INTEGER},
+                </if>
+            </set>
+            where id = #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    <update id="updateProductStock">
+        update t_mall_product_inventory
+        <set>
+            <if test="pro_num != null">
+                <if test="type == 1">
+                    inv_num = IFNULL(inv_num,0) + #{pro_num},
+                    inv_sale_num = IFNULL(inv_sale_num,0) - #{pro_num},
+                </if>
+                <if test="type == 2">
+                    inv_num = IFNULL(inv_num,0) - #{pro_num},
+                    inv_sale_num = IFNULL(inv_sale_num,0) + #{pro_num},
+                </if>
+            </if>
+        </set>
+        where id = #{inventory_id} and product_id = #{product_id}
+    </update>
+
+    <select id="selectInvenByProId" resultType="java.util.Map">
+        SELECT a.id,a.specifica_ids,a.inv_price,a.inv_num,a.inv_code,b.specifica_img_url,a.erp_inv_id
+        FROM t_mall_product_inventory a
+        LEFT JOIN t_mall_product_specifica b ON a.specifica_img_id=b.id
+        WHERE a.product_id=#{id} AND a.is_delete=0
+    </select>
 
 </mapper>

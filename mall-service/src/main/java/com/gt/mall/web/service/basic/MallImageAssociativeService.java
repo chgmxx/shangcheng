@@ -50,6 +50,6 @@ public interface MallImageAssociativeService extends BaseService<MallImageAssoci
      *
      * @Title: selectByAssId
      */
-    List<Map<String, Object>> selectImageByAssId(Map<String, Object> params);
+    List<MallImageAssociative> selectImageByAssId(Map<String, Object> params);
 
 }

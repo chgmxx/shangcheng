@@ -192,6 +192,16 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     @TableField( "flow_record_id" )
     private Integer    flowRecordId;
 
+    private MallOrderReturn orderReturn;//退款
+
+    private Byte isReturn;//是否允许退款
+
+    private double newTotalPrice;//优惠后的价格（用作存储）
+
+    private double fenbiBeforeTotalPrice;//粉币优惠前的价格
+
+    private double jifenBeforeTotalPrice;//积分优惠前的价格
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

@@ -25,11 +25,216 @@
         <result column="pro_num" property="proNum"/>
     </resultMap>
 
+    <resultMap id="pageResultMap" type="com.gt.mall.entity.presale.MallPresaleDeposit">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="presale_id" property="presaleId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="pro_specifica_ids" property="proSpecificaIds" jdbcType="VARCHAR" />
+        <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+        <result column="pro_img_url" property="proImgUrl" jdbcType="VARCHAR" />
+        <result column="deposit_no" property="depositNo" jdbcType="VARCHAR" />
+        <result column="deposit_money" property="depositMoney" jdbcType="DECIMAL" />
+        <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
+        <result column="deposit_status" property="depositStatus" jdbcType="TINYINT" />
+        <result column="pay_way" property="payWay" jdbcType="TINYINT" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
+        <result column="return_no" property="returnNo" jdbcType="VARCHAR" />
+        <result column="return_time" property="returnTime" jdbcType="TIMESTAMP" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="shopName" jdbcType="VARCHAR" property="shopName" />
+        <result column="is_submit" property="isSubmit" jdbcType="TINYINT" />
+        <result column="pro_num" property="proNum" jdbcType="INTEGER" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="presaleStatus" property="presaleStatus" jdbcType="INTEGER"/>
+    </resultMap>
+    <resultMap id="depositMap" type="com.gt.mall.entity.presale.MallPresaleDeposit">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="presale_id" property="presaleId" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="pro_specifica_ids" property="proSpecificaIds" jdbcType="VARCHAR" />
+        <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+        <result column="pro_img_url" property="proImgUrl" jdbcType="VARCHAR" />
+        <result column="deposit_no" property="depositNo" jdbcType="VARCHAR" />
+        <result column="deposit_money" property="depositMoney" jdbcType="DECIMAL" />
+        <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
+        <result column="deposit_status" property="depositStatus" jdbcType="TINYINT" />
+        <result column="pay_way" property="payWay" jdbcType="TINYINT" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
+        <result column="return_no" property="returnNo" jdbcType="VARCHAR" />
+        <result column="return_time" property="returnTime" jdbcType="TIMESTAMP" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="is_submit" property="isSubmit" jdbcType="TINYINT" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="pro_num" property="proNum" jdbcType="INTEGER" />
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, presale_id AS presaleId, product_id AS productId, pro_specifica_ids AS proSpecificaIds, pro_name AS proName, pro_img_url AS proImgUrl, deposit_no AS depositNo,
         deposit_money AS depositMoney, order_money AS orderMoney, deposit_status AS depositStatus, pay_way AS payWay, pay_time AS payTime, pay_no AS payNo, return_no AS returnNo,
         return_time AS returnTime, user_id AS userId, create_time AS createTime, is_submit AS isSubmit, pro_num AS proNum
     </sql>
+
+    <sql id="page_Column_List">
+        g.id, g.presale_id, g.product_id, pro_specifica_ids, g.pro_name, pro_img_url, deposit_no,
+        deposit_money, g.order_money, g.deposit_status, g.pay_way, g.pay_time, g.pay_no, g.return_no,
+        return_time, g.user_id, /*IF(ws.business_name IS NOT NULL ,ws.business_name, s.sto_name) AS shopName,*/is_submit,
+        g.pro_num,(SELECT order_no FROM t_mall_order WHERE order_type = 6 AND group_buy_id=g.`presale_id` AND buyer_user_id=g.`user_id` LIMIT 1) AS order_no,
+        case
+        when a.is_use = -1 then -2<!--已失效  -->
+        when a.sale_start_time > now() and   a.sale_end_time > now() then 0<!--未开始  -->
+        when a.sale_start_time &lt;= now() and now() &lt; a.sale_end_time  then 1<!-- 进行中 -->
+        when a.sale_start_time &lt; now()  and a.sale_end_time &lt;= now() then -1<!-- 已结束 -->
+        end presaleStatus
+    </sql>
+    <sql id="deposit_Column_List">
+        d.id, presale_id, d.product_id, pro_specifica_ids, pro_name, pro_img_url, deposit_no,
+        deposit_money, order_money, deposit_status, pay_way, pay_time, pay_no, return_no,
+        return_time, d.user_id, d.create_time,p.shop_id as shopId,is_submit,
+        d.pro_num
+    </sql>
+
+    <!-- 统计定金 -->
+    <select id="selectByCount" parameterType="Map" resultType="java.lang.Integer">
+        select  count(g.id)
+        from t_mall_presale_deposit g
+        LEFT JOIN t_mall_presale a ON g.`presale_id`=a.id
+        <where>
+            <if test="shoplist != null and shoplist != ''">
+                <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
+                    a.shop_id = #{item.id,jdbcType=INTEGER}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <!-- 定金分页 -->
+    <select id="selectByPage" parameterType="Map" resultMap="pageResultMap">
+        /* todo 调用小屁孩的接口 */
+        select  <include refid="page_Column_List" />
+        from t_mall_presale_deposit g
+        LEFT JOIN t_mall_presale a ON g.`presale_id`=a.id
+        LEFT JOIN t_mall_store s ON a.shop_id = s.id
+       /* LEFT JOIN t_wx_shop ws ON s.wx_shop_id = ws.id*/
+        <where>
+            /*ws.`status` != -1 AND*/ s.`is_delete`=0 AND a.`is_delete`=0
+            <if test="shoplist != null and shoplist != ''">
+                and
+                <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
+                    a.shop_id = #{item.id,jdbcType=INTEGER}
+                </foreach>
+            </if>
+        </where>
+        group by g.id
+        order by g.create_time desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+
+    <select id="selectByPreNo" parameterType="java.lang.String" resultMap="depositMap">
+        select
+        <include refid="deposit_Column_List" />
+        from t_mall_presale_deposit d
+        LEFT JOIN t_mall_presale p ON d.presale_id = p.id
+        where d.deposit_no = #{depositNo}
+    </select>
+    <select id="selectByDeposit" parameterType="com.gt.mall.entity.presale.MallPresaleDeposit" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_presale_deposit m
+        <where>
+            <if test="presaleId != null and presaleId != ''">
+                and m.presale_id = #{presaleId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and m.user_id = #{userId}
+            </if>
+            <if test="isSubmit != null">
+                and m.is_submit=#{isSubmit}
+            </if>
+            <if test="depositStatus != null and depositStatus != ''">
+                and m.deposit_status = #{depositStatus}
+            </if>
+            <if test="id != null and id != ''">
+                and m.id = #{id}
+            </if>
+        </where>
+    </select>
+    <select id="selectListByDeposit" parameterType="com.gt.mall.entity.presale.MallPresaleDeposit" resultMap="depositMap">
+        select <include refid="deposit_Column_List" />
+        from t_mall_presale_deposit d
+        left join t_mall_presale p on p.id=d.presale_id
+        <where>
+            <if test="userId != null and userId != ''">
+                and d.user_id = #{userId}
+            </if>
+            <if test="presaleId != null and presaleId != ''">
+                and d.presale_id = #{presaleId}
+            </if>
+            <if test="depositStatus != null and depositStatus != ''">
+                and d.deposit_status = #{depositStatus}
+            </if>
+            <if test="productId != null and productId != ''">
+                and d.product_id = #{productId}
+            </if>
+        </where>
+        order by d.create_time desc
+    </select>
+
+    <select id="selectDepositByEnd" resultType="Map">
+        select
+        m.id, m.presale_id, m.product_id, m.pro_specifica_ids, m.pro_name, m.pro_img_url, m.deposit_no,
+        m.deposit_money, m.deposit_status, m.pay_way, m.pay_time, m.pay_no, m.return_no, m.return_time,
+        m.user_id,m.create_time,
+        o.id as order_id,o.order_status,a.sale_end_time,a.shop_id
+        from t_mall_presale_deposit m
+        LEFT JOIN t_mall_presale a ON m.presale_id=a.id
+        left join t_mall_order o on o.order_type=6 and o.group_buy_id = a.id and o.order_status > 1
+        WHERE a.sale_start_time &lt; now()  and a.sale_end_time &lt;= now()  and m.deposit_status=1
+        and m.is_submit = 0
+        group by m.id
+    </select>
+
+    <!-- 查询用户参加拍卖的数量 -->
+    <select id="selectCountByPresaleId" parameterType="Map" resultMap="BaseResultMap">
+        select  <include refid="Base_Column_List" />
+        from t_mall_presale_deposit d
+        where d.user_id = #{joinUserId}
+        and d.presale_id= #{presaleId} and d.deposit_status >=0 and d.is_submit=0
+    </select>
+
+    <!-- 查询预售商品订购的数量 -->
+    <select id="selectBuyCountByPreId" parameterType="Map" resultType="java.lang.Integer">
+        select  count(d.id) as count
+        from t_mall_presale_deposit d
+        where  d.presale_id= #{presaleId} and d.deposit_status =1
+    </select>
+
+
+    <select id="selectListByDepositPro" parameterType="com.gt.mall.entity.presale.MallPresaleDeposit" resultType="Map">
+        select d.id, presale_id, d.product_id, d.pro_specifica_ids, d.pro_name, d.pro_img_url, deposit_no,
+        deposit_money, order_money, deposit_status, pay_way, pay_time, pay_no, return_no,
+        return_time, d.user_id, d.create_time,p.shop_id as shopId,is_submit,
+        d.pro_num
+        from t_mall_presale_deposit d
+        left join t_mall_presale p on p.id=d.presale_id
+        where 1=1
+        <if test="userId != null and userId != ''">
+            and d.user_id = #{userId}
+        </if>
+        <if test="oldUserIdList != null and oldUserIdList != ''">
+            and
+            <foreach collection="oldUserIdList" index="index" item="item" open="(" separator="or" close=")">
+                d.user_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by d.create_time desc
+    </select>
+    <select id="selectCountDeposit" parameterType="Map" resultType="java.lang.Integer">
+        SELECT count(id) FROM t_mall_presale_deposit WHERE is_submit=0 AND deposit_status = 1 AND presale_id=#{presaleId} AND user_id=#{userId}
+    </select>
 
 </mapper>

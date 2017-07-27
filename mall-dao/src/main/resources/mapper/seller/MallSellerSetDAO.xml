@@ -25,5 +25,11 @@
         is_remark_required AS isRemarkRequired, integral_reward AS integralReward, consume_money AS consumeMoney, withdrawal_type AS withdrawalType, withdrawal_lowest_money AS
         withdrawalLowestMoney, withdrawal_multiple AS withdrawalMultiple, seller_remark AS sellerRemark, bus_user_id AS busUserId
     </sql>
+    <select id="selectByBusUserId" resultType="com.gt.mall.entity.seller.MallSellerSet">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_seller_set
+        where bus_user_id = #{busUserId,jdbcType=INTEGER}
+    </select>
 
 </mapper>

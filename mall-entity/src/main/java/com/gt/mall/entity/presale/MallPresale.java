@@ -11,6 +11,8 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -87,6 +89,33 @@ public class MallPresale extends Model< MallPresale > {
      */
     @TableField( "order_num" )
     private Integer    orderNum;
+
+    @TableField(exist = false)
+    private String shopName;//店铺名称
+
+    @TableField(exist = false)
+    private String proName;//商品名称
+
+    @TableField(exist = false)
+    private int status;//预售状态
+
+    @TableField(exist = false)
+    private int joinId;//参加用户id
+
+    @TableField(exist = false)
+    private long times;
+
+    @TableField(exist = false)
+    private long startTimes;
+
+    @TableField(exist = false)
+    private String twoCodePath;
+
+    @TableField(exist = false)
+    private int invNum;
+
+    @TableField(exist = false)
+    private List<Map<String, Object> > list;
 
     @Override
     protected Serializable pkVal() {

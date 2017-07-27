@@ -23,4 +23,10 @@
         mallIntroducation, is_open_optional AS isOpenOptional, sale_member_id AS saleMemberId, bus_user_id AS busUserId
     </sql>
 
+    <select id="selectBySaleMemberId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_seller_mallset
+        where sale_member_id = #{saleMemberId,jdbcType=INTEGER}
+    </select>
 </mapper>

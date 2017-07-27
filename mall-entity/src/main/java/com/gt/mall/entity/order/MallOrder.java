@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -278,6 +279,18 @@ public class MallOrder extends Model< MallOrder > {
      */
     @TableField( "member_name" )
     private String     memberName;
+
+    @TableField(exist = false)
+    private Integer updateDay;//修改订单的天数
+
+    @TableField(exist = false)
+    private String orderPNo;//父类的订单编号
+
+    @TableField(exist = false)
+    private String shopName;//店铺名称
+
+    @TableField(exist = false)
+    private List<MallOrderDetail> mallOrderDetail;	//商品详情
 
     @Override
     protected Serializable pkVal() {

@@ -49,5 +49,66 @@
         proSpecStr, card_receive_id AS cardReceiveId, duofen_coupon AS duofenCoupon, use_card_id AS useCardId, commission, sale_member_id AS saleMemberId, integral_youhui AS
         integralYouhui, fenbi_youhui AS fenbiYouhui, flow_id AS flowId, flow_record_id AS flowRecordId
     </sql>
+    <select id="countDetailByProductId" resultType="java.lang.Integer">
+        select count(d.id)
+        from t_mall_order_detail d
+        left join t_mall_order o on d.order_id=o.id
+        <where>
+            d.product_id= #{productId}
+            <if test="noOrderStatus != null">
+                and o.order_status != #{noOrderStatus}
+            </if>
+            <if test="orderType != null">
+                and o.order_type = #{orderType}
+            </if>
+            <if test="groupBuyId != null">
+                and o.group_buy_id = #{groupBuyId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="Map" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_order_detail
+        <where>
+            order_id = #{id}
+        </where>
+        order by shop_id
+    </select>
+
+    <select id="countByOrderId" resultType="java.lang.Integer" parameterType="Map">
+        select
+        count(id) as num
+        from t_mall_order_detail
+        <where>
+            order_id = #{orderId}
+        </where>
+    </select>
+
+    <select id="selectPageByOrderId" resultMap="BaseResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_order_detail
+        <where>
+            order_id = #{orderId}
+            <if test="firstResult != null and maxResult != null">
+                limit #{firstResult},#{maxResult}
+            </if>
+        </where>
+    </select>
+    <select id="selectDetailByOrderIds" resultMap="BaseResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_order_detail
+        <where> 1=1
+            <if test="orderIdList != null and orderIdList != ''">
+                and
+                <foreach collection="orderIdList" index="index" item="item" open="(" separator="or" close=")">
+                    order_id = #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+        </where>
+    </select>
 
 </mapper>

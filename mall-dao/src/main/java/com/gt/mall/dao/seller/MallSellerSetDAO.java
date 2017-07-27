@@ -13,4 +13,10 @@ import com.gt.mall.entity.seller.MallSellerSet;
  */
 public interface MallSellerSetDAO extends BaseMapper< MallSellerSet > {
 
+    /**
+     * 通过商家id查询销售规则
+     * @param busUserId
+     * @return
+     */
+    MallSellerSet selectByBusUserId(int busUserId);
 }

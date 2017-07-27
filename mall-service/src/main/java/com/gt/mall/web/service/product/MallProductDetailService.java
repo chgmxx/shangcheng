@@ -13,4 +13,10 @@ import com.gt.mall.entity.product.MallProductDetail;
  */
 public interface MallProductDetailService extends BaseService< MallProductDetail > {
 
+    /**
+     * 根据商品id查询商品详情信息
+     * @param productId 商品id
+     * @return
+     */
+    MallProductDetail selectByProductId(int productId);
 }

@@ -52,7 +52,6 @@ public class MobileLocationUtil {
      * @throws Exception
      * @author
      */
-    @SuppressWarnings("unchecked")
     public static Map<String, String> getMobileLocation(String tel) {
         Map<String, String> resultMap = new HashMap<String, String>();
         resultMap.put("province", "未知");

@@ -4,6 +4,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.web.service.order.MallOrderDetailService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,5 +17,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MallOrderDetailServiceImpl extends BaseServiceImpl< MallOrderDetailDAO,MallOrderDetail > implements MallOrderDetailService {
+
+    @Autowired
+    private MallOrderDetailDAO mallOrderDetailDAO;//订单详情dao
 
 }

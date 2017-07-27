@@ -22,5 +22,11 @@
         id, product_id AS productId, specifica_name_id AS specificaNameId, specifica_value_id AS specificaValueId, specifica_name AS specificaName, specifica_value AS
         specificaValue, specifica_img_url AS specificaImgUrl, is_delete AS isDelete, sort, erp_specvalue_id AS erpSpecvalueId, erp_specname_id AS erpSpecnameId
     </sql>
+    <select id="selectValueBySpecId" resultType="java.util.Map">
+        SELECT b.id,b.spec_value
+        FROM t_mall_product_specifica a
+        LEFT JOIN t_mall_specifica_value b ON a.specifica_value_id=b.id
+        where a.id = #{id}
+    </select>
 
 </mapper>

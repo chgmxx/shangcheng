@@ -123,10 +123,19 @@ public class MallAuction extends Model< MallAuction > {
     @TableField( "auc_add_price" )
     private BigDecimal aucAddPrice;
 
+    @TableField(exist = false)
     private int joinId;
+
+    @TableField(exist = false)
     private int status;
+
+    @TableField(exist = false)
     private Long times;// 剩余时间
+
+    @TableField(exist = false)
     private Long startTimes;// 活动开始剩余时间
+
+    @TableField(exist = false)
     private double nowPrice;
 
     @Override

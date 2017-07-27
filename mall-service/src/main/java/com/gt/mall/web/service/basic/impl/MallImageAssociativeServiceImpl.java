@@ -1,7 +1,8 @@
 package com.gt.mall.web.service.basic.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.util.CommonUtil;
@@ -23,45 +24,56 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Service
-public class MallImageAssociativeServiceImpl extends BaseServiceImpl<MallImageAssociativeDAO, MallImageAssociative> implements MallImageAssociativeService {
+public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageAssociativeDAO,MallImageAssociative > implements MallImageAssociativeService {
 
-    private Logger logger = Logger.getLogger(MallImageAssociativeServiceImpl.class);
+    private Logger logger = Logger.getLogger( MallImageAssociativeServiceImpl.class );
 
     @Autowired
     private MallImageAssociativeDAO imageAssociativeDAO;
 
     @Override
-    public List<MallImageAssociative> selectByAssId(Map<String, Object> params) {
-        return imageAssociativeDAO.selectImageByAssId(params);
+    public List< MallImageAssociative > selectByAssId( Map< String,Object > params ) {
+	return imageAssociativeDAO.selectImageByAssId( params );
     }
 
     @Override
-    public void insertUpdBatchImage(Map<String, Object> map, Integer proId) {
-        // 逻辑删除商品图片
-        if (!CommonUtil.isEmpty(map.get("delimageList"))) {
-            List<MallImageAssociative> imageList = (List<MallImageAssociative>) JSONArray
-                    .toList(JSONArray.fromObject(map.get("delimageList")), MallImageAssociative.class);
-            if (imageList != null && imageList.size() > 0) {
-                imageAssociativeDAO.updateBatch(imageList);
+    public void insertUpdBatchImage( Map< String,Object > map, Integer proId ) {
+	// 逻辑删除商品图片
+	if ( !CommonUtil.isEmpty( map.get( "delimageList" ) ) ) {
+	    List< MallImageAssociative > imageList = (List< MallImageAssociative >) JSONArray
+			    .toList( JSONArray.fromObject( map.get( "delimageList" ) ), MallImageAssociative.class );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		imageAssociativeDAO.updateBatch( imageList );
+	    }
+	}
+	// 添加商品图片
+	if ( !CommonUtil.isEmpty( map.get( "imageList" ) ) ) {
+	    List< MallImageAssociative > addImgList = (List< MallImageAssociative >) JSONArray
+			    .toList( JSONArray.fromObject( map.get( "imageList" ) ), MallImageAssociative.class );
+	    if ( addImgList != null && addImgList.size() > 0 ) {
+		for ( MallImageAssociative images : addImgList ) {
+		    images.setAssId( proId );
+		    imageAssociativeDAO.insert( images );
+		}
 
-            }
-        }
-        // 添加商品图片
-        if (!CommonUtil.isEmpty(map.get("imageList"))) {
-            List<MallImageAssociative> addImgList = (List<MallImageAssociative>) JSONArray
-                    .toList(JSONArray.fromObject(map.get("imageList")), MallImageAssociative.class);
-            if (addImgList != null && addImgList.size() > 0) {
-                for (MallImageAssociative images : addImgList) {
-                    images.setAssId(proId);
-                    imageAssociativeDAO.insert(images);
-                }
-
-            }
-        }
+	    }
+	}
     }
 
     @Override
-    public List<Map<String, Object>> selectImageByAssId(Map<String, Object> params) {
-        return imageAssociativeDAO.selectByAssId(params);
+    public List< MallImageAssociative > selectImageByAssId( Map< String,Object > params ) {
+	Wrapper< MallImageAssociative > wrapper = new EntityWrapper<>();
+	wrapper.where( "is_delete = 0" );
+	if ( CommonUtil.isNotEmpty( params.get( "assId" ) ) ) {
+	    wrapper.andNew( "ass_id = {0}", params.get( "assId" ) );
+	}
+	if ( CommonUtil.isNotEmpty( params.get( "isMainImages" ) ) ) {
+	    wrapper.andNew( "is_main_images = {0}", params.get( "isMainImages" ) );
+	}
+	if ( CommonUtil.isNotEmpty( params.get( "assType" ) ) ) {
+	    wrapper.andNew( "ass_type = {0}", params.get( "assType" ) );
+	}
+	wrapper.orderBy( "ass_sort", true );
+	return imageAssociativeDAO.selectList( wrapper );
     }
 }

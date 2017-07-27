@@ -21,4 +21,10 @@ public class MyConfig {
 
     private String imageUrlPrefix;//图片地址
 
+    private String jxcUrl;//进销存 地址
+
+    private String jxcAccount;//进销存token用户名
+
+    private String jxcPwd;//进销存token密码
+
 }

@@ -3,25 +3,255 @@
 <mapper namespace="com.gt.mall.dao.presale.MallPresaleDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.gt.mall.entity.presale.MallPresale">
-        <id column="id" property="id"/>
-        <result column="product_id" property="productId"/>
-        <result column="shop_id" property="shopId"/>
-        <result column="sale_start_time" property="saleStartTime"/>
-        <result column="sale_end_time" property="saleEndTime"/>
-        <result column="is_deposit" property="isDeposit"/>
-        <result column="deposit_percent" property="depositPercent"/>
-        <result column="user_id" property="userId"/>
-        <result column="create_time" property="createTime"/>
-        <result column="is_delete" property="isDelete"/>
-        <result column="is_use" property="isUse"/>
-        <result column="order_num" property="orderNum"/>
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.presale.MallPresale" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="sale_start_time" property="saleStartTime" jdbcType="VARCHAR" />
+        <result column="sale_end_time" property="saleEndTime" jdbcType="VARCHAR" />
+        <result column="is_deposit" property="isDeposit" jdbcType="TINYINT" />
+        <result column="deposit_percent" property="depositPercent" jdbcType="DECIMAL" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="is_use" property="isUse" jdbcType="TINYINT" />
+        <result column="order_num" property="orderNum" jdbcType="INTEGER" />
+    </resultMap>
+
+    <resultMap id="pageResultMap" type="com.gt.mall.entity.presale.MallPresale" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="sale_start_time" property="saleStartTime" jdbcType="VARCHAR" />
+        <result column="sale_end_time" property="saleEndTime" jdbcType="VARCHAR" />
+        <result column="is_deposit" property="isDeposit" jdbcType="TINYINT" />
+        <result column="deposit_percent" property="depositPercent" jdbcType="DECIMAL" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="is_use" property="isUse" jdbcType="TINYINT" />
+        <result column="shopName" property="shopName" jdbcType="VARCHAR"/>
+        <result column="proName" property="proName" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="order_num" property="orderNum" jdbcType="INTEGER" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
-    <sql id="Base_Column_List">
-        id, product_id AS productId, shop_id AS shopId, sale_start_time AS saleStartTime, sale_end_time AS saleEndTime, is_deposit AS isDeposit, deposit_percent AS depositPercent,
-        user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse, order_num AS orderNum
+    <sql id="Base_Column_List" >
+        g.id, g.product_id, g.shop_id, sale_start_time, sale_end_time, is_deposit, deposit_percent,
+        g.user_id, g.create_time, g.is_delete, g.is_use,g.order_num,
+        case
+        when g.sale_start_time > now() and   g.sale_end_time > now() then 0<!--未开始  -->
+        when g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time  then 1<!-- 进行中 -->
+        when g.sale_start_time &lt; now()  and g.sale_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status
     </sql>
+    <sql id="page_Column_List">
+        g.id, g.product_id, g.shop_id, g.sale_start_time, g.sale_end_time, g.is_deposit, g.deposit_percent,
+        g.user_id, g.create_time, g.is_delete, g.is_use,g.order_num,
+        case
+        when g.is_use = -1 then -2<!--已失效  -->
+        when g.sale_start_time > now() and   g.sale_end_time > now() then 0<!--未开始  -->
+        when g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time  then 1<!-- 进行中 -->
+        when g.sale_start_time &lt; now()  and g.sale_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status,/*if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,*/
+        p.pro_name as proName,p.two_code_path as twoCodePath
+    </sql>
+
+    <!-- 统计预售 -->
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map" >
+        select  count(p.id)
+        from t_mall_presale p where p.is_delete = 0
+        <if test="type == -1"><!-- 未开始预售 -->
+            and p.sale_start_time > now() and   p.sale_end_time > now()
+        </if>
+        <if test="type == 1"><!-- 进行中的预售 -->
+            and p.sale_start_time &lt;= now() and now() &lt; p.sale_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的预售 -->
+            and p.sale_start_time &lt; now()  and p.sale_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                p.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <!-- 根据预售分页 -->
+    <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
+        /* todo 调用小屁孩的接口*/
+        select  <include refid="page_Column_List" />
+        from t_mall_presale g
+        left join t_mall_store s on g.shop_id = s.id
+        /* left join t_wx_shop ws on s.wx_shop_id = ws.id*/
+        left join t_mall_product p on p.id= g.product_id and p.is_delete=0
+        where g.is_delete = 0
+        <if test="type == -1"><!-- 未开始预售 -->
+            and g.sale_start_time > now() and   g.sale_end_time > now()
+        </if>
+        <if test="type == 1"><!-- 进行中的预售 -->
+            and g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的预售 -->
+            and g.sale_start_time &lt; now()  and g.sale_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                g.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        group by g.id
+        order by g.create_time desc
+        limit #{firstNum},#{maxNum}
+    </select>
+
+    <!-- 查询预售商品的状态 -->
+    <select id="selectDepositByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
+        <!-- todo 调用小屁孩门店接口 -->
+        SELECT <include refid="page_Column_List"></include>
+        from t_mall_presale  g
+        left join t_mall_store s on g.shop_id = s.id
+       /* left join t_wx_shop ws on s.wx_shop_id = ws.id */
+        left join t_mall_product p on p.id= g.product_id and p.is_delete=0
+        WHERE g.is_delete = 0 and g.id = #{id}
+        group by g.id
+    </select>
+
+    <!-- 查询是否存在未开始和进行中的商品 -->
+    <select id="selectDepositByProId" parameterType="com.gt.mall.entity.presale.MallPresale" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"></include>
+        from t_mall_presale  g
+        left join t_mall_presale_deposit d on d.presale_id=g.id
+        WHERE g.is_delete = 0 and g.is_use  =1
+        <if test="productId != null and productId != ''">
+            and g.product_id = #{productId}
+        </if>
+        and ((g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time ) or
+        (
+        g.sale_start_time > now() and  g.sale_end_time > now())
+        )
+        and d.deposit_status != -1
+    </select>
+
+
+    <select id="selectByPresaleId" resultType="Map" parameterType="java.lang.Integer">
+        select
+        b.id, b.product_id, b.shop_id, b.sale_start_time, b.sale_end_time, b.is_deposit, b.deposit_percent,
+        b.user_id, b.create_time, b.is_delete, b.is_use,b.order_num,
+        c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName,
+        if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        from t_mall_presale b
+        left join t_mall_product p on b.product_id = p.id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON b.product_id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        where b.id =#{id}
+    </select>
+
+    <!-- 根据商品id查询预售信息 -->
+    <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.presale.MallPresale" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+        from t_mall_presale g
+        where g.is_delete = 0 and g.is_use = 1
+        and g.product_id=#{productId}
+        and g.shop_id=#{shopId}
+        and (g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time or
+        g.sale_start_time > now() and   g.sale_end_time > now())
+        <if test="id != null and id != ''">
+            and g.id=#{id}
+        </if>
+        limit 1
+    </select>
+
+
+    <!-- 获取店铺下所有正在参加预售的商品 -->
+    <select id="selectgbProductByShopId" parameterType="Map" resultType="Map">
+        SELECT a.id,a.is_member_discount,a.pro_price,a.pro_cost_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,
+        a.shop_id as shopId,d.id as inv_id,a.pro_stock_total as stockTotal,
+        gb.id as preId, gb.shop_id, gb.sale_start_time, gb.sale_end_time, gb.is_deposit, gb.deposit_percent
+        from t_mall_presale gb
+        left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN  t_mall_product_specifica e ON d.specifica_img_id=e.id
+        left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and gb.is_delete=0 and gb.is_use=1
+        <if test="status != null and status != ''">
+            and ((gb.sale_start_time &lt;= now() and now() &lt; gb.sale_end_time )  or (gb.sale_start_time > now() and   gb.sale_end_time > now()))
+        </if>
+        <if test="id != null and id != ''">
+            and gb.id=#{id,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            and ( a.pro_name like CONCAT("%","${proName}","%")  or g.group_name like CONCAT("%","${proName}","%") )
+        </if>
+        <if test="productId != null and productId != ''">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+
+        group by gb.id
+
+        <if test="type != null and type != ''">
+            <if test="type == 1"><!-- 最新排序 -->
+                order by gb.id
+            </if>
+            <if test="type == 2"><!-- 销量排序 -->
+                order by a.pro_sale_total
+            </if>
+            <if test="type == 3"><!-- 价格排序 -->
+                order by a.pro_price
+            </if>
+        </if>
+        <if test="desc != null and desc != ''">
+            desc
+        </if>
+    </select>
+
+
+    <select id="selectCountByPresaleId" parameterType="Map" resultType="java.lang.Integer">
+        select  count(o.id) as count
+        from t_mall_presale p
+        left join t_mall_order o on p.id=o.group_buy_id and o.order_type = 5
+        where o.buyer_user_id = #{joinUserId}
+        and p.id=#{presaleId} and o.order_status >1 and o.order_status &lt; 5
+    </select>
+
+
+    <!-- 查询已经结束的预售 -->
+    <select id="selectByPresaleEnd" resultMap="BaseResultMap" >
+        select  <include refid="Base_Column_List" />
+        from t_mall_presale g
+        where  g.sale_start_time &lt; now()  and g.sale_end_time &lt;= now()
+        or (g.is_delete = 1 or g.is_use = -1)
+    </select>
+
+    <!-- 获取店铺下所有正在参加预售的商品 -->
+    <select id="selectCountByShopId" parameterType="Map" resultType="java.lang.Integer">
+        SELECT count(gb.id)
+        from t_mall_presale gb
+        left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        WHERE  gb.is_delete=0 and gb.is_use=1
+        <if test="isPublic != 1">
+            and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        </if>
+        <if test="status != null and status != ''">
+            and ((gb.sale_start_time &lt;= now() and now() &lt; gb.sale_end_time )  or (gb.sale_start_time > now() and   gb.sale_end_time > now()))
+        </if>
+        <if test="productId != null and productId != ''">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+    </select>
 
 </mapper>

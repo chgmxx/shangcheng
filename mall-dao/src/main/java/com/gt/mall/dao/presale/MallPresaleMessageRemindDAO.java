@@ -13,4 +13,10 @@ import com.gt.mall.entity.presale.MallPresaleMessageRemind;
  */
 public interface MallPresaleMessageRemindDAO extends BaseMapper< MallPresaleMessageRemind > {
 
+    /**
+     * 查询消息提醒信息
+     * @param message
+     * @return
+     */
+    MallPresaleMessageRemind selectByPresale(MallPresaleMessageRemind message);
 }

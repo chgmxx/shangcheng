@@ -23,4 +23,53 @@
         check_status AS checkStatus, check_pass_reason AS checkPassReason, check_time AS checkTime, paysuccess_time AS paysuccessTime, withdraw_type AS withdrawType
     </sql>
 
+    <!-- 查询销售员的提现记录 -->
+    <select id="selectBySaleMemberId" resultMap="BaseResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from t_mall_seller_withdraw
+        <where>
+            <if test="memberId != null and memberId != ''">
+                sale_member_id = #{memberId}
+            </if>
+            <if test="oldMemberIds != null and oldMemberIds != ''">
+                <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                    sale_member_id = #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!-- 统计提现列表 -->
+    <select id="selectCountWithdraw" resultType="java.lang.Integer" parameterType="Map">
+        SELECT count(w.id)
+        FROM t_mall_seller_withdraw w
+        LEFT JOIN t_mall_seller s ON s.`member_id`=w.`sale_member_id`
+        where s.bus_user_id=#{busUserId}
+    </select>
+
+    <!-- 查询提现列表 -->
+    <select id="selectWithdrawList" resultType="Map" parameterType="Map">
+        SELECT w.id,w.applay_time,s.`user_name`,s.`telephone`,w.`withdraw_money`,w.`withdraw_order_no`,w.withdraw_status
+        FROM t_mall_seller_withdraw w
+        LEFT JOIN t_mall_seller s ON s.`member_id`=w.`sale_member_id`
+        where s.bus_user_id=#{busUserId}
+        <if test="saleMemId != null">
+            and w.sale_member_id = #{saleMemId}
+        </if>
+        <if test="keyWord != null">
+            and (s.telephone like '%${keyWord}%' or s.user_name like '%${keyWord}%' )
+        </if>
+        <if test="startTime != null">
+            and w.applay_time >= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and w.applay_time &lt;= #{endTime}
+        </if>
+        order by w.id desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+
 </mapper>

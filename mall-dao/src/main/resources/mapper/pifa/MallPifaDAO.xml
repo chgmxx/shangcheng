@@ -17,10 +17,246 @@
         <result column="pf_type" property="pfType"/>
     </resultMap>
 
+    <resultMap id="pageResultMap" type="com.gt.mall.entity.pifa.MallPifa" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="pf_price" property="pfPrice" jdbcType="DECIMAL" />
+        <result column="pf_start_time" property="pfStartTime" jdbcType="VARCHAR" />
+        <result column="pf_end_time" property="pfEndTime" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="is_use" property="isUse" jdbcType="TINYINT" />
+        <result column="pf_type" property="pfType" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="shopName" property="shopName" jdbcType="VARCHAR"/>
+        <result column="joinId" property="joinId" jdbcType="INTEGER" />
+        <result column="two_code_path" property="twoCodePath" jdbcType="VARCHAR"/>
+        <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, product_id AS productId, pf_price AS pfPrice, pf_start_time AS pfStartTime, pf_end_time AS pfEndTime, user_id AS userId, shop_id AS shopId, create_time AS createTime,
         is_delete AS isDelete, is_use AS isUse, pf_type AS pfType
     </sql>
+    <sql id="page_product_Column_List">
+        p.id, p.product_id, pf_price, pf_start_time, pf_end_time, p.user_id, p.shop_id, p.create_time,
+        p.is_delete, p.is_use,p.pf_type,
+        case
+        when p.is_use = -1 then -2<!--已失效  -->
+        when p.pf_start_time > now() and   p.pf_end_time > now() then 0<!--未开始  -->
+        when p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time  then 1<!-- 进行中 -->
+        when p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/,o.id as joinId,
+        mp.two_code_path,mp.pro_name
+    </sql>
+
+    <sql id="page_Column_List">
+        p.id, p.product_id, pf_price, pf_start_time, pf_end_time, p.user_id, p.shop_id, p.create_time,
+        p.is_delete, p.is_use,p.pf_type,
+        case
+        when p.is_use = -1 then -2<!--已失效  -->
+        when p.pf_start_time > now() and   p.pf_end_time > now() then 0<!--未开始  -->
+        when p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time  then 1<!-- 进行中 -->
+        when p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/,o.id as joinId
+    </sql>
+
+
+    <!-- 统计批发 -->
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map" >
+        select  count(p.id)
+        from t_mall_pifa p where p.is_delete = 0
+        <if test="type == -1"><!-- 未开始批发 -->
+            and p.pf_start_time > now() and   p.pf_end_time > now()
+        </if>
+        <if test="type == 1"><!-- 进行中的批发 -->
+            and p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的批发 -->
+            and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                p.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <!-- 根据批发分页 -->
+    <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
+        /* todo 调用 小屁孩接口 门店信息 */
+        select  <include refid="page_product_Column_List" />
+        from t_mall_pifa p
+        left join t_mall_store s on p.shop_id = s.id
+        /*left join t_wx_shop ws on s.wx_shop_id = ws.id*/
+        left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
+        left join t_mall_product mp on mp.id= p.product_id
+        where p.is_delete = 0
+        <if test="type == -1"><!-- 未开始批发 -->
+            and p.pf_start_time > now() and   p.pf_end_time > now()
+        </if>
+        <if test="type == 1"><!-- 进行中的批发 -->
+            and p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的批发 -->
+            and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                p.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        group by p.id
+        order by p.create_time desc
+        limit #{firstNum},#{maxNum}
+    </select>
+
+    <select id="selectByPifaId" resultType="Map" parameterType="java.lang.Integer">
+        select
+        b.id, b.product_id as productId, pf_price, pf_start_time, pf_end_time, b.user_id, b.shop_id, b.create_time,
+        b.is_delete, b.is_use,b.pf_type,
+        c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        from t_mall_pifa b
+        left join t_mall_product p on b.product_id = p.id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON b.product_id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        where b.id = #{id}
+    </select>
+
+    <!-- 查询是否存在未开始和进行中的商品 -->
+    <select id="selectStartPifaByProId" parameterType="Map" resultMap="BaseResultMap">
+        SELECT p.id, p.product_id, pf_price, pf_start_time, pf_end_time, p.user_id, p.shop_id, p.create_time, p.is_delete, p.is_use,p.pf_type
+        from t_mall_pifa  p
+        left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
+        WHERE p.is_delete = 0 and p.is_use  =1
+        <if test="productId != null and productId != ''">
+            and p.product_id = #{productId}
+        </if>
+        and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or
+        (p.pf_start_time > now() and  p.pf_end_time > now())
+        <if test="id != null and id != ''">
+            and p.id != #{id}
+        </if>
+        ) and o.id > 0
+    </select>
+
+    <select id="selectPifaByProId" parameterType="Map" resultMap="BaseResultMap">
+        SELECT p.id, p.product_id, pf_price, pf_start_time, pf_end_time, p.user_id, p.shop_id, p.create_time, p.is_delete, p.is_use,p.pf_type
+        from t_mall_pifa  p
+        WHERE p.is_delete = 0 and p.is_use  =1
+        <if test="productId != null and productId != ''">
+            and p.product_id = #{productId}
+        </if>
+        and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or
+        (p.pf_start_time > now() and  p.pf_end_time > now()))
+        <if test="id != null and id != ''">
+            and p.id != #{id}
+        </if>
+
+    </select>
+
+
+    <!-- 查询批发商品的状态 -->
+    <select id="selecPifaByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
+        /* todo 调用小屁孩的接口 */
+        SELECT <include refid="page_Column_List"></include>
+        from t_mall_pifa  p
+        left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
+        left join t_mall_store s on p.shop_id = s.id
+        /*left join t_wx_shop ws on s.wx_shop_id = ws.id*/
+        WHERE p.is_delete = 0 and p.is_use  =1 and p.id = #{id}
+        group by p.id
+    </select>
+
+    <!-- 获取店铺下所有正在参加批发的商品 -->
+    <select id="selectgbProductByShopId" parameterType="Map" resultType="Map">
+        SELECT a.id,a.is_member_discount,a.pro_price,a.pro_cost_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,d.specifica_img_id,e.specifica_img_url,d.inv_num,d.inv_price,
+        gb.id as pifaId,gb.pf_price as pfPrice ,gb.pf_start_time as startTime ,gb.pf_end_time as endTime,a.shop_id as shopId,d.id as inv_id,
+        a.return_day,a.pro_stock_total as stockTotal,gb.pf_type
+        from t_mall_pifa gb
+        left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN  t_mall_product_specifica e ON d.specifica_img_id=e.id
+        left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
+        WHERE  gb.is_delete=0 and gb.is_use=1
+        <if test="isPublic != 1">
+            and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        </if>
+        <if test="status != null and status != ''">
+            and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time )  or (gb.pf_start_time > now() and   gb.pf_end_time > now()))
+        </if>
+        <if test="id != null and id != ''">
+            and gb.id=#{id,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            and (a.pro_name like CONCAT("%","${proName}","%")  or g.group_name like CONCAT("%","${proName}","%")   )
+        </if>
+        <if test="productId != null and productId != ''">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        group by gb.id
+        <if test="type != null and type != ''">
+            <if test="type == 1"><!-- 最新排序 -->
+                order by gb.id
+            </if>
+            <if test="type == 2"><!-- 销量排序 -->
+                order by a.pro_sale_total
+            </if>
+            <if test="type == 3"><!-- 价格排序 -->
+                order by gb.pf_price
+            </if>
+        </if>
+        <if test="desc != null and desc != ''">
+            desc
+        </if>
+    </select>
+
+    <!-- 根据商品id查询批发信息 -->
+    <select id="selectBuyByProductId" parameterType="com.gt.entity.mall.wholesalers.MallPifa" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"></include>
+        from t_mall_pifa p
+        where p.is_delete = 0 and p.is_use = 1
+        and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or (p.pf_start_time > now() and   p.pf_end_time > now()))
+        and p.product_id=#{productId} and p.shop_id=#{shopId}
+        limit 1
+    </select>
+
+    <select id="selectCountJoinNum" parameterType="Map" resultType="java.lang.Integer">
+        select count(id) from t_mall_order o
+        where o.group_buy_id=#{pifaId} and o.buyer_user_id=#{joinUserId} and o.order_type=7
+        and o.order_status > 1 and o.order_status &lt; 5
+    </select>
+
+    <!-- 查询正在进行中的批发商品 -->
+    <select id="selectStartPiFaByProductId" resultMap="pageResultMap" parameterType="Map" >
+        select  <include refid="Base_Column_List" />
+        from t_mall_pifa p
+        where p.is_delete = 0 and p.is_use=1
+        and p.product_id=#{product_id}
+        <if test="pfType == -1"><!-- 未开始批发 -->
+            and p.pf_start_time > now() and   p.pf_end_time > now()
+        </if>
+        <if test="pfType == 1"><!-- 进行中的批发 -->
+            and p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time
+        </if>
+        <if test="pfType == 2"><!-- 已结束的批发 -->
+            and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
+        </if>
+        order by p.create_time desc
+    </select>
 
 </mapper>

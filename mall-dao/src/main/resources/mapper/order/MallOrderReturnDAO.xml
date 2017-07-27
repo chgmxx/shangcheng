@@ -39,4 +39,31 @@
         wlNo, wl_telephone AS wlTelephone, wl_remark AS wlRemark, return_fenbi AS returnFenbi, return_jifen AS returnJifen
     </sql>
 
+    <select id="selectByOrderDetailId" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallOrderReturn" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_order_return r
+        where order_id = #{orderId,jdbcType=INTEGER} and  order_detail_id = #{orderDetailId,jdbcType=INTEGER}
+    </select>
+    <select id="selectByReturnNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select <include refid="Base_Column_List" />
+        from t_mall_order_return r
+        left join t_mall_order o on o.id=r.order_id
+        where o.order_no = #{returnNo}
+        limit 1
+    </select>
+
+    <select id="selectByDetailIds" resultMap="BaseResultMap" parameterType="Map" >
+        select <include refid="Base_Column_List" />
+        from t_mall_order_return r
+        <where> 1=1
+            <if test="detailIdList != null and detailIdList != ''">
+                and
+                <foreach collection="detailIdList" index="index" item="item" open="(" separator="or" close=")">
+                    r.order_detail_id = #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
 </mapper>

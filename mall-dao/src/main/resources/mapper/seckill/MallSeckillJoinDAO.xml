@@ -20,4 +20,12 @@
         productId, seckill_time AS seckillTime
     </sql>
 
+    <!-- 查询用户参加秒杀的数量 -->
+    <select id="selectCountByBuyId" parameterType="Map" resultType="java.lang.Integer">
+        select  count(d.det_pro_num) as count
+        from t_mall_seckill_join j
+        left join t_mall_order_detail d on j.order_detail_id=d.id
+        where j.seckill_user_id = #{joinUserId} and j.seckill_id=#{seckillId}
+    </select>
+
 </mapper>

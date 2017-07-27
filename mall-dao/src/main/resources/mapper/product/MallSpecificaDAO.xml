@@ -19,5 +19,13 @@
     <sql id="Base_Column_List">
         id, spec_name AS specName, shop_id AS shopId, user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_back_end AS isBackEnd, type, erp_name_id AS erpNameId
     </sql>
+    <select id="selectByUserId" resultType="java.util.Map">
+        select id as item_key,spec_name as item_value from t_mall_specifica
+        where  is_delete=0 and (user_id = #{userId} or is_back_end=1) and type=#{type}
+        <if test="shopId != null">
+            <!-- and shop_id = #{shopId} -->
+        </if>
+        order by id
+    </select>
 
 </mapper>

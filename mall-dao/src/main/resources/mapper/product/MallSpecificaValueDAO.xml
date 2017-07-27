@@ -18,4 +18,14 @@
         id, spec_id AS specId, spec_value AS specValue, user_id AS userId, is_delete AS isDelete, type, erp_value_id AS erpValueId
     </sql>
 
+    <select id="selectBySpecId" resultType="java.util.Map">
+        select
+        id,spec_value as value
+        from t_mall_specifica_value
+        where spec_id = #{id,jdbcType=INTEGER} and type=#{type} and is_delete = 0
+        <if test="shopId != null">
+            <!-- and shopId = #{shopId} -->
+        </if>
+    </select>
+
 </mapper>

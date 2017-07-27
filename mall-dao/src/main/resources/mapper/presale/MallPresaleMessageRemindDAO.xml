@@ -18,4 +18,23 @@
         id, presale_id AS presaleId, remind_user_id AS remindUserId, is_remind AS isRemind, is_open AS isOpen, create_time AS createTime, remind_time AS remindTime
     </sql>
 
+    <select id="selectByPresale" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.presale.MallPresaleMessageRemind" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_presale_message_remind
+        where 1=1
+        <if test="presaleId != null">
+            and presale_id = #{presaleId,jdbcType=INTEGER}
+        </if>
+        <if test="remindUserId != null">
+            and remind_user_id = #{remindUserId,jdbcType=INTEGER}
+        </if>
+        <if test="isRemind != null">
+            and is_remind = #{isRemind,jdbcType=INTEGER}
+        </if>
+        <if test="isOpen != null">
+            and is_open = #{isOpen,jdbcType=INTEGER}
+        </if>
+    </select>
+
 </mapper>

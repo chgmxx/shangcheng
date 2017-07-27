@@ -6,5 +6,7 @@
 </head>
 <body>
 aabb ${homeUrl}
+<br/>
+${wxShop}
 </body>
 </html>

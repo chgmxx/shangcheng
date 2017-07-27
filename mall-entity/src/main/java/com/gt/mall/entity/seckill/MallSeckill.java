@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -87,6 +88,51 @@ public class MallSeckill extends Model< MallSeckill > {
      */
     @TableField( "is_use" )
     private Integer    isUse;
+
+    /**
+     * 状态 不是表中字段
+     */
+    @TableField(exist = false)
+    private Integer status;
+
+    /**
+     * 店铺名称  不是表中字段
+     */
+    @TableField(exist = false)
+    private String shopName;
+
+    /**
+     * 秒杀价集合  不是表中字段
+     */
+    @TableField(exist = false)
+    private List<MallSeckillPrice> priceList;
+
+    /**
+     * 剩余时间   不是表中字段
+     */
+    @TableField(exist = false)
+    private Long times;
+
+    /**
+     * 活动开始剩余时间  不是表中字段
+     */
+    @TableField(exist = false)
+    private Long startTimes;
+
+    /**
+     * 数量  不是表中字段
+     */
+    @TableField(exist = false)
+    private Integer sNum;
+
+    /**
+     * 加入秒杀id 不是表中字段
+     */
+    @TableField(exist = false)
+    private int joinId;
+
+    @TableField(exist = false)
+    private String twoCodePath;
 
     @Override
     protected Serializable pkVal() {

@@ -94,9 +94,17 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
     @TableField( "is_use" )
     private Integer    isUse;
 
+
+    @TableField(exist = false)
     private Integer joinId;
+
+    @TableField(exist = false)
     private Integer status;//状态id
+
+    @TableField(exist = false)
     private Long times;//剩余时间
+
+    @TableField(exist = false)
     private List<MallGroupBuyPrice> priceList;
 
     @Override

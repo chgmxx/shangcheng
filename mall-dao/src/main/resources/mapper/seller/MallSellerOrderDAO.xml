@@ -21,4 +21,88 @@
         AS buyerUserId, seller_user_id AS sellerUserId, is_delete AS isDelete
     </sql>
 
+    <!-- 查询客户订单的数量 -->
+    <select id="selectCountClientOrder" parameterType="Map" resultType="java.lang.Integer">
+        SELECT COUNT(so.id) FROM t_mall_seller_order so
+        left join t_mall_seller s on s.member_id=so.sale_member_id
+        WHERE so.sale_member_id=#{refereesMemberId}
+        and so.is_delete=0
+        <if test="saleMemberId != null">
+            and sale_member_id = #{saleMemberId}
+        </if>
+        <if test="isCheck == -1">
+            and (s.check_status = 1 or s.check_status = 0 or s.check_status = -2)
+        </if>
+        <if test="isCheck == 1 or isCheck == null">
+            and (s.check_status = 1 or s.check_status = -2)
+        </if>
+    </select>
+    <!-- 查询销售员的订单信息 -->
+    <select id="selectOrderByMemberId" parameterType="Map" resultType="Map">
+        SELECT d.`det_pro_name`,d.`product_speciname` FROM `t_mall_seller_order` so
+        LEFT JOIN t_mall_order o ON o.id=so.`order_id`
+        LEFT JOIN t_mall_order_detail d ON d.order_id=o.`id`
+        WHERE so.sale_member_id=#{member_id} AND o.`order_status` &lt; 5 and so.is_delete=0
+        AND d.`id` > 0
+        ORDER BY o.`create_time` DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectOrderByClientId" parameterType="Map" resultType="Map">
+        /* todo 关联彭江丽  粉丝表  */
+        SELECT DISTINCT so.id,d.`det_pro_name` AS proName /*,m.`nickname`*/,o.`create_time`,o.`order_status`,d.status,o.`order_money`,o.`id`
+        FROM `t_mall_seller_order` so
+        LEFT JOIN t_mall_order o ON o.id=so.`order_id`
+        LEFT JOIN t_mall_order_detail d ON d.order_id=o.`id`
+        left join t_mall_seller s on s.member_id=so.sale_member_id
+        /*LEFT JOIN t_wx_bus_member m ON o.`buyer_user_id`=m.`id`*/
+        WHERE so.is_delete=0
+        <if test="memberId != null and memberId != ''">
+            and so.sale_member_id=#{memberId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds != ''">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                so.sale_member_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="status != null and status != 0">
+            and o.`order_status` = #{status}
+        </if>
+        <if test="custId != null and custId != ''">
+            and so.sale_member_id = #{custId}
+        </if>
+        <if test="isCheck == -1">
+            and (s.check_status = 1 or s.check_status = 0 or s.check_status = -2)
+        </if>
+        <if test="isCheck == 1 or isCheck == null">
+            <if test="fromType == 1">
+                and (s.check_status = 1 or s.check_status = -2)
+            </if>
+            <if test="fromType == null">
+                and s.check_status = 1
+            </if>
+        </if>
+        GROUP BY so.id
+        ORDER BY o.`create_time` DESC
+    </select>
+    <select id="selectBySellerOrder" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from t_mall_seller_order
+        <where>
+            1=1
+            <if test="saleMemberId != null">
+                and sale_member_id = #{saleMemberId}
+            </if>
+            <if test="orderId != null">
+                and order_id = #{orderId}
+            </if>
+            <if test="orderDetailId != null">
+                and order_detail_id = #{orderDetailId}
+            </if>
+            limit 1
+        </where>
+    </select>
+
 </mapper>

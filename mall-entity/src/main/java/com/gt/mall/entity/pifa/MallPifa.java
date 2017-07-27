@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -82,6 +83,30 @@ public class MallPifa extends Model< MallPifa > {
      */
     @TableField( "pf_type" )
     private Integer    pfType;
+
+    @TableField( exist = false )
+    private Integer status;
+
+    @TableField( exist = false )
+    private String shopName;
+
+    @TableField( exist = false )
+    private List<MallPifaPrice> priceList;
+
+    @TableField( exist = false )
+    private Long times;//剩余时间
+
+    @TableField( exist = false )
+    private Long startTimes;//活动开始剩余时间
+
+    @TableField( exist = false )
+    private int joinId;
+
+    @TableField( exist = false )
+    private String twoCodePath;//商品二维码路径
+
+    @TableField( exist = false )
+    private String proName;//商品名称
 
     @Override
     protected Serializable pkVal() {

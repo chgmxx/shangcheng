@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * <p>
@@ -86,6 +87,12 @@ public class MallProductInventory extends Model< MallProductInventory > {
      */
     @TableField( "erp_specvalue_id" )
     private String     erpSpecvalueId;
+
+    /**
+     * 规格集合
+     */
+    @TableField( exist = false )//此注解排除非表中字段
+    private List< MallProductSpecifica > specList;
 
     @Override
     protected Serializable pkVal() {

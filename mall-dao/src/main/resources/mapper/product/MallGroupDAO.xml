@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gt.mall.dao.basic.MallGroupDAO">
+<mapper namespace="com.gt.mall.dao.product.MallGroupDAO">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallGroup">
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.product.MallGroup">
         <id column="id" property="id"/>
         <result column="group_name" property="groupName"/>
         <result column="group_p_id" property="groupPId"/>
@@ -27,5 +27,62 @@
         is_first_parents AS isFirstParents, is_child AS isChild, sort, user_id AS userId, create_time AS createTime, edit_user_id AS editUserId, edit_time AS editTime, is_delete AS
         isDelete
     </sql>
+    <!--  -->
+    <select id="selectGroupByCount" resultType="java.lang.Integer">
+        select count(id)
+        from t_mall_group
+        where is_delete=0
+        <if test="groupPId != null">
+            and group_p_id = #{groupPId}
+        </if>
+        <if test="groupPId == 0">
+            and is_first_parents = 1
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="selectGroupByPage" resultType="java.util.Map">
+        select
+        g.id as id ,g.group_name as groupName,g.is_first_parents as isFirstParents,g.is_child as isChild,
+        g.shop_id as shopId,g.group_p_id as groupPId,g.create_time as createTime,g.edit_user_id as userId,
+        s.sto_name
+        <if test="type == 1">
+            ,ss.id as lId,ss.is_delete as lDelete
+        </if>
+        from t_mall_group g
+        left join t_mall_store s on s.id=g.shop_id
+        <if test="type == 1">
+            left join t_mall_search_label ss on ss.group_id=g.id and ss.shop_id=g.shop_id
+        </if>
+        where g.is_delete=0
+        <if test="groupPId != null">
+            and g.group_p_id = #{groupPId}
+        </if>
+        <if test="groupPId == 0">
+            and g.is_first_parents = 1
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                g.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by g.create_time desc
+        <if test="firstNum != null and maxNum != null">limit #{firstNum},#{maxNum}</if>
+    </select>
+    <select id="selectGroupByParent" resultType="java.util.Map">
+
+    </select>
+    <update id="updateByGroupId">
+        update t_mall_group set is_delete = 1
+        where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
 
 </mapper>

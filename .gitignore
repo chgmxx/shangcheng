@@ -59,7 +59,5 @@ tmp/
 /mall-generator/src/main/java/com/gt/mall/generator/service/
 /mall-common/mall-common.iml
 /mall-generator/target/
-
-!/mall-dao/mall-dao.iml
 /mall-dao/mall-dao.iml
 /mall-common/src/main/resources/

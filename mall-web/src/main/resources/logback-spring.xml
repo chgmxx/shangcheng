@@ -22,6 +22,7 @@
         </encoder>
     </appender>
 
+
     <!-- 按照每天生成日志文件 -->
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -86,4 +87,5 @@
         <appender-ref ref="console"/>
         <appender-ref ref="file"/>
     </logger>-->
+
 </configuration>

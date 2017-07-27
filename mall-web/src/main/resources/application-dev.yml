@@ -75,5 +75,31 @@ web:
   homeUrl: http://192.168.2.100:8081/
   #访问图片路径
   imageUrlPrefix: http://maint.yifriend.net/upload/
+  #进销存 地址
+  jxcUrl: http://jxc.duofee.com/jxc/
+  #进销存token用户名
+  jxcAccount: e_shop
+  #进销存token密码
+  jxcPwd: shop12345
+
+
+### 会员CXF项目接口地址
+project:
+ member:
+  cxf-url: http://jiaoyu.yifriend.net/memberWS?wsdl
+ shop:
+  cxf-url: http://yifriend.net/webservice/api?wsdl
+
+#调用大师兄接口需要的配置
+wxmp:
+ webservice:
+  domain: http://yifriend.net
+ #token 密码
+ token: 57CD54340AE48C861A1F1036099888CA
+
+
+ #### cxf 服务端配置
+cxf:
+ path: /services
 
 
