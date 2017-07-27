@@ -19,22 +19,26 @@ public interface MallGroupJoinService extends BaseService<MallGroupJoin> {
 
     /**
      * 获取开团人员
+     *
+     * @param params groupBuyId：团购id，joinUserId：用户id,buyerUserId:用户Id
+     * @param member 用户
+     * @return List
      */
     List<Map<String, Object>> getJoinGroup(Map<String, Object> params, Member member);
 
     /**
      * 查询团购参与人
      *
-     * @param params
-     * @return
+     * @param params groupBuyId：团购id，joinId：参团id
+     * @return 参与人
      */
     List<Map<String, Object>> selectJoinByjoinId(Map<String, Object> params);
 
     /**
      * 查询用户参加团购的数量
      *
-     * @param params
-     * @return
+     * @param params groupBuyId：团购id，joinUserId：用户id
+     * @return 数量
      */
     int selectCountByBuyId(Map<String, Object> params);
 

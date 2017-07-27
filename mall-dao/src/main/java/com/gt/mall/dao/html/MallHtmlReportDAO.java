@@ -17,18 +17,18 @@ public interface MallHtmlReportDAO extends BaseMapper<MallHtmlReport> {
     /**
      * 统计商城+举报方法 的举报次数
      *
-     * @param html_id
-     * @return
+     * @param html_id 模板Id
+     * @return 数量
      */
     int countReportNumByHtmlId(Integer html_id, Integer style);
 
     /**
      * 根据商城id,举报id, 修改举报次数
      *
-     * @param num
-     * @param html_id
-     * @param style
-     * @return
+     * @param num 次数
+     * @param html_id 模板id
+     * @param style 举报id
+     * @return 是否成功
      */
     int updateReportNumByHtmlId(Integer num, Integer html_id, Integer style);
 }

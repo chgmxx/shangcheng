@@ -22,40 +22,40 @@ public interface MallAuctionBiddingService extends BaseService<MallAuctionBiddin
     /**
      * 查询用户参加拍卖的数量
      *
-     * @param params
-     * @return
+     * @param params aucId：拍卖id, joinUserId：用户ID
+     * @return 数量
      */
     int selectCountByBuyId(Map<String, Object> params);
 
     /**
      * 拍卖竞拍
      *
-     * @param order
-     * @param detailList
+     * @param order 订单信息
+     * @param detailList 订单详情信息
      */
     void addBidding(MallOrder order, List<MallOrderDetail> detailList);
 
     /**
      * 修改拍卖竞拍的状态
-     *
-     * @param order
-     * @param status
+     * @param order 订单信息
+     * @param status 竞拍状态
+     * @param detailList 订单详情信息
      */
     void upStateBidding(MallOrder order, int status, List<MallOrderDetail> detailList);
 
     /**
      * 查询我的竞拍
      *
-     * @param member
-     * @return
+     * @param member 用户
+     * @return 竞拍列表
      */
     List<Map<String, Object>> selectMyBidding(Member member);
 
     /**
      * 查询我的获拍
      *
-     * @param member
-     * @return
+     * @param member 用户
+     * @return 获拍列表
      */
     List<Map<String, Object>> selectMyHuoBid(Member member);
 

@@ -2,10 +2,13 @@ package com.gt.mall.web.service.html.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.html.MallHtmlDAO;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.util.QRcodeKit;
 import com.gt.mall.web.service.html.MallHtmlService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,12 +76,11 @@ public class MallHtmlServiceImpl extends BaseServiceImpl<MallHtmlDAO, MallHtml> 
 
             htmlDAO.insert(obj);
             MallHtml obj1 = new MallHtml();
-            //TODO 需调用QRcodeKit 二维码工具类
-//            String url = PropertiesUtil.getArticleUrl()+"mallhtml/"+obj.getId()+"/79B4DE7C/phoneHtml.do";
-//            String code = PropertiesUtil.getResImagePath()+"/2/" +user.getName()+"/"+PropertiesUtil.IMAGE_FOLDER_TYPE_20+"/"+System.currentTimeMillis();
-//            String codeurl = QRcodeKit.buildQRcode(url,code,180,180);
-//            codeurl = codeurl.replaceAll("\\\\", "/");
-//            obj1.setCodeUrl(codeurl.split("upload")[1]);
+            String url = PropertiesUtil.getArticleUrl()+"mallhtml/"+obj.getId()+"/79B4DE7C/phoneHtml.do";
+            String code = PropertiesUtil.getImageUrlPrefix()+"/2/" +user.getName()+"/"+ Constants.IMAGE_FOLDER_TYPE_20+"/"+System.currentTimeMillis();
+            String codeurl = QRcodeKit.buildQRcode(url,code,180,180);
+            codeurl = codeurl.replaceAll("\\\\", "/");
+            obj1.setCodeUrl(codeurl.split("upload")[1]);
             obj1.setId(obj.getId());
             htmlDAO.updateAllColumnById(obj1);
         } else {
@@ -154,12 +156,11 @@ public class MallHtmlServiceImpl extends BaseServiceImpl<MallHtmlDAO, MallHtml> 
         obj.setCreattime(DateTimeKit.getDateTime());
         htmlDAO.insert(obj);//新增数据
         MallHtml obj1 = new MallHtml();
-        //TODO 需调用QRcodeKit 二维码工具类
-//        String url =PropertiesUtil.getArticleUrl()+"mallhtml/"+obj.getId()+"/79B4DE7C/phoneHtml.do";
-//        String code = PropertiesUtil.getResImagePath()+"/2/" +user.getName()+"/"+PropertiesUtil.IMAGE_FOLDER_TYPE_20+"/"+System.currentTimeMillis();
-//        String codeurl = QRcodeKit.buildQRcode(url,code,180,180);
-//        codeurl = codeurl.replaceAll("\\\\", "/");
-//        obj1.setCodeurl(codeurl.split("upload")[1]);
+        String url =PropertiesUtil.getArticleUrl()+"mallhtml/"+obj.getId()+"/79B4DE7C/phoneHtml.do";
+        String code = PropertiesUtil.getImageUrlPrefix()+"/2/" +user.getName()+"/"+Constants.IMAGE_FOLDER_TYPE_20+"/"+System.currentTimeMillis();
+        String codeurl = QRcodeKit.buildQRcode(url,code,180,180);
+        codeurl = codeurl.replaceAll("\\\\", "/");
+        obj1.setCodeUrl(codeurl.split("upload")[1]);
         obj1.setId(obj.getId());
         htmlDAO.updateAllColumnById(obj1);//修改二维码
         return obj.getId();

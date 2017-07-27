@@ -69,7 +69,7 @@
         and j.group_buy_id=#{groupBuyId} and (j.id = #{id} or j.p_join_id=#{id})
     </select>
     <!-- 查询团购参与人、商品信息 -->
-    <select id="selectJoinByjoinId" parameterType="Map" resultMap="JoinResultMap">
+    <select id="selectJoinByJoinId" parameterType="Map" resultMap="JoinResultMap">
         select j.id,j.group_buy_id as groupBuyId, j.join_user_id as joinUserId
 --         ,m.nickname,m.headimgurl
         ,j.join_type as joinType,j.join_time as joinTime

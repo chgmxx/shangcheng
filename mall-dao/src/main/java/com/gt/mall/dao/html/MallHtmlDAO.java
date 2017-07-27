@@ -18,19 +18,19 @@ public interface MallHtmlDAO extends BaseMapper<MallHtml> {
 
     /**
      * 得到该用户 商家中的H5模板列表
-     * @param user_id
-     * @param pid
-     * @param firstNum
-     * @param pageSize
-     * @return
+     * @param user_id 用户Id
+     * @param pid 创建人的父类id
+     * @param firstNum 页数
+     * @param pageSize 记录数
+     * @return 模板列表
      */
     List<Map<String, Object>> getHtmlByUserId(Integer user_id, Integer pid, Integer firstNum, Integer pageSize);
 
     /**
      * 统计该用户 商家中的H5模板
-     * @param user_id
-     * @param pid
-     * @return
+     * @param user_id 用户id
+     * @param pid 创建人的父类id
+     * @return 数量
      */
     int countHtmlByUserId(Integer user_id, Integer pid);
 
@@ -38,16 +38,16 @@ public interface MallHtmlDAO extends BaseMapper<MallHtml> {
     /**
      * 后台中的H5模板列表
      *
-     * @param firstNum
-     * @param pageSize
-     * @return
+     * @param firstNum 页数
+     * @param pageSize 记录数
+     * @return 模板列表
      */
     List<Map<String, Object>> getHtmlModelList(Integer firstNum, Integer pageSize);
 
     /**
      * 统计后台中的H5模板
      *
-     * @return
+     * @return 数量 
      */
     int countHtmlModelList();
 

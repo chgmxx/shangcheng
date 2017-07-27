@@ -18,7 +18,8 @@ public interface MallPaySetService extends BaseService<MallPaySet> {
 
     /**
      * 通过用户Id查询商城设置
-     * @param set
+     *
+     * @param set userId：用户Id
      * @return
      */
     MallPaySet selectByUserId(MallPaySet set);
@@ -26,19 +27,18 @@ public interface MallPaySetService extends BaseService<MallPaySet> {
     /**
      * 编辑商城设置
      *
-     * @param params
-     * @return
+     * @param params 商城设置
+     * @return 是否成功
      */
-    public int editPaySet(Map<String, Object> params);
+    int editPaySet(Map<String, Object> params);
 
 
     /**
      * 判断商户是否允许买家货到付款
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
      */
-    public void isHuoDaoByUserId(int userId, HttpServletRequest request);
+    void isHuoDaoByUserId(int userId, HttpServletRequest request);
 
     /**
      * 添加商城设置
@@ -52,8 +52,8 @@ public interface MallPaySetService extends BaseService<MallPaySet> {
     /**
      * 判断商户是否允许买家货到付款
      *
-     * @param userId
-     * @return
+     * @param userId 用户id
+     * @return map
      */
-    public Map<String, Object> isHuoDaoByUserId(int userId);
+    Map<String, Object> isHuoDaoByUserId(int userId);
 }

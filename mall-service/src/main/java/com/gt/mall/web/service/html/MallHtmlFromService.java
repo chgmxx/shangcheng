@@ -14,20 +14,20 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallHtmlFromService extends BaseService< MallHtmlFrom > {
+public interface MallHtmlFromService extends BaseService<MallHtmlFrom> {
 
 
     /**
      * h5商城列表页
-     * @param request
-     * @return
+     *
+     * @return map
      */
-    public Map<String,Object> htmlListfrom(HttpServletRequest request);
+    Map<String, Object> htmlListfrom(HttpServletRequest request);
 
     /**
      * 表单详情
-     * @param request
-     * @return
+     *
+     * @return map
      */
-    public Map<String,Object> htmlfromview(HttpServletRequest request);
+    Map<String, Object> htmlfromview(HttpServletRequest request);
 }

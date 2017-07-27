@@ -13,11 +13,13 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallFreightDetailService extends BaseService< MallFreightDetail > {
+public interface MallFreightDetailService extends BaseService<MallFreightDetail> {
     /**
      * 编辑物流详情
      *
-     * @Title: editFreightDetail
+     * @param params    delDetail：删除的物流详情，delPro：删除的物流配送区域
+     *                  detail：物流详情
+     * @param freightId 物流Id
      */
     void editFreightDetail(Map<String, Object> params, int freightId);
 }

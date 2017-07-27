@@ -19,25 +19,25 @@ public interface MallCollectService extends BaseService<MallCollect> {
     /**
      * 查询商品收藏
      *
-     * @param request
-     * @param proId
+     * @param proId 商品id
+     * @param userId 用户Id
      */
     void getProductCollect(HttpServletRequest request, int proId, int userId);
 
     /**
      * 收藏商品
      *
-     * @param params
-     * @param userId
-     * @return
+     * @param params 收藏信息
+     * @param userId 用户Id
+     * @return boolean
      */
     boolean collectionProduct(Map<String, Object> params, int userId);
 
     /**
      * 删除收藏 可批量
      *
-     * @param params
-     * @return
+     * @param params ids:收藏id集合，isDelete;是否删除，isCollect：是否收藏
+     * @return boolean
      */
     boolean deleteCollect(Map<String, Object> params);
 }

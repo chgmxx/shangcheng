@@ -28,10 +28,9 @@ public interface MallHtmlService extends BaseService<MallHtml> {
     /**
      * h5商城列表页
      *
-     * @param request
-     * @return
+     * @return map
      */
-    public Map<String, Object> htmlList(HttpServletRequest request);
+    Map<String, Object> htmlList(HttpServletRequest request);
 
     /**
      * 根据h5商城id获取相对应的部分数据
@@ -43,10 +42,10 @@ public interface MallHtmlService extends BaseService<MallHtml> {
     /**
      * 保存H5商城信息
      *
-     * @param obj
-     * @param user
+     * @param obj  h5信息
+     * @param user 用户
      */
-    public void addorUpdateSave(MallHtml obj, BusUser user);
+    void addorUpdateSave(MallHtml obj, BusUser user);
 
     /**
      * 删除数据
@@ -57,10 +56,10 @@ public interface MallHtmlService extends BaseService<MallHtml> {
     /**
      * 修改H5商城信息
      *
-     * @param obj
-     * @param user
+     * @param obj  h5信息
+     * @param user 用户
      */
-    public void htmlSave(MallHtml obj, BusUser user);
+    void htmlSave(MallHtml obj, BusUser user);
 
 
     /**
@@ -72,10 +71,10 @@ public interface MallHtmlService extends BaseService<MallHtml> {
     /**
      * 修改背景图
      *
-     * @param id
-     * @param bakurl
+     * @param id     模板Id
+     * @param bakurl 背景图
      */
-    public void updateimage(Integer id, String bakurl);
+    void updateimage(Integer id, String bakurl);
 
     /**
      * 根据用户id 查询公众号id
@@ -87,26 +86,25 @@ public interface MallHtmlService extends BaseService<MallHtml> {
     /**
      * 根据主账户id 查询已经创建的h5商城的个数
      *
-     * @param userid
-     * @return
+     * @param userid 用户Id
+     * @return 数量
      */
-    public int htmltotal(Integer userid);
+    int htmltotal(Integer userid);
 
     /**
      * h5商城模板列表页
      *
-     * @param request
-     * @return
+     * @return map
      */
-    public Map<String, Object> modelList(HttpServletRequest request);
+    Map<String, Object> modelList(HttpServletRequest request);
 
 
     /**
      * 复制模板信息，添加新数据，并且返回新增数据的id（商家添加h5列表页）
      *
-     * @param htmlid
-     * @param user
-     * @return
+     * @param htmlid 模板Id
+     * @param user   用户
+     * @return 数量
      */
-    public Integer SetmallHtml(Integer htmlid, BusUser user);
+    Integer SetmallHtml(Integer htmlid, BusUser user);
 }

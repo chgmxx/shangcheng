@@ -56,7 +56,7 @@ public class MallGroupBuyPriceServiceImpl extends BaseServiceImpl<MallGroupBuyPr
     }
 
     @Override
-    public List<MallGroupBuyPrice> selectPriceByGroupId(int groupId) {
-        return groupBuyPriceDAO.selectPriceByGroupId(groupId);
+    public List<MallGroupBuyPrice> selectPriceByGroupId(int groupBuyId) {
+        return groupBuyPriceDAO.selectPriceByGroupId(groupBuyId);
     }
 }

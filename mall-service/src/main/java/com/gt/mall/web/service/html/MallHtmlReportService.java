@@ -16,9 +16,9 @@ public interface MallHtmlReportService extends BaseService<MallHtmlReport> {
     /**
      * 举报方法
      *
-     * @param htmlid
-     * @param style
+     * @param htmlid 模板Id
+     * @param style  举报id
      */
-    public void htmlReport(Integer htmlid, Integer style);
+    void htmlReport(Integer htmlid, Integer style);
 
 }

@@ -59,5 +59,307 @@
         id, product_id AS productId, g_name AS gName, g_price AS gPrice, g_start_time AS gStartTime, g_end_time AS gEndTime, g_people_num AS gPeopleNum, g_max_buy_num AS
         gMaxBuyNum, user_id AS userId, shop_id AS shopId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse
     </sql>
+    <sql id="page_Column_List">
+        distinct g.id, g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
+        user_id, shop_id, create_time, g.is_delete, is_use,j.id as joinId
+    </sql>
+    <sql id="group_Column_List">
+        distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
+        shop_id, g.create_time, is_use,
+        case
+        when g.is_use = -1 then -2<!--已失效  -->
+        when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
+        when g.g_start_time &lt;= now() and now() &lt; g.g_end_time then 1<!-- 进行中 -->
+        when g.g_start_time &lt; now() and g.g_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status,
+        -- if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,
+        s.sto_name as shopName ,j.id as joinId
+    </sql>
+    <sql id="group_product_Column_List">
+        distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
+        g.shop_id, g.create_time, is_use,
+        case
+        when g.is_use = -1 then -2<!--已失效  -->
+        when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
+        when g.g_start_time &lt;= now() and now() &lt; g.g_end_time then 1<!-- 进行中 -->
+        when g.g_start_time &lt; now() and g.g_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status,
+        -- if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName
+        s.sto_name as shopName , j.id as joinId,p.two_code_path
+    </sql>
 
+    <!-- 统计团购 -->
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
+        select count(g.id)
+        from t_mall_group_buy g where g.is_delete = 0
+        <if test="type == -1"><!-- 未开始团购 -->
+            and g.g_start_time &gt; now() and g.g_end_time &gt; now()
+        </if>
+        <if test="type == 1"><!-- 进行中的团购 -->
+            and g.g_start_time &lt;= now() and now() &lt; g.g_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的团购 -->
+            and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                g.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <!-- 根据团购分页 -->
+    <select id="selectByPage" resultMap="groupResultMap" parameterType="Map">
+        select
+        <include refid="group_product_Column_List"/>
+        from t_mall_group_buy g
+        left join t_mall_store s on g.shop_id = s.id
+        <!-- TODO 需补充关联 t_wx_shop门店数据 -->
+        -- left join t_wx_shop ws on s.wx_shop_id = ws.id
+        left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1
+        left join t_mall_product p on p.id= g.product_id
+        where g.is_delete = 0
+        <if test="type == -1"><!-- 未开始团购 -->
+            and g.g_start_time &gt; now() and g.g_end_time &gt; now()
+        </if>
+        <if test="type == 1"><!-- 进行中的团购 -->
+            and g.g_start_time &lt;= now() and now() &lt; g.g_end_time
+        </if>
+        <if test="type == 2"><!-- 已结束的团购 -->
+            and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                g.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        group by g.id
+        order by g.create_time desc
+        limit #{firstNum},#{maxNum}
+    </select>
+    <!-- 查询未开团的商品信息 -->
+    <select id="selectProByGroup" resultMap="productResultMap" parameterType="Map">
+        SELECT distinct(a.id) as
+        id,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_price,a.pro_stock_total as
+        stockTotal,
+        a.create_time as createTime,d.id as invenId,a.pro_type_id,a.erp_pro_id,a.erp_inv_id,a.shop_id
+        from t_mall_product a
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
+        is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where
+        is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            AND a.shop_id = #{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            AND a.pro_name like '%${proName}%'
+        </if>
+        <if test="groupId != null and groupId != ''">
+            AND a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                a.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by a.pro_type_id ,a.id desc
+        limit #{firstNum},#{maxNum}
+    </select>
+    <select id="selectGroupsByProId" parameterType="Map" resultType="Map">
+        select gb.g_start_time,gb.g_end_time from t_mall_group_buy gb
+        where  ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time) or (gb.g_start_time > now() and gb.g_end_time > now()))
+        and gb.is_delete = 0 and gb.is_use = 1 and gb.product_id=#{id} limit 1
+    </select>
+    <select id="selectSeckillByProId" parameterType="Map" resultType="Map">
+        select ms.s_start_time,ms.s_end_time from t_mall_seckill ms
+        where  ((ms.s_start_time &lt;= now() and now() &lt; ms.s_end_time) or (ms.s_start_time > now() and ms.s_end_time > now()))
+        and ms.is_delete = 0 and ms.is_use = 1 and ms.product_id=#{id} limit 1
+    </select>
+    <select id="selectAuctionByProId" parameterType="Map" resultType="Map">
+        select ma.auc_start_time,ma.auc_end_time  from t_mall_auction ma
+        where ((ma.auc_start_time &lt;= now() and now() &lt; ma.auc_end_time) or (ma.auc_start_time > now() and ma.auc_end_time > now()))
+        and ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id} limit 1
+    </select>
+    <select id="selectPresaleByProId" parameterType="Map" resultType="Map">
+        select ma.sale_start_time,ma.sale_end_time  from t_mall_presale ma
+        where ((ma.sale_start_time &lt;= now() and now() &lt; ma.sale_end_time) or (ma.sale_start_time > now() and ma.sale_end_time > now()))
+        and ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id} limit 1
+    </select>
+    <select id="selectpifaByProId" parameterType="Map" resultType="Map">
+        select ma.pf_start_time,ma.pf_end_time  from t_mall_pifa ma
+        where ((ma.pf_start_time &lt;= now() and now() &lt; ma.pf_end_time) or (ma.pf_start_time > now() and ma.pf_end_time > now()))
+        and ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id} limit 1
+    </select>
+    <!-- 统计未开团的商品 -->
+    <select id="selectCountProByGroup" resultType="java.lang.Integer" parameterType="Map">
+        SELECT count(distinct(a.id))
+        from t_mall_product a
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            AND a.shop_id = #{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            AND a.pro_name like '%${proName}%'
+        </if>
+        <if test="groupId != null and groupId != ''">
+            AND a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
+        </if>
+        <if test="shoplist != null and shoplist != ''">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                a.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectByGroupBuyId" resultType="Map" parameterType="java.lang.Integer">
+        select
+        b.id, b.product_id as productId, b.g_name as gName, b.g_price as gPrice,
+        b.g_start_time as gStartTime, b.g_end_time as gEndTime, b.g_people_num as gPeopleNum, b.g_max_buy_num as gMaxBuyNum,
+        b.shop_id as shopId, c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        from t_mall_group_buy b
+        left join t_mall_product p on b.product_id = p.id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON b.product_id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        where b.id = #{id}
+    </select>
+
+    <!-- 查询是否存在未开始和进行中的商品 -->
+    <select id="selectGroupByProId" parameterType="com.gt.entity.mall.MallGroupBuy" resultMap="groupResultMap">
+        SELECT
+        <include refid="page_Column_List"></include>
+        from t_mall_group_buy g
+        left join t_mall_group_join j on g.id = j.group_buy_id
+        WHERE g.is_delete = 0 and g.is_use =1
+        <if test="productId != null and productId != ''">
+            and g.product_id = #{productId}
+        </if>
+        and ((g_start_time &lt;= now() and now() &lt; g_end_time ) or
+        (
+        g_start_time > now() and g_end_time > now())
+        <if test="id != null and id != ''">
+            and g.id != #{id}
+        </if>
+        )
+        <if test="status == null or status == ''">
+            and j.id>0
+        </if>
+        group by g.id
+    </select>
+    <!-- 查询团购商品的状态 -->
+    <select id="selectGroupByIds" parameterType="java.lang.Integer" resultMap="groupResultMap">
+        SELECT
+        <include refid="group_Column_List"></include>
+        from t_mall_group_buy g
+        left join t_mall_store s on g.shop_id = s.id
+        <!-- TODO 需补充关联 t_wx_shop门店数据 -->
+        -- left join t_wx_shop ws on s.wx_shop_id = ws.id
+        left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1
+        WHERE g.is_delete = 0 and g.is_use =1 and g.id = #{id}
+        group by g.id
+    </select>
+    <!-- 获取店铺下所有正在参加团购的商品 -->
+    <select id="selectgbProductByShopId" parameterType="Map" resultType="Map">
+        SELECT
+        a.id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,d.specifica_img_id,e.specifica_img_url,d.inv_num,d.inv_price,
+        gb.id as gBuyId,gb.g_price as price ,gb.g_start_time as startTime ,gb.g_end_time as endTime,gb.g_people_num as
+        peopleNum,a.shop_id as shopId,d.id as inv_id,
+        a.return_day,
+        gb.g_max_buy_num as maxNum
+        from t_mall_group_buy gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
+        is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where
+        is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
+        WHERE gb.is_delete=0 and gb.is_use=1
+        <if test="isPublic != 1">
+            and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        </if>
+        <if test="status != null and status != ''">
+            and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
+        </if>
+        <if test="id != null and id != ''">
+            and gb.id=#{id,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            and ( a.pro_name like CONCAT("%","${proName}","%") or g.group_name like CONCAT("%","${proName}","%") )
+        </if>
+        <if test="productId != null and productId != ''">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        GROUP BY a.id
+        <if test="type != null and type != ''">
+            <if test="type == 1"><!-- 最新排序 -->
+                order by gb.id
+            </if>
+            <if test="type == 2"><!-- 销量排序 -->
+                order by a.pro_sale_total+a.sales_base
+            </if>
+            <if test="type == 3"><!-- 价格排序 -->
+                order by gb.g_price
+            </if>
+        </if>
+        <if test="desc != null and desc != ''">
+            desc
+        </if>
+    </select>
+    <!-- 根据商品id查询团购信息 -->
+    <select id="selectBuyByProductId" parameterType="com.gt.entity.mall.MallGroupBuy" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from t_mall_group_buy gb
+        where gb.is_delete = 0 and gb.is_use = 1
+        and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
+        and gb.product_id=#{productId,jdbcType=INTEGER}
+        and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        limit 1
+    </select>
+
+    <!-- 查询已结束未成团的团购信息 -->
+    <select id="selectEndGroupByAll" resultType="Map">
+        select gb.id as groupBuyId ,j.id as id,gb.is_use
+        from t_mall_group_buy gb
+        right join t_mall_group_join j on j.group_buy_id = gb.id
+        left join t_mall_order o on o.id = j.order_id
+        where  (gb.g_start_time &lt; now()  and gb.g_end_time &lt;= now() or gb.is_use = -1)
+        and o.order_status = 2 and j.join_type = 1 and j.join_status != -1
+        and (select count(j2.id) as count from t_mall_group_join j2 where j2.id = j.id or j2.p_join_id = j.id) &lt; gb.g_people_num
+    </select>
+
+    <!-- 获取店铺下所有正在参加团购的商品 -->
+    <select id="selectCountByShopId" parameterType="Map" resultType="java.lang.Integer">
+        SELECT count(distinct(gb.id))
+        from t_mall_group_buy gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        WHERE gb.is_delete=0 and gb.is_use=1
+        <if test="isPublic != 1">
+            and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        </if>
+        <if test="status != null and status != ''">
+            AND ((gb.g_start_time &lt;= NOW() AND NOW() &lt; gb.g_end_time) OR (gb.g_start_time > NOW() AND
+            gb.g_end_time > NOW()))
+        </if>
+        <if test="productId != null and productId != ''">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+    </select>
 </mapper>

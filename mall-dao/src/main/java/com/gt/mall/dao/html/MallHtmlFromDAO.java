@@ -19,26 +19,26 @@ public interface MallHtmlFromDAO extends BaseMapper<MallHtmlFrom> {
     /**
      * 得到H5模板的表单列表
      *
-     * @param html_id
-     * @param firstNum
-     * @param pageSize
-     * @return
+     * @param html_id 模板id
+     * @param firstNum 页数
+     * @param pageSize 记录数
+     * @return 表单列表
      */
     List<Map<String, Object>> getHtmlFromByHtmlId(Integer html_id, Integer firstNum, Integer pageSize);
 
     /**
      * 统计5模板的表单数量
      *
-     * @param html_id
-     * @return
+     * @param html_id 模板id
+     * @return 数量
      */
     int countHtmlFromByHtmlId(Integer html_id);
 
     /**
      * 表单详情
      *
-     * @param id
-     * @return
+     * @param id 表单id
+     * @return 表单信息
      */
     Map<String, Object> htmlFromView(Integer id);
 }

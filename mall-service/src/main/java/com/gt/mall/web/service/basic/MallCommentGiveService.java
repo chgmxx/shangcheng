@@ -26,18 +26,18 @@ public interface MallCommentGiveService extends BaseService<MallCommentGive> {
     void commentGive(int commentId, HttpServletRequest request, int memberId);
 
     /**
-     * 编辑评论送礼
-     *
-     * @param giveList
-     * @return
+     *  编辑评论送礼
+     * @param giveList 送礼列表
+     * @param user 用户
+     * @return boolean
      */
     boolean editCommentGive(List<MallCommentGive> giveList, BusUser user);
 
     /**
      * 通过用户id查询评论送礼设置
      *
-     * @param userId
-     * @return
+     * @param userId 用户Id
+     * @return 评论送礼列表
      */
     List<MallCommentGive> getGiveByUserId(int userId);
 }

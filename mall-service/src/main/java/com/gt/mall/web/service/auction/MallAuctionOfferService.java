@@ -21,9 +21,9 @@ public interface MallAuctionOfferService extends BaseService<MallAuctionOffer> {
     /**
      * 出价
      *
-     * @param params
-     * @param memberId
-     * @return
+     * @param params offer:出价信息，bid：竞拍信息
+     * @param memberId 用户id
+     * @return 是否成功
      */
     Map<String, Object> addOffer(Map<String, Object> params, String memberId);
 

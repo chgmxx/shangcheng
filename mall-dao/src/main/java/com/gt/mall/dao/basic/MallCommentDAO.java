@@ -18,25 +18,24 @@ public interface MallCommentDAO extends BaseMapper<MallComment> {
     /**
      * 分页查询评论
      *
-     * @param params
-     * @return
+     * @param params type:是否删除，oldMemberIds:用户集合，或 memberId：用户id
+     * @return 评论列表
      */
-    @SuppressWarnings("rawtypes")
     List findByPage(Map<String, Object> params);
 
     /**
      * 获取评论数量
      *
-     * @param param
-     * @return
+     * @param param oldMemberIds:用户集合，或 memberId：用户id
+     * @return 数量
      */
     int countAppraise(Map<String, Object> param);
 
     /**
      * 查询店家回复消息
      *
-     * @param param
-     * @return
+     * @param param appraise:商家回复的评论id
+     * @return 回复消息列表
      */
     List<Map<String, Object>> ownerResponseList(Map<String, Object> param);
 
@@ -44,48 +43,48 @@ public interface MallCommentDAO extends BaseMapper<MallComment> {
     /**
      * 根据商品id查询评价信息
      *
-     * @param params 商品id
-     * @return
+     * @param params checkStatus：审核状态，feel：总体评价，productId:商品Id，repPId:商家回复的评论id
+     * @return 评价列表
      */
     List<Map<String, Object>> selectCommentByProId(Map<String, Object> params);
 
     /**
      * 统计总体评价
      *
-     * @param params
-     * @return
+     * @param params checkStatus：审核状态，feel：总体评价，productId:商品Id
+     * @return 总体评价列表
      */
     List<Map<String, Object>> selectCountFeel(Map<String, Object> params);
 
     /**
      * 统计评价数量
      *
-     * @param params
-     * @return
+     * @param params checkStatus：审核状态，feel：总体评价，shoplist：店铺id集合
+     * @return 数量
      */
     int selectCommentCount(Map<String, Object> params);
 
     /**
      * 查询评价列表
      *
-     * @param params
-     * @return
+     * @param params checkStatus：审核状态，feel：总体评价，shoplist：店铺id集合，firstNum：页数，maxNum 数量
+     * @return 评价列表
      */
     List<Map<String, Object>> selectCommentList(Map<String, Object> params);
 
     /**
      * 批量操作评论信息
      *
-     * @param params
-     * @return
+     * @param params ids:评论id集合，isDelete;是否删除，checkStatus：审核状态
+     * @return 是否成功
      */
     int batchUpdateComment(Map<String, Object> params);
 
     /**
      * 查询评价信息
      *
-     * @param comment
-     * @return
+     * @param comment  orderDetailId：商品详情Id，orderId：订单Id，userId：用户Id
+     * @return 评价信息
      */
     MallComment selectByComment(MallComment comment);
 }

@@ -3,8 +3,6 @@ package com.gt.mall.web.service.auction;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.auction.MallAuction;
-import com.gt.mall.entity.order.MallOrder;
-import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.util.PageUtil;
 
 import java.util.List;
@@ -23,56 +21,70 @@ public interface MallAuctionService extends BaseService<MallAuction> {
     /**
      * 通过店铺id来查询拍卖
      *
-     * @Title: selectFreightByShopId
+     * @param param type:状态，shoplist：店铺id集合，curPage：当前页
+     * @return page
      */
     PageUtil selectAuctionByShopId(Map<String, Object> param);
 
     /**
      * 通过拍卖id查询拍卖信息
+     *
+     * @param id 拍卖id
+     * @return Map
      */
     Map<String, Object> selectAuctionById(Integer id);
 
     /**
      * 编辑拍卖
      *
-     * @Title: editFreight
+     * @param params  auction：拍卖信息
+     * @param userId 用户id
+     * @return int
      */
     int editAuction(Map<String, Object> params, int userId);
 
     /**
      * 删除拍卖
      *
-     * @Title: deleteFreight
+     * @param auction id
+     * @return boolean
      */
     boolean deleteAuction(MallAuction auction);
 
     /**
-     * 查询所有的拍卖
-     *
-     * @param member
-     * @return
+     *  查询所有的拍卖
+     * @param member 用户
+     * @param maps  shopId：店铺Id，proName：商品名称
+     * @return list
      */
     List<Map<String, Object>> getAuctionAll(Member member, Map<String, Object> maps);
 
     /**
      * 根据商品id查询拍卖信息和拍卖价格
      *
-     * @return
+     * @param proId 商品Id
+     * @param shopId 店铺id
+     * @param aId 拍卖id
+     * @return MallAuction
      */
     MallAuction getAuctionByProId(Integer proId, Integer shopId, Integer aId);
 
 
     /**
      * 根据店铺id查询拍卖信息
+     *
+     * @param maps status：状态，id：拍卖Id，shopId:店铺id,productId:商品Id,
+     *               proName：商品名称，groupId：分组Id,type:排序,desc：降序
+     * @return list
      */
     List<Map<String, Object>> selectgbAuctionByShopId(Map<String, Object> maps);
 
     /**
      * 判断是否超过了限购
      *
-     * @param map
-     * @param memberId
-     * @return
+     * @param map groupBuyId:分组Id
+     * @param memberId 用户id
+     * @return map
      */
     Map<String, Object> isMaxNum(Map<String, Object> map, String memberId);
 

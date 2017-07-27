@@ -75,7 +75,7 @@ public class MallGroupJoinServiceImpl extends BaseServiceImpl<MallGroupJoinDAO, 
 
     @Override
     public List<Map<String, Object>> selectJoinByjoinId(Map<String, Object> params) {
-        return groupJoinDAO.selectJoinByjoinId(params);
+        return groupJoinDAO.selectJoinByJoinId(params);
     }
 
     @Override

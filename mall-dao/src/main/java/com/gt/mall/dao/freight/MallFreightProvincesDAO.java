@@ -18,8 +18,8 @@ public interface MallFreightProvincesDAO extends BaseMapper<MallFreightProvinces
     /**
      * 通过物流id查询物流配送区域id
      *
-     * @param freightId
-     * @return
+     * @param freightId 物流id
+     * @return 物流配送区域id
      */
     Map<String, Object> selectByFreightId(Integer freightId);
 }

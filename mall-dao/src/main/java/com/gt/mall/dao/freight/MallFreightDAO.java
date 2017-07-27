@@ -20,36 +20,36 @@ public interface MallFreightDAO extends BaseMapper<MallFreight> {
     /**
      * 通过 店铺id列表 得到物流总数
      *
-     * @param param
-     * @return
+     * @param param shoplist：店铺id集合
+     * @return 数量
      */
     Integer selectCountByShopId(Map<String, Object> param);
 
     /**
      * 通过店铺id查询物流
      *
-     * @param: param
+     * @param: param shoplist：店铺id集合，firstNum：页数，maxNum 数量
      */
     List<MallFreight> selectByShopId(Map<String, Object> param);
 
     /**
      * 通过物流id来删除物流信息
      *
-     * @param: ids
+     * @param: ids 物流id集合
      */
     int deleteById(Map<String, Object> ids);
 
     /**
      * 通过物流id查询物流信息
      *
-     * @param: id
+     * @param: id 物流id
      */
     MallFreight selectById(Integer id);
 
     /**
      * 通过店铺id查询物流信息
      *
-     * @param: shopId
+     * @param: shopId 店铺id
      */
     MallFreight selectFreightByShopId(Integer shopId);
 }

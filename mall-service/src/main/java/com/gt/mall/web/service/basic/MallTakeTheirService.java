@@ -16,19 +16,21 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallTakeTheirService extends BaseService< MallTakeTheir > {
+public interface MallTakeTheirService extends BaseService<MallTakeTheir> {
 
     /**
      * 根据用户id来查询商品
      *
-     * @Title: selectByUserId
+     * @param params curPage:当前页，userId：用户Id
+     * @return 自提列表
      */
     PageUtil selectByUserId(Map<String, Object> params);
 
     /**
      * 删除上门自提
      *
-     * @Title: batchUpdateTake
+     * @param params 自提信息
+     * @return boolean
      */
     boolean deleteTake(Map<String, Object> params);
 
@@ -36,35 +38,42 @@ public interface MallTakeTheirService extends BaseService< MallTakeTheir > {
     /**
      * 编辑上门自提
      *
-     * @Title: editTake
+     * @param params obj：自提信息，delimageList：删除列表，imageList：图片列表
+     *               deltimeList:删除接待时间列表，timeList：添加接待时间列表
+     * @param user   用户
+     * @return boolean
      */
     boolean editTake(Map<String, Object> params, BusUser user);
 
     /**
      * 查询上门自提集合
-     * @param param
-     * @return
+     *
+     * @param param userId：用户Id，firstNum：页数，maxNum 数量
+     * @return 上门自提信息列表
      */
     List<MallTakeTheir> selectListByUserId(Map<String, Object> param);
 
     /**
      * 根据上门自提id查询上门自提信息
-     * @param params
-     * @return
+     *
+     * @param params id：自提id
+     * @return 上门自提信息
      */
     MallTakeTheir selectById(Map<String, Object> params);
 
     /**
      * 查询用户是否允许使用上门自提
-     * @param userId
+     *
+     * @param userId 用户Id
      * @return true 允许  false 不允许
      */
     boolean isTakeTheirByUserId(int userId);
 
     /**
      * 根据公众号id查询上门自提信息
-     * @param map
-     * @return
+     *
+     * @param map userId：用户Id，provinceId：省份id，takeId：自提id
+     * @return 上门自提信息列表
      */
     List<MallTakeTheir> selectByBusUserId(Map<String, Object> map);
 }
