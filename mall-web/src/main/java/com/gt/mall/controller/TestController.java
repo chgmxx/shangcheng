@@ -2,7 +2,7 @@ package com.gt.mall.controller;
 
 import com.gt.mall.base.BaseController;
 import com.gt.mall.cxf.service.WxShopService;
-import com.gt.mall.util.MyConfigUtil;
+import com.gt.mall.util.PropertiesUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,10 +29,10 @@ public class TestController extends BaseController {
      * @return
      */
     @ApiOperation( value = "首页", notes = "首页" )
-    @GetMapping( { "", "/", "/" } )
+    @GetMapping( "/" )
     public ModelAndView index( ModelAndView map ) {
 	try {
-	    System.out.println( "MyConfigUtil.getHomeUrl() = " + MyConfigUtil.getHomeUrl() );
+	    System.out.println( "MyConfigUtil.getHomeUrl() = " + PropertiesUtil.getHomeUrl() );
 	    map.addObject( "homeUrl", 22 );
 
 	    map.addObject( "test", "hello zhangmz!" );

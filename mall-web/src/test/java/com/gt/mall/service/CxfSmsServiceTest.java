@@ -2,7 +2,7 @@ package com.gt.mall.service;
 
 import com.gt.mall.BasicTest;
 import com.gt.mall.cxf.service.SmsService;
-import com.gt.mall.util.MyConfigUtil;
+import com.gt.mall.util.PropertiesUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +46,7 @@ public class CxfSmsServiceTest extends BasicTest {
 
 //       System.out.println("redis = " + JedisUtil.get( "busCount" ));
 
-      System.out.println("222 = " + MyConfigUtil.getHomeUrl());
+      System.out.println("222 = " + PropertiesUtil.getHomeUrl());
 
    }
 

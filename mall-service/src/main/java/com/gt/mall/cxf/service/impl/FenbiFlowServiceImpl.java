@@ -8,7 +8,7 @@ import com.gt.mall.bean.result.fenbi.FenBiCount;
 import com.gt.mall.cxf.service.FenbiFlowService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.CxfFactoryBeanUtil;
-import com.gt.mall.util.MyConfigUtil;
+import com.gt.mall.util.PropertiesUtil;
 import com.gt.webservice.service.WxmpApiSerivce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +29,11 @@ public class FenbiFlowServiceImpl implements FenbiFlowService {
     @Override
     public Boolean updateFenbiReduce( UpdateFenbiReduce fenbiReduce ) throws Exception {
 
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", MyConfigUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", PropertiesUtil.getShopUrl() );
 
 	BaseParam< UpdateFenbiReduce > baseParam = new BaseParam<>();
 	baseParam.setAction( "updateFenbiReduce" );
-	baseParam.setRequestToken( MyConfigUtil.getWxmpToken() );
+	baseParam.setRequestToken( PropertiesUtil.getWxmpToken() );
 	baseParam.setReqdata( fenbiReduce );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );
@@ -44,10 +44,10 @@ public class FenbiFlowServiceImpl implements FenbiFlowService {
 
     @Override
     public Double getFenbiSurplus( FenbiSurplus fenbiSurplus ) throws Exception {
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", MyConfigUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", PropertiesUtil.getShopUrl() );
 	BaseParam< FenbiSurplus > baseParam = new BaseParam<>();
 	baseParam.setAction( "getFenbiSurplus" );
-	baseParam.setRequestToken( MyConfigUtil.getWxmpToken() );
+	baseParam.setRequestToken( PropertiesUtil.getWxmpToken() );
 	baseParam.setReqdata( fenbiSurplus );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );

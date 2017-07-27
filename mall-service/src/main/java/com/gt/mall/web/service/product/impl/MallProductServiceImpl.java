@@ -1265,7 +1265,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    }
 		    specificaValue += specifica.getSpecificaValue();
 		    if ( CommonUtil.isNotEmpty( specifica.getSpecificaImgUrl() ) ) {
-			imageUrl = MyConfigUtil.getImageUrlPrefix() + specifica.getSpecificaImgUrl().toString();
+			imageUrl = PropertiesUtil.getImageUrlPrefix() + specifica.getSpecificaImgUrl().toString();
 		    }
 		}
 		map.put( "product_speciname", specificaValue );

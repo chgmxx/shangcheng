@@ -85,9 +85,9 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
         if (list != null && list.size() > 0) {
             for (Map<String, Object> map : list) {
                 if (CommonUtil.isNotEmpty(map.get("specifica_img_url"))) {
-                    map.put("product_image", MyConfigUtil.getHomeUrl() + map.get("specifica_img_url"));
+                    map.put("product_image", PropertiesUtil.getHomeUrl() + map.get("specifica_img_url"));
                 } else {
-                    map.put("product_image", MyConfigUtil.getHomeUrl() + map.get("image_url"));
+                    map.put("product_image", PropertiesUtil.getHomeUrl() + map.get("image_url"));
                 }
                 productList.add(map);
             }

@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
  * Date : 2017/7/19 0019
  * Time : 15:11
  */
-@Component      //不加这个注解的话, 使用@Autowired 就不能注入进去了
+@Component      //不加这个注解的话, 使用@Autowired 就不能注入进去了.
 @Configuration
-public class MyConfigUtil {
+public class PropertiesUtil {
 
     private static String homeUrl;//网页地址
 
@@ -46,77 +46,77 @@ public class MyConfigUtil {
 
     @Value( "${web.homeUrl}" )
     public void setHomeUrl( String homeUrl ) {
-        MyConfigUtil.homeUrl = homeUrl;
+        PropertiesUtil.homeUrl = homeUrl;
     }
 
     @Value( "${web.imageUrlPrefix}" )
     public void setImageUrlPrefix( String imageUrlPrefix ) {
-        MyConfigUtil.imageUrlPrefix = imageUrlPrefix;
+        PropertiesUtil.imageUrlPrefix = imageUrlPrefix;
     }
 
     @Value( "${web.jxcUrl}" )
     public void setJxcUrl( String jxcUrl ) {
-        MyConfigUtil.jxcUrl = jxcUrl;
+        PropertiesUtil.jxcUrl = jxcUrl;
     }
 
     @Value( "${web.jxcAccount}" )
     public void setJxcAccount( String jxcAccount ) {
-        MyConfigUtil.jxcAccount = jxcAccount;
+        PropertiesUtil.jxcAccount = jxcAccount;
     }
 
     @Value( "${web.jxcPwd}" )
     public void setJxcPwd( String jxcPwd ) {
-        MyConfigUtil.jxcPwd = jxcPwd;
+        PropertiesUtil.jxcPwd = jxcPwd;
     }
 
     @Value( "${article.url.prefix}" )
     public void setArticleUrl( String articleUrl ) {
-        MyConfigUtil.articleUrl = articleUrl;
+        PropertiesUtil.articleUrl = articleUrl;
     }
 
     @Value( "${static.source.ftp.ip}" )
     public void setStaticSourceFtpIp( String staticSourceFtpIp ) {
-        MyConfigUtil.staticSourceFtpIp = staticSourceFtpIp;
+        PropertiesUtil.staticSourceFtpIp = staticSourceFtpIp;
     }
 
     @Value( "${static.source.ftp.port}" )
     public void setStaticSourceFtpPort( String staticSourceFtpPort ) {
-        MyConfigUtil.staticSourceFtpPort = staticSourceFtpPort;
+        PropertiesUtil.staticSourceFtpPort = staticSourceFtpPort;
     }
 
     @Value( "${static.source.ftp.user}" )
     public void setStaticSourceFtpUser( String staticSourceFtpUser ) {
-        MyConfigUtil.staticSourceFtpUser = staticSourceFtpUser;
+        PropertiesUtil.staticSourceFtpUser = staticSourceFtpUser;
     }
 
     @Value( "${static.source.ftp.password}" )
     public void setStaticSourceFtpPwd( String staticSourceFtpPwd ) {
-        MyConfigUtil.staticSourceFtpPwd = staticSourceFtpPwd;
+        PropertiesUtil.staticSourceFtpPwd = staticSourceFtpPwd;
     }
 
     @Value( "${project.shop.cxf-url}" )
     public void setShopUrl( String shopUrl ) {
-        MyConfigUtil.shopUrl = shopUrl;
+        PropertiesUtil.shopUrl = shopUrl;
     }
 
     @Value( "${wxmp.token}" )
     public void setWxmpToken( String wxmpToken ) {
-        MyConfigUtil.wxmpToken = wxmpToken;
+        PropertiesUtil.wxmpToken = wxmpToken;
     }
 
     @Value( "${spring.redis.host}" )
     public void setRedisHost( String redisHost ) {
-        MyConfigUtil.redisHost = redisHost;
+        PropertiesUtil.redisHost = redisHost;
     }
 
     @Value( "${spring.redis.port}" )
     public void setRedisPort( String redisPort ) {
-        MyConfigUtil.redisPort = redisPort;
+        PropertiesUtil.redisPort = redisPort;
     }
 
     @Value( "${spring.redis.password}" )
     public void setRedisPassword( String redisPassword ) {
-        MyConfigUtil.redisPassword = redisPassword;
+        PropertiesUtil.redisPassword = redisPassword;
     }
 
     public static String getHomeUrl() {

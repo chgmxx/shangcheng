@@ -5,7 +5,7 @@ import com.gt.mall.bean.param.BaseParam;
 import com.gt.mall.bean.param.sms.OldApiSms;
 import com.gt.mall.cxf.service.SmsService;
 import com.gt.mall.util.CxfFactoryBeanUtil;
-import com.gt.mall.util.MyConfigUtil;
+import com.gt.mall.util.PropertiesUtil;
 import com.gt.webservice.service.WxmpApiSerivce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +24,11 @@ public class SmsServiceImpl implements SmsService {
 
     @Override
     public Boolean sendMsg( OldApiSms oldApiSms ) throws Exception {
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", MyConfigUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", PropertiesUtil.getShopUrl() );
 
 	BaseParam baseParam = new BaseParam();
 	baseParam.setAction( "sendSmsOld" );
-	baseParam.setRequestToken( MyConfigUtil.getWxmpToken() );
+	baseParam.setRequestToken( PropertiesUtil.getWxmpToken() );
 	baseParam.setReqdata( oldApiSms );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );

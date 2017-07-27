@@ -7,7 +7,7 @@ import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.CxfFactoryBeanUtil;
-import com.gt.mall.util.MyConfigUtil;
+import com.gt.mall.util.PropertiesUtil;
 import com.gt.webservice.service.WxmpApiSerivce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,18 +26,18 @@ public class WxShopServiceImpl implements WxShopService {
     private static Logger logger = LoggerFactory.getLogger( WxShopServiceImpl.class );
 
     @Autowired
-    private MyConfigUtil myConfigUtil;
+    private PropertiesUtil myConfigUtil;
 
     @Override
     public WsWxShopInfo getShopById( int id ) throws Exception {
 	GetById getById = new GetById();
 	getById.setId( id );
 
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce" , MyConfigUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce" , PropertiesUtil.getShopUrl() );
 
 	BaseParam baseParam = new BaseParam<>();
 	baseParam.setAction( "getShopById" );
-	baseParam.setRequestToken( MyConfigUtil.getWxmpToken() );
+	baseParam.setRequestToken( PropertiesUtil.getWxmpToken() );
 	baseParam.setReqdata( getById );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );
