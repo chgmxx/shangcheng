@@ -2,7 +2,6 @@ package com.gt.mall.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -15,15 +14,13 @@ public class MallJxcHttpClientUtil {
 
     public static String TOKEN_STR = "";
 
-    @Autowired
-    private static JxcConfigUtil myConfig;
 
     public static String login() {
 	System.out.println( "第一次登陆" );
-	String url = myConfig.getJxcUrl() + "/erp/b/login";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/b/login";
 	Map< String,Object > params = new HashMap< String,Object >();
-	params.put( "account", myConfig.getJxcAccount() );
-	params.put( "pwd", myConfig.getJxcPwd() );
+	params.put( "account", MyConfigUtil.getJxcAccount() );
+	params.put( "pwd", MyConfigUtil.getJxcPwd() );
 	System.out.println( url );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params ) );
@@ -49,7 +46,7 @@ public class MallJxcHttpClientUtil {
      */
     public static JSONArray batchSave( Map< String,Object > params, boolean isFirst ) {
 	System.out.println( "批量新增或修改商品和商品库存:" + params );
-	String url = myConfig.getJxcUrl() + "/erp/batchSave";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/batchSave";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -85,7 +82,7 @@ public class MallJxcHttpClientUtil {
      */
     public static JSONArray batchAttrSave( Map< String,Object > params, boolean isFirst ) {
 	System.out.println( "批量新增或修改商品规格：" + params );
-	String url = myConfig.getJxcUrl() + "/erp/attr/batchSave";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/attr/batchSave";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -120,7 +117,7 @@ public class MallJxcHttpClientUtil {
      */
     public static boolean saveUpdateWarehouse( Map< String,Object > params, boolean isFirst ) {
 	System.out.println( "保存或修改仓库：" + params );
-	String url = myConfig.getJxcUrl() + "/erp/updateWarehouse";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/updateWarehouse";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -152,7 +149,7 @@ public class MallJxcHttpClientUtil {
      */
     public static boolean inventoryOperation( Map< String,Object > params, boolean isFirst ) {
 	System.out.println( "发货退货时调用修改库存：" + params );
-	String url = myConfig.getJxcUrl() + "/erp/order/inventory/operation";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/order/inventory/operation";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -183,7 +180,7 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONArray syncProductCheck( Map< String,Object > params, boolean isFirst ) {
-	String url = myConfig.getJxcUrl() + "/erp/order/sync/product/check";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/order/sync/product/check";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -216,7 +213,7 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONObject getInventoryById( Map< String,Object > params, boolean isFirst ) {
-	String url = myConfig.getJxcUrl() + "/erp/order/sync/pro/inventory";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/order/sync/pro/inventory";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -249,7 +246,7 @@ public class MallJxcHttpClientUtil {
      */
     public static JSONArray getProductAttrs( Map< String,Object > params, boolean isFirst ) {
 	System.out.println( "查询商品规格：" + params );
-	String url = myConfig.getJxcUrl() + "/erp/query/getProductAttrs/shop";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/query/getProductAttrs/shop";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -280,7 +277,7 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONArray inventoryByProduct( Map< String,Object > params, boolean isFirst ) {
-	String url = myConfig.getJxcUrl() + "erp/order/sync/inventoryByProduct";
+	String url = MyConfigUtil.getJxcUrl() + "erp/order/sync/inventoryByProduct";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -312,7 +309,7 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static Object getInvNumByInvenId( Map< String,Object > params, boolean isFirst ) {
-	String url = myConfig.getJxcUrl() + "/erp/order/sync/attrs/inventory";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/order/sync/attrs/inventory";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
@@ -344,7 +341,7 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static boolean syncCallback( Map< String,Object > params, boolean isFirst ) {
-	String url = myConfig.getJxcUrl() + "/erp/order/sync/product/callback";
+	String url = MyConfigUtil.getJxcUrl() + "/erp/order/sync/product/callback";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}

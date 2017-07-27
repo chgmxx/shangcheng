@@ -1,8 +1,6 @@
 package com.gt.mall.util;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -13,31 +11,9 @@ import java.util.*;
  * @author 李逢喜
  * @version 创建时间：2015年9月7日 下午7:14:20
  */
-@Component
 public class JedisUtil {
     private static JedisPool pool = null;
 
-    // 注入配置属性 根据环境配置切换
-
-    private static String redisHost;
-
-    private static String redisPort;
-
-    private static String redisPassword;
-
-    @Value( "${spring.redis.host}" )
-    public static String getRedisHost() {
-	return redisHost;
-    }
-
-    @Value( "${spring.redis.password}" )
-    public static String getRedisPassword() {
-	return redisPassword;
-    }
-    @Value( "${spring.redis.port}" )
-    public static String getRedisPort() {
-	return redisPort;
-    }
 
     public static JedisPool getPool() {
 	if ( pool == null ) {
@@ -51,10 +27,10 @@ public class JedisUtil {
 	    config.setMaxWaitMillis( 3000 * 100 );
 	    // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
 	    config.setTestOnBorrow( true );
-	    if ( CommonUtil.isNotEmpty( getRedisPassword() ) ) {
-		pool = new JedisPool( config, getRedisHost(), CommonUtil.toInteger( getRedisPort() ), 60000, getRedisPassword() );
+	    if ( CommonUtil.isNotEmpty( MyConfigUtil.getRedisPassword() ) ) {
+		pool = new JedisPool( config,  MyConfigUtil.getRedisHost(), CommonUtil.toInteger(  MyConfigUtil.getRedisPort() ), 60000,  MyConfigUtil.getRedisPassword() );
 	    } else {
-		pool = new JedisPool( config, getRedisHost(), CommonUtil.toInteger( getRedisPort() ), 60000 );
+		pool = new JedisPool( config,  MyConfigUtil.getRedisHost(), CommonUtil.toInteger(  MyConfigUtil.getRedisPort() ), 60000 );
 	    }
 	}
 	return pool;

@@ -98,8 +98,24 @@ wxmp:
  token: 57CD54340AE48C861A1F1036099888CA
 
 
- #### cxf 服务端配置
+#### cxf 服务端配置
 cxf:
  path: /services
 
 
+####图片资源ftp 配置
+static:
+ source:
+  ftp:
+   #FTP Ip
+   ip: 120.25.154.127
+   #FTP 端口号
+   port: 21
+   #FTP 用户名
+   user: gt123456
+   #FTP 密码
+   password: gt12345612
+#访问文章资源URL
+article:
+ url:
+  prefix: http://192.168.2.100:8081/

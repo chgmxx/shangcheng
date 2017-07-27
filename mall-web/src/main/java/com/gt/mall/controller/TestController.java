@@ -1,10 +1,8 @@
 package com.gt.mall.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.result.shop.WsWxShopInfo;
-import com.gt.mall.config.MyConfig;
 import com.gt.mall.cxf.service.WxShopService;
+import com.gt.mall.util.MyConfigUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,9 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 public class TestController extends BaseController {
 
     @Autowired
-    private MyConfig myConfig;
-
-    @Autowired
     private WxShopService wxShopService;
 
     /**
@@ -34,16 +29,21 @@ public class TestController extends BaseController {
      * @return
      */
     @ApiOperation( value = "首页", notes = "首页" )
-    @GetMapping( { "", "/index", "/" } )
-    public ModelAndView index( ModelAndView map ) throws Exception {
-	map.addObject( "homeUrl", myConfig.getHomeUrl() );
+    @GetMapping( { "", "/", "/" } )
+    public ModelAndView index( ModelAndView map ) {
+	try {
+	    System.out.println( "MyConfigUtil.getHomeUrl() = " + MyConfigUtil.getHomeUrl() );
+	    map.addObject( "homeUrl", 22 );
 
-	map.addObject( "test", "hello zhangmz!" );
+	    map.addObject( "test", "hello zhangmz!" );
 
-	WsWxShopInfo wxShopInfo = wxShopService.getShopById( 21 );
-	map.addObject( "wxShop", JSONObject.toJSONString( wxShopInfo ));
+	/*WsWxShopInfo wxShopInfo = wxShopService.getShopById( 21 );
+	map.addObject( "wxShop", JSONObject.toJSONString( wxShopInfo ));*/
 
-	map.setViewName( "index" );
+	    map.setViewName( "index" );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	}
 	return map;
     }
 

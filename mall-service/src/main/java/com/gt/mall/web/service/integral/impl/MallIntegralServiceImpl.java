@@ -61,11 +61,9 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
     private MallOrderDetailDAO orderDetailDAO;
 
     @Autowired
-    private MallPageService pageService;
+    private MallPageService  pageService;
     @Autowired
     private MallProductSpecificaService productSpecificaService;
-    @Autowired
-    private MyConfigUtil myConfigUtil;
 
     @Override
     public PageUtil selectIntegralByUserId(Map<String, Object> params) {
@@ -87,9 +85,9 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
         if (list != null && list.size() > 0) {
             for (Map<String, Object> map : list) {
                 if (CommonUtil.isNotEmpty(map.get("specifica_img_url"))) {
-                    map.put("product_image", myConfigUtil.getHomeUrl() + map.get("specifica_img_url"));
+                    map.put("product_image", MyConfigUtil.getHomeUrl() + map.get("specifica_img_url"));
                 } else {
-                    map.put("product_image", myConfigUtil.getHomeUrl() + map.get("image_url"));
+                    map.put("product_image", MyConfigUtil.getHomeUrl() + map.get("image_url"));
                 }
                 productList.add(map);
             }

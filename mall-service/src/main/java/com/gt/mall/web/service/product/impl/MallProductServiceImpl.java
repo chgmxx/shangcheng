@@ -125,9 +125,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     private MallStoreService mallStoreService;//商城店铺业务处理
 
     @Autowired
-    private MyConfigUtil myConfigUtil;
-
-    @Autowired
     private MallShopCartDAO mallShopCartDao;//购物车dao
 
     @Autowired
@@ -1268,7 +1265,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    }
 		    specificaValue += specifica.getSpecificaValue();
 		    if ( CommonUtil.isNotEmpty( specifica.getSpecificaImgUrl() ) ) {
-			imageUrl = myConfigUtil.getImageUrlPrefix() + specifica.getSpecificaImgUrl().toString();
+			imageUrl = MyConfigUtil.getImageUrlPrefix() + specifica.getSpecificaImgUrl().toString();
 		    }
 		}
 		map.put( "product_speciname", specificaValue );

@@ -5,8 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-aabb ${homeUrl}
+aabb
 <br/>
-${wxShop}
 </body>
 </html>

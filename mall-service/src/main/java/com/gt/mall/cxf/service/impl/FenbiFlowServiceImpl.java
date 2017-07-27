@@ -6,14 +6,12 @@ import com.gt.mall.bean.param.fenbiFlow.FenbiSurplus;
 import com.gt.mall.bean.param.fenbiFlow.UpdateFenbiReduce;
 import com.gt.mall.bean.result.fenbi.FenBiCount;
 import com.gt.mall.cxf.service.FenbiFlowService;
-import com.gt.mall.util.CxfConfigUtil;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.CxfFactoryBeanUtil;
+import com.gt.mall.util.MyConfigUtil;
 import com.gt.webservice.service.WxmpApiSerivce;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 /**
@@ -27,17 +25,15 @@ public class FenbiFlowServiceImpl implements FenbiFlowService {
 
     private static Logger logger = LoggerFactory.getLogger( FenbiFlowServiceImpl.class );
 
-    @Autowired
-    private CxfConfigUtil cxfConfigUtil;
 
     @Override
     public Boolean updateFenbiReduce( UpdateFenbiReduce fenbiReduce ) throws Exception {
 
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", cxfConfigUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", MyConfigUtil.getShopUrl() );
 
 	BaseParam< UpdateFenbiReduce > baseParam = new BaseParam<>();
 	baseParam.setAction( "updateFenbiReduce" );
-	baseParam.setRequestToken( cxfConfigUtil.getWxmpToken() );
+	baseParam.setRequestToken( MyConfigUtil.getWxmpToken() );
 	baseParam.setReqdata( fenbiReduce );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );
@@ -48,10 +44,10 @@ public class FenbiFlowServiceImpl implements FenbiFlowService {
 
     @Override
     public Double getFenbiSurplus( FenbiSurplus fenbiSurplus ) throws Exception {
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", cxfConfigUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", MyConfigUtil.getShopUrl() );
 	BaseParam< FenbiSurplus > baseParam = new BaseParam<>();
 	baseParam.setAction( "getFenbiSurplus" );
-	baseParam.setRequestToken( cxfConfigUtil.getWxmpToken() );
+	baseParam.setRequestToken( MyConfigUtil.getWxmpToken() );
 	baseParam.setReqdata( fenbiSurplus );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );
