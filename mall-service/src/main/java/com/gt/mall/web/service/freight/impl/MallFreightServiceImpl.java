@@ -88,7 +88,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl<MallFreightDAO, Mall
 
             } else {// 修改物流
                 freight.setEditTime(new Date());
-                freightDAO.updateAllColumnById(freight);
+                freightDAO.updateById(freight);
             }
             if (freight.getId() != null) {
                 freightDetailService.editFreightDetail(params, freight.getId());

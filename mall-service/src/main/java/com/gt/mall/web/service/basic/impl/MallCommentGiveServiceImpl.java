@@ -1,14 +1,18 @@
 package com.gt.mall.web.service.basic.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallCommentGiveDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;
+import com.gt.mall.entity.basic.MallCollect;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.web.service.basic.MallCommentGiveService;
 import org.apache.log4j.Logger;
@@ -51,7 +55,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
         // TODO:需关连 WxPublicUsers数据
 //        String sql = "select u.id as publicId,u.bus_user_id as userId,m.integral,m.fans_currency,m.totalIntegral from t_wx_bus_member m left join t_wx_public_users u on u.id=m.public_id where m.id =" + memberId;
 //        Map<String, Object> userMap = daoUtil.queryForMap(sql);//查询评论人所属的商户公众号信息
-        Map<String, Object> userMap=new HashMap<>();
+        Map<String, Object> userMap = new HashMap<>();
         if (CommonUtil.isNotEmpty(userMap)) {
             if (CommonUtil.isNotEmpty(userMap.get("userId"))) {
                 userId = CommonUtil.toInteger(userMap.get("userId"));
@@ -74,7 +78,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
             MallPaySet set = new MallPaySet();
             set.setUserId(userId);
             //查询是否开启了评论送礼
-            MallPaySet payset = paySetDAO.selectByUserId(set);
+            MallPaySet payset = paySetDAO.selectOne(set);
             if (CommonUtil.isNotEmpty(payset)) {
                 if (payset.getIsCommentGive().toString().equals("1")) {
                     isOpenGive = true;
@@ -82,7 +86,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
             }
             //TODO 需关连MemberPayService.isMemember方法
 //            boolean isMember = memPayService.isMemember(memberId);
-            boolean isMember= true;
+            boolean isMember = true;
             if (isOpenGive && isMember) {
                 //查询评价送礼的情况
                 MallComment comment = commentDAO.selectById(commentId);
@@ -92,7 +96,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
                     cGive.setUserId(userId);
                     cGive.setGiveStatus(comment.getFeel());
                     cGive.setIsEnable(1);
-                    MallCommentGive give = commentGiveDAO.selectByGive(cGive);
+                    MallCommentGive give = commentGiveDAO.selectOne(cGive);
                     Member member = new Member();
                     boolean flag = false;
                     if (CommonUtil.isNotEmpty(give)) {
@@ -150,23 +154,23 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
     @Override
     public boolean editCommentGive(List<MallCommentGive> giveList, BusUser user) {
         boolean flag = false;
-        if(giveList != null && giveList.size() > 0){
+        if (giveList != null && giveList.size() > 0) {
             for (MallCommentGive mallCommentGive : giveList) {
                 int count = 0;
                 mallCommentGive.setUserId(user.getId());
-                if(CommonUtil.isEmpty(mallCommentGive.getId())){
+                if (CommonUtil.isEmpty(mallCommentGive.getId())) {
                     MallCommentGive give = commentGiveDAO.selectByGive(mallCommentGive);
-                    if(CommonUtil.isNotEmpty(give)){
+                    if (CommonUtil.isNotEmpty(give)) {
                         mallCommentGive.setId(give.getId());
                     }
                 }
-                if(CommonUtil.isNotEmpty(mallCommentGive.getId())){
-                    count = commentGiveDAO.updateAllColumnById(mallCommentGive);
-                }else{
+                if (CommonUtil.isNotEmpty(mallCommentGive.getId())) {
+                    count = commentGiveDAO.updateById(mallCommentGive);
+                } else {
                     count = commentGiveDAO.insert(mallCommentGive);
                 }
-                if(count > 0){
-                    if(mallCommentGive.getGiveType().toString().equals("2")){
+                if (count > 0) {
+                    if (mallCommentGive.getGiveType().toString().equals("2")) {
                         //TODO 需关连 粉币方法
                         //查询资产分配
 //                        FenbiFlowRecord fenbi = new FenbiFlowRecord();
@@ -184,7 +188,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
 //                        }
                     }
                     flag = true;
-                }else{
+                } else {
                     flag = false;
                 }
             }
@@ -194,6 +198,10 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
 
     @Override
     public List<MallCommentGive> getGiveByUserId(int userId) {
-        return commentGiveDAO.getGiveByUserId(userId);
+
+        Wrapper<MallCommentGive> wrapper = new EntityWrapper<>();
+        wrapper.where("user_id = {0} ", userId);
+        return commentGiveDAO.selectList(wrapper);
+//        return commentGiveDAO.getGiveByUserId(userId);
     }
 }

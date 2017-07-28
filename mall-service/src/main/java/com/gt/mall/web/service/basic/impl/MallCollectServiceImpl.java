@@ -4,6 +4,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.entity.basic.MallCollect;
+import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.web.service.auction.impl.MallAuctionMarginServiceImpl;
 import com.gt.mall.web.service.basic.MallCollectService;
@@ -36,11 +37,14 @@ public class MallCollectServiceImpl extends BaseServiceImpl<MallCollectDAO, Mall
 
     @Override
     public void getProductCollect(HttpServletRequest request, int proId, int userId) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("productId", proId);
-        map.put("userId", userId);
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put("productId", proId);
+//        map.put("userId", userId);
         int id = 0;
-        MallCollect collect = collectDAO.selectByCollect(map);
+        MallCollect mallCollect = new MallCollect();
+        mallCollect.setUserId(userId);
+        mallCollect.setProductId(proId);
+        MallCollect collect = collectDAO.selectOne(mallCollect);
         if (CommonUtil.isNotEmpty(collect)) {
             if (CommonUtil.isNotEmpty(collect.getId())) {
                 id = collect.getId();
@@ -55,10 +59,16 @@ public class MallCollectServiceImpl extends BaseServiceImpl<MallCollectDAO, Mall
     @Override
     public boolean collectionProduct(Map<String, Object> params, int userId) {
         MallCollect collect = (MallCollect) JSONObject.toBean(JSONObject.fromObject(params.get("params")), MallCollect.class);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("productId", collect.getProductId());
-        map.put("userId", userId);
-        MallCollect c = collectDAO.selectByCollect(map);
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put("productId", collect.getProductId());
+//        map.put("userId", userId);
+//        MallCollect c = collectDAO.selectByCollect(map);
+
+        MallCollect mallCollect = new MallCollect();
+        mallCollect.setUserId(userId);
+        mallCollect.setProductId(collect.getProductId());
+        MallCollect c = collectDAO.selectOne(mallCollect);
+
         if (CommonUtil.isNotEmpty(c)) {
             if (CommonUtil.isNotEmpty(c.getId())) {
                 collect.setId(c.getId());
@@ -67,7 +77,7 @@ public class MallCollectServiceImpl extends BaseServiceImpl<MallCollectDAO, Mall
         int count = 0;
         if (CommonUtil.isNotEmpty(collect.getId())) {
             collect.setIsDelete(0);
-            count = collectDAO.updateAllColumnById(collect);
+            count = collectDAO.updateById(collect);
         } else {
             collect.setUserId(userId);
             collect.setCreateTime(new Date());

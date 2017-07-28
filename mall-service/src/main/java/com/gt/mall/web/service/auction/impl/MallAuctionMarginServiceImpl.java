@@ -126,7 +126,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl<MallAuctionMar
             }
             aucMargin.setMarginStatus(1);
             aucMargin.setPayTime(new Date());
-            num = auctionMarginDAO.updateAllColumnById(aucMargin);
+            num = auctionMarginDAO.updateById(aucMargin);
             if (num > 0 && margin.getPayWay().toString().equals("2")) {
                 //添加总的消费记录  暂不加记录
                 //addUserConsume(margin);
@@ -156,7 +156,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl<MallAuctionMar
                 result.put("result", false);
             } else {
                 margin.setId(aucMargin.getId());
-                auctionMarginDAO.updateAllColumnById(margin);
+                auctionMarginDAO.updateById(margin);
                 result.put("result", true);
                 margin.setAucNo(aucMargin.getAucNo());
             }
@@ -223,7 +223,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl<MallAuctionMar
                     margin.setId(marginId);
                     margin.setMarginStatus(-2);
                     margin.setNoReturnReason("拍卖没有转换成订单");
-                    auctionMarginDAO.updateAllColumnById(margin);
+                    auctionMarginDAO.updateById(margin);
                 } else {
                     map.put("isAlipay", false);
                     returnEndMargin(map);
@@ -267,7 +267,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl<MallAuctionMar
                 map.put("wxOrdId", wxPayOrder.getId());// 微信订单表主键
                 log.info("JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject(map).toString());
 
-                //TODO 需关连 payService.memberPayRefund(map)方法
+                //TODO 需关连 WxPayService.memberPayRefund(map)方法
                 Map<String, Object> resultmap = new HashMap<>();
 //                Map<String, Object> resultmap = payService.memberPayRefund(map);
                 log.info("JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject(resultmap).toString());
@@ -317,7 +317,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl<MallAuctionMar
         margin.setMarginStatus(-1);
         margin.setReturnNo(map.get("return_no").toString());
         margin.setReturnTime(new Date());
-        int num = auctionMarginDAO.updateAllColumnById(margin);
+        int num = auctionMarginDAO.updateById(margin);
 
     }
 

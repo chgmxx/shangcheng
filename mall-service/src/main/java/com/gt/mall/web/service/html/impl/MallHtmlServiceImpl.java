@@ -82,9 +82,9 @@ public class MallHtmlServiceImpl extends BaseServiceImpl<MallHtmlDAO, MallHtml> 
             codeurl = codeurl.replaceAll("\\\\", "/");
             obj1.setCodeUrl(codeurl.split("upload")[1]);
             obj1.setId(obj.getId());
-            htmlDAO.updateAllColumnById(obj1);
+            htmlDAO.updateById(obj1);
         } else {
-            htmlDAO.updateAllColumnById(obj);
+            htmlDAO.updateById(obj);
         }
     }
 
@@ -93,7 +93,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl<MallHtmlDAO, MallHtml> 
         obj.setPid(user.getPid());
         obj.setBusUserId(user.getId());
         obj.setCreattime(DateTimeKit.getDateTime());
-        htmlDAO.updateAllColumnById(obj);
+        htmlDAO.updateById(obj);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl<MallHtmlDAO, MallHtml> 
         MallHtml html = new MallHtml();
         html.setId(id);
         html.setBakurl(bakurl);
-        htmlDAO.updateAllColumnById(html);
+        htmlDAO.updateById(html);
     }
 
 //    @Override
@@ -162,7 +162,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl<MallHtmlDAO, MallHtml> 
         codeurl = codeurl.replaceAll("\\\\", "/");
         obj1.setCodeUrl(codeurl.split("upload")[1]);
         obj1.setId(obj.getId());
-        htmlDAO.updateAllColumnById(obj1);//修改二维码
+        htmlDAO.updateById(obj1);//修改二维码
         return obj.getId();
     }
 }

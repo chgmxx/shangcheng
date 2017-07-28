@@ -76,7 +76,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl<MallTakeTheirDAO, 
         if (params != null) {
             MallTakeTheir take = (MallTakeTheir) JSONObject.toBean(JSONObject.fromObject(params), MallTakeTheir.class);
             take.setIsDelete(1);
-            int count = mallTakeTheirDAO.updateAllColumnById(take);
+            int count = mallTakeTheirDAO.updateById(take);
             if (count > 0) {
                 flag = true;
             }
@@ -93,7 +93,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl<MallTakeTheirDAO, 
                     MallTakeTheir.class);
             if (CommonUtil.isNotEmpty(take)) {
                 if (CommonUtil.isNotEmpty(take.getId())) {
-                    code = mallTakeTheirDAO.updateAllColumnById(take);
+                    code = mallTakeTheirDAO.updateById(take);
                 } else {
                     take.setUserId(user.getId());
                     take.setCreateTime(new Date());
@@ -120,7 +120,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl<MallTakeTheirDAO, 
                     .toList(JSONArray.fromObject(params.get("deltimeList")), MallTakeTheirTime.class);
             if (timeList != null && timeList.size() > 0) {
                 for (MallTakeTheirTime time : timeList) {
-                    takeTheirTimeDAO.updateAllColumnById(time);
+                    takeTheirTimeDAO.updateById(time);
                 }
             }
         }
@@ -164,7 +164,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl<MallTakeTheirDAO, 
         MallPaySet paySet = new MallPaySet();
         paySet.setUserId(userId);
         // 通过用户id查询商户是否允许买家上门自提
-        MallPaySet set = paySetDAO.selectByUserId(paySet);
+        MallPaySet set = paySetDAO.selectOne(paySet);
         if (CommonUtil.isNotEmpty(set)) {
             if (CommonUtil.isNotEmpty(set.getIsTakeTheir())) {
                 if (set.getIsTakeTheir().toString().equals("1")) {// 允许买家上门自提

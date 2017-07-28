@@ -27,10 +27,10 @@
         </if>
     </select>
 
-    <select id="getGiveByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List" />
-        from t_mall_comment_give
-        where user_id = #{userId,jdbcType=INTEGER}
-    </select>
+    <!--<select id="getGiveByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--from t_mall_comment_give-->
+        <!--where user_id = #{userId,jdbcType=INTEGER}-->
+    <!--</select>-->
 </mapper>

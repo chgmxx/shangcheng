@@ -19,6 +19,6 @@ public interface MallPaySetDAO extends BaseMapper<MallPaySet> {
      * @param set userId：用户Id
      * @return 商城交易支付设置
      */
-    MallPaySet selectByUserId(MallPaySet set);
+//    MallPaySet selectByUserId(MallPaySet set);
 
 }

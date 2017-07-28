@@ -133,15 +133,14 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
         if (product.getIsSpecifica().toString().equals("1")) {
             //TODO 需调用pageService.productSpecifications（）方法
 //            Map<String, Object> guige = pageService.productSpecifications(product.getId(), null);//查询商品的默认规格
-            //TODO 需调用 productSpecificaService.getSpecificaByProductId方法
-//            List<Map<String, Object>> specificaList = productSpecificaService.getSpecificaByProductId(product.getId());//获取商品规格值
+            List<Map<String, Object>> specificaList = productSpecificaService.getSpecificaByProductId(product.getId());//获取商品规格值
             //TODO 需调用pageService.guigePrice（）方法
 //            List<Map<String, Object>> guigePriceList = pageService.guigePrice(product.getId());//获取商品所有规格
 //            if (guige == null || specificaList == null || specificaList.size() == 0) {
 //                product.setIsSpecifica(0);
 //            }
 //            resultMap.put("guige", guige);
-//            resultMap.put("specificaList", specificaList);
+            resultMap.put("specificaList", specificaList);
 //            resultMap.put("guigePriceList", guigePriceList);
         }
 
@@ -338,12 +337,11 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
             }
             if (CommonUtil.isNotEmpty(proSpecificas)) {
                 detail.setProductSpecificas(CommonUtil.toString(proSpecificas));
-                //TODO 需调用  productService.getProInvIdBySpecId()方法
-//                Map<String, Object> invMap = productService.getProInvIdBySpecId(proSpecificas.toString(), productId);
-//                detail.setProductSpeciname(invMap.get("specifica_values").toString());
-//                if (CommonUtil.isNotEmpty(invMap.get("specifica_img_url"))) {
-//                    detail.setProductImageUrl(invMap.get("specifica_img_url").toString());
-//                }
+                Map<String, Object> invMap = productService.getProInvIdBySpecId(proSpecificas.toString(), productId);
+                detail.setProductSpeciname(invMap.get("specifica_values").toString());
+                if (CommonUtil.isNotEmpty(invMap.get("specifica_img_url"))) {
+                    detail.setProductImageUrl(invMap.get("specifica_img_url").toString());
+                }
             }
 
             detail.setDetProNum(CommonUtil.toInteger(num));
@@ -366,7 +364,6 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
             if (CommonUtil.isNotEmpty(product.getFlowRecordId())) {
                 detail.setFlowRecordId(product.getFlowRecordId());
             }
-            //TODO 需调用  productService.getProInvIdBySpecId()方法
             count = orderDetailDAO.insert(detail);
             if (count > 0) {
                 params.put("status", 2);

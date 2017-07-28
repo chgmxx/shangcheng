@@ -68,7 +68,7 @@ public class MallFreightDetailServiceImpl extends BaseServiceImpl<MallFreightDet
                                 delDetailMap.remove(detailId);// 移除已经存在物流详情
                             }
                         }
-                        freightDetailDAO.updateAllColumnById(detail);
+                        freightDetailDAO.updateById(detail);
                     }
                     updateFreightProvince(detail, freightId, delProMap);
                 }
@@ -101,7 +101,7 @@ public class MallFreightDetailServiceImpl extends BaseServiceImpl<MallFreightDet
                             delProMap.remove(proId);
                         }
                     }
-                    freightProvincesDAO.updateAllColumnById(fProvince);
+                    freightProvincesDAO.updateById(fProvince);
                 }
             }
         }
@@ -123,13 +123,13 @@ public class MallFreightDetailServiceImpl extends BaseServiceImpl<MallFreightDet
                     detail.setId(CommonUtil.toInteger(entry.getKey()));
                     detail.setIsDelete(1);
                     // 逻辑删除物流详情
-                    freightDetailDAO.updateAllColumnById(detail);
+                    freightDetailDAO.updateById(detail);
                 } else {
                     MallFreightProvinces province = new MallFreightProvinces();
                     province.setId(CommonUtil.toInteger(entry.getKey()));
                     province.setIsDelete(1);
                     // 逻辑删除物流配送区域
-                    freightProvincesDAO.updateAllColumnById(province);
+                    freightProvincesDAO.updateById(province);
                 }
             }
         }

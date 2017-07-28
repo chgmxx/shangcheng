@@ -48,7 +48,7 @@ public class MallGroupBuyPriceServiceImpl extends BaseServiceImpl<MallGroupBuyPr
                     if (CommonUtil.isEmpty(mallGroupBuyPrice.getId())) {
                         groupBuyPriceDAO.insert(mallGroupBuyPrice);
                     } else {
-                        groupBuyPriceDAO.updateAllColumnById(mallGroupBuyPrice);
+                        groupBuyPriceDAO.updateById(mallGroupBuyPrice);
                     }
                 }
             }

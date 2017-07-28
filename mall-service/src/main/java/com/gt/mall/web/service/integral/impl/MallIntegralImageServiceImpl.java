@@ -1,9 +1,12 @@
 package com.gt.mall.web.service.integral.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.integral.MallIntegralDAO;
 import com.gt.mall.dao.integral.MallIntegralImageDAO;
 import com.gt.mall.entity.integral.MallIntegralImage;
+import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.web.service.integral.MallIntegralImageService;
@@ -60,7 +63,7 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl<MallIntegralIm
             if (CommonUtil.isNotEmpty(appletImage)) {
                 int count = 0;
                 if (CommonUtil.isNotEmpty(appletImage.getId())) {
-                    count = integralImageDAO.updateAllColumnById(appletImage);
+                    count = integralImageDAO.updateById(appletImage);
                 } else {
                     appletImage.setCreateTime(new Date());
                     appletImage.setBusUserId(userId);
@@ -87,7 +90,7 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl<MallIntegralIm
         } else {
             images.setIsShow(1);
         }
-        int count = integralImageDAO.updateAllColumnById(images);
+        int count = integralImageDAO.updateById(images);
         if (count > 0) {
             return true;
         }
@@ -96,6 +99,18 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl<MallIntegralIm
 
     @Override
     public List<MallIntegralImage> getIntegralImageByUser(Map<String, Object> params) {
-        return integralImageDAO.selectByImage(params);
+        Wrapper<MallIntegralImage> groupWrapper = new EntityWrapper<>();
+        String sql = "";
+        if (CommonUtil.isNotEmpty(params.get("userId"))) {
+            sql += " and i.bus_user_id = " + params.get("userId");
+        }
+        if (CommonUtil.isNotEmpty(params.get("shopId"))) {
+            sql += " and i.shop_id = " + params.get("shopId");
+        }
+        sql += "order by i.create_time desc";
+        groupWrapper.where("i.is_delete = 0 and i.is_show = 1 " + sql);
+
+        return integralImageDAO.selectList(groupWrapper);
+//        return integralImageDAO.selectByImage(params);
     }
 }

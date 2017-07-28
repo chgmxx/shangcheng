@@ -143,7 +143,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
                     if (auc.getStatus() == 1 && status > 0) {// 正在进行拍卖的商品不能修改
                         code = -2;
                     } else {
-                        num = auctionDAO.updateAllColumnById(auction);
+                        num = auctionDAO.updateById(auction);
                     }
                 } else {
                     auction.setUserId(userId);
@@ -165,7 +165,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
 
     @Override
     public boolean deleteAuction(MallAuction auction) {
-        int num = auctionDAO.updateAllColumnById(auction);
+        int num = auctionDAO.updateById(auction);
         if (num > 0) {
             return true;
         }
@@ -198,7 +198,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
                 keyword.setEditTime(new Date());
                 keyword.setSearchNum(keyword.getSearchNum() + 1);
                 keyword.setIsDelete(0);
-                searchKeywordDAO.updateAllColumnById(keyword);
+                searchKeywordDAO.updateById(keyword);
             }
         }
 

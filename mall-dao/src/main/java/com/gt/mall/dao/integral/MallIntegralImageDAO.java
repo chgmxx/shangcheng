@@ -38,5 +38,5 @@ public interface MallIntegralImageDAO extends BaseMapper<MallIntegralImage> {
      * @param params userId：用户Id，shopId：店铺id
      * @return 积分商城图片
      */
-    List<MallIntegralImage> selectByImage(Map<String, Object> params);
+//    List<MallIntegralImage> selectByImage(Map<String, Object> params);
 }

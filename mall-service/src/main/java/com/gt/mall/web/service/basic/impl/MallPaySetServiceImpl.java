@@ -1,6 +1,7 @@
 package com.gt.mall.web.service.basic.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -27,7 +28,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Service
-public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPaySet > implements MallPaySetService {
+public class MallPaySetServiceImpl extends BaseServiceImpl<MallPaySetDAO, MallPaySet> implements MallPaySetService {
 
     private Logger logger = Logger.getLogger(MallPaySetServiceImpl.class);
 
@@ -39,33 +40,33 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 
     @Override
     public MallPaySet selectByUserId(MallPaySet set) {
-        return paySetDAO.selectByUserId(set);
+        return paySetDAO.selectOne(set);
     }
 
     @Override
     public int editPaySet(Map<String, Object> params) {
         int count = 0;
-        MallPaySet set = (MallPaySet) JSONObject.toBean(JSONObject.fromObject(params),MallPaySet.class);
+        MallPaySet set = (MallPaySet) JSONObject.toBean(JSONObject.fromObject(params), MallPaySet.class);
 
-        MallPaySet paySet = paySetDAO.selectByUserId(set);
-        if(CommonUtil.isNotEmpty(set) && CommonUtil.isNotEmpty(paySet)){
-            if(CommonUtil.isEmpty(set.getId()) && CommonUtil.isNotEmpty(paySet.getId())){
+        MallPaySet paySet = paySetDAO.selectOne(set);
+        if (CommonUtil.isNotEmpty(set) && CommonUtil.isNotEmpty(paySet)) {
+            if (CommonUtil.isEmpty(set.getId()) && CommonUtil.isNotEmpty(paySet.getId())) {
                 set.setId(paySet.getId());
             }
         }
-        if(CommonUtil.isNotEmpty(set.getId())){
-            count = paySetDAO.updateAllColumnById(set);
-        }else{
+        if (CommonUtil.isNotEmpty(set.getId())) {
+            count = paySetDAO.updateById(set);
+        } else {
             set.setCreateTime(new Date());
             count = paySetDAO.insert(set);
         }
-        if(count > 0){
-            MallPaySet mallPaySet = paySetDAO.selectByUserId(set);
-            if(CommonUtil.isNotEmpty(set.getIsCheckSeller())){
-                if(set.getIsCheckSeller().toString().equals("0")){
-                    if(CommonUtil.isNotEmpty(mallPaySet.getIsSeller())){
-                        if(mallPaySet.getIsSeller().toString().equals("1")){
-                            sellerDAO.updateStatusByUserId(1,set.getUserId());
+        if (count > 0) {
+            MallPaySet mallPaySet = paySetDAO.selectOne(set);
+            if (CommonUtil.isNotEmpty(set.getIsCheckSeller())) {
+                if (set.getIsCheckSeller().toString().equals("0")) {
+                    if (CommonUtil.isNotEmpty(mallPaySet.getIsSeller())) {
+                        if (mallPaySet.getIsSeller().toString().equals("1")) {
+                            sellerDAO.updateStatusByUserId(1, set.getUserId());
                         }
                     }
                 }
@@ -80,15 +81,15 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
         String isDaifu = "0";//不允许代付
         MallPaySet set = new MallPaySet();
         set.setUserId(userId);
-        MallPaySet paySet = paySetDAO.selectByUserId(set);
-        if(CommonUtil.isNotEmpty(paySet)){
-            if(CommonUtil.isNotEmpty(paySet.getIsDeliveryPay())){
-                if(paySet.getIsDeliveryPay().toString().equals("1")){
+        MallPaySet paySet = paySetDAO.selectOne(set);
+        if (CommonUtil.isNotEmpty(paySet)) {
+            if (CommonUtil.isNotEmpty(paySet.getIsDeliveryPay())) {
+                if (paySet.getIsDeliveryPay().toString().equals("1")) {
                     isHuoDao = "1";//允许货到付款
                 }
             }
-            if(CommonUtil.isNotEmpty(paySet.getIsDaifu())){
-                if(paySet.getIsDaifu().toString().equals("1")){
+            if (CommonUtil.isNotEmpty(paySet.getIsDaifu())) {
+                if (paySet.getIsDaifu().toString().equals("1")) {
                     isDaifu = "1";//允许代付
                 }
             }
@@ -104,15 +105,15 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
         String isDaifu = "0";//不允许代付
         MallPaySet set = new MallPaySet();
         set.setUserId(userId);
-        MallPaySet paySet = paySetDAO.selectByUserId(set);
-        if(CommonUtil.isNotEmpty(paySet)){
-            if(CommonUtil.isNotEmpty(paySet.getIsDeliveryPay())){
-                if(paySet.getIsDeliveryPay().toString().equals("1")){
+        MallPaySet paySet = paySetDAO.selectOne(set);
+        if (CommonUtil.isNotEmpty(paySet)) {
+            if (CommonUtil.isNotEmpty(paySet.getIsDeliveryPay())) {
+                if (paySet.getIsDeliveryPay().toString().equals("1")) {
                     isHuoDao = "1";//允许货到付款
                 }
             }
-            if(CommonUtil.isNotEmpty(paySet.getIsDaifu())){
-                if(paySet.getIsDaifu().toString().equals("1")){
+            if (CommonUtil.isNotEmpty(paySet.getIsDaifu())) {
+                if (paySet.getIsDaifu().toString().equals("1")) {
                     isDaifu = "1";//允许代付
                 }
             }
@@ -120,5 +121,38 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
         resultMap.put("isHuoDao", isHuoDao);
         resultMap.put("isDaifu", isDaifu);
         return resultMap;
+    }
+
+    @Override
+    public MallPaySet selectByMember(Member member) {
+        if (CommonUtil.isEmpty(member)) {
+            return null;
+        }
+        MallPaySet paySet = new MallPaySet();
+        paySet.setUserId(member.getBusid());
+        MallPaySet set = paySetDAO.selectOne(paySet);
+        return set;
+    }
+
+    @Override
+    public Map<String, Object> getFooterMenu(int busUserId) {
+        Map<String, Object> footerMap = new HashMap<String, Object>();
+        footerMap.put("home", 1);
+        footerMap.put("group", 1);
+        footerMap.put("cart", 1);
+        footerMap.put("my", 1);
+        MallPaySet paySet = new MallPaySet();
+        paySet.setUserId(busUserId);
+        paySet = paySetDAO.selectOne(paySet);
+        if (CommonUtil.isNotEmpty(paySet)) {
+            if (CommonUtil.isNotEmpty(paySet.getFooterJson())) {
+                footerMap = (Map<String, Object>) JSONObject.toBean(JSONObject.fromObject(paySet.getFooterJson()), Map.class);
+                if (CommonUtil.toString(footerMap.get("home")).equals("0") && CommonUtil.toString(footerMap.get("group")).equals("0")
+                        && CommonUtil.toString(footerMap.get("cart")).equals("0") && CommonUtil.toString(footerMap.get("my")).equals("0")) {
+                    return null;
+                }
+            }
+        }
+        return footerMap;
     }
 }

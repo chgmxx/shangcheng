@@ -1,6 +1,7 @@
 package com.gt.mall.web.service.basic;
 
 import com.gt.mall.base.BaseService;
+import com.gt.mall.bean.Member;
 import com.gt.mall.entity.basic.MallPaySet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,4 +57,20 @@ public interface MallPaySetService extends BaseService<MallPaySet> {
      * @return map
      */
     Map<String, Object> isHuoDaoByUserId(int userId);
+
+    /**
+     * 获取商城设置
+     *
+     * @param member 用户
+     * @return 商城设置
+     */
+    MallPaySet selectByMember(Member member);
+
+    /**
+     * 查询底部菜单
+     *
+     * @param busUserId 用户Id
+     * @return Map
+     */
+    Map<String, Object> getFooterMenu(int busUserId);
 }

@@ -27,5 +27,5 @@ public interface MallCommentGiveDAO extends BaseMapper< MallCommentGive > {
      * @param userId userId：用户Id
      * @return 评论送礼列表
      */
-    List<MallCommentGive> getGiveByUserId(int userId);
+//    List<MallCommentGive> getGiveByUserId(int userId);
 }

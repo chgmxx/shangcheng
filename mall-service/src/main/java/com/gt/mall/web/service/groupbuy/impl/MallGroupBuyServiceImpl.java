@@ -120,7 +120,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
                         if (!buyOld.getProductId().equals(groupBuy.getProductId())) {//用户更换了商品
                             flag = true;
                         }
-                        num = groupBuyDAO.updateAllColumnById(groupBuy);
+                        num = groupBuyDAO.updateById(groupBuy);
                     }
                 } else {
                     groupBuy.setCreateTime(new Date());
@@ -141,7 +141,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
 
     @Override
     public boolean deleteGroupBuy(MallGroupBuy groupBuy) {
-        int num = groupBuyDAO.updateAllColumnById(groupBuy);
+        int num = groupBuyDAO.updateById(groupBuy);
         if (num > 0) {
             return true;
         }
@@ -317,7 +317,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
                 keyword.setEditTime(new Date());
                 keyword.setSearchNum(keyword.getSearchNum() + 1);
                 keyword.setIsDelete(0);
-                searchKeywordDAO.updateAllColumnById(keyword);
+                searchKeywordDAO.updateById(keyword);
             }
         }
 
@@ -438,15 +438,14 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
 
                 if (CommonUtil.isNotEmpty(detail.getProductSpecificas())) {
                     String specificaIds = detail.getProductSpecificas();
-                    //TODO 需调用productService.getProInvIdBySpecId方法
-//                    Map<String, Object> map = productService.getProInvIdBySpecId(specificaIds, detail.getProductId());
-//                    if(CommonUtil.isNotEmpty(map)){
-//                        if(CommonUtil.isNotEmpty(map.get("specifica_values"))){
-//                            String specificaValues = CommonUtil.toString(map.get("specifica_values"));
-//                            specificaValues = specificaValues.replace(",", " ");
-//                            map2.put("specifica_values", specificaValues);
-//                        }
-//                    }
+                    Map<String, Object> map = productService.getProInvIdBySpecId(specificaIds, detail.getProductId());
+                    if(CommonUtil.isNotEmpty(map)){
+                        if(CommonUtil.isNotEmpty(map.get("specifica_values"))){
+                            String specificaValues = CommonUtil.toString(map.get("specifica_values"));
+                            specificaValues = specificaValues.replace(",", " ");
+                            map2.put("specifica_values", specificaValues);
+                        }
+                    }
                 }
             }
             return map2;
