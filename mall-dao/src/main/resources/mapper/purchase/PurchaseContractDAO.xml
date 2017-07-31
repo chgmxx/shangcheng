@@ -1,19 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gt.mall.generator.purchase.mapper.PurchaseContractDAO">
+<mapper namespace="com.gt.mall.dao.purchase.PurchaseContractDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.generator.purchase.entity.PurchaseContract">
-		<id column="id" property="id" />
-		<result column="contract_title" property="contractTitle" />
-		<result column="contract_content" property="contractContent" />
-		<result column="bus_id" property="busId" />
-		<result column="create_date" property="createDate" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseContract">
+        <id column="id" property="id"/>
+        <result column="contract_title" property="contractTitle"/>
+        <result column="contract_content" property="contractContent"/>
+        <result column="bus_id" property="busId"/>
+        <result column="create_date" property="createDate"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, contract_title AS contractTitle, contract_content AS contractContent, bus_id AS busId, create_date AS createDate
     </sql>
+
+    <select id="findList" resultType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_contract
+        where bus_id=#{busId}
+        <if test="contractTitle != null and contractTitle != ''">
+            and contract_title=#{contractTitle}
+        </if>
+        order by id desc
+        limit #{pageFirst},#{pageLast}
+    </select>
+
+    <select id="findListCount" resultType="java.lang.Integer">
+        select
+        count(id)
+        from purchase_contract
+        where bus_id=#{busId}
+        <if test="contractTitle != null and contractTitle != ''">
+            and contract_title=#{contractTitle}
+        </if>
+    </select>
+
+    <select id="findAllList" resultType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_contract
+        where bus_id=#{busId}
+        order by id desc
+    </select>
+
+    <delete id="deleteContracts">
+		delete from purchase_contract where id in (${contractIds})
+	</delete>
 
 </mapper>

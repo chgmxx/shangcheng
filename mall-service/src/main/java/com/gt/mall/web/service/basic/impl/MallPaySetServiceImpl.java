@@ -5,9 +5,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -130,8 +128,7 @@ public class MallPaySetServiceImpl extends BaseServiceImpl<MallPaySetDAO, MallPa
         }
         MallPaySet paySet = new MallPaySet();
         paySet.setUserId(member.getBusid());
-        MallPaySet set = paySetDAO.selectOne(paySet);
-        return set;
+        return paySetDAO.selectOne(paySet);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.gt.mall.web.service.groupbuy.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -12,7 +14,6 @@ import com.gt.mall.dao.product.MallSearchKeywordDAO;
 import com.gt.mall.dao.seller.MallSellerJoinProductDAO;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
-import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallSearchKeyword;
@@ -20,10 +21,10 @@ import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PageUtil;
-import com.gt.mall.web.service.freight.impl.MallFreightServiceImpl;
 import com.gt.mall.web.service.groupbuy.MallGroupBuyPriceService;
 import com.gt.mall.web.service.groupbuy.MallGroupBuyService;
 import com.gt.mall.web.service.product.MallProductService;
+import com.gt.mall.web.service.product.MallSearchKeywordService;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
     @Autowired
     private MallSearchKeywordDAO searchKeywordDAO;
     @Autowired
+    private MallSearchKeywordService searchKeywordService;
+    @Autowired
     private MallOrderDetailDAO orderDetailDAO;
     @Autowired
     private MallOrderDAO orderDAO;
@@ -90,8 +93,13 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
     @Override
     public Map<String, Object> selectGroupBuyById(Integer id) {
         Map<String, Object> map = groupBuyDAO.selectByGroupBuyId(id);
+
         int groupBuyId = CommonUtil.toInteger(map.get("id"));
-        List<MallGroupBuyPrice> priceList = groupBuyPriceDAO.selectPriceByGroupId(groupBuyId);
+//        List<MallGroupBuyPrice> priceList = groupBuyPriceDAO.selectPriceByGroupId(groupBuyId);
+        Wrapper<MallGroupBuyPrice> groupWrapper = new EntityWrapper<>();
+        groupWrapper.where("group_buy_id = {0} and is_delete = 0", groupBuyId);
+        List<MallGroupBuyPrice> priceList = groupBuyPriceDAO.selectList(groupWrapper);
+
         map.put("priceList", priceList);
         return map;
     }
@@ -238,11 +246,10 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
                         sellerMap.put("userId", params.get("userId"));
                         sellerMap.put("productId", pId);
                         sellerMap.put("shopId", params.get("shopId"));
-                        //TODO 需调用sellerJoinProductDAO.selectProductByIsJoin() 加入超级销售员的商品表方法
-//                        List<MallSellerJoinProduct> jionList = sellerJoinProductDAO.selectProductByIsJoin(sellerMap);
-//                        if (jionList != null && jionList.size() > 0) {
-//                            map.put("sellerStatus", 1);
-//                        }
+                        List<MallSellerJoinProduct> jionList = sellerJoinProductDAO.selectProductByIsJoin(sellerMap);
+                        if (jionList != null && jionList.size() > 0) {
+                            map.put("sellerStatus", 1);
+                        }
                     } else if (isIntegral != 0) {
                         Map<String, Object> integralMap = new HashMap<String, Object>();
                         integralMap.put("userId", params.get("userId"));
@@ -301,9 +308,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
         if (CommonUtil.isNotEmpty(maps.get("proName")) && CommonUtil.isNotEmpty(member)) {
             proName = maps.get("proName").toString();
             //保存到搜索关键字表
-            //TODO 需调用 searchKeywordDAO.selectBykeyword()方法
-            MallSearchKeyword keyword = new MallSearchKeyword();
-//            MallSearchKeyword keyword = searchKeywordDAO.selectBykeyword(shopid, proName.toString(), member.getId());
+            MallSearchKeyword keyword = searchKeywordService.selectBykeyword(shopid, proName.toString(), member.getId());
             if (CommonUtil.isEmpty(keyword)) {
                 keyword = new MallSearchKeyword();
                 keyword.setKeyword(proName.toString());
@@ -390,8 +395,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
             Date nowTime = DateTimeKit.parse(DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss");
 
             groupBuy.setTimes((endTime.getTime() - nowTime.getTime()) / 1000);
+//            List<MallGroupBuyPrice> priceList = groupBuyPriceDAO.selectPriceByGroupId(groupBuy.getId());
+            Wrapper<MallGroupBuyPrice> groupWrapper = new EntityWrapper<>();
+            groupWrapper.where("group_buy_id = {0} and is_delete = 0", groupBuy.getId());
+            List<MallGroupBuyPrice> priceList = groupBuyPriceDAO.selectList(groupWrapper);
 
-            List<MallGroupBuyPrice> priceList = groupBuyPriceDAO.selectPriceByGroupId(groupBuy.getId());
             groupBuy.setPriceList(priceList);
             return groupBuy;
         }
@@ -439,8 +447,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
                 if (CommonUtil.isNotEmpty(detail.getProductSpecificas())) {
                     String specificaIds = detail.getProductSpecificas();
                     Map<String, Object> map = productService.getProInvIdBySpecId(specificaIds, detail.getProductId());
-                    if(CommonUtil.isNotEmpty(map)){
-                        if(CommonUtil.isNotEmpty(map.get("specifica_values"))){
+                    if (CommonUtil.isNotEmpty(map)) {
+                        if (CommonUtil.isNotEmpty(map.get("specifica_values"))) {
                             String specificaValues = CommonUtil.toString(map.get("specifica_values"));
                             specificaValues = specificaValues.replace(",", " ");
                             map2.put("specifica_values", specificaValues);
@@ -475,17 +483,16 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl<MallGroupBuyDAO, Ma
             params.put("orderDetailId", detailId);
             params.put("groupBuyId", buy.getId());
             //查询是否已成团
-            //TODO  orderDAO.groupJoinPeopleNum()方法
-//            Map<String, Object> joinMap = orderDAO.groupJoinPeopleNum(params);
-//            if(joinMap != null){
-//                int count = CommonUtil.toInteger(joinMap.get("num"));
-//                //团购凑齐人允许退款
-//                if(count >= buy.getGPeopleNum()){
-//                    groupIsReturn = 0;
-//                }else{//拼团人数没达到不允许退款
-//                    groupIsReturn = 1;
-//                }
-//            }
+            Map<String, Object> joinMap = orderDAO.groupJoinPeopleNum(params);
+            if(joinMap != null){
+                int count = CommonUtil.toInteger(joinMap.get("num"));
+                //团购凑齐人允许退款
+                if(count >= buy.getGPeopleNum()){
+                    groupIsReturn = 0;
+                }else{//拼团人数没达到不允许退款
+                    groupIsReturn = 1;
+                }
+            }
         }
         return groupIsReturn;
     }

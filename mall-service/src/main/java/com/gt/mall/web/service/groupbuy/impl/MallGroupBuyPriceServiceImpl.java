@@ -1,10 +1,11 @@
 package com.gt.mall.web.service.groupbuy.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.groupbuy.MallGroupBuyPriceDAO;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.web.service.freight.impl.MallFreightServiceImpl;
 import com.gt.mall.web.service.groupbuy.MallGroupBuyPriceService;
 import net.sf.json.JSONArray;
 import org.apache.log4j.Logger;
@@ -57,6 +58,11 @@ public class MallGroupBuyPriceServiceImpl extends BaseServiceImpl<MallGroupBuyPr
 
     @Override
     public List<MallGroupBuyPrice> selectPriceByGroupId(int groupBuyId) {
-        return groupBuyPriceDAO.selectPriceByGroupId(groupBuyId);
+
+        Wrapper<MallGroupBuyPrice> groupWrapper = new EntityWrapper<>();
+        groupWrapper.where("group_buy_id = {0} and is_delete = 0", groupBuyId);
+
+        return groupBuyPriceDAO.selectList(groupWrapper);
+
     }
 }

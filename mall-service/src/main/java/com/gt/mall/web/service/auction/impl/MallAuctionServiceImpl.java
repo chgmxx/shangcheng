@@ -15,6 +15,7 @@ import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionService;
+import com.gt.mall.web.service.product.MallSearchKeywordService;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
 
     @Autowired
     private MallSearchKeywordDAO searchKeywordDAO;
+
+    @Autowired
+    private MallSearchKeywordService searchKeywordService;
 
 
     @Override
@@ -182,9 +186,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
         if (CommonUtil.isNotEmpty(maps.get("proName")) && CommonUtil.isNotEmpty(member)) {
             proName = maps.get("proName").toString();
             //保存到搜索关键字表
-            //TODO 需调用 searchKeywordDAO.selectBykeyword()方法
-            MallSearchKeyword keyword=new  MallSearchKeyword();
-//            MallSearchKeyword keyword = searchKeywordDAO.selectBykeyword(shopid, proName.toString(), member.getId());
+            MallSearchKeyword keyword = searchKeywordService.selectBykeyword(shopid, proName.toString(), member.getId());
             if (CommonUtil.isEmpty(keyword)) {
                 keyword = new MallSearchKeyword();
                 keyword.setKeyword(proName.toString());

@@ -22,7 +22,7 @@ public interface MallGroupBuyPriceDAO extends BaseMapper<MallGroupBuyPrice> {
      * @param groupBuyId 团购id
      * @return  团购价格列表
      */
-    List<MallGroupBuyPrice> selectPriceByGroupId(Integer groupBuyId);
+//    List<MallGroupBuyPrice> selectPriceByGroupId(Integer groupBuyId);
 
     /**
      * 通过团购id 修改信息

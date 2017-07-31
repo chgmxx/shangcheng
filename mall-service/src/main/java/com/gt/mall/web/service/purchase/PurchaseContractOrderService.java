@@ -1,7 +1,7 @@
 package com.gt.mall.web.service.purchase;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.generator.purchase.entity.PurchaseContractOrder;
+import com.gt.mall.entity.purchase.PurchaseContractOrder;
 
 /**
  * <p>

@@ -102,4 +102,18 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
      */
     int selectCountAllByShopids(Map<String, Object> params);
 
+    /**
+     * 统计店铺下商品-对外报价
+     * @param params shopIds 店铺id集合，proName：商品名称
+     * @return 数量
+     */
+    int countPurchaseProByShopId(Map<String, Object> params);
+
+    /**
+     * 搜索店铺下的商品-对外报价
+     * @param params shopIds 店铺id集合，proName：商品名称,firstNum：页数，maxNum：记录数
+     * @return list
+     */
+    List<Map<String, Object>> selectPurchaseProByShopId(Map<String, Object> params);
+
 }

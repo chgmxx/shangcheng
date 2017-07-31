@@ -89,7 +89,7 @@
     <select id="selectCountByUserId" resultType="java.lang.Integer">
         select count(p.id)
         from t_mall_product p
-        where p.is_delete=0   and p.is_mall_show=0
+        where p.is_delete=0 and p.is_mall_show=0
         <if test="userId != null and userId != ''">
             and p.user_id = #{userId,jdbcType=INTEGER}
         </if>
@@ -100,7 +100,7 @@
             and p.pro_stock_total = #{proStockTotal}
         </if>
         <if test="proName != null">
-            and p.pro_name  like '%${proName}%'
+            and p.pro_name like '%${proName}%'
         </if>
         <if test="checkStatus != null">
             and p.check_status = #{checkStatus}
@@ -114,16 +114,21 @@
     </select>
     <!-- 查询商家下的商品信息-->
     <select id="selectByUserId" resultType="java.util.Map">
-        select p.id as id, i.image_url as imageUrl,p.pro_name as proName, p.pro_price as	proPrice,p.pro_stock_total as stockTotal,
-        p.pro_sale_total	as	saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as checkStatus,
-        p.check_reason as checkReason,p.shop_id as shopId ,p.two_code_path as twoCodePath,p.return_day as returnDay, views_num as viewsNum,
-        is_show_views as isShowView, is_integral_deduction,is_fenbi_deduction,p.is_specifica, p.sales_base,p.erp_pro_id,p.erp_inv_id,s.wx_shop_id as wxShopId
+        select p.id as id, i.image_url as imageUrl,p.pro_name as proName, p.pro_price as proPrice,p.pro_stock_total as
+        stockTotal,
+        p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as
+        checkStatus,
+        p.check_reason as checkReason,p.shop_id as shopId ,p.two_code_path as twoCodePath,p.return_day as returnDay,
+        views_num as viewsNum,
+        is_show_views as isShowView, is_integral_deduction,is_fenbi_deduction,p.is_specifica,
+        p.sales_base,p.erp_pro_id,p.erp_inv_id,s.wx_shop_id as wxShopId
         from t_mall_product p
-        left join	t_mall_image_associative i on p.id=i.ass_id and i.is_main_images=1 and i.is_delete=0 and i.ass_type = 1
+        left join t_mall_image_associative i on p.id=i.ass_id and i.is_main_images=1 and i.is_delete=0 and i.ass_type =
+        1
         left join t_mall_store s on p.shop_id = s.id
         where p.is_delete=0 and p.is_mall_show=0
         <if test="userId != null and userId != ''">
-            and p.user_id =	#{userId,jdbcType=INTEGER}
+            and p.user_id = #{userId,jdbcType=INTEGER}
         </if>
         <if test="isPublish != null and isPublish != ''">
             and p.is_publish = #{isPublish}
@@ -132,7 +137,7 @@
             and p.pro_stock_total = #{proStockTotal}
         </if>
         <if test="proName != null">
-            and p.pro_name  like '%${proName}%'
+            and p.pro_name like '%${proName}%'
         </if>
         <if test="checkStatus != null">
             and p.check_status = #{checkStatus}
@@ -185,13 +190,14 @@
         from t_mall_product p
         left join t_mall_image_associative i on p.id=i.ass_id
         left join t_mall_store s on p.shop_id = s.id
-        where i.is_main_images=1 and i.is_delete=0 and p.is_delete=0 and p.check_status=1 and p.is_publish=1 and i.ass_type = 1 and s.is_delete=0
+        where i.is_main_images=1 and i.is_delete=0 and p.is_delete=0 and p.check_status=1 and p.is_publish=1 and
+        i.ass_type = 1 and s.is_delete=0
         <if test="wxShopId != null and wxShopId != ''">
             and s.wx_shop_id=#{wxShopId}
         </if>
     </select>
     <select id="selectByShopId" resultType="java.util.Map">
-        select p.id as id, i.image_url,p.pro_name,  p.pro_price ,p.pro_cost_price,p.pro_stock_total ,p.shop_id,
+        select p.id as id, i.image_url,p.pro_name, p.pro_price ,p.pro_cost_price,p.pro_stock_total ,p.shop_id,
         p.is_specifica,p.is_integral_deduction,p.is_fenbi_deduction,p.is_coupons,p.is_member_discount,p.pro_restriction_num
         from t_mall_product p
         left join t_mall_image_associative i on p.id=i.ass_id
@@ -212,7 +218,8 @@
         from t_mall_product p
         left join t_mall_image_associative i on p.id=i.ass_id
         left join t_mall_store s on p.shop_id = s.id
-        where i.is_main_images=1 and i.is_delete=0 and p.is_delete=0 and p.check_status=1 and p.is_publish=1 and i.ass_type = 1 and s.is_delete=0
+        where i.is_main_images=1 and i.is_delete=0 and p.is_delete=0 and p.check_status=1 and p.is_publish=1 and
+        i.ass_type = 1 and s.is_delete=0
         <if test="wxShopId != null and wxShopId != ''">
             and s.wx_shop_id=#{wxShopId}
         </if>
@@ -241,10 +248,13 @@
         where id = #{product_id}
     </update>
     <select id="selectProductByShopids" resultType="java.util.Map">
-        SELECT distinct(a.id),a.pro_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id
+        SELECT
+        distinct(a.id),a.pro_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id
         from t_mall_product a
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
+        is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1
+        AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.`is_delete`=0
         WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
         <if test="shopId != null and shopId != ''">
@@ -275,15 +285,18 @@
         </if>
     </select>
     <select id="selectProductAllByShopids" resultType="java.util.Map">
-        SELECT distinct a.id as id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,
+        SELECT distinct a.id as
+        id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,
         a.pro_sale_total,a.sales_base
         from t_mall_product a
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
+        is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1
+        AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id and e.is_delete=0
         left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
         left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
-        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and g.is_delete=0 and pg.is_delete=0
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and g.is_delete=0 and pg.is_delete=0
         <if test="shopId != null and shopId != ''">
             and a.shop_id=#{shopId}
         </if>
@@ -312,7 +325,7 @@
                 ORDER BY a.pro_sale_total+a.sales_base
             </when>
             <when test="type == 3">
-                ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price  )
+                ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price )
             </when>
             <otherwise>
                 <if test="rType > 0">
@@ -340,7 +353,7 @@
         from t_mall_product a
         left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
         left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
-        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and g.is_delete=0 and pg.is_delete=0
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and g.is_delete=0 and pg.is_delete=0
         <if test="shopId != null and shopId != ''">
             and a.shop_id=#{shopId}
         </if>
@@ -363,6 +376,40 @@
             <foreach collection="sellerFindIds" index="index" item="item" open="(" separator="or" close=")">
                 a.id = #{item,jdbcType=INTEGER}
             </foreach>
+        </if>
+    </select>
+    <select id="countPurchaseProByShopId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM t_mall_product p
+        LEFT JOIN t_mall_image_associative i ON p.id=i.ass_id
+        LEFT JOIN t_mall_store s ON p.shop_id = s.id
+        WHERE i.is_main_images=1
+        AND i.is_delete=0 AND p.is_delete=0 AND p.check_status=1 AND p.is_publish=1 AND i.ass_type = 1 AND s.is_delete=0
+        AND s.id IN
+        <foreach close=")" collection="shopIds" index="index" item="item" open="(" separator=",">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+        <if test="proName != null and proName != ''">
+            AND p.pro_name LIKE '%${proName}%'
+        </if>
+        ORDER BY p.create_time DESC
+    </select>
+    <select id="selectPurchaseProByShopId" resultType="java.util.Map">
+        SELECT p.id AS id,d.product_detail, p.create_time,i.image_url,p.pro_name, p.pro_price ,p.pro_cost_price,p.pro_stock_total ,p.shop_id, p.is_specifica,p.is_integral_deduction,p.is_fenbi_deduction,p.is_coupons,p.is_member_discount,p.pro_restriction_num FROM t_mall_product p
+        LEFT JOIN t_mall_image_associative i ON p.id=i.ass_id
+        LEFT JOIN t_mall_store s ON p.shop_id = s.id
+        LEFT JOIN t_mall_product_detail d ON d.product_id=p.id
+        WHERE i.is_main_images=1
+        AND i.is_delete=0 AND p.is_delete=0 AND p.check_status=1 AND p.is_publish=1 AND i.ass_type = 1 AND s.is_delete=0
+        AND s.id IN
+        <foreach close=")" collection="shopIds" index="index" item="item" open="(" separator=",">
+            #{item,jdbcType=INTEGER}
+        </foreach>
+        <if test="proName != null and proName != ''">
+            AND p.pro_name LIKE '%${proName}%'
+        </if>
+        ORDER BY p.create_time DESC
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
         </if>
     </select>
 

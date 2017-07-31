@@ -3,20 +3,16 @@ package com.gt.mall.web.service.freight.impl;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.freight.MallFreightDetailDAO;
-import com.gt.mall.dao.freight.MallFreightProvincesDAO;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.freight.MallFreightDetail;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
-import com.gt.mall.web.service.basic.impl.MallCollectServiceImpl;
 import com.gt.mall.web.service.freight.MallFreightDetailService;
 import com.gt.mall.web.service.freight.MallFreightService;
-import com.gt.mall.web.service.store.MallStoreService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -171,7 +167,11 @@ public class MallFreightServiceImpl extends BaseServiceImpl<MallFreightDAO, Mall
                         weight = Float.valueOf(orderObj.get("pro_weight").toString());
                     }
                     //根据店铺来查询物流
-                    MallFreight freight = freightDAO.selectFreightByShopId(shopId);
+                    MallFreight freight =new MallFreight();
+                    freight.setShopId(shopId);
+                    freight.setIsDelete(0);
+                    freight=freightDAO.selectOne(freight);
+//                    MallFreight freight = freightDAO.selectFreightByShopId(shopId);
                     if (freight != null && toshop == 0) {
                         freightPrice = 0;//物流数量
                         float noMoney = 0;//免邮价格

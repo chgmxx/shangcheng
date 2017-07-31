@@ -2,30 +2,69 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.mall.dao.purchase.PurchaseOrderDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseOrder">
-		<id column="id" property="id" />
-		<result column="order_number" property="orderNumber" />
-		<result column="company_id" property="companyId" />
-		<result column="order_title" property="orderTitle" />
-		<result column="create_date" property="createDate" />
-		<result column="order_describe" property="orderDescribe" />
-		<result column="order_explain" property="orderExplain" />
-		<result column="order_qrcode" property="orderQrcode" />
-		<result column="order_type" property="orderType" />
-		<result column="have_contract" property="haveContract" />
-		<result column="have_tax" property="haveTax" />
-		<result column="freight" property="freight" />
-		<result column="all_money" property="allMoney" />
-		<result column="order_status" property="orderStatus" />
-		<result column="order_remarks" property="orderRemarks" />
-		<result column="bus_id" property="busId" />
-		<result column="member_id" property="memberId" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseOrder">
+        <id column="id" property="id"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="company_id" property="companyId"/>
+        <result column="order_title" property="orderTitle"/>
+        <result column="create_date" property="createDate"/>
+        <result column="order_describe" property="orderDescribe"/>
+        <result column="order_explain" property="orderExplain"/>
+        <result column="order_qrcode" property="orderQrcode"/>
+        <result column="order_type" property="orderType"/>
+        <result column="have_contract" property="haveContract"/>
+        <result column="have_tax" property="haveTax"/>
+        <result column="freight" property="freight"/>
+        <result column="all_money" property="allMoney"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="order_remarks" property="orderRemarks"/>
+        <result column="bus_id" property="busId"/>
+        <result column="member_id" property="memberId"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, order_number AS orderNumber, company_id AS companyId, order_title AS orderTitle, create_date AS createDate, order_describe AS orderDescribe, order_explain AS orderExplain, order_qrcode AS orderQrcode, order_type AS orderType, have_contract AS haveContract, have_tax AS haveTax, freight, all_money AS allMoney, order_status AS orderStatus, order_remarks AS orderRemarks, bus_id AS busId, member_id AS memberId
     </sql>
+    <select id="findList" resultType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_order
+        where bus_id=#{busId}
+        <if test="startTime != null and startTime != ''">
+            and create_date >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and create_date <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="status != null and status != '' and status !=10 and status !='10'">
+            and order_status = #{status}
+        </if>
+        <if test="search !=null and search != ''">
+            and order_number=#{search}
+        </if>
+        order by id desc
+        limit #{pageFirst},#{pageLast}
+    </select>
+
+    <select id="findListCount" resultType="java.lang.Integer">
+        select
+        count(id)
+        from purchase_order
+        where bus_id=#{busId}
+        <if test="startTime != null and startTime != ''">
+            and create_date >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and create_date <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="status != null and status != '' and status !=10 and status !='10'">
+            and order_status = #{status}
+        </if>
+        <if test="search !=null and search != ''">
+            and order_number=#{search}
+        </if>
+    </select>
 
 </mapper>

@@ -2,18 +2,56 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.mall.dao.purchase.PurchaseCarouselDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseCarousel">
-		<id column="id" property="id" />
-		<result column="carousel_img" property="carouselImg" />
-		<result column="carousel_url" property="carouselUrl" />
-		<result column="bus_id" property="busId" />
-		<result column="order_id" property="orderId" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseCarousel">
+        <id column="id" property="id"/>
+        <result column="carousel_img" property="carouselImg"/>
+        <result column="carousel_url" property="carouselUrl"/>
+        <result column="bus_id" property="busId"/>
+        <result column="order_id" property="orderId"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, carousel_img AS carouselImg, carousel_url AS carouselUrl, bus_id AS busId, order_id AS orderId
     </sql>
+
+    <select id="findList" resultType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_carousel
+        where bus_id=#{busId}
+        <if test="carouselUrl != null and carouselUrl != ''">
+            and carousel_url=#{carouselUrl}
+        </if>
+        order by id desc
+        limit #{pageFirst},#{pageLast}
+    </select>
+
+    <select id="findListCount" resultType="java.lang.Integer">
+        select
+        count(id)
+        from purchase_carousel
+        where bus_id=#{busId}
+        <if test="carouselUrl != null and carouselUrl != ''">
+            and carousel_url=#{carouselUrl}
+        </if>
+    </select>
+    <select id="findByOrderId" parameterType="java.lang.Integer" resultType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_carousel where order_id=#{orderId}
+    </select>
+    <select id="findCarouselList" resultType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_carousel
+        where id in (${carouselIds})
+    </select>
+
+
+    <delete id="deleteCarouselIds">
+		delete from purchase_carousel where id not in (${carouselIds}) and order_id=#{orderId}
+	</delete>
 
 </mapper>

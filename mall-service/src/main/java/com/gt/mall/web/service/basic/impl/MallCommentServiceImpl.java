@@ -2,9 +2,7 @@ package com.gt.mall.web.service.basic.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallCommentDAO;
-import com.gt.mall.dao.basic.MallCommentGiveDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
-import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.util.CommonUtil;
@@ -36,8 +34,6 @@ public class MallCommentServiceImpl extends BaseServiceImpl<MallCommentDAO, Mall
 
     @Autowired
     private MallCommentDAO commentDAO;
-    @Autowired
-    private MallCommentGiveDAO commentGiveDAO;
     @Autowired
     private MallImageAssociativeDAO imageAssociativeDAO;
 
@@ -113,7 +109,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl<MallCommentDAO, Mall
                 MallComment pComment = new MallComment();
                 pComment.setId(comment.getRepPId());
                 pComment.setIsRep("1");
-                commentDAO.updateAllColumnById(pComment);
+                commentDAO.updateById(pComment);
                 return true;
             }
         }
