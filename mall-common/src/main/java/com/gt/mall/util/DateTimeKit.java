@@ -457,6 +457,7 @@ public class DateTimeKit {
                 result = dateFormat.format(date);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
@@ -465,7 +466,7 @@ public class DateTimeKit {
      * 功能描述：将带有时间的日期格式化为只有年月日
      *
      * @param date Date 日期
-     * @return
+     * @return 时间
      */
     public static String format(Date date) {
         return format(date, "yyyy-MM-dd");

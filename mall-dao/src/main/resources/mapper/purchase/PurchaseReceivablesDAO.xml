@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.purchase.PurchaseReceivablesDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseReceivables">
+		<id column="id" property="id" />
+		<result column="order_id" property="orderId" />
+		<result column="fans_corrency" property="fansCorrency" />
+		<result column="integral" property="integral" />
+		<result column="coupon" property="coupon" />
+		<result column="have_term" property="haveTerm" />
+		<result column="money" property="money" />
+		<result column="buy_time" property="buyTime" />
+		<result column="buy_mode" property="buyMode" />
+		<result column="term_id" property="termId" />
+		<result column="bus_id" property="busId" />
+		<result column="member_id" property="memberId" />
+		<result column="discount" property="discount" />
+		<result column="buy_status" property="buyStatus" />
+		<result column="receivables_number" property="receivablesNumber" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id AS orderId, fans_corrency AS fansCorrency, integral, coupon, have_term AS haveTerm, money, buy_time AS buyTime, buy_mode AS buyMode, term_id AS termId, bus_id AS busId, member_id AS memberId, discount, buy_status AS buyStatus, receivables_number AS receivablesNumber
+    </sql>
+
+</mapper>

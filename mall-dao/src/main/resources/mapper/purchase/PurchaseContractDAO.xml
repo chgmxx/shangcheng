@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.generator.purchase.mapper.PurchaseContractDAO">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.gt.mall.generator.purchase.entity.PurchaseContract">
+		<id column="id" property="id" />
+		<result column="contract_title" property="contractTitle" />
+		<result column="contract_content" property="contractContent" />
+		<result column="bus_id" property="busId" />
+		<result column="create_date" property="createDate" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, contract_title AS contractTitle, contract_content AS contractContent, bus_id AS busId, create_date AS createDate
+    </sql>
+
+</mapper>

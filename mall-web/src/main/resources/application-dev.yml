@@ -119,3 +119,19 @@ static:
 article:
  url:
   prefix: http://192.168.2.100:8081/
+
+#图片存放路径
+res:
+ image:
+  path: D:/apache-tomcat-7.0.59/wtpwebapps/wxmp/upload/image
+
+#电信流量订单前缀
+dianxin:
+ order: df
+
+#消息队列
+mq:
+ #队列转换器
+ exchange: gt.exchange.message
+ #队列名称
+ queueName: gt.queueName.message

@@ -89,6 +89,8 @@ public class MallSeckill extends Model< MallSeckill > {
     @TableField( "is_use" )
     private Integer    isUse;
 
+
+    /********************************* 以下参数不是表中字段要加注解   @TableField(exist = false) *******************************************/
     /**
      * 状态 不是表中字段
      */

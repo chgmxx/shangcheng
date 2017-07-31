@@ -62,6 +62,12 @@ public class MallSeckillPrice extends Model< MallSeckillPrice > {
     @TableField( "is_delete" )
     private Integer    isDelete;
 
+    /**
+     * 秒杀数量，不是表中数据
+     */
+    @TableField( exist = false )
+    private Integer seckillNum;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

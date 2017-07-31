@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 /**
- *  Properties 读取工具（注解方式获取application.yml文件的配置参数）
+ * Properties 读取工具（注解方式获取application.yml文件的配置参数）
  * User : yangqian
  * Date : 2017/7/19 0019
  * Time : 15:11
@@ -34,148 +34,191 @@ public class PropertiesUtil {
 
     private static String staticSourceFtpPwd;  //图片资源Ftp 密码
 
-    private static String shopUrl;
+    private static String shopUrl;//cxf 调用门店的地址
 
-    private static String wxmpToken;
+    private static String wxmpToken;//cxf 调用门店的token
 
-    private static String redisHost;
+    private static String redisHost;// redis IP
 
-    private static String redisPort;
+    private static String redisPort;// redis 端口
 
-    private static String redisPassword;
+    private static String redisPassword;// redis 密码
+
+    private static String resImagePath;//获取图片存放路径
+
+    private static String dbname;//电信流量订单前缀
+
+    private static String exchange;//队列转换器
+
+    private static String queueName;//队列名称
 
     @Value( "${web.homeUrl}" )
     public void setHomeUrl( String homeUrl ) {
-        PropertiesUtil.homeUrl = homeUrl;
+	PropertiesUtil.homeUrl = homeUrl;
     }
 
     @Value( "${web.imageUrlPrefix}" )
     public void setImageUrlPrefix( String imageUrlPrefix ) {
-        PropertiesUtil.imageUrlPrefix = imageUrlPrefix;
+	PropertiesUtil.imageUrlPrefix = imageUrlPrefix;
     }
 
     @Value( "${web.jxcUrl}" )
     public void setJxcUrl( String jxcUrl ) {
-        PropertiesUtil.jxcUrl = jxcUrl;
+	PropertiesUtil.jxcUrl = jxcUrl;
     }
 
     @Value( "${web.jxcAccount}" )
     public void setJxcAccount( String jxcAccount ) {
-        PropertiesUtil.jxcAccount = jxcAccount;
+	PropertiesUtil.jxcAccount = jxcAccount;
     }
 
     @Value( "${web.jxcPwd}" )
     public void setJxcPwd( String jxcPwd ) {
-        PropertiesUtil.jxcPwd = jxcPwd;
+	PropertiesUtil.jxcPwd = jxcPwd;
     }
 
     @Value( "${article.url.prefix}" )
     public void setArticleUrl( String articleUrl ) {
-        PropertiesUtil.articleUrl = articleUrl;
+	PropertiesUtil.articleUrl = articleUrl;
     }
 
     @Value( "${static.source.ftp.ip}" )
     public void setStaticSourceFtpIp( String staticSourceFtpIp ) {
-        PropertiesUtil.staticSourceFtpIp = staticSourceFtpIp;
+	PropertiesUtil.staticSourceFtpIp = staticSourceFtpIp;
     }
 
     @Value( "${static.source.ftp.port}" )
     public void setStaticSourceFtpPort( String staticSourceFtpPort ) {
-        PropertiesUtil.staticSourceFtpPort = staticSourceFtpPort;
+	PropertiesUtil.staticSourceFtpPort = staticSourceFtpPort;
     }
 
     @Value( "${static.source.ftp.user}" )
     public void setStaticSourceFtpUser( String staticSourceFtpUser ) {
-        PropertiesUtil.staticSourceFtpUser = staticSourceFtpUser;
+	PropertiesUtil.staticSourceFtpUser = staticSourceFtpUser;
     }
 
     @Value( "${static.source.ftp.password}" )
     public void setStaticSourceFtpPwd( String staticSourceFtpPwd ) {
-        PropertiesUtil.staticSourceFtpPwd = staticSourceFtpPwd;
+	PropertiesUtil.staticSourceFtpPwd = staticSourceFtpPwd;
     }
 
     @Value( "${project.shop.cxf-url}" )
     public void setShopUrl( String shopUrl ) {
-        PropertiesUtil.shopUrl = shopUrl;
+	PropertiesUtil.shopUrl = shopUrl;
     }
 
     @Value( "${wxmp.token}" )
     public void setWxmpToken( String wxmpToken ) {
-        PropertiesUtil.wxmpToken = wxmpToken;
+	PropertiesUtil.wxmpToken = wxmpToken;
     }
 
     @Value( "${spring.redis.host}" )
     public void setRedisHost( String redisHost ) {
-        PropertiesUtil.redisHost = redisHost;
+	PropertiesUtil.redisHost = redisHost;
     }
 
     @Value( "${spring.redis.port}" )
     public void setRedisPort( String redisPort ) {
-        PropertiesUtil.redisPort = redisPort;
+	PropertiesUtil.redisPort = redisPort;
     }
 
     @Value( "${spring.redis.password}" )
     public void setRedisPassword( String redisPassword ) {
-        PropertiesUtil.redisPassword = redisPassword;
+	PropertiesUtil.redisPassword = redisPassword;
+    }
+
+    @Value( "${res.image.path}" )
+    public void setResImagePath( String resImagePath ) {
+	PropertiesUtil.resImagePath = resImagePath;
+    }
+
+    @Value( "${dianxin.order}" )
+    public void setDbname( String dbname ) {
+	PropertiesUtil.dbname = dbname;
+    }
+    @Value( "${mq.exchange}" )
+    public void setExchange( String exchange ) {
+	PropertiesUtil.exchange = exchange;
+    }
+
+    @Value( "${mq.exchange}" )
+    public void setQueueName( String queueName ) {
+	PropertiesUtil.queueName = queueName;
+    }
+
+    public static String getDbname() {
+	return dbname;
+    }
+
+    public static String getExchange() {
+	return exchange;
+    }
+
+    public static String getQueueName() {
+	return queueName;
+    }
+
+    public static String getResImagePath() {
+	return resImagePath;
     }
 
     public static String getHomeUrl() {
-        return homeUrl;
+	return homeUrl;
     }
 
     public static String getImageUrlPrefix() {
-        return imageUrlPrefix;
+	return imageUrlPrefix;
     }
 
     public static String getJxcUrl() {
-        return jxcUrl;
+	return jxcUrl;
     }
 
     public static String getJxcAccount() {
-        return jxcAccount;
+	return jxcAccount;
     }
 
     public static String getJxcPwd() {
-        return jxcPwd;
+	return jxcPwd;
     }
 
     public static String getArticleUrl() {
-        return articleUrl;
+	return articleUrl;
     }
 
     public static String getStaticSourceFtpIp() {
-        return staticSourceFtpIp;
+	return staticSourceFtpIp;
     }
 
     public static String getStaticSourceFtpPort() {
-        return staticSourceFtpPort;
+	return staticSourceFtpPort;
     }
 
     public static String getStaticSourceFtpUser() {
-        return staticSourceFtpUser;
+	return staticSourceFtpUser;
     }
 
     public static String getStaticSourceFtpPwd() {
-        return staticSourceFtpPwd;
+	return staticSourceFtpPwd;
     }
 
     public static String getShopUrl() {
-        return shopUrl;
+	return shopUrl;
     }
 
     public static String getWxmpToken() {
-        return wxmpToken;
+	return wxmpToken;
     }
 
     public static String getRedisHost() {
-        return redisHost;
+	return redisHost;
     }
 
     public static String getRedisPort() {
-        return redisPort;
+	return redisPort;
     }
 
     public static String getRedisPassword() {
-        return redisPassword;
+	return redisPassword;
     }
 }

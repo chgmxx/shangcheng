@@ -1,8 +1,10 @@
 package com.gt.mall.util;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -15,10 +17,6 @@ public class CommonUtil {
 
     /**
      * 判断对象是否为空
-     *
-     * @param obj
-     *
-     * @return
      */
     public static boolean isEmpty( Object obj ) {
 	boolean b = false;
@@ -37,10 +35,6 @@ public class CommonUtil {
 
     /**
      * 判断对象是否不为空
-     *
-     * @param obj
-     *
-     * @return
      */
     public static boolean isNotEmpty( Object obj ) {
 	boolean b = false;
@@ -59,8 +53,6 @@ public class CommonUtil {
 
     /**
      * 转Integer
-     *
-     * @param obj
      */
     public static Integer toInteger( Object obj ) {
 	try {
@@ -75,19 +67,17 @@ public class CommonUtil {
 	return null;
     }
 
-    public static Integer toIntegerByDouble(double obj) throws Exception {
+    public static Integer toIntegerByDouble( double obj ) throws Exception {
 	try {
 	    return (int) obj;
 	} catch ( Exception e ) {
 	    throw new Exception( "double转int，转换失败！" );
-//	    e.printStackTrace();
+	    //	    e.printStackTrace();
 	}
     }
 
     /**
      * 转String
-     *
-     * @param obj
      */
     public static String toString( Object obj ) {
 	try {
@@ -104,8 +94,6 @@ public class CommonUtil {
 
     /**
      * 转Double
-     *
-     * @param obj
      */
     public static Double toDouble( Object obj ) {
 	try {
@@ -135,21 +123,19 @@ public class CommonUtil {
 
     /**
      * 转BigDecimal
-     * @param obj
-     * @return
      */
-    public static BigDecimal toBigDecimal(Object obj){
-        try {
-            if(isNotEmpty( obj )){
-                if(isDouble( obj )){
-                    return BigDecimal.valueOf( toDouble( obj ) );
-		}else{
-                    throw  new Exception( "对象不是double数据，不能转换成BigDecimal" );
+    public static BigDecimal toBigDecimal( Object obj ) {
+	try {
+	    if ( isNotEmpty( obj ) ) {
+		if ( isDouble( obj ) ) {
+		    return BigDecimal.valueOf( toDouble( obj ) );
+		} else {
+		    throw new Exception( "对象不是double数据，不能转换成BigDecimal" );
 		}
-	    }else{
-                throw new Exception( "对象为空，转换失败" );
+	    } else {
+		throw new Exception( "对象为空，转换失败" );
 	    }
-	}catch ( Exception e ){
+	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
 	return null;
@@ -157,56 +143,66 @@ public class CommonUtil {
 
     /**
      * 是否为正整数
-     *
-     * @param str
-     * @return
      */
-    public static boolean isInteger(String str) {
-	Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
-	return pattern.matcher(str).matches();
+    public static boolean isInteger( String str ) {
+	Pattern pattern = Pattern.compile( "^[-\\+]?[\\d]*$" );
+	return pattern.matcher( str ).matches();
     }
 
-    public static String Blob2String(Object obj) {
+    public static String Blob2String( Object obj ) {
 	String string = null;
 	try {
-	    if (obj == null || obj.equals("")) {
+	    if ( obj == null || obj.equals( "" ) ) {
 		return "";
 	    }
 	    byte[] bytes = (byte[]) obj;
-	    string = new String(bytes, "UTF-8");
-	} catch (UnsupportedEncodingException e) {
+	    string = new String( bytes, "UTF-8" );
+	} catch ( UnsupportedEncodingException e ) {
 	    e.printStackTrace();
 	}
 	return string;
     }
 
-    public static String getBytes(String str){
+    public static String getBytes( String str ) {
 	try {
-	    if(str.equals(new String(str.getBytes("iso8859-1"), "iso8859-1")))
-	    {
-		str=new String(str.getBytes("iso8859-1"),"utf-8");
+	    if ( str.equals( new String( str.getBytes( "iso8859-1" ), "iso8859-1" ) ) ) {
+		str = new String( str.getBytes( "iso8859-1" ), "utf-8" );
 	    }
-	} catch (UnsupportedEncodingException e) {
+	} catch ( UnsupportedEncodingException e ) {
 	    e.printStackTrace();
 	}
 	return str;
     }
 
-
     /**
      * url中文参数乱码
-     * @param str
-     * @return
      */
-    public static String UrlEncode(String str){
+    public static String UrlEncode( String str ) {
 
 	try {
-	    return  URLEncoder.encode(str, "UTF-8");
-	} catch (UnsupportedEncodingException e) {
+	    return URLEncoder.encode( str, "UTF-8" );
+	} catch ( UnsupportedEncodingException e ) {
 	    e.printStackTrace();
 	    return "";
 	}
     }
 
+    /**
+     * 获取卡号 截取一位 是生成条形码13位
+     */
+    public static String getCode() {
+	Long date = new Date().getTime();
+	return date.toString().substring( 1 );
+    }
+
+    public static String getpath(HttpServletRequest request) {
+	String url = "http://"
+			+ request.getServerName() // 服务器地址
+			+ request.getContextPath() // 项目名称
+			+ request.getServletPath() // 请求页面或其他地址
+			+ (CommonUtil.isEmpty(request.getQueryString()) ? "" : "?"
+			+ request.getQueryString()); // 参数
+	return url;
+    }
 
 }
