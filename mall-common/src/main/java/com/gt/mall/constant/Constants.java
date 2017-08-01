@@ -43,4 +43,14 @@ public class Constants {
      */
     public static final String IMAGE_FOLDER_TYPE_29 = "29";
 
+    /**
+     * 网址名称
+     */
+    public final static String doMainName="多粉";
+
+    /**
+     * 发短信model
+     */
+    public static final Integer SMS_MODEL = 5;
+
 }

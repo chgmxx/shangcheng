@@ -27,13 +27,21 @@ public class MpGenerator {
     public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     public static final  String[] generatorTableName = new String[] {
-		    "t_mall_take_their",
-		    "t_mall_take_their_time"
+		    "purchase_carousel",
+		    "purchase_company_mode",
+		    "purchase_contract",
+		    "purchase_contract_order",
+		    "purchase_language",
+		    "purchase_order",
+		    "purchase_order_details",
+		    "purchase_order_statistics",
+		    "purchase_receivables",
+		    "purchase_term"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
-    public static final  String[] tablePrefix        = new String[] { "t" };
+    public static final  String[] tablePrefix        = new String[] {  };
     // 生成的包路径
-    public static final  String   packagePath        = "com.gt.mall.generator";
+    public static final  String   packagePath        = "com.gt.mall.generator.purchase";
     public static final  String   moduleName         = "";
     // 生成mapper.xml 文件路径
     public static final  String   generatorXmlPath   = outPutBaseDir + "src/main/java/com/gt/mall/generator/xml/";

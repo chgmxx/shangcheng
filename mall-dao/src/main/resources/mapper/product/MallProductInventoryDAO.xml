@@ -204,7 +204,7 @@
         where id = #{inventory_id} and product_id = #{product_id}
     </update>
 
-    <select id="selectInvenByProId" resultType="java.util.Map">
+    <select id="selectInvenByProId" parameterType="java.lang.Integer" resultType="java.util.Map">
         SELECT a.id,a.specifica_ids,a.inv_price,a.inv_num,a.inv_code,b.specifica_img_url,a.erp_inv_id
         FROM t_mall_product_inventory a
         LEFT JOIN t_mall_product_specifica b ON a.specifica_img_id=b.id

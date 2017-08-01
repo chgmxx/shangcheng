@@ -10,6 +10,7 @@ import com.gt.mall.web.service.product.MallSearchKeywordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -55,5 +56,29 @@ public class MallSearchKeywordServiceImpl extends BaseServiceImpl< MallSearchKey
 	MallSearchKeyword keyword = new MallSearchKeyword();
 	keyword.setIsDelete( 1 );
 	return mallSearchKeywordDAO.update( keyword, wrapper );
+    }
+
+    @Override
+    public void insertSeachKeyWord(int memberId,int shopId,Object searchName) {
+
+	if ( CommonUtil.isNotEmpty( searchName)) {
+	    //保存到搜索关键字表
+	    MallSearchKeyword keyword = selectBykeyword( shopId, searchName.toString(), memberId );
+	    if ( CommonUtil.isEmpty( keyword ) ) {
+		keyword = new MallSearchKeyword();
+		keyword.setKeyword( searchName.toString() );
+		keyword.setSearchNum( 1 );
+		keyword.setShopId( shopId );
+		keyword.setUserId( memberId );
+		keyword.setEditTime( new Date() );
+		keyword.setCreateTime( new Date() );
+		mallSearchKeywordDAO.insert( keyword );
+	    } else {
+		keyword.setEditTime( new Date() );
+		keyword.setSearchNum( keyword.getSearchNum() + 1 );
+		keyword.setIsDelete( 0 );
+		mallSearchKeywordDAO.updateById( keyword );
+	    }
+	}
     }
 }

@@ -184,5 +184,18 @@
             and a.shop_id=#{shopId}
         </if>
     </select>
+    
+    <select id="selectIntegralNumByWxShopId" parameterType="java.lang.Integer" resultType="Map">
+        SELECT p.id
+        FROM t_mall_integral p
+        LEFT JOIN t_mall_store s ON p.shop_id = s.id
+        WHERE s.is_delete=0 AND p.is_delete=0 AND p.is_use=1  AND p.start_time &lt;= NOW() AND NOW() &lt; p.end_time  AND s.wx_shop_id=#{wxShopId}
+    </select>
+
+    <select id="selectIntegralNumByShopId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(p.id) FROM t_mall_integral s
+        LEFT JOIN t_mall_product p ON p.`id` = s.`product_id`
+        WHERE s.is_delete=0 AND p.is_delete=0 AND p.is_publish=1 AND p.check_status=1 AND s.start_time &lt;= NOW() AND NOW() &lt; s.end_time  AND s.shop_id=#{shopId}
+    </select>
 
 </mapper>

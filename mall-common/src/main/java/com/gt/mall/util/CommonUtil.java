@@ -205,4 +205,69 @@ public class CommonUtil {
 	return url;
     }
 
+    /**
+     * 格式化字符串
+     *
+     * @param format
+     * @param args
+     * @return
+     */
+    public static String format(String format, Object... args) {
+	String str = null;
+	str = String.format(format, args);
+	return str;
+    }
+
+    /**
+     * 精确的减法运算
+     * @param v1 v1
+     * @param  v2 v2
+     * @return v1-v2
+     */
+    public static double subtract( double v1, double v2 ) {
+	BigDecimal b1 = new BigDecimal( Double.toString( v1 ) );
+	BigDecimal b2 = new BigDecimal( Double.toString( v2 ) );
+	return b1.subtract( b2 ).doubleValue();
+    }
+
+    /**
+     * 精确的乘法运算
+     * @param v1 v1
+     * @param v2 v2
+     * @return v1+v2
+     */
+    public static double multiply( double v1, double v2 ) {
+	BigDecimal b1 = new BigDecimal( Double.toString( v1 ) );
+	BigDecimal b2 = new BigDecimal( Double.toString( v2 ) );
+	return b1.multiply( b2 ).doubleValue();
+    }
+
+    /**
+     * 精确的加法运算
+     * @param v1 v1
+     * @param v2 v2
+     * @return v1*v2
+     */
+    public static double add( double v1, double v2 ) {
+	BigDecimal b1 = new BigDecimal( Double.toString( v1 ) );
+	BigDecimal b2 = new BigDecimal( Double.toString( v2 ) );
+	return b1.add( b2 ).doubleValue();
+    }
+
+    /**
+     * 除法
+     * @param v1 v1
+     * @param v2 v2
+     * @param scale 保留小数
+     * @return v1/v2
+     */
+    public static double div( double v1, double v2, int scale ) {
+	if ( scale < 0 ) {
+	    return 0;
+	}
+	BigDecimal b1 = new BigDecimal( Double.toString( v1 ) );
+	BigDecimal b2 = new BigDecimal( Double.toString( v2 ) );
+	return b1.divide( b2, scale, BigDecimal.ROUND_HALF_UP ).doubleValue();
+    }
+
 }

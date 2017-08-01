@@ -83,4 +83,9 @@ public interface MallPresaleDAO extends BaseMapper< MallPresale > {
      * @return
      */
     int selectCountByShopId(Map<String, Object> params);
+
+    /**
+     * 查询预售商品信息
+     */
+    List<Map<String,Object>> selectBySearchNames(Map<String,Object> params);
 }

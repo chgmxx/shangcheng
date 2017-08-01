@@ -13,15 +13,13 @@ public class CxfFactoryBeanUtil {
 
     /**
      * 创建cxf
-     * @param className 类名
+     * @param c 类名
      * @param url 请求地址
      * @return Object 对象
      * @throws Exception  异常
      */
-    public static Object crateCxfFactoryBean( String className, String url ) throws Exception {
-	Class c = Class.forName( className );
-	JaxWsProxyFactoryBean jaxWsProxyFactoryBean;
-	jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
+    public static Object crateCxfFactoryBean( Class c, String url ) throws Exception {
+	JaxWsProxyFactoryBean jaxWsProxyFactoryBean = new JaxWsProxyFactoryBean();
 	jaxWsProxyFactoryBean.setServiceClass( c );
 	jaxWsProxyFactoryBean.setAddress( url );
 	return jaxWsProxyFactoryBean.create();

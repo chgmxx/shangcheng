@@ -78,6 +78,21 @@
         is_mall_show AS isMallShow, flow_id AS flowId, flow_record_id AS flowRecordId, erp_pro_id AS erpProId, erp_inv_id AS erpInvId, is_sync_erp AS isSyncErp, is_merge_pro_erp AS
         isMergeProErp
     </sql>
+
+    <sql id="BaseMaps_Column_List">
+        id, pro_buy_way, shop_id, group_id, pro_type_id, is_presell,
+        pro_presell_end, pro_delivery_start,
+        pro_delivery_end, pro_stock_total, pro_sale_total, is_show_stock, pro_code, pro_name,
+        pro_price, pro_cost_price, pro_freight_set, pro_freight_temp_id,
+        pro_freight_price,
+        pro_restriction_num, is_timing_sale, pro_time_sale, is_member_discount, is_coupons,
+        is_invoice, is_warranty, user_id, create_time, edit_time, is_publish,
+        check_status,
+        is_delete,two_code_path,is_specifica,return_day,is_integral_change_pro,change_integral,views_num,is_show_views,
+        is_return,member_type,is_integral_deduction,is_fenbi_deduction,is_fenbi_change_pro,change_fenbi,
+        pro_label,pro_weight,sales_base,card_type,is_mall_show,flow_id, flow_record_id, erp_pro_id, erp_inv_id, is_sync_erp,
+        is_merge_pro_erp
+    </sql>
     <select id="countProductByGroup" resultType="java.lang.Integer">
         SELECT COUNT(DISTINCT a.id)
         FROM t_mall_product a
@@ -364,6 +379,43 @@
                 a.id = #{item,jdbcType=INTEGER}
             </foreach>
         </if>
+    </select>
+
+    <select id="selectProductMapById" parameterType="java.lang.Integer" resultType="Map">
+        SELECT  a.id, a.pro_buy_way, a.shop_id, a.group_id, a.pro_type_id,  a.pro_stock_total,  a.pro_sale_total, a.is_show_stock, a.pro_code, a.pro_name, a.pro_price,
+        a.pro_cost_price, a.pro_freight_set, a.pro_freight_temp_id, a.pro_freight_price, a.pro_restriction_num, a.is_member_discount,
+        a.is_coupons, a.is_invoice, a.is_warranty,  a.is_publish, a.check_status, a.is_delete,a.two_code_path,a.is_specifica,a.return_day,a.is_integral_change_pro,
+        a.change_integral,a.views_num,a.is_show_views,  a.is_return,a.member_type, a.is_integral_deduction,a.is_fenbi_deduction,a.is_fenbi_change_pro,a.change_fenbi,
+        a.pro_label,a.pro_weight,a.sales_base,a.card_type,a.is_mall_show,a.flow_id, a.flow_record_id, a.erp_pro_id, a.erp_inv_id, a.is_sync_erp, a.is_merge_pro_erp,
+
+        b.specifica_img_url,b.inv_price,b.inv_num,b.inv_sale_num,b.inv_code,b.specifica_img_id,c.image_url,d.product_detail,d.product_message
+		FROM t_mall_product a
+		LEFT JOIN (SELECT e.product_id,e.inv_price,e.inv_num,e.inv_sale_num,e.specifica_img_id,f.specifica_img_url,e.inv_code FROM t_mall_product_inventory e
+		LEFT JOIN  t_mall_product_specifica f ON e.specifica_img_id=f.id WHERE e.is_default=1 AND e.is_delete=0)b ON a.id=b.product_id
+		LEFT JOIN (SELECT image_url,ass_id FROM t_mall_image_associative WHERE is_main_images=1 AND is_delete=0 AND ass_type=1)c ON a.id=c.ass_id
+		left join t_mall_product_detail d on d.product_id=a.id WHERE a.id= #{id}
+    </select>
+
+    <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
+        SELECT <include refid="BaseMaps_Column_List"/>
+        FROM t_mall_product
+        <where>
+            id = #{id}
+        </where>
+
+    </select>
+
+    <select id="selectFenbiNumByWxShopId" parameterType="java.lang.Integer" resultType="Map">
+        SELECT p.id
+        FROM t_mall_product p
+        LEFT JOIN t_mall_store s ON p.shop_id = s.id
+        WHERE s.is_delete=0 AND p.is_fenbi_change_pro=1 AND p.change_fenbi>0 AND p.is_delete=0 AND p.is_publish=1 AND p.check_status=1 AND s.wx_shop_id=#{wxShopId}
+    </select>
+    <select id="selectFenbiNumByShopId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(p.id)
+        from t_mall_product p
+        left join t_mall_store s on p.shop_id = s.id
+        where s.is_delete=0 and p.is_fenbi_change_pro=1 and p.change_fenbi>0 and p.is_delete=0 and p.is_publish=1 and p.check_status=1 and s.id=#{shopId}
     </select>
 
 </mapper>

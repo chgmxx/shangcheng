@@ -464,7 +464,6 @@ public class ImageWaterMarkUtil {
 	    try {
 		myfloat = new Float( 100 / 100 );
 	    } catch ( Exception e ) {
-		// TODO: handle exception
 		myfloat = null;
 	    }
 	    iwm.markImageByIconMoreImage( logoPathStr, path, 0, myfloat, x, y, w, h, newPath );

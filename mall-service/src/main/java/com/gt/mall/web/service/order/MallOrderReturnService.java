@@ -13,4 +13,8 @@ import com.gt.mall.entity.order.MallOrderReturn;
  */
 public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
 
+    /**
+     * 系统退款（不是买家申请的）
+     */
+    public boolean returnEndOrder(Integer orderId,Integer orderDetailId) throws Exception;
 }

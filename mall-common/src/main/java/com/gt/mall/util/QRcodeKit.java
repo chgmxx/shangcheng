@@ -1,24 +1,21 @@
 package com.gt.mall.util;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 二维码工具类 需要zxingcore.jar
@@ -58,10 +55,8 @@ public final class QRcodeKit {
             file = new File(path, System.currentTimeMillis() + ".jpg");
             writeToFile(bitMatrix, "jpg", file);
         } catch (WriterException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return file.getPath().replace("\\", "/");
@@ -92,10 +87,8 @@ public final class QRcodeKit {
             file = new File(path, System.currentTimeMillis() + ".jpg");
             writeToFile(bitMatrix, "jpg", file, new File(logoPath));
         } catch (WriterException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return file.getPath();
@@ -124,10 +117,8 @@ public final class QRcodeKit {
             OutputStream stream = response.getOutputStream();
             writeToStream(bitMatrix, "jpg", stream);
         } catch (WriterException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

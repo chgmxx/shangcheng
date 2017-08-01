@@ -184,7 +184,6 @@ public class URLConnectionDownloader {
 //			init(new File("D:/tomcat/webapps/upload/temp/1482749124521.jpg"),"D:/tomcat/webapps/upload/temp");
 //			resize(40,40);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

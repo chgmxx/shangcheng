@@ -41,6 +41,13 @@
         stoLatitude, sto_picture AS stoPicture, is_delete AS isDelete, sto_area AS stoArea, wx_shop_id AS wxShopId, sto_is_sms AS stoIsSms, sto_sms_telephone AS stoSmsTelephone,
         sto_qq_customer AS stoQqCustomer, sto_head_img AS stoHeadImg
     </sql>
+    <sql id="Base_Map_Column_list">
+        id, sto_name, sto_phone, sto_linkman, sto_status, sto_pid, sto_user_id, sto_is_main,
+        sto_address, sto_qr_code, sto_branch_id, sto_is_memberDiscount, sto_house_member,
+        sto_create_time, sto_create_person, sto_province, sto_city, sto_longitude, sto_latitude,
+        sto_picture,sto_area,wx_shop_id,sto_is_sms,sto_sms_telephone,sto_qq_customer,
+        sto_head_img
+    </sql>
     <!-- 分页查询结果列 -->
     <sql id="page_Column_list">
         o.id,o.sto_linkman,o.sto_phone,o.wx_shop_id,o.sto_name,o.sto_address,o.sto_house_member,o.sto_province,o.sto_city,o.sto_area,o.sto_longitude,o.sto_latitude,o.sto_picture
@@ -127,6 +134,15 @@
         LEFT JOIN t_mall_page mp ON mp.pag_sto_id=s.id AND pag_is_main=1
         WHERE  is_delete = 0 AND  s.sto_user_id = #{userId}
         ORDER BY s.id DESC
+    </select>
+
+    <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
+        SELECT
+        <include refid="Base_Map_Column_list"/>
+        FROM t_mall_store
+        <where>
+            id = #{id}
+        </where>
     </select>
 
 

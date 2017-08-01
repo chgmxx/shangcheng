@@ -299,50 +299,47 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public Map< String,Object > productSpecifications( Integer id, String inv_id ) {
-	Map< String,Object > map = new HashMap< String,Object >();
-	MallProductInventory inventory = null;
+	Map< String,Object > map = new HashMap<>();
 	String sql = "";
 	boolean defaultHasInvNum = true;
-	Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
+	Wrapper inventoryWrapper = new EntityWrapper();
+	inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
 	inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 	if ( CommonUtil.isNotEmpty( inv_id ) ) {
 	    inventoryWrapper.andNew( "id={0} and inv_num > 0", inv_id );
 	}
 	inventoryWrapper.orderBy( "is_default,inv_num", false );
-	List< MallProductInventory > inventoryList = mallProductInventoryDAO.selectList( inventoryWrapper );
+	List< Map<String,Object> > inventoryList = mallProductInventoryDAO.selectList( inventoryWrapper );
 	if ( inventoryList == null || inventoryList.size() == 0 ) {
+	    inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 	    inventoryWrapper.orderBy( "inv_num", false );
 	    inventoryList = mallProductInventoryDAO.selectList( inventoryWrapper );
 	    defaultHasInvNum = false;
 	}
-	if(inventoryList != null && inventoryList.size() > 0 && CommonUtil.isEmpty( inv_id )){
-	    inventory = inventoryList.get( 0 );
-	    if(CommonUtil.isEmpty( inventory.getInvNum() ) || inventory.getInvNum() == 0){
-	        inventoryWrapper.andNew( " inv_num > 0 " );
+	if ( inventoryList != null && inventoryList.size() > 0 && CommonUtil.isEmpty( inv_id ) ) {
+	    map = inventoryList.get( 0 );
+	    if ( CommonUtil.isEmpty( map.get( "inv_num" ) ) || map.get( "inv_num" ).toString().equals( "0" ) ) {
+		inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
+		inventoryWrapper.andNew( " inv_num > 0 " );
+		if ( defaultHasInvNum ) {
+		    inventoryWrapper.orderBy( "is_default", false );
+		} else {
+		    inventoryWrapper.orderBy( "inv_num", false );
+		}
+		inventoryList = mallProductInventoryDAO.selectList( inventoryWrapper );
 	    }
-	    if(defaultHasInvNum){
-		inventoryWrapper.orderBy( "is_default", false );
-	    }else{
-		inventoryWrapper.orderBy( "inv_num", false );
-	    }
-	    inventoryList = mallProductInventoryDAO.selectList( inventoryWrapper );
 	}
 
 	if ( inventoryList != null && inventoryList.size() > 0 ) {
-	    inventory = inventoryList.get( 0 );
-	    map.put( "id", inventory.getId() );
-	    map.put( "specifica_ids", inventory.getSpecificaIds() );
-	    map.put( "inv_price", inventory.getInvPrice() );
-	    map.put( "inv_num", inventory.getInvNum() );
-	    map.put( "inv_code", inventory.getInvCode() );
+	    map = inventoryList.get( 0 );
 	}
-	if ( CommonUtil.isNotEmpty( inventory ) ) {
-	    String specifica_ids = inventory.getSpecificaIds();
+	if ( CommonUtil.isNotEmpty( map ) ) {
+	    String specifica_ids = map.get( "specifica_ids" ).toString();
 	    String specifica_id[] = specifica_ids.split( "," );
 	    String specifica_names = "";
 	    String xids = "";
 	    for ( int i = 0; i < specifica_id.length; i++ ) {
-		Map<String, Object> map1 = mallProductSpecificaDAO.selectValueBySpecId(  CommonUtil.toInteger( specifica_id[i] )  );
+		Map< String,Object > map1 = mallProductSpecificaDAO.selectValueBySpecId( CommonUtil.toInteger( specifica_id[i] ) );
 		specifica_names += map1.get( "spec_value" ).toString() + "&nbsp;&nbsp;";
 		if ( i == specifica_id.length - 1 ) {
 		    xids += map1.get( "id" ).toString();
@@ -358,30 +355,29 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public List< Map< String,Object > > guigePrice( Integer productId ) {
-	List<Map<String, Object>> xlist = new ArrayList<Map<String, Object>>();
-	List<Map<String,Object>> list = mallProductInventoryDAO.selectInvenByProId( productId );
-	for(int i =0;i<list.size();i++){
-	    Map<String, Object> map =  list.get(i);
-	    String specifica_ids = map.get("specifica_ids").toString();
-	    String specifica_id[] = specifica_ids.split(",");
+	List< Map< String,Object > > xlist = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > list = mallProductInventoryDAO.selectInvenByProId( productId );
+	for ( int i = 0; i < list.size(); i++ ) {
+	    Map< String,Object > map = list.get( i );
+	    String specifica_ids = map.get( "specifica_ids" ).toString();
+	    String specifica_id[] = specifica_ids.split( "," );
 	    String xids = "";
 	    String values = "";
-	    for(int j=0;j<specifica_id.length;j++){
-		Map<String, Object> map1 = mallProductSpecificaDAO.selectValueBySpecId(  CommonUtil.toInteger( specifica_id[j] )  );
-		if(j==specifica_id.length-1){
-		    xids += map1.get("id").toString();
-		    values += map1.get("spec_value").toString();
-		}else{
-		    xids += map1.get("id").toString()+",";
-		    values += map1.get("spec_value").toString()+",";
+	    for ( int j = 0; j < specifica_id.length; j++ ) {
+		Map< String,Object > map1 = mallProductSpecificaDAO.selectValueBySpecId( CommonUtil.toInteger( specifica_id[j] ) );
+		if ( j == specifica_id.length - 1 ) {
+		    xids += map1.get( "id" ).toString();
+		    values += map1.get( "spec_value" ).toString();
+		} else {
+		    xids += map1.get( "id" ).toString() + ",";
+		    values += map1.get( "spec_value" ).toString() + ",";
 		}
 	    }
-	    map.put("values", values);
-	    map.put("xsid", xids);
-	    xlist.add(map);
+	    map.put( "values", values );
+	    map.put( "xsid", xids );
+	    xlist.add( map );
 	}
 	return xlist;
     }
-
 
 }

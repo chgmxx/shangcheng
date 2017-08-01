@@ -4,7 +4,11 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.seller.MallSellerOrderDAO;
 import com.gt.mall.entity.seller.MallSellerOrder;
 import com.gt.mall.web.service.seller.MallSellerOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -17,4 +21,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrderDAO,MallSellerOrder > implements MallSellerOrderService {
 
+    @Autowired
+    private MallSellerOrderDAO mallSellerOrderDAO;
+
+    /**
+     * 查询销售员的订单信息
+     */
+    @Override
+    public Map< String,Object > selectOrderByMemberId( Map< String,Object > params ) {
+	return mallSellerOrderDAO.selectOrderByMemberId( params );
+    }
+
+    /**
+     * 查询客户的订单
+     */
+    @Override
+    public List< Map< String,Object > > selectOrderByClientId( Map< String,Object > params ) {
+	return mallSellerOrderDAO.selectOrderByClientId( params );
+    }
 }

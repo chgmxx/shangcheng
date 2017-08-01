@@ -355,7 +355,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    params.put( "assId", product.getId() );
 	    params.put( "assType", 1 );
 	    // 查询商品图片
-	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( params );
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.getParamByProductId( params );
 	    // 查询商品规格
 	    List< Map< String,Object > > specificaList = mallProductSpecificaService.getSpecificaByProductId( product.getId() );
 	    // 查询商品库存
@@ -2075,7 +2075,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	imageParam.put( "assId", productId );
 	imageParam.put( "assType", 1 );
 	// 查询商品图片
-	List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( imageParam );
+	List< MallImageAssociative > imageList = mallImageAssociativeService.getParamByProductId( imageParam );
 	// 查询商品规格
 	//			List<Map<String, Object>> specificaList = specService.getSpecificaByProductId(id);
 

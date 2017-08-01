@@ -34,6 +34,11 @@
         AS proSpecStr, pro_type AS proType, sale_member_id AS saleMemberId, commission, is_check AS isCheck, session_id AS sessionId, bus_user_id AS busUserId
     </sql>
 
+    <sql id="Base_Map_Column_List">
+        id, product_id , shop_id , product_specificas , product_num , product_message , user_id , create_time , product_speciname , price, primary_price ,
+        pro_code , user_type , discount, pro_spec_str, pro_type, sale_member_id , commission, is_check , session_id , bus_user_id
+    </sql>
+
     <select id="selectByShopCart" parameterType="com.gt.entity.mall.MallShopCart" resultType="Map">
         SELECT id,pro_spec_str
         FROM t_mall_shop_cart
@@ -98,9 +103,9 @@
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
         WHERE  b.is_delete=0  /*AND s.`status` != -1*/
         <if test="memberList != null and memberList != ''">
-            and
-            <foreach collection="memberList" index="index" item="item" open="(" separator="or" close=")">
-                a.user_id= #{item,jdbcType=INTEGER}
+            and a.user_id in
+            <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
         <if test="type == null or type == 0">
@@ -129,9 +134,9 @@
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
         WHERE  b.is_delete=0  /*AND s.`status` != -1*/ and a.is_check=1 and d.is_delete=0 and d.is_publish=1 and d.check_status=1
         <if test="cartIds != null and cartIds != ''">
-            and
-            <foreach collection="cartIds" index="index" item="item" open="(" separator="or" close=")">
-                a.id= #{item,jdbcType=INTEGER}
+            and a.id in
+            <foreach collection="cartIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
         <if test="shopId != null and shopId != ''">
@@ -160,15 +165,15 @@
        /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
         WHERE  /*s.`status` != -1 AND*/ b.is_delete=0 and a.is_check=1
         <if test="memberList != null and memberList != ''">
-            and
-            <foreach collection="memberList" index="index" item="item" open="(" separator="or" close=")">
-                a.user_id= #{item,jdbcType=INTEGER}
+            and a.user_id in
+            <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
         <if test="cartIds != null and cartIds != ''">
-            and
-            <foreach collection="cartIds" index="index" item="item" open="(" separator="or" close=")">
-                a.id= #{item,jdbcType=INTEGER}
+            and a.id in
+            <foreach collection="cartIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
         <if test="proIds != null and proIds != ''"></if>
@@ -187,8 +192,9 @@
         update t_mall_shop_cart  set is_check=0
         <where>
             <if test="memberList != null and memberList != ''">
-                <foreach collection="memberList" index="index" item="item" open="(" separator="or" close=")">
-                    user_id = #{item,jdbcType=INTEGER}
+                user_id in
+                <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                    #{item,jdbcType=INTEGER}
                 </foreach>
             </if>
         </where>
@@ -203,10 +209,76 @@
             and a.bus_user_id=#{busUserId}
         </if>
         <if test="memberList != null and memberList != ''">
-            and
-            <foreach collection="memberList" index="index" item="item" open="(" separator="or" close=")">
-                a.user_id= #{item,jdbcType=INTEGER}
+            and a.user_id in
+            <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
     </select>
+
+    <select id="selectShopCartByMemberId" parameterType="Map" resultType="Map">
+        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.`discount`,a.`pro_spec_str`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
+        b.sto_pid,e.image_url,f.id AS pageid ,
+        d.pro_name,d.is_specifica AS isSpec ,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.is_member_discount,d.pro_stock_total AS stockNum,d.pro_restriction_num
+        /*,IF(s.business_name IS NULL,b.sto_name,s.business_name) AS sto_name*/
+        FROM
+        (
+            SELECT  a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.`discount`,a.`pro_spec_str`, a.`pro_type`, a.`sale_member_id`,a.`commission`
+            FROM t_mall_shop_cart a
+            <where>
+                <if test="memberList != null and memberList != ''">
+                    and a.user_id in
+                    <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                        #{item,jdbcType=INTEGER}
+                    </foreach>
+                </if>
+                <if test="memberId != null and memberId != ''">
+                    and a.user_id = #{memberId}
+                </if>
+                <if test="checkIds != null and checkIds != ''">
+                    and a.id in
+                    <foreach collection="checkIds" index="index" item="item" open="(" separator="," close=")">
+                        #{item,jdbcType=INTEGER}
+                    </foreach>
+                </if>
+                <if test="userId != null and userId != '' and userId != 0">
+                    and a.bus_user_id= #{userId}
+                </if>
+                <if test="type == 0">
+                    and a.pro_type = 0
+                </if>
+                <if test="type == 1">
+                    and (a.pro_type = 1 or a.pro_type = 2)
+                </if>
+            </where>
+            GROUP BY a.id
+            ORDER BY a.shop_id
+        ) a
+
+        LEFT JOIN t_mall_store b ON a.shop_id=b.id
+        /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
+        LEFT JOIN t_mall_product d ON a.product_id=d.id
+        LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
+        LEFT JOIN (SELECT id,pag_sto_id FROM t_mall_page WHERE pag_is_main=1) f ON a.shop_id=f.pag_sto_id
+        WHERE  b.is_delete=0  /*AND s.`status` != -1*/
+    </select>
+
+    <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
+        select
+        <include refid="Base_Map_Column_List" />
+        from t_mall_shop_cart
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="updateShopCarts">
+        UPDATE t_mall_shop_cart SET user_id =#{memberId} ,bus_user_id=#{busUserId}
+        <where>
+            id in
+            <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </where>
+    </update>
+
+
 </mapper>

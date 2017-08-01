@@ -37,5 +37,25 @@
         from t_mall_collect
         where user_id = #{userId} and product_id = #{productId}
     </select>
+    <select id="selectCollectByMemberId" resultType="java.util.Map">
+        SELECT c.id AS cId,a.id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,d.specifica_img_id,e.specifica_img_url,d.inv_num,d.inv_price,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label
+        FROM t_mall_collect c
+        LEFT JOIN t_mall_product a ON a.id=c.product_id
+        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND c.is_delete=0 AND c.is_collect=1
+        <if test="memberIdList != null and memberIdList != ''">
+            and c.user_id in
+            <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="memberId != null and memberId != ''">
+            and c.user_id = #{memberId}
+        </if>
+        order by c.create_time desc
+    </select>
+
 
 </mapper>

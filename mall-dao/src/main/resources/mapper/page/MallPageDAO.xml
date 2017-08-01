@@ -24,7 +24,12 @@
         pag_create_time AS pagCreateTime, pag_is_main AS pagIsMain, pag_html AS pagHtml, codeUrl
     </sql>
 
-    <select id="findByPage" resultType="Map">
+    <sql id="Base_Map_Column_List">
+        id, pag_name, pag_descript, pag_type_id, pag_css, pag_data, pag_user_id, pag_sto_id,
+        pag_create_time, pag_is_main, pag_html, codeUrl
+    </sql>
+
+    <select id="findByPage" resultType="java.util.List">
         /* todo 调用陈丹的接口 */
         SELECT a.*,d.item_value,c.business_name
         FROM t_mall_page a
@@ -105,5 +110,27 @@
         /*LEFT JOIN t_wx_shop ws ON s.`wx_shop_id`=ws.`id`AND ws.`status` != -1*/
         WHERE s.`id`=#{shopId}
     </select>
+
+    <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
+        SELECT
+        <include refid="Base_Map_Column_List"/>
+        FROM t_mall_page
+        <where>
+            id = #{id}
+        </where>
+    </select>
+    <select id="selectPageByWxShopId" parameterType="Map" resultType="Map">
+        SELECT p.id
+        FROM t_mall_page p
+		LEFT JOIN t_mall_store s ON s.id=p.`pag_sto_id`
+		WHERE  p.pag_is_main=1 AND s.`is_delete`=0
+		<if test="wxShopId != null and wxShopId != ''">
+            and s.wx_shop_id = #{wxShopId}
+        </if>
+        <if test="userId != null and userId != ''">
+            and p.pag_user_id = #{userId}
+        </if>
+    </select>
+
 
 </mapper>

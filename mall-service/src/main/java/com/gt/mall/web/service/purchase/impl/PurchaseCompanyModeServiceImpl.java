@@ -1,8 +1,8 @@
 package com.gt.mall.web.service.purchase.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.generator.purchase.entity.PurchaseCompanyMode;
-import com.gt.mall.generator.purchase.mapper.PurchaseCompanyModeDAO;
+import com.gt.mall.dao.purchase.PurchaseCompanyModeDAO;
+import com.gt.mall.entity.purchase.PurchaseCompanyMode;
 import com.gt.mall.web.service.purchase.PurchaseCompanyModeService;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Service;
  * @since 2017-07-31
  */
 @Service
-public class PurchaseCompanyModeServiceImpl extends BaseServiceImpl<PurchaseCompanyModeDAO, PurchaseCompanyMode> implements PurchaseCompanyModeService {
+public class PurchaseCompanyModeServiceImpl extends BaseServiceImpl<PurchaseCompanyModeDAO,PurchaseCompanyMode > implements PurchaseCompanyModeService {
 	
 }

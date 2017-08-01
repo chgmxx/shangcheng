@@ -1,7 +1,7 @@
 package com.gt.mall.web.service.purchase;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.generator.purchase.entity.PurchaseOrder;
+import com.gt.mall.entity.purchase.PurchaseOrder;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.gt.mall.generator.purchase.entity.PurchaseOrder;
  * @author yangqian
  * @since 2017-07-31
  */
-public interface PurchaseOrderService extends BaseService<PurchaseOrder> {
+public interface PurchaseOrderService extends BaseService<PurchaseOrder > {
 	
 }

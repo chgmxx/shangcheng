@@ -1,6 +1,7 @@
 package com.gt.mall.service;
 
 import com.gt.mall.BasicTest;
+import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.cxf.service.WxShopService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ public class CxfWxShopServiceTest extends BasicTest {
     @Test
     public void test(){
         try {
-            wxShopService.getShopById( 21 );
+            WsWxShopInfo shop= wxShopService.getShopById( 21 );
+            System.out.println("shopName = " + shop.getAddress());
         } catch ( Exception e ) {
             e.printStackTrace();
         }

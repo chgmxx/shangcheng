@@ -3,6 +3,7 @@ package com.gt.mall.dao.basic;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.basic.MallCollect;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,4 +31,9 @@ public interface MallCollectDAO extends BaseMapper<MallCollect> {
      * @return 是否成功
      */
     int batchUpdateCollect(Map<String, Object> params);
+
+    /**
+     * 通过会员id查询会员收藏的信息
+     */
+    List<Map<String,Object>> selectCollectByMemberId(Map<String,Object> params);
 }

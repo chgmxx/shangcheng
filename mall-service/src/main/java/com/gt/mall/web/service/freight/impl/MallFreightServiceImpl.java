@@ -3,20 +3,16 @@ package com.gt.mall.web.service.freight.impl;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.freight.MallFreightDetailDAO;
-import com.gt.mall.dao.freight.MallFreightProvincesDAO;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.freight.MallFreightDetail;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
-import com.gt.mall.web.service.basic.impl.MallCollectServiceImpl;
 import com.gt.mall.web.service.freight.MallFreightDetailService;
 import com.gt.mall.web.service.freight.MallFreightService;
-import com.gt.mall.web.service.store.MallStoreService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -55,7 +51,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl<MallFreightDAO, Mall
 
         int curPage = CommonUtil.isEmpty(param.get("curPage")) ? 1 : CommonUtil.toInteger(param.get("curPage"));
         param.put("curPage", curPage);
-        param.put("shopList", shopList);// 每页显示商品的数量
+        param.put("shopList", shopList);// 每页显示商品的数量selectFreightByShopId
 
         count = freightDAO.selectCountByShopId(param);
         PageUtil page = new PageUtil(curPage, pageSize, count, "mFreight/index.do");

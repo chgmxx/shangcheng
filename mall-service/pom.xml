@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <name>mall-service</name>
-    <url>http://maven.apache.org</url>
+    <url>http://mall.duofee.com</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,6 +24,7 @@
             <artifactId>mall-dao</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -43,9 +44,9 @@
                             <encoding>UTF-8</encoding>
                             <wsdlOptions>
                                 <!-- 大师兄的cxf接口 -->
-                                <wsdlOption>
+                                <!--<wsdlOption>
                                     <wsdl>http://yifriend.net/webservice/api?wsdl</wsdl>
-                                </wsdlOption>
+                                </wsdlOption>-->
                                 <!--<wsdlOption>
                                     <wsdl>http://localhost:8080/services/TestServiceWS.wsdl</wsdl>
                                 </wsdlOption>-->

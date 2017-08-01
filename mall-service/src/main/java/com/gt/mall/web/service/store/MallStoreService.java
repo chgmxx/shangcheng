@@ -63,7 +63,7 @@ public interface MallStoreService extends BaseService< MallStore > {
      * @param shopId  店铺id
      * @param user 用户信息
      * @param uType 用户类型
-     * @return
+     * @return 店铺信息
      */
     public int createCangku(int shopId,BusUser user,int uType);
 
@@ -71,8 +71,15 @@ public interface MallStoreService extends BaseService< MallStore > {
      * 通过门店id查询店铺信息
      * @param wxShopId 门店id
      * @param isNotId  除id以外
-     * @return
+     * @return 店铺信息
      */
     List<MallStore> findByShopId(int wxShopId ,int isNotId);
+
+    /**
+     * 根据商家id查询店铺信息
+     * @param userId 商家id
+     * @return 店铺信息
+     */
+    List<Map<String,Object>> selectStoreByUserId(int userId);
 
 }

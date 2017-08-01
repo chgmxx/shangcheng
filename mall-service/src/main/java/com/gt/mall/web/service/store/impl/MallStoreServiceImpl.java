@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
+import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MallJxcHttpClientUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.web.service.store.MallStoreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +35,13 @@ import java.util.Map;
 @Service
 public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStore > implements MallStoreService {
 
+    private static Logger logger = LoggerFactory.getLogger( MallStoreServiceImpl.class );
+
     @Autowired
     private MallStoreDAO mallStoreDao;
+
+    @Autowired
+    private WxShopService wxShopService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -84,19 +93,32 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     public int createCangku( int shopId, BusUser user, int uType ) {
 	int wxShopId = 0;
 	//创建仓库
-	Map< String,Object > storeParams = new HashMap< String,Object >();
+	Map< String,Object > storeParams = new HashMap<>();
 	storeParams.put( "createUid", user.getId() );
 	storeParams.put( "uidType", uType );
-	List< Map< String,Object > > lists = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > lists = new ArrayList<>();
 	MallStore mallStore = this.selectById( shopId );
 	if ( CommonUtil.isNotEmpty( mallStore ) ) {
 	    // todo 对接李逢喜的接口   根据门店id查询门店信息
-	    Map< String,Object > map = new HashMap< String,Object >();
+	    Map< String,Object > map = new HashMap<>();
 	    map.put( "id", mallStore.getWxShopId() );
-	    //	    map.put("name", storeMap.get("business_name"));
-	    //	    map.put("address", storeMap.get("sto_address"));
 	    map.put( "phone", mallStore.getStoPhone() );
 	    map.put( "principal", mallStore.getStoLinkman() );
+	    try {
+		WsWxShopInfo shopInfo = wxShopService.getShopById( mallStore.getWxShopId() );
+		if(CommonUtil.isNotEmpty( shopInfo )){
+		    map.put("name", shopInfo.getBusinessName());
+		    map.put("address", shopInfo.getAddress());
+		}
+	    }catch ( Exception e ){
+	        logger.error( "CXF调用接口《根据门店id查询门店信息异常》："+e.getMessage() );
+	    }
+	    if(!map.containsKey( "name" )){
+	        map.put( "name",mallStore.getStoName() );
+	    }
+	    if(!map.containsKey( "address" )){
+	        map.put( "address",mallStore.getStoAddress() );
+	    }
 	    lists.add( map );
 	} else {
 	    return 0;
@@ -117,6 +139,15 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    storeWrapper.where( "id !={0}", isNotId );
 	}
 	return mallStoreDao.selectList( storeWrapper );
+    }
+
+    @Override
+    public List< Map< String,Object > > selectStoreByUserId( int userId ) {
+	//SELECT id,sto_name AS name FROM t_mall_store WHERE sto_user_id=" + userid + " AND is_delete=0
+	Wrapper wrapper = new EntityWrapper();
+	wrapper.where( "sto_user_id={0} AND is_delete=0", userId );
+	wrapper.setSqlSelect( "id,sto_name AS name" );
+	return mallStoreDao.selectMaps( wrapper );
     }
 
 }

@@ -37,7 +37,7 @@ public class PurchaseContractOrder extends Model<PurchaseContractOrder> {
 
 	@Override
 	protected Serializable pkVal() {
-		return this.id;
+		return null;
 	}
 
 	@Override

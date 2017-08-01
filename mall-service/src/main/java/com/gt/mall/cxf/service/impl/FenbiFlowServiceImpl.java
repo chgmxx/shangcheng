@@ -1,7 +1,6 @@
 package com.gt.mall.cxf.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.param.BaseParam;
 import com.gt.mall.bean.param.fenbiFlow.FenbiSurplus;
 import com.gt.mall.bean.param.fenbiFlow.UpdateFenbiReduce;
 import com.gt.mall.bean.result.fenbi.FenBiCount;
@@ -9,7 +8,9 @@ import com.gt.mall.cxf.service.FenbiFlowService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.CxfFactoryBeanUtil;
 import com.gt.mall.util.PropertiesUtil;
-import com.gt.webservice.service.WxmpApiSerivce;
+import com.gt.webservice.client.WxmpApiSerivce;
+import com.gt.webservice.entity.param.BaseParam;
+import com.gt.webservice.util.ParamsSignUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,15 @@ public class FenbiFlowServiceImpl implements FenbiFlowService {
     @Override
     public Boolean updateFenbiReduce( UpdateFenbiReduce fenbiReduce ) throws Exception {
 
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", PropertiesUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( WxmpApiSerivce.class, PropertiesUtil.getShopUrl() );
 
 	BaseParam< UpdateFenbiReduce > baseParam = new BaseParam<>();
 	baseParam.setAction( "updateFenbiReduce" );
-	baseParam.setRequestToken( PropertiesUtil.getWxmpToken() );
 	baseParam.setReqdata( fenbiReduce );
+	baseParam.setNonceStr(ParamsSignUtil.CreateNoncestr());
+	baseParam.setTimestamp(ParamsSignUtil.create_timestamp());
+	String sign = ParamsSignUtil.sign( baseParam,JSONObject.toJSONString( fenbiReduce ) );
+	baseParam.setRequestToken( sign );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );
 	logger.info( "更改粉币冻结额度的接口 updateFenbiReduce 返回的结果：" + json );
@@ -44,7 +48,7 @@ public class FenbiFlowServiceImpl implements FenbiFlowService {
 
     @Override
     public Double getFenbiSurplus( FenbiSurplus fenbiSurplus ) throws Exception {
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce", PropertiesUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( WxmpApiSerivce.class, PropertiesUtil.getShopUrl() );
 	BaseParam< FenbiSurplus > baseParam = new BaseParam<>();
 	baseParam.setAction( "getFenbiSurplus" );
 	baseParam.setRequestToken( PropertiesUtil.getWxmpToken() );

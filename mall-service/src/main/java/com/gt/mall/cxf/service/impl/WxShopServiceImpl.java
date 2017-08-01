@@ -1,14 +1,15 @@
 package com.gt.mall.cxf.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.param.BaseParam;
-import com.gt.mall.bean.param.GetById;
 import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.CxfFactoryBeanUtil;
 import com.gt.mall.util.PropertiesUtil;
-import com.gt.webservice.service.WxmpApiSerivce;
+import com.gt.webservice.client.WxmpApiSerivce;
+import com.gt.webservice.entity.param.BaseParam;
+import com.gt.webservice.entity.param.GetById;
+import com.gt.webservice.util.ParamsSignUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,15 @@ public class WxShopServiceImpl implements WxShopService {
 	GetById getById = new GetById();
 	getById.setId( id );
 
-	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( "WxmpApiSerivce" , PropertiesUtil.getShopUrl() );
+	WxmpApiSerivce wxmpApiSerivce = (WxmpApiSerivce) CxfFactoryBeanUtil.crateCxfFactoryBean( WxmpApiSerivce.class, PropertiesUtil.getShopUrl() );
 
 	BaseParam baseParam = new BaseParam<>();
 	baseParam.setAction( "getShopById" );
-	baseParam.setRequestToken( PropertiesUtil.getWxmpToken() );
 	baseParam.setReqdata( getById );
+	baseParam.setNonceStr(ParamsSignUtil.CreateNoncestr());
+	baseParam.setTimestamp(ParamsSignUtil.create_timestamp());
+	String sign = ParamsSignUtil.sign( baseParam,JSONObject.toJSONString( getById ) );
+	baseParam.setRequestToken( sign );
 
 	String json = wxmpApiSerivce.reInvoke( JSONObject.toJSONString( baseParam ) );
 	logger.info( "根据门店id查询门店信息的接口 getShopById 返回的结果：" + json );
@@ -46,6 +50,17 @@ public class WxShopServiceImpl implements WxShopService {
 	String data = CxfFactoryBeanUtil.getStringResultByJson( json );
 	if(CommonUtil.isNotEmpty( data )){
 	    WsWxShopInfo wxShopInfo = JSONObject.parseObject( data, WsWxShopInfo.class );
+	    if(CommonUtil.isNotEmpty( wxShopInfo )){
+		String address =wxShopInfo.getProvince()+wxShopInfo.getCity();
+		if(CommonUtil.isNotEmpty( wxShopInfo.getDistrict() )){
+		    address += wxShopInfo.getDistrict();
+		}
+		if(CommonUtil.isNotEmpty( wxShopInfo.getAddress() )){
+		    address += wxShopInfo.getAddress();
+		}
+		address += wxShopInfo.getDetail();
+		wxShopInfo.setAddress( address );
+	    }
 	    return wxShopInfo;
 	}
 	return null;

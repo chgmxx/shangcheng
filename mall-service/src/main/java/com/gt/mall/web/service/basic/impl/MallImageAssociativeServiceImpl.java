@@ -1,5 +1,6 @@
 package com.gt.mall.web.service.basic.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
@@ -7,7 +8,6 @@ import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.web.service.basic.MallImageAssociativeService;
-import net.sf.json.JSONArray;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,16 +40,14 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
     public void insertUpdBatchImage( Map< String,Object > map, Integer proId ) {
 	// 逻辑删除商品图片
 	if ( !CommonUtil.isEmpty( map.get( "delimageList" ) ) ) {
-	    List< MallImageAssociative > imageList = (List< MallImageAssociative >) JSONArray
-			    .toList( JSONArray.fromObject( map.get( "delimageList" ) ), MallImageAssociative.class );
+	    List< MallImageAssociative > imageList = JSONArray.parseArray( map.get( "delimageList" ).toString(),MallImageAssociative.class );
 	    if ( imageList != null && imageList.size() > 0 ) {
 		imageAssociativeDAO.updateBatch( imageList );
 	    }
 	}
 	// 添加商品图片
 	if ( !CommonUtil.isEmpty( map.get( "imageList" ) ) ) {
-	    List< MallImageAssociative > addImgList = (List< MallImageAssociative >) JSONArray
-			    .toList( JSONArray.fromObject( map.get( "imageList" ) ), MallImageAssociative.class );
+	    List< MallImageAssociative > addImgList = JSONArray.parseArray( map.get( "imageList" ).toString(),MallImageAssociative.class );
 	    if ( addImgList != null && addImgList.size() > 0 ) {
 		for ( MallImageAssociative images : addImgList ) {
 		    images.setAssId( proId );
@@ -61,7 +59,12 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
     }
 
     @Override
-    public List< MallImageAssociative > selectImageByAssId( Map< String,Object > params ) {
+    public List< Map< String,Object > > selectImageByAssId( Map< String,Object > params ) {
+	return imageAssociativeDAO.selectByAssId( params );
+    }
+
+    @Override
+    public List< MallImageAssociative > getParamByProductId( Map< String,Object > params ) {
 	Wrapper< MallImageAssociative > wrapper = new EntityWrapper<>();
 	wrapper.where( "is_delete = 0" );
 	if ( CommonUtil.isNotEmpty( params.get( "assId" ) ) ) {

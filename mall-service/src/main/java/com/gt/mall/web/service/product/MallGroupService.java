@@ -111,4 +111,11 @@ public interface MallGroupService extends BaseService< MallGroup > {
      */
     void copyProductGroupByProduct(Map<String, Object> params,MallProduct product);
 
+    /**
+     * 通过搜索名称模糊查询分组信息
+     * @param searchName 搜索名称
+     * @return 分组信息
+     */
+    Map<String,Object> selectGroupBySearchName(String searchName);
+
 }

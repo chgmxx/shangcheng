@@ -129,7 +129,6 @@ public class DateTimeKit {
         try {
             currentTime_2 = formatter.parse(dateString);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return currentTime_2;
@@ -1022,7 +1021,6 @@ public class DateTimeKit {
             return (int) (number / 1000);
         } catch (Exception e) {
             e.printStackTrace();
-            // TODO: handle exception
         }
         return 0;
     }

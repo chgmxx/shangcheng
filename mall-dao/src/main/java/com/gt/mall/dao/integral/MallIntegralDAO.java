@@ -2,6 +2,7 @@ package com.gt.mall.dao.integral;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.integral.MallIntegral;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -63,4 +64,18 @@ public interface MallIntegralDAO extends BaseMapper<MallIntegral> {
      * @return 积分商品列表
      */
     List<Map<String, Object>> selectIntegralByShopids(Map<String, Object> params);
+
+    /**
+     * 根据门店id查询积分商品的信息
+     * @param wxShopId 门店id
+     * @return 积分商品信息
+     */
+    List<Map<String,Object>> selectIntegralNumByWxShopId(@Param( "wxShopId" ) int wxShopId);
+
+    /**
+     * 根据店铺id查询积分商品的数量
+     * @param shopId 商城店铺id
+     * @return 积分商品数量
+     */
+    int selectIntegralNumByShopId(@Param( "shopId" )int shopId);
 }

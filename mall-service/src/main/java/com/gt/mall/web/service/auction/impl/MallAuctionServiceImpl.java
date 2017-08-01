@@ -7,14 +7,13 @@ import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.auction.MallAuctionOfferDAO;
-import com.gt.mall.dao.product.MallSearchKeywordDAO;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
-import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionService;
+import com.gt.mall.web.service.product.MallSearchKeywordService;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
     private MallAuctionBiddingDAO auctionBiddingDAO;
 
     @Autowired
-    private MallSearchKeywordDAO searchKeywordDAO;
+    private MallSearchKeywordService mallSearchKeywordService;
 
 
     @Override
@@ -182,24 +181,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
         if (CommonUtil.isNotEmpty(maps.get("proName")) && CommonUtil.isNotEmpty(member)) {
             proName = maps.get("proName").toString();
             //保存到搜索关键字表
-            //TODO 需调用 searchKeywordDAO.selectBykeyword()方法
-            MallSearchKeyword keyword=new  MallSearchKeyword();
-//            MallSearchKeyword keyword = searchKeywordDAO.selectBykeyword(shopid, proName.toString(), member.getId());
-            if (CommonUtil.isEmpty(keyword)) {
-                keyword = new MallSearchKeyword();
-                keyword.setKeyword(proName.toString());
-                keyword.setSearchNum(1);
-                keyword.setShopId(shopid);
-                keyword.setUserId(member.getId());
-                keyword.setEditTime(new Date());
-                keyword.setCreateTime(new Date());
-                searchKeywordDAO.insert(keyword);
-            } else {
-                keyword.setEditTime(new Date());
-                keyword.setSearchNum(keyword.getSearchNum() + 1);
-                keyword.setIsDelete(0);
-                searchKeywordDAO.updateById(keyword);
-            }
+	    mallSearchKeywordService.insertSeachKeyWord( member.getId(),shopid,proName );
         }
 
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();// 存放店铺下的商品

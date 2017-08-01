@@ -26,4 +26,38 @@
 		order by pg.sort
     </select>
 
+    <select id="selectProductGroupByShopId" parameterType="Map" resultType="Map">
+        SELECT distinct(a.group_id) as group_id,b.group_name,b.is_child
+        FROM t_mall_product_group a
+        LEFT JOIN t_mall_group b ON a.group_id=b.id
+        <choose>
+            <when test="shopId != null and shopId != '' and shopId > 0">
+                where a.is_delete=0 AND b.is_delete=0 AND a.shop_id= #{shopId}
+            </when>
+            <otherwise>
+                LEFT JOIN t_mall_store s ON s.id=a.`shop_id`
+                WHERE  a.is_delete=0 AND b.is_delete=0 AND s.`is_delete`=0
+                <if test="wxShopList != null and wxShopList != ''">
+                    and s.wx_shop_id in
+                    <foreach collection="wxShopList" index="index" item="item" open="(" separator="," close=")">
+                       #{item,jdbcType=INTEGER}
+                    </foreach>
+                </if>
+            </otherwise>
+        </choose>
+
+        and b.is_first_parents=1
+        order by b.sort,b.id desc
+    </select>
+
+    <select id="selectGroupByParentId" parameterType="Map" resultType="Map">
+        SELECT distinct(a.group_id) as group_id,b.group_name,b.is_child,i.image_url
+        FROM t_mall_product_group a
+        LEFT JOIN t_mall_group b ON a.group_id=b.id
+        left join t_mall_image_associative i on i.ass_type=2 and i.ass_id=b.id
+        WHERE  a.is_delete=0 AND b.is_delete=0 AND a.shop_id= #{shopId}
+        and b.group_p_id=#{groupParentId}
+        order by b.sort,b.id desc
+    </select>
+
 </mapper>

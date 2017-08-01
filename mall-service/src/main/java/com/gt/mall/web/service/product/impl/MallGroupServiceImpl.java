@@ -330,6 +330,19 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	}
     }
 
+    @Override
+    public Map< String,Object > selectGroupBySearchName( String searchName ) {
+        //select id,group_p_id,id from t_mall_group where group_name like '%" + params.get( "proName" ) + "%'
+	Wrapper wrapper = new EntityWrapper(  );
+	wrapper.setSqlSelect( "id,group_p_id" );
+	wrapper.like( "group_name",  searchName);
+	List<Map<String,Object>> groupList = mallGroupDAO.selectList( wrapper );
+	if(groupList != null && groupList.size() > 0){
+	    return groupList.get( 0 );
+	}
+	return null;
+    }
+
     private int insertGroup( Map< String,Object > map2, MallProduct product, String groupName, Object isChild, Object isFirst, int pId ) {
 	int groupId = 0;
 	MallGroup group = new MallGroup();

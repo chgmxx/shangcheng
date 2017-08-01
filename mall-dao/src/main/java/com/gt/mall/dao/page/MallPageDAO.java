@@ -17,74 +17,67 @@ import java.util.Map;
  */
 public interface MallPageDAO extends BaseMapper< MallPage > {
 
-
     /**
      * 分页
-     * @param params
-     * @return
      */
-    List findByPage(Map<String, Object> params);
-
+    List findByPage( Map< String,Object > params );
 
     /**
      * 获取条数
-     * @param params
-     * @return
      */
-    int count(Map<String, Object> params);
-
+    int count( Map< String,Object > params );
 
     /**
      * 删除多条
-     * @param params
-     * @return
      */
-    public void deleteByIds(@Param("ids")String[] ids);
+    void deleteByIds( @Param( "ids" ) String[] ids );
 
     /**
      * 修改其他的数据为非主页
-     * @param id
-     * @param stoId
-     * @return
      */
-    int updateOtherisMain(@Param("id")Integer id,@Param("stoId")Integer stoId);
-
-    int updatecss(MallPage record);
+    int updateOtherisMain( @Param( "id" ) Integer id, @Param( "stoId" ) Integer stoId );
 
     /**
      * 判断店铺下是否有主页
-     * @param page
-     * @return
      */
-    int selectMainCountByShopId(MallPage page);
+    int selectMainCountByShopId( MallPage page );
 
     /**
      * 查询店铺下的页面的个数
-     * @param pagStoId
-     * @return
      */
-    int selectCountByShopId(int pagStoId);
+    int selectCountByShopId( int pagStoId );
 
     /**
      * 重新设置主页
-     * @param pagStoId
-     * @return
      */
-    int updatePageMain(int pagStoId);
+    int updatePageMain( int pagStoId );
 
     /**
      * 查询店铺下的页面
-     * @param params
-     * @return
      */
-    List<Map<String, Object>> selectByShopId(Map<String, Object> params);
+    List< Map< String,Object > > selectByShopId( Map< String,Object > params );
 
     /**
      * 统计店铺下的页面
-     * @param params
-     * @return
      */
-    int selectCountsByShopId(Map<String, Object> params);
+    int selectCountsByShopId( Map< String,Object > params );
 
+    /**
+     * 根据页面id查询页面信息
+     *
+     * @param id 页面id
+     *
+     * @return 页面信息
+     */
+    Map< String,Object > selectMapById( int id );
+
+    /**
+     * 通过门店id查询页面id
+     *
+     * @param  params  wxShopId 微信门店id  userId  商家id
+     *
+     * @return 页面id
+     */
+    List< Map< String,Object > > selectPageByWxShopId( Map<String,Object> params );
 
 }

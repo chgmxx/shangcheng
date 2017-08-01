@@ -78,6 +78,11 @@ public class MallDaifu extends Model< MallDaifu > {
     @TableField( "df_return_time" )
     private Date       dfReturnTime;
     /**
+     * 退款价格
+     */
+    @TableField( "df_return_money" )
+    private BigDecimal dfReturnMoney;
+    /**
      * 代付退款状态  0还未退款 1发起退款 2 退款成功 -1 退款失败
      */
     @TableField( "df_return_status" )

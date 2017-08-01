@@ -82,4 +82,11 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
      */
     List< Map< String,Object > > findByUserId( @Param( "userId" ) Integer userId );
 
+    /**
+     * 根据店铺id查询店铺信息
+     * @param id 店铺id
+     * @return 店铺信息   字段
+     */
+    Map<String,Object> selectMapById(int id);
+
 }

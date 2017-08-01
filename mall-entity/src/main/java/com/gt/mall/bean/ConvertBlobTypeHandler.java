@@ -73,7 +73,6 @@ public class ConvertBlobTypeHandler extends BaseTypeHandler<String> {
 	@Override
 	public String getNullableResult(ResultSet arg0, int arg1)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}  
 }

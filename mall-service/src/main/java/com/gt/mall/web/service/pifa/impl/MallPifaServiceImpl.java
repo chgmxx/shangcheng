@@ -9,7 +9,6 @@ import com.gt.mall.dao.product.MallSearchKeywordDAO;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.pifa.MallPifaPrice;
-import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.JedisUtil;
@@ -272,27 +271,8 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	if ( CommonUtil.isNotEmpty( maps.get( "shopId" ) ) ) {
 	    shopid = CommonUtil.toInteger( maps.get( "shopId" ) );
 	}
-	String proName = "";
-	if ( CommonUtil.isNotEmpty( maps.get( "proName" ) ) && CommonUtil.isNotEmpty( member ) ) {
-	    proName = maps.get( "proName" ).toString();
-	    //保存到搜索关键字表
-	    MallSearchKeyword keyword = mallSearchKeywordService.selectBykeyword( shopid, proName.toString(), member.getId() );
-	    if ( CommonUtil.isEmpty( keyword ) ) {
-		keyword = new MallSearchKeyword();
-		keyword.setKeyword( proName.toString() );
-		keyword.setSearchNum( 1 );
-		keyword.setShopId( shopid );
-		keyword.setUserId( member.getId() );
-		keyword.setEditTime( new Date() );
-		keyword.setCreateTime( new Date() );
-		mallSearchKeywordDAO.insert( keyword );
-	    } else {
-		keyword.setEditTime( new Date() );
-		keyword.setSearchNum( keyword.getSearchNum() + 1 );
-		keyword.setIsDelete( 0 );
-		mallSearchKeywordDAO.updateById( keyword );
-	    }
-	}
+	//新增搜索关键词
+	mallSearchKeywordService.insertSeachKeyWord( member.getId(),shopid, maps.get( "proName" ) );
 
 	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();// 存放店铺下的商品
 
