@@ -292,6 +292,15 @@ public class MallOrder extends Model< MallOrder > {
     @TableField(exist = false)
     private List<MallOrderDetail> mallOrderDetail;	//商品详情
 
+
+    double jifenDiscountMoney = 0;//使用积分总共优惠的金额
+
+    double fenbiDiscountMoney = 0;//使用粉币总共优惠的金额
+
+    double yhqDiscountMoney = 0;//使用优惠券总共优惠的金额
+
+    double unionDiscountMoney = 0;//使用商家联盟总共优惠的金额
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

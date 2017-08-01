@@ -20,4 +20,37 @@
         id, image_url AS imageUrl, type, pro_id AS proId, bus_user_id AS busUserId, create_time AS createTime, is_delete AS isDelete, is_show AS isShow, shop_id AS shopId
     </sql>
 
+    <!-- 统计小程序图片-->
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
+        select count(i.id)
+        from t_mall_applet_image i where i.is_delete = 0
+        <if test="userId != null and userId != ''">
+            and i.bus_user_id=#{userId}
+        </if>
+    </select>
+    <!-- 根据拍卖分页 -->
+    <select id="selectByPage" resultMap="BaseResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from t_mall_applet_image i
+        where i.is_delete = 0
+        <if test="userId != null and userId != ''">
+            and i.bus_user_id=#{userId}
+        </if>
+        group by i.id
+        order by i.create_time desc
+        limit #{firstNum},#{maxNum}
+    </select>
+
+    <select id="selectByImage" resultMap="BaseResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List"/>
+        from t_mall_applet_image i
+        where i.is_delete = 0 and i.is_show = 1
+        <if test="userId != null and userId != ''">
+            and i.bus_user_id=#{userId}
+        </if>
+        order by i.create_time desc
+    </select>
+
 </mapper>

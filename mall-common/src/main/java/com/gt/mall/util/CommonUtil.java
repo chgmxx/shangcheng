@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
@@ -270,4 +271,52 @@ public class CommonUtil {
 	return b1.divide( b2, scale, BigDecimal.ROUND_HALF_UP ).doubleValue();
     }
 
+
+	private final static double PI = 3.14159265358979323; // 圆周率
+	private final static double R = 6371229; // 地球的半径
+
+	/**
+	 * 获取两点间的距离
+	 *
+	 * @param longt1
+	 *            经度1
+	 * @param lat1
+	 *            纬度1
+	 * @param longt2
+	 *            经度2
+	 * @param lat2
+	 *            纬度2
+	 * @return
+	 */
+	public static double getDistance(double longt1, double lat1, double longt2,
+									 double lat2) {
+		double x, y, distance;
+		x = (longt2 - longt1) * PI * R
+				* Math.cos(((lat1 + lat2) / 2) * PI / 180) / 180;
+		y = (lat2 - lat1) * PI * R / 180;
+		distance = Math.hypot(x, y);
+		if (distance > 0) {
+			return distance;
+		} else {
+			return 0.0;
+		}
+	}
+
+	/**
+	 * 获取推荐码 6位
+	 *
+	 * @return
+	 */
+	public static String getPhoneCode() {
+		StringBuffer buf = new StringBuffer("1,2,3,4,5,6,7,8,9,0");
+		String[] arr = buf.toString().split(",");
+		StringBuffer sb = new StringBuffer();
+		Random random = new Random();
+		for (int i = 0; i < 6; i++) {
+			Integer count = arr.length;
+			int a = random.nextInt(count);
+			sb.append(arr[a]);
+		}
+		return sb.toString();
+	}
 }

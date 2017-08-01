@@ -46,6 +46,8 @@ public class PropertiesUtil {
 
     private static String resImagePath;//获取图片存放路径
 
+    private static String resourceUrlPrefix;//访问资源URL
+
     private static String dbname;//电信流量订单前缀
 
     private static String exchange;//队列转换器
@@ -132,6 +134,11 @@ public class PropertiesUtil {
 	PropertiesUtil.resImagePath = resImagePath;
     }
 
+    @Value( "${resource.url.prefix}" )
+    public void setResourceUrlPrefix( String resourceUrlPrefix ) {
+        PropertiesUtil.resourceUrlPrefix = resourceUrlPrefix;
+    }
+
     @Value( "${dianxin.order}" )
     public void setDbname( String dbname ) {
 	PropertiesUtil.dbname = dbname;
@@ -160,6 +167,10 @@ public class PropertiesUtil {
 
     public static String getResImagePath() {
 	return resImagePath;
+    }
+
+    public static String getResourceUrlPrefix() {
+        return resourceUrlPrefix;
     }
 
     public static String getHomeUrl() {
