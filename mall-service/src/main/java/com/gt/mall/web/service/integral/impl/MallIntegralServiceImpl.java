@@ -14,10 +14,12 @@ import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
+import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.integral.MallIntegralService;
 import com.gt.mall.web.service.order.MallOrderService;
 import com.gt.mall.web.service.page.MallPageService;
+import com.gt.mall.web.service.product.MallProductInventoryService;
 import com.gt.mall.web.service.product.MallProductService;
 import com.gt.mall.web.service.product.MallProductSpecificaService;
 import net.sf.json.JSONObject;
@@ -54,14 +56,15 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
     @Autowired
     private MallProductDetailDAO productDetailDAO;
     @Autowired
+    private MallProductInventoryService productInventoryService;
+    @Autowired
     private MallOrderDAO orderDAO;
     @Autowired
     private MallOrderService orderService;
     @Autowired
     private MallOrderDetailDAO orderDetailDAO;
-
     @Autowired
-    private MallPageService  pageService;
+    private MallPageService pageService;
     @Autowired
     private MallProductSpecificaService productSpecificaService;
 
@@ -122,29 +125,28 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
         MallProduct product = productDAO.selectById(productId);// 根据商品id查询商品的基本信息
         resultMap.put("product", product);
         // 查询商品详情
-        //TODO 需调用  productDetailDAO.selectByGroupId(productId);方法
-//        MallProductDetail detail = productDetailDAO.selectByGroupId(productId);
-//        if (CommonUtil.isNotEmpty(detail)) {
-//            if (CommonUtil.isNotEmpty(detail.getProductDetail())) {
-//                detail.setProductDetail(detail.getProductDetail().replaceAll("\"", "&quot;").replaceAll("'", "&apos;").replaceAll("(\r\n|\r|\n|\n\r)", ""));
-//            }
-//        }
+        MallProductDetail detail = new MallProductDetail();
+        detail.setProductId(productId);
+        detail = productDetailDAO.selectOne(detail);
+        if (CommonUtil.isNotEmpty(detail)) {
+            if (CommonUtil.isNotEmpty(detail.getProductDetail())) {
+                detail.setProductDetail(detail.getProductDetail().replaceAll("\"", "&quot;").replaceAll("'", "&apos;").replaceAll("(\r\n|\r|\n|\n\r)", ""));
+            }
+        }
         //查询商品规格
         if (product.getIsSpecifica().toString().equals("1")) {
-            //TODO 需调用pageService.productSpecifications（）方法
-//            Map<String, Object> guige = pageService.productSpecifications(product.getId(), null);//查询商品的默认规格
+            Map<String, Object> guige = productInventoryService.productSpecifications(product.getId(), null);//查询商品的默认规格
             List<Map<String, Object>> specificaList = productSpecificaService.getSpecificaByProductId(product.getId());//获取商品规格值
-            //TODO 需调用pageService.guigePrice（）方法
-//            List<Map<String, Object>> guigePriceList = pageService.guigePrice(product.getId());//获取商品所有规格
-//            if (guige == null || specificaList == null || specificaList.size() == 0) {
-//                product.setIsSpecifica(0);
-//            }
-//            resultMap.put("guige", guige);
+            List<Map<String, Object>> guigePriceList = productInventoryService.guigePrice(product.getId());//获取商品所有规格
+            if (guige == null || specificaList == null || specificaList.size() == 0) {
+                product.setIsSpecifica(0);
+            }
+            resultMap.put("guige", guige);
             resultMap.put("specificaList", specificaList);
-//            resultMap.put("guigePriceList", guigePriceList);
+            resultMap.put("guigePriceList", guigePriceList);
         }
 
-//        resultMap.put("detail", detail);
+        resultMap.put("detail", detail);
 
         Map<String, Object> integralParams = new HashMap<String, Object>();
         integralParams.put("productId", product.getId());
@@ -178,10 +180,9 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
         resultMap.put("imageList", imageList);
 
         params.put("productId", productId);
-        //TODO 需调用orderDAO.selectIntegralOrder(params) 方法
-//        List<Map<String, Object>> orderList = orderDAO.selectIntegralOrder(params);
-//        int recordNum = orderList.size();
-//        resultMap.put("recordNum", recordNum);
+        List<Map<String, Object>> orderList = orderDAO.selectIntegralOrder(params);
+        int recordNum = orderList.size();
+        resultMap.put("recordNum", recordNum);
 
         if (CommonUtil.isNotEmpty(product.getFlowId())) {
             //TODO 需关连busFlowService.selectById()流量方法
@@ -319,9 +320,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
         if (CommonUtil.isNotEmpty(browser)) {
             order.setBuyerUserType(browser);
         }
-        //TODO 需调用 orderDAO.insertOrder(order);方法
-        int count = 1;
-//       int count = orderDAO.insertOrder(order);
+        int count = orderDAO.insert(order);
 
         if (count > 0) {
             MallOrderDetail detail = new MallOrderDetail();
@@ -439,7 +438,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
                         return resultMap;
                     }
                 }
-                count = integralDAO.updateAllColumnById(mallIntegral);
+                count = integralDAO.updateById(mallIntegral);
             } else {
                 if (CommonUtil.isNotEmpty(integral)) {
                     if (CommonUtil.isNotEmpty(integral.getId())) {
@@ -474,7 +473,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl<MallIntegralDAO, Ma
             integral.setIsUse(1);
         }
         integral.setId(id);
-        int count = integralDAO.updateAllColumnById(integral);
+        int count = integralDAO.updateById(integral);
         if (count > 0) {
             return true;
         }

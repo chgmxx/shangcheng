@@ -17,12 +17,12 @@
     <sql id="Base_Column_List">
         id, group_buy_id AS groupBuyId, inven_id AS invenId, specifica_ids AS specificaIds, group_price AS groupPrice, is_join_group AS isJoinGroup, is_delete AS isDelete
     </sql>
-    <select id="selectPriceByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-        select
-        <include refid="Base_Column_List" />
-        from t_mall_group_buy_price
-        where group_buy_id = #{groupBuyId,jdbcType=INTEGER} and is_delete = 0
-    </select>
+    <!--<select id="selectPriceByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >-->
+        <!--select-->
+        <!--<include refid="Base_Column_List" />-->
+        <!--from t_mall_group_buy_price-->
+        <!--where group_buy_id = #{groupBuyId,jdbcType=INTEGER} and is_delete = 0-->
+    <!--</select>-->
 
     <update id="updateByGroupBuyId" parameterType="com.gt.mall.entity.groupbuy.MallGroupBuyPrice" >
          update t_mall_group_buy_price

@@ -14,7 +14,6 @@ import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
-import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.JedisUtil;
@@ -82,9 +81,9 @@ public class MallAuctionBiddingServiceImpl extends BaseServiceImpl<MallAuctionBi
             bid.setCreateTime(new Date());
             auctionBiddingDAO.insert(bid);
         } else {
-//            bid.setAucStatus(0);
+            bid.setAucStatus(0);
             //修改拍卖竞拍
-//            auctionBiddingDAO.updateBidByAucId(bid);
+            auctionBiddingDAO.updateBidByAucId(bid);
 
             Wrapper wrapper = new EntityWrapper();
             wrapper.where(" auc_id = {0} AND pro_id = {1} AND user_id ={2}", order.getGroupBuyId(), detail.getProductId(), order.getBuyerUserId());
@@ -99,22 +98,15 @@ public class MallAuctionBiddingServiceImpl extends BaseServiceImpl<MallAuctionBi
     @Override
     public void upStateBidding(MallOrder order, int status, List<MallOrderDetail> detailList) {
         MallOrderDetail detail = detailList.get(0);
-//        MallAuctionBidding bid = new MallAuctionBidding();
-//        bid.setAucId(order.getGroupBuyId());
-//        bid.setAucStatus(status);
-//        bid.setOrderId(order.getId());
-//        bid.setOrderDetailId(detail.getId());
-//        bid.setProId(detail.getProductId());
-//        bid.setUserId(order.getBuyerUserId());
+        MallAuctionBidding bid = new MallAuctionBidding();
+        bid.setAucId(order.getGroupBuyId());
+        bid.setAucStatus(status);
+        bid.setOrderId(order.getId());
+        bid.setOrderDetailId(detail.getId());
+        bid.setProId(detail.getProductId());
+        bid.setUserId(order.getBuyerUserId());
         //修改拍卖竞拍
-//        auctionBiddingDAO.updateBidByAucId(bid);
-        Wrapper wrapper = new EntityWrapper();
-        wrapper.where(" auc_id = {0} AND pro_id = {1} AND user_id ={2}", order.getGroupBuyId(), detail.getProductId(), order.getBuyerUserId());
-        MallAuctionBidding bidding1 = new MallAuctionBidding();
-        bidding1.setAucStatus(0);
-        bidding1.setOrderId(order.getId());
-        bidding1.setOrderDetailId(detail.getId());
-        auctionBiddingDAO.update(bidding1, wrapper);
+        auctionBiddingDAO.updateBidByAucId(bid);
 
         MallAuction auction = auctionDAO.selectById(order.getGroupBuyId());
 
@@ -126,10 +118,10 @@ public class MallAuctionBiddingServiceImpl extends BaseServiceImpl<MallAuctionBi
             if (auction.getAucType() == 1) {
                 double second = (double) DateTimeKit.minsBetween(startTimes, endtimes, minTimes, DateTimeKit.DEFAULT_DATETIME_FORMAT);
                 String key = Constants.REDIS_KEY + "hAuction";
-                String field = order.getGroupBuyId() + "_" + order.getBuyerUserId();
+                String field = bid.getAucId() + "_" + bid.getUserId();
                 JSONObject obj = new JSONObject();
                 obj.put("second", second);
-                obj.put("proId", detail.getProductId());
+                obj.put("proId", bid.getProId());
                 JedisUtil.map(key, field, obj.toString());
             }
         }

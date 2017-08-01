@@ -167,7 +167,11 @@ public class MallFreightServiceImpl extends BaseServiceImpl<MallFreightDAO, Mall
                         weight = Float.valueOf(orderObj.get("pro_weight").toString());
                     }
                     //根据店铺来查询物流
-                    MallFreight freight = freightDAO.selectFreightByShopId(shopId);
+                    MallFreight freight =new MallFreight();
+                    freight.setShopId(shopId);
+                    freight.setIsDelete(0);
+                    freight=freightDAO.selectOne(freight);
+//                    MallFreight freight = freightDAO.selectFreightByShopId(shopId);
                     if (freight != null && toshop == 0) {
                         freightPrice = 0;//物流数量
                         float noMoney = 0;//免邮价格

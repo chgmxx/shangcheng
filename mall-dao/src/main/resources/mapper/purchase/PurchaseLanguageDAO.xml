@@ -2,20 +2,80 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.mall.dao.purchase.PurchaseLanguageDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseLanguage">
-		<id column="id" property="id" />
-		<result column="language_time" property="languageTime" />
-		<result column="language_content" property="languageContent" />
-		<result column="order_id" property="orderId" />
-		<result column="is_read" property="isRead" />
-		<result column="admin_content" property="adminContent" />
-		<result column="member_id" property="memberId" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseLanguage">
+        <id column="id" property="id"/>
+        <result column="language_time" property="languageTime"/>
+        <result column="language_content" property="languageContent"/>
+        <result column="order_id" property="orderId"/>
+        <result column="is_read" property="isRead"/>
+        <result column="admin_content" property="adminContent"/>
+        <result column="member_id" property="memberId"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, language_time AS languageTime, language_content AS languageContent, order_id AS orderId, is_read AS isRead, admin_content AS adminContent, member_id AS memberId
     </sql>
+    <select id="findLanguangeList" resultType="Map" parameterType="java.lang.Integer">
+        select
+        l.id,
+        m.headimgurl,
+        m.nickname,
+        l.order_id,
+        l.member_id
+        from
+        purchase_language l
+        left join
+        t_wx_bus_member m on m.id = l.member_id
+        where order_id =#{orderId} GROUP BY
+        l.member_id order by language_time
+        desc
+    </select>
+    <select id="findAllList" resultType="Map" parameterType="java.lang.Integer">
 
+        select
+        m.headimgurl,
+        m.nickname,
+        l.id,
+        l.language_time,
+        l.order_id,
+        l.is_read,
+        l.admin_content,
+        l.member_id,
+        l.language_content
+        from
+        purchase_language l
+        left join
+        t_wx_bus_member m on m.id = l.member_id
+        where order_id =#{orderId} order by language_time desc
+    </select>
+    <select id="findLanguangeDetails" resultType="Map" parameterType="com.gt.mall.entity.purchase.PurchaseLanguage">
+        select
+        l.id,
+        m.headimgurl,
+        m.nickname,
+        l.language_time,
+        l.order_id,
+        l.admin_content,
+        l.language_content
+        from purchase_language l
+        left join
+        t_wx_bus_member m on m.id = l.member_id
+        where order_id =#{orderId} and
+        l.member_id=#{memberId}
+        order by language_time desc
+    </select>
+    <select id="findLanguangeNotRead" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_language
+        where order_id in (${orderIds}) and is_read='0'
+        order by
+        language_time desc
+    </select>
+    <update id="updateLanguangeByOrderId" parameterType="java.lang.Integer">
+		update
+		purchase_language set is_read =1 where order_id=#{orderId}
+	</update>
 </mapper>

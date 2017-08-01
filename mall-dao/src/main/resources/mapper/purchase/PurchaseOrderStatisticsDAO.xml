@@ -2,19 +2,47 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.mall.dao.purchase.PurchaseOrderStatisticsDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseOrderStatistics">
-		<id column="id" property="id" />
-		<result column="order_id" property="orderId" />
-		<result column="member_id" property="memberId" />
-		<result column="look_date" property="lookDate" />
-		<result column="look_ip" property="lookIp" />
-		<result column="bus_id" property="busId" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseOrderStatistics">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="look_date" property="lookDate"/>
+        <result column="look_ip" property="lookIp"/>
+        <result column="bus_id" property="busId"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, order_id AS orderId, member_id AS memberId, look_date AS lookDate, look_ip AS lookIp, bus_id AS busId
     </sql>
+    <select id="findList" resultType="Map">
+        select
+        pos.id,
+        pos.look_date,
+        pos.look_ip,
+        twb.nickname,
+        twb.headimgurl
+        from purchase_order_statistics pos
+        left join t_wx_bus_member twb on twb.id=pos.member_id
+        where pos.bus_id=#{busId} and pos.order_id=#{orderId}
+        <if test="nickname !=null and nickname != ''">
+            and twb.nickname like '%${nickname}%'
+        </if>
+        order by pos.look_date desc
+        limit #{pageFirst},#{pageLast}
+    </select>
+
+    <select id="findListCount" resultType="java.lang.Integer">
+        select
+        count(*)
+        from purchase_order_statistics pos
+        <!--TODO  需关连 t_wx_bus_member 方法-->
+--         left join t_wx_bus_member twb on twb.id=pos.member_id
+        where pos.bus_id=#{busId} and pos.order_id=#{orderId}
+        <!--<if test="nickname !=null and nickname != ''">-->
+            <!--and twb.nickname like '%${nickname}%'-->
+        <!--</if>-->
+    </select>
 
 </mapper>

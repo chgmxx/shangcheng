@@ -108,6 +108,7 @@ public class PurchaseOrder extends Model<PurchaseOrder> {
 	@TableField("member_id")
 	private Integer memberId;
 
+	private String contractId;
 
 	@Override
 	protected Serializable pkVal() {

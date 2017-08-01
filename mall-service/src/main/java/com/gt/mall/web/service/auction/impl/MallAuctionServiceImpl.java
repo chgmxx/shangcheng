@@ -48,7 +48,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
     private MallAuctionBiddingDAO auctionBiddingDAO;
 
     @Autowired
-    private MallSearchKeywordService mallSearchKeywordService;
+    private MallSearchKeywordService searchKeywordService;
 
 
     @Override
@@ -181,7 +181,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl<MallAuctionDAO, Mall
         if (CommonUtil.isNotEmpty(maps.get("proName")) && CommonUtil.isNotEmpty(member)) {
             proName = maps.get("proName").toString();
             //保存到搜索关键字表
-	    mallSearchKeywordService.insertSeachKeyWord( member.getId(),shopid,proName );
+	    searchKeywordService.insertSeachKeyWord( member.getId(),shopid,proName );
         }
 
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();// 存放店铺下的商品

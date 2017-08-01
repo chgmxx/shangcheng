@@ -2,19 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.mall.dao.purchase.PurchaseTermDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseTerm">
-		<id column="id" property="id" />
-		<result column="order_id" property="orderId" />
-		<result column="term_index" property="termIndex" />
-		<result column="term_time" property="termTime" />
-		<result column="term_money" property="termMoney" />
-		<result column="term_buy" property="termBuy" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseTerm">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="term_index" property="termIndex"/>
+        <result column="term_time" property="termTime"/>
+        <result column="term_money" property="termMoney"/>
+        <result column="term_buy" property="termBuy"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, order_id AS orderId, term_index AS termIndex, term_time AS termTime, term_money AS termMoney, term_buy AS termBuy
     </sql>
+    <select id="findTermList" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from purchase_term
+        where order_id = #{orderId,jdbcType=INTEGER} order by id asc
+    </select>
+    <delete id="deleteTermByOrderId">
+		delete from purchase_term where id not in (${termIds}) and
+		order_id=#{orderId} and term_buy=0
+	</delete>
 
 </mapper>

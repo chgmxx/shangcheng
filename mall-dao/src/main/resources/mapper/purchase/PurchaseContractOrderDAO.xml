@@ -2,15 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.mall.dao.purchase.PurchaseContractOrderDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseContractOrder">
-		<result column="contract_id" property="contractId" />
-		<result column="order_id" property="orderId" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.purchase.PurchaseContractOrder">
+        <result column="contract_id" property="contractId"/>
+        <result column="order_id" property="orderId"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         contract_id AS contractId, order_id AS orderId
     </sql>
-
+    
+    <delete id="deleteContractOrderData" parameterType="java.lang.Integer">
+        delete from purchase_contract_order where order_id=#{orderId}
+    </delete>
+    <select id="findContractOrderList" parameterType="java.lang.Integer" resultType="Map">
+        select contract_id from purchase_contract_order where order_id=#{orderId}
+    </select>
 </mapper>
