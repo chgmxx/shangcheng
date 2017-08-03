@@ -13,7 +13,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author yangqian
@@ -108,7 +108,8 @@ public class PurchaseOrder extends Model<PurchaseOrder> {
 	@TableField("member_id")
 	private Integer memberId;
 
-	private String contractId;
+    	@TableField(exist = false)
+	private String contractId;//合同Id
 
 	@Override
 	protected Serializable pkVal() {

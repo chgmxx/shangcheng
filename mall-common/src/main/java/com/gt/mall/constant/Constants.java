@@ -24,6 +24,11 @@ public class Constants {
     public final static String SOCKEY_KEY = "Mall-";
 
     /**
+     * 微场景
+     */
+    public static final String IMAGE_FOLDER_TYPE_4 = "4";
+
+    /**
      * 微商城
      */
     public static final String IMAGE_FOLDER_TYPE_15 = "15";

@@ -113,8 +113,10 @@ public class MallTakeTheir extends Model< MallTakeTheir > {
     @TableField( "is_delete" )
     private Integer isDelete;
 
+    @TableField(exist = false)
     private List<MallImageAssociative> imageList;
 
+    @TableField(exist = false)
     private List<MallTakeTheirTime> timeList;
 
     @Override

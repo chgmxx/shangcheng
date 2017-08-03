@@ -62,6 +62,7 @@ public class MallTakeTheirTime extends Model< MallTakeTheirTime > {
     @TableField( "is_delete" )
     private Integer isDelete;
 
+    @TableField(exist = false)
     private String times;
 
     @Override

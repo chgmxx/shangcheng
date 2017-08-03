@@ -29,8 +29,13 @@
     <sql id="Base_Column_List">
         id, product_id AS productId, shop_id AS shopId, auc_type AS aucType, auc_start_price AS aucStartPrice, auc_lowest_price AS aucLowestPrice, auc_start_time AS aucStartTime,
         auc_lower_price_time AS aucLowerPriceTime, auc_lower_price AS aucLowerPrice, auc_end_time AS aucEndTime, auc_num AS aucNum, auc_restriction_num AS aucRestrictionNum,
-        user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse, is_margin AS isMargin, auc_margin AS aucMargin, auc_add_price AS aucAddPrice
-    </sql>
+        user_id AS userId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse, is_margin AS isMargin, auc_margin AS aucMargin, auc_add_price AS aucAddPrice,
+        case
+        when auc_start_time > now() and   auc_end_time > now() then 0<!--未开始  -->
+        when auc_start_time &lt;= now() and now() &lt; auc_end_time  then 1<!-- 进行中 -->
+        when auc_start_time &lt; now()  and auc_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status
+</sql>
     <sql id="page_Column_List">
         g.id, g.product_id, g.shop_id, auc_type, auc_start_price, auc_lowest_price, auc_start_time,
         auc_lower_price_time, auc_lower_price, auc_end_time, auc_num, auc_restriction_num,

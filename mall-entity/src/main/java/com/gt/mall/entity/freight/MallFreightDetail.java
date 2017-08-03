@@ -90,6 +90,7 @@ public class MallFreightDetail extends Model< MallFreightDetail > {
     @TableField( "add_money" )
     private BigDecimal addMoney;
 
+    @TableField(exist = false)
     private List<MallFreightProvinces> provinceList;
 
     @Override

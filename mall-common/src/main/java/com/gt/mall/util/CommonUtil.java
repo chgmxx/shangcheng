@@ -1,13 +1,17 @@
 package com.gt.mall.util;
 
 import com.alibaba.fastjson.JSONArray;
+import com.gt.mall.constant.Constants;
+import io.swagger.models.auth.In;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
@@ -388,5 +392,60 @@ public class CommonUtil {
 	    ip = "127.0.0.1";
 	}
 	return ip;
+    }
+
+    /**
+     * 图文保存，返回信息
+     *
+     * @param multipartFile
+     * @param userId
+     *
+     * @return
+     */
+    @SuppressWarnings( "rawtypes" )
+    public static Map fileUploadByBusUser( MultipartFile multipartFile, Integer userId ) {
+	Map map = new HashMap();
+	String originalFilename = multipartFile.getOriginalFilename();
+	// 后缀
+	String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );
+	String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
+	// 文件大小
+	Integer Size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
+	// 判断上传图片是否是支持的格式
+
+	String path = PropertiesUtil.getResImagePath() + "/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit
+			.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD ) + "/jietu/";
+
+	File file = new File( path );
+	if ( !file.exists() && !file.isDirectory() ) {
+	    file.mkdirs();
+	}
+	Long time = System.currentTimeMillis();
+	path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
+	byte[] bytes;
+	try {
+	    bytes = multipartFile.getBytes();
+	    InputStream is = new ByteArrayInputStream( bytes );
+	    BufferedImage bufimg = ImageIO.read( is );
+	    ImageIO.write( bufimg, phonejsp, new File( path ) );
+	    ContinueFTP myFtp = new ContinueFTP();
+	    try {
+		myFtp.upload( path );
+	    } catch ( Exception e ) {
+		e.printStackTrace();
+	    }
+	    is.close();
+	    String url = "/image/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD )
+			    + "/jietu/" + MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
+	    map.put( "reTurn", "1" );
+	    map.put( "message", url );// 保存路径
+
+	} catch ( IOException e ) {
+	    e.printStackTrace();
+	    map.put( "reTurn", "0" );
+	    map.put( "message", "抛出异常" );
+	}
+	return map;
+
     }
 }

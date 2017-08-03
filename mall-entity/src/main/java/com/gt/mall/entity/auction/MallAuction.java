@@ -123,11 +123,12 @@ public class MallAuction extends Model< MallAuction > {
     @TableField( "auc_add_price" )
     private BigDecimal aucAddPrice;
 
+
     @TableField(exist = false)
     private int joinId;
 
     @TableField(exist = false)
-    private int status;
+    private int status;//状态 0未开始 1进行中 -1已结束 -2已失效
 
     @TableField(exist = false)
     private Long times;// 剩余时间
@@ -136,7 +137,7 @@ public class MallAuction extends Model< MallAuction > {
     private Long startTimes;// 活动开始剩余时间
 
     @TableField(exist = false)
-    private double nowPrice;
+    private double nowPrice; //当前价格
 
     @Override
     protected Serializable pkVal() {

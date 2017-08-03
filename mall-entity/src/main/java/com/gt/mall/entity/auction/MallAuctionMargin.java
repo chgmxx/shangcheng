@@ -119,12 +119,16 @@ public class MallAuctionMargin extends Model< MallAuctionMargin > {
     @TableField( "create_time" )
     private Date       createTime;
 
-    private Integer aucType;
+    @TableField(exist = false)
+    private Integer aucType;//拍卖类型
 
-    private Integer shopId;
+    @TableField(exist = false)
+    private Integer shopId; //店铺Id
 
-    private int auctionStatus;
+    @TableField(exist = false)
+    private int auctionStatus; //拍卖状态
 
+    @TableField(exist = false)
     private List<String> oldUserIdList;
 
     @Override
