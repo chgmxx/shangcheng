@@ -1,0 +1,177 @@
+/*公共样式*/
+img { border: 0 none; vertical-align: middle;}
+input, button, textarea, select, option { height: 28px; line-height: 28px;}
+
+/*文本、单图文、多图文上部公用样式*/
+.con-box1{ overflow: hidden;margin-top: 15px; }
+.txt-btn {padding-bottom: 15px; border-bottom: 1px solid #dedede; display: block;width: 100%; overflow: hidden;}
+.srh { display: block; float: right; padding-left: 5px; width: 195px; z-index: 10;margin-right:10px;}
+.srh2 { display: block; float: right; padding-left: 5px; width: 165px; z-index: 10;margin-right:10px;}
+.sbt { background:url("/images/icon/search.jpg") no-repeat center center; cursor: pointer; display: block;
+ 	height: 30px;margin-left: 162px; position: absolute; width: 24px; z-index: 99;}
+.sbt2 { background:url("/images/icon/search.jpg") no-repeat center center; cursor: pointer; display: block;
+height: 30px;margin-left: 130px; position: absolute; width: 24px; z-index: 99;}
+.grey-btn{border:1px solid #dedede; border-radius:3px; display: block; font-size: 14px; height: 30px; line-height: 30px; 
+	text-align: center; width: 70px;}
+.grey-btn a:hover{color:#1aa1e7;}
+.addBtn,.importBtn,.clearBtn{margin-right:15px;}
+.blue-btn{background-color: #1aa1e7; border-radius: 3px;  color: #fff; display: block; font-size: 14px; height: 30px; 
+		line-height: 30px; text-align: center; width: 70px; margin-right: 15px;}
+.blue-btn a{color:#fff;}
+.bxoCon{margin-bottom:30px; overflow:hidden;}
+.boxPage{margin-bottom: 20px; overflow: hidden;}
+.pageLef{margin-right:10px;}
+
+/*文本样式*/
+.txt-tle {display: block;font-size: 14px;height: 35px;line-height: 35px;color: #595959;background-color: #fafafa;}
+.t1 {float: left; font-size: 14px; width: 5%;}
+.t2 { float: left; font-size: 14px; width: 15%;}
+.t3 {float: left; font-size: 14px; width: 15%;}
+.t4 { float: left; font-size: 14px; width: 25%;}
+.txt-tle2{overflow:hidden;}
+.t5 { float: left; font-size: 14px; text-align: center; width: 25%;}
+.txt-tle2 li {background: #ffffff;border-bottom: 1px solid #eeeeee;display: block;float: left;font-size: 14px;height: 60px;
+	line-height: 60px; overflow: hidden;width: 100%; color: #595959;}
+.list-checkbox {position: relative;}
+.lista {display: block;float: left; height: 60px; overflow: hidden; width: 5%;}
+.lista input{margin-top: 18px;}
+.listb { display: block; float: left; height: 60px; overflow: hidden; width: 15%;}
+.listc { display: block; float: left; height: 60px; overflow: hidden; width: 25%;}
+.listd { display: block; float: left; height: 60px; overflow: hidden; width: 15%;}
+.liste {width: 20%!important;}
+.txt-tle2 li .skip {  height: 60px; margin: 0 auto;}
+.a1 { color: #0000ff; display: block; float: left; text-align: center; width: 100px;}
+.a1 a { color: #315297 !important;}
+.txt-tle2 li .bianji { display: block; height: 60px; margin: 0 ; width: 90px;}
+.bj-a{cursor: pointer;display: block;float: left; height: 18px; margin-left: 10px; margin-top: 20px; width: 17px;}
+.textShare{background: url(/images/icon/share_icon.png) no-repeat -2px -20px; }
+.textEdit{background: url(/images/icon/input02.png) no-repeat -37px -12px ; }
+.textDelete{background: url(/images/icon/input02.png) no-repeat -18px -13px;}
+.bianji .textShare:hover{background: url(/images/icon/share_icon.png) no-repeat -2px 2px; }
+.bianji .textEdit:hover{background: url(/images/icon/input02.png) no-repeat 0px -12px ; }
+.bianji .textDelete:hover{background: url(/images/icon/input02.png) no-repeat -53px -12px;} 
+
+/*单图文中间图文显示*/
+.con-dan{overflow: hidden;}
+/*.txtlist li {background:url("/images/txt-bg.jpg") no-repeat center bottom; float: left; height: 279px; margin-bottom: 20px;  margin-right: 20px; width: 254px;}
+.txtlist li:hover{background: url("/images/txt-focus.jpg") no-repeat center bottom;}*/
+#chose .close {background: url("/images/icon/input02.png")  -18px -13px;float: right; height: 18px ;margin-left: 4px; width: 18px;}
+#chose .edit { background: url("/images/icon/input02.png") no-repeat  -36px -12px; float: right; height: 18px; width: 18px;}
+#chose .reply {background:url("/images/icon/input.jpg") no-repeat  -303px -26px;float: right; height: 18px; margin-left: 4px; 
+		width: 18px;}
+.download {background:url("/images/icon/input.jpg") no-repeat  -256px -26px; height: 18px; margin-left: 10px; 
+		width: 18px;}
+#chose .scenePic{background:url("/images/icon/input.jpg") no-repeat  -192px -33px;float: right; height: 18px; margin-left: 4px; 
+		width: 18px;}
+#chose .sceneMusic{background:url("/images/icon/input.jpg") no-repeat  -130px -35px;float: right; height: 18px; margin-left: 4px; 
+		width: 18px;}
+.welcome { background: url("/images/icon/input02.png") no-repeat  0 -32px; display: block;float: right; height: 18px;
+		 margin-left: 4px; width: 18px;}
+.mass { background: url("/images/icon/input.jpg") no-repeat  -356px -4px; float: right; height: 18px; margin-left: 4px; 
+		width: 18px;}
+#chose .share {background:url("/images/icon/yl1.png") ;cursor: pointer; display: block;
+		float: right; height: 18px;margin-left: 0; margin-right: 4px; margin-top: 0; width: 17px;}
+
+#chose .close:hover {background: url("/images/icon/input02.png") no-repeat -52px -12px;float: right; height: 18px ;margin-left: 4px;
+		 width: 18px;}
+#chose .edit:hover { background: url("/images/icon/input02.png") no-repeat  0px -12px; float: right; height: 18px; width: 18px;}
+#chose .reply:hover { background:url("/images/icon/input.jpg") no-repeat  -327px -26px;float: right; height: 18px; margin-left: 4px;
+		 width: 18px;}
+.replyHover{background:url("/images/icon/input.jpg") no-repeat  -327px -26px;float: right; height: 18px; margin-left: 4px;
+		 width: 18px;}
+#chose .welcome:hover { background: url("/images/icon/input.jpg") no-repeat scroll -354px -26px;float: right;height: 18px;
+		margin-left: 4px;width: 18px;}
+.welcomeHover{background: url("/images/icon/input.jpg") no-repeat scroll -354px -26px;float: right;height: 18px;
+		margin-left: 4px;width: 18px;}
+#chose .mass:hover { background: url("/images/icon/input.jpg") no-repeat  -380px -4px; float: right; height: 18px; margin-left: 4px; 
+		width: 18px;}
+#chose .share:hover {background:url("/images/icon/yl2.png");cursor: pointer; display: block; float: right;
+		height: 18px;margin-left: 0; margin-right: 4px; margin-top: 0; width: 17px;}
+ #chose .scenePic:hover{background:url("/images/icon/input.jpg") no-repeat  -223px -33px;float: right; height: 18px; margin-left: 4px; 
+		width: 18px;}
+ #chose .sceneMusic:hover{background:url("/images/icon/input.jpg") no-repeat  -153px -33px;float: right; height: 18px; margin-left: 4px; 
+		width: 18px;}
+ .download:hover{background:url("/images/icon/input.jpg") -276px -26px; height: 18px; margin-left: 10px; 
+		width: 18px;}
+
+.txthidden { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 120px;}
+.list-cont { display: block; height: 188px; margin: 15px; overflow: hidden; position: absolute; width: 224px; z-index: 999;}
+.list-cont h1 { display: block; font-weight: bold;}
+.list-cont span { color: #999;display: block;height: 40px; margin-bottom: 10px;}
+.list-cont img{width: 224px;height: 100px;padding-top: 10px;}
+
+ /*多图文样式*/
+.col { float: left; list-style: outside none none; margin-right: 20px;}
+.col li { margin-bottom: 20px; margin-right: 30px;float: left;}
+.imgtxt { border: 2px solid #e5e5e5; border-radius: 3px; margin-top: 20px; padding: 10px 0; width: 250px;}
+.imgtxt span {display: block; margin: 0 auto 10px;width: 224px;}
+.more-img{ width: 224px; height:100px;}
+.picmoreinfo_summary {background-color: #333333; color: #ffffff; margin: 0 auto 10px; width: 220px;text-indent:1em;}
+.img-cont{overflow: hidden; border-top: 1px solid #ddd;font-size: 14px;line-height: 40px; padding: 10px 13px;}
+.more-img2{width: 40px; width: 40px; float: right;}
+
+/*文本、单图文、多图文公用页码*/
+.page {background: #fafafa none repeat scroll 0 0;display: block; height: 50px;
+	 line-height: 50px;width: 100%;}
+.page-span1{float: left;width:20px;}
+.checkall{margin-top: 12px;}
+#a-allchoose {cursor: default;}
+.page ul { float: right; list-style: outside none none; margin-right: 10px; margin-top: 5px;}
+.page ul li {border: 1px solid #ddd; color: #48b9ef; margin: 0 5px 0 0;-moz-border-radius: 3px;-webkit-border-radius: 3px;
+	display: block; float: left; font-size: 14px; line-height: 35px;border-radius: 3px;}
+.page ul li:hover{
+    background: #fff2f5;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+.current{
+ 	border: 1px solid #1aa1e7;
+    color: white;
+    font-weight: 700;
+ }
+.pgfocus { padding: 0 5px;}
+.point {border-bottom: 1px solid #fff !important; border-top: 1px solid #fff !important; font-size: 12px; padding: 0 10px;}
+
+.reply,.welcome,.mass,.scenePic,.sceneMusic{cursor: pointer;}
+
+.icon_chat{z-index: 100;cursor: pointer;}
+.chat_tips {border:1px solid #d1d2d6;position: absolute;background-color: #fff;width: 252px;
+		display: none;z-index: 1100;left: 50%;top:50%;margin-left: -131px; margin-top: 30px;
+}
+
+.chat_tips i{background: url(/images/icon/close.png) no-repeat;width:22px;height:22px;display: block;float: right;
+	margin:-12px;cursor: pointer;
+}
+
+.titleClass{width: 3px; display: block; height: 27px; background-color: #23b4ff;}
+
+
+/*10.28  测试修改样式*/
+.con-duo{overflow:hidden;clear:both;}
+.bj-import{background: url(/images/icon/exportiocn.jpg) -2px 0px; margin-top: 17px; width: 18px; height: 20px}
+.bj-record{background: url(/images/icon/exportiocn.jpg) -27px 21px }
+.bj-import:hover{background: url(/images/icon/exportiocn.jpg) 21px 0px}
+.bj-record:hover{background: url(/images/icon/exportiocn.jpg) -2px 21px}
+
+a.choosePro{padding: 4px 12px; margin-bottom: 0;  font-size: 14px; color: #333; vertical-align: middle;
+  background-color: #f8f8f8; border: 1px solid #ddd; -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px}
+ 
+ /* 暂停开始按钮 2016.6.27 改 */
+/*
+.bianji .paly{
+ background:  url(/images/play-pause.png) no-repeat -1px -23px; 
+ width: 20px;
+ height: 20px
+ }
+ .bianji .paly:hover{
+ background:  url(/images/play-pause.png) no-repeat -1px -2px; 
+ }
+ .bianji .pause{
+ background:  url(/images/play-pause.png) no-repeat -25px -23px; 
+ width: 20px;
+ height: 20px
+ }
+ .bianji .pause:hover{
+ background:  url(/images/play-pause.png) no-repeat -25px -2px; 
+ }*/
