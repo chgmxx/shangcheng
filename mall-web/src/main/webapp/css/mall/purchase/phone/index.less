@@ -1,0 +1,318 @@
+@pad_lr:0.12rem 0.4rem;
+@border: 1px solid #d2d2d2;
+@background: #fff;
+*{list-style: none; margin: 0; padding: 0}
+.flex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
+.flex-v{-webkit-box-orient:vertical;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}
+.flex-1{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;}
+.flex-align-center{-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;}
+.flex-pack-center{-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;}
+.flex-pack-justify{-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;}
+.txt_small{font-size: 0.25rem}
+.colorf0{color: #f01414}
+.color01{color: #01aaed!important;}
+.fl{float: left}
+.fr{float: right;}
+.text-right{text-align: right}
+.pb{padding-bottom: 0.1rem}
+.pt{padding-top: 0.2rem}
+a{color: #000000}
+html,body{height: 100%}
+.warp{
+  width: 7.5rem;
+  overflow: hidden;
+  margin:0 auto;
+  font-size: 0.28rem;
+  background-color: #f1f1f1;
+  line-height: 1.5;
+  min-height: 100%;
+}
+.weui-cells_checkbox .quotes_check:checked + .weui-icon-checked:before{color:#01aaed!important; }
+.quotes_switch:checked{border-color:#01aaed!important;background-color: #01aaed!important; }
+/***********************************************首页****************************************************/
+.quotes_header{
+  padding: 0.25rem;
+    margin: 0 auto;
+  background-color: #f1f1f1;
+  border-bottom: @border;
+.quotes_header_pic{
+  height: 3rem;
+  background-color: #FFFFFF;
+  overflow: hidden;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+  .header_pic{
+    width: 100%;
+    height: auto;
+  }
+  .quotes_header_h1{
+    font-size: 0.5rem;
+    font-weight: normal;
+    text-indent: 10px;
+    width: 100%;
+  }
+}
+.quotes_company{
+  border-bottom: @border;
+  background-color: @background;
+  padding: @pad_lr;
+
+.company_list{
+  display: flex;
+  line-height: 1.6;
+  .company_list_left{
+    min-width: 1.5rem;
+  }
+  .company_list_right{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+}
+.quotes_line{
+  padding: @pad_lr;
+  border-bottom:@border;
+  background-color: @background;
+}
+.quotes_txt{
+  padding: @pad_lr;
+}
+.order_item_right,.order_item_left{
+  display: inline-block;
+  vertical-align: top;
+}
+
+.order_item_pic{
+  div{
+    width: 1.67rem;
+    height: 1.70rem;
+    border: @border;
+    border-radius: 4px;
+    box-sizing: border-box;
+
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+
+  }
+  img{
+    width: 100%;
+    height:auto;
+  }
+}
+.quotes_order_item{
+  padding: @pad_lr;
+  background-color: @background;
+  margin-bottom: 0.16rem;
+  border-top:@border;
+  border-bottom: @border;
+  .order_item_right{
+    width: 4.85rem;
+  }
+.order_item_detail{
+  .detail1{
+    font-size: 0.3rem;
+    margin-top: -0.1rem;
+  }
+  .detail2{
+    font-size: 0.23rem;
+    color: #6f717e;
+  }
+}
+}
+.quotes_explain{
+    background-color: @background;
+    padding: @pad_lr;
+    margin: 0.14rem auto;
+  border-top:@border;
+  border-bottom: @border;
+  .quotes_explian_right{
+    margin-left: 1rem;
+  }
+}
+.quotes_msg_list{
+  background-color: @background;
+  border-top: @border;
+  border-bottom:@border;
+  margin: 0.14rem auto;
+  li:last-child{
+    border-bottom: none;
+  }
+  .quotes_msg{
+    border-bottom:@border;
+    padding:@pad_lr;
+  }
+ .quotes_msg_tit{
+   padding: 0 15px;
+   text-align: right;
+   background: url("/images/mall/purchase/icon1.png") no-repeat 6.4rem center;
+   background-size: 0.3rem 0.3rem;
+   a{
+     display: block;
+     color: #000000;
+   }
+ }
+  .quotes_msg_time{
+    color: #999999;
+    padding-left: 1.3rem;
+    font-size:13px;
+  }
+}
+
+.quotes_attention{
+  padding: 0.3rem 0;
+  background-color: @background;
+  margin: 0.14rem auto;
+  border-top: @border;
+  border-bottom:@border;
+  .attention_code{
+    height: 1.65rem;
+    display: block;
+    margin: 0 auto;
+  }
+  .attention_txt{
+    line-height: 2.5;
+    text-align: center;
+  }
+  .attention_support{
+    width: 24%;
+    display: block;
+    margin:0 auto;
+    padding-top: 0.5rem;
+  }
+}
+
+.quotes_footer{
+  border-top:@border;
+  padding: 0 0;
+  background-color: @background;
+ .quotes_footer_pay{
+   width: 75%;
+   text-align: center;
+ }
+ .quotes_footer_ok{
+   width: 25%;
+   background-color: #01aaed;
+   color: #FFFFFF;
+   text-align: center;
+   line-height: 1.25rem;
+   height:1.25rem;
+ }
+}
+
+/***********************************************写留言****************************************************/
+.quotes_title{
+  font-size: 0.47rem;
+  font-weight: normal;
+  padding: @pad_lr;
+}
+.quotes_form_item{
+  height: 44px;
+  line-height: 44px;
+}
+.quotes_msg_form{
+  margin: 1.17647059em 0;
+}
+.quotes_btn_primary{
+  background-color: #01aaed;
+}
+/**************************************************确认订单***********************************************/
+.quotes_tips{
+  font-size: 13px;
+  color: #b2b2b2;
+}
+
+/*************************************************商品详情**********************************************/
+.quotes-carousel{
+  width: 100%;
+  height: 6.16rem;
+  position: relative;
+  .swiper-container{
+    height: 100%;
+  }
+  .swiper-slide{
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    background-color: @background;
+  }
+  .carousel_pic{
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+.quotes-carousel .page{
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  background-color: #c6c6cc;
+  line-height: 0.75rem;
+  font-size: 0.25rem;
+  text-align: center;
+  color: #FFFFFF;
+  position: absolute;
+  bottom: 0.35rem;
+  right: 0.30rem;
+  z-index: 99997;
+}
+.quotes_fee{
+  padding: @pad_lr;
+  font-size: 0.32rem;
+  h2{
+    font-size: 0.32rem;
+    font-weight: normal;
+  }
+  .quotes_fee_discount{
+    margin: 0.25rem 0;
+  }
+  .quotes_fee_other{
+    color: #6f717e;
+    font-size: 0.26rem;
+  }
+}
+
+/******************************************合同协议****************************************/
+.hetong_main{
+  height: 84%;
+  width: 6.84rem;
+  margin:0.22rem auto;
+  background-color: #FFFFFF;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.hetong_main h1{
+  font-size: 0.36rem;
+  font-weight: normal;
+  text-align: center;
+}
+
+.hetong_footer{
+  height: 15%;
+}
+
+/******错误提示******/
+.error{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 46px;
+  line-height: 46px;
+  background-color: #e64340;
+  color: #FFFFFF;
+  text-align: center;
+  display: none;
+  font-size: 17px;
+}

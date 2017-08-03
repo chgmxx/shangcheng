@@ -1,0 +1,191 @@
+html,body {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin:0 auto;
+    background-color:#f8f8f8;
+}
+.mWrapper {
+	width:12.8rem;
+    /* font-size:.5rem; */
+    position: relative;
+    letter-spacing: .04rem;
+}
+.m-con {
+	width:12.8rem;
+    position:relative;
+    margin-bottom:1.6rem;
+}
+.mHeader {
+    height:4rem;
+    width:100%;
+    background: url("/images/mall/new/topBg.jpg") no-repeat;
+    background-size:100% 100%;
+    color:#fff;
+    padding:0 .4rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.mh-left {
+    height: 100%;
+}
+.myImg {
+    width:2rem;
+    height:2rem;
+    border-radius:100%;
+    border:.08rem solid #fff;
+    margin-right:.5rem;
+}
+.pdb {
+    padding-bottom:.3rem;
+}
+.mh-name {
+    font-size:.55rem;
+    font-weight:bold;
+}
+.pdlr{
+    padding:0 .3rem;
+}
+.mNav {
+    height:2.4rem;
+    background-color:#fff;
+}
+.navUl{
+    height:100%;
+    border-bottom:.08rem solid #e5e5e5;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.navUl>li{
+    height:1.6rem;
+}
+.mBgTop{
+    background-position: top center;
+    background-repeat:no-repeat;
+    display: inline-block;
+    height: auto;
+    padding-top:1rem;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color:#565656;
+    font-size: .45rem;
+}
+.dzf-icon {
+    background-image: url("/images/mall/new/dzf.png");
+    background-size:.74rem .64rem;
+}
+.dfh-icon {
+    background-image: url("/images/mall/new/dfh.png");
+    background-size:.7rem .64rem;
+}
+.dsh-icon {
+    background-image: url("/images/mall/new/dsh.png");
+    background-size:.72rem .64rem;
+}
+.dpj-icon {
+    background-image: url("/images/mall/new/dpj.png");
+    background-size:.72rem .68rem;
+}
+.addr-icon {
+    background-image: url("/images/mall/new/addr.png");
+    background-size:.46rem .7rem;
+}
+.home-icon{
+    background-image: url("/images/mall/new/home.png");
+    background-size:.68rem .68rem;
+}
+.type-icon{
+    background-image: url("/images/mall/new/type.png");
+    background-size:.68rem .68rem;
+}
+.sc-icon{
+    background-image: url("/images/mall/new/sc.png");
+    background-size:.68rem .62rem;
+}
+.me-r-icon{
+    background-image: url("/images/mall/new/me-r.png");
+    background-size:.72rem .72rem;
+}
+.footer-active {
+    color:#e4393c;
+}
+.itemUl {
+    padding-left:.6rem;
+    background-color:#fff;
+    margin-bottom:.4rem;
+}
+.itemUl>li{
+    height:1.34rem;
+    line-height:1.34rem;
+    padding-left:.3rem;
+}
+.itemUl>li:not(:last-child) {
+    border-bottom:.04rem solid #e7e7e7;
+}
+.mBgLeft{
+    background-position: left center;
+    background-repeat:no-repeat;
+    padding-left:.9rem;
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+}
+.order-icon {
+    background-image: url("/images/mall/new/order.png");
+    background-size:.5rem .6rem;
+}
+.hyk-icon{
+    background-image: url("/images/mall/new/hyk.png");
+    background-size:.54rem .4rem;
+}
+.eval-icon {
+    background-image: url("/images/mall/new/evaluate.png");
+    background-size:.6rem .6rem;
+}
+.col-icon {
+    background-image: url("/images/mall/new/shoucang.png");
+    background-size:.54rem .52rem;
+}
+.exp-icon {
+    background-image: url("/images/mall/new/express.png");
+    background-size:.54rem .42rem;
+}
+.jp-icon {
+    background-image: url("/images/mall/new/auction.png");
+    background-size:.56rem .58rem;
+}
+.sk-icon{
+    background-image: url("/images/mall/new/sk.png");
+    background-size:.56rem .56rem;
+}
+.ws-icon{
+    background-image: url("/images/mall/new/ws.png");
+    background-size:.58rem .52rem;
+}
+.gp-icon{
+    background-image: url("/images/mall/new/gp.png");
+    background-size:.58rem .58rem;
+}
+.isAdvert{
+	height:2rem;width:100%;
+}
+.mFooter {
+	height:1.6rem;
+    width:12.8rem;
+    position: fixed;
+    bottom: 0;
+    background-color:#f8f8f8;
+}
+.footerUl {
+	height:100%;
+    border-top:.04rem solid #d1d1d1;
+}
+.footerUl a.mBgTop{
+    padding-top:.7rem;
+}
+.mh-phone span{color:#fff;}
+
+.mFooter li a{font-size: 0.36rem;}
