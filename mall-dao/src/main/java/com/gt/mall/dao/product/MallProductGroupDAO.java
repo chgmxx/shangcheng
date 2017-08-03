@@ -30,4 +30,9 @@ public interface MallProductGroupDAO extends BaseMapper< MallProductGroup > {
      * 根据父类的分组id查询子类的分组信息
      */
     List<Map<String,Object>> selectGroupByParentId(Map<String,Object> params);
+
+    /**
+     * 查询店铺下所有的商品分组和图片
+     */
+    List<Map<String, Object>> selectGroupsByShopId(Map<String, Object> params);
 }

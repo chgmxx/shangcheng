@@ -18,7 +18,6 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-@Service
 public interface MallStoreService extends BaseService< MallStore > {
 
     /**

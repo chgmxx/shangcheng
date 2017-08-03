@@ -119,6 +119,10 @@ static:
 article:
  url:
   prefix: http://192.168.2.100:8081/
+#访问资源URL
+resource:
+ url:
+  prefix: http://maint.yifriend.net/upload/
 
 #图片存放路径
 res:
@@ -135,3 +139,4 @@ mq:
  exchange: gt.exchange.message
  #队列名称
  queueName: gt.queueName.message
+

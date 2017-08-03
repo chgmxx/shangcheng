@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -123,6 +124,8 @@ public class MallAuctionMargin extends Model< MallAuctionMargin > {
     private Integer shopId;
 
     private int auctionStatus;
+
+    private List<String> oldUserIdList;
 
     @Override
     protected Serializable pkVal() {

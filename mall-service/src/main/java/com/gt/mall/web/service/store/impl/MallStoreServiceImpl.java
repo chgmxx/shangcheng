@@ -14,6 +14,8 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MallJxcHttpClientUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.web.service.store.MallStoreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,8 @@ import java.util.Map;
  */
 @Service
 public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStore > implements MallStoreService {
+
+    private static Logger logger = LoggerFactory.getLogger( MallStoreServiceImpl.class );
 
     @Autowired
     private MallStoreDAO mallStoreDao;

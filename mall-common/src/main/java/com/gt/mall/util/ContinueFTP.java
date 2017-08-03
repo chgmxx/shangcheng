@@ -85,15 +85,14 @@ public class ContinueFTP {
      * @throws IOException
      */
     public Map<String, Object> download(String local) throws Exception {
-        //TODO 需调用PropertiesUtil 方法获取参数
-//        connect(PropertiesUtil.getStaticSourceFtpIp(), CommonUtil.toInteger(PropertiesUtil.getStaticSourceFtpPort()), PropertiesUtil.getStaticSourceFtpUser(),PropertiesUtil.getStaticSourceFtpPwd());
-//        Boolean is_connect=connect(PropertiesUtil.getStaticSourceFtpIp(), CommonUtil.toInteger(PropertiesUtil.getStaticSourceFtpPort()), PropertiesUtil.getStaticSourceFtpUser(),PropertiesUtil.getStaticSourceFtpPwd());
+        connect(PropertiesUtil.getStaticSourceFtpIp(), CommonUtil.toInteger(PropertiesUtil.getStaticSourceFtpPort()), PropertiesUtil.getStaticSourceFtpUser(),PropertiesUtil.getStaticSourceFtpPwd());
+        Boolean is_connect=connect(PropertiesUtil.getStaticSourceFtpIp(), CommonUtil.toInteger(PropertiesUtil.getStaticSourceFtpPort()), PropertiesUtil.getStaticSourceFtpUser(),PropertiesUtil.getStaticSourceFtpPwd());
         Map<String, Object> resultMap = new HashMap<>();
-//        if(is_connect==false){
-//            resultMap.put("filesPath", "");
-//            resultMap.put("code",  DownloadStatus.Download_From_Break_Success);
-//            return resultMap;
-//        }
+        if(is_connect==false){
+            resultMap.put("filesPath", "");
+            resultMap.put("code",  DownloadStatus.Download_From_Break_Success);
+            return resultMap;
+        }
 
         // 设置被动模式
         ftpClient.enterLocalPassiveMode();
@@ -211,12 +210,11 @@ public class ContinueFTP {
     public UploadStatus upload(String local, String remote) throws Exception {
         UploadStatus result;
         try {
-            //TODO 需调用PropertiesUtil 方法获取参数
-//            Boolean is_connect = connect(PropertiesUtil.getStaticSourceFtpIp(), CommonUtil.toInteger(PropertiesUtil.getStaticSourceFtpPort()), PropertiesUtil.getStaticSourceFtpUser(), PropertiesUtil.getStaticSourceFtpPwd());
-//            System.out.println("is_connect:" + is_connect);
-//            if (is_connect == false) {
-//                return UploadStatus.Upload_From_Break_Success;
-//            }
+            Boolean is_connect = connect(PropertiesUtil.getStaticSourceFtpIp(), CommonUtil.toInteger(PropertiesUtil.getStaticSourceFtpPort()), PropertiesUtil.getStaticSourceFtpUser(), PropertiesUtil.getStaticSourceFtpPwd());
+            System.out.println("is_connect:" + is_connect);
+            if (is_connect == false) {
+                return UploadStatus.Upload_From_Break_Success;
+            }
             // 设置PassiveMode传输
             ftpClient.enterLocalPassiveMode();
             ftpClient.enterLocalActiveMode();

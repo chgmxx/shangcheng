@@ -35,71 +35,67 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Service
-public class MallProductAppletServiceImpl extends BaseServiceImpl<MallAppletImageDAO, MallAppletImage> implements MallProductAppletService {
+public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletImageDAO,MallAppletImage > implements MallProductAppletService {
 
     @Autowired
     private MallShopCartDAO shopCartDAO;
     @Autowired
-    private MallPifaDAO pifaDAO;
+    private MallPifaDAO     pifaDAO;
 
     @Autowired
-    private MallProductService productService;
+    private MallProductService          productService;
     @Autowired
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MallProductInventoryService productInventoryService;
 
-
     @Override
-    public Map<String, Object> shoppingcare(Map<String, Object> params) {
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        int memberId = CommonUtil.toInteger(params.get("memberId"));
-        //TODO 会员信息  memberService.findById();
-        Member member = null;
-//                memberService.findById(memberId);
-        //TODO 会员信息  memberPayService.findMemberIds();
-        List<Integer> memberList = null;
-//                memberPayService.findMemberIds(memberId);//查询会员信息
-        params.put("memberList", memberList);
-        //TODO 会员折扣  mallProductService.getMemberDiscount();
-        double discount = 0;
-//                mallProductService.getMemberDiscount("1", member);//获取会员折扣
-        /*double discount = 1;*/
+    public Map< String,Object > shoppingcare( Map< String,Object > params ) {
+	Map< String,Object > resultMap = new HashMap< String,Object >();
+	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+	//TODO 会员信息  memberService.findById();
+	Member member = null;
+	//                memberService.findById(memberId);
+	//TODO 会员信息  memberPayService.findMemberIds();
+	List< Integer > memberList = null;
+	//                memberPayService.findMemberIds(memberId);//查询会员信息
+	params.put( "memberList", memberList );
+	double discount = productService.getMemberDiscount( "1", member );//获取会员折扣
 
-        List<Map<String, Object>> list = shopCartDAO.selectAppletByParams(params);
-        /*int type = 0;
+	List< Map< String,Object > > list = shopCartDAO.selectAppletByParams( params );
+	/*int type = 0;
 		if(CommonUtil.isNotEmpty(params.get("type"))){
 			type = CommonUtil.toInteger(params.get("type"));
 		}*/
 
-        List<Map<String, Object>> shopList = new ArrayList<Map<String, Object>>();
-        List<Map<String, Object>> shopCartList = new ArrayList<Map<String, Object>>();
+	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > shopCartList = new ArrayList< Map< String,Object > >();
 
-        //保存失效商品
-        List<Map<String, Object>> sxCartList = new ArrayList<Map<String, Object>>();
-        List<Map<String, Object>> sxshopCartList = new ArrayList<Map<String, Object>>();
-        int shopId = 0;
-        Map<String, Object> shopMap = new HashMap<String, Object>();
-        Map<String, Object> sxShopMap = new HashMap<String, Object>();
-        Map<String, Object> productMap = new HashMap<String, Object>();
-        if (list != null && list.size() > 0) {
-            int j = 0;
-            for (Map<String, Object> map : list) {
-                Map<String, Object> cartMap = new HashMap<String, Object>();
-                String proId = map.get("product_id").toString();
-                int productNum = CommonUtil.toInteger(map.get("product_num"));//商品数量
-                int stockNum = CommonUtil.toInteger(map.get("pro_stock_num"));//库存数量
-                double price = CommonUtil.toDouble(map.get("price"));//商品价
-                int pro_type = 0;
-                if (CommonUtil.isNotEmpty(map.get("pro_type"))) {
-                    pro_type = CommonUtil.toInteger(map.get("pro_type"));
-                }
-                DecimalFormat df = new DecimalFormat("######0.00");
-                MallShopCart cart = new MallShopCart();
-                cart.setId(CommonUtil.toInteger(map.get("id")));
-                cartMap.put("id", map.get("id"));
-                cartMap.put("product_id", map.get("proId"));
-                cartMap.put("product_name", map.get("pro_name"));
+	//保存失效商品
+	List< Map< String,Object > > sxCartList = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > sxshopCartList = new ArrayList< Map< String,Object > >();
+	int shopId = 0;
+	Map< String,Object > shopMap = new HashMap< String,Object >();
+	Map< String,Object > sxShopMap = new HashMap< String,Object >();
+	Map< String,Object > productMap = new HashMap< String,Object >();
+	if ( list != null && list.size() > 0 ) {
+	    int j = 0;
+	    for ( Map< String,Object > map : list ) {
+		Map< String,Object > cartMap = new HashMap< String,Object >();
+		String proId = map.get( "product_id" ).toString();
+		int productNum = CommonUtil.toInteger( map.get( "product_num" ) );//商品数量
+		int stockNum = CommonUtil.toInteger( map.get( "pro_stock_num" ) );//库存数量
+		double price = CommonUtil.toDouble( map.get( "price" ) );//商品价
+		int pro_type = 0;
+		if ( CommonUtil.isNotEmpty( map.get( "pro_type" ) ) ) {
+		    pro_type = CommonUtil.toInteger( map.get( "pro_type" ) );
+		}
+		DecimalFormat df = new DecimalFormat( "######0.00" );
+		MallShopCart cart = new MallShopCart();
+		cart.setId( CommonUtil.toInteger( map.get( "id" ) ) );
+		cartMap.put( "id", map.get( "id" ) );
+		cartMap.put( "product_id", map.get( "proId" ) );
+		cartMap.put( "product_name", map.get( "pro_name" ) );
 				/*String jump_url = PropertiesUtil.getWebHomeUrl()+"/mallApplet/79B4DE7C/phoneProduct.do?memberId="+memberId+"&shopId="+map.get("shop_id")+"&productId="+proId;
 				int is_return = 1;
 				if(CommonUtil.isNotEmpty(map.get("pro_type_id")) && CommonUtil.isNotEmpty(map.get("member_type"))){
@@ -111,108 +107,108 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl<MallAppletImag
 				}
 				cartMap.put("jump_url", jump_url);
 				cartMap.put("is_return", is_return);*/
-                cartMap.put("pro_type_id", map.get("pro_type_id"));
-                cartMap.put("image_url", PropertiesUtil.getResourceUrlPrefix() + map.get("image_url"));
-                cartMap.put("product_speciname", map.get("product_speciname"));
-                cartMap.put("pro_stock_num", map.get("pro_stock_num"));
-                cartMap.put("product_num", map.get("product_num"));
-                cartMap.put("shop_id", shopId);
-                String msg = "";
-                int code = 1;
-                //判断限购和商品是否正在售卖
-                Map<String, Object> xgMap = productService.isshoppingCart(map, productNum);
-                if (xgMap.get("code").toString().equals("1")) {
-                    if (xgMap.containsKey("product_num")) {
-                        cartMap.put("product_num", xgMap.get("product_num"));
-                    }
-                    if (xgMap.containsKey("maxBuy")) {
-                        cartMap.put("maxBuy", xgMap.get("maxBuy"));
-                    }
-                    if (xgMap.containsKey("productMap")) {
-                        productMap.putAll(JSONObject.fromObject(xgMap.get("productMap")));
-                    }
-                } else {
-                    code = CommonUtil.toInteger(xgMap.get("code"));
-                    msg = CommonUtil.toString(xgMap.get("msg"));
-                }
-                String proSpec = map.get("product_specificas").toString();
-                if (map.get("isSpec").toString().equals("1") && code == 1 && pro_type == 0) {//商品存在规格
-                    if (proSpec.equals("")) {
-                        code = 0;
-                        msg = "商品存在规格";
-                    } else {
-                        //判断商品规格是否异常
-                        Map<String, Object> invPriceMap = productService.getProInvIdBySpecId(proSpec, CommonUtil.toInteger(proId));
-                        boolean flag = false;
-                        if (CommonUtil.isNotEmpty(invPriceMap)) {
-                            cartMap.put("pro_stock_num", invPriceMap.get("inv_num"));
-                            if (CommonUtil.isNotEmpty(invPriceMap.get("specifica_img_url"))) {
-                                cartMap.put("image_url", PropertiesUtil.getResourceUrlPrefix() + invPriceMap.get("specifica_img_url"));
-                            }
-                            if (CommonUtil.isNotEmpty(invPriceMap.get("specifica_values"))) {
-                                String speciname = invPriceMap.get("specifica_values").toString();
-                                speciname = speciname.replaceAll(",", "/");
-                                cartMap.put("product_speciname", speciname);
-                            }
-                            double invPrice = CommonUtil.toDouble(invPriceMap.get("inv_price"));
-                            double yhPrice = invPrice;
-                            if (CommonUtil.isNotEmpty(map.get("is_member_discount"))) {
-                                if (map.get("is_member_discount").toString().equals("1")) {//开启会员折扣
-                                    yhPrice = invPrice * discount;
-                                }
-                            }
-                            cartMap.put("price", df.format(invPrice));
-                            if (price != invPrice || yhPrice != price) {//同步价格
-                                yhPrice = CommonUtil.toDouble(df.format(yhPrice));
-                                if (yhPrice <= 0) {
-                                    yhPrice = 0.01;
-                                }
-                                cart.setPrice(BigDecimal.valueOf(yhPrice));
-                                cart.setPrimaryPrice(BigDecimal.valueOf(invPrice));
-                                shopCartDAO.updateById(cart);
-                                cartMap.put("hyPrice", df.format(yhPrice));
-//								cartMap.put("primary_price",df.format(invPrice));
-                                cartMap.put("price", df.format(yhPrice));
-                            }
-                            if (CommonUtil.isEmpty(invPriceMap.get("inv_num"))) {
-                                flag = true;
-                            } else {
-                                int invNum = CommonUtil.toInteger(invPriceMap.get("inv_num"));
-                                if (invNum <= 0) {
-                                    flag = true;
-                                } else if (productNum > invNum) {
-                                    flag = true;
-                                }
-                            }
+		cartMap.put( "pro_type_id", map.get( "pro_type_id" ) );
+		cartMap.put( "image_url", PropertiesUtil.getResourceUrl() + map.get( "image_url" ) );
+		cartMap.put( "product_speciname", map.get( "product_speciname" ) );
+		cartMap.put( "pro_stock_num", map.get( "pro_stock_num" ) );
+		cartMap.put( "product_num", map.get( "product_num" ) );
+		cartMap.put( "shop_id", shopId );
+		String msg = "";
+		int code = 1;
+		//判断限购和商品是否正在售卖
+		Map< String,Object > xgMap = productService.isshoppingCart( map, productNum );
+		if ( xgMap.get( "code" ).toString().equals( "1" ) ) {
+		    if ( xgMap.containsKey( "product_num" ) ) {
+			cartMap.put( "product_num", xgMap.get( "product_num" ) );
+		    }
+		    if ( xgMap.containsKey( "maxBuy" ) ) {
+			cartMap.put( "maxBuy", xgMap.get( "maxBuy" ) );
+		    }
+		    if ( xgMap.containsKey( "productMap" ) ) {
+			productMap.putAll( JSONObject.fromObject( xgMap.get( "productMap" ) ) );
+		    }
+		} else {
+		    code = CommonUtil.toInteger( xgMap.get( "code" ) );
+		    msg = CommonUtil.toString( xgMap.get( "msg" ) );
+		}
+		String proSpec = map.get( "product_specificas" ).toString();
+		if ( map.get( "isSpec" ).toString().equals( "1" ) && code == 1 && pro_type == 0 ) {//商品存在规格
+		    if ( proSpec.equals( "" ) ) {
+			code = 0;
+			msg = "商品存在规格";
+		    } else {
+			//判断商品规格是否异常
+			Map< String,Object > invPriceMap = productService.getProInvIdBySpecId( proSpec, CommonUtil.toInteger( proId ) );
+			boolean flag = false;
+			if ( CommonUtil.isNotEmpty( invPriceMap ) ) {
+			    cartMap.put( "pro_stock_num", invPriceMap.get( "inv_num" ) );
+			    if ( CommonUtil.isNotEmpty( invPriceMap.get( "specifica_img_url" ) ) ) {
+				cartMap.put( "image_url", PropertiesUtil.getResourceUrl() + invPriceMap.get( "specifica_img_url" ) );
+			    }
+			    if ( CommonUtil.isNotEmpty( invPriceMap.get( "specifica_values" ) ) ) {
+				String speciname = invPriceMap.get( "specifica_values" ).toString();
+				speciname = speciname.replaceAll( ",", "/" );
+				cartMap.put( "product_speciname", speciname );
+			    }
+			    double invPrice = CommonUtil.toDouble( invPriceMap.get( "inv_price" ) );
+			    double yhPrice = invPrice;
+			    if ( CommonUtil.isNotEmpty( map.get( "is_member_discount" ) ) ) {
+				if ( map.get( "is_member_discount" ).toString().equals( "1" ) ) {//开启会员折扣
+				    yhPrice = invPrice * discount;
+				}
+			    }
+			    cartMap.put( "price", df.format( invPrice ) );
+			    if ( price != invPrice || yhPrice != price ) {//同步价格
+				yhPrice = CommonUtil.toDouble( df.format( yhPrice ) );
+				if ( yhPrice <= 0 ) {
+				    yhPrice = 0.01;
+				}
+				cart.setPrice( BigDecimal.valueOf( yhPrice ) );
+				cart.setPrimaryPrice( BigDecimal.valueOf( invPrice ) );
+				shopCartDAO.updateById( cart );
+				cartMap.put( "hyPrice", df.format( yhPrice ) );
+				//								cartMap.put("primary_price",df.format(invPrice));
+				cartMap.put( "price", df.format( yhPrice ) );
+			    }
+			    if ( CommonUtil.isEmpty( invPriceMap.get( "inv_num" ) ) ) {
+				flag = true;
+			    } else {
+				int invNum = CommonUtil.toInteger( invPriceMap.get( "inv_num" ) );
+				if ( invNum <= 0 ) {
+				    flag = true;
+				} else if ( productNum > invNum ) {
+				    flag = true;
+				}
+			    }
 
-                        } else {
-                            code = 0;
-                            msg = "商品规格不存在";
-                        }
-                        if (flag) {
-                            code = 0;
-                            msg = "商品已售罄";
-                        }
+			} else {
+			    code = 0;
+			    msg = "商品规格不存在";
+			}
+			if ( flag ) {
+			    code = 0;
+			    msg = "商品已售罄";
+			}
 
-                    }
-                } else if (map.get("isSpec").toString().equals("0") && code == 1 && pro_type == 0) {//商品部存在规格
-                    if (!proSpec.equals("")) {
-                        code = 0;
-                        msg = "商品不存在规格";
-                    }
-                    double proPrice = CommonUtil.toDouble(map.get("pro_price"));
-                    cartMap.put("price", df.format(proPrice));
-                    double yhPrice = proPrice;
-                    if (CommonUtil.isNotEmpty(map.get("is_member_discount"))) {
-                        if (map.get("is_member_discount").toString().equals("1")) {//开启会员折扣
-                            yhPrice = proPrice * discount;
-                        }
-                    }
-                    if (price != proPrice || yhPrice != price) {//同步价格
-                        yhPrice = CommonUtil.toDouble(df.format(yhPrice));
-                        if (yhPrice <= 0) {
-                            yhPrice = 0.01;
-                        }
+		    }
+		} else if ( map.get( "isSpec" ).toString().equals( "0" ) && code == 1 && pro_type == 0 ) {//商品部存在规格
+		    if ( !proSpec.equals( "" ) ) {
+			code = 0;
+			msg = "商品不存在规格";
+		    }
+		    double proPrice = CommonUtil.toDouble( map.get( "pro_price" ) );
+		    cartMap.put( "price", df.format( proPrice ) );
+		    double yhPrice = proPrice;
+		    if ( CommonUtil.isNotEmpty( map.get( "is_member_discount" ) ) ) {
+			if ( map.get( "is_member_discount" ).toString().equals( "1" ) ) {//开启会员折扣
+			    yhPrice = proPrice * discount;
+			}
+		    }
+		    if ( price != proPrice || yhPrice != price ) {//同步价格
+			yhPrice = CommonUtil.toDouble( df.format( yhPrice ) );
+			if ( yhPrice <= 0 ) {
+			    yhPrice = 0.01;
+			}
 						/*boolean isUpPro = true;
 						if(CommonUtil.isNotEmpty(map.get("sale_member_id"))){
 							if(CommonUtil.toInteger(map.get("sale_member_id")) > 0){
@@ -220,37 +216,37 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl<MallAppletImag
 							}
 						}
 						if(isUpPro){*/
-                        cart.setPrice(BigDecimal.valueOf(yhPrice));
-                        cart.setPrimaryPrice(BigDecimal.valueOf(proPrice));
-                        shopCartDAO.updateById(cart);
-                        cartMap.put("price", df.format(yhPrice));
-                        cartMap.put("hyPrice", df.format(yhPrice));
-//							cartMap.put("primary_price",df.format(proPrice));
+			cart.setPrice( BigDecimal.valueOf( yhPrice ) );
+			cart.setPrimaryPrice( BigDecimal.valueOf( proPrice ) );
+			shopCartDAO.updateById( cart );
+			cartMap.put( "price", df.format( yhPrice ) );
+			cartMap.put( "hyPrice", df.format( yhPrice ) );
+			//							cartMap.put("primary_price",df.format(proPrice));
 						/*}*/
 
 						/*code = 0;
 						msg = "商品价格异常";*/
-                    }
-                    if (productNum > stockNum) {
-                        code = 0;
-                        msg = "商品已售罄";
-                    }
-                }
-                if (pro_type == 1 || pro_type == 2) {//批发商品
-                    cartMap.put("pfType", 1);
-                    List<MallPifa> pfList = pifaDAO.selectStartPiFaByProductId(map);
-                    if (pfList == null || pfList.size() == 0) {
-                        code = 0;
-                        msg = "批发商品已结束或已删除";
-                    } else {
-                        MallPifa pifa = pfList.get(0);
-                        if (!pifa.getPfType().toString().equals(map.get("pro_type").toString())) {
-                            code = 0;
-                            msg = "商家已更改批发类型";
-                        }
-                    }
-                }
-                //批发
+		    }
+		    if ( productNum > stockNum ) {
+			code = 0;
+			msg = "商品已售罄";
+		    }
+		}
+		if ( pro_type == 1 || pro_type == 2 ) {//批发商品
+		    cartMap.put( "pfType", 1 );
+		    List< MallPifa > pfList = pifaDAO.selectStartPiFaByProductId( map );
+		    if ( pfList == null || pfList.size() == 0 ) {
+			code = 0;
+			msg = "批发商品已结束或已删除";
+		    } else {
+			MallPifa pifa = pfList.get( 0 );
+			if ( !pifa.getPfType().toString().equals( map.get( "pro_type" ).toString() ) ) {
+			    code = 0;
+			    msg = "商家已更改批发类型";
+			}
+		    }
+		}
+		//批发
 				/*if(CommonUtil.isNotEmpty(map.get("pro_spec_str"))){
 					Map<String, Object> specStr = JSONObject.fromObject(map.get("pro_spec_str"));
 					Set<String> set = specStr.keySet();
@@ -268,51 +264,51 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl<MallAppletImag
 					}
 					map.put("proSpecStr", specStr);
 				}*/
-                cartMap.put("msg", msg);
-                cartMap.put("code", code);
+		cartMap.put( "msg", msg );
+		cartMap.put( "code", code );
 
-                if (code == 1) {
-                    shopList.add(cartMap);
-                } else {
-                    sxCartList.add(cartMap);
-                }
-                if (!map.get("shop_id").toString().equals(CommonUtil.toString(shopId)) || j == 0) {
-                    shopId = CommonUtil.toInteger(map.get("shop_id"));
-                }
-                String next_shop_id = "";
-                if (j + 1 < list.size()) {
-                    Map<String, Object> nextMap = list.get(j + 1);
-                    next_shop_id = nextMap.get("shop_id").toString();
-                }
-                if ((!next_shop_id.equals(CommonUtil.toString(shopId)) && CommonUtil.isNotEmpty(next_shop_id)) || j + 1 == list.size()) {
-                    if (null != shopList && shopList.size() > 0) {
-                        shopMap = getShopMaps(shopMap, map, pro_type);
-                        shopMap.put("proList", shopList);
-                        shopCartList.add(shopMap);
+		if ( code == 1 ) {
+		    shopList.add( cartMap );
+		} else {
+		    sxCartList.add( cartMap );
+		}
+		if ( !map.get( "shop_id" ).toString().equals( CommonUtil.toString( shopId ) ) || j == 0 ) {
+		    shopId = CommonUtil.toInteger( map.get( "shop_id" ) );
+		}
+		String next_shop_id = "";
+		if ( j + 1 < list.size() ) {
+		    Map< String,Object > nextMap = list.get( j + 1 );
+		    next_shop_id = nextMap.get( "shop_id" ).toString();
+		}
+		if ( ( !next_shop_id.equals( CommonUtil.toString( shopId ) ) && CommonUtil.isNotEmpty( next_shop_id ) ) || j + 1 == list.size() ) {
+		    if ( null != shopList && shopList.size() > 0 ) {
+			shopMap = getShopMaps( shopMap, map, pro_type );
+			shopMap.put( "proList", shopList );
+			shopCartList.add( shopMap );
 
-                        shopList = new ArrayList<Map<String, Object>>();
-                        shopMap = new HashMap<String, Object>();
-                    }
-                    if (null != sxCartList && sxCartList.size() > 0) {
-                        sxShopMap = getShopMaps(sxShopMap, map, pro_type);
-                        sxShopMap.put("proList", sxCartList);
-                        sxshopCartList.add(sxShopMap);
+			shopList = new ArrayList< Map< String,Object > >();
+			shopMap = new HashMap< String,Object >();
+		    }
+		    if ( null != sxCartList && sxCartList.size() > 0 ) {
+			sxShopMap = getShopMaps( sxShopMap, map, pro_type );
+			sxShopMap.put( "proList", sxCartList );
+			sxshopCartList.add( sxShopMap );
 
-                        sxCartList = new ArrayList<Map<String, Object>>();
-                        sxShopMap = new HashMap<String, Object>();
-                    }
-                }
-                j++;
-            }
-        }
-        if (shopCartList != null && shopCartList.size() > 0) {
-            resultMap.put("productList", shopCartList);
-        }
-        if (sxshopCartList != null && sxshopCartList.size() > 0) {
-            resultMap.put("sxProductList", sxshopCartList);
-        }
+			sxCartList = new ArrayList< Map< String,Object > >();
+			sxShopMap = new HashMap< String,Object >();
+		    }
+		}
+		j++;
+	    }
+	}
+	if ( shopCartList != null && shopCartList.size() > 0 ) {
+	    resultMap.put( "productList", shopCartList );
+	}
+	if ( sxshopCartList != null && sxshopCartList.size() > 0 ) {
+	    resultMap.put( "sxProductList", sxshopCartList );
+	}
 
-        //混批
+	//混批
 		/*if(type == 1){//批发购物车
 			//通过商品id查询预售信息
 			MallPaySet set = mallPaySetService.selectByMember(member);
@@ -345,83 +341,83 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl<MallAppletImag
 			resultMap.put("hpNum", hpNum);
 			resultMap.put("spHand", spHand);
 		}*/
-        return resultMap;
+	return resultMap;
     }
 
-    public Map<String, Object> getShopMaps(Map<String, Object> shopMap, Map<String, Object> map, int pro_type) {
+    public Map< String,Object > getShopMaps( Map< String,Object > shopMap, Map< String,Object > map, int pro_type ) {
 
-        shopMap.put("shop_id", map.get("shop_id"));
-        shopMap.put("sto_name", map.get("sto_name"));
-        shopMap.put("pageid", map.get("pageid"));
-        shopMap.put("pro_type", pro_type);
-        if (CommonUtil.isNotEmpty(map.get("shopPicture"))) {
-            shopMap.put("sto_image", PropertiesUtil.getResourceUrlPrefix() + map.get("shopPicture"));
-        } else if (CommonUtil.isNotEmpty(map.get("stoPicture"))) {
-            shopMap.put("sto_image", PropertiesUtil.getResourceUrlPrefix() + map.get("stoPicture"));
-        }
-        return shopMap;
-    }
-
-    @Override
-    public void shoppingdelete(List<Integer> ids) {
-        if (CommonUtil.isNotEmpty(ids) && ids.size() > 0) {
-            for (int id : ids) {
-                shopCartDAO.deleteById(id);
-            }
-        }
+	shopMap.put( "shop_id", map.get( "shop_id" ) );
+	shopMap.put( "sto_name", map.get( "sto_name" ) );
+	shopMap.put( "pageid", map.get( "pageid" ) );
+	shopMap.put( "pro_type", pro_type );
+	if ( CommonUtil.isNotEmpty( map.get( "shopPicture" ) ) ) {
+	    shopMap.put( "sto_image", PropertiesUtil.getResourceUrl() + map.get( "shopPicture" ) );
+	} else if ( CommonUtil.isNotEmpty( map.get( "stoPicture" ) ) ) {
+	    shopMap.put( "sto_image", PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
+	}
+	return shopMap;
     }
 
     @Override
-    public void shoppingorder(Map<String, Object> params) {
-        if (CommonUtil.isNotEmpty(params.get("memberId"))) {
-            int memberId = CommonUtil.toInteger(params.get("memberId"));
-            //TODO 会员信息  memberPayService.findMemberIds();
-            List<Integer> memberList = null;
-//                    memberPayService.findMemberIds(memberId);//查询会员信息
-            params.put("memberList", memberList);
-            shopCartDAO.updateCheckByShopCart(params);
-        }
-        JSONArray jsonArray = JSONArray.fromObject(params.get("cart"));
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject obj = JSONObject.fromObject(jsonArray.get(i));
-            MallShopCart cart = new MallShopCart();
-            cart.setId(CommonUtil.toInteger(obj.get("id")));
-            cart.setIsCheck(CommonUtil.toInteger(obj.get("check")));
-            cart.setProductNum(CommonUtil.toInteger(obj.get("num")));
-            if (CommonUtil.isNotEmpty(obj.get("specStr"))) {
-                cart.setProSpecStr(CommonUtil.toString(obj.get("specStr")));
-            }
-            shopCartDAO.updateById(cart);
-        }
+    public void shoppingdelete( List< Integer > ids ) {
+	if ( CommonUtil.isNotEmpty( ids ) && ids.size() > 0 ) {
+	    for ( int id : ids ) {
+		shopCartDAO.deleteById( id );
+	    }
+	}
     }
 
     @Override
-    public Map<String, Object> getProductSpecifica(Map<String, Object> params) {
-        if (CommonUtil.isEmpty(params.get("id"))) {
-            return null;
-        }
-        int productId = CommonUtil.toInteger(params.get("id"));
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        //查询商品的规格价
-        Map<String, Object> defaultInvMap = productInventoryService.productSpecifications(productId, "");//查询商品默认的规格
+    public void shoppingorder( Map< String,Object > params ) {
+	if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
+	    int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+	    //TODO 会员信息  memberPayService.findMemberIds();
+	    List< Integer > memberList = null;
+	    //                    memberPayService.findMemberIds(memberId);//查询会员信息
+	    params.put( "memberList", memberList );
+	    shopCartDAO.updateCheckByShopCart( params );
+	}
+	JSONArray jsonArray = JSONArray.fromObject( params.get( "cart" ) );
+	for ( int i = 0; i < jsonArray.size(); i++ ) {
+	    JSONObject obj = JSONObject.fromObject( jsonArray.get( i ) );
+	    MallShopCart cart = new MallShopCart();
+	    cart.setId( CommonUtil.toInteger( obj.get( "id" ) ) );
+	    cart.setIsCheck( CommonUtil.toInteger( obj.get( "check" ) ) );
+	    cart.setProductNum( CommonUtil.toInteger( obj.get( "num" ) ) );
+	    if ( CommonUtil.isNotEmpty( obj.get( "specStr" ) ) ) {
+		cart.setProSpecStr( CommonUtil.toString( obj.get( "specStr" ) ) );
+	    }
+	    shopCartDAO.updateById( cart );
+	}
+    }
 
-        List<Map<String, Object>> specificaList = productSpecificaService.getSpecificaByProductId(productId);//获取商品规格值
-        List<Map<String, Object>> guigePriceList = productInventoryService.guigePrice(productId);//根据商品id获取所有规格对应的规格、价格、图片
+    @Override
+    public Map< String,Object > getProductSpecifica( Map< String,Object > params ) {
+	if ( CommonUtil.isEmpty( params.get( "id" ) ) ) {
+	    return null;
+	}
+	int productId = CommonUtil.toInteger( params.get( "id" ) );
+	Map< String,Object > resultMap = new HashMap< String,Object >();
+	//查询商品的规格价
+	Map< String,Object > defaultInvMap = productInventoryService.productSpecifications( productId, "" );//查询商品默认的规格
 
-        resultMap.put("specificaNum", guigePriceList.size());
+	List< Map< String,Object > > specificaList = productSpecificaService.getSpecificaByProductId( productId );//获取商品规格值
+	List< Map< String,Object > > guigePriceList = productInventoryService.guigePrice( productId );//根据商品id获取所有规格对应的规格、价格、图片
 
-        if (CommonUtil.isNotEmpty(defaultInvMap)) {
-            if (CommonUtil.isNotEmpty(defaultInvMap.get("specifica_name"))) {
-                String names = defaultInvMap.get("specifica_name").toString();
-                resultMap.put("productSpeciname", names.replaceAll("&nbsp;&nbsp;", ","));
-            }
-            if (CommonUtil.isNotEmpty(defaultInvMap.get("xids"))) {//规格id
-                resultMap.put("productSpecificas", defaultInvMap.get("xids"));
-            }
-        }
+	resultMap.put( "specificaNum", guigePriceList.size() );
 
-        resultMap.put("specificaList", specificaList);
-        resultMap.put("guigePriceList", guigePriceList);
-        return resultMap;
+	if ( CommonUtil.isNotEmpty( defaultInvMap ) ) {
+	    if ( CommonUtil.isNotEmpty( defaultInvMap.get( "specifica_name" ) ) ) {
+		String names = defaultInvMap.get( "specifica_name" ).toString();
+		resultMap.put( "productSpeciname", names.replaceAll( "&nbsp;&nbsp;", "," ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( defaultInvMap.get( "xids" ) ) ) {//规格id
+		resultMap.put( "productSpecificas", defaultInvMap.get( "xids" ) );
+	    }
+	}
+
+	resultMap.put( "specificaList", specificaList );
+	resultMap.put( "guigePriceList", guigePriceList );
+	return resultMap;
     }
 }

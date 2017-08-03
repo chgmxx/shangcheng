@@ -1,11 +1,16 @@
 package com.gt.mall.util;
 
+import com.alibaba.fastjson.JSONArray;
+import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -15,6 +20,8 @@ import java.util.regex.Pattern;
  * Time : 16:22
  */
 public class CommonUtil {
+
+    private static final Logger log = Logger.getLogger( CommonUtil.class );
 
     /**
      * 判断对象是否为空
@@ -196,13 +203,11 @@ public class CommonUtil {
 	return date.toString().substring( 1 );
     }
 
-    public static String getpath(HttpServletRequest request) {
-	String url = "http://"
-			+ request.getServerName() // 服务器地址
+    public static String getpath( HttpServletRequest request ) {
+	String url = "http://" + request.getServerName() // 服务器地址
 			+ request.getContextPath() // 项目名称
 			+ request.getServletPath() // 请求页面或其他地址
-			+ (CommonUtil.isEmpty(request.getQueryString()) ? "" : "?"
-			+ request.getQueryString()); // 参数
+			+ ( CommonUtil.isEmpty( request.getQueryString() ) ? "" : "?" + request.getQueryString() ); // 参数
 	return url;
     }
 
@@ -211,18 +216,21 @@ public class CommonUtil {
      *
      * @param format
      * @param args
+     *
      * @return
      */
-    public static String format(String format, Object... args) {
+    public static String format( String format, Object... args ) {
 	String str = null;
-	str = String.format(format, args);
+	str = String.format( format, args );
 	return str;
     }
 
     /**
      * 精确的减法运算
+     *
      * @param v1 v1
-     * @param  v2 v2
+     * @param v2 v2
+     *
      * @return v1-v2
      */
     public static double subtract( double v1, double v2 ) {
@@ -233,8 +241,10 @@ public class CommonUtil {
 
     /**
      * 精确的乘法运算
+     *
      * @param v1 v1
      * @param v2 v2
+     *
      * @return v1+v2
      */
     public static double multiply( double v1, double v2 ) {
@@ -245,8 +255,10 @@ public class CommonUtil {
 
     /**
      * 精确的加法运算
+     *
      * @param v1 v1
      * @param v2 v2
+     *
      * @return v1*v2
      */
     public static double add( double v1, double v2 ) {
@@ -257,9 +269,11 @@ public class CommonUtil {
 
     /**
      * 除法
-     * @param v1 v1
-     * @param v2 v2
+     *
+     * @param v1    v1
+     * @param v2    v2
      * @param scale 保留小数
+     *
      * @return v1/v2
      */
     public static double div( double v1, double v2, int scale ) {
@@ -271,52 +285,108 @@ public class CommonUtil {
 	return b1.divide( b2, scale, BigDecimal.ROUND_HALF_UP ).doubleValue();
     }
 
+    private final static double PI = 3.14159265358979323; // 圆周率
+    private final static double R  = 6371229; // 地球的半径
 
-	private final static double PI = 3.14159265358979323; // 圆周率
-	private final static double R = 6371229; // 地球的半径
-
-	/**
-	 * 获取两点间的距离
-	 *
-	 * @param longt1
-	 *            经度1
-	 * @param lat1
-	 *            纬度1
-	 * @param longt2
-	 *            经度2
-	 * @param lat2
-	 *            纬度2
-	 * @return
-	 */
-	public static double getDistance(double longt1, double lat1, double longt2,
-									 double lat2) {
-		double x, y, distance;
-		x = (longt2 - longt1) * PI * R
-				* Math.cos(((lat1 + lat2) / 2) * PI / 180) / 180;
-		y = (lat2 - lat1) * PI * R / 180;
-		distance = Math.hypot(x, y);
-		if (distance > 0) {
-			return distance;
-		} else {
-			return 0.0;
-		}
+    /**
+     * 获取两点间的距离
+     *
+     * @param longt1 经度1
+     * @param lat1   纬度1
+     * @param longt2 经度2
+     * @param lat2   纬度2
+     *
+     * @return
+     */
+    public static double getDistance( double longt1, double lat1, double longt2, double lat2 ) {
+	double x, y, distance;
+	x = ( longt2 - longt1 ) * PI * R * Math.cos( ( ( lat1 + lat2 ) / 2 ) * PI / 180 ) / 180;
+	y = ( lat2 - lat1 ) * PI * R / 180;
+	distance = Math.hypot( x, y );
+	if ( distance > 0 ) {
+	    return distance;
+	} else {
+	    return 0.0;
 	}
+    }
 
-	/**
-	 * 获取推荐码 6位
-	 *
-	 * @return
-	 */
-	public static String getPhoneCode() {
-		StringBuffer buf = new StringBuffer("1,2,3,4,5,6,7,8,9,0");
-		String[] arr = buf.toString().split(",");
-		StringBuffer sb = new StringBuffer();
-		Random random = new Random();
-		for (int i = 0; i < 6; i++) {
-			Integer count = arr.length;
-			int a = random.nextInt(count);
-			sb.append(arr[a]);
-		}
-		return sb.toString();
+    /**
+     * 获取推荐码 6位
+     *
+     * @return
+     */
+    public static String getPhoneCode() {
+	StringBuffer buf = new StringBuffer( "1,2,3,4,5,6,7,8,9,0" );
+	String[] arr = buf.toString().split( "," );
+	StringBuffer sb = new StringBuffer();
+	Random random = new Random();
+	for ( int i = 0; i < 6; i++ ) {
+	    Integer count = arr.length;
+	    int a = random.nextInt( count );
+	    sb.append( arr[a] );
 	}
+	return sb.toString();
+    }
+
+    /**
+     * 判断浏览器
+     *
+     * @return 1:微信浏览器,99:其他浏览器
+     */
+    public static Integer judgeBrowser( HttpServletRequest request ) {
+	Integer result = null;
+	String ua = request.getHeader( "user-agent" ).toLowerCase();
+	if ( ua.indexOf( "micromessenger" ) > 0 ) {// 微信-1
+	    result = 1;
+	} else {//其他 -99
+	    result = 99;
+	}
+	return result;
+    }
+
+    /**
+     * 返回json数据到客户端
+     *
+     * @param response
+     * @param obj
+     *
+     * @throws IOException
+     */
+    public static void write( HttpServletResponse response, Object obj ) throws IOException {
+	if ( obj instanceof List || obj instanceof Object[] ) {
+	    response.getWriter().print( JSONArray.toJSON( obj ) );
+	} else if ( obj instanceof Boolean || obj instanceof Integer || obj instanceof String || obj instanceof Double ) {
+	    Map< String,Object > result = new HashMap< String,Object >();
+	    result.put( "status", obj );
+	    response.getWriter().print( JSONObject.fromObject( result ) );
+	} else {
+	    response.getWriter().print( JSONObject.fromObject( obj ) );
+	}
+	response.getWriter().flush();
+	response.getWriter().close();
+    }
+
+    /**
+     * 获取IP
+     *
+     * @param request
+     *
+     * @return
+     */
+    public static String getIpAddr( HttpServletRequest request ) {
+	String ip = request.getHeader( "x-forwarded-for" );
+	if ( ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase( ip ) ) {
+	    ip = request.getHeader( "Proxy-Client-IP" );
+	}
+	if ( ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase( ip ) ) {
+	    ip = request.getHeader( "WL-Proxy-Client-IP" );
+	}
+	if ( ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase( ip ) ) {
+	    ip = request.getRemoteAddr();
+	}
+	if ( "0:0:0:0:0:0:0:1".equals( ip ) ) {
+	    ip = "127.0.0.1";
+	}
+	return ip;
+    }
 }

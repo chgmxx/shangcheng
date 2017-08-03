@@ -1,8 +1,32 @@
 package com.gt.mall.controller.basic;
 
+import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.BusUser;
+import com.gt.mall.entity.basic.MallCommentGive;
+import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.PageUtil;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.util.SessionUtils;
+import com.gt.mall.web.service.basic.MallCommentGiveService;
+import com.gt.mall.web.service.basic.MallCommentService;
+import com.gt.mall.web.service.basic.MallPaySetService;
+import com.gt.mall.web.service.store.MallStoreService;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -15,5 +39,155 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping( "/mallComment" )
 public class MallCommentController extends BaseController {
+
+    @Autowired
+    private MallCommentService     commentService;
+    @Autowired
+    private MallCommentGiveService commentGiveService;
+    @Autowired
+    private MallPaySetService      paySetService;
+    @Autowired
+    private MallStoreService       storeService;
+
+    /**
+     * 批量设置评论送礼
+     *
+     * @Title: batchCommentGive
+     */
+    @SuppressWarnings( { "unchecked", "deprecation" } )
+    @SysLogAnnotation( description = "商城设置：批量设置评论", op_function = "2" )
+    @RequestMapping( "batchCommentGive" )
+    public void batchCommentGive( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+
+	logger.info( "进入评论送礼controller" );
+	response.setCharacterEncoding( "utf-8" );
+	boolean flag = false;// 编辑成功
+	PrintWriter p = null;
+	try {
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    List< MallCommentGive > giveList = (List< MallCommentGive >) JSONArray.toList( JSONArray.fromObject( params.get( "datas" ) ), MallCommentGive.class );
+	    flag = commentGiveService.editCommentGive( giveList, user );
+	    p = response.getWriter();
+	} catch ( Exception e ) {
+	    flag = false;
+	    logger.debug( "编辑评论送礼：" + e.getMessage() );
+	    e.printStackTrace();
+	}
+	JSONObject obj = new JSONObject();
+	obj.put( "flag", flag );
+	p.write( obj.toString() );
+	p.flush();
+	p.close();
+    }
+
+    /**
+     * 进入评价管理列表
+     *
+     * @Title: to_index
+     */
+    @RequestMapping( "to_index" )
+    public String to_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	try {
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    // 查询会员下面的评论
+	    if ( shoplist != null && shoplist.size() > 0 ) {
+		request.setAttribute( "shoplist", shoplist );
+
+		params.put( "shoplist", shoplist );
+		PageUtil page = commentService.selectCommentPage( params );
+		request.setAttribute( "page", page );
+	    }
+	    MallPaySet set = new MallPaySet();
+	    set.setUserId( user.getId() );
+	    set = paySetService.selectByUserId( set );
+	    if ( CommonUtil.isNotEmpty( set ) ) {
+		if ( CommonUtil.isNotEmpty( set.getIsCommentCheck() ) ) {
+		    if ( set.getIsCommentCheck() == 1 ) {
+			request.setAttribute( "isOpenCheck", 1 );
+		    }
+		}
+	    }
+
+	    if ( CommonUtil.isNotEmpty( params.get( "checkStatus" ) ) ) {
+		request.setAttribute( "checkStatus", params.get( "checkStatus" ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( params.get( "feel" ) ) ) {
+		request.setAttribute( "feel", params.get( "feel" ) );
+	    }
+	    request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
+	} catch ( Exception e ) {
+	    logger.error( "进入评论管理列表异常" );
+	    e.printStackTrace();
+	}
+	return "merchants/trade/mall/comment/comment_index";
+    }
+
+    /**
+     * 修改评论信息
+     *
+     * @Title: checkComment
+     */
+    @SysLogAnnotation( description = "评论管理——删除,审核评论", op_function = "2" )
+    @RequestMapping( "checkComment" )
+    public void checkComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException {
+	logger.info( "进入删除,审核评论的controller" );
+	PrintWriter p = null;
+	boolean result = false;
+	String msg = "";
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    p = response.getWriter();
+	    if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
+		result = commentService.checkComment( params );
+	    }
+	} catch ( Exception e ) {
+	    result = false;
+	    logger.debug( "删除,审核评论失败：" + e.getMessage() );
+	    e.printStackTrace();
+	}
+	if ( !result ) {
+	    map.put( "msg", "删除,审核评论失败，请稍后重试" );
+	}
+	map.put( "result", result );
+	map.put( "msg", msg );
+	p.write( JSONObject.fromObject( map ).toString() );
+	p.flush();
+	p.close();
+    }
+
+    /**
+     * 回复评论
+     *
+     * @Title: repComment
+     */
+    @SysLogAnnotation( description = "评论管理——回复评论", op_function = "2" )
+    @RequestMapping( "repComment" )
+    public void repComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException {
+	logger.info( "进入回复评论的controller" );
+	PrintWriter p = null;
+	boolean result = false;
+	String msg = "";
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    p = response.getWriter();
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    if ( CommonUtil.isNotEmpty( params.get( "params" ) ) && CommonUtil.isNotEmpty( user ) ) {
+		result = commentService.replatComment( params, user.getId() );
+	    }
+	} catch ( Exception e ) {
+	    result = false;
+	    logger.debug( "回复评论失败：" + e.getMessage() );
+	    e.printStackTrace();
+	}
+	if ( !result ) {
+	    map.put( "msg", "回复评论失败，请稍后重试" );
+	}
+	map.put( "result", result );
+	map.put( "msg", msg );
+	p.write( JSONObject.fromObject( map ).toString() );
+	p.flush();
+	p.close();
+    }
 
 }

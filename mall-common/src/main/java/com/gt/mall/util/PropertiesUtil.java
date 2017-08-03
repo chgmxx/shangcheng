@@ -46,7 +46,7 @@ public class PropertiesUtil {
 
     private static String resImagePath;//获取图片存放路径
 
-    private static String resourceUrlPrefix;//访问资源URL
+    private static String resourceUrl;//访问资源URL
 
     private static String dbname;//电信流量订单前缀
 
@@ -135,8 +135,8 @@ public class PropertiesUtil {
     }
 
     @Value( "${resource.url.prefix}" )
-    public void setResourceUrlPrefix( String resourceUrlPrefix ) {
-        PropertiesUtil.resourceUrlPrefix = resourceUrlPrefix;
+    public void setResourceUrl( String resourceUrl ) {
+        PropertiesUtil.resourceUrl = resourceUrl;
     }
 
     @Value( "${dianxin.order}" )
@@ -169,8 +169,8 @@ public class PropertiesUtil {
 	return resImagePath;
     }
 
-    public static String getResourceUrlPrefix() {
-        return resourceUrlPrefix;
+    public static String getResourceUrl() {
+        return resourceUrl;
     }
 
     public static String getHomeUrl() {

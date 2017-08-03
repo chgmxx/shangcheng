@@ -22,7 +22,7 @@ public class Constants {
      * 定义 socke key 开头字符串
      */
     public final static String SOCKEY_KEY = "Mall-";
-    
+
     /**
      * 微商城
      */
@@ -46,11 +46,20 @@ public class Constants {
     /**
      * 网址名称
      */
-    public final static String doMainName="多粉";
+    public final static String doMainName = "多粉";
 
     /**
      * 发短信model
      */
     public static final Integer SMS_MODEL = 5;
+
+    /** 商家账户在session key */
+    public static final String SESSION_BUSINESS_KEY = SESSION_KEY + "business_key";
+
+    /** 商家微信在session key */
+    public static final String SESSION_WXPUBLICUSERS_KEY = SESSION_KEY + "wxPublicUsers";
+
+    /** 会员 **/
+    public static final String SESSION_MEMBER_KEY = SESSION_KEY + "member";
 
 }
