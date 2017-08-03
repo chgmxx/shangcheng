@@ -84,11 +84,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
     Map< String,Object > selectByDIdOrder( @Param( "detailId" ) Integer detailId );
 
     /**
-     * 根据memberId查询pageId
-     */
-    List< Map< String,Object > > selectPageIdByUserId( @Param( "userId" ) Integer userId );
-
-    /**
      * 修改订单号
      */
     int upOrderNoById( MallOrder order );

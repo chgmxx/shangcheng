@@ -1,21 +1,16 @@
 package com.gt.mall.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 支持断点续传的FTP实用类
@@ -137,7 +132,7 @@ public class ContinueFTP {
                             process = nowProcess;
                             if (process % 10 == 0)
                                 logger.info("下载进度：" + process);
-                            // TODO 更新文件下载进度,值存放在process变量中
+                            //  更新文件下载进度,值存放在process变量中
                         }
                     }
                 } catch (Exception e) {
@@ -174,7 +169,7 @@ public class ContinueFTP {
                             process = nowProcess;
                             if (process % 10 == 0)
                                 logger.info("下载进度：" + process);
-                            // TODO 更新文件下载进度,值存放在process变量中
+                            // 更新文件下载进度,值存放在process变量中
                         }
                     }
                 } catch (Exception e) {
@@ -205,7 +200,7 @@ public class ContinueFTP {
      * @param local  本地文件名称，绝对路径
      * @param remote 远程文件路径，使用/home/directory1/subdirectory/file.ext 按照Linux上的路径指定方式，支持多级目录嵌套，支持递归创建不存在的目录结构
      * @return 上传结果
-     * @throws IOException
+     * @throws IOException s
      */
     public UploadStatus upload(String local, String remote) throws Exception {
         UploadStatus result;
@@ -384,8 +379,8 @@ public class ContinueFTP {
      * @param localFile  本地文件File句柄，绝对路径
      * @param remoteSize 需要显示的处理进度步进值
      * @param ftpClient  FTPClient引用
-     * @return
-     * @throws IOException
+     * @return 上传
+     * @throws IOException 异常
      */
     public UploadStatus uploadFile(String remoteFile, File localFile, FTPClient ftpClient, long remoteSize) throws IOException {
         UploadStatus status;
@@ -410,7 +405,7 @@ public class ContinueFTP {
             if (localreadbytes / step != process) {
                 process = localreadbytes / step;
                 System.out.println("上传进度:" + process);
-                // TODO 汇报上传状态
+                //  汇报上传状态
             }
         }
         out.flush();

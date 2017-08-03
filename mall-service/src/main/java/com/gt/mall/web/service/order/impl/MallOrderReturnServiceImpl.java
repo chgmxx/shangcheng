@@ -308,7 +308,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		    }
 		    proMap.put( "total", total );
 		    proMap.put( "saleNum", invSaleNum );
-		    mallProductInventoryService.updatettProductInventory( proMap );
+		    mallProductInventoryService.updateProductInventory( proMap );
 		}
 	    }
 

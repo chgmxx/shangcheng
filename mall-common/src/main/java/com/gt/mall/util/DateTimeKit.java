@@ -13,11 +13,11 @@ import java.util.*;
  * 日期操作工具类
  */
 public class DateTimeKit {
-    public static Date date = null;
+    private static Date date = null;
 
-    public static DateFormat dateFormat = null;
+    private static DateFormat dateFormat = null;
 
-    public static Calendar calendar = null;
+    private static Calendar calendar = null;
 
     /**
      * 缺省的日期显示格式： yyyy-MM-dd

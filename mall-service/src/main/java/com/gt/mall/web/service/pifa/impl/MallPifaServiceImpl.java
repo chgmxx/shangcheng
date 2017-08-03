@@ -2,6 +2,7 @@ package com.gt.mall.web.service.pifa.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.pifa.MallPifaApplyDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.pifa.MallPifaPriceDAO;
@@ -25,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -119,7 +117,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		}
 		obj.put( "nickname", nickname );
 
-		String key = "mall:syncOrderCount";
+		String key = Constants.REDIS_KEY+"syncOrderCount";
 		String member_id = obj.get( "member_id" ).toString();
 		if ( JedisUtil.hExists( key, member_id ) ) {
 		    String str = JedisUtil.maoget( key, member_id );
@@ -371,5 +369,23 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
     @Override
     public int updateWholesaleApplay( MallPifaApply applay ) {
 	return mallPifaApplyDAO.updateById( applay );
+    }
+
+    @Override
+    public double getPifaPriceByProIds(boolean isPifa,int productId) {
+	if ( isPifa ) {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "pfType", 1 );
+	    params.put( "product_id", productId );
+	    //查询商品是否已经加入批发
+	    List< MallPifa > pifaList = mallPifaDAO.selectStartPiFaByProductId( params );
+	    if ( pifaList != null && pifaList.size() > 0 && isPifa ) {
+		MallPifa pifa = pifaList.get( 0 );
+		if ( CommonUtil.isNotEmpty( pifa.getPfPrice() ) ) {
+		    return CommonUtil.toDouble( pifa.getPfPrice() );
+		}
+	    }
+	}
+	return -1;
     }
 }

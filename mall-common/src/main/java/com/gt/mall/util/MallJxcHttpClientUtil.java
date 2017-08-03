@@ -12,13 +12,12 @@ import java.util.Map;
  */
 public class MallJxcHttpClientUtil {
 
-    public static String TOKEN_STR = "";
+    private static String TOKEN_STR = "";
 
-
-    public static String login() {
+    private static String login() {
 	System.out.println( "第一次登陆" );
 	String url = PropertiesUtil.getJxcUrl() + "/erp/b/login";
-	Map< String,Object > params = new HashMap< String,Object >();
+	Map< String,Object > params = new HashMap<>();
 	params.put( "account", PropertiesUtil.getJxcAccount() );
 	params.put( "pwd", PropertiesUtil.getJxcPwd() );
 	System.out.println( url );
@@ -42,7 +41,7 @@ public class MallJxcHttpClientUtil {
      * @param params  商品参数
      * @param isFirst 是否第一次，避免死循环
      *
-     * @return
+     * @return 返回
      */
     public static JSONArray batchSave( Map< String,Object > params, boolean isFirst ) {
 	System.out.println( "批量新增或修改商品和商品库存:" + params );
@@ -78,7 +77,7 @@ public class MallJxcHttpClientUtil {
      * @param params  规格信息
      * @param isFirst 是否第一次，避免死循环
      *
-     * @return
+     * @return JSONArray
      */
     public static JSONArray batchAttrSave( Map< String,Object > params, boolean isFirst ) {
 	System.out.println( "批量新增或修改商品规格：" + params );
@@ -363,7 +362,6 @@ public class MallJxcHttpClientUtil {
 	}
 	return false;
     }
-
 
     public static void main( String[] args ) {
 

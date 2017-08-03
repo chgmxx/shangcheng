@@ -65,50 +65,34 @@ public interface MallProductService extends BaseService< MallProduct > {
 
     /**
      * 根据商家id查询会员卡
-     * @param userId
-     * @return
      */
-//    List<Map<String, Object>> selectMemberType(int userId);
+    List<Map<String, Object>> selectMemberType(int userId);
 
     /**
      * 同步门店下的商品信息
-     * @param params
-     * @param user
-     * @return
-     * @throws Exception
      */
     Map<String, Object> copyProductByShopId(Map<String, Object> params,BusUser user) throws Exception;
 
     /**
      * 同步商品信息
-     * @param params
-     * @param user
-     * @return
      */
     Map<String, Object> copyProduct(Map<String, Object> params,BusUser user) throws Exception;
 
 
     /**
      * 根据门店id查询商品列表
-     * @param params  wxShopId
-     * @return
-     * @throws Exception
      */
     List<Map<String, Object>> selectProductByWxShop(Map<String, Object> params) throws Exception;
 
     /**
      * 统计门店id里面的商品数量
-     * @param params wxShopId
-     * @return
-     * @throws Exception
      */
     int selectCountProductByWxShop(Map<String, Object> params) throws Exception;
 
     /**
      * 根据商品id查询商品库存
-     * @param params  productId  商品id
-     * @param params  memberId   用户id   取自t_wx_bus_member表的id  如果需要折扣价就传至，否则就不传
-     * @return
+     * @param params  productId  商品id  ，memberId   用户id   取自t_wx_bus_member表的id  如果需要折扣价就传至，否则就不传
+     * @return 商品库存
      */
     Map<String, Object> selectProStockByProId(Map<String, Object> params) throws Exception;
 
@@ -160,14 +144,13 @@ public interface MallProductService extends BaseService< MallProduct > {
 
     /**
      * 查询会员折扣
-     * @return
      */
     double getMemberDiscount(String isMemberDiscount,Member member);
 
     /**
      * 计算库存是否足够
      * @param proId 商品id
-     * @param proSpecificas
+     * @param proSpecificas 商品规格
      * @param proNum 购买数量
      * @param memberId 购买人id
      * @return

@@ -49,11 +49,11 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
     /**
      * 根据门店id查询商品店铺信息
      *
-     * @param shopIds 门店id
+     * @param wxShopIds 门店id
      *
      * @return
      */
-    List< Map< String,Object > > findByShopIds( @Param( "shopIds" ) List< Integer > shopIds );
+    List< Map< String,Object > > findByShopIds( @Param( "wxShopIds" ) List< Integer > wxShopIds );
 
     /**
      * 根据商家idid查询  店铺信息，门店信息和  店铺页面id   oldParams findByPublicId

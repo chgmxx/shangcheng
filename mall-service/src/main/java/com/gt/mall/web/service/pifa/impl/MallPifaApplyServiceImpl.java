@@ -58,6 +58,11 @@ public class MallPifaApplyServiceImpl extends BaseServiceImpl< MallPifaApplyDAO,
 	if(CommonUtil.isEmpty(set)){
 	    return false;
 	}
+	return isPifaPublic(member,set);
+    }
+
+    @Override
+    public boolean isPifaPublic( Member member, MallPaySet set ) {
 	int state = getPifaApplay(member, set);
 	boolean isPifa = false;
 	if(CommonUtil.isNotEmpty(set)){

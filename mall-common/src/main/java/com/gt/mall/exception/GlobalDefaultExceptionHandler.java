@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalDefaultExceptionHandler {
     // 全局默认错误页
-    public static final String DEFAULT_ERROR_VIEW = "error/defaultError";
+    public static final String DEFAULT_ERROR_VIEW = "/jsp/error/defaultError.jsp";
 
     // 页面
     // 统一异常处理 页面跳转

@@ -194,7 +194,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     @Override
     public int getSaleMemberIdByRedis( Member member, int saleMemberId, HttpServletRequest request, int userid ) {
 	HttpSession session = request.getSession();
-		/*String key = "mall:mallSaleMemberId_";
+		/*String key = Constants.REDIS_KEY+"mallSaleMemberId_";
 		String field = IPKit.getRemoteIP(request);
 		if(CommonUtil.isNotEmpty(member)){
 			//field = member.getId().toString();
@@ -229,7 +229,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	if ( saleMemberId > 0 ) {
 	    request.getSession().setAttribute( "mall_mallSaleMemberId_" + userid, saleMemberId );
 	}
-		/*String key = "mall:mallSaleMemberId_";
+		/*String key = Constants.REDIS_KEY+"mallSaleMemberId_";
 		String field = IPKit.getRemoteIP(request);
 		if(CommonUtil.isNotEmpty(member)){
 			//field = member.getId().toString();
@@ -243,7 +243,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     @Override
     public void clearSaleMemberIdByRedis( Member member, HttpServletRequest request, int userid ) {
 	request.getSession().setAttribute( "mall_mallSaleMemberId_" + userid, null );
-		/*String key = "mall:mallSaleMemberId_";
+		/*String key = Constants.REDIS_KEY+"mallSaleMemberId_";
 		String field = IPKit.getRemoteIP(request);
 		if(CommonUtil.isNotEmpty(member)){
 			key += member.getId();
@@ -559,7 +559,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
     @Override
     public void delSaleMemberIdByRedis( Member member ) {
-	String key = "mall:mallSaleMemberId";
+	String key = Constants.REDIS_KEY+"mallSaleMemberId";
 	String field = member.getId().toString();
 	if ( JedisUtil.hExists( key, field ) ) {
 	    JedisUtil.hdel( key, field );
@@ -808,7 +808,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
      * 从redis获取图片
      */
     /*public String getRedisSellerImage(String saleMemberId) {
-	    String key = "mall:seller_promotion_img_"+saleMemberId;
+	    String key = Constants.REDIS_KEY+"seller_promotion_img_"+saleMemberId;
 	    if(JedisUtil.exists(key)){
 		    String image = JedisUtil.get(key);
 
@@ -825,7 +825,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    return null;
     }*/
     /*public void setRedisSellerImage(String saleMemberId,String imagePath) {
-	    String key = "mall:seller_promotion_img_"+saleMemberId;
+	    String key = Constants.REDIS_KEY+"seller_promotion_img_"+saleMemberId;
 	    JedisUtil.set(key, imagePath, 60*30);
     }*/
     @Override
@@ -838,7 +838,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		imagesPaths = seller.getUcpromotionPosterPath();
 	    }
 	    if ( CommonUtil.isNotEmpty( imagesPaths ) ) {
-		String path = URLConnectionDownloader.isConnect( PropertiesUtil.getImageUrlPrefix() + imagesPaths );//判断
+		String path = URLConnectionDownloader.isConnect( PropertiesUtil.getResourceUrl() + imagesPaths );//判断
 		if ( CommonUtil.isEmpty( path ) ) {
 		    imagesPaths = null;
 		}
@@ -846,7 +846,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    boolean isUpHead = true;//修改用户头像
 	    //判断销售员表保存的头像跟用户表保存的头像地址是否一致
 	    if ( CommonUtil.isNotEmpty( member.getHeadimgurl() ) ) {
-		String path = URLConnectionDownloader.isConnect( PropertiesUtil.getImageUrlPrefix() + member.getHeadimgurl() );//判断
+		String path = URLConnectionDownloader.isConnect( PropertiesUtil.getResourceUrl() + member.getHeadimgurl() );//判断
 		if ( CommonUtil.isEmpty( path ) ) {
 		    path = PropertiesUtil.getHomeUrl() + "/images/mall/img/pt-detail2.jpg";
 		    String isConnet = URLConnectionDownloader.isConnect( path );//判断
@@ -934,15 +934,14 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    try {
 		myfloat = (float) ( 100 / 100 );
 	    } catch ( Exception e ) {
-		// TODO: handle exception
 		myfloat = null;
 	    }
 	    iwm.markImageByIconMoreImage( logoPathStr, path, 0, myfloat, x, y, w, h, PropertiesUtil.getResImagePath() + newPath );//生成新的图片
 
 	    //删除下载的二维码、用户头像和背景图片
 	    if ( logoPathStr != null && logoPathStr.length > 0 ) {
-		for ( int i = 0; i < logoPathStr.length; i++ ) {
-		    File files = new File( logoPathStr[i] );
+		for ( String aLogoPathStr : logoPathStr ) {
+		    File files = new File( aLogoPathStr );
 		    if ( files.exists() ) {
 			files.delete();//删除水印图片
 		    }
@@ -981,7 +980,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		String codePath = QRcodeKit
 				.buildQRcode( url, PropertiesUtil.getResImagePath() + "/" + member.getPhone() + "/" + Constants.IMAGE_FOLDER_TYPE_15 + "/" + nowDate + "/", 200,
 						200 );
-		codePath = PropertiesUtil.getImageUrlPrefix() + codePath.split( "upload/" )[1];
+		codePath = PropertiesUtil.getResourceUrl() + codePath.split( "upload/" )[1];
 		MallSeller mallSeller = new MallSeller();
 		//mallSeller.setQrCodePath(codePath);
 		mallSeller.setUcqrCodePath( codePath );

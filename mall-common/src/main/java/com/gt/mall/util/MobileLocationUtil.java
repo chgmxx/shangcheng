@@ -26,7 +26,7 @@ public class MobileLocationUtil {
      * @return
      */
     private static String callUrlByGet(String callurl, String charset) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         try {
             URL url = new URL(callurl);
             URLConnection connection = url.openConnection();
@@ -34,14 +34,15 @@ public class MobileLocationUtil {
             BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), charset));
             String line;
             while ((line = reader.readLine()) != null) {
-                result += line;
-                result += "\n";
+                result.append( line );
+                result.append( "\n" );
             }
+            reader.close();
         } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
-        return result;
+        return result.toString();
     }
 
     /**

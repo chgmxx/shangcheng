@@ -835,18 +835,6 @@
         where id = #{id}
     </update>
 
-    <select id="selectPageIdByUserId" resultType="map" parameterType="java.lang.Integer">
-        /* todo 关联小屁孩门店接口 */
-        SELECT a.id,a.pag_sto_id FROM t_mall_page a
-        LEFT JOIN t_mall_store b ON a.pag_sto_id=b.id
-        /*LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
-        WHERE a.pag_is_main=1 AND b.is_delete=0 AND a.pag_user_id=#{userId} /*AND s.`status` != -1*/
-    </select>
-
-    <!--<select id="selectSpeBySpeValueId" resultType="java.lang.Integer" parameterType="map">
-        SELECT s.id FROM t_mall_product_specifica s WHERE s.`product_id`= #{proId}
-        AND s.`specifica_value_id` = #{specificaValueId} AND s.`is_delete` = 0
-    </select>-->
 
     <select id="selectOrderPid" resultType="Map" parameterType="java.lang.Integer">
         SELECT id,shop_id,order_status,order_no FROM t_mall_order WHERE order_pid = #{orderId}
@@ -933,8 +921,8 @@
         IF(ws.`business_name` IS NOT NULL ,ws.`business_name`,s.`sto_name`)AS sto_name  */
         FROM t_mall_order t
         LEFT JOIN t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
-        LEFT JOIN t_mall_store s ON s.id=t.`shop_id`
-        /*LEFT JOIN t_wx_shop ws ON ws.`id`=s.`wx_shop_id`*/
+        /*LEFT JOIN t_mall_store s ON s.id=t.`shop_id`
+        LEFT JOIN t_wx_shop ws ON ws.`id`=s.`wx_shop_id`*/
         WHERE 1=1
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 AND d.id IS NOT NULL) )
         <if test="userId != null and userId != ''">
@@ -973,9 +961,9 @@
             <if test="orderFilter == 5">and t.member_name = #{orderNo}</if>
         </if>
         <if test="shoplist != null and shoplist != ''">
-            and
-            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                t.shop_id = #{item.id,jdbcType=INTEGER}
+            and t.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
         ORDER BY t.create_time desc,t.pay_time desc

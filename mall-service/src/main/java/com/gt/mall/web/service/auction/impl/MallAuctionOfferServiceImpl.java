@@ -1,7 +1,6 @@
 package com.gt.mall.web.service.auction.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionOfferDAO;
 import com.gt.mall.entity.auction.MallAuctionBidding;
@@ -44,7 +43,7 @@ public class MallAuctionOfferServiceImpl extends BaseServiceImpl<MallAuctionOffe
         String msg = "";
         MallAuctionOffer offer = (MallAuctionOffer) JSONObject.toBean(JSONObject.fromObject(params.get("offer")), MallAuctionOffer.class);
 
-        String key = Constants.REDIS_KEY + "zAuctionOffer_" + offer.getAucId();
+        String key =  "zAuctionOffer_" + offer.getAucId();
         Double money = Double.parseDouble(offer.getOfferMoney().toString());
         String value = memberId;
         if (JedisUtil.exists(key)) {

@@ -14,7 +14,7 @@ import java.util.Map;
 public class CookieUtil {
 	
 	/** 用户的购物车商品cookie key */
-	public static String SHOP_CART_COOKIE_KEY = "mall_shopCart_id" ;
+	public static String SHOP_CART_COOKIE_KEY = "mall:mall_shopCart_id" ;
 	
 	
 	/**

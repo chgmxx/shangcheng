@@ -45,7 +45,7 @@ public class MallCollect extends Model< MallCollect > {
      * 收藏时间
      */
     @TableField( "create_time" )
-    private Date    createTime;
+    public  Date    createTime;
     /**
      * 是否收藏（0未收藏  1已收藏）
      */

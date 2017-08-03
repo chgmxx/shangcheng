@@ -2,7 +2,6 @@ package com.gt.mall.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 /**
  * Properties 读取工具（注解方式获取application.yml文件的配置参数）
@@ -10,13 +9,12 @@ import org.springframework.stereotype.Component;
  * Date : 2017/7/19 0019
  * Time : 15:11
  */
-@Component      //不加这个注解的话, 使用@Autowired 就不能注入进去了.
 @Configuration
 public class PropertiesUtil {
 
-    private static String homeUrl;//网页地址
+    private static String domain;//获取域名
 
-    private static String imageUrlPrefix;//图片地址
+    private static String homeUrl;//网页地址
 
     private static String jxcUrl;//进销存 地址
 
@@ -54,14 +52,14 @@ public class PropertiesUtil {
 
     private static String queueName;//队列名称
 
+    @Value( "${web.domain}" )
+    public void setDomain( String domain ) {
+	PropertiesUtil.domain = domain;
+    }
+
     @Value( "${web.homeUrl}" )
     public void setHomeUrl( String homeUrl ) {
 	PropertiesUtil.homeUrl = homeUrl;
-    }
-
-    @Value( "${web.imageUrlPrefix}" )
-    public void setImageUrlPrefix( String imageUrlPrefix ) {
-	PropertiesUtil.imageUrlPrefix = imageUrlPrefix;
     }
 
     @Value( "${web.jxcUrl}" )
@@ -136,13 +134,14 @@ public class PropertiesUtil {
 
     @Value( "${resource.url.prefix}" )
     public void setResourceUrl( String resourceUrl ) {
-        PropertiesUtil.resourceUrl = resourceUrl;
+	PropertiesUtil.resourceUrl = resourceUrl;
     }
 
     @Value( "${dianxin.order}" )
     public void setDbname( String dbname ) {
 	PropertiesUtil.dbname = dbname;
     }
+
     @Value( "${mq.exchange}" )
     public void setExchange( String exchange ) {
 	PropertiesUtil.exchange = exchange;
@@ -151,6 +150,13 @@ public class PropertiesUtil {
     @Value( "${mq.exchange}" )
     public void setQueueName( String queueName ) {
 	PropertiesUtil.queueName = queueName;
+    }
+
+    /**
+     * 获取域名
+     */
+    public static String getDomain() {
+	return domain;
     }
 
     public static String getDbname() {
@@ -170,15 +176,11 @@ public class PropertiesUtil {
     }
 
     public static String getResourceUrl() {
-        return resourceUrl;
+	return resourceUrl;
     }
 
     public static String getHomeUrl() {
 	return homeUrl;
-    }
-
-    public static String getImageUrlPrefix() {
-	return imageUrlPrefix;
     }
 
     public static String getJxcUrl() {

@@ -163,7 +163,10 @@
         FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
        /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
-        WHERE  /*s.`status` != -1 AND*/ b.is_delete=0 and a.is_check=1
+        WHERE  /*s.`status` != -1 AND*/ b.is_delete=0
+        <if test="isCheck == 1">
+            and a.is_check=1
+        </if>
         <if test="memberList != null and memberList != ''">
             and a.user_id in
             <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
@@ -176,7 +179,6 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="proIds != null and proIds != ''"></if>
         <if test="type == null or type == 0">
             and a.pro_type = 0
         </if>
@@ -217,9 +219,10 @@
     </select>
 
     <select id="selectShopCartByMemberId" parameterType="Map" resultType="Map">
-        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.`discount`,a.`pro_spec_str`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
-        b.sto_pid,e.image_url,f.id AS pageid ,
-        d.pro_name,d.is_specifica AS isSpec ,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.is_member_discount,d.pro_stock_total AS stockNum,d.pro_restriction_num
+        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
+        b.sto_pid,e.image_url,d.specifica_img_url,f.id AS pageid ,
+        d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons as isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num,
+        d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id as flowId
         /*,IF(s.business_name IS NULL,b.sto_name,s.business_name) AS sto_name*/
         FROM
         (
@@ -250,6 +253,10 @@
                 <if test="type == 1">
                     and (a.pro_type = 1 or a.pro_type = 2)
                 </if>
+                <if test="shopId != null and shopId != ''">
+                    a.shop_id = #{shopId}
+                </if>
+
             </where>
             GROUP BY a.id
             ORDER BY a.shop_id

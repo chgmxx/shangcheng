@@ -6,13 +6,10 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
-import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.seller.MallSellerJoinProductDAO;
 import com.gt.mall.dao.seller.MallSellerMallsetDAO;
 import com.gt.mall.dao.seller.MallSellerProductDAO;
-import com.gt.mall.dao.seller.MallSellerSetDAO;
 import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
@@ -21,6 +18,7 @@ import com.gt.mall.util.PageUtil;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.page.MallPageService;
 import com.gt.mall.web.service.pifa.MallPifaApplyService;
+import com.gt.mall.web.service.pifa.MallPifaService;
 import com.gt.mall.web.service.product.MallProductService;
 import com.gt.mall.web.service.seller.MallSellerMallsetService;
 import com.gt.mall.web.service.seller.MallSellerService;
@@ -75,6 +73,9 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 
     @Autowired
     private MallPaySetService mallPaySetService;
+
+    @Autowired
+    private MallPifaService mallPifaService;
 
     /**
      * 通过销售员id查询商城设置
@@ -229,18 +230,9 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 			}
 		    }
 
-		    if ( isPifa ) {
-			Map< String,Object > param = new HashMap<>();
-			param.put( "pfType", 1 );
-			param.put( "product_id", map.get( "id" ) );
-			//查询商品是否已经加入批发
-			List< MallPifa > pifaList = mallPifaDAO.selectStartPiFaByProductId( param );
-			if ( pifaList != null && pifaList.size() > 0 && isPifa ) {
-			    MallPifa pifa = pifaList.get( 0 );
-			    if ( CommonUtil.isNotEmpty( pifa.getPfPrice() ) ) {
-				map.put( "pfPrice", df.format( pifa.getPfPrice() ) );
-			    }
-			}
+		    double pfPrice = mallPifaService.getPifaPriceByProIds( isPifa, CommonUtil.toInteger( map.get( "id" ) ) );
+		    if ( pfPrice >= 0 ) {
+			map.put( "pfPrice", df.format( pfPrice ) );
 		    }
 		    //price = commissionMoney+price;
 		    map.put( "image_url", image_url );

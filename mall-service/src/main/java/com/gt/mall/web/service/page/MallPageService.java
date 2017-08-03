@@ -319,16 +319,6 @@ public interface MallPageService extends BaseService< MallPage > {
     void getSearchLabel( HttpServletRequest request, int shopId, Member member, Map< String,Object > params );
 
     /**
-     * 查询商品收藏
-     */
-    void getProductCollect( HttpServletRequest request, int proId, int userId );
-
-    /**
-     * 收藏商品
-     */
-    boolean collectionProduct( Map< String,Object > params, int userId );
-
-    /**
      * 查询商品的规格参数
      */
     List< MallProductParam > getProductParam( int proId );

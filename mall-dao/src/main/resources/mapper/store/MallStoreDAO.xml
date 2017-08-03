@@ -102,9 +102,9 @@
         from t_mall_store t
         <where>
             is_delete = 0
-            <if test="shopIds != null and shopIds != ''">
+            <if test="wxShopIds != null and wxShopIds != ''">
                 and wx_shop_id in
-                <foreach close=")" collection="shopIds" item="shopId" open="(" separator=",">
+                <foreach close=")" collection="wxShopIds" item="shopId" open="(" separator=",">
                     #{shopId}
                 </foreach>
             </if>

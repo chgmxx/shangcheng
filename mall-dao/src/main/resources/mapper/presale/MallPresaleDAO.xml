@@ -109,13 +109,19 @@
 
     <!-- 查询预售商品的状态 -->
     <select id="selectDepositByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
-        <!-- todo 调用小屁孩门店接口 -->
+        <!-- todo 调用小屁孩门店接口  t_wx_shop -->
         SELECT <include refid="page_Column_List"></include>
         from t_mall_presale  g
         left join t_mall_store s on g.shop_id = s.id
        /* left join t_wx_shop ws on s.wx_shop_id = ws.id */
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         WHERE g.is_delete = 0 and g.id = #{id}
+        <if test="shoplist != null and shoplist != ''">
+            and g.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+              #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
         group by g.id
     </select>
 

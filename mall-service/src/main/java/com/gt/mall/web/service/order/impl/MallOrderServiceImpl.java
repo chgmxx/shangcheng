@@ -12,7 +12,6 @@ import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.cxf.service.SmsService;
 import com.gt.mall.cxf.service.WxShopService;
-import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
@@ -20,11 +19,10 @@ import com.gt.mall.dao.order.MallDaifuDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
+import com.gt.mall.dao.page.MallPageDAO;
 import com.gt.mall.dao.presale.MallPresaleDepositDAO;
 import com.gt.mall.dao.presale.MallPresaleRankDAO;
 import com.gt.mall.dao.product.MallProductDAO;
-import com.gt.mall.dao.product.MallProductInventoryDAO;
-import com.gt.mall.dao.seller.MallSellerOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
@@ -43,7 +41,6 @@ import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionBiddingService;
-import com.gt.mall.web.service.auction.MallAuctionService;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.basic.MallTakeTheirService;
 import com.gt.mall.web.service.order.MallOrderService;
@@ -96,9 +93,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallOrderReturnDAO mallOrderReturnDAO;
 
     @Autowired
-    private MallProductInventoryDAO mallProductInventoryDAO;
-
-    @Autowired
     private MallStoreDAO mallStoreDAO;
 
     @Autowired
@@ -111,16 +105,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallSeckillService mallSeckillService;
 
     @Autowired
-    private MallAuctionService mallAuctionService;
-
-    @Autowired
     private MallTakeTheirService mallTakeTheirService;
 
     @Autowired
     private MallDaifuDAO mallDaifuDAO;
-
-    @Autowired
-    private MallPaySetDAO mallPaySetDAO;
 
     @Autowired
     private MallPresaleDepositDAO mallPresaleDepositDAO;
@@ -139,9 +127,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private MallSellerService mallSellerService;
-
-    @Autowired
-    private MallSellerOrderDAO mallSellerOrderDAO;
 
     @Autowired
     private MallProductService mallProductService;
@@ -166,6 +151,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private MallFreightDAO mallFreightDAO;
+
+    @Autowired
+    private MallPageDAO mallPageDAO;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -552,7 +540,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    //加入拍卖竞拍
 		    mallAuctionBiddingService.addBidding( order, orderDetail );
 		}
-		String unionKey = "mall:union_order_" + order.getId();
+		String unionKey = Constants.REDIS_KEY+"union_order_" + order.getId();
 		if ( CommonUtil.isNotEmpty( params.get( "union_id" ) ) && CommonUtil.isNotEmpty( params.get( "cardId" ) ) ) {
 		    JSONObject unionJson = new JSONObject();
 		    unionJson.put( "union_id", params.get( "union_id" ) );
@@ -634,7 +622,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			}
 		    }
 		} else {
-		    if (  type.equals( "1" ) ) {//购物车添加订单详情
+		    if ( type.equals( "1" ) ) {//购物车添加订单详情
 			orderDetail.add( addOrderDetails( params, request, orderId, detail ) );
 		    } else {//立即购买添加订单详情
 			String image_url2 = detail.get( "image_url" ).toString();
@@ -771,7 +759,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    boolean flag = MallJxcHttpClientUtil.inventoryOperation( erpMap, true );
 	    if ( !flag ) {
 		//同步失败，信息放到redis
-		JedisUtil.rPush( "mall:erp_inven", JSONObject.fromObject( erpMap ).toString() );
+		JedisUtil.rPush( Constants.REDIS_KEY+"erp_inven", JSONObject.fromObject( erpMap ).toString() );
 	    }
 	    logger.info( "同步库存：" + flag );
 	}
@@ -1126,7 +1114,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			mallProduct.setProStockTotal( total );
 			mallProduct.setProSaleTotal( saleNum );
 			count = mallProductDAO.updateById( mallProduct );//修改商品库存
-			if ( null != pro.getIsSpecifica()  && CommonUtil.isNotEmpty( pro.getIsSpecifica() ) ) {
+			if ( null != pro.getIsSpecifica() && CommonUtil.isNotEmpty( pro.getIsSpecifica() ) ) {
 			    if ( pro.getIsSpecifica() == 1 ) {//该商品存在规格
 				String[] specifica = ( detail.getProductSpecificas() ).split( "," );
 				StringBuilder ids = new StringBuilder( "0" );
@@ -1150,14 +1138,14 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				saleNum = ( Integer.parseInt( invSaleNum ) + detail.getDetProNum() );
 				proMap.put( "total", total );
 				proMap.put( "saleNum", saleNum );
-				mallProductInventoryService.updatettProductInventory( proMap );//修改规格的库存
+				mallProductInventoryService.updateProductInventory( proMap );//修改规格的库存
 			    }
 			}
 		    }
 		    if ( detail.getProTypeId() == 3 && order.getOrderPayWay() != 7 ) { // 卡券购买发布卡券
 			//todo 调用彭江丽接口 商场支付成功回调 分配卡券
 			//duofenCardService.successPayBack( orderDetail.get( i ).getCardReceiveId(), orderDetail.get( i ).getDetProNum(), order.getBuyerUserId() );
-			String key = "mall:card_receive_num";
+			String key = Constants.REDIS_KEY+"card_receive_num";
 			JedisUtil.map( key, order.getId().toString(), detail.getCardReceiveId().toString() );
 		    }
 		}
@@ -1343,7 +1331,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	}
 	//微信联盟核销
-	/*String unionKey = "mall:union_order_" + order.getId();
+	/*String unionKey =  Constants.REDIS_KEY+"union_order_" + order.getId();
 	if ( JedisUtil.exists( unionKey ) ) {
 	    String values = JedisUtil.get( unionKey );
 	    if ( CommonUtil.isNotEmpty( values ) ) {
@@ -2511,7 +2499,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    proMap.put( "total", total );
 		    proMap.put( "saleNum", invSaleNum );
 		    if ( isJxc == 0 || !product.getProTypeId().toString().equals( "0" ) ) {
-			mallProductInventoryService.updatettProductInventory( proMap );
+			mallProductInventoryService.updateProductInventory( proMap );
 		    }
 
 		    String field = seckillId + "_" + detailMap.get( "product_specificas" ).toString();
@@ -2558,7 +2546,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    boolean flag = MallJxcHttpClientUtil.inventoryOperation( erpMaps, true );
 		    if ( !flag ) {
 			//同步失败，信息放到redis
-			JedisUtil.rPush( "mall:erp_inven", JSONObject.fromObject( erpMaps ).toString() );
+			JedisUtil.rPush( Constants.REDIS_KEY+"erp_inven", JSONObject.fromObject( erpMaps ).toString() );
 		    }
 		    logger.info( "同步库存：" + flag );
 		}
@@ -2633,7 +2621,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Override
     public List< Map< String,Object > > selectPageIdByUserId( Integer userId ) {
-	return mallOrderDAO.selectPageIdByUserId( userId );
+	return mallPageDAO.selectPageIdByUserId( userId );
     }
 
     @Override
@@ -3685,7 +3673,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 	if ( CommonUtil.isNotEmpty( userMap ) ) {
 	    Set< String > set = userMap.keySet();
-	    String key = "mall:syncOrderCount";
+	    String key = Constants.REDIS_KEY+"syncOrderCount";
 	    for ( String str : set ) {
 		JedisUtil.map( key, str, userMap.get( str ).toString() );
 	    }
@@ -4207,6 +4195,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Override
     public Map< String,Object > getMemberParams( Member member, Map< String,Object > params ) {
+        //todo 调用彭江丽接口   根据会员Id查询会员id集合
 	if ( CommonUtil.isNotEmpty( member.getOldid() ) ) {
 	    if ( !member.getOldid().equals( "0" ) ) {
 		List< String > lists = new ArrayList<>();
@@ -4252,7 +4241,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 
 	String ip = IPKit.getRemoteIP( request );
-	String key2 = "mall:add_order_" + ip;
+	String key2 = Constants.REDIS_KEY+"add_order_" + ip;
 	if ( CommonUtil.isNotEmpty( JedisUtil.exists( key2 ) ) ) {
 	    JedisUtil.del( key2 );
 	}

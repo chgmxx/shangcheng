@@ -73,7 +73,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
 	    htmlDAO.insert( obj );
 	    MallHtml obj1 = new MallHtml();
 	    String url = PropertiesUtil.getArticleUrl() + "mallhtml/" + obj.getId() + "/79B4DE7C/phoneHtml.do";
-	    String code = PropertiesUtil.getImageUrlPrefix() + "/2/" + user.getName() + "/" + Constants.IMAGE_FOLDER_TYPE_20 + "/" + System.currentTimeMillis();
+	    String code = PropertiesUtil.getResourceUrl() + "/2/" + user.getName() + "/" + Constants.IMAGE_FOLDER_TYPE_20 + "/" + System.currentTimeMillis();
 	    String codeurl = QRcodeKit.buildQRcode( url, code, 180, 180 );
 	    codeurl = codeurl.replaceAll( "\\\\", "/" );
 	    obj1.setCodeUrl( codeurl.split( "upload" )[1] );
@@ -153,7 +153,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
 	htmlDAO.insert( obj );//新增数据
 	MallHtml obj1 = new MallHtml();
 	String url = PropertiesUtil.getArticleUrl() + "mallhtml/" + obj.getId() + "/79B4DE7C/phoneHtml.do";
-	String code = PropertiesUtil.getImageUrlPrefix() + "/2/" + user.getName() + "/" + Constants.IMAGE_FOLDER_TYPE_20 + "/" + System.currentTimeMillis();
+	String code = PropertiesUtil.getResourceUrl() + "/2/" + user.getName() + "/" + Constants.IMAGE_FOLDER_TYPE_20 + "/" + System.currentTimeMillis();
 	String codeurl = QRcodeKit.buildQRcode( url, code, 180, 180 );
 	codeurl = codeurl.replaceAll( "\\\\", "/" );
 	obj1.setCodeUrl( codeurl.split( "upload" )[1] );

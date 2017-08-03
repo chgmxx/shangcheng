@@ -82,6 +82,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	if ( count > 0 ) {// 判断秒杀是否有数据
+	    //todo 调用陈丹接口 查询商家所拥有的店铺集合
 	    List< MallSeckill > seckillList = mallSeckillDAO.selectByPage( params );
 	    page.setSubList( seckillList );
 	}
@@ -120,8 +121,9 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    if ( buyList == null || buyList.size() == 0 ) {
 		seckill.setUserId( userId );
 		if ( CommonUtil.isNotEmpty( seckill.getId() ) ) {
+		    //todo 传商家所拥有的店铺集合
 		    // 判断本商品是否正在秒杀中
-		    MallSeckill buy = mallSeckillDAO.selectSeckillByIds( seckill.getId() );
+		    MallSeckill buy = mallSeckillDAO.selectSeckillByIds( seckill.getId() ,null);
 		    if ( buy.getStatus() == 1 && buy.getJoinId() > 0 ) {// 正在进行秒杀的商品不能修改
 			code = -2;
 			status = buy.getStatus();

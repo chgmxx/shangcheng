@@ -261,6 +261,12 @@
             <artifactId>httpclient</artifactId>
         </dependency>
 
+        <!--配置jsp jstl的支持-->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
         <!-- cxf 服务端配置 start -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -279,7 +285,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>3.9</version>
+            <version>3.12</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>

@@ -17,14 +17,20 @@ public interface MallPifaApplyService extends BaseService< MallPifaApply > {
 
     /**
      * 获取批发审核的状态
-     * @return
      */
     public int getPifaApplay(Member member,MallPaySet set);
 
     /**
      * 是否可以选择批发商品
-     * @return
      */
     public boolean isPifa(Member member);
+
+    /**
+     * 商家是否已经开启批发商品
+     * @param member 会员对象
+     * @param set 设置
+     * @return true 已设置
+     */
+    public boolean isPifaPublic(Member member,MallPaySet set);
 
 }

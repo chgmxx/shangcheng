@@ -258,7 +258,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 					PropertiesUtil.getResImagePath() + "/2/" + user.getName() + "/" + PropertiesUtil.IMAGE_FOLDER_TYPE_15,
 					200,
 					200 );
-			sto.setStoQrCode( PropertiesUtil.getImageUrlPrefix() + qrUrl.split( "upload/" )[1] );*/
+			sto.setStoQrCode( PropertiesUtil.getResourceUrl() + qrUrl.split( "upload/" )[1] );*/
 			count = mallStoreDao.updateById( sto );
 			if ( count <= 0 ) {
 			    throw new Exception( "操作失败，店铺二维码生成失败！" );

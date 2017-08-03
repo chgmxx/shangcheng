@@ -28,36 +28,26 @@ public interface MallPifaService extends BaseService< MallPifa > {
 
     /**
      * 根据memberId和busUserId 查询批发商
-     * @param pifaApply
-     * @return
      */
     public MallPifaApply selectByPifaApply(MallPifaApply pifaApply);
 
     /**
      * 批发商设置
-     * @param map
-     * @return
      */
     public int updateSetWholesaler(Map<String,Object> map);
 
     /**
      * 查询批发商列表
-     * @param params
-     * @return
      */
     public PageUtil wholesalerList(Map<String,Object> params);
 
     /**
      * 修改审核状态
-     * @param params
-     * @return
      */
     public int updateStatus(Map<String,Object> params);
 
     /**
      * 批发商品列表
-     * @param params
-     * @return
      */
     PageUtil pifaProductList(Map<String, Object> params);
 
@@ -71,14 +61,12 @@ public interface MallPifaService extends BaseService< MallPifa > {
     /**
      * 编辑批发
      *
-     * @Title: editPifa
      */
     public int editPifa(Map<String, Object> pifaMap, int userId);
 
     /**
      * 删除批发
      *
-     * @Title: deleteFreight
      */
     public boolean deletePifa(MallPifa pifa);
 
@@ -95,14 +83,19 @@ public interface MallPifaService extends BaseService< MallPifa > {
     /**
      * 根据商品id查询秒杀信息和秒杀价格
      *
-     * @return
      */
     public MallPifa getPifaByProId(Integer proId, Integer shopId);
 
     /**
      * 修改批发申请
-     * @param applay
-     * @return
      */
     public int updateWholesaleApplay(MallPifaApply applay);
+
+    /**
+     * 根据商品id查询批发价
+     * @param isPifa 是否开启批发 true 开启  false不开启
+     * @param productId 商品id
+     * @return 批发价
+     */
+    public double getPifaPriceByProIds(boolean isPifa,int productId);
 }

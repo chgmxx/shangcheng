@@ -13,4 +13,8 @@ import com.gt.mall.entity.order.MallDaifu;
  */
 public interface MallDaifuService extends BaseService< MallDaifu > {
 
+    /**
+     * 根据代付订单号查询代付信息
+     */
+    MallDaifu selectByDfOrderNo(String dfOrderNo);
 }

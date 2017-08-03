@@ -14,7 +14,6 @@ import java.util.*;
 public class JedisUtil {
     private static JedisPool pool = null;
 
-
     public static JedisPool getPool() {
 	if ( pool == null ) {
 	    JedisPoolConfig config = new JedisPoolConfig();
@@ -28,9 +27,9 @@ public class JedisUtil {
 	    // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
 	    config.setTestOnBorrow( true );
 	    if ( CommonUtil.isNotEmpty( PropertiesUtil.getRedisPassword() ) ) {
-		pool = new JedisPool( config,  PropertiesUtil.getRedisHost(), CommonUtil.toInteger(  PropertiesUtil.getRedisPort() ), 60000,  PropertiesUtil.getRedisPassword() );
+		pool = new JedisPool( config, PropertiesUtil.getRedisHost(), CommonUtil.toInteger( PropertiesUtil.getRedisPort() ), 60000, PropertiesUtil.getRedisPassword() );
 	    } else {
-		pool = new JedisPool( config,  PropertiesUtil.getRedisHost(), CommonUtil.toInteger(  PropertiesUtil.getRedisPort() ), 60000 );
+		pool = new JedisPool( config, PropertiesUtil.getRedisHost(), CommonUtil.toInteger( PropertiesUtil.getRedisPort() ), 60000 );
 	    }
 	}
 	return pool;
@@ -40,7 +39,7 @@ public class JedisUtil {
 	Map< String,Integer > params = new HashMap< String,Integer >();
 	params.put( "total", 36002 );
 	params.put( "daysCount", 211 );
-	set( "busCount", JSONObject.toJSONString( params ));
+	set( "busCount", JSONObject.toJSONString( params ) );
     }
 
     /**
@@ -85,7 +84,7 @@ public class JedisUtil {
      *
      * @param key
      * @param value
-     * @param seconds  秒
+     * @param seconds 秒
      */
     public static void set( String key, String value, int seconds ) {
 	JedisPool pool = null;

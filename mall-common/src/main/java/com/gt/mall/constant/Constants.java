@@ -16,7 +16,7 @@ public class Constants {
     /**
      * 定义 redis key 开头字符串
      */
-    public final static String REDIS_KEY = "Mall:";
+    public final static String REDIS_KEY = "mall:";
 
     /**
      * 定义 socke key 开头字符串
@@ -51,7 +51,7 @@ public class Constants {
     /**
      * 网址名称
      */
-    public final static String doMainName = "多粉";
+    public final static String doMainName="多粉";
 
     /**
      * 发短信model

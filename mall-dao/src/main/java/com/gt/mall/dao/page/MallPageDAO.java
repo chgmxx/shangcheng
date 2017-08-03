@@ -74,10 +74,15 @@ public interface MallPageDAO extends BaseMapper< MallPage > {
     /**
      * 通过门店id查询页面id
      *
-     * @param  params  wxShopId 微信门店id  userId  商家id
+     * @param params wxShopId 微信门店id  userId  商家id
      *
      * @return 页面id
      */
-    List< Map< String,Object > > selectPageByWxShopId( Map<String,Object> params );
+    List< Map< String,Object > > selectPageByWxShopId( Map< String,Object > params );
+
+    /**
+     * 根据memberId查询pageId
+     */
+    List< Map< String,Object > > selectPageIdByUserId( @Param( "userId" ) Integer userId );
 
 }

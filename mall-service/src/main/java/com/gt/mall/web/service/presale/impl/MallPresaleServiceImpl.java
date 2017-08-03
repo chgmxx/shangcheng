@@ -6,10 +6,13 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
-import com.gt.mall.dao.presale.*;
-import com.gt.mall.dao.product.MallSearchKeywordDAO;
+import com.gt.mall.dao.presale.MallPresaleDAO;
+import com.gt.mall.dao.presale.MallPresaleDepositDAO;
+import com.gt.mall.dao.presale.MallPresaleGiveDAO;
+import com.gt.mall.dao.presale.MallPresaleRankDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -286,7 +289,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	presale = mallPresaleDAO.selectBuyByProductId( presale );
 	if ( presale != null && CommonUtil.isNotEmpty( presale.getId() ) ) {
 
-	    String key = "mall:presale_num";
+	    String key = Constants.REDIS_KEY + "presale_num";
 	    String field = presale.getId().toString();
 	    if ( JedisUtil.hExists( key, field ) ) {
 		String str = JedisUtil.maoget( key, field );
@@ -459,7 +462,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     @Override
     public void loadPresaleByJedis( MallPresale pre ) {
 
-	String key = "mall:presale_num";
+	String key = Constants.REDIS_KEY + "presale_num";
 	/*List<MallSeckill> seckillList = seckillMapper.selectByPage(null);
 	if(seckillList != null && seckillList.size() > 0){
 		for (MallSeckill mallSeckill : seckillList) {
@@ -501,7 +504,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 				    .selectInvenByProductId( Integer.parseInt( proId ) );
 		    if ( invenList != null && invenList.size() > 0 ) {
 			for ( MallProductInventory inven : invenList ) {
-			    Map< String,Object > invMap = new HashMap< >();
+			    Map< String,Object > invMap = new HashMap<>();
 			    StringBuilder specIds = new StringBuilder();
 			    for ( MallProductSpecifica spec : inven.getSpecList() ) {
 				if ( !specIds.toString().equals( "" ) ) {
@@ -536,9 +539,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      */
     @Override
     public Map< String,Object > isInvNum( Map< String,Object > params ) {
-	Map< String,Object > result = new HashMap< >();
+	Map< String,Object > result = new HashMap<>();
 	String preId = params.get( "groupBuyId" ).toString();
-	String invKey = "mall:presale_num";//秒杀库存的key
+	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
 	String specificas = "";
 	JSONArray dobj = JSONArray.fromObject( params.get( "detail" ).toString() );
 	JSONArray arr = JSONArray.fromObject( dobj );
@@ -596,7 +599,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      */
     @Override
     public void diffInvNum( MallOrder order ) {
-	String invKey = "mall:presale_num";//秒杀库存的key
+	String invKey = Constants.REDIS_KEY+"presale_num";//秒杀库存的key
 
 	String field = order.getGroupBuyId().toString();
 	String specificas = "";
@@ -649,7 +652,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
     @Override
     public void presaleStartRemain() {
-	String key = "mall:presale_message";
+	String key = Constants.REDIS_KEY+"presale_message";
 	Map< String,String > map = JedisUtil.mapGetAll( key );
 	if ( CommonUtil.isNotEmpty( map ) ) {
 	    Set< String > set = map.keySet();
@@ -794,9 +797,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	List< MallPresale > presaleList = mallPresaleDAO.selectByPresaleEnd();
 	if ( presaleList != null && presaleList.size() > 0 ) {
 	    for ( MallPresale mallPresale : presaleList ) {
-		String invKey = "mall:presale_num";//秒杀库存的key
+		String invKey = Constants.REDIS_KEY+"presale_num";//秒杀库存的key
 		JedisUtil.mapdel( invKey, mallPresale.getId().toString() );
-		String key = "mall:presale_message";
+		String key = Constants.REDIS_KEY+"presale_message";
 		JedisUtil.mapdel( key, mallPresale.getId().toString() );
 	    }
 	}

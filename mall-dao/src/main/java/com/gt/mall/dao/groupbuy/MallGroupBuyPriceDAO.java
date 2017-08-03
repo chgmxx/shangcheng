@@ -3,8 +3,6 @@ package com.gt.mall.dao.groupbuy;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 
-import java.util.List;
-
 /**
  * <p>
  * 团购价格表 Mapper 接口

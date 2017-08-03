@@ -20,6 +20,7 @@ import com.gt.mall.web.service.auction.MallAuctionBiddingService;
 import com.gt.mall.web.service.auction.MallAuctionMarginService;
 import com.gt.mall.web.service.auction.MallAuctionOfferService;
 import com.gt.mall.web.service.auction.MallAuctionService;
+import com.gt.mall.web.service.basic.MallCollectService;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.freight.MallFreightService;
 import com.gt.mall.web.service.order.MallOrderService;
@@ -75,6 +76,8 @@ public class MallAuctionController extends BaseController {
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MallAuctionOfferService     auctionOfferService;
+    @Autowired
+    private MallCollectService          mallCollectService;
 
     /**
      * 拍卖入口
@@ -334,7 +337,7 @@ public class MallAuctionController extends BaseController {
 	    loginMap.put( "uclogin", 1 );
 	    // TODO 登录地址
 	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    //	    userLogin( request, response, userid, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -426,7 +429,7 @@ public class MallAuctionController extends BaseController {
 	    loginMap.put( "uclogin", 1 );
 	    // TODO 登录地址
 	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    //	    userLogin( request, response, userid, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -617,7 +620,7 @@ public class MallAuctionController extends BaseController {
 		    }
 		}
 		if ( CommonUtil.isNotEmpty( member ) ) {
-		    pageService.getProductCollect( request, id, member.getId() );
+		    mallCollectService.getProductCollect( request, id, member.getId() );
 		}
 		pageService.getCustomer( request, userid );
 
@@ -684,7 +687,7 @@ public class MallAuctionController extends BaseController {
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    // TODO 登录地址
 	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    //	    userLogin( request, response, userid, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -762,7 +765,7 @@ public class MallAuctionController extends BaseController {
 	loginMap.put( "uclogin", 1 );
 	// TODO 登录地址
 	String returnUrl = "";
-//	userLogin( request, response, userid, loginMap );
+	//	userLogin( request, response, userid, loginMap );
 	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 	    return returnUrl;
 	}
@@ -880,7 +883,7 @@ public class MallAuctionController extends BaseController {
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    // TODO 登录地址
 	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    //	    userLogin( request, response, userid, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -962,7 +965,7 @@ public class MallAuctionController extends BaseController {
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    // TODO 登录地址
 	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    //	    userLogin( request, response, userid, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -1015,7 +1018,7 @@ public class MallAuctionController extends BaseController {
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    // TODO 登录地址
 	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    //	    userLogin( request, response, userid, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -1058,7 +1061,7 @@ public class MallAuctionController extends BaseController {
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    // TODO 登录地址
 	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    //	    userLogin( request, response, userid, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }

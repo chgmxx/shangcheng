@@ -59,16 +59,16 @@
         when g.s_start_time &lt; now()  and g.s_end_time &lt;= now() then -1<!-- 已结束 -->
         end status/* ,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName */,j.id as joinId
     </sql>
-    <sql id="page_product_Column_List">
+    <!--<sql id="page_product_Column_List">
         g.id, g.product_id, s_name, s_price, s_start_time, s_end_time, s_max_buy_num,
         g.shop_id, g.create_time, is_use,
         case
-        when g.is_use = -1 then -2<!--已失效  -->
-        when g.s_start_time &gt; now() and   g.s_end_time &gt; now() then 0<!--未开始  -->
-        when g.s_start_time &lt;= now() and now() &lt; g.s_end_time  then 1<!-- 进行中 -->
-        when g.s_start_time &lt; now()  and g.s_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/,j.id as joinId,p.two_code_path
-    </sql>
+        when g.is_use = -1 then -2&lt;!&ndash;已失效  &ndash;&gt;
+        when g.s_start_time &gt; now() and   g.s_end_time &gt; now() then 0&lt;!&ndash;未开始  &ndash;&gt;
+        when g.s_start_time &lt;= now() and now() &lt; g.s_end_time  then 1&lt;!&ndash; 进行中 &ndash;&gt;
+        when g.s_start_time &lt; now()  and g.s_end_time &lt;= now() then -1&lt;!&ndash; 已结束 &ndash;&gt;
+        end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/,j.id as joinId
+    </sql>-->
     
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
@@ -90,21 +90,17 @@
             and g.s_start_time &lt; now()  and g.s_end_time &lt;= now()
         </if>
         <if test="shoplist != null and shoplist != ''">
-            and
-            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                g.shop_id = #{item.id,jdbcType=INTEGER}
+            and g.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
     </select>
     <!-- 根据秒杀分页 -->
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
-        <!-- todo 调用陈丹接口 -->
-        select  <include refid="page_product_Column_List" />
+        select  <include refid="page_Column_List" />
         from t_mall_seckill g
-        left join t_mall_store s on g.shop_id = s.id
-        /*left join t_wx_shop ws on s.wx_shop_id = ws.id*/
         left join t_mall_seckill_join j on g.id=j.seckill_id
-        left join t_mall_product p on p.id= g.product_id
         where g.is_delete = 0
         <if test="type == -1"><!-- 未开始秒杀 -->
             and g.s_start_time &gt; now() and   g.s_end_time &gt; now()
@@ -198,13 +194,16 @@
     </select>
     <!-- 查询秒杀商品的状态 -->
     <select id="selectSeckillByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
-        <!-- todo 跟门店关联 -->
         SELECT <include refid="page_Column_List"></include>
         from t_mall_seckill  g
         left join t_mall_seckill_join j on j.seckill_id=g.id
-        left join t_mall_store s on g.shop_id = s.id
-        /*left join t_wx_shop ws on s.wx_shop_id = ws.id*/
         WHERE g.is_delete = 0 and g.is_use  =1 and g.id = #{id}
+        <if test="shoplist != null and shoplist != ''"><!--微信门店集合 -->
+            and g.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
         group by g.id
     </select>
     <!-- 获取店铺下所有正在参加秒杀的商品 -->

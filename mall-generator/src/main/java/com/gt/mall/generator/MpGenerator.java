@@ -22,11 +22,11 @@ import java.util.*;
 public class MpGenerator {
 
     // 项目的绝对路径
-    public static final  String   outPutBaseDir      = "E:/work_news/mall/mall-generator/";
+    private static final  String   outPutBaseDir      = "E:/work_news/mall/mall-generator/";
     // 生成*.java 的文件路径
-    public static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
+    private static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
-    public static final  String[] generatorTableName = new String[] {
+    private static final  String[] generatorTableName = new String[] {
 		    "purchase_carousel",
 		    "purchase_company_mode",
 		    "purchase_contract",
@@ -39,30 +39,30 @@ public class MpGenerator {
 		    "purchase_term"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
-    public static final  String[] tablePrefix        = new String[] {  };
+    private static final  String[] tablePrefix        = new String[] {  };
     // 生成的包路径
-    public static final  String   packagePath        = "com.gt.mall.generator.purchase";
-    public static final  String   moduleName         = "";
+    private static final  String   packagePath        = "com.gt.mall.generator.purchase";
+    private static final  String   moduleName         = "";
     // 生成mapper.xml 文件路径
-    public static final  String   generatorXmlPath   = outPutBaseDir + "src/main/java/com/gt/mall/generator/xml/";
+    private static final  String   generatorXmlPath   = outPutBaseDir + "src/main/java/com/gt/mall/generator/xml/";
     // Mapper.java Mapper 后缀修改 DAO
-    public static final  String   setMapperName      = "%sDAO";
+    private static final  String   setMapperName      = "%sDAO";
     // Mapper.xml Mapper 后缀修改 DAO
-    public static final  String   setXmlName         = "%sDAO";
+    private static final  String   setXmlName         = "%sDAO";
     // Service.java
-    public static final  String   setServiceName     = "%sService";
+    private static final  String   setServiceName     = "%sService";
     // ServiceImpl.java
-    public static final  String   setServiceImplName = "%sServiceImpl";
+    private static final  String   setServiceImplName = "%sServiceImpl";
     // 数据库方言
-    public static final  DbType   dbType             = DbType.MYSQL;
+    private static final  DbType   dbType             = DbType.MYSQL;
     // 驱动
-    public static final  String   driverName         = "com.mysql.jdbc.Driver";
+    private static final  String   driverName         = "com.mysql.jdbc.Driver";
     // url
-    public static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt_mall?characterEncoding=utf8";
+    private static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt_mall?characterEncoding=utf8";
     // 数据库用户名
-    public static final  String   username           = "root";
+    private static final  String   username           = "root";
     // 密码
-    public static final  String   password           = "gt123456";
+    private static final  String   password           = "gt123456";
     // 作者
     private static final String   author             = "yangqian";
     private static       Logger   logger             = LoggerFactory.getLogger( MpGenerator.class );
