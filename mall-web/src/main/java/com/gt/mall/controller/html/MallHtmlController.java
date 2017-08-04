@@ -92,7 +92,7 @@ public class MallHtmlController extends BaseController {
 	    request.setAttribute( "ispid", ispid );
 	    //TODO 需关连 视频方法
 	    //	    request.setAttribute("videourl", course.urlquery("87"));
-	    jsp = "merchants/trade/mall/htmlmall/htmllist";
+	    jsp = "mall/htmlmall/htmllist";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
 	    jsp = "error/error";
@@ -117,7 +117,7 @@ public class MallHtmlController extends BaseController {
 	    Map< String,Object > map = htmlService.modelList( request );
 	    request.setAttribute( "image", PropertiesUtil.getResourceUrl() );
 	    request.setAttribute( "map", map );
-	    jsp = "merchants/trade/mall/htmlmall/modelList";
+	    jsp = "mall/htmlmall/modelList";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
 	    jsp = "error/error";
@@ -147,7 +147,7 @@ public class MallHtmlController extends BaseController {
 	    request.setAttribute( "id", id );
 	    request.setAttribute( "pageTitle", "修改信息" );
 	}
-	return "merchants/trade/mall/htmlmall/addOrUpdate";
+	return "mall/htmlmall/addOrUpdate";
 
     }
 
@@ -215,7 +215,7 @@ public class MallHtmlController extends BaseController {
 	    Object id = request.getParameter( "id" );
 	    MallHtml obj = htmlService.selectById( Integer.valueOf( id.toString() ) );
 	    request.setAttribute( "obj", obj );
-	    jsp = "merchants/trade/mall/htmlmall/mall_h5/HtmlMall";
+	    jsp = "mall/htmlmall/mall_h5/HtmlMall";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
 	    jsp = "error/error";
@@ -241,7 +241,7 @@ public class MallHtmlController extends BaseController {
 	//TODO 播放器样式 dictService.dictkeyvalue("1048");
 	//	List playList = dictService.dictkeyvalue("1048");//获取播放器样式
 	//	request.setAttribute("playlist", playList);
-	return "/merchants/trade/mall/htmlmall/musicUrl";
+	return "/mall/htmlmall/musicUrl";
 
     }
 
@@ -282,7 +282,7 @@ public class MallHtmlController extends BaseController {
     public String htmlimage( HttpServletRequest request, HttpServletResponse response ) {
 	String image = request.getParameter( "url" ).toString();
 	request.setAttribute( "url", PropertiesUtil.getResourceUrl() + image );
-	return "/merchants/trade/mall/htmlmall/ylcodeurl";
+	return "/mall/htmlmall/ylcodeurl";
 
     }
 
@@ -322,7 +322,7 @@ public class MallHtmlController extends BaseController {
 	    request.setAttribute( "msg", obj );
 	    request.setAttribute( "http", http );
 	}
-	return "/merchants/trade/mall/htmlmall/phone/phonehtml";
+	return "/mall/htmlmall/phone/phonehtml";
 
     }
 
@@ -386,7 +386,7 @@ public class MallHtmlController extends BaseController {
 	try {
 	    Map< String,Object > map = htmlFromService.htmlListfrom( request );
 	    request.setAttribute( "map", map );
-	    jsp = "merchants/trade/mall/htmlmall/htmlfromlist";
+	    jsp = "mall/htmlmall/htmlfromlist";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
 	    jsp = "error/error";
@@ -409,7 +409,7 @@ public class MallHtmlController extends BaseController {
 	try {
 	    Map< String,Object > map = htmlFromService.htmlfromview( request );
 	    request.setAttribute( "map", map );
-	    jsp = "merchants/trade/mall/htmlmall/htmlfromview";
+	    jsp = "mall/htmlmall/htmlfromview";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
 	    jsp = "error/error";
@@ -456,7 +456,7 @@ public class MallHtmlController extends BaseController {
 	Map< String,Object > map = htmlService.selectMap( groupWrapper );
 	request.setAttribute( "map", map );
 	request.setAttribute( "image", PropertiesUtil.getResourceUrl() );
-	return "merchants/trade/mall/htmlmall/ylmodel";
+	return "mall/htmlmall/ylmodel";
     }
 
     /**

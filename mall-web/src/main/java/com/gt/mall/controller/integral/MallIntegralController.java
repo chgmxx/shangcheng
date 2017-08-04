@@ -73,7 +73,7 @@ public class MallIntegralController extends BaseController {
 	    logger.error( "进入积分商城异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/integral_index";
+	return "mall/integral/integral_index";
     }
 
     /**
@@ -101,7 +101,7 @@ public class MallIntegralController extends BaseController {
 	    logger.error( "进入编辑积分商品异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/integral_edit";
+	return "mall/integral/integral_edit";
     }
 
     /**
@@ -212,7 +212,7 @@ public class MallIntegralController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/integral/integral_image_index";
+	return "mall/integral/integral_image_index";
     }
 
     /**
@@ -237,7 +237,7 @@ public class MallIntegralController extends BaseController {
 	    logger.error( "进入积分商城图片编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/integral_image_edit";
+	return "mall/integral/integral_image_edit";
     }
 
     /**
@@ -333,7 +333,7 @@ public class MallIntegralController extends BaseController {
 	    logger.error( "获取积分商城二维码图片失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/iframe/integral_mall";
+	return "mall/integral/iframe/integral_mall";
     }
 
 }

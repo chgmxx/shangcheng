@@ -1,0 +1,21 @@
+<h1 style="color:#444"><img src="images/externallinks.png"/>地图</h1>
+<input type="text" class="map_latlng" data-ng-model="data.dataMap.latlng" style="display:none">
+<div class="map bg-f8">
+    <div class="map-box">
+        <label>名称</label>
+        <input type="text" class="map_name" data-ng-model="data.dataMap.name">
+    </div>
+    <div class="map-box">
+        <label>电话</label>
+        <input type="text" class="map_phone" data-ng-model="data.dataMap.phone">
+    </div>
+    <div class="map-box">
+        <label>地址</label>
+        <input type="text" class="map_address" data-ng-model="data.dataMap.address" style="width:217px;padding-right:23px;box-sizing:border-box;height:32px;">
+        <span class="icon_find"></span>
+    </div>
+    <div class="txMap">
+        <div id="map"></div>
+        <i></i>
+    </div>
+</div>

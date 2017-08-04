@@ -119,7 +119,7 @@ public class MallAuctionController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/auction/auction_index";
+	return "mall/auction/auction_index";
     }
 
 
@@ -149,7 +149,7 @@ public class MallAuctionController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/auction/auction_margin";
+	return "mall/auction/auction_margin";
     }
 
     /**
@@ -185,7 +185,7 @@ public class MallAuctionController extends BaseController {
 	    logger.error( "进入拍卖编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/auction/auction_edit";
+	return "mall/auction/auction_edit";
     }
 
     /**
@@ -313,7 +313,7 @@ public class MallAuctionController extends BaseController {
 	    }
 	    boolean isShop = pageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    List groupList = pageService.storeList( shopid, 1, 0 );// 获取分类
@@ -365,7 +365,7 @@ public class MallAuctionController extends BaseController {
 	    logger.error( "进入拍卖商品的页面出错：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/auction/phone/auctionall";
+	return "mall/auction/phone/auctionall";
     }
 
     /**
@@ -383,7 +383,7 @@ public class MallAuctionController extends BaseController {
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String auctiondetail( HttpServletRequest request, HttpServletResponse response, @PathVariable int id, @PathVariable int shopid, @PathVariable int aId,
 		    @RequestParam Map< String,Object > param ) throws Exception {
-	String jsp = "merchants/trade/mall/auction/phone/auctiondetail";
+	String jsp = "mall/auction/phone/auctiondetail";
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -406,7 +406,7 @@ public class MallAuctionController extends BaseController {
 
 	    boolean isShop = pageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 	    //条件类型
 	    String inv_id = "";//存放默认库存id
@@ -596,10 +596,10 @@ public class MallAuctionController extends BaseController {
 
 		//商品已下架或者已删除
 	    } else if ( is_delete == "1" || is_delete.equals( "1" ) || is_publish == "-1" || is_publish.equals( "-1" ) ) {
-		jsp = "merchants/trade/mall/product/phone/shopdelect";
+		jsp = "mall/product/phone/shopdelect";
 		//商品审核中或者未上架
 	    } else {
-		jsp = "merchants/trade/mall/product/phone/shopdelect";
+		jsp = "mall/product/phone/shopdelect";
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "进入拍卖商品的页面出错：" + e );
@@ -624,7 +624,7 @@ public class MallAuctionController extends BaseController {
     public String toAddMargin( HttpServletRequest request, HttpServletResponse response, @PathVariable int proId, @PathVariable int invId, @PathVariable int auctionId,
 		    @RequestParam Map< String,Object > param ) throws Exception {
 	logger.info( "进入交纳保证金的页面...." );
-	String jsp = "merchants/trade/mall/auction/phone/toAddMargin";
+	String jsp = "mall/auction/phone/toAddMargin";
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -789,7 +789,7 @@ public class MallAuctionController extends BaseController {
 	    }
 	}
 	pageService.getCustomer( request, userid );
-	return "merchants/trade/mall/auction/phone/productdetail";
+	return "mall/auction/phone/productdetail";
     }
 
     /**
@@ -963,7 +963,7 @@ public class MallAuctionController extends BaseController {
 	    logger.error( "进入我的保证金页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/auction/phone/mymargin";
+	return "mall/auction/phone/mymargin";
     }
 
     /**
@@ -1006,7 +1006,7 @@ public class MallAuctionController extends BaseController {
 	    logger.error( "进入我的竞拍页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/auction/phone/mymargin";
+	return "mall/auction/phone/mymargin";
     }
 
     /**
@@ -1042,7 +1042,7 @@ public class MallAuctionController extends BaseController {
 	    logger.error( "进入我的获拍页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/auction/phone/mymargin";
+	return "mall/auction/phone/mymargin";
     }
 
     /**
@@ -1083,7 +1083,7 @@ public class MallAuctionController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/auction/returnMarginPopUp";
+	return "mall/auction/returnMarginPopUp";
     }
 
     /**

@@ -52,9 +52,9 @@ public class PurchaseCarouselController extends BaseController {
 	    e.printStackTrace();
 	}
 	if ( parms.get( "entrance" ) != null ) {
-	    return "merchants/trade/mall/purchase/carouselIframe";
+	    return "mall/purchase/carouselIframe";
 	}
-	return "merchants/trade/mall/purchase/carouselIndex";
+	return "mall/purchase/carouselIndex";
     }
 
     @RequestMapping( value = "/carouselForm" )
@@ -68,7 +68,7 @@ public class PurchaseCarouselController extends BaseController {
 	}
 	request.setAttribute( "title", title );
 	request.setAttribute( "carousel", carousel );
-	return "merchants/trade/mall/purchase/carouselEdit";
+	return "mall/purchase/carouselEdit";
     }
 
     @ResponseBody

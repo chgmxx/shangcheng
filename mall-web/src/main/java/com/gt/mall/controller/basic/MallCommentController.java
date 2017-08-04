@@ -115,7 +115,7 @@ public class MallCommentController extends BaseController {
 	    logger.error( "进入评论管理列表异常" );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/comment/comment_index";
+	return "mall/comment/comment_index";
     }
 
     /**

@@ -1,0 +1,97 @@
+.jcrop-wrap{
+    position: relative;
+    background-color: rgba(221,221,221,.6);
+    overflow: hidden;
+}
+.jcrop-handle{
+    background-color: #333333;
+    border: 1px #eeeeee solid;
+    width: 7px;
+    height: 7px;
+    font-size: 1px;
+    position: absolute;
+}
+.jcrop-hline{
+    height: 8px;
+    width: 100%;
+    position: absolute;
+    cursor: ns-resize;
+}
+.jcrop-img{
+    max-width: 100%;
+    max-height: 100%;
+}
+.jcrop-main{
+    position: absolute;
+    z-index: 999;
+}
+.jcrop-hline.jh-left,.jcrop-hline.jh-right{
+    height: 100%;
+    width: 8px;
+    cursor: ew-resize;
+}
+.jcrop-hline.jh-right{
+    right: 0;
+}
+.jcrop-hline.jh-bottom{
+    bottom: 0;
+}
+.jcrop-handle.ord-t-l{
+    left: 0;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 0;
+    cursor: nw-resize;
+}
+.jcrop-handle.ord-t-c{
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 0;
+    cursor: ns-resize;
+}
+.jcrop-handle.ord-t-r{
+    margin-right: -4px;
+    margin-top: -4px;
+    right: 0;
+    top: 0;
+    cursor: nesw-resize;
+}
+.jcrop-handle.ord-m-l{
+    left: 0;
+    margin-left: -4px;
+    margin-top: -4px;
+    top: 50%;
+    cursor: ew-resize;
+}
+.jcrop-handle.ord-m-r{
+    right: -4px;
+    margin-top: -4px;
+    top: 50%;
+    cursor: ew-resize;
+}
+.jcrop-handle.ord-b-l{
+    left: 0;
+    margin-left: -4px;
+    bottom: -4px;
+    cursor: sw-resize;
+}
+.jcrop-handle.ord-b-c{
+    left: 50%;
+    margin-left: -4px;
+    bottom: -4px;
+    cursor: ns-resize;
+}
+.jcrop-handle.ord-b-r{
+    margin-right: -4px;
+    right: 0;
+    bottom: -4px;
+    cursor: nwse-resize;
+}
+.jcrop-tracker{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 290;
+    background-color: rgba(0,0,0,.3);
+}

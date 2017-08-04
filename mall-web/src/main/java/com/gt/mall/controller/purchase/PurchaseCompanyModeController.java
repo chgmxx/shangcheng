@@ -58,7 +58,7 @@ public class PurchaseCompanyModeController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/moban";
+	return "mall/purchase/moban";
     }
 
     /**
@@ -81,7 +81,7 @@ public class PurchaseCompanyModeController extends BaseController {
 	}
 	request.setAttribute( "title", title );
 	request.setAttribute( "company", company );
-	return "merchants/trade/mall/purchase/moban-add";
+	return "mall/purchase/moban-add";
     }
 
     @ResponseBody
