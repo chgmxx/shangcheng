@@ -1,6 +1,5 @@
 package com.gt.mall.controller.pifa;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -49,15 +48,6 @@ public class MallPifaController extends BaseController {
     private MallPageService   mallPageService;
     @Autowired
     private MallPaySetService mallPaySetService;
-
-    @CommAnno( menu_url = "mallWholesalers/start.do" )
-    @RequestMapping( value = "/start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-	String iframe_url = "mallWholesalers/index.do";
-	request.setAttribute( "iframe_url", iframe_url );
-	request.setAttribute( "title", "微商城" );
-	return "iframe";
-    }
 
     /**
      * 批发商列表
@@ -258,18 +248,6 @@ public class MallPifaController extends BaseController {
 	    e.printStackTrace();
 	}
 	return "mall/wholesalers/wholesalersIndex";
-    }
-
-    @CommAnno( menu_url = "mallWholesalers/start.do" )
-    @RequestMapping( "edit" )
-    public String edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	String url = "mallWholesalers/to_edit.do";
-	if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
-	    url += "?id=" + params.get( "id" ).toString();
-	}
-	request.setAttribute( "iframe_url", url );
-	request.setAttribute( "title", "批发管理-编辑批发" );
-	return "iframe";
     }
 
     /**

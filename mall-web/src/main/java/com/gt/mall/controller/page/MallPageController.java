@@ -1,7 +1,6 @@
 package com.gt.mall.controller.page;
 
 import com.gt.mall.annotation.AfterAnno;
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -99,14 +98,6 @@ public class MallPageController extends BaseController {
     private WxShopService               wxShopService;
     @Autowired
     private MallCollectService          mallCollectService;
-
-    @CommAnno( menu_url = "mallPage/start.do" )
-    @RequestMapping( "/start" )
-    public String res_start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mallPage/index.do" );
-	request.setAttribute( "title", "微商城" );
-	return "iframe";
-    }
 
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {

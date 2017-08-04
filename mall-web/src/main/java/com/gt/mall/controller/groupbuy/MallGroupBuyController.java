@@ -1,21 +1,17 @@
 package com.gt.mall.controller.groupbuy;
 
 import com.gt.mall.annotation.AfterAnno;
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.constant.Constants;
-import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallPaySetService;
-import com.gt.mall.web.service.basic.MallTakeTheirService;
-import com.gt.mall.web.service.freight.MallFreightService;
 import com.gt.mall.web.service.groupbuy.MallGroupBuyService;
 import com.gt.mall.web.service.groupbuy.MallGroupJoinService;
 import com.gt.mall.web.service.page.MallPageService;
@@ -32,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -66,14 +61,6 @@ public class MallGroupBuyController extends BaseController {
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MallPageService             pageService;
-
-    @CommAnno( menu_url = "mGroupBuy/start.do" )
-    @RequestMapping( "start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mGroupBuy/index.do" );
-	request.setAttribute( "title", "团购管理" );
-	return "merchants/trade/iframe";
-    }
 
     /**
      * 团购管理列表页面
@@ -114,17 +101,6 @@ public class MallGroupBuyController extends BaseController {
 	return "merchants/trade/mall/groupBuy/groupbuy_index";
     }
 
-    @CommAnno( menu_url = "mGroupBuy/start.do" )
-    @RequestMapping( "edit" )
-    public String edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	String url = "mGroupBuy/to_edit.do";
-	if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
-	    url += "?id=" + params.get( "id" ).toString();
-	}
-	request.setAttribute( "iframe_url", url );
-	request.setAttribute( "title", "团购管理-编辑团购" );
-	return "merchants/trade/iframe";
-    }
 
     /**
      * 进入团购编辑页面

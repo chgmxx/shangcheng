@@ -52,6 +52,8 @@ public class PropertiesUtil {
 
     private static String queueName;//队列名称
 
+    private static String wxmpDomain;//主项目域名（登陆。。）
+
     @Value( "${web.domain}" )
     public void setDomain( String domain ) {
 	PropertiesUtil.domain = domain;
@@ -152,8 +154,20 @@ public class PropertiesUtil {
 	PropertiesUtil.queueName = queueName;
     }
 
+    @Value( "${web.wxmp.domain}" )
+    public void setWxmpDomain( String wxmpDomain ) {
+	PropertiesUtil.wxmpDomain = wxmpDomain;
+    }
+
     /**
-     * 获取域名
+     * 获取主域名（登陆）
+     * @return 域名
+     */
+    public static String getWxmpDomain() {
+	return wxmpDomain;
+    }
+    /**
+     * 获取商城的域名
      */
     public static String getDomain() {
 	return domain;

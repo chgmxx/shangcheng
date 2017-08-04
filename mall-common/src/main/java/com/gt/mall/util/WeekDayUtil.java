@@ -63,14 +63,14 @@ public class WeekDayUtil {
 	 */
 	public static String weekForNum(List<Integer> weekDays) {
 		// 返回结果为组合的星期系数
-		String weekNumber = "";
+		StringBuffer weekNumber = new StringBuffer(  );
 		for (Integer weekDay : weekDays) {
 			if(weekDay == 7){
 				weekDay = 0;
 			}
-			weekNumber = weekNumber + "" + getWeekNum(weekDay).toString();
+		    weekNumber.append( getWeekNum(weekDay).toString() );
 		}
-		return weekNumber;
+		return weekNumber.toString();
 
 	}
 

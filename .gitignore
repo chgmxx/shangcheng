@@ -61,3 +61,4 @@ tmp/
 /mall-generator/target/
 /mall-dao/mall-dao.iml
 /mall-common/src/main/resources/
+/mall-web/logs/

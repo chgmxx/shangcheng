@@ -28,6 +28,11 @@
 </head>
 
 <body>
+<div class="con-head">
+    <a class="navColor" href="/store/index.do">店铺管理</a>
+    <a class="" href="/store/setindex.do">商城设置</a>
+</div>
+
 <div class="fansTitle">
     <span class="i-con fl"></span><span class="title-p">${pageTitle }</span>
 </div>

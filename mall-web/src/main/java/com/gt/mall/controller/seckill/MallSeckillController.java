@@ -2,7 +2,6 @@ package com.gt.mall.controller.seckill;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.annotation.AfterAnno;
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -47,14 +46,6 @@ public class MallSeckillController extends BaseController {
     @Autowired
     private MallPaySetService mallPaySetService;
 
-    @CommAnno( menu_url = "mSeckill/start.do" )
-    @RequestMapping( "start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mSeckill/index.do" );
-	request.setAttribute( "title", "秒杀管理" );
-	return "iframe";
-    }
-
     /**
      * 秒杀管理列表页面
      */
@@ -90,18 +81,6 @@ public class MallSeckillController extends BaseController {
 	}
 
 	return "mall/seckill/seckill_index";
-    }
-
-    @CommAnno( menu_url = "mSeckill/start.do" )
-    @RequestMapping( "edit" )
-    public String edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	String url = "mSeckill/to_edit.do";
-	if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
-	    url += "?id=" + params.get( "id" ).toString();
-	}
-	request.setAttribute( "iframe_url", url );
-	request.setAttribute( "title", "秒杀管理-编辑秒杀" );
-	return "iframe";
     }
 
     /**

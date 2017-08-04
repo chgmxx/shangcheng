@@ -1,6 +1,5 @@
 package com.gt.mall.controller.presale;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -47,14 +46,6 @@ public class MallPresaleController extends BaseController {
     private MallPresaleDepositService mallPresaleDepositService;
     @Autowired
     private MallPaySetService         mallPaySetService;
-
-    @CommAnno( menu_url = "mPresale/start.do" )
-    @RequestMapping( "start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mPresale/index.do" );
-	request.setAttribute( "title", "预售管理" );
-	return "iframe";
-    }
 
     /**
      * 预售管理列表页面
@@ -107,19 +98,6 @@ public class MallPresaleController extends BaseController {
 	}
 
 	return "mall/presale/presale_index";
-    }
-
-    @CommAnno( menu_url = "mPresale/start.do" )
-    @RequestMapping( "edit" )
-    public String edit( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
-	String url = "mPresale/to_edit.do";
-	if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
-	    url += "?id=" + params.get( "id" ).toString();
-	}
-	request.setAttribute( "iframe_url", url );
-	request.setAttribute( "title", "预售管理-编辑预售" );
-	return "iframe";
     }
 
     /**
@@ -232,14 +210,6 @@ public class MallPresaleController extends BaseController {
 	    obj.put( "code", code );
 	    CommonUtil.write( response,obj );
 	}
-    }
-
-    @CommAnno( menu_url = "mPresale/start.do" )
-    @RequestMapping( "to_deposit" )
-    public String to_deposit( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mPresale/deposit.do" );
-	request.setAttribute( "title", "预售管理" );
-	return "iframe";
     }
 
     /**

@@ -813,16 +813,16 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	//商家订单短信推送
 	params.remove( "shopIds" );
-	String telePhone = "";
+	StringBuffer telePhone = new StringBuffer(  );
 	String[] shopId = shopIds.split( "," );
 	for ( int i = 0; i < shopId.length; i++ ) {
 	    store = mallStoreDAO.selectById( Integer.parseInt( shopId[i] ) );
 	    if ( store.getStoIsSms() == 1 ) {//1是推送
 		if ( store.getStoSmsTelephone() != null ) {
 		    if ( CommonUtil.isNotEmpty( telePhone ) ) {
-			telePhone += ",";
+			telePhone.append( "," );
 		    }
-		    telePhone += store.getStoSmsTelephone();
+		    telePhone.append( store.getStoSmsTelephone() );
 		}
 	    }
 	}
@@ -830,7 +830,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	BusUser busUser = null;//busUserMapper.selectByPrimaryKey( member.getBusid() );
 	if ( !telePhone.equals( "" ) ) {
 	    OldApiSms oldApiSms = new OldApiSms();
-	    oldApiSms.setMobiles( telePhone );
+	    oldApiSms.setMobiles( telePhone.toString() );
 	    oldApiSms.setCompany( busUser.getMerchant_name() );
 	    oldApiSms.setBusId( member.getBusid() );
 	    oldApiSms.setModel( Constants.SMS_MODEL );

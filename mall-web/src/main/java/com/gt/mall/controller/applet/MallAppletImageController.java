@@ -1,6 +1,5 @@
 package com.gt.mall.controller.applet;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -41,14 +40,6 @@ public class MallAppletImageController extends BaseController {
     private WxShopService          wxShopService;
     @Autowired
     private MallStoreService       storeService;
-
-    @CommAnno( menu_url = "mApplet/start.do" )
-    @RequestMapping( "start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mApplet/index.do" );
-	request.setAttribute( "title", "小程序管理" );
-	return "merchants/trade/iframe";
-    }
 
     /**
      * 小程序管理列表页面

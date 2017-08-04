@@ -1,6 +1,5 @@
 package com.gt.mall.controller.integral;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -40,15 +39,6 @@ public class MallIntegralController extends BaseController {
     private MallIntegralImageService integralImageService;
     @Autowired
     private MallStoreService         storeService;
-
-    @CommAnno( menu_url = "mallIntegral/start.do" )
-    @RequestMapping( value = "start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-	String iframe_url = "mallIntegral/index.do";
-	request.setAttribute( "iframe_url", iframe_url );
-	request.setAttribute( "title", "微商城" );
-	return "merchants/trade/iframe";
-    }
 
     /**
      * 进入积分商城

@@ -49,7 +49,7 @@ public class DateTimeKit {
      */
     public static final String yyyyMMddHHmmss = "yyyyMMddHHmmss";
 
-    public static Map<Integer, String> weekMap;
+    private static final Map<Integer, String> weekMap;
 
     static {
         weekMap = new HashMap<Integer, String>();
@@ -418,16 +418,16 @@ public class DateTimeKit {
      */
     public static Date parseDate(String dateStr, String format) {
         try {
-            dateFormat = new SimpleDateFormat(format);
+            DateFormat dateFormat = new SimpleDateFormat(format);
             String dt = dateStr.replaceAll("-", "/");
             if ((!dt.equals("")) && (dt.length() < format.length())) {
                 dt += format.substring(dt.length()).replaceAll("[YyMmDdHhSs]",
                         "0");
             }
-            date = (Date) dateFormat.parse(dt);
+            return (Date) dateFormat.parse(dt);
         } catch (Exception e) {
         }
-        return date;
+        return null;
     }
 
 
@@ -452,13 +452,13 @@ public class DateTimeKit {
         String result = "";
         try {
             if (date != null) {
-                dateFormat = new SimpleDateFormat(format);
-                result = dateFormat.format(date);
+                DateFormat dateFormat = new SimpleDateFormat(format);
+                return dateFormat.format(date);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return null;
     }
 
     /**
@@ -478,7 +478,7 @@ public class DateTimeKit {
      * @return 返回年份
      */
     public static int getYear(Date date) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.YEAR);
     }
@@ -490,7 +490,7 @@ public class DateTimeKit {
      * @return 返回月份
      */
     public static int getMonth(Date date) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.MONTH) + 1;
     }
@@ -502,7 +502,7 @@ public class DateTimeKit {
      * @return 返回日份
      */
     public static int getDay(Date date) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
@@ -514,7 +514,7 @@ public class DateTimeKit {
      * @return 返回小时
      */
     public static int getHour(Date date) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.HOUR_OF_DAY);
     }
@@ -526,7 +526,7 @@ public class DateTimeKit {
      * @return 返回分钟
      */
     public static int getMinute(Date date) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.MINUTE);
     }
@@ -538,7 +538,7 @@ public class DateTimeKit {
      * @return 返回秒钟
      */
     public static int getSecond(Date date) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.get(Calendar.SECOND);
     }
@@ -550,7 +550,7 @@ public class DateTimeKit {
      * @return 返回毫秒
      */
     public static long getMillis(Date date) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar.getTimeInMillis();
     }
@@ -593,7 +593,7 @@ public class DateTimeKit {
      * @return 返回相加后的日期
      */
     public static Date addDate(Date date, int day) {
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         long millis = getMillis(date) + ((long) day) * 24 * 3600 * 1000;
         calendar.setTimeInMillis(millis);
         return calendar.getTime();
@@ -629,7 +629,7 @@ public class DateTimeKit {
      */
     public static String getMonthEnd(String strdate) {
         date = parseDate(getMonthBegin(strdate));
-        calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.add(Calendar.MONTH, 1);
         calendar.add(Calendar.DAY_OF_YEAR, -1);

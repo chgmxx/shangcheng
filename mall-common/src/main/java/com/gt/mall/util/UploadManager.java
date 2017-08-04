@@ -108,7 +108,7 @@ public class UploadManager {
 	    }
 	    bufImg = null;
 	    subImg = null;
-	    int size = new Long( file.length() / 1024 ).intValue();
+	    int size = CommonUtil.toInteger( new Long( file.length() / 1024 ).intValue() );
 	    // 封装剪切后的信息
 	    List< Integer > list = new ArrayList<>();
 	    list.add( width );

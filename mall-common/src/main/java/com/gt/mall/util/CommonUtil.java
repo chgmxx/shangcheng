@@ -2,7 +2,6 @@ package com.gt.mall.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.constant.Constants;
-import io.swagger.models.auth.In;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
@@ -403,8 +402,8 @@ public class CommonUtil {
      * @return
      */
     @SuppressWarnings( "rawtypes" )
-    public static Map fileUploadByBusUser( MultipartFile multipartFile, Integer userId ) {
-	Map map = new HashMap();
+    public static Map< String,Object > fileUploadByBusUser( MultipartFile multipartFile, Integer userId ) {
+	Map< String,Object > map = new HashMap<>();
 	String originalFilename = multipartFile.getOriginalFilename();
 	// 后缀
 	String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );

@@ -265,7 +265,11 @@ public class PageUtil {
     }
 
     public void setPageSizes( int[] pageSizes ) {
-	this.pageSizes = pageSizes;
+        if(pageSizes == null || pageSizes.length == 0){
+            this.pageSizes = null;
+	}else{
+            this.pageSizes = (int[])pageSizes.clone();
+	}
     }
 
     public void setPageCount( int pageCount ) {

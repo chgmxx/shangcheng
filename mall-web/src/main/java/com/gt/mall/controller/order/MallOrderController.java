@@ -1,6 +1,5 @@
 package com.gt.mall.controller.order;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -53,19 +52,6 @@ public class MallOrderController extends BaseController {
     private MallOrderDAO        mallOrderDAO;
     @Autowired
     private MallDaifuService    mallDaifuService;
-
-    @CommAnno( menu_url = "mallOrder/indexstart.do" )
-    @RequestMapping( value = "/indexstart" )
-    public String res_start( HttpServletRequest request, HttpServletResponse response ) {
-	Object orderId = request.getParameter( "orderId" );
-	String iframe_url = "mallOrder/toIndex.do";
-	if ( null != orderId && !orderId.equals( "" ) ) {
-	    iframe_url = "mallOrder/orderDetail.do?orderId=" + orderId;
-	}
-	request.setAttribute( "iframe_url", iframe_url );
-	request.setAttribute( "title", "微商城" );
-	return "iframe";
-    }
 
     /**
      * 订单首页

@@ -1,6 +1,5 @@
 package com.gt.mall.controller.store;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -49,16 +48,9 @@ public class MallStoreController extends BaseController {
     @Autowired
     private MallPaySetService mallPaySetService;
 
-    @CommAnno( menu_url = "store/start.do" )
-    @RequestMapping( "/start" )
-    public String res_start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "store/index.do" );
-	request.setAttribute( "title", "微商城" );
-	return "iframe";
-    }
-
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入店铺管理啦啦啦" );
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    int pid = 0;
@@ -105,11 +97,11 @@ public class MallStoreController extends BaseController {
      */
     @RequestMapping( "/to_edit" )
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	Integer userId = SessionUtils.getLoginUser( request ).getId();
+	BusUser user = SessionUtils.getLoginUser( request );
 	int shopId = 0;
 	try {
+	    Integer userId = user.getId();
 	    if ( CommonUtil.isEmpty( params.get( "id" ) ) ) {
-		request.setAttribute( "pageTitle", "添加信息" );
 		//todo 调用陈丹信息  userService.findUserDefArea
 		Map< String,Object > defArea = null;//userService.findUserDefArea(userId);
 		if ( defArea.size() > 0 ) {
@@ -155,6 +147,8 @@ public class MallStoreController extends BaseController {
 	    //request.setAttribute("areaLs", restaurantService.findCityByPid(restaurantService.getAreaIds()));
 	} catch ( Exception e ) {
 	    e.printStackTrace();
+	} finally {
+	    request.setAttribute( "pageTitle", "添加信息" );
 	}
 	return "mall/store/edit";
     }
@@ -179,7 +173,7 @@ public class MallStoreController extends BaseController {
 	    msg.put( "message", e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response , msg );
+	    CommonUtil.write( response, msg );
 	}
     }
 
@@ -189,7 +183,7 @@ public class MallStoreController extends BaseController {
     @SysLogAnnotation( description = "店铺管理-删除店铺信息", op_function = "4" )
     @RequestMapping( "/delete" )
     public void delete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< String,Object > msg = new HashMap< String,Object >();
+	Map< String,Object > msg = new HashMap<>();
 	try {
 	    String ids[] = params.get( "ids" ).toString().split( "," );
 	    msg = mallStoreService.deleteShop( ids );
@@ -198,7 +192,7 @@ public class MallStoreController extends BaseController {
 	    msg.put( "message", e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response , msg );
+	    CommonUtil.write( response, msg );
 	}
     }
 
@@ -282,10 +276,10 @@ public class MallStoreController extends BaseController {
 	    flag = false;
 	    logger.debug( "编辑设置：" + e.getMessage() );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "flag", flag );
-	    CommonUtil.write( response , obj );
+	    CommonUtil.write( response, obj );
 	}
     }
 

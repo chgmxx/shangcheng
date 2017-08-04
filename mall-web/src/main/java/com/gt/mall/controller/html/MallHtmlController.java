@@ -2,7 +2,6 @@ package com.gt.mall.controller.html;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -44,20 +43,6 @@ public class MallHtmlController extends BaseController {
     private MallHtmlFromService   htmlFromService;
     @Autowired
     private MallHtmlReportService htmlReportService;
-
-    /**
-     * html5商城首页
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     */
-    @CommAnno( menu_url = "mallhtml/indexstart.do" )
-    @RequestMapping( "/indexstart" )
-    public String index( HttpServletRequest request, HttpServletResponse response ) {
-	return "merchants/trade/mall/htmlmall/indexstart";
-    }
 
     /**
      * h5 商城列表页

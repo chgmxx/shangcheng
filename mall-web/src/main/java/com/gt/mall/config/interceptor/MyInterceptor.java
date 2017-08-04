@@ -1,9 +1,10 @@
-package com.gt.mall.config;
+package com.gt.mall.config.interceptor;
 
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
+import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -93,11 +94,10 @@ public class MyInterceptor implements HandlerInterceptor {
 	    urlwx = tmp.substring( tmp.lastIndexOf( "/" ) + 1, tmp.length() );
 	}
 	//如果URL是登录页面或者是登录界面时或者是微信接口，继续
-	/*if ( url.equals( "/" ) ) {
+	if ( url.equals( "/" ) ) {
 	    ServletResponse.sendRedirect( "http://www." + PropertiesUtil.getDomain() + "" );
 	    return false;
-	} else*/
-	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.indexOf( "79B4DE7C" ) > -1 ) {//移动端
+	} else if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.indexOf( "79B4DE7C" ) > -1 ) {//移动端
 	    Member member = SessionUtils.getLoginMember( servletRequest );
 	    if ( CommonUtil.isNotEmpty( member ) && member.isPass() ) {//商家已过期，清空会员登录session
 		servletRequest.getSession().removeAttribute( "member" );
@@ -112,7 +112,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	} else if ( user == null ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
 	    response.setCharacterEncoding( "UTF-8" );
 	    String script = "<script type='text/javascript'>"
-			    + "top.location.href='/jsp/error/warning.jsp';"
+			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "/user/tologin.do';"
 			    + "</script>";
 	    if ( url.indexOf( "unionBrokerage" ) > -1 && !( url.indexOf( "toLogin" ) > -1 ) ) {
 		script = "<script type='text/javascript'>"
@@ -127,7 +127,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		response.getWriter().write( script );
 	    }
 	    return false;
-	}/* else if ( user.getPid() == 0 && user != null && user.getLogin_source() != 1 ) {//会员过期,跳转到充值页面
+	} else if ( user.getPid() == 0 && user != null && user.getLogin_source() != 1 ) {//会员过期,跳转到充值页面
 	    if ( user.getDays() < 0 ) {
 		if ( url.equals( "/trading/upGrade.do" ) ) {
 		    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
@@ -137,7 +137,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		    return false;
 		}
 	    }
-	}*/
+	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
 

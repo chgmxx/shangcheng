@@ -1,6 +1,5 @@
 package com.gt.mall.controller.product;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -48,14 +47,6 @@ public class MallProductController extends BaseController {
     private MallStoreService            mallStoreService;
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
-
-    @CommAnno( menu_url = "mPro/product_start.do" )
-    @RequestMapping( "product_start" )
-    public String productStart( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mPro/index.do" );
-	request.setAttribute( "title", "商品管理" );
-	return "iframe";
-    }
 
     /**
      * 进入商品管理列表页面
@@ -147,20 +138,6 @@ public class MallProductController extends BaseController {
 	    CommonUtil.write( response, obj );
 	}
 
-    }
-
-    @CommAnno( menu_url = "mPro/product_start.do" )
-    @RequestMapping( "product_edit" )
-    public String productEdit( HttpServletRequest request,
-		    HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
-	String url = "mPro/to_edit.do";
-	if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
-	    url += "?id=" + params.get( "id" ).toString();
-	}
-	request.setAttribute( "iframe_url", url );
-	request.setAttribute( "title", "商品管理-编辑商品" );
-	return "iframe";
     }
 
     /**

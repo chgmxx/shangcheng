@@ -1,7 +1,6 @@
 package com.gt.mall.controller.auction;
 
 import com.gt.mall.annotation.AfterAnno;
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.AlipayUser;
@@ -81,17 +80,6 @@ public class MallAuctionController extends BaseController {
     private MallCollectService          mallCollectService;
 
     /**
-     * 拍卖入口
-     */
-    @CommAnno( menu_url = "mAuction/start.do" )
-    @RequestMapping( "start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mAuction/index.do" );
-	request.setAttribute( "title", "拍卖管理" );
-	return "merchants/trade/iframe";
-    }
-
-    /**
      * 拍卖管理列表页面
      *
      * @param request
@@ -134,25 +122,6 @@ public class MallAuctionController extends BaseController {
 	return "merchants/trade/mall/auction/auction_index";
     }
 
-    @CommAnno( menu_url = "mAuction/start.do" )
-    @RequestMapping( "edit" )
-    public String edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	String url = "mAuction/to_edit.do";
-	if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
-	    url += "?id=" + params.get( "id" ).toString();
-	}
-	request.setAttribute( "iframe_url", url );
-	request.setAttribute( "title", "拍卖管理-编辑拍卖" );
-	return "merchants/trade/iframe";
-    }
-
-    @CommAnno( menu_url = "mAuction/start.do" )
-    @RequestMapping( "to_margin" )
-    public String to_margin( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	request.setAttribute( "iframe_url", "mAuction/margin.do" );
-	request.setAttribute( "title", "拍卖管理-定金管理" );
-	return "merchants/trade/iframe";
-    }
 
     /**
      * 拍卖管理列表页面

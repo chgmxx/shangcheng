@@ -1,5 +1,7 @@
 package com.gt.mall.config;
 
+import com.gt.mall.config.interceptor.MyInterceptor;
+import com.gt.mall.config.interceptor.SysLogInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -12,6 +14,7 @@ public class Loginfilter extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new MyInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new SysLogInterceptor()).addPathPatterns("/**");
 
         super.addInterceptors(registry);
     }

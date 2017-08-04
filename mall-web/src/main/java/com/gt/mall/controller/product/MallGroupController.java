@@ -1,6 +1,5 @@
 package com.gt.mall.controller.product;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -49,13 +48,6 @@ public class MallGroupController extends BaseController {
     @Autowired
     MallImageAssociativeService mallImageAssociativeService;
 
-    @CommAnno( menu_url = "mPro/product_start.do" )
-    @RequestMapping( "/start" )
-    public String group_start( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "iframe_url", "mPro/group/group_index.do" );
-	request.setAttribute( "title", "商品分组" );
-	return "iframe";
-    }
 
     /**
      * 商品分组主页面

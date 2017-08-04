@@ -1,6 +1,5 @@
 package com.gt.mall.controller.freight;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -53,15 +52,6 @@ public class MallFreightController extends BaseController {
     @Autowired
     private MallPaySetService    paySetService;
 
-    @CommAnno( menu_url = "mFreight/start.do" )
-    @RequestMapping( "start" )
-    public String start( HttpServletRequest request, HttpServletResponse response ) {
-
-	request.setAttribute( "iframe_url", "mFreight/index.do" );
-	request.setAttribute( "title", "物流管理" );
-	return "merchants/trade/iframe";
-    }
-
     /**
      * 进入物流管理列表页面
      *
@@ -100,17 +90,6 @@ public class MallFreightController extends BaseController {
 	return "merchants/trade/mall/freight/freight_index";
     }
 
-    @CommAnno( menu_url = "mFreight/start.do" )
-    @RequestMapping( "edit" )
-    public String freightEdit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	String url = "mFreight/to_edit.do";
-	if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
-	    url += "?id=" + params.get( "id" ).toString();
-	}
-	request.setAttribute( "iframe_url", url );
-	request.setAttribute( "title", "物流管理-编辑物流" );
-	return "merchants/trade/iframe";
-    }
 
     /**
      * 进入修改物流信息页面

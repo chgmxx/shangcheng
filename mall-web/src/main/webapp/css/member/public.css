@@ -301,8 +301,7 @@ flex下的子元素宽度和高度不能超过父元素，否则会导致子元�
     -webkit-box-orient: horizontal;
     -webkit-box-pack: center;
     -webkit-box-align: center;
-
-    display: box;
+    /*display:box;*/
     box-orient: horizontal;
     box-pack: center;
     box-align: center;

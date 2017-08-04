@@ -1,6 +1,5 @@
 package com.gt.mall.controller.seller;
 
-import com.gt.mall.annotation.CommAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
@@ -46,15 +45,6 @@ public class MallSellerController extends BaseController {
     private MallPaySetService         mallPaySetService;
     @Autowired
     private MallSellerWithdrawService mallSellerWithdrawService;
-
-    @CommAnno(menu_url="mallSellers/start.do")
-    @RequestMapping(value="/start")
-    public String start(HttpServletRequest request,HttpServletResponse response) {
-	String iframe_url = "mallSellers/sellerSet.do";
-	request.setAttribute("iframe_url", iframe_url);
-	request.setAttribute("title", "微商城");
-	return "iframe";
-    }
 
     /**
      * 商品佣金设置

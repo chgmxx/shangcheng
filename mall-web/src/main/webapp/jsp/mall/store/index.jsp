@@ -27,7 +27,7 @@
     <script type="text/javascript" src="/js/util.js"></script>
     <script type="text/javascript" src="/js/table.js"></script>
     <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
-    <script type="text/javascript" src="/js/copy.js/copy.js"></script>
+    <script type="text/javascript" src="/js/common/copy.js"></script>
     <%--<script type="text/javascript" src="/js/plugin/zclip/zclip.js"></script>--%>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
     <script type="text/javascript" src="/js/plugin/copy/clipboard.min.js"></script>
