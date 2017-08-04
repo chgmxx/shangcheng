@@ -1,0 +1,72 @@
+.c-config .map{
+    width: 320px;
+    box-sizing: border-box;
+    padding: 58px 20px 20px 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.c-config #map{
+    height: 198px;
+    border: 1px solid #ccc;
+}
+.c-config .map .map-box{
+    height: 32px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.c-config .map .map-box label{
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+    display: block;
+    float: left;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#fdfdfd),color-stop(1,#e0e0e0));
+}
+.c-config .map .map-box input{
+    width: 216px;
+    height: 28px;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-left-width: 0;
+    resize: none;
+    outline: none;
+    text-indent: 0.5em;
+}
+.c-config .txMap{
+    position: relative;
+}
+.c-config .txMap i{
+    width: 24px;
+    height: 24px;
+    padding: 0px;
+    margin: -30px auto auto -12px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: rgb(255, 39, 17);
+    -webkit-border-radius: 50% 50% 50% 0;
+    border-radius: 50% 50% 50% 0;
+    z-index: 1;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+.c-config .map .icon_find{
+    border: none;
+    width: 22px;
+    height: 30px;
+    background-size: 18px 18px;
+    background: #fff url(../../images/search.png) no-repeat center;
+    vertical-align: middle;
+    cursor: pointer;
+    position: absolute;
+    right: 2px;
+    top: 1px;
+}

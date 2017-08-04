@@ -1,0 +1,118 @@
+.c-form .form{
+    width: 320px;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #f8f8f8;
+    border-bottom: 1px solid #ccc;
+}
+.c-form .c-form-row{
+    margin-bottom: 10px;
+}
+.c-form .c-form-row select{
+    width: 78px;
+    margin: 0;
+    height: 26px;
+    min-height: 26px;
+    padding: 0 0 0 5px;
+    text-align: left;
+    border: 1px solid #ccc;
+    line-height: 24px;
+    color: #444;
+    float: left;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    background: url(../../images/x8-triangle.png)92% center no-repeat,-webkit-linear-gradient(top,#fff,#ddd);
+    outline: 0;
+}
+.c-form .c-form-row .fgx{
+    position: absolute;
+    width: 1px;
+    height: 25px;
+    left: 56px;
+    top: 1px;
+    border-right: 1px solid #ccc;
+}
+.c-form .c-form-row input,.c-form .c-form-submit input{
+    width: 164px;
+    height: 26px;
+    float: left;
+    line-height: 26px;
+    border: 1px solid #ccc;
+    border-left: 0px;
+    text-indent: .5rem;
+    color: #444;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    outline: 0;
+}
+.c-form .c-form-row a{
+    display: inline-block;
+    background: url(../../images/icon-s9fcea044bf.png) no-repeat 0 -1885px;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.c-form .c-form-row a:hover{
+    background-position: 0 -1861px;
+}
+.c-form .c-form-row a.first{
+    background: url(../../images/icon-s9fcea044bf.png) no-repeat 0 -1981px;
+}
+.c-form .c-form-row a.first:hover{
+    background-position: 0 -1957px;
+}
+.c-form .c-form-submit label{
+    width: 78px;
+    height: 26px;
+    line-height: 26px;
+    display: inline-block;
+    background: #ddd;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    float: left;
+    padding-left: .5rem;
+}
+
+.fixedLeftAlert{
+    width: 320px;
+    position: fixed;
+    right: 330px;
+    top: 101px;
+    border: 1px solid #b8b8b8;
+    border-radius: 5px;
+}
+.fixedLeftAlert .title{
+    height: 38px;
+    line-height: 38px;
+    border-radius: 5px 5px 0 0;
+    text-align: center;
+    border-bottom: 1px solid #bfbfbf;
+    background: #dedede;
+}
+.fixedLeftAlert .c-config-chil{
+    background: #f8f8f8;
+    padding: 10px 20px
+}
+.fixedLeftAlert .u-spinner{
+    width: 105px;
+    vertical-align: top;
+    display: inline-block;
+    font-size: 0px;
+}
+.fixedLeftAlert .u-spinner button{
+    width: 26px;
+    height: 26px;
+    vertical-align: top;
+    position: relative;
+    z-index: 1;
+}
+.fixedLeftAlert .u-spinner input{
+    width: 42px;
+    margin: 0 -1px;
+    height: 22px;
+    text-align: center;
+    text-indent: 0;
+    border: 1px solid rgba(0,0,0,.2);
+}

@@ -1,0 +1,531 @@
+
+/*粉丝列表*/
+.listItem {
+	font-size: 1.3em;
+	text-align: center;
+	margin-right: 1px;
+	letter-spacing: 1px;
+	color: #fff;
+	display: block;
+	width: 200px;
+	height: 50px;
+	line-height: 50px;
+	float: left;
+	background-color: #888888;
+	cursor: pointer;
+}
+
+.fansList {
+	overflow: hidden;
+}
+
+/*粉丝分组查询等*/
+.con-box1 {
+	overflow: hidden;
+}
+
+.txt-btn {
+	padding-bottom: 15px;
+	margin-top: 30px;
+	overflow: hidden;
+	display: block;
+	float: left;
+	width: 100%;
+}
+
+.srh {
+	display: block;
+	float: right;
+	padding-left: 5px;
+	margin-right:10px;
+	width: 195px;
+	z-index: 10;
+}
+
+.srh input {
+	height: 28px;
+	line-height: 28px;
+}
+
+.sbt {
+	background: url("/images/search.jpg") no-repeat center center;
+	cursor: pointer;
+	display: block;
+	float: right;
+	height: 30px;
+	margin-left: 162px;
+	position: absolute;
+	width: 24px;
+	z-index: 99;
+}
+
+.grey-btn {
+	display: block;
+	font-size: 14px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	width: 70px;
+}
+
+.blue-btn {
+	border: none;
+	background-color: #1aa1e7;
+	border-radius: 3px;
+	color: #fff;
+	font-size: 14px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	width: 70px;
+	margin-right: 15px;
+}
+
+.box1Btn {
+	margin-right: 15px;
+	cursor: pointer;
+}
+
+.box1Btn a {
+	color: #fff;
+}
+
+.box-btm30 {
+	border-bottom: 20px;
+	overflow: hidden;
+}
+
+.gjsx_type, a.gjsx_type {
+	display: block;
+	width: 70px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	color: #FF8F0B;
+	text-decoration: underline;
+	text-align: center;
+	float: right;
+	margin-left: 10px;
+}
+
+/*管理内容开始*/
+.msg-list {
+	border: 1px solid #edebeb;
+}
+
+.fanListItem {
+	height: 55px;
+	line-height: 55px;
+	text-align: center;
+	border-bottom: 1px solid #edebeb;
+}
+.fanListItem span{display: inline-block;}
+
+.fanListItem:last-child {
+	border-bottom: none;
+}
+
+.fansCheck {
+	vertical-align: middle;
+}
+
+.ConItem {
+	cursor: pointer;
+	font-size: 1.1em;
+	display: block;
+	width: 17%;
+	text-align: right;
+	margin-right: 35px;
+}
+
+.delIcon {
+	display: none;
+	cursor: pointer;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	background: url(../../../images/wxRed10.png) no-repeat;
+	width: 10px;
+	height: 10px;
+	z-index:89;
+}
+.condition {
+	position: relative;
+	padding: 2px 5px;
+	height: 20px;
+	border: 1px solid #edebeb;
+	border-radius: 4px;
+	line-height: 20px;
+	cursor:pointer;
+}
+.condition:hover {
+	background: rgba(0, 0, 0, 0.3); 
+	/* ie8支持rgba方法 */
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#4c000000,endColorstr=#4c000000);
+	color: #666;
+	cursor: pointer;
+}
+
+.condition:hover .delIcon {
+	display: block;
+} 
+
+.listTwo {
+	font-size: 1.1em;
+    margin: 10px 15px 10px 0px;
+    border: 0;
+    padding: 5px;
+    background-color: #1aa1e7;
+    cursor: pointer;
+    width: 80px;
+    border-radius: 3px;
+    color: #fff;
+}
+.fanItemTop{
+	border-bottom:1px solid #edebeb;
+}
+.fanItemTop .topSpanOne{
+	margin:0px 26px;
+	height:35px;
+	display: inline-block;
+}
+
+.txt-tle {
+	font-size: 1.1em;
+	height: 55px;
+    line-height: 55px;
+    text-align: center;
+    border-bottom: 1px solid #edebeb;
+}
+.txt-tle span{display: inline-block;}
+
+/* .f1{width: 5%;}
+.f2,.f5,.f6,.f7 {width: 12%;}
+.f3{width:20%;}
+.f4{width: 5%}  */
+.f1,.f4{width: 7%;}
+.f2,.f3,.f5,.f6,.f7{width: 13%;}
+.f8{width: 20%;}
+
+.fanMag span {
+	display: block;
+	text-align: center;
+	height: 55px;
+	display: -moz-box;
+	-moz-box-pack: center;
+	-moz-box-align: center;
+	-moz-box-orient: vertical;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+	overflow: hidden;
+}
+
+.fansHead {
+	display: block;
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	margin: auto;
+}
+
+.fanDel {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	background: url(../../../images/input02.png) no-repeat -35px -13px;
+}
+
+.fanDel:hover {
+	background: url(../../../images/input02.png) no-repeat 0px -13px;
+}
+
+.fansPage {
+	display: inline-block;
+	float: right;
+	margin-right: 10px;
+	font-size: 1.1em;
+}
+
+.fansPage a {
+	margin-left: 10px;
+    border: 1px solid #ddd;
+    line-height: 20px;
+    display: block;
+    float: left;
+    margin-top: 12px;
+    padding: 5px;
+    font-size: 14px; 
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.fansPage a:hover{
+    background: #fff2f5;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+/*分组管理   批量分组弹出层*/
+#newGroupLayer {
+	display: none;
+	width: 434px;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -217px;
+	margin-top: -64px;
+	z-index: 1002;
+	background-color: white;
+}
+/*分组列表，修改*/
+#newGroupLayer1 {
+	display: none;
+	width: 434px;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -217px;
+	margin-top: -62px;
+	z-index: 1002;
+	background-color: white;
+}
+
+#EditGroupLayer {
+	display: none;
+	width: 434px;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -217px;
+	margin-top: -62px;
+	z-index: 1002;
+	background-color: white;
+}
+
+.layerTop {
+	height: 31px;
+	background-color: #1aa1e7;
+	color: #fff;
+	font-size: 1.2em;
+	line-height: 46px;
+}
+
+.fanLayDel {
+	display: block;
+	width: 11px;
+	height: 11px;
+	float: right;
+	margin: 10px;
+	background: #000;
+	z-index: 98454;
+	cursor:pointer;
+	background: url(../../../images/fanLayDel.png) no-repeat right top;
+}
+
+.layCon {
+	overflow: hidden;
+	padding: 35px 10px;
+}
+
+.inpt {
+	margin: 0px 12px 0px 8px;
+	border: 2px solid #e0e0e0;
+	width: 260px;
+	height: 24px;
+	line-height: 24px;
+	padding: 3px;
+}
+
+.addBtn {
+	background-color: #1aa1e7;
+	color: #fff;
+	padding: 4px 16px;
+	border-radius: 3px;
+}
+
+.returnBtn {
+	border: 1px solid #dedede;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	cursor:pointer;
+	display: none;
+}
+
+#moveGroupLayer {
+	display: none;
+	width: 434px;
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-left: -217px;
+	margin-top: -62px;
+	z-index: 1002;
+	background-color: white;
+}
+
+.select {
+	width: 260px;
+	height: 30px;
+	line-height: 30px;
+	padding-left: 3px;
+}
+
+/*高级筛选内容*/
+.fanSct {
+	border: 1px solid #edebeb;
+	overflow: hidden;
+	border-top: 0 none;
+	margin-top: 7px;
+}
+
+.fanItem {
+	font-size: 1.1em;
+	height: 50px;
+	border-top: 1px solid #edebeb;
+	padding-top: 13px;
+	box-sizing: border-box;
+}
+
+.sctLeft {
+	width: 100px;
+	text-align: right;
+	display: block;
+	float: left;
+	color: #595959;
+	margin-right: 20px;
+	margin-top: 4px;
+}
+
+.fanAny {
+	height: 28px;
+	vertical-align: top;
+}
+
+.fanBox {
+	margin-top: 30px;
+	overflow: hidden;
+}
+
+.selectQuck {
+	overflow: hidden;
+	border-bottom: 1px solid #edebeb;
+}
+
+.selectAll {
+	display: block;
+	text-align: center;
+	height: 50px;
+	line-height: 50px;
+}
+
+.selectTit {
+	padding: 10px 0px;
+	border-bottom: 1px solid #edebeb;
+	overflow: hidden;
+}
+
+.fanBox {
+	border: 1px solid #edebeb;
+}
+
+.countrySet, .provSet, .citySet {
+	width: 100px;
+	vertical-align: middle;
+}
+
+.provSet option, .citySet option {
+	padding-top: 5px;
+}
+
+.fanBtn {
+	float: left;
+	margin-top: 5px;
+	cursor: pointer;
+}
+
+.fanMag p {
+	font-size: 14px;
+	text-align: center;
+	line-height: 60px;
+}
+
+/*分组类表样式*/
+.conGroup {
+	padding-top: 30px;
+}
+
+.conGroup ul {
+	background-color: #fafafa;
+}
+
+.groupLi {
+	width: 100%;
+	height: 40px;
+	border-bottom: 1px solid #dedede;
+	overflow:hidden;
+}
+
+.groupLi:first-child {
+	border-top: 1px solid #dedede;
+	background-color: #f5f5f5;
+}
+
+.groupLi span {
+	font-size: 1.1em;
+	display: block;
+	line-height: 40px;
+	height:40px;
+	display: -webkit-box;
+   -webkit-box-orient: vertical;
+   -webkit-box-pack: center;
+   -webkit-box-align: center;
+}
+
+.groupItem1 {
+	width: 10%;
+	text-align: center;
+}
+
+.groupItem2, .groupItem3{
+	width: 30%;
+}
+.groupItem4{
+	width:29%;
+} 
+.groupEdit {
+	display: block;
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+	background: url(../../../images/input02.png) no-repeat -36px -13px;
+	margin-right: 10px;
+	margin-top: 10px;
+}
+
+.groupEdit:hover {
+	background: url(../../../images/input02.png) 0px -13px;
+}
+
+.groupDel {
+	display: block;
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+	background: url(../../../images/input02.png) -19px -13px;
+	margin-top: 10px;
+}
+
+.groupDel:hover {
+	background: url(../../../images/input02.png) -54px -13px;
+}
+
+.massBtn{
+	border: 1px solid #dedede;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	cursor:pointer;
+}

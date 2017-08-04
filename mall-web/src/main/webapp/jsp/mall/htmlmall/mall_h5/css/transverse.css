@@ -1,0 +1,260 @@
+.transverse-page{
+    height: 0;
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+
+.transverse-box{
+    height: 150px;
+    position: relative;
+    left: -482px;
+    transition: left .3s;
+}
+.transverse-box-m{
+    height: 100%;
+    display: inline-block;
+    position: relative;
+}
+.transverse-box:hover{
+    left: 0px;
+}
+
+.transverse-box .swiper-container {
+    max-width: 432px;
+    height: 100%;
+    background-color: #e6e6e6;
+    display: inline-block;
+}
+.transverse-box .swiper-wrapper{
+    height: 100%;
+}
+.transverse-box .swiper-slide {
+    width: 144px!important;
+    height: 100%;
+    display: inline-block;
+    float: left;
+    overflow: hidden;
+}
+
+.transverse-box .show{
+    width: 80px;
+    height: 130px;
+    margin: 10px 0 10px 35px;
+    background-size: cover!important;
+    background-position: center center!important;
+    background-repeat: no-repeat!important;
+    background-color: white;
+}
+
+.transverse-box .swiper-slide:hover{
+    background-color: #b2b2b2;
+}
+
+.transverse-box  .tp-add{
+    width: 50px;
+    height: 100%;
+    text-align: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    position: absolute;
+    right: -50px;
+    top: 0;
+    color: white;
+    background: #444;
+    font-size: 48px;
+    font-weight: 400;
+    font-family: -webkit-pictograph,serif,'宋体';
+    cursor: pointer;
+}
+
+.transverse-box  .show .com-preview {
+    -moz-transform: scale(.208,.208);
+    -ms-transform: scale(.208,.208);
+    -webkit-transform: scale(.208,.208);
+    transform: scale(.208,.208);
+    -moz-transform-origin: left top;
+    -ms-transform-origin: left top;
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    position: absolute;
+}
+.transverse-box .nav-container {
+    position: absolute;
+    cursor: pointer!important;
+}
+.transverse-box .close{
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    -webkit-transform: translate(22px,-22px);
+    transform: translate(22px,-22px);
+    -webkit-transition: all .5s;
+    transition: all .5s;
+    background-position: 0 -976px;
+    background-image: url(../images/icon-s9fcea044bf.png);
+    background-repeat: no-repeat;
+}
+.transverse-box .swiper-slide:hover .close{
+    -webkit-transform: translate(0);
+    transform: translate(0);
+}
+.copy{
+    width: 15px;
+    height: 17px;
+    background: url(../images/rightSpirite.png) no-repeat -10px -205px;
+    position: absolute;
+    right: 6px;
+    top: 68px;
+    transition: all .5s;
+    -webkit-transform: translate(22px,0px);
+    transform: translate(22px,0px);
+}
+.c-ct:hover .copy{
+    -webkit-transform: translate(0px,0px);
+    transform: translate(0px,0px);
+}
+.box-blur{
+    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -o-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(1px);
+}
+.transverse-dom{
+    position: absolute;
+    z-index: 99;
+    background-color: #fff;
+    background-size: cover!important;
+    background-position: center center!important;
+    background-repeat: no-repeat!important;
+}
+.transverse-dom.ontrans{
+    z-index: 9999;
+}
+.editorFrame-main{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 9;
+    background-size: cover!important;
+    background-position: center center!important;
+    background-repeat: no-repeat!important;
+}
+#dashboard{
+    z-index: 999;
+}
+#dashboard.ontrans{
+    background:none!important;
+}
+
+.left0{
+    left:0px;
+}
+.swiper-btn ul li{
+    float: left;
+    box-sizing: border-box;
+    padding: 5px;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    position: relative;
+    margin: 0 20px 20px 0;
+    background: center center no-repeat;
+    background-size: cover;
+}
+.swiper-btn ul li:nth-child(3n){
+    margin-right: 0;
+}
+.swiper-btn{
+    overflow: hidden;
+}
+
+.swiper-btn .remove{
+    background: url("../images/imgClose.png");
+    background-size: contain;
+    color: #fff;
+    cursor: pointer;
+    transition: all .5s;
+    position: absolute;
+    right: -50px;
+    top: -80px;
+    width: 25px;
+    height: 25px;
+    text-indent: 7px;
+    line-height: 33px;
+}
+.left-move,.right-move{
+    position: absolute;
+    bottom: 0;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    transition: all .5s;
+}
+.swiper-btn .left-move{
+    left: -30px;
+    background: url(../images/left.png) no-repeat;
+}
+.swiper-btn .right-move{
+    right: -30px;
+    background: url(../images/right.png) no-repeat;
+}
+.swiper-btn li:hover .remove {
+    right: 0px;
+    top: 0px;
+}
+
+.swiper-btn li:hover .right-move {
+    right: 10px;
+}
+.swiper-btn li:hover .left-move {
+    left: 10px;
+}
+
+#bgswiper{
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+#bgswiper div{
+    width: 100%;
+    height:100%;
+    position: absolute;
+    top:0;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+
+}
+#bgswiper div.animate-pic{
+    animation: pic 3s linear;
+    -webkit-animation: pic 3s linear;
+}
+
+@keyframes pic{
+    0% { transform: scale(1.2); -webkit-transform: scale(1.2); opacity: 1;}
+    80% { transform: scale(1.04); -webkit-transform: scale(1.04); opacity: 1;}
+    100% { transform: scale(1); -webkit-transform: scale(1); opacity: 0; }
+}
+@-webkit-keyframes pic{
+    0% { transform: scale(1.2); -webkit-transform: scale(1.2); opacity: 1;}
+    80% { transform: scale(1.04); -webkit-transform: scale(1.04); opacity: 1;}
+    100% { transform: scale(1); -webkit-transform: scale(1); opacity: 0;}
+}
+

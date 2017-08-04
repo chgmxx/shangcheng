@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="js/jcrop/jcrop.css"/>
+<div class="autoWh jcrop-wrap">
+    <div class="jcrop-main" style="width:{{datawidth}}px;height:{{dataheight}}px;left:{{dataleft}}px;top:{{datatop}}px;cursor: move;">
+        <div style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;z-index: 9;">
+            <div class="jcrop-hline jh-top"></div>
+            <div class="jcrop-hline jh-left"></div>
+            <div class="jcrop-hline jh-right"></div>
+            <div class="jcrop-hline jh-bottom"></div>
+            <div class="ord-t-l jcrop-handle"></div>
+            <div class="ord-t-c jcrop-handle"></div>
+            <div class="ord-t-r jcrop-handle"></div>
+            <div class="ord-m-l jcrop-handle"></div>
+            <div class="ord-m-r jcrop-handle"></div>
+            <div class="ord-b-l jcrop-handle"></div>
+            <div class="ord-b-c jcrop-handle"></div>
+            <div class="ord-b-r jcrop-handle"></div>
+        </div>
+        <div style="position: absolute;width: 100%;height: 100%;top: 0;left: 0;z-index: 8;overflow: hidden;">
+            <img ng-show="dispic" ng-src="{{datasrc}}"
+                 style="position: absolute;width:{{picW}}px;height:{{picH}}px;left:{{-dataleft}}px;top:{{-datatop}}px">
+        </div>
+    </div>
+    <div class="jcrop-tracker autoWh" style="width:{{picW}}px;height:{{picH}}px;"></div>
+    <img class="jcrop-img" ng-src="{{datasrc}}" style="width:{{picW}}px;height:{{picH}}px;">
+</div>

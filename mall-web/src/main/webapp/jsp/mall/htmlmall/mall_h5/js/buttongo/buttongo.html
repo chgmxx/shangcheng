@@ -1,0 +1,121 @@
+<h1 style="color:#444"><img src="images/externallinks.png"/>按钮-{{title[data.btnType]}}</h1>
+<div class="btn" data-ng-click="init_btn()">
+    <div>
+        <label>{{explain[data.btnType]}}</label>
+    </div>
+    <div style="height: 10px;"></div>
+    <div class="c-dropdown-row">
+        <div data-ng-if="btnType(1)">
+            <input type="text" class="btn-input" data-ng-model="data.url" placeholder="请输入链接，如http://www.duofriend.com">
+            <div style="height: 15px"></div>
+           <!--  <div>
+                <select style="width:49%">
+                    <option>模块1</option>
+                </select>
+                <select style="width:49%">
+                    <option>模块2</option>
+                </select>
+            </div> -->
+        </div>
+        <div data-ng-if="btnType(2)">
+            <input type="text" class="btn-input" data-ng-model="data.phone" placeholder="请输入电话号码，如4008894522">
+        </div>
+        <div data-ng-if="btnType(3)">
+            <select ng-model="data.page" ng-options="('第 '+ p +' 页') for p in pages"></select>
+        </div>
+        <div data-ng-if="btnType(4)">
+            <input type="text" class="btn-input" data-ng-model="data.QQ" placeholder="请输入QQ号码，如4008894522">
+        </div>
+        <div class="swiper-btn" data-ng-if="btnType(5)">
+            <ul>
+                <li style="background-image: url('{{src}}')" ng-repeat="src in data.swiper track by $index">
+                    <i class="remove" data-ng-click="removeswiperpic($index)"></i>
+                    <i class="left-move" data-ng-click="setsorting($index,$index-1)"></i>
+                    <i class="right-move" data-ng-click="setsorting($index,$index+1)"></i>
+                </li>
+                <li class="addswiper-icon" data-ng-click="setprovenance('pics')">+</li>
+            </ul>
+            <input type="hidden" class="swiper-btn-tip" ng-click="setswiperpage($event)"/>
+        </div>
+    </div>
+    <div>
+        <section class="c-externallinks-switch">
+            <ul class="f-fix">
+                <li data-ng-class={"z-active":!data.viewType} data-ng-click="setviewType(false)">
+                    <a>文字按钮</a>
+                </li>
+                <li data-ng-class={"z-active":data.viewType} data-ng-click="setviewType(true)">
+                    <a>图标按钮</a>
+                </li>
+            </ul>
+        </section>
+        <section class="c-externallinks-setting" ng-if="!data.viewType">
+            <div class="c-btn-input">
+                <input type="text" class="btnTxt" ng-model="data.dataText.value">
+            </div>
+            <div class="f-fix c-font-setting">
+                <ul class="u-tab">
+                    <li class="dropdown" data-ng-click="settextSize($event)">
+                        <a class="icon-x16 icon-font-size"></a>
+                    </li>
+                    <li class="dropdown" data-ng-click="setbtncolorBoard($event)">
+                        <a class="icon-x16 icon-font-color"></a>
+                    </li>
+                    <li class="dropdown" data-ng-click="settextAlign($event)">
+                        <a class="icon-x16 icon-font-center"></a>
+                    </li>
+                    <li class="dropdown" data-ng-click="settextqt($event)">
+                        <a class="icon-x16 icon-bold"></a>
+                    </li>
+                </ul>
+
+                <ul class="dropdown-list text-size" ng-show="textSize">
+                    <li ng-class={'selected':init_font(data)} data-ng-repeat="data in font_size"
+                        data-ng-click="setFontSize(data)">{{data}}
+                    </li>
+                </ul>
+
+                <ul class="dropdown-list text-align" ng-show="textAlign">
+                    <li ng-class={"selected":init_font("left")} ng-click="setFontAlign('left')"><i class="icon-x16 icon-left"></i></li>
+                    <li ng-class={"selected":init_font("center")} ng-click="setFontAlign('center')"><i class="icon-x16 icon-center"></i></li>
+                    <li ng-class={"selected":init_font("right")} ng-click="setFontAlign('right')"><i class="icon-x16 icon-right"></i></li>
+                </ul>
+
+                <ul class="dropdown-list text-line" ng-show="textqt">
+                    <li ng-class={"selected":init_bold} ng-click="set_f_bold()"><i class="icon-x16 icon-bold"></i></li>
+                    <li ng-class={"selected":init_italic} ng-click="set_f_italic()"><i class="icon-x16 icon-italic"></i></li>
+                    <li ng-class={"selected":init_decoration} ng-click="set_f_decoration()"><i class="icon-x16 icon-decoration"></i></li>
+                </ul>
+            </div>
+        </section>
+        <section class="c-externallinks-setting" ng-if="data.viewType">
+            <div class="c-btn-input">
+                <div class="u-image-icon" style="background-image:url({{data.dataPic.src}})"></div>
+            </div>
+            <div class="f-fix c-font-setting">
+                <div class="u-image-change-btn" data-ng-click="setprovenance('btngo')">更换图标</div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- 取色器 -->
+<section class="color-picker" ng-show="btncolorBoard" style="top:{{colorBoardTop + 30}}px">
+    <div class="">
+        <div id="picker"></div>
+        <div style="height:20px;"></div>
+        <div class="form-item">
+            <div class="cp-color-warp">
+                <div class="cpColor bg-color-show"></div>
+                <input type="text" class="btncolor" ng-model="data.dataText.font_color"/>
+            </div>
+            <!--
+           <div class="bg-color-input">
+               <label>透明</label>
+               <input type="text" id="opacity" class="opacity" value="100" />
+           </div>
+           -->
+        </div>
+    </div>
+</section>
+<!-- end取色器 -->
