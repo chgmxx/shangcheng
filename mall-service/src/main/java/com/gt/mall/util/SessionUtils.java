@@ -18,17 +18,21 @@ public class SessionUtils {
      */
     public static BusUser getLoginUser( HttpServletRequest request ) {
 	try {
-	    Object obj = request.getSession().getAttribute( Constants.SESSION_BUSINESS_KEY );
-	    if ( obj != null ) {
-		return JSONObject.parseObject( obj.toString(), BusUser.class );
-	    } else {
+	    Object obj = request.getSession().getAttribute(Constants.SESSION_BUSINESS_KEY);
+
+	    if(obj != null){
+
+		BusUser user =  JSONObject.toJavaObject((JSONObject.parseObject(obj.toString())),BusUser.class );
+		return user;
+	    }else{
 		return null;
 	    }
-	} catch ( Exception e ) {
-	    log.info( e.getLocalizedMessage() );
+	} catch (Exception e) {
+	    log.info(e.getLocalizedMessage());
 	    e.printStackTrace();
 	}
 	return null;
+
     }
 
 

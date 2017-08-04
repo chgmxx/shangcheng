@@ -59,12 +59,12 @@ public class Constants {
     public static final Integer SMS_MODEL = 5;
 
     /** 商家账户在session key */
-    public static final String SESSION_BUSINESS_KEY = SESSION_KEY + "business_key";
+    public static final String SESSION_BUSINESS_KEY =  "business_key";
 
     /** 商家微信在session key */
-    public static final String SESSION_WXPUBLICUSERS_KEY = SESSION_KEY + "wxPublicUsers";
+    public static final String SESSION_WXPUBLICUSERS_KEY = "wxPublicUsers";
 
     /** 会员 **/
-    public static final String SESSION_MEMBER_KEY = SESSION_KEY + "member";
+    public static final String SESSION_MEMBER_KEY = "member";
 
 }
