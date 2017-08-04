@@ -52,7 +52,7 @@ public class MallSeckillController extends BaseController {
     public String start( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mSeckill/index.do" );
 	request.setAttribute( "title", "秒杀管理" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -89,7 +89,7 @@ public class MallSeckillController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/seckill/seckill_index";
+	return "mall/seckill/seckill_index";
     }
 
     @CommAnno( menu_url = "mSeckill/start.do" )
@@ -101,7 +101,7 @@ public class MallSeckillController extends BaseController {
 	}
 	request.setAttribute( "iframe_url", url );
 	request.setAttribute( "title", "秒杀管理-编辑秒杀" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -131,7 +131,7 @@ public class MallSeckillController extends BaseController {
 	    logger.error( "进入秒杀编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seckill/seckill_edit";
+	return "mall/seckill/seckill_edit";
     }
 
     /**
@@ -233,7 +233,7 @@ public class MallSeckillController extends BaseController {
 
 	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    String http = PropertiesUtil.getResourceUrl();// 图片url链接前缀
@@ -285,7 +285,7 @@ public class MallSeckillController extends BaseController {
 	    logger.error( "进入秒杀商品的页面出错：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seckill/phone/seckillall";
+	return "mall/seckill/phone/seckillall";
     }
 
     @RequestMapping( "79B4DE7C/getSeckillByJedis" )

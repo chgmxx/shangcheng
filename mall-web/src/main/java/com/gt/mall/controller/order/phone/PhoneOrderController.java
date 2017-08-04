@@ -452,7 +452,7 @@ public class PhoneOrderController extends BaseController {
 	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    logger.info( "访问提交订单页面花费：" + second + "秒" );
 	}
-	return "merchants/trade/mall/order/phone/submitOrder";
+	return "mall/order/phone/submitOrder";
     }
 
     @SuppressWarnings( { "unchecked", "unused" } )
@@ -869,7 +869,7 @@ public class PhoneOrderController extends BaseController {
 	    logger.error( "收货地址列表页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/phone/addressList";
+	return "mall/order/phone/addressList";
     }
 
     /**
@@ -930,7 +930,7 @@ public class PhoneOrderController extends BaseController {
 	    logger.error( "跳转至新增/修改收货地址页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/phone/addAddress";
+	return "mall/order/phone/addAddress";
     }
 
    /* *//**
@@ -1187,7 +1187,7 @@ public class PhoneOrderController extends BaseController {
 	    logger.error( "我的订单列表页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/phone/myOrder";
+	return "mall/order/phone/myOrder";
     }
 
     /**
@@ -1251,7 +1251,7 @@ public class PhoneOrderController extends BaseController {
 	    logger.error( "进入申请退款页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/phone/requestRefund";
+	return "mall/order/phone/requestRefund";
     }
 
     /**
@@ -1412,7 +1412,7 @@ public class PhoneOrderController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/order/phone/orderDetail";
+	return "mall/order/phone/orderDetail";
     }
 
     /**
@@ -1464,7 +1464,7 @@ public class PhoneOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/take/phone/takeall";
+	return "mall/take/phone/takeall";
     }
 
     /**
@@ -1526,7 +1526,7 @@ public class PhoneOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/phone/daifuShare";
+	return "mall/order/phone/daifuShare";
     }
 
     /**
@@ -1610,7 +1610,7 @@ public class PhoneOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/phone/daifu";
+	return "mall/order/phone/daifu";
     }
 
     /**

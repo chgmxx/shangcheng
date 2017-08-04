@@ -54,7 +54,7 @@ public class MallProductController extends BaseController {
     public String productStart( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mPro/index.do" );
 	request.setAttribute( "title", "商品管理" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -116,7 +116,7 @@ public class MallProductController extends BaseController {
 	    logger.error( "进入商品列表异常" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/product/product_index";
+	return "mall/product/product_index";
     }
 
     /**
@@ -160,7 +160,7 @@ public class MallProductController extends BaseController {
 	}
 	request.setAttribute( "iframe_url", url );
 	request.setAttribute( "title", "商品管理-编辑商品" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -250,7 +250,7 @@ public class MallProductController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/product/product_edit";
+	return "mall/product/product_edit";
     }
 
     /**
@@ -405,7 +405,7 @@ public class MallProductController extends BaseController {
 	    logger.error( "获取拍卖二维码图片失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/product/iframe/product_shop_buy";
+	return "mall/product/iframe/product_shop_buy";
     }
 
     /**

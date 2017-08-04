@@ -105,7 +105,7 @@ public class MallPageController extends BaseController {
     public String res_start( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mallPage/index.do" );
 	request.setAttribute( "title", "微商城" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     @RequestMapping( "/index" )
@@ -232,7 +232,7 @@ public class MallPageController extends BaseController {
      */
     @RequestMapping( "/designPage" )
     public String designPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	String jsp = "merchants/trade/mall/page/editor/index";
+	String jsp = "mall/page/editor/index";
 	try {
 	    //获取轮播选择类型
 	    Map< String,Object > lbMap = new HashMap<>();
@@ -496,7 +496,7 @@ public class MallPageController extends BaseController {
 
 	    boolean isShop = mallPageService.wxShopIsDelete( obj.getPagStoId() );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 	    Map storeMap = mallPageService.shopmessage( obj.getPagStoId() );//获取店铺信息
 
@@ -748,7 +748,7 @@ public class MallPageController extends BaseController {
 	    logger.error( "选择预售商品出错：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/page/branchPresale";
+	return "mall/page/branchPresale";
 
     }
 
@@ -794,7 +794,7 @@ public class MallPageController extends BaseController {
 
 	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    if ( CommonUtil.isNotEmpty( param ) ) {
@@ -1085,10 +1085,10 @@ public class MallPageController extends BaseController {
 
 		//商品已下架或者已删除
 	    } else if ( is_delete.equals( "1" ) || is_publish.equals( "-1" ) ) {
-		jsp = "merchants/trade/mall/product/phone/shopdelect";
+		jsp = "mall/product/phone/shopdelect";
 		//商品审核中或者未上架
 	    } else {
-		jsp = "merchants/trade/mall/product/phone/shopdelect";
+		jsp = "mall/product/phone/shopdelect";
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "访问商城商品详细页面异常：" + e.getMessage() );
@@ -1190,7 +1190,7 @@ public class MallPageController extends BaseController {
 	    logger.error( "购物车异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/product/phone/shoppingcare";
+	return "mall/product/phone/shoppingcare";
 
     }
 
@@ -1258,7 +1258,7 @@ public class MallPageController extends BaseController {
     public String shopdetails( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) {
 	MallProductDetail obj = mallPageService.shopdetails( id );
 	request.setAttribute( "obj", obj );
-	return "merchants/trade/mall/product/phone/shopdetails";
+	return "mall/product/phone/shopdetails";
     }
 
     /**
@@ -1289,7 +1289,7 @@ public class MallPageController extends BaseController {
 	    }*/
 	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    String http = PropertiesUtil.getResourceUrl();//图片url链接前缀
@@ -1379,7 +1379,7 @@ public class MallPageController extends BaseController {
 	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    logger.info( "访问全部商品页面花费：" + second + "秒" );
 	}
-	return "merchants/trade/mall/product/phone/shoppingall";
+	return "mall/product/phone/shoppingall";
 
     }
 
@@ -1463,7 +1463,7 @@ public class MallPageController extends BaseController {
 	request.setAttribute( "shopList", shopList );
 	request.setAttribute( "http", http );
 	mallPageService.getCustomer( request, userid );
-	return "merchants/trade/mall/store/phone/shopall";
+	return "mall/store/phone/shopall";
 
     }
 
@@ -1487,7 +1487,7 @@ public class MallPageController extends BaseController {
 	request.setAttribute( "shopList", shopList );
 	request.setAttribute( "http", http );
 	mallPageService.getCustomer( request, userId );
-	return "merchants/trade/mall/store/phone/shopall";
+	return "mall/store/phone/shopall";
 
     }
 
@@ -1631,7 +1631,7 @@ public class MallPageController extends BaseController {
 	}
 	mallPageService.getCustomer( request, userid );
 
-	return "merchants/trade/mall/store/phone/shoplist";
+	return "mall/store/phone/shoplist";
     }
 
     /**

@@ -56,7 +56,7 @@ public class MallPifaController extends BaseController {
 	String iframe_url = "mallWholesalers/index.do";
 	request.setAttribute( "iframe_url", iframe_url );
 	request.setAttribute( "title", "微商城" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -72,7 +72,7 @@ public class MallPifaController extends BaseController {
 	//todo course.urlquery
 	//	request.setAttribute("videourl", course.urlquery("84"));
 
-	return "merchants/trade/mall/wholesalers/wholesalerList";
+	return "mall/wholesalers/wholesalerList";
     }
 
     /**
@@ -91,7 +91,7 @@ public class MallPifaController extends BaseController {
 		request.setAttribute( "pfSet", obj );
 	    }
 	}
-	return "merchants/trade/mall/wholesalers/setWholesaler";
+	return "mall/wholesalers/setWholesaler";
     }
 
     /*
@@ -257,7 +257,7 @@ public class MallPifaController extends BaseController {
 	    logger.error( "批发管理列表异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/wholesalers/wholesalersIndex";
+	return "mall/wholesalers/wholesalersIndex";
     }
 
     @CommAnno( menu_url = "mallWholesalers/start.do" )
@@ -269,7 +269,7 @@ public class MallPifaController extends BaseController {
 	}
 	request.setAttribute( "iframe_url", url );
 	request.setAttribute( "title", "批发管理-编辑批发" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -301,7 +301,7 @@ public class MallPifaController extends BaseController {
 	    logger.error( "进入批发编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/wholesalers/wholesalersEdit";
+	return "mall/wholesalers/wholesalersEdit";
     }
 
     /**

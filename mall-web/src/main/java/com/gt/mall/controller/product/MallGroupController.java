@@ -54,7 +54,7 @@ public class MallGroupController extends BaseController {
     public String group_start( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mPro/group/group_index.do" );
 	request.setAttribute( "title", "商品分组" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -95,7 +95,7 @@ public class MallGroupController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/product/group_index";
+	return "mall/product/group_index";
     }
 
     /**
@@ -150,7 +150,7 @@ public class MallGroupController extends BaseController {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/product/group_edit";
+	return "mall/product/group_edit";
     }
 
     /**
@@ -328,7 +328,7 @@ public class MallGroupController extends BaseController {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/product/groupPopUp";
+	return "mall/product/groupPopUp";
     }
 
     /**
@@ -351,7 +351,7 @@ public class MallGroupController extends BaseController {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/product/groupSyncPopUp";
+	return "mall/product/groupSyncPopUp";
     }
 
     /**
@@ -392,7 +392,7 @@ public class MallGroupController extends BaseController {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/product/label_index";
+	return "mall/product/label_index";
     }
 
     /**

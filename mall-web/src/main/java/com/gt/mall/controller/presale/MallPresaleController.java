@@ -53,7 +53,7 @@ public class MallPresaleController extends BaseController {
     public String start( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mPresale/index.do" );
 	request.setAttribute( "title", "预售管理" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -106,7 +106,7 @@ public class MallPresaleController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/presale/presale_index";
+	return "mall/presale/presale_index";
     }
 
     @CommAnno( menu_url = "mPresale/start.do" )
@@ -119,7 +119,7 @@ public class MallPresaleController extends BaseController {
 	}
 	request.setAttribute( "iframe_url", url );
 	request.setAttribute( "title", "预售管理-编辑预售" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -151,7 +151,7 @@ public class MallPresaleController extends BaseController {
 	    logger.error( "进入预售编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/presale/presale_edit";
+	return "mall/presale/presale_edit";
     }
 
     /**
@@ -239,7 +239,7 @@ public class MallPresaleController extends BaseController {
     public String to_deposit( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mPresale/deposit.do" );
 	request.setAttribute( "title", "预售管理" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -263,7 +263,7 @@ public class MallPresaleController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/presale/presale_deposit";
+	return "mall/presale/presale_deposit";
     }
 
     /**
@@ -290,7 +290,7 @@ public class MallPresaleController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/presale/presale_set";
+	return "mall/presale/presale_set";
     }
 
     /**
@@ -383,7 +383,7 @@ public class MallPresaleController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/presale/returnDepositPopUp";
+	return "mall/presale/returnDepositPopUp";
     }
 
     /**

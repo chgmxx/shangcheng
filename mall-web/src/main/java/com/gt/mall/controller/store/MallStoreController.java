@@ -54,7 +54,7 @@ public class MallStoreController extends BaseController {
     public String res_start( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "store/index.do" );
 	request.setAttribute( "title", "微商城" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     @RequestMapping( "/index" )
@@ -97,7 +97,7 @@ public class MallStoreController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/store/index";
+	return "mall/store/index";
     }
 
     /**
@@ -156,7 +156,7 @@ public class MallStoreController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/store/edit";
+	return "mall/store/edit";
     }
 
     /**
@@ -209,7 +209,7 @@ public class MallStoreController extends BaseController {
     public String viewQR( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	MallStore sto = mallStoreService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	request.setAttribute( "qrCode", sto.getStoQrCode() );
-	return "merchants/trade/mall/store/viewQR";
+	return "mall/store/viewQR";
     }
 
     /**
@@ -254,7 +254,7 @@ public class MallStoreController extends BaseController {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/set/set_index";
+	return "mall/set/set_index";
     }
 
     /**

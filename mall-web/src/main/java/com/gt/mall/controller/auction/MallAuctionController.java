@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -831,13 +832,11 @@ public class MallAuctionController extends BaseController {
      */
     @RequestMapping( value = "/79B4DE7C/addMargin" )
     @SysLogAnnotation( op_function = "2", description = "拍卖交纳保证金" )
-    public void addMargin( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) {
+    public void addMargin( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) throws IOException {
 	logger.info( "进入生成订单页面-拍卖" );
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	PrintWriter out = null;
 	Map< String,Object > result = new HashMap< String,Object >();
 	try {
-	    out = response.getWriter();
 	    String memberId = SessionUtils.getLoginMember( request ).getId().toString();
 	    if ( CommonUtil.isNotEmpty( param.get( "userId" ) ) ) {
 		memberId = param.get( "userId" ).toString();
@@ -857,9 +856,7 @@ public class MallAuctionController extends BaseController {
 	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    logger.info( "交纳保证金花费：" + second + "秒" );
 
-	    out.write( JSONObject.fromObject( result ).toString() );
-	    out.flush();
-	    out.close();
+	    CommonUtil.write( response,result );
 	}
     }
 

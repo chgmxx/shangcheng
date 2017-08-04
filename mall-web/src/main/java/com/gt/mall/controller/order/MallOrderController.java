@@ -64,7 +64,7 @@ public class MallOrderController extends BaseController {
 	}
 	request.setAttribute( "iframe_url", iframe_url );
 	request.setAttribute( "title", "微商城" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -129,7 +129,7 @@ public class MallOrderController extends BaseController {
 	    logger.info( "访问提交订单页面花费：" + second + "毫秒" );
 	}
 	logger.info( "订单加载完成，跳转页面中。。。。" );
-	return "merchants/trade/mall/order/orderIndex";
+	return "mall/order/orderIndex";
 
     }
 
@@ -192,7 +192,7 @@ public class MallOrderController extends BaseController {
 	request.setAttribute( "result", result );
 	request.setAttribute( "type", type );
 	request.setAttribute( "orderId", orderId );
-	return "merchants/trade/mall/order/orderPopUp";
+	return "mall/order/orderPopUp";
     }
 
     /**
@@ -205,7 +205,7 @@ public class MallOrderController extends BaseController {
 	request.setAttribute( "result", result );
 	request.setAttribute( "orderId", orderId );
 	request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
-	return "merchants/trade/mall/order/orderDetail";
+	return "mall/order/orderDetail";
     }
 
     /**
@@ -256,7 +256,7 @@ public class MallOrderController extends BaseController {
 	request.setAttribute( "busUserId", user.getId() );
 	request.setAttribute( "http", PropertiesUtil.getArticleUrl() );
 
-	return "merchants/trade/mall/order/returnPopUp";
+	return "mall/order/returnPopUp";
     }
 
     /**
@@ -391,6 +391,6 @@ public class MallOrderController extends BaseController {
 	    logger.error( "商城重新生成订单号异常" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/orderPrint";
+	return "mall/order/orderPrint";
     }
 }
