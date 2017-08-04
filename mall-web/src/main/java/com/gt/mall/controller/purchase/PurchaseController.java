@@ -23,6 +23,6 @@ public class PurchaseController {
     @RequestMapping( value = "/index" )
     public String index( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "/purchaseOrder/orderIndex.do" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 }

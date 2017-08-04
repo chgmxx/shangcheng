@@ -77,7 +77,7 @@ public class PurchaseOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/index";
+	return "mall/purchase/index";
     }
 
     /**
@@ -107,7 +107,7 @@ public class PurchaseOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/chakanxiangqing";
+	return "mall/purchase/chakanxiangqing";
     }
 
     /**
@@ -153,7 +153,7 @@ public class PurchaseOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/index-add";
+	return "mall/purchase/index-add";
     }
 
     /**
@@ -187,7 +187,7 @@ public class PurchaseOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/choosePro";
+	return "mall/purchase/choosePro";
     }
 
     /**
@@ -203,7 +203,7 @@ public class PurchaseOrderController extends BaseController {
     public String orderIndexRemarks( HttpServletRequest request, Integer languageId, Integer orderId ) {
 	request.setAttribute( "languageId", languageId );
 	request.setAttribute( "orderId", orderId );
-	return "merchants/trade/mall/purchase/orderRemark";
+	return "mall/purchase/orderRemark";
     }
 
     /**
@@ -430,7 +430,7 @@ public class PurchaseOrderController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/shoukuanxinxi";
+	return "mall/purchase/shoukuanxinxi";
     }
 
     /**
@@ -458,7 +458,7 @@ public class PurchaseOrderController extends BaseController {
 	//设置订单的留言为已阅状态
 	languageDAO.updateLanguangeByOrderId( orderId );
 	request.setAttribute( "languageList", languageList );
-	return "merchants/trade/mall/purchase/liuyanguanli";
+	return "mall/purchase/liuyanguanli";
     }
 
     /**
@@ -487,7 +487,7 @@ public class PurchaseOrderController extends BaseController {
 	    }
 	}
 	request.setAttribute( "languageList", languageList );
-	return "merchants/trade/mall/purchase/detail";
+	return "mall/purchase/detail";
     }
 
 }

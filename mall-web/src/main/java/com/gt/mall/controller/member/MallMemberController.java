@@ -185,7 +185,7 @@ public class MallMemberController extends BaseController {
 	    logger.error( "手机订单页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/member/index";
+	return "mall/member/index";
     }
 
     /**
@@ -234,7 +234,7 @@ public class MallMemberController extends BaseController {
 	    logger.error( "进入评论页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/order/phone/orderAppraise";
+	return "mall/order/phone/orderAppraise";
     }
 
     /**
@@ -318,7 +318,7 @@ public class MallMemberController extends BaseController {
 	    logger.error( "查询我的评论有误！" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "/merchants/trade/mall/order/phone/myAppraise";
+	return "/mall/order/phone/myAppraise";
     }
 
     /**
@@ -370,7 +370,7 @@ public class MallMemberController extends BaseController {
 	    e.printStackTrace();
 	    logger.error( "我的收藏页面异常：" + e.getMessage() );
 	}
-	return "merchants/trade/mall/member/collectAll";
+	return "mall/member/collectAll";
 
     }
 
@@ -539,6 +539,6 @@ public class MallMemberController extends BaseController {
 	if ( CommonUtil.isNotEmpty( params.get( "type" ) ) ) {
 	    request.setAttribute( "type", params.get( "type" ) );
 	}
-	return "merchants/trade/mall/order/phone/tencentMap";
+	return "mall/order/phone/tencentMap";
     }
 }

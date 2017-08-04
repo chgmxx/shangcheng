@@ -42,6 +42,6 @@ public class PurchaseOrderStatisticsController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/statisticsIndex";
+	return "mall/purchase/statisticsIndex";
     }
 }

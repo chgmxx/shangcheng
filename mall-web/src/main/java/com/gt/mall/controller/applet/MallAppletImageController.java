@@ -47,7 +47,7 @@ public class MallAppletImageController extends BaseController {
     public String start( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mApplet/index.do" );
 	request.setAttribute( "title", "小程序管理" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -85,7 +85,7 @@ public class MallAppletImageController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/applet/applet_index";
+	return "mall/applet/applet_index";
     }
 
     /**
@@ -110,7 +110,7 @@ public class MallAppletImageController extends BaseController {
 	    logger.error( "进入小程序编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/applet/applet_edit";
+	return "mall/applet/applet_edit";
     }
 
     /**

@@ -44,7 +44,7 @@ public class PurchaseContractController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/hetongguanli";
+	return "mall/purchase/hetongguanli";
     }
 
     @RequestMapping( value = "/contractForm" )
@@ -58,7 +58,7 @@ public class PurchaseContractController extends BaseController {
 	}
 	request.setAttribute( "title", title );
 	request.setAttribute( "contract", contract );
-	return "merchants/trade/mall/purchase/hetong-add";
+	return "mall/purchase/hetong-add";
     }
 
     @ResponseBody

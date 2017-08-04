@@ -81,7 +81,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    if ( shopId > 0 ) {
 		boolean isShop = pageService.wxShopIsDelete( shopId );
 		if ( !isShop ) {
-		    return "merchants/trade/mall/product/phone/shopdelect";
+		    return "mall/product/phone/shopdelect";
 		}
 		params.put( "shopId", shopId );
 	    }
@@ -117,7 +117,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    logger.error( "进入积分商城异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/phone/integral_index";
+	return "mall/integral/phone/integral_index";
     }
 
     /**
@@ -193,7 +193,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    logger.error( "进入兑换记录的页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/phone/integral_record";
+	return "mall/integral/phone/integral_record";
     }
 
     /**
@@ -242,7 +242,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    logger.error( "进入积分明细的页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/phone/integral_detail";
+	return "mall/integral/phone/integral_detail";
     }
 
     /**
@@ -332,7 +332,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    logger.error( "进入积分商品明细的页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/phone/integral_product";
+	return "mall/integral/phone/integral_product";
     }
 
     /**
@@ -399,7 +399,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    logger.error( "收货地址列表页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/phone/address_list";
+	return "mall/integral/phone/address_list";
     }
 
     /**
@@ -470,7 +470,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    logger.error( "跳转至新增/修改收货地址页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/integral/phone/address_edit";
+	return "mall/integral/phone/address_edit";
     }
 
     /**

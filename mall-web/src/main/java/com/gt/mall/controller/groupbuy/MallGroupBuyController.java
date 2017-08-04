@@ -72,7 +72,7 @@ public class MallGroupBuyController extends BaseController {
     public String start( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "iframe_url", "mGroupBuy/index.do" );
 	request.setAttribute( "title", "团购管理" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -111,7 +111,7 @@ public class MallGroupBuyController extends BaseController {
 	    e.printStackTrace();
 	}
 
-	return "merchants/trade/mall/groupBuy/groupbuy_index";
+	return "mall/groupBuy/groupbuy_index";
     }
 
     @CommAnno( menu_url = "mGroupBuy/start.do" )
@@ -123,7 +123,7 @@ public class MallGroupBuyController extends BaseController {
 	}
 	request.setAttribute( "iframe_url", url );
 	request.setAttribute( "title", "团购管理-编辑团购" );
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -155,7 +155,7 @@ public class MallGroupBuyController extends BaseController {
 	    logger.error( "进入团购编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/groupBuy/groupbuy_edit";
+	return "mall/groupBuy/groupbuy_edit";
     }
 
     /**
@@ -280,7 +280,7 @@ public class MallGroupBuyController extends BaseController {
 	    logger.error( "团购编辑-获取商品：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/groupBuy/choosePro";
+	return "mall/groupBuy/choosePro";
     }
 
     /**
@@ -436,7 +436,7 @@ public class MallGroupBuyController extends BaseController {
 	    }
 	    boolean isShop = pageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    String http = PropertiesUtil.getResourceUrl();// 图片url链接前缀
@@ -487,7 +487,7 @@ public class MallGroupBuyController extends BaseController {
 	    logger.error( "进入团购商品的页面出错：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/groupBuy/phone/groupbuyall";
+	return "mall/groupBuy/phone/groupbuyall";
     }
 
     /**
@@ -630,7 +630,7 @@ public class MallGroupBuyController extends BaseController {
 	    logger.error( "进入我要参团/团购详情的页面出错：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/groupBuy/phone/groupBuyDetail";
+	return "mall/groupBuy/phone/groupBuyDetail";
     }
 
     /**
@@ -678,7 +678,7 @@ public class MallGroupBuyController extends BaseController {
 	    }
 	}
 	pageService.getCustomer( request, userid );
-	return "merchants/trade/mall/product/phone/playDetail";
+	return "mall/product/phone/playDetail";
     }
 
 }

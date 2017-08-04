@@ -144,7 +144,7 @@ public class PhonePurchaseController extends BaseController {
 	    logger.error( "手机端订单详情首页异常:" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/phone/index";
+	return "mall/purchase/phone/index";
     }
 
     /**
@@ -170,7 +170,7 @@ public class PhonePurchaseController extends BaseController {
 	    logger.error( "查询订单详情商品信息异常:" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/phone/detail";
+	return "mall/purchase/phone/detail";
     }
 
     /**
@@ -210,7 +210,7 @@ public class PhonePurchaseController extends BaseController {
 		}
 		request.setAttribute( "orderId", request.getParameter( "orderId" ).toString() );
 		request.setAttribute( "busId", request.getParameter( "busId" ).toString() );
-		return "merchants/trade/mall/purchase/phone/hetong";
+		return "mall/purchase/phone/hetong";
 	    } else { // 如果不存在合同则直接跳转到报价单详情页进行付款操作
 		//浏览器类型判断
 		if ( CommonUtil.judgeBrowser( request ) != 1 ) {request.setAttribute( "payType", 0 );} else {request.setAttribute( "payType", 1 );}
@@ -277,7 +277,7 @@ public class PhonePurchaseController extends BaseController {
 	    logger.error( "付款详情异常:" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/phone/order";
+	return "mall/purchase/phone/order";
     }
 
     /**
@@ -349,7 +349,7 @@ public class PhonePurchaseController extends BaseController {
 	    logger.error( "去往写留言的页面异常:" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/purchase/phone/msg";
+	return "mall/purchase/phone/msg";
     }
 
     /**
@@ -503,6 +503,6 @@ public class PhonePurchaseController extends BaseController {
 	request.setAttribute( "index", index );
 	request.setAttribute( "retainage", retainage );
 	request.setAttribute( "termList", termList );
-	return "merchants/trade/mall/purchase/phone/xiangqing";
+	return "mall/purchase/phone/xiangqing";
     }
 }
