@@ -1,0 +1,70 @@
+@charset "utf-8";
+/* CSS Document */
+html,body,p,h1,h2,h3,h4,h5,h6,h7,ul,li,table,th,tr,td,span{margin:0;padding:0;}
+hr{border: 0;border-top: 1px solid #cecece;margin: 10px 0;display: block;clear: both;}
+
+/*排版*/
+.mg{margin:0 auto}
+.fl-l{float:left;display:inline}
+.fl-r{float:right;display:inline}
+.pa{position:absolute}
+.pr{position:relative}
+.block{display:block}
+.none{display:none}
+.inb{display:inline-block;*display:inline;zoom:1}
+.vam{vertical-align:middle}
+.oh{overflow:hidden}
+.cb{clear:both}
+
+
+/*字*/
+.f0{font-size:0px}
+.f12{font-size:12px}
+.f13{font-size:13px}
+.f14{font-size:14px}
+.f16{font-size:16px}
+.f18{font-size:18px}
+.f20{font-size:20px}
+.f72{font-size:72px}
+.tc{text-align:center}
+.text-l{text-align:left}
+.text-r{text-align:right}
+.fb{font-weight:bold}
+
+
+/*交互*/
+.cp{cursor:pointer}
+
+/*组合效果*/
+.omit{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+
+
+/*结构规范*/
+.header{}        /*用于头部*/
+.main{}          /*用于主体内容*/
+.content{}		 /*用于主体内容*/
+.nav{}           /*用于菜单导航条*/
+.footer{}		 /*用于底部*/
+.menu{}			 /*用于菜单*/
+.subnav{}        /*用于二级导航*/
+
+/*一个项目的扩展*/
+.m-l-7{margin-left:7px;!important}
+.m-l-18{margin-left: 18px!important}
+.m-t-20{margin-top: 20px!important}
+.m-t-21{margin-top: 21px!important}
+.m-t-30{margin-top: 30px!important}
+.m-r-35{margin-right: 35px!important}
+.m-b-20{margin-bottom:20px!important}
+
+.p-20{padding:20px!important;}
+
+.bg-f8{background: #f8f8f8;}
+
+.line-h-29{line-height:29px!important}
+
+input{color: #747D88;font-family: 微软雅黑;resize: none;}
+
+.icon-x16{width:16px;height:16px;}
+
+.curr{color: rgb(85, 147, 226);}

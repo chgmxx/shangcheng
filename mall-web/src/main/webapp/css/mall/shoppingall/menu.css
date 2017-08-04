@@ -78,7 +78,7 @@ html, body {
 
 .srh-icon {
 	display: block;
-	background: url(/images/mall/new/fdj.jpg) no-repeat;
+	background: url(/images/mall/img/fdj.jpg) no-repeat;
 	background-size: 0.72rem auto;
 	width: 0.72rem;
 	height: 0.6rem;
@@ -191,9 +191,9 @@ html, body {
 	font-size: .45rem;
 }
 
-.item-icon {
-	background-image: url("../images/a.jpg");
-}
+/*.item-icon {
+	background-image: url("/images/a.jpg");
+}*/
 /*遮罩层 */
 .cd-popup {
 	display: none;
