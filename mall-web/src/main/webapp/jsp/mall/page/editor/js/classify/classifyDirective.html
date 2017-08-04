@@ -1,0 +1,81 @@
+<div class="classifyDirective" ng-controller="swiperController">
+    <div class="control-group" style="min-height: 240px;">
+        <label class="control-label">布局：</label>
+        <div class="controls">
+            <table cellpadding="0" cellspacing="0" width="240">
+                
+            </table>
+        </div>
+    </div>
+
+
+
+    <div class="control-group">
+        <div class="choice-content">
+            <ul>
+                <li>
+                    <div class="fl-r">
+                        <i class="remove_btn layout_module" >×</i>
+                    </div>
+                    <div class="control-group">
+                        <label class="swiper-label">选择图片：</label>
+                        <div class="control-action" onclick="materiallayer(2)">
+                            <a>选择图片</a>
+                            <div class="choice_pic">
+                                <img src="" class="previewpic">
+                                <a>修改</a>
+                            </div>
+                            <div class="jy">建议尺寸：<span class="pix"></span>像素</div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="swiper-label">链接到：</label>
+
+                        <div class="control-action hsaLine">
+                            <span class="group-title">商品| 123456</span>
+                            <i class="remove_btn layout_href" >×</i>
+                        </div>
+
+                        <div class="control-action">
+                            <div class="notLine">
+                                <a>设置链接到的页面地址<label class="caret"></label></a>
+                            </div>
+                            <div class="hsaLine">
+                                <a style="margin-left: 15px;">修改<label class="caret"></label></a>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div type="1" onclick="lbTypeClick(this,2)">商品</div>
+                                <div type="2" onclick="lbTypeClick(this,2)">分类</div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- <div class="control-group">
+                        <label class="swiper-label">图片占：</label>
+                        <div class="control-action" style="padding: 0">
+                            <button><span class="caret"></span></button>
+                            <div class="dropdown-menu">
+                                <div>1行1列</div>
+                                <div>1行1列</div>
+                                <div>1行1列</div>
+                            </div>
+                        </div>
+                    </div> -->
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<div class="layout_tank">
+    <div class="layout_tank_header">
+        <span>选择布局</span>
+        <a class="close">x</a>
+    </div>
+    <div class="layout_tank_body">
+        <div class="inb">
+
+        </div>
+    </div>
+</div>

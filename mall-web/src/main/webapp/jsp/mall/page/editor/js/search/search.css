@@ -1,0 +1,57 @@
+.search input{
+    width: 295px;
+    height: 40px;
+    box-sizing: border-box;
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+    border: 1px solid #555;
+    text-indent: 1em;
+}
+.find_icon{
+	width:14px;
+	height:16px;
+	display:inline-block;
+	background-image:url(../../images/minico_02.png);
+    position: absolute;
+    top: 50%;
+    margin-top: -7px;
+    right: 8px;
+    background-size: cover;
+}
+.u-colorpicker{
+    position: relative;
+    width: 66px;
+    height: 26px;
+    border: 1px solid rgba(0,0,0,.2);
+    background: #fff;
+    padding: 2px;
+    display: inline-block;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.bg-color{
+    background-color: #ffffff;
+    position: absolute;
+    display: block;
+    width: 39px;
+    height: 22px;
+    top: 1px;
+    left: 1px;
+    box-sizing: border-box;
+    cursor: default;
+}
+.small{
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 20px;
+    top: 2px;
+    right: 2px;
+}
+.icon-x20-color{
+    display: inline-block;
+    background-position: 0 -471px;
+    background-image: url(../../images/icon-s9fcea044bf.png);
+    background-repeat: no-repeat;
+}

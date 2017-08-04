@@ -1,0 +1,94 @@
+<div  ng-controller="adminController as admin" class="admin tc">
+
+	<div class="inb text-l">
+	
+	    <div class="app-preview">
+	        <div class="app-header"></div>
+	        <div class="app-entry">
+	            <div class="app-title">
+	                <h1><span>微页面标题</span></h1>
+	            </div>
+	            <div class="app-mian">
+	
+	                <div  class="clearfix app-preview-box" ng-repeat="data in dataJson">
+						
+	                    <div class="module pr" ng-if="data.type == 1" ng-include="'js/module/commodity.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	
+	                    <div class="module pr" ng-if="data.type == 2" ng-include="'js/module/swiper.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	
+	                    <div class="module pr" ng-if="data.type == 3" ng-include="'js/module/classify.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                    
+	                    <div class="module pr" ng-if="data.type == 4" ng-include="'js/module/interval.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	
+	                	<div class="module pr" ng-if="data.type == 5" ng-include="'js/module/search.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 6" ng-include="'js/module/reservation.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                
+	                	<div class="module pr" ng-if="data.type == 7"  ng-include="'js/module/header.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                
+	                </div>
+	
+	            </div>
+	        </div>
+	        <div class="js-add-region">
+	            <div class="app-add-field">
+	                <h4>添加内容</h4>
+	                <ul>
+	                    <li ng-click="addcommodity()"><a>商品</a></li>
+	                    <li ng-click="addswiper()"><a>轮播</a></li>
+	                    <li ng-click="addclassify()"><a>分类</a></li>
+	                    <li ng-click="addinterval()"><a>间隔</a></li>
+	                    <li ng-click="addsearch()"><a>搜索</a></li>
+	                    <li ng-click="addreservation()"><a>预售</a></li>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="app-sidebar" style="margin-top: {{positionTop}}px">
+	        <div class="arrow"></div>
+	        <div class="app-sidebar-inner">
+	        
+	            <div ng-if="showEdit(1)">
+	                <div commodity-draggable></div>
+	            </div>
+	
+	            <div ng-if="showEdit(2)">
+	                <div swiper-draggable></div>
+	            </div>
+	
+	            <div ng-if="showEdit(3)">
+	                <div classify-draggable dataedit="dataedit"></div>
+	            </div>
+	            
+	            <div ng-if="showEdit(4)">
+	                <div interval-draggable></div>
+	            </div>
+	            
+	            <div ng-if="showEdit(5)">
+					<div search-draggable></div>
+				</div>
+				
+				<div ng-if="showEdit(6)">
+					<div reservation-draggable></div>
+				</div>
+				
+				<div ng-if="showEdit(7)">
+					<div header-draggable></div>
+				</div>
+	        </div>
+	    </div>
+    
+    </div>
+
+    <!-- <div ng-show="shade.commodity_shade" ng-include="'js/tank/commodity_tank.html'"></div> -->
+
+    <div class="shade fadeIn" ng-show="shade.shade" ng-click="colseShade()"></div>
+    
+    <div class="none">
+        <div id="addcommoditypic" ng-click="addcommoditypic()"></div>
+        <div id="addcommoditypicone" ng-click="addcommoditypicone()"></div>
+        <div id="addswiperpic" ng-click="addswiperpic()"></div>
+        <div id="addswiperpic_last" ng-click="addswiperpic_last()"></div>
+        <div id="saveclassify" ng-click="saveclassify()"></div>
+    </div>
+</div>

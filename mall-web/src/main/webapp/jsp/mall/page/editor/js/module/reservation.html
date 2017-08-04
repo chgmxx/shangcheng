@@ -1,0 +1,66 @@
+<div ng-if="picJson[$index].imgID.length<=0">
+	<div class="reservation">
+		<div class="reservation_m">
+			<div class="res-photo"><img src="images/pic_12.jpg"></div>
+	    	<div class="res-m">
+	    		<div class="res-title">Surface Book</div>
+	    		<div style="height:14px;"></div>
+	    		<div class="res-m1">超轻薄、超精致、屏幕分辨率超震撼，超越 你对笔记本的想象</div>
+	    		<div style="height:14px;"></div>
+	    		<div class="res-m2" style="visibility: hidden;">首发价11,088元，预约下单独享10,088元惊爆价！</div>
+	    		<div style="height:14px;"></div>
+	    		<div class="res-money">
+	    			<span class="r-money">￥11,088</span>
+	    			<div class="res-btn">
+	    				<button >点我预订<img src="images/icon_02.png"></button>
+	    				<div style="height:14px;"></div>
+	    				<div class="res-p">已有<span>666</span>人预定</div>
+	    			</div>
+	   			</div>
+	    	</div>
+		</div>
+	    <div class="reservation_b">
+	   		<span class="icon_time"><img src="images/icon_01.png">距离结束</span>
+	   		<div class="time-d" count-down datatime="1000000"><span class="day">00</span>天<span class="hours">00</span>时<span class="minutes">00</span>分<span class="seconds">00</span>秒</div>
+	    </div>
+	    <div class="clock"><a><img src="images/clock_btn.png"></a></div>
+	</div>
+	<div style="height:124px"></div>
+</div>
+<div ng-if="picJson[$index].imgID.length>0">
+	<div ng-repeat="res in picJson[$index].imgID">
+		<div class="reservation">
+			<div class="reservation_m">
+				<div class="res-photo"><img ng-src="{{res.proImgUrl}}"></div>
+		    	<div class="res-m">
+		    		<div class="res-title" ng-bind="res.proName">Surface Book</div>
+		    		<div style="height:14px;"></div>
+		    		<div class="res-m1" ng-bind="res.product_introdu"></div>
+		    		<div style="height:14px;"></div>
+		    		<div class="res-m2" ng-bind="res.name"></div>
+		    		<div style="height:14px;"></div>
+		    		<div class="res-money">
+		    			<span class="r-money">￥<lable ng-bind="res.proPrice">11,088</lable></span>
+		    			<div class="res-btn">
+		    				<button>点我预订<img src="images/icon_02.png"></button>
+		    				<div style="height:14px;"></div>
+		    				<div class="res-p">已有<span ng-bind="res.orderNum">666</span>人预定</div>
+		    			</div>
+		   			</div>
+		    	</div>
+			</div>
+		    <div class="reservation_b" ng-class={"end-a":res.status==-1}>
+   				<span class="icon_time" ng-if="res.status == 0"><img src="images/icon_01.png">距离开始</span>
+   				<span class="icon_time" ng-if="res.status == 1"><img src="images/icon_01.png">距离结束</span>
+   				<span class="icon_time" ng-if="res.status == -1"><img src="images/icon_01.png">活动结束</span>
+   				<div class="time-d" count-down datatime="{{res.times}}"><span class="day">00</span>天<span class="hours">00</span>时<span class="minutes">00</span>分<span class="seconds">00</span>秒</div>
+	    		
+	    	</div>
+	    	<div class="clock" ng-if="res.status == 0"><a><img src="images/clock_btn.png"></a></div>
+		</div>
+		<div style="height:124px"></div>
+	</div>
+</div>
+<div class="actions">
+    <div class="actions-wrap"><span class="action edit">编辑</span><span class="action add" ng-click="addmoduleAny($index+1,$event)">加内容</span><span class="action delete" ng-click="removemodule($index)">删除</span></div>
+</div>

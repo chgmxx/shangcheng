@@ -1,0 +1,23 @@
+<div  ng-controller="adminController as admin" class="admin">
+	<div class="app-preview">
+		<div class="app-entry">
+		    <div  class="clearfix" ng-repeat="data in dataJson">
+		
+		        <div class="module pr" ng-if="data.type == 1" ng-include="'js/module/commodity.html'"></div>
+		
+		        <div class="module pr" ng-if="data.type == 2" ng-include="'js/module/swiper.html'"></div>
+		
+		        <div class="module pr" ng-if="data.type == 3" ng-include="'js/module/classify.html'"></div>
+		        
+		        <div class="module pr" ng-if="data.type == 4" style="height:{{data.height}}px"></div>
+               	
+               	<div class="module pr" ng-if="data.type == 5" ng-include="'js/module/search.html'"></div>
+               	
+               	<div class="module pr" ng-if="data.type == 6" ng-include="'js/module/reservation.html'"></div>
+               	
+               	<div class="module pr" ng-if="data.type == 7" ng-include="'js/module/header.html'"></div>
+		
+		    </div>
+	    </div>
+	</div>
+</div>

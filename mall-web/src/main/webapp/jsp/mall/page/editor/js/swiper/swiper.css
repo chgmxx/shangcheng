@@ -1,0 +1,228 @@
+.swiper{
+    width: 100%;
+}
+.swiper-title{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin: 0 auto;
+    text-align: left;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 15px;
+    z-index: 10;
+    background-color: rgba(51,51,51,0.8);
+    color: #fff;
+    font-size: 14px;
+    line-height: 2;
+}
+.swiper-box{
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    position: relative;
+    text-align: center;
+}
+
+
+
+/****************************************************************************/
+.swiperDirective ul{
+    width: 100%;
+}
+.swiperDirective ul li{
+    position: relative;
+    border: 1px solid #e5e5e5;
+    margin: 10px 10px 0 10px;
+    padding: 14px;
+    background: #fff;
+    zoom: 1;
+    display: inline-block;
+}
+.swiperDirective ul li:hover .actions{
+    display: block;
+}
+
+.swiperDirective ul li .choice-image{
+    position: relative;
+    float: left;
+    width: 120px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: center;
+}
+.swiperDirective ul li .choice-image img{
+    min-height: 120px;
+    border: 1px solid #e5e5e5;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.swiperDirective ul li .choice-image a{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+
+.swiperDirective ul li .choice-content{
+    float: left;
+    width: 280px;
+}
+
+.swiperDirective ul li .choice-image{
+
+}
+
+.swiperDirective .swiper-label{
+    float: left;
+    width: 54px;
+    text-align: right;
+    padding-top: 5px;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 18px;
+    cursor: default;
+}
+
+.swiperDirective .actions{
+    position: absolute;
+    top: -10px;
+    right: -15px;
+    display: none;
+}
+.swiperDirective .control-action{
+    padding-top: 5px;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 18px;
+    cursor: pointer;
+    position: relative;
+}
+.swiperDirective .control-action:hover .dropdown-menu{
+    display: block;
+}
+.swiperDirective .control-action a{
+    color: #07d;
+}
+.swiperDirective .caret{
+    margin-top: 8px;
+    margin-left: 5px;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: top;
+    border-top: 4px solid #000;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+.swiperDirective input{
+    background-color: #fff;
+    border: 1px solid #ccc;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border linear .2s,box-shadow linear .2s;
+    -moz-transition: border linear .2s,box-shadow linear .2s;
+    -o-transition: border linear .2s,box-shadow linear .2s;
+    transition: border linear .2s,box-shadow linear .2s;
+    display: inline-block;
+    height: 20px;
+    padding: 4px 6px;
+    line-height: 20px;
+    color: #555;
+    vertical-align: middle;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    font-size: 12px;
+    width: 206px;
+}
+
+.remove_btn,.add_btn{
+    position: static;
+    display: inline-block;
+    margin-right: 5px;
+    z-index: 2;
+    top: -9px;
+    right: -9px;
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 18px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(153,153,153,0.6);
+    border-radius: 10px;
+    line-height: 20px;
+}
+.remove_btn:hover, .add_btn:hover{
+    color: #fff;
+    background: #000;
+}
+
+.swiperDirective .dropdown-menu{
+    min-width: 110px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,0.125);
+    border-radius: 4px;
+    display: none;
+}
+.swiperDirective .dropdown-menu>div{
+    padding: 3px 15px;
+    font-weight: 400;
+    color: #333;
+    white-space: nowrap;
+    line-height: 20px;
+    clear: both;
+}
+.swiperDirective .dropdown-menu>div:hover{
+    color: #ffffff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#648bf5), to(#2866f2));
+    background-image: -webkit-linear-gradient(top, #648bf5, #2866f2);
+    background-image: -moz-linear-gradient(top, #648bf5, #2866f2);
+    background-image: linear-gradient(to bottom, #648bf5, #2866f2);
+    -webkit-box-shadow: #5a82eb 0px 1px 0px inset,#1758e7 0px -1px 0px inset;
+    box-shadow: #5a82eb 0px 1px 0px inset,#1758e7 0px -1px 0px inset;
+}
+.swiperDirective .control-action:hover .dropdown-menu{
+    display: block;
+}
+
+.swiperDirective .addswiper{
+    border: 1px solid #e5e5e5;
+    margin: 0 10px;
+    padding: 14px;
+    background: #fff;
+    zoom: 1;
+    cursor: pointer;
+}
+.swiperDirective .addswiper .icon-add{
+    vertical-align: middle;
+    margin-right: 5px;
+}

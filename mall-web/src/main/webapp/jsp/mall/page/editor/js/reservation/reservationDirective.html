@@ -1,0 +1,18 @@
+<div class="reservationDirective" ng-controller="reservationController">
+    <div class="control-group">
+        <label class="control-label">选择预售商品：</label>
+        <div class="controls">
+            <ul class="clearfix inb">
+            	<li>
+                    <a onclick="choosePro(2)" href="javascript:void(0);" class="js-add-goods add-goods"><i class="icon-add"></i></a>
+                </li>
+                <li class="sort" ng-repeat="pic in picJson[pageEdit].imgID">
+                    <a href="javascript:void(0);" class="js-add-goods add-goods">
+                        <img ng-src="{{pic.src}}" width="100%" height="100%">
+                    </a>
+                    <a class="remove_btn" ng-click="removeshop($index)">×</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

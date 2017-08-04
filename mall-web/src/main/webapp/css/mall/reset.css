@@ -1,60 +1,118 @@
 /*******************页面初始化***********************/
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td { margin:0; padding:0; }
-body { background:#fff; color:#000;font-family: "Microsoft YaHei", "黑体","宋体", Arial, Helvetica, sans-serif; }
-td,th,caption { font-size:12px; }
-h1, h2, h3, h4, h5, h6 { font-weight:normal; font-size:100%; }
-address, caption, cite, code, dfn, em, strong, th, var { font-style:normal; font-weight:normal;}
-a { color:#666; text-decoration:none; }
-a:hover { text-decoration:none; }
-img { border:none; }
-ol,ul,li { list-style:none; }
-input, textarea, select, button { font:12px Verdana,Helvetica,Arial,sans-serif; }
-table { border-collapse:collapse;}
-html {overflow-y: scroll;}
-textarea { resize:none; } /*禁用了文本的拖拉，尤其在谷歌下*/
-p{ text-align:justify; text-justify:distribute;} /*为了使文本段落左右两边对齐*/
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #fff;
+    color: #000;
+    font-family: "Microsoft YaHei", "黑体", "宋体", Arial, Helvetica, sans-serif;
+}
+
+td, th, caption {
+    font-size: 12px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+    font-size: 100%;
+}
+
+address, caption, cite, code, dfn, em, strong, th, var {
+    font-style: normal;
+    font-weight: normal;
+}
+
+a {
+    color: #666;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+img {
+    border: none;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+
+input, textarea, select, button {
+    font: 12px Verdana, Helvetica, Arial, sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+textarea {
+    resize: none;
+}
+
+/*禁用了文本的拖拉，尤其在谷歌下*/
+p {
+    text-align: justify;
+    text-justify: distribute;
+}
+
+/*为了使文本段落左右两边对齐*/
 
 * {
-  margin: 0;
-  padding: 0;
-  outline: none;
- /* Font-size:62.5%;*/
-} 
-
-body{
-	max-width: 1920px;
-	margin: 0 auto;
+    margin: 0;
+    padding: 0;
+    outline: none;
+    /* Font-size:62.5%;*/
 }
-body,html{
-	position: relative;
-	height: 100%;
+
+body {
+    max-width: 1920px;
+    margin: 0 auto;
+}
+
+body, html {
+    position: relative;
+    height: 100%;
 }
 
 *:not(input,textarea) {
-  -webkit-touch-callout: inherit;
-  -webkit-user-select: auto;
+    -webkit-touch-callout: inherit;
+    -webkit-user-select: auto;
 }
 
-button,input,select,textarea {
-  font-size: 100%;
-  margin: 0;
-  padding: 0;
-  outline: none;
+button, input, select, textarea {
+    font-size: 100%;
+    margin: 0;
+    padding: 0;
+    outline: none;
 }
-dt,dd {
-  display: inline-block;
+
+dt, dd {
+    display: inline-block;
 }
-textarea,input {
-  resize: none;
-  outline: none;
+
+textarea, input {
+    resize: none;
+    outline: none;
 }
+
 textarea {
-  resize: none;
-  -webkit-appearance: none;
+    resize: none;
+    -webkit-appearance: none;
 }
+
 em {
-  font-style: normal;
+    font-style: normal;
 
 }
 
-.red{color:red;}
+.red {
+    color: red;
+}

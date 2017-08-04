@@ -1,170 +1,183 @@
 @charset "utf-8";
 
 .title-p {
-	font-size: 1.7em;
-	padding-left: 20px;
-	color: #444444;
+    font-size: 1.7em;
+    padding-left: 20px;
+    color: #444444;
 }
 
 .i-con {
-	width: 3px;
-	display: block;
-	height: 27px;
-	background-color: #23b4ff;
+    width: 3px;
+    display: block;
+    height: 27px;
+    background-color: #23b4ff;
 }
 
 .fansTitle {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .txt-btn {
-	float: none;
+    float: none;
 }
 
 .text1 {
-	height: 28px;
-	width: 300px;
-	text-indent: 10px;
-	vertical-align:middle
-	/* line-height: 28px; */
+    height: 28px;
+    width: 300px;
+    text-indent: 10px;
+    vertical-align: middle
+    /* line-height: 28px; */
 }
 
 .table-td1 {
-	width: 140px;
-	text-align: right;
-	color: #646363;
-	font-size: 14px;
+    width: 140px;
+    text-align: right;
+    color: #646363;
+    font-size: 14px;
 }
 
 .table-td2 {
-	width: 350px;
-	text-align: left;
-	padding: 10px 0;
-	color: #646363;
+    width: 350px;
+    text-align: left;
+    padding: 10px 0;
+    color: #646363;
 }
 
 .tColor {
-	color: red;
+    color: red;
 }
 
 .blue-btn {
-	cursor: pointer;
-	background-color: #1aa1e7;
-	border-radius: 3px;
-	color: #fff;
-	font-size: 14px;
-	height: 30px;
-	line-height: 30px;
-	text-align: center;
-	width: 70px;
-	border: none;
+    cursor: pointer;
+    background-color: #1aa1e7;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+    border: none;
 }
 
 .btn_cancel_div {
-	font-size: 14px;
-	width: 70px;
-	height: 96%;
-	float: left;
-	text-align: center;
-	margin-left: 2%;
-	border: 1px #ccc solid;
-	line-height: 30px;
-	background-color: #8cc717;
+    font-size: 14px;
+    width: 70px;
+    height: 96%;
+    float: left;
+    text-align: center;
+    margin-left: 2%;
+    border: 1px #ccc solid;
+    line-height: 30px;
+    background-color: #8cc717;
 }
 
 .btn_cancel_div :HOVER {
-	color: #1aa1e7;
+    color: #1aa1e7;
 }
 
 .btn_save_div {
-	width: 70px;
-	height: 100%;
-	float: left;
-	margin-left: 35%;
+    width: 70px;
+    height: 100%;
+    float: left;
+    margin-left: 35%;
 }
 
 .btn_box_div {
-	width: 500px;
-	height: 30px;
+    width: 500px;
+    height: 30px;
 }
 
 .food_tr {
-	height: 38px;
+    height: 38px;
 }
 
 .food_td {
-	text-align: right;
-	color: #646363;
-	font-size: 14px;
-	padding-right: 5px;
+    text-align: right;
+    color: #646363;
+    font-size: 14px;
+    padding-right: 5px;
 }
 
 .food_head {
-	font-size: 14px;
-	color: #595959;
-	background: #FAFAFA;
-	height: 35px;
+    font-size: 14px;
+    color: #595959;
+    background: #FAFAFA;
+    height: 35px;
 }
 
 .food_sel {
-	height: 23px;
-	width: 100px;
+    height: 23px;
+    width: 100px;
 }
 
 .food_txt {
-	height: 23px;
-	width: 100px;
+    height: 23px;
+    width: 100px;
 }
 
 .chooseFood {
-	width: 40px;
-	height: 25px;
-	background: #1aa1e7;
-	color: #fff;
-	border-radius: 3px;
-	border: none;
-	cursor: pointer;
+    width: 40px;
+    height: 25px;
+    background: #1aa1e7;
+    color: #fff;
+    border-radius: 3px;
+    border: none;
+    cursor: pointer;
 }
 
 li {
-	height: 35px;
-	cursor: hand;
+    height: 35px;
+    cursor: hand;
 }
 
 .placeholder {
-	color: #C3C3C3
+    color: #C3C3C3
 }
 
 .table-td3 {
-	width: 550px;
-	text-align: left;
-	padding: 10px 0;
-	color: #000;
+    width: 550px;
+    text-align: left;
+    padding: 10px 0;
+    color: #000;
 }
 
 .con-head {
-	overflow: hidden;
-	margin-bottom: 38px;
+    overflow: hidden;
+    margin-bottom: 38px;
 }
 
 .con-head a {
-	color: #fff;
-	text-align: center;
-	font-size: 16px;
-	background-color: #888;
-	float: left;
-	line-height: 50px;
-	display: block;
-	width: 150px;
-	height: 50px;
-	margin-right: 1px;
-	cursor: pointer;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    background-color: #888;
+    float: left;
+    line-height: 50px;
+    display: block;
+    width: 150px;
+    height: 50px;
+    margin-right: 1px;
+    cursor: pointer;
 }
 
 .navColor {
-	background-color: #8fc41a !important;
+    background-color: #8fc41a !important;
 }
-.table2 td{padding: 10px 0px;clear: both;}
-.inpDiv{margin-bottom:10px;}
-i{font-style: normal;}
-i.btn{cursor: pointer;}
+
+.table2 td {
+    padding: 10px 0px;
+    clear: both;
+}
+
+.inpDiv {
+    margin-bottom: 10px;
+}
+
+i {
+    font-style: normal;
+}
+
+i.btn {
+    cursor: pointer;
+}

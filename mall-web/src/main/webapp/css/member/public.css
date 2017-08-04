@@ -2,75 +2,211 @@ html {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
 }
+
 /*input[type="submit"], input[type="reset"], input[type="button"], input{ -webkit-appearance:none; resize: none; }*/
-body,div,ul,li,ol,h1,h2,h3,h4,h5,h6,input,textarea,select,p,dl,dt,dd,a,img,button,form,table,th,tr,td,tbody,article,aside, details,figcaption,figure,footer,header,hgroup, menu,nav,section{ -webkit-tap-highlight-color:rgba(0, 0, 0, 0); }
-article, aside, details,figcaption,figure,footer,header,hgroup, menu,nav,section {display: block; }
-img { max-width: 100%; height: auto; width:auto\9; /* ie8 */ -ms-interpolation-mode:bicubic;}
-body,div,ul,li,ol,h1,h2,h3,h4,h5,h6,input,textarea,select,p,dl,dt,dd,a,img,button,form,table,th,tr,td,tbody,article, 
-aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{margin:0; padding:0; border:none;}
-body{font: normal 12px/1.5 Tahoma,"Lucida Grande",Verdana,"Microsoft Yahei",STXihei,hei;}
-em,i{font-style:normal;}
-strong{font-weight: normal;}
-a{ text-decoration:none; color:#000; font-family: Microsoft YaHei,Tahoma,Arial,sans-serif;}
-a:hover{text-decoration:underline;}
-ul,ol{list-style:none;}
-h1, h2, h3, h4, h5, h6{ font-size:100%; font-family: Microsoft YaHei; font-weight: normal;}
-img{ border: none; vertical-align: middle; }
-a:hover{text-decoration: none;}
-.clearfix:after{content:""; display:block; visibility:hidden; height:0; clear:both;}
-.clearfix{zoom:1;}
-.l{ float:left; }
-.r{ float:right; }
+body, div, ul, li, ol, h1, h2, h3, h4, h5, h6, input, textarea, select, p, dl, dt, dd, a, img, button, form, table, th, tr, td, tbody, article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    width: auto \9; /* ie8 */
+    -ms-interpolation-mode: bicubic;
+}
+
+body, div, ul, li, ol, h1, h2, h3, h4, h5, h6, input, textarea, select, p, dl, dt, dd, a, img, button, form, table, th, tr, td, tbody, article,
+aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+body {
+    font: normal 12px/1.5 Tahoma, "Lucida Grande", Verdana, "Microsoft Yahei", STXihei, hei;
+}
+
+em, i {
+    font-style: normal;
+}
+
+strong {
+    font-weight: normal;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+    font-family: Microsoft YaHei, Tahoma, Arial, sans-serif;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-family: Microsoft YaHei;
+    font-weight: normal;
+}
+
+img {
+    border: none;
+    vertical-align: middle;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.clearfix:after {
+    content: "";
+    display: block;
+    visibility: hidden;
+    height: 0;
+    clear: both;
+}
+
+.clearfix {
+    zoom: 1;
+}
+
+.l {
+    float: left;
+}
+
+.r {
+    float: right;
+}
+
 /* 移动端定义字体的代码 */
-body{
-	font-family:Helvetica,Microsoft YaHei;"微软雅黑";
+body {
+    font-family: Helvetica, Microsoft YaHei;
+"微软雅黑";
     -ms-user-select: none;
     -webkit-user-select: none;
     -webkit-text-size-adjust: none;
     -o-user-select: none;
-    }
-html { font-size: 50px; height: 100%;}
-body { font-size: 24px; height: 100%;}
+}
+
+html {
+    font-size: 50px;
+    height: 100%;
+}
+
+body {
+    font-size: 24px;
+    height: 100%;
+}
+
 @media screen and (max-width: 359px) {
-    html { font-size: 25px;}
-    body { font-size: 12px; }
+    html {
+        font-size: 25px;
+    }
+
+    body {
+        font-size: 12px;
+    }
 }
+
 @media screen and (min-width: 360px) {
-    html { font-size: 28.13px;}
-    body { font-size: 12px; }
+    html {
+        font-size: 28.13px;
+    }
+
+    body {
+        font-size: 12px;
+    }
 }
+
 @media screen and (min-width: 375px) {
-    html { font-size: 29.30px;}
-    body { font-size: 14px; }
+    html {
+        font-size: 29.30px;
+    }
+
+    body {
+        font-size: 14px;
+    }
 }
+
 @media screen and (min-width: 384px) {
-    html { font-size: 30px;}
-    body { font-size: 14px; }
+    html {
+        font-size: 30px;
+    }
+
+    body {
+        font-size: 14px;
+    }
 }
+
 @media screen and (min-width: 400px) {
-    html { font-size: 31.25px;}
-    body { font-size: 15px; }
+    html {
+        font-size: 31.25px;
+    }
+
+    body {
+        font-size: 15px;
+    }
 }
+
 @media screen and (min-width: 414px) {
-    html { font-size: 32.34px;}
-    body { font-size: 16px; }
+    html {
+        font-size: 32.34px;
+    }
+
+    body {
+        font-size: 16px;
+    }
 }
+
 @media screen and (min-width: 424px) {
-    html { font-size: 33.13px;}
-    body { font-size: 16px; }
+    html {
+        font-size: 33.13px;
+    }
+
+    body {
+        font-size: 16px;
+    }
 }
+
 @media screen and (min-width: 480px) {
-    html { font-size: 37.50px;}
-    body { font-size: 18px; }
+    html {
+        font-size: 37.50px;
+    }
+
+    body {
+        font-size: 18px;
+    }
 }
+
 @media screen and (min-width: 540px) {
-    html { font-size: 42.19px;}
-    body { font-size: 20px; }
+    html {
+        font-size: 42.19px;
+    }
+
+    body {
+        font-size: 20px;
+    }
 }
+
 @media screen and (min-width: 640px) {
-    html { font-size: 50px;}
-    body { font-size: 24px;}
+    html {
+        font-size: 50px;
+    }
+
+    body {
+        font-size: 24px;
+    }
 }
+
 /* ============================================================
    flex：定义布局为盒模型
    flex-v：盒模型垂直布局
@@ -83,18 +219,55 @@ body { font-size: 24px; height: 100%;}
 /*使用注意：
 flex下的子元素必须为块级元素，非块级元素在android2.3机器下flex失效
 flex下的子元素宽度和高度不能超过父元素，否则会导致子元素定位错误，例如水平垂直居中*/
-.flex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-.flex-v{-webkit-box-orient:vertical;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}
-.flex-1{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;}
-.flex-align-center{-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;}
-.flex-pack-center{-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;}
-.flex-pack-justify{-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;}
+.flex {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.flex-v {
+    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
 .flex-1 {
     -webkit-box-flex: 1;
     -webkit-flex: 1;
     -ms-flex: 1;
     flex: 1;
 }
+
+.flex-align-center {
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.flex-pack-center {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.flex-pack-justify {
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+
+.flex-1 {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+
 .flex-2 {
     -webkit-box-flex: 2;
     -webkit-flex: 2;
@@ -139,21 +312,24 @@ flex下的子元素宽度和高度不能超过父元素，否则会导致子元�
     -webkit-box-flex: 1;
     -moz-box-flex: 1;
 }
-.text-overflow{
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
+
+.text-overflow {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
-.text-color{
-	color: #888;
+
+.text-color {
+    color: #888;
 }
-.fade{
-	width: 100%;
+
+.fade {
+    width: 100%;
     height: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    background-color: rgba(0,0,0,.4);
+    background-color: rgba(0, 0, 0, .4);
     z-index: 10005;
     display: none;
 }

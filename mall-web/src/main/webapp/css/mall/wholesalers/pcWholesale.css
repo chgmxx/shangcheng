@@ -1,13 +1,15 @@
-.contentWarp{
-	width: 900px;
+.contentWarp {
+    width: 900px;
 }
+
 /*头部导航*/
-.con-head{
-	overflow: hidden;
+.con-head {
+    overflow: hidden;
     margin-bottom: 38px;
 }
-.con-head a{
-	color: #fff;
+
+.con-head a {
+    color: #fff;
     text-align: center;
     font-size: 16px;
     background-color: #888;
@@ -19,37 +21,42 @@
     margin-right: 1px;
     cursor: pointer;
 }
+
 .navColor {
     background-color: #8fc41a !important;
 }
-.con-box{
-	margin-bottom: 15px;
-}
-.con-box .change{
-  font-size: 16px;	
-  height: 28px;
-}
-.con-box .btn{
-	width: 79px;
-	height: 28px;
-	line-height: 28px;
-	border-radius: 2px;
-	border: none;
-	background-color: #1aa1e7;
-	color: #FFFFFF;
-	text-align: center;
-	cursor: pointer;
+
+.con-box {
+    margin-bottom: 15px;
 }
 
-.con-box .srh{
-	padding-left: 5px;
+.con-box .change {
+    font-size: 16px;
+    height: 28px;
+}
+
+.con-box .btn {
+    width: 79px;
+    height: 28px;
+    line-height: 28px;
+    border-radius: 2px;
+    border: none;
+    background-color: #1aa1e7;
+    color: #FFFFFF;
+    text-align: center;
+    cursor: pointer;
+}
+
+.con-box .srh {
+    padding-left: 5px;
     z-index: 10;
     margin-right: 10px;
     float: right;
     width: 186px;
-	height: 28px;
-	font-size: 12px;
+    height: 28px;
+    font-size: 12px;
 }
+
 .con-box .sbt {
     background: url(/../images/mall/wholesalers/search.jpg) no-repeat center center;
     cursor: pointer;
@@ -60,17 +67,20 @@
     width: 24px;
     z-index: 99;
 }
+
 .title {
     padding: 10px 0px;
     margin-bottom: 10px;
 }
+
 .i-con {
     width: 3px;
-    display: block; 
+    display: block;
     height: 27px;
     background-color: #23b4ff;
     float: left;
 }
+
 .title-p {
     font-size: 18px;
     margin-left: 20px;
@@ -80,90 +90,108 @@
 }
 
 /*table*/
-.center{
-	text-align: center;
+.center {
+    text-align: center;
 }
 
-.saleTab th{
-	text-align: left;
-	height: 35px;
-	background-color: #fafafa;
-	border-top: 1px solid #eeeeee;
+.saleTab th {
+    text-align: left;
+    height: 35px;
+    background-color: #fafafa;
+    border-top: 1px solid #eeeeee;
 }
-.saleTab td{
-	height: 46px;
-	border-bottom: 1px solid #eeeeee;
+
+.saleTab td {
+    height: 46px;
+    border-bottom: 1px solid #eeeeee;
 }
-.operate a{
-	display: inline-block;
-	width: 22px;
-	height: 22px;
-	background-image: url(/../images/mall/wholesalers/sale.jpg);
-	background-repeat: no-repeat;
+
+.operate a {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background-image: url(/../images/mall/wholesalers/sale.jpg);
+    background-repeat: no-repeat;
 }
-.operate .operate1{
-	background-position: -2px 1px;
+
+.operate .operate1 {
+    background-position: -2px 1px;
 }
-.operate .operate1:hover{
-	background-position: -30px 1px;
+
+.operate .operate1:hover {
+    background-position: -30px 1px;
 }
-.operate .operate2{
-	background-position: 0px -19px;
+
+.operate .operate2 {
+    background-position: 0px -19px;
 }
-.operate .operate2:hover{
-	background-position: -29px -19px;
+
+.operate .operate2:hover {
+    background-position: -29px -19px;
 }
-.saleTab2 td{
-	font-size: 14px;
-	padding: 8px 0;
+
+.saleTab2 td {
+    font-size: 14px;
+    padding: 8px 0;
 }
-.saleTab2 .td1{
-	text-align: right;
-	vertical-align: top;
-	width: 130px;
+
+.saleTab2 .td1 {
+    text-align: right;
+    vertical-align: top;
+    width: 130px;
 }
-.saleTab2 .list{
-	margin-top: 8px;
+
+.saleTab2 .list {
+    margin-top: 8px;
 }
-.saleTab2 .td2{
-	padding-left: 8px;
+
+.saleTab2 .td2 {
+    padding-left: 8px;
 }
-.saleTab2 input{
-	margin: 0 8px;
-	vertical-align: middle;
+
+.saleTab2 input {
+    margin: 0 8px;
+    vertical-align: middle;
 }
-.saleTab2 input.iptTxt{
-	width: 64px;
-	height: 20px;
-	border: 1px solid #cccccc;
+
+.saleTab2 input.iptTxt {
+    width: 64px;
+    height: 20px;
+    border: 1px solid #cccccc;
 }
-.saleTab2 textarea{
-	width: 320px;
-	height: 96px;
-	border: 1px solid #CCCCCC;
+
+.saleTab2 textarea {
+    width: 320px;
+    height: 96px;
+    border: 1px solid #CCCCCC;
 }
+
 .saleBot {
-	margin-top: 65px;
+    margin-top: 65px;
 }
-.saleBot input[type='button']{
-	border: none;
-	color: #FFFFFF;
-	appearance: none;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	width: 70px;
-	height: 30px;
-	border-radius: 3px;
-	cursor: pointer;
+
+.saleBot input[type='button'] {
+    border: none;
+    color: #FFFFFF;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 70px;
+    height: 30px;
+    border-radius: 3px;
+    cursor: pointer;
 }
-.saleBot .blue-btn{
-	margin-right: 10px;
-	margin-left: 240px;
-	background-color: #1aa1e7;
+
+.saleBot .blue-btn {
+    margin-right: 10px;
+    margin-left: 240px;
+    background-color: #1aa1e7;
 }
-.saleBot .green-btn{
-	background-color: #8cc717;
+
+.saleBot .green-btn {
+    background-color: #8cc717;
 }
+
 .page {
     background: #fafafa none repeat scroll 0 0;
     display: block;
@@ -171,12 +199,14 @@
     line-height: 50px;
     width: 100%;
 }
+
 .page ul {
     float: right;
     list-style: outside none none;
     margin-right: 10px;
     margin-top: 5px;
 }
+
 .page ul li {
     border: 1px solid #ddd;
     color: #48b9ef;
@@ -190,85 +220,96 @@
     padding: 0 10px;
     cursor: pointer;
 }
-.pass,.unpass{
-	color: #1aa1e7;
-	font-size: 14px;
-	margin-left: 8px;
+
+.pass, .unpass {
+    color: #1aa1e7;
+    font-size: 14px;
+    margin-left: 8px;
 }
+
 /*开关样式*/
 .toggle {
-	position: relative;
-	display: block;
-	width: 70px;
-	height: 26px;
-	color: white;
-	outline: 0;
-	text-decoration: none;
-	border-radius: 100px;
-	border: 2px solid #CCCCCC;
-	background-color: #fff;
-	-webkit-transition: all 500ms;
-	-moz-transition: all 500ms;
-	-o-transition: all 500ms;
-	transition: all 500ms;
-	outline: none;
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);  
+    position: relative;
+    display: block;
+    width: 70px;
+    height: 26px;
+    color: white;
+    outline: 0;
+    text-decoration: none;
+    border-radius: 100px;
+    border: 2px solid #CCCCCC;
+    background-color: #fff;
+    -webkit-transition: all 500ms;
+    -moz-transition: all 500ms;
+    -o-transition: all 500ms;
+    transition: all 500ms;
+    outline: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+
 .toggle:hover:not(.toggle--moving):after {
-	background-color: #FFFFFF;
-	}
+    background-color: #FFFFFF;
+}
+
 .toggle:after {
-	display: block;
-	position: absolute;
-	top: 0px;
-	bottom: 0px;
-	left: -2px;
-	width: 22px;
-	line-height: 22px;
-	text-align: center;
-	text-transform: uppercase;
-	font-size: 20px;
-	color: white;
-	background-color: #FFFFFF;
-	/*border: 2px solid #FFFFFF;*/
-	-webkit-transition: all 500ms;
-	-moz-transition: all 500ms;
-	-o-transition: all 500ms;
-	transition: all 500ms;
+    display: block;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: -2px;
+    width: 22px;
+    line-height: 22px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 20px;
+    color: white;
+    background-color: #FFFFFF;
+    /*border: 2px solid #FFFFFF;*/
+    -webkit-transition: all 500ms;
+    -moz-transition: all 500ms;
+    -o-transition: all 500ms;
+    transition: all 500ms;
 }
+
 .toggle--on:after {
-	content: '';
-	border-radius: 50%;
-	-webkit-transform: translate(100%, 0);
-	-moz-transform: translate(100%, 0);
-	-o-transform: translate(100%, 0);
-	transform: translate(100%, 0);
-	left: 18px;
-	border: 2px solid #FFFFFF;
+    content: '';
+    border-radius: 50%;
+    -webkit-transform: translate(100%, 0);
+    -moz-transform: translate(100%, 0);
+    -o-transform: translate(100%, 0);
+    transform: translate(100%, 0);
+    left: 18px;
+    border: 2px solid #FFFFFF;
 }
-.toggle--off{
-	background-color: #ccc;
+
+.toggle--off {
+    background-color: #ccc;
 }
+
 .toggle--off:after {
-	content: '';
-	border-radius: 50%;
-	border: 2px solid #FFFFFF;
+    content: '';
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
 }
+
 .toggle--moving {
-	background-color: #44bb00;
-	}
+    background-color: #44bb00;
+}
+
 .toggle--moving:after {
-	border-color: #44bb00;
-	background-color: #44bb00;
-	-webkit-transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
-	-moz-transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
-	-o-transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
-	transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
+    border-color: #44bb00;
+    background-color: #44bb00;
+    -webkit-transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
+    -moz-transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
+    -o-transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
+    transition: color 0s, transform 500ms, border-radius 500ms, background-color 500ms;
 }
-.red{
-	background-color: #44bb00;
-	border: 2px solid #44BB00;
+
+.red {
+    background-color: #44bb00;
+    border: 2px solid #44BB00;
 }
+
 .toggle i {
     text-align: left;
     font-style: normal;
@@ -276,18 +317,20 @@
     font-size: 12px;
     color: #FFFFFF;
 }
-.toggle--on i:after{
-	content: '已启用';
-	margin-left: 4px;
+
+.toggle--on i:after {
+    content: '已启用';
+    margin-left: 4px;
 }
 
-.toggle--off i:before{
-	content: '已禁用';
-	margin-right: 4px;
-	color: #000;
-	text-align: right;
-	float: right;
+.toggle--off i:before {
+    content: '已禁用';
+    margin-right: 4px;
+    color: #000;
+    text-align: right;
+    float: right;
 }
+
 .btns {
     border: none;
     background-color: #1aa1e7;
@@ -302,6 +345,8 @@
     padding: 0px 10px;
     cursor: pointer;
 }
-.viewDetail a{
-	color: #61a9ed;cursor: pointer;
+
+.viewDetail a {
+    color: #61a9ed;
+    cursor: pointer;
 }

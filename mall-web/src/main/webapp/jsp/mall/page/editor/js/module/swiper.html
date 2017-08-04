@@ -1,0 +1,10 @@
+
+<div class="swiper">
+    <div class="swiper-box">
+        <div class="swiper-title">{{data.pic[0].title}}</div>
+        <img id="swiper_fist_pic" ng-src="{{data.pic[0].src}}" />
+    </div>
+</div>
+<div class="actions">
+    <div class="actions-wrap"><span class="action edit">编辑</span><span class="action add" ng-click="addmoduleAny($index+1,$event)">加内容</span><span class="action delete" ng-click="removemodule($index)">删除</span></div>
+</div>

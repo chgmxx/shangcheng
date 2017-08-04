@@ -1,52 +1,260 @@
 /*公共样式*/
-img { border: 0 none; vertical-align: middle;}
-input, button, textarea, select, option { height: 28px; line-height: 28px;}
+img {
+    border: 0 none;
+    vertical-align: middle;
+}
+
+input, button, textarea, select, option {
+    height: 28px;
+    line-height: 28px;
+}
 
 /*文本、单图文、多图文上部公用样式*/
-.con-box1{ overflow: hidden;margin-top: 15px; }
-.txt-btn {padding-bottom: 15px; border-bottom: 1px solid #dedede; display: block; float: left; width: 100%;}
-.srh { display: block; float: right; padding-left: 5px; width: 195px; z-index: 10;margin-right:10px;}
-.sbt { background:url("../../../images/search.jpg") no-repeat center center; cursor: pointer; display: block;
- 	height: 30px;margin-left: 162px; position: absolute; width: 24px; z-index: 99;}
-.grey-btn{border:1px solid #dedede; border-radius:3px; display: block; font-size: 14px; height: 30px; line-height: 30px; 
-	text-align: center; width: 70px;}
-.grey-btn a:hover{color:#1aa1e7;}
-.addBtn,.importBtn,.clearBtn{margin-right:15px;}
-.blue-btn{background-color: #1aa1e7; border-radius: 3px;  color: #fff; display: block; font-size: 14px; height: 30px; 
-		line-height: 30px; text-align: center; width: 70px; margin-right: 15px;}
-.blue-btn a{color:#fff;}
-.bxoCon{margin-bottom:30px; overflow:hidden;}
-.boxPage{margin-bottom: 20px; overflow: hidden;}
-.pageLef{margin-right:10px;}
+.con-box1 {
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.txt-btn {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dedede;
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+.srh {
+    display: block;
+    float: right;
+    padding-left: 5px;
+    width: 195px;
+    z-index: 10;
+    margin-right: 10px;
+}
+
+.sbt {
+    background: url("../../../images/search.jpg") no-repeat center center;
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    margin-left: 162px;
+    position: absolute;
+    width: 24px;
+    z-index: 99;
+}
+
+.grey-btn {
+    border: 1px solid #dedede;
+    border-radius: 3px;
+    display: block;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+}
+
+.grey-btn a:hover {
+    color: #1aa1e7;
+}
+
+.addBtn, .importBtn, .clearBtn {
+    margin-right: 15px;
+}
+
+.blue-btn {
+    background-color: #1aa1e7;
+    border-radius: 3px;
+    color: #fff;
+    display: block;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    width: 70px;
+    margin-right: 15px;
+}
+
+.blue-btn a {
+    color: #fff;
+}
+
+.bxoCon {
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.boxPage {
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.pageLef {
+    margin-right: 10px;
+}
 
 /*文本样式*/
-.txt-tle {display: block;font-size: 14px;height: 35px;line-height: 35px;color: #595959;background-color: #fafafa;text-align: center;}
-.t1 {float: left; font-size: 14px; width: 5%;}
-.t2 { float: left; font-size: 14px; width: 18%;}
-.t3 {float: left; font-size: 14px; width: 23%;}
-.t4 { float: left; font-size: 14px; width: 15%;}
+.txt-tle {
+    display: block;
+    font-size: 14px;
+    height: 35px;
+    line-height: 35px;
+    color: #595959;
+    background-color: #fafafa;
+    text-align: center;
+}
 
-.t5 { float: left; font-size: 14px; text-align: center; width: 25%;}
-.txt-tle2 li {background: #ffffff;border-bottom: 1px solid #eeeeee;display: block;float: left;font-size: 14px;height: 60px;
-	line-height: 60px; overflow: hidden;width: 100%; color: #595959;}
-.list-checkbox {position: relative;}
-.lista {display: block;float: left; height: 60px; overflow: hidden; width: 5%;}
-.lista input{margin-top: 18px;}
-.listb { display: block; float: left; height: 60px; overflow: hidden; width: 18%;    text-align: center;}
-.listc { display: block; float: left; height: 60px; overflow: hidden; width: 23%; text-align: center;}
-.listd { display: block; float: left; height: 60px; overflow: hidden; width: 25%;}
-.txt-tle2 li .skip {  height: 60px; margin: 0 auto;}
-.a1 { color: #0000ff; display: block; float: left; text-align: center; width: 100px;}
-.a1 a { color: #315297 !important;}
-.txt-tle2 li .bianji { display: block;  margin: 5px auto; width: 30px; overflow: hidden; }
-.bj-a{cursor: pointer;display: block;float: left; height: 18px; margin-left: 10px;  width: 17px;}
-.textShare{background: url(/images/share_icon.png) no-repeat -2px -20px; }
-.textEdit{background: url(/images/input02.png) no-repeat -37px -12px ; }
-.textDelete{background: url(/images/input02.png) no-repeat -18px -13px;}
-.bianji .textShare:hover{background: url(/images/share_icon.png) no-repeat -2px 2px; }
-.bianji .textEdit:hover{background: url(/images/input02.png) no-repeat 0px -12px ; }
-.bianji .textDelete:hover{background: url(/images/input02.png) no-repeat -53px -12px;} 
-.weblink{float: left}
-.copyLink{line-height: 25px; color: #1aa1e7; cursor: pointer;}
+.t1 {
+    float: left;
+    font-size: 14px;
+    width: 5%;
+}
+
+.t2 {
+    float: left;
+    font-size: 14px;
+    width: 18%;
+}
+
+.t3 {
+    float: left;
+    font-size: 14px;
+    width: 23%;
+}
+
+.t4 {
+    float: left;
+    font-size: 14px;
+    width: 15%;
+}
+
+.t5 {
+    float: left;
+    font-size: 14px;
+    text-align: center;
+    width: 25%;
+}
+
+.txt-tle2 li {
+    background: #ffffff;
+    border-bottom: 1px solid #eeeeee;
+    display: block;
+    float: left;
+    font-size: 14px;
+    height: 60px;
+    line-height: 60px;
+    overflow: hidden;
+    width: 100%;
+    color: #595959;
+}
+
+.list-checkbox {
+    position: relative;
+}
+
+.lista {
+    display: block;
+    float: left;
+    height: 60px;
+    overflow: hidden;
+    width: 5%;
+}
+
+.lista input {
+    margin-top: 18px;
+}
+
+.listb {
+    display: block;
+    float: left;
+    height: 60px;
+    overflow: hidden;
+    width: 18%;
+    text-align: center;
+}
+
+.listc {
+    display: block;
+    float: left;
+    height: 60px;
+    overflow: hidden;
+    width: 23%;
+    text-align: center;
+}
+
+.listd {
+    display: block;
+    float: left;
+    height: 60px;
+    overflow: hidden;
+    width: 25%;
+}
+
+.txt-tle2 li .skip {
+    height: 60px;
+    margin: 0 auto;
+}
+
+.a1 {
+    color: #0000ff;
+    display: block;
+    float: left;
+    text-align: center;
+    width: 100px;
+}
+
+.a1 a {
+    color: #315297 !important;
+}
+
+.txt-tle2 li .bianji {
+    display: block;
+    margin: 5px auto;
+    width: 30px;
+    overflow: hidden;
+}
+
+.bj-a {
+    cursor: pointer;
+    display: block;
+    float: left;
+    height: 18px;
+    margin-left: 10px;
+    width: 17px;
+}
+
+.textShare {
+    background: url(/images/share_icon.png) no-repeat -2px -20px;
+}
+
+.textEdit {
+    background: url(/images/input02.png) no-repeat -37px -12px;
+}
+
+.textDelete {
+    background: url(/images/input02.png) no-repeat -18px -13px;
+}
+
+.bianji .textShare:hover {
+    background: url(/images/share_icon.png) no-repeat -2px 2px;
+}
+
+.bianji .textEdit:hover {
+    background: url(/images/input02.png) no-repeat 0px -12px;
+}
+
+.bianji .textDelete:hover {
+    background: url(/images/input02.png) no-repeat -53px -12px;
+}
+
+.weblink {
+    float: left
+}
+
+.copyLink {
+    line-height: 25px;
+    color: #1aa1e7;
+    cursor: pointer;
+}
 
 

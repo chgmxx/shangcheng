@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>样式</title>
+<link rel="stylesheet" type="text/css" href="./css/basic.css">
+<script type="text/javascript" src="./js/jquery-2.2.2.js"></script>
+<script type="text/javascript" src="./js/gt_common.js"></script>
+</head>
+<body>
+<section class="wrap720">
+    <section class="gt_flex gt_fixedbox gt_flex_box gt_top_fixedbox open_flashing">
+    	<section class="gt_cell_primary clearfix">
+    		<img src="./images/ewm.jpg"/><span class="flashtxt">关注</span>我们
+    	</section>
+    	<section class="gt_cell_primary clearfix">
+    		<a href="#" class="gt_btn gtb_green_a flashbtn">按 钮</a>
+    	</section>
+        <a href="javascript:;" class="gt_icon_clear gt_close"></a>
+    </section>
+
+    <!-- <section class="gt_flex gt_fixedbox gt_flex_box gt_bottom_fixedbox open_flashing">
+    	<section class="gt_cell_primary clearfix">
+    		<img src="./images/ewm.jpg"/><span class="flashtxt">关注</span>们
+    	</section>
+    	<section class="gt_cell_primary clearfix">
+    		<a href="#" class="gt_btn gtb_green_a flashbtn">按 钮</a>
+    	</section>
+    	<a href="javascript:;" class="gt_icon_clear gt_close"></a>
+    </section> -->
+</section>
+<script type="text/javascript">
+$(function(){
+    if(typeof gt_common == 'undefined' && typeof gtcom == 'undefined')
+    {
+        //
+        //img        图片路径
+        //position   浮动图片位置
+        //isflag     是否闪动
+        //
+        $.getScript("./js/gt_common.js",function(){
+            //gtcom.fixedboxhtml("./images/ewm.jpg","top",true);
+            gtcom.fixedboxhtml("./images/ewm.jpg","bottom",false);
+        });
+    }
+
+    gtcom.fixedboxhtml("./images/ewm.jpg","bottom",false);
+});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,97 @@
+<div class="searchDirective" ng-controller="searchController">
+    <div class="control-group">
+        <label class="control-label">宽度：</label>
+        <div class="interval-slider">
+            <div class="ui-slider">
+                <a class="ui-slider-handle ui-slider-handle01" style="left:{{dataedit.attr.width * 0.78125}}px;"></a>
+            </div>
+
+            <div class="slider-height"><span class="js-height" ng-bind="dataedit.attr.width"></span> 像素</div>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">高低：</label>
+        <div class="interval-slider">
+            <div class="ui-slider">
+                <a class="ui-slider-handle ui-slider-handle02" style="left:{{dataedit.attr.height * 2.5}}px;"></a>
+            </div>
+
+            <div class="slider-height"><span class="js-height" ng-bind="dataedit.attr.height"></span> 像素</div>
+        </div>
+    </div>
+
+    <div class="control-group" style="height: 26px;line-height: 26px">
+        <label class="control-label">背景色：</label>
+        <div style="line-height: 0">
+            <div class="u-colorpicker" data-ng-click="showHidemoduleBoard($event)">
+                <a class="bg-color" style="background-color:{{dataedit.attr.bgColor}}"></a>
+                <a class="small"><i class="icon-x20 icon-x20-color"></i></a>
+            </div>
+        </div>
+
+        <section class="color-picker" >
+            <div class="">
+                <div id="picker01"></div>
+                <div style="height:20px;"></div>
+                <div class="form-item">
+                    <div class="cp-color-warp">
+                        <div class="cpColor bg-color-show"></div>
+                        <input type="text" id="bgcolor" class="bgcolor" ng-model="dataedit.attr.bgColor"/>
+                    </div>
+                </div>
+                <div ng-controller="farbtasticController"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="control-group" style="height: 26px;line-height: 26px">
+        <label class="control-label">边框色：</label>
+        <div style="line-height: 0">
+            <div class="u-colorpicker" data-ng-click="showHidemoduleBoard($event)">
+                <a class="bg-color" style="background-color:{{dataedit.attr.borderColor}}"></a>
+                <a class="small"><i class="icon-x20 icon-x20-color"></i></a>
+            </div>
+        </div>
+
+        <section class="color-picker" >
+            <div class="">
+                <div id="picker02"></div>
+                <div style="height:20px;"></div>
+                <div class="form-item">
+                    <div class="cp-color-warp">
+                        <div class="cpColor bg-color-show"></div>
+                        <input type="text" id="borderColor" class="borderColor" ng-model="dataedit.attr.borderColor"/>
+                    </div>
+                </div>
+                <div ng-controller="farbtasticController"></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="control-group" style="height: 26px;line-height: 26px">
+        <label class="control-label">文字颜色：</label>
+        <div style="line-height: 0">
+            <div class="u-colorpicker" data-ng-click="showHidemoduleBoard($event)">
+                <a class="bg-color" style="background-color:{{dataedit.attr.color}}"></a>
+                <a class="small"><i class="icon-x20 icon-x20-color"></i></a>
+            </div>
+        </div>
+
+        <section class="color-picker" >
+            <div class="">
+                <div id="picker03"></div>
+                <div style="height:20px;"></div>
+                <div class="form-item">
+                    <div class="cp-color-warp">
+                        <div class="cpColor bg-color-show"></div>
+                        <input type="text" id="color" class="color" ng-model="dataedit.attr.color"/>
+                    </div>
+                </div>
+                <div ng-controller="farbtasticController"></div>
+            </div>
+        </section>
+    </div>
+
+</div>

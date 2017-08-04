@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>样式</title>
+<link rel="stylesheet" type="text/css" href="./css/basic.css">
+<script type="text/javascript" src="./js/jquery-2.2.2.js"></script>
+<script type="text/javascript" src="./js/gt_common.js"></script>
+</head>
+<body>
+<section class="wrap720">
+	<ul class="list">
+		<li><a href="javascript:;" class="gt_btn gtb_green_a" id="dialog1">点击弹出1</a></li>
+		<li><a href="javascript:;" class="gt_btn gtb_green_a" id="dialog2">点击弹出2</a></li>
+	</ul>
+</section>
+<script type="text/javascript">
+function tt()
+{
+    alert(1);
+}
+$(function(){
+    $("#dialog1").click(function(){
+        gtcom.dialog("黄宝强戴绿帽！","a")
+    });
+
+    $("#dialog2").click(function(){
+        gtcom.dialog("黄宝强戴绿帽！","b","tt");
+    });
+})
+</script>
+</body>
+</html> 

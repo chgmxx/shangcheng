@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>选择场景</title>
+<link rel="stylesheet" href="css/base.css" />
+<style type="text/css">
+body{font: 14px/27px "微软雅黑";}
+h1,h2,h3,h4,h5,h6,h7{font-size: 100%;}
+
+.adjust_up_and_down{display:inline-block;width:0px;height:100%;vertical-align:middle;}
+
+ul li{list-style:none}
+.f-fix{overflow:hidden}
+
+.cj-box{position:relative}
+.left-wrap{float:left;width:100%;}
+.left{margin-right:480px;}
+.variety{background:#E6E6E6;line-height:33px;padding-left:15px;}
+.variety ul li{float:left;margin-top: 7px;padding-left: 15px;padding-right: 15px;cursor: pointer;}
+
+.module-box{padding-left:30px;}
+
+.sub-variety ul li{height:40px;float: left;line-height: 40px;padding-left: 15px;padding-right: 15px;cursor: pointer;} 
+    
+.sel-variety{color: #5fb336;background: #fff;border-radius: 2px 2px 0 0;}
+
+.logo{position:relative;border: 1px #E6E6E6 solid;}
+
+.sub-module{float: left;width: 17%;margin-right: 3%;margin-top: 13px;cursor: pointer;}
+.mCS_img_loaded{width:100%;border-radius:4px;}    
+
+.code_img{width: 20px;height: 20px;display: inline-block;margin-top: 5px;margin-right: 5px;position:absolute;right:0;;top:0}   
+    
+.f-hc h1{width: 70%;display: inline-block;height: 30px;line-height: 30px;font-weight: normal;text-indent: 3px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}  
+
+.z-layer{width: 100%;height: 100%;position:absolute;top: 0;z-index: 100;border-radius: 4px;overflow:hidden;background:url(images/pic_opacity_hide.png)}    
+.z-layer:hover{background:url(images/pic_opacity.png)}
+.select-module .z-layer:hover{background:none}
+
+.selectPic{display:none;width:100%;position:absolute;top:0}
+.select-module .selectPic{display:block}
+    
+.z-code-img{width: 100%;height: 100%; position: absolute;top: 100%;text-align:center;font-size:0px}
+.z-code-img img{vertical-align:middle;}
+
+.f-hc{position: relative;z-index: 999;background-color: #fff;color: #555;  }
+    
+.bottom-wrap{height:50px;width:100%;position:fixed;bottom:0;left:0;background: #E6E6E6;z-index:9999}
+
+.cretae-tpl-btn,.choose-btn{width: 180px;cursor: pointer;color: #ffffff;text-align: center;margin-top: 7px;border-radius: 4px;position:relative}
+.cretae-tpl-btn{height: 34px;line-height: 34px;border: 1px solid #5fb336;color: #5fb336;float: left;left:30px}
+
+.choose-btn{height: 36px;line-height: 36px;background: #5FB336;float:right;right: 180px;}
+
+.right-wrap{width:480px;position:absolute;right:0;top:0;padding-top: 30px;}
+.phone{width:238px;height:494px;background:url(images/phone1_bg.png) no-repeat;margin: 0 auto;}
+
+</style>
+</head>
+
+<body>
+
+<div class="cj-box">
+
+	<!-- 左边展示 -->
+    <div class="left-wrap">
+    	<div class="left">
+            <!-- 导航 -->
+            <div class="nav-box">
+            
+                <div class="variety">
+                    <ul class="f-fix">
+                        <li class="sel-variety">热门</li>
+                        <li>最新</li>
+                        <li>行业</li>
+                        <li>企业</li>
+                        <li>个人</li>
+                        <li>高级</li>
+                    </ul>
+                </div>
+                
+                <!-- 子类描述 -->
+                <div class="sub-variety" style="display:none">
+                    <ul class="f-fix">
+                        <li>全部</li>
+                    </ul>
+                </div>
+                <div class="sub-variety" style="display:none">
+                    <ul class="f-fix">
+                        <li>全部</li>
+                    </ul>
+                </div>
+                <div class="sub-variety" style="display:none">
+                    <ul class="f-fix">
+                        <li>全部</li>
+                        <li>互联网/数码</li>
+                        <li>其他</li>
+                    </ul>
+                </div>
+                <div class="sub-variety" style="display:none">
+                    <ul class="f-fix">
+                        <li>全部</li>
+                        <li>会议</li>
+                        <li>沙龙</li>
+                    </ul>
+                </div>
+                <div class="sub-variety" style="display:none">
+                    <ul class="f-fix">
+                        <li>全部</li>
+                        <li>亲子</li>
+                        <li>节日</li>
+                    </ul>
+                </div>
+                <div class="sub-variety" style="display:none">
+                    <ul class="f-fix">
+                        <li>全部</li>
+                        <li>私人订制</li>
+                        <li>互动</li>
+                    </ul>
+                </div>
+                <!-- 子类描述 end -->
+                
+            </div>
+            <!-- 导航 end -->
+            
+            <!-- 模板 -->
+            <div class="module-box">
+            	<ul class="f-fix">
+                	<li class="sub-module">
+                    	<div class="logo">
+                        	<img src="images/CoQ8n1ZFW-mAROSoAAKOWcJWeSQ733.png" class="mCS_img_loaded" />
+                            <img src="images/select.png" class="selectPic" />
+                            <div class="z-layer">
+                            	<div class="z-code-img">
+                                	<img src="images/code_ewf.png" width="90%"/>
+                                    <span class="adjust_up_and_down"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f-hc">
+                        	<h1>社群工坊模板</h1>
+                            <img class="code_img" src="images/code_tmb.png" />
+                        </div>
+                    </li>
+                    
+                    <li class="sub-module">
+                    	<div class="logo">
+                        	<img src="images/CoQ8n1ZFW-mAROSoAAKOWcJWeSQ733.png" class="mCS_img_loaded" />
+                            <img src="images/select.png" class="selectPic" />
+                            <div class="z-layer">
+                            	<div class="z-code-img">
+                                	<img src="images/code_ewf.png" width="90%"/>
+                                    <span class="adjust_up_and_down"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f-hc">
+                        	<h1>社群工坊模板</h1>
+                            <img class="code_img" src="images/code_tmb.png" />
+                        </div>
+                    </li>
+                    
+                    <li class="sub-module">
+                    	<div class="logo">
+                        	<img src="images/CoQ8n1ZFW-mAROSoAAKOWcJWeSQ733.png" class="mCS_img_loaded" />
+                            <img src="images/select.png" class="selectPic" />
+                            <div class="z-layer">
+                            	<div class="z-code-img">
+                                	<img src="images/code_ewf.png" width="90%"/>
+                                    <span class="adjust_up_and_down"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f-hc">
+                        	<h1>社群工坊模板</h1>
+                            <img class="code_img" src="images/code_tmb.png" />
+                        </div>
+                    </li>
+                    
+                    <li class="sub-module">
+                    	<div class="logo">
+                        	<img src="images/CoQ8n1ZFW-mAROSoAAKOWcJWeSQ733.png" class="mCS_img_loaded" />
+                            <img src="images/select.png" class="selectPic" />
+                            <div class="z-layer">
+                            	<div class="z-code-img">
+                                	<img src="images/code_ewf.png" width="90%"/>
+                                    <span class="adjust_up_and_down"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f-hc">
+                        	<h1>社群工坊模板</h1>
+                            <img class="code_img" src="images/code_tmb.png" />
+                        </div>
+                    </li>
+                    
+                    <li class="sub-module">
+                    	<div class="logo">
+                        	<img src="images/CoQ8n1ZFW-mAROSoAAKOWcJWeSQ733.png" class="mCS_img_loaded" />
+                            <img src="images/select.png" class="selectPic" />
+                            <div class="z-layer">
+                            	<div class="z-code-img">
+                                	<img src="images/code_ewf.png" width="90%"/>
+                                    <span class="adjust_up_and_down"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f-hc">
+                        	<h1>社群工坊模板</h1>
+                            <img class="code_img" src="images/code_tmb.png" />
+                        </div>
+                    </li>
+                    
+                    <li class="sub-module">
+                    	<div class="logo">
+                        	<img src="images/CoQ8n1ZFW-mAROSoAAKOWcJWeSQ733.png" class="mCS_img_loaded" />
+                            <img src="images/select.png" class="selectPic" />
+                            <div class="z-layer">
+                            	<div class="z-code-img">
+                                	<img src="images/code_ewf.png" width="90%"/>
+                                    <span class="adjust_up_and_down"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="f-hc">
+                        	<h1>社群工坊模板</h1>
+                            <img class="code_img" src="images/code_tmb.png" />
+                        </div>
+                    </li>
+                    
+                </ul>
+            </div>
+            <!-- 模板 end -->
+        </div>
+    </div>
+    <!-- 左边展示 end -->
+    
+    <!-- 右边展示 -->
+    <div class="right-wrap">
+    	<div class="phone">
+        	<h1></h1>
+            <div></div>
+            <div></div>
+            <iframe src=""></iframe>
+        </div>
+    </div>
+    <!-- 右边展示 end -->
+    
+    <!-- 底部选取 -->
+    <div class="bottom-wrap">
+    	<div class="cretae-tpl-btn">+ 新建空白模板</div>
+        <div class="choose-btn">选取</div>
+    </div>
+    <!-- 底部选取 end -->
+</div>
+
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+<script>
+var subVariety = $(".sub-variety");
+$(".variety").on("click","ul li",function(){
+	$(".variety ul li").removeClass("sel-variety");
+	$(this).addClass("sel-variety");
+	subVariety.hide();
+	var svDom = subVariety.eq($(this).index());
+	if(svDom.find("li").length>1){
+		svDom.show();
+	}
+})
+
+$(".module-box").on("mouseenter",".code_img",function(){
+	$(this).parents("li").find(".z-layer").css("background","url(images/pic_opacity.png)").children().animate({"top":"0%"},300);
+	
+})
+$(".module-box").on("mouseleave",".code_img",function(){
+	$(this).parents("li").find(".z-layer").css("background","").children().animate({"top":"100%"},300);
+})
+$(".module-box").on("click",".z-layer",function(){
+	$(".logo").removeClass("select-module");
+	$(this).parent().addClass("select-module");
+})
+
+
+
+</script>
+</body>
+</html>
