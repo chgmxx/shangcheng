@@ -855,7 +855,7 @@
 </form>
 <c:if test="${!empty unionMap }">
 	<c:if test="${unionMap.status == -2 || unionMap.status == 1}">
-<jsp:include page="/jsp/merchants/trade/mall/order/layer/unionPhone.jsp"></jsp:include>
+<jsp:include page="/jsp/mall/order/layer/unionPhone.jsp"></jsp:include>
 	</c:if>
 </c:if>
 
@@ -1026,7 +1026,7 @@
 </c:if>
 <c:if test="${!empty isFlow }">
 	<input type="hidden" class="isFlow" value="${isFlow }"/>
-	<jsp:include page="/jsp/merchants/trade/mall/order/layer/flowPhone.jsp"></jsp:include>
+	<jsp:include page="/jsp/mall/order/layer/flowPhone.jsp"></jsp:include>
 </c:if>
 
 <!-- <script src="/js/plugin/jquery-1.8.3.min.js"></script> -->

@@ -87,7 +87,7 @@ public class MallFreightController extends BaseController {
 	    logger.error( "物流管理列表: " + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/freight/freight_index";
+	return "mall/freight/freight_index";
     }
 
 
@@ -137,7 +137,7 @@ public class MallFreightController extends BaseController {
 	    logger.error( "修改物流信息:" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/freight/freight_edit";
+	return "mall/freight/freight_edit";
     }
 
     /**
@@ -221,7 +221,7 @@ public class MallFreightController extends BaseController {
 	request.setAttribute( "index", map.get( "index" ) );
 	request.setAttribute( "selectPro", map.get( "selectPro" ) );
 	request.setAttribute( "hidePro", map.get( "hidePro" ) );
-	return "merchants/trade/mall/freight/provincePopUp";
+	return "mall/freight/provincePopUp";
     }
 
     /**
@@ -280,7 +280,7 @@ public class MallFreightController extends BaseController {
 	    logger.error( "上门自提列表:" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/take/take_index";
+	return "mall/take/take_index";
     }
 
     /**
@@ -328,7 +328,7 @@ public class MallFreightController extends BaseController {
 	    logger.error( "进入编辑上门自提失败：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/take/take_edit";
+	return "mall/take/take_edit";
     }
 
     /**

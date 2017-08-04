@@ -68,7 +68,7 @@
                 <tr>
                     <td>
                         <c:if test="${empty statistics.headimgurl ||  statistics.headimgurl ==''}">
-                            <img src="/jsp/merchants/trade/mall/purchase/baojia/image/defaulthead.png" width="60px" height="60px">
+                            <img src="/jsp/mall/purchase/baojia/image/defaulthead.png" width="60px" height="60px">
                         </c:if>
                         <c:if test="${!empty statistics.headimgurl && statistics.headimgurl !=''}">
                             <img src="${statistics.headimgurl}" width="60px" height="60px">

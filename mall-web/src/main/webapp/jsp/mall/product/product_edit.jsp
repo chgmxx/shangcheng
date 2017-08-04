@@ -1007,7 +1007,7 @@
                 <div class="right-box">
                     <div class="phone">
                         <iframe name="oneIframe" id="oneIframe"
-                                src="/jsp/merchants/trade/mall/product/iframe/product_edit_one.jsp"
+                                src="/jsp/mall/product/iframe/product_edit_one.jsp"
                                 id="oneIframe" width="234" height="420" style="border: 0;"></iframe>
                     </div>
                 </div>
@@ -1052,7 +1052,7 @@
                             <div class="phone">
 
                                 <iframe name="twoIframe" id="twoIframe"
-                                        src="/jsp/merchants/trade/mall/product/iframe/product_edit_two.jsp"
+                                        src="/jsp/mall/product/iframe/product_edit_two.jsp"
                                         width="234" height="420" style="border: 0;"></iframe>
                             </div>
 

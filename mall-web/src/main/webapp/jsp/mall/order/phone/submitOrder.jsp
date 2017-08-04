@@ -602,7 +602,7 @@
 </form>
 <c:if test="${!empty unionMap }">
 	<c:if test="${unionMap.status == -2 || unionMap.status == 1}">
-<jsp:include page="/jsp/merchants/trade/mall/order/layer/unionPhone.jsp"></jsp:include>
+<jsp:include page="/jsp/mall/order/layer/unionPhone.jsp"></jsp:include>
 	</c:if>
 </c:if>
 

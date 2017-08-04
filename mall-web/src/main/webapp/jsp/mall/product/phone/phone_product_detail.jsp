@@ -483,7 +483,7 @@
 
         </c:if>
 
-        <jsp:include page="/jsp/merchants/trade/mall/product/phone/product_detail_new.jsp"></jsp:include>
+        <jsp:include page="/jsp/mall/product/phone/product_detail_new.jsp"></jsp:include>
     </div>
     <c:set var="cla" value="uls"></c:set>
     <c:set var="fCla" value=""></c:set>
