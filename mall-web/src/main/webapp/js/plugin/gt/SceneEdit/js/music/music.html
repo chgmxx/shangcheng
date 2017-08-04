@@ -1,0 +1,60 @@
+<h1 style="color:#444"><img src="images/singleimage.png"/>音频</h1>
+<input type="text" id="musicsrc" data-ng-model="data.datamusic.music" style="display:none">
+<input type="text" id="musicname" data-ng-model="data.datamusic.name" style="display:none">
+<div class="btn c-music" data-ng-click="init_btn()">
+    <div class="c-dropdown-row f-fix">
+        <!--没有音乐-->
+        <div class="f-fix" data-ng-hide="hasmusic(data.datamusic.music)">
+            <div class="music-img fl-l">
+                <div class="music-img-wrap"></div>
+            </div>
+            <div class="music-add fl-r">
+                <label>没有音频</label>
+                <a href="javascript:void(0);" class="u-btn u-btn-large" data-ng-click="addMusic()">添加音频</a>
+            </div>
+        </div>
+        <!--有音乐-->
+        <div class="f-fix"data-ng-show="hasmusic(data.datamusic.music)">
+            <div class="music-img fl-l">
+                <div class="music-img-wrap" style="background-image: url(/js/SceneEdit/images/audio-icon.png)"></div>
+            </div>
+            <div class="music-add fl-r">
+                <label data-ng-bind="data.datamusic.name"></label>
+                <div class="f-fix" style="display:inline-block;position:relative;top:5px;">
+                    <span class="bg-icon icon-x50-change" data-ng-click="addMusic()" style="width:50px;height:24px;margin-right:8px;display:inline-block;"></span>
+                   <!--  <span class="bg-icon icon-x50-audition" style="width:50px;height:24px;margin-right:8px;display:inline-block;"></span> -->
+                   <!--  <span class="bg-icon icon-x24 icon-x24-remove"></span> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="f-fix">
+        <section class="playmenu">
+            <ul class="f-fix">
+                <li data-ng-class={"active":musicpage(1)} data-ng-click="setmusicpage(1)">
+                    <a>自动播放</a>
+                </li>
+                <li data-ng-class={"active":musicpage(2)} data-ng-click="setmusicpage(2)">
+                    <a>点击播放</a>
+                </li>
+                <li data-ng-class={"active":musicpage(3)} data-ng-click="setmusicpage(3)">
+                    <a>摇一摇播放</a>
+                </li>
+            </ul>
+        </section>
+
+        <section class="c-conf-bgbox">
+            <div class="bg-warp">
+                <div class="music-icon" style="background-image:url({{data.datamusic.src}})"></div>
+            </div>
+            <div class="f-fix c-font-setting">
+                <div class="u-image-change-btn" data-ng-click="setprovenance('music')">更换图标</div>
+            </div>
+        </section>
+        <div class="f-fix m-t-20">
+            <label>隐藏图标</label>
+            <div class="fl-r" data-ng-class={"icon-off":!data.music,"icon-on":data.music} data-ng-click="setmusic()"></div>
+        </div>
+    </div>
+</div>

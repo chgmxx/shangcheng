@@ -1,0 +1,30 @@
+<div class="tpl-shop" ng-if="dataJson[$index].radio">
+    <div class="tpl-shop-header" style="background-color:#ffffff; background-image: url('{{picJson[$index].stoPicture}}');">
+        <div class="tpl-shop-title">{{picJson[$index].stoName}}</div>
+        <div class="tpl-shop-avatar">
+            <img ng-src="{{picJson[$index].headImg}}" alt="头像">
+        </div>
+    </div>
+    <div class="tpl-shop-content">
+        <ul class="clearfix">
+            <li class="js-all-goods">
+                <a href="javascript:void(0);" onclick="shoppingall();">
+                    <span class="count">{{picJson[$index].countproduct}}</span>
+                    <span class="text">全部商品</span>
+                </a>
+            </li>
+             <li class="js-new-goods">
+                <a href="javascript:void(0);" onclick="shoppingall();">
+                    <span class="count">0</span>
+                    <span class="text">新上商品</span>
+                </a>
+            </li> 
+            <li class="js-order">
+                <a href="javascript:void(0);"  onclick="toOrder();">
+                    <span class="count user"></span>
+                    <span class="text">我的订单</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,382 @@
+<div class="commodityDirective" ng-controller="commodityController">
+    <div class="control-group">
+        <label class="control-label">选择商品：</label>
+        <div class="controls">
+            <ul class="clearfix inb">
+            	<li>
+                    <a onclick="choosePro()" href="javascript:void(0);" class="js-add-goods add-goods"><i class="icon-add"></i></a>
+                </li>
+                <li class="sort" ng-repeat="pic in picJson[pageEdit].imgID">
+                    <a href="javascript:void(0);" class="js-add-goods add-goods">
+                        <img ng-src="{{pic.src}}" width="100%" height="100%">
+                    </a>
+                    <a class="remove_btn" ng-click="removeshop($index)">×</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label">列表样式：</label>
+        <div class="controls">
+            <label class="radio inline" ng-click="setpage(0)">
+                <input type="radio" name="size" value="0" ng-model="dataedit.page">大图
+            </label>
+            <label class="radio inline" ng-click="setpage(1)">
+                <input type="radio" name="size" value="1" ng-model="dataedit.page">小图
+            </label>
+            <label class="radio inline" ng-click="setpage(2)">
+                <input type="radio" name="size" value="2" ng-model="dataedit.page">一大两小
+            </label>
+            <label class="radio inline" ng-click="setpage(3)">
+                <input type="radio" name="size" value="3" ng-model="dataedit.page">详细列表
+            </label>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls" ng-if="dataedit.page == 0">
+            <div class="controls-card">
+                <div class="controls-card-tab">
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+                        卡片样式
+                    </label>
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+                        极简样式
+                    </label>
+                </div>
+
+                <div class="controls-card-item" ng-hide="dataedit.css == 1">
+                    <div>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="buy_btn" value="1" ng-model="dataedit.btn">显示购买按钮
+                        </label>
+                    </div>
+
+                    <div style="margin: 10px 0 0 20px;" ng-show="dataedit.btn">
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+                            样式1
+                        </label>
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+                            样式2
+                        </label>
+
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+                            样式3
+                        </label>
+
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+                            样式4
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="controls-card-item">
+                	<div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" name="title" ng-model="dataedit.name">显示商品名 (小图不显示名称)
+	                    </label>
+                    </div>
+                </div>
+
+                <div class="controls-card-item">
+                	<div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" name="show_sub_title" ng-model="dataedit.intro">显示商品简介
+	                    </label>
+                    </div>
+                </div>
+
+                <div class="controls-card-item">
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="price" ng-model="dataedit.price">显示价格
+                    </label>
+                </div>
+                
+                <div class="controls-card-item" ng-hide="dataedit.css == 1">
+                	<div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.label">显示标签
+	                    </label>
+	                </div>
+                    
+                    <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_discount">显示折扣价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_other">显示会员价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_wholesale">显示批发价格
+	                    </label>
+	                </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="controls" ng-if="dataedit.page == 1">
+            <div class="controls-card">
+                <div class="controls-card-tab">
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+                        卡片样式
+                    </label>
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+                        极简样式
+                    </label>
+                    <!--<label class="radio inline">-->
+                        <!--<input type="radio" name="size_type" value="2" ng-model="dataedit.css">-->
+                        <!--瀑布流-->
+                    <!--</label>-->
+                    <label class="radio inline" style="margin-left:0">
+                        <input type="radio" name="size_type" value="3" ng-model="dataedit.css">
+                        促销
+                    </label>
+                </div>
+
+                <div class="controls-card-item" ng-hide="dataedit.css == 1 || dataedit.css == 3">
+                    <div>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="buy_btn" value="1"  ng-model="dataedit.btn">显示购买按钮
+                        </label>
+                    </div>
+
+                    <div style="margin: 10px 0 0 20px;" ng-show="dataedit.btn">
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+                            样式1
+                        </label>
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+                            样式2
+                        </label>
+
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+                            样式3
+                        </label>
+
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+                            样式4
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="controls-card-item" ng-hide="dataedit.css == 1 || dataedit.css == 3">
+                	<div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.name">显示商品名 (小图不显示名称)
+	                    </label>
+                    </div>
+                    
+                    <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.label">显示标签
+	                    </label>
+	                </div>
+                    
+                    <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_discount">显示折扣价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_other">显示会员价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_wholesale">显示批发价格
+	                    </label>
+	                </div>
+	                
+                </div>
+
+                <div class="controls-card-item" ng-hide="dataedit.css == 3">
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="price" ng-model="dataedit.price">显示价格
+                    </label>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="controls" ng-if="dataedit.page == 2">
+            <div class="controls-card">
+                <div class="controls-card-tab">
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+                        卡片样式
+                    </label>
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+                        极简样式
+                    </label>
+                </div>
+
+                <div class="controls-card-item" ng-hide="dataedit.css == 1">
+                    <div>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="buy_btn" ng-model="dataedit.btn">显示购买按钮
+                        </label>
+                    </div>
+
+                    <div style="margin: 10px 0 0 20px;" ng-show="dataedit.btn">
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+                            样式1
+                        </label>
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+                            样式2
+                        </label>
+
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+                            样式3
+                        </label>
+
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+                            样式4
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="controls-card-item">
+                	<div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" name="title" ng-model="dataedit.name">显示商品名 (小图不显示名称)
+	                    </label>
+                    </div>
+                </div>
+
+                <div class="controls-card-item">
+                    <label class="checkbox inline">
+                        <input type="checkbox" name="price" ng-model="dataedit.price">显示价格
+                    </label>
+                </div>
+                
+                <div class="controls-card-item" ng-hide="dataedit.css == 1">
+                	<div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.label">显示标签
+	                    </label>
+	                </div>
+                    
+                    <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_discount">显示折扣价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_other">显示会员价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_wholesale">显示批发价格
+	                    </label>
+	                </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="controls" ng-if="dataedit.page == 3">
+            <div class="controls-card">
+                <div class="controls-card-tab">
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+                        卡片样式
+                    </label>
+                    <label class="radio inline">
+                        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+                        极简样式
+                    </label>
+                </div>
+
+                <div class="controls-card-item">
+                    <div>
+                        <label class="checkbox inline">
+                            <input type="checkbox" name="buy_btn" ng-model="dataedit.btn">显示购买按钮
+                        </label>
+                    </div>
+
+                    <div style="margin: 10px 0 0 20px;" ng-show="dataedit.btn">
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+                            样式1
+                        </label>
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+                            样式2
+                        </label>
+
+                        <label class="radio inline"  ng-hide="dataedit.css == 1">
+                            <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+                            样式3
+                        </label>
+
+                        <label class="radio inline">
+                            <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+                            样式4
+                        </label>
+                    </div>
+
+                </div>
+                
+                <div class="controls-card-item">	     
+                	<div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.label">显示标签
+	                    </label>
+	                </div>               
+                    <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_discount">显示折扣价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_other">显示会员价格
+	                    </label>
+	                </div>
+	                
+	                <div class="controls-card-item">
+	                    <label class="checkbox inline">
+	                        <input type="checkbox" ng-model="dataedit.price_wholesale">显示批发价格
+	                    </label>
+	                </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="search">
+    <div style="width: {{data.attr.width}}px;height: {{data.attr.height}}px;margin: 0 auto;position: relative;">
+    	<input type="text" value="搜索" style="width: 100%;height: 100%;border-color: {{data.attr.borderColor}};color: {{data.attr.color}};background-color: {{data.attr.bgColor}};">
+    	<i class="find_icon"></i>
+    </div>
+</div>
+
+<div class="actions">
+    <div class="actions-wrap"><span class="action edit">编辑</span><span class="action add" ng-click="addmoduleAny($index+1,$event)">加内容</span><span class="action delete" ng-click="removemodule($index)">删除</span></div>
+</div>

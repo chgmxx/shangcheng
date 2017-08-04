@@ -1,0 +1,112 @@
+.btn-input{
+    border: 1px solid #ccc;
+    width: 280px;
+    box-sizing: border-box;
+    height: 40px;
+    line-height: 40px;
+    text-indent: .5em;
+}
+.c-dropdown-row{
+    margin-bottom: 17px;
+}
+.c-externallinks-switch ul{
+    margin: 0 auto;
+    display: table;
+}
+.c-externallinks-switch ul li{
+    display: table-cell;
+}
+.c-externallinks-switch ul li a{
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-right: none;
+    padding: 2px 13px;
+    text-decoration: none;
+    color: #444;
+    text-align: center;
+    background: -webkit-linear-gradient(#fbfbfb,#e1e1e1);
+    background: -o-linear-gradient(#fbfbfb,#e1e1e1);
+    background: linear-gradient(#fbfbfb,#e1e1e1);
+    position: relative;
+    display: block;
+}
+.c-externallinks-switch ul li a::after{
+    content: '';
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    right: -1px;
+    border-right: 1px solid #ccc;
+    display: block;
+}
+.c-externallinks-switch ul li.z-active a::after{
+    border-color: #a3a3a3;
+    z-index: 1;
+}
+.c-externallinks-switch ul li a:hover{
+    background: #E6E6E6;
+    cursor: pointer;
+}
+.c-externallinks-switch ul li.z-active a{
+    background: #ccc;
+    border-color: rgba(0,0,0,.2);
+}
+.c-externallinks-setting{
+    margin-top: -12px;
+}
+.c-externallinks-setting .btnTxt{
+    text-indent: .5rem;
+}
+.c-externallinks-setting .btnTxt:focus{
+    -moz-box-shadow: 0 0 8px #4a90e2;
+    -webkit-box-shadow: 0 0 8px #4a90e2;
+    box-shadow: 0 0 8px #4a90e2;
+    border-color: #4a90e2;
+}
+.u-image-icon{
+    width: 40px;
+    height: 40px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+}
+.u-image-change-btn{
+    height: 24px;
+    line-height: 24px;
+    border: 1px solid #ccc;
+    text-align: center;
+    cursor: pointer;
+    background: -webkit-linear-gradient(#fbfbfb, #e1e1e1);
+    background: -moz-linear-gradient(#fbfbfb, #e1e1e1);
+    background: linear-gradient(#fbfbfb, #e1e1e1);
+}
+.u-image-change-btn:hover{
+    background: #E6E6E6;
+}
+.c-font-setting{
+    position: relative;
+}
+
+.btn-go{
+    text-align: center;
+    font-family: "微软雅黑";
+    display: -webkit-box;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    display: -moz-box;
+    -moz-box-pack: center;
+    -moz-box-align: center;
+    display: -ms-flexbox;
+    -ms-flex-pack: center;
+    -ms-flex-align: center;
+}
+.btn-icon{
+    height:100%;
+    width:100%;
+}
+.btn-icon div{
+    width: 100%;
+    height: 100%;
+    background: no-repeat center center;
+    background-size: contain;
+}

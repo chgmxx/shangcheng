@@ -1,0 +1,180 @@
+<h1 style="color:#444"><img src="/js/SceneEdit/images/customform.png"/>表单</h1>
+<div class="form">
+    <div style="height: 40px;"></div>
+
+    <section>
+        <div class="c-form-row pr" data-ng-repeat="d in data.dataform.input.data">
+            <div class="u-input-group pr f-fix">
+                <select ng-model="d[0]" ng-change="setformname(d)" ng-options="list[l] for l in listpage"></select>
+                <span class="fgx"></span>
+                <input type="text" data-ng-model="d[1]">
+            </div>
+            <a href="javascript:void(0);" class="icon-x24 first" data-ng-if="$first" data-ng-click="setalert01()"></a>
+            <a href="javascript:void(0);" class="icon-x24" data-ng-if="!$first" data-ng-click="removeform($index)"></a>
+        </div>
+        <div class="c-form-row pr">
+            <button data-ng-click="addform()">添加字段</button>
+        </div>
+    </section>
+
+    <section>
+        <div class="c-form-row pr f-fix">
+            <div class="c-form-submit">
+                <label>按钮</label>
+                <input type="text" data-ng-model="data.dataform.submit.val">
+            </div>
+            <a href="javascript:void(0);" class="icon-x24 first" data-ng-click="setalert02()"></a>
+        </div>
+    </section>
+
+    <div class="fixedLeftAlert" data-ng-show="alert01" data-ng-click="getinit_state()">
+        <div class="title">外观</div>
+        <section class="c-config-chil">
+            <div class="c-config-row f-fix">
+                <label>背景</label>
+                <div class="fl-r" style="line-height: 0">
+                    <div class="u-colorpicker" data-ng-click="setformbgBoard($event)">
+                        <a class="bg-color" style="background-color:{{data.dataform.input.bgcolor}}"></a>
+                        <a class="small"><i class="icon-x20 icon-x20-color"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="c-config-row f-fix">
+                <label>边框</label>
+                <div class="fl-r" style="line-height: 0">
+                    <div class="u-spinner">
+                        <button type="button" data-ng-click="minusborder()"><i class="oni-icon oni-icon-minus">-</i></button>
+                        <input type="text"  data-ng-model="data.dataform.input.border">
+                        <button type="button" data-ng-click="plusborder()"><i class="oni-icon oni-icon-plus">+</i></button>
+                    </div>
+                    <div class="u-colorpicker" data-ng-click="setformborBoard($event)">
+                        <a class="bg-color" style="background-color:{{data.dataform.input.borcolor}}"></a>
+                        <a class="small"><i class="icon-x20 icon-x20-color"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="c-config-row f-fix">
+                <label>圆角</label>
+                <div class="fl-r">
+                    <div class="u-slider ng-scope">
+                        <i my-plan style="left:{{data.dataform.input.borderRadius}}%" datamodel="data.dataform.input.borderRadius" datarate="1" dataint="true"></i>
+                    </div>
+                    <input type="text" ng-model="data.dataform.input.borderRadius" class="ng-pristine ng-valid">
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="fixedLeftAlert" data-ng-show="alert02" data-ng-click="getinit_state()">
+        <div class="title">外观</div>
+        <section class="c-config-chil">
+            <div class="c-config-row f-fix">
+                <label>背景</label>
+                <div class="fl-r" style="line-height: 0">
+                    <div class="u-colorpicker" data-ng-click="setsubmitbgBoard($event)">
+                        <a class="bg-color" style="background-color:{{data.dataform.submit.bgcolor}}"></a>
+                        <a class="small"><i class="icon-x20 icon-x20-color"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="c-config-row f-fix">
+                <label>边框</label>
+                <div class="fl-r" style="line-height: 0">
+                    <div class="u-spinner">
+                        <button type="button" data-ng-click="minusborder()"><i class="oni-icon oni-icon-minus">-</i></button>
+                        <input type="text"  data-ng-model="data.dataform.submit.border">
+                        <button type="button" data-ng-click="plusborder()"><i class="oni-icon oni-icon-plus">+</i></button>
+                    </div>
+                    <div class="u-colorpicker" data-ng-click="setsubmitborBoard($event)">
+                        <a class="bg-color" style="background-color:{{data.dataform.submit.borcolor}}"></a>
+                        <a class="small"><i class="icon-x20 icon-x20-color"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="c-config-row f-fix">
+                <label>圆角</label>
+                <div class="fl-r">
+                    <div class="u-slider ng-scope">
+                        <i my-plan style="left:{{data.dataform.submit.borderRadius}}%" datamodel="data.dataform.submit.borderRadius" datarate="1" dataint="true"></i>
+                    </div>
+                    <input type="text" ng-model="data.dataform.submit.borderRadius" class="ng-pristine ng-valid">
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- 取色器 -->
+<section class="color-form" data-ng-show="formbgBoard" style="top:{{btnBoardTop + 30}}px" data-ng-click="getinit_state()">
+    <div class="">
+        <div class="formBoard formBoard01"></div>
+        <div style="height:20px;"></div>
+        <div class="form-item">
+            <div class="cp-color-warp" style="left:0">
+                <div class="cpColor bg-color-show"></div>
+                <input type="text" class="forminput01 forminput form_bgcolor" ng-model="data.dataform.input.bgcolor"/>
+            </div>
+            <div class="bg-color-input">
+                <label>透明</label>
+                <input type="text" class="opacity" ng-model="data.dataform.input.bgopacity" />
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end取色器 -->
+
+<!-- 取色器 -->
+<section class="color-form" data-ng-show="formborBoard" style="top:{{btnBoardTop + 30}}px" data-ng-click="getinit_state()">
+    <div class="">
+        <div class="formBoard formBoard02"></div>
+        <div style="height:20px;"></div>
+        <div class="form-item">
+            <div class="cp-color-warp" style="left:0">
+                <div class="cpColor bg-color-show"></div>
+                <input type="text" class="forminput02 forminput form_borcolor" ng-model="data.dataform.input.borcolor"/>
+            </div>
+            <div class="bg-color-input">
+                <label>透明</label>
+                <input type="text" class="opacity" ng-model="data.dataform.input.boropacity" />
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end取色器 -->
+
+<!-- 取色器 -->
+<section class="color-form" data-ng-show="submitbgBoard" style="top:{{colorBoardTop+30}}px" data-ng-click="getinit_state()">
+    <div class="">
+        <div class="formBoard formBoard03"></div>
+        <div style="height:20px;"></div>
+        <div class="form-item">
+            <div class="cp-color-warp" style="left:0">
+                <div class="cpColor bg-color-show"></div>
+                <input type="text" class="forminput03 forminput form_submit_bg" ng-model="data.dataform.submit.bgcolor"/>
+            </div>
+            <div class="bg-color-input">
+                <label>透明</label>
+                <input type="text" class="opacity" ng-model="data.dataform.submit.bgopacity" />
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end取色器 -->
+
+<!-- 取色器 -->
+<section class="color-form" data-ng-show="submitborBoard" style="top:{{colorBoardTop+30}}px" data-ng-click="getinit_state()">
+    <div class="">
+        <div class="formBoard formBoard04"></div>
+        <div style="height:20px;"></div>
+        <div class="form-item">
+            <div class="cp-color-warp" style="left:0">
+                <div class="cpColor bg-color-show"></div>
+                <input type="text" class="forminput04 forminput form_submit_bor" ng-model="data.dataform.submit.borcolor"/>
+            </div>
+            <div class="bg-color-input">
+                <label>透明</label>
+                <input type="text" class="opacity" ng-model="data.dataform.submit.boropacity" />
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end取色器 -->

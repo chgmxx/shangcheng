@@ -1,0 +1,483 @@
+.control-group{margin-bottom: 10px;}
+.control-label{
+    width: 87px;
+    cursor: default;
+    display: block;
+    float: left;
+    font-size: 14px;
+    line-height: 18px;
+    text-align: right;
+    padding-top: 5px;
+}
+.controls{
+    margin-left: 93px;
+    word-break: break-all;
+}
+.control-group:before,.control-group:after,.clearfix:before,.clearfix:after{
+    display: table;
+    line-height: 0;
+    content: "";
+}
+.commodityDirective li .add-goods{
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    line-height: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+.commodityDirective li{
+    float: left;
+    margin: 0 10px 10px 0;
+    display: block;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    position: relative;
+}
+.icon-add {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: url("../../images/icon-add.png") no-repeat 0;
+}
+.controls>.radio:first-child {
+    padding-top: 5px;
+}
+.checkbox.inline, .radio.inline {
+    display: inline-block;
+    padding-top: 5px;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+.radio, .checkbox {
+    padding-left: 16px;
+    cursor: pointer;
+}
+.checkbox input[type=checkbox], .radio input[type=radio] {
+    float: left;
+    margin-left: -20px;
+}
+.radio input[type="radio"], .checkbox input[type="checkbox"] {
+    margin-left: -16px;
+    margin-top: 4px;
+}
+.checkbox.inline+.checkbox.inline, .radio.inline+.radio.inline {
+    margin-left: 10px;
+}
+.controls-card{
+    padding: 20px;
+    margin-right: 20px;
+    border: 1px solid #e5e5e5;
+    background: #fff;
+}
+.controls-card .controls-card-tab{
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e5e5e5;
+}
+.controls-card .controls-card-item {
+    margin-bottom: 10px;
+}
+.app-preview .photo-block{
+    min-height: 100px;
+    margin: 4px;
+    text-align: center;
+    overflow: hidden;
+    position: relative;
+    background-color: #f8f8f8;
+    background-size: 6px 6px;
+}
+.goods-card ul li{
+    display: inline-block;
+    margin: 4px 0;
+    position: relative;
+}
+.goods-card01 ul li:nth-child(3n-2){
+    width: 100%;
+}
+.goods-card01 ul li:nth-child(3n-1),.goods-card01 ul li:nth-child(3n){
+    width: 50%;
+    box-sizing: border-box;
+}
+.goods-card01 ul li:nth-child(3n-2) .goods-title {
+    font-size: 14px;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 85%;
+    line-height: 1.3;
+    overflow: hidden;
+    color: #333;
+    margin-bottom: 5px;
+}
+.goods-card01 ul li:nth-child(3n-1) .goods-title,.goods-card01 ul li:nth-child(3n) .goods-title{
+    height: 32px;
+    margin-bottom: 5px;
+    line-height: 1.3;
+    font-size: 13px;
+    overflow: hidden;
+    color: #333;
+    padding-top: 3px;
+}
+.goods-card02 ul li{
+    width: 100%;
+}
+.goods-card02 ul li .goods-title{
+    font-size: 14px;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 85%;
+    line-height: 1.3;
+    overflow: hidden;
+    color: #333;
+    padding: 5px 0px;
+}
+.goods-card02 ul li .goods-sub-title{
+    width: 100%;
+    margin-bottom: 6px;
+    word-break: break-all;
+    line-height: 16px;
+    padding-top: 0px;
+    color: #666;
+    white-space: normal;
+    font-size: 12px;
+}	
+.goods-card03 ul li{
+    width: 50%;
+    box-sizing: border-box;
+}
+.goods-card03 ul li .goods-title{
+    height: 32px;
+    margin-bottom: 5px;
+    line-height: 1.4;
+    font-size: 12px;
+    color: #333;
+    overflow: hidden;
+    padding-top: 2px;
+}
+.goods-card04 ul li{
+    width: 100%;
+}
+.goods-card04 .photo-block{
+    width: 125px;
+    float: left;
+    margin-right: 13px;
+}
+.goods-card04 ul li .goods-title{
+    font-size: 14px;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 85%;
+    line-height: 1.3;
+    color: #333;
+    margin-bottom: 5px;
+}
+.goods-card04 .good-buy{
+    margin-right: 5px;
+}
+.app-preview .link{
+    min-height: 100px;
+    display: block;
+    margin: 0px 4px;
+    border: 2px solid #e5e5e5;
+    -webkit-border-image: url("../../images/border-line.png") 2 stretch;
+    -moz-border-image: url("../../images/border-line.png") 2 stretch;
+    border-image: url("../../images/border-line.png") 2 stretch;
+    background: #fff;
+    overflow: hidden;
+}
+
+.app-preview .link.simpleness{
+    border: 0;
+    margin: 5px;
+}
+.app-preview .goods-card01 ul li:nth-child(3n-2) .link.simpleness{
+    margin: 0;
+}
+.app-preview .link.simpleness .photo-block{
+    margin: 0;
+}
+.app-preview .link.simpleness .goods-price{
+    color: #fff;
+    margin: 0px;
+    float: right;
+    max-width: 70px;
+    overflow: hidden;
+    line-height: 22px;
+    height: 22px;
+    padding: 0 5px;
+}
+.app-preview .link.simpleness .simpleness-price{
+    position: absolute;
+    height: 22px;
+    bottom: 0;
+    right: 10px;
+    margin: 10px 0;
+    padding-left: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    background: rgba(0,0,0,0.4);
+    background-clip: border-box;
+    border-radius: 2px;
+}
+.app-preview .goods-card01 ul li:nth-child(3n-2) .link.simpleness .simpleness-price{
+    margin: 5px 0;
+}
+.app-preview img{
+    max-width: 100%;
+}
+.app-preview .goods-card03 .photo-block{
+    height: 143px;
+}
+.app-preview .goods-card03 .photo-block img{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    vertical-align: bottom;
+}
+.app-preview .info-price{
+    padding-right: 8px;
+    padding-left: 10px;
+    margin-top: 7px;
+    position: relative;
+}
+.app-preview .goods-price{
+    font-size: 15px;
+    display: inline-block;
+    margin: 2px 10px 10px 0;
+    font-weight: bold;
+    padding: 0px;
+    color: #ff6600;
+}
+.sc-goods-list{
+    font-size: 0px;
+    padding: 5px;
+    list-style: none;
+    margin: 0;
+}
+.app-preview .actions .actions-wrap {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.app-preview .actions {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    display: none;
+    height: 100%;
+    width: 320px;
+    border: 2px dashed rgba(255,0,0,0.5);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 9999;
+}
+.app-preview .good-buy{
+    position: absolute;
+}
+.app-preview .good-buy.btn1,.app-preview .good-buy.btn2,.app-preview .good-buy.btn3,.app-preview .good-buy.btn4 {
+    background-image: url("../../images/showcase-1416814739063.png");
+    background-repeat: no-repeat;
+}
+.app-preview .good-buy.btn1{
+    right: 10px;
+    bottom: 10px;
+    height: 25px;
+    width: 30px;
+}
+.app-preview .good-buy.btn2 {
+    right: 10px;
+    bottom: 12px;
+    height: 20px;
+    width: 20px;
+    background-position: 0 -88px;
+}
+.app-preview .good-buy.btn3 {
+    bottom: 10px;
+    right: 1px;
+    height: 25px;
+    width: 40px;
+    background-position: 0 -25px;
+}
+.app-preview .good-buy.btn4 {
+    right: 10px;
+    bottom: 10px;
+    height: 20px;
+    width: 37px;
+    background-position: 0 -68px;
+}
+.controls-card-tab label {
+    margin-right: 20px;
+}
+.simpleness-title{
+    display: none;
+}
+.left-10{
+    left: 10px;
+}
+
+.app-preview .goods-card01 ul li:nth-child(3n-2) .simpleness-title {
+    float: left;
+    margin: 0;
+    padding-left: 10px;
+    max-width: 70%;
+    line-height: 22px;
+    color: #fff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    display: block;
+    overflow: hidden;
+}
+
+.app-preview .goods-card02 ul li .simpleness-title {
+    float: left;
+    margin: 0;
+    padding-left: 10px;
+    max-width: 70%;
+    line-height: 22px;
+    color: #fff;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    display: block;
+    overflow: hidden;
+}
+
+.simpleness-big{
+    position: relative;
+    height: auto;
+    left: 0px;
+    right: 0px;
+    bottom: 0;
+    margin: 5px 0;
+    padding-left: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.simpleness-big-title{
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    min-width: 10px;
+    min-height: 22px;
+    padding-left: 0px;
+    float: left;
+    margin: 0;
+    max-width: 70%;
+    line-height: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.simpleness-big-price{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    color: #f60;
+    font-size: 14px;
+    margin: 0px;
+    float: right;
+    max-width: 70px;
+    overflow: hidden;
+    line-height: 22px;
+    height: 22px;
+    padding: 0 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+.simpleness-big-box{
+    height: 22px;
+}
+.app-preview .goods-card02 .link.simpleness{
+    margin: 0;
+    background:none;
+}
+
+.app-preview .goods-card04 .simpleness{
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e5e5;
+}
+.app-preview .goods-card04 .simpleness .link{
+    border:0;
+    background: none;
+    margin: 0;
+}
+.app-preview .goods-card03 .goods-buy{
+    right: 0px;
+    bottom: 0px;
+    width: 47px;
+    height: 40px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 7px 10px;
+    color: white;
+    font-size: 13px;
+    line-height: 13px;
+    background: #ff495b;
+    position: absolute;
+}
+.app-preview .rush .photo-block{
+    margin: 0;
+}
+.app-preview .rush .sales{
+    position: relative;
+    height: 40px;
+    margin-top: 0px;
+}
+
+.app-preview .rush .goods-price{
+    color: #ff495b;
+    padding-left: 4px;
+}
+
+.commodityDirective .sort .remove_btn{
+    position: absolute;
+    right: -12px;
+    display: none;
+}
+.commodityDirective .sort:hover .remove_btn{
+    display: block;
+}
+
+.goods-label{
+	background-color: #ee343f;
+	color:#fff;
+	padding:2px;
+	border-radius:4px;
+	margin-right: 3px;
+}
+.original{
+    font-size: 35px;
+    color: #9a9a9a;
+}
+.original label{
+    position: relative;
+}
+.original i{
+    width: 100%;
+    position: absolute;
+    height: 2px;
+    background-color: #999;
+    top: 50%;
+    margin-top: -2px;
+}
+
+.list-scale{
+	width: 540px;
+	position: relative;
+	transform: scale(0.23148148148148148);
+	transform-origin: left top;
+}
+.goods-card01 ul li:nth-child(3n-2) .list-scale{
+    width: 1180px;
+}

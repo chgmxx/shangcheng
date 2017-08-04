@@ -1,37 +1,105 @@
 /*微官网模板*/
-.webTitle{margin-bottom: 30px;}
-.title-p{font-size: 1.7em; padding-left: 20px; color: #444444;}
-.i-con{width: 3px; display: block; height: 27px; background-color: #23b4ff;}
-.webSelect{overflow: hidden;}
-.selectSpan{display: block;  line-height: 30px; margin-right: 10px;}
-.selectSite{width: 152px; height: 30px; line-height: 30px; padding-top: 5px; font-size: 14px; text-indent: 4px;}
-.microSite{overflow: hidden;}
-.microSiteUl{float: left; width: 100%;margin-top: 20px;}
-.microSiteUl li{float:left; margin-right: 16px; margin-bottom: 40px; width: 178px; }
-.microSiteUlTitle{margin-top: 65px;text-align: center;}
-.microSiteList{background: url("../../../../images/radio_iphone0.png") no-repeat center top;position: relative; width: 170px;height:383px;}
-.microSiteListSel{background: url("../../../../images/radio_iphone.png") no-repeat center top;position: relative; width: 170px;height:383px;}
-.temBackImgOver{background: url("../../../../images/radio_iphone.png") no-repeat center top;}
-.temBackImgOut{background: url("../../../../images/radio_iphone0.png") no-repeat center top;}
+.webTitle {
+    margin-bottom: 30px;
+}
+
+.title-p {
+    font-size: 1.7em;
+    padding-left: 20px;
+    color: #444444;
+}
+
+.i-con {
+    width: 3px;
+    display: block;
+    height: 27px;
+    background-color: #23b4ff;
+}
+
+.webSelect {
+    overflow: hidden;
+}
+
+.selectSpan {
+    display: block;
+    line-height: 30px;
+    margin-right: 10px;
+}
+
+.selectSite {
+    width: 152px;
+    height: 30px;
+    line-height: 30px;
+    padding-top: 5px;
+    font-size: 14px;
+    text-indent: 4px;
+}
+
+.microSite {
+    overflow: hidden;
+}
+
+.microSiteUl {
+    float: left;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.microSiteUl li {
+    float: left;
+    margin-right: 16px;
+    margin-bottom: 40px;
+    width: 178px;
+}
+
+.microSiteUlTitle {
+    margin-top: 65px;
+    text-align: center;
+}
+
+.microSiteList {
+    background: url("../../../../images/radio_iphone0.png") no-repeat center top;
+    position: relative;
+    width: 170px;
+    height: 383px;
+}
+
+.microSiteListSel {
+    background: url("../../../../images/radio_iphone.png") no-repeat center top;
+    position: relative;
+    width: 170px;
+    height: 383px;
+}
+
+.temBackImgOver {
+    background: url("../../../../images/radio_iphone.png") no-repeat center top;
+}
+
+.temBackImgOut {
+    background: url("../../../../images/radio_iphone0.png") no-repeat center top;
+}
 
 /* 翻页 */
-.fansPage{float: right;}
+.fansPage {
+    float: right;
+}
+
 .fansPage a {
-	margin-left: 10px;
+    margin-left: 10px;
     border: 1px solid #ddd;
     line-height: 20px;
     display: block;
     float: left;
     margin-top: 12px;
     padding: 5px;
-    font-size: 14px; 
+    font-size: 14px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
     text-align: right;
 }
 
-.fansPage a:hover{
+.fansPage a:hover {
     background: #fff2f5;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;

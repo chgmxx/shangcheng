@@ -1,29 +1,102 @@
 @charset "utf-8";
 
 /*****************************公用样式*******************************/
-.flex{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;}
-.flex-v{-webkit-box-orient:vertical;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;}
-.flex-1{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;}
-.flex-align-center{-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;}
-.flex-pack-center{-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;}
-.flex-pack-justify{-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;}
-.text-right{text-align: right;}
-.text-left{text-align: left;}
-.text-center{text-align: center;}
-.font14{font-size: 14px;}
-.width200{width: 200px!important;}
-.width900{width: 900px;}
-.mar-tb5{margin: 5px 0;}
-.mar-tb10{margin: 10px 0;}
-.mar-b10{margin-bottom: 10px;}
-.mar-t20{margin-top: 20px;}
-.mar-r20{margin-right: 20px;}
-.ver-top{vertical-align: top;}
-.cell-top-border{
-	position: relative;
+.flex {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
 }
-.cell-top-border:before{
-	content: " ";
+
+.flex-v {
+    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+.flex-1 {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+}
+
+.flex-align-center {
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.flex-pack-center {
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.flex-pack-justify {
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.font14 {
+    font-size: 14px;
+}
+
+.width200 {
+    width: 200px !important;
+}
+
+.width900 {
+    width: 900px;
+}
+
+.mar-tb5 {
+    margin: 5px 0;
+}
+
+.mar-tb10 {
+    margin: 10px 0;
+}
+
+.mar-b10 {
+    margin-bottom: 10px;
+}
+
+.mar-t20 {
+    margin-top: 20px;
+}
+
+.mar-r20 {
+    margin-right: 20px;
+}
+
+.ver-top {
+    vertical-align: top;
+}
+
+.cell-top-border {
+    position: relative;
+}
+
+.cell-top-border:before {
+    content: " ";
     position: absolute;
     left: 0;
     top: -15px;
@@ -37,251 +110,271 @@
     transform: scaleY(0.5);
     z-index: 2;
 }
+
 /************************************首页 报价管理*****************/
-.table-operate{
-	width: 900px;
-}
-.operate-date{
-	text-align: right;
-}
-.operate-date input{
-	width: 180px;
-	height: 28px;
-}
-.operate-input{
-	width: 200px!important;
-	height: 30px;
-	padding: 0!important;
-	vertical-align: middle;
-}
-.second-title{
-	font-size: 15px;
-	margin: 15px 0;
-}
-.add-form{
-	font-size: 14px;
-	position: relative;
-}
-.add-form .gt-form-left{
-	min-width: 150px;
-}
-.add-form .add-form-input{
-	width: 240px;
-	height: 30px;
-	padding: 0;
-}
-.add-form textarea{
-	outline: none;
-	resize: none;
-	height: 80px!important;
-}
-.add-form .add-form-label{
-	min-width: 80px;
-	display: inline-block;
-}
-.add-form .add-form-label input[type='radio']{
-	margin: 0 8px;
-}
-.warning-txt{
-	font-size: 13px;
-	color: red;
-}
-.commodity-input{
-	width: 60px;
-	height: 25px;
-}
-.fenqi-input{
-	width: 150px!important;
-	height: 30px!important;
-	padding: 0!important;
-}
-.fenqi-hide{
-	display: none;
+.table-operate {
+    width: 900px;
 }
 
+.operate-date {
+    text-align: right;
+}
+
+.operate-date input {
+    width: 180px;
+    height: 28px;
+}
+
+.operate-input {
+    width: 200px !important;
+    height: 30px;
+    padding: 0 !important;
+    vertical-align: middle;
+}
+
+.second-title {
+    font-size: 15px;
+    margin: 15px 0;
+}
+
+.add-form {
+    font-size: 14px;
+    position: relative;
+}
+
+.add-form .gt-form-left {
+    min-width: 150px;
+}
+
+.add-form .add-form-input {
+    width: 240px;
+    height: 30px;
+    padding: 0;
+}
+
+.add-form textarea {
+    outline: none;
+    resize: none;
+    height: 80px !important;
+}
+
+.add-form .add-form-label {
+    min-width: 80px;
+    display: inline-block;
+}
+
+.add-form .add-form-label input[type='radio'] {
+    margin: 0 8px;
+}
+
+.warning-txt {
+    font-size: 13px;
+    color: red;
+}
+
+.commodity-input {
+    width: 60px;
+    height: 25px;
+}
+
+.fenqi-input {
+    width: 150px !important;
+    height: 30px !important;
+    padding: 0 !important;
+}
+
+.fenqi-hide {
+    display: none;
+}
 
 /***********************************查看详情*****************************/
 
 /*进度条修改*/
 .stepflex {
-	display: inline-block;
-	display: block;
-	text-align: center;
-	padding-top: 20px;
+    display: inline-block;
+    display: block;
+    text-align: center;
+    padding-top: 20px;
 }
 
 .stepflex:after {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden
 }
 
 .stepflex dl {
-	float: left;
-	position: relative;
-	width: 151px;
-	top: -5px;
-	border-top: 5px solid #ccc
+    float: left;
+    position: relative;
+    width: 151px;
+    top: -5px;
+    border-top: 5px solid #ccc
 }
 
 .stepflex dl.doing {
-	border-top-color: #7abd54
+    border-top-color: #7abd54
 }
 
 .stepflex dl.doing .s-num {
-	background-position: -23px 0
+    background-position: -23px 0
 }
 
 .stepflex dl.doing .s-text {
-	color: #7abd54;
-	font-size: 14px;
+    color: #7abd54;
+    font-size: 14px;
 }
 
 .stepflex dl.done {
-	border-top-color: #caecb6;
+    border-top-color: #caecb6;
 }
 
 .stepflex dl.done .s-num {
-	background-position: -46px 0
+    background-position: -46px 0
 }
 
 .stepflex dl.done .s-text {
-	color: #caecb6;
-	font-size: 14px;
+    color: #caecb6;
+    font-size: 14px;
 }
 
-.stepflex .doing b, .stepflex .doing s, .stepflex .first s, .stepflex .last b
-	{
-	width: 5px;
-	height: 5px;
-	position: absolute;
-	line-height: 0;
-	font-size: 0;
-	top: -5px;
-	background-image: url(/images/mall/purchase/step2013.png);
-	overflow: hidden
+.stepflex .doing b, .stepflex .doing s, .stepflex .first s, .stepflex .last b {
+    width: 5px;
+    height: 5px;
+    position: absolute;
+    line-height: 0;
+    font-size: 0;
+    top: -5px;
+    background-image: url(/images/mall/purchase/step2013.png);
+    overflow: hidden
 }
 
 .stepflex .s-num {
-	position: relative;
-	margin: -15px auto 0;
-	color: #fff;
-	font-weight: 700;
-	width: 23px;
-	height: 23px;
-	background-image: url(/images/mall/purchase/step2013.png);
-	line-height: 23px
+    position: relative;
+    margin: -15px auto 0;
+    color: #fff;
+    font-weight: 700;
+    width: 23px;
+    height: 23px;
+    background-image: url(/images/mall/purchase/step2013.png);
+    line-height: 23px
 }
 
 .stepflex .s-text {
-	color: #ccc;
-	font-size: 14px;
+    color: #ccc;
+    font-size: 14px;
 }
 
 .stepflex s {
-	left: 0
+    left: 0
 }
 
 .stepflex b {
-	right: 0
+    right: 0
 }
 
 .stepflex .first s {
-	background-position: 0 -24px;
-	background-color: #fff
+    background-position: 0 -24px;
+    background-color: #fff
 }
 
 .stepflex .last b {
-	background-position: -5px -24px;
-	background-color: #fff
+    background-position: -5px -24px;
+    background-color: #fff
 }
 
 .stepflex .doing s {
-	background-position: -23px -24px
+    background-position: -23px -24px
 }
 
 .stepflex .doing b {
-	background-position: -28px -24px;
-	background-color: #ccc
+    background-position: -28px -24px;
+    background-color: #ccc
 }
 
 .stepflex .doing.last s, .stepflex .doing.normal s {
-	background-color: #caecb6
+    background-color: #caecb6
 }
 
 .stepflex .doing.last b {
-	background-color: #fff
+    background-color: #fff
 }
 
 .stepflex .done s {
-	background-position: -46px -24px
+    background-position: -46px -24px
 }
 
 .stepflex .done b {
-	background-position: -51px -24px;
+    background-position: -51px -24px;
 }
 
 .stepflex .doing.last .s-num {
-	background-position: -91px 0
+    background-position: -91px 0
 }
 
 .stepflex dt {
-	display: block;
-}
-.top-back-icon{
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	background-image: url(/images/mall/purchase/u1019.svg);
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-color: #DEDEDE; 
-	background-size: contain;
-	cursor: pointer;
-}
-.deatil-table{
-	border: 2px solid #000;
+    display: block;
 }
 
-.deatil-table{
-	width: 900px;
-	font-size: 14px;
-}
-.deatil-table th{
-	border-bottom: 2px solid #000;
-	padding: 10px 0;
+.top-back-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url(/images/mall/purchase/u1019.svg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #DEDEDE;
+    background-size: contain;
+    cursor: pointer;
 }
 
-.deatil-table tbody td{
-	border-bottom: 1px dashed #000;
-	border-right: 1px dashed #000;
-	padding: 10px 0;
-	text-indent: 10px;
+.deatil-table {
+    border: 2px solid #000;
 }
-.deatil-table tbody td:last-child{
-	border-right: none;
+
+.deatil-table {
+    width: 900px;
+    font-size: 14px;
 }
-.deatil-table .detail-table-img{
-	max-height: 60px;
+
+.deatil-table th {
+    border-bottom: 2px solid #000;
+    padding: 10px 0;
 }
-.deatil-table tr:last-child td{
-	border-bottom: none;
+
+.deatil-table tbody td {
+    border-bottom: 1px dashed #000;
+    border-right: 1px dashed #000;
+    padding: 10px 0;
+    text-indent: 10px;
+}
+
+.deatil-table tbody td:last-child {
+    border-right: none;
+}
+
+.deatil-table .detail-table-img {
+    max-height: 60px;
+}
+
+.deatil-table tr:last-child td {
+    border-bottom: none;
 }
 
 /*******************************收款详情*******************************/
-.shoukuan-info li{
-	margin: 10px 0;
-	font-size: 14px;
+.shoukuan-info li {
+    margin: 10px 0;
+    font-size: 14px;
 }
+
 .shoukuan-info {
-	padding-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 /*********************************留言管理****************************/
-.table-image-circle{
-	height: 60px;
-	width: 60px;
-	border-radius: 50%;
+.table-image-circle {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
 }

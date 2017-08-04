@@ -1,37 +1,45 @@
-.Warp{
-	width: 12.8rem;
-	margin: 0 auto;
+.Warp {
+    width: 12.8rem;
+    margin: 0 auto;
 }
-.red-txt{
-	color: #F20000;
+
+.red-txt {
+    color: #F20000;
 }
-header{
-	text-align: center;
-	font-weight: bold;
-	margin: 1rem 0;
+
+header {
+    text-align: center;
+    font-weight: bold;
+    margin: 1rem 0;
 }
-.process{
-	padding: 0.4rem;
+
+.process {
+    padding: 0.4rem;
 }
-.process .pro-txt{
-	color: #828282;
+
+.process .pro-txt {
+    color: #828282;
 }
-.process .pro-txt:first-child,.pro-txt-last{
-	width: 3rem;
+
+.process .pro-txt:first-child, .pro-txt-last {
+    width: 3rem;
 }
-.process .line-arrow{
-	text-align: center;
-	position: relative;
+
+.process .line-arrow {
+    text-align: center;
+    position: relative;
 }
-.process .line-arrow span{
-	display: inline-block;
-	width: 1.5rem;
-	height: 1px;
-	background-color: #828282;
-	vertical-align: middle;
-} 
-.process .line-arrow .rig-arrow{
-	position: absolute;
+
+.process .line-arrow span {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1px;
+    background-color: #828282;
+    vertical-align: middle;
+}
+
+.process .line-arrow .rig-arrow {
+    position: absolute;
     width: 0;
     height: 0;
     right: 0.25rem;
@@ -42,8 +50,9 @@ header{
     border-left: 0.3rem solid #828282;
     border-bottom: 0.15rem solid transparent;
 }
-.process .line-arrow .left-arrow{
-	position: absolute;
+
+.process .line-arrow .left-arrow {
+    position: absolute;
     width: 0;
     height: 0;
     left: 0.25rem;
@@ -54,20 +63,23 @@ header{
     border-right: 0.3rem solid #828282;
     border-bottom: 0.15rem solid transparent;
 }
-.process2{
-	height: 2.5rem;
-	text-align: right;
-	position: relative;
+
+.process2 {
+    height: 2.5rem;
+    text-align: right;
+    position: relative;
 }
-.process2 span{
-	height: 1.5rem;
-	width: 1px;
-	background-color: #828282;
-	display: inline-block;
-	margin: 0.4rem 0.8rem;
+
+.process2 span {
+    height: 1.5rem;
+    width: 1px;
+    background-color: #828282;
+    display: inline-block;
+    margin: 0.4rem 0.8rem;
 }
-.process2 .down-arrow{
-	position: absolute;
+
+.process2 .down-arrow {
+    position: absolute;
     width: 0;
     height: 0;
     right: 0.67rem;
@@ -78,9 +90,10 @@ header{
     border-left: 0.15rem solid transparent;
     border-right: 0.15rem solid transparent;
 }
-.rule{
-	border: 1px solid #D7D9D9;
-	width: 11.24rem;
-	margin: 1rem auto;
-	padding: 0.2rem;
+
+.rule {
+    border: 1px solid #D7D9D9;
+    width: 11.24rem;
+    margin: 1rem auto;
+    padding: 0.2rem;
 }

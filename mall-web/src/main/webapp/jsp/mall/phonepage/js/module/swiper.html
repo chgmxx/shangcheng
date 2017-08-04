@@ -1,0 +1,19 @@
+
+<div class="swiper" swiper-draggable>
+
+	<div class="swiper-container">
+		<div class="swiper-wrapper">
+			<div class="swiper-slide swiper-box" ng-repeat="pic in data.pic" on-load>
+		        <div class="swiper-title">{{data.pic[0].title}}</div>
+		        <a ng-href="{{picJson[$parent.$index].imgID[$index].url}}">
+		        	<img id="swiper_fist_pic" ng-src="{{pic.src}}" ng-if="$index == 0"/>
+		        	<img id="swiper_fist_pic" class="swiper-lazy" data-src="{{pic.src}}" ng-if="$index != 0"/>
+		        	<div class="swiper-lazy-preloader" ng-if="$index != 0" style="width:21px;height:21px;"></div>
+		        </a>
+		    </div>
+		</div>
+		<!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+	</div>
+    
+</div>

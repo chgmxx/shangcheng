@@ -88,7 +88,7 @@ public class PhonePresaleController extends BaseController {
 			member = memberService.findById(Integer.valueOf(memberId));*/
 	    boolean isShop = pageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    String http = PropertiesUtil.getResourceUrl();// 图片url链接前缀
@@ -156,7 +156,7 @@ public class PhonePresaleController extends BaseController {
 	    logger.error( "进入预售商品的页面出错：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/presale/phone/presaleall";
+	return "mall/presale/phone/presaleall";
     }
 
     /**
@@ -167,7 +167,7 @@ public class PhonePresaleController extends BaseController {
     public String toAddDeposit( HttpServletRequest request, HttpServletResponse response,
 		    @PathVariable int proId, @PathVariable int invId, @PathVariable int presaleId, @RequestParam Map< String,Object > param ) throws Exception {
 	logger.info( "进入交纳定金的页面...." );
-	String jsp = "merchants/trade/mall/presale/phone/toAddDeposit";
+	String jsp = "mall/presale/phone/toAddDeposit";
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -453,6 +453,6 @@ public class PhonePresaleController extends BaseController {
 	    logger.error( "进入我的保证金页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/presale/phone/myDeposit";
+	return "mall/presale/phone/myDeposit";
     }
 }

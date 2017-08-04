@@ -53,7 +53,7 @@ public class MallSellerController extends BaseController {
 	String iframe_url = "mallSellers/sellerSet.do";
 	request.setAttribute("iframe_url", iframe_url);
 	request.setAttribute("title", "微商城");
-	return "merchants/trade/iframe";
+	return "iframe";
     }
 
     /**
@@ -78,7 +78,7 @@ public class MallSellerController extends BaseController {
 	    e.printStackTrace();
 	    logger.error("商品佣金设置异常："+e.getMessage());
 	}
-	return "merchants/trade/mall/seller/joinProduct";
+	return "mall/seller/joinProduct";
     }
 
     /**
@@ -109,7 +109,7 @@ public class MallSellerController extends BaseController {
 	    e.printStackTrace();
 	    logger.error(" 进入商品佣金设置页面异常："+e.getMessage());
 	}
-	return "merchants/trade/mall/seller/editJoinProduct";
+	return "mall/seller/editJoinProduct";
     }
 
 
@@ -204,7 +204,7 @@ public class MallSellerController extends BaseController {
 	    e.printStackTrace();
 	    logger.error("超级销售员设置异常："+e.getMessage());
 	}
-	return "merchants/trade/mall/seller/sellerSet";
+	return "mall/seller/sellerSet";
     }
 
     /**
@@ -265,7 +265,7 @@ public class MallSellerController extends BaseController {
 	    e.printStackTrace();
 	    logger.error("销售员审核列表异常："+e.getMessage());
 	}
-	return "merchants/trade/mall/seller/sellerCheckList";
+	return "mall/seller/sellerCheckList";
     }
 
     /**
@@ -332,7 +332,7 @@ public class MallSellerController extends BaseController {
 	    e.printStackTrace();
 	    logger.error("超级销售员列表异常："+e.getMessage());
 	}
-	return "merchants/trade/mall/seller/sellerList";
+	return "mall/seller/sellerList";
     }
 
     /**
@@ -367,7 +367,7 @@ public class MallSellerController extends BaseController {
 	    e.printStackTrace();
 	    logger.error("提现异常："+e.getMessage());
 	}
-	return "merchants/trade/mall/seller/withDrawList";
+	return "mall/seller/withDrawList";
     }
 
     /**

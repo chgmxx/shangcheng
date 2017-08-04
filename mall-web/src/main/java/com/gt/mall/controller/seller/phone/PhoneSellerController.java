@@ -195,7 +195,7 @@ public class PhoneSellerController extends BaseController {
 		    Map< String,Object > map1 = list1.get( 0 );
 		    request.setAttribute( "pageId", map1.get( "id" ).toString() );
 		}
-		return "merchants/trade/mall/seller/phone/applyTip";
+		return "mall/seller/phone/applyTip";
 	    }
 	    if ( isIndex ) {
 		String jsp = "redirect:/phoneSellers/79B4DE7C/sellerIndex.do?member_id=" + member.getId() + "&uId=" + member.getBusid();
@@ -212,7 +212,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入申请超级销售员失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/applySellers";
+	return "mall/seller/phone/applySellers";
     }
 
     /**
@@ -254,7 +254,7 @@ public class PhoneSellerController extends BaseController {
 
 	    boolean isSeller = mallSellerService.isSeller( member.getId() );//判断商户是否是销售员
 	    if ( !isSeller ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    //判断用户是否已经对商城进行设置
@@ -300,7 +300,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入超级销售员首页失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/sellerIndex";
+	return "mall/seller/phone/sellerIndex";
     }
 
     /**
@@ -354,7 +354,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入统计收益页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/totalIncome";
+	return "mall/seller/phone/totalIncome";
     }
 
     /**
@@ -396,7 +396,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入我的二维码页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/myTwoCode";
+	return "mall/seller/phone/myTwoCode";
     }
 
     /**
@@ -458,7 +458,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入推广页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/promotion";
+	return "mall/seller/phone/promotion";
     }
 
     /**
@@ -534,7 +534,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入销售排行榜页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/saleRank";
+	return "mall/seller/phone/saleRank";
     }
 
     /**
@@ -660,7 +660,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入我的客户页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/clientList";
+	return "mall/seller/phone/clientList";
     }
 
     /**
@@ -721,7 +721,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入客户订单页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/clientOrder";
+	return "mall/seller/phone/clientOrder";
     }
 
     /**
@@ -774,7 +774,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入我的提现页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/myWithdrawal";
+	return "mall/seller/phone/myWithdrawal";
     }
 
     /**
@@ -854,7 +854,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入提现明细页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/withdrawalDetail";
+	return "mall/seller/phone/withdrawalDetail";
     }
 
     /**
@@ -903,7 +903,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入销售规则页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/saleRules";
+	return "mall/seller/phone/saleRules";
     }
 
     /**
@@ -1007,7 +1007,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入商城设置失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/mallSet";
+	return "mall/seller/phone/mallSet";
     }
 
     /**
@@ -1094,7 +1094,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入自选商品的页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/findProduct";
+	return "mall/seller/phone/findProduct";
     }
 
     /**
@@ -1190,7 +1190,7 @@ public class PhoneSellerController extends BaseController {
 
 	    boolean isSeller = mallSellerService.isSeller( saleMemberId );
 	    if ( !isSeller ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    //查询销售员选择的商品
@@ -1214,7 +1214,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入我的商城失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/mallIndex";
+	return "mall/seller/phone/mallIndex";
     }
 
     /**
@@ -1251,7 +1251,7 @@ public class PhoneSellerController extends BaseController {
 
 	    boolean isSeller = mallSellerService.isSeller( saleMemberId );//判断商户是否是销售员
 	    if ( !isSeller ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    String http = PropertiesUtil.getResourceUrl();//图片url链接前缀
@@ -1307,7 +1307,7 @@ public class PhoneSellerController extends BaseController {
 	    e.printStackTrace();
 	    logger.error( "商品搜索页面异常：" + e.getMessage() );
 	}
-	return "merchants/trade/mall/product/phone/shoppingall";
+	return "mall/product/phone/shoppingall";
     }
 
     /**
@@ -1369,7 +1369,7 @@ public class PhoneSellerController extends BaseController {
 
 	    boolean isSeller = mallSellerService.isSeller( saleMemberId );
 	    if ( !isSeller ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    //查询商品信息
@@ -1400,7 +1400,7 @@ public class PhoneSellerController extends BaseController {
 	    logger.error( "进入分享页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/seller/phone/shareSeller";
+	return "mall/seller/phone/shareSeller";
     }
 
     /**

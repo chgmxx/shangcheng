@@ -270,7 +270,7 @@ public class PhonePifaController extends BaseController {
 	    }*/
 	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
-		return "merchants/trade/mall/product/phone/shopdelect";
+		return "mall/product/phone/shopdelect";
 	    }
 
 	    String http = PropertiesUtil.getResourceUrl();// 图片url链接前缀
@@ -346,6 +346,6 @@ public class PhonePifaController extends BaseController {
 	    logger.error( "进入批发商品的列表的页面出错：" + e );
 	    e.printStackTrace();
 	}
-	return "merchants/trade/mall/wholesalers/phone/wholesalersall";
+	return "mall/wholesalers/phone/wholesalersall";
     }
 }

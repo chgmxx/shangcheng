@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,17 +57,15 @@ public class MallCommentController extends BaseController {
     @SuppressWarnings( { "unchecked", "deprecation" } )
     @SysLogAnnotation( description = "商城设置：批量设置评论", op_function = "2" )
     @RequestMapping( "batchCommentGive" )
-    public void batchCommentGive( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public void batchCommentGive( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 
 	logger.info( "进入评论送礼controller" );
 	response.setCharacterEncoding( "utf-8" );
 	boolean flag = false;// 编辑成功
-	PrintWriter p = null;
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    List< MallCommentGive > giveList = (List< MallCommentGive >) JSONArray.toList( JSONArray.fromObject( params.get( "datas" ) ), MallCommentGive.class );
 	    flag = commentGiveService.editCommentGive( giveList, user );
-	    p = response.getWriter();
 	} catch ( Exception e ) {
 	    flag = false;
 	    logger.debug( "编辑评论送礼：" + e.getMessage() );
@@ -75,15 +73,12 @@ public class MallCommentController extends BaseController {
 	}
 	JSONObject obj = new JSONObject();
 	obj.put( "flag", flag );
-	p.write( obj.toString() );
-	p.flush();
-	p.close();
+	CommonUtil.write( response, obj );
     }
 
     /**
      * 进入评价管理列表
      *
-     * @Title: to_index
      */
     @RequestMapping( "to_index" )
     public String to_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -130,14 +125,12 @@ public class MallCommentController extends BaseController {
      */
     @SysLogAnnotation( description = "评论管理——删除,审核评论", op_function = "2" )
     @RequestMapping( "checkComment" )
-    public void checkComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException {
+    public void checkComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException, IOException {
 	logger.info( "进入删除,审核评论的controller" );
-	PrintWriter p = null;
 	boolean result = false;
 	String msg = "";
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    p = response.getWriter();
 	    if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
 		result = commentService.checkComment( params );
 	    }
@@ -151,9 +144,8 @@ public class MallCommentController extends BaseController {
 	}
 	map.put( "result", result );
 	map.put( "msg", msg );
-	p.write( JSONObject.fromObject( map ).toString() );
-	p.flush();
-	p.close();
+
+	CommonUtil.write( response, map );
     }
 
     /**
@@ -163,14 +155,12 @@ public class MallCommentController extends BaseController {
      */
     @SysLogAnnotation( description = "评论管理——回复评论", op_function = "2" )
     @RequestMapping( "repComment" )
-    public void repComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException {
+    public void repComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException, IOException {
 	logger.info( "进入回复评论的controller" );
-	PrintWriter p = null;
 	boolean result = false;
 	String msg = "";
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    p = response.getWriter();
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params.get( "params" ) ) && CommonUtil.isNotEmpty( user ) ) {
 		result = commentService.replatComment( params, user.getId() );
@@ -185,9 +175,7 @@ public class MallCommentController extends BaseController {
 	}
 	map.put( "result", result );
 	map.put( "msg", msg );
-	p.write( JSONObject.fromObject( map ).toString() );
-	p.flush();
-	p.close();
+	CommonUtil.write( response, map );
     }
 
 }

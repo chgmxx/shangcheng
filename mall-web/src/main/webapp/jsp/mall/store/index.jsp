@@ -28,16 +28,17 @@
     <script type="text/javascript" src="/js/table.js"></script>
     <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/copy.js/copy.js"></script>
-    <%--<script type="text/javascript" src="/js/zclip/zclip.js"></script>--%>
+    <%--<script type="text/javascript" src="/js/plugin/zclip/zclip.js"></script>--%>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
-    <script type="text/javascript" src="/js/copy/clipboard.min.js"></script>
-    <script type="text/javascript" src="/js/copy/copypublic.js"></script>
+    <script type="text/javascript" src="/js/plugin/copy/clipboard.min.js"></script>
+    <script type="text/javascript" src="/js/plugin/copy/copypublic.js"></script>
     <script type="text/javascript" src="/js/mall/store/index.js?<%=System.currentTimeMillis()%>"></script>
     <style>
         a.copy:hover, a.copy {
             height: 18px;
             width: 18px;
         }
+
         a.qrcode:hover, a.qrcode {
             height: 18px;
             width: 18px;

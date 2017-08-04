@@ -393,7 +393,7 @@ form[class*="lzw_cells_"] .lzw_icon_success:before {
 
 .lzw_check:checked:after {
     content: "\EA06";
-    color:#03bf01
+    color: #03bf01
 }
 
 .lzw_radio {

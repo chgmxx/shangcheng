@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -202,7 +203,7 @@ public class MallFreightController extends BaseController {
      */
     @SysLogAnnotation( description = "物流管理-删除物流", op_function = "4" )
     @RequestMapping( "deleteFreight" )
-    public void deleteFreight( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public void deleteFreight( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入删除物流信息的controller" );
 	boolean flag = false;
 	PrintWriter p = null;
@@ -216,16 +217,11 @@ public class MallFreightController extends BaseController {
 	    flag = false;
 	    logger.debug( "删除物流信息：" + e.getMessage() );
 	    e.printStackTrace();
-	}
-
-	JSONObject obj = new JSONObject();
-	try {
+	}finally {
+	    JSONObject obj = new JSONObject();
 	    obj.put( "flag", flag );
-	    p.write( obj.toString() );
-	    p.flush();
-	    p.close();
-	} catch ( JSONException e ) {
-	    e.printStackTrace();
+
+	    CommonUtil.write( response, obj );
 	}
     }
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="css/base.css"/>
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/action/jsonService.js"></script>
+
+    <link rel="stylesheet" href="js/admin/admin.css"/>
+    <script src="js/admin/admin.js"></script>
+
+    <!--商品-->
+    <link rel="stylesheet" href="js/commodity/commodity.css"/>
+    <script src="js/commodity/commodity.js"></script>
+
+    <!--轮播图-->
+    <link rel="stylesheet" href="js/swiper/swiper.css"/>
+    <script src="js/swiper/swiper.js"></script>
+
+    <!--弹框-->
+    <link rel="stylesheet" href="js/tank/commodity_tank.css"/>
+
+</head>
+<body>
+<admindraggable></admindraggable>
+
+<script>
+    var dataJson = [{
+                "type":1,
+                "page": 2,
+                "css":0,
+                "btn": true,
+                "btnpage": 0,
+                "name": false,
+                "intro":false,
+                "price": true,
+            }],       //样式数据
+         picJson = [
+             {
+                 "type":1,
+                 "imgID":[{
+                     "id":0,
+                     "title":"",
+                     "src":"",
+                     "href":"",
+                 },{
+                     "id":0,
+                     "title":"",
+                     "src":"",
+                     "href":"",
+                 }]
+             }
+         ],       //图片id数据
+        imgList  = [];          //每次填充图片数据修改此数据
+</script>
+</body>
+</html>

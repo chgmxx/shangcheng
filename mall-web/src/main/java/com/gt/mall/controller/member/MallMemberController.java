@@ -383,7 +383,7 @@ public class MallMemberController extends BaseController {
 	try {
 	    Integer memberId = SessionUtils.getLoginMember( request ).getId();
 
-	    String imageUrl = "";
+	    StringBuffer imageUrl = new StringBuffer(  );
 	    boolean flag = false;
 	    //TODO 会员 memberMapper.selectByPrimaryKey( memberId );
 	    //	    Member member = memberMapper.selectByPrimaryKey( memberId );
@@ -399,9 +399,9 @@ public class MallMemberController extends BaseController {
 			Map< String,Object > returnMap = CommonUtil.fileUploadByBusUser( file, user.getId() );
 			if ( "1".equals( returnMap.get( "reTurn" ) ) ) {
 			    if ( CommonUtil.isNotEmpty( imageUrl ) ) {
-				imageUrl += ";";
+				imageUrl.append( ";" );
 			    }
-			    imageUrl += returnMap.get( "message" );
+			    imageUrl.append( returnMap.get( "message" ) );
 			    flag = true;
 
 			} else {
