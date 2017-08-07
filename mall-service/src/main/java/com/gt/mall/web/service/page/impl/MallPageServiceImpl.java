@@ -7,7 +7,6 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
-import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;
@@ -137,8 +136,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private MallProductDAO              mallProductDAO;
     @Autowired
     private MallProductService          mallProductService;
-    @Autowired
-    private WxShopService               wxShopService;//微信门店接口
+//    @Autowired
+//    private WxShopService               wxShopService;//微信门店接口
     @Autowired
     private MallProductGroupDAO         mallProductGroupDAO;//商品分组dao
     @Autowired
@@ -378,7 +377,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
 	    storeMap.put( "business_name", storeMap.get( "sto_name" ) );
 	    try {
-		WsWxShopInfo wxShop = wxShopService.getShopById( CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) ) );
+		//TODO  wxShopService.getShopById()
+		WsWxShopInfo wxShop = null;//wxShopService.getShopById( CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) ) );
 		storeMap.put( "business_name", wxShop.getBusinessName() );
 		storeMap.put( "status", wxShop.getStatus() );
 		//todo 调用小屁孩接口 根据门店id查询门店图片
@@ -1481,7 +1481,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			map.put( "shop_name", store.getStoName() );
 			//通过门店id查询门店信息
 			if ( CommonUtil.isNotEmpty( store.getWxShopId() ) && store.getWxShopId() > 0 ) {
-			    WsWxShopInfo shop = wxShopService.getShopById( store.getWxShopId() );
+			    //TODO  wxShopService.getShopById()
+			    WsWxShopInfo shop = null;//wxShopService.getShopById( store.getWxShopId() );
 			    map.put( "shop_name", shop.getBusinessName() );
 			}
 		    }
@@ -1723,7 +1724,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	MallStore store = mallStoreService.selectById( shopId );
 	if ( store.getIsDelete() == 0 ) {
 	    if ( CommonUtil.isNotEmpty( store.getWxShopId() ) && store.getWxShopId() > 0 ) {
-		WsWxShopInfo shop = wxShopService.getShopById( store.getWxShopId() );
+		//TODO  wxShopService.getShopById()
+		WsWxShopInfo shop = null;//wxShopService.getShopById( store.getWxShopId() );
 		if ( CommonUtil.isNotEmpty( shop ) ) {
 		    if ( !CommonUtil.toString( shop.getStatus() ).equals( "-1" ) ) {
 			return true;

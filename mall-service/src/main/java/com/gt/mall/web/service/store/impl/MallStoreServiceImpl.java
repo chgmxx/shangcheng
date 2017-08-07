@@ -7,7 +7,6 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
-import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.util.CommonUtil;
@@ -41,8 +40,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     @Autowired
     private MallStoreDAO mallStoreDao;
 
-    @Autowired
-    private WxShopService wxShopService;
+//    @Autowired
+//    private WxShopService wxShopService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -133,7 +132,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    map.put( "phone", mallStore.getStoPhone() );
 	    map.put( "principal", mallStore.getStoLinkman() );
 	    try {
-		WsWxShopInfo shopInfo = wxShopService.getShopById( mallStore.getWxShopId() );
+		//TODO  wxShopService.getShopById()
+		WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
 		if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		    map.put( "name", shopInfo.getBusinessName() );
 		    map.put( "address", shopInfo.getAddress() );
@@ -185,7 +185,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	Map< String,Object > storeMap = JSONObject.parseObject( JSONObject.toJSONString( store ), Map.class );
 
 	if ( CommonUtil.isNotEmpty( store.getWxShopId() ) ) {
-	    WsWxShopInfo shopInfo = wxShopService.getShopById( store.getWxShopId() );
+	    //TODO  wxShopService.getShopById()
+	    WsWxShopInfo shopInfo = null;
+//	    wxShopService.getShopById( store.getWxShopId() );
 	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		storeMap.put( "stoName", shopInfo.getBusinessName() );
 		storeMap.put( "stoPhone", shopInfo.getTelephone() );

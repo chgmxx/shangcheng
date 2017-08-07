@@ -4,7 +4,6 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.result.shop.WsWxShopInfo;
-import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
@@ -46,8 +45,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     private MallImageAssociativeService mallImageAssociativeService;
     @Autowired
     private MallShopCartDAO             mallShopCartDAO;
-    @Autowired
-    private WxShopService               wxShopService;
+//    @Autowired
+//    private WxShopService               wxShopService;
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
 
@@ -394,7 +393,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	String shopName = "";
 	MallStore mallStore = mallStoreDAO.selectById( shopId );
 	if ( CommonUtil.isNotEmpty( mallStore.getWxShopId() ) ) {
-	    WsWxShopInfo shopInfo = wxShopService.getShopById( mallStore.getWxShopId() );
+	    //TODO  wxShopService.getShopById()
+	    WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
 	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		shopName = shopInfo.getBusinessName();
 	    }

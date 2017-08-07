@@ -7,7 +7,6 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.result.shop.WsWxShopInfo;
-import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.page.MallPageDAO;
 import com.gt.mall.dao.product.MallProductDAO;
@@ -94,8 +93,8 @@ public class MallPageController extends BaseController {
     private MallProductService          mallProductService;
     @Autowired
     private MallProductDAO              mallProductDAO;
-    @Autowired
-    private WxShopService               wxShopService;
+//    @Autowired
+//    private WxShopService               wxShopService;
     @Autowired
     private MallCollectService          mallCollectService;
 
@@ -758,7 +757,8 @@ public class MallPageController extends BaseController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map< String,Object > mapmessage = mallPageService.querySelct( id );//获取商品信息
 	    Map< String,Object > mapuser = mallPageService.selUser( shopid );//查询商家信息
-	    WsWxShopInfo shop = wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
+	    //TODO  wxShopService.getShopById()
+	    WsWxShopInfo shop = null;//wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
 	    if ( shop != null ) {//商家地址显示
 		Map< String,Object > province = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getProvince() ) );
 		Map< String,Object > city = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getCity() ) );

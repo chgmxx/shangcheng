@@ -3,7 +3,6 @@ package com.gt.mall.controller.applet;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -36,8 +35,8 @@ public class MallAppletImageController extends BaseController {
 
     @Autowired
     private MallAppletImageService appletImageService;
-    @Autowired
-    private WxShopService          wxShopService;
+//    @Autowired
+//    private WxShopService          wxShopService;
     @Autowired
     private MallStoreService       storeService;
 

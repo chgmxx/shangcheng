@@ -6,7 +6,6 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallDaifuDAO;
@@ -69,8 +68,8 @@ import java.util.*;
 @RequestMapping( "/phoneOrder" )
 public class PhoneOrderController extends BaseController {
 
-    @Autowired
-    private WxShopService               wxShopService;
+//    @Autowired
+//    private WxShopService               wxShopService;
     @Autowired
     private MallOrderService            mallOrderService;
     @Autowired

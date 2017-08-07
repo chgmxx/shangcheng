@@ -10,8 +10,6 @@ import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.param.sms.OldApiSms;
 import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
-import com.gt.mall.cxf.service.SmsService;
-import com.gt.mall.cxf.service.WxShopService;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
@@ -138,16 +136,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallAuctionBiddingService mallAuctionBiddingService;
 
     @Autowired
-    private SmsService smsService;
-
-    @Autowired
     private MallPaySetService mallPaySetService;
 
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
-
-    @Autowired
-    private WxShopService wxShopService;
 
     @Autowired
     private MallFreightDAO mallFreightDAO;
@@ -836,7 +828,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    oldApiSms.setModel( Constants.SMS_MODEL );
 	    oldApiSms.setContent( CommonUtil.format( "你的商城有新的订单，请登录" + Constants.doMainName + "网站查看详情。" ) );
 	    try {
-		smsService.sendMsg( oldApiSms );
+	        //TODO 发送短信
+//		smsService.sendMsg( oldApiSms );
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 		logger.error( "短信推送消息异常：" + e.getMessage() );
@@ -895,7 +888,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    oldApiSms.setModel( Constants.SMS_MODEL );
 			    oldApiSms.setContent( CommonUtil.format( messages ) );
 			    try {
-				smsService.sendMsg( oldApiSms );
+			        //TODO 发送短信
+//				smsService.sendMsg( oldApiSms );
 			    } catch ( Exception e ) {
 				e.printStackTrace();
 				logger.error( "短信推送消息异常：" + e.getMessage() );
@@ -4102,10 +4096,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    MallStore store = mallStoreDAO.selectById( order.getShopId() );
 	    if ( CommonUtil.isNotEmpty( store ) ) {
 		try {
-		    WsWxShopInfo shopInfo = wxShopService.getShopById( store.getWxShopId() );
-		    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
-			shopName = shopInfo.getBusinessName();
-		    }
+		    //TODO  wxShopService.getShopById()
+//		    WsWxShopInfo shopInfo = wxShopService.getShopById( store.getWxShopId() );
+//		    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
+//			shopName = shopInfo.getBusinessName();
+//		    }
 		} catch ( Exception e ) {
 		    logger.error( "获取微信门店 方法异常：" + e.getMessage() );
 		    e.printStackTrace();
