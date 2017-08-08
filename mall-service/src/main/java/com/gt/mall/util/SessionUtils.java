@@ -67,7 +67,7 @@ public class SessionUtils {
 	try {
 	    Object obj = request.getSession().getAttribute( Constants.SESSION_WXPUBLICUSERS_KEY );
 	    if ( obj != null ) {
-		return (WxPublicUsers) obj;
+		return JSONObject.parseObject( obj.toString(),WxPublicUsers.class );
 	    } else {
 		return null;
 	    }

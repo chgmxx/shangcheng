@@ -3,6 +3,7 @@ package com.gt.mall.controller.store;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
@@ -53,6 +54,8 @@ public class MallStoreController extends BaseController {
 	logger.info( "进入店铺管理啦啦啦" );
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
+	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
+	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
 	    int pid = 0;
 	    boolean isAdminFlag = true;
 	    //如果是子账户按照分店查询

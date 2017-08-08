@@ -65,7 +65,7 @@
             </if>
         </where>
     </select>
-    <select id="countByPage" resultType="java.lang.Integer" parameterType="java.util.Map">
+    <select id="countByPage" resultType="java.lang.Integer" parameterType="map">
         select
         count(o.id)
         from t_mall_order o
@@ -79,7 +79,7 @@
             </if>
         </where>
     </select>
-    <update id="updateByIds">
+    <update id="updateByIds" parameterType="java.lang.Integer">
         update t_mall_store set is_delete = 1
         <where>
             id in
@@ -89,7 +89,7 @@
         </where>
     </update>
 
-    <select id="findByShopIds" resultType="java.util.Map">
+    <select id="findByShopIds" resultType="java.util.Map" parameterType="java.util.Map">
         select
         <include refid="Base_Column_List"/>
         from t_mall_store t
@@ -103,7 +103,7 @@
             </if>
         </where>
     </select>
-    <select id="findWxStorePageByUser" resultType="java.util.Map">
+    <select id="findWxStorePageByUser" resultType="java.util.Map" parameterType="java.lang.Integer">
         select s.sto_picture as stoPicture ,s.id,mp.id as pageId
         from t_mall_store s
         left join t_mall_page mp on mp.pag_sto_id=s.id and pag_is_main=1
@@ -119,15 +119,14 @@
         left join t_mall_page p on p.pag_sto_id=s.id
         where s.wx_shop_id=#{wxShopId} and s.is_delete=0
     </select>
-    <select id="findByUserId" resultType="java.util.Map">
+    <select id="findByUserId" resultType="java.util.Map" parameterType="java.lang.Integer">
         SELECT s.sto_picture AS stoPicture , s.id,mp.id AS pageId
         FROM t_mall_store s
         LEFT JOIN t_mall_page mp ON mp.pag_sto_id=s.id AND pag_is_main=1
         WHERE  is_delete = 0 AND  s.sto_user_id = #{userId}
         ORDER BY s.id DESC
     </select>
-
-    <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
+    <select id="selectMapById" resultType="java.util.Map" parameterType="java.lang.Integer">
         SELECT
         <include refid="Base_Map_Column_list"/>
         FROM t_mall_store

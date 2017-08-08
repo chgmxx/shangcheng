@@ -1,6 +1,5 @@
 package com.gt.mall;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -13,7 +12,6 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
  * @author zhangmz
  * @create 2017/7/8
  */
-@MapperScan( "com.gt.mall.dao" )
 @ServletComponentScan
 @SpringBootApplication
 public class MallApplication extends SpringBootServletInitializer {

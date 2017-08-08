@@ -39,7 +39,7 @@
         <dev.lib.mybatis>1.1.1</dev.lib.mybatis>
         <dev.lib.druid>1.0.31</dev.lib.druid>
         <dev.lib.mysql>5.0.5</dev.lib.mysql>
-        <dev.lib.mybatis-plus>2.1-gamma</dev.lib.mybatis-plus>
+        <dev.lib.mybatis-plus>2.1.0</dev.lib.mybatis-plus>
         <dev.lib.velocity>1.7</dev.lib.velocity>
         <dev.lib.commons-lang3>3.5</dev.lib.commons-lang3>
         <dev.lib.nekohtml>1.9.22</dev.lib.nekohtml>
@@ -146,7 +146,7 @@
             <version>${dev.lib.swagger2}</version>
         </dependency>
         <!-- Mybatis -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${dev.lib.mybatis}</version>
@@ -160,7 +160,13 @@
                     <groupId>org.mybatis</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatisplus-spring-boot-starter</artifactId>
+            <version>1.0.4</version>
         </dependency>
+
 
         <!-- mybatisPlus代码生成模板引擎 -->
         <dependency>

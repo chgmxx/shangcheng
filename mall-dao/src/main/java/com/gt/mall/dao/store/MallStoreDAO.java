@@ -20,29 +20,22 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
     /**
      * 分页查询商城店铺
      *
-     * @param params userId 商家id
-     * @param params stoName 店铺名称 （用在搜索，不传值则不搜索）
-     *
-     * @return
+     * @param params userId 商家id  stoName 店铺名称 （用在搜索，不传值则不搜索）
      */
-    List< Map< String,Object > > findByPage( Map< String,Object > params );
+    List< Map< String,Object > > findByPage(  Map< String,Object > params );
 
     /**
      * 统计商家的店铺数量
      *
-     * @param params userId 商家id
-     * @param params stoName 店铺名称 （用在搜索，不传值则不搜索）
-     *
-     * @return
+     * @param params userId 商家id stoName 店铺名称 （用在搜索，不传值则不搜索）
      */
-    int countByPage( Map< String,Object > params );
+    int countByPage(  Map< String,Object > params );
 
     /**
      * 根据店铺id 逻辑删除店铺
      *
      * @param ids 店铺id
      *
-     * @return
      */
     int updateByIds( @Param( "ids" ) String[] ids );
 
@@ -51,14 +44,12 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
      *
      * @param wxShopIds 门店id
      *
-     * @return
      */
     List< Map< String,Object > > findByShopIds( @Param( "wxShopIds" ) List< Integer > wxShopIds );
 
     /**
      * 根据商家idid查询  店铺信息，门店信息和  店铺页面id   oldParams findByPublicId
      *
-     * @param userId
      *
      * @return 店铺信息，门店信息  和店铺页面
      */
