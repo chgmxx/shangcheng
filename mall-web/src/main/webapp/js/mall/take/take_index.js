@@ -180,9 +180,8 @@ function deletePro(datas, tip, url) {
     if (url == null) {
         url = "store/edit_set.do";
     }
-    var layerLoad = parent.layer.load(1, {
-        shade: [0.3, '#000']
-    });
+    var layerLoad = parent.loadForm();
+    return false;
     $.ajax({
         type: "post",
         data: datas,

@@ -29,10 +29,6 @@ public class TestController extends BaseController {
     @GetMapping( "/" )
     public ModelAndView index( ModelAndView map ) {
 	try {
-	    System.out.println( "MyConfigUtil.getHomeUrl() = " + PropertiesUtil.getHomeUrl() );
-	    map.addObject( "homeUrl", 11 );
-
-	    map.addObject( "test", "hello sswws!" );
 
 	/*WsWxShopInfo wxShopInfo = wxShopService.getShopById( 21 );
 	map.addObject( "wxShop", JSONObject.toJSONString( wxShopInfo ));*/

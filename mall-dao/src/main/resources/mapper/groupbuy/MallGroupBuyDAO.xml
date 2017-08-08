@@ -231,7 +231,7 @@
     </select>
 
     <!-- 查询是否存在未开始和进行中的商品 -->
-    <select id="selectGroupByProId" parameterType="com.gt.entity.mall.MallGroupBuy" resultMap="groupResultMap">
+    <select id="selectGroupByProId" parameterType="com.gt.mall.entity.groupbuy.MallGroupBuy" resultMap="groupResultMap">
         SELECT
         <include refid="page_Column_List"></include>
         from t_mall_group_buy g
@@ -320,7 +320,7 @@
         </if>
     </select>
     <!-- 根据商品id查询团购信息 -->
-    <select id="selectBuyByProductId" parameterType="com.gt.entity.mall.MallGroupBuy" resultMap="BaseResultMap">
+    <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.groupbuy.MallGroupBuy" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
         from t_mall_group_buy gb

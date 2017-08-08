@@ -226,7 +226,7 @@
     </select>
 
     <!-- 根据商品id查询批发信息 -->
-    <select id="selectBuyByProductId" parameterType="com.gt.entity.mall.wholesalers.MallPifa" resultMap="BaseResultMap">
+    <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.pifa.MallPifa" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"></include>
         from t_mall_pifa p
         where p.is_delete = 0 and p.is_use = 1

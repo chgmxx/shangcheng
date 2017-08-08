@@ -21,7 +21,7 @@
         <id column="id" jdbcType="INTEGER" property="id" />
         <result column="groupBuyId" jdbcType="INTEGER" property="groupBuyId" />
         <result column="joinUserId" jdbcType="INTEGER" property="joinUserId" />
-        <result column="nickname" property="nickname" typeHandler="com.gt.entity.ConvertBlobTypeHandler" />
+        <result column="nickname" property="nickname" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler" />
         <result column="joinNum" jdbcType="INTEGER" property="joinNum" />
         <result column="pelpleNum" jdbcType="INTEGER" property="pelpleNum" />
         <result column="orderDetailId" jdbcType="INTEGER" property="orderDetailId" />

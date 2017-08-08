@@ -215,7 +215,7 @@
         <result column="receive_name" property="receiveName" jdbcType="VARCHAR"/>
         <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR"/>
         <result column="flow_phone" property="flowPhone" jdbcType="VARCHAR"/>
-        <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.entity.ConvertBlobTypeHandler"/>
+        <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
         <collection property="mallOrderDetail" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -602,7 +602,7 @@
         </if>
     </select>
 
-    <update id="upOrderNoOrRemark" parameterType="com.gt.entity.mall.Order">
+    <update id="upOrderNoOrRemark" parameterType="com.gt.mall.entity.order.MallOrder">
         update t_mall_order set update_time = now()
         <choose>
             <when test="status != '' and status != null">
@@ -813,7 +813,7 @@
         where order_no = #{out_trade_no}
     </update>
 
-    <update id="upOrderNoById" parameterType="com.gt.entity.mall.Order">
+    <update id="upOrderNoById" parameterType="com.gt.mall.entity.order.MallOrder">
         update t_mall_order
         <set>
             <if test="orderNo != null and orderNo != ''">

@@ -87,7 +87,7 @@
         <!--<result column="content" jdbcType="VARCHAR" property="content" />-->
         <!--<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />-->
         <!--<result column="is_upload_image" jdbcType="TINYINT" property="is_upload_image" />-->
-        <!--<result column="nickname" property="nickname" typeHandler="com.gt.entity.ConvertBlobTypeHandler" />-->
+        <!--<result column="nickname" property="nickname" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler" />-->
         <!--<result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />-->
         <!--<result column="product_specificas" jdbcType="VARCHAR" property="product_specificas" />-->
         <!--<result column="is_rep" jdbcType="INTEGER" property="is_rep" />-->

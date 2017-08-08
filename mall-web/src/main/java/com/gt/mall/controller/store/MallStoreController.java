@@ -212,7 +212,7 @@ public class MallStoreController extends BaseController {
     /**
      * 进入商城设置列表页面
      */
-    @RequestMapping( "setindex" )
+    @RequestMapping( "/setindex" )
     public String setindex( HttpServletRequest request,
 		    HttpServletResponse response,
 		    @RequestParam Map< String,Object > params ) {

@@ -22,6 +22,7 @@ public class BaseControllerTest extends BasicTest {
     @Test
     public void tests() {
 	Map< String,Object > params = new HashMap<>();
+	params.put( "userId",42 );
 	int rowCount = mallStoreDAO.countByPage( params );
 
 	params.put( "firstResult", 1 );
