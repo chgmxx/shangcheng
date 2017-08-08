@@ -35,7 +35,7 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
      *
      * @return
      */
-    int count( Map< String,Object > params );
+    int countByPage( Map< String,Object > params );
 
     /**
      * 根据店铺id 逻辑删除店铺

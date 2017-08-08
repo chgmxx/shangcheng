@@ -27,37 +27,4 @@
 
     </dependencies>
 
-    <build>
-
-        <plugins>
-            <!-- CXF 客户端配置 -->
-            <plugin>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-codegen-plugin</artifactId>
-                <version>${dev.lib.cxf}</version>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <sourceRoot>${basedir}/src/main/java</sourceRoot>
-                            <encoding>UTF-8</encoding>
-                            <wsdlOptions>
-                                <!-- 大师兄的cxf接口 -->
-                                <!--<wsdlOption>
-                                    <wsdl>http://yifriend.net/webservice/api?wsdl</wsdl>
-                                </wsdlOption>-->
-                                <!--<wsdlOption>
-                                    <wsdl>http://localhost:8080/services/TestServiceWS.wsdl</wsdl>
-                                </wsdlOption>-->
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

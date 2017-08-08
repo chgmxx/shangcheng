@@ -32,10 +32,6 @@ public class PropertiesUtil {
 
     private static String staticSourceFtpPwd;  //图片资源Ftp 密码
 
-    private static String shopUrl;//cxf 调用门店的地址
-
-    private static String wxmpToken;//cxf 调用门店的token
-
     private static String redisHost;// redis IP
 
     private static String redisPort;// redis 端口
@@ -104,16 +100,6 @@ public class PropertiesUtil {
 	PropertiesUtil.staticSourceFtpPwd = staticSourceFtpPwd;
     }
 
-    @Value( "${project.shop.cxf-url}" )
-    public void setShopUrl( String shopUrl ) {
-	PropertiesUtil.shopUrl = shopUrl;
-    }
-
-    @Value( "${wxmp.token}" )
-    public void setWxmpToken( String wxmpToken ) {
-	PropertiesUtil.wxmpToken = wxmpToken;
-    }
-
     @Value( "${spring.redis.host}" )
     public void setRedisHost( String redisHost ) {
 	PropertiesUtil.redisHost = redisHost;
@@ -161,11 +147,13 @@ public class PropertiesUtil {
 
     /**
      * 获取主域名（登陆）
+     *
      * @return 域名
      */
     public static String getWxmpDomain() {
 	return wxmpDomain;
     }
+
     /**
      * 获取商城的域名
      */
@@ -227,14 +215,6 @@ public class PropertiesUtil {
 
     public static String getStaticSourceFtpPwd() {
 	return staticSourceFtpPwd;
-    }
-
-    public static String getShopUrl() {
-	return shopUrl;
-    }
-
-    public static String getWxmpToken() {
-	return wxmpToken;
     }
 
     public static String getRedisHost() {

@@ -87,23 +87,6 @@ web:
  jxcPwd: shop12345
 
 
-### 会员CXF项目接口地址
-project:
- shop:
-  cxf-url: http://yifriend.net/webservice/api?wsdl
-
-#调用大师兄接口需要的配置
-wxmp:
- webservice:
-  domain: http://yifriend.net
- #token 密码
- token: 57CD54340AE48C861A1F1036099888CA
-
-
-#### cxf 服务端配置
-cxf:
- path: /services
-
 
 ####图片资源ftp 配置
 static:
