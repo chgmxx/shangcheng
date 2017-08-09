@@ -33,7 +33,7 @@ eclipse 请使用**doc/java-code-style-eclipse.xml**
 
 多模块细分各模块职责。
 
-### 酒店ERP 系统
+### 商城ERP 系统
 模块分析
 - mall  基础 提供jar包依赖管理并管理各子模块
 - mall-common 提供基础设施
