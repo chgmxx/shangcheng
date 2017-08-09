@@ -51,7 +51,7 @@ public class MallProductController extends BaseController {
     /**
      * 进入商品管理列表页面
      */
-    @RequestMapping( "index" )
+    @RequestMapping( "/index" )
     public String productIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	BusUser user = SessionUtils.getLoginUser( request );
 	try {

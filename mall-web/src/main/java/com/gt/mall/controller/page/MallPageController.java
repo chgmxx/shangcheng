@@ -127,7 +127,7 @@ public class MallPageController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "/page/index";
+	return "/mall/page/index";
     }
 
     /**
@@ -152,7 +152,7 @@ public class MallPageController extends BaseController {
 	request.setAttribute( "typeMap", typeMap );*/
 	request.setAttribute( "allSto", allSto );
 	request.setAttribute( "urls", request.getHeader( "Referer" ) );
-	return "/page/edit";
+	return "/mall/page/edit";
     }
 
     /**
@@ -399,7 +399,7 @@ public class MallPageController extends BaseController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "/page/choosePro";
+	return "/mall/page/choosePro";
     }
 
     /**
@@ -431,7 +431,7 @@ public class MallPageController extends BaseController {
 	String http = PropertiesUtil.getResourceUrl();
 	request.setAttribute( "http", http );
 	request.setAttribute( "codeUrl", page.getCodeUrl() );
-	return "/page/editor/yl";
+	return "/mall/editor/yl";
     }
 
     @RequestMapping( "{id}/79B4DE7C/viewHomepage" )
@@ -455,14 +455,14 @@ public class MallPageController extends BaseController {
 	mallProductService.clearJifenByRedis( member, request, userid );
 	mallProductService.clearIsShopSession( obj.getPagStoId(), userid, request );
 
-	return "redirect:/mallPage/" + id + "/79B4DE7C/pageIndex.do";
+	return "redirect:/mallPage/" + id + "/79B4DE7CIndex.do";
     }
 
     /**
      * 手机访问商家主页面接口
      */
     @SuppressWarnings( "unchecked" )
-    @RequestMapping( "{id}/79B4DE7C/pageIndex" )
+    @RequestMapping( "{id}/79B4DE7CIndex" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String pageIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws IOException {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
@@ -683,7 +683,7 @@ public class MallPageController extends BaseController {
 	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    logger.info( "访问商城首页耗时：" + second + "秒" );
 	}
-	return "/phonepage/phoneHomepage";
+	return "/mall/phonepage/phoneHomepage";
     }
 
     /**
@@ -711,7 +711,7 @@ public class MallPageController extends BaseController {
 	    logger.error( "商城店铺分类弹出框异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "/page/branchPage";
+	return "/mall/page/branchPage";
 
     }
 
@@ -751,7 +751,7 @@ public class MallPageController extends BaseController {
 		    throws Exception {
 	logger.info( "进入商城商品详细页面。。。" );
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	String jsp = "/product/phone/phone_product_detail";
+	String jsp = "/mall/product/phone/phone_product_detail";
 	int userid = 0;
 	try {
 	    Member member = SessionUtils.getLoginMember( request );

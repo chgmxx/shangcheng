@@ -17,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, order_detail_id AS orderDetailId, sale_member_id AS saleMemberId, referees_member_id AS refereesMemberId, order_money AS orderMoney, buyer_user_id
+        id, order_id, order_detail_id, sale_member_id, referees_member_id, order_money , buyer_user_id
         AS buyerUserId, seller_user_id AS sellerUserId, is_delete AS isDelete
     </sql>
 

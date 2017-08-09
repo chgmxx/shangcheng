@@ -42,7 +42,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "mallGroupBuy" )
+@RequestMapping( "mGroupBuy" )
 public class MallGroupBuyController extends BaseController {
 
     @Autowired

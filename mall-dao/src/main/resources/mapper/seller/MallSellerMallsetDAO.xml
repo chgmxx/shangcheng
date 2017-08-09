@@ -19,8 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shop_id AS shopId, mall_name AS mallName, contact_number AS contactNumber, qq, mall_head_path AS mallHeadPath, banner_path AS bannerPath, mall_introducation AS
-        mallIntroducation, is_open_optional AS isOpenOptional, sale_member_id AS saleMemberId, bus_user_id AS busUserId
+        id, shop_id , mall_name, contact_number , qq, mall_head_path, banner_path, mall_introducation, is_open_optional , sale_member_id , bus_user_id
     </sql>
 
     <select id="selectBySaleMemberId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

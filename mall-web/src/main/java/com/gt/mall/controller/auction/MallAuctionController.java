@@ -49,7 +49,7 @@ import java.util.*;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "/mallAuction" )
+@RequestMapping( "/mAuction" )
 public class MallAuctionController extends BaseController {
 
     @Autowired

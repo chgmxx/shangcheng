@@ -112,7 +112,7 @@ public class MallOrderController extends BaseController {
 	    String endTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    logger.info( startTime + "---" + endTime );
 	    long second = DateTimeKit.minsBetween( startTime, endTime, 1, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( "访问提交订单页面花费：" + second + "毫秒" );
+	    logger.info( "访问订单管理花费：" + second + "毫秒" );
 	}
 	logger.info( "订单加载完成，跳转页面中。。。。" );
 	return "mall/order/orderIndex";

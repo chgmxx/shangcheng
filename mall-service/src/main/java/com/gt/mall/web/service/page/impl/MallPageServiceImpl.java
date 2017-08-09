@@ -136,8 +136,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private MallProductDAO              mallProductDAO;
     @Autowired
     private MallProductService          mallProductService;
-//    @Autowired
-//    private WxShopService               wxShopService;//微信门店接口
+    //    @Autowired
+    //    private WxShopService               wxShopService;//微信门店接口
     @Autowired
     private MallProductGroupDAO         mallProductGroupDAO;//商品分组dao
     @Autowired
@@ -168,7 +168,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "mallPage/index.do" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	params.put( "maxResult", pageSize );
-	List list = mallPageDAO.findByPage( params );
+	//todo 调用陈丹的接口 根据商家id查询门店id
+	//查询店铺id
+	List< Map< String,Object > > list = mallPageDAO.findByPage( params );
 	page.setSubList( list );
 	return page;
     }
@@ -487,18 +489,17 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     /**
      * 把购物车信息保存到session
-     *
      */
     private void saveShopCartBySession( MallShopCart cart, HttpServletRequest request ) {
-	String key = Constants.SESSION_KEY+"mall_shopcart";
-	String key2 = Constants.SESSION_KEY+"mall_shopcart_id";
+	String key = Constants.SESSION_KEY + "mall_shopcart";
+	String key2 = Constants.SESSION_KEY + "mall_shopcart_id";
 	boolean isFlag = true;
 	HttpSession session = request.getSession();
 	Object cartObj = session.getAttribute( key );
 	List< MallShopCart > newCartList = new ArrayList<>();
 	StringBuilder ids = new StringBuilder();
 	if ( CommonUtil.isNotEmpty( cartObj ) ) {
-	    List< MallShopCart > cartList = com.alibaba.fastjson.JSONArray.parseArray( cartObj.toString(),MallShopCart.class );
+	    List< MallShopCart > cartList = com.alibaba.fastjson.JSONArray.parseArray( cartObj.toString(), MallShopCart.class );
 	    if ( cartList != null && cartList.size() > 0 ) {
 		for ( MallShopCart mallShopCart : cartList ) {
 		    if ( mallShopCart.getProductId().toString().equals( cart.getProductId().toString() ) ) {
@@ -940,7 +941,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    Map maps = (Map) aJsonArray;
 	    String check = maps.get( "check" ).toString();
 	    Integer id = Integer.valueOf( maps.get( "id" ).toString() );
-//	    String num = maps.get( "num" ).toString();
+	    //	    String num = maps.get( "num" ).toString();
 
 	    MallShopCart shopcart = new MallShopCart();
 	    shopcart.setProductNum( CommonUtil.toInteger( maps.get( "num" ) ) );

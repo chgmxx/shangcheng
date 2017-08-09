@@ -33,11 +33,11 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, sto_name AS stoName, sto_phone AS stoPhone, sto_linkman AS stoLinkman, sto_status AS stoStatus, sto_pid AS stoPid, sto_user_id AS stoUserId, sto_is_main AS stoIsMain,
-        sto_address AS stoAddress, sto_qr_code AS stoQrCode, sto_branch_id AS stoBranchId, sto_is_memberDiscount AS stoIsMemberDiscount, sto_house_member AS stoHouseMember,
-        sto_create_time AS stoCreateTime, sto_create_person AS stoCreatePerson, sto_province AS stoProvince, sto_city AS stoCity, sto_longitude AS stoLongitude, sto_latitude AS
-        stoLatitude, sto_picture AS stoPicture, is_delete AS isDelete, sto_area AS stoArea, wx_shop_id AS wxShopId, sto_is_sms AS stoIsSms, sto_sms_telephone AS stoSmsTelephone,
-        sto_qq_customer AS stoQqCustomer, sto_head_img AS stoHeadImg
+        id, sto_name , sto_phone , sto_linkman , sto_status , sto_pid , sto_user_id , sto_is_main ,
+        sto_address , sto_qr_code , sto_branch_id , sto_is_memberDiscount , sto_house_member ,
+        sto_create_time , sto_create_person , sto_province , sto_city , sto_longitude, sto_latitude ,
+        sto_picture , is_delete , sto_area , wx_shop_id , sto_is_sms , sto_sms_telephone ,
+        sto_qq_customer , sto_head_img
     </sql>
     <sql id="Base_Map_Column_list">
         id, sto_name, sto_phone, sto_linkman, sto_status, sto_pid, sto_user_id, sto_is_main,
@@ -70,6 +70,7 @@
                 </foreach>
             </if>
         </where>
+        limit #{firstResult},#{maxResult}
     </select>
     <select id="countByPage" resultType="java.lang.Integer" parameterType="map">
         select

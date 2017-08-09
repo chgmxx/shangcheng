@@ -90,6 +90,7 @@ public class MallStoreController extends BaseController {
 	    //todo 调用陈丹接口 视频教程接口
 	    /*request.setAttribute("videourl", course.urlquery("8"));*/
 	} catch ( Exception e ) {
+	    logger.error( "商城店铺管理异常："+e.getMessage() );
 	    e.printStackTrace();
 	}
 	return "mall/store/index";
@@ -149,6 +150,7 @@ public class MallStoreController extends BaseController {
 	    //todo 调用陈丹接口，根据地区id查询地区信息
 	    //request.setAttribute("areaLs", restaurantService.findCityByPid(restaurantService.getAreaIds()));
 	} catch ( Exception e ) {
+	    logger.error( "进入修改店铺页面异常："+e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    request.setAttribute( "pageTitle", "添加信息" );
@@ -174,6 +176,7 @@ public class MallStoreController extends BaseController {
 	} catch ( Exception e ) {
 	    msg.put( "result", false );
 	    msg.put( "message", e.getMessage() );
+	    logger.error( "保存店铺信息异常："+e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    CommonUtil.write( response, msg );
@@ -193,6 +196,7 @@ public class MallStoreController extends BaseController {
 	} catch ( Exception e ) {
 	    msg.put( "result", false );
 	    msg.put( "message", e.getMessage() );
+	    logger.error( "删除店铺信息异常："+e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    CommonUtil.write( response, msg );
@@ -248,7 +252,7 @@ public class MallStoreController extends BaseController {
 		request.setAttribute( "giveList", giveList );
 	    }
 	} catch ( Exception e ) {
-	    logger.error( e.getMessage() );
+	    logger.error( "进入商城设置页面异常："+e.getMessage() );
 	    e.printStackTrace();
 	}
 	return "mall/set/set_index";
@@ -277,7 +281,7 @@ public class MallStoreController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    flag = false;
-	    logger.debug( "编辑设置：" + e.getMessage() );
+	    logger.debug( "编辑商城设置异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    JSONObject obj = new JSONObject();

@@ -20,7 +20,7 @@ public interface MallPageDAO extends BaseMapper< MallPage > {
     /**
      * 分页
      */
-    List findByPage( Map< String,Object > params );
+    List< Map< String,Object > > findByPage( Map< String,Object > params );
 
     /**
      * 获取条数

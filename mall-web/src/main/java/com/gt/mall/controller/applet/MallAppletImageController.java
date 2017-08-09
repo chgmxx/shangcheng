@@ -30,7 +30,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "/mallAppletImage" )
+@RequestMapping( "/mApplet" )
 public class MallAppletImageController extends BaseController {
 
     @Autowired

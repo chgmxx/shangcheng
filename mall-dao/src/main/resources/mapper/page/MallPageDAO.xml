@@ -29,20 +29,22 @@
         pag_create_time, pag_is_main, pag_html, codeUrl
     </sql>
 
-    <select id="findByPage" resultType="java.util.List">
-        /* todo 调用陈丹的接口 */
-        SELECT a.*,d.item_value,c.business_name
+    <select id="findByPage" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT a.*
         FROM t_mall_page a
         LEFT JOIN t_mall_store b ON a.pag_sto_id=b.id
-       /* LEFT JOIN t_wx_shop c ON b.wx_shop_id=c.id
-        LEFT JOIN (SELECT item_key,item_value FROM t_man_dict_items c LEFT JOIN  t_man_dict  d ON c.dict_id=d.id where d.dict_type='1073')d ON a.pag_type_id=d.item_key*/
-        WHERE c.status NOT IN (-1) AND b.is_delete=0
-        <if test="pid == 0">
-            AND b.id IN (SELECT id FROM t_mall_store WHERE  sto_create_person=#{userid})
+        WHERE  b.is_delete=0
+
+        <if test="wxShopList != null">
+            AND pag_sto_id IN
+            <foreach close=")" collection="wxShopList" index="index" item="item" open="(" separator=",">
+                #{item}
+            </foreach>
         </if>
-        <if test="pid != 0">
-            /*AND c.id IN (SELECT branchid FROM bus_user_branch_relation WHERE  userid=#{userid})*/
+        <if test="wxShopList == null">
+            AND pag_sto_id IN (SELECT a.id FROM t_mall_store a WHERE a.sto_create_person=#{userid} AND a.is_delete=0 )
         </if>
+
         <if test="pagName != null">
             and a.pag_name like '%${pagName}%'
         </if>
@@ -53,12 +55,21 @@
     <select id="count" resultType="java.lang.Integer">
         select count(id) from t_mall_page
         <where>
-            <if test="pid == 0">
+            <if test="wxShopList != null">
+                AND pag_sto_id IN
+                <foreach close=")" collection="wxShopList" index="index" item="item" open="(" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="wxShopList == null">
+                AND pag_sto_id IN (SELECT a.id FROM t_mall_store a WHERE a.sto_create_person=#{userid} AND a.is_delete=0 )
+            </if>
+            <!--<if test="pid == 0">
                 AND pag_sto_id IN (SELECT a.id FROM t_mall_store a LEFT JOIN t_wx_shop b ON a.wx_shop_id=b.id WHERE a.sto_create_person=#{userid} AND a.is_delete=0 AND b.status NOT IN (-1))
             </if>
             <if test="pid != 0">
                 AND pag_sto_id IN (SELECT e.id FROM t_mall_store e LEFT JOIN bus_user_branch_relation f  ON e.wx_shop_id=f.branchid LEFT JOIN t_wx_shop h ON f.branchid=h.id WHERE f.userid=#{userid} AND e.is_delete=0 AND h.status  NOT IN (-1))
-            </if>
+            </if>-->
             <if test="pagName != null">
                 and pag_name like '%${pagName}%'
             </if>
