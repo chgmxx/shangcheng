@@ -39,7 +39,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "/phoneIntegral" )
+@RequestMapping( "phoneIntegral" )
 public class PhoneMallIntegralController extends BaseController {
 
     @Autowired

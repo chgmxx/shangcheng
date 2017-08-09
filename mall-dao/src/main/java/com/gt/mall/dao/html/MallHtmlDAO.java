@@ -2,6 +2,7 @@ package com.gt.mall.dao.html;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.html.MallHtml;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public interface MallHtmlDAO extends BaseMapper<MallHtml> {
      * @param pageSize 记录数
      * @return 模板列表
      */
-    List<Map<String, Object>> getHtmlByUserId(Integer user_id, Integer pid, Integer firstNum, Integer pageSize);
+    List<Map<String, Object>> getHtmlByUserId(@Param( "user_id" ) Integer user_id, @Param( "pid" ) Integer pid, @Param( "firstNum" ) Integer firstNum, @Param( "pageSize" ) Integer pageSize);
 
     /**
      * 统计该用户 商家中的H5模板
@@ -32,7 +33,7 @@ public interface MallHtmlDAO extends BaseMapper<MallHtml> {
      * @param pid 创建人的父类id
      * @return 数量
      */
-    int countHtmlByUserId(Integer user_id, Integer pid);
+    int countHtmlByUserId(@Param( "user_id" ) Integer user_id, @Param( "pid" ) Integer pid);
 
 
     /**
@@ -42,7 +43,7 @@ public interface MallHtmlDAO extends BaseMapper<MallHtml> {
      * @param pageSize 记录数
      * @return 模板列表
      */
-    List<Map<String, Object>> getHtmlModelList(Integer firstNum, Integer pageSize);
+    List<Map<String, Object>> getHtmlModelList(@Param( "firstNum" ) Integer firstNum, @Param( "pageSize" ) Integer pageSize);
 
     /**
      * 统计后台中的H5模板
