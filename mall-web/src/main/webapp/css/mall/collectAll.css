@@ -22,7 +22,7 @@ html, body {
 .mHeader {
     height: 4rem;
     width: 100%;
-    background: url("../images/topBg.jpg") no-repeat;
+    background: url("/images/mall/new/topBg.jpg") no-repeat;
     background-size: 100% 100%;
     color: #fff;
     padding: 0 .4rem;
@@ -90,47 +90,47 @@ html, body {
 }
 
 .dzf-icon {
-    background-image: url("../images/dzf.png");
+    background-image: url("/images/mall/new/dzf.png");
     background-size: .74rem .64rem;
 }
 
 .dfh-icon {
-    background-image: url("../images/dfh.png");
+    background-image: url("/images/mall/new/dfh.png");
     background-size: .7rem .64rem;
 }
 
 .dsh-icon {
-    background-image: url("../images/dsh.png");
+    background-image: url("/images/mall/new/dsh.png");
     background-size: .72rem .64rem;
 }
 
 .dpj-icon {
-    background-image: url("../images/dpj.png");
+    background-image: url("/images/mall/new/dpj.png");
     background-size: .72rem .68rem;
 }
 
 .addr-icon {
-    background-image: url("../images/addr.png");
+    background-image: url("/images/mall/new/addr.png");
     background-size: .46rem .7rem;
 }
 
 .home-icon {
-    background-image: url("../images/home.png");
+    background-image: url("/images/mall/new/home.png");
     background-size: .68rem .68rem;
 }
 
 .type-icon {
-    background-image: url("../images/type.png");
+    background-image: url("/images/mall/new/type.png");
     background-size: .68rem .68rem;
 }
 
 .sc-icon {
-    background-image: url("../images/sc.png");
+    background-image: url("/images/mall/new/sc.png");
     background-size: .68rem .62rem;
 }
 
 .me-r-icon {
-    background-image: url("../images/me-r.png");
+    background-image: url("/images/mall/new/me-r.png");
     background-size: .72rem .72rem;
 }
 
@@ -163,47 +163,47 @@ html, body {
 }
 
 .order-icon {
-    background-image: url("../images/order.png");
+    background-image: url("/images/mall/new/order.png");
     background-size: .5rem .6rem;
 }
 
 .hyk-icon {
-    background-image: url("../images/hyk.png");
+    background-image: url("/images/mall/new/hyk.png");
     background-size: .54rem .4rem;
 }
 
 .eval-icon {
-    background-image: url("../images/evaluate.png");
+    background-image: url("/images/mall/new/evaluate.png");
     background-size: .6rem .6rem;
 }
 
 .col-icon {
-    background-image: url("../images/collect.png");
+    background-image: url("/images/mall/new/collect.png");
     background-size: .54rem .52rem;
 }
 
 .exp-icon {
-    background-image: url("../images/express.png");
+    background-image: url("/images/mall/new/express.png");
     background-size: .54rem .42rem;
 }
 
 .jp-icon {
-    background-image: url("../images/auction.png");
+    background-image: url("/images/mall/new/auction.png");
     background-size: .56rem .58rem;
 }
 
 .sk-icon {
-    background-image: url("../images/sk.png");
+    background-image: url("/images/mall/new/sk.png");
     background-size: .56rem .56rem;
 }
 
 .ws-icon {
-    background-image: url("../images/ws.png");
+    background-image: url("/images/mall/new/ws.png");
     background-size: .58rem .52rem;
 }
 
 .gp-icon {
-    background-image: url("../images/gp.png");
+    background-image: url("/images/mall/new/gp.png");
     background-size: .58rem .58rem;
 }
 

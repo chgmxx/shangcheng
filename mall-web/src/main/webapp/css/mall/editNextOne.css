@@ -131,7 +131,7 @@ html, body {
     height: 23px;
     vertical-align: middle;
     margin: 0 5px;
-    background: url(/images/mallMap.png) no-repeat center center;
+    background: url(/images/icon/mallMap.png) no-repeat center center;
 }
 
 .address .pay {
