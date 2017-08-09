@@ -17,8 +17,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, commission_rate AS commissionRate, commission_type AS commissionType, user_id AS userId, shop_id AS shopId, create_time AS createTime,
-        is_delete AS isDelete, is_use AS isUse
+        id, product_id , commission_rate, commission_type , user_id , shop_id , create_time,
+        is_delete, is_use
     </sql>
 
     <select id="selectProductByJoinSale" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

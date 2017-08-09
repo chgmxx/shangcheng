@@ -39,7 +39,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "mallApplet" )
+@RequestMapping( "/mallApplet" )
 public class PhoneHomeAppletController extends BaseController {
 
     @Autowired

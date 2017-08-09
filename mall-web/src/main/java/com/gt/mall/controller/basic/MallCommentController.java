@@ -37,7 +37,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "/mallComment" )
+@RequestMapping( "/comment" )
 public class MallCommentController extends BaseController {
 
     @Autowired
@@ -56,7 +56,7 @@ public class MallCommentController extends BaseController {
      */
     @SuppressWarnings( { "unchecked", "deprecation" } )
     @SysLogAnnotation( description = "商城设置：批量设置评论", op_function = "2" )
-    @RequestMapping( "batchCommentGive" )
+    @RequestMapping( "/batchCommentGive" )
     public void batchCommentGive( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 
 	logger.info( "进入评论送礼controller" );
@@ -80,7 +80,7 @@ public class MallCommentController extends BaseController {
      * 进入评价管理列表
      *
      */
-    @RequestMapping( "to_index" )
+    @RequestMapping( "/to_index" )
     public String to_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
@@ -124,7 +124,7 @@ public class MallCommentController extends BaseController {
      * @Title: checkComment
      */
     @SysLogAnnotation( description = "评论管理——删除,审核评论", op_function = "2" )
-    @RequestMapping( "checkComment" )
+    @RequestMapping( "/checkComment" )
     public void checkComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException, IOException {
 	logger.info( "进入删除,审核评论的controller" );
 	boolean result = false;
@@ -154,7 +154,7 @@ public class MallCommentController extends BaseController {
      * @Title: repComment
      */
     @SysLogAnnotation( description = "评论管理——回复评论", op_function = "2" )
-    @RequestMapping( "repComment" )
+    @RequestMapping( "/repComment" )
     public void repComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws JSONException, IOException {
 	logger.info( "进入回复评论的controller" );
 	boolean result = false;

@@ -31,22 +31,26 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
      * 订单详情标识
      */
     @TableId( value = "id", type = IdType.AUTO )
-    private Integer    id;
+    private Integer id;
     /**
      * 订单id 关联t_mall_order表的id
      */
     @TableField( "order_id" )
-    private Integer    orderId;
+    private Integer orderId;
     /**
      * 产品id 关联t_mall_product表的id
      */
     @TableField( "product_id" )
-    private Integer    productId;
+    private Integer productId;
     /**
      * 店铺id
      */
     @TableField( "shop_id" )
-    private Integer    shopId;
+    private Integer shopId;
+
+    /**
+     * 商品谷歌
+     */
     @TableField( "product_specificas" )
     private String     productSpecificas;
     /**
@@ -92,6 +96,7 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     /**
      * 退款状态 -3还未退款 0退款中 1退款成功 2已同意退款退货，请退货给商家 3已退货等待商家确认收货 4 商家未收到货，不同意退款申请 5退款退货成功 -1 退款失败(卖家不同意退款) -2买家撤销退款
      */
+    @TableField( "status" )
     private Integer    status;
     /**
      * 完成订单后在有效天数内退款
@@ -101,6 +106,7 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     /**
      * 折扣数
      */
+    @TableField( "discount" )
     private Integer    discount;
     /**
      * 微信优惠券code
@@ -165,7 +171,9 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     /**
      * 销售佣金
      */
+    @TableField( "commission" )
     private BigDecimal commission;
+
     /**
      * 销售员id  关联t_wx_bus_member表的id
      */
@@ -192,14 +200,19 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     @TableField( "flow_record_id" )
     private Integer    flowRecordId;
 
+    @TableField( exist = false )
     private MallOrderReturn orderReturn;//退款
 
+    @TableField( exist = false )
     private Byte isReturn;//是否允许退款
 
+    @TableField( exist = false )
     private double newTotalPrice;//优惠后的价格（用作存储）
 
+    @TableField( exist = false )
     private double fenbiBeforeTotalPrice;//粉币优惠前的价格
 
+    @TableField( exist = false )
     private double jifenBeforeTotalPrice;//积分优惠前的价格
 
     @Override

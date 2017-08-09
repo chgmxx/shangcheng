@@ -38,9 +38,6 @@
             parent.layer.alert("参数错误，将调回前一个页面");
             window.history.back(-1);
         }
-        if (top == self) {
-            window.location.href = "/mPro/product_start.do";
-        }
     </script>
 </head>
 

@@ -21,9 +21,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, sale_member_id AS saleMemberId, income_commission AS incomeCommission, income_integral AS incomeIntegral, income_money AS incomeMoney, income_time AS incomeTime,
-        buyer_user_id AS buyerUserId, order_id AS orderId, order_detail_id AS orderDetailId, income_type AS incomeType, is_get AS isGet, commission_type AS commissionType,
-        no_receive_commission AS noReceiveCommission
+        id, sale_member_id, income_commission, income_integral, income_money, income_time,
+        buyer_user_id, order_id, order_detail_id, income_type, is_get, commission_type,
+        no_receive_commission
     </sql>
 
 

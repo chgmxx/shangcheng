@@ -42,12 +42,10 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, product_id AS productId, shop_id AS shopId, product_specificas AS productSpecificas, product_image_url AS productImageUrl, det_pro_num AS
-        detProNum, det_pro_price AS detProPrice, det_pro_name AS detProName, det_pro_code AS detProCode, det_privivilege AS detPrivivilege, det_pro_message AS detProMessage,
-        product_speciname AS productSpeciname, status, return_day AS returnDay, discount, coupon_code AS couponCode, discounted_prices AS discountedPrices, create_time AS
-        createTime, pro_type_id AS proTypeId, use_fenbi AS useFenbi, use_jifen AS useJifen, total_price AS totalPrice, appraise_status AS appraiseStatus, pro_spec_str AS
-        proSpecStr, card_receive_id AS cardReceiveId, duofen_coupon AS duofenCoupon, use_card_id AS useCardId, commission, sale_member_id AS saleMemberId, integral_youhui AS
-        integralYouhui, fenbi_youhui AS fenbiYouhui, flow_id AS flowId, flow_record_id AS flowRecordId
+        id, order_id, product_id, shop_id, product_specificas, product_image_url, det_pro_num, det_pro_price, det_pro_name,
+        det_pro_code, det_privivilege, det_pro_message, product_speciname, status, return_day, discount, coupon_code,
+        discounted_prices, create_time, pro_type_id, use_fenbi, use_jifen, total_price, appraise_status, pro_spec_str,
+        card_receive_id, duofen_coupon, use_card_id, commission, sale_member_id, integral_youhui, fenbi_youhui, flow_id, flow_record_id
     </sql>
     <select id="countDetailByProductId" resultType="java.lang.Integer" parameterType="Map">
         select count(d.id)
@@ -67,9 +65,9 @@
         </where>
     </select>
 
-    <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="Map" >
+    <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="Map">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_order_detail
         <where>
             order_id = #{id}
@@ -88,7 +86,7 @@
 
     <select id="selectPageByOrderId" resultMap="BaseResultMap" parameterType="Map">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_order_detail
         <where>
             order_id = #{orderId}
@@ -97,15 +95,15 @@
             </if>
         </where>
     </select>
-    <select id="selectDetailByOrderIds" resultMap="BaseResultMap" parameterType="Map">
+    <select id="selectDetailByOrderIds" resultMap="BaseResultMap" parameterType="java.util.Map">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_order_detail
-        <where> 1=1
-            <if test="orderIdList != null and orderIdList != ''">
-                and
-                <foreach collection="orderIdList" index="index" item="item" open="(" separator="or" close=")">
-                    order_id = #{item,jdbcType=INTEGER}
+        <where>1=1
+            <if test="orderIdList != null">
+                and order_id in
+                <foreach collection="orderIdList" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
                 </foreach>
             </if>
         </where>
@@ -118,7 +116,7 @@
         discounted_prices,create_time,pro_type_id,use_fenbi,use_jifen,total_price,card_receive_id,duofen_coupon,use_card_id,
         commission,sale_member_id, integral_youhui, fenbi_youhui,flow_id,flow_record_id)
         values
-        <foreach collection="list" item="item" index="index" separator="," >
+        <foreach collection="list" item="item" index="index" separator=",">
             (#{item.orderId},#{item.productId},#{item.shopId},#{item.productSpecificas},#{item.productImageUrl},#{item.detProNum},
             #{item.detProPrice},#{item.detProName},#{item.detProCode},#{item.detPrivivilege},#{item.detProMessage},
             #{item.productSpeciname},#{item.returnDay},#{item.discount},#{item.couponCode},#{item.discountedPrices},#{item.createTime},

@@ -115,7 +115,7 @@ ol.ws-notice {
 }
 
 ol.ws-notice li:before {
-    content: counter(sectioncounter) "銆�;
+    content: counter(sectioncounter) "";
     counter-increment: sectioncounter;
 }
 

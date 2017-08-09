@@ -40,7 +40,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "/mallFreight/" )
+@RequestMapping( "/mFreight" )
 public class MallFreightController extends BaseController {
 
     @Autowired
