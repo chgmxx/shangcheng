@@ -1,4 +1,4 @@
-package com.gt.mall.controller.integral;
+package com.gt.mall.controller.integral.phone;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
