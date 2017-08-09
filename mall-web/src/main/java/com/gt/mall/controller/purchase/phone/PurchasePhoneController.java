@@ -1,4 +1,4 @@
-package com.gt.mall.controller.purchase;
+package com.gt.mall.controller.purchase.phone;
 
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
@@ -36,9 +36,9 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "purchasePhone" )
-public class PhonePurchaseController extends BaseController {
+public class PurchasePhoneController extends BaseController {
 
-    private final static Logger logger = Logger.getLogger( PhonePurchaseController.class );
+    private final static Logger logger = Logger.getLogger( PurchasePhoneController.class );
     @Autowired
     PurchaseOrderService        orderService;
     @Autowired
