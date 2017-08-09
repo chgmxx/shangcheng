@@ -119,11 +119,11 @@ $(function () {
     });
 });
 
-$(function () {
+/*$(function () {
     $("#main", window.parent.document).load(function () {
         $(this).height($("body")[0].scrollHeight + 50);
     });
-});
+});*/
 
 
 /**
