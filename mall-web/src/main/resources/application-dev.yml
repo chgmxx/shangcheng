@@ -65,9 +65,9 @@ datasource:
   #useGlobalDataSourceStat: true
 
 server:
-  port: 8080
-  session:
-    timeout: 30
+ port: 8080
+ session:
+  timeout: 30
 
 
 ######################## 开发环境配置 ########################
@@ -76,9 +76,9 @@ web:
  wxmp:
   domain: http://sz.yifriend.net
  #域名
- domain: 192.168.2.100:8081
+ domain: 192.168.2.100:8080
  #网页访问路径
- homeUrl: http://192.168.2.100:8081/
+ homeUrl: http://192.168.2.100:8080/
  #进销存 地址
  jxcUrl: http://jxc.duofee.com/jxc/
  #进销存token用户名
@@ -103,7 +103,7 @@ static:
 #访问文章资源URL
 article:
  url:
-  prefix: http://192.168.2.100:8081/
+  prefix: http://192.168.2.100:8080/
 #访问资源URL
 resource:
  url:
@@ -128,6 +128,6 @@ mq:
 
 ### 设置 Redis session 共享
 redisSession:
-  domainName: .example.com
-  cookiePath: /
-  cookieName: JSESSIONID
+ domainName: .example.com
+ cookiePath: /
+ cookieName: JSESSIONID

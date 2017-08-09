@@ -135,10 +135,8 @@
                                     <c:if test="${!(wxPublicUsers.mchId==null||wxPublicUsers.mchId==''||wxPublicUsers.apiKey==null||wxPublicUsers.apiKey=='')}">
                                         <a target="_blank" class="bj-a download" href="wxPay/3/${sto.id}/createPayQR.do?busId=${sto.sto_user_id}" title="下载支付二维码"></a>
                                     </c:if>
-                                    <c:if test="${sto.codeUrl != null && sto.codeUrl != '' }">
-                                        <a href="javascript:;" class="bj-a qrcode" title="预览" url="/mallPage/${sto.pageId}/79B4DE7C/viewHomepage.do"></a>
-                                    </c:if>
                                     <c:if test="${sto.pageId != null && sto.pageId != '' }">
+                                        <a href="javascript:;" class="bj-a qrcode" title="预览" url="/mallPage/${sto.pageId}/79B4DE7C/viewHomepage.do"></a>
                                         <a href="javascript:;" class="bj-a copy copy_public" title="复制链接"
                                            data-clipboard-text="${path }/mallPage/${sto.pageId}/79B4DE7C/viewHomepage.do" aria-label="复制成功！"></a>
                                     </c:if>

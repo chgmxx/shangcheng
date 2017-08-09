@@ -839,11 +839,11 @@ footer a {
     border-radius: 3px;
 }
 
-/*.qrcode:hover {
+.qrcode:hover {
     display: inline-block;
     width: 18px;
     height: 18px;
-    background: url(../../../../images/qrcode_hover.png);
+    background: url(/images/icon/qrcode_hover.png);
 }
 
 .qrcode {
@@ -852,9 +852,9 @@ footer a {
     display: inline-block;
     width: 18px;
     height: 18px;
-    background: url(../../../../images/qrcode.png);
+    background: url(/images/icon/qrcode.png);
     margin-top: 20px;
-}*/
+}
 
 .copy {
     margin-left: 5px;

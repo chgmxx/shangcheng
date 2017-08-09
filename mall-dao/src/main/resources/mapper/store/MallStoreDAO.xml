@@ -47,8 +47,8 @@
         sto_head_img
     </sql>
     <sql id="page_Column_list">
-        o.id,o.sto_linkman,o.sto_phone,o.wx_shop_id,o.sto_name,o.sto_address,o.sto_house_member,o.sto_province,o.sto_city,o.sto_area,o.sto_longitude,o.sto_latitude,o.sto_picture,
-        p.id
+        o.id,o.sto_linkman,o.sto_phone,o.wx_shop_id,o.sto_name,o.sto_address,o.sto_house_member,o.sto_province,o.sto_city,o.sto_area,o.sto_longitude,o.sto_latitude,o.sto_picture,o.sto_user_id,
+        p.id as pageId
     </sql>
     <select id="findByPage" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT
@@ -81,7 +81,7 @@
                 and o.sto_user_id=#{userId}
             </if>
             <if test="stoName != null">
-                and t.sto_name like '%${stoName}%'
+                and o.sto_name like '%${stoName}%'
             </if>
             <if test="wxShopList != null">
                 AND o.`wx_shop_id` in
