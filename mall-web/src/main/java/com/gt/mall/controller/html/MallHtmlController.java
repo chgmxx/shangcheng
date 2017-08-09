@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "mallHtml" )
+@RequestMapping( "mallhtml" )
 public class MallHtmlController extends BaseController {
 
     @Autowired
@@ -96,6 +96,7 @@ public class MallHtmlController extends BaseController {
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
 	    jsp = "error/error";
+	    e.printStackTrace();
 	}
 	return jsp;
 
