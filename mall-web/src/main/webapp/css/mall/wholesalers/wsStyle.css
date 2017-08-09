@@ -154,7 +154,7 @@ ol.ws-notice li:before {
 }
 
 .cd-close {
-    background: url("../image/close.png") no-repeat center center;
+    background: url("/images/mall/close.png") no-repeat center center;
     background-size: 100%;
     position: absolute;
     right: .26rem;

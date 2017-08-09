@@ -131,7 +131,7 @@ i {
     border: none;
     appearance: none;
     -webkit-appearance: none;
-    -webkit-align-content:;
+    /*-webkit-align-content:;*/
 }
 
 .main .sum-info { /* text-align: right; */
@@ -420,7 +420,7 @@ i {
 }
 
 .step .doing {
-    background-image: url(/js/SceneEdit/images/music.png);
+    background-image: url(/images/icon/music.png);
     background-repeat: no-repeat;
     width: 20px;
     height: 20px;

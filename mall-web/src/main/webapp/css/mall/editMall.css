@@ -326,7 +326,7 @@ textarea::-webkit-input-placeholder {
     width: 200px;
     border-radius: 4px;
     border: 1px solid #c5c5c5;
-    background: url(/js/laydate/skins/lan/icon.png) no-repeat right center;
+    background: url(/js/plugin/laydate/skins/lan/icon.png) no-repeat right center;
 }
 
 .controls input.date2 {
@@ -334,7 +334,7 @@ textarea::-webkit-input-placeholder {
     width: 130px;
     border-radius: 4px;
     border: 1px solid #c5c5c5;
-    background: url(/js/laydate/skins/lan/icon.png) no-repeat right center;
+    background: url(/js/plugin/laydate/skins/lan/icon.png) no-repeat right center;
 }
 
 .pre-sale-warp .pre-sale-item {
