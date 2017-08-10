@@ -34,14 +34,6 @@
     <script type="text/javascript" src="/js/plugin/kindeditor/lang/zh_CN.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
     <script type="text/javascript">
-        if (top == self) {
-            window.location.href = "/mPro/product_start.do";
-        }
-        var error = '${error}';
-        if (error != undefined && error != "") {
-            parent.layer.alert("参数错误，将调回前一个页面");
-            window.history.back(-1);
-        }
         var imgResource = "${imgUrl}";
         var groups = {};
         var groupDefaults = new Array();

@@ -27,11 +27,6 @@
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
     <script type="text/javascript">
-
-        if (top == self) {
-            window.location.href = "/mPresale/index.do";
-        }
-
         var timeSelArr = new Array();
 
         var timeDefaultObj = new Object();//默认时间数据

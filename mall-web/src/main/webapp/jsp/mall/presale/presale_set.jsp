@@ -26,11 +26,6 @@
     <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
-    <script type="text/javascript">
-        if (top == self) {
-            window.location.href = "/mPresale/start.do";
-        }
-    </script>
     <style type="text/css">
         .inpt4 {
             width: 100px;
