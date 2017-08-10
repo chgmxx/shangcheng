@@ -1,5 +1,12 @@
 package com.gt.mall.config.interceptor;
 
+import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.Member;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.JedisUtil;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.util.SessionUtils;
+import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -56,7 +63,7 @@ public class MyInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler )
 		    throws Exception {
-	/*System.out.println( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+	System.out.println( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
 	System.out.println( "basePath = " + request.getRequestURL() );
 
 	// 获得在下面代码中要用的request,response,session对象
@@ -107,11 +114,11 @@ public class MyInterceptor implements HandlerInterceptor {
 	    String script = "<script type='text/javascript'>"
 			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "/user/tologin.do';"
 			    + "</script>";
-	    if ( url.indexOf( "unionBrokerage" ) > -1 && !( url.indexOf( "toLogin" ) > -1 ) ) {
+	    /*if ( url.indexOf( "unionBrokerage" ) > -1 && !( url.indexOf( "toLogin" ) > -1 ) ) {
 		script = "<script type='text/javascript'>"
 				+ "top.location.href='/jsp/error/warning.jsp';"
 				+ "</script>";
-	    }
+	    }*/
 	    if ( isAjax( servletRequest ) ) {
 		Map< String,Object > map = new HashMap<>();
 		map.put( "timeout", "连接超时，请重新登录！" );
@@ -130,7 +137,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		    return false;
 		}
 	    }
-	}*/
+	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
 

@@ -74,7 +74,7 @@ server:
 web:
  #主域名
  wxmp:
-  domain: http://sz.yifriend.net
+  domain: http://chen.example.com:8070/
  #域名
  domain: 192.168.2.100:8080
  #网页访问路径
