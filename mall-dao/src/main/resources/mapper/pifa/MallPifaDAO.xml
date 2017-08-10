@@ -38,8 +38,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, pf_price AS pfPrice, pf_start_time AS pfStartTime, pf_end_time AS pfEndTime, user_id AS userId, shop_id AS shopId, create_time AS createTime,
-        is_delete AS isDelete, is_use AS isUse, pf_type AS pfType
+        id, product_id , pf_price , pf_start_time , pf_end_time , user_id , shop_id , create_time,
+        is_delete , is_use , pf_type
     </sql>
     <sql id="page_product_Column_List">
         p.id, p.product_id, pf_price, pf_start_time, pf_end_time, p.user_id, p.shop_id, p.create_time,

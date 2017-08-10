@@ -31,10 +31,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, is_delivery_pay AS isDeliveryPay, is_take_their AS isTakeTheir, user_id AS userId, create_time AS createTime, is_daifu AS isDaifu, is_comment AS isComment,
-        is_comment_check AS isCommentCheck, is_comment_give AS isCommentGive, is_message AS isMessage, is_presale AS isPresale, is_presale_give AS isPresaleGive, message_json AS
-        messageJson, is_sms_member AS isSmsMember, sms_message AS smsMessage, is_pf AS isPf, is_pf_check AS isPfCheck, pf_set AS pfSet, pf_remark AS pfRemark, pf_apply_remark AS
-        pfApplyRemark, is_seller AS isSeller, is_check_seller AS isCheckSeller, footer_json AS footerJson
+        id, is_delivery_pay , is_take_their , user_id , create_time , is_daifu , is_comment , is_comment_check,
+        is_comment_give , is_message , is_presale , is_presale_give , message_json , is_sms_member, sms_message ,
+        is_pf , is_pf_check , pf_set , pf_remark , pf_apply_remark, is_seller , is_check_seller , footer_json
     </sql>
     <!--<select id="selectByUserId" parameterType="com.gt.mall.entity.basic.MallPaySet" resultMap="BaseResultMap">-->
         <!--select-->

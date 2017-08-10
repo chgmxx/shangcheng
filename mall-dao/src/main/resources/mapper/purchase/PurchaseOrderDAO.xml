@@ -25,7 +25,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_number AS orderNumber, company_id AS companyId, order_title AS orderTitle, create_date AS createDate, order_describe AS orderDescribe, order_explain AS orderExplain, order_qrcode AS orderQrcode, order_type AS orderType, have_contract AS haveContract, have_tax AS haveTax, freight, all_money AS allMoney, order_status AS orderStatus, order_remarks AS orderRemarks, bus_id AS busId, member_id AS memberId
+        id, order_number, company_id, order_title, create_date, order_describe, order_explain , order_qrcode ,
+        order_type , have_contract , have_tax , freight, all_money , order_status, order_remarks , bus_id ,
+        member_id
     </sql>
     <select id="findList" resultType="Map">
         select

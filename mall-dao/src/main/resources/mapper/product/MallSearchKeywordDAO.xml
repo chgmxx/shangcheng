@@ -16,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, keyword, search_num AS searchNum, shop_id AS shopId, user_id AS userId, create_time AS createTime, edit_time AS editTime, is_delete AS isDelete
+        id, keyword, search_num , shop_id , user_id , create_time , edit_time , is_delete
     </sql>
 
 </mapper>

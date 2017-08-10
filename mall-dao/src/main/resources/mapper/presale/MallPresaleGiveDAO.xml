@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, give_type AS giveType, give_name AS giveName, give_num AS giveNum, give_ranking AS giveRanking, user_id AS userId, is_delete AS isDelete
+        id, give_type , give_name , give_num , give_ranking , user_id , is_delete
     </sql>
 
     <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

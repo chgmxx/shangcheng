@@ -29,12 +29,6 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, shop_id AS shopId, product_specificas AS productSpecificas, product_num AS productNum, product_message AS productMessage, user_id AS userId,
-        create_time AS createTime, product_speciname AS productSpeciname, price, primary_price AS primaryPrice, pro_code AS proCode, user_type AS userType, discount, pro_spec_str
-        AS proSpecStr, pro_type AS proType, sale_member_id AS saleMemberId, commission, is_check AS isCheck, session_id AS sessionId, bus_user_id AS busUserId
-    </sql>
-
-    <sql id="Base_Map_Column_List">
         id, product_id , shop_id , product_specificas , product_num , product_message , user_id , create_time , product_speciname , price, primary_price ,
         pro_code , user_type , discount, pro_spec_str, pro_type, sale_member_id , commission, is_check , session_id , bus_user_id
     </sql>
@@ -272,7 +266,7 @@
 
     <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
         select
-        <include refid="Base_Map_Column_List" />
+        <include refid="Base_Column_List" />
         from t_mall_shop_cart
         where id = #{id,jdbcType=INTEGER}
     </select>

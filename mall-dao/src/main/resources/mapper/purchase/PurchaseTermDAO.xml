@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, term_index AS termIndex, term_time AS termTime, term_money AS termMoney, term_buy AS termBuy
+        id, order_id , term_index , term_time, term_money , term_buy
     </sql>
     <select id="findTermList" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select

@@ -33,10 +33,10 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, order_detail_id AS orderDetailId, return_no AS returnNo, ret_handling_way AS retHandlingWay, ret_reason_id AS retReasonId, ret_reason AS retReason,
-        ret_money AS retMoney, ret_telephone AS retTelephone, ret_remark AS retRemark, images_url AS imagesUrl, shop_id AS shopId, create_time AS createTime, update_time AS
-        updateTime, status, user_id AS userId, no_return_reason AS noReturnReason, return_address AS returnAddress, wl_company_id AS wlCompanyId, wl_company AS wlCompany, wl_no AS
-        wlNo, wl_telephone AS wlTelephone, wl_remark AS wlRemark, return_fenbi AS returnFenbi, return_jifen AS returnJifen
+        id, order_id , order_detail_id, return_no , ret_handling_way , ret_reason_id , ret_reason ,
+        ret_money , ret_telephone , ret_remark, images_url, shop_id, create_time, update_time, status, user_id ,
+        no_return_reason , return_address , wl_company_id , wl_company , wl_no,
+        wl_telephone, wl_remark , return_fenbi , return_jifen
     </sql>
 
     <select id="selectByOrderDetailId" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallOrderReturn" >

@@ -6,7 +6,6 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.page.MallPageDAO;
 import com.gt.mall.dao.product.MallProductDAO;
@@ -757,13 +756,13 @@ public class MallPageController extends BaseController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map< String,Object > mapmessage = mallPageService.querySelct( id );//获取商品信息
 	    Map< String,Object > mapuser = mallPageService.selUser( shopid );//查询商家信息
-	    //TODO  wxShopService.getShopById()
-	    WsWxShopInfo shop = null;//wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
+	    //TODO 根据门店id查询门店信息  wxShopService.getShopById()
+	    /*WsWxShopInfo shop = null;//wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
 	    if ( shop != null ) {//商家地址显示
 		Map< String,Object > province = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getProvince() ) );
 		Map< String,Object > city = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getCity() ) );
 		request.setAttribute( "storeAddress", province.get( "city_name" ) + city.get( "city_name" ).toString() );
-	    }
+	    }*/
 	    if ( CommonUtil.isNotEmpty( mapuser ) ) {
 		userid = CommonUtil.toInteger( mapuser.get( "id" ) );
 	    }

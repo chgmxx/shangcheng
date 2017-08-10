@@ -16,7 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, presale_id AS presaleId, start_time AS startTime, end_time AS endTime, sale_type AS saleType, price, is_delete AS isDelete, price_type AS priceType
+        id, presale_id , start_time , end_time , sale_type , price, is_delete, price_type
     </sql>
 
 

@@ -56,8 +56,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, g_name AS gName, g_price AS gPrice, g_start_time AS gStartTime, g_end_time AS gEndTime, g_people_num AS gPeopleNum, g_max_buy_num AS
-        gMaxBuyNum, user_id AS userId, shop_id AS shopId, create_time AS createTime, is_delete AS isDelete, is_use AS isUse
+        id, product_id , g_name , g_price , g_start_time , g_end_time , g_people_num , g_max_buy_num , user_id , shop_id , create_time , is_delete , is_use
     </sql>
     <sql id="page_Column_List">
         distinct g.id, g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,

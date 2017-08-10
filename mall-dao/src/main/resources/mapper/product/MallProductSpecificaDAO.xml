@@ -19,8 +19,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, specifica_name_id AS specificaNameId, specifica_value_id AS specificaValueId, specifica_name AS specificaName, specifica_value AS
-        specificaValue, specifica_img_url AS specificaImgUrl, is_delete AS isDelete, sort, erp_specvalue_id AS erpSpecvalueId, erp_specname_id AS erpSpecnameId
+        id, product_id , specifica_name_id , specifica_value_id , specifica_name, specifica_value ,
+        specifica_img_url , is_delete , sort, erp_specvalue_id , erp_specname_id
     </sql>
     <select id="selectValueBySpecId" resultType="java.util.Map">
         SELECT b.id,b.spec_value

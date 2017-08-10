@@ -18,7 +18,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, presale_id AS presaleId, deposit_id AS depositId, order_id AS orderId, rank, type, member_id AS memberId, give_name AS giveName, give_num AS giveNum, is_give AS isGive
+        id, presale_id , deposit_id , order_id , rank, type, member_id , give_name , give_num , is_give
     </sql>
 
     <select id="selectByPresaleId" parameterType="Map" resultMap="BaseResultMap">

@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, group_buy_id AS groupBuyId, inven_id AS invenId, specifica_ids AS specificaIds, group_price AS groupPrice, is_join_group AS isJoinGroup, is_delete AS isDelete
+        id, group_buy_id , inven_id , specifica_ids , group_price , is_join_group , is_delete
     </sql>
     <!--<select id="selectPriceByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >-->
         <!--select-->

@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shop_id AS shopId, product_id AS productId, access_time AS accessTime, group_value_id AS groupValueId, user_id AS userId, session_id AS sessionId
+        id, shop_id , product_id , access_time , group_value_id , user_id , session_id
     </sql>
 
 </mapper>

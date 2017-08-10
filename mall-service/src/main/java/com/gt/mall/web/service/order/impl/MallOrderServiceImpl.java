@@ -7,7 +7,6 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.param.sms.OldApiSms;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -819,7 +818,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 	//todo 调用陈丹接口，根据商家id查询商家信息
 	BusUser busUser = null;//busUserMapper.selectByPrimaryKey( member.getBusid() );
-	if ( !telePhone.equals( "" ) ) {
+	/*if ( !telePhone.equals( "" ) ) {
 	    OldApiSms oldApiSms = new OldApiSms();
 	    oldApiSms.setMobiles( telePhone.toString() );
 	    oldApiSms.setCompany( busUser.getMerchant_name() );
@@ -833,7 +832,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		e.printStackTrace();
 		logger.error( "短信推送消息异常：" + e.getMessage() );
 	    }
-	}
+	}*/
 
 	if ( CommonUtil.isNotEmpty( pbUser ) ) {
 	    try {
@@ -880,7 +879,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				    }
 				}
 			    }
-			    OldApiSms oldApiSms = new OldApiSms();
+			   /* OldApiSms oldApiSms = new OldApiSms();
 			    oldApiSms.setMobiles( telephone );
 			    oldApiSms.setCompany( busUser.getMerchant_name() );
 			    oldApiSms.setBusId( member.getBusid() );
@@ -892,7 +891,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    } catch ( Exception e ) {
 				e.printStackTrace();
 				logger.error( "短信推送消息异常：" + e.getMessage() );
-			    }
+			    }*/
 
 			}
 		    }

@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, mallset_id AS mallsetId, sale_member_id AS saleMemberId, bus_user_id AS busUserId, product_id AS productId, shop_id AS shopId, is_delete AS isDelete
+        id, mallset_id , sale_member_id , bus_user_id , product_id , shop_id , is_delete
     </sql>
 
     <select id="selectProductByMallSet" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.seller.MallSellerProduct" >

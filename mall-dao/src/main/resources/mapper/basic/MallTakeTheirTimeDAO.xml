@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, take_id AS takeId, start_time AS startTime, end_time AS endTime, visit_days AS visitDays, create_time AS createTime, is_delete AS isDelete
+        id, take_id , start_time , end_time , visit_days , create_time , is_delete
     </sql>
 
     <select id="selectByTakeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">

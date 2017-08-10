@@ -26,7 +26,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, creattime, category, categoryname, genre, genrename, family, familyname, property, propertyname, nature, naturename, quality, qualityname, attribute, attributename,
-        html_id AS htmlId
+        html_id
     </sql>
 
 

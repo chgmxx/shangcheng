@@ -16,8 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, params_name_id AS paramsNameId, params_value_id AS paramsValueId, params_name AS paramsName, params_value AS paramsValue, is_delete AS
-        isDelete, sort
+        id, product_id , params_name_id , params_value_id , params_name , params_value , is_delete , sort
     </sql>
 
 </mapper>

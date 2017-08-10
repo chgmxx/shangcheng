@@ -3,7 +3,6 @@ package com.gt.mall.web.service.product.impl;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
@@ -393,11 +392,11 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	String shopName = "";
 	MallStore mallStore = mallStoreDAO.selectById( shopId );
 	if ( CommonUtil.isNotEmpty( mallStore.getWxShopId() ) ) {
-	    //TODO  wxShopService.getShopById()
-	    WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
+	    //TODO  根据门店id查询门店名称 wxShopService.getShopById()
+	   /* WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
 	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		shopName = shopInfo.getBusinessName();
-	    }
+	    }*/
 	}
 	if ( CommonUtil.isEmpty( shopName ) ) {
 	    shopName = mallStore.getStoName();
