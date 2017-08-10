@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, seckill_id AS seckillId, inven_id AS invenId, specifica_ids AS specificaIds, seckill_price AS seckillPrice, is_join_group AS isJoinGroup, is_delete AS isDelete
+        id, seckill_id, inven_id, specifica_ids, seckill_price, is_join_group, is_delete
     </sql>
 
 

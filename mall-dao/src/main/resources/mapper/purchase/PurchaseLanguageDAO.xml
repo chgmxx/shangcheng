@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, language_time AS languageTime, language_content AS languageContent, order_id AS orderId, is_read AS isRead, admin_content AS adminContent, member_id AS memberId
+        id, language_time , language_content , order_id , is_read , admin_content , member_id
     </sql>
     <select id="findLanguangeList" resultType="Map" parameterType="java.lang.Integer">
         select

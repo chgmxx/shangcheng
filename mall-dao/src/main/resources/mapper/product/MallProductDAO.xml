@@ -66,33 +66,17 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, pro_buy_way AS proBuyWay, shop_id AS shopId, group_id AS groupId, pro_type_id AS proTypeId, is_presell AS isPresell, pro_presell_end AS proPresellEnd,
-        pro_delivery_start AS proDeliveryStart, pro_delivery_end AS proDeliveryEnd, pro_stock_total AS proStockTotal, pro_sale_total AS proSaleTotal, is_show_stock AS isShowStock,
-        pro_code AS proCode, pro_name AS proName, pro_price AS proPrice, pro_cost_price AS proCostPrice, pro_freight_set AS proFreightSet, pro_freight_temp_id AS proFreightTempId,
-        pro_freight_price AS proFreightPrice, pro_restriction_num AS proRestrictionNum, is_timing_sale AS isTimingSale, pro_time_sale AS proTimeSale, is_member_discount AS
-        isMemberDiscount, is_coupons AS isCoupons, is_invoice AS isInvoice, is_warranty AS isWarranty, user_id AS userId, create_time AS createTime, edit_time AS editTime,
-        is_publish AS isPublish, check_status AS checkStatus, check_reason AS checkReason, check_time AS checkTime, is_delete AS isDelete, is_specifica AS isSpecifica,
-        two_code_path AS twoCodePath, return_day AS returnDay, is_integral_change_pro AS isIntegralChangePro, change_integral AS changeIntegral, views_num AS viewsNum,
-        is_show_views AS isShowViews, is_return AS isReturn, member_type AS memberType, is_integral_deduction AS isIntegralDeduction, is_fenbi_deduction AS isFenbiDeduction,
-        is_fenbi_change_pro AS isFenbiChangePro, change_fenbi AS changeFenbi, pro_label AS proLabel, pro_weight AS proWeight, sales_base AS salesBase, card_type AS cardType,
-        is_mall_show AS isMallShow, flow_id AS flowId, flow_record_id AS flowRecordId, erp_pro_id AS erpProId, erp_inv_id AS erpInvId, is_sync_erp AS isSyncErp, is_merge_pro_erp AS
-        isMergeProErp
+        id, pro_buy_way, shop_id, group_id, pro_type_id, is_presell,pro_presell_end, pro_delivery_start,
+		pro_delivery_end, pro_stock_total, pro_sale_total, is_show_stock, pro_code, pro_name,
+		pro_price, pro_cost_price, pro_freight_set, pro_freight_temp_id,pro_freight_price,
+		pro_restriction_num, is_timing_sale, pro_time_sale, is_member_discount, is_coupons,
+		is_invoice, is_warranty, user_id, create_time, edit_time, is_publish,check_status,
+		is_delete,two_code_path,is_specifica,return_day,is_integral_change_pro,change_integral,views_num,is_show_views,
+		is_return,member_type,is_integral_deduction,is_fenbi_deduction,is_fenbi_change_pro,change_fenbi,
+		pro_label,pro_weight,sales_base,card_type,is_mall_show,flow_id, flow_record_id, erp_pro_id, erp_inv_id, is_sync_erp,
+    	is_merge_pro_erp
     </sql>
 
-    <sql id="BaseMaps_Column_List">
-        id, pro_buy_way, shop_id, group_id, pro_type_id, is_presell,
-        pro_presell_end, pro_delivery_start,
-        pro_delivery_end, pro_stock_total, pro_sale_total, is_show_stock, pro_code, pro_name,
-        pro_price, pro_cost_price, pro_freight_set, pro_freight_temp_id,
-        pro_freight_price,
-        pro_restriction_num, is_timing_sale, pro_time_sale, is_member_discount, is_coupons,
-        is_invoice, is_warranty, user_id, create_time, edit_time, is_publish,
-        check_status,
-        is_delete,two_code_path,is_specifica,return_day,is_integral_change_pro,change_integral,views_num,is_show_views,
-        is_return,member_type,is_integral_deduction,is_fenbi_deduction,is_fenbi_change_pro,change_fenbi,
-        pro_label,pro_weight,sales_base,card_type,is_mall_show,flow_id, flow_record_id, erp_pro_id, erp_inv_id, is_sync_erp,
-        is_merge_pro_erp
-    </sql>
     <select id="countProductByGroup" resultType="java.lang.Integer">
         SELECT COUNT(DISTINCT a.id)
         FROM t_mall_product a
@@ -444,7 +428,7 @@
     </select>
 
     <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
-        SELECT <include refid="BaseMaps_Column_List"/>
+        SELECT <include refid="Base_Column_List"/>
         FROM t_mall_product
         <where>
             id = #{id}

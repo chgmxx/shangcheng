@@ -20,8 +20,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, df_order_no AS dfOrderNo, df_user_id AS dfUserId, df_pay_way AS dfPayWay, df_pay_time AS dfPayTime, df_pay_money AS dfPayMoney, df_pay_status AS
-        dfPayStatus, df_return_no AS dfReturnNo, df_return_time AS dfReturnTime, df_return_status AS dfReturnStatus, df_create_time AS dfCreateTime
+        id, order_id , df_order_no , df_user_id , df_pay_way , df_pay_time , df_pay_money , df_pay_status,
+        df_return_no , df_return_time , df_return_status , df_create_time
     </sql>
 
     <select id="selectByDfOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >

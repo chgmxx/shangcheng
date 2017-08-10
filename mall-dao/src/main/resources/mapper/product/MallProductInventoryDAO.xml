@@ -20,8 +20,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, specifica_ids AS specificaIds, inv_price AS invPrice, inv_num AS invNum, inv_code AS invCode, inv_sale_num AS invSaleNum, is_delete AS
-        isDelete, is_default AS isDefault, specifica_img_id AS specificaImgId, erp_inv_id AS erpInvId, erp_specvalue_id AS erpSpecvalueId
+        id, product_id , specifica_ids , inv_price , inv_num , inv_code , inv_sale_num , is_delete ,
+        is_default, specifica_img_id, erp_inv_id, erp_specvalue_id
     </sql>
     <select id="selectByUserId" resultType="java.util.Map">
         select distinct p.id as id, i.image_url as imageUrl,p.pro_name as proName,p.pro_price,p.pro_stock_total as stockTotal,

@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, user_id AS userId, create_time AS createTime, is_collect AS isCollect, is_delete AS isDelete
+        id, product_id , user_id , create_time , is_collect , is_delete
     </sql>
     <update id="batchUpdateCollect" parameterType="java.util.Map">
         update t_mall_collect

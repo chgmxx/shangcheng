@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, member_id AS memberId, look_date AS lookDate, look_ip AS lookIp, bus_id AS busId
+        id, order_id , member_id , look_date , look_ip , bus_id
     </sql>
     <select id="findList" resultType="Map">
         select

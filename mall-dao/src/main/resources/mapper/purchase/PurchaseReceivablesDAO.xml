@@ -23,7 +23,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, fans_corrency AS fansCorrency, integral, coupon, have_term AS haveTerm, money, buy_time AS buyTime, buy_mode AS buyMode, term_id AS termId, bus_id AS busId, member_id AS memberId, discount, buy_status AS buyStatus, receivables_number AS receivablesNumber
+        id, order_id , fans_corrency , integral, coupon, have_term , money, buy_time , buy_mode ,
+        term_id , bus_id , member_id, discount, buy_status , receivables_number
     </sql>
 
     <select id="findReceivablesList" resultType="Map" parameterType="java.lang.Integer">

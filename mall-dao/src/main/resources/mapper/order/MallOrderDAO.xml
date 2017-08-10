@@ -294,16 +294,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_no AS orderNo, wx_order_no AS wxOrderNo, receive_id AS receiveId, order_money AS orderMoney, order_freight_money AS orderFreightMoney, order_old_money AS
-        orderOldMoney, order_buyer_message AS orderBuyerMessage, order_seller_remark AS orderSellerRemark, order_start AS orderStart, order_pay_way AS orderPayWay, delivery_method
-        AS deliveryMethod, appointment_name AS appointmentName, appointment_telephone AS appointmentTelephone, appointment_time AS appointmentTime, invoice_title AS invoiceTitle,
-        take_their_id AS takeTheirId, is_message_notice AS isMessageNotice, buyer_user_id AS buyerUserId, seller_user_id AS sellerUserId, shop_id AS shopId, order_status AS
-        orderStatus, create_time AS createTime, order_pay_no AS orderPayNo, pay_time AS payTime, express_way AS expressWay, express_id AS expressId, express_number AS
-        expressNumber, express_time AS expressTime, buyer_cancel_reason AS buyerCancelReason, seller_cancel_reason AS sellerCancelReason, update_time AS updateTime, buyer_user_type
-        AS buyerUserType, order_pid AS orderPid, mem_card_type AS memCardType, give_status AS giveStatus, group_buy_id AS groupBuyId, order_type AS orderType, p_join_id AS pJoinId,
-        coupon_code AS couponCode, appointment_start_time AS appointmentStartTime, appointment_end_time AS appointmentEndTime, is_wallet AS isWallet, bus_user_id AS busUserId,
-        receive_address AS receiveAddress, receive_name AS receiveName, receive_phone AS receivePhone, flow_phone AS flowPhone, flow_recharge_status AS flowRechargeStatus,
-        member_name AS memberName
+        id, order_no, wx_order_no, receive_id, order_money, order_freight_money, order_buyer_message, order_seller_remark,
+        order_start, order_pay_way, delivery_method, appointment_name, appointment_telephone, appointment_time,invoice_title,
+        take_their_id, is_message_notice, buyer_user_id, seller_user_id, shop_id, order_status, create_time,order_pay_no,
+        pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,
+        order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone
     </sql>
 
     <sql id="More_Column_List">

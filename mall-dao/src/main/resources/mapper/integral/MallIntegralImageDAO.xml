@@ -29,7 +29,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shop_id AS shopId, image_url AS imageUrl, type, return_url AS returnUrl, bus_user_id AS busUserId, create_time AS createTime, is_delete AS isDelete, is_show AS isShow
+        id, shop_id , image_url , type, return_url , bus_user_id , create_time , is_delete , is_show
     </sql>
     <sql id="page_Column_List" >
         i.id, i.shop_id, i.image_url, i.type, return_url,i. bus_user_id, i.create_time, i.is_delete, i.is_show,s.sto_name AS shopName

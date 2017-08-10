@@ -19,8 +19,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, company_name AS companyName, telephone, remark, member_id AS memberId, bus_user_id AS busUserId, create_time AS createTime, status, check_time AS checkTime,
-        is_use AS isUse
+        id, name, company_name , telephone, remark, member_id , bus_user_id , create_time , status, check_time ,
+        is_use
     </sql>
 
     <select id="selectByPifaApply" parameterType="com.gt.mall.entity.pifa.MallPifaApply" resultMap="BaseResultMap">

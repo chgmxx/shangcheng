@@ -13,7 +13,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, product_detail AS productDetail, product_introdu AS productIntrodu, product_message AS productMessage
+        id, product_id , product_detail , product_introdu , product_message
     </sql>
 
 </mapper>

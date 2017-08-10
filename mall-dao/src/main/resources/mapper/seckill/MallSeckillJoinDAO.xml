@@ -16,8 +16,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, seckill_id AS seckillId, seckill_user_id AS seckillUserId, seckill_price AS seckillPrice, order_id AS orderId, order_detail_id AS orderDetailId, product_id AS
-        productId, seckill_time AS seckillTime
+        id, seckill_id , seckill_user_id , seckill_price , order_id , order_detail_id , product_id , seckill_time
     </sql>
 
     <!-- 查询用户参加秒杀的数量 -->

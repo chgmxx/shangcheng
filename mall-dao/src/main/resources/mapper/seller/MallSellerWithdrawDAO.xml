@@ -19,8 +19,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, sale_member_id AS saleMemberId, applay_time AS applayTime, withdraw_money AS withdrawMoney, withdraw_status AS withdrawStatus, withdraw_order_no AS withdrawOrderNo,
-        check_status AS checkStatus, check_pass_reason AS checkPassReason, check_time AS checkTime, paysuccess_time AS paysuccessTime, withdraw_type AS withdrawType
+        id, sale_member_id , applay_time , withdraw_money, withdraw_status , withdraw_order_no ,
+        check_status , check_pass_reason , check_time , paysuccess_time , withdraw_type
     </sql>
 
     <!-- 查询销售员的提现记录 -->

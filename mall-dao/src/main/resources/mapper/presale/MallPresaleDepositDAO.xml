@@ -73,9 +73,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, presale_id AS presaleId, product_id AS productId, pro_specifica_ids AS proSpecificaIds, pro_name AS proName, pro_img_url AS proImgUrl, deposit_no AS depositNo,
-        deposit_money AS depositMoney, order_money AS orderMoney, deposit_status AS depositStatus, pay_way AS payWay, pay_time AS payTime, pay_no AS payNo, return_no AS returnNo,
-        return_time AS returnTime, user_id AS userId, create_time AS createTime, is_submit AS isSubmit, pro_num AS proNum
+        id, presale_id , product_id , pro_specifica_ids , pro_name , pro_img_url , deposit_no ,
+        deposit_money , order_money , deposit_status , pay_way , pay_time , pay_no , return_no ,
+        return_time, user_id , create_time , is_submit , pro_num
     </sql>
 
     <sql id="page_Column_List">

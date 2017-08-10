@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.result.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
@@ -132,12 +131,12 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    map.put( "phone", mallStore.getStoPhone() );
 	    map.put( "principal", mallStore.getStoLinkman() );
 	    try {
-		//TODO  wxShopService.getShopById()
-		WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
+		//TODO   wxShopService.getShopById()
+		/*WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
 		if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		    map.put( "name", shopInfo.getBusinessName() );
 		    map.put( "address", shopInfo.getAddress() );
-		}
+		}*/
 	    } catch ( Exception e ) {
 		logger.error( "CXF调用接口《根据门店id查询门店信息异常》：" + e.getMessage() );
 	    }
@@ -186,7 +185,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	if ( CommonUtil.isNotEmpty( store.getWxShopId() ) ) {
 	    //TODO  wxShopService.getShopById()
-	    WsWxShopInfo shopInfo = null;
+	   /* WsWxShopInfo shopInfo = null;
 //	    wxShopService.getShopById( store.getWxShopId() );
 	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		storeMap.put( "stoName", shopInfo.getBusinessName() );
@@ -203,7 +202,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 		//todo 调用陈丹接口，根据城市id查询城市名称
 		storeMap.put( "stoAddress", shopInfo.getAddress() + shopInfo.getDetail() );
-	    }
+	    }*/
 	}
 	return storeMap;
     }

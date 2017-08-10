@@ -21,8 +21,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, freight_id AS freightId, provinces_id AS provincesId, provinces, money, express_id AS expressId, express, is_delete AS isDelete, no_money_num AS noMoneyNum, no_money AS
-        noMoney, first_nums AS firstNums, add_nums AS addNums, add_money AS addMoney
+        id, freight_id , provinces_id , provinces, money, express_id , express, is_delete, no_money_num , no_money, first_nums , add_nums , add_money
     </sql>
 
     <update id="deleteByFreightId" parameterType="java.util.Map">

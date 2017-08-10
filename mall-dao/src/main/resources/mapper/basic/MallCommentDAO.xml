@@ -26,9 +26,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, order_detail_id AS orderDetailId, product_id AS productId, content, is_upload_image AS isUploadImage, feel, descript_start AS descriptStart,
-        service_start AS serviceStart, speeed_start AS speeedStart, rep_p_id AS repPId, user_id AS userId, user_type AS userType, is_rep AS isRep, shop_id AS shopId, createTime,
-        is_delete AS isDelete, check_status AS checkStatus
+        id, order_id , order_detail_id , product_id , content, is_upload_image , feel, descript_start ,
+        service_start , speeed_start, rep_p_id , user_id , user_type , is_rep , shop_id, createTime,
+        is_delete , check_status
     </sql>
     <update id="batchUpdateComment" parameterType="java.util.Map">
         update t_mall_comment

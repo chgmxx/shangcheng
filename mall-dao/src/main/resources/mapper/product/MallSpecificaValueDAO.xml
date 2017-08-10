@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, spec_id AS specId, spec_value AS specValue, user_id AS userId, is_delete AS isDelete, type, erp_value_id AS erpValueId
+        id, spec_id , spec_value , user_id , is_delete , type, erp_value_id
     </sql>
 
     <select id="selectBySpecId" resultType="java.util.Map">

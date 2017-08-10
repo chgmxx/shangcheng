@@ -26,9 +26,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, auc_id AS aucId, pro_id AS proId, pro_specifica_ids AS proSpecificaIds, pro_name AS proName, pro_img_url AS proImgUrl, auc_no AS aucNo, margin_money AS marginMoney,
-        margin_status AS marginStatus, pay_way AS payWay, pay_time AS payTime, pay_no AS payNo, return_no AS returnNo, return_time AS returnTime, is_return AS isReturn,
-        no_return_reason AS noReturnReason, user_id AS userId, create_time AS createTime
+        id, auc_id , pro_id , pro_specifica_ids, pro_name , pro_img_url , auc_no , margin_money ,
+        margin_status, pay_way , pay_time , pay_no , return_no , return_time , is_return ,
+        no_return_reason, user_id , create_time
     </sql>
     <sql id="AucShop_Column_List">
         m.id, m.auc_id, m.pro_id, pro_specifica_ids, pro_name, pro_img_url, auc_no, margin_money,

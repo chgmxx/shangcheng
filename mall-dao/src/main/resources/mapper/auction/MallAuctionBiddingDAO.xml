@@ -20,8 +20,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, auc_id AS aucId, pro_id AS proId, pro_name AS proName, pro_specifica_ids AS proSpecificaIds, pro_img_url AS proImgUrl, auc_price AS aucPrice, auc_status AS aucStatus,
-        order_id AS orderId, order_detail_id AS orderDetailId, user_id AS userId, create_time AS createTime
+        id, auc_id, pro_id , pro_name , pro_specifica_ids , pro_img_url , auc_price , auc_status ,
+        order_id , order_detail_id , user_id , create_time
     </sql>
 
     <update id="updateBidByAucId">

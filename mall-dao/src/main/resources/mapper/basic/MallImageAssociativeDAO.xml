@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, image_url AS imageUrl, ass_id AS assId, is_main_images AS isMainImages, ass_type AS assType, ass_sort AS assSort, is_delete AS isDelete
+        id, image_url , ass_id , is_main_images , ass_type , ass_sort , is_delete
     </sql>
 
     <!-- 批量删除商品分组 -->

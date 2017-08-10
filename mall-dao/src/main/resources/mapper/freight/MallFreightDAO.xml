@@ -64,9 +64,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, name, user_id AS userId, shop_id AS shopId, express_id AS expressId, express, create_time AS createTime, edit_time AS editTime, money, is_no_money AS isNoMoney,
-        no_money_num AS noMoneyNum, is_result_money AS isResultMoney, is_delete AS isDelete, no_money AS noMoney, price_type AS priceType, first_nums AS firstNums, add_nums AS
-        addNums, add_money AS addMoney
+        id, name, user_id , shop_id , express_id , express, create_time , edit_time , money, is_no_money ,
+        no_money_num , is_result_money , is_delete , no_money , price_type , first_nums , add_nums, add_money
     </sql>
     <sql id="index_Column_List">
         f.id, f.name, f.user_id, f.shop_id, f.express_id, f.express, f.create_time, f.money, f.is_no_money,

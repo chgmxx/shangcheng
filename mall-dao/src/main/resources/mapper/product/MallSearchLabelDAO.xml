@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, label_type AS labelType, shop_id AS shopId, group_id AS groupId, user_id AS userId, is_delete AS isDelete, create_time AS createTime
+        id, label_type , shop_id , group_id , user_id , is_delete , create_time
     </sql>
     <select id="selectByGroupShop" parameterType="com.gt.mall.entity.product.MallSearchLabel" resultMap="BaseResultMap">
         select

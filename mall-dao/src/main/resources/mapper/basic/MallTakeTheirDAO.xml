@@ -25,10 +25,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, visit_name AS visitName, visit_province_id AS visitProvinceId, visit_city_id AS visitCityId, visit_area_id AS visitAreaId, visit_address AS visitAddress,
-        visit_longitude AS visitLongitude, visit_latitude AS visitLatitude, visit_address_detail AS visitAddressDetail, visit_contact_number AS visitContactNumber, visit_remark AS
-        visitRemark, is_store_reception AS isStoreReception, is_store_pay AS isStorePay, images_url AS imagesUrl, user_id AS userId, create_time AS createTime, is_delete AS
-        isDelete
+        id, visit_name , visit_province_id , visit_city_id , visit_area_id, visit_address , visit_longitude , visit_latitude,
+        visit_address_detail, visit_contact_number , visit_remark , is_store_reception , is_store_pay , images_url , user_id ,
+        create_time , is_delete
     </sql>
  
     <select id="selectCount" parameterType="Map" resultType="java.lang.Integer">

@@ -14,7 +14,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, give_type AS giveType, give_status AS giveStatus, num, is_enable AS isEnable, user_id AS userId
+        id, give_type , give_status , num, is_enable , user_id
     </sql>
 
     <select id="selectByGive" parameterType="com.gt.mall.entity.basic.MallCommentGive" resultMap="BaseResultMap">

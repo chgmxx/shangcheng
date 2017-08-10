@@ -13,7 +13,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, carousel_img AS carouselImg, carousel_url AS carouselUrl, bus_id AS busId, order_id AS orderId
+        id, carousel_img , carousel_url , bus_id , order_id
     </sql>
 
     <select id="findList" resultType="java.util.Map">

@@ -21,9 +21,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, is_name_required AS isNameRequired, is_company_required AS isCompanyRequired, is_telephone_required AS isTelephoneRequired, is_validate_required AS isValidateRequired,
-        is_remark_required AS isRemarkRequired, integral_reward AS integralReward, consume_money AS consumeMoney, withdrawal_type AS withdrawalType, withdrawal_lowest_money AS
-        withdrawalLowestMoney, withdrawal_multiple AS withdrawalMultiple, seller_remark AS sellerRemark, bus_user_id AS busUserId
+        id, is_name_required , is_company_required , is_telephone_required , is_validate_required ,
+        is_remark_required , integral_reward , consume_money , withdrawal_type , withdrawal_lowest_money,
+         withdrawal_multiple , seller_remark , bus_user_id
     </sql>
     <select id="selectByBusUserId" resultType="com.gt.mall.entity.seller.MallSellerSet">
         select

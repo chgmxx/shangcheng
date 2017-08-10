@@ -19,8 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id AS productId, money, start_time AS startTime, end_time AS endTime, type, user_id AS userId, shop_id AS shopId, create_time AS createTime, is_delete AS
-        isDelete, is_use AS isUse
+        id, product_id , money, start_time , end_time, type, user_id , shop_id , create_time , is_delete , is_use
     </sql>
     <sql id="page_Column_List">
         i.id, i.product_id as productId, i.money, i.start_time as startTime, i.end_time as endTime, i.type, i.user_id, i.shop_id, i.create_time as createTime,

@@ -12,7 +12,7 @@ spring:
   host: 14.29.79.226
   port: 6379
   password: gt@123456
-  database: 3
+  database: 5
 #redis session共享
  session:
    store-type: redis

@@ -15,7 +15,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, presale_id AS presaleId, remind_user_id AS remindUserId, is_remind AS isRemind, is_open AS isOpen, create_time AS createTime, remind_time AS remindTime
+        id, presale_id , remind_user_id , is_remind , is_open, create_time , remind_time
     </sql>
 
     <select id="selectByPresale" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.presale.MallPresaleMessageRemind" >

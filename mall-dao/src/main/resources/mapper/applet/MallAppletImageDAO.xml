@@ -17,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, image_url AS imageUrl, type, pro_id AS proId, bus_user_id AS busUserId, create_time AS createTime, is_delete AS isDelete, is_show AS isShow, shop_id AS shopId
+        id, image_url , type, pro_id , bus_user_id, create_time , is_delete , is_show , shop_id
     </sql>
 
     <!-- 统计小程序图片-->

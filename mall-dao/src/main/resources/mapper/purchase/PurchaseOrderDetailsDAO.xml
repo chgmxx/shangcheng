@@ -21,7 +21,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id AS orderId, product_id AS productId, product_name AS productName, product_img AS productImg, product_details AS productDetails, labor_cost AS laborCost, installation_fee AS installationFee, freight, money, discount_money AS discountMoney, count, all_money AS allMoney
+        id, order_id, product_id, product_name, product_img, product_details, labor_cost, installation_fee,
+         freight, money, discount_money , count, all_money
     </sql>
 
     <delete id="deleteDetailsByOrderId">

@@ -26,9 +26,9 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, shop_id AS shopId, product_id AS productId, sale_num AS saleNum, sale_price AS salePrice, sale_miprice AS saleMiprice, sale_minum AS saleMinum, sale_totalnum AS
-        saleTotalnum, sale_totalprice AS saleTotalprice, refund_num AS refundNum, refund_price AS refundPrice, count_date AS countDate, refund_minum AS refundMinum, refund_miprice
-        AS refundMiprice, refund_totalnum AS refundTotalnum, refund_totalprice AS refundTotalprice, year, month
+        id, shop_id , product_id , sale_num , sale_price , sale_miprice , sale_minum , sale_totalnum ,
+        sale_totalprice , refund_num , refund_price , count_date , refund_minum, refund_miprice,
+        refund_totalnum, refund_totalprice , year, month
     </sql>
 
 </mapper>

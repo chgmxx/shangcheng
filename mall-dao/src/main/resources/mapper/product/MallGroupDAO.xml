@@ -23,9 +23,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, group_name AS groupName, group_p_id AS groupPId, first_priority AS firstPriority, second_priority AS secondPriority, is_show_page AS isShowPage, shop_id AS shopId,
-        is_first_parents AS isFirstParents, is_child AS isChild, sort, user_id AS userId, create_time AS createTime, edit_user_id AS editUserId, edit_time AS editTime, is_delete AS
-        isDelete
+        id, group_name , group_p_id , first_priority , second_priority , is_show_page , shop_id ,
+        is_first_parents , is_child , sort, user_id , create_time , edit_user_id , edit_time , is_delete
     </sql>
     <!--  -->
     <select id="selectGroupByCount" resultType="java.lang.Integer">

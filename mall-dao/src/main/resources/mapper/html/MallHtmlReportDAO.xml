@@ -12,7 +12,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, html_id AS htmlId, style, report_num AS reportNum
+        id, html_id , style, report_num
     </sql>
 
     <update id="updateReportNumByHtmlId">
