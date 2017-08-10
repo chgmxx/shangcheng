@@ -68,8 +68,8 @@ import java.util.*;
 @RequestMapping( "/phoneOrder" )
 public class PhoneOrderController extends BaseController {
 
-//    @Autowired
-//    private WxShopService               wxShopService;
+    //    @Autowired
+    //    private WxShopService               wxShopService;
     @Autowired
     private MallOrderService            mallOrderService;
     @Autowired
@@ -1636,7 +1636,6 @@ public class PhoneOrderController extends BaseController {
 	}
     }
 
-
     /**
      * 储值卡支付成功的回调
      *
@@ -1659,7 +1658,6 @@ public class PhoneOrderController extends BaseController {
 
     /**
      * 订单判断库存
-     *
      */
     private Map judgeStock( JSONObject detail, Map< String,Object > result, String type, int memberId ) {
 	int proId = CommonUtil.toInteger( detail.get( "product_id" ) );
@@ -1693,7 +1691,6 @@ public class PhoneOrderController extends BaseController {
 
     /**
      * 去支付
-     *
      */
     @RequestMapping( value = "/79B4DE7C/goPay" )
     @Transactional( rollbackFor = Exception.class )
@@ -1711,12 +1708,12 @@ public class PhoneOrderController extends BaseController {
 
 		MallOrder order = mallOrderService.selectById( orderId );
 		if ( CommonUtil.isNotEmpty( order ) ) {
-		    MallOrder newOrder = new MallOrder();
-		    newOrder.setId( order.getId() );
-		    String orderNo = "SC" + System.currentTimeMillis();
-		    newOrder.setOrderNo( orderNo );
-		    mallOrderService.upOrderNoById( newOrder );
-		    order.setOrderNo( orderNo );
+		    /*Order newOrder = new Order();
+		    newOrder.setId(order.getId());
+		    String orderNo="SC"+System.currentTimeMillis();
+		    newOrder.setOrderNo(orderNo);
+		    morderService.upOrderNoById(newOrder);
+		    order.setOrderNo(orderNo);*/
 
 		    if ( order.getOrderType() == 3 ) {//秒杀订单
 			JSONObject detailObj = new JSONObject();
@@ -1773,6 +1770,10 @@ public class PhoneOrderController extends BaseController {
 
 			    }
 			}
+		    }
+		    if ( order.getOrderStatus() == 2 || order.getOrderStatus() == 3 || order.getOrderStatus() == 4 ) {
+			result.put( "result", false );
+			result.put( "msg", "您已经支付成功，无需再次支付" );
 		    }
 		    result.put( "proTypeId", order.getMallOrderDetail().get( 0 ).getProTypeId() );
 		    result.put( "out_trade_no", order.getOrderNo() );
