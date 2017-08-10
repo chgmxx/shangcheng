@@ -25,9 +25,6 @@
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
     <script type="text/javascript">
 
-        if (top == self) {
-            window.location.href = "/mFreight/index.do";
-        }
         var dProvinceObj = new Object();
         var dDetailObj = new Object();
 

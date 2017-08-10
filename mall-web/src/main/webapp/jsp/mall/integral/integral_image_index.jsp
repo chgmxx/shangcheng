@@ -25,16 +25,6 @@
     <%--<script type="text/javascript" src="/js/zclip/zclip.js"></script>--%>
     <script type="text/javascript" src="/js/common/copy.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
-    <script type="text/javascript">
-        var error = '${error}';
-        if (error != undefined && error != "") {
-            parent.layer.alert("参数错误，将调回前一个页面");
-            window.history.back(-1);
-        }
-        if (top == self) {
-            window.location.href = "/mallIntegral/index.do";
-        }
-    </script>
     <style type="text/css">
         .img_span { /* display: table-cell;  */
             width: 100%;

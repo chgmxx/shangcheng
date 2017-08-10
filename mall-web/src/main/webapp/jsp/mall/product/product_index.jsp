@@ -32,13 +32,6 @@
     <script type="text/javascript" src="/js/plugin/copy/clipboard.min.js"></script>
     <script type="text/javascript" src="/js/plugin/copy/copypublic.js"></script>
 
-    <script type="text/javascript">
-        var error = '${error}';
-        if (error != undefined && error != "") {
-            parent.layer.alert("参数错误，将调回前一个页面");
-            window.history.back(-1);
-        }
-    </script>
 </head>
 
 <div class="contentWarp">

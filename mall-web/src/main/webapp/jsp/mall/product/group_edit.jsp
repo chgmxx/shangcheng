@@ -30,9 +30,6 @@
         var groupObj = new Object();
         var imgResource = "${imgUrl}";
 
-        if (top == self) {
-            window.location.href = "/mPro/product_start.do";
-        }
     </script>
 
 </head>
