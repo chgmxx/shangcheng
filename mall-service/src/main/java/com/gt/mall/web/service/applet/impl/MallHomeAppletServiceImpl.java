@@ -169,12 +169,32 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< Map< String,Object > > xlist = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > list = productDAO.selectProductAllByShopids( params );
 
-	for ( int i = 0; i < list.size(); i++ ) {
-	    Map< String,Object > map1 = list.get( i );
+	List<Integer> proIds = new ArrayList<Integer>();
+	String specImgIds = "";
 
-	    map1 = productGetPrice( map1, params, discount );
+	if(list != null && list.size() > 0) {
+	    for ( int i = 0; i < list.size(); i++ ) {
+		Map< String,Object > map1 = list.get( i );
+		map1 = productGetPrice( map1, params, discount );
+		xlist.add( map1 );
 
-	    xlist.add( map1 );
+		if ( CommonUtil.isNotEmpty( map1.get( "specifica_img_id" ) ) ) {
+		    if ( !map1.get( "specifica_img_id" ).toString().equals( "0" ) ) {
+			if ( CommonUtil.isNotEmpty( specImgIds ) ) {
+			    specImgIds += ",";
+			}
+			specImgIds += map1.get( "specifica_img_id" ).toString();
+		    }
+		}
+		if ( CommonUtil.isNotEmpty( map1.get( "id" ) ) ) {
+		    proIds.add( CommonUtil.toInteger( map1.get( "id" ) ) );
+		}
+	    }
+	    String[] split = null;
+	    if(CommonUtil.isNotEmpty(specImgIds)){
+		split = specImgIds.split(",");
+	    }
+	    xlist = pageService.getProductImages(xlist, proIds, split);
 	}
 	page.setSubList( xlist );
 	return page;

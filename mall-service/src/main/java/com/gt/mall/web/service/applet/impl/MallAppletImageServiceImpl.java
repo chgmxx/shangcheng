@@ -2,6 +2,7 @@ package com.gt.mall.web.service.applet.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
+import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.util.CommonUtil;
@@ -28,9 +29,11 @@ import java.util.Map;
 public class MallAppletImageServiceImpl extends BaseServiceImpl<MallAppletImageDAO, MallAppletImage> implements MallAppletImageService {
 
     @Autowired
-    private MallAppletImageDAO appletImageDAO;
+    private MallAppletImageDAO      mallAppletImageDAO;
     @Autowired
-    private MallProductDAO productDAO;
+    private MallProductDAO          mallProductDAO;
+    @Autowired
+    private MallImageAssociativeDAO mallImageAssociativeDAO;
 
     @Override
     public PageUtil selectImageByShopId(Map<String, Object> params) {
@@ -38,7 +41,7 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl<MallAppletImageD
 
         int curPage = CommonUtil.isEmpty(params.get("curPage")) ? 1 : CommonUtil.toInteger(params.get("curPage"));
         params.put("curPage", curPage);
-        int count = appletImageDAO.selectByCount(params);
+        int count = mallAppletImageDAO.selectByCount(params);
 
         PageUtil page = new PageUtil(curPage, pageSize, count, "mApplet/index.do");
         int firstNum = pageSize * ((page.getCurPage() <= 0 ? 1 : page.getCurPage()) - 1);
@@ -46,7 +49,7 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl<MallAppletImageD
         params.put("maxNum", pageSize);// 每页显示商品的数量
 
         if (count > 0) {// 判断拍卖是否有数据
-            List<MallAppletImage> AuctionList = appletImageDAO.selectByPage(params);
+            List<MallAppletImage> AuctionList = mallAppletImageDAO.selectByPage(params);
             page.setSubList(AuctionList);
         }
 
@@ -55,21 +58,30 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl<MallAppletImageD
 
     @Override
     public Map<String, Object> selectImageById(Integer id) {
-        MallAppletImage image = appletImageDAO.selectById(id);
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("id", image.getProId());
-        List<Map<String, Object>> imageList = productDAO.selectProductAllByShopids(params);
-        if (imageList != null && imageList.size() > 0) {
-            Map<String, Object> imageMaps = imageList.get(0);
-
-            imageMaps.put("id", image.getId());
-            imageMaps.put("imageUrl", image.getImageUrl());
-            imageMaps.put("pro_id", image.getProId());
-            imageMaps.put("shop_id", image.getShopId());
-            imageMaps.put("type", image.getType());
-            return imageMaps;
+        Map<String, Object> imageMaps = new HashMap<String, Object>();
+        MallAppletImage image = mallAppletImageDAO.selectById(id);
+        if(CommonUtil.isNotEmpty(image.getProId()) && image.getProId() > 0){
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("id", image.getProId());
+            List<Map<String, Object>> imageList = mallProductDAO.selectProductAllByShopids(params);
+            if(imageList != null && imageList.size() > 0){
+                imageMaps = imageList.get(0);
+                Map<String, Object> imgMaps = new HashMap<String, Object>();
+                imgMaps.put("isMainImages", 1);
+                imgMaps.put("assType", 1);
+                imgMaps.put("assId", image.getProId());
+                List<Map<String, Object>> proImageList = mallImageAssociativeDAO.selectByAssId(imgMaps);
+                if(proImageList != null && proImageList.size() > 0){
+                    imageMaps.put("image_url", proImageList.get(0).get("image_url"));
+                }
+            }
         }
-        return null;
+        imageMaps.put("id", image.getId());
+        imageMaps.put("imageUrl", image.getImageUrl());
+        imageMaps.put("pro_id", image.getProId());
+        imageMaps.put("shop_id", image.getShopId());
+        imageMaps.put("type", image.getType());
+        return imageMaps;
     }
 
     @Override
@@ -79,11 +91,11 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl<MallAppletImageD
             if (CommonUtil.isNotEmpty(appletImage)) {
                 int count = 0;
                 if (CommonUtil.isNotEmpty(appletImage.getId())) {
-                    count = appletImageDAO.updateById(appletImage);
+                    count = mallAppletImageDAO.updateById(appletImage);
                 } else {
                     appletImage.setCreateTime(new Date());
                     appletImage.setBusUserId(userId);
-                    count = appletImageDAO.insert(appletImage);
+                    count = mallAppletImageDAO.insert(appletImage);
                 }
                 if (count > 0) {
                     return true;
@@ -106,7 +118,7 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl<MallAppletImageD
         } else {
             images.setIsShow(1);
         }
-        int count = appletImageDAO.updateById(images);
+        int count = mallAppletImageDAO.updateById(images);
         if (count > 0) {
             return true;
         }

@@ -114,11 +114,11 @@ public class MyInterceptor implements HandlerInterceptor {
 	    String script = "<script type='text/javascript'>"
 			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "/user/tologin.do';"
 			    + "</script>";
-	    /*if ( url.indexOf( "unionBrokerage" ) > -1 && !( url.indexOf( "toLogin" ) > -1 ) ) {
+	    if ( url.indexOf( "unionBrokerage" ) > -1 && !( url.indexOf( "toLogin" ) > -1 ) ) {
 		script = "<script type='text/javascript'>"
 				+ "top.location.href='/jsp/error/warning.jsp';"
 				+ "</script>";
-	    }*/
+	    }
 	    if ( isAjax( servletRequest ) ) {
 		Map< String,Object > map = new HashMap<>();
 		map.put( "timeout", "连接超时，请重新登录！" );

@@ -8,6 +8,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.dao.basic.MallCommentDAO;
+import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.integral.MallIntegralDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -153,6 +154,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private MallGroupJoinService        mallGroupJoinService;
     @Autowired
     private MallCollectService          mallCollectService;
+    @Autowired
+    private MallImageAssociativeDAO mallImageAssociativeDAO;
 
     /**
      * 分页查询
@@ -1097,15 +1100,95 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	List< Map< String,Object > > xlist = new ArrayList<>();
 	List< Map< String,Object > > list = mallProductDAO.selectProductAllByShopids( params );
 
-	for ( Map< String,Object > map1 : list ) {
-	    map1.put( "rType", rType );
-	    map1 = productGetPrice( map1, discount, isPifa );
+	List<Integer> proIds = new ArrayList<Integer>();
+	String specImgIds = "";
 
-	    xlist.add( map1 );
+	if(list != null && list.size() > 0) {
+	    for ( Map< String,Object > map1 : list ) {
+		map1.put( "rType", rType );
+		map1 = productGetPrice( map1, discount, isPifa );
+		xlist.add( map1 );
+
+		if ( CommonUtil.isNotEmpty( map1.get( "specifica_img_id" ) ) ) {
+		    if ( !map1.get( "specifica_img_id" ).toString().equals( "0" ) ) {
+			if ( CommonUtil.isNotEmpty( specImgIds ) ) {
+			    specImgIds += ",";
+			}
+			specImgIds += map1.get( "specifica_img_id" ).toString();
+		    }
+		}
+		if ( CommonUtil.isNotEmpty( map1.get( "id" ) ) ) {
+		    proIds.add( CommonUtil.toInteger( map1.get( "id" ) ) );
+		}
+	    }
+	    String[] split = null;
+	    if(CommonUtil.isNotEmpty(specImgIds)){
+		split = specImgIds.split(",");
+	    }
+	    xlist = getProductImages(xlist, proIds, split);
 	}
-
 	page.setSubList( xlist );
 	return page;
+    }
+
+    @Override
+    public List<Map<String, Object>> getProductImages( List<Map<String, Object>> xlist, List<Integer> proIds, String[] specImgIds) {
+	List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
+	if(proIds != null && proIds.size() > 0){
+	    //查询商品图片
+	    Map<String, Object> imgMaps = new HashMap<String, Object>();
+	    imgMaps.put("isMainImages", 1);
+	    imgMaps.put("assType", 1);
+	    imgMaps.put("assIds", proIds);
+	    List<Map<String, Object>> imageList = mallImageAssociativeDAO.selectByAssIds(imgMaps);
+	    if(imageList != null && imageList.size() > 0){
+		for (Map<String, Object> maps : xlist) {
+		    String id = maps.get("id").toString();
+		    for (int i = 0; i < imageList.size(); i++) {
+			Map<String,Object> imageMaps = imageList.get(i);
+			String assIds = imageMaps.get("ass_id").toString();
+			if(CommonUtil.isNotEmpty(imageMaps.get("image_url")) && assIds.equals(id)){
+			    maps.put("image_url", PropertiesUtil.getResourceUrl()+imageMaps.get("image_url"));
+			    imageList.remove(i);
+			    break;
+			}
+		    }
+		    newList.add(maps);
+		}
+	    }
+	    if(newList != null && newList.size() > 0){
+		xlist = new ArrayList<Map<String,Object>>();
+		xlist.addAll(newList);
+	    }
+	}
+
+	if(specImgIds != null && specImgIds.length > 0){
+	    newList = new ArrayList<Map<String,Object>>();
+	    //查询查询规格图片
+	    List<MallProductSpecifica> specList = mallProductSpecificaService.selectBySpecId(specImgIds);
+	    if(specList != null && specList.size() > 0){
+		for (Map<String, Object> maps : xlist) {
+		    if(CommonUtil.isNotEmpty(maps.get("specifica_img_id"))){
+			String imgIds = maps.get("specifica_img_id").toString();
+			for (int i = 0; i < specList.size(); i++) {
+			    MallProductSpecifica spec = specList.get(i);
+			    if(CommonUtil.isNotEmpty(spec.getSpecificaImgUrl()) && imgIds.equals(spec.getId().toString())){
+				maps.put("image_url", PropertiesUtil.getResourceUrl()+spec.getSpecificaImgUrl());
+				specList.remove(i);
+				break;
+			    }
+			}
+		    }
+		    newList.add(maps);
+		}
+	    }
+	    if(newList != null && newList.size() > 0){
+		xlist = new ArrayList<Map<String,Object>>();
+		xlist.addAll(newList);
+	    }
+
+	}
+	return xlist;
     }
 
     @Override

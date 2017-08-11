@@ -39,7 +39,6 @@ public interface MallImageAssociativeDAO extends BaseMapper< MallImageAssociativ
     /**
      * 批量修改商品图片
      * @param imageList 图片信息列表
-     * @return
      */
     int updateBatch(List<MallImageAssociative> imageList);
 
@@ -49,4 +48,11 @@ public interface MallImageAssociativeDAO extends BaseMapper< MallImageAssociativ
      * @return 图片地址列表
      */
     List<Map<String, Object>> selectByAssId(Map<String, Object> params);
+
+    /**
+     * 根据关联表id来查询图片
+     * @param params isMainImages：是否是主图，assType：关联表类型，assIds：关联id
+     * @return 图片地址列表
+     */
+    List<Map<String, Object>> selectByAssIds(Map<String, Object> params);
 }
