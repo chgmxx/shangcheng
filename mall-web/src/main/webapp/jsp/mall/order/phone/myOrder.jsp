@@ -402,11 +402,16 @@ function goPay(orderId,payWay,orderMoney){
 						location.href = "/wxPay/79B4DE7C/wxMallAnOrder.do?orderId="+orderId;
 					}
 				}else{
-					if(data.msg != null && data.msg != ""){
-						alert(data.msg);
-					}else{
-						alert("支付失败，请稍后重新支付");
-					}
+                    if(data.code == 0){
+                        alert(data.msg);
+                        location.href= window.location.href
+                    }else{
+                        if(data.msg != null && data.msg != ""){
+                            alert(data.msg);
+                        }else{
+                            alert("支付失败，请稍后重新支付");
+                        }
+                    }
 				}
 				layer.closeAll();
 		  },error:function(){

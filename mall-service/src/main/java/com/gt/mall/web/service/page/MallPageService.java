@@ -227,6 +227,11 @@ public interface MallPageService extends BaseService< MallPage > {
     public PageUtil productAllList( Integer shopid, String type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa );
 
     /**
+     * 获取商品图片
+     */
+    public List<Map<String, Object>> getProductImages(List<Map<String, Object>> xlist, List<Integer> proIds,String[] specImgIds);
+
+    /**
      * 重新组装对象
      */
     public Map< String,Object > productGetPrice( Map< String,Object > map1, double discount, boolean isPifa );

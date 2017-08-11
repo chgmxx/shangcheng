@@ -140,4 +140,24 @@
         order by ass_sort
     </select>
 
+
+    <!-- 根据关联id来查询图片 -->
+    <select id="selectByAssIds" parameterType="map" resultType="Map">
+        select ass_id,image_url from t_mall_image_associative
+        where is_delete = 0
+        <if test="assIds != null">
+            and ass_id in
+            <foreach collection="assIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="isMainImages != null">
+            and is_main_images=#{isMainImages}
+        </if>
+        <if test="assType != null">
+            and ass_type=#{assType}
+        </if>
+        order by ass_sort
+    </select>
+
 </mapper>

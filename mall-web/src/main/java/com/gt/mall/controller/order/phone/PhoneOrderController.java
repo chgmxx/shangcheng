@@ -1639,7 +1639,6 @@ public class PhoneOrderController extends BaseController {
     /**
      * 储值卡支付成功的回调
      *
-     * @param params
      */
     @RequestMapping( value = "/79B4DE7C/success" )
     @Transactional( rollbackFor = Exception.class )
@@ -1692,78 +1691,85 @@ public class PhoneOrderController extends BaseController {
     /**
      * 去支付
      */
-    @RequestMapping( value = "/79B4DE7C/goPay" )
-    @Transactional( rollbackFor = Exception.class )
-    public void goPay( HttpServletRequest request,
-		    @RequestParam Map< String,Object > param,
-		    HttpServletResponse response ) {
-	logger.info( "进入去支付controller" );
+    @RequestMapping(value = "/79B4DE7C/goPay")
+    @Transactional(rollbackFor = Exception.class)
+    public void goPay(HttpServletRequest request,
+		    @RequestParam Map<String, Object> param,
+		    HttpServletResponse response) {
+	logger.info("进入去支付controller");
 	PrintWriter out = null;
-	Map< String,Object > result = new HashMap< String,Object >();
+	Map<String,Object> result = new HashMap<String, Object>();
+	int code = 1;
 	try {
-	    out = response.getWriter();
-	    if ( CommonUtil.isNotEmpty( param.get( "id" ) ) ) {
+	    out =  response.getWriter();
+	    if(CommonUtil.isNotEmpty(param.get("id"))){
 
-		int orderId = CommonUtil.toInteger( param.get( "id" ) );
+		int orderId = CommonUtil.toInteger(param.get("id"));
 
-		MallOrder order = mallOrderService.selectById( orderId );
-		if ( CommonUtil.isNotEmpty( order ) ) {
-		    /*Order newOrder = new Order();
-		    newOrder.setId(order.getId());
-		    String orderNo="SC"+System.currentTimeMillis();
-		    newOrder.setOrderNo(orderNo);
-		    morderService.upOrderNoById(newOrder);
-		    order.setOrderNo(orderNo);*/
+		MallOrder order = mallOrderService.selectById(orderId);
+		if(CommonUtil.isNotEmpty(order)){
+					/*Order newOrder = new Order();
+					newOrder.setId(order.getId());
+					String orderNo="SC"+System.currentTimeMillis();
+					newOrder.setOrderNo(orderNo);
+					morderService.upOrderNoById(newOrder);
+					order.setOrderNo(orderNo);*/
 
-		    if ( order.getOrderType() == 3 ) {//秒杀订单
+		    if(order.getOrderType() == 3){//秒杀订单
 			JSONObject detailObj = new JSONObject();
 			String key = "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
-			if ( JedisUtil.hExists( key, order.getId().toString() ) ) {
-			    detailObj.put( "groupBuyId", order.getGroupBuyId() );
+			if(JedisUtil.hExists(key, order.getId().toString())){
+			    detailObj.put("groupBuyId", order.getGroupBuyId());
 			    //判断秒杀订单是否正在进行
-			    MallSeckill seckill = mallSeckillService.selectSeckillBySeckillId( order.getGroupBuyId() );
-			    if ( CommonUtil.isNotEmpty( seckill ) ) {
-				if ( seckill.getIsDelete().toString().equals( "1" ) ) {
-				    result.put( "result", false );
-				    result.put( "msg", "您购买的秒杀商品已经被删除，请重新下单" );
-				} else if ( seckill.getIsUse().toString().equals( "-1" ) ) {
-				    result.put( "result", false );
-				    result.put( "msg", "您购买的秒杀商品已经被失效，请重新下单" );
-				} else if ( seckill.getStatus() == 0 ) {
-				    result.put( "result", false );
-				    result.put( "msg", "您购买的秒杀商品还没开始，请耐心等待" );
-				} else if ( seckill.getStatus() == -1 ) {
-				    result.put( "result", false );
-				    result.put( "msg", "您购买的秒杀商品已经结束，请重新下单" );
+			    MallSeckill seckill = mallSeckillService.selectSeckillBySeckillId(order.getGroupBuyId());
+			    if(CommonUtil.isNotEmpty(seckill)){
+				if(seckill.getIsDelete().toString().equals("1")){
+				    code = -1;
+				    result.put("result", false);
+				    result.put("msg", "您购买的秒杀商品已经被删除，请重新下单");
+				}else if(seckill.getIsUse().toString().equals("-1")){
+				    code = -1;
+				    result.put("result", false);
+				    result.put("msg", "您购买的秒杀商品已经被失效，请重新下单");
+				}else if(seckill.getStatus() == 0){
+				    code = -1;
+				    result.put("result", false);
+				    result.put("msg", "您购买的秒杀商品还没开始，请耐心等待");
+				}else if(seckill.getStatus() == -1){
+				    code = -1;
+				    result.put("result", false);
+				    result.put("msg", "您购买的秒杀商品已经结束，请重新下单");
 				}
-			    } else {
-				result.put( "result", false );
-				result.put( "msg", "您购买的秒杀商品已经被删除，请重新下单" );
+			    }else{
+				code = -1;
+				result.put("result", false);
+				result.put("msg", "您购买的秒杀商品已经被删除，请重新下单");
 			    }
-			} else {
-			    result.put( "result", false );
-			    result.put( "msg", "您的订单已关闭，请重新下单" );
+			}else{
+			    code = -1;
+			    result.put("result", false);
+			    result.put("msg", "您的订单已关闭，请重新下单");
 			}
 
-		    } else {
-			if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) ) {
-			    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-				if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType().toString().equals( "7" ) && CommonUtil
-						.isNotEmpty( detail.getProSpecStr() ) ) {//批发商品判断库存
-				    JSONObject map = JSONObject.fromObject( detail.getProSpecStr() );
-				    for ( Object key : map.keySet() ) {
+		    }else{
+			if(CommonUtil.isNotEmpty(order.getMallOrderDetail())){
+			    for (MallOrderDetail detail : order.getMallOrderDetail()) {
+				if(CommonUtil.isNotEmpty(order.getOrderType()) && order.getOrderType().toString().equals("7") && CommonUtil.isNotEmpty( detail.getProSpecStr())){//批发商品判断库存
+				    JSONObject map = JSONObject.fromObject( detail.getProSpecStr());
+				    for (Object key : map.keySet()) {
 					String proSpecificas = key.toString();
-					JSONObject p = JSONObject.fromObject( map.get( key ) );
-					int proNum = CommonUtil.toInteger( p.get( "num" ) );
-					result = mallProductService.calculateInventory( detail.getProductId(), proSpecificas, proNum, order.getBuyerUserId() );
-					if ( !( result.get( "result" ) ).equals( "true" ) ) {
+					JSONObject p = JSONObject.fromObject(map.get(key));
+					int proNum = CommonUtil.toInteger(p.get("num"));
+					result = mallProductService.calculateInventory(detail.getProductId(), proSpecificas, proNum,order.getBuyerUserId());
+					if(!(result.get("result")).equals("true")){
+					    code = -1;
 					    break;
 					}
 				    }
-				} else {
-				    result = mallProductService
-						    .calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
-				    if ( !( result.get( "result" ) ).equals( "ture" ) ) {
+				}else{
+				    result = mallProductService.calculateInventory(detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(),order.getBuyerUserId());
+				    if(!(result.get("result")).equals("ture")){
+					code = -1;
 					break;
 				    }
 				}
@@ -1771,27 +1777,31 @@ public class PhoneOrderController extends BaseController {
 			    }
 			}
 		    }
-		    if ( order.getOrderStatus() == 2 || order.getOrderStatus() == 3 || order.getOrderStatus() == 4 ) {
-			result.put( "result", false );
-			result.put( "msg", "您已经支付成功，无需再次支付" );
+		    if(order.getOrderStatus() == 2 || order.getOrderStatus() == 3 || order.getOrderStatus() == 4){
+			result.put("result", false);
+			code = 0;
+			result.put("msg", "您已经支付成功，无需再次支付");
 		    }
-		    result.put( "proTypeId", order.getMallOrderDetail().get( 0 ).getProTypeId() );
-		    result.put( "out_trade_no", order.getOrderNo() );
-		    result.put( "orderMoney", order.getOrderMoney() );
-		    result.put( "busId", order.getBusUserId() );
+		    result.put("proTypeId", order.getMallOrderDetail().get(0).getProTypeId());
+		    result.put("out_trade_no", order.getOrderNo());
+		    result.put("orderMoney", order.getOrderMoney());
+		    result.put("busId", order.getBusUserId());
 		}
 	    }
 
-	} catch ( Exception e ) {
-	    result.put( "result", false );
-	    result.put( "msg", "去支付失败，稍后请重新支付" );
-	    logger.error( "去支付异常：" + e.getMessage() );
+	} catch (Exception e) {
+	    code = -1;
+	    result.put("result", false);
+	    result.put("msg", "去支付失败，稍后请重新支付");
+	    logger.error("去支付异常："+e.getMessage());
 	    e.printStackTrace();
-	} finally {
-	    if ( CommonUtil.isEmpty( result.get( "result" ) ) ) {
-		result.put( "result", true );
+	}finally{
+	    if (CommonUtil.isEmpty(result.get("result"))){
+		code = 1;
+		result.put("result", true);
 	    }
-	    out.write( JSONObject.fromObject( result ).toString() );
+	    result.put("code", code);
+	    out.write(JSONObject.fromObject(result).toString());
 	    out.flush();
 	    out.close();
 	}

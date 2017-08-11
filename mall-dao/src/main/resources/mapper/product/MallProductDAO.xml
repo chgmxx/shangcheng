@@ -284,18 +284,17 @@
         </if>
     </select>
     <select id="selectProductAllByShopids" resultType="java.util.Map">
-        SELECT distinct a.id as
-        id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,
-        a.pro_sale_total,a.sales_base
+        SELECT  a.id as id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,
+        a.pro_sale_total,a.sales_base ,d.inv_num,d.inv_price,d.specifica_img_id
+        from (
+        select distinct a.id AS id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,
+        a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,a.pro_sale_total,a.sales_base
         from t_mall_product a
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
-        is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1
-        AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id and e.is_delete=0
-        left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
-        left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
-        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and g.is_delete=0 and pg.is_delete=0
+        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+
+        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0
+
         <if test="shopId != null and shopId != ''">
             and a.shop_id=#{shopId}
         </if>
@@ -323,9 +322,6 @@
             <when test="type == 2">
                 ORDER BY a.pro_sale_total+a.sales_base
             </when>
-            <when test="type == 3">
-                ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price )
-            </when>
             <otherwise>
                 <if test="rType > 0">
                     <if test="rType == 1">
@@ -335,16 +331,26 @@
                         ORDER BY a.change_fenbi
                     </if>
                 </if>
-                <if test="rType == 0">
-                    ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price)
-                </if>
             </otherwise>
         </choose>
-        <if test="desc != null and desc != '' and desc == 1">
-            desc
+        <if test="type !=3">
+            <if test="desc != null and desc != '' and desc == 1">
+                desc
+            </if>
+            <if test="firstNum != null and maxNum != null">
+                limit #{firstNum},#{maxNum}
+            </if>
         </if>
-        <if test="firstNum != null and maxNum != null">
-            limit #{firstNum},#{maxNum}
+        ) a
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0) d ON a.id=d.product_id
+        <if test="type == 3">
+            ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price  )
+            <if test="desc != null and desc != '' and desc == 1">
+                desc
+            </if>
+            <if test="firstNum != null and maxNum != null">
+                limit #{firstNum},#{maxNum}
+            </if>
         </if>
     </select>
     <select id="selectCountAllByShopids" resultType="java.lang.Integer">
