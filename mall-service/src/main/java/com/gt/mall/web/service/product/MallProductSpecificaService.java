@@ -2,6 +2,7 @@ package com.gt.mall.web.service.product;
 
 import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.base.BaseService;
+import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
@@ -151,27 +152,45 @@ public interface MallProductSpecificaService extends BaseService< MallProductSpe
 
     /**
      * 根据规格名称id和规格值id查询商品给
+     *
      * @param params nameId     规格名称id
      * @param params valueId    规格值id
      * @param params proId      商品名称id
+     *
      * @return
      */
     MallProductSpecifica selectByNameValueId( Map< String,Object > params );
 
     /**
      * 根据商品id查询商品规格
-     * @param productId 商品id
      *
+     * @param productId 商品id
      */
-    List<MallProductSpecifica> selectByProductId(Integer productId);
+    List< MallProductSpecifica > selectByProductId( Integer productId );
 
     /**
      * 根据商品和规格值id查询商品规格信息
+     *
      * @param productIds 商品id
-     * @param valueIds 规格值id
+     * @param valueIds   规格值id
+     *
      * @return 商品规格集合
      */
-    List<MallProductSpecifica> selectByValueIds(int productIds,String[] valueIds);
+    List< MallProductSpecifica > selectByValueIds( int productIds, String[] valueIds );
 
+    /**
+     * 同步所有规格名称
+     *
+     * @param user 用户信息
+     */
+
+    void syncAllSpecifica( BusUser user );
+
+    /**
+     * 同步所有规格值
+     *
+     * @param user 用户信息
+     */
+    void syncAllSpecificaValue( BusUser user );
 
 }

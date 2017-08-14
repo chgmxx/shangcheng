@@ -147,6 +147,18 @@
             id = #{id}
         </where>
     </select>
+    <select id="selectWxShopByUserId" resultType="java.util.Map">
+
+        SELECT s.`sto_name` AS business_name ,
+	CONCAT((SELECT city_name FROM  basis_city WHERE id=wx.province),
+  	(SELECT city_name FROM  basis_city WHERE id=wx.city),IF(wx.district!='' AND wx.district IS NOT NULL,
+  	(SELECT city_name FROM  basis_city WHERE id=wx.district),''),wx.address,wx.detail) AS sto_address,
+  	s.sto_phone AS sto_phone ,
+  	s.sto_linkman,wx.id AS wxShopId
+	FROM t_mall_store s
+	LEFT JOIN t_wx_shop wx ON wx.`id`=s.`wx_shop_id`
+	WHERE s.sto_user_id=#{userId}  AND s.`is_delete`=0
+    </select>
 
 
 </mapper>
