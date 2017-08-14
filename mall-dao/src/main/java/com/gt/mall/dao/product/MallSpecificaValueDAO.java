@@ -18,7 +18,18 @@ public interface MallSpecificaValueDAO extends BaseMapper< MallSpecificaValue > 
 
     /**
      * 获取规格值
+     *
      * @Title: selectBySpecId
      */
-    List<Map<String, Object> > selectBySpecId(Map<String, Object> map);
+    List< Map< String,Object > > selectBySpecId( Map< String,Object > map );
+
+    /**
+     * 获取用户下所有规格值
+     *
+     * @param userId
+     *
+     * @return 规格值 列表
+     */
+    List< Map< String,Object > > selectByUserId( Integer userId );
+
 }

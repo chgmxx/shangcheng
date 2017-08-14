@@ -25,14 +25,14 @@
     </sql>
     <select id="selectByUserId" resultType="java.util.Map">
         select distinct p.id as id, i.image_url as imageUrl,p.pro_name as proName,p.pro_price,p.pro_stock_total as stockTotal,
-        p.pro_sale_total as  saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as checkStatus,
+        p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as checkStatus,
         p.check_reason as checkReason,p.shop_id as shopId,p.two_code_path as twoCodePath
         from t_mall_product_inventory inv
         right join t_mall_product p on inv.product_id = p.id
-        left join t_mall_image_associative i on	p.id=i.ass_id
+        left join t_mall_image_associative i on p.id=i.ass_id
         left join t_mall_store s on p.shop_id = s.id
-        where i.is_main_images=1 and( inv.inv_num = 0 or  p.pro_stock_total=0 )
-        and i.is_delete=0 and i.ass_type = 1 and p.is_delete = 0  and p.is_mall_show=0
+        where i.is_main_images=1 and( inv.inv_num = 0 or p.pro_stock_total=0 )
+        and i.is_delete=0 and i.ass_type = 1 and p.is_delete = 0 and p.is_mall_show=0
         <if test="userId != null and userId != ''">
             and p.user_id = #{userId,jdbcType=INTEGER}
         </if>
@@ -52,15 +52,15 @@
             </foreach>
         </if>
         order by p.create_time desc
-        <if test="firstNum != null and maxNum != null"> limit #{firstNum},#{maxNum} </if>
+        <if test="firstNum != null and maxNum != null">limit #{firstNum},#{maxNum}</if>
     </select>
     <select id="selectCountByUserId" resultType="java.lang.Integer">
         select count(distinct p.id) from t_mall_product_inventory inv
         left join t_mall_product p on inv.product_id = p.id
         left join t_mall_image_associative i on p.id=i.ass_id
-        where i.is_main_images=1 and inv.inv_num = 0 and i.is_delete=0 and p.is_delete=0 and i.ass_type = 1  and p.is_mall_show=0
+        where i.is_main_images=1 and inv.inv_num = 0 and i.is_delete=0 and p.is_delete=0 and i.ass_type = 1 and p.is_mall_show=0
         <if test="userId != null and userId != ''">
-            and p.user_id =	#{userId,jdbcType=INTEGER}
+            and p.user_id = #{userId,jdbcType=INTEGER}
         </if>
         <if test="isPublish != null and isPublish != ''">
             and p.is_publish = #{isPublish}
@@ -209,6 +209,21 @@
         FROM t_mall_product_inventory a
         LEFT JOIN t_mall_product_specifica b ON a.specifica_img_id=b.id
         WHERE a.product_id=#{id} AND a.is_delete=0
+    </select>
+
+    <select id="selectInvenByProIdsOrShopId" resultType="com.gt.mall.entity.product.MallProductInventory">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM `t_mall_product_inventory` i
+        LEFT JOIN `t_mall_product` t ON i.`product_id`=t.`id`
+        WHERE b.is_delete=0
+        <if test="productIds != null and productIds != ''">
+            and i.product_id in
+            <foreach collection="productIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        AND t.shop_id=#{shopId}
     </select>
 
 </mapper>

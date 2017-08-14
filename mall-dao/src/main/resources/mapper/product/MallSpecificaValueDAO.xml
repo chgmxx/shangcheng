@@ -27,5 +27,14 @@
             <!-- and shopId = #{shopId} -->
         </if>
     </select>
+    <select id="selectByUserId" resultType="java.util.Map">
+        SELECT <include refid="Base_Column_List"/>,  s.`erp_name_id`
+        FROM t_mall_specifica s,`t_mall_specifica_value` v
+        WHERE s.id=v.`spec_id` AND v.is_delete=0
+        AND s.is_delete=0 AND s.`TYPE`=1
+        AND v.`erp_value_id`=0
+        AND s.`user_id`=#{userId}
+    </select>
+
 
 </mapper>

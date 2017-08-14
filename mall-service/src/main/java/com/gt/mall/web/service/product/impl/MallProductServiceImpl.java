@@ -152,8 +152,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    count = mallProductDAO.selectCountByUserId( param );
 	}
 	PageUtil page = new PageUtil( curPage, pageSize, count, "mPro/index.do" );
-	int firstNum = pageSize
-			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
 	param.put( "firstNum", firstNum );// 起始页
 	param.put( "maxNum", pageSize );// 每页显示商品的数量
 
@@ -244,8 +243,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 				    if ( proArr.size() > 0 ) {
 					String erpShopId = proArr.get( 0 ).toString();
 					String erpProIds = proArr.get( 1 ).toString();
-					if ( erpProIds.equals( CommonUtil.toString( erpProId ) ) &&
-							erpShopId.equals( map.get( "wxShopId" ).toString() ) ) {
+					if ( erpProIds.equals( CommonUtil.toString( erpProId ) ) && erpShopId.equals( map.get( "wxShopId" ).toString() ) ) {
 					    logger.info( "库存：" + proArr.get( 2 ) + "，商品:" + map.get( "id" ) );
 					    map.put( "stockTotal", proArr.get( 2 ) );
 					    break;
@@ -589,8 +587,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    if ( !CommonUtil.isEmpty( params.get( "detail" ) ) ) {
 		MallProductDetail detail = JSONObject.parseObject( params.get( "detail" ).toString(), MallProductDetail.class );
 		detail.setProductId( product.getId() );
-		if ( detail != null )
-		    mallProductDetailService.insert( detail );
+		if ( detail != null ) mallProductDetailService.insert( detail );
 		//		    mallProductDetailDao.insert(detail);
 
 	    }
@@ -610,19 +607,15 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    Map< String,Object > specMap = new HashMap<>();
 	    // 批量添加商品规格
 	    if ( !CommonUtil.isEmpty( params.get( "speList" ) ) ) {
-		if ( params.get( "speList" ) != null )
-		    specMap = mallProductSpecificaService.saveOrUpdateBatch( params.get( "speList" ), product.getId(), null, true );
+		if ( params.get( "speList" ) != null ) specMap = mallProductSpecificaService.saveOrUpdateBatch( params.get( "speList" ), product.getId(), null, true );
 	    }
 	    // 批量添加商品库存
 	    if ( !CommonUtil.isEmpty( params.get( "invenList" ) ) ) {
-		if ( params.get( "invenList" ) != null )
-		    mallProductInventoryService.saveOrUpdateBatch( specMap, params.get( "invenList" ), product.getId(), null );
+		if ( params.get( "invenList" ) != null ) mallProductInventoryService.saveOrUpdateBatch( specMap, params.get( "invenList" ), product.getId(), null );
 	    }
 	    // 批量添加商品参数
 	    if ( !CommonUtil.isEmpty( params.get( "paramsList" ) ) ) {
-		if ( params.get( "paramsList" ) != null )
-		    mallProductParamService.saveOrUpdateBatch(
-				    params.get( "paramsList" ), product.getId(), null, true );
+		if ( params.get( "paramsList" ) != null ) mallProductParamService.saveOrUpdateBatch( params.get( "paramsList" ), product.getId(), null, true );
 	    }
 	}
 
@@ -728,8 +721,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 	// 批量添加或修改商品规格
 	if ( specObj != null || defaultSpecMap != null ) {
-	    specMap = mallProductSpecificaService.saveOrUpdateBatch( params.get( "speList" ),
-			    product.getId(), defaultSpecMap, flag );
+	    specMap = mallProductSpecificaService.saveOrUpdateBatch( params.get( "speList" ), product.getId(), defaultSpecMap, flag );
 	}
 	Object invenObj = null;
 	// 需要修改的库存数据
@@ -745,8 +737,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 	// 批量添加商品库存
 	if ( invenObj != null || defaultMap != null ) {
-	    mallProductInventoryService.saveOrUpdateBatch( specMap, invenObj, product.getId(),
-			    defaultMap );
+	    mallProductInventoryService.saveOrUpdateBatch( specMap, invenObj, product.getId(), defaultMap );
 	}
 	Map< String,Object > paramDefaultMap = new HashMap<>();
 	// 还未修改的参数数据
@@ -755,8 +746,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 	// 批量添加商品参数
 	if ( !CommonUtil.isEmpty( params.get( "paramsList" ) ) ) {
-	    mallProductParamService.saveOrUpdateBatch( params.get( "paramsList" ),
-			    product.getId(), paramDefaultMap, true );
+	    mallProductParamService.saveOrUpdateBatch( params.get( "paramsList" ), product.getId(), paramDefaultMap, true );
 	}
 	// 批量添加商品分组
 	if ( !CommonUtil.isEmpty( params.get( "groupList" ) ) ) {
@@ -2178,6 +2168,196 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    productWrapper.where( "shop_id = {0}", params.get( "shopId" ) );
 	}
 	return mallProductDAO.selectList( productWrapper );
+    }
+
+    @Override
+    public void syncAllProduct( BusUser user ) {
+	// todo 调用陈丹接口 dictService.pidUserId
+	int userPId = 1;//dictService.pidUserId(user.getId());
+	int uType = 1;//用户类型 1总账号  0子账号
+	if ( user.getId() != userPId ) {
+	    uType = 0;
+	}
+	Map< String,Object > params = new HashMap< String,Object >();
+	List< Map< String,Object > > pros = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > norms = new ArrayList< Map< String,Object > >();
+
+	List< Map< String,Object > > productList = mallProductDAO.selectProByUserIdGroupName( user.getId() );
+	System.out.println( "同步所有商品至erp 数量=" + productList.size() );
+	if ( productList != null && productList.size() > 0 ) {
+	    for ( int i = 0; i < productList.size(); i++ ) {
+		Map< String,Object > proMap = productList.get( i );
+		String is_specifica = proMap.get( "is_specifica" ).toString();
+		pros = new ArrayList< Map< String,Object > >();
+		norms = new ArrayList< Map< String,Object > >();
+		String productIds = proMap.get( "id" ).toString();
+
+		if ( is_specifica.equals( "1" ) ) {
+		    //封装库存
+		    String shopIds = proMap.get( "shop_id" ).toString();
+		    String[] shopId = shopIds.split( "," );
+		    Integer productId = null;
+		    if ( shopId.length > 0 ) {
+			for ( int j = 0; j < shopId.length; j++ ) {
+			    pros = new ArrayList< Map< String,Object > >();
+			    norms = new ArrayList< Map< String,Object > >();
+
+			    List< Map< String,Object > > spec = queryInventoryByproIdShopId( productIds, CommonUtil.toInteger( shopId[j] ) );
+			    norms.addAll( spec );
+
+			    Map< String,Object > product = new HashMap< String,Object >();
+			    if ( productId != null ) {
+				product.put( "id", productId );
+			    }
+			    product.put( "name", proMap.get( "pro_name" ) );
+			    product.put( "norms", norms );
+			    pros.add( product );
+
+			    params = new HashMap< String,Object >();
+			    params.put( "uId", user.getId() );
+			    params.put( "uType", uType );
+			    params.put( "uName", user.getName() );
+			    params.put( "rootUid", userPId );
+			    params.put( "pros", pros );
+			    System.out.println( params );
+			    productId = updateInvAndPro( params, productIds, is_specifica, CommonUtil.toInteger( shopId[j] ) );
+			}
+		    }
+		} else {
+		    MallStore shop = mallStoreService.selectById( CommonUtil.toInteger( proMap.get( "shop_id" ) ) );
+		    Map< String,Object > spec = new HashMap< String,Object >();
+		    spec.put( "ids", "" );//规格id组
+		    spec.put( "names", "" );
+		    spec.put( "shopId", shop.getWxShopId() );
+		    spec.put( "amount", proMap.get( "amount" ) );
+		    spec.put( "price", proMap.get( "price" ) );
+		    norms.add( spec );
+
+		    Map< String,Object > product = new HashMap< String,Object >();
+		    product.put( "name", proMap.get( "pro_name" ) );
+		    product.put( "norms", norms );
+		    pros.add( product );
+
+		    params = new HashMap< String,Object >();
+		    params.put( "uId", user.getId() );
+		    params.put( "uType", uType );
+		    params.put( "uName", user.getName() );
+		    params.put( "rootUid", userPId );
+		    params.put( "pros", pros );
+		    System.out.println( params );
+		    updateInvAndPro( params, productIds, is_specifica, null );
+		}
+	    }
+	}
+    }
+
+    public int updateInvAndPro( Map< String,Object > params, String productIds, String is_specifica, Integer shopId ) {
+
+	Map< String,Object > proParams = new HashMap< String,Object >();
+	proParams.put( "pros", com.alibaba.fastjson.JSONObject.toJSON( params ) );
+	System.out.println( proParams );
+	int erpProId = 0;
+	com.alibaba.fastjson.JSONArray proArr = MallJxcHttpClientUtil.batchSave( proParams, true );
+	if ( proArr != null && proArr.size() > 0 ) {
+	    for ( Object object : proArr ) {
+		net.sf.json.JSONObject proObj = net.sf.json.JSONObject.fromObject( object );
+		net.sf.json.JSONObject productObj = net.sf.json.JSONObject.fromObject( proObj.get( "product" ) );
+		int erpInvId = proObj.getInt( "id" );
+		erpProId = productObj.getInt( "id" );
+		String attrIds = proObj.getString( "attrIds" );
+
+		if ( is_specifica.equals( "1" ) ) {
+		    Wrapper< MallProductInventory > keywordWrapper = new EntityWrapper<>();
+		    String sql1 = " erp_specvalue_id='" + attrIds + "' and product_id in(SELECT id FROM t_mall_product t WHERE t.shop_id=" + shopId + " AND t.id IN(" + productIds
+				    + ") )";
+		    keywordWrapper.where( sql1 );
+		    MallProductInventory productInventory = new MallProductInventory();
+		    productInventory.setErpInvId( erpInvId );
+		    mallProductInventoryDAO.update( productInventory, keywordWrapper );
+		}
+
+		Wrapper< MallProduct > keywordWrapper = new EntityWrapper<>();
+		keywordWrapper.where( "id in(" + productIds + ") " );
+		MallProduct product = new MallProduct();
+		if ( is_specifica.equals( "1" ) ) {
+		    product.setErpInvId( erpInvId );
+		}
+		product.setErpProId( erpProId );
+		product.setIsSyncErp( 1 );
+		mallProductDAO.update( product, keywordWrapper );
+
+	    }
+	}
+
+	return erpProId;
+    }
+
+    /**
+     * 根据门店id,商品Id列表查询库存
+     *
+     * @param productIds
+     * @param shopId
+     */
+    public List< Map< String,Object > > queryInventoryByproIdShopId( String productIds, Integer shopId ) {
+
+	MallStore shop = mallStoreService.selectById( shopId );
+	List< MallProductInventory > invList = mallProductInventoryDAO.selectInvenByProIdsOrShopId( productIds, shopId );
+	Map< String,Map< String,Object > > invs = new HashMap<>();
+	if ( invList != null && invList.size() > 0 ) {
+	    for ( int i = 0; i < invList.size(); i++ ) {
+		Map< String,Object > inv = new HashMap<>();
+		MallProductInventory invMap = invList.get( i );
+		String[] specIds = ( (String) invMap.getSpecificaIds() ).split( "," );
+		String ids = "";
+		String names = "";
+		Wrapper< MallProductSpecifica > wrapper = new EntityWrapper<>();
+		wrapper.where( "id in(" + specIds + ") and is_delete = 0" );
+		wrapper.orderBy( "sort" );
+		List< MallProductSpecifica > specList = mallProductSpecificaDao.selectList( wrapper );
+		for ( int j = 0; j < specList.size(); j++ ) {
+		    MallProductSpecifica specifica = specList.get( j );
+		    if ( ids.equals( "" ) ) {
+			ids = specifica.getErpSpecvalueId().toString();
+		    } else {
+			ids += "," + specifica.getErpSpecvalueId();
+		    }
+		    if ( names.equals( "" ) ) {
+			names = specifica.getSpecificaValue().toString();
+		    } else {
+			names += "," + specifica.getSpecificaValue();
+		    }
+		}
+		//添加 库存表erp规格Id
+		MallProductInventory inventory = new MallProductInventory();
+		inventory.setId( CommonUtil.toInteger( invMap.getId() ) );
+		inventory.setErpSpecvalueId( ids );
+		mallProductInventoryDAO.updateAllColumnById( inventory );
+
+		if ( invs.containsKey( ids ) ) {//是否存在
+		    inv = invs.get( ids );
+		    if ( CommonUtil.toDouble( invMap.getInvPrice() ) > CommonUtil.toDouble( inv.get( "price" ) ) ) {//取最大的价格
+			inv.put( "price", invMap.getInvPrice() );
+		    }
+		    inv.put( "amount", CommonUtil.toDouble( invMap.getInvNum() ) + CommonUtil.toDouble( inv.get( "amount" ) ) );//库存累加
+
+		} else {
+		    inv.put( "id", "" );
+		    inv.put( "shopId", shop.getWxShopId() );
+		    inv.put( "ids", ids );
+		    inv.put( "names", names );
+		    inv.put( "amount", invMap.getInvNum() );
+		    inv.put( "price", invMap.getInvPrice() );
+		}
+		invs.put( ids, inv );
+	    }
+	}
+	List< Map< String,Object > > reulst = new ArrayList< Map< String,Object > >();
+
+	for ( Map.Entry< String,Map< String,Object > > entry : invs.entrySet() ) {
+	    reulst.add( entry.getValue() );
+	}
+
+	return reulst;
     }
 
 }
