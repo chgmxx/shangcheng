@@ -58,7 +58,7 @@ public class MpGenerator {
     // 驱动
     private static final  String   driverName         = "com.mysql.jdbc.Driver";
     // url
-    private static final  String   url                = "jdbc:mysql://14.29.79.226:3306/gt_mall?characterEncoding=utf8";
+    private static final  String   url                = "jdbc:mysql://113.106.202.51:3306/gt_mall?characterEncoding=utf8";
     // 数据库用户名
     private static final  String   username           = "root";
     // 密码

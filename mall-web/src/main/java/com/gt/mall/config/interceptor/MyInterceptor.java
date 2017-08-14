@@ -1,9 +1,7 @@
 package com.gt.mall.config.interceptor;
 
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.JedisUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
 import net.sf.json.JSONObject;
@@ -67,25 +65,9 @@ public class MyInterceptor implements HandlerInterceptor {
 	System.out.println( "basePath = " + request.getRequestURL() );
 
 	// 获得在下面代码中要用的request,response,session对象
-
-	HttpServletRequest servletRequest = (HttpServletRequest) request;
-	HttpServletResponse ServletResponse = (HttpServletResponse) response;
-
-	Object obj = servletRequest.getSession().getAttribute( "busCount" );
-	if ( CommonUtil.isEmpty( obj ) ) {
-	    Map< String,Integer > params = new HashMap< String,Integer >();
-	    String jsonStr = JedisUtil.get( "busCount" );
-	    if ( !CommonUtil.isEmpty( jsonStr ) ) {
-		params = (Map< String,Integer >) JSONObject.toBean( JSONObject.fromObject( jsonStr ), Map.class );
-	    } else {
-		params.put( "total", 10096 );
-		params.put( "daysCount", 211 );
-	    }
-	    servletRequest.getSession().setAttribute( "busCount", params );
-	}
 	// 从session里取用户对象
-	BusUser user = SessionUtils.getLoginUser( servletRequest );
-	String url = ( (HttpServletRequest) request ).getRequestURI();
+	BusUser user = SessionUtils.getLoginUser( request );
+	String url = request.getRequestURI();
 
 	String urlwx = "";
 	if ( url.length() > 0 ) {
@@ -94,19 +76,21 @@ public class MyInterceptor implements HandlerInterceptor {
 	    urlwx = tmp.substring( tmp.lastIndexOf( "/" ) + 1, tmp.length() );
 	}
 	//如果URL是登录页面或者是登录界面时或者是微信接口，继续
-	if ( url.equals( "/" ) ) {
-	    ServletResponse.sendRedirect( "http://www." + PropertiesUtil.getDomain() + "" );
+	/*if ( url.equals( "/" ) ) {
+	    response.sendRedirect( "http://www." + PropertiesUtil.getDomain() + "" );
 	    return false;
-	} else if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.indexOf( "79B4DE7C" ) > -1 ) {//移动端
-	    Member member = SessionUtils.getLoginMember( servletRequest );
+	} else */
+	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.indexOf( "79B4DE7C" ) > -1 ) {//移动端
+	   /* Member member = SessionUtils.getLoginMember( request );
 	    if ( CommonUtil.isNotEmpty( member ) && member.isPass() ) {//商家已过期，清空会员登录session
-		servletRequest.getSession().removeAttribute( "member" );
-		String upGradeUrl = servletRequest.getContextPath() + "/jsp/error/warning.jsp";
-		ServletResponse.sendRedirect( upGradeUrl );
+		request.getSession().removeAttribute( "member" );
+		String upGradeUrl = request.getContextPath() + "/jsp/error/warning.jsp";
+		response.sendRedirect( upGradeUrl );
 		return false;
 	    } else {
 		return true;// 只有返回true才会继续向下执行，返回false取消当前请求
-	    }
+	    }*/
+	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) ) {
 	    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
 	} else if ( user == null ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
@@ -114,12 +98,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	    String script = "<script type='text/javascript'>"
 			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "/user/tologin.do';"
 			    + "</script>";
-	    if ( url.indexOf( "unionBrokerage" ) > -1 && !( url.indexOf( "toLogin" ) > -1 ) ) {
-		script = "<script type='text/javascript'>"
-				+ "top.location.href='/jsp/error/warning.jsp';"
-				+ "</script>";
-	    }
-	    if ( isAjax( servletRequest ) ) {
+	    if ( isAjax( request ) ) {
 		Map< String,Object > map = new HashMap<>();
 		map.put( "timeout", "连接超时，请重新登录！" );
 		response.getWriter().write( JSONObject.fromObject( map ).toString() );
@@ -127,17 +106,11 @@ public class MyInterceptor implements HandlerInterceptor {
 		response.getWriter().write( script );
 	    }
 	    return false;
-	} else if ( user.getPid() == 0 && user != null && user.getLogin_source() != 1 ) {//会员过期,跳转到充值页面
-	    if ( user.getDays() < 0 ) {
-		if ( url.equals( "/trading/upGrade.do" ) ) {
-		    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
-		} else {
-		    String upGradeUrl = "/jsp/merchants/user/pastPage.jsp";
-		    ServletResponse.sendRedirect( upGradeUrl );
-		    return false;
-		}
-	    }
 	}
+	if ( CommonUtil.isNotEmpty( user ) ) {
+	    request.setAttribute( "wxmpDomain", PropertiesUtil.getWxmpDomain() );//wxmp链接，前端调用js用的
+	}
+	request.setAttribute( "webUrl", PropertiesUtil.getHomeUrl() );//本项目的地址
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
 
