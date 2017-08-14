@@ -12,14 +12,11 @@ $(function () {
 function del(ids) {
     //event.stopPropagation();
     parent.layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', offset: "40%"}, function (index) {
-        parent.layer.close(index);
+        parentCloseAll();
         var params = {
             ids: ids
         };
-        var index2 = parent.layer.load(3, {
-            offset: '40%',
-            shade: [0.4, '#8E8E8E']
-        });
+        parentLayerLoad();
         $.post("store/delete.do", params, function (data) {
             parent.alertMsg(data.message);
             if (data.result) {
@@ -45,14 +42,6 @@ function batchdel() {
     if (ids != "" && ids != undefined) {
         del(ids);
     } else {
-        parent.alertMsg("请至少选择一条数据！");
+        parentAlertMsg("请至少选择一条数据！");
     }
-}
-
-/**
- * 查看二维码
- * @param id
- */
-function viewQR(id) {
-    parent.openIframeNoScoll("店铺二维码", "400px", "300px", "store/viewQR.do?id=" + id);
 }

@@ -16,7 +16,7 @@ spring:
    store-type: redis
 datasource:
  druid:
-  url: jdbc:mysql://14.29.79.226:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+  url: jdbc:mysql://113.106.202.51:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
   username: root
   password: gt123456
   driver-class-name: com.mysql.jdbc.Driver

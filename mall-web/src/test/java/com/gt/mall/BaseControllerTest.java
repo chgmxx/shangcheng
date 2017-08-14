@@ -1,12 +1,10 @@
 package com.gt.mall;
 
+import com.gt.mall.bean.Member;
 import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.inter.service.MemberService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA
@@ -21,15 +19,16 @@ public class BaseControllerTest extends BasicTest {
 
     @Test
     public void tests() {
-	Map< String,Object > params = new HashMap<>();
+	/*Map< String,Object > params = new HashMap<>();
 	params.put( "userId",42 );
 	int rowCount = mallStoreDAO.countByPage( params );
 
 	params.put( "firstResult", 1 );
 	params.put( "maxResult", 10 );
-	List< Map< String,Object > > list = mallStoreDAO.findByPage( params );
+	List< Map< String,Object > > list = mallStoreDAO.findByPage( params );*/
 
+        Member member = MemberService.findMemberById( 124,null );
 
-//	mallStoreDAO.selectById( 17 );
+        System.out.println("nickname = " + member.getNickname());
     }
 }

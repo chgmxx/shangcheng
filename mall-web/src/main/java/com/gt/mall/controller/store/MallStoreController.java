@@ -206,12 +206,12 @@ public class MallStoreController extends BaseController {
     /**
      * 查看二维码信息
      */
-    @RequestMapping( "/viewQR" )
+    /*@RequestMapping( "/viewQR" )
     public String viewQR( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	MallStore sto = mallStoreService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	request.setAttribute( "qrCode", sto.getStoQrCode() );
 	return "mall/store/viewQR";
-    }
+    }*/
 
     /**
      * 进入商城设置列表页面

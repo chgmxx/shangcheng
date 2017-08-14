@@ -32,7 +32,6 @@
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
     <script type="text/javascript" src="/js/plugin/copy/clipboard.min.js"></script>
     <script type="text/javascript" src="/js/plugin/copy/copypublic.js"></script>
-    <script type="text/javascript" src="/js/mall/store/index.js?<%=System.currentTimeMillis()%>"></script>
     <style>
         a.copy:hover, a.copy {
             height: 18px;
@@ -51,20 +50,24 @@
              * @param id
              */
             $(".qrcode").click(function () {
-                parent.layer.open({
+                parentOpenIframe("店铺二维码", "200px", "240px", "/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "" );
+
+               /* parent.layer.open({
                     type: 1,
                     title: "页面预览",
                     skin: 'layui-layer-rim', //加上边框
                     area: ['200px', '240px'], //宽高
                     offset: "30%",
                     content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
-                });
+                });*/
             });
         });
     </script>
 </head>
 
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp" />
+
 <div class="body_div">
     <c:if test="${empty isNoAdminFlag }">
         <div class="con-head">
@@ -159,10 +162,11 @@
     </c:if>
 </div>
 </body>
+<script type="text/javascript" src="/js/mall/store/index.js?<%=System.currentTimeMillis()%>"></script>
 <script type="text/javascript">
     function add(obj) {
-        if (add > 0) {
-            alert("店铺已添加完毕，需要添加新店铺，请前往分店里面添加新的店铺")
+        if (obj > 0) {
+            parentAlertMsg("店铺已添加完毕，需要添加新店铺，请前往门店里面添加新的门店")
         } else {
             window.location.href = "/store/to_edit.do";
         }
