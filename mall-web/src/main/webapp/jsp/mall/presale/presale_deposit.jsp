@@ -94,10 +94,12 @@
 <!--container  End-->
 <!--footer  End-->
 <script src="/js/plugin/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     var shopId = $(".shopId").attr("id");
     $(".shopId").find("option[value=" + shopId + "]").attr("selected", true);
     function returns(depositId) {
+        parentOpenIframe("退定金", "500px", "180px", "/mPresale/returnPresalePopUp.do?depositId=" + depositId);
         parent.openIframeNoScoll("退定金", "500px", "180px", "/mPresale/returnPresalePopUp.do?depositId=" + depositId);
     }
 </script>

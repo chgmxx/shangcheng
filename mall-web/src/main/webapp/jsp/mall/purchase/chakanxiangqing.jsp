@@ -190,6 +190,7 @@
 
 
     </div>
+    <jsp:include page="/jsp/common/headerCommon.jsp"/>
     <script type="text/javascript">
         $(function () {
             var status = "${order.orderStatus}";
@@ -249,6 +250,7 @@
         /**打开一个询问框**/
         function openConfirm(status) {
             //询问框
+            //TODO  window.parent.layer.confirm
             window.parent.layer.confirm("确定要修改报价单状态吗?", {
                 btn: ['确定', '取消'],
                 offset: '40%'
@@ -261,7 +263,8 @@
                     success: function (data) {
                     }
                 });
-                window.parent.layer.closeAll();
+                parentCloseAll();
+//                window.parent.layer.closeAll();
                 location.href = "/purchaseOrder/orderIndexDetail.do?orderId=${order.id}";
             }, function () {
             });

@@ -60,6 +60,7 @@
 <form id="xinfrom" method="post" action="/mallhtml/updateHtml.do" target="_blank">
     <input type="hidden" name="id" id="id">
 </form>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 </body>
 <script type="text/javascript">
     //弹出遮罩层
@@ -115,7 +116,8 @@
 
     //回调方法
     function hdhtml(id) {
-        parent.layer.closeAll();
+        parentCloseAll();
+//        parent.layer.closeAll();
         $("#main").attr("src", "/mallhtml/htmllist.do?pageNum=1");
         $("#id").val(id);
         $("#xinfrom").submit();//post 请求弹出新页面;

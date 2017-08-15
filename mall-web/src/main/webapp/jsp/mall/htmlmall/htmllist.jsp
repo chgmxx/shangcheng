@@ -143,6 +143,7 @@
         <input type="hidden" name="id" id="id">
     </form>
 </c:if>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 </body>
 <script type="text/javascript">
 
@@ -183,14 +184,16 @@
     function add(iscreat, ispid) {
         if (iscreat == 1) {
             if (ispid == 0) {
+                //TODO  parent.layer.confirm
                 parent.layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", {offset: '25%'}, function () {
                     top.location.href = "/trading/upGrade.do?setType=trading";
                 })
             } else {
-                parent.layer.alert("主账户等级不足，不能在创建h5商城", {
-                    offset: "30%",
-                    closeBtn: 0
-                });
+                parentAlertMsg("主账户等级不足，不能在创建h5商城");
+//                parent.layer.alert("主账户等级不足，不能在创建h5商城", {
+//                    offset: "30%",
+//                    closeBtn: 0
+//                });
             }
         } else {
             window.location.href = "/mallhtml/modelList.do";
@@ -200,20 +203,23 @@
         window.location.href = "/mallhtml/addOrUpdate.do?id=" + id;
     }
     function del(id) {
+        //TODO  parent.layer.confirm
         parent.layer.confirm("确定删除吗？删除之后，引用该链接的页面，将会以找不到页面，跳转到404页面中", {offset: '25%'}, function () {
             $.post("mallhtml/delect.do", {
                 id: id
             }, function (data) {
                 if (data.error == 1 || data.error == '1') {
-                    parent.layer.alert("删除失败", {
-                        offset: "30%",
-                        closeBtn: 0
-                    });
+                    parentAlertMsg("删除失败");
+//                    parent.layer.alert("删除失败", {
+//                        offset: "30%",
+//                        closeBtn: 0
+//                    });
                 } else {
-                    parent.layer.alert("删除成功", {
-                        offset: "30%",
-                        closeBtn: 0
-                    });
+                    parentAlertMsg("删除成功");
+//                    parent.layer.alert("删除成功", {
+//                        offset: "30%",
+//                        closeBtn: 0
+//                    });
                     window.location.href = "/mallhtml/htmllist.do";
                 }
             });
@@ -231,10 +237,11 @@
             window.location.href = "/mallhtml/htmllist.do?pageNum=1";
 
         } else {
-            parent.layer.alert("已经是最前一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最前一页");
+//            parent.layer.alert("已经是最前一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function previous(obj) {
@@ -247,10 +254,11 @@
             window.location.href = url;
 
         } else {
-            parent.layer.alert("已经是最前一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最前一页");
+//            parent.layer.alert("已经是最前一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function next(obj, totalPages) {
@@ -262,10 +270,11 @@
             window.location.href = url;
 
         } else {
-            parent.layer.alert("已经是最后一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最后一页");
+//            parent.layer.alert("已经是最后一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function last(obj, totalPages) {
@@ -278,16 +287,18 @@
             window.location.href = url;
 
         } else {
-            parent.layer.alert("已经是最后一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最后一页");
+//            parent.layer.alert("已经是最后一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
 
     //背景图切换
     function uploadImg(id) {
         $("#changgeidimg").val(id);
+        //TODO    parent.materiallayer();
         parent.materiallayer();
     }
 
@@ -300,17 +311,19 @@
             data: {id: id, imgurl: imgurl},
             success: function (data) {
                 if (data.error == 0) {
-                    parent.layer.alert("替换成功", {
-                        offset: "30%",
-                        closeBtn: 0
-                    });
+                    parentAlertMsg("替换成功");
+//                    parent.layer.alert("替换成功", {
+//                        offset: "30%",
+//                        closeBtn: 0
+//                    });
                     $("#pic" + id).find("img").attr("src", (imgurl));
                     $("#pic" + id).find("img").attr("data-original", (imgurl));
                 } else {
-                    parent.layer.alert("替换失败", {
-                        offset: "30%",
-                        closeBtn: 0
-                    });
+                    parentAlertMsg("替换失败");
+//                    parent.layer.alert("替换失败", {
+//                        offset: "30%",
+//                        closeBtn: 0
+//                    });
                 }
             }
         })

@@ -62,12 +62,14 @@
     <input type="hidden" class="id" value="${margin.id }"/>
 </div>
 </body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     $("#submit").click(function () {
-        var layerLoad = parent.layer.load(1, {
-            shade: [0.3, '#000'],
-            offset: "30%"
-        });
+        var layerLoad = parentLayerLoad();
+//        var layerLoad = parent.layer.load(1, {
+//            shade: [0.3, '#000'],
+//            offset: "30%"
+//        });
         var id = $(".id").val();
         $.ajax({
             type: "post",
@@ -77,7 +79,8 @@
             },
             dataType: "json",
             success: function (data) {
-                parent.layer.close(layerLoad);
+                parentCloseAll(layerLoad);
+//                parent.layer.close(layerLoad);
                 if (data.result == true) {
                     parent.location.href = "/mAuction/to_margin.do";
                 } else {// 编辑失败
@@ -90,7 +93,8 @@
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parent.layer.close(layerLoad);
+//                parent.layer.close(layerLoad);
+                parentCloseAll(layerLoad);
                 alert("退保证金失败，请稍后重试");
                 return;
             }

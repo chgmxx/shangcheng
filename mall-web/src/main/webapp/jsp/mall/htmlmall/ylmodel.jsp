@@ -25,47 +25,53 @@
 
         function checkupdate(id) {
             $("#buttoncl").attr("disabled", "disabled");
-            var index = parent.layer.load(1);
+            var index = parentLayerLoad();
+//            var index = parent.layer.load(1);
             $.ajax({
                 type: "post",
                 url: "mallhtml/SetmallHtml.do",
                 data: {id: id},
                 dataType: "json",
                 success: function (data) {
-
-                    parent.layer.close(index);
+                    parentCloseAll();
+//                    parent.layer.close(index);
                     var error = data.error;
                     if (error == 0) {
+                        //TODO  parent.hdhtml(data.xid)
                         parent.hdhtml(data.xid);
 
                     } else if (error == 2) {
                         var ispid = data.ispid;
                         if (ispid == 0) {
+                            //TODO  parent.layer.confirm
                             parent.layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", {offset: '25%'}, function () {
                                 top.location.href = "/trading/upGrade.do?setType=trading";
                             })
                         } else {
-                            parent.layer.alert("主账户等级不足，不能在创建h5商城", {
-                                offset: "30%",
-                                closeBtn: 0
-                            });
+                            parentAlertMsg("主账户等级不足，不能在创建h5商城");
+//                            parent.layer.alert("主账户等级不足，不能在创建h5商城", {
+//                                offset: "30%",
+//                                closeBtn: 0
+//                            });
                         }
                     } else {
-                        parent.layer.alert("操作失败，数据异常，请联系管理员", {
-                            offset: "30%",
-                            closeBtn: 0
-                        });
+                        parentAlertMsg("操作失败，数据异常，请联系管理员");
+//                        parent.layer.alert("操作失败，数据异常，请联系管理员", {
+//                            offset: "30%",
+//                            closeBtn: 0
+//                        });
                     }
                 }
             });
         }
         function closeWindow() {
-            parent.layer.closeAll();
+            parentCloseAll();
+//            parent.layer.closeAll();
         }
     </script>
 </head>
 <body>
-
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div style="text-align: center">
     <img id="img" style="width: 200px;height:200px; margin: 0 auto;vertical-align: middle;" alt="扫一扫，查看效果" src="${image}${map.codeUrl}">
 

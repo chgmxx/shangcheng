@@ -237,6 +237,7 @@
 	    </div>
 	</div>
 	</c:if>
+	<jsp:include page="/jsp/common/headerCommon.jsp"/>
 </body>
 <script type="text/javascript">
 $(".nowPrice").each(function(){
@@ -270,14 +271,17 @@ $(function(){
 				detailObj : JSON.stringify(detail)
 			}, function(result) {
 				parent.location.href = "mallOrder/indexstart.do";
-				parent.layer.closeAll();
+                parentCloseAll();
+//				parent.layer.closeAll();
 			},"json");
 		}else{
 			if(orderMoney < 0){
-				parent.alertMsg("价格必须大于0。");
+                parentAlertMsg("价格必须大于0。");
+//				parent.alertMsg("价格必须大于0。");
 				$('#orderMoney').val("");
 			}else{
-				parent.alertMsg("价格不能为空。");
+                parentAlertMsg("价格不能为空。");
+//				parent.alertMsg("价格不能为空。");
 				/* parent.location.href = "mallOrder/indexstart.do";
 				parent.layer.closeAll(); */
 			}
@@ -318,10 +322,12 @@ $(function(){
 				orderId: orderId,
 				orderSellerRemark: remark
 			}, function(result) {
-				parent.layer.closeAll();
+                parentCloseAll();
+//				parent.layer.closeAll();
 			},"json");
 		}else{
-			parent.layer.closeAll();
+            parentCloseAll();
+//			parent.layer.closeAll();
 		}
 	});
 	
@@ -339,6 +345,7 @@ $(function(){
 				sellerReason: reason
 			}, function(result) {
 				//parent.layer.closeAll();
+                //TODO  parent.location.href
 				parent.location.href =  window.parent.location.href;
 			},"json");
 		}
@@ -346,7 +353,8 @@ $(function(){
 	
 	//取消按钮
 	$('#cancelOrder').click(function(){
-		parent.layer.closeAll();
+//		parent.layer.closeAll();
+        parentCloseAll();
 	});
 	
 	$("#thBth").click(function(){
@@ -358,6 +366,7 @@ $(function(){
 			status : 4
 		}, function(result) {
 			//parent.layer.closeAll();
+			//TODO  parent.location.href
 			parent.location.href =  window.parent.location.href;
 		},"json");
 	});

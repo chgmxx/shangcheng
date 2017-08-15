@@ -61,6 +61,7 @@
         <a href="/mallhtml/htmllist.do" style="cursor: pointer; color: white;">返回</a>
     </div>
 </div>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 </body>
 <script type="text/javascript">
     $(function () {
@@ -81,24 +82,28 @@
             return false;
         }
 
-        parent.showAll();//加载
+//        parent.showAll();//加载
+        parentLayerLoad();
         $("#textmsg").ajaxSubmit({
             type: "post",
             dataType: "json",
             url: "/mallhtml/addorUpdateSave.do",
             success: function (data) {
-                parent.closeWindow(); //加载完毕
+//                parent.closeWindow(); //加载完毕
+                parentCloseAll();
                 if (data.error == "0") {
-                    parent.layer.alert("操作成功", {
-                        offset: "30%",
-                        closeBtn: 0
-                    });
+                    parentAlertMsg("操作成功");
+//                    parent.layer.alert("操作成功", {
+//                        offset: "30%",
+//                        closeBtn: 0
+//                    });
                     window.location.href = "/mallhtml/htmllist.do";
                 } else {
-                    parent.layer.alert(data.message, {
-                        offset: "30%",
-                        closeBtn: 0
-                    });
+                    parentAlertMsg(data.message);
+//                    parent.layer.alert(data.message, {
+//                        offset: "30%",
+//                        closeBtn: 0
+//                    });
                 }
             }
         });

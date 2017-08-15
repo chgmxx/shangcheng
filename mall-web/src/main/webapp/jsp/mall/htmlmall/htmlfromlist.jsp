@@ -93,11 +93,12 @@
     </div>
 </c:if>
 
-
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 </body>
 <script type="text/javascript">
     $(function () {
         var body = $("body").height() + 89;
+        //TODO parent.$("#nav").height();
         var candan = parent.$("#nav").height();
         if (body < candan) {
             $("body").height(candan - 89);
@@ -105,15 +106,16 @@
     })
     //查看详情
     function preview(id) {
-        parent.layer.open({
-            type: 2,
-            title: '查看详情',
-            shadeClose: true,
-            shade: 0.2,
-            area: ['500px', '500px'],
-            offset: "20%",
-            content: '/mallhtml/htmlfromview.do?id=' + id,
-        });
+        parentOpenIframe('查看详情','500px', '500px','/mallhtml/htmlfromview.do?id=' + id);
+//        parent.layer.open({
+//            type: 2,
+//            title: '查看详情',
+//            shadeClose: true,
+//            shade: 0.2,
+//            area: ['500px', '500px'],
+//            offset: "20%",
+//            content: '/mallhtml/htmlfromview.do?id=' + id,
+//        });
     }
     //分页
     function first(obj) {
@@ -122,10 +124,11 @@
             window.location.href = "/mallhtml/htmlfromlist.do?pageNum=1&&id=${map.id}";
 
         } else {
-            parent.layer.alert("已经是最前一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最前一页");
+//            parent.layer.alert("已经是最前一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function previous(obj) {
@@ -138,10 +141,11 @@
             window.location.href = url;
 
         } else {
-            parent.layer.alert("已经是最前一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最前一页");
+//            parent.layer.alert("已经是最前一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function next(obj, totalPages) {
@@ -153,10 +157,11 @@
             window.location.href = url;
 
         } else {
-            parent.layer.alert("已经是最后一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最后一页");
+//            parent.layer.alert("已经是最后一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function last(obj, totalPages) {
@@ -169,10 +174,11 @@
             window.location.href = url;
 
         } else {
-            parent.layer.alert("已经是最后一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最后一页");
+//            parent.layer.alert("已经是最后一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
 

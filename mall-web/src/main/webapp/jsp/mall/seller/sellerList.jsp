@@ -30,7 +30,8 @@
 <script type="text/javascript">
 	var error = '${error}';
 	if (error != undefined && error != "") {
-		parent.layer.alert("参数错误，将调回前一个页面");
+        parentAlertMsg("参数错误，将调回前一个页面");
+//		parent.layer.alert("参数错误，将调回前一个页面");
 		window.history.back(-1);
 	}
 	if(top==self){
@@ -39,6 +40,7 @@
 </script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 	 <div class="page-body">
         <ul class="page-tab">
             <li>

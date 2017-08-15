@@ -65,10 +65,12 @@
     </table>
 </div>
 <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     /**打开一个IFRAME窗口**/
     function openRemarks(content, winth, height, title) {
-        window.parent.openIframe(title, winth, height, content);
+        parentOpenIframe(title, winth, height, content);
+//        window.parent.openIframe(title, winth, height, content);
     }
 </script>
 </body>

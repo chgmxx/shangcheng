@@ -48,19 +48,21 @@
              * @param id
              */
             $(".qrcode").click(function () {
-                parent.layer.open({
-                    type: 1,
-                    title: "拍卖预览",
-                    skin: 'layui-layer-rim', //加上边框
-                    area: ['208px', '251px'], //宽高
-                    offset: "30%",
-                    content: "<img src ='/mAuction/79B4DE7C/getTwoCode.do?code=" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>"
-                });
+                parentOpenIframe("拍卖预览","208px","251px","<img src ='/mAuction/79B4DE7C/getTwoCode.do?code=" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>");
+//                parent.layer.open({
+//                    type: 1,
+//                    title: "拍卖预览",
+//                    skin: 'layui-layer-rim', //加上边框
+//                    area: ['208px', '251px'], //宽高
+//                    offset: "30%",
+//                    content: "<img src ='/mAuction/79B4DE7C/getTwoCode.do?code=" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>"
+//                });
             });
         });
     </script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="con_div">
     <c:if test="${empty isNoAdminFlag }">
         <div id="con-box">

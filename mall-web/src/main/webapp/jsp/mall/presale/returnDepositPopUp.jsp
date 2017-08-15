@@ -45,13 +45,16 @@
 
     <input type="hidden" class="id" value="${deposit.id }"/>
 </div>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 </body>
+
 <script type="text/javascript">
     $("#submit").click(function () {
-        var layerLoad = parent.layer.load(1, {
-            shade: [0.3, '#000'],
-            offset: "30%"
-        });
+        var layerLoad = parentLayerLoad();
+//        var layerLoad = parent.layer.load(1, {
+//            shade: [0.3, '#000'],
+//            offset: "30%"
+//        });
         var id = $(".id").val();
         $.ajax({
             type: "post",
@@ -61,7 +64,8 @@
             },
             dataType: "json",
             success: function (data) {
-                parent.layer.close(layerLoad);
+                parentCloseAll();
+//                parent.layer.close(layerLoad);
                 if (data.result == true) {
                     parent.location.href = "/mPresale/to_deposit.do";
                 } else {// 编辑失败
@@ -74,7 +78,8 @@
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parent.layer.close(layerLoad);
+                parentCloseAll();
+//                parent.layer.close(layerLoad);
                 alert("退定金金失败，请稍后重试");
                 return;
             }
