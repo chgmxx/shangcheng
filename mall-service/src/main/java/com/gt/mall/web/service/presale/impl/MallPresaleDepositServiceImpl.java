@@ -4,11 +4,15 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.params.PaySuccessBo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.*;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.presale.*;
+import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
@@ -93,12 +97,10 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     /**
      * 定金支付成功的回调函数
      */
-    @SuppressWarnings( "deprecation" )
     @Override
     public int paySuccessPresale( Map< String,Object > params ) {
 	int num = 0;
 	String aucNo = params.get( "out_trade_no" ).toString();
-
 	//根据返回的定金单号来查询竞拍定金
 	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( aucNo );
 	if ( deposit != null ) {
@@ -113,10 +115,6 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    dep.setPayTime( new Date() );
 	    num = mallPresaleDepositDAO.updateById( dep );
 	    if ( num > 0 ) {
-		if ( deposit.getPayWay().toString().equals( "2" ) ) {
-		    //添加总的消费记录   暂不加记录
-		    //addUserConsume(deposit);
-		}
 		diffInvNum( deposit );//从redis扣除商品库存
 		Map< String,Object > maps = new HashMap< String,Object >();
 		maps.put( "presaleId", deposit.getPresaleId() );
@@ -158,9 +156,47 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		    }
 
 		}
+
+		//储值卡支付
+		if ( deposit.getPayWay() == 2 && num > 0 ) {
+		    num = petCartPay( deposit );
+		}
 	    }
 	}
 	return num;
+    }
+
+    /**
+     * 储值卡支付
+     */
+    private int petCartPay( MallPresaleDeposit deposit ) {
+	PaySuccessBo sucess = new PaySuccessBo();
+	sucess.setMemberId( deposit.getUserId() );//会员id
+	MallStore store = mallStoreDAO.selectById( deposit.getShopId() );
+	sucess.setStoreId( store.getWxShopId() );//门店id
+	sucess.setOrderCode( deposit.getOrderNo() );//订单号
+	sucess.setTotalMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );//原价
+	sucess.setDiscountMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );//折扣后金额
+	sucess.setPay( CommonUtil.toDouble( deposit.getDepositMoney() ) );//支付金额
+	int payType = 1;//微信支付
+	if(deposit.getPayWay() == 2){
+	    payType = 5;//储值卡支付
+	}
+	sucess.setPayType( payType );//支付方式
+	sucess.setUcType( 101 );//消费方式 对应字典表 1197
+	sucess.setDelay( -1 );//不赠送物品
+	sucess.setUcTable( "t_mall_presale_deposit" );
+	sucess.setDataSource( deposit.getBuyerUserType()  );
+	//支付
+	Map< String,Object > resultMap = memberService.paySuccess( sucess );
+	int code = CommonUtil.toInteger( resultMap.get( "code" ) );
+	if ( code == 1) {//支付成功
+	    return 1;
+	}else if(code == 5006){//储值卡金额不够
+	    return -2;
+	} else {//支付失败
+	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
+	}
     }
 
     /**
@@ -175,7 +211,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	if ( CommonUtil.isNotEmpty( dep.getProSpecificaIds() ) ) {
 	    specificas = dep.getProSpecificaIds();
 	}
-	//查询秒杀商品的库存
+	//查询预售商品的库存
 	Integer invNum = 0;
 	String value = JedisUtil.maoget( invKey, field );
 	if ( CommonUtil.isNotEmpty( value ) ) {
@@ -208,86 +244,21 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    JedisUtil.map( invKey, field, specObj.toString() );
 	}
     }
-	/*private void addUserConsume(MallPresaleDeposit deposit){
-		WxPublicUsers pbUser = mallOrderDao.getWpUser(deposit.getUserId());
-
-
-		UserConsume consume =  new UserConsume();
-
-		int memType = 0;//会员类型
-		if(memberPayService.isMemember(deposit.getUserId())){//是否为会员
-			memType = memberPayService.isCardType(deposit.getUserId());
-		}
-		int uctype = 6;//游客消费
-		if(memType == 1){
-			uctype = 0;//积分卡消费
-		}else if(memType == 2){
-			uctype = 2;//折扣卡消费
-		}else if(memType == 3){
-			uctype = 1;//储值卡消费
-		}else if(memType == 4){//时效卡
-			uctype = 8;
-		}else if(memType == 5){//次卡
-			uctype = 3;
-		}
-
-
-		Store store = mallStoreDao.selectByPrimaryKey(deposit.getShopId());
-		if(store != null){
-			consume.setStoreid(store.getWxShopId());//(店铺Id 改为微信门店id
-		}
-
-		consume.setPublicId(pbUser.getId());//公众号id
-		if(pbUser.getMchId() != null && !pbUser.getMchId().equals("")){
-			consume.setBususerid(Integer.parseInt(pbUser.getMchId()));//商户id
-		}
-		Card card = memberPayService.findCardByMemberId(deposit.getUserId());
-		if(card != null){
-			consume.setMcid(card.getMcId());
-			consume.setGtId(card.getGtId());
-			consume.setCtid(card.getCtId());
-		}
-		consume.setTotalmoney(Double.parseDouble(deposit.getDepositMoney().toString()));//订单原价（折扣前的价格总价）
-		consume.setRecordtype(Byte.valueOf("2"));//记录类型 2消费记录
-
-		consume.setModuletype(Byte.valueOf("0"));//模块类型 0 商城
-
-		consume.setMemberid(deposit.getUserId());//买家id
-		consume.setDiscount(100);//折扣数
-		consume.setFreightmoney(Double.parseDouble("0"));//运费
-		consume.setUctype(Byte.valueOf(uctype+""));//消费类型
-		consume.setDiscountmoney(Double.parseDouble(deposit.getDepositMoney().toString()));//实付订单金额
-		consume.setOrderid(deposit.getId());//总订单id
-		int payWay = CommonUtil.toInteger(deposit.getPayWay());//支付方式
-		if(payWay == 1){//微信支付
-			payWay = 1;
-		}else if(payWay == 2){//储值卡支付
-			payWay = 5;
-		}else if(payWay == 3){//支付宝支付
-			payWay = 0;
-		}
-
-		consume.setUctable("t_mall_presale_deposit");//订单表名
-		consume.setCreatedate(new Date());//创建时间
-		consume.setPaymenttype(Byte.valueOf(payWay+""));//支付方式
-		consume.setPaystatus(Byte.valueOf("1"));//支付状态 1 已支付
-		consume.setOrdercode(deposit.getDepositNo());//订单编号
-		//添加退款记录
-		consumeMapper.insertSelective(consume);
-	}*/
 
     /**
      * 交纳定金成功
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public Map< String,Object > addDeposit( Map< String,Object > params, String memberId ) {
+    public Map< String,Object > addDeposit( Map< String,Object > params, String memberId ,Integer browser ) {
 	Map< String,Object > result = new HashMap< String,Object >();
 
 	MallPresaleDeposit deposit = (MallPresaleDeposit) JSONObject.toBean( JSONObject.fromObject( params.get( "presale" ) ), MallPresaleDeposit.class );
 	deposit.setUserId( CommonUtil.toInteger( memberId ) );
 	deposit.setIsSubmit( 0 );
 	MallPresaleDeposit dep = mallPresaleDepositDAO.selectByDeposit( deposit );
+
+	deposit.setBuyerUserType( browser );
 
 	String depNo = "YSH" + System.currentTimeMillis();
 
@@ -329,7 +300,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	return result;
     }
 
-    public Map< String,Object > isInvNum( MallPresaleDeposit dep ) {
+    private Map< String,Object > isInvNum( MallPresaleDeposit dep ) {
 	Map< String,Object > result = new HashMap<>();
 	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
 	String specificas = "";

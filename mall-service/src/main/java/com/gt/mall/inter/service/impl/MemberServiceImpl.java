@@ -208,6 +208,17 @@ public class MemberServiceImpl implements MemberService {
 	return 0;
     }
 
+    @Override
+    public Map findGradeType( int memberId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/member/findGradeType" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+	}
+	return null;
+    }
+
     /**
      * 会员计算 （还未调试）
      *

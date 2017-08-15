@@ -7,6 +7,7 @@ import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.presale.MallPresaleDepositDAO;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PropertiesUtil;
@@ -48,6 +49,8 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
     private MallPresaleDepositDAO     mallPresaleDepositDAO;
     @Autowired
     private MallPaySetService         mallPaySetService;
+    @Autowired
+    private MemberService             memberService;
 
     /**
      * 获取店铺下所有的预售（手机）
@@ -227,12 +230,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 		guige = pageService.productSpecifications( proId, invId + "" );
 	    }
 
-	    int memType = 0;
-	    //todo memPayService.isMemember
-	   /* if ( memPayService.isMemember( member.getId() ) ) {//是否为会员
-	   	//todo memPayService.isCardType
-		memType = memPayService.isCardType( member.getId() );
-	    }*/
+	    int memType = memberService.isCardType( member.getId() );
 	    request.setAttribute( "memType", memType );
 	    request.setAttribute( "memberId", member.getId() );
 	    request.setAttribute( "guige", guige );
@@ -286,9 +284,13 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( param.get( "userId" ) ) ) {
 		memberId = param.get( "userId" ).toString();
 	    }
+	    Integer browser = CommonUtil.judgeBrowser( request );
+	    if ( browser != 1 ) {//UC浏览器
+		browser = 2;
+	    }
 
 	    if ( param != null ) {
-		result = mallPresaleDepositService.addDeposit( param, memberId );
+		result = mallPresaleDepositService.addDeposit( param, memberId, browser );
 	    }
 	    result.put( "busId", member.getBusid() );
 	} catch ( Exception e ) {
@@ -329,23 +331,18 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 		return returnUrl;
 	    }
 	    String memberId = member.getId().toString();
-			/*String memberId = "200";*/
 
 	    Integer payWay = CommonUtil.toInteger( params.get( "payWay" ) );
 
-	    Map< String,Object > payRresult = new HashMap< String,Object >();
+	    Map< String,Object > payRresult = new HashMap<>();
 	    double orderMoney = Double.parseDouble( params.get( "orderMoney" ).toString() );
 
 	    if ( payWay == 2 ) {//储蓄卡支付方式
-		//todo memberpayService
-		//payRresult = memberpayService.storePay( Integer.parseInt( memberId ), orderMoney );
-		String result = payRresult.get( "result" ).toString();
-		if ( result.equals( "2" ) ) {
-		    params.put( "out_trade_no", params.get( "no" ) );
+		params.put( "out_trade_no", params.get( "no" ) );
 
-		    mallPresaleDepositService.paySuccessPresale( params );
-		} else if ( result.equals( "1" ) && payWay != 4 ) {
-		    return "redirect:/phoneMemberController/79B4DE7C/recharge.do?id=" + memberId;
+		int num = mallPresaleDepositService.paySuccessPresale( params );
+		if ( num == -2 ) {//储值卡金额不够，跳转到充值页面
+		   /* return "redirect:/phoneMemberController/79B4DE7C/recharge.do?id=" + memberId;*/
 		}
 	    }
 	} catch ( Exception e ) {
@@ -371,7 +368,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
     public void messageRemind( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) {
 	logger.info( "预售提醒controller" );
 	PrintWriter out = null;
-	Map< String,Object > result = new HashMap< String,Object >();
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    out = response.getWriter();
 

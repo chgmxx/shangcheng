@@ -8,7 +8,7 @@ package com.gt.mall.enums;
  */
 public enum ResponseEnums {
     SUCCESS( 1, "成功" ),
-    ERROR( -1, "错误" ),
+    ERROR( -1, "请求失败" ),
     NEED_LOGIN( 1001, "需要登录" ),
     AUTHENTICATION( 10, "非法认证" ),
     JWT_TOKEN_EXPIRED( 11, "TOKEN失效" ),

@@ -31,7 +31,7 @@ public interface MallPresaleDepositService extends BaseService< MallPresaleDepos
     /**
      * 交纳保证金
      */
-    Map<String, Object> addDeposit(Map<String, Object> params,String memberId);
+    Map<String, Object> addDeposit(Map<String, Object> params,String memberId,Integer browser);
 
     /**
      * 根据用户id查询我的所有的保证金

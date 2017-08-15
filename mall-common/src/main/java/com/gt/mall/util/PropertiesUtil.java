@@ -64,17 +64,17 @@ public class PropertiesUtil {
 	PropertiesUtil.homeUrl = homeUrl;
     }
 
-    @Value( "${web.jxcUrl}" )
+    @Value( "${http.jxc.domain}" )
     public void setJxcUrl( String jxcUrl ) {
 	PropertiesUtil.jxcUrl = jxcUrl;
     }
 
-    @Value( "${web.jxcAccount}" )
+    @Value( "${http.jxc.account}" )
     public void setJxcAccount( String jxcAccount ) {
 	PropertiesUtil.jxcAccount = jxcAccount;
     }
 
-    @Value( "${web.jxcPwd}" )
+    @Value( "${http.jxc.pwx}" )
     public void setJxcPwd( String jxcPwd ) {
 	PropertiesUtil.jxcPwd = jxcPwd;
     }
@@ -144,7 +144,7 @@ public class PropertiesUtil {
 	PropertiesUtil.queueName = queueName;
     }
 
-    @Value( "${web.wxmp.domain}" )
+    @Value( "${http.wxmp.domain}" )
     public void setWxmpDomain( String wxmpDomain ) {
 	PropertiesUtil.wxmpDomain = wxmpDomain;
     }

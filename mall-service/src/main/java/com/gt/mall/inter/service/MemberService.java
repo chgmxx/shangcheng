@@ -104,6 +104,13 @@ public interface MemberService {
     public Integer isCardType(int memberId);
 
     /**
+     * 查询会员卡片名称
+     * @param memberId 会员id
+     * @return 会员名称
+     */
+    public Map findGradeType(int memberId);
+
+    /**
      * 会员计算 （还未调试）
      *
      * @param mallAllEntity 对象

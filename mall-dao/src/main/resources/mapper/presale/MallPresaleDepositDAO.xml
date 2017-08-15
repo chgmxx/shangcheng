@@ -23,6 +23,7 @@
         <result column="create_time" property="createTime"/>
         <result column="is_submit" property="isSubmit"/>
         <result column="pro_num" property="proNum"/>
+        <result column="buyer_user_type" property="buyerUserType" />
     </resultMap>
 
     <resultMap id="pageResultMap" type="com.gt.mall.entity.presale.MallPresaleDeposit">
@@ -47,6 +48,7 @@
         <result column="pro_num" property="proNum" jdbcType="INTEGER" />
         <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
         <result column="presaleStatus" property="presaleStatus" jdbcType="INTEGER"/>
+        <result column="buyer_user_type" property="buyerUserType" />
     </resultMap>
     <resultMap id="depositMap" type="com.gt.mall.entity.presale.MallPresaleDeposit">
         <id column="id" property="id" jdbcType="INTEGER" />
@@ -69,20 +71,21 @@
         <result column="is_submit" property="isSubmit" jdbcType="TINYINT" />
         <result column="shop_id" property="shopId" jdbcType="INTEGER" />
         <result column="pro_num" property="proNum" jdbcType="INTEGER" />
+        <result column="buyer_user_type" property="buyerUserType" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, presale_id , product_id , pro_specifica_ids , pro_name , pro_img_url , deposit_no ,
         deposit_money , order_money , deposit_status , pay_way , pay_time , pay_no , return_no ,
-        return_time, user_id , create_time , is_submit , pro_num
+        return_time, user_id , create_time , is_submit , pro_num, buyer_user_type
     </sql>
 
     <sql id="page_Column_List">
         g.id, g.presale_id, g.product_id, pro_specifica_ids, g.pro_name, pro_img_url, deposit_no,
         deposit_money, g.order_money, g.deposit_status, g.pay_way, g.pay_time, g.pay_no, g.return_no,
         return_time, g.user_id, /*IF(ws.business_name IS NOT NULL ,ws.business_name, s.sto_name) AS shopName,*/is_submit,
-        g.pro_num,(SELECT order_no FROM t_mall_order WHERE order_type = 6 AND group_buy_id=g.`presale_id` AND buyer_user_id=g.`user_id` LIMIT 1) AS order_no,
+        g.pro_num, g.buyer_user_type,(SELECT order_no FROM t_mall_order WHERE order_type = 6 AND group_buy_id=g.`presale_id` AND buyer_user_id=g.`user_id` LIMIT 1) AS order_no,
         case
         when a.is_use = -1 then -2<!--已失效  -->
         when a.sale_start_time > now() and   a.sale_end_time > now() then 0<!--未开始  -->
@@ -94,7 +97,7 @@
         d.id, presale_id, d.product_id, pro_specifica_ids, pro_name, pro_img_url, deposit_no,
         deposit_money, order_money, deposit_status, pay_way, pay_time, pay_no, return_no,
         return_time, d.user_id, d.create_time,p.shop_id as shopId,is_submit,
-        d.pro_num
+        d.pro_num , buyer_user_type
     </sql>
 
     <!-- 统计定金 -->

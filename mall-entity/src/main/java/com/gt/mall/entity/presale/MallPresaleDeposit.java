@@ -124,22 +124,28 @@ public class MallPresaleDeposit extends Model< MallPresaleDeposit > {
     @TableField( "pro_num" )
     private Integer    proNum;
 
-    @TableField(exist = false)
+    /**
+     * 买家 数据来源 0:pc端 1:微信 2:uc端 3:小程序
+     */
+    @TableField( "buyer_user_type" )
+    private Integer buyerUserType;
+
+    @TableField( exist = false )
     private String shopName;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer shopId;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int invId;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String orderNo;
 
-    @TableField(exist = false)
-    private List<String> oldUserIdList;
+    @TableField( exist = false )
+    private List< String > oldUserIdList;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int presaleStatus;
 
     @Override

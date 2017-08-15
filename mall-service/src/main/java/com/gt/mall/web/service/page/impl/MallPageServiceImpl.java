@@ -1734,14 +1734,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			map.put( "spec", spec.toString() );
 		    }
 		}
-		/*if ( CommonUtil.isNotEmpty( params.get( "isMemberType" ) ) ) {
-		    //查询用户类型
-		    //todo 调用彭江丽的接口 根据用户id查询用户的会员卡名称
-		    GradeType gradeType = memberPayService.findGradeType( CommonUtil.toInteger( map.get( "user_id" ) ) );//会员卡名称
-		    if ( CommonUtil.isNotEmpty( gradeType ) ) {
-			map.put( "gradeTypeName", gradeType.getGtName() );
-		    }
-		}*/
+		Map gradeMap = memberService.findGradeType( CommonUtil.toInteger( map.get( "user_id" ) ) );//查询会员卡片名称
+		if ( CommonUtil.isNotEmpty( gradeMap ) ) {
+		    map.put( "gradeTypeName", gradeMap.get( "gtName" ) );
+		}
 		if ( CommonUtil.isNotEmpty( params.get( "isReply" ) ) && map.get( "is_rep" ).toString().equals( "1" ) ) {
 		    //查询回复内容
 		    Map< String,Object > replyMap = new HashMap<>();
@@ -1764,36 +1760,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public List< Map< String,Object > > getProductCollectByMemberId( Member member, double discount ) {
-	/*String sql = "SELECT c.id as cId,a.id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,d.specifica_img_id,e.specifica_img_url,d.inv_num,d.inv_price,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label "
-			+ " from t_mall_collect c  "
-			+ " left join t_mall_product a on a.id=c.product_id  "
-			+ "	LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id "
-			+ " LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id "
-			+ " LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id "
-			+ " WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and c.is_delete=0 and c.is_collect=1 ";
-	if ( CommonUtil.isNotEmpty( member.getOldid() ) ) {
-	    if ( !member.getOldid().equals( "0" ) ) {
-		sql += " and ( ";
-		int i = 0;
-		for ( String oldMemberId : member.getOldid().split( "," ) ) {
-		    if ( CommonUtil.isNotEmpty( oldMemberId ) ) {
-			if ( i > 0 ) {
-			    sql += " or ";
-			}
-			sql += " c.user_id=" + oldMemberId + " ";
-			i++;
-		    }
-
-		}
-		sql += " ) ";
-	    } else {
-		sql += " and c.user_id=" + member.getId();
-	    }
-	} else {
-	    sql += " and c.user_id=" + member.getId();
-	}
-	sql += " order by c.create_time desc ";*/
-
 	List< Map< String,Object > > xlist = new ArrayList<>();
 	Map< String,Object > params = new HashMap<>();
 	List< Integer > memberList = memberService.findMemberListByIds( member.getId() );

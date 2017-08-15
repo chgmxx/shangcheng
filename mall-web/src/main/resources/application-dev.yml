@@ -72,21 +72,10 @@ server:
 
 ######################## 开发环境配置 ########################
 web:
- #主域名
- wxmp:
-  domain: http://chen.example.com:8070/
  #域名
- domain: mall.example.com:8080
+ domain: mall.yifriend.net:8080
  #网页访问路径
- homeUrl: http://mall.example.com:8080/
- #进销存 地址
- jxcUrl: http://jxc.duofee.com/jxc/
- #进销存token用户名
- jxcAccount: e_shop
- #进销存token密码
- jxcPwd: shop12345
-
-
+ homeUrl: http://mall.yifriend.net:8080/
 
 ####图片资源ftp 配置
 static:
@@ -103,7 +92,7 @@ static:
 #访问文章资源URL
 article:
  url:
-  prefix: http://mall.example.com:8080/
+  prefix: http://mall.yifriend.net:8080/
 #访问资源URL
 resource:
  url:
@@ -133,7 +122,18 @@ redisSession:
  cookieName: DTL_SESSION_ID
 
 http:
+ #总项目请求地址
+ wxmp:
+  domain: http://wxmp.yifriend.net:8070/
  #会员key 和 请求地址
  member:
   domain: http://113.106.202.53:13885/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
+ #进销存的请求地址、token 用户名  和token密码
+ jxc:
+  #进销存 地址
+  domain: http://jxc.duofee.com/jxc/
+  #进销存token用户名
+  account: e_shop
+  #进销存token密码
+  pwx: shop12345

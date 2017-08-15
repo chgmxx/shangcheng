@@ -737,7 +737,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map< String,Object > mapmessage = mallPageService.querySelct( id );//获取商品信息
 	    Map< String,Object > mapuser = mallPageService.selUser( shopid );//查询商家信息
-	    //TODO 根据门店id查询门店信息  wxShopService.getShopById()
+	    //TODO 调用小屁孩接口   根据门店id查询门店信息  wxShopService.getShopById()
 	    /*WsWxShopInfo shop = null;//wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
 	    if ( shop != null ) {//商家地址显示
 		Map< String,Object > province = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getProvince() ) );

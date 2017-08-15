@@ -102,21 +102,21 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @Autowired
     private MallDaifuDAO                mallDaifuDAO;
     @Autowired
-    private MallPresaleService       mallPresaleService;
+    private MallPresaleService          mallPresaleService;
     @Autowired
-    private MallSellerService        mallSellerService;
+    private MallSellerService           mallSellerService;
     @Autowired
-    private MallSellerMallsetService mallSellerMallsetService;
+    private MallSellerMallsetService    mallSellerMallsetService;
     @Autowired
-    private MallPaySetService        mallPaySetService;
+    private MallPaySetService           mallPaySetService;
     @Autowired
-    private MallGroupJoinDAO         mallGroupJoinDAO;
+    private MallGroupJoinDAO            mallGroupJoinDAO;
     @Autowired
-    private MallFreightDAO           mallFreightDAO;
+    private MallFreightDAO              mallFreightDAO;
     @Autowired
-    private MallShopCartService      mallShopCartService;
+    private MallShopCartService         mallShopCartService;
     @Autowired
-    private MemberService            memberService;
+    private MemberService               memberService;
 
     /**
      * 跳转至提交订单页面
@@ -222,14 +222,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    request.setAttribute( "loginCity", loginCity );
 
-	    int memType = 0;
-	    /*if ( CommonUtil.isNotEmpty( member ) ) {
-	    	//todo 彭江丽接口 memPayService.isMemember
-		if ( memPayService.isMemember( member.getId() ) ) {//是否为会员
-		//todo 彭江丽接口  memPayService.isCardType
-		    memType = memPayService.isCardType( member.getId() );
-		}
-	    }*/
+	    int memType = memberService.isCardType( member.getId() );
 	    Object dataObj = request.getSession().getAttribute( "dataOrder" );
 	    Object addTypeObj = request.getSession().getAttribute( "addressType" );
 	    Object deliveryMethodObj = request.getSession().getAttribute( "deliveryMethod" );
@@ -500,7 +493,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		JSONObject details = JSONObject.fromObject( arr.get( 0 ) );
 		if ( CommonUtil.isNotEmpty( details.get( "pro_type_id" ) ) ) {
 		    if ( details.get( "pro_type_id" ).toString().equals( "2" ) ) {//虚拟物品（会员卡）
-			//todo memPayService.findBuyCard
+			result.put( "result", false );
+			flag = false;
 			/*Map< String,Object > cardResult = memPayService.findBuyCard( member );//购买会员卡
 						*//*cardResult.put("code", 1);*//*//测试用
 			if ( cardResult.get( "code" ).equals( "-1" ) || cardResult.get( "code" ).equals( "-2" ) ) {//-1购买成功，跳转完善资料链接，-2已购买会员卡
@@ -521,22 +515,22 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    request.getSession().setAttribute( "deliveryMethod", params.get( "deliveryMethod" ) );
 	    //判断是否用积分抵扣来兑换商品
-			/*if(flag){
-				if(orderPayWay == 4){//积分支付
-					Integer mIntergral = member.getIntegral();
-					if (mIntergral < orderMoney || mIntergral < 0) {
-						result.put("result", false);
-						result.put("msg", "您的积分不够，不能用积分来兑换这件商品");
-					}
-				}
-				if(orderPayWay == 8){//粉币支付
-					double fenbi = member.getFansCurrency();
-					if (fenbi < orderMoney || fenbi < 0) {
-						result.put("result", false);
-						result.put("msg", "您的粉币不够，不能用粉币来兑换这件商品");
-					}
-				}
-			}*/
+	    /*if(flag){
+		    if(orderPayWay == 4){//积分支付
+			    Integer mIntergral = member.getIntegral();
+			    if (mIntergral < orderMoney || mIntergral < 0) {
+				    result.put("result", false);
+				    result.put("msg", "您的积分不够，不能用积分来兑换这件商品");
+			    }
+		    }
+		    if(orderPayWay == 8){//粉币支付
+			    double fenbi = member.getFansCurrency();
+			    if (fenbi < orderMoney || fenbi < 0) {
+				    result.put("result", false);
+				    result.put("msg", "您的粉币不够，不能用粉币来兑换这件商品");
+			    }
+		    }
+	    }*/
 	    int memberId = 0;
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		memberId = member.getId();
@@ -1547,7 +1541,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 				}
 			}*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    String returnUrl = userLogin( request, response,  loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
