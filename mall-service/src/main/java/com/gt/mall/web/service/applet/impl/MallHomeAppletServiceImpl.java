@@ -96,7 +96,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     @Autowired
     private MallOrderService            orderService;
     @Autowired
-    private MemberService memberService;
+    private MemberService               memberService;
 
     @Override
     public List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > params ) {
@@ -155,7 +155,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	/*int memberId = 0;*/
 	double discount = 1;//商品折扣
 	/*if(CommonUtil.isNotEmpty(params.get("memberId"))){
-            memberId = CommonUtil.toInteger(params.get("memberId"));
+	    memberId = CommonUtil.toInteger(params.get("memberId"));
 		}
 		//计算会员价
 		if(memberId > 0){
@@ -229,7 +229,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	if ( price > 0 ) {
 	    String proPrice = df.format( price );
-            /*if(discount > 0){
+	    /*if(discount > 0){
                 double memberProPrice = CommonUtil.toDouble(df.format(price*discount));
 			}*/
 	    proMap.put( "pro_price", proPrice );
@@ -334,7 +334,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( CommonUtil.isNotEmpty( product.getProCostPrice() ) ) {
 	    proCostPrice = CommonUtil.toDouble( product.getProCostPrice() );
 	}
-	Member member =  memberService.findMemberById(CommonUtil.toInteger(params.get("memberId")),null);
+	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	//TODO 需关连dictService 查询主帐号方法
 	//        int userPId = dictService.pidUserId(member.getBusid());//通过用户名查询主账号id
 	//TODO 需关连erpLoginOrMenusService 判断商家有无进销存方法
@@ -441,13 +441,12 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    Map< String,Object > addressParams = new HashMap< String,Object >();
-	    //TODO  memberPayService.findMemberIds查询会员信息方法
-	    //            List<Integer> memberList = memberPayService.findMemberIds(member.getId());//查询会员信息
-	    //            if(memberList != null && memberList.size() > 0){
-	    //                addressParams.put("oldMemberIds", memberList);
-	    //            }else{
-	    //                addressParams.put("memberId", member.getId());
-	    //            }
+	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
+	    if ( memberList != null && memberList.size() > 0 ) {
+		addressParams.put( "oldMemberIds", memberList );
+	    } else {
+		addressParams.put( "memberId", member.getId() );
+	    }
 	    addressParams.put( "memDefault", 1 );
 	    addressList = orderService.selectShipAddress( addressParams );//获取默认地址
 	}
@@ -512,9 +511,8 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	productMap.put( "paramList", paramList );
 
 	//查询用户id
-	//TODO 需关连 memberPayService.findMemberIds();查询会员信息
-	//        List<Integer> memberList = memberPayService.findMemberIds(member.getId());//查询会员信息
-	//        params.put("memberList", memberList);
+	List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
+	params.put( "memberList", memberList );
 
 	//查询购物车的数量
 	params.put( "type", 0 );
@@ -658,7 +656,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     public Map< String,Object > getMemberPage( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	Member member =  memberService.findMemberById(memberId,null);
+	Member member = memberService.findMemberById( memberId, null );
 	resultMap.put( "member_name", member.getNickname() );
 	resultMap.put( "head_image", member.getHeadimgurl() );
 	resultMap.put( "telephone", member.getPhone() );

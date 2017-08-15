@@ -80,7 +80,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	Member member = memberService.findMemberById(memberId,null);
+	Member member = memberService.findMemberById( memberId, null );
 	int from = 1;
 	if ( CommonUtil.isNotEmpty( params.get( "from" ) ) ) {
 	    from = CommonUtil.toInteger( params.get( "from" ) );
@@ -89,9 +89,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	//查询用户默认的地址
 	Map< String,Object > addressParams = new HashMap< String,Object >();
 	Map< String,Object > addressMap = new HashMap< String,Object >();//保存默认地址信息
-	//TODO 需关连 查询会员信息 memberPayService.findMemberIds(）方法
-	List< Integer > memberList = null;
-	//                memberPayService.findMemberIds(memberId);//查询会员信息
+	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	if ( memberList != null && memberList.size() > 0 ) {
 	    addressParams.put( "oldMemberIds", memberList );
 	} else {
@@ -499,10 +497,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	int memType = 0;
 	if ( CommonUtil.isNotEmpty( member ) ) {
-	    //TODO 需关连 会员 memberPayService isCardType()方法
-	    if ( memberService.isMember( member.getId() ) ) {//是否为会员
-		//                memType = memberPayService.isCardType(member.getId());
-	    }
+	    memType = memberService.isCardType( member.getId() );
 	}
 	if ( memType == 3 ) {
 	    resultMap.put( "isChuzhiCard", 1 );//是否是流量充值商品   1是  0 不是
@@ -740,7 +735,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    return resultMap;
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	Member member = memberService.findMemberById(memberId,null);
+	Member member = memberService.findMemberById( memberId, null );
 	//判断库存
 	List< MallOrder > orderList = new ArrayList<>();
 
@@ -1784,7 +1779,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    return resultMap;
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	Member member =   memberService.findMemberById(memberId,null);
+	Member member = memberService.findMemberById( memberId, null );
 	//TODO 需关连 wxPublicUsersMapper 微信订阅号用户信息
 	WxPublicUsers wxPublicUsers = null;
 	//                wxPublicUsersMapper.selectByUserId(member.getBusid());
@@ -1793,11 +1788,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	List< MallOrder > orderList = new ArrayList<>();
 	double totalPrimary = 0;
 
-	int memType = 0;
-	//TODO 需关连 memberPayService。isCardType()方法
-	        if(memberService.isMember(member.getId())){//是否为会员
-	//            memType = memberPayService.isCardType(member.getId());
-	        }
+	int memType = memberService.isCardType( member.getId() );
+
 	Map< String,Object > countMap = getIntegralFenbi( member );
 	params.putAll( countMap );
 	Map< String,Object > proMap = new HashMap< String,Object >();
@@ -1926,13 +1918,13 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    orderFreightMoney = CommonUtil.toDouble( df.format( orderFreightMoney ) );
 	}
 	if ( orderPayWay == 3 && code > 0 ) {//储值卡支付，判断储值卡余额是否足够
-//	    boolean flag =  memberService.isAdequateMoney(member.getId(), orderTotalMoney);
-//	    if ( !flag ) {
-//		code = -1;
-//		msg = "您的储值卡余额不足";
-//	    }
-	    Map< String,Object > moneyMap=memberService.isAdequateMoney(member.getId(), orderTotalMoney);
-	    if ( !moneyMap.get("code" ).equals( "1" ) ){//失败
+	    //	    boolean flag =  memberService.isAdequateMoney(member.getId(), orderTotalMoney);
+	    //	    if ( !flag ) {
+	    //		code = -1;
+	    //		msg = "您的储值卡余额不足";
+	    //	    }
+	    Map< String,Object > moneyMap = memberService.isAdequateMoney( member.getId(), orderTotalMoney );
+	    if ( !moneyMap.get( "code" ).equals( "1" ) ) {//失败
 		code = -1;
 		msg = "您的储值卡余额不足";
 	    }

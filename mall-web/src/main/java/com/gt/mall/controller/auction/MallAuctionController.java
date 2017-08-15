@@ -673,11 +673,8 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		guige = pageService.productSpecifications( proId, invId + "" );
 	    }
 
-	    int memType = 0;
-	    //TODO 需关连 memPayService.isCardType()方法
-	    if ( memberService.isMember( member.getId() ) ) {//是否为会员
-		//		memType = memPayService.isCardType(member.getId());
-	    }
+	    int memType = memberService.isCardType( member.getId() );
+
 	    int isWxPay = 0;//不能微信支付
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicUserid ) ) ) {

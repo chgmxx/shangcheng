@@ -69,7 +69,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     @Autowired
     private MallProductSpecificaService productSpecificaService;
     @Autowired
-    private MemberService memberService;
+    private MemberService               memberService;
 
     @Override
     public PageUtil selectIntegralByUserId( Map< String,Object > params ) {
@@ -242,11 +242,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	}
 	int proTypeId = product.getProTypeId();
 
-	int memType = 0;
-	//TODO 需关连memberPayService   isCardType()方法
-	        if(memberService.isMember(member.getId())){//是否为会员
-	//            memType = memberPayService.isCardType(member.getId());
-	        }
+	int memType = memberService.isCardType( member.getId() );
 	if ( orderPayWay == 4 ) {//积分支付
 	    Integer mIntergral = member.getIntegral();
 	    if ( mIntergral < totalPrice || mIntergral < 0 ) {
@@ -256,7 +252,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    }
 	}
 	/*if(orderPayWay == 8){//粉币支付
-            double fenbi = member.getFansCurrency();
+	    double fenbi = member.getFansCurrency();
 			if (fenbi < totalPrice || fenbi < 0) {
 				resultMap.put("code", -1);
 				resultMap.put("msg", "您的粉币不够，不能用粉币来兑换这件商品");

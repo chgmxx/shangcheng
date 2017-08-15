@@ -82,11 +82,11 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     @Autowired
     private MallPaySetService           paySetService;
     @Autowired
-    private MemberService memberService;
+    private MemberService               memberService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
-	List< Integer > memberList =   memberService.findMemberListByIds(CommonUtil.toInteger(params.get("memberId")));//查询会员信息
+	List< Integer > memberList = memberService.findMemberListByIds( CommonUtil.toInteger( params.get( "memberId" ) ) );//查询会员信息
 	if ( memberList != null && memberList.size() > 0 ) {
 	    params.put( "oldMemberIds", memberList );
 	}
@@ -165,7 +165,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		cardReceiveId = CommonUtil.toInteger( dObj.get( "cardReceiveId" ) );
 	    }
 	    /*if(buy != null){
-                Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<String, Object>();
 				params.put("orderId", orderMap.get("id"));
 				params.put("orderDetailId", dObj.get("id"));
 				params.put("groupBuyId", buy.getId());
@@ -190,7 +190,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		//url = "/mallApplet/79B4DE7C/phoneProduct.do?rType=2&productId="+productId+"&shopId="+shopId;
 		proUnit = "粉币";
 	    }
-            /*if(orderType.equals("4")){// 拍卖的商品，直接跳转到拍卖详情
+	    /*if(orderType.equals("4")){// 拍卖的商品，直接跳转到拍卖详情
 				url = "/mallApplet/79B4DE7C/auctiondetail.do?productId="+productId+"&shopId="+shopId+"&auctionId="+orderMap.get("groupBuyId");
 			}else if(CommonUtil.isNotEmpty(dObj.get("saleMemberId")) && !orderType.equals("4")){
 				int saleMemberId = CommonUtil.toInteger(dObj.get("saleMemberId"));
@@ -644,7 +644,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    msg = "去支付失败";
 	} else {
 	    if ( order.getOrderPayWay() == 10 ) {
-		Member member =  memberService.findMemberById(CommonUtil.toInteger(params.get("memberId")),null);
+		Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 		//TODO 需关连 wxPublicUsersMapper.selectByUserId() 方法
 		WxPublicUsers wxPublicUsers = null;
 		//                        wxPublicUsersMapper.selectByUserId(member.getBusid());
@@ -974,7 +974,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	Member member =  memberService.findMemberById(memberId,null);
+	Member member = memberService.findMemberById( memberId, null );
 	int from = 1;
 	if ( CommonUtil.isNotEmpty( params.get( "from" ) ) ) {
 	    from = CommonUtil.toInteger( params.get( "from" ) );
@@ -983,7 +983,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	//查询用户默认的地址
 	Map< String,Object > addressParams = new HashMap< String,Object >();
 	Map< String,Object > addressMap = new HashMap< String,Object >();//保存默认地址信息
-	List< Integer > memberList =  memberService.findMemberListByIds(memberId);//查询会员信息
+	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	if ( memberList != null && memberList.size() > 0 ) {
 	    addressParams.put( "oldMemberIds", memberList );
 	} else {
@@ -1220,7 +1220,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 
-	Member member =  memberService.findMemberById(memberId,null);
+	Member member = memberService.findMemberById( memberId, null );
 	//TODO 用户 wxPublicUsersMapper.selectByUserId
 	WxPublicUsers wxPublicUsers = null;
 	//                wxPublicUsersMapper.selectByUserId(member.getBusid());
@@ -1230,11 +1230,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	List< MallOrder > orderList = new ArrayList<>();
 	BigDecimal totalPrimary = new BigDecimal( 0 );
 
-	int memType = 0;
-	//TODO 会员 memberPayService.isCardType()
-	        if (memberService.isMember(member.getId())) {//是否为会员
-	//            memType = memberPayService.isCardType(member.getId());
-	        }
+	int memType = memberService.isCardType( member.getId() );
 	double orderTotalMoneys = 0;
 	double orderTotalFreightMoney = 0;
 	//判断库存
@@ -1405,7 +1401,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
     @Override
     public Map< Object,Object > appletWxOrder( Map< String,Object > params, String url ) throws Exception {
-	Member member =  memberService.findMemberById(CommonUtil.toInteger(params.get("memberId")),null);
+	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	//TODO 用户 wxPublicUsersMapper.selectByUserId
 	WxPublicUsers wxPublicUsers = null;
 	//                wxPublicUsersMapper.selectByUserId(member.getBusid());
@@ -1444,12 +1440,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    return resultMap;
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	Member member =  memberService.findMemberById(memberId,null);
-	int memType = 0;
-	//TODO 会员 memberPayService.isCardType()
-	        if (memberService.isMember(member.getId())) {//是否为会员
-	//            memType = memberPayService.isCardType(member.getId());
-	        }
+	Member member = memberService.findMemberById( memberId, null );
+	int memType = memberService.isCardType( member.getId() );
 	//判断库存
 	List< MallOrder > orderList = new ArrayList<>();
 	JSONArray orderArray = JSONArray.fromObject( params.get( "order" ) );
