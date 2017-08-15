@@ -2,7 +2,6 @@ package com.gt.mall.controller.purchase;
 
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.SessionUtils;
 import com.gt.mall.web.service.purchase.PurchaseOrderStatisticsService;

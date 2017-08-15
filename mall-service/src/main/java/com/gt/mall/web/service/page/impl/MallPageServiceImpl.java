@@ -33,6 +33,7 @@ import com.gt.mall.entity.product.*;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.inter.service.CardService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionService;
 import com.gt.mall.web.service.basic.MallCollectService;
@@ -598,7 +599,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	Map< String,Object > shopParams = new HashMap<>();
 	if ( member != null ) {
 	    memberId = CommonUtil.toInteger( member.getId() );
-	    //todo 调用彭江丽  根据粉丝id查询会员
+	    //todo 调用彭江丽  根据粉丝id查询会员集合
 	    memberList = new ArrayList<>();//memberPayService.findMemberIds( memberId );//查询会员信息
 	}
 	if ( memberList != null && memberList.size() > 0 ) {
@@ -1447,7 +1448,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public BusUser selUserByMember( Member member ) {
 	if ( CommonUtil.isNotEmpty( member ) ) {
-	    //todo 根据商家id查询商家信息
+	    //todo 根据商家id查询商家信息 busUserMapper.selectByPrimaryKey
 	    BusUser user = new BusUser();// busUserMapper.selectByPrimaryKey( member.getBusid() );
 	    if ( CommonUtil.isNotEmpty( user ) ) {
 		return user;
@@ -2214,9 +2215,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > getCardReceive( int receiveId ) {
-	//todo 调用彭江丽接口   根据卡包查询卡券信息展示 map中key
-	//Map< String,Object > cardMap = duofenCardService.findduofenCardByReceiveId( receiveId );
-	return null;
+	return CardService.findDuofenCardByReceiveId(receiveId);
     }
 
     @Override
@@ -2297,6 +2296,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	url = url.substring( url.indexOf( request.getServletPath() ), url.length() );
 	JedisUtil.set( redisKey, url, 5 * 60 );
 	loginMap.put( "redisKey", redisKey );
+	loginMap.put( "busId",userid );
 	request.setAttribute( "userid", userid );
 	return loginMap;
     }

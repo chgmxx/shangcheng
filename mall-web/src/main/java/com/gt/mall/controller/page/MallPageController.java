@@ -2,12 +2,10 @@ package com.gt.mall.controller.page;
 
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.dao.basic.MallPaySetDAO;
-import com.gt.mall.dao.page.MallPageDAO;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.page.MallPage;
@@ -16,19 +14,16 @@ import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerMallset;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
-import com.gt.mall.web.service.auction.MallAuctionService;
 import com.gt.mall.web.service.basic.MallCollectService;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.freight.MallFreightService;
-import com.gt.mall.web.service.groupbuy.MallGroupBuyService;
 import com.gt.mall.web.service.order.MallOrderService;
 import com.gt.mall.web.service.page.MallPageService;
 import com.gt.mall.web.service.pifa.MallPifaApplyService;
-import com.gt.mall.web.service.presale.MallPresaleService;
 import com.gt.mall.web.service.product.MallProductService;
 import com.gt.mall.web.service.product.MallProductSpecificaService;
-import com.gt.mall.web.service.seckill.MallSeckillService;
 import com.gt.mall.web.service.seller.MallSellerMallsetService;
 import com.gt.mall.web.service.seller.MallSellerService;
 import com.gt.mall.web.service.store.MallStoreService;
@@ -56,30 +51,18 @@ import java.util.*;
  */
 @Controller
 @RequestMapping( "/mallPage" )
-public class MallPageController extends BaseController {
+public class MallPageController extends AuthorizeOrLoginController {
 
     @Autowired
     private MallStoreService            mallStoreService;
     @Autowired
     private MallPageService             mallPageService;
     @Autowired
-    private MallPageDAO                 mallPageDAO;
-    @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
-    @Autowired
-    private MallGroupBuyService         mallGroupBuyService;
     @Autowired
     private MallOrderService            mallOrderService;
     @Autowired
     private MallFreightService          mallFreightService;
-    @Autowired
-    private MallSeckillService          mallSeckillService;
-    @Autowired
-    private MallAuctionService          mallAuctionService;
-    @Autowired
-    private MallPresaleService          mallPresaleService;
-    @Autowired
-    private MallPaySetDAO               mallPaySetDAO;
     @Autowired
     private MallPifaApplyService        mallPifaApplyService;
     @Autowired
@@ -92,8 +75,6 @@ public class MallPageController extends BaseController {
     private MallProductService          mallProductService;
     @Autowired
     private MallProductDAO              mallProductDAO;
-//    @Autowired
-//    private WxShopService               wxShopService;
     @Autowired
     private MallCollectService          mallCollectService;
 
@@ -435,7 +416,7 @@ public class MallPageController extends BaseController {
 
     @RequestMapping( "{id}/79B4DE7C/viewHomepage" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
-    public String ViewHomepage( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws IOException {
+    public String ViewHomepage( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws Exception {
 	int userid = 0;
 	Member member = SessionUtils.getLoginMember( request );
 	MallPage obj = mallPageService.select( id );//根据页面id查询页面信息
@@ -445,11 +426,10 @@ public class MallPageController extends BaseController {
 	}
 	Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	loginMap.put( "uclogin", 1 );
-	//todo 调用彭江丽登陆的方法  userLogin
-	/*String returnUrl = userLogin( request, response, userid, loginMap );
+	String returnUrl = userLogin( request, response, loginMap );
 	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 	    return returnUrl;
-	}*/
+	}
 	sellerService.clearSaleMemberIdByRedis( member, request, userid );
 	mallProductService.clearJifenByRedis( member, request, userid );
 	mallProductService.clearIsShopSession( obj.getPagStoId(), userid, request );
@@ -476,11 +456,10 @@ public class MallPageController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo 调用彭江丽登陆接口： userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    sellerService.clearSaleMemberIdByRedis( member, request, userid );
 
 	    boolean isShop = mallPageService.wxShopIsDelete( obj.getPagStoId() );
@@ -772,11 +751,10 @@ public class MallPageController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo 调用彭江丽接口  userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 
 	    //条件类型
 	    int rType = 0;//0 普通商品 1积分商品 2粉币商品
@@ -823,8 +801,7 @@ public class MallPageController extends BaseController {
 		    inv_id = invId;
 		}
 	    } else if ( CommonUtil.isNotEmpty( member ) ) {
-		//todo 调用彭江丽接口   memberService.findById
-		/*member = memberService.findById( member.getId() );*/
+		member = MemberService.findMemberById( member.getId(), member );
 		if ( rType == 1 ) {
 		    request.setAttribute( "integral", member.getIntegral() );
 		} else if ( rType == 2 ) {
@@ -1138,11 +1115,10 @@ public class MallPageController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo 调用小屁孩接口   userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 
 	    double discount = 1;//商品折扣
 	    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -1272,11 +1248,10 @@ public class MallPageController extends BaseController {
 
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo 调用彭江丽接口： userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
@@ -1441,11 +1416,10 @@ public class MallPageController extends BaseController {
 	int userid = wx.getBusUserId();
 	Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	loginMap.put( "uclogin", 1 );
-	// todo 调用彭江丽UC登陆  userLogin
-	/*String returnUrl = userLogin( request, response, userid, loginMap );
+	String returnUrl = userLogin( request, response, loginMap );
 	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 	    return returnUrl;
-	}*/
+	}
 	request.setAttribute( "userid", member );
 	String http = PropertiesUtil.getResourceUrl();//图片url链接前缀
 	List< Map< String,Object > > shopList = mallStoreService.findByUserId( userid );
@@ -1466,11 +1440,10 @@ public class MallPageController extends BaseController {
 	Member member = SessionUtils.getLoginMember( request );
 	Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userId, request );
 	loginMap.put( "uclogin", 1 );
-	// todo 调用彭江丽UC登陆  userLogin
-	/*String returnUrl = userLogin( request, response, userId, loginMap );
+	String returnUrl = userLogin( request, response, loginMap );
 	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 	    return returnUrl;
-	}*/
+	}
 	String http = PropertiesUtil.getResourceUrl();//图片url链接前缀
 	List< Map< String,Object > > shopList = mallStoreService.findByUserId( userId );
 
@@ -1596,30 +1569,33 @@ public class MallPageController extends BaseController {
     @RequestMapping( "{shopId}/79B4DE7C/storesAll" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String findStores( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopId, @RequestParam Map< String,Object > params ) {
-	Member member = SessionUtils.getLoginMember( request );
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	    request.setAttribute( "userid", userid );
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+	    int userid = 0;
+	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "uId" ) );
+		request.setAttribute( "userid", userid );
+	    }
+	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
+	    loginMap.put( "uclogin", 1 );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		return returnUrl;
+	    }
+	    List< Map< String,Object > > shopList = mallStoreService.findByUserId( userid );
+	    request.setAttribute( "shopList", shopList );
+	    request.setAttribute( "member", member );
+	    request.setAttribute( "urls", request.getHeader( "Referer" ) );
+	    List list1 = mallPageService.shoppage( shopId );
+	    if ( list1.size() > 0 ) {
+		Map map1 = (Map) list1.get( 0 );
+		String pageid = map1.get( "id" ).toString();
+		request.setAttribute( "pageid", pageid );
+	    }
+	    mallPageService.getCustomer( request, userid );
+	} catch ( Exception e ) {
+	    logger.error( "查询公众号下面所有的门店异常：" + e.getMessage() );
 	}
-	Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	loginMap.put( "uclogin", 1 );
-	//todo 调用彭江丽UC登陆  userLogin
-	/*String returnUrl = userLogin( request, response, userid, loginMap );
-	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-	    return returnUrl;
-	}*/
-	List< Map< String,Object > > shopList = mallStoreService.findByUserId( userid );
-	request.setAttribute( "shopList", shopList );
-	request.setAttribute( "member", member );
-	request.setAttribute( "urls", request.getHeader( "Referer" ) );
-	List list1 = mallPageService.shoppage( shopId );
-	if ( list1.size() > 0 ) {
-	    Map map1 = (Map) list1.get( 0 );
-	    String pageid = map1.get( "id" ).toString();
-	    request.setAttribute( "pageid", pageid );
-	}
-	mallPageService.getCustomer( request, userid );
 
 	return "mall/store/phone/shoplist";
     }
@@ -1636,10 +1612,9 @@ public class MallPageController extends BaseController {
 
 	    Member member = SessionUtils.getLoginMember( request );
 
-	    /*if ( CommonUtil.isEmpty( member ) && CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
-	    	//todo 调用彭江丽  根据会员id查询会员信息的接口   memberService.findById
-		member = memberService.findById( CommonUtil.toInteger( params.get( "memberId" ) ) );
-	    }*/
+	    if ( CommonUtil.isEmpty( member ) && CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
+		member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
+	    }
 
 	    if ( CommonUtil.isNotEmpty( params.get( "proId" ) ) ) {
 		Map< String,Object > maps = mallPageService.getProductComment( params, member );

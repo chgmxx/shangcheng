@@ -12,7 +12,7 @@ spring:
   host: 113.106.202.51
   port: 6379
   password: gt@123456
-  database: 5
+  database: 10
 #redis session共享
  session:
    store-type: redis
@@ -128,9 +128,9 @@ mq:
 
 ### 设置 Redis session 共享
 redisSession:
- domainName: .example.com
+ domainName: .yifriend.net
  cookiePath: /
- cookieName: JSESSIONID
+ cookieName: DTL_SESSION_ID
 
 http:
  #会员key 和 请求地址

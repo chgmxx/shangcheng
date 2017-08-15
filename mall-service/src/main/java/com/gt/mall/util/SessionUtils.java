@@ -9,9 +9,27 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+
 public class SessionUtils {
 
     private static final Logger log = Logger.getLogger( SessionUtils.class );
+
+
+    /**
+     * 获取用户bus_user   SESSION的值
+     */
+    public static Object getLoginUser2( HttpServletRequest request ) {
+	try {
+	    Object obj = request.getSession().getAttribute(Constants.SESSION_BUSINESS_KEY);
+		System.out.println("obj = " + obj);
+	} catch (Exception e) {
+	    log.info(e.getLocalizedMessage());
+	    e.printStackTrace();
+	}
+	return null;
+
+    }
+
 
     /**
      * 获取用户bus_user   SESSION的值

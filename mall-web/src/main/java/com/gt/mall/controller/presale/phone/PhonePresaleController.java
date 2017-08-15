@@ -2,8 +2,8 @@ package com.gt.mall.controller.presale.phone;
 
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.presale.MallPresaleDepositDAO;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
@@ -37,17 +37,17 @@ import java.util.*;
  * @author yangqian
  * @since 2017-07-20
  */
-public class PhonePresaleController extends BaseController {
+public class PhonePresaleController extends AuthorizeOrLoginController {
     @Autowired
-    private MallPresaleService          mallPresaleService;
+    private MallPresaleService        mallPresaleService;
     @Autowired
-    private MallPresaleDepositService   mallPresaleDepositService;
+    private MallPresaleDepositService mallPresaleDepositService;
     @Autowired
-    private MallPageService             pageService;
+    private MallPageService           pageService;
     @Autowired
-    private MallPresaleDepositDAO       mallPresaleDepositDAO;
+    private MallPresaleDepositDAO     mallPresaleDepositDAO;
     @Autowired
-    private MallPaySetService           mallPaySetService;
+    private MallPaySetService         mallPaySetService;
 
     /**
      * 获取店铺下所有的预售（手机）
@@ -79,13 +79,10 @@ public class PhonePresaleController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo userLogin
-	    /*String returnUrl = userLogin(request, response, userid, loginMap);
-	    if(CommonUtil.isNotEmpty(returnUrl)){
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
-			/*String memberId = "200";
-			member = memberService.findById(Integer.valueOf(memberId));*/
+	    }
 	    boolean isShop = pageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
@@ -180,11 +177,10 @@ public class PhonePresaleController extends BaseController {
 		userid = CommonUtil.toInteger( mapmessage.get( "user_id" ) );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
 			/*if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
 				boolean isLogin = pageService.isLogin(member, userid, request);
@@ -272,7 +268,6 @@ public class PhonePresaleController extends BaseController {
 
     /**
      * 交纳定金
-     *
      */
     @RequestMapping( value = "/79B4DE7C/addDeposit" )
     @SysLogAnnotation( op_function = "2", description = "预售交纳定金" )
@@ -315,7 +310,6 @@ public class PhonePresaleController extends BaseController {
 
     /**
      * 储值卡支付成功的回调
-     *
      */
     @RequestMapping( value = "/79B4DE7C/payWay" )
     @SysLogAnnotation( op_function = "2", description = "定金储蓄卡支付成功添加记录和修改" )
@@ -329,12 +323,11 @@ public class PhonePresaleController extends BaseController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-	   /* Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    String returnUrl = userLogin( request, response, userid, loginMap );
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    String memberId = member.getId().toString();
 			/*String memberId = "200";*/
 
@@ -371,7 +364,6 @@ public class PhonePresaleController extends BaseController {
 
     /**
      * 消息提醒
-     *
      */
     @RequestMapping( value = "/79B4DE7C/messageRemind" )
     @SysLogAnnotation( op_function = "2", description = "预售提醒" )
@@ -419,11 +411,10 @@ public class PhonePresaleController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    String memberId = member.getId().toString();
 			/*String memberId = "200";*/
 	    if ( CommonUtil.isNotEmpty( params.get( "userId" ) ) ) {

@@ -1,13 +1,14 @@
 package com.gt.mall.controller.pifa.phone;
 
 import com.gt.mall.annotation.AfterAnno;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifaApply;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -43,7 +44,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "/phoneWholesaler" )
-public class PhonePifaController extends BaseController {
+public class PhonePifaController extends AuthorizeOrLoginController {
 
     @Autowired
     private MallPifaService mallPifaService;
@@ -78,8 +79,7 @@ public class PhonePifaController extends BaseController {
 	}*/
 	if ( userid == 0 && CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
 	    int memberid = CommonUtil.toInteger( request.getParameter( "member_id" ) );
-	    //todo memberService.findById
-	    Member members = null;//memberService.findById(memberid);
+	    Member members = MemberService.findMemberById( memberid, member );//通过会员id查询会员信息
 	    userid = members.getBusid();
 	    /*if(CommonUtil.isNotEmpty(members.getPublicId())){
 	    	//todo publicUsersMapper.selectByPrimaryKey
@@ -90,14 +90,13 @@ public class PhonePifaController extends BaseController {
 	    userid = wx.getBusUserId();
 	    request.setAttribute( "userid", userid );
 	}
-	Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	//todo 调用彭江丽uc登陆
-	/*String returnUrl = userLogin(request, response, userid, loginMap);
-	if(CommonUtil.isNotEmpty(returnUrl)){
-	    return returnUrl;
-	}*/
-
 	try {
+	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		return returnUrl;
+	    }
+
 	    MallPaySet set = mallPaySetService.selectByMember( member );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
 		if ( CommonUtil.isNotEmpty( set.getPfApplyRemark() ) ) {
@@ -110,7 +109,7 @@ public class PhonePifaController extends BaseController {
 
 	request.setAttribute( "memberId", member.getId() );
 	request.setAttribute( "userid", userid );
-	return "wholesalers/phone/applyWholesalers";
+	return "mall/wholesalers/phone/applyWholesalers";
     }
 
     /**
@@ -242,7 +241,6 @@ public class PhonePifaController extends BaseController {
 
     /**
      * 获取店铺下所有的批发（手机）
-     *
      */
     @SuppressWarnings( "rawtypes" )
     @RequestMapping( "{shopid}/79B4DE7C/wholesalerall" )
@@ -263,11 +261,10 @@ public class PhonePifaController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo 调用彭江丽UC登陆  userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";

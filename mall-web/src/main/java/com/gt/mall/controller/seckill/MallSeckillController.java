@@ -3,9 +3,9 @@ package com.gt.mall.controller.seckill;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallPaySetService;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "/mSeckill" )
-public class MallSeckillController extends BaseController {
+public class MallSeckillController extends AuthorizeOrLoginController {
     @Autowired
     private MallStoreService   mallStoreService;
     @Autowired
@@ -204,11 +204,10 @@ public class MallSeckillController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo 调用彭江丽接口   UC登陆  userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 
 	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
 	    if ( !isShop ) {

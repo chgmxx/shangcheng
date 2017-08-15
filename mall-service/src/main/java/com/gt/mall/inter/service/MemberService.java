@@ -2,6 +2,8 @@ package com.gt.mall.inter.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.params.MallAllEntity;
+import com.gt.mall.bean.params.PaySuccessBo;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;
 import org.slf4j.Logger;
@@ -38,6 +40,12 @@ public class MemberService {
 	    }
 	    if ( CommonUtil.isNotEmpty( memberObj.get( "nickname" ) ) ) {
 		member.setNickname( memberObj.getString( "nickname" ) );
+	    }
+	    if(CommonUtil.isNotEmpty( memberObj.get( "openid" ) )){
+	        member.setOpenid( memberObj.getString( "openid" ) );
+	    }
+	    if(CommonUtil.isNotEmpty( memberObj.get( "headimgurl" ) )){
+	        member.setHeadimgurl( memberObj.getString( "headimgurl" ) );
 	    }
 	}
 	return member;
@@ -110,7 +118,7 @@ public class MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	params.put( "shopId", shopId );
-	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/member/findMemberCardByMemberId" );
+	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/member/findCardByMembeId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject memberObj = JSONObject.parseObject( data );
 	}
@@ -149,6 +157,32 @@ public class MemberService {
 	    return resultMap;
 	}
 	return null;
+    }
+
+    /**
+     * 会员计算 （还未调试）
+     *
+     * @param mallAllEntity 对象
+     *
+     * @return 对象
+     */
+    public static MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity ) {
+	String data = MemberInterUtil.SignHttpSelect( mallAllEntity, "/memberAPI/memberCountApi/memberCountMoneyByShop" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), MallAllEntity.class );
+	}
+	return null;
+    }
+
+    /**
+     * 支付成功回调   传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款
+     *
+     * @param paySuccessBo 对象
+     *
+     * @return 对象
+     */
+    public static Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
+	return MemberInterUtil.SignHttpInsertOrUpdate( paySuccessBo, "/memberAPI/memberCountApi/paySuccess" );
     }
 
 }

@@ -2,10 +2,10 @@ package com.gt.mall.controller.auction;
 
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.AlipayUser;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionOfferDAO;
@@ -50,7 +50,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping( "/mAuction" )
-public class MallAuctionController extends BaseController {
+public class MallAuctionController extends AuthorizeOrLoginController {
 
     @Autowired
     private MallAuctionService          auctionService;
@@ -121,7 +121,6 @@ public class MallAuctionController extends BaseController {
 
 	return "mall/auction/auction_index";
     }
-
 
     /**
      * 拍卖管理列表页面
@@ -305,9 +304,7 @@ public class MallAuctionController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    // TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -397,9 +394,7 @@ public class MallAuctionController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    // TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -655,9 +650,7 @@ public class MallAuctionController extends BaseController {
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -720,75 +713,78 @@ public class MallAuctionController extends BaseController {
     @RequestMapping( "{id}/{shopid}/{auctionId}/79B4DE7C/shopdetails" )
     public String shopdetails( HttpServletRequest request, HttpServletResponse response, @PathVariable int id, @PathVariable int shopid, @PathVariable int auctionId,
 		    @RequestParam Map< String,Object > param ) {
-	Member member = SessionUtils.getLoginMember( request );
-	int userid = 0;
-	Map< String,Object > mapuser = pageService.selUser( shopid );//查询商家信息
-	if ( CommonUtil.isNotEmpty( mapuser ) ) {
-	    userid = CommonUtil.toInteger( mapuser.get( "id" ) );
-	}
-	Map< String,Object > publicUserid = pageService.getPublicByUserMap( mapuser );//查询公众号信息
-	if ( CommonUtil.isNotEmpty( publicUserid ) ) {
-	    userid = CommonUtil.toInteger( mapuser.get( "bus_user_id" ) );
-	}
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+	    int userid = 0;
+	    Map< String,Object > mapuser = pageService.selUser( shopid );//查询商家信息
+	    if ( CommonUtil.isNotEmpty( mapuser ) ) {
+		userid = CommonUtil.toInteger( mapuser.get( "id" ) );
+	    }
+	    Map< String,Object > publicUserid = pageService.getPublicByUserMap( mapuser );//查询公众号信息
+	    if ( CommonUtil.isNotEmpty( publicUserid ) ) {
+		userid = CommonUtil.toInteger( mapuser.get( "bus_user_id" ) );
+	    }
 
-	Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	loginMap.put( "uclogin", 1 );
-	// TODO 登录地址
-	String returnUrl = "";
-	//	userLogin( request, response, userid, loginMap );
-	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-	    return returnUrl;
-	}
-	int type = 1;
-	if ( CommonUtil.isNotEmpty( param.get( "type" ) ) ) {
-	    type = Integer.valueOf( param.get( "type" ).toString() );
-	}
-	MallAuction auction = auctionService.getAuctionByProId( id, shopid, auctionId );
-	if ( type == 1 ) {//拍品详情
-	    MallProductDetail obj = pageService.shopdetails( id );
-	    request.setAttribute( "obj", obj );
-	} else if ( type == 2 ) {
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+	    loginMap.put( "uclogin", 1 );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		return returnUrl;
+	    }
+	    int type = 1;
+	    if ( CommonUtil.isNotEmpty( param.get( "type" ) ) ) {
+		type = Integer.valueOf( param.get( "type" ).toString() );
+	    }
+	    MallAuction auction = auctionService.getAuctionByProId( id, shopid, auctionId );
+	    if ( type == 1 ) {//拍品详情
+		MallProductDetail obj = pageService.shopdetails( id );
+		request.setAttribute( "obj", obj );
+	    } else if ( type == 2 ) {
+		if ( auction != null ) {
+		    request.setAttribute( "aucType", auction.getAucType() );
+		    MallAuctionBidding bid = new MallAuctionBidding();
+		    bid.setAucId( auction.getId() );
+		    if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
+			//查询出价次数
+			MallAuctionOffer offer = new MallAuctionOffer();
+			offer.setAucId( auction.getId() );
+			List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
+			request.setAttribute( "offerList", offerList );
+		    } else {//降价拍
+			List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
+			request.setAttribute( "bidList", bidList );
+		    }
+		}
+	    }
 	    if ( auction != null ) {
 		request.setAttribute( "aucType", auction.getAucType() );
-		MallAuctionBidding bid = new MallAuctionBidding();
-		bid.setAucId( auction.getId() );
-		if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
-		    //查询出价次数
-		    MallAuctionOffer offer = new MallAuctionOffer();
-		    offer.setAucId( auction.getId() );
-		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
-		    request.setAttribute( "offerList", offerList );
-		} else {//降价拍
-		    List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
-		    request.setAttribute( "bidList", bidList );
-		}
 	    }
-	}
-	if ( auction != null ) {
-	    request.setAttribute( "aucType", auction.getAucType() );
-	}
-	request.setAttribute( "id", id );
-	request.setAttribute( "shopid", shopid );
-	request.setAttribute( "auctionId", auctionId );
-	request.setAttribute( "type", type );
-	String pageid = "0";
-	List list1 = pageService.shoppage( shopid );
-	if ( list1.size() > 0 ) {
-	    Map map1 = (Map) list1.get( 0 );
-	    pageid = map1.get( "id" ).toString();
-	    request.setAttribute( "pageid", pageid );
-	}
-	if ( CommonUtil.isNotEmpty( shopid ) ) {
-	    String mall_shopId = Constants.SESSION_KEY + "shopId";
-	    if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
-		request.getSession().setAttribute( mall_shopId, shopid );
-	    } else {
-		if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( CommonUtil.toString( shopid ) ) ) {
+	    request.setAttribute( "id", id );
+	    request.setAttribute( "shopid", shopid );
+	    request.setAttribute( "auctionId", auctionId );
+	    request.setAttribute( "type", type );
+	    String pageid = "0";
+	    List list1 = pageService.shoppage( shopid );
+	    if ( list1.size() > 0 ) {
+		Map map1 = (Map) list1.get( 0 );
+		pageid = map1.get( "id" ).toString();
+		request.setAttribute( "pageid", pageid );
+	    }
+	    if ( CommonUtil.isNotEmpty( shopid ) ) {
+		String mall_shopId = Constants.SESSION_KEY + "shopId";
+		if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
 		    request.getSession().setAttribute( mall_shopId, shopid );
+		} else {
+		    if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( CommonUtil.toString( shopid ) ) ) {
+			request.getSession().setAttribute( mall_shopId, shopid );
+		    }
 		}
 	    }
+	    pageService.getCustomer( request, userid );
+	} catch ( Exception e ) {
+	    this.logger.error( "MallAuctionController方法异常：" + e.getMessage() );
+	    e.printStackTrace();
 	}
-	pageService.getCustomer( request, userid );
 	return "mall/auction/phone/productdetail";
     }
 
@@ -825,7 +821,7 @@ public class MallAuctionController extends BaseController {
 	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    logger.info( "交纳保证金花费：" + second + "秒" );
 
-	    CommonUtil.write( response,result );
+	    CommonUtil.write( response, result );
 	}
     }
 
@@ -847,9 +843,7 @@ public class MallAuctionController extends BaseController {
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -929,9 +923,7 @@ public class MallAuctionController extends BaseController {
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -982,14 +974,11 @@ public class MallAuctionController extends BaseController {
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
 	    String memberId = member.getId().toString();
-			/*String memberId = "200";*/
 	    if ( CommonUtil.isNotEmpty( params.get( "userId" ) ) ) {
 		memberId = params.get( "userId" ).toString();
 	    }
@@ -1025,9 +1014,7 @@ public class MallAuctionController extends BaseController {
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }

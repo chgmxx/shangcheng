@@ -1,7 +1,7 @@
 package com.gt.mall.controller.purchase.phone;
 
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.entity.purchase.*;
@@ -36,7 +36,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "purchasePhone" )
-public class PurchasePhoneController extends BaseController {
+public class PurchasePhoneController extends AuthorizeOrLoginController {
 
     private final static Logger logger = Logger.getLogger( PurchasePhoneController.class );
     @Autowired
@@ -197,9 +197,8 @@ public class PurchasePhoneController extends BaseController {
 	    JedisUtil.set( redisKey, "/purchasePhone/79B4DE7C/buy.do?orderId=" + orderId + "&busId=" + busId + "&haveContract=" + haveContract, 300 );
 	    Map< String,Object > mapParam = new HashMap< String,Object >();
 	    mapParam.put( "redisKey", redisKey );
-	    // TODO 登录地址
-	    String returnStr = "";
-//	    userLogin( request, response, Integer.parseInt( busId ), mapParam );
+	    mapParam.put( "busId", busId );
+	    String returnStr = userLogin( request, response, mapParam );
 	    if ( CommonUtil.isNotEmpty( returnStr ) ) {return returnStr;}
 	    //判断是否存在合同 ,如果有合同跳转合同页面待用户确认
 	    if ( request.getParameter( "haveContract" ) != null && request.getParameter( "haveContract" ).toString().equals( "0" ) ) {
@@ -328,16 +327,15 @@ public class PurchasePhoneController extends BaseController {
      * @return
      */
     @RequestMapping( "/79B4DE7C/languagePage" )
-    public String languagePage( HttpServletRequest request, HttpServletResponse response ) {
+    public String languagePage( HttpServletRequest request, HttpServletResponse response ) throws Exception {
 	String redisKey = Constants.REDIS_KEY + CommonUtil.getCode();
 	JedisUtil.set( redisKey,
 			"/purchasePhone/79B4DE7C/languagePage.do?orderId=" + request.getParameter( "orderId" ).toString() + "&busId=" + request.getParameter( "busId" ).toString(),
 			300 );
 	Map< String,Object > mapParam = new HashMap< String,Object >();
 	mapParam.put( "redisKey", redisKey );
-	// TODO 登录地址
-	String returnStr = "";
-//	userLogin( request, response, Integer.parseInt( request.getParameter( "busId" ).toString() ), mapParam );
+	mapParam.put( "busId", Integer.parseInt( request.getParameter( "busId" ).toString() ) );
+	String returnStr = userLogin( request, response, mapParam );
 	if ( CommonUtil.isNotEmpty( returnStr ) ) { return returnStr; }
 	PurchaseOrder order = orderService.selectById( Integer.parseInt( request.getParameter( "orderId" ) ) );
 	request.setAttribute( "orderId", order.getId() );
@@ -427,9 +425,8 @@ public class PurchasePhoneController extends BaseController {
 		JedisUtil.set( redisKey, "/purchasePhone/79B4DE7C/getMemberPower.do?orderId=" + orderId + "&busId=" + busId, 300 );
 		Map< String,Object > mapParam = new HashMap< String,Object >();
 		mapParam.put( "redisKey", redisKey );
-		// TODO 登录地址
-		String returnStr = "";
-//		userLogin( request, response, Integer.parseInt( request.getParameter( "busId" ).toString() ), mapParam );
+		mapParam.put( "busId", Integer.parseInt( request.getParameter( "busId" ).toString() ) );
+		String returnStr = userLogin( request, response, mapParam );
 		if ( CommonUtil.isNotEmpty( returnStr ) ) { return returnStr; }
 		request.setAttribute( "payType", 1 );
 	    }

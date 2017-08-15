@@ -4,6 +4,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxApplet;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -146,9 +147,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 		int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 		if ( memberId > 0 ) {
-		    //TODO 需关连 Member
-		    Member member = null;
-		    //		    memberService.findById(memberId);
+		    Member member = MemberService.findMemberById( memberId, null );
 		    params.put( "userId", member.getBusid() );
 		    //查询首页轮播图
 		    List< Map< String,Object > > imageList = mallHomeAppletService.getAppletImageByBusUser( params );

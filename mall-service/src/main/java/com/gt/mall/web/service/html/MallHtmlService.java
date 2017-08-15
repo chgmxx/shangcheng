@@ -3,7 +3,6 @@ package com.gt.mall.web.service.html;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.html.MallHtml;
-import com.gt.mall.entity.html.MallHtmlFrom;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;

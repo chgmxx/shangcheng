@@ -1,10 +1,10 @@
 package com.gt.mall.controller.member;
 
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -46,7 +46,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "mMember" )
-public class MallMemberController extends BaseController {
+public class MallMemberController extends AuthorizeOrLoginController {
 
     private Logger logger = Logger.getLogger( MallMemberController.class );
 
@@ -91,9 +91,7 @@ public class MallMemberController extends BaseController {
 	    //	    wx = wxPublicUsersMapper.selectByUserId( userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -208,9 +206,7 @@ public class MallMemberController extends BaseController {
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -302,9 +298,7 @@ public class MallMemberController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -342,9 +336,7 @@ public class MallMemberController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //TODO 登录地址
-	    String returnUrl = "";
-	    //	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -383,7 +375,7 @@ public class MallMemberController extends BaseController {
 	try {
 	    Integer memberId = SessionUtils.getLoginMember( request ).getId();
 
-	    StringBuffer imageUrl = new StringBuffer(  );
+	    StringBuffer imageUrl = new StringBuffer();
 	    boolean flag = false;
 	    //TODO 会员 memberMapper.selectByPrimaryKey( memberId );
 	    //	    Member member = memberMapper.selectByPrimaryKey( memberId );
