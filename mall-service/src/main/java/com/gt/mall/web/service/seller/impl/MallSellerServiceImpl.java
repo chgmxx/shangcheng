@@ -53,7 +53,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     @Autowired
     private MallPaySetService        mallPaySetService;
     @Autowired
-    private  MemberService           memberService;
+    private MemberService            memberService;
 
     /**
      * 查询客户订单的个数
@@ -123,11 +123,10 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
     /**
      * 查询销售员收益积分姐呢排行榜
-     *
      */
     @Override
     public Map< String,Object > selectSellerByBusUserId( Map< String,Object > params, int type, Member member ) {
-	Map< String,Object > resultMap = new HashMap< >();
+	Map< String,Object > resultMap = new HashMap<>();
 	if ( params.containsKey( "memberId" ) ) {
 	    params.put( "refereesMemberId", params.get( "memberId" ) );
 	}
@@ -150,7 +149,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    if ( rankList != null && rankList.size() > 0 ) {
 		for ( Map< String,Object > rankMap : rankList ) {
 		    if ( CommonUtil.isNotEmpty( rankMap.get( "member_id" ) ) ) {
-			Map< String,Object > map = new HashMap< >();
+			Map< String,Object > map = new HashMap<>();
 			Map< String,Object > orderMap = sellerOrderService.selectOrderByMemberId( map );
 			if ( CommonUtil.isNotEmpty( orderMap ) ) {
 			    rankMap.put( "det_pro_name", orderMap.get( "det_pro_name" ) );
@@ -184,7 +183,6 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
     /**
      * 通过商家id查询销售规则
-     *
      */
     @Override
     public MallSellerSet selectByBusUserId( int busUserId ) {
@@ -261,7 +259,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	if ( saleMemberId == 0 ) {
 	    return false;
 	}
-	Member member = memberService.findMemberById( saleMemberId,null );//查询销售员的用户信息
+	Member member = memberService.findMemberById( saleMemberId, null );//查询销售员的用户信息
 	MallPaySet set = mallPaySetService.selectByMember( member );
 	int state = getSellerApplay( member, set );
 	boolean isSeller = false;
@@ -320,7 +318,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public Map< String,Object > saveOrUpdSellerSet( int busUserId,
 		    Map< String,Object > params ) {
 	int count = 0;
-	Map< String,Object > resultMap = new HashMap< >();
+	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "sellerSet" ) ) ) {
 	    MallSellerSet sellerSet = (MallSellerSet) JSONObject.toBean( JSONObject.fromObject( params.get( "sellerSet" ) ), MallSellerSet.class );
 	    if ( CommonUtil.isEmpty( sellerSet.getId() ) ) {
@@ -499,7 +497,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public Map< String,Object > saveOrUpdSellerJoinProduct( int busUserId,
 		    Map< String,Object > params ) {
 	int count = 0;
-	Map< String,Object > resultMap = new HashMap< >();
+	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "joinProduct" ) ) ) {
 	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toBean( JSONObject.fromObject( params.get( "joinProduct" ) ), MallSellerJoinProduct.class );
 	    MallSellerJoinProduct jProduct = null;
@@ -544,7 +542,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     @Override
     public Map< String,Object > UpdSellerJoinProduct( int busUserId,
 		    Map< String,Object > params ) {
-	Map< String,Object > resultMap = new HashMap< >();
+	Map< String,Object > resultMap = new HashMap<>();
 	int count = 0;
 	if ( CommonUtil.isNotEmpty( params ) ) {
 	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toBean( JSONObject.fromObject( params ), MallSellerJoinProduct.class );
@@ -560,7 +558,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
     @Override
     public void delSaleMemberIdByRedis( Member member ) {
-	String key = Constants.REDIS_KEY+"mallSaleMemberId";
+	String key = Constants.REDIS_KEY + "mallSaleMemberId";
 	String field = member.getId().toString();
 	if ( JedisUtil.hExists( key, field ) ) {
 	    JedisUtil.hdel( key, field );
@@ -595,7 +593,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    mallSellerIncomeDAO.insert( income );
 
 	    //修改佣金
-	    Map< String,Object > params = new HashMap<  >();
+	    Map< String,Object > params = new HashMap<>();
 	    if ( commission > 0 ) {
 		params.put( "commission", commission );
 	    }
@@ -626,7 +624,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     @Override
     public Map< String,Object > sellerSendIntegral( Map< String,Object > params ) {
 
-	Map< String,Object > resultMap = new HashMap<  >();
+	Map< String,Object > resultMap = new HashMap<>();
 	int memberId = 0;//关注会员id
 	int refMemberId = 0;//推荐人id
 	String scene_id = "";
@@ -723,20 +721,14 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    income.setIncomeType( 1 );
 	    income.setIsGet( 1 );
 	    mallSellerIncomeDAO.insert( income );
-	    //todo 调用彭江丽的接口    判断是否是会员
-	    //todo 调用彭江丽的接口    加入会员积分记录
-	  /*  boolean isMember = memPayService.isMemember(refMemberId);//判断是否是会员
-	    if(isMember){
-		Member member = memberService.findById(refMemberId);
-		//加入会员积分记录
-		CardRecord record = new CardRecord();
-		record.setCardid(member.getMcId());
-		record.setRecordtype(Byte.valueOf("2"));
-		record.setNumber(integral+"");
-		record.setCreatedate(new Date());
-		record.setItemname("商城关注送积分（销售员）");
-		cardRecordMapper.insert(record);
-	    }*/
+
+	    boolean isMember = memberService.isMember( refMemberId );//判断是否是会员
+	    if ( isMember ) {
+		Map< String,Object > jifenParams = new HashMap<>();
+		jifenParams.put( "memberId", refMemberId );
+		jifenParams.put( "jifen", integral );
+		memberService.updateJifen( jifenParams );//新增积分记录
+	    }
 	}
 	if ( count > 0 ) {
 	    resultMap.put( "flag", true );

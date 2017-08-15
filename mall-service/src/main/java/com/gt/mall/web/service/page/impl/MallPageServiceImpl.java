@@ -34,6 +34,7 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.inter.service.CardService;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionService;
 import com.gt.mall.web.service.basic.MallCollectService;
@@ -158,7 +159,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Autowired
     private MallImageAssociativeDAO     mallImageAssociativeDAO;
     @Autowired
-    private  CardService                cardService;
+    private CardService                 cardService;
+    @Autowired
+    private MemberService               memberService;
 
     /**
      * 分页查询
@@ -601,8 +604,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	Map< String,Object > shopParams = new HashMap<>();
 	if ( member != null ) {
 	    memberId = CommonUtil.toInteger( member.getId() );
-	    //todo 调用彭江丽  根据粉丝id查询会员集合
-	    memberList = new ArrayList<>();//memberPayService.findMemberIds( memberId );//查询会员信息
+	    memberList = memberService.findMemberListByIds( memberId );//根据粉丝id查询会员集合
 	}
 	if ( memberList != null && memberList.size() > 0 ) {
 	    shopParams.put( "memberList", memberList );
@@ -1103,10 +1105,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	List< Map< String,Object > > xlist = new ArrayList<>();
 	List< Map< String,Object > > list = mallProductDAO.selectProductAllByShopids( params );
 
-	List<Integer> proIds = new ArrayList<Integer>();
+	List< Integer > proIds = new ArrayList< Integer >();
 	String specImgIds = "";
 
-	if(list != null && list.size() > 0) {
+	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map1 : list ) {
 		map1.put( "rType", rType );
 		map1 = productGetPrice( map1, discount, isPifa );
@@ -1125,69 +1127,69 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		}
 	    }
 	    String[] split = null;
-	    if(CommonUtil.isNotEmpty(specImgIds)){
-		split = specImgIds.split(",");
+	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
+		split = specImgIds.split( "," );
 	    }
-	    xlist = getProductImages(xlist, proIds, split);
+	    xlist = getProductImages( xlist, proIds, split );
 	}
 	page.setSubList( xlist );
 	return page;
     }
 
     @Override
-    public List<Map<String, Object>> getProductImages( List<Map<String, Object>> xlist, List<Integer> proIds, String[] specImgIds) {
-	List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
-	if(proIds != null && proIds.size() > 0){
+    public List< Map< String,Object > > getProductImages( List< Map< String,Object > > xlist, List< Integer > proIds, String[] specImgIds ) {
+	List< Map< String,Object > > newList = new ArrayList< Map< String,Object > >();
+	if ( proIds != null && proIds.size() > 0 ) {
 	    //查询商品图片
-	    Map<String, Object> imgMaps = new HashMap<String, Object>();
-	    imgMaps.put("isMainImages", 1);
-	    imgMaps.put("assType", 1);
-	    imgMaps.put("assIds", proIds);
-	    List<Map<String, Object>> imageList = mallImageAssociativeDAO.selectByAssIds(imgMaps);
-	    if(imageList != null && imageList.size() > 0){
-		for (Map<String, Object> maps : xlist) {
-		    String id = maps.get("id").toString();
-		    for (int i = 0; i < imageList.size(); i++) {
-			Map<String,Object> imageMaps = imageList.get(i);
-			String assIds = imageMaps.get("ass_id").toString();
-			if(CommonUtil.isNotEmpty(imageMaps.get("image_url")) && assIds.equals(id)){
-			    maps.put("image_url", PropertiesUtil.getResourceUrl()+imageMaps.get("image_url"));
-			    imageList.remove(i);
+	    Map< String,Object > imgMaps = new HashMap< String,Object >();
+	    imgMaps.put( "isMainImages", 1 );
+	    imgMaps.put( "assType", 1 );
+	    imgMaps.put( "assIds", proIds );
+	    List< Map< String,Object > > imageList = mallImageAssociativeDAO.selectByAssIds( imgMaps );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		for ( Map< String,Object > maps : xlist ) {
+		    String id = maps.get( "id" ).toString();
+		    for ( int i = 0; i < imageList.size(); i++ ) {
+			Map< String,Object > imageMaps = imageList.get( i );
+			String assIds = imageMaps.get( "ass_id" ).toString();
+			if ( CommonUtil.isNotEmpty( imageMaps.get( "image_url" ) ) && assIds.equals( id ) ) {
+			    maps.put( "image_url", PropertiesUtil.getResourceUrl() + imageMaps.get( "image_url" ) );
+			    imageList.remove( i );
 			    break;
 			}
 		    }
-		    newList.add(maps);
+		    newList.add( maps );
 		}
 	    }
-	    if(newList != null && newList.size() > 0){
-		xlist = new ArrayList<Map<String,Object>>();
-		xlist.addAll(newList);
+	    if ( newList != null && newList.size() > 0 ) {
+		xlist = new ArrayList< Map< String,Object > >();
+		xlist.addAll( newList );
 	    }
 	}
 
-	if(specImgIds != null && specImgIds.length > 0){
-	    newList = new ArrayList<Map<String,Object>>();
+	if ( specImgIds != null && specImgIds.length > 0 ) {
+	    newList = new ArrayList< Map< String,Object > >();
 	    //查询查询规格图片
-	    List<MallProductSpecifica> specList = mallProductSpecificaService.selectBySpecId(specImgIds);
-	    if(specList != null && specList.size() > 0){
-		for (Map<String, Object> maps : xlist) {
-		    if(CommonUtil.isNotEmpty(maps.get("specifica_img_id"))){
-			String imgIds = maps.get("specifica_img_id").toString();
-			for (int i = 0; i < specList.size(); i++) {
-			    MallProductSpecifica spec = specList.get(i);
-			    if(CommonUtil.isNotEmpty(spec.getSpecificaImgUrl()) && imgIds.equals(spec.getId().toString())){
-				maps.put("image_url", PropertiesUtil.getResourceUrl()+spec.getSpecificaImgUrl());
-				specList.remove(i);
+	    List< MallProductSpecifica > specList = mallProductSpecificaService.selectBySpecId( specImgIds );
+	    if ( specList != null && specList.size() > 0 ) {
+		for ( Map< String,Object > maps : xlist ) {
+		    if ( CommonUtil.isNotEmpty( maps.get( "specifica_img_id" ) ) ) {
+			String imgIds = maps.get( "specifica_img_id" ).toString();
+			for ( int i = 0; i < specList.size(); i++ ) {
+			    MallProductSpecifica spec = specList.get( i );
+			    if ( CommonUtil.isNotEmpty( spec.getSpecificaImgUrl() ) && imgIds.equals( spec.getId().toString() ) ) {
+				maps.put( "image_url", PropertiesUtil.getResourceUrl() + spec.getSpecificaImgUrl() );
+				specList.remove( i );
 				break;
 			    }
 			}
 		    }
-		    newList.add(maps);
+		    newList.add( maps );
 		}
 	    }
-	    if(newList != null && newList.size() > 0){
-		xlist = new ArrayList<Map<String,Object>>();
-		xlist.addAll(newList);
+	    if ( newList != null && newList.size() > 0 ) {
+		xlist = new ArrayList< Map< String,Object > >();
+		xlist.addAll( newList );
 	    }
 
 	}
@@ -1792,8 +1794,12 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
 	List< Map< String,Object > > xlist = new ArrayList<>();
 	Map< String,Object > params = new HashMap<>();
-	//todo 调用彭江丽  根据会员id查询会员集合
-	params.put( "memberId", member.getId() );
+	List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+	if ( memberList != null && memberList.size() > 1 ) {
+	    params.put( "memberIdList", memberList );
+	} else {
+	    params.put( "memberId", member.getId() );
+	}
 	List< Map< String,Object > > list = mallCollectDAO.selectCollectByMemberId( params );
 	for ( Map< String,Object > map1 : list ) {
 	    map1 = productGetPrice( map1, discount, false );
@@ -2217,7 +2223,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > getCardReceive( int receiveId ) {
-	return cardService.findDuofenCardByReceiveId(receiveId);
+	return cardService.findDuofenCardByReceiveId( receiveId );
     }
 
     @Override
@@ -2298,7 +2304,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	url = url.substring( url.indexOf( request.getServletPath() ), url.length() );
 	JedisUtil.set( redisKey, url, 5 * 60 );
 	loginMap.put( "redisKey", redisKey );
-	loginMap.put( "busId",userid );
+	loginMap.put( "busId", userid );
 	request.setAttribute( "userid", userid );
 	return loginMap;
     }

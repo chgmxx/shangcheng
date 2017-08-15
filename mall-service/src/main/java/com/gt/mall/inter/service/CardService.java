@@ -28,6 +28,13 @@ public interface CardService {
      * @return 卡包信息
      */
     public List< Map > findReceiveByBusUserId( int busUserId );
+
+    /**
+     * 商场支付成功回调 分配卡券
+     * @param params {receiveId:卡包id，num：数量，memberId：粉丝id}
+     * @return true 成功  false 失败
+     */
+    public boolean successPayBack(Map<String,Object> params);
 }
 
 

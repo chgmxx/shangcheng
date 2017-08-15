@@ -474,7 +474,6 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    Map< String,Object > returnParams = new HashMap<>();
 	    returnParams.put( "busId", member.getBusid() );
 	    returnParams.put( "orderNo", depNo );
-	    returnParams.put( "ucType", 2 );
 	    returnParams.put( "money", money );
 	    //储值卡退款
 	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);

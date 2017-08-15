@@ -2,6 +2,8 @@ package com.gt.mall.inter.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.inter.service.CardService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;
@@ -52,6 +54,20 @@ public class CardServiceImpl implements CardService {
 	    return JSONArray.parseArray( data, Map.class );
 	}
 	return null;
+    }
+
+    @Override
+    public boolean successPayBack( Map< String,Object > params ) {
+	Map< String,Object > resultMap = MemberInterUtil.SignHttpInsertOrUpdate( params, "/memberAPI/cardCouponseApi/successPayBack" );
+	if ( CommonUtil.isNotEmpty( resultMap ) ) {
+	    int code = CommonUtil.toInteger( resultMap.get( "code" ) );
+	    if(code == 1){
+	       return true;
+	    }else{
+		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(),ResponseEnums.INTER_ERROR.getDesc() );
+	    }
+	}
+	throw new BusinessException( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc() );
     }
 }
 

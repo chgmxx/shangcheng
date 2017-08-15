@@ -5,6 +5,8 @@ import com.gt.mall.inter.service.MemberService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA
  * User : yangqian
@@ -14,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class BaseControllerTest extends BasicTest {
 
     @Autowired
-    private MallStoreDAO mallStoreDAO;
+    private MallStoreDAO  mallStoreDAO;
     @Autowired
     private MemberService memberService;
 
@@ -28,6 +30,8 @@ public class BaseControllerTest extends BasicTest {
 	params.put( "maxResult", 10 );
 	List< Map< String,Object > > list = mallStoreDAO.findByPage( params );*/
 
+	List< Integer > list = memberService.findMemberListByIds( 124 );
+	System.out.println( "list = " + list );
 
     }
 }

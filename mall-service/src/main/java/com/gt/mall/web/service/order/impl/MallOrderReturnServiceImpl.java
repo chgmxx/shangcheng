@@ -110,7 +110,6 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			Map< String,Object > returnParams = new HashMap<>();
 			returnParams.put( "busId", busUserId );
 			returnParams.put( "orderNo", orderNo );
-			returnParams.put( "ucType", 2 );
 			returnParams.put( "money", orderMoney );
 			//储值卡退款
 			Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
@@ -189,87 +188,12 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
      * 退款成功，修改退款表的状态，并添加退款记录
      */
     private void updateReturnStatus( WxPublicUsers pUser, Map< String,Object > detailMap, String returnNo ) throws Exception {
-	/*Integer memberId = CommonUtil.toInteger( detailMap.get( "buyer_user_id" ) );*/
 	Integer detailId = CommonUtil.toInteger( detailMap.get( "dId" ) );
-	/*Integer orderId = CommonUtil.toInteger( detailMap.get( "oId" ) );
-	Integer shopId = CommonUtil.toInteger( detailMap.get( "shopId" ) );
-	Double orderMoney = CommonUtil.toDouble( detailMap.get( "orderMoney" ) );
-	String orderNo = detailMap.get( "order_no" ).toString();*/
 
 	MallOrderDetail detail = new MallOrderDetail();
 	detail.setId( detailId );// 修改订单详情的状态
 	detail.setStatus( 1 );
 	mallOrderDetailDAO.updateById( detail );
-
-	//todo 调用彭江丽接口，添加会员退款记录
-
-	/*int flowId = 0;
-	if ( CommonUtil.isNotEmpty( detailMap.get( "flow_id" ) ) ) {
-	    flowId = CommonUtil.toInteger( detailMap.get( "flow_id" ) );
-	}
-	if ( flowId == 0 ) {
-	    //通过店铺id查询店铺信息
-	    MallStore store = mallStoreDAO.selectById( shopId );
-	    //查询该订单的消费记录
-	    UserConsume consume = userConsumeMapper.findByOrderCode1(orderNo);
-	    int xiaofeiId = 0;
-	    if(consume == null){
-		consume =  new UserConsume();
-	    }else{
-		xiaofeiId = consume.getId();
-		consume.setId(null);
-	    }
-	    int shopsId = store.getWxShopId();
-	    if(shopsId <= 0){
-		shopsId = store.getId();
-	    }
-
-	    if(CommonUtil.isNotEmpty(pUser)){
-		consume.setPublicId(pUser.getId());//公众号id
-	    }
-	    Member member = memberService.findById(memberId);
-	    consume.setBususerid(member.getBusid());//商户id
-	    consume.setModuletype(Byte.valueOf("0"));//模块类型 0 商城
-	    consume.setStoreid(shopsId);//店铺id
-	    //			consume.setIsparent(isBrachStore);//是否是子店铺
-	    consume.setMemberid(memberId);//买家id
-	    consume.setRecordtype(Byte.valueOf("3"));//记录类型 3退款记录
-	    consume.setUctype(Byte.valueOf("12"));//消费类型
-	    consume.setTotalmoney(orderMoney);//退款金额
-	    consume.setDiscountmoney(null);
-	    consume.setOrderid(orderId);//订单id
-	    if(CommonUtil.isNotEmpty(detailMap.get("order_pid"))){
-		if(detailMap.get("order_pid").toString().equals("0")){
-		    consume.setOrderid(CommonUtil.toInteger(detailMap.get("order_pid")));//订单id
-		}
-	    }
-	    int payWay = CommonUtil.toInteger(detailMap.get("order_pay_way"));//支付方式
-	    if(payWay == 2){//货到付款
-		payWay = 4;
-	    }else if(payWay == 3){//储值卡支付
-		payWay = 5;
-	    }
-	    consume.setUctable("t_mall_order_detail");//详情表名
-	    consume.setCreatedate(new Date());//创建时间
-	    consume.setPaymenttype(Byte.valueOf(payWay+""));//支付方式
-	    consume.setPaystatus(Byte.valueOf("3"));//支付状态 3 退单
-	    consume.setOrdercode(returnNo);//订单号微信或支付宝或自定义
-	    //添加退款记录
-	    userConsumeMapper.insertSelective(consume);
-	    if(consume.getId() > 0){//退款成功
-		if(xiaofeiId > 0){
-		    UserConsumeRefundKey refund = new UserConsumeRefundKey();
-		    refund.setConsumeid(xiaofeiId);//消费id
-		    refund.setRefundid(consume.getId());//新添加的退款id
-		    consumeRefundMapper.insertSelective(refund);
-		}
-
-		//判断是否是会员
-		if(memberPayService.isMemember(memberId)){
-		    memberPayService.refundBack(returnNo);//退款成功 回调 添加card操作记录
-		}
-	    }
-	}*/
 
 	//退款成功修改商品的库存和销量
 	updateInvenNum( detailMap );

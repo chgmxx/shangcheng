@@ -8,6 +8,7 @@ import com.gt.mall.dao.purchase.PurchaseTermDAO;
 import com.gt.mall.entity.purchase.PurchaseOrder;
 import com.gt.mall.entity.purchase.PurchaseReceivables;
 import com.gt.mall.entity.purchase.PurchaseTerm;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.web.service.purchase.PurchaseReceivablesService;
@@ -35,6 +36,8 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
     private PurchaseOrderDAO       purchaseOrderDAO;
     @Autowired
     private PurchaseTermDAO        purchaseTermDAO;
+    @Autowired
+    private MemberService memberService;
 
     @Override
     public SortedMap< Object,Object > cgPay( String url, Integer memberId, Integer busId, String termId, Double money, Double discountmoney, Double fenbi, Integer jifen,
@@ -42,9 +45,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	if ( CommonUtil.isEmpty( memberId ) || CommonUtil.isEmpty( money ) ) {
 	    throw new Exception();
 	}
-	//TODO 需关连member数据
-	Member member = null;
-	//        Member member = memberMapper.selectByPrimaryKey(memberId);
+	Member member = memberService.findMemberById( memberId,null );
 	//新增收款记录
 	Integer deduction_jifen = 0;
 	Double deduction_fenbi = 0.0;

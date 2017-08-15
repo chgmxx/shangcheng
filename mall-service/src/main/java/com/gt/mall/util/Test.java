@@ -57,14 +57,14 @@ public class Test {
 //	String result = SignHttpByJSON( map, "/memberAPI/member/findCardByMembeId" );
 
 
-//	map.put( "memberId", 1225352 );
-//	String result = SignHttpByJSON( map, "/memberAPI/member/findByMemberId" );
+	map.put( "memberId", 1225352 );
+	String result = SignHttpByJSON( map, "/memberAPI/member/findByMemberId" );
 
 //	map.put( "busId", 42 );
 //	String result = SignHttpByJSON( map, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
 
-	map.put( "memberId", 1225352 );
-	String result = SignHttpByJSON( map, "/memberAPI/member/isMember" );
+//	map.put( "memberId", 1225352 );
+//	String result = SignHttpByJSON( map, "/memberAPI/member/isMember" );
 
 
 
