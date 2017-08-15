@@ -486,9 +486,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		request.getSession().setAttribute( Constants.SESSION_KEY + "integral_order", params );
 	    } else {
 		member = memberService.findMemberById( member.getId(), member );
-		//TODO 判断浏览器
-		Integer browser = 1;
-		//		CommonUtil.judgeBrowser( request, member.getBusid() );
+		Integer browser = CommonUtil.judgeBrowser( request);
 		if ( browser != 1 ) {
 		    browser = 2;
 		}

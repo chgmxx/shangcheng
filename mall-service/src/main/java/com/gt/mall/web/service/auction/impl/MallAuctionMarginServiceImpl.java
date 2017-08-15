@@ -283,9 +283,12 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		}
 	    }
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
-	    //TODO 需关连memberPayService.chargeBack(memberId,money)方法
-	    Map< String,Object > payResultMap = new HashMap<>();
-	    //            Map<String, Object> payResultMap = memberPayService.chargeBack(memberId,money);
+	    Map< String,Object > returnParams = new HashMap<>();
+	    Member member = memberService.findMemberById( memberId, null );
+	    returnParams.put( "busId", member.getBusid() );
+	    returnParams.put( "orderNo", aucNo );
+	    returnParams.put( "money", money );
+	     Map<String, Object> payResultMap = memberService.refundMoney(returnParams); //memberPayService.chargeBack(memberId,money);
 	    if ( payResultMap != null ) {
 		if ( !CommonUtil.isEmpty( payResultMap.get( "result" ) ) ) {
 		    boolean result = Boolean.valueOf( payResultMap.get( "result" ).toString() );

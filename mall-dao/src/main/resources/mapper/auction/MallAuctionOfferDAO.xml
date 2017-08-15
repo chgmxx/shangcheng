@@ -27,8 +27,6 @@
     <select id="selectListByOffer" resultType="com.gt.mall.entity.auction.MallAuctionOffer">
         select <include refid="offer_Column_List" />
         from t_mall_auction_offer o
-        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
---         left join t_wx_bus_member m on o.user_id=m.id
         where o.auc_id=#{aucId}
         order by o.offer_money desc
     </select>

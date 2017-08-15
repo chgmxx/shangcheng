@@ -939,8 +939,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public Map< String,Object > shoporder( String json, String totalnum, String totalprice,
-		    String memberId ) {
+    public Map< String,Object > shoporder( String json, String totalnum, String totalprice, String memberId ) {
 	Map< String,Object > map = new HashMap<>();
 	JSONArray jsonArray = JSONArray.fromObject( json );
 	StringBuilder shop_ids = new StringBuilder();
@@ -1078,8 +1077,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public PageUtil productAllList( Integer shopid,
-		    String type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa ) {
+    public PageUtil productAllList( Integer shopid, String type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
 	    int memberId = 0;
 	    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -1753,6 +1751,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			map.put( "replyContent", replayList.get( 0 ).get( "content" ) );
 		    }
 		}
+		Member member1 = memberService.findMemberById( CommonUtil.toInteger( map.get( "user_id" ) ), null );
+		map.put( "nickname", member1.getNickname() );
+		map.put( "headimgurl", member1.getHeadimgurl() );
+
 		productCommentList.add( map );
 	    }
 	    maps.put( "commentList", productCommentList );

@@ -94,10 +94,7 @@
     <!--</resultMap>-->
     <select id="selectCommentByProId"  parameterType="map" resultType="Map">
         select c.id,c.content, date_format(c.createTime,'%Y-%m-%d %H:%i:%s') as createTime,c.is_upload_image,d.product_specificas ,c.is_rep,c.user_id,c.`feel`
---         m.nickname,m.headimgurl,
         from t_mall_comment c
-        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
---         left join t_wx_bus_member m on c.user_id=m.id
         left join t_mall_order_detail d on d.id = c.order_detail_id
         where c.product_id= #{productId} and c.is_delete=0  and c.user_type=1
         <choose>

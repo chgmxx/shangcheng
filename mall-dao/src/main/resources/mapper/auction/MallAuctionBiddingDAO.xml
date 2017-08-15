@@ -96,10 +96,8 @@
         </if>
     </select>
     <select id="selectListByBidding" resultType="com.gt.mall.entity.auction.MallAuctionBidding">
-        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
         select <include refid="Base_Column_List"/>
         from t_mall_auction_bidding b
-        -- left join t_wx_bus_member m on b.user_id=m.id
         where b.auc_id = #{aucId}
         <if test="userId != null and userId != ''">
             and b.user_id=#{userId}

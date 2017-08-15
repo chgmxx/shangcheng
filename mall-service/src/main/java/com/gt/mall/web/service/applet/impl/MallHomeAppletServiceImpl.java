@@ -832,12 +832,12 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	Map< String,Object > resultMap = new HashMap<>();
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	member = memberService.bingdingPhone( params, member );
-		/*if((boolean) resultMap.get("result")){
-			Member member = (Member) resultMap.get("member");
-		}*/
 	if ( !"".equals( member.getPhone() ) ) {
 	    resultMap.put( "result", true );
 	    resultMap.put( "message", "绑定成功" );
+	}else{
+	    resultMap.put( "result", false );
+	    resultMap.put( "message", "绑定失败" );
 	}
 	return resultMap;
     }

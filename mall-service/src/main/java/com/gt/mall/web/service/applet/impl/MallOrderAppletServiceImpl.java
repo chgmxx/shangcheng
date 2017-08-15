@@ -28,6 +28,7 @@ import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.freight.MallFreightService;
 import com.gt.mall.web.service.groupbuy.MallGroupBuyService;
 import com.gt.mall.web.service.order.MallOrderService;
+import com.gt.mall.web.service.page.MallPageService;
 import com.gt.mall.web.service.product.MallProductInventoryService;
 import com.gt.mall.web.service.product.MallProductService;
 import com.gt.mall.web.service.seckill.MallSeckillService;
@@ -83,6 +84,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private MallPaySetService           paySetService;
     @Autowired
     private MemberService               memberService;
+    @Autowired
+    private MallPageService pageService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -1550,9 +1553,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	if ( CommonUtil.isNotEmpty( detail.getProTypeId() ) && code > 0 ) {
 	    //卡全包购买判断是否已经过期
 	    if ( detail.getProTypeId().toString().equals( "3" ) && CommonUtil.isNotEmpty( detail.getCardReceiveId() ) ) {
-		//TODO 卡包  pageService.getCardReceive()
-		Map< String,Object > cardMap = null;
-		//                        pageService.getCardReceive(detail.getCardReceiveId());
+		Map< String,Object > cardMap =  pageService.getCardReceive(detail.getCardReceiveId());
 		if ( CommonUtil.isNotEmpty( cardMap ) ) {
 		    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
 			JSONObject cardObj = JSONObject.fromObject( cardMap.get( "recevieMap" ) );

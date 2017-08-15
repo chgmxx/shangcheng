@@ -69,8 +69,6 @@
 
     <select id="selectCountByBusUserId" parameterType="Map" resultType="java.lang.Integer">
         select count(t.id) from t_mall_take_their t
-        <!--TODO 还需补充关联 t_wx_bus_member数据 -->
---         LEFT JOIN t_wx_bus_member p ON p.`busId`=t.user_id
         where t.is_delete = 0 and t.user_id= #{userId}
     </select>
 
