@@ -197,6 +197,17 @@ public class MemberServiceImpl implements MemberService {
 	return null;
     }
 
+    @Override
+    public Integer isCardType( int memberId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/member/isCardType" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return CommonUtil.toInteger( data );
+	}
+	return 0;
+    }
+
     /**
      * 会员计算 （还未调试）
      *
