@@ -59,6 +59,8 @@ public class PhonePifaController extends AuthorizeOrLoginController {
     private MallPifaApplyService mallPifaApplyService;
     @Autowired
     private MallPaySetService    mallPaySetService;
+    @Autowired
+    private MemberService        memberService;
 
     /**
      * 进入申请批发商页面
@@ -79,7 +81,7 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 	}*/
 	if ( userid == 0 && CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
 	    int memberid = CommonUtil.toInteger( request.getParameter( "member_id" ) );
-	    Member members = MemberService.findMemberById( memberid, member );//通过会员id查询会员信息
+	    Member members = memberService.findMemberById( memberid, member );//通过会员id查询会员信息
 	    userid = members.getBusid();
 	    /*if(CommonUtil.isNotEmpty(members.getPublicId())){
 	    	//todo publicUsersMapper.selectByPrimaryKey

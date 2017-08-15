@@ -1,11 +1,5 @@
 package com.gt.mall.inter.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.MemberInterUtil;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +9,7 @@ import java.util.Map;
  * Date : 2017/8/14 0014
  * Time : 10:39
  */
-public class CardService {
+public interface CardService {
 
     /**
      * 根据卡包id查询卡券信息 map中key guoqi=1标示该包或该券过期
@@ -24,30 +18,16 @@ public class CardService {
      *
      * @return 卡券信息
      */
-    public static Map< String,Object > findDuofenCardByReceiveId( int receiveId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "receiveId", receiveId );
-	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findDuofenCardByReceiveId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
-	}
-	return null;
-    }
+    public Map< String,Object > findDuofenCardByReceiveId( int receiveId );
 
     /**
      * 根据商家 查询商家拥有的卡包信息
+     *
      * @param busUserId 商家id
+     *
      * @return 卡包信息
      */
-    public static List< Map > findReceiveByBusUserId(int busUserId){
-	Map< String,Object > params = new HashMap<>();
-	params.put( "busId", busUserId );
-	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONArray.parseArray( data,Map.class );
-	}
-	return null;
-    }
+    public List< Map > findReceiveByBusUserId( int busUserId );
 }
 
 

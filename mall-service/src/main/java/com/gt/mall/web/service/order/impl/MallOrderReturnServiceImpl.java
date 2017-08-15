@@ -53,9 +53,11 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     @Autowired
     private MallOrderDetailDAO mallOrderDetailDAO;
 
+    @Autowired
+    private MemberService memberService;
+
     /**
      * 系统退款（不是买家申请的）
-     *
      */
     @Override
     public boolean returnEndOrder( Integer orderId, Integer orderDetailId ) throws Exception {
@@ -107,10 +109,10 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			Map< String,Object > returnParams = new HashMap<>();
 			returnParams.put( "busId", busUserId );
 			returnParams.put( "orderNo", orderNo );
-			returnParams.put( "ucType",2 );
-			returnParams.put( "money",orderMoney );
+			returnParams.put( "ucType", 2 );
+			returnParams.put( "money", orderMoney );
 			//储值卡退款
-			Map< String,Object > payResultMap = MemberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
+			Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
 			if ( payResultMap != null ) {
 			    if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
 				int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
@@ -125,7 +127,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		    boolean flag = false;
 		    //查询订单详情是否已经全部退款
 		    MallOrder order = mallOrderDAO.getOrderById( orderId );
-		    flag = mallOrderService.isReturnSuccess(order);
+		    flag = mallOrderService.isReturnSuccess( order );
 		    /*if ( order != null ) {
 			if ( order.getMallOrderDetail() != null ) {
 			    for ( MallOrderDetail mDetail : order.getMallOrderDetail() ) {

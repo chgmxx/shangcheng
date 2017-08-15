@@ -63,18 +63,10 @@ public class Test {
 //	map.put( "busId", 42 );
 //	String result = SignHttpByJSON( map, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
 
+	map.put( "memberId", 1225352 );
+	String result = SignHttpByJSON( map, "/memberAPI/member/isMember" );
 
-//	MallAllEntity mAll=new MallAllEntity();
-//	mAll.setMemberId(1225636);;  //粉丝信息
-//	mAll.setTotalMoney(2001.78);; //订单总金额
-//	mAll.setUseFenbi(1);;  //是否使用粉币
-//	mAll.setUserJifen(1);;  //是否使用积分
-//
-//	MallShopEntity mallShop=new MallShopEntity();
-//	mallShop.setShopId(1);;  //门店id
-//	mallShop.setUseCoupon(0); //是否使用优惠券
-//	mallShop.setCouponType(1);; //优惠券类型 0微信 1多粉优惠券
-//	mallShop.setCoupondId(2849);;  //卡券id 81微信优惠券
+
 
 //	MallAllEntity mAll= getMallAllEntity();
 //	String result = SignHttpByJSON( mAll, "/memberAPI/memberCountApi/memberCountMoneyByShop" );

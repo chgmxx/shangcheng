@@ -81,6 +81,9 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
     @Autowired
     private MallProductService mallProductService;
 
+    @Autowired
+    private MemberService memberService;
+
     /**
      * 进入申请超级销售员页面
      */
@@ -102,7 +105,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 	    }*/
 	    if ( userid == 0 && CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
 		int memberid = CommonUtil.toInteger( request.getParameter( "member_id" ) );
-		Member members = MemberService.findMemberById( memberid, member );
+		Member members = memberService.findMemberById( memberid, member );
 		userid = members.getBusid();
 		/*if(CommonUtil.isNotEmpty(members.getPublicId())){
 			//todo publicUsersMapper.selectByPrimaryKey
@@ -232,7 +235,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 	    }
 	    if ( userid == 0 && CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
 		int memberid = CommonUtil.toInteger( request.getParameter( "member_id" ) );
-		Member members = MemberService.findMemberById( memberid, member );
+		Member members = memberService.findMemberById( memberid, member );
 		userid = members.getBusid();
 		if ( CommonUtil.isNotEmpty( members.getPublicId() ) ) {
 		    //todo publicUsersMapper.selectByPrimaryKey
@@ -245,7 +248,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    member = MemberService.findMemberById( member.getId(), member );
+	    member = memberService.findMemberById( member.getId(), member );
 	    //授权结束
 
 	    boolean isSeller = mallSellerService.isSeller( member.getId() );//判断商户是否是销售员
@@ -606,7 +609,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    member = MemberService.findMemberById( member.getId(), member );
+	    member = memberService.findMemberById( member.getId(), member );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -869,7 +872,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    member = MemberService.findMemberById( member.getId(), member );
+	    member = memberService.findMemberById( member.getId(), member );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -1337,7 +1340,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 
 	    //查询销售员信息
 	    MallSeller mallSeller = mallSellerService.selectSellerByMemberId( saleMemberId );
-	    Member sellerMember = MemberService.findMemberById( mallSeller.getMemberId(), member );//查询销售员的用户信息
+	    Member sellerMember = memberService.findMemberById( mallSeller.getMemberId(), member );//查询销售员的用户信息
 	    request.setAttribute( "sellerMember", sellerMember );
 
 	    if ( CommonUtil.isNotEmpty( share ) && saleMemberId > 0 && CommonUtil.isNotEmpty( mallSeller ) ) {//分享的用户 判断是否是销售员

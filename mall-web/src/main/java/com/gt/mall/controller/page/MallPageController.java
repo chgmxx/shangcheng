@@ -64,19 +64,21 @@ public class MallPageController extends AuthorizeOrLoginController {
     @Autowired
     private MallFreightService          mallFreightService;
     @Autowired
-    private MallPifaApplyService        mallPifaApplyService;
+    private MallPifaApplyService     mallPifaApplyService;
     @Autowired
-    private MallSellerService           sellerService;
+    private MallSellerService        sellerService;
     @Autowired
-    private MallSellerMallsetService    mallSellerMallsetService;
+    private MallSellerMallsetService mallSellerMallsetService;
     @Autowired
-    private MallPaySetService           mallPaySetService;
+    private MallPaySetService        mallPaySetService;
     @Autowired
-    private MallProductService          mallProductService;
+    private MallProductService       mallProductService;
     @Autowired
-    private MallProductDAO              mallProductDAO;
+    private MallProductDAO           mallProductDAO;
     @Autowired
-    private MallCollectService          mallCollectService;
+    private MallCollectService       mallCollectService;
+    @Autowired
+    private MemberService            memberService;
 
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -801,7 +803,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		    inv_id = invId;
 		}
 	    } else if ( CommonUtil.isNotEmpty( member ) ) {
-		member = MemberService.findMemberById( member.getId(), member );
+		member = memberService.findMemberById( member.getId(), member );
 		if ( rType == 1 ) {
 		    request.setAttribute( "integral", member.getIntegral() );
 		} else if ( rType == 2 ) {
@@ -1613,7 +1615,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Member member = SessionUtils.getLoginMember( request );
 
 	    if ( CommonUtil.isEmpty( member ) && CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
-		member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
+		member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	    }
 
 	    if ( CommonUtil.isNotEmpty( params.get( "proId" ) ) ) {

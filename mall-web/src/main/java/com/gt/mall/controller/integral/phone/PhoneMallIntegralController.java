@@ -53,6 +53,8 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     private MallOrderService         orderService;
     @Autowired
     private MallStoreService         storeService;
+    @Autowired
+    private MemberService            memberService;
 
     /**
      * 进入积分商城
@@ -487,7 +489,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		resultMap.put( "code", -2 );
 		request.getSession().setAttribute( Constants.SESSION_KEY + "integral_order", params );
 	    } else {
-		member = MemberService.findMemberById( member.getId(), member );
+		member = memberService.findMemberById( member.getId(), member );
 		//TODO 判断浏览器
 		Integer browser = 1;
 		//		CommonUtil.judgeBrowser( request, member.getBusid() );

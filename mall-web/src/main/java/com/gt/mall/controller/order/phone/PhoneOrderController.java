@@ -102,19 +102,21 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @Autowired
     private MallDaifuDAO                mallDaifuDAO;
     @Autowired
-    private MallPresaleService          mallPresaleService;
+    private MallPresaleService       mallPresaleService;
     @Autowired
-    private MallSellerService           mallSellerService;
+    private MallSellerService        mallSellerService;
     @Autowired
-    private MallSellerMallsetService    mallSellerMallsetService;
+    private MallSellerMallsetService mallSellerMallsetService;
     @Autowired
-    private MallPaySetService           mallPaySetService;
+    private MallPaySetService        mallPaySetService;
     @Autowired
-    private MallGroupJoinDAO            mallGroupJoinDAO;
+    private MallGroupJoinDAO         mallGroupJoinDAO;
     @Autowired
-    private MallFreightDAO              mallFreightDAO;
+    private MallFreightDAO           mallFreightDAO;
     @Autowired
-    private MallShopCartService         mallShopCartService;
+    private MallShopCartService      mallShopCartService;
+    @Autowired
+    private MemberService            memberService;
 
     /**
      * 跳转至提交订单页面
@@ -189,7 +191,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "isAliPay", isAliPay );
 
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		member = MemberService.findMemberById( member.getId(), member );
+		member = memberService.findMemberById( member.getId(), member );
 	    }
 	    List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
 	    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -491,7 +493,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    arr = JSONArray.fromObject( dobj );
 
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		member = MemberService.findMemberById( member.getId(), member );
+		member = memberService.findMemberById( member.getId(), member );
 	    }
 
 	    if ( arr != null && arr.size() > 0 && CommonUtil.isNotEmpty( member ) ) {
@@ -1078,7 +1080,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    Member member = MemberService.findMemberById( sMember.getId(), sMember );
+	    Member member = memberService.findMemberById( sMember.getId(), sMember );
 	    //查询的积分、粉币跟session里面的积分、粉币不同，则更新session
 	    if ( CommonUtil.isNotEmpty( sMember ) && CommonUtil.isNotEmpty( member ) ) {
 		boolean flag = false;

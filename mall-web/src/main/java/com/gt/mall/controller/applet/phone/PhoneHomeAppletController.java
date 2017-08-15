@@ -57,6 +57,8 @@ public class PhoneHomeAppletController extends BaseController {
     private MallOrderService          morderService;
     @Autowired
     private MallNewOrderAppletService mallNewOrderAppletService;
+    @Autowired
+    private  MemberService            memberService;
 
     /**
      * 商城小程序授权
@@ -147,7 +149,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 		int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 		if ( memberId > 0 ) {
-		    Member member = MemberService.findMemberById( memberId, null );
+		    Member member = memberService.findMemberById( memberId, null );
 		    params.put( "userId", member.getBusid() );
 		    //查询首页轮播图
 		    List< Map< String,Object > > imageList = mallHomeAppletService.getAppletImageByBusUser( params );

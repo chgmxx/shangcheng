@@ -60,6 +60,9 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     @Autowired
     private MallPresaleDAO mallPresaleDAO;
 
+    @Autowired
+    private MemberService memberService;
+
     /**
      * 通过店铺id来查询拍定金
      *
@@ -123,7 +126,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		if ( CommonUtil.isNotEmpty( presaleRank ) ) {
 		    ranks = presaleRank.getRank() + 1;
 		}
-		Member member = MemberService.findMemberById( deposit.getUserId(), null );
+		Member member = memberService.findMemberById( deposit.getUserId(), null );
 		int busUserId = 0;//商家id
 		if ( CommonUtil.isNotEmpty( member ) ) {
 		    busUserId = member.getBusid();
@@ -467,14 +470,14 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    }
 
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
-	    Member member = MemberService.findMemberById( memberId, null );
+	    Member member = memberService.findMemberById( memberId, null );
 	    Map< String,Object > returnParams = new HashMap<>();
 	    returnParams.put( "busId", member.getBusid() );
 	    returnParams.put( "orderNo", depNo );
-	    returnParams.put( "ucType",2 );
-	    returnParams.put( "money",money );
+	    returnParams.put( "ucType", 2 );
+	    returnParams.put( "money", money );
 	    //储值卡退款
-	    Map< String,Object > payResultMap = MemberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
+	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
 	    if ( payResultMap != null ) {
 		if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
 		    int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
@@ -505,7 +508,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	params.put( "return_no", returnNo );
 	params.put( "pay_way", deposit.getPayWay() );
 	params.put( "shop_id", deposit.getShopId() );
-	Member member = MemberService.findMemberById( deposit.getUserId(), null );//根据会员id查询会员信息
+	Member member = memberService.findMemberById( deposit.getUserId(), null );//根据会员id查询会员信息
 	// todo 调用小屁孩的接口，根据公众号id查询公众号信息
 	WxPublicUsers wx = null;
 	if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {

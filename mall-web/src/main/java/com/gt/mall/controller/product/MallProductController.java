@@ -48,6 +48,8 @@ public class MallProductController extends BaseController {
     private MallStoreService            mallStoreService;
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
+    @Autowired
+    private CardService                 cardService;
 
     /**
      * 进入商品管理列表页面
@@ -179,7 +181,7 @@ public class MallProductController extends BaseController {
 	    }
 
 	    //查询卡券包
-	    List< Map > cardReceiveList = CardService.findReceiveByBusUserId( user.getId() );
+	    List< Map > cardReceiveList = cardService.findReceiveByBusUserId( user.getId() );
 	    if ( cardReceiveList != null && cardReceiveList.size() > 0 ) {
 		for ( Map< String,Object > map2 : cardReceiveList ) {
 

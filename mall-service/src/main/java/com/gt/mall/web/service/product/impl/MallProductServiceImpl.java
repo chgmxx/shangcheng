@@ -132,6 +132,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     @Autowired
     private MallOrderDAO mallOrderDAO;//订单dao
 
+    @Autowired
+    private MemberService memberService;
+
     @Override
     public PageUtil selectByUserId( Map< String,Object > param ) {
 	List< Map< String,Object > > productList = null;
@@ -830,7 +833,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    double discount = 1;
 		    boolean isPifa = false;
 		    if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
-			Member member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
+			Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
 			discount = getMemberDiscount( "1", member );
 
 			MallPaySet set = mallPaySetService.selectByMember( member );
@@ -869,7 +872,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	boolean isPifa = false;
 	Member member = null;
 	if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
-	    member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
+	    member = memberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
 	    isPifa = mallPifaApplyService.isPifa( member );
 	}
 
@@ -974,7 +977,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		boolean isPifa = false;
 		double discount = 1;//保存会员的折扣
 		if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
-		    Member member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
+		    Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
 		    ;
 		    isPifa = mallPifaApplyService.isPifa( member );
 		    discount = getMemberDiscount( "1", member );//获取会员的折扣
@@ -1117,7 +1120,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     public double getMemberDiscount( String isMemberDiscount, Member member ) {
 	double discount = 1;
 	if ( isMemberDiscount.equals( "1" ) && CommonUtil.isNotEmpty( member ) ) {
-	    return MemberService.getMemberDiscount( member.getId() );
+	    return memberService.getMemberDiscount( member.getId() );
 	}
 	return 0;
     }

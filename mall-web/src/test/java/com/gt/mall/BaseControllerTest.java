@@ -16,6 +16,8 @@ public class BaseControllerTest extends BasicTest {
 
     @Autowired
     private MallStoreDAO mallStoreDAO;
+    @Autowired
+    private MemberService memberService;
 
     @Test
     public void tests() {
@@ -27,7 +29,7 @@ public class BaseControllerTest extends BasicTest {
 	params.put( "maxResult", 10 );
 	List< Map< String,Object > > list = mallStoreDAO.findByPage( params );*/
 
-        Member member = MemberService.findMemberById( 124,null );
+        Member member = memberService.findMemberById( 124,null );
 
         System.out.println("nickname = " + member.getNickname());
     }

@@ -52,6 +52,8 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     private MallSellerJoinProductDAO mallSellerJoinProductDAO;
     @Autowired
     private MallPaySetService        mallPaySetService;
+    @Autowired
+    private  MemberService           memberService;
 
     /**
      * 查询客户订单的个数
@@ -259,7 +261,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	if ( saleMemberId == 0 ) {
 	    return false;
 	}
-	Member member = MemberService.findMemberById( saleMemberId,null );//查询销售员的用户信息
+	Member member = memberService.findMemberById( saleMemberId,null );//查询销售员的用户信息
 	MallPaySet set = mallPaySetService.selectByMember( member );
 	int state = getSellerApplay( member, set );
 	boolean isSeller = false;

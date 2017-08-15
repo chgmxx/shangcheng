@@ -156,7 +156,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Autowired
     private MallCollectService          mallCollectService;
     @Autowired
-    private MallImageAssociativeDAO mallImageAssociativeDAO;
+    private MallImageAssociativeDAO     mallImageAssociativeDAO;
+    @Autowired
+    private  CardService                cardService;
 
     /**
      * 分页查询
@@ -2215,7 +2217,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > getCardReceive( int receiveId ) {
-	return CardService.findDuofenCardByReceiveId(receiveId);
+	return cardService.findDuofenCardByReceiveId(receiveId);
     }
 
     @Override
