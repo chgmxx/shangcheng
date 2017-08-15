@@ -9,6 +9,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.*;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.seller.MallSellerOrderService;
@@ -258,9 +259,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	if ( saleMemberId == 0 ) {
 	    return false;
 	}
-	//todo 调用彭江丽的接口 根据粉丝id获取粉丝信息
-	Member member = new Member();
-	//	Member member = memberService.findById(saleMemberId);//查询销售员的用户信息
+	Member member = MemberService.findMemberById( saleMemberId,null );//查询销售员的用户信息
 	MallPaySet set = mallPaySetService.selectByMember( member );
 	int state = getSellerApplay( member, set );
 	boolean isSeller = false;

@@ -2,9 +2,9 @@ package com.gt.mall.controller.groupbuy;
 
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.product.MallProduct;
@@ -43,7 +43,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "mGroupBuy" )
-public class MallGroupBuyController extends BaseController {
+public class MallGroupBuyController extends AuthorizeOrLoginController {
 
     @Autowired
     private MallStoreService            storeService;
@@ -100,7 +100,6 @@ public class MallGroupBuyController extends BaseController {
 
 	return "mall/groupBuy/groupbuy_index";
     }
-
 
     /**
      * 进入团购编辑页面
@@ -404,9 +403,7 @@ public class MallGroupBuyController extends BaseController {
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    // TODO 登录地址
-	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -433,11 +430,11 @@ public class MallGroupBuyController extends BaseController {
 	    }
 	    params.put( "shopId", shopid );
 	    List< Map< String,Object > > productList = groupBuyService.getGroupBuyAll( member, params );// 查询店铺下所有加入团购的商品
-	    String mall_shopId=Constants.SESSION_KEY + "shopId";
+	    String mall_shopId = Constants.SESSION_KEY + "shopId";
 	    if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
 		request.getSession().setAttribute( mall_shopId, shopid );
 	    } else {
-		if ( !request.getSession().getAttribute( mall_shopId).toString().equals( String.valueOf( shopid ) ) ) {
+		if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( String.valueOf( shopid ) ) ) {
 		    request.getSession().setAttribute( mall_shopId, shopid );
 		}
 	    }
@@ -497,9 +494,7 @@ public class MallGroupBuyController extends BaseController {
 	    }*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    // TODO 登录地址
-	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -536,8 +531,8 @@ public class MallGroupBuyController extends BaseController {
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( productMap ) ) {
-		String mall_shopId=Constants.SESSION_KEY + "shopId";
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId) ) && CommonUtil.isNotEmpty( productMap.get( "shopId" ) ) ) {
+		String mall_shopId = Constants.SESSION_KEY + "shopId";
+		if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) && CommonUtil.isNotEmpty( productMap.get( "shopId" ) ) ) {
 		    request.getSession().setAttribute( mall_shopId, productMap.get( "shopId" ) );
 		} else {
 		    if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( productMap.get( "shopId" ).toString() ) ) {
@@ -616,12 +611,13 @@ public class MallGroupBuyController extends BaseController {
     @RequestMapping( "{shopid}/79B4DE7C/playDetail" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String playDetail( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopid, @RequestParam Map< String,Object > params ) {
-	Member member = SessionUtils.getLoginMember( request );
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	    request.setAttribute( "userid", userid );
-	}
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+	    int userid = 0;
+	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "uId" ) );
+		request.setAttribute( "userid", userid );
+	    }
 	/*Map<String, Object> publicMap = pageService.memberMap(userid);
 	if(CommonUtil.isEmpty(member) && (CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
 		boolean isLogin = pageService.isLogin(member, userid, request);
@@ -629,31 +625,33 @@ public class MallGroupBuyController extends BaseController {
 			return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
 		}
 	}*/
-	Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	// TODO 登录地址
-	String returnUrl = "";
-//	userLogin( request, response, userid, loginMap );
-	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-	    return returnUrl;
-	}
-	Map< String,Object > mapuser = pageService.selUser( shopid );//查询商家信息
-	if ( CommonUtil.isNotEmpty( mapuser ) ) {
-	    userid = CommonUtil.toInteger( mapuser.get( "id" ) );
-	}
-	Map publicUserid = pageService.getPublicByUserMap( mapuser );//查询公众号信息
-	if ( CommonUtil.isNotEmpty( publicUserid ) ) {
-	    userid = CommonUtil.toInteger( mapuser.get( "bus_user_id" ) );
-	}
-
-	String mall_shopId=Constants.SESSION_KEY + "shopId";
-	if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
-	    request.getSession().setAttribute( mall_shopId, shopid );
-	} else {
-	    if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( String.valueOf( shopid ) ) ) {
-		request.getSession().setAttribute( mall_shopId, shopid );
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		return returnUrl;
 	    }
+	    Map< String,Object > mapuser = pageService.selUser( shopid );//查询商家信息
+	    if ( CommonUtil.isNotEmpty( mapuser ) ) {
+		userid = CommonUtil.toInteger( mapuser.get( "id" ) );
+	    }
+	    Map publicUserid = pageService.getPublicByUserMap( mapuser );//查询公众号信息
+	    if ( CommonUtil.isNotEmpty( publicUserid ) ) {
+		userid = CommonUtil.toInteger( mapuser.get( "bus_user_id" ) );
+	    }
+
+	    String mall_shopId = Constants.SESSION_KEY + "shopId";
+	    if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
+		request.getSession().setAttribute( mall_shopId, shopid );
+	    } else {
+		if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( String.valueOf( shopid ) ) ) {
+		    request.getSession().setAttribute( mall_shopId, shopid );
+		}
+	    }
+	    pageService.getCustomer( request, userid );
+	} catch ( Exception e ) {
+	    logger.error( "玩法详情异常：" + e.getMessage() );
+	    e.printStackTrace();
 	}
-	pageService.getCustomer( request, userid );
 	return "mall/product/phone/playDetail";
     }
 

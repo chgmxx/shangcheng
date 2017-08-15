@@ -1,11 +1,11 @@
 package com.gt.mall.controller.order.phone;
 
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallDaifuDAO;
@@ -20,6 +20,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionService;
 import com.gt.mall.web.service.basic.MallPaySetService;
@@ -66,7 +67,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping( "/phoneOrder" )
-public class PhoneOrderController extends BaseController {
+public class PhoneOrderController extends AuthorizeOrLoginController {
 
     //    @Autowired
     //    private WxShopService               wxShopService;
@@ -168,12 +169,11 @@ public class PhoneOrderController extends BaseController {
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo userLogin
-	   /* String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		request.getSession().setAttribute( key, JSONObject.fromObject( data ).toString() );
 		return returnUrl;
-	    }*/
+	    }
 	    int isWxPay = 0;//不能微信支付
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) ) {
@@ -188,10 +188,9 @@ public class PhoneOrderController extends BaseController {
 	    request.setAttribute( "isWxPay", isWxPay );
 	    request.setAttribute( "isAliPay", isAliPay );
 
-	    //todo 彭江丽接口 memberMapper.selectByPrimaryKey
-	    /*if ( CommonUtil.isNotEmpty( member ) ) {
-		member = memberMapper.selectByPrimaryKey( member.getId() );
-	    }*/
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		member = MemberService.findMemberById( member.getId(), member );
+	    }
 	    List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		Map< String,Object > params = new HashMap< String,Object >();
@@ -491,10 +490,9 @@ public class PhoneOrderController extends BaseController {
 	    JSONArray dobj = JSONArray.fromObject( data1 );
 	    arr = JSONArray.fromObject( dobj );
 
-	    //todo memberMapper.selectByPrimaryKey
-	    /*if ( CommonUtil.isNotEmpty( member ) ) {
-		member = memberMapper.selectByPrimaryKey( member.getId() );
-	    }*/
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		member = MemberService.findMemberById( member.getId(), member );
+	    }
 
 	    if ( arr != null && arr.size() > 0 && CommonUtil.isNotEmpty( member ) ) {
 		JSONObject details = JSONObject.fromObject( arr.get( 0 ) );
@@ -554,23 +552,23 @@ public class PhoneOrderController extends BaseController {
 			    break;
 			}
 		    }
-					/*if(type.equals("1")){//购物车判断库存
-						JSONArray list1 = JSONArray.fromObject(list.get("message"));
-						for (int k = 0; k < list1.size(); k++) {
-							JSONObject detail = JSONObject.fromObject(list1.get(k));
-							result = judgeStock(detail, result, type,memberId);//判断商品库存，库存不够跳出循环
-							if(!result.get("result").toString().equals("true")){
-								flag = false;
-								break;
-							}
-						}
-					}else{//立即购买判断库存
-						result = judgeStock(list, result, type,memberId);
-						if(!result.get("result").toString().equals("true")){
-							flag = false;
-							break;
-						}
-					}*/
+		    /*if(type.equals("1")){//购物车判断库存
+			    JSONArray list1 = JSONArray.fromObject(list.get("message"));
+			    for (int k = 0; k < list1.size(); k++) {
+				    JSONObject detail = JSONObject.fromObject(list1.get(k));
+				    result = judgeStock(detail, result, type,memberId);//判断商品库存，库存不够跳出循环
+				    if(!result.get("result").toString().equals("true")){
+					    flag = false;
+					    break;
+				    }
+			    }
+		    }else{//立即购买判断库存
+			    result = judgeStock(list, result, type,memberId);
+			    if(!result.get("result").toString().equals("true")){
+				    flag = false;
+				    break;
+			    }
+		    }*/
 		}
 		//					int orderPayWay = Integer.parseInt(params.get("orderPayWay").toString());
 		if ( result.get( "result" ).toString().equals( "true" ) ) {
@@ -736,12 +734,16 @@ public class PhoneOrderController extends BaseController {
 	    userid = CommonUtil.toInteger( params.get( "uId" ) );
 	    request.setAttribute( "userid", userid );
 	}
-	Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	//todo userLogin
-	/*String returnUrl = userLogin( request, response, userid, loginMap );
-	if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-	    return returnUrl;
-	}*/
+	try {
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		return returnUrl;
+	    }
+	} catch ( Exception e ) {
+	    this.logger.error( "PhoneOrderController方法异常：" + e.getMessage() );
+	    e.printStackTrace();
+	}
 	String memberId = member.getId().toString();
 	Integer payWay = CommonUtil.toInteger( params.get( "payWay" ) );
 	String orderId = params.get( "orderId" ).toString();
@@ -839,11 +841,10 @@ public class PhoneOrderController extends BaseController {
 	    request.setAttribute( "addressManage", addressManage );
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 
 	    String memberId = member.getId().toString();
 
@@ -885,11 +886,10 @@ public class PhoneOrderController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    //todo wxShopService.queryCityByLevel
 	    //查询省份数据
 	    /*List< Map< String,Object > > maps = wxShopService.queryCityByLevel( 2 );
@@ -1021,11 +1021,10 @@ public class PhoneOrderController extends BaseController {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, busId, request );
-	    //todo userLogin
-	   /* String returnUrl = userLogin( request, response, busId, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "支付成功跳转页面异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -1048,11 +1047,10 @@ public class PhoneOrderController extends BaseController {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, busId, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, busId, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "支付成功跳转页面异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -1076,13 +1074,11 @@ public class PhoneOrderController extends BaseController {
 	    }
 	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( sMember, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
-	    //todo memberService.findById
-	    Member member = null;//memberService.findById( sMember.getId() );
+	    }
+	    Member member = MemberService.findMemberById( sMember.getId(), sMember );
 	    //查询的积分、粉币跟session里面的积分、粉币不同，则更新session
 	    if ( CommonUtil.isNotEmpty( sMember ) && CommonUtil.isNotEmpty( member ) ) {
 		boolean flag = false;
@@ -1211,15 +1207,13 @@ public class PhoneOrderController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    if ( !CommonUtil.isEmpty( params.get( "dId" ) ) ) {
 		Integer detailId = CommonUtil.toInteger( params.get( "dId" ) );
-		Map< String,Object > map = mallOrderService
-				.selectByDIdOrder( detailId );
+		Map< String,Object > map = mallOrderService.selectByDIdOrder( detailId );
 		request.setAttribute( "map", map );
 	    }
 	    if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
@@ -1343,11 +1337,10 @@ public class PhoneOrderController extends BaseController {
 	    request.setAttribute( "userid", userid );
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    String memberId = member.getId().toString();
 	    params.put( "memberId", memberId );
 	    params.put( "id", orderId );
@@ -1434,13 +1427,12 @@ public class PhoneOrderController extends BaseController {
 					return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
 				}
 			}*/
-	    /*Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo userLogin
-	    String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    Map< String,Object > map = new HashMap< String,Object >();
 	    map.put( "userId", userid );
 	    //根据公众号id查询提取信息
@@ -1488,11 +1480,10 @@ public class PhoneOrderController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    if ( orderId > 0 ) {
 		MallOrder order = mallOrderService.selectById( orderId );
 		List< Map< String,Object > > detailList = mallOrderDAO.selectDetailByOrderId( orderId );
@@ -1554,11 +1545,10 @@ public class PhoneOrderController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response,  loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    int isWxPay = 0;//不能微信支付
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) ) {
@@ -1638,7 +1628,6 @@ public class PhoneOrderController extends BaseController {
 
     /**
      * 储值卡支付成功的回调
-     *
      */
     @RequestMapping( value = "/79B4DE7C/success" )
     @Transactional( rollbackFor = Exception.class )
@@ -1691,23 +1680,23 @@ public class PhoneOrderController extends BaseController {
     /**
      * 去支付
      */
-    @RequestMapping(value = "/79B4DE7C/goPay")
-    @Transactional(rollbackFor = Exception.class)
-    public void goPay(HttpServletRequest request,
-		    @RequestParam Map<String, Object> param,
-		    HttpServletResponse response) {
-	logger.info("进入去支付controller");
+    @RequestMapping( value = "/79B4DE7C/goPay" )
+    @Transactional( rollbackFor = Exception.class )
+    public void goPay( HttpServletRequest request,
+		    @RequestParam Map< String,Object > param,
+		    HttpServletResponse response ) {
+	logger.info( "进入去支付controller" );
 	PrintWriter out = null;
-	Map<String,Object> result = new HashMap<String, Object>();
+	Map< String,Object > result = new HashMap< String,Object >();
 	int code = 1;
 	try {
-	    out =  response.getWriter();
-	    if(CommonUtil.isNotEmpty(param.get("id"))){
+	    out = response.getWriter();
+	    if ( CommonUtil.isNotEmpty( param.get( "id" ) ) ) {
 
-		int orderId = CommonUtil.toInteger(param.get("id"));
+		int orderId = CommonUtil.toInteger( param.get( "id" ) );
 
-		MallOrder order = mallOrderService.selectById(orderId);
-		if(CommonUtil.isNotEmpty(order)){
+		MallOrder order = mallOrderService.selectById( orderId );
+		if ( CommonUtil.isNotEmpty( order ) ) {
 					/*Order newOrder = new Order();
 					newOrder.setId(order.getId());
 					String orderNo="SC"+System.currentTimeMillis();
@@ -1715,60 +1704,62 @@ public class PhoneOrderController extends BaseController {
 					morderService.upOrderNoById(newOrder);
 					order.setOrderNo(orderNo);*/
 
-		    if(order.getOrderType() == 3){//秒杀订单
+		    if ( order.getOrderType() == 3 ) {//秒杀订单
 			JSONObject detailObj = new JSONObject();
 			String key = "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
-			if(JedisUtil.hExists(key, order.getId().toString())){
-			    detailObj.put("groupBuyId", order.getGroupBuyId());
+			if ( JedisUtil.hExists( key, order.getId().toString() ) ) {
+			    detailObj.put( "groupBuyId", order.getGroupBuyId() );
 			    //判断秒杀订单是否正在进行
-			    MallSeckill seckill = mallSeckillService.selectSeckillBySeckillId(order.getGroupBuyId());
-			    if(CommonUtil.isNotEmpty(seckill)){
-				if(seckill.getIsDelete().toString().equals("1")){
+			    MallSeckill seckill = mallSeckillService.selectSeckillBySeckillId( order.getGroupBuyId() );
+			    if ( CommonUtil.isNotEmpty( seckill ) ) {
+				if ( seckill.getIsDelete().toString().equals( "1" ) ) {
 				    code = -1;
-				    result.put("result", false);
-				    result.put("msg", "您购买的秒杀商品已经被删除，请重新下单");
-				}else if(seckill.getIsUse().toString().equals("-1")){
+				    result.put( "result", false );
+				    result.put( "msg", "您购买的秒杀商品已经被删除，请重新下单" );
+				} else if ( seckill.getIsUse().toString().equals( "-1" ) ) {
 				    code = -1;
-				    result.put("result", false);
-				    result.put("msg", "您购买的秒杀商品已经被失效，请重新下单");
-				}else if(seckill.getStatus() == 0){
+				    result.put( "result", false );
+				    result.put( "msg", "您购买的秒杀商品已经被失效，请重新下单" );
+				} else if ( seckill.getStatus() == 0 ) {
 				    code = -1;
-				    result.put("result", false);
-				    result.put("msg", "您购买的秒杀商品还没开始，请耐心等待");
-				}else if(seckill.getStatus() == -1){
+				    result.put( "result", false );
+				    result.put( "msg", "您购买的秒杀商品还没开始，请耐心等待" );
+				} else if ( seckill.getStatus() == -1 ) {
 				    code = -1;
-				    result.put("result", false);
-				    result.put("msg", "您购买的秒杀商品已经结束，请重新下单");
+				    result.put( "result", false );
+				    result.put( "msg", "您购买的秒杀商品已经结束，请重新下单" );
 				}
-			    }else{
+			    } else {
 				code = -1;
-				result.put("result", false);
-				result.put("msg", "您购买的秒杀商品已经被删除，请重新下单");
+				result.put( "result", false );
+				result.put( "msg", "您购买的秒杀商品已经被删除，请重新下单" );
 			    }
-			}else{
+			} else {
 			    code = -1;
-			    result.put("result", false);
-			    result.put("msg", "您的订单已关闭，请重新下单");
+			    result.put( "result", false );
+			    result.put( "msg", "您的订单已关闭，请重新下单" );
 			}
 
-		    }else{
-			if(CommonUtil.isNotEmpty(order.getMallOrderDetail())){
-			    for (MallOrderDetail detail : order.getMallOrderDetail()) {
-				if(CommonUtil.isNotEmpty(order.getOrderType()) && order.getOrderType().toString().equals("7") && CommonUtil.isNotEmpty( detail.getProSpecStr())){//批发商品判断库存
-				    JSONObject map = JSONObject.fromObject( detail.getProSpecStr());
-				    for (Object key : map.keySet()) {
+		    } else {
+			if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) ) {
+			    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+				if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType().toString().equals( "7" ) && CommonUtil
+						.isNotEmpty( detail.getProSpecStr() ) ) {//批发商品判断库存
+				    JSONObject map = JSONObject.fromObject( detail.getProSpecStr() );
+				    for ( Object key : map.keySet() ) {
 					String proSpecificas = key.toString();
-					JSONObject p = JSONObject.fromObject(map.get(key));
-					int proNum = CommonUtil.toInteger(p.get("num"));
-					result = mallProductService.calculateInventory(detail.getProductId(), proSpecificas, proNum,order.getBuyerUserId());
-					if(!(result.get("result")).equals("true")){
+					JSONObject p = JSONObject.fromObject( map.get( key ) );
+					int proNum = CommonUtil.toInteger( p.get( "num" ) );
+					result = mallProductService.calculateInventory( detail.getProductId(), proSpecificas, proNum, order.getBuyerUserId() );
+					if ( !( result.get( "result" ) ).equals( "true" ) ) {
 					    code = -1;
 					    break;
 					}
 				    }
-				}else{
-				    result = mallProductService.calculateInventory(detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(),order.getBuyerUserId());
-				    if(!(result.get("result")).equals("ture")){
+				} else {
+				    result = mallProductService
+						    .calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
+				    if ( !( result.get( "result" ) ).equals( "ture" ) ) {
 					code = -1;
 					break;
 				    }
@@ -1777,31 +1768,31 @@ public class PhoneOrderController extends BaseController {
 			    }
 			}
 		    }
-		    if(order.getOrderStatus() == 2 || order.getOrderStatus() == 3 || order.getOrderStatus() == 4){
-			result.put("result", false);
+		    if ( order.getOrderStatus() == 2 || order.getOrderStatus() == 3 || order.getOrderStatus() == 4 ) {
+			result.put( "result", false );
 			code = 0;
-			result.put("msg", "您已经支付成功，无需再次支付");
+			result.put( "msg", "您已经支付成功，无需再次支付" );
 		    }
-		    result.put("proTypeId", order.getMallOrderDetail().get(0).getProTypeId());
-		    result.put("out_trade_no", order.getOrderNo());
-		    result.put("orderMoney", order.getOrderMoney());
-		    result.put("busId", order.getBusUserId());
+		    result.put( "proTypeId", order.getMallOrderDetail().get( 0 ).getProTypeId() );
+		    result.put( "out_trade_no", order.getOrderNo() );
+		    result.put( "orderMoney", order.getOrderMoney() );
+		    result.put( "busId", order.getBusUserId() );
 		}
 	    }
 
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    code = -1;
-	    result.put("result", false);
-	    result.put("msg", "去支付失败，稍后请重新支付");
-	    logger.error("去支付异常："+e.getMessage());
+	    result.put( "result", false );
+	    result.put( "msg", "去支付失败，稍后请重新支付" );
+	    logger.error( "去支付异常：" + e.getMessage() );
 	    e.printStackTrace();
-	}finally{
-	    if (CommonUtil.isEmpty(result.get("result"))){
+	} finally {
+	    if ( CommonUtil.isEmpty( result.get( "result" ) ) ) {
 		code = 1;
-		result.put("result", true);
+		result.put( "result", true );
 	    }
-	    result.put("code", code);
-	    out.write(JSONObject.fromObject(result).toString());
+	    result.put( "code", code );
+	    out.write( JSONObject.fromObject( result ).toString() );
 	    out.flush();
 	    out.close();
 	}

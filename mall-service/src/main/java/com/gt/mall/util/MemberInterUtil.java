@@ -19,16 +19,15 @@ public class MemberInterUtil {
 
     private static Logger logger = LoggerFactory.getLogger( MemberInterUtil.class );
 
-    private static JSONObject SignHttpJson( Map< String,Object > params, String url ) {
+    private static JSONObject SignHttpJson( Object obj, String url ) {
 	url = PropertiesUtil.getMemberDomain() + url;
 	String signKey = PropertiesUtil.getMemberSignKey();
 	try {
-	    String result = SignHttpUtils.postByHttp( url, params, signKey );
+	    String result = SignHttpUtils.postByHttp( url, obj, signKey );
 	    logger.info( "result:" + result );
 
 	    if ( CommonUtil.isNotEmpty( result ) ) {
-		JSONObject resultObj = JSONObject.parseObject( result );
-		return resultObj;
+		return JSONObject.parseObject( result );
 	    }
 	} catch ( SignException e ) {
 	    e.printStackTrace();
@@ -44,7 +43,7 @@ public class MemberInterUtil {
      *
      * @return 返回
      */
-    public static String SignHttpSelect( Map< String,Object > params, String url ) {
+    public static String SignHttpSelect( Object params, String url ) {
 	JSONObject resultObj = SignHttpJson( params, url );
 
 	if ( resultObj.getInteger( "code" ) == 0 ) {
@@ -64,7 +63,7 @@ public class MemberInterUtil {
      *
      * @return 返回
      */
-    public static Map< String,Object > SignHttpInsertOrUpdate( Map< String,Object > params, String url ) {
+    public static Map< String,Object > SignHttpInsertOrUpdate( Object params, String url ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	JSONObject resultObj = SignHttpJson( params, url );
 

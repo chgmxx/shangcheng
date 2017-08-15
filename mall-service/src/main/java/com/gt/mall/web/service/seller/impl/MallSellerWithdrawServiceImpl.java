@@ -11,6 +11,7 @@ import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerIncome;
 import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.entity.seller.MallSellerWithdraw;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.web.service.seller.MallSellerWithdrawService;
@@ -191,8 +192,7 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
 	//	Member member = memberMapper.selectByPrimaryKey(seller.getMemberId());
 	//todo 调用小屁孩的接口，根据商家id查询公众号信息
 	WxPublicUsers wxPublicUsers = new WxPublicUsers();
-	//todo 调用彭江丽的接口，根据粉丝id查询粉丝信息
-	Member member = new Member();
+	Member member = MemberService.findMemberById( seller.getMemberId() ,null);//根据粉丝id查询粉丝信息
 
 	params.put( "appid", wxPublicUsers.getAppid() );
 	params.put( "partner_trade_no", withdraw.getWithdrawOrderNo() );

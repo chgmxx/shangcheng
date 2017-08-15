@@ -2,10 +2,10 @@ package com.gt.mall.controller.seller.phone;
 
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.seller.MallSellerSetDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallProduct;
@@ -13,6 +13,7 @@ import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.entity.seller.MallSellerWithdraw;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.order.MallOrderService;
@@ -48,7 +49,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping( "/phoneSellers" )
-public class PhoneSellerController extends BaseController {
+public class PhoneSellerController extends AuthorizeOrLoginController {
 
     @Autowired
     private MallSellerService mallSellerService;
@@ -101,8 +102,7 @@ public class PhoneSellerController extends BaseController {
 	    }*/
 	    if ( userid == 0 && CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
 		int memberid = CommonUtil.toInteger( request.getParameter( "member_id" ) );
-		//todo memberService.findById
-		Member members = null;//memberService.findById(memberid);
+		Member members = MemberService.findMemberById( memberid, member );
 		userid = members.getBusid();
 		/*if(CommonUtil.isNotEmpty(members.getPublicId())){
 			//todo publicUsersMapper.selectByPrimaryKey
@@ -116,11 +116,10 @@ public class PhoneSellerController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo 彭江丽接口 userLogin
-	    /*String returnUrl = userLogin(request, response, userid, loginMap);
-	    if(CommonUtil.isNotEmpty(returnUrl)){
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    boolean isError = false;
 	    boolean isIndex = false;
 	    String errorMsg = "";
@@ -231,25 +230,22 @@ public class PhoneSellerController extends BaseController {
 		//todo wxPublicUsersMapper.selectByUserId
 		//wx = wxPublicUsersMapper.selectByUserId(userid);
 	    }
-	    /*if(userid == 0 && CommonUtil.isNotEmpty(request.getParameter("member_id"))){
-		int memberid = CommonUtil.toInteger(request.getParameter("member_id"));
-		//todo memberService.findById
-		Member members = memberService.findById(memberid);
+	    if ( userid == 0 && CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
+		int memberid = CommonUtil.toInteger( request.getParameter( "member_id" ) );
+		Member members = MemberService.findMemberById( memberid, member );
 		userid = members.getBusid();
-		if(CommonUtil.isNotEmpty(members.getPublicId())){
-			//todo publicUsersMapper.selectByPrimaryKey
-			wx = publicUsersMapper.selectByPrimaryKey(members.getPublicId());
+		if ( CommonUtil.isNotEmpty( members.getPublicId() ) ) {
+		    //todo publicUsersMapper.selectByPrimaryKey
+		    //		    wx = publicUsersMapper.selectByPrimaryKey(members.getPublicId());
 		}
-	    }*/
+	    }
 	    request.setAttribute( "userid", userid );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	   /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    //todo memberService.findById
-	    member = memberService.findById( member.getId() );*/
+	    member = MemberService.findMemberById( member.getId(), member );
 	    //授权结束
 
 	    boolean isSeller = mallSellerService.isSeller( member.getId() );//判断商户是否是销售员
@@ -326,11 +322,10 @@ public class PhoneSellerController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 
 	    Map< String,Object > params = new HashMap< String,Object >();
 	    params.put( "type", type );
@@ -372,11 +367,10 @@ public class PhoneSellerController extends BaseController {
 	    }
 	    Map< String,Object > publicMap = mallPageService.publicMapByUserId( userid );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.getSellerTwoCode( seller, member, CommonUtil.judgeBrowser( request ) );//获取二维码
@@ -420,11 +414,10 @@ public class PhoneSellerController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    request.setAttribute( "seller", seller );//销售员信息
@@ -482,11 +475,10 @@ public class PhoneSellerController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 
@@ -610,13 +602,11 @@ public class PhoneSellerController extends BaseController {
 	    }
 	    Map< String,Object > publicMap = mallPageService.publicMapByUserId( userid );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	   /* String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    //todo memberService.findById
-	    member = memberService.findById( member.getId() );*/
+	    member = MemberService.findMemberById( member.getId(), member );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -678,11 +668,10 @@ public class PhoneSellerController extends BaseController {
 	    }
 	    Map< String,Object > publicMap = mallPageService.publicMapByUserId( userid );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    // todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    int customerId = 0;//客户id
 	    if ( CommonUtil.isNotEmpty( params ) ) {
 		if ( CommonUtil.isNotEmpty( params.get( "custId" ) ) ) {
@@ -745,11 +734,10 @@ public class PhoneSellerController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.mergeData( seller, member );
@@ -824,11 +812,10 @@ public class PhoneSellerController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    if ( CommonUtil.isNotEmpty( params.get( "getType" ) ) ) {
 		int getType = CommonUtil.toInteger( params.get( "getType" ) );
 		params.put( "types", getType );
@@ -878,13 +865,11 @@ public class PhoneSellerController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    //todo memberService.findById
-	    member = memberService.findById( member.getId() );*/
+	    member = MemberService.findMemberById( member.getId(), member );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -931,11 +916,10 @@ public class PhoneSellerController extends BaseController {
 				}
 			}*/
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	   /* String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    int type = 1;
 	    if ( CommonUtil.isNotEmpty( params ) ) {
 		if ( CommonUtil.isNotEmpty( params.get( "type" ) ) ) {
@@ -1031,11 +1015,10 @@ public class PhoneSellerController extends BaseController {
 	    }
 	    Map< String,Object > publicMap = mallPageService.publicMapByUserId( userid );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    userid = seller.getBusUserId();
 	    if ( CommonUtil.isNotEmpty( params.get( "proName" ) ) ) {
@@ -1044,7 +1027,7 @@ public class PhoneSellerController extends BaseController {
 		request.setAttribute( "proName", proName );
 	    }
 
-	    double discount = mallProductService.getMemberDiscount( "1", member  );//商品折扣
+	    double discount = mallProductService.getMemberDiscount( "1", member );//商品折扣
 	    request.setAttribute( "discount", discount );
 
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( member.getId() );
@@ -1115,7 +1098,7 @@ public class PhoneSellerController extends BaseController {
 	    resultMap.put( "flag", false );
 	    resultMap.put( "msg", "保存商城设置失败，请稍后重试" );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    CommonUtil.write( response, resultMap );
 	}
     }
@@ -1144,7 +1127,6 @@ public class PhoneSellerController extends BaseController {
 
     /**
      * 进入我的商城页面
-     *
      */
     @RequestMapping( value = "{saleMemberId}/79B4DE7C/mallIndex" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
@@ -1166,11 +1148,10 @@ public class PhoneSellerController extends BaseController {
 	    Map< String,Object > publicMap = mallPageService.publicMapByUserId( saleMemberId );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 
 	    if ( CommonUtil.isNotEmpty( params.get( "share" ) ) || saleMemberId > 0 ) {//分享出来的链接，保存销售员在缓存
 		mallSellerService.setSaleMemberIdByRedis( member, saleMemberId, request, userid );
@@ -1219,7 +1200,6 @@ public class PhoneSellerController extends BaseController {
 
     /**
      * 根据店铺id获取商家所有的商品
-     *
      */
     @SuppressWarnings( { "rawtypes", "unchecked" } )
     @RequestMapping( "{saleMemberId}/79B4DE7C/shoppingall" )
@@ -1235,11 +1215,10 @@ public class PhoneSellerController extends BaseController {
 	    int userid = mallSet.getBusUserId();
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, mallSet.getBusUserId(), request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, mallSet.getBusUserId(), loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    //授权结束
 	    if ( CommonUtil.isNotEmpty( params.get( "proName" ) ) ) {
 		String proName = new String( params.get( "proName" ).toString().getBytes( "iso8859-1" ), "utf-8" );
@@ -1277,7 +1256,7 @@ public class PhoneSellerController extends BaseController {
 
 	    double discount = 1;//商品折扣
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-	        discount = mallProductService.getMemberDiscount( "1",member  );
+		discount = mallProductService.getMemberDiscount( "1", member );
 	    }
 	    request.setAttribute( "discount", discount );
 
@@ -1345,11 +1324,10 @@ public class PhoneSellerController extends BaseController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    //todo userLogin
-	    /*String returnUrl = userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }*/
+	    }
 	    //授权结束
 	    if ( CommonUtil.isNotEmpty( share ) ) {//分享出来的链接，保存销售员在缓存
 		mallSellerService.setSaleMemberIdByRedis( member, saleMemberId, request, userid );
@@ -1359,8 +1337,7 @@ public class PhoneSellerController extends BaseController {
 
 	    //查询销售员信息
 	    MallSeller mallSeller = mallSellerService.selectSellerByMemberId( saleMemberId );
-	    //todo memberService.findById
-	    Member sellerMember = null;//memberService.findById( mallSeller.getMemberId() );//查询销售员的用户信息
+	    Member sellerMember = MemberService.findMemberById( mallSeller.getMemberId(), member );//查询销售员的用户信息
 	    request.setAttribute( "sellerMember", sellerMember );
 
 	    if ( CommonUtil.isNotEmpty( share ) && saleMemberId > 0 && CommonUtil.isNotEmpty( mallSeller ) ) {//分享的用户 判断是否是销售员
@@ -1447,7 +1424,6 @@ public class PhoneSellerController extends BaseController {
 
     /**
      * 检验验证码
-     *
      */
     @RequestMapping( value = "/79B4DE7C/checkCode" )
     @ResponseBody
@@ -1480,7 +1456,6 @@ public class PhoneSellerController extends BaseController {
 
     /**
      * 添加批发商
-     *
      */
     @RequestMapping( value = "/79B4DE7C/addSellers" )
     public void addSellers( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > map ) {

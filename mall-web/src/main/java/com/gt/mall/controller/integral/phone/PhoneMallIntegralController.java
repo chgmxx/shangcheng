@@ -1,11 +1,12 @@
 package com.gt.mall.controller.integral.phone;
 
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
+import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.integral.MallIntegralImage;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -40,7 +41,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "phoneIntegral" )
-public class PhoneMallIntegralController extends BaseController {
+public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 
     @Autowired
     private MallPageService          pageService;
@@ -72,9 +73,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    // TODO 登录地址
-	    String returnUrl ="";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -164,9 +163,7 @@ public class PhoneMallIntegralController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl ="";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -214,9 +211,7 @@ public class PhoneMallIntegralController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl ="";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -291,9 +286,7 @@ public class PhoneMallIntegralController extends BaseController {
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
-	    // TODO 登录地址
-	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -356,9 +349,7 @@ public class PhoneMallIntegralController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -421,9 +412,7 @@ public class PhoneMallIntegralController extends BaseController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
@@ -493,18 +482,15 @@ public class PhoneMallIntegralController extends BaseController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    // TODO 登录地址
-	    String returnUrl = "";
-//	    userLogin( request, response, userid, loginMap );
+	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		resultMap.put( "code", -2 );
 		request.getSession().setAttribute( Constants.SESSION_KEY + "integral_order", params );
 	    } else {
-		//TODO 需关连 Member 会员信息
-		//		member = memberService.findById(member.getId());
+		member = MemberService.findMemberById( member.getId(), member );
 		//TODO 判断浏览器
 		Integer browser = 1;
-//		CommonUtil.judgeBrowser( request, member.getBusid() );
+		//		CommonUtil.judgeBrowser( request, member.getBusid() );
 		if ( browser != 1 ) {
 		    browser = 2;
 		}

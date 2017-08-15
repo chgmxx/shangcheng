@@ -9,6 +9,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.*;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.presale.*;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
 import com.gt.mall.util.PageUtil;
@@ -122,10 +123,11 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		if ( CommonUtil.isNotEmpty( presaleRank ) ) {
 		    ranks = presaleRank.getRank() + 1;
 		}
-		//通过微信id查询商家id
-		//		String sql = "SELECT u.id FROM bus_user u LEFT JOIN t_wx_bus_member m ON m.`busId`=u.id WHERE m.id="+deposit.getUserId();
-		//todo  根据粉丝id查询商家id
-		int busUserId = 0;//daoUtil.queryForInt(sql);
+		Member member = MemberService.findMemberById( deposit.getUserId(), null );
+		int busUserId = 0;//商家id
+		if ( CommonUtil.isNotEmpty( member ) ) {
+		    busUserId = member.getBusid();
+		}
 
 		if ( busUserId > 0 ) {
 		    MallPresaleRank rank = new MallPresaleRank();
@@ -465,16 +467,22 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    }
 
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
-	    //todo 调用彭江丽的接口，储值卡退款
-	    Map< String,Object > payResultMap = null;//memberPayService.chargeBack(memberId,money);
+	    Member member = MemberService.findMemberById( memberId, null );
+	    Map< String,Object > returnParams = new HashMap<>();
+	    returnParams.put( "busId", member.getBusid() );
+	    returnParams.put( "orderNo", depNo );
+	    returnParams.put( "ucType",2 );
+	    returnParams.put( "money",money );
+	    //储值卡退款
+	    Map< String,Object > payResultMap = MemberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
 	    if ( payResultMap != null ) {
-		if ( !CommonUtil.isEmpty( payResultMap.get( "result" ) ) ) {
-		    boolean result = Boolean.valueOf( payResultMap.get( "result" ).toString() );
-		    if ( result ) {//退款成功修改退款状态
+		if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
+		    int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
+		    if ( code == 1 ) {//退款成功修改退款状态
 			updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
 		    } else {
 			resultMap.put( "result", false );
-			resultMap.put( "msg", payResultMap.get( "message" ) );
+			resultMap.put( "msg", payResultMap.get( "errorMsg" ) );
 		    }
 		}
 	    }
@@ -497,8 +505,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	params.put( "return_no", returnNo );
 	params.put( "pay_way", deposit.getPayWay() );
 	params.put( "shop_id", deposit.getShopId() );
-	//todo 调用彭江丽的接口，根据会员id查询会员信息
-	Member member = null;//memberService.findById(deposit.getUserId());
+	Member member = MemberService.findMemberById( deposit.getUserId(), null );//根据会员id查询会员信息
 	// todo 调用小屁孩的接口，根据公众号id查询公众号信息
 	WxPublicUsers wx = null;
 	if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {

@@ -12,6 +12,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.web.service.order.MallOrderReturnService;
 import com.gt.mall.web.service.order.MallOrderService;
@@ -66,7 +67,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		/*Integer memberId = CommonUtil.toInteger( detailMap.get( "buyer_user_id" ) );*/
 		Integer orderPayWay = CommonUtil.toInteger( detailMap.get( "order_pay_way" ) );
 		Double orderMoney = CommonUtil.toDouble( detailMap.get( "orderMoney" ) );
-		/*String orderNo = CommonUtil.toString( detailMap.get( "orderNo" ) );*/
+		String orderNo = CommonUtil.toString( detailMap.get( "orderNo" ) );
+		int busUserId = CommonUtil.toInteger( detailMap.get( "bus_user_id" ) );
 		//todo 调用小屁孩接口，根据粉丝id查询公众号信息
 		WxPublicUsers pUser = null;
 		String returnNo = "TK" + System.currentTimeMillis();
@@ -102,13 +104,17 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			}
 
 		    } else if ( orderPayWay == 3 && CommonUtil.isNotEmpty( pUser ) ) {//储值卡退款
-			//todo 调用彭江丽接口   储值卡退款
-			Map< String,Object > payResultMap = null;//memberPayService.chargeBack(memberId,orderMoney);
+			Map< String,Object > returnParams = new HashMap<>();
+			returnParams.put( "busId", busUserId );
+			returnParams.put( "orderNo", orderNo );
+			returnParams.put( "ucType",2 );
+			returnParams.put( "money",orderMoney );
+			//储值卡退款
+			Map< String,Object > payResultMap = MemberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
 			if ( payResultMap != null ) {
-			    if ( !CommonUtil.isEmpty( payResultMap.get( "result" ) ) ) {
-				boolean result = Boolean.valueOf( payResultMap.get( "result" ).toString() );
-				//String message = payResultMap.get("message").toString();
-				if ( result ) {//退款成功修改退款状态
+			    if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
+				int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
+				if ( code == 1 ) {//退款成功修改退款状态
 				    resultFlag = true;
 				    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
 				}

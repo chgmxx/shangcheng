@@ -26,6 +26,7 @@ import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.product.*;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallImageAssociativeService;
 import com.gt.mall.web.service.basic.MallPaySetService;
@@ -829,8 +830,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    double discount = 1;
 		    boolean isPifa = false;
 		    if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
-			//todo 调用彭江丽的方法 memberService.findById
-			Member member = null;//memberService.findById(CommonUtil.toInteger(params.get("member_id")));
+			Member member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
 			discount = getMemberDiscount( "1", member );
 
 			MallPaySet set = mallPaySetService.selectByMember( member );
@@ -869,8 +869,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	boolean isPifa = false;
 	Member member = null;
 	if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
-	    //todo 调用彭江丽会员接口 memberService.findById
-	    member = null;//memberService.findById(CommonUtil.toInteger(params.get("member_id")));
+	    member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
 	    isPifa = mallPifaApplyService.isPifa( member );
 	}
 
@@ -975,15 +974,10 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		boolean isPifa = false;
 		double discount = 1;//保存会员的折扣
 		if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
-		    //todo 调用彭江丽接口 memberService.findById
-		    Member member = null;//memberService.findById(CommonUtil.toInteger(params.get("member_id")));
+		    Member member = MemberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
+		    ;
 		    isPifa = mallPifaApplyService.isPifa( member );
 		    discount = getMemberDiscount( "1", member );//获取会员的折扣
-		   /* Map<String,Object> map = memberpayService.findCardType(CommonUtil.toInteger(params.get("member_id")));//查询会员的折扣
-		    String result = map.get("result").toString();
-		    if(result=="true"||result.equals("true")){
-			discount = CommonUtil.toDouble(map.get("discount"));
-		    }*/
 		}
 
 		//查询商品规格集合
@@ -1121,16 +1115,11 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     @Override
     public double getMemberDiscount( String isMemberDiscount, Member member ) {
-	/*double discount = 1;
-	if ( ( isMemberDiscount == "1" || isMemberDiscount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {
-	    // todo 调用彭江丽会员接口 memberpayService.findCardType
-	    Map<String, Object> map = memberpayService.findCardType(member.getId());
-	    String result = map.get("result").toString();
-	    if((result=="true"||result.equals("true")) && CommonUtil.isNotEmpty(map.get("discount"))){
-		discount = CommonUtil.toDouble(map.get("discount"));
-	    }
-	}*/
-	return 1;
+	double discount = 1;
+	if ( isMemberDiscount.equals( "1" ) && CommonUtil.isNotEmpty( member ) ) {
+	    return MemberService.getMemberDiscount( member.getId() );
+	}
+	return 0;
     }
 
     @Override

@@ -3,11 +3,13 @@ package com.gt.mall.controller.store;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
-import com.gt.mall.util.*;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.util.QRcodeKit;
+import com.gt.mall.util.SessionUtils;
 import com.gt.mall.web.service.basic.MallCommentGiveService;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.store.MallStoreService;
@@ -53,7 +55,8 @@ public class MallStoreController extends BaseController {
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入店铺管理啦啦啦" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    SessionUtils.getLoginUser2( request );
+	    /*BusUser user = SessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
 	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
 	    int pid = 0;
@@ -86,7 +89,7 @@ public class MallStoreController extends BaseController {
 		request.setAttribute( "page", page );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
-	    }
+	    }*/
 	    //todo 调用陈丹接口 视频教程接口
 	    /*request.setAttribute("videourl", course.urlquery("8"));*/
 	} catch ( Exception e ) {

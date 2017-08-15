@@ -4,7 +4,6 @@ import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.util.PageUtil;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;

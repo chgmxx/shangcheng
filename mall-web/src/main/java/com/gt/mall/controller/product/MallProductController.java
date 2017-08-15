@@ -4,6 +4,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.product.MallGroup;
+import com.gt.mall.inter.service.CardService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.product.MallGroupService;
 import com.gt.mall.web.service.product.MallProductService;
@@ -178,8 +179,7 @@ public class MallProductController extends BaseController {
 	    }
 
 	    //查询卡券包
-	    //todo 调用彭江丽接口  查询卡券包 duofenCardService.findReceiveByBusUserId
-	    /*List< Map< String,Object > > cardReceiveList = duofenCardService.findReceiveByBusUserId( user );
+	    List< Map > cardReceiveList = CardService.findReceiveByBusUserId( user.getId() );
 	    if ( cardReceiveList != null && cardReceiveList.size() > 0 ) {
 		for ( Map< String,Object > map2 : cardReceiveList ) {
 
@@ -189,7 +189,7 @@ public class MallProductController extends BaseController {
 		    }
 		}
 		request.setAttribute( "cardReceiveList", cardReceiveList );
-	    }*/
+	    }
 
 	    // 查询会员下面的所有分组
 	    if ( shoplist != null && shoplist.size() > 0 ) {
@@ -342,13 +342,12 @@ public class MallProductController extends BaseController {
 	    map.put( "msg", "同步商品信息失败，请稍后重试" );
 	    map.put( "code", -1 );
 	}
-	CommonUtil.write( response,map );
+	CommonUtil.write( response, map );
 
     }
 
     /**
      * 获取二维码的图片
-     *
      */
     @RequestMapping( value = "/79B4DE7C/getTwoCode" )
     public void getTwoCode( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
@@ -366,7 +365,6 @@ public class MallProductController extends BaseController {
 
     /**
      * 获取二维码的图片
-     *
      */
     @RequestMapping( value = "/79B4DE7C/codeIframs" )
     public String codeIframs( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
@@ -413,7 +411,7 @@ public class MallProductController extends BaseController {
 		msg = "没有传商品参数";
 	    }
 	    if ( code == 1 ) {
-	        //todo 调用彭江丽 token验证   TokenUitl.checkTokenToLocal
+		//todo 调用彭江丽 token验证   TokenUitl.checkTokenToLocal
 		/*boolean bool = TokenUitl.checkTokenToLocal( params.get( "token" ).toString() );
 		if ( !bool ) {
 		    code = -2;
@@ -443,7 +441,6 @@ public class MallProductController extends BaseController {
 
     /**
      * 添加商品
-     *
      */
     @SuppressWarnings( "unchecked" )
     @SysLogAnnotation( description = "修改库存", op_function = "3" )
