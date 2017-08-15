@@ -97,6 +97,13 @@ public interface MemberService {
     public List<Integer> findMemberListByIds(int memberId);
 
     /**
+     * 获取会员类型
+     * @param memberId 会员id
+     * @return 会员类型
+     */
+    public Integer isCardType(int memberId);
+
+    /**
      * 会员计算 （还未调试）
      *
      * @param mallAllEntity 对象
