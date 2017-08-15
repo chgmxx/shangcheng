@@ -4,7 +4,9 @@
 <head>
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/common/comm.css"/>
+
 </head>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <body>
 <div>
     <div>
@@ -24,8 +26,10 @@
             success: function (data) {
                 if (data == true || data == "true") {
                     top.frames[0].location.reload();
+                    //TODO parent.layer.getFrameIndex
                     var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                    parent.layer.close(index);
+                    parentCloseAll();
+//                    parent.layer.close(index);
                 } else {
                     alert("回复失败!");
                 }

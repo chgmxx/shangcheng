@@ -18,6 +18,7 @@
     <script src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script src="/js/plugin/kindeditor/kindeditor-min.js" type="text/javascript" charset="utf-8"></script>
     <title>${title}</title>
+
     <script type="text/javascript">
         var editor;
         KindEditor.ready(function (K) {
@@ -51,11 +52,13 @@
             var contractContent = $('textarea[name="contractContent"]').val();
 
             if ($.trim(contractTitle) == "") {
-                window.parent.alertMsg("合同标题不可以为空!")
+                parentAlertMsg("合同标题不可以为空!");
+//                window.parent.alertMsg("合同标题不可以为空!")
                 return;
             }
             if ($.trim(contractContent) == "") {
-                window.parent.alertMsg("合同内容不可以为空!")
+                parentAlertMsg("合同内容不可以为空!");
+//                window.parent.alertMsg("合同内容不可以为空!")
                 return;
             }
             $.ajax({
@@ -65,10 +68,12 @@
                 dataType: "JSON",
                 success: function (data) {
                     if (data.result == true || data.result == "true") {
-                        window.parent.alertMsg("合同保存成功!")
+                        parentAlertMsg("合同保存成功!")
+//                        window.parent.alertMsg("合同保存成功!")
                         location.href = "/purchaseContract/contractIndex.do";
                     } else {
-                        window.parent.alertMsg("合同保存失败!")
+                        parentAlertMsg("合同保存失败!")
+//                        window.parent.alertMsg("合同保存失败!")
                     }
                 }
             });
@@ -77,6 +82,7 @@
     </script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="warp">
     <div class="gt-bread-crumb">
         <span class="gt-bread-crumb-title">${title}</span>

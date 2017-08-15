@@ -83,12 +83,14 @@
     <jsp:include page="page.jsp"></jsp:include>
 </div>
 <script src="/js/plugin/jquery-1.8.3.min.js"></script>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     function submitForm() {
         $("#companyForm").submit();
     }
 
     function removeCompany(companyId) {
+        //TODO parent.layer.confirm
         parent.layer.confirm("确定要删除该条数据吗?", {
             btn: ['确定', '取消'],
             offset: '40%'
@@ -102,14 +104,17 @@
                 dataType: "JSON",
                 success: function (data) {
                     if (data.result == true || data.result == "true") {
-                        window.parent.alertMsg("删除成功!");
+                        parentAlertMsg("删除成功!");
+//                        window.parent.alertMsg("删除成功!");
                         location.href = "/purchaseCompany/companyIndex.do";
                     } else {
-                        window.parent.alertMsg("删除失败!");
+                        parentAlertMsg("删除失败!");
+//                        window.parent.alertMsg("删除失败!");
                     }
                 }
             });
-            parent.layer.closeAll();
+            parentCloseAll();
+//            parent.layer.closeAll();
         }, function () {
         });
     }

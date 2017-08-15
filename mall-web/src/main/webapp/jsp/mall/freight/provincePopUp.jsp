@@ -38,6 +38,7 @@
     </c:if>
     <div><a id="subRemark" class="ui-btn ui-btn-primary" style="width: 120px;">确认</a></div>
 </div>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     function onload() {
         var selectPro = $(".selectPro").val();
@@ -76,14 +77,16 @@
                     province += $(this).attr("tip");
                 }
             });
+            //TODO  parent.getProvinces
             parent.getProvinces(id, province, index);
-
-            parent.layer.closeAll();
+            parentCloseAll();
+//            parent.layer.closeAll();
         });
 
         //取消按钮
         $('#cancelOrder').click(function () {
-            parent.layer.closeAll();
+            parentCloseAll();
+//            parent.layer.closeAll();
         });
     });
 </script>

@@ -22,7 +22,6 @@
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/table.js"></script>
-
     <script type="text/javascript">
 
         $(function () {
@@ -43,6 +42,7 @@
                 var proId = json.id;
                 getProductId(proId, json);
             } else if (isSpe == 0) {
+                //TODO parent.getProductGroup
                 parent.getProductGroup(json, null);//方法回调
                 closeWindow();
             }
@@ -55,8 +55,10 @@
 
         function closeWindow() {
             //当你在iframe页面关闭自身时
+            //TODO parent.layer.getFrameIndex
             var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.layer.close(index); //再执行关闭
+            parentCloseAll(index);
+//            parent.layer.close(index); //再执行关闭
         }
 
         function getProductId(proId, json) {
@@ -72,6 +74,7 @@
                     if (data != null && data.list != null) {
                         proSpecArr = data.list;
                     }
+                    //TODO parent.getProductGroup
                     parent.getProductGroup(json, proSpecArr);//方法回调
                     closeWindow();
                 }
@@ -81,6 +84,7 @@
     </script>
 </head>
 <body style="margin: 10px">
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div style="padding-bottom: 50px">
     <div class="txt-btn pd-bottom-15 clearfix">
         <div>

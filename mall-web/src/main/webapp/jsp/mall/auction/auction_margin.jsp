@@ -88,13 +88,15 @@
 <!--中间信息结束-->
 <!--container  End-->
 <!--footer  End-->
+<jsp:include page="/jsp/common/headerCommon.jsp" />
 <script src="/js/plugin/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="/js/mall/auction/auction.js"></script>
 <script type="text/javascript">
     var shopId = $(".shopId").attr("id");
     $(".shopId").find("option[value=" + shopId + "]").attr("selected", true);
     function returns(marginId) {
-        parent.openIframeNoScoll("退保证金", "500px", "180px", "/mAuction/returnMarginPopUp.do?marginId=" + marginId);
+        parentOpenIframe("退保证金", "500px", "180px", "/mAuction/returnMarginPopUp.do?marginId=" + marginId);
+//        parent.openIframeNoScoll("退保证金", "500px", "180px", "/mAuction/returnMarginPopUp.do?marginId=" + marginId);
     }
 
 </script>

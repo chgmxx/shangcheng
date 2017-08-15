@@ -28,10 +28,12 @@
 
 <script type="text/javascript" src="/js/util.js"></script>
 <script type="text/javascript" src="/js/mall/mall_public.js"></script>
+
 <script type="text/javascript">
 	var error = '${error}';
 	if (error != undefined && error != "") {
-		parent.layer.alert("参数错误，将调回前一个页面");
+        parentAlertMsg("参数错误，将调回前一个页面");
+//		parent.layer.alert("参数错误，将调回前一个页面");
 		window.history.back(-1);
 	}
 	if(top==self){
@@ -40,6 +42,7 @@
 </script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 	<div id="con-box">
 		<div class="con-head" style="margin:0px;">
 			<a class="" href="/mPro/index.do" >商品管理</a>
@@ -137,6 +140,7 @@
 		var data = [];
 		var parentObj = $(this).parent(); 
 		// 询问框
+		//TODO parent.layer.confirm
 		parent.layer.confirm('您确定要删除推荐？', {
 			btn : [ '确定', '取消' ]
 		// 按钮
@@ -183,9 +187,10 @@
 		if(bol){
 			ajax(this,"批量推荐",data);
 		}else{
-			parent.layer.alert("您还没有要选择批量的推荐", {
-				offset : "30%"
-			});
+            parentAlertMsg("您还没有要选择批量的推荐");
+//			parent.layer.alert("您还没有要选择批量的推荐", {
+//				offset : "30%"
+//			});
 		}
 		
 		
@@ -218,6 +223,7 @@
 		if(bol){
 			if (data != null && data != "") {
 				// 询问框
+				//TODO parent.layer.confirm
 				parent.layer.confirm('您确定要批量删除推荐？', {
 					btn : [ '确定', '取消' ]
 				// 按钮
@@ -225,14 +231,16 @@
 					ajax(this,"批量删除推荐",data);
 				});
 			}else{
-				parent.layer.alert("没有能被批量删除的推荐", {
-					offset : "30%"
-				});
+                parentAlertMsg("没有能被批量删除的推荐");
+//				parent.layer.alert("没有能被批量删除的推荐", {
+//					offset : "30%"
+//				});
 			}
 		}else{
-			parent.layer.alert("您还没有选择要批量删除的推荐", {
-				offset : "30%"
-			});
+            parentAlertMsg("您还没有选择要批量删除的推荐");
+//			parent.layer.alert("您还没有选择要批量删除的推荐", {
+//				offset : "30%"
+//			});
 		}
 		
 		
@@ -254,42 +262,53 @@
 				success : function(data) {
 					parent.layer.close(layerLoad);
 					if (data.code == 0) {// 重新登录
-						parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-							offset : "30%",
-							closeBtn : 0
-						}, function(index) {
-							location.href = "/user/tologin.do";
-						});
+                        //TODO alert 跳转
+                        parentAlertMsg("操作失败，长时间没操作，跳转到登录页面");
+//						parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+//							offset : "30%",
+//							closeBtn : 0
+//						}, function(index) {
+//							location.href = "/user/tologin.do";
+//						});
 					} else if (data.code == 1) {
-						var tip = parent.layer.alert(msg+"成功", {
-							offset : "30%",
-							closeBtn : 0
-						}, function(index) {
-							parent.layer.close(tip);
-							location.href = window.location.href;
-						});
+                        //TODO alert 跳转
+                        var tip=parentAlertMsg(msg+"成功");
+//						var tip = parent.layer.alert(msg+"成功", {
+//							offset : "30%",
+//							closeBtn : 0
+//						}, function(index) {
+//							parent.layer.close(tip);
+//							location.href = window.location.href;
+//						});
 					} else {// 编辑失败
-						var tip = parent.layer.alert(msg+"失败", {
-							offset : "30%"
-						});
+                        var tip=parentAlertMsg(msg+"失败");
+//						var tip = parent.layer.alert(msg+"失败", {
+//							offset : "30%"
+//						});
 					}
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
-					parent.layer.close(layerLoad);
-					parent.layer.alert(msg+"失败", {
-						offset : "30%"
-					});
+                    parentCloseAll();
+                    parentAlertMsg(msg+"失败");
+
+//					parent.layer.close(layerLoad);
+//					parent.layer.alert(msg+"失败", {
+//						offset : "30%"
+//					});
 					return;
 				}
 			});
-			parent.layer.closeAll();
+            parentCloseAll();
+//			parent.layer.closeAll();
 		}else{
-			var tip = parent.layer.alert("没有能被"+msg, {
-				offset : "30%",
-				closeBtn : 0
-			}, function(index) {
-				parent.layer.closeAll();
-			});
+            //TODO alert 跳转
+            var tip=parentAlertMsg("没有能被"+msg);
+//			var tip = parent.layer.alert("没有能被"+msg, {
+//				offset : "30%",
+//				closeBtn : 0
+//			}, function(index) {
+//				parent.layer.closeAll();
+//			});
 		}
 
 	}

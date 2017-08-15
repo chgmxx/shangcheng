@@ -75,9 +75,11 @@
 <form id="xinfrom" method="post" action="/mallhtml/updateHtml.do" target="_blank">
     <input type="hidden" name="id" id="id">
 </form>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     $(function () {
         var body = $("body").height() + 89;
+        //TODO parent.$("#nav").height();
         var candan = parent.$("#nav").height();
         if (body < candan) {
             $("body").height(candan - 89);
@@ -100,15 +102,16 @@
         });
     });
     function htmllayer(pid) {
-        parent.layer.open({
-            type: 2,
-            title: 'h5商城预览',
-            shadeClose: true,
-            shade: 0.2,
-            area: ['820px', '500px'],
-            offset: "10px",
-            content: '/mallhtml/ylmodel.do?id=' + pid, //iframe的url
-        });
+        parentOpenIframe('h5商城预览','820px', '500px','/mallhtml/ylmodel.do?id=' + pid);
+//        parent.layer.open({
+//            type: 2,
+//            title: 'h5商城预览',
+//            shadeClose: true,
+//            shade: 0.2,
+//            area: ['820px', '500px'],
+//            offset: "10px",
+//            content: '/mallhtml/ylmodel.do?id=' + pid, //iframe的url
+//        });
     }
 
     function first(obj) {
@@ -124,10 +127,11 @@
         if (1 < currentPage) {
             window.location.href = "/mallhtml/modelList.do?pageNum=${map.pageNum-1}";
         } else {
-            parent.layer.alert("已经是最前一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最前一页");
+//            parent.layer.alert("已经是最前一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function next(obj, totalPages) {
@@ -135,10 +139,11 @@
         if (currentPage < totalPages) {
             window.location.href = "/mallhtml/modelList.do?pageNum=${map.pageNum+1} ";
         } else {
-            parent.layer.alert("已经是最后一页", {
-                offset: "30%",
-                closeBtn: 0
-            });
+            parentAlertMsg("已经是最后一页");
+//            parent.layer.alert("已经是最后一页", {
+//                offset: "30%",
+//                closeBtn: 0
+//            });
         }
     }
     function last(obj, totalPages) {

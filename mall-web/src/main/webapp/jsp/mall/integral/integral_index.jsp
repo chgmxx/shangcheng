@@ -27,6 +27,7 @@
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
     <script type="text/javascript" src="/js/plugin/copy/clipboard.min.js"></script>
     <script type="text/javascript" src="/js/plugin/copy/copypublic.js"></script>
+
     <script type="text/javascript">
         $(function () {
             /* $(".copy").zclip({
@@ -61,19 +62,21 @@
              * @param id
              */
             $(".qrcode").click(function () {
-                parent.layer.open({
-                    type: 1,
-                    title: "积分商品预览",
-                    skin: 'layui-layer-rim', //加上边框
-                    area: ['208px', '251px'], //宽高
-                    offset: "30%",
-                    content: "<img src ='/mallIntegral/getTwoCode.do?" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>"
-                });
+                parentOpenIframe("积分商品预览",'208px', '251px',"<img src ='/mallIntegral/getTwoCode.do?" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>");
+//                parent.layer.open({
+//                    type: 1,
+//                    title: "积分商品预览",
+//                    skin: 'layui-layer-rim', //加上边框
+//                    area: ['208px', '251px'], //宽高
+//                    offset: "30%",
+//                    content: "<img src ='/mallIntegral/getTwoCode.do?" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>"
+//                });
             });
         });
     </script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="con_div">
     <c:if test="${empty isNoAdminFlag }">
         <div id="con-box">

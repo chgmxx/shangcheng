@@ -24,11 +24,11 @@
 
     <script type="text/javascript" src="/js/util.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
-
     <script type="text/javascript">
         var error = '${error}';
         if (error != undefined && error != "") {
-            parent.layer.alert("参数错误，将调回前一个页面");
+            parentAlertMsg("参数错误，将调回前一个页面");
+//            parent.layer.alert("参数错误，将调回前一个页面");
             window.history.back(-1);
         }
     </script>
@@ -36,6 +36,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="div_con">
     <div class="i-title vam" style="padding:0px;">
         <div class="con-head">
@@ -267,12 +268,13 @@
 
     function showImages(img) {
         $(".layers img").attr("src", img);
-        var index = parent.layer.open({
-            type: 1,
-            content: $(".layers").html(),
-            maxmin: true,
-            offset: "10%",
-        });
+        var index = parentOpenIframe("","","",$(".layers").html());
+//        var index = parent.layer.open({
+//            type: 1,
+//            content: $(".layers").html(),
+//            maxmin: true,
+//            offset: "10%",
+//        });
         //parent.layer.full(index);
     }
 

@@ -52,19 +52,21 @@
              * @param id
              */
             $(".qrcode").click(function () {
-                parent.layer.open({
-                    type: 1,
-                    title: "批发预览",
-                    skin: 'layui-layer-rim', //加上边框
-                    area: ['200px', '240px'], //宽高
-                    offset: "30%",
-                    content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
-                });
+                parentOpenIframe( "批发预览",'200px', '240px',"<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>");
+//                parent.layer.open({
+//                    type: 1,
+//                    title: "批发预览",
+//                    skin: 'layui-layer-rim', //加上边框
+//                    area: ['200px', '240px'], //宽高
+//                    offset: "30%",
+//                    content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
+//                });
             });
         });
     </script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="con_div">
     <c:if test="${empty isNoAdminFlag }">
         <div class="con-head" style="margin-bottom: 0px;">

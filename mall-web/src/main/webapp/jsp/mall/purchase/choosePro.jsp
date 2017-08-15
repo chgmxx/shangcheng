@@ -22,6 +22,7 @@
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/table.js"></script>
+
     <style>
         .srh {
             display: block;
@@ -83,12 +84,15 @@
 
         function closeWindow() {
             //当你在iframe页面关闭自身时
+            //TODO parent.layer.getFrameIndex
             var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.layer.close(index); //再执行关闭
+            parentCloseAll();
+//            parent.layer.close(index); //再执行关闭
         }
     </script>
 </head>
 <body style="margin: 10px">
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div style="padding-bottom: 50px">
     <div class="txt-btn pd-bottom-15 clearfix">
         <div>

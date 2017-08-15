@@ -387,7 +387,9 @@
 	<h1 class="groupH1"><strong>您还不是管理员，不能管理商城</strong></h1>
 </c:if>
 </div>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 </body>
+
 <script type="text/javascript">
 $(function(){
 	loadLaydate();
@@ -425,7 +427,8 @@ $(function(){
 		var rId = $(this).attr("rId");
 		var oNo = $(this).attr("oNo");
 		var orderPayNo = $(this).attr("orderPayNo");
-		parent.openIframeNoScoll("拒绝退款","500","350","/mallOrder/returnPopUp.do?rId="+rId+"&type=-1"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+        parentOpenIframe("拒绝退款","500px","350px","/mallOrder/returnPopUp.do?rId="+rId+"&type=-1"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+//		parent.openIframeNoScoll("拒绝退款","500","350","/mallOrder/returnPopUp.do?rId="+rId+"&type=-1"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
 	});
 	/**
 	 * 同意买家退款
@@ -434,7 +437,8 @@ $(function(){
 		var rId = $(this).attr("rId");
 		var oNo = $(this).attr("oNo");
 		var orderPayNo = $(this).attr("orderPayNo");
-		parent.openIframeNoScoll("同意买家退款","500px","300px","/mallOrder/returnPopUp.do?rId="+rId+"&type=1"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+        parentOpenIframe("同意买家退款","500px","300px","/mallOrder/returnPopUp.do?rId="+rId+"&type=1"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+//		parent.openIframeNoScoll("同意买家退款","500px","300px","/mallOrder/returnPopUp.do?rId="+rId+"&type=1"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
 		
 	});
 	/**
@@ -444,7 +448,8 @@ $(function(){
 		var rId = $(this).attr("rId");
 		var oNo = $(this).attr("oNo");
 		var orderPayNo = $(this).attr("orderPayNo");
-		parent.openIframeNoScoll("同意退款退货","500px","380px","/mallOrder/returnPopUp.do?rId="+rId+"&type=2"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+        parentOpenIframe("同意退款退货","500px","380px","/mallOrder/returnPopUp.do?rId="+rId+"&type=2"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+//		parent.openIframeNoScoll("同意退款退货","500px","380px","/mallOrder/returnPopUp.do?rId="+rId+"&type=2"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
 	});
 
 	/**
@@ -463,7 +468,8 @@ $(function(){
 		var rId = $(this).attr("rId");
 		var oNo = $(this).attr("oNo");
 		var orderPayNo = $(this).attr("orderPayNo");
-		parent.openIframeNoScoll("拒绝确认收货","500px","350px","/mallOrder/returnPopUp.do?rId="+rId+"&type=4"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+        parentOpenIframe("拒绝确认收货","500px","350px","/mallOrder/returnPopUp.do?rId="+rId+"&type=4"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+//		parent.openIframeNoScoll("拒绝确认收货","500px","350px","/mallOrder/returnPopUp.do?rId="+rId+"&type=4"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
 	});
 	/**
 	 * 同意退货，修改退货信息
@@ -472,7 +478,8 @@ $(function(){
 		var rId = $(this).attr("rId");
 		var oNo = $(this).attr("oNo");
 		var orderPayNo = $(this).attr("orderPayNo");
-		parent.openIframeNoScoll("同意退货，修改退货信息","500px","350px","/mallOrder/returnPopUp.do?rId="+rId+"&type=5"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+        parentOpenIframe("同意退货，修改退货信息","500px","350px","/mallOrder/returnPopUp.do?rId="+rId+"&type=5"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
+//		parent.openIframeNoScoll("同意退货，修改退货信息","500px","350px","/mallOrder/returnPopUp.do?rId="+rId+"&type=5"+"&oNo="+oNo+"&orderPayNo="+orderPayNo);
 	});
 });
 function searchOrderFilter(obj){
@@ -490,7 +497,8 @@ function searchOrder(){
 	if(type != 0){
 		$('#orderForm').submit();
 	}else{
-		parent.alertMsg("请先选择搜索类型！");
+        parentAlertMsg("请先选择搜索类型！");
+//		parent.alertMsg("请先选择搜索类型！");
 	}
 }
 function pressSearch(e){
@@ -523,13 +531,15 @@ function orderRemark(type,obj,groupBuyId) {
 		var order_heigth = "330px";
 		if(returnStatus != null && returnStatus != ""){
 			if(returnStatus != -2 && returnStatus != -3 && returnStatus != 1 && returnStatus != 5){//正在退款的订单不能发货
-				parent.alertMsg("订单中的部分商品，买家已提交了退款申请。你需要先跟买家协商，买家撤销退款申请后，才能进行发货操作。");
+                parentAlertMsg("订单中的部分商品，买家已提交了退款申请。你需要先跟买家协商，买家撤销退款申请后，才能进行发货操作。");
+//				parent.alertMsg("订单中的部分商品，买家已提交了退款申请。你需要先跟买家协商，买家撤销退款申请后，才能进行发货操作。");
 				flag = false;
 			}
 		}
 	}
 	if(flag){
-		parent.openIframe("",order_width,order_heigth,"mallOrder/orderPopUp.do?orderId="+orderId+"&type="+type+"&groupBuyId="+groupBuyId);	
+        parentOpenIframe("",order_width,order_heigth,"mallOrder/orderPopUp.do?orderId="+orderId+"&type="+type+"&groupBuyId="+groupBuyId);
+//		parent.openIframe("",order_width,order_heigth,"mallOrder/orderPopUp.do?orderId="+orderId+"&type="+type+"&groupBuyId="+groupBuyId);
 	}
 }
 
@@ -581,10 +591,11 @@ var orderNos="";
  * 钱包支付
  */
 function walletPay(orderId){
-	var layerLoad = parent.layer.load(1, {
-		shade : [ 0.3, '#000' ],
-		offset : "30%"
-	});
+    var layerLoad = parentLayerLoad();
+//	var layerLoad = parent.layer.load(1, {
+//		shade : [ 0.3, '#000' ],
+//		offset : "30%"
+//	});
 	
 	$.ajax({
 		type : "post",
@@ -601,7 +612,8 @@ function walletPay(orderId){
 					url : "/mallOrder/againGenerateOrderNo.do",
 					dataType : "json",
 					success : function(data) {
-						parent.layer.closeAll();
+                        parentCloseAll();
+//						parent.layer.closeAll();
 						if (data.result) {
 							//调用钱包接口
 							orderNos = data.no;
@@ -609,49 +621,60 @@ function walletPay(orderId){
 							 var oMoney = data.money;
 							 var url="/cashier/pay_page.do?model=3&out_trade_no="+out_trade_no+"&total_fee="+oMoney+"&businessUtilName=MallBusinessService&is_calculate=1";
 							// parent.openIframeNoScoll("钱包支付",700,650,url);
-							 parent.openIframeNoScoll2("钱包支付",700,650,'4%',url,true);
+                            parentOpenIframe("钱包支付",700,650,'4%',url,true)
+//							 parent.openIframeNoScoll2("钱包支付",700,650,'4%',url,true);
 							  
 						} else {// 编辑失败
-							parent.layer.alert(data.msg, {
-								offset : "30%"
-							});
+                            parentAlertMsg(data.msg);
+//							parent.layer.alert(data.msg, {
+//								offset : "30%"
+//							});
 						}
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown) {
-						parent.layer.closeAll();
-						parent.layer.alert("钱包支付失败，请稍后重试", {
-							offset : "30%"
-						});
+                        parentCloseAll();
+                        parentAlertMsg("钱包支付失败，请稍后重试");
+//						parent.layer.closeAll();
+//						parent.layer.alert("钱包支付失败，请稍后重试", {
+//							offset : "30%"
+//						});
 						return;
 					}
 				});
 				  
 			} else {// 编辑失败
-				parent.layer.closeAll();
-				parent.layer.alert(data.msg, {
-					offset : "30%"
-				});
+                parentCloseAll();
+                parentAlertMsg(data.msg);
+//				parent.layer.closeAll();
+//				parent.layer.alert(data.msg, {
+//					offset : "30%"
+//				});
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			parent.layer.closeAll();
-			parent.layer.alert("钱包支付失败，请稍后重试", {
-				offset : "30%"
-			});
+            parentCloseAll();
+            parentAlertMsg("钱包支付失败，请稍后重试");
+//			parent.layer.closeAll();
+//			parent.layer.alert("钱包支付失败，请稍后重试", {
+//				offset : "30%"
+//			});
 			return;
 		}
 	});
 }
 function refurbish(){
-	parent.layer.closeAll();
+    parentCloseAll();
+//	parent.layer.closeAll();
 	//alert("刷新啦！")
 	if(orderNos != null && orderNos != ""){
+	    //TODO parent.layer.confirm
 		parent.layer.confirm('请前往钱包支付查询订单状态', {
 		    btn: ['确定'] ,
 		    offset : "30%"
 		},
 		function(index, layero){
-			parent.layer.closeAll();
+            parentCloseAll();
+//			parent.layer.closeAll();
 			window.location.href="/cashier/pay_list.do";
 		});
 	}else{
@@ -662,16 +685,17 @@ function refurbish(){
  * 前往打印
  */
 function toPrint(orderId){
-	var printIndex = parent.layer.open({
-		type: 2,
-	    title: "订单打印",
-	    shadeClose: true,
-	    shade: 0.3,
-	    offset: "20%",
-	    shadeClose : false,
-	    area: ["730px","360px"],
-	    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId
-	});
+    var printIndex = parentOpenIframe("订单打印","730px","360px","mallOrder/toPrintMallOrder.do?orderId="+orderId);
+//	var printIndex = parent.layer.open({
+//		type: 2,
+//	    title: "订单打印",
+//	    shadeClose: true,
+//	    shade: 0.3,
+//	    offset: "20%",
+//	    shadeClose : false,
+//	    area: ["730px","360px"],
+//	    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId
+//	});
 }
 
 </script>

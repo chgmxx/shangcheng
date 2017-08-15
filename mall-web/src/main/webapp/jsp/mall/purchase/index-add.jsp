@@ -309,7 +309,7 @@
         </div>
     </div>
 </form>
-
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
 
     var winParents = window.parent;
@@ -391,6 +391,7 @@
 
     function removeTerm(_this) {
         //询问框
+        //TODO parent.layer.confirm
         parent.layer.confirm("确定要删除该条数据吗?", {
             btn: ['确定', '取消'],
             offset: '40%'
@@ -401,7 +402,8 @@
             for (var i = 0; i < termIndexs.length; i++) {
                 $(termIndexs[i]).text("第" + accSub(i, 1) + "期");
             }
-            parent.layer.closeAll();
+            parentCloseAll();
+//            parent.layer.closeAll();
         }, function () {
         });
     }
@@ -424,7 +426,8 @@
     function clone1() {
         var sex = document.getElementsByName('sex');
         if (sex.length >= 3) {
-            window.parent.alertMsg("轮播图最多添加三张!");
+            parentAlertMsg("轮播图最多添加三张!");
+//            window.parent.alertMsg("轮播图最多添加三张!");
             return;
         }
         idIndex++;
@@ -440,7 +443,8 @@
     }
 
     function addProduct() {
-        parent.openIframe("选择商品", "600px", "480px", "/purchaseOrder/getProductByGroup.do");//check==0代表多选，check==1代表单选
+        parentOpenIframe("选择商品", "600px", "480px", "/purchaseOrder/getProductByGroup.do");
+//        parent.openIframe("选择商品", "600px", "480px", "/purchaseOrder/getProductByGroup.do");//check==0代表多选，check==1代表单选
     }
 
 
@@ -456,16 +460,19 @@
         var termAllMoney = 0;
         var is_true = true;
         if ($.trim(orderTitle) == "") {
-            window.parent.alertMsg("请填写报价单的标题!");
+            parentAlertMsg("请填写报价单的标题!");
+//            window.parent.alertMsg("请填写报价单的标题!");
             return;
         }
         if ($("#companySelect option:selected").val() == 0 || $("#companySelect option:selected").val() == "0") {
-            window.parent.alertMsg("请选择所属公司!");
+            parentAlertMsg("请选择所属公司!");
+//            window.parent.alertMsg("请选择所属公司!");
             return;
         }
         if (havaContract == "0" || havaContract == 0) {
             if ($("#contractSelect option:selected").val() == 0 || $("#contractSelect option:selected").val() == "0") {
-                window.parent.alertMsg("请选择合同!");
+                parentAlertMsg("请选择合同!");
+//                window.parent.alertMsg("请选择合同!");
                 return;
             }
         }
@@ -475,7 +482,8 @@
             for (var i = 0; i < termMoney.length; i++) {
                 if ($(termMoney[i]).val() <= 0) {
                     is_true = false;
-                    window.parent.alertMsg("分期金额必须大于零!");
+                    parentAlertMsg("分期金额必须大于零!");
+//                    window.parent.alertMsg("分期金额必须大于零!");
                     return;
                 }
                 termAllMoney = accSub(termAllMoney, $(termMoney[i]).val());
@@ -483,7 +491,7 @@
             for (var i = 0; i < termTime.length; i++) {
                 if ($(termTime[i]).val() == "") {
                     is_true = false;
-                    window.parent.alertMsg("分期时间必须填写!");
+                    parentAlertMsg("分期时间必须填写!");
                     return;
                 }
                 if (i > 0) {
@@ -491,46 +499,46 @@
                     var d2 = new Date($(termTime[i]).val().replace(/\-/g, "\/"));
                     if (d1 > d2) {
                         is_true = false;
-                        window.parent.alertMsg("分期时间分配错误,后期时间必须大于前期!");
+                        parentAlertMsg("分期时间分配错误,后期时间必须大于前期!");
                         return;
                     }
                 }
             }
             if (is_true && accClaer(termAllMoney, $("input[name='orderAllMoney']").val()) != "0.00" && accClaer(termAllMoney, $("input[name='orderAllMoney']").val()) != 0.00 && accClaer(termAllMoney, $("input[name='orderAllMoney']").val()) != 0) {
-                window.parent.alertMsg("您的分期金额和报价单总金额不匹配!");
+                parentAlertMsg("您的分期金额和报价单总金额不匹配!");
                 return;
             }
         }
 
         if (orderQrcode == "") {
-            window.parent.alertMsg("请上传报价单底部的二维码图!");
+            parentAlertMsg("请上传报价单底部的二维码图!");
             return;
         }
         if (carouselUrl == null || carouselUrl.length == 0) {
-            window.parent.alertMsg("请设置轮播图!");
+            parentAlertMsg("请设置轮播图!");
             return;
         }
         for (var i = 0; i < carouselUrl.length; i++) {
             if (carouselImg[i].value == "") {
                 is_true = false;
-                window.parent.alertMsg("请选择轮播图片!");
+                parentAlertMsg("请选择轮播图片!");
                 return;
             } else if (!checkUrl(carouselUrl[i].value)) {
                 is_true = false;
-                window.parent.alertMsg("轮播图链接地址不正确!");
+                parentAlertMsg("轮播图链接地址不正确!");
                 return;
             }
 
         }
         if (productIds.length <= 0) {
-            window.parent.alertMsg("请选择商品!");
+            parentAlertMsg("请选择商品!");
             return;
         }
         for (var i = 0; i < discountMoney.length; i++) {
             var money = discountMoney[i].value;
             if (money - 0 <= 0) {
                 is_true = false;
-                window.parent.alertMsg("商品的优惠价格不能小于或等于零!");
+                parentAlertMsg("商品的优惠价格不能小于或等于零!");
                 return;
             }
         }
@@ -542,10 +550,10 @@
                 dataType: "JSON",
                 success: function (data) {
                     if (data.result == true || data.result == "true") {
-                        window.parent.alertMsg("报价单保存成功!")
+                        parentAlertMsg("报价单保存成功!")
                         location.href = "/purchaseOrder/orderIndex.do";
                     } else {
-                        window.parent.alertMsg("报价单保存失败!")
+                        parentAlertMsg("报价单保存失败!")
                     }
                 }
             });
