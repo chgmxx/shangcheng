@@ -10,6 +10,7 @@ import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSellerSet;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallCollectService;
 import com.gt.mall.web.service.basic.MallCommentService;
@@ -64,6 +65,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
     private MallPaySetService    mallPaySetService;
     @Autowired
     private MallSellerService    mallSellerService;
+    @Autowired
+    private MemberService memberService;
 
     /**
      * 跳转至个人中心的页面
@@ -377,8 +380,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 
 	    StringBuffer imageUrl = new StringBuffer();
 	    boolean flag = false;
-	    //TODO 会员 memberMapper.selectByPrimaryKey( memberId );
-	    //	    Member member = memberMapper.selectByPrimaryKey( memberId );
+	    Member member = memberService.findMemberById( memberId ,null);
 	    //TODO 用户 busUserMapper.selectByPrimaryKey( member.getBusid() );
 	    BusUser user = null;
 	    //	    nullbusUserMapper.selectByPrimaryKey( member.getBusid() );

@@ -94,8 +94,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 
 	    //查询我的积分
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		//TODO 需关连 Member 会员信息
-		//		member = memberService.findById(member.getId());
+		member = memberService.findMemberById( member.getId(), member );
 		if ( CommonUtil.isNotEmpty( member.getIntegral() ) ) {
 		    request.setAttribute( "memberIntegral", member.getIntegral() );
 		} else {
@@ -224,8 +223,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    request.setAttribute( "integralList", page.getSubList() );
 	    //查询我的积分
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		//TODO 需关连 Member 会员信息
-		//		member = memberService.findById(member.getId());
+		member = memberService.findMemberById( member.getId(), member );
 		request.setAttribute( "memberIntegral", member.getIntegral() );
 	    }
 
@@ -306,13 +304,11 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		    request.setAttribute("integral", resultMap.get("integral"));
 	    }*/
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		//TODO 需关连 Member 会员信息
-		//		member = memberService.findById(member.getId());
-		//TODO 需关连 Member 是否会员 方法isMemember()
-		//		boolean isMember = memberPayService.isMemember(member.getId());
-		//		if(isMember){
-		//		    request.setAttribute("isMember", 1);
-		//		}
+		member = memberService.findMemberById( member.getId(), member );
+		boolean isMember = memberService.isMember( member.getId() );
+		if ( isMember ) {
+		    request.setAttribute( "isMember", 1 );
+		}
 	    }
 	    request.setAttribute( "member", member );
 	    request.setAttribute( "imageHttp", PropertiesUtil.getResourceUrl() );

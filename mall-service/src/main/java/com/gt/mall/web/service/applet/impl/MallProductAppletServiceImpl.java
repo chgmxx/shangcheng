@@ -8,6 +8,7 @@ import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.MallShopCart;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.web.service.applet.MallProductAppletService;
@@ -48,17 +49,15 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MallProductInventoryService productInventoryService;
+    @Autowired
+    private MemberService               memberService;
 
     @Override
     public Map< String,Object > shoppingcare( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	//TODO 会员信息  memberService.findById();
-	Member member = null;
-	//                memberService.findById(memberId);
-	//TODO 会员信息  memberPayService.findMemberIds();
-	List< Integer > memberList = null;
-	//                memberPayService.findMemberIds(memberId);//查询会员信息
+	Member member = memberService.findMemberById( memberId, null );
+	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	params.put( "memberList", memberList );
 	double discount = productService.getMemberDiscount( "1", member );//获取会员折扣
 
@@ -371,9 +370,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
     public void shoppingorder( Map< String,Object > params ) {
 	if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 	    int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	    //TODO 会员信息  memberPayService.findMemberIds();
-	    List< Integer > memberList = null;
-	    //                    memberPayService.findMemberIds(memberId);//查询会员信息
+	    List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	    params.put( "memberList", memberList );
 	    shopCartDAO.updateCheckByShopCart( params );
 	}

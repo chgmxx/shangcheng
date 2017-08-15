@@ -7,6 +7,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.bean.UserConsume;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.entity.purchase.*;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.purchase.PurchaseCompanyModeService;
 import com.gt.mall.web.service.purchase.PurchaseOrderService;
@@ -57,6 +58,8 @@ public class PurchaseOrderController extends BaseController {
     PurchaseCompanyModeDAO   companyModeDAO;
     @Autowired
     private MallStoreService storeService;
+    @Autowired
+    MemberService    memberService;
 
     /**
      * 订单首页
@@ -413,9 +416,7 @@ public class PurchaseOrderController extends BaseController {
     @RequestMapping( "/receivablesDetails" )
     public String receivablesDetails( HttpServletRequest request, @RequestParam Integer orderId, @RequestParam Integer memberId ) {
 	try {
-	    //TODO 用户 Member
-	    Member member = null;
-	    //	    memberMapper.selectByPrimaryKey(memberId);//查询用户信息
+	    Member member = memberService.findMemberById( memberId, null );//查询用户信息
 	    if ( member != null && member.getMcId() != null ) { //如果用户存在会员卡
 		//TODO 会员卡信息 Card
 		Card card = null;

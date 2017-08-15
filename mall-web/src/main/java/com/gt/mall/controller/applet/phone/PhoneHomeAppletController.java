@@ -309,9 +309,7 @@ public class PhoneHomeAppletController extends BaseController {
 	try {
 	    logger.info( "查询商品评价的参数：" + params );
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( CommonUtil.isNotEmpty( params.get( "proId" ) ) ) ) {
-		//TODO 需关连 Member
-		Member member = null;
-		//		memberService.findById(CommonUtil.toInteger(params.get("memberId")));
+		Member member = memberService.findMemberById(CommonUtil.toInteger(params.get("memberId")),null);
 		params.put( "isMemberType", 1 );
 		params.put( "isReply", 1 );
 		resultMap = pageService.getProductComment( params, member );

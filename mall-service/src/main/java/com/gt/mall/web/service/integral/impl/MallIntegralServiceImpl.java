@@ -15,6 +15,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.integral.MallIntegralService;
 import com.gt.mall.web.service.order.MallOrderService;
@@ -67,6 +68,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     private MallPageService             pageService;
     @Autowired
     private MallProductSpecificaService productSpecificaService;
+    @Autowired
+    private MemberService memberService;
 
     @Override
     public PageUtil selectIntegralByUserId( Map< String,Object > params ) {
@@ -240,10 +243,10 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	int proTypeId = product.getProTypeId();
 
 	int memType = 0;
-	//TODO 需关连memberPayService  isMemember()  isCardType()方法
-	//        if(memberPayService.isMemember(member.getId())){//是否为会员
+	//TODO 需关连memberPayService   isCardType()方法
+	        if(memberService.isMember(member.getId())){//是否为会员
 	//            memType = memberPayService.isCardType(member.getId());
-	//        }
+	        }
 	if ( orderPayWay == 4 ) {//积分支付
 	    Integer mIntergral = member.getIntegral();
 	    if ( mIntergral < totalPrice || mIntergral < 0 ) {

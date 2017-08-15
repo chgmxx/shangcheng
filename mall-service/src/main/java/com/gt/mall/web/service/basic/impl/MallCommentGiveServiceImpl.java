@@ -11,13 +11,16 @@ import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.SessionUtils;
 import com.gt.mall.web.service.basic.MallCommentGiveService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.Session;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +45,8 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
     private MallCommentGiveDAO commentGiveDAO;
     @Autowired
     private MallPaySetDAO paySetDAO;
+    @Autowired
+    private MemberService memberService;
 
     @Override
     public void commentGive(int commentId, HttpServletRequest request, int memberId) {
@@ -82,9 +87,8 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
                     isOpenGive = true;
                 }
             }
-            //TODO 需关连MemberPayService.isMemember方法
-//            boolean isMember = memPayService.isMemember(memberId);
-            boolean isMember = true;
+
+            boolean isMember = memberService.isMember(memberId);
             if (isOpenGive && isMember) {
                 //查询评价送礼的情况
                 MallComment comment = commentDAO.selectById(commentId);
@@ -128,10 +132,10 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl<MallCommentGiveD
                         }
                         if (flag) {
                             member.setId(memberId);
-                            //TODO 需关连 会员方法
+                            //TODO 需关连 修改会员方法
 //                            memberMapper.updateByPrimaryKeySelective(member);
-//                            member = memberMapper.selectByPrimaryKey(memberId);
-//                            CommonUtil.setLoginMember(request, member);
+                            member = memberService.findMemberById(memberId,null);
+                            SessionUtils.setLoginMember(request, member);
                         }
                     } else {
                         logger.info("评论送礼：没有设置评论送礼");

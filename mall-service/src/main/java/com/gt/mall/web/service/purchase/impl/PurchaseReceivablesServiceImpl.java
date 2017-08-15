@@ -37,7 +37,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
     @Autowired
     private PurchaseTermDAO        purchaseTermDAO;
     @Autowired
-    private MemberService memberService;
+    private MemberService          memberService;
 
     @Override
     public SortedMap< Object,Object > cgPay( String url, Integer memberId, Integer busId, String termId, Double money, Double discountmoney, Double fenbi, Integer jifen,
@@ -45,7 +45,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	if ( CommonUtil.isEmpty( memberId ) || CommonUtil.isEmpty( money ) ) {
 	    throw new Exception();
 	}
-	Member member = memberService.findMemberById( memberId,null );
+	Member member = memberService.findMemberById( memberId, null );
 	//新增收款记录
 	Integer deduction_jifen = 0;
 	Double deduction_fenbi = 0.0;
@@ -144,9 +144,8 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    receivables.setBuyStatus( 0 );
 	    receivables.setTermId( termId == null || termId.equals( "" ) ? null : Integer.parseInt( termId ) );
 	    purchaseReceivablesDAO.insert( receivables );
-	    //TODO 需关连会员方法
-	    Member member = null;
-	    //            Member member = memberMapper.selectByPrimaryKey(memberId);
+
+	    Member member = memberService.findMemberById( memberId, null );
 	    //TODO 需关连wxPayOrderMapper 方法
 	    WxPayOrder wxPayOrder = null;
 	    //            WxPayOrder wxPayOrder = wxPayOrderMapper.selectByOutTradeNo(receivablesNumber);
@@ -216,9 +215,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	//TODO 需关连会员消费记录 userConsumeMapper.findByOrderCode()方法
 	List< Map< String,Object > > list = null;
 	//                userConsumeMapper.findByOrderCode(order.getOrderNumber());
-	//TODO 需关连memberMapper方法
-	Member member = null;
-	//                memberMapper.selectByPrimaryKey(receivable.getMemberId());
+	Member member = memberService.findMemberById( receivable.getMemberId(), null );
 	UserConsume userConsume = new UserConsume();
 	if ( list != null && list.size() > 0 ) {
 	    userConsume.setId( Integer.parseInt( list.get( 0 ).get( "id" ).toString() ) );

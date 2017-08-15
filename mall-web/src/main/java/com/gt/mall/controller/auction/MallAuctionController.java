@@ -14,6 +14,7 @@ import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.product.MallProductDetail;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionBiddingService;
 import com.gt.mall.web.service.auction.MallAuctionMarginService;
@@ -78,6 +79,8 @@ public class MallAuctionController extends AuthorizeOrLoginController {
     private MallAuctionOfferService     auctionOfferService;
     @Autowired
     private MallCollectService          mallCollectService;
+    @Autowired
+    private MemberService               memberService;
 
     /**
      * 拍卖管理列表页面
@@ -671,10 +674,10 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    }
 
 	    int memType = 0;
-	    //TODO 需关连 memPayService.isMemember，isCardType()方法
-	    //	    if(memPayService.isMemember(member.getId())){//是否为会员
-	    //		memType = memPayService.isCardType(member.getId());
-	    //	    }
+	    //TODO 需关连 memPayService.isCardType()方法
+	    if ( memberService.isMember( member.getId() ) ) {//是否为会员
+		//		memType = memPayService.isCardType(member.getId());
+	    }
 	    int isWxPay = 0;//不能微信支付
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicUserid ) ) ) {

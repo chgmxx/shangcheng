@@ -17,6 +17,7 @@ import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.*;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.applet.MallHomeAppletService;
 import com.gt.mall.web.service.basic.MallImageAssociativeService;
@@ -94,6 +95,8 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     private MallPageService             pageService;
     @Autowired
     private MallOrderService            orderService;
+    @Autowired
+    private MemberService memberService;
 
     @Override
     public List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > params ) {
@@ -118,7 +121,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		}
 		map.put( "is_child", isChild );
 		/*String jump_url = PropertiesUtil.getWebHomeUrl()+"/mallApplet/79B4DE7C/";
-                if(isChild == 1){//有子类 跳转到分类页面
+		if(isChild == 1){//有子类 跳转到分类页面
 					jump_url += "clssAll.do?shopId="+map.get("shop_id")+"&memberId="+params.get("memberId")+"&classId="+map.get("group_id");
 				}else{//没有子类  直接跳转到全部商品页面
 					jump_url += "productAll.do?shopId="+map.get("shop_id")+"&memberId="+params.get("memberId")+"&classId="+map.get("group_id");
@@ -149,9 +152,9 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    params.put( "desc", desc );
 	    params.put( "type", type );
 	}
-        /*int memberId = 0;*/
+	/*int memberId = 0;*/
 	double discount = 1;//商品折扣
-        /*if(CommonUtil.isNotEmpty(params.get("memberId"))){
+	/*if(CommonUtil.isNotEmpty(params.get("memberId"))){
             memberId = CommonUtil.toInteger(params.get("memberId"));
 		}
 		//计算会员价
@@ -169,10 +172,10 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< Map< String,Object > > xlist = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > list = productDAO.selectProductAllByShopids( params );
 
-	List<Integer> proIds = new ArrayList<Integer>();
+	List< Integer > proIds = new ArrayList< Integer >();
 	String specImgIds = "";
 
-	if(list != null && list.size() > 0) {
+	if ( list != null && list.size() > 0 ) {
 	    for ( int i = 0; i < list.size(); i++ ) {
 		Map< String,Object > map1 = list.get( i );
 		map1 = productGetPrice( map1, params, discount );
@@ -191,10 +194,10 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		}
 	    }
 	    String[] split = null;
-	    if(CommonUtil.isNotEmpty(specImgIds)){
-		split = specImgIds.split(",");
+	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
+		split = specImgIds.split( "," );
 	    }
-	    xlist = pageService.getProductImages(xlist, proIds, split);
+	    xlist = pageService.getProductImages( xlist, proIds, split );
 	}
 	page.setSubList( xlist );
 	return page;
@@ -331,9 +334,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( CommonUtil.isNotEmpty( product.getProCostPrice() ) ) {
 	    proCostPrice = CommonUtil.toDouble( product.getProCostPrice() );
 	}
-	//TODO 需关连memberService 会员方法
-	Member member = null;
-	//                memberService.findById(CommonUtil.toInteger(params.get("memberId")));
+	Member member =  memberService.findMemberById(CommonUtil.toInteger(params.get("memberId")),null);
 	//TODO 需关连dictService 查询主帐号方法
 	//        int userPId = dictService.pidUserId(member.getBusid());//通过用户名查询主账号id
 	//TODO 需关连erpLoginOrMenusService 判断商家有无进销存方法
@@ -657,9 +658,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     public Map< String,Object > getMemberPage( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	//TODO 需关连 memberService.findById(memberId);方法
-	Member member = null;
-	//                memberService.findById(memberId);
+	Member member =  memberService.findMemberById(memberId,null);
 	resultMap.put( "member_name", member.getNickname() );
 	resultMap.put( "head_image", member.getHeadimgurl() );
 	resultMap.put( "telephone", member.getPhone() );
@@ -832,13 +831,16 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 
     @Override
     public Map< String,Object > bindPhones( Map< String,Object > params ) throws Exception {
-	//TODO 需关连 会员绑定手机号码方法 memberPayService.bingdingPhone(params);
-	Map< String,Object > resultMap = null;
-	//                memberPayService.bingdingPhone(params);
+	Map< String,Object > resultMap = new HashMap<>();
+	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
+	member = memberService.bingdingPhone( params, member );
 		/*if((boolean) resultMap.get("result")){
 			Member member = (Member) resultMap.get("member");
 		}*/
-
+	if ( !"".equals( member.getPhone() ) ) {
+	    resultMap.put( "result", true );
+	    resultMap.put( "message", "绑定成功" );
+	}
 	return resultMap;
     }
 }

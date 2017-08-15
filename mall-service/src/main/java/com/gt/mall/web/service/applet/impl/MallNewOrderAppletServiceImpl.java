@@ -17,7 +17,11 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.store.MallStore;
-import com.gt.mall.util.*;
+import com.gt.mall.inter.service.MemberService;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.DateTimeKit;
+import com.gt.mall.util.MobileLocationUtil;
+import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.web.service.applet.MallNewOrderAppletService;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.freight.MallFreightService;
@@ -68,15 +72,15 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private MallOrderService   orderService;
     @Autowired
     private MallPageService    pageService;
+    @Autowired
+    private MemberService      memberService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
 
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	//TODO 需关连 member方法
-	Member member = null;
-	//                memberService.findById(memberId);
+	Member member = memberService.findMemberById(memberId,null);
 	int from = 1;
 	if ( CommonUtil.isNotEmpty( params.get( "from" ) ) ) {
 	    from = CommonUtil.toInteger( params.get( "from" ) );
@@ -142,7 +146,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    totalNum = 0;
 		    boolean isYhq = false;
 		    /*jifenNum = 0;//统计能使用积分的商品数量
-                    jifenMoney = 0;//统计能使用积分的商品总价
+		    jifenMoney = 0;//统计能使用积分的商品总价
 					fenbiNum = 0;//统计能使用粉币的商品数量
 					fenbiMoney = 0;//统计能使用粉币的商品总价
 */
@@ -495,10 +499,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	int memType = 0;
 	if ( CommonUtil.isNotEmpty( member ) ) {
-	    //TODO 需关连 会员 memberPayService.isMemember() isCardType()方法
-	    //            if(memberPayService.isMemember(member.getId())){//是否为会员
-	    //                memType = memberPayService.isCardType(member.getId());
-	    //            }
+	    //TODO 需关连 会员 memberPayService isCardType()方法
+	    if ( memberService.isMember( member.getId() ) ) {//是否为会员
+		//                memType = memberPayService.isCardType(member.getId());
+	    }
 	}
 	if ( memType == 3 ) {
 	    resultMap.put( "isChuzhiCard", 1 );//是否是流量充值商品   1是  0 不是
@@ -736,9 +740,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    return resultMap;
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	//TODO 需关连  memberService.findById(memberId);方法
-	Member member = null;
-	//                memberService.findById(memberId);
+	Member member = memberService.findMemberById(memberId,null);
 	//判断库存
 	List< MallOrder > orderList = new ArrayList<>();
 
@@ -1782,9 +1784,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    return resultMap;
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	//TODO 需关连 memberService 会员信息
-	Member member = null;
-	//                memberService.findById(memberId);
+	Member member =   memberService.findMemberById(memberId,null);
 	//TODO 需关连 wxPublicUsersMapper 微信订阅号用户信息
 	WxPublicUsers wxPublicUsers = null;
 	//                wxPublicUsersMapper.selectByUserId(member.getBusid());
@@ -1794,10 +1794,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	double totalPrimary = 0;
 
 	int memType = 0;
-	//TODO 需关连 memberPayService。isMemember(),isCardType()方法
-	//        if(memberPayService.isMemember(member.getId())){//是否为会员
+	//TODO 需关连 memberPayService。isCardType()方法
+	        if(memberService.isMember(member.getId())){//是否为会员
 	//            memType = memberPayService.isCardType(member.getId());
-	//        }
+	        }
 	Map< String,Object > countMap = getIntegralFenbi( member );
 	params.putAll( countMap );
 	Map< String,Object > proMap = new HashMap< String,Object >();
@@ -1926,13 +1926,17 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    orderFreightMoney = CommonUtil.toDouble( df.format( orderFreightMoney ) );
 	}
 	if ( orderPayWay == 3 && code > 0 ) {//储值卡支付，判断储值卡余额是否足够
-	    //TODO 需关连  memberPayService.isAdequateMoney()方法
-	    boolean flag = true;
-	    //                    memberPayService.isAdequateMoney(member.getId(), orderTotalMoney);
-	    if ( !flag ) {
+//	    boolean flag =  memberService.isAdequateMoney(member.getId(), orderTotalMoney);
+//	    if ( !flag ) {
+//		code = -1;
+//		msg = "您的储值卡余额不足";
+//	    }
+	    Map< String,Object > moneyMap=memberService.isAdequateMoney(member.getId(), orderTotalMoney);
+	    if ( !moneyMap.get("code" ).equals( "1" ) ){//失败
 		code = -1;
 		msg = "您的储值卡余额不足";
 	    }
+
 	}
 	logger.info( "订单总金额：" + orderTotalMoney );
 	String orderNo = "";
