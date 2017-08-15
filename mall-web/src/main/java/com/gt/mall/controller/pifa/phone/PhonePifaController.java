@@ -8,6 +8,7 @@ import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifaApply;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
 import com.gt.mall.util.PropertiesUtil;
