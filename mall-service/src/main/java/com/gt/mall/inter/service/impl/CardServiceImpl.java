@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.inter.service.CardService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
  * Date : 2017/8/14 0014
  * Time : 10:39
  */
+@Service
 public class CardServiceImpl implements CardService {
 
     /**

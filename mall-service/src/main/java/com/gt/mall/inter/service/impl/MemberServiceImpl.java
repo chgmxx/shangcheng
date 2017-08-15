@@ -1,5 +1,6 @@
 package com.gt.mall.inter.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.params.MallAllEntity;
@@ -7,8 +8,10 @@ import com.gt.mall.bean.params.PaySuccessBo;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,6 +20,7 @@ import java.util.Map;
  * Date : 2017/8/14 0014
  * Time : 10:39
  */
+@Service
 public class MemberServiceImpl implements MemberService {
 
     /**
@@ -43,6 +47,9 @@ public class MemberServiceImpl implements MemberService {
 	    }
 	    if ( CommonUtil.isNotEmpty( memberObj.get( "headimgurl" ) ) ) {
 		member.setHeadimgurl( memberObj.getString( "headimgurl" ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( memberObj.get( "mcId" ) ) ) {
+		member.setMcId( CommonUtil.toInteger( memberObj.get( "mcId" ) ) );
 	    }
 	}
 	return member;
@@ -172,6 +179,22 @@ public class MemberServiceImpl implements MemberService {
 	}
 	return false;
 
+    }
+
+    @Override
+    public Map< String,Object > updateJifen( Map< String,Object > params ) {
+	return MemberInterUtil.SignHttpInsertOrUpdate( params, "/memberAPI/member/updateJifen" );
+    }
+
+    @Override
+    public List< Integer > findMemberListByIds( int memberId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/member/findMemberIdsByid" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONArray.parseArray( data, Integer.class );
+	}
+	return null;
     }
 
     /**

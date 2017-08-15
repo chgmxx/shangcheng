@@ -4,6 +4,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.bean.params.MallAllEntity;
 import com.gt.mall.bean.params.PaySuccessBo;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,6 +81,20 @@ public interface MemberService {
      * @return 是否是会员
      */
     public boolean isMember( int memberId ) ;
+
+    /**
+     * 新增会员积分 和记录
+     * @param params {memberId：会员id，jifen：积分}
+     * @return 是否修改成功
+     */
+    public Map<String,Object> updateJifen(Map<String,Object> params);
+
+    /**
+     * 根据会员id查询会员集合
+     * @param memberId 会员id
+     * @return 会员集合
+     */
+    public List<Integer> findMemberListByIds(int memberId);
 
     /**
      * 会员计算 （还未调试）
