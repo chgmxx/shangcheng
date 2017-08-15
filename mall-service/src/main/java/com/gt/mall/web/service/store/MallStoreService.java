@@ -140,11 +140,20 @@ public interface MallStoreService extends BaseService< MallStore > {
     /**
      * 逻辑删除店铺信息
      */
-    Map<String, Object> deleteShop(String[] ids) throws Exception;
+    Map< String,Object > deleteShop( String[] ids ) throws Exception;
 
     /**
      * 获取登录人拥有的店铺集合
      */
-    public List<Map<String, Object>> findAllStoByUser(BusUser user);
+    public List< Map< String,Object > > findAllStoByUser( BusUser user );
+
+    /**
+     * 创建所有erp仓库
+     *
+     * @param user 用户信息
+     *
+     * @return 是否成功
+     */
+    boolean createCangkuAll( BusUser user );
 
 }

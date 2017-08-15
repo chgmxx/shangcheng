@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaValueDAO;
@@ -232,8 +233,8 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 	if ( specList != null && specList.size() > 0 ) {
 	    for ( int i = 0; i < specList.size(); i++ ) {
 		Map< String,Object > specMaps = specList.get( i );
-		if ( CommonUtil.isEmpty( specMaps.get( "erpSpecnameId" ) ) || CommonUtil.isEmpty( specMaps.get( "specificaName" ) )
-				|| CommonUtil.isEmpty( specMaps.get( "erpSpecvalueId" ) ) || CommonUtil.isEmpty( specMaps.get( "specificaValue" ) ) || code < 1 ) {
+		if ( CommonUtil.isEmpty( specMaps.get( "erpSpecnameId" ) ) || CommonUtil.isEmpty( specMaps.get( "specificaName" ) ) || CommonUtil
+				.isEmpty( specMaps.get( "erpSpecvalueId" ) ) || CommonUtil.isEmpty( specMaps.get( "specificaValue" ) ) || code < 1 ) {
 		    code = -1;
 		    break;
 		}
@@ -556,6 +557,143 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 	Wrapper< MallProductSpecifica > productSpecificaWrapper = new EntityWrapper<>();
 	productSpecificaWrapper.where( "is_delete = 0 and product_id = {0}", productIds ).in( "specifica_value_id", valueIds ).orderBy( "sort", true );
 	return mallProductSpecificaDAO.selectList( productSpecificaWrapper );
+    }
+
+    @Override
+    public void syncAllSpecifica( BusUser user ) {
+	// todo 调用陈丹接口 dictService.pidUserId
+	int userPId = 1;//dictService.pidUserId(user.getId());
+	int uType = 1;//用户类型 1总账号  0子账号
+	if ( user.getId() != userPId ) {
+	    uType = 0;
+	}
+
+	JSONObject params = new JSONObject();
+	params.put( "uId", user.getId() );
+	params.put( "uType", uType );
+	params.put( "uName", user.getName() );
+	params.put( "rootUid", userPId );
+
+	List< Map< String,Object > > norms = new ArrayList< Map< String,Object > >();
+
+	Wrapper< MallSpecifica > groupWrapper = new EntityWrapper<>();
+	groupWrapper.where( "is_delete = 0 and TYPE = 1 and erp_name_id = 0 and user_id = {0}", user.getId() );
+	List< MallSpecifica > specificaList = mallSpecificaDAO.selectList( groupWrapper );
+
+	System.out.println( "同步所有规格名称至erp 数量=" + specificaList.size() );
+	if ( specificaList != null && specificaList.size() > 0 ) {
+	    for ( int i = 0; i < specificaList.size(); i++ ) {
+		MallSpecifica spec = specificaList.get( i );
+		Map< String,Object > specParams = new HashMap<>();
+		specParams.put( "id", "" );
+		specParams.put( "name", spec.getSpecName() );
+		specParams.put( "mall_id", spec.getId() );
+		specParams.put( "parentId", "" );
+		norms.add( specParams );
+	    }
+	}
+	if ( norms.size() > 0 ) {
+	    params.put( "norms", norms );
+	    Map< String,Object > attrParams = new HashMap< String,Object >();
+	    attrParams.put( "attrs", params );
+
+	    com.alibaba.fastjson.JSONArray attrArr = MallJxcHttpClientUtil.batchAttrSave( attrParams, true );
+	    if ( attrArr != null && attrArr.size() > 0 ) {
+		for ( Object object : attrArr ) {
+		    net.sf.json.JSONObject proObj = net.sf.json.JSONObject.fromObject( object );
+		    int erpNameId = proObj.getInt( "id" );
+		    int mall_id = 0;
+		    for ( int i = 0; i < norms.size(); i++ ) {
+			Map< String,Object > spec = norms.get( i );
+			if ( proObj.getString( "name" ).equals( spec.get( "name" ) ) ) {
+			    mall_id = CommonUtil.toInteger( spec.get( "mall_id" ) );
+			    break;
+			}
+		    }
+
+		    if ( mall_id > 0 ) {
+			//保存erp规格名称Id
+			MallSpecifica specifica = new MallSpecifica();
+			specifica.setId( mall_id );
+			specifica.setErpNameId( erpNameId );
+			mallSpecificaDAO.updateAllColumnById( specifica );
+			//保存erp规格名称Id
+			Wrapper< MallProductSpecifica > keywordWrapper = new EntityWrapper<>();
+			keywordWrapper.where( " is_delete =0 AND specifica_name_id=" + mall_id );
+			MallProductSpecifica productSpecifica = new MallProductSpecifica();
+			productSpecifica.setErpSpecnameId( erpNameId );
+			mallProductSpecificaDAO.update( productSpecifica, keywordWrapper );
+		    }
+		}
+	    }
+	}
+    }
+
+    @Override
+    public void syncAllSpecificaValue( BusUser user ) {
+	// todo 调用陈丹接口 dictService.pidUserId
+	int userPId = 1;//dictService.pidUserId(user.getId());
+	int uType = 1;//用户类型 1总账号  0子账号
+	if ( user.getId() != userPId ) {
+	    uType = 0;
+	}
+
+	JSONObject params = new JSONObject();
+	params.put( "uId", user.getId() );
+	params.put( "uType", uType );
+	params.put( "uName", user.getName() );
+	params.put( "rootUid", userPId );
+
+	List< Map< String,Object > > norms = new ArrayList< Map< String,Object > >();
+
+	List< Map< String,Object > > specificaList = mallSpecificaValueDAO.selectByUserId( user.getId() );
+	System.out.println( "同步所有规格值至erp 数量=" + specificaList.size() );
+	if ( specificaList != null && specificaList.size() > 0 ) {
+	    for ( int i = 0; i < specificaList.size(); i++ ) {
+		Map< String,Object > spec = specificaList.get( i );
+		Map< String,Object > specParams = new HashMap< String,Object >();
+		specParams.put( "id", "" );
+		specParams.put( "name", spec.get( "spec_value" ) );
+		specParams.put( "parentId", spec.get( "erp_name_id" ) );
+		specParams.put( "mall_id", spec.get( "id" ) );
+		norms.add( specParams );
+	    }
+	}
+	if ( norms.size() > 0 ) {
+	    params.put( "norms", norms );
+	    Map< String,Object > attrParams = new HashMap< String,Object >();
+	    attrParams.put( "attrs", params );
+
+	    com.alibaba.fastjson.JSONArray attrArr = MallJxcHttpClientUtil.batchAttrSave( attrParams, true );
+	    if ( attrArr != null && attrArr.size() > 0 ) {
+		for ( Object object : attrArr ) {
+		    net.sf.json.JSONObject proObj = net.sf.json.JSONObject.fromObject( object );
+		    int erpValueId = proObj.getInt( "id" );
+		    int mall_id = 0;
+		    for ( int i = 0; i < norms.size(); i++ ) {
+			Map< String,Object > spec = norms.get( i );
+			if ( proObj.getString( "name" ).equals( spec.get( "name" ) ) ) {
+			    mall_id = CommonUtil.toInteger( spec.get( "mall_id" ) );
+			    break;
+			}
+		    }
+
+		    if ( mall_id > 0 ) {
+			MallSpecificaValue specificaValue = new MallSpecificaValue();
+			specificaValue.setId( mall_id );
+			specificaValue.setErpValueId( erpValueId );
+			mallSpecificaValueDAO.updateAllColumnById( specificaValue );
+
+			Wrapper< MallProductSpecifica > keywordWrapper = new EntityWrapper<>();
+			String sql1 = " is_delete =0 AND specifica_value_id=" + mall_id;
+			keywordWrapper.where( sql1 );
+			MallProductSpecifica specifica = new MallProductSpecifica();
+			specifica.setErpSpecvalueId( erpValueId );
+			mallProductSpecificaDAO.update( specifica, keywordWrapper );
+		    }
+		}
+	    }
+	}
     }
 
 }

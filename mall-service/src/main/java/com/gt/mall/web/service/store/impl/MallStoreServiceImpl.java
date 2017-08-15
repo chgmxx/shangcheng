@@ -39,8 +39,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     @Autowired
     private MallStoreDAO mallStoreDao;
 
-//    @Autowired
-//    private WxShopService wxShopService;
+    //    @Autowired
+    //    private WxShopService wxShopService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -282,9 +282,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     public Map< String,Object > deleteShop( String[] ids ) throws Exception {
 	boolean result = true;
 	String message = "删除成功！";
-	Map<String, Object> msg = new HashMap<String, Object>();
+	Map< String,Object > msg = new HashMap< String,Object >();
 	try {
-	    mallStoreDao.updateByIds(ids);//逻辑删除店铺
+	    mallStoreDao.updateByIds( ids );//逻辑删除店铺
 	    //todo 调用小屁孩接口 删除中间门店记录 shopSubsopService.updateBySubShop
 	    /*if(ids != null && ids.length > 0){
 		for (String string : ids) {
@@ -293,12 +293,12 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		    }
 		}
 	    }*/
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    throw new  Exception("删除失败，系统异常！");
+	    throw new Exception( "删除失败，系统异常！" );
 	} finally {
-	    msg.put("result", result);
-	    msg.put("message", message);
+	    msg.put( "result", result );
+	    msg.put( "message", message );
 	}
 	return msg;
     }
@@ -331,30 +331,71 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return message;
     }
 
-
     /**
      * 获取登录人拥有的店铺集合
-     *
      */
     @Override
-    public List<Map<String, Object>> findAllStoByUser(BusUser user) {
-	List<Map<String, Object>> ls = null;
+    public List< Map< String,Object > > findAllStoByUser( BusUser user ) {
+	List< Map< String,Object > > ls = null;
 	Integer userId = user.getId();
 	//todo 调用陈丹接口  根据商家id  查询门店信息
-	if (CommonUtil.isNotEmpty(user.getPid()) && user.getPid() > 0) {
+	if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
 	    // 如果子账户，先获取子账户拥有的分店
 	    //			String sql = "SELECT a.id,a.sto_name FROM t_mall_store a LEFT JOIN bus_user_branch_relation b ON a.sto_branch_id=b.branchid WHERE a.is_delete=0  AND b.userid="
 	    //					+ userId;
-	    boolean isAdminFlag = isAdminUser(user.getId());
-	    if(isAdminFlag){
-//		String sql = "SELECT a.id,ws.business_name as sto_name FROM t_mall_store a LEFT JOIN bus_user_branch_relation b ON a.wx_shop_id=b.branchid left join t_wx_shop ws on ws.id =  a.wx_shop_id WHERE a.is_delete=0 and a.wx_shop_id>0 and ws.id>0  and ws.`status` != -1 AND b.userid="+userId;
-//		ls = daoUtil.queryForList(sql);
+	    boolean isAdminFlag = isAdminUser( user.getId() );
+	    if ( isAdminFlag ) {
+		//		String sql = "SELECT a.id,ws.business_name as sto_name FROM t_mall_store a LEFT JOIN bus_user_branch_relation b ON a.wx_shop_id=b.branchid left join t_wx_shop ws on ws.id =  a.wx_shop_id WHERE a.is_delete=0 and a.wx_shop_id>0 and ws.id>0  and ws.`status` != -1 AND b.userid="+userId;
+		//		ls = daoUtil.queryForList(sql);
 	    }
 	} else {
-//	    String sql = "select s.id,ws.business_name as sto_name from t_mall_store s left join t_wx_shop ws on ws.id =  s.wx_shop_id where s.is_delete = 0 and s.wx_shop_id>0 and ws.id>0  and ws.`status` != -1 and s.sto_user_id ="+userId;
-//	    ls = daoUtil.queryForList(sql);
+	    //	    String sql = "select s.id,ws.business_name as sto_name from t_mall_store s left join t_wx_shop ws on ws.id =  s.wx_shop_id where s.is_delete = 0 and s.wx_shop_id>0 and ws.id>0  and ws.`status` != -1 and s.sto_user_id ="+userId;
+	    //	    ls = daoUtil.queryForList(sql);
 	}
 	return ls;
+    }
+
+    @Override
+    public boolean createCangkuAll( BusUser user ) {
+	boolean result = true;
+	// todo 调用陈丹接口 dictService.pidUserId
+	int userPId = 1;//dictService.pidUserId(user.getId());
+	int uType = 1;//用户类型 1总账号  0子账号
+	if ( user.getId() != userPId ) {
+	    uType = 0;
+	}
+	//创建仓库
+	Map< String,Object > storeParams = new HashMap< String,Object >();
+	storeParams.put( "createUid", user.getId() );
+	storeParams.put( "uidType", uType );
+
+	List< Map< String,Object > > lists = new ArrayList< Map< String,Object > >();
+	Wrapper< MallStore > wrapper = new EntityWrapper<>();
+	wrapper.where( "sto_user_id = {0} AND is_delete=0 ", user.getId() );
+	List< MallStore > storeList = mallStoreDao.selectList( wrapper );
+	if ( storeList != null && storeList.size() > 0 ) {
+	    for ( MallStore mallStore : storeList ) {
+		Map< String,Object > map = new HashMap< String,Object >();
+		map.put( "id", mallStore.getWxShopId() );
+		map.put( "phone", mallStore.getStoPhone() );
+		map.put( "principal", mallStore.getStoLinkman() );
+		try {
+		    //TODO   wxShopService.getShopById()
+		/*WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
+		if ( CommonUtil.isNotEmpty( shopInfo ) ) {
+		    map.put( "name", shopInfo.getBusinessName() );
+		    map.put( "address", shopInfo.getAddress() );
+		}*/
+		} catch ( Exception e ) {
+		    logger.error( "CXF调用接口《根据门店id查询门店信息异常》：" + e.getMessage() );
+		}
+		lists.add( map );
+	    }
+	}
+	storeParams.put( "shopList", com.alibaba.fastjson.JSONArray.toJSON( lists ) );
+	result = MallJxcHttpClientUtil.saveUpdateWarehouse( storeParams, true );
+
+	return result;
     }
 
 }

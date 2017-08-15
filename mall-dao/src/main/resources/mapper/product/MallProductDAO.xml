@@ -454,5 +454,12 @@
         left join t_mall_store s on p.shop_id = s.id
         where s.is_delete=0 and p.is_fenbi_change_pro=1 and p.change_fenbi>0 and p.is_delete=0 and p.is_publish=1 and p.check_status=1 and s.id=#{shopId}
     </select>
-
+    <select id="selectProByUserIdGroupName" resultType="java.util.Map">
+        SELECT GROUP_CONCAT(t.id) id,GROUP_CONCAT( DISTINCT s.id) shop_id,t.`pro_name`,t.is_specifica, t.`erp_pro_id`, MAX(t.pro_price) price,SUM(t.pro_stock_total) amount
+        FROM `t_mall_product` t
+        LEFT JOIN t_mall_store s  ON t.`shop_id`=s.`id`
+        WHERE  t.`user_id`= #{userId} AND t.`is_delete`=0 AND t.`pro_type_id`=0
+        AND s.`is_delete`=0  AND t.`erp_pro_id`=0
+        GROUP BY t.`pro_name`
+    </select>
 </mapper>
