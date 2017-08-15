@@ -1,6 +1,5 @@
 package com.gt.mall;
 
-import com.gt.mall.bean.Member;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.inter.service.MemberService;
 import org.junit.Test;
@@ -29,8 +28,6 @@ public class BaseControllerTest extends BasicTest {
 	params.put( "maxResult", 10 );
 	List< Map< String,Object > > list = mallStoreDAO.findByPage( params );*/
 
-        Member member = memberService.findMemberById( 124,null );
 
-        System.out.println("nickname = " + member.getNickname());
     }
 }

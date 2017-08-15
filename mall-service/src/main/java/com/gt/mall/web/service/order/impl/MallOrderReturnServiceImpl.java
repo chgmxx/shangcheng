@@ -58,6 +58,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 
     /**
      * 系统退款（不是买家申请的）
+     *
      */
     @Override
     public boolean returnEndOrder( Integer orderId, Integer orderDetailId ) throws Exception {
@@ -127,7 +128,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		    boolean flag = false;
 		    //查询订单详情是否已经全部退款
 		    MallOrder order = mallOrderDAO.getOrderById( orderId );
-		    flag = mallOrderService.isReturnSuccess( order );
+		    flag = mallOrderService.isReturnSuccess(order);
 		    /*if ( order != null ) {
 			if ( order.getMallOrderDetail() != null ) {
 			    for ( MallOrderDetail mDetail : order.getMallOrderDetail() ) {

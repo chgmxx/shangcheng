@@ -443,7 +443,7 @@ public class MallPageController extends AuthorizeOrLoginController {
      * 手机访问商家主页面接口
      */
     @SuppressWarnings( "unchecked" )
-    @RequestMapping( "{id}/79B4DE7CIndex" )
+    @RequestMapping( "{id}/79B4DE7C/pageIndex" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String pageIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws IOException {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );

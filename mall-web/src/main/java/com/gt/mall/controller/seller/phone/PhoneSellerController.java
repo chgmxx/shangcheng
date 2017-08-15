@@ -13,7 +13,6 @@ import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.entity.seller.MallSellerWithdraw;
-import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.order.MallOrderService;
