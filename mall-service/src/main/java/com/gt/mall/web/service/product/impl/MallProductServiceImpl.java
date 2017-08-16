@@ -2117,9 +2117,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public List< Map< String,Object > > selectMemberType( int userId ) {
-	//todo 调用彭江丽的接口
-	return null;
+    public List< Map > selectMemberType( int userId ) {
+	return memberService.findBuyGradeType( userId );
     }
    /* private Map<String, Object> getFlowRecord(MallProduct product,BusFlow flow){
 	FenbiFlowRecord flowRecord = new FenbiFlowRecord();

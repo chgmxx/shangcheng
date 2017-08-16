@@ -128,6 +128,13 @@ public interface MemberService {
     public List< Map > findCardrecordList( Map< String,Object > params );
 
     /**
+     * 查询购买的会员卡
+     * @param userId 商家id
+     * @return 会员卡集合
+     */
+    public List<Map> findBuyGradeType(int userId);
+
+    /**
      * 会员计算 （还未调试）
      *
      * @param mallAllEntity 对象

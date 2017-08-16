@@ -220,7 +220,7 @@ public class MallProductController extends BaseController {
 	    }*/
 
 	    //查询会员卡
-	    List< Map< String,Object > > cardList = mallProductService.selectMemberType( user.getId() );
+	    List< Map > cardList = mallProductService.selectMemberType( user.getId() );
 	    request.setAttribute( "cardList", cardList );
 	    request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 	    request.setAttribute( "urls", request.getHeader( "Referer" ) );

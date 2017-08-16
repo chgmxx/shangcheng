@@ -267,6 +267,17 @@ public class MemberServiceImpl implements MemberService {
 	return null;
     }
 
+    @Override
+    public List< Map > findBuyGradeType( int userId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "busId", userId );
+	String data = MemberInterUtil.SignHttpSelect( params, MEMBER_URL + "findBuyGradeType" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONArray.parseArray( data, Map.class );
+	}
+	return null;
+    }
+
     /**
      * 会员计算 （还未调试）
      *

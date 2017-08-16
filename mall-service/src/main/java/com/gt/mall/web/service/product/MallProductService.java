@@ -68,7 +68,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 根据商家id查询会员卡
      */
-    List< Map< String,Object > > selectMemberType( int userId );
+    List< Map > selectMemberType( int userId );
 
     /**
      * 同步门店下的商品信息
