@@ -346,14 +346,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
 
 	    String http = PropertiesUtil.getResourceUrl();//图片url链接前缀
 
-	    double discount = 1;//商品折扣
-	    //TODO 折扣 memberpayService.findCardType( member.getId() );
-	    Map< String,Object > map = null;
-	    //	    memberpayService.findCardType( member.getId() );
-	    String result = map.get( "result" ).toString();
-	    if ( result == "true" || result.equals( "true" ) ) {
-		discount = Double.parseDouble( map.get( "discount" ).toString() );
-	    }
+	    double discount = memberService.getMemberDiscount( member.getId() );//商品折扣
+
 	    request.setAttribute( "discount", discount );
 	    List< Map< String,Object > > xlist = pageService.getProductCollectByMemberId( member, discount );
 

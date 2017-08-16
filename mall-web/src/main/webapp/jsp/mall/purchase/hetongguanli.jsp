@@ -26,8 +26,8 @@
         <a href="/purchaseOrder/orderIndex.do" class="gt-t-menu-box" hidefocus="true">
             <span class="gt-t-menu-title">报价单管理</span>
         </a>
-        <a href="/purchaseContract/contractIndex.do" class="gt-t-menu-box linked" hidefocus="true"> <
-            span class="gt-t-menu-title">合同管理</span>
+        <a href="/purchaseContract/contractIndex.do" class="gt-t-menu-box linked" hidefocus="true">
+            <span class="gt-t-menu-title">合同管理</span>
         </a>
         <a href="/purchaseCompany/companyIndex.do" class="gt-t-menu-box" hidefocus="true">
             <span class="gt-t-menu-title">公司模版管理</span>

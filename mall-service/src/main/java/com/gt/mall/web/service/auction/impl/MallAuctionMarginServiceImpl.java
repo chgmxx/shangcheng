@@ -35,14 +35,12 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 
     @Autowired
     private MallAuctionMarginDAO auctionMarginDAO;
-
     @Autowired
-    private MallOrderDAO orderDAO;
-
+    private MallOrderDAO         orderDAO;
     @Autowired
-    private MallStoreDAO  storeDAO;
+    private MallStoreDAO         storeDAO;
     @Autowired
-    private MemberService memberService;
+    private MemberService        memberService;
 
     @Override
     public PageUtil selectMarginByShopId( Map< String,Object > params ) {
@@ -288,7 +286,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    returnParams.put( "busId", member.getBusid() );
 	    returnParams.put( "orderNo", aucNo );
 	    returnParams.put( "money", money );
-	     Map<String, Object> payResultMap = memberService.refundMoney(returnParams); //memberPayService.chargeBack(memberId,money);
+	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams ); //memberPayService.chargeBack(memberId,money);
 	    if ( payResultMap != null ) {
 		if ( !CommonUtil.isEmpty( payResultMap.get( "result" ) ) ) {
 		    boolean result = Boolean.valueOf( payResultMap.get( "result" ).toString() );

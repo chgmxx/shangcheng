@@ -10,6 +10,7 @@ import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.groupbuy.MallGroupBuyService;
@@ -61,6 +62,8 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MallPageService             pageService;
+    @Autowired
+    private MemberService               memberService;
 
     /**
      * 团购管理列表页面
@@ -542,15 +545,11 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    }
 	    Map shopmessage = pageService.shopmessage( CommonUtil.toInteger( productMap.get( "shopId" ) ) );//查询店铺信息
 	    request.setAttribute( "shopMap", shopmessage );
-	    String discount = "1";//商品折扣
+	    double discount = 1;//商品折扣
+
 	    String is_member_discount = productMap.get( "is_member_discount" ).toString();//商品是否参加折扣
 	    if ( ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {
-		//TODO 折扣 memberpayService.findCardType
-		//		Map map = memberpayService.findCardType(member.getId());//查询个人折扣信息
-		//		String result = map.get("result").toString();
-		//		if(result=="true"||result.equals("true")){
-		//		    discount = map.get("discount").toString();
-		//		}
+		 discount = memberService.getMemberDiscount( member.getId() );//商品折扣
 	    }
 	    request.setAttribute( "discount", discount );//折扣价
 	    Map< String,Object > maps = new HashMap< String,Object >();
