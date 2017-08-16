@@ -9,44 +9,26 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 public class SessionUtils {
 
     private static final Logger log = Logger.getLogger( SessionUtils.class );
-
-
-    /**
-     * 获取用户bus_user   SESSION的值
-     */
-    public static Object getLoginUser2( HttpServletRequest request ) {
-	try {
-	    Object obj = request.getSession().getAttribute(Constants.SESSION_BUSINESS_KEY);
-		System.out.println("obj = " + obj);
-	} catch (Exception e) {
-	    log.info(e.getLocalizedMessage());
-	    e.printStackTrace();
-	}
-	return null;
-
-    }
-
 
     /**
      * 获取用户bus_user   SESSION的值
      */
     public static BusUser getLoginUser( HttpServletRequest request ) {
 	try {
-	    Object obj = request.getSession().getAttribute(Constants.SESSION_BUSINESS_KEY);
+	    Object obj = request.getSession().getAttribute( Constants.SESSION_BUSINESS_KEY );
 
-	    if(obj != null){
+	    if ( obj != null ) {
 
-		BusUser user =  JSONObject.toJavaObject((JSONObject.parseObject(obj.toString())),BusUser.class );
+		BusUser user = JSONObject.toJavaObject( ( JSONObject.parseObject( obj.toString() ) ), BusUser.class );
 		return user;
-	    }else{
+	    } else {
 		return null;
 	    }
-	} catch (Exception e) {
-	    log.info(e.getLocalizedMessage());
+	} catch ( Exception e ) {
+	    log.info( e.getLocalizedMessage() );
 	    e.printStackTrace();
 	}
 	return null;
@@ -85,7 +67,7 @@ public class SessionUtils {
 	try {
 	    Object obj = request.getSession().getAttribute( Constants.SESSION_WXPUBLICUSERS_KEY );
 	    if ( obj != null ) {
-		return JSONObject.parseObject( obj.toString(),WxPublicUsers.class );
+		return JSONObject.parseObject( obj.toString(), WxPublicUsers.class );
 	    } else {
 		return null;
 	    }

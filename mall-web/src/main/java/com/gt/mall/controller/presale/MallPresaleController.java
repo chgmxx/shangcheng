@@ -8,6 +8,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.entity.presale.MallPresaleGive;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallPaySetService;
 import com.gt.mall.web.service.presale.MallPresaleDepositService;
@@ -46,10 +47,11 @@ public class MallPresaleController extends BaseController {
     private MallPresaleDepositService mallPresaleDepositService;
     @Autowired
     private MallPaySetService         mallPaySetService;
+    @Autowired
+    private DictService               dictService;
 
     /**
      * 预售管理列表页面
-     *
      */
     @RequestMapping( "index" )
     public String index( HttpServletRequest request, HttpServletResponse response,
@@ -91,7 +93,7 @@ public class MallPresaleController extends BaseController {
 	    }
 	    request.setAttribute( "isOpenPresale", isOpenPresale );
 	    //todo course.urlquery
-//	    request.setAttribute( "videourl", course.urlquery( "83" ) );
+	    //	    request.setAttribute( "videourl", course.urlquery( "83" ) );
 	} catch ( Exception e ) {
 	    logger.error( "预售列表异常：" + e );
 	    e.printStackTrace();
@@ -205,10 +207,10 @@ public class MallPresaleController extends BaseController {
 	    code = -1;
 	    logger.error( "删除预售：" + e );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "code", code );
-	    CommonUtil.write( response,obj );
+	    CommonUtil.write( response, obj );
 	}
     }
 
@@ -248,9 +250,8 @@ public class MallPresaleController extends BaseController {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
 	    List< MallPresaleGive > giveList = mallPresaleService.selectGiveByUserId( user );
 
-	    //todo 陈丹字典接口 dictService.getDictList
-	    //	    List<Map<String, Object>> list = dictService.getDictList("1143");
-	    //	    request.setAttribute("dictList", list);
+	    List< Map > list = dictService.getDict( "1143" );
+	    request.setAttribute( "dictList", list );
 
 	    request.setAttribute( "giveList", giveList );
 	    request.setAttribute( "shoplist", shoplist );

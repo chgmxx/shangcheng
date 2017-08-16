@@ -1,6 +1,5 @@
 package com.gt.mall.config.interceptor;
 
-import com.gt.mall.util.SessionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -61,10 +60,6 @@ public class MyInterceptor implements HandlerInterceptor {
 	System.out.println( "basePath = " + request.getRequestURL() );
 
 	// 获得在下面代码中要用的request,response,session对象
-	// 从session里取用户对象
-	SessionUtils.getLoginUser2(request);
-
-
 
 	/*BusUser user = SessionUtils.getLoginUser( request );
 	String url = request.getRequestURI();

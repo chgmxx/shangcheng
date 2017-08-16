@@ -12,7 +12,7 @@ spring:
   host: 113.106.202.51
   port: 6379
   password: gt@123456
-  database: 10
+  database: 8
 #redis session共享
  session:
    store-type: redis
@@ -22,13 +22,6 @@ spring:
    enabled: true
  thymeleaf:
    cache: false
-  #redis配置
-#  redis:
-#     host: 127.0.0.1
-#     port: 6379
-#     #password: gt@123456
-#   session:
-#     store-type: redis
 
 
 datasource:
@@ -119,7 +112,7 @@ mq:
 redisSession:
  domainName: .yifriend.net
  cookiePath: /
- cookieName: DTL_SESSION_ID
+ cookieName: JSESSIONID
 
 http:
  #总项目请求地址

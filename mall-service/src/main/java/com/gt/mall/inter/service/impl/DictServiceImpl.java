@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.inter.service.DictService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
  * Date : 2017/8/16 0016
  * Time : 10:30
  */
+@Service
 public class DictServiceImpl implements DictService {
 
     public static final String DICT_URL = "/memberAPI/dict/";//字典链接
