@@ -85,7 +85,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     @Autowired
     private MemberService               memberService;
     @Autowired
-    private MallPageService pageService;
+    private MallPageService             pageService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -647,30 +647,12 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    msg = "去支付失败";
 	} else {
 	    if ( order.getOrderPayWay() == 10 ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-		//TODO 需关连 wxPublicUsersMapper.selectByUserId() 方法
-		WxPublicUsers wxPublicUsers = null;
-		//                        wxPublicUsersMapper.selectByUserId(member.getBusid());
-
-		//TODO 需关连 t_wx_member_applet_openid 数据
-		//                String sql = "select openid from t_wx_member_applet_openid where style=4 and member_id=" + member.getId();
-		//                Map<String, Object> openMap = daoUtil.queryForMap(sql);
-
-		Map< String,Object > appletParams = new HashMap< String,Object >();
-		appletParams.put( "paySource", 1 );//支付来源
-		appletParams.put( "busId", wxPublicUsers.getBusUserId() );//商家ID
-		appletParams.put( "sysOrderNo", order.getOrderNo() );//订单号
-		appletParams.put( "productId", order.getOrderNo() );
-		appletParams.put( "desc", "商城下单" );
-		appletParams.put( "totalFee", order.getOrderMoney() );
-		appletParams.put( "ip", "127.0.0.1" );
-		//                appletParams.put("openid", openMap.get("openid"));
-		appletParams.put( "model", 3 );
-		appletParams.put( "url", url );
-		appletParams.put( "appid", CommonUtil.toString( params.get( "appid" ) ) );
-		//TODO 需关连 wxPayService.memberPayByWxApplet() 方法
-		//                Map<Object, Object> parameters = wxPayService.memberPayByWxApplet(appletParams);
-		//                resultMap.putAll(parameters);
+		Map< String,Object > appletParam = new HashMap<>();
+		appletParam.put( "memberId", params.get( "memberId" ) );
+		appletParam.put( "orderNo", order.getOrderNo() );
+		appletParam.put( "appid", params.get( "appid" ) );
+		Map< Object,Object > parameters = appletWxOrder( appletParam, url );
+		resultMap.putAll( parameters );
 	    }
 
 	}
@@ -1405,9 +1387,6 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     @Override
     public Map< Object,Object > appletWxOrder( Map< String,Object > params, String url ) throws Exception {
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-	//TODO 用户 wxPublicUsersMapper.selectByUserId
-	WxPublicUsers wxPublicUsers = null;
-	//                wxPublicUsersMapper.selectByUserId(member.getBusid());
 
 	//TODO  t_wx_member_applet_openid
 	//        String sql = "select openid from t_wx_member_applet_openid where style=4 and member_id=" + member.getId();
@@ -1416,7 +1395,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	MallOrder order = orderDAO.selectOrderByOrderNo( CommonUtil.toString( params.get( "orderNo" ) ) );
 	Map< String,Object > appletParams = new HashMap< String,Object >();
 	appletParams.put( "paySource", 1 );//支付来源
-	appletParams.put( "busId", wxPublicUsers.getBusUserId() );//商家ID
+	appletParams.put( "busId", member.getBusid() );//商家ID
 	appletParams.put( "sysOrderNo", order.getOrderNo() );//订单号
 	appletParams.put( "productId", order.getOrderNo() );
 	appletParams.put( "desc", "商城下单" );
@@ -1553,7 +1532,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	if ( CommonUtil.isNotEmpty( detail.getProTypeId() ) && code > 0 ) {
 	    //卡全包购买判断是否已经过期
 	    if ( detail.getProTypeId().toString().equals( "3" ) && CommonUtil.isNotEmpty( detail.getCardReceiveId() ) ) {
-		Map< String,Object > cardMap =  pageService.getCardReceive(detail.getCardReceiveId());
+		Map< String,Object > cardMap = pageService.getCardReceive( detail.getCardReceiveId() );
 		if ( CommonUtil.isNotEmpty( cardMap ) ) {
 		    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
 			JSONObject cardObj = JSONObject.fromObject( cardMap.get( "recevieMap" ) );
