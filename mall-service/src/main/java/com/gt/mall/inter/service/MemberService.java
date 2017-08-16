@@ -23,7 +23,7 @@ public interface MemberService {
      *
      * @return 会员对象
      */
-    public Member findMemberById( int memberId, Member member ) ;
+    public Member findMemberById( int memberId, Member member );
 
     /**
      * 绑定手机号
@@ -33,7 +33,7 @@ public interface MemberService {
      *
      * @return 会员对象
      */
-    public Member bingdingPhone( Map< String,Object > params, Member member ) ;
+    public Member bingdingPhone( Map< String,Object > params, Member member );
 
     /**
      * 根据粉丝id获取会员折扣
@@ -42,7 +42,7 @@ public interface MemberService {
      *
      * @return 折扣数
      */
-    public double getMemberDiscount( int memberId ) ;
+    public double getMemberDiscount( int memberId );
 
     /**
      * 根据会员id和门店id 查询 会员信息、优惠券信息和卡券信息
@@ -52,7 +52,7 @@ public interface MemberService {
      *
      * @return 会员信息、优惠券信息和卡券信息
      */
-    public Member findMemberCardByMemberId( int memberId, int shopId ) ;
+    public Member findMemberCardByMemberId( int memberId, int shopId );
 
     /**
      * 判断储值卡金额是否充足
@@ -62,7 +62,7 @@ public interface MemberService {
      *
      * @return 消费是否充足
      */
-    public Map< String,Object > isAdequateMoney( int memberId, double money ) ;
+    public Map< String,Object > isAdequateMoney( int memberId, double money );
 
     /**
      * 储值卡退款
@@ -80,35 +80,52 @@ public interface MemberService {
      *
      * @return 是否是会员
      */
-    public boolean isMember( int memberId ) ;
+    public boolean isMember( int memberId );
 
     /**
      * 新增会员积分 和记录
+     *
      * @param params {memberId：会员id，jifen：积分}
+     *
      * @return 是否修改成功
      */
-    public Map<String,Object> updateJifen(Map<String,Object> params);
+    public Map< String,Object > updateJifen( Map< String,Object > params );
 
     /**
      * 根据会员id查询会员集合
+     *
      * @param memberId 会员id
+     *
      * @return 会员集合
      */
-    public List<Integer> findMemberListByIds(int memberId);
+    public List< Integer > findMemberListByIds( int memberId );
 
     /**
      * 获取会员类型
+     *
      * @param memberId 会员id
+     *
      * @return 会员类型
      */
-    public Integer isCardType(int memberId);
+    public Integer isCardType( int memberId );
 
     /**
      * 查询会员卡片名称
+     *
      * @param memberId 会员id
+     *
      * @return 会员名称
      */
-    public Map findGradeType(int memberId);
+    public Map findGradeType( int memberId );
+
+    /**
+     * 查询会员积分记录
+     *
+     * @param params {mcId：会员卡id，page：页数，pageSize：大小}
+     *
+     * @return 会员积分记录
+     */
+    public List< Map > findCardrecordList( Map< String,Object > params );
 
     /**
      * 会员计算 （还未调试）
@@ -117,7 +134,7 @@ public interface MemberService {
      *
      * @return 对象
      */
-    public MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity ) ;
+    public MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity );
 
     /**
      * 支付成功回调   传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款
