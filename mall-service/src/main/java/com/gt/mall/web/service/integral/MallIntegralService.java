@@ -34,7 +34,7 @@ public interface MallIntegralService extends BaseService<MallIntegral> {
      * @param params curPage：当前页
      * @return 积分明细列表
      */
-    PageUtil selectIntegralDetail(Member member, Map<String, Object> params);
+//    PageUtil selectIntegralDetail(Member member, Map<String, Object> params);
 
     /**
      * 查询积分商品信息

@@ -217,10 +217,18 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		return returnUrl;
 	    }
 	    //查询兑换记录
-	    PageUtil page = integralService.selectIntegralDetail( member, params );
-	    request.setAttribute( "curPage", page.getCurPage() );
-	    request.setAttribute( "pageCount", page.getPageCount() );
-	    request.setAttribute( "integralList", page.getSubList() );
+	    //	    PageUtil page = integralService.selectIntegralDetail( member, params );
+	    Map< String,Object > map = new HashMap<>();
+	    int pageSize = 20;
+	    int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	    int firstNum = pageSize * ( ( curPage <= 0 ? 1 : curPage ) - 1 );
+	    map.put( "mcId", member.getMcId() );
+	    map.put( "page", firstNum );
+	    map.put( "pageSize", pageSize );
+	    List< Map > list = memberService.findCardrecordList( map );
+	    request.setAttribute( "curPage", curPage );
+	    //	    request.setAttribute( "pageCount", page.getPageCount() );
+	    request.setAttribute( "integralList", list );
 	    //查询我的积分
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		member = memberService.findMemberById( member.getId(), member );
@@ -255,10 +263,18 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    //查询积分商品
-	    PageUtil page = integralService.selectIntegralDetail( member, params );
-	    resultMap.put( "curPage", page.getCurPage() );
-	    resultMap.put( "pageCount", page.getPageCount() );
-	    resultMap.put( "integerList", page.getSubList() );
+	    //	    PageUtil page = integralService.selectIntegralDetail( member, params );
+	    Map< String,Object > map = new HashMap<>();
+	    int pageSize = 20;
+	    int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	    int firstNum = pageSize * ( ( curPage <= 0 ? 1 : curPage ) - 1 );
+	    map.put( "mcId", member.getMcId() );
+	    map.put( "page", firstNum );
+	    map.put( "pageSize", pageSize );
+	    List< Map > list = memberService.findCardrecordList( map );
+	    resultMap.put( "curPage", curPage );
+	    //	    resultMap.put( "pageCount", page.getPageCount() );
+	    resultMap.put( "integerList", list );
 	} catch ( Exception e ) {
 	    logger.error( "分页积分明细异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -486,7 +502,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		request.getSession().setAttribute( Constants.SESSION_KEY + "integral_order", params );
 	    } else {
 		member = memberService.findMemberById( member.getId(), member );
-		Integer browser = CommonUtil.judgeBrowser( request);
+		Integer browser = CommonUtil.judgeBrowser( request );
 		if ( browser != 1 ) {
 		    browser = 2;
 		}

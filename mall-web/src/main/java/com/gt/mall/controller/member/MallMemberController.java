@@ -66,7 +66,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
     @Autowired
     private MallSellerService    mallSellerService;
     @Autowired
-    private MemberService memberService;
+    private MemberService        memberService;
 
     /**
      * 跳转至个人中心的页面
@@ -127,11 +127,11 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		//TODO 会员卡方法 memberPay.findGradeType() findCardByMemberId()
-		//		GradeType gradeType = memberPay.findGradeType( member.getId() );//会员卡名称
+		//TODO 会员卡方法 memberPay findCardByMemberId()
+		Map< String,Object > gradeType = memberService.findGradeType( member.getId() );//会员卡名称
 		//		Card card = memberPay.findCardByMemberId( member.getId() );//会员卡号
 		//		request.setAttribute( "card", card );
-		//		request.setAttribute( "gradeType", gradeType );
+		request.setAttribute( "gradeType", gradeType );
 	    }
 	    request.setAttribute( "member", member );
 
@@ -380,7 +380,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 
 	    StringBuffer imageUrl = new StringBuffer();
 	    boolean flag = false;
-	    Member member = memberService.findMemberById( memberId ,null);
+	    Member member = memberService.findMemberById( memberId, null );
 	    //TODO 用户 busUserMapper.selectByPrimaryKey( member.getBusid() );
 	    BusUser user = null;
 	    //	    nullbusUserMapper.selectByPrimaryKey( member.getBusid() );

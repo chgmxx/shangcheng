@@ -17,6 +17,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
@@ -74,6 +75,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private MallPageService    pageService;
     @Autowired
     private MemberService      memberService;
+    @Autowired
+    private DictService        dictService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -584,9 +587,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    }
 	}
 	//查询粉币抵扣的比例
-	//TODO 需关连 dictService.getDictList（）方法
-	List< Map< String,Object > > currencyList = null;
-	//                dictService.getDictList("1058");
+	List< Map > currencyList = dictService.getDict( "1058" );
 	if ( currencyList != null && currencyList.size() > 0 ) {
 	    Map< String,Object > fenbiMap = currencyList.get( 0 );
 
@@ -662,9 +663,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	if ( fenbiMoney > 0 ) {
 	    //查询粉币抵扣的比例
-	    //TODO 需关连 dictService.getDictList（）方法
-	    List< Map< String,Object > > currencyList = null;
-	    //                    dictService.getDictList("1058");
+	    List< Map > currencyList = dictService.getDict( "1058" );
 	    if ( currencyList != null && currencyList.size() > 0 ) {
 		Map< String,Object > fenbiMap = currencyList.get( 0 );
 

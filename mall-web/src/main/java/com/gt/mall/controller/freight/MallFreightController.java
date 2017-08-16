@@ -7,6 +7,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.freight.MallFreight;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -27,9 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -51,6 +50,8 @@ public class MallFreightController extends BaseController {
     private MallTakeTheirService takeTheirService;
     @Autowired
     private MallPaySetService    paySetService;
+    @Autowired
+    private DictService          dictService;
 
     /**
      * 进入物流管理列表页面
@@ -90,7 +91,6 @@ public class MallFreightController extends BaseController {
 	return "mall/freight/freight_index";
     }
 
-
     /**
      * 进入修改物流信息页面
      *
@@ -129,9 +129,12 @@ public class MallFreightController extends BaseController {
 	    }
 
 	    //查询物流公司
-	    //TODO 字典  dictService.getDict("1092");
-	    //	    SortedMap<String, Object> comMap = dictService.getDict("1092");
-	    //	    request.setAttribute("comMap", comMap);
+	    List< Map > list = dictService.getDict( "1092" );
+	    SortedMap< String,Object > map = new TreeMap< String,Object >();
+	    for ( Map< String,Object > map2 : list ) {
+		map.put( map2.get( "item_key" ).toString(), map2.get( "item_value" ) );
+	    }
+	    request.setAttribute( "comMap", map );
 
 	} catch ( Exception e ) {
 	    logger.error( "修改物流信息:" + e );
@@ -196,7 +199,7 @@ public class MallFreightController extends BaseController {
 	    flag = false;
 	    logger.debug( "删除物流信息：" + e.getMessage() );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "flag", flag );
 

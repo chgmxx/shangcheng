@@ -21,6 +21,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.applet.MallOrderAppletService;
@@ -86,6 +87,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private MemberService               memberService;
     @Autowired
     private MallPageService             pageService;
+    @Autowired
+    private DictService                 dictService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -380,11 +383,9 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( order.getExpressId() ) ) {
-		//TODO 需关连 dictService 字典方法
-		//                Map<String, Object> expressMap = dictService.value("1092", order.getExpressId().toString());
-		//                if(CommonUtil.isNotEmpty(expressMap)){
-		//                    resultMap.put("expressName", expressMap.get("item_value"));
-		//                }
+		String expressName = dictService.getDictRuturnValue( "1092", order.getExpressId() );
+		resultMap.put( "expressName", expressName );
+
 	    }
 	    if ( CommonUtil.isNotEmpty( order.getExpressNumber() ) ) {
 		resultMap.put( "expressNumber", order.getExpressNumber() );
@@ -727,9 +728,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( type == 0 ) {//申请退款
 	    // 查询退款原因
-	    //TODO 关连 字典 dictService.getDictList();方法
-	    //            List<Map<String, Object>> reasonList = dictService.getDictList("1091");
-	    //            resultMap.put("reasonList", reasonList);
+	    List< Map > reasonList = dictService.getDict( "1091" );
+	    resultMap.put( "reasonList", reasonList );
 	    List< Map< String,Object > > handWayList = new ArrayList< Map< String,Object > >();//处理方式
 	    Map< String,Object > handWayMap = new HashMap< String,Object >();
 	    if ( orderPayWay != 2 && orderPayWay != 6 ) {//支付方式不是货到付款和到点支付
@@ -772,9 +772,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    resultMap.put( "handWayList", handWayList );
 	} else if ( type == 1 ) {//填写物流公司
 	    //查询物流公司
-	    //TODO 关连 字典 dictService.getDictList();方法
-	    //            List<Map<String, Object>> comList = dictService.getDictList("1092");
-	    //            resultMap.put("comList", comList);
+	    List< Map > comList = dictService.getDict( "1092" );
+	    resultMap.put( "comList", comList );
 	}
 	//退款id
 	if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {

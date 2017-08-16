@@ -102,10 +102,9 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	return page;
     }
 
-    @Override
-    public PageUtil selectIntegralDetail( Member member, Map< String,Object > params ) {
-	int pageSize = 20;
-	//TODO 需关连卡片t_member_cardrecord 记录
+//    @Override  调用memberService.findCardrecordList
+//    public PageUtil selectIntegralDetail( Member member, Map< String,Object > params ) {
+//	int pageSize = 20;
 	//        int curPage = CommonUtil.isEmpty(params.get("curPage")) ? 1 : CommonUtil.toInteger(params.get("curPage"));
 	//        String countSql = "SELECT count(id) FROM t_member_cardrecord WHERE recordType = 2 AND cardId=" + member.getMcId();
 	//        int count = daoUtil.queryForInt(countSql);
@@ -118,8 +117,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	//        List<Map<String, Object>> recordList = daoUtil.queryForList(sql);
 	//        page.setSubList(recordList);
 	//        return page;
-	return null;
-    }
+//	return null;
+//    }
 
     @Override
     public Map< String,Object > selectProductDetail( Member member, Map< String,Object > params ) {

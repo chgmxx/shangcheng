@@ -7,6 +7,7 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PropertiesUtil;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +45,8 @@ public class MallHtmlController extends BaseController {
     private MallHtmlFromService   htmlFromService;
     @Autowired
     private MallHtmlReportService htmlReportService;
+    @Autowired
+    private DictService           dictService;
 
     /**
      * h5 商城列表页
@@ -239,9 +243,9 @@ public class MallHtmlController extends BaseController {
 	request.setAttribute( "addres", request.getParameter( "addres" ) );
 	request.setAttribute( "player_style", request.getParameter( "player_style" ) );
 	request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
-	//TODO 播放器样式 dictService.dictkeyvalue("1048");
-	//	List playList = dictService.dictkeyvalue("1048");//获取播放器样式
-	//	request.setAttribute("playlist", playList);
+
+	List< Map > playList = dictService.getDict( "1048" );//获取播放器样式
+	request.setAttribute( "playlist", playList );
 	return "/mall/htmlmall/musicUrl";
 
     }
