@@ -1,11 +1,13 @@
 package com.gt.mall;
 
 import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.inter.service.MemberService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA
@@ -19,6 +21,8 @@ public class BaseControllerTest extends BasicTest {
     private MallStoreDAO  mallStoreDAO;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private DictService dictService;
 
     @Test
     public void tests() {
@@ -30,8 +34,11 @@ public class BaseControllerTest extends BasicTest {
 	params.put( "maxResult", 10 );
 	List< Map< String,Object > > list = mallStoreDAO.findByPage( params );*/
 
-	List< Integer > list = memberService.findMemberListByIds( 124 );
-	System.out.println( "list = " + list );
+	/*List< Integer > list = memberService.findMemberListByIds( 124 );
+	System.out.println( "list = " + list );*/
+
+	List<Map > typeMap = dictService.getDict( "1073" );
+	System.out.println("typeMap = " + typeMap);
 
     }
 }

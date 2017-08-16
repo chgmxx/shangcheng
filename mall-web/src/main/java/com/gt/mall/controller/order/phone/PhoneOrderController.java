@@ -8,9 +8,7 @@ import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
-import com.gt.mall.dao.order.MallDaifuDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
-import com.gt.mall.dao.order.MallOrderReturnDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.freight.MallFreight;
@@ -20,6 +18,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionService;
@@ -31,12 +30,9 @@ import com.gt.mall.web.service.groupbuy.MallGroupBuyService;
 import com.gt.mall.web.service.order.MallOrderService;
 import com.gt.mall.web.service.page.MallPageService;
 import com.gt.mall.web.service.presale.MallPresaleService;
-import com.gt.mall.web.service.product.MallProductInventoryService;
 import com.gt.mall.web.service.product.MallProductService;
-import com.gt.mall.web.service.product.MallProductSpecificaService;
 import com.gt.mall.web.service.product.MallShopCartService;
 import com.gt.mall.web.service.seckill.MallSeckillService;
-import com.gt.mall.web.service.seller.MallSellerMallsetService;
 import com.gt.mall.web.service.seller.MallSellerService;
 import com.gt.mall.web.service.store.MallStoreService;
 import net.sf.json.JSONArray;
@@ -69,54 +65,44 @@ import java.util.*;
 @RequestMapping( "/phoneOrder" )
 public class PhoneOrderController extends AuthorizeOrLoginController {
 
-    //    @Autowired
-    //    private WxShopService               wxShopService;
     @Autowired
-    private MallOrderService            mallOrderService;
+    private MallOrderService         mallOrderService;
     @Autowired
-    private MallOrderDAO                mallOrderDAO;
+    private MallOrderDAO             mallOrderDAO;
     @Autowired
-    private MallPageService             pageService;
+    private MallPageService          pageService;
     @Autowired
-    private MallProductService          mallProductService;
+    private MallProductService       mallProductService;
     @Autowired
-    private MallProductSpecificaService productSpecificaService;
+    private MallFreightService       mallFreightService;
     @Autowired
-    private MallProductInventoryService productInventoryService;
+    private MallGroupBuyService      mallGroupBuyService;
     @Autowired
-    private MallFreightService          mallFreightService;
+    private MallStoreService         mallStoreService;
     @Autowired
-    private MallGroupBuyService         mallGroupBuyService;
+    private MallSeckillService       mallSeckillService;
     @Autowired
-    private MallOrderReturnDAO          mallOrderReturnDAO;
+    private MallTakeTheirTimeService mallTakeTheirTimeService;
     @Autowired
-    private MallStoreService            mallStoreService;
+    private MallTakeTheirService     mallTakeTheirService;
     @Autowired
-    private MallSeckillService          mallSeckillService;
+    private MallAuctionService       mallAuctionService;
     @Autowired
-    private MallTakeTheirTimeService    mallTakeTheirTimeService;
+    private MallPresaleService       mallPresaleService;
     @Autowired
-    private MallTakeTheirService        mallTakeTheirService;
+    private MallSellerService        mallSellerService;
     @Autowired
-    private MallAuctionService          mallAuctionService;
+    private MallPaySetService        mallPaySetService;
     @Autowired
-    private MallDaifuDAO                mallDaifuDAO;
+    private MallGroupJoinDAO         mallGroupJoinDAO;
     @Autowired
-    private MallPresaleService          mallPresaleService;
+    private MallFreightDAO           mallFreightDAO;
     @Autowired
-    private MallSellerService           mallSellerService;
+    private MallShopCartService      mallShopCartService;
     @Autowired
-    private MallSellerMallsetService    mallSellerMallsetService;
+    private MemberService            memberService;
     @Autowired
-    private MallPaySetService           mallPaySetService;
-    @Autowired
-    private MallGroupJoinDAO            mallGroupJoinDAO;
-    @Autowired
-    private MallFreightDAO              mallFreightDAO;
-    @Autowired
-    private MallShopCartService         mallShopCartService;
-    @Autowired
-    private MemberService               memberService;
+    private DictService              dictService;
 
     /**
      * 跳转至提交订单页面
@@ -1217,20 +1203,18 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		MallOrderReturn orderReturn = mallOrderService.selectByDId( id );
 		request.setAttribute( "orderReturn", orderReturn );
 	    }
-	    /*if ( !CommonUtil.isEmpty( params.get( "type" ) ) ) {
+	    if ( !CommonUtil.isEmpty( params.get( "type" ) ) ) {
 		Integer type = CommonUtil.toInteger( params.get( "type" ) );
 		if ( type == 0 ) {
 		    // 查询退款原因
-		    //todo dictService.getDict
-		    SortedMap< String,Object > dictMap = dictService.getDict( "1091" );
+		    List< Map > dictMap = dictService.getDict( "1091" );
 		    request.setAttribute( "dictMap", dictMap );
 		} else if ( type == 1 ) {
 		    //查询物流公司
-		    //todo dictService.getDict
-		    SortedMap< String,Object > comMap = dictService.getDict( "1092" );
+		    List< Map > comMap = dictService.getDict( "1092" );
 		    request.setAttribute( "comMap", comMap );
 		}
-	    }*/
+	    }
 	    request.setAttribute( "type", params.get( "type" ) );
 	    //todo CommonUtil.getWxParams
 	    /*if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) && CommonUtil.isNotEmpty( member ) ) {
@@ -1348,13 +1332,12 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		List< Map< String,Object > > addressList = mallOrderService.selectShipAddress( params );
 		request.setAttribute( "addressList", addressList );
 	    }
-	    /*if ( CommonUtil.isNotEmpty( orders.getExpressId() ) ) {
-	    	//todo dictService.value
-		Map< String,Object > expressMap = dictService.value( "1092", orders.getExpressId().toString() );
-		if ( CommonUtil.isNotEmpty( expressMap ) ) {
-		    request.setAttribute( "expressName", expressMap.get( "item_value" ) );
+	    if ( CommonUtil.isNotEmpty( orders.getExpressId() ) ) {
+		String expressName = dictService.getDictRuturnValue( "1092", orders.getExpressId() );
+		if ( CommonUtil.isNotEmpty( expressName ) ) {
+		    request.setAttribute( "expressName", expressName );
 		}
-	    }*/
+	    }
 	    if ( orders.getDeliveryMethod() == 2 && orders.getTakeTheirId() > 0 ) {//配送方式是到店自提
 		MallTakeTheir take = mallTakeTheirService.selectById( orders.getTakeTheirId() );
 		request.setAttribute( "take", take );

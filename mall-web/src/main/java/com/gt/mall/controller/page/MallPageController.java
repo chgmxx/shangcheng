@@ -14,6 +14,7 @@ import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerMallset;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.basic.MallCollectService;
@@ -64,21 +65,23 @@ public class MallPageController extends AuthorizeOrLoginController {
     @Autowired
     private MallFreightService          mallFreightService;
     @Autowired
-    private MallPifaApplyService     mallPifaApplyService;
+    private MallPifaApplyService        mallPifaApplyService;
     @Autowired
-    private MallSellerService        sellerService;
+    private MallSellerService           sellerService;
     @Autowired
-    private MallSellerMallsetService mallSellerMallsetService;
+    private MallSellerMallsetService    mallSellerMallsetService;
     @Autowired
-    private MallPaySetService        mallPaySetService;
+    private MallPaySetService           mallPaySetService;
     @Autowired
-    private MallProductService       mallProductService;
+    private MallProductService          mallProductService;
     @Autowired
-    private MallProductDAO           mallProductDAO;
+    private MallProductDAO              mallProductDAO;
     @Autowired
-    private MallCollectService       mallCollectService;
+    private MallCollectService          mallCollectService;
     @Autowired
-    private MemberService            memberService;
+    private MemberService               memberService;
+    @Autowired
+    private DictService                 dictService;
 
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -129,9 +132,8 @@ public class MallPageController extends AuthorizeOrLoginController {
 	//获取用户店铺集合
 	List< Map< String,Object > > allSto = mallStoreService.findAllStoByUser( user );
 	//获取页面类型
-	//todo 调用陈丹接口  dictService.getDict
-	/*Map< String,Object > typeMap = dictService.getDict( "1073" );
-	request.setAttribute( "typeMap", typeMap );*/
+	List<Map> typeMap = dictService.getDict( "1073" );
+	request.setAttribute( "typeMap", typeMap );
 	request.setAttribute( "allSto", allSto );
 	request.setAttribute( "urls", request.getHeader( "Referer" ) );
 	return "/mall/page/edit";

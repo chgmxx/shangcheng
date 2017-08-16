@@ -57,8 +57,8 @@
 			    		<option value="0">请选择一个取消订单的理由</option>
 			    	</c:if>
 			    	<c:forEach var="orderReason" items="${cancelReason }">
-			    		<option ${orderReason.key == result.orderInfo[0].seller_cancel_reason?'selected':''} 
-			    			value="${orderReason.key }">${orderReason.value }</option>
+			    		<option ${orderReason.item_key == result.orderInfo[0].seller_cancel_reason?'selected':''}
+			    			value="${orderReason.item_key }">${orderReason.item_value }</option>
 			    	</c:forEach>
 			    </select>
 			    <div style="text-align: center;">
@@ -201,8 +201,8 @@
 				    	 	<div class="fl">
 				    	 		<select id="logisticsCompany">
 				    	 			<c:forEach var="company" items="${logisticsCompany }">
-							    		<option ${company.key == result.orderInfo[0].express_id?'selected':''} 
-							    			value="${company.key }">${company.value }</option>
+							    		<option ${company.item_key == result.orderInfo[0].express_id?'selected':''}
+							    			value="${company.item_key }">${company.item_value }</option>
 							    	</c:forEach>
 				    	 		</select>
 				    	 	</div>

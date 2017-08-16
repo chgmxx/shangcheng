@@ -8,6 +8,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
+import com.gt.mall.inter.service.DictService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.groupbuy.MallGroupBuyService;
 import com.gt.mall.web.service.order.MallDaifuService;
@@ -52,6 +53,8 @@ public class MallOrderController extends BaseController {
     private MallOrderDAO        mallOrderDAO;
     @Autowired
     private MallDaifuService    mallDaifuService;
+    @Autowired
+    private DictService         dictService;
 
     /**
      * 订单首页
@@ -150,9 +153,8 @@ public class MallOrderController extends BaseController {
 	if ( type.equals( "1" ) ) {        //备注
 
 	} else if ( type.equals( "2" ) ) {                //取消订单
-	    //todo 字典 dictService.getDict
-	    /*Map< String,Object > cancelReason = dictService.getDict( "1079" );
-	    request.setAttribute( "cancelReason", cancelReason );*/
+	    List< Map > cancelReason = dictService.getDict( "1079" );
+	    request.setAttribute( "cancelReason", cancelReason );
 	} else if ( type.equals( "3" ) ) {                //修改价格
 
 	} else {        //发货
@@ -169,9 +171,8 @@ public class MallOrderController extends BaseController {
 	    } else {
 		count = "1";
 	    }
-	    //todo dictService.getDict
-	    /*Map< String,Object > logisticsCompany = dictService.getDict( "1092" );
-	    request.setAttribute( "logisticsCompany", logisticsCompany );*/
+	    List<Map> logisticsCompany = dictService.getDict( "1092" );
+	    request.setAttribute( "logisticsCompany", logisticsCompany );
 	}
 	request.setAttribute( "count", count );
 	result = mallOrderService.selectOrderList( params );
@@ -272,7 +273,6 @@ public class MallOrderController extends BaseController {
 
     /**
      * 商城导出订单
-     *
      */
     @RequestMapping( value = "/exportMallOrder" )
     public void exportMallOrder( HttpServletRequest request, HttpServletResponse response,
@@ -323,7 +323,6 @@ public class MallOrderController extends BaseController {
 
     /**
      * 重新生成订单号（钱包支付）
-     *
      */
     @RequestMapping( value = "/againGenerateOrderNo" )
     public void againGenerateOrderNo( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {

@@ -52,7 +52,7 @@
                                           name="pagTypeId">
                 <!-- <option value="0">无</option> -->
                 <c:forEach items="${typeMap }" var="map">
-                    <option ${map.key eq pag.pagTypeId?'selected':'' } value="${map.key }">${map.value}</option>
+                    <option ${map.item_key eq pag.pagTypeId?'selected':'' } value="${map.item_key }">${map.item_value}</option>
                 </c:forEach>
             </select></td>
             <td><span class="tColor"></span></td>

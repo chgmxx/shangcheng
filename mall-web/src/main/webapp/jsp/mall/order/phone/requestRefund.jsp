@@ -254,7 +254,7 @@ body { font-size: 12px; }
 							<option value="">请选择退款原因</option>
 							<c:if test="${!empty dictMap }">
 								<c:forEach var="dic" items="${dictMap }">
-									<option value="${dic.key }" <c:if test="${reason == dic.key}">selected='selected'</c:if>>${dic.value }</option>
+									<option value="${dic.item_key }" <c:if test="${reason == dic.item_key}">selected='selected'</c:if>>${dic.item_value }</option>
 								</c:forEach>
 							</c:if>
 						</select>
@@ -284,7 +284,7 @@ body { font-size: 12px; }
 							<option value="">请选择物流公司</option>
 							<c:if test="${!empty comMap }">
 								<c:forEach var="com" items="${comMap }">
-									<option value="${com.key }" <c:if test="${companyId == com.key}">selected='selected'</c:if>>${com.value }</option>
+									<option value="${com.item_key }" <c:if test="${companyId == com.item_key}">selected='selected'</c:if>>${com.item_value }</option>
 								</c:forEach>
 							</c:if>
 						</select>
