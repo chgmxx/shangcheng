@@ -13,6 +13,7 @@ import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.inter.service.MemberPayService;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
@@ -66,6 +67,9 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private MemberPayService memberPayService;
 
     /**
      * 通过店铺id来查询拍定金
@@ -188,7 +192,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	sucess.setUcTable( "t_mall_presale_deposit" );
 	sucess.setDataSource( deposit.getBuyerUserType()  );
 	//支付
-	Map< String,Object > resultMap = memberService.paySuccess( sucess );
+	Map< String,Object > resultMap = memberPayService.paySuccess( sucess );
 	int code = CommonUtil.toInteger( resultMap.get( "code" ) );
 	if ( code == 1) {//支付成功
 	    return 1;

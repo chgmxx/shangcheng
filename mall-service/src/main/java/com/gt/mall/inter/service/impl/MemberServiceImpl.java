@@ -3,8 +3,6 @@ package com.gt.mall.inter.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.params.MallAllEntity;
-import com.gt.mall.bean.params.PaySuccessBo;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;
@@ -24,8 +22,6 @@ import java.util.Map;
 public class MemberServiceImpl implements MemberService {
 
     private static final String MEMBER_URL = "/memberAPI/member/";//会员链接
-
-    private static final String MEMBER_COUNT_URL = "/memberAPI/memberCountApi/";//会员计算链接
 
     /**
      * 判断member是否是空 ，为空则赋值
@@ -122,13 +118,13 @@ public class MemberServiceImpl implements MemberService {
      *
      * @return 会员信息、优惠券信息和卡券信息
      */
-    public Member findMemberCardByMemberId( int memberId, int shopId ) {
+    public Map findMemberCardByMemberId( int memberId, int shopId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	params.put( "shopId", shopId );
 	String data = MemberInterUtil.SignHttpSelect( params, MEMBER_URL + "findCardByMembeId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
-	    JSONObject memberObj = JSONObject.parseObject( data );
+	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
 	}
 	return null;
     }
@@ -178,11 +174,7 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	String result = MemberInterUtil.SignHttpSelect( params, MEMBER_URL + "isMember" );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return true;
-	}
-	return false;
-
+	return CommonUtil.isNotEmpty( result );
     }
 
     /**
@@ -276,32 +268,6 @@ public class MemberServiceImpl implements MemberService {
 	    return JSONArray.parseArray( data, Map.class );
 	}
 	return null;
-    }
-
-    /**
-     * 会员计算 （还未调试）
-     *
-     * @param mallAllEntity 对象
-     *
-     * @return 对象
-     */
-    public MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity ) {
-	String data = MemberInterUtil.SignHttpSelect( mallAllEntity, MEMBER_COUNT_URL + "memberCountMoneyByShop" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), MallAllEntity.class );
-	}
-	return null;
-    }
-
-    /**
-     * 支付成功回调   传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款
-     *
-     * @param paySuccessBo 对象
-     *
-     * @return 对象
-     */
-    public Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
-	return MemberInterUtil.SignHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
     }
 
 }

@@ -198,7 +198,6 @@ public class MallProductController extends BaseController {
 		request.setAttribute( "shoplist", shoplist );
 		Integer shopId = CommonUtil.toInteger( shoplist.get( 0 ).get( "id" ) );
 		if ( CommonUtil.isEmpty( request.getAttribute( "groupList" ) ) ) {
-		    //todo 跟以前的不一样
 		    List< MallGroup > groupList = mallGroupService.selectGroupByShopId( shopId, -1 );
 		    request.setAttribute( "groupList", groupList );
 		}
