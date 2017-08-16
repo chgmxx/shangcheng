@@ -160,7 +160,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		//计算会员价
 		if(memberId > 0){
 			Member member = memberService.findById(memberId);
-			discount = mallProductService.getMemberDiscount("1", member);//获取会员折扣
+			discount = memberService.getMemberDiscount("1", member);//获取会员折扣
 		}*/
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );

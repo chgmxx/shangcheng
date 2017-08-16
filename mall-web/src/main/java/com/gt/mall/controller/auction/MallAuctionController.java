@@ -497,16 +497,15 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		request.setAttribute( "http", http );
 		request.setAttribute( "mapmessage", mapmessage );
 		Map shopmessage = pageService.shopmessage( shopid );
-		String discount = "1";//商品折扣
+		double discount = 1;//商品折扣
 		String is_member_discount = mapmessage.get( "is_member_discount" ).toString();//商品是否参加折扣
 		if ( ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {
-		    //TODO 需关连 会员卡信息 memberpayService.findCardType()
-		    Map map = new HashMap();
-		    //		    Map map = memberpayService.findCardType(member.getId());
+		    discount = memberService.getMemberDiscount( member.getId() );//商品折扣
+		    /*Map map = memberpayService.findCardType(member.getId());
 		    String result = map.get( "result" ).toString();
 		    if ( result == "true" || result.equals( "true" ) ) {
 			discount = map.get( "discount" ).toString();
-		    }
+		    }*/
 		}
 		request.setAttribute( "discount", discount );//折扣价
 		request.setAttribute( "shopid", shopid );
@@ -548,7 +547,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    obj.put( "shop_id", shopid );
 		    float price = 0;
 		    if ( mapmessage != null ) {
-			float dis = Float.valueOf( discount );//折扣
+			float dis = (float) discount;//折扣
 			if ( mapmessage.get( "is_specifica" ).equals( "1" ) ) {
 			    price = Float.valueOf( mapmessage.get( "inv_price" ).toString() ) * dis;
 			} else {
