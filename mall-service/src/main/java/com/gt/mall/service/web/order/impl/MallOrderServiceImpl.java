@@ -42,19 +42,19 @@ import com.gt.mall.service.inter.CardService;
 import com.gt.mall.service.inter.DictService;
 import com.gt.mall.service.inter.MemberPayService;
 import com.gt.mall.service.inter.MemberService;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.service.web.seller.MallSellerService;
-import com.gt.mall.util.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
+import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerMallsetService;
+import com.gt.mall.service.web.seller.MallSellerService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
@@ -332,26 +332,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		consumeParams.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );
 		memberService.updateUserConsume( consumeParams );
 
-		if ( order.getOrderPayWay() == 6 ) {//到店提货
-		    double useFenbi = 0;
-		    double useIntegral = 0;
-		    if ( CommonUtil.isNotEmpty( order ) ) {
-			if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) ) {
-			    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-				if ( CommonUtil.isNotEmpty( detail.getUseFenbi() ) ) {
-				    useFenbi += detail.getUseFenbi();
-				}
-				if ( CommonUtil.isNotEmpty( detail.getUseFenbi() ) ) {
-				    useIntegral += detail.getUseFenbi();
-				}
-			    }
-			}
-		    }
-		    if ( useFenbi > 0 || useIntegral > 0 ) {
-			member = memberService.findMemberById( order.getBuyerUserId(), member );
-			updateMemberJifen( useFenbi, useIntegral, member );
-		    }
-		}
 	    }
 	}
 	if ( count > 0 ) {
@@ -755,12 +735,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    mallOrderList.add( mallOrder );
 	}
 
-	if ( order.getOrderPayWay() != 5 && order.getOrderPayWay() != 6 && order.getOrderPayWay() != 7 ) {
-	    Object useFenbi = map.get( "fenbi" );//使用了多少粉币
-	    Object useIntegral = map.get( "integral" );//使用了多少积分
-	    updateMemberJifen( useFenbi, useIntegral, member );
-	}
-
 	if ( erpList != null && erpList.size() > 0 ) {
 	    Map< String,Object > erpMap = new HashMap<>();
 	    erpMap.put( "orders", JSONArray.fromObject( erpList ) );
@@ -772,7 +746,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    logger.info( "同步库存：" + flag );
 	}
 	if ( mallOrderList != null && mallOrderList.size() > 0 ) {
-	    paySuccess( mallOrderList );//储值卡支付，积分支付，粉币支付
+	    paySuccess( mallOrderList );//支付成功回调储值卡支付，积分支付，粉币支付
 	}
 
 	//PC 端订单推送
@@ -858,6 +832,22 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 
 	return Integer.parseInt( map.get( "count" ).toString() );
+    }
+
+    private void fenCard( MallOrder order ) {
+	if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) ) {
+	    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+		if ( detail.getProTypeId() == 3 && CommonUtil.isNotEmpty( detail.getCardReceiveId() ) ) {
+		    if ( detail.getCardReceiveId() > 0 ) {
+			Map< String,Object > cardParams = new HashMap<>();
+			cardParams.put( "receiveId", detail.getCardReceiveId() );//卡包id
+			cardParams.put( "num", detail.getDetProNum() );//数量
+			cardParams.put( "memberId", order.getBuyerUserId() );//粉丝id
+			cardService.successPayBack( cardParams );//商场支付成功回调 分配卡券
+		    }
+		}
+	    }
+	}
     }
 
     /**
@@ -1002,64 +992,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     }
 
     /**
-     * 使用积分和粉币
-     */
-    private void updateMemberJifen( Object useFenbi, Object useIntegral, Member member ) {
-	double fenbi = 0;
-	double integral = 0;
-	Member m = new Member();
-	boolean flag = false;
-	if ( null != useFenbi && !useFenbi.toString().equals( "" ) ) {
-	    double fansCurr = Double.parseDouble( useFenbi.toString() );
-	    if ( fansCurr > 0 ) {
-		fenbi = CommonUtil.subtract( member.getFansCurrency(), fansCurr );
-		if ( fenbi < 0 ) {
-		    fenbi = 0;
-		}
-		if ( fenbi >= 0 && fansCurr > 0 ) {
-		    flag = true;
-		    m.setFansCurrency( fenbi );
-		}
-	    }
-
-	}
-	if ( null != useIntegral && !useIntegral.toString().equals( "" ) ) {
-	    double jifen = Double.parseDouble( useIntegral.toString() );
-	    integral = member.getIntegral() - jifen;
-	    if ( integral < 0 ) {
-		integral = 0;
-	    }
-	    if ( integral >= 0 && jifen > 0 ) {
-		flag = true;
-		m.setIntegral( (int) integral );
-	    }
-	}
-
-	if ( CommonUtil.isNotEmpty( m ) && flag ) {
-	    m.setId( member.getId() );
-	    //扣除用户的积分和粉币
-	    int updateFenbiJifen = 0;// memberMapper.updateById( m );//把积分和粉币退还给会员
-	    if ( updateFenbiJifen == 0 ) {
-		logger.error( "修改积分粉币失败：" + fenbi + "——" + integral );
-	    } else {
-		member.setFansCurrency( fenbi );
-		member.setIntegral( (int) integral );
-
-		//把扣除的粉币，加到商家用户中
-		// todo 调用彭江丽接口 扣除低分和粉币信息
-		/*WxPublicUsers publicUser = null;//mallOrderDAO.getWpUser( member.getId() );
-		if ( CommonUtil.isNotEmpty( publicUser ) ) {
-		    BusUser busUser = busUserMapper.selectByPrimaryKey( publicUser.getBusUserId() );
-		    BusUser busUser1 = new BusUser();
-		    busUser1.setId( busUser.getId() );
-		    busUser1.setFansCurrency( busUser.getFansCurrency() + fenbi );
-		    busUserMapper.updateById( busUser1 );
-		}*/
-	    }
-	}
-    }
-
-    /**
      * 修改库存
      */
     private Map updateStatusStock( MallOrder order, Map< String,Object > params, Member member, WxPublicUsers wxPublicUser ) {
@@ -1191,13 +1123,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			}
 		    }
 		    if ( detail.getProTypeId() == 3 && order.getOrderPayWay() != 7 ) { // 卡券购买发布卡券
-			Map< String,Object > cardParams = new HashMap<>();
-			cardParams.put( "receiveId", detail.getCardReceiveId() );//卡包id
-			cardParams.put( "num", detail.getDetProNum() );//数量
-			cardParams.put( "memberId", order.getBuyerUserId() );//粉丝id
-			cardService.successPayBack( cardParams );//商场支付成功回调 分配卡券
+
+			fenCard( order );//分配卡券
+
 			String key = Constants.REDIS_KEY + "card_receive_num";
 			JedisUtil.map( key, order.getId().toString(), detail.getCardReceiveId().toString() );
+
 		    }
 		}
 	    }
@@ -2992,33 +2923,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	    //todo 调用小屁孩接口 根据粉丝id查询公众号信息
 	    WxPublicUsers pbUser = null;//mallOrderDAO.getWpUser( order.getBuyerUserId() );
+	    updateStatusStock( order, params, null, pbUser );
 
-	    Map< String,Object > map = updateStatusStock( order, params, null, pbUser );
-	    if ( CommonUtil.isNotEmpty( map ) ) {
-		double useFenbi = 0;
-		double useIntegral = 0;
-		if ( CommonUtil.isNotEmpty( map.get( "fenbi" ) ) ) {
-		    useFenbi = CommonUtil.toDouble( map.get( "fenbi" ) );//使用了多少粉币
-		}
-		if ( CommonUtil.isNotEmpty( map.get( "integral" ) ) ) {
-		    useIntegral = CommonUtil.toDouble( map.get( "integral" ) );//使用了多少粉币
-		}
-		Member member = memberService.findMemberById( order.getBuyerUserId(), null );//根据粉丝id查询会员信息
-		updateMemberJifen( useFenbi, useIntegral, member );
-	    }
-	    if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) ) {
-		for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-		    if ( detail.getProTypeId() == 3 && CommonUtil.isNotEmpty( detail.getCardReceiveId() ) ) {
-			if ( detail.getCardReceiveId() > 0 ) {
-			    Map< String,Object > cardParams = new HashMap<>();
-			    cardParams.put( "receiveId", detail.getCardReceiveId() );//卡包id
-			    cardParams.put( "num", detail.getDetProNum() );//数量
-			    cardParams.put( "memberId", order.getBuyerUserId() );//粉丝id
-			    cardService.successPayBack( cardParams );//商场支付成功回调 分配卡券
-			}
-		    }
-		}
-	    }
+	    fenCard( order );
+
 	}
     }
 

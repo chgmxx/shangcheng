@@ -469,10 +469,10 @@ public class CommonUtil {
 		payType = 11;
 		break;
 	    case 5://扫码支付
-		payType = 13;
+		payType = 1;
 		break;
 	    case 7://找人代付
-		payType = 14;
+		payType = 1;
 		break;
 	    case 8://粉币支付
 		payType = 12;

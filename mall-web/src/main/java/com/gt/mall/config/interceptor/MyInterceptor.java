@@ -1,5 +1,10 @@
 package com.gt.mall.config.interceptor;
 
+import com.gt.mall.bean.BusUser;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.util.SessionUtils;
+import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -61,7 +66,7 @@ public class MyInterceptor implements HandlerInterceptor {
 
 	// 获得在下面代码中要用的request,response,session对象
 
-	/*BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = SessionUtils.getLoginUser( request );
 	String url = request.getRequestURI();
 
 	String urlwx = "";
@@ -71,12 +76,12 @@ public class MyInterceptor implements HandlerInterceptor {
 	    urlwx = tmp.substring( tmp.lastIndexOf( "/" ) + 1, tmp.length() );
 	}
 	//如果URL是登录页面或者是登录界面时或者是微信接口，继续
-	*//*if ( url.equals( "/" ) ) {
+	/*if ( url.equals( "/" ) ) {
 	    response.sendRedirect( "http://www." + PropertiesUtil.getDomain() + "" );
 	    return false;
-	} else *//*
-	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.indexOf( "79B4DE7C" ) > -1 ) {//移动端
-	   *//* Member member = SessionUtils.getLoginMember( request );
+	} else */
+	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.contains( "79B4DE7C" ) ) {//移动端
+	   /* Member member = SessionUtils.getLoginMember( request );
 	    if ( CommonUtil.isNotEmpty( member ) && member.isPass() ) {//商家已过期，清空会员登录session
 		request.getSession().removeAttribute( "member" );
 		String upGradeUrl = request.getContextPath() + "/jsp/error/warning.jsp";
@@ -84,7 +89,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		return false;
 	    } else {
 		return true;// 只有返回true才会继续向下执行，返回false取消当前请求
-	    }*//*
+	    }*/
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) ) {
 	    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
@@ -105,7 +110,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	if ( CommonUtil.isNotEmpty( user ) ) {
 	    request.setAttribute( "wxmpDomain", PropertiesUtil.getWxmpDomain() );//wxmp链接，前端调用js用的
 	}
-	request.setAttribute( "webUrl", PropertiesUtil.getHomeUrl() );//本项目的地址*/
+	request.setAttribute( "webUrl", PropertiesUtil.getHomeUrl() );//本项目的地址
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
 
