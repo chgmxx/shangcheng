@@ -67,4 +67,7 @@ public class Constants {
     /** 会员 **/
     public static final String SESSION_MEMBER_KEY = "member";
 
+    public static final String MEMBER_PAY_TYPE = "2";
+
+
 }

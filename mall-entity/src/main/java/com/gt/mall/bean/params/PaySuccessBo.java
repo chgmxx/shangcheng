@@ -13,7 +13,7 @@ public class PaySuccessBo implements Serializable {
     private Integer storeId;  //门店id
     private String  orderCode;  //订单号
     private Double  totalMoney;  //原价
-    private Double  discountMoney;  //折扣后金额
+    private Double  discountMoney;  //折扣后金额（不包含运费）
     private Integer payType = 0;  //支付方式 查询看字典1198
     private Double  pay     = 0.0; //实际支付金额
 

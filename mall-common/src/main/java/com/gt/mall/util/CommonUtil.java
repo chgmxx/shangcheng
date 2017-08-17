@@ -78,13 +78,13 @@ public class CommonUtil {
 	return null;
     }
 
-    public static Integer toIntegerByDouble( double obj ) throws Exception {
+    public static Integer toIntegerByDouble( double obj ) {
 	try {
 	    return (int) obj;
 	} catch ( Exception e ) {
-	    throw new Exception( "double转int，转换失败！" );
-	    //	    e.printStackTrace();
+	    e.printStackTrace();
 	}
+	return null;
     }
 
     /**
@@ -446,5 +446,81 @@ public class CommonUtil {
 	}
 	return map;
 
+    }
+
+    /**
+     * 获取会员的支付方式
+     *
+     * @param payWay   支付方式  传 order.getOrderPayWay
+     * @param isWallet 是否使用钱包支付   1已使用  0未使用 -1正在支付  传 order.getIsWallet
+     *
+     * @return @return 支付方式（调用 memberPayService.paySuccess用的，不适用与其他的接口）
+     */
+    public static int getMemberPayType( int payWay, int isWallet ) {
+	int payType = 0;//现金支付
+	switch ( payWay ) {
+	    case 1://微信支付
+		payType = 1;
+		break;
+	    case 3://储值卡支付
+		payType = 5;
+		break;
+	    case 4://积分支付
+		payType = 11;
+		break;
+	    case 5://扫码支付
+		payType = 13;
+		break;
+	    case 7://找人代付
+		payType = 14;
+		break;
+	    case 8://粉币支付
+		payType = 12;
+		break;
+	    default:
+		payType = 10;//现金支付
+		break;
+	}
+	if ( isWallet == 1 ) {
+	    payType = 1;
+	}
+	return payType;
+    }
+
+    /**
+     * 获取会员的消费方式
+     *
+     * @return 消费方式 （调用 memberPayService.paySuccess用的，不适用与其他的接口）
+     */
+    public static int getMemberUcType( int orderType ) {
+	int uctype = 104;//商城下单
+
+	switch ( orderType ) {
+	    case 1:
+		uctype = 105;//团购
+		break;
+	    case 2:
+		uctype = 110;//积分
+		break;
+	    case 3:
+		uctype = 106;//秒杀
+		break;
+	    case 4:
+		uctype = 107;//拍卖
+		break;
+	    case 5:
+		uctype = 111;//粉币
+		break;
+	    case 6:
+		uctype = 108;//预售
+		break;
+	    case 7:
+		uctype = 109;//批发
+		break;
+	    default:
+		uctype = 104;//商城下单
+		break;
+	}
+	return uctype;
     }
 }

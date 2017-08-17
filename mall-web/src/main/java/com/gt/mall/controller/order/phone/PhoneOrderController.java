@@ -737,7 +737,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	    }
 
-	    if ( payWay == 4 ) {//积分支付
+	    /*if ( payWay == 4 ) {//积分支付
 		//todo  memPayService.updateMemberIntergral
 		//payRresult = memPayService.updateMemberIntergral( request, member.getId(), (int) -orderMoney );
 	    } else if ( payWay == -1 || payWay == 2 || payWay == 6 || payWay == 7 ) {// -1 -- 实付金额等于0时 ,2 -- 货到付款 , 6 -- 到店付款
@@ -748,7 +748,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    } else {//储蓄卡支付方式
 		//todo memPayService.storePay
 		//payRresult = memPayService.storePay( member.getId(), orderMoney );
-	    }
+	    }*/
 	    String result = payRresult.get( "result" ).toString();
 	    if ( result.equals( "2" ) ) {
 		MallOrder order = mallOrderService.selectById( Integer.parseInt( orderId ) );

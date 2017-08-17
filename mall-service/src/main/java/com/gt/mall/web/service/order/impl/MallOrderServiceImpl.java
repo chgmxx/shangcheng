@@ -3,7 +3,12 @@ package com.gt.mall.web.service.order.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.*;
+import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.Member;
+import com.gt.mall.bean.WxPayOrder;
+import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.params.PaySuccessBo;
+import com.gt.mall.bean.params.UserConsumeParams;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -32,8 +37,10 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.inter.service.CardService;
 import com.gt.mall.inter.service.DictService;
+import com.gt.mall.inter.service.MemberPayService;
 import com.gt.mall.inter.service.MemberService;
 import com.gt.mall.util.*;
 import com.gt.mall.web.service.auction.MallAuctionBiddingService;
@@ -153,6 +160,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private DictService dictService;
+
+    @Autowired
+    private MemberPayService memberPayService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -315,18 +325,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( CommonUtil.isNotEmpty( type ) && count > 0 ) {
 	    if ( type.equals( "4" ) ) {
 		MallOrder order = mallOrderDAO.getOrderById( CommonUtil.toInteger( params.get( "orderId" ) ) );
-		//todo 调用彭江丽的接口  会员交易记录信息 改成统一接口
-		//商家确认买家已经提货
-		/*UserConsume consume = userConsumeMapper.findByOrderCode1( order.getOrderNo() );
-		if ( CommonUtil.isNotEmpty( consume ) ) {
-		    if ( consume.getPaystatus().toString().equals( "0" ) && consume.getPaymenttype().toString().equals( "8" ) && consume.getModuletype().toString()
-				    .equals( "1" ) ) {
-			UserConsume uConsume = new UserConsume();
-			uConsume.setId( consume.getId() );
-			uConsume.setPaystatus( Byte.valueOf( "1" ) );
-			userConsumeMapper.updateById( uConsume );
-		    }
-		}*/
+		//商家确认买家已经提货 修改交易记录表
+		UserConsumeParams consumeParams = new UserConsumeParams();
+		consumeParams.setOrderNo( order.getOrderNo() );
+		consumeParams.setPayStatus( 1 );
+		consumeParams.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );
+		memberService.updateUserConsume( consumeParams );
+
 		if ( order.getOrderPayWay() == 6 ) {//到店提货
 		    double useFenbi = 0;
 		    double useIntegral = 0;
@@ -722,12 +727,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	List< Map< String,Object > > erpList = new ArrayList<>();
 
 	Map< String,Object > map = new HashMap<>();
-	List idList = mallOrderDAO.selectOrderPid( order.getId() );
-	if ( idList.size() > 0 ) {
-	    for ( int i = 0; i < idList.size(); i++ ) {
-		JSONObject obj = JSONObject.fromObject( idList.get( i ) );
-		Integer orderId = Integer.parseInt( obj.get( "id" ).toString() );
-		map = updateStatusStock( orderId, params, member, pbUser );
+	List< MallOrder > mallOrderList = mallOrderDAO.getOrderByOrderPId( order.getId() );
+	if ( mallOrderList.size() > 0 ) {
+	    for ( MallOrder mallOrder : mallOrderList ) {
+		map = updateStatusStock( mallOrder, params, member, pbUser );
 		params.put( "shopIds", map.get( "shopIds" ) );
 		params.put( "fenbi", map.get( "fenbi" ) );
 		params.put( "integral", map.get( "integral" ) );
@@ -742,12 +745,22 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	} else {
-	    map = updateStatusStock( order.getId(), params, member, pbUser );
+	    MallOrder mallOrder = mallOrderDAO.getOrderById( order.getId() );
+	    map = updateStatusStock( order, params, member, pbUser );
 	    if ( CommonUtil.isNotEmpty( map.get( "erpMap" ) ) ) {
 		Map< String,Object > erpMap = (Map< String,Object >) JSONObject.fromObject( map.get( "erpMap" ) );
 		erpList.add( erpMap );
 	    }
+	    mallOrderList = new ArrayList<>();
+	    mallOrderList.add( mallOrder );
 	}
+
+	if ( order.getOrderPayWay() != 5 && order.getOrderPayWay() != 6 && order.getOrderPayWay() != 7 ) {
+	    Object useFenbi = map.get( "fenbi" );//使用了多少粉币
+	    Object useIntegral = map.get( "integral" );//使用了多少积分
+	    updateMemberJifen( useFenbi, useIntegral, member );
+	}
+
 	if ( erpList != null && erpList.size() > 0 ) {
 	    Map< String,Object > erpMap = new HashMap<>();
 	    erpMap.put( "orders", JSONArray.fromObject( erpList ) );
@@ -758,19 +771,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    logger.info( "同步库存：" + flag );
 	}
-	if ( order.getOrderPayWay() != 5 && order.getOrderPayWay() != 6 && order.getOrderPayWay() != 7 ) {
-	    Object useFenbi = map.get( "fenbi" );//使用了多少粉币
-	    Object useIntegral = map.get( "integral" );//使用了多少积分
-	    updateMemberJifen( useFenbi, useIntegral, member );
+	if ( mallOrderList != null && mallOrderList.size() > 0 ) {
+	    paySuccess( mallOrderList );//储值卡支付，积分支付，粉币支付
 	}
-	//	Object wxcoupon = map.get( "wxCoupon2" );
-	//	if ( CommonUtil.isNotEmpty( wxcoupon ) ) {
-	//	    String[] c = ( wxcoupon.toString() ).split( "," );
-	//	    for ( int i = 0; i < c.length; i++ ) {
-	//		//todo 调用彭江丽接口   核销微信优惠券 改成统一接口
-	//		cardSerivice.wxCardReceive( pbUser, c[i] );//核销微信优惠券
-	//	    }
-	//	}
 
 	//PC 端订单推送
 	String shopIds = map.get( "shopIds" ).toString();
@@ -783,8 +786,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	List list = null;//daoUtil.queryForList( sql );
 	String url = PropertiesUtil.getHomeUrl() + "mallOrder/indexstart.do";
 	if ( null != list && list.size() > 0 ) {
-	    for ( int i = 0; i < list.size(); i++ ) {
-		JSONObject obj = JSONObject.fromObject( list.get( i ) );
+	    for ( Object aList : list ) {
+		JSONObject obj = JSONObject.fromObject( aList );
 		int userId = Integer.parseInt( obj.get( "userid" ).toString() );
 		try {
 		    //todo 调用陈丹接口，socket相关
@@ -855,6 +858,97 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 
 	return Integer.parseInt( map.get( "count" ).toString() );
+    }
+
+    /**
+     * 储值卡支付，积分支付，粉币支付
+     *
+     * @param mallOrderList 订单集合
+     */
+    private void paySuccess( List< MallOrder > mallOrderList ) {
+	MallOrder order = mallOrderList.get( 0 );
+	double discountMoney = 0;//折扣后的金额
+	boolean useCoupon = false;//是否使用优惠券
+	String codes = "";//优惠券code
+	int couponType = -1;//优惠券类型  0 微信  1多粉
+	boolean isFenbi = false;//是否使用粉币
+	boolean isJifen = false;//是否使用积分
+	double fenbiNum = 0;//使用粉币数量
+	double jifenNum = 0;//使用积分数量
+
+	for ( MallOrder mallOrder : mallOrderList ) {
+	    if ( mallOrder.getMallOrderDetail() != null ) {
+		for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
+		    discountMoney += orderDetail.getTotalPrice();
+		    //优惠券code
+		    if ( CommonUtil.isNotEmpty( orderDetail.getCouponCode() ) ) {
+			useCoupon = true;
+			if ( CommonUtil.isNotEmpty( codes ) ) {
+			    codes += ",";
+			}
+			codes += orderDetail.getCouponCode();
+		    }
+		    //优惠券json
+		    String coupon = orderDetail.getDuofenCoupon();
+		    if ( CommonUtil.isNotEmpty( coupon ) ) {
+			JSONObject couponObj = JSONObject.fromObject( coupon );
+			int type = couponObj.getInt( "couponType" );
+			if ( type == 1 ) {//微信
+			    couponType = 0;
+			} else if ( type == 2 ) {//多粉
+			    couponType = 1;
+			}
+		    }
+		    if ( orderDetail.getUseFenbi() > 0 ) {
+			isFenbi = true;
+			fenbiNum += orderDetail.getUseFenbi();
+		    }
+		    if ( orderDetail.getUseJifen() > 0 ) {
+			isJifen = true;
+			jifenNum += orderDetail.getUseJifen();
+		    }
+		}
+	    }
+	    int orderPayWay = order.getOrderPayWay();
+	    if ( orderPayWay == 4 ) {//积分支付
+		isJifen = true;
+		jifenNum += CommonUtil.toDouble( order.getOrderMoney() );
+	    } else if ( orderPayWay == 8 ) {//粉币支付
+		isFenbi = true;
+		fenbiNum += CommonUtil.toDouble( order.getOrderMoney() );
+	    }
+	}
+	PaySuccessBo successBo = new PaySuccessBo();
+	successBo.setMemberId( order.getBuyerUserId() );//会员id
+	successBo.setOrderCode( order.getOrderNo() );//订单号
+	successBo.setTotalMoney( CommonUtil.toDouble( order.getOrderOldMoney() ) );//订单原价
+	successBo.setDiscountMoney( discountMoney );//折扣后的价格（不包含运费）
+	successBo.setPay( CommonUtil.toDouble( order.getOrderMoney() ) );
+	successBo.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );////支付方式 查询看字典1198
+	successBo.setUcType( CommonUtil.getMemberUcType( order.getOrderType() ) );//消费类型 字典1197
+	if ( useCoupon ) {
+	    successBo.setUseCoupon( useCoupon );//是否使用优惠券
+	    //todo couponType  优惠券类型 以后会改
+	    successBo.setCouponType( couponType );//优惠券类型 0微信 1多粉优惠券
+	    successBo.setCodes( codes );//使用优惠券code值 用来核销卡券
+	}
+	if ( isFenbi ) {
+	    successBo.setUserFenbi( isFenbi );
+	    successBo.setFenbiNum( fenbiNum );
+	}
+	if ( isJifen ) {
+	    successBo.setUserJifen( isJifen );
+	    successBo.setJifenNum( CommonUtil.toIntegerByDouble( jifenNum ) );
+	}
+	successBo.setDelay( 0 ); //会员赠送物品 0延迟送 1立即送  -1 不赠送物品
+	successBo.setDataSource( order.getBuyerUserType() );
+	successBo.setUcTable( "t_mall_order" );
+	Map< String,Object > payMap = memberPayService.paySuccess( successBo );
+	if ( CommonUtil.isNotEmpty( payMap ) ) {
+	    if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {
+		throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), CommonUtil.toString( payMap.get( "errorMsg" ) ) );
+	    }
+	}
     }
 
     /**
@@ -944,7 +1038,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( CommonUtil.isNotEmpty( m ) && flag ) {
 	    m.setId( member.getId() );
 	    //扣除用户的积分和粉币
-	    //todo 调用彭江丽接口 把积分和粉币退还给会员  改成统一接口
 	    int updateFenbiJifen = 0;// memberMapper.updateById( m );//把积分和粉币退还给会员
 	    if ( updateFenbiJifen == 0 ) {
 		logger.error( "修改积分粉币失败：" + fenbi + "——" + integral );
@@ -953,7 +1046,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		member.setIntegral( (int) integral );
 
 		//把扣除的粉币，加到商家用户中
-		// todo 调用彭江丽接口 扣除低分和粉币信息 改成统一接口
+		// todo 调用彭江丽接口 扣除低分和粉币信息
 		/*WxPublicUsers publicUser = null;//mallOrderDAO.getWpUser( member.getId() );
 		if ( CommonUtil.isNotEmpty( publicUser ) ) {
 		    BusUser busUser = busUserMapper.selectByPrimaryKey( publicUser.getBusUserId() );
@@ -969,8 +1062,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     /**
      * 修改库存
      */
-    private Map updateStatusStock( Integer orderId, Map< String,Object > params, Member member, WxPublicUsers wxPublicUser ) {
-	MallOrder order = mallOrderDAO.getOrderById( orderId );
+    private Map updateStatusStock( MallOrder order, Map< String,Object > params, Member member, WxPublicUsers wxPublicUser ) {
 
 	Map< String,Object > map = new HashMap();
 	String shopIds = order.getShopId() + ",";
@@ -990,18 +1082,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	double integral = 0;//积分
 	int proTypeId = 0;
 	int memberType = 0;
-	String wxCoupon = "";//使用微信优惠券的code（为添加t_wx_user_consume的数据）
-	String wxCoupon2 = "";//使用微信优惠券的code（为核销优惠券使用）
-	if ( CommonUtil.isNotEmpty( params.get( "wxCoupon2" ) ) ) {//跨店购买会生成三条订单，一条主订单，不同店铺生成不同的子订单
-	    wxCoupon = params.get( "wxCoupon" ).toString();
-	    wxCoupon2 = params.get( "wxCoupon2" ).toString();
-	}
-	String duofenCoupon = "";//使用多粉优惠券的code（为添加t_wx_user_consume的数据）
-	String duofenCoupon2 = "";//使用微信优惠券的code（为核销优惠券使用）
-	if ( CommonUtil.isNotEmpty( params.get( "duofenCoupon2" ) ) ) {//跨店购买会生成三条订单，一条主订单，不同店铺生成不同的子订单
-	    duofenCoupon = params.get( "duofenCoupon" ).toString();
-	    duofenCoupon2 = params.get( "duofenCoupon2" ).toString();
-	}
 	int flowId = 0;//流量id
 	int flowRecordId = 0;//流量冻结id
 	int totalNum = 0;
@@ -1059,35 +1139,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    totalNum += detail.getDetProNum();
 		    fenbi += detail.getUseFenbi();
 		    integral += detail.getUseJifen();
-		    String[] coupon = wxCoupon2.split( "," );
-		    for ( String aCoupon : coupon ) {
-			String c = detail.getCouponCode();
-			if ( CommonUtil.isEmpty( detail.getDuofenCoupon() ) ) {
-			    if ( !( aCoupon ).equals( c ) && CommonUtil.isNotEmpty( c ) ) {
-				wxCoupon += detail.getCouponCode() + "-" + detail.getOrderId() + ",";//获取微信优惠券的code
-				wxCoupon2 += detail.getCouponCode() + ",";//核销优惠券的时候使用
-			    }
-			}
-		    }
-		    String[] duofenCouponCode = duofenCoupon2.split( "\\|" );
-		    for ( String duofenCode : duofenCouponCode ) {
-			String dc = detail.getCouponCode();
-			if ( !CommonUtil.isEmpty( detail.getDuofenCoupon() ) ) {
-			    if ( !( duofenCode ).equals( dc ) && CommonUtil.isNotEmpty( dc ) ) {
-				duofenCoupon += detail.getCouponCode() + "-"
-						+ detail.getOrderId() + "=" + detail.getUseCardId() + "|";//获取使用多粉优惠券code
-				duofenCoupon2 += detail.getCouponCode() + "|";//核销优惠券的时候使用
-
-				/*MallStore stores = mallStoreDAO.selectById( order.getShopId() );
-				Map< String,Object > cardMap = new HashMap<>();
-				cardMap.put( "codes", detail.getCouponCode() );
-				cardMap.put( "storeId", stores.getWxShopId() );
-				//todo 调用彭江丽的接口，多粉优惠券核销   改成统一接口
-				duofenCardService.verificationCard_2( cardMap );//多粉优惠券核销*/
-
-			    }
-			}
-		    }
 		    if ( CommonUtil.isNotEmpty( detail.getDiscount() ) ) {
 			if ( detail.getDiscount() < 100 && detail.getDiscount() > 0 ) {
 			    discount = detail.getDiscount();
@@ -1158,15 +1209,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 
-	    Map< String,Object > couponParam = new HashMap<>();
-	    couponParam.put( "duofenCoupon", duofenCoupon );
-	    couponParam.put( "wxCoupon", wxCoupon );
 	    if ( CommonUtil.isNotEmpty( order.getBuyerUserId() ) ) {
 		/*boolean isMember = memberService.isMember( order.getBuyerUserId() );//判断用户是否是会员
-		if ( isMember || ( flowId > 0 && flowRecordId > 0 ) ) {
-		    //是会员或者使用多粉优惠券才添加消费记录
-		    addUserConsume( order, member, fenbi, integral, couponParam, discount, newOrderNo, wxPublicUser );//添加总的消费记录
-		}*/
+		*/
 
 		/*if ( isMember || CommonUtil.isNotEmpty( duofenCoupon ) ) {
 		    try {
@@ -1392,10 +1437,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	map.put( "shopIds", shopIds.substring( 0, shopIds.length() - 1 ) );
 	map.put( "fenbi", fenbi );
 	map.put( "integral", integral );
-	map.put( "wxCoupon", wxCoupon );
-	map.put( "duofenCoupon", duofenCoupon );
-	map.put( "wxCoupon2", wxCoupon2 );
-	map.put( "duofenCoupon2", duofenCoupon2 );
 	map.put( "totalNum", totalNum );
 	return map;
     }
@@ -2952,7 +2993,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    //todo 调用小屁孩接口 根据粉丝id查询公众号信息
 	    WxPublicUsers pbUser = null;//mallOrderDAO.getWpUser( order.getBuyerUserId() );
 
-	    Map< String,Object > map = updateStatusStock( order.getId(), params, null, pbUser );
+	    Map< String,Object > map = updateStatusStock( order, params, null, pbUser );
 	    if ( CommonUtil.isNotEmpty( map ) ) {
 		double useFenbi = 0;
 		double useIntegral = 0;

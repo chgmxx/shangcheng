@@ -692,6 +692,14 @@
         where t.id = #{orderId}
     </select>
 
+    <select id="getOrderByOrderPId" resultMap="MoreResultMap" parameterType="java.lang.Integer">
+        select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
+        left join t_mall_order_detail d on d.order_id = t.id
+        left join t_mall_store s on s.id = t.shop_id
+        left join t_mall_product p on p.id=d.product_id
+        where t.order_pid = #{orderId}
+    </select>
+
 
     <select id="mobileOrderList" resultMap="MoreResultMap" parameterType="map">
         select

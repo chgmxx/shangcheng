@@ -59,7 +59,7 @@ public class MallOrder extends Model< MallOrder > {
     @TableField( "order_freight_money" )
     private BigDecimal orderFreightMoney;
     /**
-     * 订单原价(不包含原价)
+     * 订单原价(不包含运费)
      */
     @TableField( "order_old_money" )
     private BigDecimal orderOldMoney;

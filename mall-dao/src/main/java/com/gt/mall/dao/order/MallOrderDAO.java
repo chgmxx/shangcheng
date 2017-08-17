@@ -64,6 +64,13 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
     MallOrder getOrderById( Integer orderId );
 
     /**
+     * 根据父类id查询订单信息
+     * @param orderId 订单id
+     * @return 订单信息
+     */
+    List<MallOrder> getOrderByOrderPId(int orderId);
+
+    /**
      * 手机端订单列表
      */
     List< MallOrder > mobileOrderList( Map< String,Object > params );

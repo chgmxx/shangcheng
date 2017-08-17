@@ -1,6 +1,7 @@
 package com.gt.mall.inter.service;
 
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.params.UserConsumeParams;
 
 import java.util.List;
 import java.util.Map;
@@ -133,5 +134,12 @@ public interface MemberService {
      * @return 会员卡集合
      */
     List< Map > findBuyGradeType( int userId );
+
+    /**
+     * 修改交易记录状态
+     * @param consumeParams 实体类
+     * @return 是否修改成功
+     */
+    boolean updateUserConsume(UserConsumeParams consumeParams);
 
 }
