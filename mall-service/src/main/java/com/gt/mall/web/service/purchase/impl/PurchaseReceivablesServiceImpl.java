@@ -216,7 +216,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	List< Map< String,Object > > list = null;
 	//                userConsumeMapper.findByOrderCode(order.getOrderNumber());
 	Member member = memberService.findMemberById( receivable.getMemberId(), null );
-	UserConsume userConsume = new UserConsume();
+	/*UserConsume userConsume = new UserConsume();
 	if ( list != null && list.size() > 0 ) {
 	    userConsume.setId( Integer.parseInt( list.get( 0 ).get( "id" ).toString() ) );
 	    if ( CommonUtil.isEmpty( list.get( 0 ).get( "memberid" ) ) ) {
@@ -295,7 +295,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    }
 	    //TODO 需关连会员消费记录 userConsumeMapper.updateByPrimaryKeySelective()方法
 	    //            userConsumeMapper.updateByPrimaryKeySelective(userConsume);
-	}
+	}*/
     }
 
     /**

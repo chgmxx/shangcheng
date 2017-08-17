@@ -4,7 +4,6 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Card;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.UserConsume;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.entity.purchase.*;
 import com.gt.mall.inter.service.MemberService;
@@ -21,7 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -366,7 +368,7 @@ public class PurchaseOrderController extends BaseController {
 	    if ( status.equals( "2" ) || status == 2 ) {
 		PurchaseOrder orderEntity = purchaseOrderService.selectById( orderId );
 		// 添加会员记录
-		UserConsume uc = new UserConsume();
+		/*UserConsume uc = new UserConsume();
 		uc.setRecordtype( (byte) 2 );
 		uc.setTotalmoney( orderEntity.getAllMoney() );
 		uc.setOrderid( orderEntity.getId() );
@@ -374,7 +376,7 @@ public class PurchaseOrderController extends BaseController {
 		uc.setCreatedate( new Date() );
 		uc.setPaystatus( (byte) 0 );
 		uc.setOrdercode( orderEntity.getOrderNumber() );
-		uc.setFreightmoney( orderEntity.getFreight() );
+		uc.setFreightmoney( orderEntity.getFreight() );*/
 		//TODO 添加会员记录  UserConsume
 		//		userConsumeMapper.insertSelective(uc);
 	    }

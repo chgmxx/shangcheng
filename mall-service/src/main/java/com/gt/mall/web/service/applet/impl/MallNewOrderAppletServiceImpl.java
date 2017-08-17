@@ -3,7 +3,6 @@ package com.gt.mall.web.service.applet.impl;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.PublicParameterSet;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
@@ -578,7 +577,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 
 	//TODO 需关连 paramSetMapper.findBybusId（）方法
-	PublicParameterSet ps = null;
+	/*PublicParameterSet ps = null;
 	//                paramSetMapper.findBybusId(member.getBusid());
 
 	if ( CommonUtil.isNotEmpty( ps ) ) {
@@ -593,7 +592,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	    double itemValue = Double.parseDouble( fenbiMap.get( "item_value" ).toString() );
 	    resultMap.put( "fenbi_dk_num", itemValue );
-	}
+	}*/
 	return resultMap;
     }
 
@@ -627,7 +626,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	//查询积分抵扣的信息
 	//TODO 需关连 paramSetMapper.findBybusId（）方法
-	PublicParameterSet ps = null;
+	/*PublicParameterSet ps = null;
 	//                paramSetMapper.findBybusId(member.getBusid());
 
 	Integer userIntegral = member.getIntegral();//用户积分
@@ -688,7 +687,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    map.put( "fenbi", CommonUtil.toDouble( df.format( fenbi ) ) );//粉币数量
 		}
 	    }
-	}
+	}*/
 	int isJifen = 0;
 	if ( map.containsKey( "integral_money" ) ) {
 	    isJifen = 1;
