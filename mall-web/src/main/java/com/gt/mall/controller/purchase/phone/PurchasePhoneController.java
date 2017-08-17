@@ -10,7 +10,6 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.web.service.purchase.*;
 import com.gt.mall.service.web.purchase.impl.PurchaseReceivablesServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

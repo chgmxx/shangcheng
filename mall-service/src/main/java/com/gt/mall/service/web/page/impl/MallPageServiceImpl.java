@@ -49,7 +49,6 @@ import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
-import com.gt.mall.web.service.product.*;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
 import net.sf.json.JSONArray;
