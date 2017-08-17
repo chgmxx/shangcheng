@@ -13,10 +13,11 @@ function save() {
         return;
     }
     if (requiredValidate()) {
-        var index = parent.layer.load(3, {
-            offset: '40%',
-            shade: [0.4, '#8E8E8E']
-        });
+        var index = parentLayerLoad();
+        // var index = parent.layer.load(3, {
+        //     offset: '40%',
+        //     shade: [0.4, '#8E8E8E']
+        // });
         var obj = $("#tab").serializeObject();
         var params = {
             obj: JSON.stringify(obj)
@@ -27,8 +28,10 @@ function save() {
             data: params,
             dataType: "json",
             success: function (data) {
-                parent.layer.close(index);
-                parent.alertMsg(data.message);
+                parentCloseAll();
+                parentAlertMsg(data.message);
+                // parent.layer.close(index);
+                // parent.alertMsg(data.message);
                 if (data.result) {
                     location.href = $(".urls").val();
                 }

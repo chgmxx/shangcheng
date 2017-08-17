@@ -31,6 +31,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
+  <jsp:include page="/jsp/common/headerCommon.jsp"/>
  <div class="con_div">
 	<div class="con-head">
 		<a class="" href="/store/index.do">店铺管理</a> 

@@ -9,16 +9,15 @@ function deleteGroup(obj, type) {
             msg = "使失效";
         }
         // 询问框
+        //TODO  parent.layer.confirm
         parent.layer.confirm('您确定要' + msg + '？', {
             offset: "30%",
+            shade:[0.1,'#fff'],
             btn: ['确定', '取消']
             // 按钮
         }, function () {
             // loading层
-            var layerLoad = layer.load(1, {
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
+           var layerLoad= parentLayerLoad();
             $.ajax({
                 type: "post",
                 url: "mallWholesalers/pifa_remove.do",
@@ -28,30 +27,37 @@ function deleteGroup(obj, type) {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    // parent.layer.close(layerLoad);
+                    parentCloseAll();
                     if (data.code == 1) {
-                        var tip = parent.layer.alert(msg + "成功", {
-                            offset: "30%",
-                            closeBtn: 0
-                        }, function (index) {
-                            parent.layer.close(tip);
-                            location.href = window.location.href;
-                        });
+                        parentAlertMsg(msg + "成功");
+                        //TODO alert 跳转
+                        // var tip = parent.layer.alert(msg + "成功", {
+                        //     offset: "30%",
+                        //     closeBtn: 0
+                        // }, function (index) {
+                        //     parent.layer.close(tip);
+                        //     location.href = window.location.href;
+                        // });
                     } else {// 编辑失败
-                        var tip = parent.layer.alert(msg + "失败", {
-                            offset: "30%"
-                        });
+                        parentAlertMsg(msg + "失败");
+                        // var tip = parent.layer.alert(msg + "失败", {
+                        //     offset: "30%"
+                        // });
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert(msg + "失败", {
-                        offset: "30%"
-                    });
+                    parentCloseAll();
+                    parentAlertMsg(msg + "失败");
+                    // parent.layer.close(layerLoad);
+                    // parent.layer.alert(msg + "失败", {
+                    //     offset: "30%"
+                    // });
                     return;
                 }
             });
-            parent.layer.closeAll();
+            parentCloseAll();
+            // parent.layer.closeAll();
         });
     }
 
@@ -141,30 +147,35 @@ function editPifa() {
     var pfType = $(".pfType:checked").val();
     var ids = $("#ids").val();
     if (productId == null || productId == "") {
-        layer.msg('请选择商品', {
-            icon: 1,
-            offset: "30%"
-        });
+        parentAlertMsg('请选择商品');
+        // layer.msg('请选择商品', {
+        //     icon: 1,
+        //     offset: "30%"
+        // });
     } else if (pfType == null || pfType == "") {
-        layer.msg('请批发类型', {
-            icon: 1,
-            offset: "30%"
-        });
+        parentAlertMsg('请批发类型');
+        // layer.msg('请批发类型', {
+        //     icon: 1,
+        //     offset: "30%"
+        // });
     } else if (gStartTime == null || $.trim(gStartTime) == "") {
-        layer.msg('请选择活动开始时间', {
-            icon: 1,
-            offset: "30%"
-        });
+        parentAlertMsg('请选择活动开始时间');
+        // layer.msg('请选择活动开始时间', {
+        //     icon: 1,
+        //     offset: "30%"
+        // });
     } else if (gEndTime == null || $.trim(gEndTime) == "") {
-        layer.msg('请选择活动结束时间', {
-            icon: 1,
-            offset: "30%"
-        });
+        parentAlertMsg('请选择活动结束时间');
+        // layer.msg('请选择活动结束时间', {
+        //     icon: 1,
+        //     offset: "30%"
+        // });
     } else if (gStartTime >= gEndTime) {
-        layer.msg('活动开始时间要小于活动结束时间', {
-            icon: 1,
-            offset: "30%"
-        });
+        parentAlertMsg('活动开始时间要小于活动结束时间');
+        // layer.msg('活动开始时间要小于活动结束时间', {
+        //     icon: 1,
+        //     offset: "30%"
+        // });
     } else {
         var flag = true;
         $("input[datatype!=null]").each(function () {
@@ -232,15 +243,17 @@ function editPifa() {
         loadWindow();
 
         if (!flag) {
-            layer.msg('请填写已经勾选的批发价', {
-                icon: 1,
-                offset: "30%"
-            });
+            parentAlertMsg("请填写已经勾选的批发价");
+            // layer.msg('请填写已经勾选的批发价', {
+            //     icon: 1,
+            //     offset: "30%"
+            // });
         } else if (isSpec == 1 && checkLen == 0) {
-            layer.msg('请勾选的参加批发的规格', {
-                icon: 1,
-                offset: "30%"
-            });
+            parentAlertMsg("请勾选的参加批发的规格");
+            // layer.msg('请勾选的参加批发的规格', {
+            //     icon: 1,
+            //     offset: "30%"
+            // });
         } else {
             var isSpec = $("#isSpec").val();
             if (proInvNum == 0 && isSpec == 0) {
@@ -248,11 +261,12 @@ function editPifa() {
             }
             pifa.sNum = proInvNum;
             // loading层
-            var layerLoad = parent.layer.load(1, {
-                offset: "30%",
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
+            var layerLoad = parentLayerLoad();
+            // var layerLoad = parent.layer.load(1, {
+            //     offset: "30%",
+            //     shade: [0.1, '#fff']
+            //     // 0.1透明度的白色背景
+            // });
             $.ajax({
                 type: "post",
                 url: "mallWholesalers/edit_pifa.do",
@@ -262,37 +276,45 @@ function editPifa() {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    parentCloseAll();
+                    // parent.layer.close(layerLoad);
                     if (data.code == 1) {
-                        var tip = parent.layer.alert("编辑成功", {
-                            offset: "30%",
-                            closeBtn: 0
-                        }, function (index) {
-                            parent.layer.close(tip);
-                            location.href = "/mallWholesalers/index.do";
-                        });
+                        parentAlertMsg('编辑成功');
+                        //TODO alert 跳转
+                        // var tip = parent.layer.alert("编辑成功", {
+                        //     offset: "30%",
+                        //     closeBtn: 0
+                        // }, function (index) {
+                        //     parent.layer.close(tip);
+                        //     location.href = "/mallWholesalers/index.do";
+                        // });
                     } else if (data.code == -2) {
-                        var tip = parent.layer.alert("正在进行批发的商品不能修改", {
-                            offset: "30%",
-                            closeBtn: 0
-                        });
+                        parentAlertMsg('正在进行批发的商品不能修改');
+                        // var tip = parent.layer.alert("正在进行批发的商品不能修改", {
+                        //     offset: "30%",
+                        //     closeBtn: 0
+                        // });
                     } else if (data.code == 0) {
-                        var tip = parent.layer.alert("同一个商品只能参与一个批发活动", {
-                            offset: "30%",
-                            closeBtn: 0
-                        });
+                        parentAlertMsg('同一个商品只能参与一个批发活动');
+                        // var tip = parent.layer.alert("同一个商品只能参与一个批发活动", {
+                        //     offset: "30%",
+                        //     closeBtn: 0
+                        // });
                     } else {// 编辑失败
-                        parent.layer.alert("编辑失败", {
-                            offset: "30%"
-                        });
+                        parentAlertMsg('编辑失败');
+                        // parent.layer.alert("编辑失败", {
+                        //     offset: "30%"
+                        // });
                     }
 
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert("编辑失败", {
-                        offset: "30%"
-                    });
+                    parentCloseAll();
+                    parentAlertMsg('编辑失败');
+                    // parent.layer.close(layerLoad);
+                    // parent.layer.alert("编辑失败", {
+                    //     offset: "30%"
+                    // });
                     return;
                 }
             });
@@ -421,9 +443,11 @@ function choosePro() {
     }
     loadWindow();
     if (shopId != null && shopId != "") {
-        parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+        parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+        // parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
     } else {
-        parent.alertMsg("请选择商品");
+        parentAlertMsg("请选择商品");
+        // parent.alertMsg("请选择商品");
     }
 };
 /**

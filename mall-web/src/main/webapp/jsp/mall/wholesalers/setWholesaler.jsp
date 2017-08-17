@@ -20,6 +20,7 @@
 %>
 <script type="text/javascript" src="/js/mall/mall_public.js"></script>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="contentWarp">
     <div class="con-head">
         <a href="/mallWholesalers/index.do">批发管理</a>

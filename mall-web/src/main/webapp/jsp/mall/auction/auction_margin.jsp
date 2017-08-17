@@ -31,6 +31,7 @@
     </style>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div id="con-box">
     <c:if test="${!empty shoplist }">
         <div class="con-head">

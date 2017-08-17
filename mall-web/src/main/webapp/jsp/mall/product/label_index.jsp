@@ -142,6 +142,7 @@
 		// 询问框
 		//TODO parent.layer.confirm
 		parent.layer.confirm('您确定要删除推荐？', {
+            shade:[0.1,'#fff'],
 			btn : [ '确定', '取消' ]
 		// 按钮
 		}, function() {
@@ -225,6 +226,7 @@
 				// 询问框
 				//TODO parent.layer.confirm
 				parent.layer.confirm('您确定要批量删除推荐？', {
+                    shade:[0.1,'#fff'],
 					btn : [ '确定', '取消' ]
 				// 按钮
 				}, function() {

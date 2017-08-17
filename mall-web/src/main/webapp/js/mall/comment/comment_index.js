@@ -13,15 +13,18 @@ $(".js-batch-delete").click(function () {
         }
     });
     if (id.length == 0 || !flag) {
-        parentLayer.alert("请选择需要删除的评论", {
-            offset: "30%",
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
+        parentAlertMsg("请选择需要删除的评论");
+        // parentLayer.alert("请选择需要删除的评论", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // }, function (index) {
+        //     parentLayer.closeAll();
+        // });
     } else {
+        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要批量删除选中的评论？', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
             parentLayer.closeAll();
@@ -42,9 +45,10 @@ $(".a-del").click(function () {
     var id = [];
     if ($(this).attr("id") != null) {
         id.push($(this).attr("id"));
-
+        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要删除评论评论？', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
             parentLayer.closeAll();
@@ -64,8 +68,10 @@ $(".a-check").click(function () {
     if ($(this).attr("id") != null) {
         id.push($(this).attr("id"));
 
+        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要通过评论？', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
             parentLayer.closeAll();
@@ -86,8 +92,10 @@ $(".a-uncheck").click(function () {
     if ($(this).attr("id") != null) {
         id.push($(this).attr("id"));
 
+        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要不通过评论？不通过评论后，不会在商品详情页面展示', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
             parentLayer.closeAll();
@@ -115,22 +123,26 @@ $(".js-batch-agreen").click(function () {
         }
     });
     if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要通过的评论", {
-            offset: "30%",
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
+        parentAlertMsg("请选择需要通过的评论");
+        // parentLayer.alert("请选择需要通过的评论", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // }, function (index) {
+        //     parentLayer.closeAll();
+        // });
     } else if (id.length == 0 && flag) {
-        parentLayer.alert("未审核的评论才能进行审核通过操作", {
-            offset: "30%",
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
+        parentAlertMsg("未审核的评论才能进行审核通过操作");
+        // parentLayer.alert("未审核的评论才能进行审核通过操作", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // }, function (index) {
+        //     parentLayer.closeAll();
+        // });
     } else {
+        //TODO parent.layer.confirm
         parentLayer.confirm('您确定要批量通过选中的评论？', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
             parentLayer.closeAll();
@@ -161,26 +173,31 @@ $(".js-batch-no-agreen").click(function () {
         }
     });
     if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要不通过的评论", {
-            offset: "30%",
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
+        parentAlertMsg("请选择需要不通过的评论");
+        // parentLayer.alert("请选择需要不通过的评论", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // }, function (index) {
+        //     parentLayer.closeAll();
+        // });
     }
     if (id.length == 0 && flag) {
-        parentLayer.alert("未审核的评价才能进行审核未通过操作", {
-            offset: "30%",
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
+        parentAlertMsg("未审核的评价才能进行审核未通过操作");
+        // parentLayer.alert("未审核的评价才能进行审核未通过操作", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // }, function (index) {
+        //     parentLayer.closeAll();
+        // });
     } else {
+        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要批量未通过选中的评论？', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
-            parentLayer.closeAll();
+            parentCloseAll();
+            // parentLayer.closeAll();
             var data = {
                 ids: JSON.stringify(id),
                 checkStatus: -1
@@ -193,37 +210,44 @@ $(".js-batch-no-agreen").click(function () {
 });
 
 function deletePro(data, tip, index) {
-    var layerLoad = parentLayer.load(1, {
-        shade: [0.3, '#000']
-    });
+    var layerLoad =parentLayerLoad();
+    // var layerLoad = parentLayer.load(1, {
+    //     shade: [0.3, '#000']
+    // });
     $.ajax({
         type: "post",
         data: data,
         url: "/comment/checkComment.do",
         dataType: "json",
         success: function (data) {
-            parentLayer.close(layerLoad);
+            parentCloseAll();
+            // parentLayer.close(layerLoad);
             if (data != null) {
                 if (data.result) {
-                    var tipLayer = parent.layer.alert(tip + "成功", {
-                        offset: "30%",
-                        closeBtn: 0
-                    }, function (index) {
-                        parent.layer.close(tipLayer);
-                        location.href = window.location.href;
-                    });
+                    parentAlertMsg(tip + "成功");
+                    //TODO alert 跳转
+                    // var tipLayer = parent.layer.alert(tip + "成功", {
+                    //     offset: "30%",
+                    //     closeBtn: 0
+                    // }, function (index) {
+                    //     parent.layer.close(tipLayer);
+                    //     location.href = window.location.href;
+                    // });
                 } else {
-                    parent.layer.alert(tip + "失败", {
-                        offset: "30%"
-                    });
+                    parentAlertMsg(tip + "失败");
+                    // parent.layer.alert(tip + "失败", {
+                    //     offset: "30%"
+                    // });
                 }
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parent.layer.closeAll();
-            parent.layer.alert(tip + "失败", {
-                offset: "30%"
-            });
+            parentCloseAll();
+            parentAlertMsg(tip + "失败");
+            // parent.layer.closeAll();
+            // parent.layer.alert(tip + "失败", {
+            //     offset: "30%"
+            // });
             return;
         }
     });
@@ -238,39 +262,46 @@ $(".subRepComBtn").click(function (event) {
     var repContent = parentObj.find(".repContent").html();
     var shop_id = parentObj.find("input.shop_id").val();
     if (repContent == null || repContent == "" || typeof(repContent) == "undefinde") {
-        parent.layer.alert("请输入要回复的内容", {
-            offset: "30%"
-        });
+        parentAlertMsg("请输入要回复的内容");
+        // parent.layer.alert("请输入要回复的内容", {
+        //     offset: "30%"
+        // });
     } else if (repContent.length >= 240) {
-        parent.layer.alert("回复内容不能超过240个字", {
-            offset: "30%"
-        });
+        parentAlertMsg("回复内容不能超过240个字");
+        // parent.layer.alert("回复内容不能超过240个字", {
+        //     offset: "30%"
+        // });
     } else {
         var data = {
             content: $.trim(repContent),
             repPId: pId,
             shopId: shop_id
         };
-        var layerLoad = parentLayer.load(1, {
-            shade: [0.3, '#000']
-        });
+        var layerLoad = parentLayerLoad();
+        // var layerLoad = parentLayer.load(1, {
+        //     shade: [0.3, '#000']
+        // });
         $.ajax({
             type: "post",
             data: {params: JSON.stringify(data)},
             url: "/comment/repComment.do",
             dataType: "json",
             success: function (data) {
-                parentLayer.close(layerLoad);
+                parentCloseAll();
+                // parentLayer.close(layerLoad);
                 if (data != null) {
                     if (data.result) {
-                        var tipLayer = parent.layer.alert("回复评论成功", {
-                            offset: "30%",
-                            closeBtn: 0
-                        }, function (index) {
-                            parent.layer.close(tipLayer);
-                            location.href = window.location.href;
-                        });
+                        parentAlertMsg("回复评论成功");
+                        //TODO alert 跳转
+                        // var tipLayer = parent.layer.alert("回复评论成功", {
+                        //     offset: "30%",
+                        //     closeBtn: 0
+                        // }, function (index) {
+                        //     parent.layer.close(tipLayer);
+                        //     location.href = window.location.href;
+                        // });
                     } else {
+                        parentAlertMsg("回复评论失败");
                         parent.layer.alert("回复评论失败", {
                             offset: "30%"
                         });
@@ -278,10 +309,12 @@ $(".subRepComBtn").click(function (event) {
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parent.layer.closeAll();
-                parent.layer.alert("回复评论失败", {
-                    offset: "30%"
-                });
+                parentCloseAll();
+                parentAlertMsg("回复评论失败");
+                // parent.layer.closeAll();
+                // parent.layer.alert("回复评论失败", {
+                //     offset: "30%"
+                // });
                 return;
             }
         });

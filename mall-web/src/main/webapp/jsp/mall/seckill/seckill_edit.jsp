@@ -39,6 +39,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <c:if test="${!empty seckill }">
     <c:if test="${!empty seckill.priceList }">
         <c:forEach var="obj" items="${seckill.priceList }">

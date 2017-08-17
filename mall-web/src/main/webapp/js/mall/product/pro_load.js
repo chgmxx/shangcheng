@@ -1,5 +1,4 @@
-﻿﻿﻿
-$(function () {
+﻿$(function () {
     loadLaydate();
 
     if ($('.group-contain').length > 0) {
@@ -306,10 +305,11 @@ function getSpecifica(obj, defaultVal, type) {
     var shopId = $(".shop-contain option:selected").val();
     // console.log(obj.html())
     if (shopId == null || shopId == "") {
-        parent.layer.alert("请选择所属商铺", {
-            offset: "30%",
-            closeBtn: 0
-        });
+        parentAlertMsg("请选择所属商铺");
+        // parent.layer.alert("请选择所属商铺", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // });
     }
     $.ajax({
         type: "post",
@@ -355,10 +355,11 @@ function getSpecifica(obj, defaultVal, type) {
 function getSpecificaValue(id, selectObj, defaultStr, type) {
     var shopId = $(".shop-contain option:selected").val();
     if (shopId == null || shopId == "") {
-        parent.layer.alert("请选择所属商铺", {
-            offset: "30%",
-            closeBtn: 0
-        });
+        parentAlertMsg("请选择所属商铺");
+        // parent.layer.alert("请选择所属商铺", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // });
     }
     var op = "";
     $.ajax({
@@ -605,7 +606,8 @@ function addPop(obj) {
                 specArrs.find(".sku-atom").each(function () {
                     var speVal = $(this).find("span:eq(0)").text();
                     if ($.trim(speVal) == val) {
-                        parent.layer.msg("已经添加了相同的规格值");
+                        parentAlertMsg("已经添加了相同的规格值");
+                        // parent.layer.msg("已经添加了相同的规格值");
                         flag = false;
                         return;
                     }
@@ -936,19 +938,21 @@ function materiallayer(type, obj) {
     if (type == 0) {
         url += "?selectType=checked";
     }
-    parent.layer.open({
-        type: 2,
-        title: '素材库',
-        shadeClose: true,
-        shade: 0.2,
-        area: ['820px', '500px'],
-        offset: "10px",
-        content: url,
-    });
+    parentOpenIframe('素材库','820px', '500px',url);
+    // parent.layer.open({
+    //     type: 2,
+    //     title: '素材库',
+    //     shadeClose: true,
+    //     shade: 0.2,
+    //     area: ['820px', '500px'],
+    //     offset: "10px",
+    //     content: url,
+    // });
 }
 // 素材库里面返回信息
 function image(imageArray, url) {
-    parent.layer.closeAll();
+    parentCloseAll();
+    // parent.layer.closeAll();
     $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
 }
 /**

@@ -40,6 +40,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <c:if test="${!empty pifa }">
     <c:if test="${!empty pifa.priceList }">
         <c:forEach var="obj" items="${pifa.priceList }">

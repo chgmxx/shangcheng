@@ -21,6 +21,7 @@
     <script type="text/javascript" src="/js/plugin/copy/copypublic.js"></script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="returnLayer">
     <form id="returnForm">
         <input type="hidden" name="returnId" class="returnId" value="<c:if test="${!empty oReturn }">${oReturn.id }</c:if>"/>

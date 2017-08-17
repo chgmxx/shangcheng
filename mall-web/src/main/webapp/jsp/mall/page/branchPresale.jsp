@@ -45,6 +45,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					jsonArry.push(json);
 				}
 			});
+            //TODO  parent.returnProVal()
 			parent.returnProVal(jsonArry,6,${check});//方法回调
 			closeWindow();
 		}
@@ -56,6 +57,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		function closeWindow(){
 			//当你在iframe页面关闭自身时
+            //TODO parent.layer.getFrameIndex
 			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
 			parent.layer.close(index); //再执行关闭  
 		}
@@ -63,6 +65,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body style="margin: 10px">
+  <jsp:include page="/jsp/common/headerCommon.jsp"/>
   <div style="padding-bottom: 50px">
     <div class="txt-btn pd-bottom-15 clearfix">
 		<div>

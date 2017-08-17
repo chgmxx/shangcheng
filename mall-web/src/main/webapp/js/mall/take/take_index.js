@@ -4,15 +4,18 @@
  */
 function del(ids) {
     //event.stopPropagation();
-    parent.layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', offset: "40%"}, function (index) {
-        parent.layer.close(index);
+    //TODO  parent.layer.confirm
+    parent.layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
+        // parent.layer.close(index);
+        parentCloseAll();
         var params = {
             id: ids
         };
-        var index2 = parent.layer.load(3, {
-            offset: '40%',
-            shade: [0.4, '#8E8E8E']
-        });
+        var index2 = parentLayerLoad();
+        // var index2 = parent.layer.load(3, {
+        //     offset: '40%',
+        //     shade: [0.4, '#8E8E8E']
+        // });
 
         $.ajax({
             type: "post",
@@ -20,20 +23,24 @@ function del(ids) {
             url: "mFreight/deleteTake.do",
             dataType: "json",
             success: function (data) {
-                parent.layer.close(index2);
+                // parent.layer.close(index2);
+                parentCloseAll();
                 if (!data.flag) {// 重新登录
-                    parent.layer.alert("编辑上门自提失败", {
-                        offset: "30%"
-                    });
+                    parentAlertMsg("编辑上门自提失败");
+                    // parent.layer.alert("编辑上门自提失败", {
+                    //     offset: "30%"
+                    // });
                 } else {
                     location.href = window.location.href;
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parent.layer.closeAll();
-                parent.layer.alert("编辑上门自提失败", {
-                    offset: "30%"
-                });
+                parentCloseAll();
+                parentAlertMsg("编辑上门自提失败");
+                // parent.layer.closeAll();
+                // parent.layer.alert("编辑上门自提失败", {
+                //     offset: "30%"
+                // });
                 return;
             }
         });
@@ -112,9 +119,10 @@ $(".ui-switcher").click(function () {
             deletePro(data, "开启评论送礼", null);
         } else {
             flag = false;
-            parent.layer.alert("请先开启评论管理", {
-                offset: "30%"
-            });
+            parentAlertMsg("请先开启评论管理");
+            // parent.layer.alert("请先开启评论管理", {
+            //     offset: "30%"
+            // });
         }
     } else if ($(this).attr("id") == 6) {
         data.isMessage = isMessage;
@@ -180,7 +188,8 @@ function deletePro(datas, tip, url) {
     if (url == null) {
         url = "store/edit_set.do";
     }
-    var layerLoad = parent.loadForm();
+    // var layerLoad = parent.loadForm();
+    var layerLoad = parentLayerLoad();
     return false;
     $.ajax({
         type: "post",
@@ -188,21 +197,25 @@ function deletePro(datas, tip, url) {
         url: url,
         dataType: "json",
         success: function (data) {
-            layer.close(layerLoad);
-            parent.layer.closeAll();
+            // layer.close(layerLoad);
+            // parent.layer.closeAll();
+            parentCloseAll();
             if (!data.flag) {// 重新登录
-                parent.layer.alert(tip + "失败", {
-                    offset: "30%"
-                });
+                parentAlertMsg(tip + "失败");
+                // parent.layer.alert(tip + "失败", {
+                //     offset: "30%"
+                // });
             } else {
                 location.href = window.location.href;
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parent.layer.closeAll();
-            parent.layer.alert(tip + "失败", {
-                offset: "30%"
-            });
+            parentCloseAll();
+            parentAlertMsg(tip + "失败");
+            // parent.layer.closeAll();
+            // parent.layer.alert(tip + "失败", {
+            //     offset: "30%"
+            // });
             return;
         }
     });

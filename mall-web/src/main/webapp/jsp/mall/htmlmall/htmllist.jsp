@@ -185,7 +185,7 @@
         if (iscreat == 1) {
             if (ispid == 0) {
                 //TODO  parent.layer.confirm
-                parent.layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", {offset: '25%'}, function () {
+                parent.layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", { shade:[0.1,'#fff'],offset: '25%'}, function () {
                     top.location.href = "/trading/upGrade.do?setType=trading";
                 })
             } else {
@@ -204,7 +204,7 @@
     }
     function del(id) {
         //TODO  parent.layer.confirm
-        parent.layer.confirm("确定删除吗？删除之后，引用该链接的页面，将会以找不到页面，跳转到404页面中", {offset: '25%'}, function () {
+        parent.layer.confirm("确定删除吗？删除之后，引用该链接的页面，将会以找不到页面，跳转到404页面中", { shade:[0.1,'#fff'],offset: '25%'}, function () {
             $.post("mallhtml/delect.do", {
                 id: id
             }, function (data) {

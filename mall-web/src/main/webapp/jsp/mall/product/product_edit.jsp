@@ -1165,7 +1165,7 @@
 </div>
 <input type="hidden" class="urls" value="${urls }"/>
 <input type="hidden" class="isJxc" value="${empty isJxc ? 1 : isJxc }"/>
-
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript" src="/js/util.js"></script>
 <script src="/js/plugin/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" src="/js/mall/product/pro_load.js"></script>

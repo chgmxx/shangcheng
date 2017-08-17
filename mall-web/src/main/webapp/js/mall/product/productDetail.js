@@ -1,5 +1,4 @@
-﻿﻿
-var memberId = $(".memberId").val();
+﻿var memberId = $(".memberId").val();
 var userid = $(".userid").val();
 /**
  * 交纳预售定金

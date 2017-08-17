@@ -38,6 +38,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div id="newGroup">
     <c:if test="${!empty shoplist }">
         <div class="con-head">

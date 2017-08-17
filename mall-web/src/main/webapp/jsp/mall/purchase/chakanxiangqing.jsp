@@ -252,6 +252,7 @@
             //询问框
             //TODO  window.parent.layer.confirm
             window.parent.layer.confirm("确定要修改报价单状态吗?", {
+                shade:[0.1,'#fff'],
                 btn: ['确定', '取消'],
                 offset: '40%'
             }, function () {

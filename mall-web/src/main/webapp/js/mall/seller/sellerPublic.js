@@ -53,8 +53,10 @@ function checkSeller(sellerId, status) {
     if (status == -1) {
         msg = "审核不通过";
     }
+    //TODO parent.layer.confirm
     parent.layer.confirm("您是否要" + msg + "此销售员", {
         btn: ['确定', '取消'], //按钮
+        shade:[0.1,'#fff'],
         offset: "30%"
     }, function () {
         var data = {
@@ -75,8 +77,10 @@ function sellerStart(sellerId, status) {
     if (status == -1) {
         msg = "暂停";
     }
+    //TODO parent.layer.confirm
     parent.layer.confirm("您是否要" + msg + "此销售员", {
         btn: ['确定', '取消'], //按钮
+        shade:[0.1,'#fff'],
         offset: "30%"
     }, function () {
         var data = {
@@ -108,15 +112,18 @@ function batchCheck(status) {
         }
     });
     if (id.length == 0 && !flag) {
-        parent.layer.alert("请选择需要" + msg + "的销售员", {
-            offset: "30%",
-            closeBtn: 0
-        }, function (index) {
-            parent.layer.closeAll();
-        });
+        parentAlertMsg("请选择需要" + msg + "的销售员");
+        // parent.layer.alert("请选择需要" + msg + "的销售员", {
+        //     offset: "30%",
+        //     closeBtn: 0
+        // }, function (index) {
+        //     parent.layer.closeAll();
+        // });
     } else {
+        //TODO parent.layer.confirm
         parent.layer.confirm("您是否要" + msg + "选中的销售员", {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
             parent.layer.closeAll();
@@ -132,27 +139,32 @@ function batchCheck(status) {
 
 function editSeller(data, msg) {
     // loading层
-    var layerLoad = parent.layer.load(1, {
-        offset: "30%",
-        shade: [0.1, '#fff']
-        // 0.1透明度的白色背景
-    });
+    var layerLoad = parentLayerLoad();
+    // var layerLoad = parent.layer.load(1, {
+    //     offset: "30%",
+    //     shade: [0.1, '#fff']
+    //     // 0.1透明度的白色背景
+    // });
     $.ajax({
         type: "post",
         url: "mallSellers/checkSeller.do",
         data: data,
         dataType: "json",
         success: function (data) {
-            parent.layer.closeAll();
+            parentCloseAll();
+            // parent.layer.closeAll();
             if (data.flag) {
-                var tip = parent.layer.alert(msg + "成功", {
-                    offset: "30%",
-                    closeBtn: 0
-                }, function (index) {
-                    parent.layer.close(tip);
-                    location.href = window.location.href;
-                });
+                parentAlertMsg(msg + "成功");
+                //TODO alert 跳转
+                // var tip = parent.layer.alert(msg + "成功", {
+                //     offset: "30%",
+                //     closeBtn: 0
+                // }, function (index) {
+                //     parent.layer.close(tip);
+                //     location.href = window.location.href;
+                // });
             } else {// 编辑失败
+                parentAlertMsg(msg + "失败，请稍后重试");
                 parent.layer.alert(msg + "失败，请稍后重试", {
                     offset: "30%"
                 });
@@ -160,6 +172,8 @@ function editSeller(data, msg) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
+            parentCloseAll();
+
             parent.layer.closeAll();
             parent.layer.alert(msg + "失败，请稍后重试", {
                 offset: "30%"

@@ -670,6 +670,7 @@ function refurbish(){
 	    //TODO parent.layer.confirm
 		parent.layer.confirm('请前往钱包支付查询订单状态', {
 		    btn: ['确定'] ,
+            shade:[0.1,'#fff'],
 		    offset : "30%"
 		},
 		function(index, layero){

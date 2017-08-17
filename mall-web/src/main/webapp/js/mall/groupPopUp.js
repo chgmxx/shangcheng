@@ -32,10 +32,12 @@
             array[array.length] = obj;
         }
     });
+    //TODO parent.returnVal(array);
     parent.returnVal(array);
 }
 function cancel() {
-    parent.layer.closeAll();
+    parentCloseAll();
+    // parent.layer.closeAll();
 }
 
 onload();
@@ -109,16 +111,18 @@ function getShop(shopId) {
     if (shopId == null || shopId == "" || shopId == "0") {
         shopId = $(".shopSelect option:selected").attr("id");
     }
-    var layerLoad = parentLayer.load(1, {
-        shade: [0.3, '#000']
-    });
+    parentLayerLoad();
+    // var layerLoad = parentLayer.load(1, {
+    //     shade: [0.3, '#000']
+    // });
     $.ajax({
         type: "post",
         data: {shopId: shopId},
         url: "mPro/group/getGroupsByShopid.do",
         dataType: "json",
         success: function (data) {
-            parentLayer.close(layerLoad);
+            parentCloseAll();
+            // parentLayer.close(layerLoad);
             var html = "";
             if (data.code == 1) {
                 if (data.list != null && data.list.length > 0) {
@@ -203,15 +207,17 @@ function subtmit() {
     });
     var shopId = $(".shopSelect option:selected").attr("id");
     if (shopId == null || shopId == "") {
-        parentLayer.alert("请选择所属店铺", {
-            offset: "30%"
-        });
+        parentAlertMsg("请选择所属店铺");
+        // parentLayer.alert("请选择所属店铺", {
+        //     offset: "30%"
+        // });
         return false;
     }
     if (array == null || array.length == 0) {
-        parentLayer.alert("请选择所属分组", {
-            offset: "30%"
-        });
+        parentAlertMsg("请选择所属分组");
+        // parentLayer.alert("请选择所属分组", {
+        //     offset: "30%"
+        // });
         return false;
     }
     var data = {
@@ -221,10 +227,11 @@ function subtmit() {
     };
     //console.log(data);
 
-    var layerLoad = parentLayer.load(1, {
-        shade: [0.3, '#000'],
-        offset: "30%"
-    });
+    parentLayerLoad();
+    // var layerLoad = parentLayer.load(1, {
+    //     shade: [0.3, '#000'],
+    //     offset: "30%"
+    // });
     $.ajax({
         type: "post",
         data: data,
@@ -232,34 +239,41 @@ function subtmit() {
         dataType: "json",
         timeout: 60000 * 30,//半小时的超时时间
         success: function (data) {
-            parentLayer.close(layerLoad);
+            parentCloseAll();
+            // parentLayer.close(layerLoad);
             //parentLayer.closeAll();
             if (data.code == 0) {// 重新登录
-                parentLayer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                    offset: "30%",
-                    closeBtn: 0
-                }, function (index) {
-                    parent.location.href = "/user/tologin.do";
-                });
+                parentAlertMsg("操作失败，长时间没操作，跳转到登录页面");
+                //TODO alert 跳转
+                // parentLayer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                //     offset: "30%",
+                //     closeBtn: 0
+                // }, function (index) {
+                //     parent.location.href = "/user/tologin.do";
+                // });
             } else if (data.code == 1) {
-                var tipLayer = parentLayer.alert("同步商品成功", {
-                    offset: "30%",
-                    closeBtn: 0
-                }, function (index) {
-                    //parentLayer.closeAll();
-                    parent.location.href = window.parent.location.href;
-                });
+                parentAlertMsg("同步商品成功");
+                //TODO alert 跳转
+                // var tipLayer = parentLayer.alert("同步商品成功", {
+                //     offset: "30%",
+                //     closeBtn: 0
+                // }, function (index) {
+                //     //parentLayer.closeAll();
+                //     parent.location.href = window.parent.location.href;
+                // });
             } else {// 编辑失败
-                parentLayer.alert("同步商品失败", {
-                    offset: "30%"
-                });
+                parentAlertMsg("同步商品失败");
+                // parentLayer.alert("同步商品失败", {
+                //     offset: "30%"
+                // });
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             //parentLayer.closeAll();
-            parentLayer.alert("同步商品失败", {
-                offset: "30%"
-            });
+            parentAlertMsg("同步商品失败");
+            // parentLayer.alert("同步商品失败", {
+            //     offset: "30%"
+            // });
             return;
         }
     });

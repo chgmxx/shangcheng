@@ -1,5 +1,4 @@
-﻿﻿
-var memberId = $(".memberId").val();
+﻿var memberId = $(".memberId").val();
 var userid = $(".userid").val();
 /*商品详情  规格参数  评价切换*/
 $('.moduleChange a').click(function () {

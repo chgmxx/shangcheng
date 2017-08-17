@@ -18,17 +18,20 @@ function deleteJoinProduct(obj, type) {
             data["isDelete"] = 1;
         }
         // 询问框
+        //TODO parent.layer.confirm
         parent.layer.confirm('您确定要' + msg + '商品销售佣金?', {
             offset: "30%",
+            shade:[0.1,'#fff'],
             btn: ['确定', '取消']
             // 按钮
         }, function () {
             // loading层
-            var layerLoad = layer.load(1, {
-                offset: "30%",
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
+            var layerLoad = parentLayerLoad();
+            // var layerLoad = layer.load(1, {
+            //     offset: "30%",
+            //     shade: [0.1, '#fff']
+            //     // 0.1透明度的白色背景
+            // });
             $.ajax({
                 type: "post",
                 url: "/mallSellers/upJoinProduct.do",
@@ -37,26 +40,32 @@ function deleteJoinProduct(obj, type) {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    parentCloseAll();
+                    // parent.layer.close(layerLoad);
                     if (data.flag) {
-                        var tip = parent.layer.alert(msg + "成功", {
-                            offset: "30%",
-                            closeBtn: 0
-                        }, function (index) {
-                            parent.layer.close(tip);
-                            location.href = window.location.href;
-                        });
+                        parentAlertMsg(msg + "成功");
+                        //TODO alert 跳转
+                        // var tip = parent.layer.alert(msg + "成功", {
+                        //     offset: "30%",
+                        //     closeBtn: 0
+                        // }, function (index) {
+                        //     parent.layer.close(tip);
+                        //     location.href = window.location.href;
+                        // });
                     } else {// 编辑失败
-                        var tip = parent.layer.alert(msg + "失败", {
-                            offset: "30%"
-                        });
+                        parentAlertMsg(msg + "失败");
+                        // var tip = parent.layer.alert(msg + "失败", {
+                        //     offset: "30%"
+                        // });
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert(msg + "失败", {
-                        offset: "30%"
-                    });
+                    parentCloseAll();
+                    parentAlertMsg(msg + "失败");
+                    // parent.layer.close(layerLoad);
+                    // parent.layer.alert(msg + "失败", {
+                    //     offset: "30%"
+                    // });
                     return;
                 }
             });
@@ -91,20 +100,23 @@ function editJoinProduct() {
     var commissionType = $(".commissionType").find("option:selected").val();//佣金类型
     var ids = $("#ids").val();
     if (shopId == null || shopId == "") {
-        layer.msg('请选择店铺', {
-            offset: "30%",
-            icon: 1
-        });
+        parentAlertMsg('请选择店铺');
+        // layer.msg('请选择店铺', {
+        //     offset: "30%",
+        //     icon: 1
+        // });
     } else if (productId == null || productId == "") {
-        layer.msg('请选择商品', {
-            offset: "30%",
-            icon: 1
-        });
+        parentAlertMsg('请选择商品');
+        // layer.msg('请选择商品', {
+        //     offset: "30%",
+        //     icon: 1
+        // });
     } else if (commissionType == null || commissionType == "") {
-        layer.msg('请选择佣金类型', {
-            offset: "30%",
-            icon: 1
-        });
+        parentAlertMsg('请选择佣金类型');
+        // layer.msg('请选择佣金类型', {
+        //     offset: "30%",
+        //     icon: 1
+        // });
     } else {
         var flag = true;
         $("input[datatype!=null]").each(function () {
@@ -124,17 +136,19 @@ function editJoinProduct() {
             joinProduct["id"] = ids;
         }
         if (!flag) {
-            layer.msg('请完善商品佣金', {
-                icon: 1,
-                offset: "30%"
-            });
+            parentAlertMsg('请完善商品佣金');
+            // layer.msg('请完善商品佣金', {
+            //     icon: 1,
+            //     offset: "30%"
+            // });
         } else {
             // loading层
-            var layerLoad = parent.layer.load(1, {
-                offset: "30%",
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
+            var layerLoad = parentLayerLoad();
+            // var layerLoad = parent.layer.load(1, {
+            //     offset: "30%",
+            //     shade: [0.1, '#fff']
+            //     // 0.1透明度的白色背景
+            // });
             $.ajax({
                 type: "post",
                 url: "/mallSellers/editJoinProduct.do",
@@ -143,32 +157,39 @@ function editJoinProduct() {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    parentCloseAll();
+                    // parent.layer.close(layerLoad);
                     if (data.flag) {
-                        var tip = parent.layer.alert("编辑成功", {
-                            offset: "30%",
-                            closeBtn: 0
-                        }, function (index) {
-                            parent.layer.close(tip);
-                            location.href = "/mallSellers/joinProduct.do";
-                        });
+                        parentAlertMsg("编辑成功");
+                        //TODO alert 跳转
+                        // var tip = parent.layer.alert("编辑成功", {
+                        //     offset: "30%",
+                        //     closeBtn: 0
+                        // }, function (index) {
+                        //     parent.layer.close(tip);
+                        //     location.href = "/mallSellers/joinProduct.do";
+                        // });
                     } else {
                         if (data.msg != null && data.msg != "") {
-                            parent.layer.alert(data.msg, {
-                                offset: "30%"
-                            });
+                            parentAlertMsg(data.msg);
+                            // parent.layer.alert(data.msg, {
+                            //     offset: "30%"
+                            // });
                         } else {
-                            parent.layer.alert("编辑失败", {
-                                offset: "30%"
-                            });
+                            parentAlertMsg("编辑失败");
+                            // parent.layer.alert("编辑失败", {
+                            //     offset: "30%"
+                            // });
                         }
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert("编辑失败", {
-                        offset: "30%"
-                    });
+                    parentCloseAll();
+                    parentAlertMsg("编辑失败");
+                    // parent.layer.close(layerLoad);
+                    // parent.layer.alert("编辑失败", {
+                    //     offset: "30%"
+                    // });
                     return;
                 }
             });
@@ -337,9 +358,9 @@ function choosePro() {
     }
     loadWindow();
     if (shopId != null && shopId != "") {
-        parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId + "&isCommission=1");//check==0代表多选，check==1代表单选
+        parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId + "&isCommission=1");//check==0代表多选，check==1代表单选
     } else {
-        parent.alertMsg("请选择商品");
+        parentAlertMsg("请选择商品");
     }
 };
 /**

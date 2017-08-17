@@ -36,6 +36,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <c:if test="${!empty groupBuy }">
     <c:if test="${!empty groupBuy.priceList }">
         <c:forEach var="obj" items="${groupBuy.priceList }">

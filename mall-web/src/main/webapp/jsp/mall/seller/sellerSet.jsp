@@ -30,6 +30,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div id="con-box">
     <c:if test="${empty isNoAdminFlag }">
         <div class="page-body">

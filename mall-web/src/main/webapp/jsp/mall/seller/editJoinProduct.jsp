@@ -29,6 +29,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div id="newGroup">
     <ul class="page-tab">
         <li>

@@ -129,10 +129,11 @@ function editSellerSet() {
                 $(".withdrawalLowestMoney").css("border-color", "red");
                 $(".withdrawalLowestMoneyVali").css("color", "red");
                 flag = false;
-                parent.layer.msg('最底可提现金额最多输入5位小数且大于0', {
-                    icon: 1,
-                    offset: "30%"
-                });
+                parentAlertMsg("最底可提现金额最多输入5位小数且大于0");
+                // parent.layer.msg('最底可提现金额最多输入5位小数且大于0', {
+                //     icon: 1,
+                //     offset: "30%"
+                // });
             }
         } else if (withdrawalType == 2) {
             if (withdrawalMultiple == "" || withdrawalMultiple == 0) {
@@ -140,27 +141,30 @@ function editSellerSet() {
                 $(".withdrawalMultiple").css("border-color", "red");
                 $(".withdrawalMultipleVali").css("color", "red");
                 flag = false;
-                parent.layer.msg('提现规则最多输入5位小数且大于0', {
-                    icon: 1,
-                    offset: "30%"
-                });
+                parentAlertMsg("提现规则最多输入5位小数且大于0");
+                // parent.layer.msg('提现规则最多输入5位小数且大于0', {
+                //     icon: 1,
+                //     offset: "30%"
+                // });
             }
         }
 
     } else {
-        parent.layer.msg('请填写基本信息', {
-            icon: 1,
-            offset: "30%"
-        });
+        parentAlertMsg("请填写基本信息");
+        // parent.layer.msg('请填写基本信息', {
+        //     icon: 1,
+        //     offset: "30%"
+        // });
     }
     if (flag) {
 
         // loading层
-        var layerLoad = parent.layer.load(1, {
-            offset: "30%",
-            shade: [0.1, '#fff']
-            // 0.1透明度的白色背景
-        });
+        var layerLoad = parentLayerLoad();
+        // var layerLoad = parent.layer.load(1, {
+        //     offset: "30%",
+        //     shade: [0.1, '#fff']
+        //     // 0.1透明度的白色背景
+        // });
         $.ajax({
             type: "post",
             url: "mallSellers/editSellerSet.do",
@@ -169,27 +173,33 @@ function editSellerSet() {
             },
             dataType: "json",
             success: function (data) {
-                parent.layer.close(layerLoad);
+                parentCloseAll();
+                // parent.layer.close(layerLoad);
                 if (data.flag) {
-                    var tip = parent.layer.alert("编辑成功", {
-                        offset: "30%",
-                        closeBtn: 0
-                    }, function (index) {
-                        parent.layer.close(tip);
-                        location.href = window.location.href;
-                    });
+                    parentAlertMsg("编辑成功");
+                    //TODO alert 跳转
+                    // var tip = parent.layer.alert("编辑成功", {
+                    //     offset: "30%",
+                    //     closeBtn: 0
+                    // }, function (index) {
+                    //     parent.layer.close(tip);
+                    //     location.href = window.location.href;
+                    // });
                 } else {// 编辑失败
-                    parent.layer.alert("编辑失败，请稍后重试", {
-                        offset: "30%"
-                    });
+                    parentAlertMsg("编辑失败，请稍后重试");
+                    // parent.layer.alert("编辑失败，请稍后重试", {
+                    //     offset: "30%"
+                    // });
                 }
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parent.layer.close(layerLoad);
-                parent.layer.alert("编辑失败，请稍后重试", {
-                    offset: "30%"
-                });
+                parentCloseAll();
+                parentAlertMsg("编辑失败，请稍后重试");
+                // parent.layer.close(layerLoad);
+                // parent.layer.alert("编辑失败，请稍后重试", {
+                //     offset: "30%"
+                // });
                 return;
             }
         });

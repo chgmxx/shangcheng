@@ -11,16 +11,18 @@ $(function () {
  */
 function del(ids) {
     //event.stopPropagation();
-    parent.layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', offset: "40%"}, function (index) {
+    //TODO parent.layer.confirm
+    parent.layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
         parentCloseAll();
         var params = {
             ids: ids
         };
         parentLayerLoad();
         $.post("store/delete.do", params, function (data) {
-            parent.alertMsg(data.message);
+            parentAlertMsg(data.message);
             if (data.result) {
-                parent.layer.close(index2);
+                parentCloseAll();
+                // parent.layer.close(index2);
                 location.reload();
             }
         }, "json");
