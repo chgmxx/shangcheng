@@ -1,8 +1,8 @@
 package com.gt.mall;
 
 import com.gt.mall.dao.store.MallStoreDAO;
-import com.gt.mall.inter.service.DictService;
-import com.gt.mall.inter.service.MemberService;
+import com.gt.mall.service.inter.DictService;
+import com.gt.mall.service.inter.MemberService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -6,7 +6,7 @@ import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.web.service.product.MallGroupService;
+import com.gt.mall.service.web.product.MallGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

@@ -6,7 +6,7 @@ import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.web.service.product.MallProductSpecificaService;
+import com.gt.mall.service.web.product.MallProductSpecificaService;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

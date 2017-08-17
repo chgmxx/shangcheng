@@ -6,7 +6,7 @@ import com.gt.mall.entity.purchase.PurchaseCompanyMode;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.web.service.purchase.PurchaseCompanyModeService;
+import com.gt.mall.service.web.purchase.PurchaseCompanyModeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
