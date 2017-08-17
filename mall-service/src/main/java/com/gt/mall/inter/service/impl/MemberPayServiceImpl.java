@@ -6,6 +6,7 @@ import com.gt.mall.bean.params.PaySuccessBo;
 import com.gt.mall.inter.service.MemberPayService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import java.util.Map;
  * Date : 2017/8/16 0016
  * Time : 17:13
  */
+@Service
 public class MemberPayServiceImpl implements MemberPayService {
 
     private static final String MEMBER_COUNT_URL = "/memberAPI/memberCountApi/";//会员计算链接
