@@ -26,7 +26,7 @@ import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.product.*;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallStore;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;

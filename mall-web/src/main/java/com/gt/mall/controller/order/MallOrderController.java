@@ -8,7 +8,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
-import com.gt.mall.service.inter.DictService;
+import com.gt.mall.service.inter.member.DictService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallDaifuService;

@@ -6,7 +6,7 @@ import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.integral.MallIntegralImage;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;

@@ -1,4 +1,4 @@
-package com.gt.mall.service.inter;
+package com.gt.mall.service.inter.member;
 
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.member.ReturnParams;

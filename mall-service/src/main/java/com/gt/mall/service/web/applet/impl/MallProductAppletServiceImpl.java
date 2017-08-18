@@ -8,7 +8,7 @@ import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.MallShopCart;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.applet.MallProductAppletService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;

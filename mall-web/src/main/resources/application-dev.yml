@@ -118,6 +118,8 @@ http:
  #总项目请求地址
  wxmp:
   domain: http://wxmp.yifriend.net:13882/
+#  domain: http://yifriend.net/
+  key: WXMP2017
  #会员key 和 请求地址
  member:
   domain: http://113.106.202.53:13885/

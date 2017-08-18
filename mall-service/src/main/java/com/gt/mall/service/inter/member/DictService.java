@@ -1,4 +1,4 @@
-package com.gt.mall.service.inter;
+package com.gt.mall.service.inter.member;
 
 import java.util.List;
 import java.util.Map;

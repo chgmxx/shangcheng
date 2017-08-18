@@ -11,7 +11,7 @@ import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerIncome;
 import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.entity.seller.MallSellerWithdraw;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.seller.MallSellerWithdrawService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;

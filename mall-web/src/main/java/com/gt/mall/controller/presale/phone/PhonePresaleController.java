@@ -7,7 +7,7 @@ import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.presale.MallPresaleDepositDAO;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PropertiesUtil;

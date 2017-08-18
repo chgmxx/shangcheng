@@ -1,9 +1,9 @@
-package com.gt.mall.service.inter.impl;
+package com.gt.mall.service.inter.member.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.gt.mall.service.inter.DictService;
+import com.gt.mall.service.inter.member.DictService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.MemberInterUtil;
+import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class DictServiceImpl implements DictService {
     public List< Map > getDict( String dictType ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "dictType", dictType );
-	String data = MemberInterUtil.SignHttpSelect( params, DICT_URL + "getdict" );
+	String data = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getdict" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}
@@ -37,6 +37,6 @@ public class DictServiceImpl implements DictService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "dictType", dictType );
 	params.put( "key", key );
-	return MemberInterUtil.SignHttpSelect( params, DICT_URL + "getDictRuturnValue" );
+	return HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictRuturnValue" );
     }
 }

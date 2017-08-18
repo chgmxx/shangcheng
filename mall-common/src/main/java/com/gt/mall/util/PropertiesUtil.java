@@ -50,6 +50,8 @@ public class PropertiesUtil {
 
     private static String wxmpDomain;//主项目域名（登陆。。）
 
+    private static String wxmpSignKey;//调用主项目接口的前面key
+
     private static String memberDomain;//调用会员接口的链接
 
     private static String memberSignKey;//调用会员接口的签名key
@@ -149,6 +151,11 @@ public class PropertiesUtil {
 	PropertiesUtil.wxmpDomain = wxmpDomain;
     }
 
+    @Value( "${http.wxmp.key}" )
+    public void setWxmpSignKey( String wxmpSignKey ) {
+	PropertiesUtil.wxmpSignKey = wxmpSignKey;
+    }
+
     @Value( "${http.member.domain}" )
     public void setMemberDomain( String memberDomain ) {
 	PropertiesUtil.memberDomain = memberDomain;
@@ -159,21 +166,32 @@ public class PropertiesUtil {
 	PropertiesUtil.memberSignKey = memberSignKey;
     }
 
-    public static String getMemberDomain() {
-	return memberDomain;
-    }
-
-    public static String getMemberSignKey() {
-	return memberSignKey;
+    /**
+     * 获取主项目的签名keykey
+     */
+    public static String getWxmpSignKey() {
+	return wxmpSignKey;
     }
 
     /**
      * 获取主域名（登陆）
-     *
-     * @return 域名
      */
     public static String getWxmpDomain() {
 	return wxmpDomain;
+    }
+
+    /**
+     * 获取会员域名
+     */
+    public static String getMemberDomain() {
+	return memberDomain;
+    }
+
+    /**
+     * 获取会员签名key
+     */
+    public static String getMemberSignKey() {
+	return memberSignKey;
     }
 
     /**

@@ -8,7 +8,7 @@ import com.gt.mall.dao.purchase.PurchaseTermDAO;
 import com.gt.mall.entity.purchase.PurchaseOrder;
 import com.gt.mall.entity.purchase.PurchaseReceivables;
 import com.gt.mall.entity.purchase.PurchaseTerm;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.service.web.purchase.PurchaseReceivablesService;

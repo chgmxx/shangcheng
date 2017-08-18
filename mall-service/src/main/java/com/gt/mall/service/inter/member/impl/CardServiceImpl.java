@@ -1,12 +1,12 @@
-package com.gt.mall.service.inter.impl;
+package com.gt.mall.service.inter.member.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.service.inter.CardService;
+import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.MemberInterUtil;
+import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class CardServiceImpl implements CardService {
     public Map< String,Object > findDuofenCardByReceiveId( int receiveId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "receiveId", receiveId );
-	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findDuofenCardByReceiveId" );
+	String data = HttpSignUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findDuofenCardByReceiveId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
 	}
@@ -49,7 +49,7 @@ public class CardServiceImpl implements CardService {
     public List< Map > findReceiveByBusUserId( int busUserId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "busId", busUserId );
-	String data = MemberInterUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
+	String data = HttpSignUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}
@@ -58,7 +58,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public boolean successPayBack( Map< String,Object > params ) {
-	Map< String,Object > resultMap = MemberInterUtil.SignHttpInsertOrUpdate( params, "/memberAPI/cardCouponseApi/successPayBack" );
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, "/memberAPI/cardCouponseApi/successPayBack" );
 	if ( CommonUtil.isNotEmpty( resultMap ) ) {
 	    int code = CommonUtil.toInteger( resultMap.get( "code" ) );
 	    if(code == 1){

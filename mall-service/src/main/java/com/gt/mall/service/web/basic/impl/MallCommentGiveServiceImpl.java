@@ -11,7 +11,7 @@ import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.SessionUtils;

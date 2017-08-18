@@ -15,15 +15,23 @@ import java.util.Map;
  * Date : 2017/8/14 0014
  * Time : 15:50
  */
-public class MemberInterUtil {
+public class HttpSignUtil {
 
-    private static Logger logger = LoggerFactory.getLogger( MemberInterUtil.class );
+    private static Logger logger = LoggerFactory.getLogger( HttpSignUtil.class );
 
-    private static JSONObject SignHttpJson( Object obj, String url ) {
-	url = PropertiesUtil.getMemberDomain() + url;
-	String signKey = PropertiesUtil.getMemberSignKey();
+    private static JSONObject SignHttpJson( Object obj, String url, int... types ) {
 	try {
-	    String result = SignHttpUtils.postByHttp( url, obj, signKey );
+	    String result = null;
+	    if ( types[0] == 0 ) {//会员
+		String signKey = PropertiesUtil.getMemberSignKey();
+		url = PropertiesUtil.getMemberDomain() + url;
+		result = SignHttpUtils.postByHttp( url, obj, signKey );
+	    } else {
+		//门店
+		String signKey = PropertiesUtil.getWxmpSignKey();
+		url = PropertiesUtil.getWxmpDomain() + url;
+		result = SignHttpUtils.WxmppostByHttp( url, obj, signKey );
+	    }
 	    logger.info( "result:" + result );
 
 	    if ( CommonUtil.isNotEmpty( result ) ) {
@@ -40,11 +48,12 @@ public class MemberInterUtil {
      *
      * @param params 参数
      * @param url    地址
+     * @param type   请求类型  0 会员  1 门店  2商家
      *
      * @return 返回
      */
-    public static String SignHttpSelect( Object params, String url ) {
-	JSONObject resultObj = SignHttpJson( params, url );
+    public static String SignHttpSelect( Object params, String url, int... type ) {
+	JSONObject resultObj = SignHttpJson( params, url, type );
 
 	if ( resultObj.getInteger( "code" ) == 0 ) {
 	    logger.info( "data = " + resultObj.getString( "data" ) );
@@ -60,13 +69,14 @@ public class MemberInterUtil {
      *
      * @param params 参数
      * @param url    地址
+     * @param type   请求类型  0 会员  1 门店  2商家
      *
      * @return 返回
      */
-    public static Map< String,Object > SignHttpInsertOrUpdate( Object params, String url ) {
+    public static Map< String,Object > SignHttpInsertOrUpdate( Object params, String url, int... type ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	JSONObject resultObj = SignHttpJson( params, url );
-	logger.info( "会员接口返回值 = " + resultObj.getString( "data" ) );
+	logger.info( "调用接口返回值 = " + resultObj.getString( "data" ) );
 	int code = resultObj.getInteger( "code" );
 	if ( code == 0 ) {
 	    resultMap.put( "code", 1 );//成功
@@ -80,4 +90,5 @@ public class MemberInterUtil {
 	}
 	return resultMap;
     }
+
 }

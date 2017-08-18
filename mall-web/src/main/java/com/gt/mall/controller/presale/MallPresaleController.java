@@ -8,7 +8,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.entity.presale.MallPresaleGive;
-import com.gt.mall.service.inter.DictService;
+import com.gt.mall.service.inter.member.DictService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;

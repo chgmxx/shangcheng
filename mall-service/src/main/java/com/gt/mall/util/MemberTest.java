@@ -17,7 +17,7 @@ import java.util.Map;
  * Date : 2017/8/14 0014
  * Time : 10:10
  */
-public class Test {
+public class MemberTest {
 
     private static String SignHttpByJSON( Object params, String url ) {
 	url = "http://113.106.202.53:13885/" + url;

@@ -1,11 +1,11 @@
-package com.gt.mall.service.inter.impl;
+package com.gt.mall.service.inter.member.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.bean.member.PaySuccessBo;
-import com.gt.mall.service.inter.MemberPayService;
+import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.MemberInterUtil;
+import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -29,7 +29,7 @@ public class MemberPayServiceImpl implements MemberPayService {
      * @return 对象
      */
     public MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity ) {
-	String data = MemberInterUtil.SignHttpSelect( mallAllEntity, MEMBER_COUNT_URL + "memberCountMoneyByShop" );
+	String data = HttpSignUtil.SignHttpSelect( mallAllEntity, MEMBER_COUNT_URL + "memberCountMoneyByShop" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), MallAllEntity.class );
 	}
@@ -44,6 +44,6 @@ public class MemberPayServiceImpl implements MemberPayService {
      * @return 对象
      */
     public Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
-	return MemberInterUtil.SignHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
+	return HttpSignUtil.SignHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
     }
 }

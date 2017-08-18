@@ -5,7 +5,7 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.util.*;
-import com.gt.mall.service.inter.CardService;
+import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;

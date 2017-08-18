@@ -8,7 +8,7 @@ import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.auction.MallAuctionMargin;
-import com.gt.mall.service.inter.MemberService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
