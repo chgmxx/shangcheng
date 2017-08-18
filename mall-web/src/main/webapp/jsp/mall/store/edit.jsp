@@ -28,6 +28,7 @@
 </head>
 
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="con-head">
     <a class="navColor" href="/store/index.do">店铺管理</a>
     <a class="" href="/store/setindex.do">商城设置</a>

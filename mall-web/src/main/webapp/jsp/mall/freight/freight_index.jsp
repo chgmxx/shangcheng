@@ -26,6 +26,7 @@
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <c:if test="${empty isNoAdminFlag }">
     <div id="con-box">
         <c:if test="${!empty shoplist }">

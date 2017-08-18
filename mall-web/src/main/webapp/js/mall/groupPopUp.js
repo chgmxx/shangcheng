@@ -32,10 +32,10 @@
             array[array.length] = obj;
         }
     });
-    parent.returnVal(array);
+    returnVal(array);
 }
 function cancel() {
-    parent.layer.closeAll();
+   layer.closeAll();
 }
 
 onload();
@@ -99,7 +99,7 @@ function onload() {
         event.stopPropagation();
     })
 }
-var parentLayer = window.parent.parent.layer;
+var parentLayer = window.layer;
 $(".shopSelect").change(function () {
     var obj = $(this);
     var shopId = obj.find("option:selected").attr("id");
@@ -110,7 +110,7 @@ function getShop(shopId) {
         shopId = $(".shopSelect option:selected").attr("id");
     }
     var layerLoad = parentLayer.load(1, {
-        shade: [0.3, '#000']
+        shade: [0.3, '#fff']
     });
     $.ajax({
         type: "post",
@@ -204,12 +204,14 @@ function subtmit() {
     var shopId = $(".shopSelect option:selected").attr("id");
     if (shopId == null || shopId == "") {
         parentLayer.alert("请选择所属店铺", {
+            shade:[0.1,"#fff"],
             offset: "30%"
         });
         return false;
     }
     if (array == null || array.length == 0) {
         parentLayer.alert("请选择所属分组", {
+            shade:[0.1,"#fff"],
             offset: "30%"
         });
         return false;
@@ -221,8 +223,9 @@ function subtmit() {
     };
     //console.log(data);
 
+
     var layerLoad = parentLayer.load(1, {
-        shade: [0.3, '#000'],
+        shade: [0.3, '#fff'],
         offset: "30%"
     });
     $.ajax({
@@ -233,24 +236,27 @@ function subtmit() {
         timeout: 60000 * 30,//半小时的超时时间
         success: function (data) {
             parentLayer.close(layerLoad);
-            //parentLayer.closeAll();
+            parentLayer.closeAll();
             if (data.code == 0) {// 重新登录
                 parentLayer.alert("操作失败，长时间没操作，跳转到登录页面", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
-                    parent.location.href = "/user/tologin.do";
+                    location.href = "/user/tologin.do";
                 });
             } else if (data.code == 1) {
                 var tipLayer = parentLayer.alert("同步商品成功", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
                     //parentLayer.closeAll();
-                    parent.location.href = window.parent.location.href;
+                    location.href = window.parent.location.href;
                 });
             } else {// 编辑失败
                 parentLayer.alert("同步商品失败", {
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
             }
@@ -258,6 +264,7 @@ function subtmit() {
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             //parentLayer.closeAll();
             parentLayer.alert("同步商品失败", {
+                shade:[0.1,"#fff"],
                 offset: "30%"
             });
             return;

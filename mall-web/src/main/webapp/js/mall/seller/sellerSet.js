@@ -129,8 +129,9 @@ function editSellerSet() {
                 $(".withdrawalLowestMoney").css("border-color", "red");
                 $(".withdrawalLowestMoneyVali").css("color", "red");
                 flag = false;
-                parent.layer.msg('最底可提现金额最多输入5位小数且大于0', {
+                layer.msg('最底可提现金额最多输入5位小数且大于0', {
                     icon: 1,
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
             }
@@ -140,23 +141,25 @@ function editSellerSet() {
                 $(".withdrawalMultiple").css("border-color", "red");
                 $(".withdrawalMultipleVali").css("color", "red");
                 flag = false;
-                parent.layer.msg('提现规则最多输入5位小数且大于0', {
+                layer.msg('提现规则最多输入5位小数且大于0', {
                     icon: 1,
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
             }
         }
 
     } else {
-        parent.layer.msg('请填写基本信息', {
+        layer.msg('请填写基本信息', {
             icon: 1,
+            shade:[0.1,"#fff"],
             offset: "30%"
         });
     }
     if (flag) {
 
         // loading层
-        var layerLoad = parent.layer.load(1, {
+        var layerLoad = layer.load(1, {
             offset: "30%",
             shade: [0.1, '#fff']
             // 0.1透明度的白色背景
@@ -169,25 +172,28 @@ function editSellerSet() {
             },
             dataType: "json",
             success: function (data) {
-                parent.layer.close(layerLoad);
+                layer.close(layerLoad);
                 if (data.flag) {
-                    var tip = parent.layer.alert("编辑成功", {
+                    var tip = layer.alert("编辑成功", {
                         offset: "30%",
+                        shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
-                        parent.layer.close(tip);
+                        layer.close(tip);
                         location.href = window.location.href;
                     });
                 } else {// 编辑失败
-                    parent.layer.alert("编辑失败，请稍后重试", {
+                    layer.alert("编辑失败，请稍后重试", {
+                        shade:[0.1,"#fff"],
                         offset: "30%"
                     });
                 }
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parent.layer.close(layerLoad);
-                parent.layer.alert("编辑失败，请稍后重试", {
+                layer.close(layerLoad);
+                layer.alert("编辑失败，请稍后重试", {
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
                 return;

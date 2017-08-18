@@ -37,6 +37,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp" />
 <c:if test="${!empty auction }">
     <%-- <c:if test="${!empty auction.priceList }">
         <c:forEach var="obj" items="${auction.priceList }">

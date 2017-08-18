@@ -29,6 +29,7 @@
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div id="con-box">
     <div class="con-head" style="margin:0px;">
         <a class="" href="/mPro/index.do">商品管理</a>

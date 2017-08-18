@@ -3,15 +3,16 @@ function deleteFreight(obj) {
     var id = $(obj).attr("id");
     if (id != null && id != "") {
         // 询问框
-        parent.layer.confirm('您确定要删除？', {
+        layer.confirm('您确定要删除？', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: "30%"
             // 按钮
         }, function () {
             var idArr = [];
             idArr.push(id);
             // loading层
-            var layerLoad = parent.layer.load(1, {
+            var layerLoad = layer.load(1, {
                 offset: "30%",
                 shade: [0.1, '#fff']
                 // 0.1透明度的白色背景
@@ -24,24 +25,27 @@ function deleteFreight(obj) {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    layer.close(layerLoad);
                     if (data.flag) {// 重新登录
-                        var tip = parent.layer.alert("删除成功", {
+                        var tip = layer.alert("删除成功", {
                             offset: "30%",
+                            shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
-                            parent.layer.closeAll();
+                            layer.closeAll();
                             location.href = "/mFreight/index.do";
                         });
                     } else {// 删除失败
-                        var tip = parent.layer.alert("删除失败", {
+                        var tip = layer.alert("删除失败", {
+                            shade:[0.1,"#fff"],
                             offset: "30%"
                         });
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert("删除失败", {
+                    layer.close(layerLoad);
+                    layer.alert("删除失败", {
+                        shade:[0.1,"#fff"],
                         offset: "30%"
                     });
                     return;
@@ -233,6 +237,7 @@ function editFreight() {
 
     if (!flag || !detailFlag) {
         layer.msg('请完善物流信息', {
+            shade:[0.1,"#fff"],
             icon: 1
         });
     } else {
@@ -243,9 +248,9 @@ function editFreight() {
 //		}
 
         // loading层
-        var layerLoad = parent.layer.load(1, {
+        var layerLoad = layer.load(1, {
             offset: "30%",
-            shade: [0.3, '#000']
+            shade: [0.3, '#fff']
         });
         $.ajax({
             type: "post",
@@ -253,17 +258,19 @@ function editFreight() {
             data: params,
             dataType: "json",
             success: function (data) {
-                parent.layer.close(layerLoad);
+                layer.close(layerLoad);
                 if (data.flag == true) {
-                    var tip = parent.layer.alert("编辑成功", {
+                    var tip = layer.alert("编辑成功", {
+                        shade:[0.1,"#fff"],
                         offset: "30%",
                         closeBtn: 0
                     }, function (index) {
-                        parent.layer.close(tip);
-                        window.parent.location.href = "/mFreight/start.do";
+                        layer.close(tip);
+                        window.location.href = "/mFreight/start.do";
                     });
                 } else {// 编辑失败
-                    parent.layer.alert("编辑失败", {
+                    layer.alert("编辑失败", {
+                        shade:[0.1,"#fff"],
                         offset: "30%"
                     });
                 }
@@ -271,7 +278,8 @@ function editFreight() {
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 layer.close(layerLoad);
-                parent.layer.alert("编辑失败", {
+                layer.alert("编辑失败", {
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
                 return;
@@ -528,7 +536,8 @@ function selectPro(obj) {
     if ($.trim(hidePro) != "") {
         url += "&hidePro=," + hidePro + ",";
     }
-    parent.openIframeNoScoll("选择可配送区域", "450px", "350px", url);
+    parentOpenIframe("选择可配送区域", "450px", "350px", url);
+    // parent.openIframeNoScoll("选择可配送区域", "450px", "350px", url);
 }
 
 

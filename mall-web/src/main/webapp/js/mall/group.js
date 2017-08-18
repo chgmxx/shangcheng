@@ -5,13 +5,14 @@ function deleteGroup(obj) {
     var id = $(obj).attr("id");
     if (id != null && id != "") {
         // 询问框
-        parent.layer.confirm('您确定要删除？', {
+        layer.confirm('您确定要删除？', {
             btn: ['确定', '取消'],
+            shade:[0.1,'#fff'],
             offset: "30%"
             // 按钮
         }, function () {
             // loading层
-            var layerLoad = parent.layer.load(1, {
+            var layerLoad = layer.load(1, {
                 shade: [0.1, '#fff'],
                 offset: "30%"
                 // 0.1透明度的白色背景
@@ -24,37 +25,41 @@ function deleteGroup(obj) {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    layer.close(layerLoad);
                     if (data.code == 0) {// 重新登录
-                        parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                        layer.alert("操作失败，长时间没操作，跳转到登录页面", {
                             offset: "30%",
+                            shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
                             location.href = "/user/tologin.do";
                         });
                     } else if (data.code == 1) {
-                        var tip = parent.layer.alert("删除成功", {
+                        var tip = layer.alert("删除成功", {
                             offset: "30%",
+                            shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
-                            parent.layer.close(tip);
+                            layer.close(tip);
                             location.href = window.location.href;
                         });
                     } else {// 编辑失败
-                        var tip = parent.layer.alert("删除失败", {
+                        var tip = layer.alert("删除失败", {
+                            shade:[0.1,"#fff"],
                             offset: "30%"
                         });
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert("删除失败", {
+                    layer.close(layerLoad);
+                    layer.alert("删除失败", {
+                        shade:[0.1,"#fff"],
                         offset: "30%"
                     });
                     return;
                 }
             });
-            parent.layer.closeAll();
+            layer.closeAll();
         });
     }
 
@@ -133,7 +138,7 @@ function editGroup() {
         };
 
         // loading层
-        var layerLoad = parent.layer.load(1, {
+        var layerLoad = layer.load(1, {
             shade: [0.1, '#fff']
             // 0.1透明度的白色背景
         });
@@ -146,20 +151,22 @@ function editGroup() {
             },
             dataType: "json",
             success: function (data) {
-                parent.layer.close(layerLoad);
+                layer.close(layerLoad);
                 if (data.code == 0) {// 重新登录
-                    parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                    layer.alert("操作失败，长时间没操作，跳转到登录页面", {
                         offset: "30%",
+                        shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
                         location.href = "/user/tologin.do";
                     });
                 } else if (data.code == 1) {
-                    var tip = parent.layer.alert("编辑成功", {
+                    var tip = layer.alert("编辑成功", {
                         offset: "30%",
+                        shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
-                        parent.layer.close(tip);
+                        layer.close(tip);
                         var url = $("input.urls").val();
                         if (url == null || url == "" || (typeof url) == "undefined") {
                             url = "/mPro/group/group_index.do";
@@ -167,7 +174,8 @@ function editGroup() {
                         location.href = url;
                     });
                 } else {// 编辑失败
-                    parent.layer.alert("编辑失败", {
+                    layer.alert("编辑失败", {
+                        shade:[0.1,"#fff"],
                         offset: "30%"
                     });
                 }
@@ -175,7 +183,8 @@ function editGroup() {
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 layer.close(layerLoad);
-                parent.layer.alert("编辑失败", {
+                layer.alert("编辑失败", {
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
                 return;
@@ -273,19 +282,20 @@ var imgObj;
 // 弹出素材库
 function materiallayer(obj) {
     imgObj = $(obj);
-    parent.layer.open({
-        type: 2,
-        title: '素材库',
-        shadeClose: true,
-        shade: 0.2,
-        area: ['820px', '500px'],
-        offset: "10px",
-        content: "/common/material.do?selectType=checked",
-    });
+    fhmater(1);
+    // parent.layer.open({
+    //     type: 2,
+    //     title: '素材库',
+    //     shadeClose: true,
+    //     shade: 0.2,
+    //     area: ['820px', '500px'],
+    //     offset: "10px",
+    //     content: "/common/material.do?selectType=checked",
+    // });
 }
 // 素材库里面返回信息
 function image(imageArray, url) {
-    parent.layer.closeAll();
+    layer.closeAll();
     $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
 }
 

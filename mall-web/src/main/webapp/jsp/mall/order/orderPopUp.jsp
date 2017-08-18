@@ -270,18 +270,15 @@ $(function(){
 				orderMoney: orderMoney,
 				detailObj : JSON.stringify(detail)
 			}, function(result) {
-				parent.location.href = "mallOrder/indexstart.do";
-                parentCloseAll();
-//				parent.layer.closeAll();
+				location.href = "mallOrder/indexstart.do";
+				layer.closeAll();
 			},"json");
 		}else{
 			if(orderMoney < 0){
-                parentAlertMsg("价格必须大于0。");
-//				parent.alertMsg("价格必须大于0。");
+				alertMsg("价格必须大于0。");
 				$('#orderMoney').val("");
 			}else{
-                parentAlertMsg("价格不能为空。");
-//				parent.alertMsg("价格不能为空。");
+				alertMsg("价格不能为空。");
 				/* parent.location.href = "mallOrder/indexstart.do";
 				parent.layer.closeAll(); */
 			}
@@ -308,7 +305,7 @@ $(function(){
 				express: 1
 			}, function(result) {
 				//parent.layer.closeAll();
-				parent.location.href = "mallOrder/indexstart.do";
+				location.href = "mallOrder/indexstart.do";
 			},"json");
 		}
 	});
@@ -322,12 +319,10 @@ $(function(){
 				orderId: orderId,
 				orderSellerRemark: remark
 			}, function(result) {
-                parentCloseAll();
-//				parent.layer.closeAll();
+				layer.closeAll();
 			},"json");
 		}else{
-            parentCloseAll();
-//			parent.layer.closeAll();
+			layer.closeAll();
 		}
 	});
 	
@@ -345,16 +340,14 @@ $(function(){
 				sellerReason: reason
 			}, function(result) {
 				//parent.layer.closeAll();
-                //TODO  parent.location.href
-				parent.location.href =  window.parent.location.href;
+				location.href =  window.parent.location.href;
 			},"json");
 		}
 	});
 	
 	//取消按钮
 	$('#cancelOrder').click(function(){
-//		parent.layer.closeAll();
-        parentCloseAll();
+		layer.closeAll();
 	});
 	
 	$("#thBth").click(function(){
@@ -366,8 +359,7 @@ $(function(){
 			status : 4
 		}, function(result) {
 			//parent.layer.closeAll();
-			//TODO  parent.location.href
-			parent.location.href =  window.parent.location.href;
+			location.href =  window.parent.location.href;
 		},"json");
 	});
 });

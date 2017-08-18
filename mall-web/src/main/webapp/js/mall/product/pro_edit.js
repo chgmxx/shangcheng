@@ -1,5 +1,4 @@
-﻿﻿
-var invenArray = new Array();
+﻿var invenArray = new Array();
 var specificaArray = new Array();
 var params = new Object();
 var shopId = 0;
@@ -15,8 +14,9 @@ $(".subBtn").click(function () {
     productObj = $("#productForm").serializeObject();
     shopId = $(".shop-contain option:selected").val();
     if (shopId == null || $.trim(shopId) == "") {
-        parent.layer.alert("请选择所属商铺", {
+        layer.alert("请选择所属商铺", {
             offset: "30%",
+            shade:[0.1,"#fff"],
             closeBtn: 0
         });
         return;
@@ -34,7 +34,8 @@ $(".subBtn").click(function () {
     //var groupList = eachGroup();// 遍历产品分组
     var groupList = eachProGroup();// 遍历产品分组
     if (groupList.length == 0 && updGroupList.length == 0 && flag) {
-        parent.layer.alert("请选择商品分组", {
+        layer.alert("请选择商品分组", {
+            shade:[0.1,"#fff"],
             offset: "30%",
             closeBtn: 0
         });
@@ -116,16 +117,18 @@ $(".subBtn").click(function () {
         tip = eachSpecifica();// 遍历规格
         if (tip != null) {
             flag = false;
-            parent.layer.alert(tip, {
+            layer.alert(tip, {
                 offset: "30%",
+                shade:[0.1,"#fff"],
                 closeBtn: 0
             });
             $(window.parent).scrollTop(400);
         } else {
             flag = eachInven();// 遍历库存
             if (!flag) {
-                parent.layer.alert("请完善商品库存", {
+                layer.alert("请完善商品库存", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 });
                 $(window.parent).scrollTop(400);
@@ -135,8 +138,9 @@ $(".subBtn").click(function () {
         tip = eachParams();//遍历参数
         if (tip != null && tip != "") {
             flag = false;
-            parent.layer.alert(tip, {
+            layer.alert(tip, {
                 offset: "30%",
+                shade:[0.1,"#fff"],
                 closeBtn: 0
             });
             $(window.parent).scrollTop(400);
@@ -157,7 +161,8 @@ $(".subBtn").click(function () {
         }
 
         if (imageList.length == 0 && delimageList.length == 0 && flag) {
-            parent.layer.alert("商品图至少上传一张", {
+            layer.alert("商品图至少上传一张", {
+                shade:[0.1,"#fff"],
                 offset: "30%",
                 closeBtn: 0
             });
@@ -181,8 +186,9 @@ $(".subBtn").click(function () {
         if (isFenbiChangePro) {
             var changeFenbi = $(".changeFenbi").val();
             if (changeFenbi == null || changeFenbi == "") {
-                parent.layer.alert("请填写兑换粉币值", {
+                layer.alert("请填写兑换粉币值", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 });
                 flag = false;
@@ -194,8 +200,9 @@ $(".subBtn").click(function () {
         if (isShowViews) {
             var viewsNum = $(".viewsNum").val();
             if (viewsNum == null || viewsNum == "") {
-                parent.layer.alert("请填写浏览量", {
+                layer.alert("请填写浏览量", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 });
                 flag = false;
@@ -211,8 +218,9 @@ $(".subBtn").click(function () {
          }*/
         if (flag) {
             if (!validateForm()) {
-                parent.layer.alert("请完善商品信息", {
+                layer.alert("请完善商品信息", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 });
             } else {
@@ -297,11 +305,12 @@ $(".savePage").click(function () {
  * 保存并送审
  */
 $(".saveStatusPage").click(function () {
-    parent.layer.confirm('保存并送审后商品不允许修改，您确定要保存并送审商品？', {
+    layer.confirm('保存并送审后商品不允许修改，您确定要保存并送审商品？', {
         btn: ['确定', '取消'],
+        shade:[0.1,'#fff'],
         offset: '100px'
     }, function () {
-        parent.layer.closeAll();
+        layer.closeAll();
         saveUpd(2);
     });
 });
@@ -347,8 +356,8 @@ function saveUpd(type) {
 
     /*console.log(JSON.stringify(params))*/
     // loading层
-    var layerLoad = parent.layer.load(1, {
-        shade: [0.3, '#000'],
+    var layerLoad = layer.load(1, {
+        shade: [0.3, '#fff'],
         offset: "30%"
     });
     var proId = $(".proId").val();
@@ -363,23 +372,25 @@ function saveUpd(type) {
         dataType: "json",
         timeout: 60000 * 60,//一小时的超时时间
         success: function (data) {
-            parent.layer.closeAll();
+            layer.closeAll();
             if (data.code == 0) {// 重新登录
-                parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                layer.alert("操作失败，长时间没操作，跳转到登录页面", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
                     location.href = "/user/tologin.do";
                 });
             } else if (data.code == 1) {
-                var tip = parent.layer.alert("编辑成功", {
+                var tip = layer.alert("编辑成功", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
-                    parent.layer.close(tip);
+                    layer.close(tip);
                     if (type == 0) {
                         var pId = data.id;
-                        window.parent.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
+                        window.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
                     } else {
                         var urls = $("input.urls").val();
                         if (urls == null || urls == "") {
@@ -395,15 +406,16 @@ function saveUpd(type) {
                 if (data.msg != "") {
                     msg = data.msg;
                 }
-                parent.layer.alert(msg, {
+                layer.alert(msg, {
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
             }
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parent.layer.closeAll();
-            parent.layer.alert("编辑失败", {
+            layer.alert("编辑失败", {
+                shade:[0.1,"#fff"],
                 offset: "30%"
             });
             return;

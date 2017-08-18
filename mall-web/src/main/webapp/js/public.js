@@ -7,14 +7,16 @@
 //微信公众号还未绑定，跳转页面
 function a() {
     layer.alert("还未绑定微信公众号，请先绑定微信公众号", {
+        shade:[0.1,"#fff"],
         offset: "30%",
         closeBtn: 0
     }, function () {
-        parent.layer.alert("绑定公众前，请先确认公众号没有授权给其他第三方平台，否则会影响正常的业务处理", {
+        layer.alert("绑定公众前，请先确认公众号没有授权给其他第三方平台，否则会影响正常的业务处理", {
+            shade:[0.1,"#fff"],
             offset: "30%",
             closeBtn: 0
         }, function (index) {
-            parent.layer.close(index);
+            layer.close(index);
             window.location.href = "/wx/api.do";
         });
     });

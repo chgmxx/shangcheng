@@ -243,6 +243,7 @@
         </div>
     </div>
 </div>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript" src="/js/mall/product/pro_index.js?<%= System.currentTimeMillis()%>"></script>
 <script type="text/javascript">
     /*全选 反选*/

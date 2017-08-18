@@ -250,8 +250,8 @@
         /**打开一个询问框**/
         function openConfirm(status) {
             //询问框
-            //TODO  window.parent.layer.confirm
-            window.parent.layer.confirm("确定要修改报价单状态吗?", {
+            window.layer.confirm("确定要修改报价单状态吗?", {
+                shade:[0.1,'#fff'],
                 btn: ['确定', '取消'],
                 offset: '40%'
             }, function () {
@@ -263,8 +263,7 @@
                     success: function (data) {
                     }
                 });
-                parentCloseAll();
-//                window.parent.layer.closeAll();
+                window.layer.closeAll();
                 location.href = "/purchaseOrder/orderIndexDetail.do?orderId=${order.id}";
             }, function () {
             });

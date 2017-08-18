@@ -42,8 +42,7 @@
                 var proId = json.id;
                 getProductId(proId, json);
             } else if (isSpe == 0) {
-                //TODO parent.getProductGroup
-                parent.getProductGroup(json, null);//方法回调
+                getProductGroup(json, null);//方法回调
                 closeWindow();
             }
         }
@@ -55,10 +54,8 @@
 
         function closeWindow() {
             //当你在iframe页面关闭自身时
-            //TODO parent.layer.getFrameIndex
-            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parentCloseAll(index);
-//            parent.layer.close(index); //再执行关闭
+            var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            layer.close(index); //再执行关闭
         }
 
         function getProductId(proId, json) {
@@ -74,8 +71,7 @@
                     if (data != null && data.list != null) {
                         proSpecArr = data.list;
                     }
-                    //TODO parent.getProductGroup
-                    parent.getProductGroup(json, proSpecArr);//方法回调
+                    getProductGroup(json, proSpecArr);//方法回调
                     closeWindow();
                 }
 

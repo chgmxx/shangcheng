@@ -94,15 +94,16 @@
     }
     //弹出素材库
     function materiallayer() {
-        layer.open({
-            type: 2,
-            title: '素材库',
-            shadeClose: true,
-            shade: 0.2,
-            area: ['820px', '500px'],
-            offset: "10px",
-            content: '/common/material.do',
-        });
+        fhmater(2);
+//        layer.open({
+//            type: 2,
+//            title: '素材库',
+//            shadeClose: true,
+//            shade:[0.2,"#fff"],
+//            area: ['820px', '500px'],
+//            offset: "10px",
+//            content: '/common/material.do',
+//        });
     }
     //素材库里面返回信息
     function image(id, url) {
@@ -116,8 +117,7 @@
 
     //回调方法
     function hdhtml(id) {
-        parentCloseAll();
-//        parent.layer.closeAll();
+        layer.closeAll();
         $("#main").attr("src", "/mallhtml/htmllist.do?pageNum=1");
         $("#id").val(id);
         $("#xinfrom").submit();//post 请求弹出新页面;

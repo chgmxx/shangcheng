@@ -136,7 +136,8 @@ $(function () {
             success: function (data) {
                 /*console.log(data);*/
                 if (data.result == "1") {
-                    parent.layer.alert("保存成功", {
+                    layer.alert("保存成功", {
+                        shade:[0.1,"#fff"],
                         offset: "30%",
                         end: function () {
                             /* location.reload();*///刷新本页面
@@ -171,7 +172,8 @@ function isCheck(obj) {
 }
 
 function promMsg(content) {
-    parent.layer.alert(content, {
+    layer.alert(content, {
+        shade:[0.1,"#fff"],
         offset: "30%"
     });
 };

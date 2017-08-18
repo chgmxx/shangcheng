@@ -39,7 +39,7 @@
                     jsonArry.push(json);
                 }
             });
-            parent.returnBranch(jsonArry);//方法回调
+            returnBranch(jsonArry);//方法回调
             closeWindow();
         }
 
@@ -50,13 +50,14 @@
 
         function closeWindow() {
             //当你在iframe页面关闭自身时
-            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.layer.close(index); //再执行关闭
+            var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            layer.close(index); //再执行关闭
         }
     </script>
 </head>
 
 <body style="margin: 10px">
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div style="padding-bottom: 50px">
     <div class="box-btm30">
 

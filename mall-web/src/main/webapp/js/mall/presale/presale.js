@@ -1,5 +1,4 @@
-﻿﻿﻿
-/**
+﻿/**
  * 删除预售
  */
 function deletePresale(obj, type) {
@@ -10,10 +9,10 @@ function deletePresale(obj, type) {
             msg = "使失效";
         }
         // 询问框
-        parent.layer.confirm('您确定要' + msg + '？', {
+        layer.confirm('您确定要' + msg + '？', {
             btn: ['确定', '取消'],
             offset: "30%",
-            shade: [0.1, '#000']
+            shade: [0.1, '#fff']
             // 按钮
         }, function () {
             // loading层
@@ -31,30 +30,31 @@ function deletePresale(obj, type) {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    layer.close(layerLoad);
                     if (data.code == 1) {
-                        var tip = parent.layer.alert(msg + "成功", {
+                        var tip = layer.alert(msg + "成功", {
                             offset: "30%",
                             closeBtn: 0
                         }, function (index) {
-                            parent.layer.close(tip);
+                            layer.close(tip);
                             location.href = window.location.href;
                         });
                     } else {// 编辑失败
-                        var tip = parent.layer.alert(msg + "失败", {
+                        var tip = layer.alert(msg + "失败", {
                             offset: "30%"
                         });
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert(msg + "失败", {
+
+                    layer.close(layerLoad);
+                    layer.alert(msg + "失败", {
                         offset: "30%"
                     });
                     return;
                 }
             });
-            parent.layer.closeAll();
+            layer.closeAll();
         });
     }
 
@@ -296,40 +296,40 @@ function editPresale() {
     var start = new Date(sStartTime.replace("-", "/").replace("-", "/"));
     var end = new Date(sEndTime.replace("-", "/").replace("-", "/"));
     if (shopId == null || shopId == "") {
-        parent.layer.msg('请选择店铺', {
+        layer.msg('请选择店铺', {
             icon: 1,
             offset: "30%",
-            shade: [0.1, '#000']
+            shade: [0.1, '#fff']
         });
     } else if (productId == null || productId == "") {
-        parent.layer.msg('请选择商品', {
+        layer.msg('请选择商品', {
             icon: 1,
             offset: "30%",
-            shade: [0.1, '#000']
+            shade: [0.1, '#fff']
         });
     } else if (sStartTime == null || $.trim(sStartTime) == "") {
-        parent.layer.msg('请选择活动开始时间', {
+        layer.msg('请选择活动开始时间', {
             icon: 1,
             offset: "30%",
-            shade: [0.1, '#000']
+            shade: [0.1, '#fff']
         });
     } else if (sEndTime == null || sEndTime == "") {
-        parent.layer.msg('请选择活动结束时间', {
+        layer.msg('请选择活动结束时间', {
             icon: 1,
             offset: "30%",
-            shade: [0.1, '#000']
+            shade: [0.1, '#fff']
         });
     } else if (start * 1 > end * 1) {
-        parent.layer.msg('活动开始时间必须要早于活动结束时间', {
+        layer.msg('活动开始时间必须要早于活动结束时间', {
             icon: 1,
             offset: "30%",
-            shade: [0.1, '#000']
+            shade: [0.1, '#fff']
         });
     } else if (!flag) {
-        parent.layer.msg('请完善商品信息', {
+        layer.msg('请完善商品信息', {
             icon: 1,
             offset: "30%",
-            shade: [0.1, '#000']
+            shade: [0.1, '#fff']
         });
     } else {
         var presale = $("#groupForm").serializeObject();
@@ -357,9 +357,9 @@ function editPresale() {
 
         if (flag) {
             // loading层
-            var layerLoad = parent.layer.load(1, {
+            var layerLoad = layer.load(1, {
                 offset: "30%",
-                shade: [0.1, '#000']
+                shade: [0.1, '#fff']
                 // 0.1透明度的白色背景
             });
             $.ajax({
@@ -368,40 +368,46 @@ function editPresale() {
                 data: datas,
                 dataType: "json",
                 success: function (data) {
-                    parent.layer.close(layerLoad);
+                    layer.close(layerLoad);
                     if (data.code == 1) {
-                        var tip = parent.layer.alert("编辑成功", {
+                        var tip = layer.alert("编辑成功", {
                             offset: "30%",
+                            shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
-                            parent.layer.close(tip);
+                            layer.close(tip);
                             location.href = "/mPresale/index.do";
                         });
                     } else if (data.code == -2) {
-                        var tip = parent.layer.alert("正在进行预售的活动不能修改", {
+                        var tip = layer.alert("正在进行预售的活动不能修改", {
                             offset: "30%",
+                            shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else if (data.code == -3) {
-                        var tip = parent.layer.alert("已失效的预售不能进行修改", {
+                        var tip = layer.alert("已失效的预售不能进行修改", {
                             offset: "30%",
+                            shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else if (data.code == 0) {
-                        var tip = parent.layer.alert("同一个商品只能参与一个预售活动", {
+                        var tip = layer.alert("同一个商品只能参与一个预售活动", {
                             offset: "30%",
+                            shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else {// 编辑失败
-                        parent.layer.alert("编辑失败", {
+                        layer.alert("编辑失败", {
+                            shade:[0.1,"#fff"],
                             offset: "30%"
                         });
                     }
 
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parent.layer.close(layerLoad);
-                    parent.layer.alert("编辑失败", {
+                    layer.close(layerLoad);
+                    layer.alert("编辑失败", {
+                        shade:[0.1,"#fff"],
                         offset: "30%"
                     });
                     return;
@@ -522,10 +528,10 @@ function validatePriceTime() {
 
         }
         if (!flag) {
-            parent.layer.msg(msg, {
+            layer.msg(msg, {
                 icon: 1,
                 offset: "30%",
-                shade: [0.1, '#000']
+                shade: [0.1, '#fff']
             });
             return false;
         } else if (!isNull) {
@@ -652,9 +658,9 @@ function choosePro() {
     }
     loadWindow();
     if (shopId != null && shopId != "") {
-        parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+        parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
     } else {
-        parent.alertMsg("请选择商品");
+        alertMsg("请选择商品");
     }
 };
 /**

@@ -13,9 +13,9 @@ function save() {
         return;
     }
     if (requiredValidate()) {
-        var index = parent.layer.load(3, {
+        var index = layer.load(3, {
             offset: '40%',
-            shade: [0.4, '#8E8E8E']
+            shade: [0.4, '#fff']
         });
         var obj = $("#tab").serializeObject();
         var params = {
@@ -27,8 +27,8 @@ function save() {
             data: params,
             dataType: "json",
             success: function (data) {
-                parent.layer.close(index);
-                parent.alertMsg(data.message);
+                layer.close(index);
+                alertMsg(data.message);
                 if (data.result) {
                     location.href = $(".urls").val();
                 }

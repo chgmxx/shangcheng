@@ -26,10 +26,8 @@
             success: function (data) {
                 if (data == true || data == "true") {
                     top.frames[0].location.reload();
-                    //TODO parent.layer.getFrameIndex
-                    var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                    parentCloseAll();
-//                    parent.layer.close(index);
+                    var index = layer.getFrameIndex(window.name); //获取窗口索引
+                    layer.close(index);
                 } else {
                     alert("回复失败!");
                 }

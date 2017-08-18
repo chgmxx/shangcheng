@@ -125,18 +125,19 @@ function valiTime(obj) {
 
 /**选择图片**/
 function choosePicture() {
-    parent.layer.open({
-        type: 2,
-        title: '素材库',
-        shadeClose: true,
-        shade: 0.2,
-        area: ['820px', '500px'],
-        offset: "10px",
-        content: "/common/material.do?selectType=checked",
-    });
+        fhmater(1);
+    // parent.layer.open({
+    //     type: 2,
+    //     title: '素材库',
+    //     shadeClose: true,
+    //     shade: 0.2,
+    //     area: ['820px', '500px'],
+    //     offset: "10px",
+    //     content: "/common/material.do?selectType=checked",
+    // });
 }
 /**选择图片回调**/
-function fhmateriallayer(imageArray, url) {
+function image(imageArray, url) {
     var imgHttp = $(".imgHttp").val();
     var html = "";
     if (imageArray != null && imageArray.length > 0) {
@@ -225,13 +226,13 @@ function openMap() {
         if ($("#visitProvinceId").val() != "0" && $("#visitProvinceId").val() != undefined) {
             address = $("#visitProvinceId option:selected").text();
         } else {
-            parent.alertMsg("请选择省份!");
+            layer.msg("请选择省份!");
             return;
         }
         if ($("#visitCityId").val() != "0" && $("#visitCityId").val() != undefined) {
             address += $("#visitCityId option:selected").text();
         } else {
-            parent.alertMsg("请选择城市!");
+            layer.msg("请选择城市!");
             return;
         }
     }
@@ -256,7 +257,8 @@ function openMap() {
                 if (latitude != "" && longitude != "") {
                     url += "&coordtype=5&coord=" + latitude + "," + longitude;
                 }
-                parent.layer.open({
+
+                layer.open({
                     area: ['800px', '600px'],
                     title: [
                         '消息',
@@ -267,7 +269,7 @@ function openMap() {
                     btn: ["确定", "取消"],
                     content: [url, "no"],
                     yes: function (index) {
-                        parent.layer.close(index);
+                        layer.close(index);
                     }
                 });
             }
@@ -470,9 +472,9 @@ function save() {
             }
         }
 
-        var index = parent.layer.load(3, {
+        var index = layer.load(3, {
             offset: '40%',
-            shade: [0.4, '#8E8E8E']
+            shade: [0.4, '#fff']
         });
         $.ajax({
             url: "/mFreight/editTake.do",
@@ -480,11 +482,11 @@ function save() {
             dataType: "json",
             type: "post",
             success: function (data) {
-                parent.layer.close(index);
+                layer.close(index);
                 if (data.flag) {
                     location.href = "/mFreight/takeindex.do";
                 } else {
-                    parent.alertMsg("编辑自提点失败，请稍后提交");
+                    layer.msg("编辑自提点失败，请稍后提交");
                 }
             }
         });
@@ -606,7 +608,7 @@ function onLoad() {
 
             loadTimes(obj);
         } else {
-            parent.alertMsg("请先确认接待时间再编辑");
+            layer.alert("请先确认接待时间再编辑");
         }
 
     });

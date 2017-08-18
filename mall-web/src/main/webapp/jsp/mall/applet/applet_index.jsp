@@ -41,6 +41,7 @@
 </head>
 <body>
 <div class="con_div">
+    <jsp:include page="/jsp/common/headerCommon.jsp" />
     <c:if test="${empty isNoAdminFlag }">
         <div id="con-box">
             <c:if test="${!empty shoplist }">

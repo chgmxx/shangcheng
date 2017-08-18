@@ -69,33 +69,27 @@
         var companyInternet = $("input[name='companyInternet']").val();
         var companyAddress = $("#address").val();
         if ($.trim(companyName) == "") {
-            parentAlertMsg("公司名称不可以为空!")
-//            window.parent.alertMsg("公司名称不可以为空!")
+            window.alertMsg("公司名称不可以为空!")
             return;
         }
         if ($.trim(companyTel) == "") {
-            parentAlertMsg("公司电话不可以为空!")
-//            window.parent.alertMsg("公司电话不可以为空!")
+            window.alertMsg("公司电话不可以为空!")
             return;
         }
         if (!checkTel($.trim(companyTel)) && !checkPhone($.trim(companyTel))) {
-            parentAlertMsg("公司联系电话有误!")
-//            window.parent.alertMsg("公司联系电话有误!")
+            window.alertMsg("公司联系电话有误!")
             return;
         }
         if ($.trim(companyInternet) == "") {
-            parentAlertMsg("公司官网不可以为空!")
-//            window.parent.alertMsg("公司官网不可以为空!")
+            window.alertMsg("公司官网不可以为空!")
             return;
         }
         if (!checkUrl($.trim(companyInternet))) {
-            parentAlertMsg("公司官网链接有误!")
-//            window.parent.alertMsg("公司官网链接有误!")
+            window.alertMsg("公司官网链接有误!")
             return;
         }
         if ($.trim(companyAddress) == "") {
-            parentAlertMsg("公司地址不可以为空!")
-//            window.parent.alertMsg("公司地址不可以为空!")
+            window.alertMsg("公司地址不可以为空!")
             return;
         }
         $.ajax({
@@ -105,12 +99,10 @@
             dataType: "JSON",
             success: function (data) {
                 if (data.result == true || data.result == "true") {
-                    parentAlertMsg("公司信息保存成功!")
-//                    window.parent.alertMsg("公司信息保存成功!")
+                    window.alertMsg("公司信息保存成功!")
                     location.href = "/purchaseCompany/companyIndex.do";
                 } else {
-                    parentAlertMsg("公司信息保存失败!")
-//                    window.parent.alertMsg("公司信息保存失败!")
+                    window.alertMsg("公司信息保存失败!")
                 }
             }
         });
@@ -149,21 +141,21 @@
             if (latitude != "" && longitude != "") {
                 url += address;
             }
-            parentOpenIframe('消息','800px', '600px',[url, "no"]);
-//            window.parent.layer.open({
-//                area: ['800px', '600px'],
-//                title: [
-//                    '消息',
-//                    'background-color:#5FBFE7; color:#fff;'
-//                ],
-//                offset: "5%",
-//                type: 2,
-//                btn: ["确定", "取消"],
-//                content: [url, "no"], //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
-//                yes: function (index) {
-//                    window.parent.layer.close(index);
-//                }
-//            });
+            window.layer.open({
+                area: ['800px', '600px'],
+                title: [
+                    '消息',
+                    'background-color:#5FBFE7; color:#fff;'
+                ],
+                shade:[0.1,"#fff"],
+                offset: "5%",
+                type: 2,
+                btn: ["确定", "取消"],
+                content: [url, "no"], //这里content是一个URL，如果你不想让iframe出现滚动条，你还可以content: ['http://sentsin.com', 'no']
+                yes: function (index) {
+                    window.layer.close(index);
+                }
+            });
         });
     });
 

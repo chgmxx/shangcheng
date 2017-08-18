@@ -34,6 +34,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <c:set var="isFirstParents" value="1"></c:set>
 <c:set var="groupPId" value="0"></c:set>
 <c:set var="pIds" value="0"></c:set>

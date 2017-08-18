@@ -50,11 +50,10 @@
 
 <script type="text/javascript">
     $("#submit").click(function () {
-        var layerLoad = parentLayerLoad();
-//        var layerLoad = parent.layer.load(1, {
-//            shade: [0.3, '#000'],
-//            offset: "30%"
-//        });
+        var layerLoad = layer.load(1, {
+            shade: [0.3, '#fff'],
+            offset: "30%"
+        });
         var id = $(".id").val();
         $.ajax({
             type: "post",
@@ -64,10 +63,9 @@
             },
             dataType: "json",
             success: function (data) {
-                parentCloseAll();
-//                parent.layer.close(layerLoad);
+                layer.close(layerLoad);
                 if (data.result == true) {
-                    parent.location.href = "/mPresale/to_deposit.do";
+                    location.href = "/mPresale/to_deposit.do";
                 } else {// 编辑失败
                     if (data.msg == null || data.msg == "") {
                         alert("退定金失败，请稍后重试");
@@ -78,8 +76,7 @@
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parentCloseAll();
-//                parent.layer.close(layerLoad);
+                layer.close(layerLoad);
                 alert("退定金金失败，请稍后重试");
                 return;
             }

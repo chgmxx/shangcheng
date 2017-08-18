@@ -100,7 +100,7 @@
     $(".shopId").find("option[value=" + shopId + "]").attr("selected", true);
     function returns(depositId) {
         parentOpenIframe("退定金", "500px", "180px", "/mPresale/returnPresalePopUp.do?depositId=" + depositId);
-        parent.openIframeNoScoll("退定金", "500px", "180px", "/mPresale/returnPresalePopUp.do?depositId=" + depositId);
+//        parent.openIframeNoScoll("退定金", "500px", "180px", "/mPresale/returnPresalePopUp.do?depositId=" + depositId);
     }
 </script>
 </body>

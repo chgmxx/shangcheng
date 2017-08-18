@@ -1,5 +1,4 @@
-﻿﻿
-$(".productGroup").each(function () {
+﻿$(".productGroup").each(function () {
     groups(this);
 });
 /**
@@ -14,6 +13,7 @@ function findChildGroup(obj, index) {
             var gId = $(obj).find("option:selected").val();
             if (gId == groupPId) {
                 bol = false;
+                //noinspection JSAnnotator
                 break;
             }
         }
@@ -350,7 +350,7 @@ function loadGroups() {
         }
         //console.log(group)
 
-        parent.openIframe("选择分组", "500px", "530px", "/mPro/group/getGroups.do?shopId=" + shopId + "&proId=" + proId + "&group=" + group)
+        parentOpenIframe("选择分组", "500px", "530px", "/mPro/group/getGroups.do?shopId=" + shopId + "&proId=" + proId + "&group=" + group)
     });
 }
 
@@ -391,5 +391,5 @@ function returnVal(arr) {
     if (groups != null && groups != "") {
         $("textarea.groups").val(groups);
     }
-    parent.layer.closeAll();
+    layer.closeAll();
 }

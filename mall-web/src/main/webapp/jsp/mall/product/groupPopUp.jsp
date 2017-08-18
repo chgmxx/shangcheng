@@ -18,6 +18,7 @@
     <link rel="stylesheet" type="text/css" href="/css/mall/groupPopUp.css"/>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="area-modal">
     <!--  <div class="area-head">选择可配送区域</div> -->
     <!--   <div class="area-main"> -->

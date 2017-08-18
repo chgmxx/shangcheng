@@ -1,4 +1,4 @@
-﻿var parentLayer = window.parent.layer;
+﻿var parentLayer = window.layer;
 /**
  * 删除
  */
@@ -10,11 +10,12 @@ $(".delete").click(function () {
         isDelete: 1
     };
     // 询问框
-    parent.layer.confirm('您确定要删除此产品？', {
+    layer.confirm('您确定要删除此产品？', {
         btn: ['确定', '取消'],
+        shade:[0.1,'#fff'],
         offset: '100px'
     }, function () {
-        parentLayer.closeAll();
+        layer.closeAll();
         deletePro(data, "删除", 1);
     });
 });
@@ -32,8 +33,9 @@ $(".js-batch-viewNum").click(function () {
          }*/
     });
     if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要修改浏览量的商品", {
+            parentLayer.alert("请选择需要修改浏览量的商品", {
             offset: "30%",
+                shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
             parentLayer.closeAll();
@@ -64,6 +66,7 @@ $(".js-batch-sale").click(function () {
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要修改销量基数的商品", {
             offset: "30%",
+            shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
             parentLayer.closeAll();
@@ -91,6 +94,7 @@ $(".viewNum").click(function () {
 function upViewsNum(nums, isView, data) {
     parentLayer.open({
         area: ["400px", "200px"],
+        shade:[0.1,"#fff"],
         offset: '100px',
         title: "修改浏览量",
         type: 1,
@@ -154,6 +158,7 @@ function upSaleBase(saleBase, data) {
         area: ["400px", "200px"],
         offset: '100px',
         title: "修改销量基数",
+        shade:[0.1,"#fff"],
         type: 1,
         content: $("div.saleBase").html(),
         btn: ['确定', '取消'],
@@ -183,6 +188,7 @@ $(".send_valid").click(function () {
     id.push($(this).attr("id"));
     parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
         btn: ['确定', '取消'],
+        shade:[0.1,'#fff'],
         offset: '100px'
     }, function () {
         parentLayer.closeAll();
@@ -211,6 +217,7 @@ $(".js-batch-valid").click(function () {
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要送审的商品", {
             offset: "30%",
+            shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
             parentLayer.closeAll();
@@ -219,6 +226,7 @@ $(".js-batch-valid").click(function () {
         if (id.length == 0 && flag) {
             parentLayer.alert("未送审的商品才能进行送审操作", {
                 offset: "30%",
+                shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
@@ -226,6 +234,7 @@ $(".js-batch-valid").click(function () {
         } else {
             parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
                 btn: ['确定', '取消'],
+                shade:[0.1,'#fff'],
                 offset: '100px'
             }, function () {
                 parentLayer.closeAll();
@@ -247,6 +256,7 @@ $("a.sj").click(function () {
     id.push($(this).attr("id"));
     parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
         btn: ['确定', '取消'],
+        shade:[0.1,'#fff'],
         offset: '100px'
     }, function () {
         parentLayer.closeAll();
@@ -276,6 +286,7 @@ $(".js-batch-load").click(function () {
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要上架的商品", {
             offset: "30%",
+            shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
             parentLayer.closeAll();
@@ -284,6 +295,7 @@ $(".js-batch-load").click(function () {
         if (id.length == 0 && flag) {
             parentLayer.alert("审核通过后的商品才能上架商品", {
                 offset: "30%",
+                shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
@@ -291,6 +303,7 @@ $(".js-batch-load").click(function () {
         } else {
             parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
                 btn: ['确定', '取消'],
+                shade:[0.1,'#fff'],
                 offset: '100px'
             }, function () {
                 parentLayer.closeAll();
@@ -313,6 +326,7 @@ $("a.xj").click(function () {
     id.push($(this).attr("id"));
     parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
         btn: ['确定', '取消'],
+        shade:[0.1,'#fff'],
         offset: '100px'
     }, function () {
         parentLayer.closeAll();
@@ -343,6 +357,7 @@ $(".js-batch-unload").click(function () {
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要下架的商品", {
             offset: "30%",
+            shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
             parentLayer.closeAll();
@@ -351,6 +366,7 @@ $(".js-batch-unload").click(function () {
         if (id.length == 0 && flag) {
             parentLayer.alert("审核通过后的商品才能下架商品", {
                 offset: "30%",
+                shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
@@ -358,6 +374,7 @@ $(".js-batch-unload").click(function () {
         } else {
             parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
                 btn: ['确定', '取消'],
+                shade:[0.1,'#fff'],
                 offset: '100px'
             }, function () {
                 parentLayer.closeAll();
@@ -391,6 +408,7 @@ $(".js-batch-delete").click(function () {
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要删除的商品", {
             offset: "30%",
+            shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
             parentLayer.closeAll();
@@ -399,6 +417,7 @@ $(".js-batch-delete").click(function () {
         if (id.length == 0 && flag) {
             parentLayer.alert("未上架的商品才能进行删除操作", {
                 offset: "30%",
+                shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
@@ -406,6 +425,7 @@ $(".js-batch-delete").click(function () {
         } else {
             parentLayer.confirm('您确定要批量删除选中的产品？', {
                 btn: ['确定', '取消'],
+                shade:[0.1,'#fff'],
                 offset: '100px'
             }, function () {
                 parentLayer.closeAll();
@@ -424,7 +444,7 @@ $(".js-batch-delete").click(function () {
 
 function deletePro(data, tip, index) {
     var layerLoad = parentLayer.load(1, {
-        shade: [0.3, '#000']
+        shade: [0.3, '#fff']
     });
     $.ajax({
         type: "post",
@@ -433,20 +453,22 @@ function deletePro(data, tip, index) {
         dataType: "json",
         success: function (data) {
             layer.close(layerLoad);
-            parent.layer.closeAll();
+            // parent.layer.closeAll();
             if (data.code == 0) {// 重新登录
-                parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                layer.alert("操作失败，长时间没操作，跳转到登录页面", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
                     location.href = "/user/tologin.do";
                 });
             } else if (data.code == 1) {
-                var tipLayer = parent.layer.alert(tip + "成功", {
+                var tipLayer = layer.alert(tip + "成功", {
                     offset: "30%",
+                    shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
-                    parent.layer.close(tipLayer);
+                    layer.close(tipLayer);
                     if (index == 1) {
                         location.href = "/mPro/index.do";
                     } else {
@@ -454,14 +476,16 @@ function deletePro(data, tip, index) {
                     }
                 });
             } else {// 编辑失败
-                parent.layer.alert(tip + "失败", {
+                layer.alert(tip + "失败", {
+                    shade:[0.1,"#fff"],
                     offset: "30%"
                 });
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parent.layer.closeAll();
-            parent.layer.alert(tip + "失败", {
+            layer.closeAll();
+            layer.alert(tip + "失败", {
+                shade:[0.1,"#fff"],
                 offset: "30%"
             });
             return;
@@ -522,7 +546,7 @@ function getProduct(type, proName) {
  * @param id
  */
 $(".qrcode").click(function () {
-    parent.layer.open({
+    layer.open({
         type: 1,
         title: "商品预览",
         skin: 'layui-layer-rim', //加上边框
@@ -535,7 +559,7 @@ $(".qrcode").click(function () {
 $(".toShops").click(function () {
     var id = $(this).attr("id");
     var shopId = $(this).attr("sId");
-    parent.layer.open({
+    layer.open({
         type: 2,
         title: "到店购买",
         skin: 'layui-layer-rim', //加上边框
@@ -546,19 +570,19 @@ $(".toShops").click(function () {
     });
 });
 function viewQR(id) {
-    parent.openIframeNoScoll("店铺二维码", "400px", "300px", "store/viewQR.do?id=" + id);
+    parentOpenIframe("店铺二维码", "400px", "300px", "store/viewQR.do?id=" + id);
 }
 /**
  * 同步
  */
 $(".sync").click(function () {
     var proId = $(this).attr("id");
-    parent.openIframe("同步商品", "500px", "530px", "/mPro/group/getGroups.do?proId=" + proId + "&type=1");
+    parentOpenIframe("同步商品", "500px", "530px", "/mPro/group/getGroups.do?proId=" + proId + "&type=1");
 });
 /**
  * 一键同步
  */
 function syncProductByShop() {
-    parent.openIframe("一键同步商品", "500px", "200px", "/mPro/group/syncProduct.do");
+    parentOpenIframe("一键同步商品", "500px", "200px", "/mPro/group/syncProduct.do");
 }
 

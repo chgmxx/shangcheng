@@ -195,21 +195,20 @@
         lodop_prview(url, JSON.stringify(results));
     }
     function prevPage(orderId, page) {
-        parentOpenIframe("订单打印", "730px", "360px", "mallOrder/toPrintMallOrder.do?orderId=" + orderId + "&curPage=" + page);
-//		parent.layer.open({
-//			type: 2,
-//		    title: "订单打印",
-//		    shadeClose: true,
-//		    shade: 0.3,
-//		    offset: "20%",
-//		    shadeClose : false,
-//		    area: ["730px","360px"],
-//		    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId+"&curPage="+page,
-//		    success: function(layero, index){
-//		    	var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-//		    	parent.layer.close(index);
-//		     }
-//		});
+		layer.open({
+			type: 2,
+		    title: "订单打印",
+		    shadeClose: true,
+            shade:[0.3,"#fff"],
+		    offset: "20%",
+		    shadeClose : false,
+		    area: ["730px","360px"],
+		    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId+"&curPage="+page,
+		    success: function(layero, index){
+		    	var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		    	layer.close(index);
+		     }
+		});
     }
 </script>
 </html>

@@ -60,9 +60,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		 * @param id
 		 */
 		$(".qrcode").click(function(){
-			parent.layer.open({
+			layer.open({
 				  type: 1,
 				  title :"页面预览",
+				  shade:[0.1,"#fff"],
 				  skin: 'layui-layer-rim', //加上边框
 				  area: ['200px', '240px'], //宽高
 				  offset: "30%",
@@ -76,6 +77,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <body>
   <input type="hidden" class="urls" value="${urls }" />
 <div class="con_body">
+	<jsp:include page="/jsp/common/headerCommon.jsp"/>
   <c:if test="${empty isNoAdminFlag }">
   <!--post 请求。弹出新页面  -->
   <form id="xinfrom" method="post" action="/mallPage/designPage.do" target="_blank">

@@ -29,6 +29,7 @@
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="page-body">
     <ul class="page-tab">
         <li>
