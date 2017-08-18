@@ -79,7 +79,7 @@ public class HttpSignUtil {
     public static Map< String,Object > SignHttpInsertOrUpdate( Object params, String url, int... type ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	JSONObject resultObj = SignHttpJson( params, url, type );
-	logger.info( "调用接口返回值 = " + resultObj.getString( "data" ) );
+	/*logger.info( "调用接口返回值 = " + resultObj.getString( "data" ) );*/
 	int code = resultObj.getInteger( "code" );
 	if ( code == 0 ) {
 	    resultMap.put( "code", 1 );//成功
@@ -90,6 +90,7 @@ public class HttpSignUtil {
 	}
 	if ( resultObj.containsKey( "msg" ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
+	    logger.info( "调用会员接口异常：" + resultObj.getString( "msg" ) );
 	}
 	return resultMap;
     }

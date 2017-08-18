@@ -51,7 +51,7 @@ public class Constants {
     /**
      * 网址名称
      */
-    public final static String doMainName="多粉";
+    public final static String doMainName = "多粉";
 
     /**
      * 发短信model
@@ -59,7 +59,7 @@ public class Constants {
     public static final Integer SMS_MODEL = 5;
 
     /** 商家账户在session key */
-    public static final String SESSION_BUSINESS_KEY =  "business_key";
+    public static final String SESSION_BUSINESS_KEY = "business_key";
 
     /** 商家微信在session key */
     public static final String SESSION_WXPUBLICUSERS_KEY = "wxPublicUsers";
@@ -69,8 +69,9 @@ public class Constants {
 
     public static final String MEMBER_PAY_TYPE = "2";
 
-    /** 发送短信model **/
-    public static final String MOBILE_MODEL = "5";
-
+    /**
+     * 生成二维码所需的场景值
+     */
+    public static final String SCENE_KEY = "3";
 
 }

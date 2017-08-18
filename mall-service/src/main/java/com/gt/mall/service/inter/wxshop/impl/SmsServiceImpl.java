@@ -1,6 +1,7 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
 import com.gt.mall.bean.wxshop.OldApiSms;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
@@ -22,6 +23,7 @@ public class SmsServiceImpl implements SmsService {
 
     @Override
     public boolean sendSmsOld( OldApiSms oldApiSms ) {
+	oldApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", oldApiSms );
 	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, SMS_URL + "sendSmsOld.do", 1 );
