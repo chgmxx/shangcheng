@@ -32,8 +32,7 @@
         id, shop_id , image_url , type, return_url , bus_user_id , create_time , is_delete , is_show
     </sql>
     <sql id="page_Column_List" >
-        i.id, i.shop_id, i.image_url, i.type, return_url,i. bus_user_id, i.create_time, i.is_delete, i.is_show,s.sto_name AS shopName
---         IF(ws.business_name IS NOT NULL ,ws.business_name, s.sto_name) AS shopName
+        i.id, i.shop_id, i.image_url, i.type, return_url,i. bus_user_id, i.create_time, i.is_delete, i.is_show,s.sto_name AS shopName,s.wx_shop_id
     </sql>
 
     <!-- 统计积分图片-->
@@ -49,8 +48,6 @@
         select  <include refid="page_Column_List" />
         from t_mall_integral_image i
         LEFT JOIN t_mall_store s ON i.shop_id = s.id
-        <!-- TODO 需补充关联 t_wx_shop门店数据 -->
---         LEFT JOIN t_wx_shop ws ON s.wx_shop_id = ws.id
         where i.is_delete = 0 and s.is_delete=0 and ws.status!=-1
         <if test="userId != null and userId != ''">
             and i.bus_user_id=#{userId}

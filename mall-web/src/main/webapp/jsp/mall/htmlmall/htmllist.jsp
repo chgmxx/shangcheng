@@ -21,6 +21,7 @@
     <link rel="stylesheet" type="text/css" href="/css/common/comm.css"/>
     <link rel="stylesheet" type="text/css"  href="/css/mall/html/htmllist.css?<%= System.currentTimeMillis()%>"/>
     <script type="text/javascript"  src="/js/plugin/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
+    <script src="/js/plugin/layer/layer.js"></script>
     <%--<script type="text/javascript"  src="/js/zclip/zclip.js?<%= System.currentTimeMillis()%>"></script>--%>
     <style>
         .share {

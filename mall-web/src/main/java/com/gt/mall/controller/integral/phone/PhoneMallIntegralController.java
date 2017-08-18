@@ -3,10 +3,12 @@ package com.gt.mall.controller.integral.phone;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
+import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -55,6 +57,8 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     private MallStoreService         storeService;
     @Autowired
     private MemberService            memberService;
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
 
     /**
      * 进入积分商城
@@ -388,11 +392,11 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    }
 	    pageService.getCustomer( request, userid );
 	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( member ) ) {
-		//TODO 需关连 t_wx_public_users 用户信息
-		//		Map<String, Object> publicMap = pageService.publicUserid(userid);
-		//		if(CommonUtil.isNotEmpty(publicMap)){
-		//		    CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
-		//		}
+		WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId(userid);
+		if ( wxPublicUsers !=null ){
+		    //TODO  CommonUtil.getWxParams
+//		    CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
+		}
 	    }
 	    Object obj = request.getSession().getAttribute( Constants.SESSION_KEY + "integral_order" );
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
@@ -457,11 +461,11 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    }
 	    pageService.getCustomer( request, userid );
 	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( member ) ) {
-		//TODO 需关连 t_wx_public_users 用户信息
-		//		Map<String, Object> publicMap = pageService.publicUserid(userid);
-		//		if(CommonUtil.isNotEmpty(publicMap)){
-		//		    CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
-		//		}
+		WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId(userid);
+		if ( wxPublicUsers !=null ){
+		    //TODO  CommonUtil.getWxParams
+		    //CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
+		}
 	    }
 	    Object obj = request.getSession().getAttribute( Constants.SESSION_KEY + "integral_order" );
 	    if ( CommonUtil.isNotEmpty( obj ) ) {

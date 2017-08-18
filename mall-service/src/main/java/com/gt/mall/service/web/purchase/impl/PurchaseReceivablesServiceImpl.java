@@ -9,6 +9,7 @@ import com.gt.mall.entity.purchase.PurchaseOrder;
 import com.gt.mall.entity.purchase.PurchaseReceivables;
 import com.gt.mall.entity.purchase.PurchaseTerm;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.service.web.purchase.PurchaseReceivablesService;
@@ -38,6 +39,8 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
     private PurchaseTermDAO        purchaseTermDAO;
     @Autowired
     private MemberService          memberService;
+    @Autowired
+    private WxPublicUserService    wxPublicUserService;
 
     @Override
     public SortedMap< Object,Object > cgPay( String url, Integer memberId, Integer busId, String termId, Double money, Double discountmoney, Double fenbi, Integer jifen,
@@ -74,10 +77,9 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	receivables.setReceivablesNumber( receivablesNumber );
 	receivables.setTermId( termId == null || termId.equals( "" ) ? null : Integer.parseInt( termId ) );
 	purchaseReceivablesDAO.insert( receivables );
-	//TODO 需关连 wxPublicUsersMapper方法
-	WxPublicUsers wxPublicUsers = null;
+	//TODO 需关连 wxPayOrderMapper.selectByOutTradeNo 方法
 	WxPayOrder wxPayOrder = null;
-	//        WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByPrimaryKey(member.getPublicId());
+	WxPublicUsers wxPublicUsers = wxPublicUserService.selectById( member.getPublicId() );
 	//        WxPayOrder wxPayOrder = wxPayOrderMapper.selectByOutTradeNo(receivablesNumber);
 	if ( wxPayOrder != null ) {
 	    receivablesNumber = "CG" + System.currentTimeMillis();

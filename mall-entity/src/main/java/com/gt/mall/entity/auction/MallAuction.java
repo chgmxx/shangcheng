@@ -139,6 +139,15 @@ public class MallAuction extends Model< MallAuction > {
     @TableField(exist = false)
     private double nowPrice; //当前价格
 
+    @TableField(exist = false)
+    private int wx_shop_id; //门店ID 关联wx_shop表的id
+
+    @TableField(exist = false)
+    private String shopName;
+
+    @TableField(exist = false)
+    private String proName;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

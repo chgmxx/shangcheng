@@ -83,6 +83,7 @@
     <jsp:include page="page.jsp"></jsp:include>
 </div>
 <script src="/js/plugin/jquery-1.8.3.min.js"></script>
+<script src="/js/plugin/layer/layer.js"></script>
 <jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     function submitForm() {
@@ -104,10 +105,10 @@
                 dataType: "JSON",
                 success: function (data) {
                     if (data.result == true || data.result == "true") {
-                        window.alertMsg("删除成功!");
+                        layer.msg("删除成功!");
                         location.href = "/purchaseCompany/companyIndex.do";
                     } else {
-                        window.alertMsg("删除失败!");
+                        layer.msg("删除失败!");
                     }
                 }
             });

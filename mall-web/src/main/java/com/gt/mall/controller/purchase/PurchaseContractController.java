@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,6 +76,7 @@ public class PurchaseContractController extends BaseController {
 		contract.setId( Integer.parseInt( parms.get( "id" ).toString() ) );
 		contractService.updateById( contract );
 	    } else {
+		contract.setCreateDate( new Date());
 		contractService.insert( contract );
 	    }
 	    map.put( "result", true );

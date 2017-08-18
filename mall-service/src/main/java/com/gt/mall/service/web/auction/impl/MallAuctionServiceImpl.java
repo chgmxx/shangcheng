@@ -2,6 +2,7 @@ package com.gt.mall.service.web.auction.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.wxshop.WsWxShopInfo;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
@@ -10,11 +11,13 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,13 +51,14 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 
     @Autowired
     private MallSearchKeywordService searchKeywordService;
+    @Autowired
+    private WxShopService            wxShopService;
 
     @Override
     public PageUtil selectAuctionByShopId( Map< String,Object > params ) {
 	int pageSize = 10;
 
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
-			: CommonUtil.toInteger( params.get( "curPage" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 	int count = auctionDAO.selectByCount( params );
 
@@ -69,6 +73,10 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		for ( MallAuction auction : AuctionList ) {
 		    int status = isJoinAuction( auction );
 		    auction.setJoinId( status );
+		    WsWxShopInfo wxShopInfo=wxShopService.getShopById(auction.getWx_shop_id());
+		    if (CommonUtil.isNotEmpty( wxShopInfo.getBusinessName()) ){
+			auction.setShopName( wxShopInfo.getBusinessName());
+		    }
 		}
 	    }
 	    page.setSubList( AuctionList );
@@ -128,14 +136,19 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	int num = 0;
 	int code = -1;
 	if ( CommonUtil.isNotEmpty( groupMap.get( "auction" ) ) ) {
-	    MallAuction auction = (MallAuction) JSONObject.toBean( JSONObject.fromObject( groupMap.get( "auction" ) ),
-			    MallAuction.class );
+	    MallAuction auction = (MallAuction) JSONObject.toBean( JSONObject.fromObject( groupMap.get( "auction" ) ), MallAuction.class );
 	    // 判断选择的商品是否已经存在未开始和进行中的拍卖中
 	    List< MallAuction > buyList = auctionDAO.selectAuctionByProId( auction );
 	    if ( buyList == null || buyList.size() == 0 ) {
 		if ( CommonUtil.isNotEmpty( auction.getId() ) ) {
 		    // 判断本商品是否正在拍卖中
 		    MallAuction auc = auctionDAO.selectAuctionByIds( auction.getId() );
+
+		    WsWxShopInfo wxShopInfo=wxShopService.getShopById(auc.getWx_shop_id());
+		    if (CommonUtil.isNotEmpty( wxShopInfo.getBusinessName()) ){
+			auc.setShopName( wxShopInfo.getBusinessName());
+		    }
+
 		    int status = isJoinAuction( auc );
 		    if ( auc.getStatus() == 1 && status > 0 ) {// 正在进行拍卖的商品不能修改
 			code = -2;
@@ -275,7 +288,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		if ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) {
 
 					/*map2.put("price", Math.ceil((Double.parseDouble(map2.get(
-                            "price").toString()) * discount) * 100) / 100);*/
+			    "price").toString()) * discount) * 100) / 100);*/
 		}
 		list.add( map2 );
 	    }

@@ -18,10 +18,10 @@
     <link rel="stylesheet" type="text/css" href="/css/common.css?<%=System.currentTimeMillis()%>"/>
     <link rel="stylesheet" type="text/css" href="/css/mall/auction/aucMargin.css"/>
     <link rel="stylesheet" type="text/css" href="/css/mall/manageList.css"/>
-    <script src="/js/plugin/jquery-1.8.0.min.js"></script>
+    <script src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
-    <script type="text/javascript" src="/js/common/util.js"></script>
+    <script type="text/javascript" src="/js/util.js"></script>
     <%--<script type="text/javascript" src="/js/zclip/zclip.js"></script>--%>
     <script type="text/javascript" src="/js/common/copy.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>

@@ -439,6 +439,10 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    MallAuctionOffer offer = new MallAuctionOffer();
 		    offer.setAucId( auction.getId() );
 		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
+		    for (MallAuctionOffer offer1: offerList ) {
+			Member member1=memberService.findMemberById( offer.getUserId(),null );
+			offer1.setNickname( member1.getNickname());
+		    }
 		    request.setAttribute( "offerList", offerList );
 		    if ( auction.getStatus() == -1 ) {
 			//获取加价拍卖胜出的人
@@ -748,6 +752,10 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 			MallAuctionOffer offer = new MallAuctionOffer();
 			offer.setAucId( auction.getId() );
 			List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
+			for (MallAuctionOffer offer1: offerList ) {
+			    Member member1=memberService.findMemberById( offer.getUserId(),null );
+			    offer1.setNickname( member1.getNickname());
+			}
 			request.setAttribute( "offerList", offerList );
 		    } else {//降价拍
 			List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息

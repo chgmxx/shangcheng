@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wxshop.WsWxShopInfo;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyPriceDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
@@ -11,11 +13,15 @@ import com.gt.mall.dao.integral.MallIntegralDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.seller.MallSellerJoinProductDAO;
+import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
+import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyPriceService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -63,6 +69,12 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     private MallOrderDAO             orderDAO;
     @Autowired
     private MallProductService       productService;
+    @Autowired
+    private WxShopService            wxShopService;
+    @Autowired
+    private MallStoreDAO storeDAO;
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
 
     @Override
     public PageUtil selectGroupBuyByShopId( Map< String,Object > params ) {
@@ -79,6 +91,12 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 
 	if ( count > 0 ) {// 判断团购是否有数据
 	    List< MallGroupBuy > groupBuyList = groupBuyDAO.selectByPage( params );
+	    for ( MallGroupBuy buy : groupBuyList ) {
+		WsWxShopInfo wsWxShopInfo = wxShopService.getShopById( buy.getWx_shop_id() );
+		if ( CommonUtil.isNotEmpty( wsWxShopInfo.getBusinessName() ) ) {
+		    buy.setShopName( wsWxShopInfo.getBusinessName() );
+		}
+	    }
 	    page.setSubList( groupBuyList );
 	}
 
@@ -114,6 +132,12 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 		if ( CommonUtil.isNotEmpty( groupBuy.getId() ) ) {
 		    //判断本商品是否正在团购中
 		    MallGroupBuy buy = groupBuyDAO.selectGroupByIds( groupBuy.getId() );
+
+		    WsWxShopInfo wsWxShopInfo = wxShopService.getShopById( buy.getWx_shop_id() );
+		    if ( CommonUtil.isNotEmpty( wsWxShopInfo.getBusinessName() ) ) {
+			buy.setShopName( wsWxShopInfo.getBusinessName() );
+		    }
+
 		    if ( buy.getStatus() == 1 && CommonUtil.isNotEmpty( buy.getJoinId() ) ) {//正在进行团购的商品不能修改
 			code = -2;
 			status = buy.getStatus();
@@ -432,11 +456,19 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     }
 
     @Override
-    public Map< String,Object > wxPublicByBuyId( int id ) {
-	//TODO 需关连 t_wx_public_users数据
-	//        String sql= "SELECT a.id,b.id as shopId,a.bus_user_id FROM t_wx_public_users a LEFT JOIN t_mall_store b ON a.bus_user_id=b.sto_user_id LEFT JOIN t_mall_group_buy c ON b.id=c.shop_id WHERE c.id="+id;
+    public WxPublicUsers wxPublicByBuyId( int id ) {
+
+        MallGroupBuy groupBuy=groupBuyDAO.selectById( id );
+	MallStore store=storeDAO.selectById( groupBuy.getShopId());
+	return wxPublicUserService.selectByUserId( store.getStoUserId() );
+
+	//        String sql= "
+	// SELECT a.id,b.id as shopId,a.bus_user_id FROM t_wx_public_users a
+	// LEFT JOIN t_mall_store b ON a.bus_user_id=b.sto_user_id
+	// LEFT JOIN t_mall_group_buy c ON b.id=c.shop_id
+	// WHERE c.id="+id;
 	//        return daoUtil.queryForMap(sql);
-	return null;
+//	return null;
     }
 
     @Override

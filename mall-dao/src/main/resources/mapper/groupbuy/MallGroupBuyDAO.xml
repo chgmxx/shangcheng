@@ -64,26 +64,24 @@
     </sql>
     <sql id="group_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
-        shop_id, g.create_time, is_use,
+        shop_id, g.create_time, is_use,s.wx_shop_id
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
         when g.g_start_time &lt;= now() and now() &lt; g.g_end_time then 1<!-- 进行中 -->
         when g.g_start_time &lt; now() and g.g_end_time &lt;= now() then -1<!-- 已结束 -->
         end status,
-        -- if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,
         s.sto_name as shopName ,j.id as joinId
     </sql>
     <sql id="group_product_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
-        g.shop_id, g.create_time, is_use,
+        g.shop_id, g.create_time, is_use,s.wx_shop_id
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
         when g.g_start_time &lt;= now() and now() &lt; g.g_end_time then 1<!-- 进行中 -->
         when g.g_start_time &lt; now() and g.g_end_time &lt;= now() then -1<!-- 已结束 -->
         end status,
-        -- if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName
         s.sto_name as shopName , j.id as joinId,p.two_code_path
     </sql>
 
@@ -113,8 +111,6 @@
         <include refid="group_product_Column_List"/>
         from t_mall_group_buy g
         left join t_mall_store s on g.shop_id = s.id
-        <!-- TODO 需补充关联 t_wx_shop门店数据 -->
-        -- left join t_wx_shop ws on s.wx_shop_id = ws.id
         left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1
         left join t_mall_product p on p.id= g.product_id
         where g.is_delete = 0
@@ -257,8 +253,6 @@
         <include refid="group_Column_List"></include>
         from t_mall_group_buy g
         left join t_mall_store s on g.shop_id = s.id
-        <!-- TODO 需补充关联 t_wx_shop门店数据 -->
-        -- left join t_wx_shop ws on s.wx_shop_id = ws.id
         left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1
         WHERE g.is_delete = 0 and g.is_use =1 and g.id = #{id}
         group by g.id

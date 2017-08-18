@@ -11,6 +11,7 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
@@ -64,6 +65,8 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
     private MallPageService             pageService;
     @Autowired
     private MemberService               memberService;
+    @Autowired
+    private WxPublicUserService         wxPublicUserService;
 
     /**
      * 团购管理列表页面
@@ -549,7 +552,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 
 	    String is_member_discount = productMap.get( "is_member_discount" ).toString();//商品是否参加折扣
 	    if ( ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {
-		 discount = memberService.getMemberDiscount( member.getId() );//商品折扣
+		discount = memberService.getMemberDiscount( member.getId() );//商品折扣
 	    }
 	    request.setAttribute( "discount", discount );//折扣价
 	    Map< String,Object > maps = new HashMap< String,Object >();
@@ -593,8 +596,8 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    }
 	    pageService.getCustomer( request, groupBuy.getUserId() );
 	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) && CommonUtil.isNotEmpty( member ) ) {
-		//TODO 公众号信息 morderService.getWpUser
-		//		CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
+		//TODO 公众号信息 CommonUtil.getWxParams
+//				CommonUtil.getWxParams(wxPublicUserService.selectByMemberId(member.getId()),request);
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "进入我要参团/团购详情的页面出错：" + e );

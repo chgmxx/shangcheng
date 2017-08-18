@@ -61,6 +61,7 @@
     </div>
 </div>
 <script charset="utf-8" type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
+<script src="/js/plugin/layer/layer.js"></script>
 <jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     function save() {
@@ -69,27 +70,27 @@
         var companyInternet = $("input[name='companyInternet']").val();
         var companyAddress = $("#address").val();
         if ($.trim(companyName) == "") {
-            window.alertMsg("公司名称不可以为空!")
+            parentAlertMsg("公司名称不可以为空!")
             return;
         }
         if ($.trim(companyTel) == "") {
-            window.alertMsg("公司电话不可以为空!")
+            parentAlertMsg("公司电话不可以为空!")
             return;
         }
         if (!checkTel($.trim(companyTel)) && !checkPhone($.trim(companyTel))) {
-            window.alertMsg("公司联系电话有误!")
+            parentAlertMsg("公司联系电话有误!")
             return;
         }
         if ($.trim(companyInternet) == "") {
-            window.alertMsg("公司官网不可以为空!")
+            parentAlertMsg("公司官网不可以为空!")
             return;
         }
         if (!checkUrl($.trim(companyInternet))) {
-            window.alertMsg("公司官网链接有误!")
+            parentAlertMsg("公司官网链接有误!")
             return;
         }
         if ($.trim(companyAddress) == "") {
-            window.alertMsg("公司地址不可以为空!")
+            parentAlertMsg("公司地址不可以为空!")
             return;
         }
         $.ajax({
@@ -99,10 +100,10 @@
             dataType: "JSON",
             success: function (data) {
                 if (data.result == true || data.result == "true") {
-                    window.alertMsg("公司信息保存成功!")
+                    parentAlertMsg("公司信息保存成功!")
                     location.href = "/purchaseCompany/companyIndex.do";
                 } else {
-                    window.alertMsg("公司信息保存失败!")
+                    parentAlertMsg("公司信息保存失败!")
                 }
             }
         });

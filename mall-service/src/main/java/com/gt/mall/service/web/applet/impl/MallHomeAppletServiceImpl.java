@@ -6,6 +6,8 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wxshop.OldApiSms;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
@@ -18,6 +20,8 @@ import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.*;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.SmsService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.freight.MallFreightService;
@@ -97,6 +101,10 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     private MallOrderService            orderService;
     @Autowired
     private MemberService               memberService;
+    @Autowired
+    private SmsService                  smsService;
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
 
     @Override
     public List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > params ) {
@@ -230,7 +238,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( price > 0 ) {
 	    String proPrice = df.format( price );
 	    /*if(discount > 0){
-                double memberProPrice = CommonUtil.toDouble(df.format(price*discount));
+		double memberProPrice = CommonUtil.toDouble(df.format(price*discount));
 			}*/
 	    proMap.put( "pro_price", proPrice );
 
@@ -248,7 +256,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    saleTotal += CommonUtil.toInteger( map1.get( "sales_base" ) );
 	}
 	//		String jump_url = PropertiesUtil.getWebHomeUrl()+"/mallApplet/79B4DE7C/phoneProduct.do?memberId="+params.get("memberId")+"&shopId="+map1.get("shopId")+"&productId="+map1.get("id");
-        /*int is_return = 1;
+	/*int is_return = 1;
 		if(CommonUtil.isNotEmpty(map1.get("pro_type_id")) && CommonUtil.isNotEmpty(map1.get("member_type"))){
 			if(CommonUtil.toInteger(map1.get("pro_type_id")) == 2 && CommonUtil.toInteger(map1.get("member_type")) > 0){
 //				jump_url = "";
@@ -810,20 +818,26 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     public Map< String,Object > getValCode( Map< String,Object > params ) throws Exception {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int busId = CommonUtil.toInteger( params.get( "busId" ) );
-	//TODO 需关连wxPublicUsersMapper.selectByUserId(busId); 方法
-	WxPublicUsers pbUser = null;
-	//                wxPublicUsersMapper.selectByUserId(busId);
-	Map< String,Object > codeParams = new HashMap< String,Object >();
-	codeParams.put( "busId", busId );
-	codeParams.put( "model", 5 );
-	String no = CommonUtil.getPhoneCode();
+	WxPublicUsers pbUser = wxPublicUserService.selectByUserId(busId);
+	String no = Constants.REDIS_KEY + CommonUtil.getPhoneCode();
 	JedisUtil.set( no, no, 10 * 60 );
 	System.out.println( no );
-	codeParams.put( "content", "" + pbUser.getAuthorizerInfo() + "  提醒您，您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。" );
-	codeParams.put( "mobiles", params.get( "phoneNo" ) );
-	codeParams.put( "company", pbUser.getAuthorizerInfo() );
-	//TODO 需关连 发送短信  smsSpendingService.sendSms(codeParams)方法
-	//        resultMap = smsSpendingService.sendSms(codeParams);
+
+	OldApiSms apiSms = new OldApiSms();
+	apiSms.setBusId( busId );
+	apiSms.setCompany( pbUser.getAuthorizerInfo() );
+	apiSms.setContent( "" + pbUser.getAuthorizerInfo() + "  提醒您，您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。" );
+	apiSms.setMobiles( params.get( "phoneNo" ).toString() );
+	apiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
+
+	boolean result = smsService.sendSmsOld( apiSms );
+	if ( result ) {
+	    resultMap.put( "code", 1 );
+	    resultMap.put( "msg", "发送成功" );
+	} else {
+	    resultMap.put( "code", -1 );
+	    resultMap.put( "msg", "发送失败" );
+	}
 	return resultMap;
     }
 
@@ -835,7 +849,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( !"".equals( member.getPhone() ) ) {
 	    resultMap.put( "result", true );
 	    resultMap.put( "message", "绑定成功" );
-	}else{
+	} else {
 	    resultMap.put( "result", false );
 	    resultMap.put( "message", "绑定失败" );
 	}

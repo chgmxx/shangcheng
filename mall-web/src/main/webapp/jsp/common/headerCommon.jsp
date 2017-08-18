@@ -39,7 +39,7 @@
      * @param msg 提示内容
      */
     function parentAlertMsg(msg){
-        messageSocket("alertMsg("+msg+")");
+        messageSocket("alertMsg('"+msg+"')");
     }
 
     /**

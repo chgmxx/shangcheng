@@ -107,6 +107,15 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
     @TableField(exist = false)
     private List<MallGroupBuyPrice> priceList;
 
+    @TableField(exist = false)
+    private int wx_shop_id; //门店ID 关联wx_shop表的id
+
+    @TableField(exist = false)
+    private String shopName;
+
+    @TableField(exist = false)
+    private String two_code_path;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

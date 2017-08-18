@@ -4,11 +4,14 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wxshop.WsWxShopInfo;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
@@ -41,6 +44,10 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     private MallStoreDAO         storeDAO;
     @Autowired
     private MemberService        memberService;
+    @Autowired
+    private WxShopService        wxShopService;
+    @Autowired
+    private WxPublicUserService  wxPublicUserService;
 
     @Override
     public PageUtil selectMarginByShopId( Map< String,Object > params ) {
@@ -60,6 +67,10 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    List< MallAuctionMargin > marginList = new ArrayList< MallAuctionMargin >();
 	    if ( auctionList != null && auctionList.size() > 0 ) {
 		for ( MallAuctionMargin margin : auctionList ) {
+		    WsWxShopInfo wxShopInfo = wxShopService.getShopById( margin.getWx_shop_id() );
+		    if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
+			margin.setShopName( wxShopInfo.getBusinessName() );
+		    }
 		    boolean isReturn = true;
 		    if ( ( margin.getAuctionStatus() == -1 || margin.getAuctionStatus() == -2 ) && margin.getMarginStatus().toString().equals( "1" ) ) {
 			if ( margin.getAuctionStatus() == -1 ) {
@@ -244,9 +255,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	Integer payWay = CommonUtil.toInteger( map.get( "pay_way" ) );
 	Double money = CommonUtil.toDouble( map.get( "margin_money" ) );
 	String aucNo = CommonUtil.toString( map.get( "auc_no" ) );
-	//TODO 需关连 WxPublicUsers 数据
-	WxPublicUsers pUser = new WxPublicUsers();
-	//        WxPublicUsers pUser = mOrderMapper.getWpUser(memberId);
+	WxPublicUsers pUser = wxPublicUserService.selectByMemberId( memberId );
 	String returnNo = "PMTK" + System.currentTimeMillis();
 	map.put( "return_no", returnNo );
 
@@ -338,11 +347,10 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	params.put( "shop_id", margin.getShopId() );
 
 	Member member = memberService.findMemberById( margin.getUserId(), null );
-	//TODO 需关连 WxPublicUsers 数据
 	WxPublicUsers wx = null;
-	//        if(CommonUtil.isNotEmpty(member.getPublicId())){
-	//            wx = wxPublicUsersMapper.selectByPrimaryKey(member.getPublicId());
-	//        }
+	if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
+	    wx = wxPublicUserService.selectById( member.getPublicId() );
+	}
 	updateReturnStatus( wx, params, returnNo );
     }
 }

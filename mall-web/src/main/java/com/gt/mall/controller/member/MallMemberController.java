@@ -11,6 +11,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallCommentService;
@@ -67,6 +68,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
     private MallSellerService    mallSellerService;
     @Autowired
     private MemberService        memberService;
+    @Autowired
+    private WxPublicUserService  wxPublicUserService;
 
     /**
      * 跳转至个人中心的页面
@@ -90,8 +93,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    } else if ( CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
 		request.setAttribute( "userid", member.getBusid() );
 	    }
-	    //TODO wxPublicUsersMapper.selectByUserId( userid );
-	    //	    wx = wxPublicUsersMapper.selectByUserId( userid );
+	    wx = wxPublicUserService.selectByUserId( userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );

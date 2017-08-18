@@ -23,6 +23,7 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.service.inter.member.DictService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.applet.MallOrderAppletService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
@@ -89,6 +90,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private MallPageService             pageService;
     @Autowired
     private DictService                 dictService;
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -1205,9 +1208,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 
 	Member member = memberService.findMemberById( memberId, null );
-	//TODO 用户 wxPublicUsersMapper.selectByUserId
-	WxPublicUsers wxPublicUsers = null;
-	//                wxPublicUsersMapper.selectByUserId(member.getBusid());
+	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId(member.getBusid());
 
 	int orderPayWay = 0;
 	//判断库存

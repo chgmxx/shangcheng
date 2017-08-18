@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
 import com.gt.mall.service.inter.member.DictService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PropertiesUtil;
@@ -47,6 +49,8 @@ public class MallHtmlController extends BaseController {
     private MallHtmlReportService htmlReportService;
     @Autowired
     private DictService           dictService;
+    @Autowired
+    private WxPublicUserService   wxPublicUserService;
 
     /**
      * h5 商城列表页
@@ -313,13 +317,12 @@ public class MallHtmlController extends BaseController {
 	    if ( ua.indexOf( "micromessenger" ) > 0 ) {// 是否来自于微信浏览器打开
 		//来自于商家这边
 		if ( obj.getSourceType() == 2 ) {
-		    //TODO 公众号
-		    //		    Integer wxid = htmlService.wxidSelect(obj.getBusUserId());
-		    //		    if(wxid!=0){
-		    //			style = 0;
-		    //			WxPublicUsers publicUsers=wxPublicUsersMapper.selectByPrimaryKey(wxid);
-		    //			CommonUtil.getWxParams(publicUsers, request);
-		    //		    }
+		    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( obj.getBusUserId() );
+		    if ( wxPublicUsers != null ) {
+			style = 0;
+			//TODO CommonUtil.getWxParams
+//			CommonUtil.getWxParams( publicUsers, request );
+		    }
 		}
 	    }
 	    String http = PropertiesUtil.getResourceUrl();

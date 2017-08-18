@@ -2,6 +2,7 @@ package com.gt.mall.service.web.groupbuy;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.util.PageUtil;
 
@@ -93,7 +94,7 @@ public interface MallGroupBuyService extends BaseService<MallGroupBuy> {
      * @param id 团购id
      * @return 公众号信息
      */
-    Map<String, Object> wxPublicByBuyId(int id);
+    WxPublicUsers wxPublicByBuyId(int id);
 
     /**
      * 获取正在进行的团购

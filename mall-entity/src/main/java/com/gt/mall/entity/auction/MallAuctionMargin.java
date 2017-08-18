@@ -131,6 +131,12 @@ public class MallAuctionMargin extends Model< MallAuctionMargin > {
     @TableField(exist = false)
     private List<String> oldUserIdList;
 
+    @TableField(exist = false)
+    private int wx_shop_id; //门店ID 关联wx_shop表的id
+
+    @TableField(exist = false)
+    private String shopName;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

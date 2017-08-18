@@ -1,11 +1,18 @@
 package com.gt.mall.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.util.PropertiesUtil;
 import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONObject;
+import org.junit.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * API 参考类
@@ -16,7 +23,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestController extends BaseController {
 
-
+    @Test
+    public void test() {
+	Map<String, Integer> params=new HashMap<>(  );
+	params.put( "id",2 );
+	params.put( "userId",42 );
+//	MallPaySet set = (MallPaySet) JSON.parseArray(params.toString(), MallPaySet.class);
+	MallPaySet set2 = (MallPaySet) JSONObject.toBean(JSONObject.fromObject(params), MallPaySet.class);
+	System.out.println("开始");
+	System.out.println( set2.getId() );
+    }
 
     /**
      * 跳转index 页面

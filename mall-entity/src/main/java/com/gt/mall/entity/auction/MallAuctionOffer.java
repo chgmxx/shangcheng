@@ -58,6 +58,9 @@ public class MallAuctionOffer extends Model< MallAuctionOffer > {
     @TableField( "create_time" )
     private Date       createTime;
 
+    @TableField(exist = false)
+    private String nickname;//会员名称
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

@@ -39,14 +39,13 @@
     <sql id="page_Column_List">
         g.id, g.product_id, g.shop_id, auc_type, auc_start_price, auc_lowest_price, auc_start_time,
         auc_lower_price_time, auc_lower_price, auc_end_time, auc_num, auc_restriction_num,
-        g.user_id, g.create_time, is_use, is_margin, auc_margin, auc_add_price,
+        g.user_id, g.create_time, is_use, is_margin, auc_margin, auc_add_price,s.wx_shop_id
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.auc_start_time > now() and g.auc_end_time > now() then 0<!--未开始  -->
         when g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time then 1<!-- 进行中 -->
         when g.auc_start_time &lt; now() and g.auc_end_time &lt;= now() then -1<!-- 已结束 -->
         end status,
-        -- if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,
         s.sto_name as shopName,p.pro_name as proName
     </sql>
     <select id="selectByCount" resultType="java.lang.Integer">
@@ -73,8 +72,6 @@
         <include refid="page_Column_List"/>
         from t_mall_auction g
         left join t_mall_store s on g.shop_id = s.id
-        <!-- TODO 需补充关联 t_wx_shop门店数据 -->
-        -- left join t_wx_shop ws on s.wx_shop_id = ws.id
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         where g.is_delete = 0
         <if test="type == -1"><!-- 未开始拍卖 -->
@@ -221,8 +218,6 @@
         <include refid="page_Column_List"></include>
         from t_mall_auction g
         left join t_mall_store s on g.shop_id = s.id
-        <!--TODO 需补充关联 t_wx_shop门店数 -->
-        -- left join t_wx_shop ws on s.wx_shop_id = ws.id
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         WHERE g.is_delete = 0 and g.is_use =1 and g.id = #{id}
         group by g.id

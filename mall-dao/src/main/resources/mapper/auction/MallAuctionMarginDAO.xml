@@ -37,8 +37,7 @@
     </sql>
     <sql id="page_Column_List">
         g.id, auc_id, pro_id, pro_name, pro_img_url, auc_no, margin_money, margin_status, pay_way,
-        pay_time, return_time, is_return,g.user_id,g.create_time,a.auc_type,
---         if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,
+        pay_time, return_time, is_return,g.user_id,g.create_time,a.auc_type as aucType,
         s.sto_name as shopName,
         case
         when a.is_use = -1 then -2<!--已失效  -->
@@ -69,8 +68,6 @@
         from t_mall_auction_margin g
         LEFT JOIN t_mall_auction a ON g.`auc_id`=a.id
         LEFT JOIN t_mall_store s ON a.shop_id = s.id
-        <!--TODO 需补充关联 t_wx_shop门店数 -->
---         LEFT JOIN t_wx_shop ws ON s.wx_shop_id = ws.id
         <where>
             1=1
             <if test="shoplist != null and shoplist != ''">

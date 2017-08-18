@@ -18,6 +18,7 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.DictService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
@@ -76,6 +77,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private MemberService      memberService;
     @Autowired
     private DictService        dictService;
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -108,8 +111,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	resultMap.put( "memberPhone", member.getPhone() );
 	WxPublicUsers wxPublicUsers = null;
 	if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
-	    //TODO 需关连wxPublicUsersMapper 方法
-	    //            wxPublicUsers = wxPublicUsersMapper.selectByPrimaryKey(member.getPublicId());
+	    wxPublicUsers = wxPublicUserService.selectById(member.getPublicId());
 	}
 	int jifenNum = 0;//统计能使用积分的商品数量
 	double jifenMoney = 0;//统计能使用积分的商品总价
@@ -1778,9 +1780,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	Member member = memberService.findMemberById( memberId, null );
-	//TODO 需关连 wxPublicUsersMapper 微信订阅号用户信息
-	WxPublicUsers wxPublicUsers = null;
-	//                wxPublicUsersMapper.selectByUserId(member.getBusid());
+	WxPublicUsers wxPublicUsers =  wxPublicUserService.selectByUserId(member.getBusid());
 	int orderPayWay = 0;
 	//判断库存
 	List< MallOrder > orderList = new ArrayList<>();

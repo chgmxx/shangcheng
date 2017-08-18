@@ -2,6 +2,7 @@ package com.gt.mall.service.web.integral.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.wxshop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.integral.MallIntegralDAO;
@@ -9,6 +10,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.product.MallProductDetailDAO;
+import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrder;
@@ -16,6 +18,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -70,6 +73,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MemberService               memberService;
+    @Autowired
+    private WxShopService               wxShopService;
 
     @Override
     public PageUtil selectIntegralByUserId( Map< String,Object > params ) {
@@ -102,23 +107,23 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	return page;
     }
 
-//    @Override  调用memberService.findCardrecordList
-//    public PageUtil selectIntegralDetail( Member member, Map< String,Object > params ) {
-//	int pageSize = 20;
-	//        int curPage = CommonUtil.isEmpty(params.get("curPage")) ? 1 : CommonUtil.toInteger(params.get("curPage"));
-	//        String countSql = "SELECT count(id) FROM t_member_cardrecord WHERE recordType = 2 AND cardId=" + member.getMcId();
-	//        int count = daoUtil.queryForInt(countSql);
+    //    @Override  调用memberService.findCardrecordList
+    //    public PageUtil selectIntegralDetail( Member member, Map< String,Object > params ) {
+    //	int pageSize = 20;
+    //        int curPage = CommonUtil.isEmpty(params.get("curPage")) ? 1 : CommonUtil.toInteger(params.get("curPage"));
+    //        String countSql = "SELECT count(id) FROM t_member_cardrecord WHERE recordType = 2 AND cardId=" + member.getMcId();
+    //        int count = daoUtil.queryForInt(countSql);
 
-	//        PageUtil page = new PageUtil(curPage, pageSize, count, "phoneIntegral/79B4DE7C/toIndex.do");
-	//        int firstNum = pageSize * ((page.getCurPage() <= 0 ? 1 : page.getCurPage()) - 1);
+    //        PageUtil page = new PageUtil(curPage, pageSize, count, "phoneIntegral/79B4DE7C/toIndex.do");
+    //        int firstNum = pageSize * ((page.getCurPage() <= 0 ? 1 : page.getCurPage()) - 1);
 
-	//        String sql = "SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord " +
-	//                "WHERE recordType = 2 AND cardId=" + member.getMcId() + " order by id desc limit " + firstNum + "," + pageSize;
-	//        List<Map<String, Object>> recordList = daoUtil.queryForList(sql);
-	//        page.setSubList(recordList);
-	//        return page;
-//	return null;
-//    }
+    //        String sql = "SELECT itemName,number,date_format(createDate, '%Y-%c-%d %h:%i:%s') as createDate FROM t_member_cardrecord " +
+    //                "WHERE recordType = 2 AND cardId=" + member.getMcId() + " order by id desc limit " + firstNum + "," + pageSize;
+    //        List<Map<String, Object>> recordList = daoUtil.queryForList(sql);
+    //        page.setSubList(recordList);
+    //        return page;
+    //	return null;
+    //    }
 
     @Override
     public Map< String,Object > selectProductDetail( Member member, Map< String,Object > params ) {
@@ -400,6 +405,12 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 
 	if ( count > 0 ) {// 判断团购是否有数据
 	    List< Map< String,Object > > integralList = integralDAO.selectByPage( params );
+	    for ( Map< String,Object > integral : integralList ) {
+		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( integral.get( "wx_shop_id" ) ) );
+		if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
+		    integral.put("shopName" ,wxShopInfo.getBusinessName());
+		}
+	    }
 	    page.setSubList( integralList );
 	}
 	return page;

@@ -18,7 +18,7 @@
     <link rel="stylesheet" type="text/css" href="/css/common.css?<%=System.currentTimeMillis()%>"/>
     <link rel="stylesheet" type="text/css" href="/css/mall/group.css?<%= System.currentTimeMillis()%>"/>
     <link rel="stylesheet" type="text/css" href="/css/mall/manageList.css"/>
-    <script src="/js/plugin/jquery-1.8.0.min.js"></script>
+    <script src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script src="/js/plugin/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
