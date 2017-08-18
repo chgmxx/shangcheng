@@ -11,14 +11,14 @@ function deletePresale(obj, type) {
         // 询问框
         layer.confirm('您确定要' + msg + '？', {
             btn: ['确定', '取消'],
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
             // 按钮
         }, function () {
             // loading层
             var layerLoad = layer.load(1, {
                 shade: [0.1, '#fff'],
-                offset: "30%"
+                offset: "10%"
                 // 0.1透明度的白色背景
             });
             $.ajax({
@@ -33,7 +33,7 @@ function deletePresale(obj, type) {
                     layer.close(layerLoad);
                     if (data.code == 1) {
                         var tip = layer.alert(msg + "成功", {
-                            offset: "30%",
+                            offset: "10%",
                             closeBtn: 0
                         }, function (index) {
                             layer.close(tip);
@@ -41,7 +41,7 @@ function deletePresale(obj, type) {
                         });
                     } else {// 编辑失败
                         var tip = layer.alert(msg + "失败", {
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 },
@@ -49,7 +49,7 @@ function deletePresale(obj, type) {
 
                     layer.close(layerLoad);
                     layer.alert(msg + "失败", {
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -173,6 +173,7 @@ function getProductId(proId) {
 $(".times_span").click(function () {
     if (!valiForm()) {
         layer.msg('请完善商品信息', {
+            offset: '10%',
             icon: 1
         });
         return;
@@ -298,37 +299,37 @@ function editPresale() {
     if (shopId == null || shopId == "") {
         layer.msg('请选择店铺', {
             icon: 1,
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
         });
     } else if (productId == null || productId == "") {
         layer.msg('请选择商品', {
             icon: 1,
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
         });
     } else if (sStartTime == null || $.trim(sStartTime) == "") {
         layer.msg('请选择活动开始时间', {
             icon: 1,
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
         });
     } else if (sEndTime == null || sEndTime == "") {
         layer.msg('请选择活动结束时间', {
             icon: 1,
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
         });
     } else if (start * 1 > end * 1) {
         layer.msg('活动开始时间必须要早于活动结束时间', {
             icon: 1,
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
         });
     } else if (!flag) {
         layer.msg('请完善商品信息', {
             icon: 1,
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
         });
     } else {
@@ -358,7 +359,7 @@ function editPresale() {
         if (flag) {
             // loading层
             var layerLoad = layer.load(1, {
-                offset: "30%",
+                offset: "10%",
                 shade: [0.1, '#fff']
                 // 0.1透明度的白色背景
             });
@@ -371,7 +372,7 @@ function editPresale() {
                     layer.close(layerLoad);
                     if (data.code == 1) {
                         var tip = layer.alert("编辑成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -380,26 +381,26 @@ function editPresale() {
                         });
                     } else if (data.code == -2) {
                         var tip = layer.alert("正在进行预售的活动不能修改", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else if (data.code == -3) {
                         var tip = layer.alert("已失效的预售不能进行修改", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else if (data.code == 0) {
                         var tip = layer.alert("同一个商品只能参与一个预售活动", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else {// 编辑失败
                         layer.alert("编辑失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
 
@@ -408,7 +409,7 @@ function editPresale() {
                     layer.close(layerLoad);
                     layer.alert("编辑失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -530,7 +531,7 @@ function validatePriceTime() {
         if (!flag) {
             layer.msg(msg, {
                 icon: 1,
-                offset: "30%",
+                offset: "10%",
                 shade: [0.1, '#fff']
             });
             return false;
@@ -660,7 +661,10 @@ function choosePro() {
     if (shopId != null && shopId != "") {
         parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
     } else {
-        alertMsg("请选择商品");
+        layer.alert("请选择商品", {
+            shade:[0.1,"#fff"],
+            offset: "10%"
+        });
     }
 };
 /**

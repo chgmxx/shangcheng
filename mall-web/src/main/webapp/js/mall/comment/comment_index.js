@@ -15,7 +15,7 @@ $(".js-batch-delete").click(function () {
     if (id.length == 0 || !flag) {
         parentLayer.alert("请选择需要删除的评论", {
             shade:[0.1,"#fff"],
-            offset: "30%",
+            offset: "10%",
             closeBtn: 0
         }, function (index) {
             parentLayer.closeAll();
@@ -24,7 +24,7 @@ $(".js-batch-delete").click(function () {
         parentLayer.confirm('您确定要批量删除选中的评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: '100px'
+            offset: '10%'
         }, function () {
             parentLayer.closeAll();
             var data = {
@@ -47,7 +47,7 @@ $(".a-del").click(function () {
         parentLayer.confirm('您确定要删除评论评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: '100px'
+            offset: '10%'
         }, function () {
             parentLayer.closeAll();
             var data = {
@@ -69,7 +69,7 @@ $(".a-check").click(function () {
         parentLayer.confirm('您确定要通过评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: '100px'
+            offset: '10%'
         }, function () {
             parentLayer.closeAll();
             var data = {
@@ -92,7 +92,7 @@ $(".a-uncheck").click(function () {
         parentLayer.confirm('您确定要不通过评论？不通过评论后，不会在商品详情页面展示', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: '100px'
+            offset: '10%'
         }, function () {
             parentLayer.closeAll();
             var data = {
@@ -120,7 +120,7 @@ $(".js-batch-agreen").click(function () {
     });
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要通过的评论", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -128,7 +128,7 @@ $(".js-batch-agreen").click(function () {
         });
     } else if (id.length == 0 && flag) {
         parentLayer.alert("未审核的评论才能进行审核通过操作", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -138,7 +138,7 @@ $(".js-batch-agreen").click(function () {
         parentLayer.confirm('您确定要批量通过选中的评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: '100px'
+            offset: '10%'
         }, function () {
             parentLayer.closeAll();
             var data = {
@@ -169,7 +169,7 @@ $(".js-batch-no-agreen").click(function () {
     });
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要不通过的评论", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -178,7 +178,7 @@ $(".js-batch-no-agreen").click(function () {
     }
     if (id.length == 0 && flag) {
         parentLayer.alert("未审核的评价才能进行审核未通过操作", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -188,7 +188,7 @@ $(".js-batch-no-agreen").click(function () {
         parentLayer.confirm('您确定要批量未通过选中的评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: '100px'
+            offset: '10%'
         }, function () {
             parentLayer.closeAll();
             var data = {
@@ -216,7 +216,7 @@ function deletePro(data, tip, index) {
             if (data != null) {
                 if (data.result) {
                     var tipLayer = layer.alert(tip + "成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
@@ -226,7 +226,7 @@ function deletePro(data, tip, index) {
                 } else {
                     layer.alert(tip + "失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 }
             }
@@ -235,7 +235,7 @@ function deletePro(data, tip, index) {
             layer.closeAll();
             layer.alert(tip + "失败", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return;
         }
@@ -253,12 +253,12 @@ $(".subRepComBtn").click(function (event) {
     if (repContent == null || repContent == "" || typeof(repContent) == "undefinde") {
         layer.alert("请输入要回复的内容", {
             shade:[0.1,"#fff"],
-            offset: "30%"
+            offset: "10%"
         });
     } else if (repContent.length >= 240) {
         layer.alert("回复内容不能超过240个字", {
             shade:[0.1,"#fff"],
-            offset: "30%"
+            offset: "10%"
         });
     } else {
         var data = {
@@ -267,6 +267,7 @@ $(".subRepComBtn").click(function (event) {
             shopId: shop_id
         };
         var layerLoad = parentLayer.load(1, {
+            offset: "10%",
             shade: [0.3, '#fff']
         });
         $.ajax({
@@ -279,7 +280,7 @@ $(".subRepComBtn").click(function (event) {
                 if (data != null) {
                     if (data.result) {
                         var tipLayer = layer.alert("回复评论成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -289,7 +290,7 @@ $(".subRepComBtn").click(function (event) {
                     } else {
                         layer.alert("回复评论失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 }
@@ -298,7 +299,7 @@ $(".subRepComBtn").click(function (event) {
                 layer.closeAll();
                 layer.alert("回复评论失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }

@@ -4,13 +4,13 @@
  */
 function del(ids) {
     //event.stopPropagation();
-    layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
+    layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "10%"}, function (index) {
         layer.close(index);
         var params = {
             id: ids
         };
         var index2 = layer.load(3, {
-            offset: '40%',
+            offset: '10%',
             shade: [0.4, '#fff']
         });
 
@@ -24,7 +24,7 @@ function del(ids) {
                 if (!data.flag) {// 重新登录
                     layer.alert("编辑上门自提失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 } else {
                     location.href = window.location.href;
@@ -34,7 +34,7 @@ function del(ids) {
                 layer.closeAll();
                 layer.alert("编辑上门自提失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }
@@ -105,7 +105,7 @@ $(".ui-switcher").click(function () {
         } else {
             flag = false;
             layer.alert("请先开启评论管理", {
-                offset: "30%"
+                offset: "10%"
             });
         }
     } else if ($(this).attr("id") == 5) {
@@ -116,7 +116,7 @@ $(".ui-switcher").click(function () {
             flag = false;
             layer.alert("请先开启评论管理", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
         }
     } else if ($(this).attr("id") == 6) {
@@ -183,20 +183,22 @@ function deletePro(datas, tip, url) {
     if (url == null) {
         url = "store/edit_set.do";
     }
-    var layerLoad = parent.loadForm();
-    return false;
+
+    var layerLoad = layer.load(1, {
+        shade : [ 0.3, '#fff' ]
+    });
     $.ajax({
         type: "post",
         data: datas,
         url: url,
         dataType: "json",
         success: function (data) {
-            // layer.close(layerLoad);
+            layer.close(layerLoad);
             layer.closeAll();
             if (!data.flag) {// 重新登录
                 layer.alert(tip + "失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             } else {
                 location.href = window.location.href;
@@ -206,7 +208,7 @@ function deletePro(datas, tip, url) {
             layer.closeAll();
             layer.alert(tip + "失败", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return;
         }

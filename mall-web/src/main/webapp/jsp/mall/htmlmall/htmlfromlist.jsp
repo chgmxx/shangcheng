@@ -111,7 +111,7 @@
             shadeClose: true,
             shade:[0.2,"#fff"],
             area: ['500px', '500px'],
-            offset: "20%",
+            offset: "10%",
             content: '/mallhtml/htmlfromview.do?id=' + id,
         });
     }
@@ -123,7 +123,7 @@
 
         } else {
             layer.alert("已经是最前一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -140,7 +140,7 @@
 
         } else {
             layer.alert("已经是最前一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -156,7 +156,7 @@
 
         } else {
             layer.alert("已经是最后一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -173,7 +173,7 @@
 
         } else {
             layer.alert("已经是最后一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });

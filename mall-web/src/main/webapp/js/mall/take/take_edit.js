@@ -226,13 +226,19 @@ function openMap() {
         if ($("#visitProvinceId").val() != "0" && $("#visitProvinceId").val() != undefined) {
             address = $("#visitProvinceId option:selected").text();
         } else {
-            layer.msg("请选择省份!");
+            layer.msg("请选择省份!", {
+                shade:[0.1,"#fff"],
+                offset: "10%"
+            });
             return;
         }
         if ($("#visitCityId").val() != "0" && $("#visitCityId").val() != undefined) {
             address += $("#visitCityId option:selected").text();
         } else {
-            layer.msg("请选择城市!");
+            layer.msg("请选择城市!", {
+                shade:[0.1,"#fff"],
+                offset: "10%"
+            });
             return;
         }
     }
@@ -473,7 +479,7 @@ function save() {
         }
 
         var index = layer.load(3, {
-            offset: '40%',
+            offset: '10%',
             shade: [0.4, '#fff']
         });
         $.ajax({
@@ -486,7 +492,10 @@ function save() {
                 if (data.flag) {
                     location.href = "/mFreight/takeindex.do";
                 } else {
-                    layer.msg("编辑自提点失败，请稍后提交");
+                    layer.msg("编辑自提点失败，请稍后提交", {
+                        shade:[0.1,"#fff"],
+                        offset: "10%"
+                    });
                 }
             }
         });

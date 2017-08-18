@@ -399,6 +399,7 @@
             obj.parents("tr").remove();
         } else {
             layer.msg('至少要有一个配送区域', {
+                offset: "10%",
                 icon: 1
             });
         }

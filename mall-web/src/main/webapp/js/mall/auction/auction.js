@@ -10,7 +10,7 @@ function deleteGroup(obj, type) {
         }
         // 询问框
         layer.confirm('您确定要' + msg + '？', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,'#fff'],
             btn: ['确定', '取消']
             // 按钮
@@ -32,7 +32,7 @@ function deleteGroup(obj, type) {
                      layer.close(layerLoad);
                     if (data.code == 1) {
                         var tip = layer.alert(msg + "成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -42,7 +42,7 @@ function deleteGroup(obj, type) {
                     } else {// 编辑失败
                         var tip = layer.alert(msg + "失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 },
@@ -50,7 +50,7 @@ function deleteGroup(obj, type) {
                     layer.close(layerLoad);
                     layer.alert(msg + "失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -130,7 +130,7 @@ function getProductId(proId) {
 $(".times_span").click(function () {
     if (!valiForm()) {
         layer.msg('请完善商品信息', {
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
         return;
@@ -176,7 +176,7 @@ function endTime() {
     var aucLowerPrice = $("#aucLowerPrice").val() * 1;//每分钟价格
     if (startPrice <= aucLowestPrice) {
         layer.msg('最低价格必须小于起拍价格', {
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
     } else {
@@ -260,22 +260,22 @@ function editAuction() {
 
     if (productId == null || productId == "") {
         layer.msg('请选择商品', {
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
     } else if (!flag) {
         layer.msg('请完善商品信息', {
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
     } else if (aucStartTime == null || $.trim(aucStartTime) == "") {
         layer.msg('请选择活动开始时间', {
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
     } else if (aucStartPrice * 1 < aucLowestPrice * 1) {
         layer.msg('最低价格必须小于起拍价格', {
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
     } else {
@@ -296,6 +296,7 @@ function editAuction() {
             auction.aucLowestPrice = 0;
             if (aucStartTime >= aucEndTime) {
                 layer.msg('活动开始时间要小于活动结束时间', {
+                    offset: "10%",
                     icon: 1
                 });
                 return;
@@ -314,7 +315,7 @@ function editAuction() {
 
         // loading层
         var layerLoad = layer.load(1, {
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
             // 0.1透明度的白色背景
         });
@@ -329,7 +330,7 @@ function editAuction() {
                 layer.close(layerLoad);
                 if (data.code == 1) {
                     var tip = layer.alert("编辑成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
@@ -339,19 +340,19 @@ function editAuction() {
                 } else if (data.code == -2) {
                     var tip = layer.alert("正在进行拍卖的商品不能修改", {
                         shade:[0.1,"#fff"],
-                        offset: "30%",
+                        offset: "10%",
                         closeBtn: 0
                     });
                 } else if (data.code == 0) {
                     var tip = layer.alert("同一个商品只能参与一个拍卖活动", {
                         shade:[0.1,"#fff"],
-                        offset: "30%",
+                        offset: "10%",
                         closeBtn: 0
                     });
                 } else {// 编辑失败
                     layer.alert("编辑失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 }
 
@@ -360,7 +361,7 @@ function editAuction() {
                 layer.close(layerLoad);
                 layer.alert("编辑失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }

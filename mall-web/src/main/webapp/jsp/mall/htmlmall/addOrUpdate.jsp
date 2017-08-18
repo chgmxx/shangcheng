@@ -91,14 +91,14 @@
                 closeWindow(); //加载完毕
                 if (data.error == "0") {
                     layer.alert("操作成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });
                     window.location.href = "/mallhtml/htmllist.do";
                 } else {
                     layer.alert(data.message, {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });

@@ -64,7 +64,7 @@
                     shade:[0.1,"#fff"],
                     skin: 'layui-layer-rim', //加上边框
                     area: ['200px', '240px'], //宽高
-                    offset: "30%",
+                    offset: "10%",
                     content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
                 });
             });

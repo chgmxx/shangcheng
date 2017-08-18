@@ -68,7 +68,7 @@
                     title: "积分商品预览",
                     skin: 'layui-layer-rim', //加上边框
                     area: ['208px', '251px'], //宽高
-                    offset: "30%",
+                    offset: "10%",
                     content: "<img src ='/mallIntegral/getTwoCode.do?" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>"
                 });
             });

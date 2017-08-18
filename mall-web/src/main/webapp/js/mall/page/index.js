@@ -11,13 +11,13 @@ $(function () {
  */
 function del(ids) {
     //event.stopPropagation();
-    layer.confirm('确认要删除此数据吗?删除之后，引用该页面的地方将会因为找不到该链接跳转到404页面', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
+    layer.confirm('确认要删除此数据吗?删除之后，引用该页面的地方将会因为找不到该链接跳转到404页面', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "10%"}, function (index) {
         layer.close(index);
         var params = {
             ids: ids
         };
         var index2 = layer.load(3, {
-            offset: '40%',
+            offset: '10%',
             shade: [0.4, '#fff']//#8E8E8E
         });
         $.post("mallPage/delete.do", params, function (data) {
@@ -55,14 +55,14 @@ function batchdel() {
  * 设为主页
  */
 function setMian(id, shopid) {
-    layer.confirm('确认要设为主页吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
+    layer.confirm('确认要设为主页吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "10%"}, function (index) {
         layer.close(index);
         var params = {
             id: id,
             shopid: shopid
         };
         var index2 = layer.load(3, {
-            offset: '40%',
+            offset: '10%',
             shade: [0.4, '#fff']//#8E8E8E
         });
         $.post("mallPage/setMain.do", params, function (data) {

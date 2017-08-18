@@ -185,12 +185,12 @@
         if (iscreat == 1) {
             if (ispid == 0) {
 
-                layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", {shade:[0.1,"#fff"],offset: '25%'}, function () {
+                layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", {shade:[0.1,"#fff"],offset: '10%'}, function () {
                     top.location.href = "/trading/upGrade.do?setType=trading";
                 })
             } else {
                 layer.alert("主账户等级不足，不能在创建h5商城", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 });
@@ -203,19 +203,19 @@
         window.location.href = "/mallhtml/addOrUpdate.do?id=" + id;
     }
     function del(id) {
-        layer.confirm("确定删除吗？删除之后，引用该链接的页面，将会以找不到页面，跳转到404页面中", {shade:[0.1,"#fff"],offset: '25%'}, function () {
+        layer.confirm("确定删除吗？删除之后，引用该链接的页面，将会以找不到页面，跳转到404页面中", {shade:[0.1,"#fff"],offset: '10%'}, function () {
             $.post("mallhtml/delect.do", {
                 id: id
             }, function (data) {
                 if (data.error == 1 || data.error == '1') {
                     layer.alert("删除失败", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });
                 } else {
                     layer.alert("删除成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });
@@ -237,7 +237,7 @@
 
         } else {
             layer.alert("已经是最前一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -254,7 +254,7 @@
 
         } else {
             layer.alert("已经是最前一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -270,7 +270,7 @@
 
         } else {
             layer.alert("已经是最后一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -287,7 +287,7 @@
 
         } else {
             layer.alert("已经是最后一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -310,7 +310,7 @@
             success: function (data) {
                 if (data.error == 0) {
                     layer.alert("替换成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });
@@ -318,7 +318,7 @@
                     $("#pic" + id).find("img").attr("data-original", (imgurl));
                 } else {
                     layer.alert("替换失败", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });

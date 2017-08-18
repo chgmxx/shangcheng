@@ -11,13 +11,13 @@ $(function () {
  */
 function del(ids) {
     //event.stopPropagation();
-    layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
+    layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "10%"}, function (index) {
         layer.closeAll();
         var params = {
             ids: ids
         };
         var index2 = layer.load(1, {
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
             // 0.1透明度的白色背景
         });
@@ -46,6 +46,9 @@ function batchdel() {
     if (ids != "" && ids != undefined) {
         del(ids);
     } else {
-        layer.msg("请至少选择一条数据！");
+        layer.msg("请至少选择一条数据！", {
+            shade:[0.1,"#fff"],
+            offset: "10%"
+        });
     }
 }

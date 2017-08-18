@@ -14,7 +14,7 @@ function save() {
     }
     if (requiredValidate()) {
         var index = layer.load(3, {
-            offset: '40%',
+            offset: '10%',
             shade: [0.4, '#fff']
         });
         var obj = $("#tab").serializeObject();

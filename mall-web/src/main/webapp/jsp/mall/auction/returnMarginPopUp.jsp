@@ -67,7 +67,7 @@
     $("#submit").click(function () {
         var layerLoad = parent.layer.load(1, {
             shade: [0.3, '#fff'],
-            offset: "30%"
+            offset: "10%"
         });
         var id = $(".id").val();
         $.ajax({

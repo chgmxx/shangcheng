@@ -56,7 +56,7 @@ function checkSeller(sellerId, status) {
     layer.confirm("您是否要" + msg + "此销售员", {
         btn: ['确定', '取消'], //按钮
         shade:[0.1,'#fff'],
-        offset: "30%"
+        offset: "10%"
     }, function () {
         var data = {
             "id": sellerId,
@@ -79,7 +79,7 @@ function sellerStart(sellerId, status) {
     layer.confirm("您是否要" + msg + "此销售员", {
         btn: ['确定', '取消'], //按钮
         shade:[0.1,'#fff'],
-        offset: "30%"
+        offset: "10%"
     }, function () {
         var data = {
             "id": sellerId,
@@ -111,7 +111,7 @@ function batchCheck(status) {
     });
     if (id.length == 0 && !flag) {
         layer.alert("请选择需要" + msg + "的销售员", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -121,7 +121,7 @@ function batchCheck(status) {
         layer.confirm("您是否要" + msg + "选中的销售员", {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: '100px'
+            offset: '10%'
         }, function () {
             layer.closeAll();
             var data = {
@@ -137,7 +137,7 @@ function batchCheck(status) {
 function editSeller(data, msg) {
     // loading层
     var layerLoad = layer.load(1, {
-        offset: "30%",
+        offset: "10%",
         shade: [0.1, '#fff']
         // 0.1透明度的白色背景
     });
@@ -150,7 +150,7 @@ function editSeller(data, msg) {
             layer.closeAll();
             if (data.flag) {
                 var tip = layer.alert(msg + "成功", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
@@ -160,7 +160,7 @@ function editSeller(data, msg) {
             } else {// 编辑失败
                 layer.alert(msg + "失败，请稍后重试", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             }
 
@@ -170,7 +170,7 @@ function editSeller(data, msg) {
 
             layer.alert(msg + "失败，请稍后重试", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return;
         }
@@ -244,4 +244,4 @@ $.fn.serializeObject = function () {
         }
     });
     return o;
-};
+};}

@@ -26,6 +26,7 @@
         function checkupdate(id) {
             $("#buttoncl").attr("disabled", "disabled");
              var index = layer.load(1, {
+                 offset: "10%",
                  shade: [0.1, '#fff']
                  // 0.1透明度的白色背景
              });
@@ -43,19 +44,19 @@
                     } else if (error == 2) {
                         var ispid = data.ispid;
                         if (ispid == 0) {
-                            layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", { shade:[0.1,'#fff'],offset: '25%'}, function () {
+                            layer.confirm("等级不够，不能在创建h5商城，请前往<a href='/trading/upGrade.do?setType=trading' style='text-decoration: none;color:red'>续费升级级别</a>", { shade:[0.1,'#fff'],offset: '10%'}, function () {
                                 top.location.href = "/trading/upGrade.do?setType=trading";
                             })
                         } else {
                             layer.alert("主账户等级不足，不能在创建h5商城", {
-                                offset: "30%",
+                                offset: "10%",
                                 shade:[0.1,"#fff"],
                                 closeBtn: 0
                             });
                         }
                     } else {
                         layer.alert("操作失败，数据异常，请联系管理员", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         });

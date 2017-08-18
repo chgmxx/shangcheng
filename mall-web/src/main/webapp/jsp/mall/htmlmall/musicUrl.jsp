@@ -124,7 +124,7 @@
          */
         function promptBox(txt) {
             layer.alert(txt, {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });

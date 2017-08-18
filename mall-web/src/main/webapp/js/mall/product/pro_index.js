@@ -13,7 +13,7 @@ $(".delete").click(function () {
     layer.confirm('您确定要删除此产品？', {
         btn: ['确定', '取消'],
         shade:[0.1,'#fff'],
-        offset: '100px'
+        offset: '10%'
     }, function () {
         layer.closeAll();
         deletePro(data, "删除", 1);
@@ -34,7 +34,7 @@ $(".js-batch-viewNum").click(function () {
     });
     if (id.length == 0 && !flag) {
             parentLayer.alert("请选择需要修改浏览量的商品", {
-            offset: "30%",
+            offset: "10%",
                 shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -65,7 +65,7 @@ $(".js-batch-sale").click(function () {
     });
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要修改销量基数的商品", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -95,7 +95,7 @@ function upViewsNum(nums, isView, data) {
     parentLayer.open({
         area: ["400px", "200px"],
         shade:[0.1,"#fff"],
-        offset: '100px',
+        offset: '10%',
         title: "修改浏览量",
         type: 1,
         content: $("div.viewNum").html(),
@@ -156,7 +156,7 @@ $(".sales").click(function () {
 function upSaleBase(saleBase, data) {
     parentLayer.open({
         area: ["400px", "200px"],
-        offset: '100px',
+        offset: '10%',
         title: "修改销量基数",
         shade:[0.1,"#fff"],
         type: 1,
@@ -189,7 +189,7 @@ $(".send_valid").click(function () {
     parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
         btn: ['确定', '取消'],
         shade:[0.1,'#fff'],
-        offset: '100px'
+        offset: '10%'
     }, function () {
         parentLayer.closeAll();
         var data = {
@@ -216,7 +216,7 @@ $(".js-batch-valid").click(function () {
     });
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要送审的商品", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -225,7 +225,7 @@ $(".js-batch-valid").click(function () {
     } else {
         if (id.length == 0 && flag) {
             parentLayer.alert("未送审的商品才能进行送审操作", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
@@ -235,7 +235,7 @@ $(".js-batch-valid").click(function () {
             parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
                 btn: ['确定', '取消'],
                 shade:[0.1,'#fff'],
-                offset: '100px'
+                offset: '10%'
             }, function () {
                 parentLayer.closeAll();
                 var data = {
@@ -257,7 +257,7 @@ $("a.sj").click(function () {
     parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
         btn: ['确定', '取消'],
         shade:[0.1,'#fff'],
-        offset: '100px'
+        offset: '10%'
     }, function () {
         parentLayer.closeAll();
         var data = {
@@ -285,7 +285,7 @@ $(".js-batch-load").click(function () {
     });
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要上架的商品", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -294,7 +294,7 @@ $(".js-batch-load").click(function () {
     } else {
         if (id.length == 0 && flag) {
             parentLayer.alert("审核通过后的商品才能上架商品", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
@@ -304,7 +304,7 @@ $(".js-batch-load").click(function () {
             parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
                 btn: ['确定', '取消'],
                 shade:[0.1,'#fff'],
-                offset: '100px'
+                offset: '10%'
             }, function () {
                 parentLayer.closeAll();
                 var data = {
@@ -327,7 +327,7 @@ $("a.xj").click(function () {
     parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
         btn: ['确定', '取消'],
         shade:[0.1,'#fff'],
-        offset: '100px'
+        offset: '10%'
     }, function () {
         parentLayer.closeAll();
         var data = {
@@ -356,7 +356,7 @@ $(".js-batch-unload").click(function () {
     });
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要下架的商品", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -365,7 +365,7 @@ $(".js-batch-unload").click(function () {
     } else {
         if (id.length == 0 && flag) {
             parentLayer.alert("审核通过后的商品才能下架商品", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
@@ -375,7 +375,7 @@ $(".js-batch-unload").click(function () {
             parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
                 btn: ['确定', '取消'],
                 shade:[0.1,'#fff'],
-                offset: '100px'
+                offset: '10%'
             }, function () {
                 parentLayer.closeAll();
                 var data = {
@@ -407,7 +407,7 @@ $(".js-batch-delete").click(function () {
     });
     if (id.length == 0 && !flag) {
         parentLayer.alert("请选择需要删除的商品", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         }, function (index) {
@@ -416,7 +416,7 @@ $(".js-batch-delete").click(function () {
     } else {
         if (id.length == 0 && flag) {
             parentLayer.alert("未上架的商品才能进行删除操作", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             }, function (index) {
@@ -426,7 +426,7 @@ $(".js-batch-delete").click(function () {
             parentLayer.confirm('您确定要批量删除选中的产品？', {
                 btn: ['确定', '取消'],
                 shade:[0.1,'#fff'],
-                offset: '100px'
+                offset: '10%'
             }, function () {
                 parentLayer.closeAll();
                 var data = {
@@ -456,7 +456,7 @@ function deletePro(data, tip, index) {
             // parent.layer.closeAll();
             if (data.code == 0) {// 重新登录
                 layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
@@ -464,7 +464,7 @@ function deletePro(data, tip, index) {
                 });
             } else if (data.code == 1) {
                 var tipLayer = layer.alert(tip + "成功", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
@@ -478,7 +478,7 @@ function deletePro(data, tip, index) {
             } else {// 编辑失败
                 layer.alert(tip + "失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             }
         },
@@ -486,7 +486,7 @@ function deletePro(data, tip, index) {
             layer.closeAll();
             layer.alert(tip + "失败", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return;
         }
@@ -551,7 +551,7 @@ $(".qrcode").click(function () {
         title: "商品预览",
         skin: 'layui-layer-rim', //加上边框
         area: ['200px', '240px'], //宽高
-        offset: "30%",
+        offset: "10%",
         content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
     });
 });
@@ -564,7 +564,7 @@ $(".toShops").click(function () {
         title: "到店购买",
         skin: 'layui-layer-rim', //加上边框
         area: ['300px', '300px'], //宽高
-        offset: "30%",
+        offset: "10%",
         bth: ["下载二维码"],
         content: "/mPro/79B4DE7C/codeIframs.do?id=" + id + "&shopId=" + shopId + ""
     });

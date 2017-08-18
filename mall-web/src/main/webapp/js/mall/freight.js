@@ -6,14 +6,14 @@ function deleteFreight(obj) {
         layer.confirm('您确定要删除？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: "30%"
+            offset: "10%"
             // 按钮
         }, function () {
             var idArr = [];
             idArr.push(id);
             // loading层
             var layerLoad = layer.load(1, {
-                offset: "30%",
+                offset: "10%",
                 shade: [0.1, '#fff']
                 // 0.1透明度的白色背景
             });
@@ -28,7 +28,7 @@ function deleteFreight(obj) {
                     layer.close(layerLoad);
                     if (data.flag) {// 重新登录
                         var tip = layer.alert("删除成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -38,7 +38,7 @@ function deleteFreight(obj) {
                     } else {// 删除失败
                         var tip = layer.alert("删除失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 },
@@ -46,7 +46,7 @@ function deleteFreight(obj) {
                     layer.close(layerLoad);
                     layer.alert("删除失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -238,6 +238,7 @@ function editFreight() {
     if (!flag || !detailFlag) {
         layer.msg('请完善物流信息', {
             shade:[0.1,"#fff"],
+            offset: "10%",
             icon: 1
         });
     } else {
@@ -249,7 +250,7 @@ function editFreight() {
 
         // loading层
         var layerLoad = layer.load(1, {
-            offset: "30%",
+            offset: "10%",
             shade: [0.3, '#fff']
         });
         $.ajax({
@@ -262,7 +263,7 @@ function editFreight() {
                 if (data.flag == true) {
                     var tip = layer.alert("编辑成功", {
                         shade:[0.1,"#fff"],
-                        offset: "30%",
+                        offset: "10%",
                         closeBtn: 0
                     }, function (index) {
                         layer.close(tip);
@@ -271,7 +272,7 @@ function editFreight() {
                 } else {// 编辑失败
                     layer.alert("编辑失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 }
 
@@ -280,7 +281,7 @@ function editFreight() {
                 layer.close(layerLoad);
                 layer.alert("编辑失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }

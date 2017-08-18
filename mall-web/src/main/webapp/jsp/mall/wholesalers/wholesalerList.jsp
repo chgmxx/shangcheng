@@ -129,7 +129,7 @@
             skin: 'layui-layer-rim', //加上边框
             area: ['350px', '230px'], //宽高
             shade:[0.1,"#fff"],
-            offset: '30%',
+            offset: '10%',
             content: '<div id="pifaDetail"><div><dl style="margin: 10px;"><dd><dt>姓名：' + name +
             '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>公司名称：' + company + '</dt></dd></dl><dl style="margin: 10px;"><dd>' +
             '<dt>电话号码：' + tel + '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>备注：' + remark +
@@ -249,7 +249,7 @@
     function syncOrder() {
         var layerLoad = layer.load(1, {
             shade: [0.1, '#fff'],
-            offset: "30%"
+            offset: "10%"
         });
         $.ajax({
             url: "/mallOrder/syncOrderPifa.do",
@@ -271,7 +271,7 @@
     }
     function promMsg(msgContent) {
         layer.alert(msgContent, {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             end: function () {
                 location.reload();//刷新本页面

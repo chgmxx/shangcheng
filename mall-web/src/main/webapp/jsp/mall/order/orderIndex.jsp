@@ -591,7 +591,7 @@ var orderNos="";
 function walletPay(orderId){
 	var layerLoad = layer.load(1, {
 		shade : [ 0.3, '#fff' ],
-		offset : "30%"
+		offset : "10%"
 	});
 	
 	$.ajax({
@@ -622,7 +622,7 @@ function walletPay(orderId){
 						} else {// 编辑失败
 							layer.alert(data.msg, {
                                 shade:[0.1,"#fff"],
-								offset : "30%"
+								offset : "10%"
 							});
 						}
 					},
@@ -630,7 +630,7 @@ function walletPay(orderId){
 						layer.closeAll();
 						layer.alert("钱包支付失败，请稍后重试", {
                             shade:[0.1,"#fff"],
-							offset : "30%"
+							offset : "10%"
 						});
 						return;
 					}
@@ -640,7 +640,7 @@ function walletPay(orderId){
 				layer.closeAll();
 				layer.alert(data.msg, {
                     shade:[0.1,"#fff"],
-					offset : "30%"
+					offset : "10%"
 				});
 			}
 		},
@@ -648,7 +648,7 @@ function walletPay(orderId){
 			layer.closeAll();
 			layer.alert("钱包支付失败，请稍后重试", {
                 shade:[0.1,"#fff"],
-				offset : "30%"
+				offset : "10%"
 			});
 			return;
 		}
@@ -661,7 +661,7 @@ function refurbish(){
 		layer.confirm('请前往钱包支付查询订单状态', {
 		    btn: ['确定'] ,
             shade:[0.1,'#fff'],
-		    offset : "30%"
+		    offset : "10%"
 		},
 		function(index, layero){
 			layer.closeAll();
@@ -680,7 +680,7 @@ function toPrint(orderId){
 	    title: "订单打印",
 	    shadeClose: true,
         shade:[0.3,"#fff"],
-	    offset: "20%",
+	    offset: "10%",
 	    shadeClose : false,
 	    area: ["730px","360px"],
 	    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId

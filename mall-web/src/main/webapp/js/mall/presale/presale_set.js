@@ -66,14 +66,14 @@ function editPresale() {
     if (!flag) {
         layer.msg("请完善订购送礼信息", {
             icon: 1,
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
         });
     }
     if (flag) {
         // loading层
         var layerLoad = layer.load(1, {
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
             // 0.1透明度的白色背景
         });
@@ -86,7 +86,7 @@ function editPresale() {
                 layer.close(layerLoad);
                 if (data.code == 1) {
                     var tip = layer.alert("编辑成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
@@ -95,26 +95,26 @@ function editPresale() {
                     });
                 } else if (data.code == -2) {
                     var tip = layer.alert("正在进行预售的活动不能修改", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });
                 } else if (data.code == -3) {
                     var tip = layer.alert("已失效的预售不能进行修改", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });
                 } else if (data.code == 0) {
                     var tip = layer.alert("同一个商品只能参与一个预售活动", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     });
                 } else {// 编辑失败
                     layer.alert("编辑失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 }
 
@@ -123,7 +123,7 @@ function editPresale() {
                 layer.close(layerLoad);
                 layer.alert("编辑失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }

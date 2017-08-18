@@ -69,7 +69,7 @@
 function updReturn(order, returnOrder, tips, type) {
     var layerLoad = layer.load(1, {
         shade: [0.3, '#fff'],
-        offset: "30%"
+        offset: "10%"
     });
     $.ajax({
         type: "post",

@@ -110,6 +110,7 @@ function getShop(shopId) {
         shopId = $(".shopSelect option:selected").attr("id");
     }
     var layerLoad = parentLayer.load(1, {
+        offset: "10%",
         shade: [0.3, '#fff']
     });
     $.ajax({
@@ -205,14 +206,14 @@ function subtmit() {
     if (shopId == null || shopId == "") {
         parentLayer.alert("请选择所属店铺", {
             shade:[0.1,"#fff"],
-            offset: "30%"
+            offset: "10%"
         });
         return false;
     }
     if (array == null || array.length == 0) {
         parentLayer.alert("请选择所属分组", {
             shade:[0.1,"#fff"],
-            offset: "30%"
+            offset: "10%"
         });
         return false;
     }
@@ -226,7 +227,7 @@ function subtmit() {
 
     var layerLoad = parentLayer.load(1, {
         shade: [0.3, '#fff'],
-        offset: "30%"
+        offset: "10%"
     });
     $.ajax({
         type: "post",
@@ -239,7 +240,7 @@ function subtmit() {
             parentLayer.closeAll();
             if (data.code == 0) {// 重新登录
                 parentLayer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
@@ -247,7 +248,7 @@ function subtmit() {
                 });
             } else if (data.code == 1) {
                 var tipLayer = parentLayer.alert("同步商品成功", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
@@ -257,7 +258,7 @@ function subtmit() {
             } else {// 编辑失败
                 parentLayer.alert("同步商品失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             }
         },
@@ -265,7 +266,7 @@ function subtmit() {
             //parentLayer.closeAll();
             parentLayer.alert("同步商品失败", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return;
         }

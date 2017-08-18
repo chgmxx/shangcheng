@@ -717,6 +717,7 @@ function shopdelect() {
             var index = layer.open({
                 title: "",
                 content: "",
+                offset: "10%",
                 type: 2,
                 shadeClose: false
             });
@@ -756,6 +757,7 @@ $(".clearCart").click(function () {
             var index = layer.open({
                 title: "",
                 content: "",
+                offset: "10%",
                 type: 2,
                 shadeClose: false
             });
@@ -848,6 +850,7 @@ function go_order() {
         var index = layer.open({
             title: "",
             content: "",
+            offset: "10%",
             type: 2,
             shadeClose: false
         });

@@ -132,7 +132,7 @@ function editSellerSet() {
                 layer.msg('最底可提现金额最多输入5位小数且大于0', {
                     icon: 1,
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             }
         } else if (withdrawalType == 2) {
@@ -144,7 +144,7 @@ function editSellerSet() {
                 layer.msg('提现规则最多输入5位小数且大于0', {
                     icon: 1,
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             }
         }
@@ -153,14 +153,14 @@ function editSellerSet() {
         layer.msg('请填写基本信息', {
             icon: 1,
             shade:[0.1,"#fff"],
-            offset: "30%"
+            offset: "10%"
         });
     }
     if (flag) {
 
         // loading层
         var layerLoad = layer.load(1, {
-            offset: "30%",
+            offset: "10%",
             shade: [0.1, '#fff']
             // 0.1透明度的白色背景
         });
@@ -175,7 +175,7 @@ function editSellerSet() {
                 layer.close(layerLoad);
                 if (data.flag) {
                     var tip = layer.alert("编辑成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
@@ -185,7 +185,7 @@ function editSellerSet() {
                 } else {// 编辑失败
                     layer.alert("编辑失败，请稍后重试", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 }
 
@@ -194,7 +194,7 @@ function editSellerSet() {
                 layer.close(layerLoad);
                 layer.alert("编辑失败，请稍后重试", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }
