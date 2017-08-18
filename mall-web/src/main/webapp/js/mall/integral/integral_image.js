@@ -29,19 +29,17 @@ function deleteImage(obj, type) {
             msg = "显示积分商城图片";
         }
         // 询问框
-        //TODO parent.layer.confirm
-        parent.layer.confirm('您确定要' + msg + '？', {
+        layer.confirm('您确定要' + msg + '？', {
             offset: "30%",
             shade:[0.1,'#fff'],
             btn: ['确定', '取消']
             // 按钮
         }, function () {
             // loading层
-            parentLayerLoad();
-            // var layerLoad = parent.layer.load(1, {
-            //     offset: "30%",
-            //     shade: [0.1, '#fff'] // 0.1透明度的白色背景
-            // });
+            var layerLoad = layer.load(1, {
+                offset: "30%",
+                shade: [0.1, '#fff'] // 0.1透明度的白色背景
+            });
             $.ajax({
                 type: "post",
                 url: "mallIntegral/image_remove.do",
@@ -51,37 +49,33 @@ function deleteImage(obj, type) {
                 },
                 dataType: "json",
                 success: function (data) {
-                    parentCloseAll();
-                    // parent.layer.close(layerLoad);
+                    layer.close(layerLoad);
                     if (data.code == 1) {
-                        parentAlertMsg(msg + "成功");
-                        //TODO alert 跳转
-                        // var tip = parent.layer.alert(msg + "成功", {
-                        //     offset: "30%",
-                        //     closeBtn: 0
-                        // }, function (index) {
-                        //     parent.layer.close(tip);
-                        //     location.href = window.location.href;
-                        // });
+                        var tip = layer.alert(msg + "成功", {
+                            offset: "30%",
+                            shade:[0.1,"#fff"],
+                            closeBtn: 0
+                        }, function (index) {
+                            layer.close(tip);
+                            location.href = window.location.href;
+                        });
                     } else {// 编辑失败
-                        parentAlertMsg(msg + "失败");
-                        // var tip = parent.layer.alert(msg + "失败", {
-                        //     offset: "30%"
-                        // });
+                        var tip = layer.alert(msg + "失败", {
+                            shade:[0.1,"#fff"],
+                            offset: "30%"
+                        });
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    parentCloseAll();
-                    parentAlertMsg(msg + "失败");
-                    // parent.layer.close(layerLoad);
-                    // parent.layer.alert(msg + "失败", {
-                    //     offset: "30%"
-                    // });
+                    layer.close(layerLoad);
+                    layer.alert(msg + "失败", {
+                        shade:[0.1,"#fff"],
+                        offset: "30%"
+                    });
                     return;
                 }
             });
-            parentCloseAll();
-            // parent.layer.closeAll();
+            layer.closeAll();
         });
     }
 
@@ -137,37 +131,37 @@ function editAuction() {
     var returnUrl = $(".returnUrl").val();
     var shopId = $(".shopId").find("option:selected").val();//店铺id
     if (imageUrl == null || imageUrl == "" || typeof(imageUrl) == "undefined") {
-        parentAlertMsg('请上传图片');
-        // parent.layer.msg('请上传图片', {
-        //     offset: "30%",
-        //     icon: 1
-        // });
+        layer.msg('请上传图片', {
+            shade:[0.1,"#fff"],
+            offset: "30%",
+            icon: 1
+        });
         return false;
     }
     if (type == 1) {//跳转到商品详情
         if (returnUrl == null || returnUrl == "") {
-            parentAlertMsg('请输入要跳转的链接');
-            // parent.layer.msg('请输入要跳转的链接', {
-            //     offset: "30%",
-            //     icon: 1
-            // });
+            layer.msg('请输入要跳转的链接', {
+                offset: "30%",
+                shade:[0.1,"#fff"],
+                icon: 1
+            });
             return false;
         }
         if (returnUrl.length > 500) {
-            parentAlertMsg('跳转链接的长度不能大于500');
-            // parent.layer.msg('跳转链接的长度不能大于500', {
-            //     offset: "30%",
-            //     icon: 1
-            // });
+            layer.msg('跳转链接的长度不能大于500', {
+                offset: "30%",
+                shade:[0.1,"#fff"],
+                icon: 1
+            });
             return false;
         }
         var reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)[\w\W]{1,}$/;
         if (!reg.test(returnUrl)) {
-            parentAlertMsg('这网址不是以http://https://开头，或者不是网址！');
-            // parent.layer.msg("这网址不是以http://https://开头，或者不是网址！", {
-            //     offset: "30%",
-            //     icon: 1
-            // });
+            layer.msg("这网址不是以http://https://开头，或者不是网址！", {
+                offset: "30%",
+                shade:[0.1,"#fff"],
+                icon: 1
+            });
             return false;
         }
     } else {
@@ -186,7 +180,7 @@ function editAuction() {
     }
 
     // loading层
-    var layerLoad = parent.layer.load(1, {
+    var layerLoad = layer.load(1, {
         offset: "30%",
         shade: [0.1, '#fff']
         // 0.1透明度的白色背景
@@ -197,33 +191,30 @@ function editAuction() {
         data: data,
         dataType: "json",
         success: function (data) {
-            parentCloseAll();
-            // parent.layer.close(layerLoad);
+            layer.close(layerLoad);
             if (data.code == 1) {
-                parentAlertMsg("编辑成功");
-                //TODO alert 跳转
-                // var tip = parent.layer.alert("编辑成功", {
-                //     offset: "30%",
-                //     closeBtn: 0
-                // }, function (index) {
-                //     parent.layer.close(tip);
-                //     location.href = "/mallIntegral/image_index.do";
-                // });
+                var tip = layer.alert("编辑成功", {
+                    offset: "30%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    layer.close(tip);
+                    location.href = "/mallIntegral/image_index.do";
+                });
             } else {// 编辑失败
-                parentAlertMsg("编辑失败");
-                // parent.layer.alert("编辑失败", {
-                //     offset: "30%"
-                // });
+                layer.alert("编辑失败", {
+                    shade:[0.1,"#fff"],
+                    offset: "30%"
+                });
             }
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parentCloseAll();
-            parentAlertMsg("编辑失败");
-            // parent.layer.close(layerLoad);
-            // parent.layer.alert("编辑失败", {
-            //     offset: "30%"
-            // });
+            layer.close(layerLoad);
+            layer.alert("编辑失败", {
+                shade:[0.1,"#fff"],
+                offset: "30%"
+            });
             return;
         }
     });
@@ -418,7 +409,7 @@ function valiTable(obj) {
  * @returns
  */
 function chooseImage() {
-    parentOpenIframe('素材库','820px', '500px',"/common/material.do");
+    fhmater(0);
     // parent.layer.open({
     //     type: 2,
     //     title: '素材库',
@@ -431,8 +422,8 @@ function chooseImage() {
 }
 //素材库里面返回信息
 function image(imageArray, url) {
-    parentCloseAll();
-    // parent.layer.closeAll();
+
+    layer.closeAll();
     $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
 }
 /**

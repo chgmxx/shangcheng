@@ -168,8 +168,8 @@ var claObj = "";
 function choosePicture(classess) {
     claObj = classess;
     if ($("#stoPid").val() != -1) {
-        //TODO  parent.materiallayer();
-        parent.materiallayer();
+        // parent.materiallayer();
+        materiallayer();
     } else {
         alert("请选择店铺");
     }
@@ -227,13 +227,13 @@ function openMap() {
         if ($("#stoProvince").val() != "0" && $("#stoProvince").val() != undefined) {
             address = $("#stoProvince option:selected").text();
         } else {
-            parentAlertMsg("请选择省份!");
+            layer.msg("请选择省份!");
             return;
         }
         if ($("#stoCity").val() != "0" && $("#stoCity").val() != undefined) {
             address += $("#stoCity option:selected").text();
         } else {
-            parentAlertMsg("请选择城市!");
+            layer.msg("请选择城市!");
             return;
         }
     }
@@ -258,21 +258,21 @@ function openMap() {
                 if (latitude != "" && longitude != "") {
                     url += "&coordtype=5&coord=" + latitude + "," + longitude;
                 }
-                parentOpenIframe('消息','800px', '600px',[url, "no"]);
-                // parent.layer.open({
-                //     area: ['800px', '600px'],
-                //     title: [
-                //         '消息',
-                //         'background-color:#5FBFE7; color:#fff;'
-                //     ],
-                //     offset: "5%",
-                //     type: 2,
-                //     btn: ["确定", "取消"],
-                //     content: [url, "no"],
-                //     yes: function (index) {
-                //         parent.layer.close(index);
-                //     }
-                // });
+
+                layer.open({
+                    area: ['800px', '600px'],
+                    title: [
+                        '消息',
+                        'background-color:#5FBFE7; color:#fff;'
+                    ],
+                    offset: "5%",
+                    type: 2,
+                    btn: ["确定", "取消"],
+                    content: [url, "no"],
+                    yes: function (index) {
+                        layer.close(index);
+                    }
+                });
             }
         }
     );
@@ -358,24 +358,21 @@ function save() {
          alert("请选择店铺");
          return false;
          }*/
-        var index = parentLayerLoad();
-        // var index = parent.layer.load(3, {
-        //     offset: '40%',
-        //     shade: [0.4, '#8E8E8E']
-        // });
+        var index = layer.load(3, {
+            offset: '40%',
+            shade: [0.4, '#fff']
+        });
         $.ajax({
             url: "/store/saveOrUpdate.do",
             data: params,
             dataType: "json",
             type: "post",
             success: function (data) {
-                parentCloseAll();
-                // parent.layer.close(index);
+                layer.close(index);
                 if (data.message != null && data.message != "") {
-                    parentAlertMsg(data.message);
-                    parent.alertMsg(data.message);
+                    alertMsg(data.message);
                 } else {
-                    parentAlertMsg("保存店铺失败，请稍后重试");
+                    alertMsg("保存店铺失败，请稍后重试");
                 }
                 if (data.result) {
                     location.href = "/store/index.do";

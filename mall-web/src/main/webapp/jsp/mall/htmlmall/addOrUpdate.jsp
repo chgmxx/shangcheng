@@ -82,28 +82,26 @@
             return false;
         }
 
-//        parent.showAll();//加载
-        parentLayerLoad();
+        showAll();//加载
         $("#textmsg").ajaxSubmit({
             type: "post",
             dataType: "json",
             url: "/mallhtml/addorUpdateSave.do",
             success: function (data) {
-//                parent.closeWindow(); //加载完毕
-                parentCloseAll();
+                closeWindow(); //加载完毕
                 if (data.error == "0") {
-                    parentAlertMsg("操作成功");
-//                    parent.layer.alert("操作成功", {
-//                        offset: "30%",
-//                        closeBtn: 0
-//                    });
+                    layer.alert("操作成功", {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    });
                     window.location.href = "/mallhtml/htmllist.do";
                 } else {
-                    parentAlertMsg(data.message);
-//                    parent.layer.alert(data.message, {
-//                        offset: "30%",
-//                        closeBtn: 0
-//                    });
+                    layer.alert(data.message, {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    });
                 }
             }
         });

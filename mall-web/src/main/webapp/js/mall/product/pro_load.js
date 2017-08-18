@@ -305,11 +305,11 @@ function getSpecifica(obj, defaultVal, type) {
     var shopId = $(".shop-contain option:selected").val();
     // console.log(obj.html())
     if (shopId == null || shopId == "") {
-        parentAlertMsg("请选择所属商铺");
-        // parent.layer.alert("请选择所属商铺", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // });
+        layer.alert("请选择所属商铺", {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            closeBtn: 0
+        });
     }
     $.ajax({
         type: "post",
@@ -355,11 +355,11 @@ function getSpecifica(obj, defaultVal, type) {
 function getSpecificaValue(id, selectObj, defaultStr, type) {
     var shopId = $(".shop-contain option:selected").val();
     if (shopId == null || shopId == "") {
-        parentAlertMsg("请选择所属商铺");
-        // parent.layer.alert("请选择所属商铺", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // });
+        layer.alert("请选择所属商铺", {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            closeBtn: 0
+        });
     }
     var op = "";
     $.ajax({
@@ -606,8 +606,7 @@ function addPop(obj) {
                 specArrs.find(".sku-atom").each(function () {
                     var speVal = $(this).find("span:eq(0)").text();
                     if ($.trim(speVal) == val) {
-                        parentAlertMsg("已经添加了相同的规格值");
-                        // parent.layer.msg("已经添加了相同的规格值");
+                        layer.msg("已经添加了相同的规格值");
                         flag = false;
                         return;
                     }
@@ -675,7 +674,7 @@ function loadSpecImg() {
         });
 
     $(".upload-img-wrap").click(function () {
-        parent.materiallayer();
+        materiallayer();
     });
 
 }
@@ -937,8 +936,11 @@ function materiallayer(type, obj) {
     var url = "/common/material.do";
     if (type == 0) {
         url += "?selectType=checked";
+        fhmater(1);
+    }else{
+        fhmater(0);
     }
-    parentOpenIframe('素材库','820px', '500px',url);
+
     // parent.layer.open({
     //     type: 2,
     //     title: '素材库',
@@ -951,8 +953,7 @@ function materiallayer(type, obj) {
 }
 // 素材库里面返回信息
 function image(imageArray, url) {
-    parentCloseAll();
-    // parent.layer.closeAll();
+    layer.closeAll();
     $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
 }
 /**

@@ -59,7 +59,6 @@
         var orderPayWay = $("input.orderPayWay").val();
         if ((type == 1 || type == 3) && orderPayWay == 9) {
             parentOpenIframe("钱包支付", 700, 650, '4%', url, true);
-            //TODO  parent.openIframeNoScoll2
             // parent.openIframeNoScoll2("钱包支付", 700, 650, '4%', url, true);
         } else {
             updReturn(payParams, returnOrder, tip, type);
@@ -68,11 +67,10 @@
 });
 
 function updReturn(order, returnOrder, tips, type) {
-    parentLayerLoad();
-    // var layerLoad = parent.layer.load(1, {
-    //     shade: [0.3, '#000'],
-    //     offset: "30%"
-    // });
+    var layerLoad = layer.load(1, {
+        shade: [0.3, '#fff'],
+        offset: "30%"
+    });
     $.ajax({
         type: "post",
         url: "/mallOrder/updateReturn.do",
@@ -82,12 +80,10 @@ function updReturn(order, returnOrder, tips, type) {
         },
         dataType: "json",
         success: function (data) {
-            parentCloseAll();
-            // parent.layer.close(layerLoad);
+            layer.close(layerLoad);
             if (data.flag == true) {// 重新登录
                 alert(tips + "成功");
-                //TODO  parent.location.href
-                parent.location.href = "/mallOrder/indexstart.do";
+                location.href = "/mallOrder/indexstart.do";
             } else {// 编辑失败
                 if (typeof data.msg != "undefined" && data.msg != null && data.msg != "" && type == 1) {
                     alert(data.msg);
@@ -98,8 +94,7 @@ function updReturn(order, returnOrder, tips, type) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parentCloseAll();
-            // parent.layer.close(layerLoad);
+            layer.close(layerLoad);
             alert(tips + "失败");
             return;
         }

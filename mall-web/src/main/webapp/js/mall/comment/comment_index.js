@@ -1,4 +1,4 @@
-﻿var parentLayer = window.parent.layer;
+﻿var parentLayer = window.layer;
 
 /**
  * 批量删除
@@ -13,15 +13,14 @@ $(".js-batch-delete").click(function () {
         }
     });
     if (id.length == 0 || !flag) {
-        parentAlertMsg("请选择需要删除的评论");
-        // parentLayer.alert("请选择需要删除的评论", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // }, function (index) {
-        //     parentLayer.closeAll();
-        // });
+        parentLayer.alert("请选择需要删除的评论", {
+            shade:[0.1,"#fff"],
+            offset: "30%",
+            closeBtn: 0
+        }, function (index) {
+            parentLayer.closeAll();
+        });
     } else {
-        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要批量删除选中的评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
@@ -45,7 +44,6 @@ $(".a-del").click(function () {
     var id = [];
     if ($(this).attr("id") != null) {
         id.push($(this).attr("id"));
-        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要删除评论评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
@@ -68,7 +66,6 @@ $(".a-check").click(function () {
     if ($(this).attr("id") != null) {
         id.push($(this).attr("id"));
 
-        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要通过评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
@@ -92,7 +89,6 @@ $(".a-uncheck").click(function () {
     if ($(this).attr("id") != null) {
         id.push($(this).attr("id"));
 
-        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要不通过评论？不通过评论后，不会在商品详情页面展示', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
@@ -123,23 +119,22 @@ $(".js-batch-agreen").click(function () {
         }
     });
     if (id.length == 0 && !flag) {
-        parentAlertMsg("请选择需要通过的评论");
-        // parentLayer.alert("请选择需要通过的评论", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // }, function (index) {
-        //     parentLayer.closeAll();
-        // });
+        parentLayer.alert("请选择需要通过的评论", {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            closeBtn: 0
+        }, function (index) {
+            parentLayer.closeAll();
+        });
     } else if (id.length == 0 && flag) {
-        parentAlertMsg("未审核的评论才能进行审核通过操作");
-        // parentLayer.alert("未审核的评论才能进行审核通过操作", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // }, function (index) {
-        //     parentLayer.closeAll();
-        // });
+        parentLayer.alert("未审核的评论才能进行审核通过操作", {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            closeBtn: 0
+        }, function (index) {
+            parentLayer.closeAll();
+        });
     } else {
-        //TODO parent.layer.confirm
         parentLayer.confirm('您确定要批量通过选中的评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
@@ -173,31 +168,29 @@ $(".js-batch-no-agreen").click(function () {
         }
     });
     if (id.length == 0 && !flag) {
-        parentAlertMsg("请选择需要不通过的评论");
-        // parentLayer.alert("请选择需要不通过的评论", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // }, function (index) {
-        //     parentLayer.closeAll();
-        // });
+        parentLayer.alert("请选择需要不通过的评论", {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            closeBtn: 0
+        }, function (index) {
+            parentLayer.closeAll();
+        });
     }
     if (id.length == 0 && flag) {
-        parentAlertMsg("未审核的评价才能进行审核未通过操作");
-        // parentLayer.alert("未审核的评价才能进行审核未通过操作", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // }, function (index) {
-        //     parentLayer.closeAll();
-        // });
+        parentLayer.alert("未审核的评价才能进行审核未通过操作", {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            closeBtn: 0
+        }, function (index) {
+            parentLayer.closeAll();
+        });
     } else {
-        //TODO  parent.layer.confirm
         parentLayer.confirm('您确定要批量未通过选中的评论？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
             offset: '100px'
         }, function () {
-            parentCloseAll();
-            // parentLayer.closeAll();
+            parentLayer.closeAll();
             var data = {
                 ids: JSON.stringify(id),
                 checkStatus: -1
@@ -210,44 +203,40 @@ $(".js-batch-no-agreen").click(function () {
 });
 
 function deletePro(data, tip, index) {
-    var layerLoad =parentLayerLoad();
-    // var layerLoad = parentLayer.load(1, {
-    //     shade: [0.3, '#000']
-    // });
+    var layerLoad = parentLayer.load(1, {
+        shade: [0.3, '#fff']
+    });
     $.ajax({
         type: "post",
         data: data,
         url: "/comment/checkComment.do",
         dataType: "json",
         success: function (data) {
-            parentCloseAll();
-            // parentLayer.close(layerLoad);
+            parentLayer.close(layerLoad);
             if (data != null) {
                 if (data.result) {
-                    parentAlertMsg(tip + "成功");
-                    //TODO alert 跳转
-                    // var tipLayer = parent.layer.alert(tip + "成功", {
-                    //     offset: "30%",
-                    //     closeBtn: 0
-                    // }, function (index) {
-                    //     parent.layer.close(tipLayer);
-                    //     location.href = window.location.href;
-                    // });
+                    var tipLayer = layer.alert(tip + "成功", {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        layer.close(tipLayer);
+                        location.href = window.location.href;
+                    });
                 } else {
-                    parentAlertMsg(tip + "失败");
-                    // parent.layer.alert(tip + "失败", {
-                    //     offset: "30%"
-                    // });
+                    layer.alert(tip + "失败", {
+                        shade:[0.1,"#fff"],
+                        offset: "30%"
+                    });
                 }
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parentCloseAll();
-            parentAlertMsg(tip + "失败");
-            // parent.layer.closeAll();
-            // parent.layer.alert(tip + "失败", {
-            //     offset: "30%"
-            // });
+            layer.closeAll();
+            layer.alert(tip + "失败", {
+                shade:[0.1,"#fff"],
+                offset: "30%"
+            });
             return;
         }
     });
@@ -262,59 +251,55 @@ $(".subRepComBtn").click(function (event) {
     var repContent = parentObj.find(".repContent").html();
     var shop_id = parentObj.find("input.shop_id").val();
     if (repContent == null || repContent == "" || typeof(repContent) == "undefinde") {
-        parentAlertMsg("请输入要回复的内容");
-        // parent.layer.alert("请输入要回复的内容", {
-        //     offset: "30%"
-        // });
+        layer.alert("请输入要回复的内容", {
+            shade:[0.1,"#fff"],
+            offset: "30%"
+        });
     } else if (repContent.length >= 240) {
-        parentAlertMsg("回复内容不能超过240个字");
-        // parent.layer.alert("回复内容不能超过240个字", {
-        //     offset: "30%"
-        // });
+        layer.alert("回复内容不能超过240个字", {
+            shade:[0.1,"#fff"],
+            offset: "30%"
+        });
     } else {
         var data = {
             content: $.trim(repContent),
             repPId: pId,
             shopId: shop_id
         };
-        var layerLoad = parentLayerLoad();
-        // var layerLoad = parentLayer.load(1, {
-        //     shade: [0.3, '#000']
-        // });
+        var layerLoad = parentLayer.load(1, {
+            shade: [0.3, '#fff']
+        });
         $.ajax({
             type: "post",
             data: {params: JSON.stringify(data)},
             url: "/comment/repComment.do",
             dataType: "json",
             success: function (data) {
-                parentCloseAll();
-                // parentLayer.close(layerLoad);
+                parentLayer.close(layerLoad);
                 if (data != null) {
                     if (data.result) {
-                        parentAlertMsg("回复评论成功");
-                        //TODO alert 跳转
-                        // var tipLayer = parent.layer.alert("回复评论成功", {
-                        //     offset: "30%",
-                        //     closeBtn: 0
-                        // }, function (index) {
-                        //     parent.layer.close(tipLayer);
-                        //     location.href = window.location.href;
-                        // });
+                        var tipLayer = layer.alert("回复评论成功", {
+                            offset: "30%",
+                            shade:[0.1,"#fff"],
+                            closeBtn: 0
+                        }, function (index) {
+                            layer.close(tipLayer);
+                            location.href = window.location.href;
+                        });
                     } else {
-                        parentAlertMsg("回复评论失败");
-                        parent.layer.alert("回复评论失败", {
+                        layer.alert("回复评论失败", {
+                            shade:[0.1,"#fff"],
                             offset: "30%"
                         });
                     }
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parentCloseAll();
-                parentAlertMsg("回复评论失败");
-                // parent.layer.closeAll();
-                // parent.layer.alert("回复评论失败", {
-                //     offset: "30%"
-                // });
+                layer.closeAll();
+                layer.alert("回复评论失败", {
+                    shade:[0.1,"#fff"],
+                    offset: "30%"
+                });
                 return;
             }
         });

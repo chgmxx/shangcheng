@@ -735,12 +735,10 @@ function shopdelect() {
                         location.href = window.location.href;
                     } else {
                         alert("删除购物车商品失败");
-                        parentCloseAll();
-                        // layer.closeAll();
+                        layer.closeAll();
                     }
                 }, error: function () {
-                    // layer.closeAll();
-                    parentCloseAll();
+                    layer.closeAll();
                 }
             })
         }
@@ -775,10 +773,10 @@ $(".clearCart").click(function () {
                         location.href = window.location.href;
                     } else {
                         alert("确认清空失效商品失败");
-                        parentCloseAll();
+                        layer.closeAll();
                     }
                 }, error: function () {
-                    parentCloseAll();
+                    layer.closeAll();
                 }
             })
         }
@@ -862,11 +860,11 @@ function go_order() {
                     $("#json").val(data.result)
                     $("#queryText").submit();
                 } else {
-                    parentCloseAll();
+                    layer.closeAll();
                     alert("结算购物车失败，请稍后结算");
                 }
             }, error: function () {
-                parentCloseAll();
+                layer.closeAll();
             }
         });
     }

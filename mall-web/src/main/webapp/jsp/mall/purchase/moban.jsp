@@ -90,8 +90,7 @@
     }
 
     function removeCompany(companyId) {
-        //TODO parent.layer.confirm
-        parent.layer.confirm("确定要删除该条数据吗?", {
+        layer.confirm("确定要删除该条数据吗?", {
             shade:[0.1,'#fff'],
             btn: ['确定', '取消'],
             offset: '40%'
@@ -105,17 +104,14 @@
                 dataType: "JSON",
                 success: function (data) {
                     if (data.result == true || data.result == "true") {
-                        parentAlertMsg("删除成功!");
-//                        window.parent.alertMsg("删除成功!");
+                        window.alertMsg("删除成功!");
                         location.href = "/purchaseCompany/companyIndex.do";
                     } else {
-                        parentAlertMsg("删除失败!");
-//                        window.parent.alertMsg("删除失败!");
+                        window.alertMsg("删除失败!");
                     }
                 }
             });
-            parentCloseAll();
-//            parent.layer.closeAll();
+            layer.closeAll();
         }, function () {
         });
     }

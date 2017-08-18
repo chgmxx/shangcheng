@@ -77,16 +77,13 @@
                     province += $(this).attr("tip");
                 }
             });
-            //TODO  parent.getProvinces
-            parent.getProvinces(id, province, index);
-            parentCloseAll();
-//            parent.layer.closeAll();
+            getProvinces(id, province, index);
+            layer.closeAll();
         });
 
         //取消按钮
         $('#cancelOrder').click(function () {
-            parentCloseAll();
-//            parent.layer.closeAll();
+            layer.closeAll();
         });
     });
 </script>

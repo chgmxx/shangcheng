@@ -124,20 +124,17 @@
 </div>
 <script type="text/javascript">
     function pifaDetail(name, company, tel, remark) {
-        parentOpenIframe("",'350px', '230px','<div id="pifaDetail"><div><dl style="margin: 10px;"><dd><dt>姓名：' + name +
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim', //加上边框
+            area: ['350px', '230px'], //宽高
+            shade:[0.1,"#fff"],
+            offset: '30%',
+            content: '<div id="pifaDetail"><div><dl style="margin: 10px;"><dd><dt>姓名：' + name +
             '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>公司名称：' + company + '</dt></dd></dl><dl style="margin: 10px;"><dd>' +
             '<dt>电话号码：' + tel + '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>备注：' + remark +
-            '</dt></dd></dl></div></div>');
-//        parent.layer.open({
-//            type: 1,
-//            skin: 'layui-layer-rim', //加上边框
-//            area: ['350px', '230px'], //宽高
-//            offset: '30%',
-//            content: '<div id="pifaDetail"><div><dl style="margin: 10px;"><dd><dt>姓名：' + name +
-//            '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>公司名称：' + company + '</dt></dd></dl><dl style="margin: 10px;"><dd>' +
-//            '<dt>电话号码：' + tel + '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>备注：' + remark +
-//            '</dt></dd></dl></div></div>'
-//        });
+            '</dt></dd></dl></div></div>'
+        });
     }
 
     /*开关切换*/
@@ -186,8 +183,7 @@
                 }
             });
         } else {
-            parentAlertMsg("请选择审核通过或未通过的批发商");
-//            parent.alertMsg("请选择审核通过或未通过的批发商");
+            alertMsg("请选择审核通过或未通过的批发商");
         }
     }
 
@@ -211,8 +207,7 @@
                 }
             });
         } else {
-            parentAlertMsg("网络繁忙，请稍后再试");
-//            parent.alertMsg("网络繁忙，请稍后再试");
+            alertMsg("网络繁忙，请稍后再试");
         }
     }
 
@@ -252,43 +247,36 @@
     }
     //同步订单成交数
     function syncOrder() {
-        var layerLoad=parentLayerLoad();
-//        var layerLoad = parent.layer.load(1, {
-//            shade: [0.1, '#000'],
-//            offset: "30%"
-//        });
+        var layerLoad = layer.load(1, {
+            shade: [0.1, '#fff'],
+            offset: "30%"
+        });
         $.ajax({
             url: "/mallOrder/syncOrderPifa.do",
             type: "post",
             dataType: "json",
             success: function (data) {
-                parentCloseAll();
-//                parent.layer.close(layerLoad);
+                layer.close(layerLoad);
                 if (data.flag) {
-                    parentAlertMsg("同步成功");
-//                    parent.alertMsg("同步成功");
+                    alertMsg("同步成功");
                     location.href = window.location.href;
                 } else {
-                    parentAlertMsg("同步失败，请稍后重试");
-//                    parent.alertMsg("同步失败，请稍后重试");
+                    alertMsg("同步失败，请稍后重试");
                 }
             }, error: function (data) {
-                parentCloseAll();
-                parentAlertMsg("同步失败，请稍后重试");
-//                parent.layer.close(layerLoad);
-//                parent.alertMsg("同步失败，请稍后重试");
+                layer.close(layerLoad);
+                alertMsg("同步失败，请稍后重试");
             }
         });
     }
     function promMsg(msgContent) {
-        //TODO alert 跳转
-        parentAlertMsg(msgContent);
-//        parent.layer.alert(msgContent, {
-//            offset: "30%",
-//            end: function () {
-//                location.reload();//刷新本页面
-//            }
-//        });
+        layer.alert(msgContent, {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            end: function () {
+                location.reload();//刷新本页面
+            }
+        });
     }
 
 </script>

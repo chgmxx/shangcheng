@@ -64,72 +64,67 @@ function editPresale() {
     }
 
     if (!flag) {
-        parentAlertMsg("请完善订购送礼信息");
-        // parent.layer.msg("请完善订购送礼信息", {
-        //     icon: 1,
-        //     offset: "30%",
-        //     shade: [0.1, '#000']
-        // });
+        layer.msg("请完善订购送礼信息", {
+            icon: 1,
+            offset: "30%",
+            shade: [0.1, '#fff']
+        });
     }
     if (flag) {
         // loading层
-        var layerLoad = parentLayerLoad();
-        // var layerLoad = parent.layer.load(1, {
-        //     offset: "30%",
-        //     shade: [0.1, '#000']
-        //     // 0.1透明度的白色背景
-        // });
+        var layerLoad = layer.load(1, {
+            offset: "30%",
+            shade: [0.1, '#fff']
+            // 0.1透明度的白色背景
+        });
         $.ajax({
             type: "post",
             url: "mPresale/edit_presale_set.do",
             data: datas,
             dataType: "json",
             success: function (data) {
-                parentCloseAll();
-                // parent.layer.close(layerLoad);
+                layer.close(layerLoad);
                 if (data.code == 1) {
-                    parentAlertMsg("编辑成功");
-                    //TODO alert 跳转
-                    // var tip = parent.layer.alert("编辑成功", {
-                    //     offset: "30%",
-                    //     closeBtn: 0
-                    // }, function (index) {
-                    //     parent.layer.close(tip);
-                    //     location.href = "/mPresale/presale_set.do";
-                    // });
+                    var tip = layer.alert("编辑成功", {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        layer.close(tip);
+                        location.href = "/mPresale/presale_set.do";
+                    });
                 } else if (data.code == -2) {
-                    parentAlertMsg("正在进行预售的活动不能修改");
-                    // var tip = parent.layer.alert("正在进行预售的活动不能修改", {
-                    //     offset: "30%",
-                    //     closeBtn: 0
-                    // });
+                    var tip = layer.alert("正在进行预售的活动不能修改", {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    });
                 } else if (data.code == -3) {
-                    parentAlertMsg("已失效的预售不能进行修改");
-                    // var tip = parent.layer.alert("已失效的预售不能进行修改", {
-                    //     offset: "30%",
-                    //     closeBtn: 0
-                    // });
+                    var tip = layer.alert("已失效的预售不能进行修改", {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    });
                 } else if (data.code == 0) {
-                    parentAlertMsg("同一个商品只能参与一个预售活动");
-                    // var tip = parent.layer.alert("同一个商品只能参与一个预售活动", {
-                    //     offset: "30%",
-                    //     closeBtn: 0
-                    // });
+                    var tip = layer.alert("同一个商品只能参与一个预售活动", {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    });
                 } else {// 编辑失败
-                    parentAlertMsg("编辑失败");
-                    // parent.layer.alert("编辑失败", {
-                    //     offset: "30%"
-                    // });
+                    layer.alert("编辑失败", {
+                        shade:[0.1,"#fff"],
+                        offset: "30%"
+                    });
                 }
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parentCloseAll();
-                parentAlertMsg("编辑失败");
-                // parent.layer.close(layerLoad);
-                // parent.layer.alert("编辑失败", {
-                //     offset: "30%"
-                // });
+                layer.close(layerLoad);
+                layer.alert("编辑失败", {
+                    shade:[0.1,"#fff"],
+                    offset: "30%"
+                });
                 return;
             }
         });
@@ -255,8 +250,7 @@ function isCN(str) { // 判断是不是中文
 }
 
 function closewindow() {
-    // layer.closeAll();
-    parentCloseAll();
+    layer.closeAll();
 }
 
 /** 自定义一个序列化表单的方法* */

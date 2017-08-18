@@ -45,8 +45,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				}
 			});
 			var isCheck = $("input#isCheck").val();
-            //TODO  parent.returnProVal()
-			parent.returnProVal(jsonArry,1,isCheck);//方法回调
+			returnProVal(jsonArry,1,isCheck);//方法回调
 			closeWindow();
 		}
 	
@@ -57,9 +56,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		function closeWindow(){
 			//当你在iframe页面关闭自身时
-            //TODO parent.layer.getFrameIndex
-			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-			parent.layer.close(index); //再执行关闭  
+			var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+			layer.close(index); //再执行关闭
 		}
 	</script>
   </head>

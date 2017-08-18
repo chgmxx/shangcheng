@@ -497,8 +497,7 @@ function searchOrder(){
 	if(type != 0){
 		$('#orderForm').submit();
 	}else{
-        parentAlertMsg("请先选择搜索类型！");
-//		parent.alertMsg("请先选择搜索类型！");
+		alertMsg("请先选择搜索类型！");
 	}
 }
 function pressSearch(e){
@@ -531,8 +530,7 @@ function orderRemark(type,obj,groupBuyId) {
 		var order_heigth = "330px";
 		if(returnStatus != null && returnStatus != ""){
 			if(returnStatus != -2 && returnStatus != -3 && returnStatus != 1 && returnStatus != 5){//正在退款的订单不能发货
-                parentAlertMsg("订单中的部分商品，买家已提交了退款申请。你需要先跟买家协商，买家撤销退款申请后，才能进行发货操作。");
-//				parent.alertMsg("订单中的部分商品，买家已提交了退款申请。你需要先跟买家协商，买家撤销退款申请后，才能进行发货操作。");
+				alertMsg("订单中的部分商品，买家已提交了退款申请。你需要先跟买家协商，买家撤销退款申请后，才能进行发货操作。");
 				flag = false;
 			}
 		}
@@ -591,11 +589,10 @@ var orderNos="";
  * 钱包支付
  */
 function walletPay(orderId){
-    var layerLoad = parentLayerLoad();
-//	var layerLoad = parent.layer.load(1, {
-//		shade : [ 0.3, '#000' ],
-//		offset : "30%"
-//	});
+	var layerLoad = layer.load(1, {
+		shade : [ 0.3, '#fff' ],
+		offset : "30%"
+	});
 	
 	$.ajax({
 		type : "post",
@@ -612,70 +609,62 @@ function walletPay(orderId){
 					url : "/mallOrder/againGenerateOrderNo.do",
 					dataType : "json",
 					success : function(data) {
-                        parentCloseAll();
-//						parent.layer.closeAll();
+						layer.closeAll();
 						if (data.result) {
 							//调用钱包接口
 							orderNos = data.no;
 						 	 var out_trade_no=data.no;
 							 var oMoney = data.money;
 							 var url="/cashier/pay_page.do?model=3&out_trade_no="+out_trade_no+"&total_fee="+oMoney+"&businessUtilName=MallBusinessService&is_calculate=1";
-							// parent.openIframeNoScoll("钱包支付",700,650,url);
                             parentOpenIframe("钱包支付",700,650,'4%',url,true)
 //							 parent.openIframeNoScoll2("钱包支付",700,650,'4%',url,true);
 							  
 						} else {// 编辑失败
-                            parentAlertMsg(data.msg);
-//							parent.layer.alert(data.msg, {
-//								offset : "30%"
-//							});
+							layer.alert(data.msg, {
+                                shade:[0.1,"#fff"],
+								offset : "30%"
+							});
 						}
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                        parentCloseAll();
-                        parentAlertMsg("钱包支付失败，请稍后重试");
-//						parent.layer.closeAll();
-//						parent.layer.alert("钱包支付失败，请稍后重试", {
-//							offset : "30%"
-//						});
+						layer.closeAll();
+						layer.alert("钱包支付失败，请稍后重试", {
+                            shade:[0.1,"#fff"],
+							offset : "30%"
+						});
 						return;
 					}
 				});
 				  
 			} else {// 编辑失败
-                parentCloseAll();
-                parentAlertMsg(data.msg);
-//				parent.layer.closeAll();
-//				parent.layer.alert(data.msg, {
-//					offset : "30%"
-//				});
+				layer.closeAll();
+				layer.alert(data.msg, {
+                    shade:[0.1,"#fff"],
+					offset : "30%"
+				});
 			}
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-            parentCloseAll();
-            parentAlertMsg("钱包支付失败，请稍后重试");
-//			parent.layer.closeAll();
-//			parent.layer.alert("钱包支付失败，请稍后重试", {
-//				offset : "30%"
-//			});
+			layer.closeAll();
+			layer.alert("钱包支付失败，请稍后重试", {
+                shade:[0.1,"#fff"],
+				offset : "30%"
+			});
 			return;
 		}
 	});
 }
 function refurbish(){
-    parentCloseAll();
-//	parent.layer.closeAll();
+	layer.closeAll();
 	//alert("刷新啦！")
 	if(orderNos != null && orderNos != ""){
-	    //TODO parent.layer.confirm
-		parent.layer.confirm('请前往钱包支付查询订单状态', {
+		layer.confirm('请前往钱包支付查询订单状态', {
 		    btn: ['确定'] ,
             shade:[0.1,'#fff'],
 		    offset : "30%"
 		},
 		function(index, layero){
-            parentCloseAll();
-//			parent.layer.closeAll();
+			layer.closeAll();
 			window.location.href="/cashier/pay_list.do";
 		});
 	}else{
@@ -686,17 +675,16 @@ function refurbish(){
  * 前往打印
  */
 function toPrint(orderId){
-    var printIndex = parentOpenIframe("订单打印","730px","360px","mallOrder/toPrintMallOrder.do?orderId="+orderId);
-//	var printIndex = parent.layer.open({
-//		type: 2,
-//	    title: "订单打印",
-//	    shadeClose: true,
-//	    shade: 0.3,
-//	    offset: "20%",
-//	    shadeClose : false,
-//	    area: ["730px","360px"],
-//	    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId
-//	});
+	var printIndex = layer.open({
+		type: 2,
+	    title: "订单打印",
+	    shadeClose: true,
+        shade:[0.3,"#fff"],
+	    offset: "20%",
+	    shadeClose : false,
+	    area: ["730px","360px"],
+	    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId
+	});
 }
 
 </script>

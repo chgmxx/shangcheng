@@ -73,43 +73,41 @@
 
 <script type="text/javascript">
     function cancel() {
-        parentCloseAll();
-//        parent.layer.closeAll();
+        layer.closeAll();
     }
     function subtmit() {
         var array = new Array();
         var shopId = $(".shopSel option:selected").attr("id");
         var toShopId = $(".toShopSel option:selected").attr("id");
         if (shopId == null || shopId == "") {
-            parentAlertMsg("请选择来源店铺");
-//            parent.layer.alert("请选择来源店铺", {
-//                offset: "30%"
-//            });
+            layer.alert("请选择来源店铺", {
+                shade:[0.1,"#fff"],
+                offset: "30%"
+            });
             return false;
         }
         if (toShopId == null || toShopId.length == 0) {
-            parentAlertMsg("请选择目标店铺");
-//            parent.layer.alert("请选择目标店铺", {
-//                offset: "30%"
-//            });
+            layer.alert("请选择目标店铺", {
+                shade:[0.1,"#fff"],
+                offset: "30%"
+            });
             return false;
         }
         if (shopId == toShopId) {
-            parentAlertMsg("来源店铺和目标店铺不能相同！");
-//            parent.layer.alert("来源店铺和目标店铺不能相同！", {
-//                offset: "30%"
-//            });
+            layer.alert("来源店铺和目标店铺不能相同！", {
+                shade:[0.1,"#fff"],
+                offset: "30%"
+            });
             return false;
         }
         var data = {
             shopId: shopId,
             toShopId: toShopId
         };
-        var layerLoad =parentLayerLoad();
-//        var layerLoad = parent.layer.load(1, {
-//            shade: [0.3, '#000'],
-//            offset: "30%"
-//        });
+        var layerLoad = layer.load(1, {
+            shade: [0.3, '#fff'],
+            offset: "30%"
+        });
         $.ajax({
             type: "post",
             data: data,
@@ -117,42 +115,36 @@
             dataType: "json",
             timeout: 60000 * 30,//半小时的超时时间
             success: function (data) {
-                parentCloseAll();
-//                parent.layer.close(layerLoad);
-                //parent.layer.closeAll();
+                layer.close(layerLoad);
+                //layer.closeAll();
                 if (data.code == 0) {// 重新登录
-                    //TODO alert 跳转
-                    parentAlertMsg("操作失败，长时间没操作，跳转到登录页面");
-//                    parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-//                        offset: "30%",
-//                        closeBtn: 0
-//                    }, function (index) {
-//                        parent.location.href = "/user/tologin.do";
-//                    });
+                    layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                        offset: "30%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        location.href = "/user/tologin.do";
+                    });
                 } else if (data.code == 1) {
-                    //TODO alert 跳转
-                    parentAlertMsg("同步商品成功");
-//                    var tipLayer = parent.layer.alert("同步商品成功", {
-//                        offset: "30%",
-//                        closeBtn: 0
-//                    }, function (index) {
-//                        //parent.layer.closeAll();
-//                        parent.location.href = window.parent.location.href;
-//                    });
+                    var tipLayer = layer.alert("同步商品成功", {
+                        offset: "30%",
+                        closeBtn: 0
+                    }, function (index) {
+                        location.href = window.parent.location.href;
+                    });
                 } else {// 编辑失败
-                    parentAlertMsg("同步商品失败");
-//                    parent.layer.alert("同步商品失败", {
-//                        offset: "30%"
-//                    });
+                    layer.alert("同步商品失败", {
+                        shade:[0.1,"#fff"],
+                        offset: "30%"
+                    });
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                parentCloseAll();
-//                parent.layer.close(layerLoad);
-                parentAlertMsg("同步商品失败");
-//                parent.layer.alert("同步商品失败", {
-//                    offset: "30%"
-//                });
+                layer.close(layerLoad);
+                layer.alert("同步商品失败", {
+                    shade:[0.1,"#fff"],
+                    offset: "30%"
+                });
                 return;
             }
         });

@@ -34,8 +34,7 @@
 <script type="text/javascript">
 	var error = '${error}';
 	if (error != undefined && error != "") {
-        parentAlertMsg("参数错误，将调回前一个页面");
-//		parent.layer.alert("参数错误，将调回前一个页面");
+		layer.alert("参数错误，将调回前一个页面");
 		window.history.back(-1);
 	}
 	if(top==self){
@@ -47,15 +46,15 @@
 		 * @param id
 		 */
 		$(".qrcode").click(function(){
-            parentOpenIframe("商品预览",'208px', '251px',"<img src ='/mallSellers/getTwoCode.do?code="+$(this).attr("tit")+"' style='width:200px;height:200px;'/>");
-//			parent.layer.open({
-//				  type: 1,
-//				  title :"商品预览",
-//				  skin: 'layui-layer-rim', //加上边框
-//				  area: ['208px', '251px'], //宽高
-//				  offset: "30%",
-//				  content: "<img src ='/mallSellers/getTwoCode.do?code="+$(this).attr("tit")+"' style='width:200px;height:200px;'/>"
-//				});
+ 			layer.open({
+				  type: 1,
+				  title :"商品预览",
+                  shade:[0.1,"#fff"],
+				  skin: 'layui-layer-rim', //加上边框
+				  area: ['208px', '251px'], //宽高
+				  offset: "30%",
+				  content: "<img src ='/mallSellers/getTwoCode.do?code="+$(this).attr("tit")+"' style='width:200px;height:200px;'/>"
+				});
 		});
 	});
 </script>

@@ -125,7 +125,7 @@ function valiTime(obj) {
 
 /**选择图片**/
 function choosePicture() {
-    parentOpenIframe( '素材库','820px', '500px',"/common/material.do?selectType=checked");
+        fhmater(1);
     // parent.layer.open({
     //     type: 2,
     //     title: '素材库',
@@ -137,7 +137,7 @@ function choosePicture() {
     // });
 }
 /**选择图片回调**/
-function fhmateriallayer(imageArray, url) {
+function image(imageArray, url) {
     var imgHttp = $(".imgHttp").val();
     var html = "";
     if (imageArray != null && imageArray.length > 0) {
@@ -226,13 +226,13 @@ function openMap() {
         if ($("#visitProvinceId").val() != "0" && $("#visitProvinceId").val() != undefined) {
             address = $("#visitProvinceId option:selected").text();
         } else {
-            parentAlertMsg("请选择省份!");
+            layer.msg("请选择省份!");
             return;
         }
         if ($("#visitCityId").val() != "0" && $("#visitCityId").val() != undefined) {
             address += $("#visitCityId option:selected").text();
         } else {
-            parentAlertMsg("请选择城市!");
+            layer.msg("请选择城市!");
             return;
         }
     }
@@ -257,21 +257,21 @@ function openMap() {
                 if (latitude != "" && longitude != "") {
                     url += "&coordtype=5&coord=" + latitude + "," + longitude;
                 }
-                parentOpenIframe('消息','800px', '600px', [url, "no"]);
-                // parent.layer.open({
-                //     area: ['800px', '600px'],
-                //     title: [
-                //         '消息',
-                //         'background-color:#5FBFE7; color:#fff;'
-                //     ],
-                //     offset: "5%",
-                //     type: 2,
-                //     btn: ["确定", "取消"],
-                //     content: [url, "no"],
-                //     yes: function (index) {
-                //         parent.layer.close(index);
-                //     }
-                // });
+
+                layer.open({
+                    area: ['800px', '600px'],
+                    title: [
+                        '消息',
+                        'background-color:#5FBFE7; color:#fff;'
+                    ],
+                    offset: "5%",
+                    type: 2,
+                    btn: ["确定", "取消"],
+                    content: [url, "no"],
+                    yes: function (index) {
+                        layer.close(index);
+                    }
+                });
             }
         }
     );
@@ -472,23 +472,21 @@ function save() {
             }
         }
 
-        var index = parentLayerLoad();
-        // var index = parent.layer.load(3, {
-        //     offset: '40%',
-        //     shade: [0.4, '#8E8E8E']
-        // });
+        var index = layer.load(3, {
+            offset: '40%',
+            shade: [0.4, '#fff']
+        });
         $.ajax({
             url: "/mFreight/editTake.do",
             data: params,
             dataType: "json",
             type: "post",
             success: function (data) {
-                parentCloseAll();
-                // parent.layer.close(index);
+                layer.close(index);
                 if (data.flag) {
                     location.href = "/mFreight/takeindex.do";
                 } else {
-                    parentAlertMsg("编辑自提点失败，请稍后提交");
+                    layer.msg("编辑自提点失败，请稍后提交");
                 }
             }
         });
@@ -610,7 +608,7 @@ function onLoad() {
 
             loadTimes(obj);
         } else {
-            parentAlertMsg("请先确认接待时间再编辑");
+            layer.alert("请先确认接待时间再编辑");
         }
 
     });

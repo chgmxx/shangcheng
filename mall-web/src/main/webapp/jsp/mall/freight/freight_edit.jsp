@@ -438,7 +438,7 @@
         loadFrame();
     });
     function shopIndex() {
-        parent.location.href = "/store/start.do";
+        location.href = "/store/start.do";
     }
 
     function loads() {

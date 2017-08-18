@@ -391,5 +391,5 @@ function returnVal(arr) {
     if (groups != null && groups != "") {
         $("textarea.groups").val(groups);
     }
-    parentCloseAll();
+    layer.closeAll();
 }

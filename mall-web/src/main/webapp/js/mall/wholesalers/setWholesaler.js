@@ -136,16 +136,15 @@ $(function () {
             success: function (data) {
                 /*console.log(data);*/
                 if (data.result == "1") {
-                    parentAlertMsg("保存成功");
-                    //TODO alert end 属性 跳转
-                    // parent.layer.alert("保存成功", {
-                    //     offset: "30%",
-                    //     end: function () {
-                    //         /* location.reload();*///刷新本页面
-                    //         //parent.location.href = "/mallWholesalers/start.do";
-                    //         location.href = window.location.href;
-                    //     }
-                    // });
+                    layer.alert("保存成功", {
+                        shade:[0.1,"#fff"],
+                        offset: "30%",
+                        end: function () {
+                            /* location.reload();*///刷新本页面
+                            //parent.location.href = "/mallWholesalers/start.do";
+                            location.href = window.location.href;
+                        }
+                    });
                 } else {
                     $("#blue-btn").attr("disabled", false);
                     promMsg("保存失败");
@@ -173,8 +172,8 @@ function isCheck(obj) {
 }
 
 function promMsg(content) {
-    parentAlertMsg(content);
-    // parent.layer.alert(content, {
-    //     offset: "30%"
-    // });
+    layer.alert(content, {
+        shade:[0.1,"#fff"],
+        offset: "30%"
+    });
 };

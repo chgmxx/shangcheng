@@ -14,11 +14,11 @@ $(".subBtn").click(function () {
     productObj = $("#productForm").serializeObject();
     shopId = $(".shop-contain option:selected").val();
     if (shopId == null || $.trim(shopId) == "") {
-        parentAlertMsg("请选择所属商铺");
-        // parent.layer.alert("请选择所属商铺", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // });
+        layer.alert("请选择所属商铺", {
+            offset: "30%",
+            shade:[0.1,"#fff"],
+            closeBtn: 0
+        });
         return;
     }
     productObj.shopId = shopId;
@@ -34,11 +34,11 @@ $(".subBtn").click(function () {
     //var groupList = eachGroup();// 遍历产品分组
     var groupList = eachProGroup();// 遍历产品分组
     if (groupList.length == 0 && updGroupList.length == 0 && flag) {
-        parentAlertMsg("请选择商品分组");
-        // parent.layer.alert("请选择商品分组", {
-        //     offset: "30%",
-        //     closeBtn: 0
-        // });
+        layer.alert("请选择商品分组", {
+            shade:[0.1,"#fff"],
+            offset: "30%",
+            closeBtn: 0
+        });
         $(window.parent).scrollTop(400);
         $('.group-contain input').focus();
         flag = false;
@@ -117,20 +117,20 @@ $(".subBtn").click(function () {
         tip = eachSpecifica();// 遍历规格
         if (tip != null) {
             flag = false;
-            parentAlertMsg(tip);
-            // parent.layer.alert(tip, {
-            //     offset: "30%",
-            //     closeBtn: 0
-            // });
+            layer.alert(tip, {
+                offset: "30%",
+                shade:[0.1,"#fff"],
+                closeBtn: 0
+            });
             $(window.parent).scrollTop(400);
         } else {
             flag = eachInven();// 遍历库存
             if (!flag) {
-                parentAlertMsg("请完善商品库存");
-                // parent.layer.alert("请完善商品库存", {
-                //     offset: "30%",
-                //     closeBtn: 0
-                // });
+                layer.alert("请完善商品库存", {
+                    offset: "30%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                });
                 $(window.parent).scrollTop(400);
             }
 
@@ -138,11 +138,11 @@ $(".subBtn").click(function () {
         tip = eachParams();//遍历参数
         if (tip != null && tip != "") {
             flag = false;
-            parentAlertMsg(tip);
-            // parent.layer.alert(tip, {
-            //     offset: "30%",
-            //     closeBtn: 0
-            // });
+            layer.alert(tip, {
+                offset: "30%",
+                shade:[0.1,"#fff"],
+                closeBtn: 0
+            });
             $(window.parent).scrollTop(400);
         }
 
@@ -161,11 +161,11 @@ $(".subBtn").click(function () {
         }
 
         if (imageList.length == 0 && delimageList.length == 0 && flag) {
-            parentAlertMsg("商品图至少上传一张");
-            // parent.layer.alert("商品图至少上传一张", {
-            //     offset: "30%",
-            //     closeBtn: 0
-            // });
+            layer.alert("商品图至少上传一张", {
+                shade:[0.1,"#fff"],
+                offset: "30%",
+                closeBtn: 0
+            });
             $(".imageVali").html("商品图至少上传一张");
             flag = false;
         }
@@ -186,11 +186,11 @@ $(".subBtn").click(function () {
         if (isFenbiChangePro) {
             var changeFenbi = $(".changeFenbi").val();
             if (changeFenbi == null || changeFenbi == "") {
-                parentAlertMsg("请填写兑换粉币值");
-                // parent.layer.alert("请填写兑换粉币值", {
-                //     offset: "30%",
-                //     closeBtn: 0
-                // });
+                layer.alert("请填写兑换粉币值", {
+                    offset: "30%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                });
                 flag = false;
             }
         } else {
@@ -200,11 +200,11 @@ $(".subBtn").click(function () {
         if (isShowViews) {
             var viewsNum = $(".viewsNum").val();
             if (viewsNum == null || viewsNum == "") {
-                parentAlertMsg("请填写浏览量");
-                // parent.layer.alert("请填写浏览量", {
-                //     offset: "30%",
-                //     closeBtn: 0
-                // });
+                layer.alert("请填写浏览量", {
+                    offset: "30%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                });
                 flag = false;
             }
         } else {
@@ -218,11 +218,11 @@ $(".subBtn").click(function () {
          }*/
         if (flag) {
             if (!validateForm()) {
-                parentAlertMsg("请完善商品信息");
-                // parent.layer.alert("请完善商品信息", {
-                //     offset: "30%",
-                //     closeBtn: 0
-                // });
+                layer.alert("请完善商品信息", {
+                    offset: "30%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                });
             } else {
                 params = {
                     imageList: JSON.stringify(imageList),
@@ -305,14 +305,12 @@ $(".savePage").click(function () {
  * 保存并送审
  */
 $(".saveStatusPage").click(function () {
-    //TODO  parent.layer.confirm
-    parent.layer.confirm('保存并送审后商品不允许修改，您确定要保存并送审商品？', {
+    layer.confirm('保存并送审后商品不允许修改，您确定要保存并送审商品？', {
         btn: ['确定', '取消'],
         shade:[0.1,'#fff'],
         offset: '100px'
     }, function () {
-        parentCloseAll();
-        // parent.layer.closeAll();
+        layer.closeAll();
         saveUpd(2);
     });
 });
@@ -358,8 +356,8 @@ function saveUpd(type) {
 
     /*console.log(JSON.stringify(params))*/
     // loading层
-    var layerLoad = parent.layer.load(1, {
-        shade: [0.3, '#000'],
+    var layerLoad = layer.load(1, {
+        shade: [0.3, '#fff'],
         offset: "30%"
     });
     var proId = $(".proId").val();
@@ -374,56 +372,52 @@ function saveUpd(type) {
         dataType: "json",
         timeout: 60000 * 60,//一小时的超时时间
         success: function (data) {
-            parentCloseAll();
-            // parent.layer.closeAll();
+            layer.closeAll();
             if (data.code == 0) {// 重新登录
-                parentAlertMsg("操作失败，长时间没操作，跳转到登录页面");
-                //TODO alert 跳转
-                // parent.layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                //     offset: "30%",
-                //     closeBtn: 0
-                // }, function (index) {
-                //     location.href = "/user/tologin.do";
-                // });
+                layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                    offset: "30%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    location.href = "/user/tologin.do";
+                });
             } else if (data.code == 1) {
-                parentAlertMsg("编辑成功");
-                //TODO alert 跳转
-                // var tip = parent.layer.alert("编辑成功", {
-                //     offset: "30%",
-                //     closeBtn: 0
-                // }, function (index) {
-                //     parent.layer.close(tip);
-                //     if (type == 0) {
-                //         var pId = data.id;
-                //         window.parent.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
-                //     } else {
-                //         var urls = $("input.urls").val();
-                //         if (urls == null || urls == "") {
-                //             location.href = "/mPro/index.do";
-                //         } else {
-                //             location.href = urls;
-                //         }
-                //     }
-                //
-                // });
+                var tip = layer.alert("编辑成功", {
+                    offset: "30%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    layer.close(tip);
+                    if (type == 0) {
+                        var pId = data.id;
+                        window.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
+                    } else {
+                        var urls = $("input.urls").val();
+                        if (urls == null || urls == "") {
+                            location.href = "/mPro/index.do";
+                        } else {
+                            location.href = urls;
+                        }
+                    }
+
+                });
             } else {// 编辑失败
                 var msg = "编辑失败";
                 if (data.msg != "") {
                     msg = data.msg;
                 }
-                parentAlertMsg(msg);
-                // parent.layer.alert(msg, {
-                //     offset: "30%"
-                // });
+                layer.alert(msg, {
+                    shade:[0.1,"#fff"],
+                    offset: "30%"
+                });
             }
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            parentCloseAll();
-            parentAlertMsg("编辑失败");
-            // parent.layer.alert("编辑失败", {
-            //     offset: "30%"
-            // });
+            layer.alert("编辑失败", {
+                shade:[0.1,"#fff"],
+                offset: "30%"
+            });
             return;
         }
     });

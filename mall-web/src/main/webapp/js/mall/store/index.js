@@ -11,18 +11,20 @@ $(function () {
  */
 function del(ids) {
     //event.stopPropagation();
-    //TODO parent.layer.confirm
-    parent.layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
-        parentCloseAll();
+    layer.confirm('确认要删除此数据吗?', {icon: 3, title: '提示', shade:[0.1,'#fff'], offset: "40%"}, function (index) {
+        layer.closeAll();
         var params = {
             ids: ids
         };
-        parentLayerLoad();
+        var index2 = layer.load(1, {
+            offset: "30%",
+            shade: [0.1, '#fff']
+            // 0.1透明度的白色背景
+        });
         $.post("store/delete.do", params, function (data) {
-            parentAlertMsg(data.message);
+            layer.msg(data.message);
             if (data.result) {
-                parentCloseAll();
-                // parent.layer.close(index2);
+                layer.close(index2);
                 location.reload();
             }
         }, "json");
@@ -44,6 +46,6 @@ function batchdel() {
     if (ids != "" && ids != undefined) {
         del(ids);
     } else {
-        parentAlertMsg("请至少选择一条数据！");
+        layer.msg("请至少选择一条数据！");
     }
 }

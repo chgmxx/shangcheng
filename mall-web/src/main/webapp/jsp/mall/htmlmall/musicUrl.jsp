@@ -108,8 +108,8 @@
                 }
             })
             //TODO parent.layer.getFrameIndex   parent.layerwindow
-            var index = parent.layer.getFrameIndex(window.name);
-            parent.layerwindow(musicurl, musicname, player_style, addres, index);
+            var index = layer.getFrameIndex(window.name);
+            layerwindow(musicurl, musicname, player_style, addres, index);
 
         }
         /**
@@ -123,29 +123,28 @@
          *消息提示弹出框
          */
         function promptBox(txt) {
-            parentAlertMsg(txt);
-//            parent.layer.alert(txt, {
-//                offset: "30%",
-//                closeBtn: 0
-//            });
+            layer.alert(txt, {
+                offset: "30%",
+                shade:[0.1,"#fff"],
+                closeBtn: 0
+            });
         }
 
         //弹出音乐素材库
         function materiallayer() {
-            parentOpenIframe('音乐素材库','550px', '520px','/common/musicmatre.do');
-//            parent.layer.open({
-//                type: 2,
-//                title: '音乐素材库',
-//                fix: false,
-//                shade: 0.2,
-//                shadeClose: false,
-//                closeBtn: 0,
-//                shift: 1,
-//                maxmin: false,
-//                area: ['550px', '520px'],//定义宽、高
-//                content: '/common/musicmatre.do',
-//
-//            });
+            layer.open({
+                type: 2,
+                title: '音乐素材库',
+                fix: false,
+                shade:[0.2,"#fff"],
+                shadeClose: false,
+                closeBtn: 0,
+                shift: 1,
+                maxmin: false,
+                area: ['550px', '520px'],//定义宽、高
+                content: '/common/musicmatre.do',
+
+            });
         }
         function fhmat(musicid, musicname, musicurl) {
 

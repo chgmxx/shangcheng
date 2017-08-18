@@ -65,11 +65,10 @@
 <jsp:include page="/jsp/common/headerCommon.jsp"/>
 <script type="text/javascript">
     $("#submit").click(function () {
-        var layerLoad = parentLayerLoad();
-//        var layerLoad = parent.layer.load(1, {
-//            shade: [0.3, '#000'],
-//            offset: "30%"
-//        });
+        var layerLoad = parent.layer.load(1, {
+            shade: [0.3, '#fff'],
+            offset: "30%"
+        });
         var id = $(".id").val();
         $.ajax({
             type: "post",
@@ -79,10 +78,9 @@
             },
             dataType: "json",
             success: function (data) {
-                parentCloseAll(layerLoad);
-//                parent.layer.close(layerLoad);
+               layer.close(layerLoad);
                 if (data.result == true) {
-                    parent.location.href = "/mAuction/to_margin.do";
+                    location.href = "/mAuction/to_margin.do";
                 } else {// 编辑失败
                     if (data.msg == null || data.msg == "") {
                         alert("退保证金失败，请稍后重试");
@@ -93,8 +91,7 @@
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
-//                parent.layer.close(layerLoad);
-                parentCloseAll(layerLoad);
+                layer.close(layerLoad);
                 alert("退保证金失败，请稍后重试");
                 return;
             }
