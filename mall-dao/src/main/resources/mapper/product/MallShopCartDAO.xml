@@ -156,7 +156,7 @@
         b.sto_picture AS stoPicture
         FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
-       /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
+       /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id */
         WHERE  /*s.`status` != -1 AND*/ b.is_delete=0
         <if test="isCheck == 1">
             and a.is_check=1

@@ -4,7 +4,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.params.PaySuccessBo;
+import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.*;

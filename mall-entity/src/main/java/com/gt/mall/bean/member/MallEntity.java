@@ -1,4 +1,4 @@
-package com.gt.mall.bean.params;
+package com.gt.mall.bean.member;
 
 /**
  * Created by Administrator on 2017/8/2 0002.

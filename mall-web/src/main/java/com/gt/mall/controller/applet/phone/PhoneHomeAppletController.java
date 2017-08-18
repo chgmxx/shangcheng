@@ -3,11 +3,7 @@ package com.gt.mall.controller.applet.phone;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxApplet;
-import com.gt.mall.util.CommonUtil;
 import com.gt.mall.service.inter.MemberService;
-import com.gt.mall.util.PageUtil;
-import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.applet.MallOrderAppletService;
@@ -15,6 +11,9 @@ import com.gt.mall.service.web.applet.MallProductAppletService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.PageUtil;
+import com.gt.mall.util.PropertiesUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,41 +58,6 @@ public class PhoneHomeAppletController extends BaseController {
     private MallNewOrderAppletService mallNewOrderAppletService;
     @Autowired
     private  MemberService            memberService;
-
-    /**
-     * 商城小程序授权
-     *
-     * @param request
-     * @param response
-     * @param params
-     *
-     * @throws IOException
-     */
-    @RequestMapping( "/79B4DE7C/login" )
-    public void login( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< String,Object > resultMap = new HashMap< String,Object >();
-	try {
-	    logger.info( "进入商城小程序授权！参数：" + params );
-	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
-	    //TODO 查询小程序 wxAppletService.selectBybusIdAndindustryCode
-	    WxApplet wxApplet = null;
-	    //	    wxAppletService.selectBybusIdAndindustryCode(busId,4);
-	    params.put( "appid", wxApplet.getAppid() );
-	    params.put( "secret", wxApplet.getAppsecret() );
-	    params.put( "style", 4 );
-	    //TODO 小程序授权 arrivalSgService.xcxGrant(params);
-	    //	    resultMap = arrivalSgService.xcxGrant(params);
-
-	    params.put( "busUserId", busId );
-	    resultMap.put( "isAdvert", mallHomeAppletService.getAdvert( params ) );
-	    resultMap.put( "appid", wxApplet.getAppid() );
-	} catch ( Exception e ) {
-	    logger.error( "商城小程序授权异常。。。" + e.getMessage() );
-	    e.printStackTrace();
-	} finally {
-	    CommonUtil.write( response, resultMap );
-	}
-    }
 
     /**
      * 进入店铺列表页面

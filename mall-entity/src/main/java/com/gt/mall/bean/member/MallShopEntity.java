@@ -1,4 +1,4 @@
-package com.gt.mall.bean.params;
+package com.gt.mall.bean.member;
 
 import java.util.Map;
 

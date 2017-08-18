@@ -136,7 +136,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			    request.setAttribute( "flowPhone", maps.get( "flowPhone" ) );
 			}
 		    }
-
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( payWayObj ) ) {
@@ -267,19 +266,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		JSONObject maps = JSONObject.fromObject( list.get( 0 ) );
 		list = new ArrayList< Map< String,Object > >();
 		list = mallShopCartService.getProductByIds( maps, pbUser, member, userid );
-				/*maps = pageService.getProduct(maps);//通过商品id获取商品的信息
-				list = new ArrayList<Map<String,Object>>();
-				list.add(maps);*/
-		//优惠劵
-				/*Store store = mallStoreDAO.selectByPrimaryKey(Integer.parseInt(maps.get("shop_id").toString()));
-				if(CommonUtil.isNotEmpty(member)){
-					List map =cardSerivice.findWxCardByShopId(store.getWxShopId(), pbUser, member);
-
-					request.setAttribute("coupon", map);
-					//查询多粉优惠券
-					List<Map<String,Object>> duofenCoupon = duofenCardService.findDuofenCardByMemberId(member.getId(),store.getWxShopId());//查询多粉优惠券
-					request.setAttribute("duofenCoupon", duofenCoupon);
-				}*/
 	    }
 	    int toshop = 0;
 	    toshop = mallProductService.getIsShopBySession( shopId, userid, request );
@@ -288,12 +274,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "appointName", appointName );
 	    request.setAttribute( "appointTel", appointTel );
 
-			/*if(CommonUtil.isNotEmpty(data.get("toshop"))){
-				if(data.get("toshop").toString().equals("1")){
-					toshop = 1;
-					request.setAttribute("toshop", 1);
-				}
-			}*/
 	    //计算运费如下
 	    if ( loginCity != null && !loginCity.equals( "" ) ) {
 		Map< String,Object > map = new HashMap< String,Object >();
@@ -379,13 +359,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    if ( memType > 0 && CommonUtil.isNotEmpty( member ) ) {
 		Map< String,Object > map = mallOrderService.countIntegralFenbi( member, orderTotalMoney );//获取积分、粉币抵扣金额
 		request.setAttribute( "map", map );
-		//cardMapper.selectByPrimaryKey
-		/*Card card = cardMapper.selectByPrimaryKey( member.getMcId() );
-		if ( CommonUtil.isNotEmpty( card ) ) {
-		    if ( card.getCtId() == 2 ) {
-			request.setAttribute( "isDiscount", 1 );
-		    }
-		}*/
 	    } else if ( CommonUtil.isNotEmpty( member ) ) {
 		//查询商家是否已经开启了商家联盟
 		Map< String,Object > unionMap = new HashMap< String,Object >();

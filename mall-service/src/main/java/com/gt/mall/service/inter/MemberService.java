@@ -1,7 +1,8 @@
 package com.gt.mall.service.inter;
 
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.params.UserConsumeParams;
+import com.gt.mall.bean.member.ReturnParams;
+import com.gt.mall.bean.member.UserConsumeParams;
 
 import java.util.List;
 import java.util.Map;
@@ -141,5 +142,12 @@ public interface MemberService {
      * @return 是否修改成功
      */
     boolean updateUserConsume(UserConsumeParams consumeParams);
+
+    /**
+     * 退款包括了储值卡退款(包括积分和粉币)
+     * @param returnParams
+     * @return 是否退款成功
+     */
+    Map<String,Object> refundMoneyAndJifenAndFenbi(ReturnParams returnParams);
 
 }

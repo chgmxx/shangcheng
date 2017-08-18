@@ -87,6 +87,7 @@ public class MallStoreController extends BaseController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    }
+	    request.setAttribute("wxPublicUsers", wxPublicUsers);
 	    //todo 调用陈丹接口 视频教程接口
 	    /*request.setAttribute("videourl", course.urlquery("8"));*/
 	} catch ( Exception e ) {

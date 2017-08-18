@@ -3,9 +3,9 @@ package com.gt.mall.util;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.mall.bean.params.MallAllEntity;
-import com.gt.mall.bean.params.MallEntity;
-import com.gt.mall.bean.params.MallShopEntity;
+import com.gt.mall.bean.member.MallAllEntity;
+import com.gt.mall.bean.member.MallEntity;
+import com.gt.mall.bean.member.MallShopEntity;
 
 import java.util.Date;
 import java.util.HashMap;

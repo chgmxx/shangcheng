@@ -1,8 +1,8 @@
 package com.gt.mall.service.inter.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.params.MallAllEntity;
-import com.gt.mall.bean.params.PaySuccessBo;
+import com.gt.mall.bean.member.MallAllEntity;
+import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.service.inter.MemberPayService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MemberInterUtil;

@@ -66,16 +66,17 @@ public class MemberInterUtil {
     public static Map< String,Object > SignHttpInsertOrUpdate( Object params, String url ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	JSONObject resultObj = SignHttpJson( params, url );
+	logger.info( "会员接口返回值 = " + resultObj.getString( "data" ) );
 	int code = resultObj.getInteger( "code" );
 	if ( code == 0 ) {
-	    logger.info( "data = " + resultObj.getString( "data" ) );
 	    resultMap.put( "code", 1 );//成功
-	} else if ( code == 5005 ) {//5005 非会员
-	    resultMap.put( "code", 0 );
-	} else {//失败的将会回滚
-	    resultMap.put( "code", -1 );//失败
+	} else if ( code == 1 ) {//失败
+	    resultMap.put( "code", -1 );
+	} else {
+	    resultMap.put( "code", code );
+	}
+	if ( resultObj.containsKey( "msg" ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
-	    logger.info( "调用会员接口异常：" + resultObj.getString( "msg" ) );
 	}
 	return resultMap;
     }

@@ -7,8 +7,9 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.params.PaySuccessBo;
-import com.gt.mall.bean.params.UserConsumeParams;
+import com.gt.mall.bean.member.PaySuccessBo;
+import com.gt.mall.bean.member.ReturnParams;
+import com.gt.mall.bean.member.UserConsumeParams;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -1964,7 +1965,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					orderNo = pOrder.getOrderNo();
 				    }
 				}
-				Map< String,Object > returnParams = new HashMap<>();
+				updateReturnStatus( pUser, oReturn, orderReturn, order );//退款成功修改退款状态
+				/*Map< String,Object > returnParams = new HashMap<>();
 				resultMap.put( "busId", order.getBusUserId() );//商家id
 				resultMap.put( "orderNo", orderNo );//支付时的订单号
 				resultMap.put( "money", oReturn.getRetMoney() );//退款金额
@@ -1979,7 +1981,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					    msg = CommonUtil.toString( payResultMap.get( "errorMsg" ) );
 					}
 				    }
-				}
+				}*/
 			    } else if ( order.getOrderPayWay() == 2 || order.getOrderPayWay() == 6 ) {//货到付款和到店支付都不用退钱
 				rFlag = true;
 				MallOrderDetail detail = new MallOrderDetail();
@@ -2271,9 +2273,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 
 	if ( CommonUtil.isNotEmpty( orderReturn ) && CommonUtil.isNotEmpty( oReturn ) ) {
-	    updateOrderInvNum( order, orderReturn.getOrderDetailId(), oReturn.getReturnFenbi() );
+	    updateOrderInvNum( order, orderReturn.getOrderDetailId(), oReturn.getReturnFenbi(), oReturn.getReturnJifen(), CommonUtil.toDouble( oReturn.getRetMoney() ) );
 	} else {
-	    updateOrderInvNum( order, detail.getId(), detail.getUseFenbi() );
+	    updateOrderInvNum( order, detail.getId(), detail.getUseFenbi(), detail.getUseJifen(), CommonUtil.toDouble( order.getOrderMoney() ) );
 	}
 
     }
@@ -2291,7 +2293,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
     }
 
-    private void updateOrderInvNum( MallOrder order, int orderDetailId, double returnFenbi ) {
+    private void updateOrderInvNum( MallOrder order, int orderDetailId, double returnFenbi, int returnJifen, double returnMoney ) {
 	Map< String,Object > detailMap = mallOrderDAO.selectByDIdOrder( orderDetailId );
 	Integer productId = 0;
 	Integer productNum = 0;
@@ -2375,6 +2377,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    //todo 调用陈丹接口  根据商家id查询商家信息
 		    BusUser user = null;//busUserMapper.selectByPrimaryKey( order.getBusUserId() );//查询商家信息
 		    int uType = 1;//用户类型 1总账号  0子账号
+		    //todo 查询总账号id
 		    if ( !order.getBusUserId().toString().equals( CommonUtil.toString( userPId ) ) ) {
 			uType = 0;
 		    }
@@ -2411,41 +2414,20 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    logger.info( "同步库存：" + flag );
 		}
 	    }
-	    //todo 调用小屁孩接口  根据用户id查询用户信息
-	    Member member = null;//memberService.findById( order.getBuyerUserId() );
-			/*int jifen = 0;*/
-	    double fenbi;
-	    Member m = new Member();
-	    //退还积分
-	    /*if(CommonUtil.isNotEmpty(oReturn.getReturnJifen())){
-		    jifen = member.getIntegral()+oReturn.getReturnJifen();
-		    m.setIntegral(jifen);
-	    }*/
-	    //退还粉币
 
-	    if ( CommonUtil.isNotEmpty( returnFenbi ) ) {
-		fenbi = member.getFansCurrency() + returnFenbi;
-		m.setFansCurrency( fenbi );
-	    }
-	    if ( CommonUtil.isNotEmpty( m ) ) {
-		m.setId( member.getId() );
-		//todo 调用彭江丽接口   把积分和粉币退还给会员
-		int count = 0;//memberMapper.updateById( m );//把积分和粉币退还给会员
-		if ( count > 0 ) {
-		    //把扣除的粉币，加到商家用户中
-		    //todo 调用小屁孩接口  根据会员id查询公众号信息
-		    WxPublicUsers publicUser = null;//mallOrderDAO.getWpUser( member.getId() );
-		    if ( CommonUtil.isNotEmpty( publicUser ) ) {
-			BusUser busUser = null;//busUserMapper.selectByPrimaryKey( publicUser.getBusUserId() );
-			BusUser busUser1 = new BusUser();
-			busUser1.setId( busUser.getId() );
-			busUser1.setFansCurrency( busUser.getFansCurrency() - returnFenbi );
-			//busUserMapper.updateById( busUser1 );
-			//todo 调用彭江丽接口  扣除商家粉币
-		    }
-		}
-	    }
+	    ReturnParams returnParams = new ReturnParams();
+	    returnParams.setBusId( order.getBusUserId() );
+	    returnParams.setOrderNo( order.getOrderNo() );
+	    returnParams.setMoney( returnMoney );
+	    returnParams.setFenbi( returnFenbi );
+	    returnParams.setJifen( returnJifen );
 
+	    Map< String,Object > resultMap = memberService.refundMoneyAndJifenAndFenbi( returnParams );
+	    if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == -1 ) {
+	        //同步失败，存入redis todo  定时器还未做
+		JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( returnParams ) );
+		//		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
+	    }
 	}
 
 	MallOrderDetail orderDetail = mallOrderDetailDAO.selectById( orderDetailId );
