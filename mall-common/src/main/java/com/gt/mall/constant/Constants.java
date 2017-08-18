@@ -69,5 +69,8 @@ public class Constants {
 
     public static final String MEMBER_PAY_TYPE = "2";
 
+    /** 发送短信model **/
+    public static final String MOBILE_MODEL = "5";
+
 
 }
