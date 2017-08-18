@@ -82,21 +82,21 @@
         if (shopId == null || shopId == "") {
             layer.alert("请选择来源店铺", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return false;
         }
         if (toShopId == null || toShopId.length == 0) {
             layer.alert("请选择目标店铺", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return false;
         }
         if (shopId == toShopId) {
             layer.alert("来源店铺和目标店铺不能相同！", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return false;
         }
@@ -106,7 +106,7 @@
         };
         var layerLoad = layer.load(1, {
             shade: [0.3, '#fff'],
-            offset: "30%"
+            offset: "10%"
         });
         $.ajax({
             type: "post",
@@ -119,7 +119,7 @@
                 //layer.closeAll();
                 if (data.code == 0) {// 重新登录
                     layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
@@ -127,7 +127,7 @@
                     });
                 } else if (data.code == 1) {
                     var tipLayer = layer.alert("同步商品成功", {
-                        offset: "30%",
+                        offset: "10%",
                         closeBtn: 0
                     }, function (index) {
                         location.href = window.parent.location.href;
@@ -135,7 +135,7 @@
                 } else {// 编辑失败
                     layer.alert("同步商品失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 }
             },
@@ -143,7 +143,7 @@
                 layer.close(layerLoad);
                 layer.alert("同步商品失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }

@@ -200,7 +200,7 @@
 		    title: "订单打印",
 		    shadeClose: true,
             shade:[0.3,"#fff"],
-		    offset: "20%",
+		    offset: "10%",
 		    shadeClose : false,
 		    area: ["730px","360px"],
 		    content: "mallOrder/toPrintMallOrder.do?orderId="+orderId+"&curPage="+page,

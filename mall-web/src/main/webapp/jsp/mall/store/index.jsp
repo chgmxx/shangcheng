@@ -166,7 +166,10 @@
 <script type="text/javascript">
     function add(obj) {
         if (obj > 0) {
-            parentAlertMsg("店铺已添加完毕，需要添加新店铺，请前往门店里面添加新的门店")
+            layer.msg("店铺已添加完毕，需要添加新店铺，请前往门店里面添加新的门店", {
+                shade:[0.1,"#fff"],
+                offset: "10%"
+            });
         } else {
             window.location.href = "/store/to_edit.do";
         }

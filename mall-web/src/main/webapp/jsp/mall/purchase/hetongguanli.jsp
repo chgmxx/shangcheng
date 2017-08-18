@@ -86,7 +86,7 @@
         layer.confirm("确定要删除该条数据吗?", {
             shade:[0.1,'#fff'],
             btn: ['确定', '取消'],
-            offset: '40%'
+            offset: '10%'
         }, function () {
             $.ajax({
                 url: "/purchaseContract/deleteContract.do",

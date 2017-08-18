@@ -30,14 +30,14 @@ function deleteImage(obj, type) {
         }
         // 询问框
         layer.confirm('您确定要' + msg + '？', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,'#fff'],
             btn: ['确定', '取消']
             // 按钮
         }, function () {
             // loading层
             var layerLoad = layer.load(1, {
-                offset: "30%",
+                offset: "10%",
                 shade: [0.1, '#fff'] // 0.1透明度的白色背景
             });
             $.ajax({
@@ -52,7 +52,7 @@ function deleteImage(obj, type) {
                     layer.close(layerLoad);
                     if (data.code == 1) {
                         var tip = layer.alert(msg + "成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -62,7 +62,7 @@ function deleteImage(obj, type) {
                     } else {// 编辑失败
                         var tip = layer.alert(msg + "失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 },
@@ -70,7 +70,7 @@ function deleteImage(obj, type) {
                     layer.close(layerLoad);
                     layer.alert(msg + "失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -133,7 +133,7 @@ function editAuction() {
     if (imageUrl == null || imageUrl == "" || typeof(imageUrl) == "undefined") {
         layer.msg('请上传图片', {
             shade:[0.1,"#fff"],
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
         return false;
@@ -141,7 +141,7 @@ function editAuction() {
     if (type == 1) {//跳转到商品详情
         if (returnUrl == null || returnUrl == "") {
             layer.msg('请输入要跳转的链接', {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 icon: 1
             });
@@ -149,7 +149,7 @@ function editAuction() {
         }
         if (returnUrl.length > 500) {
             layer.msg('跳转链接的长度不能大于500', {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 icon: 1
             });
@@ -158,7 +158,7 @@ function editAuction() {
         var reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)[\w\W]{1,}$/;
         if (!reg.test(returnUrl)) {
             layer.msg("这网址不是以http://https://开头，或者不是网址！", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 icon: 1
             });
@@ -181,7 +181,7 @@ function editAuction() {
 
     // loading层
     var layerLoad = layer.load(1, {
-        offset: "30%",
+        offset: "10%",
         shade: [0.1, '#fff']
         // 0.1透明度的白色背景
     });
@@ -194,7 +194,7 @@ function editAuction() {
             layer.close(layerLoad);
             if (data.code == 1) {
                 var tip = layer.alert("编辑成功", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
@@ -204,7 +204,7 @@ function editAuction() {
             } else {// 编辑失败
                 layer.alert("编辑失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             }
 
@@ -213,7 +213,7 @@ function editAuction() {
             layer.close(layerLoad);
             layer.alert("编辑失败", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return;
         }

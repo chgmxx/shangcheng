@@ -54,7 +54,7 @@
                     skin: 'layui-layer-rim', //加上边框
                     area: ['208px', '251px'], //宽高
                     shade:[0.1,"#fff"],
-                    offset: "30%",
+                    offset: "10%",
                     content: "<img src ='/mAuction/79B4DE7C/getTwoCode.do?code=" + $(this).attr("tit") + "' style='width:200px;height:200px;'/>"
                 });
             });

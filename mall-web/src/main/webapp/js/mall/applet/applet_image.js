@@ -30,14 +30,14 @@ function deleteImage(obj, type) {
         }
         // 询问框
         layer.confirm('您确定要' + msg + '？', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,'#fff'],
             btn: ['确定', '取消']
             // 按钮
         }, function () {
             // loading层
             var layerLoad = layer.load(1, {
-                offset: "30%",
+                offset: "10%",
                 shade: [0.1, '#fff'] // 0.1透明度的白色背景
             });
             $.ajax({
@@ -53,7 +53,7 @@ function deleteImage(obj, type) {
                     if (data.code == 1) {
                         var tip = layer.alert(msg + "成功", {
                             shade:[0.1,"#fff"],
-                            offset: "30%",
+                            offset: "10%",
                             closeBtn: 0
                         }, function (index) {
                             layer.close(tip);
@@ -62,7 +62,7 @@ function deleteImage(obj, type) {
                     } else {// 编辑失败
                         var tip = layer.alert(msg + "失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 },
@@ -70,7 +70,7 @@ function deleteImage(obj, type) {
                     layer.close(layerLoad);
                     layer.alert(msg + "失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -132,7 +132,7 @@ function editAuction() {
     if (imageUrl == null || imageUrl == "" || typeof(imageUrl) == "undefined") {
         layer.msg('请上传图片', {
             shade:[0.1,"#fff"],
-            offset: "30%",
+            offset: "10%",
             icon: 1
         });
         return false;
@@ -141,7 +141,7 @@ function editAuction() {
         if (productId == null || productId == "") {
             layer.msg('请选择要跳转的商品', {
                 shade:[0.1,"#fff"],
-                offset: "30%",
+                offset: "10%",
                 icon: 1
             });
             return false;
@@ -160,7 +160,7 @@ function editAuction() {
 
     // loading层
     var layerLoad = layer.load(1, {
-        offset: "30%",
+        offset: "10%",
         shade: [0.1, '#fff']
         // 0.1透明度的白色背景
     });
@@ -173,7 +173,7 @@ function editAuction() {
             layer.close(layerLoad);
             if (data.code == 1) {
                 var tip = layer.alert("编辑成功", {
-                    offset: "30%",
+                    offset: "10%",
                     shade:[0.1,"#fff"],
                     closeBtn: 0
                 }, function (index) {
@@ -183,7 +183,7 @@ function editAuction() {
             } else {// 编辑失败
                 layer.alert("编辑失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
             }
 
@@ -192,7 +192,7 @@ function editAuction() {
             layer.close(layerLoad);
             layer.alert("编辑失败", {
                 shade:[0.1,"#fff"],
-                offset: "30%"
+                offset: "10%"
             });
             return;
         }

@@ -87,5 +87,4 @@
 <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
 <script type="text/javascript" src="/js/mall/groupPopUp.js"></script>
-<script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
 </html>

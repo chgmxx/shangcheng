@@ -306,7 +306,7 @@ function getSpecifica(obj, defaultVal, type) {
     // console.log(obj.html())
     if (shopId == null || shopId == "") {
         layer.alert("请选择所属商铺", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         });
@@ -356,7 +356,7 @@ function getSpecificaValue(id, selectObj, defaultStr, type) {
     var shopId = $(".shop-contain option:selected").val();
     if (shopId == null || shopId == "") {
         layer.alert("请选择所属商铺", {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             closeBtn: 0
         });
@@ -606,7 +606,10 @@ function addPop(obj) {
                 specArrs.find(".sku-atom").each(function () {
                     var speVal = $(this).find("span:eq(0)").text();
                     if ($.trim(speVal) == val) {
-                        layer.msg("已经添加了相同的规格值");
+                        layer.msg("已经添加了相同的规格值", {
+                            shade:[0.1,"#fff"],
+                            offset: "10%"
+                        });
                         flag = false;
                         return;
                     }

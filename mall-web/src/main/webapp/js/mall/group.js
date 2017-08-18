@@ -8,13 +8,13 @@ function deleteGroup(obj) {
         layer.confirm('您确定要删除？', {
             btn: ['确定', '取消'],
             shade:[0.1,'#fff'],
-            offset: "30%"
+            offset: "10%"
             // 按钮
         }, function () {
             // loading层
             var layerLoad = layer.load(1, {
                 shade: [0.1, '#fff'],
-                offset: "30%"
+                offset: "10%"
                 // 0.1透明度的白色背景
             });
             $.ajax({
@@ -28,7 +28,7 @@ function deleteGroup(obj) {
                     layer.close(layerLoad);
                     if (data.code == 0) {// 重新登录
                         layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -36,7 +36,7 @@ function deleteGroup(obj) {
                         });
                     } else if (data.code == 1) {
                         var tip = layer.alert("删除成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -46,7 +46,7 @@ function deleteGroup(obj) {
                     } else {// 编辑失败
                         var tip = layer.alert("删除失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 },
@@ -54,7 +54,7 @@ function deleteGroup(obj) {
                     layer.close(layerLoad);
                     layer.alert("删除失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -82,11 +82,13 @@ function editGroup() {
     if (groupName == null || $.trim(groupName) == "") {
         $("#groupName").focus();
         layer.msg('请填写商品分组名称', {
+            offset: "10%",
             icon: 1
         });
     } else if (!valGroupName($("#groupName"))) {
         $("#groupName").focus();
         layer.msg('分组名称最多输入6位汉字或12位字符', {
+            offset: "10%",
             icon: 1
         });
     } else {
@@ -139,6 +141,7 @@ function editGroup() {
 
         // loading层
         var layerLoad = layer.load(1, {
+            offset: "10%",
             shade: [0.1, '#fff']
             // 0.1透明度的白色背景
         });
@@ -154,7 +157,7 @@ function editGroup() {
                 layer.close(layerLoad);
                 if (data.code == 0) {// 重新登录
                     layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
@@ -162,7 +165,7 @@ function editGroup() {
                     });
                 } else if (data.code == 1) {
                     var tip = layer.alert("编辑成功", {
-                        offset: "30%",
+                        offset: "10%",
                         shade:[0.1,"#fff"],
                         closeBtn: 0
                     }, function (index) {
@@ -176,7 +179,7 @@ function editGroup() {
                 } else {// 编辑失败
                     layer.alert("编辑失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                 }
 
@@ -185,7 +188,7 @@ function editGroup() {
                 layer.close(layerLoad);
                 layer.alert("编辑失败", {
                     shade:[0.1,"#fff"],
-                    offset: "30%"
+                    offset: "10%"
                 });
                 return;
             }

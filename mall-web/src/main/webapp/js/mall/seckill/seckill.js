@@ -10,13 +10,14 @@ function deleteGroup(obj, type) {
         }
         // 询问框
         layer.confirm('您确定要' + msg + '？', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,'#fff'],
             btn: ['确定', '取消']
             // 按钮
         }, function () {
             // loading层
             var layerLoad = layer.load(1, {
+                offset: "10%",
                 shade: [0.1, '#fff']
                 // 0.1透明度的白色背景
             });
@@ -32,7 +33,7 @@ function deleteGroup(obj, type) {
                     layer.close(layerLoad);
                     if (data.code == 1) {
                         var tip = layer.alert(msg + "成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -42,7 +43,7 @@ function deleteGroup(obj, type) {
                     } else {// 编辑失败
                         var tip = layer.alert(msg + "失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
                 },
@@ -50,7 +51,7 @@ function deleteGroup(obj, type) {
                     layer.close(layerLoad);
                     layer.alert(msg + "失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -145,39 +146,39 @@ function editGroup() {
     var ids = $("#ids").val();
     if (productId == null || productId == "") {
         layer.msg('请选择商品', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             icon: 1
         });
     } else if (name == null || $.trim(name) == "") {
         $("gName").focus();
         layer.msg('请填写活动名称', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             icon: 1
         });
     } else if (!valName($("#sName"))) {
         $("#sName").focus();
         layer.msg('活动名称最多输入50位汉字或100位字符', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             icon: 1
         });
     } else if (gStartTime == null || $.trim(gStartTime) == "") {
         layer.msg('请选择活动开始时间', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             icon: 1
         });
     } else if (gEndTime == null || $.trim(gEndTime) == "") {
         layer.msg('请选择活动结束时间', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             icon: 1
         });
     } else if (gStartTime >= gEndTime) {
         layer.msg('活动开始时间要小于活动结束时间', {
-            offset: "30%",
+            offset: "10%",
             shade:[0.1,"#fff"],
             icon: 1
         });
@@ -248,13 +249,13 @@ function editGroup() {
 
         if (!flag) {
             layer.msg('请填写已经勾选的秒杀价', {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 icon: 1
             });
         } else if (isSpec == 1 && checkLen == 0) {
             layer.msg('请勾选的参加秒杀的规格', {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 icon: 1
             });
@@ -266,7 +267,7 @@ function editGroup() {
             seckill.sNum = proInvNum;
             // loading层
             var layerLoad = parent.layer.load(1, {
-                offset: "30%",
+                offset: "10%",
                 shade: [0.1, '#fff']
                 // 0.1透明度的白色背景
             });
@@ -282,7 +283,7 @@ function editGroup() {
                     layer.close(layerLoad);
                     if (data.code == 1){
                         var tip = layer.alert("编辑成功", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         }, function (index) {
@@ -291,20 +292,20 @@ function editGroup() {
                         });
                     } else if (data.code == -2) {
                         var tip = layer.alert("正在进行秒杀的商品不能修改", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else if (data.code == 0) {
                         var tip = layer.alert("同一个商品只能参与一个秒杀活动", {
-                            offset: "30%",
+                            offset: "10%",
                             shade:[0.1,"#fff"],
                             closeBtn: 0
                         });
                     } else {// 编辑失败
                         layer.alert("编辑失败", {
                             shade:[0.1,"#fff"],
-                            offset: "30%"
+                            offset: "10%"
                         });
                     }
 
@@ -313,7 +314,7 @@ function editGroup() {
                     layer.close(layerLoad);
                     layer.alert("编辑失败", {
                         shade:[0.1,"#fff"],
-                        offset: "30%"
+                        offset: "10%"
                     });
                     return;
                 }
@@ -445,7 +446,10 @@ function choosePro() {
     if (shopId != null && shopId != "") {
         parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
     } else {
-        layer.msg("请选择商品");
+        layer.msg("请选择商品", {
+            shade:[0.1,"#fff"],
+            offset: "10%"
+        });
     }
 };
 /**

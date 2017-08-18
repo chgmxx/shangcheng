@@ -198,6 +198,7 @@
         var index = layer.open({
             title: "",
             content: "",
+            offset: "10%",
             type: 2,
             shadeClose: false
         });

@@ -126,7 +126,7 @@
             window.location.href = "/mallhtml/modelList.do?pageNum=${map.pageNum-1}";
         } else {
             layer.alert("已经是最前一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });
@@ -138,7 +138,7 @@
             window.location.href = "/mallhtml/modelList.do?pageNum=${map.pageNum+1} ";
         } else {
             layer.alert("已经是最后一页", {
-                offset: "30%",
+                offset: "10%",
                 shade:[0.1,"#fff"],
                 closeBtn: 0
             });

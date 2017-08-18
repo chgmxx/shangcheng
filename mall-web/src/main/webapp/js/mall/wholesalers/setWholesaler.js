@@ -138,7 +138,7 @@ $(function () {
                 if (data.result == "1") {
                     layer.alert("保存成功", {
                         shade:[0.1,"#fff"],
-                        offset: "30%",
+                        offset: "10%",
                         end: function () {
                             /* location.reload();*///刷新本页面
                             //parent.location.href = "/mallWholesalers/start.do";
@@ -174,6 +174,6 @@ function isCheck(obj) {
 function promMsg(content) {
     layer.alert(content, {
         shade:[0.1,"#fff"],
-        offset: "30%"
+        offset: "10%"
     });
 };

@@ -169,14 +169,14 @@ function choosePicture(classess) {
     claObj = classess;
     if ($("#stoPid").val() != -1) {
         // parent.materiallayer();
-        materiallayer();
+        fhmater(0);
     } else {
         alert("请选择店铺");
     }
 }
 
 /**选择图片回调**/
-function fhmateriallayer(id, url) {
+function image(id, url) {
     $("." + claObj).attr("src", url);
     $("." + claObj).attr("width", 50);
     var url = url.split("/upload/")[1];
@@ -265,7 +265,7 @@ function openMap() {
                         '消息',
                         'background-color:#5FBFE7; color:#fff;'
                     ],
-                    offset: "5%",
+                    offset: "10%",
                     type: 2,
                     btn: ["确定", "取消"],
                     content: [url, "no"],
@@ -359,7 +359,7 @@ function save() {
          return false;
          }*/
         var index = layer.load(3, {
-            offset: '40%',
+            offset: '10%',
             shade: [0.4, '#fff']
         });
         $.ajax({
