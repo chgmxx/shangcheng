@@ -22,17 +22,20 @@ public class HttpSignUtil {
     private static JSONObject SignHttpJson( Object obj, String url, int... types ) {
 	try {
 	    String result = null;
-	    if ( types[0] == 0 ) {//会员
+	    int type = CommonUtil.isNotEmpty( types ) && types.length > 0 ? types[0] : 0;
+	    if ( type == 0 ) {//会员
 		String signKey = PropertiesUtil.getMemberSignKey();
 		url = PropertiesUtil.getMemberDomain() + url;
+		logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 		result = SignHttpUtils.postByHttp( url, obj, signKey );
 	    } else {
 		//门店
 		String signKey = PropertiesUtil.getWxmpSignKey();
 		url = PropertiesUtil.getWxmpDomain() + url;
+		logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 		result = SignHttpUtils.WxmppostByHttp( url, obj, signKey );
 	    }
-	    logger.info( "result:" + result );
+	    logger.info( "接口返回result:" + result );
 
 	    if ( CommonUtil.isNotEmpty( result ) ) {
 		return JSONObject.parseObject( result );
@@ -75,7 +78,7 @@ public class HttpSignUtil {
      */
     public static Map< String,Object > SignHttpInsertOrUpdate( Object params, String url, int... type ) {
 	Map< String,Object > resultMap = new HashMap<>();
-	JSONObject resultObj = SignHttpJson( params, url );
+	JSONObject resultObj = SignHttpJson( params, url, type );
 	logger.info( "调用接口返回值 = " + resultObj.getString( "data" ) );
 	int code = resultObj.getInteger( "code" );
 	if ( code == 0 ) {
