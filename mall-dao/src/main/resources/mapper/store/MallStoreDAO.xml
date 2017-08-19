@@ -102,13 +102,13 @@
         </where>
     </update>
 
-    <select id="findByShopIds" resultType="java.util.Map" parameterType="java.util.Map">
+    <select id="findByShopIds" resultType="java.util.Map" parameterType="java.util.List">
         select
         <include refid="Base_Column_List"/>
         from t_mall_store t
         <where>
             is_delete = 0
-            <if test="wxShopIds != null and wxShopIds != ''">
+            <if test="wxShopIds != null ">
                 and wx_shop_id in
                 <foreach close=")" collection="wxShopIds" item="shopId" open="(" separator=",">
                     #{shopId}

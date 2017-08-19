@@ -7,11 +7,12 @@ import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerSet;
-import com.gt.mall.util.*;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.seller.MallSellerWithdrawService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,28 +46,30 @@ public class MallSellerController extends BaseController {
     private MallPaySetService         mallPaySetService;
     @Autowired
     private MallSellerWithdrawService mallSellerWithdrawService;
+    @Autowired
+    private BusUserService            busUserService;
 
     /**
      * 商品佣金设置
      */
-    @RequestMapping(value="/joinProduct")
-    public String joinProduct(@RequestParam Map<String,Object> params,HttpServletRequest request,
-		    HttpServletResponse response) {
+    @RequestMapping( value = "/joinProduct" )
+    public String joinProduct( @RequestParam Map< String,Object > params, HttpServletRequest request,
+		    HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser(request);
-	    List<Map<String, Object>> shoplist = mallStoreService.findAllStoByUser(user);// 查询登陆人拥有的店铺
-	    if (shoplist != null && shoplist.size() > 0) {
-		params.put("shoplist", shoplist);
-		PageUtil page = mallSellerService.selectProductByShopId(params);
-		request.setAttribute("page", page);
-		request.setAttribute("shoplist", shoplist);
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    if ( shoplist != null && shoplist.size() > 0 ) {
+		params.put( "shoplist", shoplist );
+		PageUtil page = mallSellerService.selectProductByShopId( params );
+		request.setAttribute( "page", page );
+		request.setAttribute( "shoplist", shoplist );
 	    }
-	    request.setAttribute("type", params.get("type"));
-	    request.setAttribute("imgUrl", PropertiesUtil.getResourceUrl());
-	    request.setAttribute("path", PropertiesUtil.getHomeUrl());
-	} catch (Exception e) {
+	    request.setAttribute( "type", params.get( "type" ) );
+	    request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
+	    request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    logger.error("商品佣金设置异常："+e.getMessage());
+	    logger.error( "商品佣金设置异常：" + e.getMessage() );
 	}
 	return "mall/seller/joinProduct";
     }
@@ -74,125 +77,121 @@ public class MallSellerController extends BaseController {
     /**
      * 进入商品佣金设置
      */
-    @RequestMapping(value="/to_edit_join")
-    public String editJoinProduct(@RequestParam Map<String,Object> params,HttpServletRequest request,
-		    HttpServletResponse response) {
+    @RequestMapping( value = "/to_edit_join" )
+    public String editJoinProduct( @RequestParam Map< String,Object > params, HttpServletRequest request,
+		    HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser(request);
-	    List<Map<String, Object>> shoplist = mallStoreService.findAllStoByUser(user);// 查询登陆人拥有的店铺
-	    if (CommonUtil.isNotEmpty(params.get("id"))) {
-		Integer id = CommonUtil.toInteger(params.get("id"));
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
+		Integer id = CommonUtil.toInteger( params.get( "id" ) );
 		// 根据团购id查询团购信息
-		Map<String, Object> joinProductMap = mallSellerService.selectJoinProductById(id);
-		if (joinProductMap != null) {
-		    Object imageUrl = joinProductMap.get("specImageUrl");
-		    if (CommonUtil.isEmpty(imageUrl)) {
-			imageUrl = joinProductMap.get("imageUrl");
+		Map< String,Object > joinProductMap = mallSellerService.selectJoinProductById( id );
+		if ( joinProductMap != null ) {
+		    Object imageUrl = joinProductMap.get( "specImageUrl" );
+		    if ( CommonUtil.isEmpty( imageUrl ) ) {
+			imageUrl = joinProductMap.get( "imageUrl" );
 		    }
-		    joinProductMap.put("imgUrl", imageUrl);
+		    joinProductMap.put( "imgUrl", imageUrl );
 		}
-		request.setAttribute("joinProductMap", joinProductMap);
+		request.setAttribute( "joinProductMap", joinProductMap );
 	    }
-	    request.setAttribute("shoplist", shoplist);
-	    request.setAttribute("http", PropertiesUtil.getResourceUrl());
-	} catch (Exception e) {
+	    request.setAttribute( "shoplist", shoplist );
+	    request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    logger.error(" 进入商品佣金设置页面异常："+e.getMessage());
+	    logger.error( " 进入商品佣金设置页面异常：" + e.getMessage() );
 	}
 	return "mall/seller/editJoinProduct";
     }
 
-
     /**
      * 保存商品佣金设置
      */
-    @SysLogAnnotation(description = "销售员——商品佣金设置", op_function = "2")
-    @RequestMapping(value="/editJoinProduct")
-    public void editJoinProduct(HttpServletRequest request,HttpServletResponse response,@RequestParam Map<String, Object> params) {
-	logger.info("进入商品佣金设置Controller");
+    @SysLogAnnotation( description = "销售员——商品佣金设置", op_function = "2" )
+    @RequestMapping( value = "/editJoinProduct" )
+    public void editJoinProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入商品佣金设置Controller" );
 	PrintWriter pw = null;
-	Map<String, Object> resultMap = new HashMap<String, Object>();
+	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser(request);
+	    BusUser user = SessionUtils.getLoginUser( request );
 
-	    resultMap = mallSellerService.saveOrUpdSellerJoinProduct(user.getId(), params);
+	    resultMap = mallSellerService.saveOrUpdSellerJoinProduct( user.getId(), params );
 
-	} catch (Exception e) {
-	    logger.error("保存商品佣金设置失败："+e.getMessage());
-	    resultMap.put("flag", false);
+	} catch ( Exception e ) {
+	    logger.error( "保存商品佣金设置失败：" + e.getMessage() );
+	    resultMap.put( "flag", false );
 	    e.printStackTrace();
 	}
-	pw.write( JSONObject.fromObject(resultMap).toString());
+	pw.write( JSONObject.fromObject( resultMap ).toString() );
 	pw.flush();
 	pw.close();
     }
-
 
     /**
      * 商品佣金的删除或失效
      */
-    @SysLogAnnotation(description = "销售员——商品佣金的删除或失效", op_function = "3")
-    @RequestMapping(value="/upJoinProduct")
-    public void upJoinProduct(HttpServletRequest request,HttpServletResponse response,@RequestParam Map<String, Object> params) {
-	logger.info("进入商品佣金的删除或失效Controller");
+    @SysLogAnnotation( description = "销售员——商品佣金的删除或失效", op_function = "3" )
+    @RequestMapping( value = "/upJoinProduct" )
+    public void upJoinProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入商品佣金的删除或失效Controller" );
 	PrintWriter pw = null;
-	Map<String, Object> resultMap = new HashMap<String, Object>();
+	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser(request);
+	    BusUser user = SessionUtils.getLoginUser( request );
 
-	    resultMap = mallSellerService.saveOrUpdSellerJoinProduct(user.getId(), params);
+	    resultMap = mallSellerService.saveOrUpdSellerJoinProduct( user.getId(), params );
 
-	} catch (Exception e) {
-	    logger.error("商品佣金的删除或失效异常："+e.getMessage());
-	    resultMap.put("flag", false);
+	} catch ( Exception e ) {
+	    logger.error( "商品佣金的删除或失效异常：" + e.getMessage() );
+	    resultMap.put( "flag", false );
 	    e.printStackTrace();
 	}
-	pw.write(JSONObject.fromObject(resultMap).toString());
+	pw.write( JSONObject.fromObject( resultMap ).toString() );
 	pw.flush();
 	pw.close();
     }
 
-
     /**
      * 超级销售员设置
      */
-    @RequestMapping(value="/sellerSet")
-    public String sellerSet(@RequestParam Map<String,Object> params,HttpServletRequest request,
-		    HttpServletResponse response) {
+    @RequestMapping( value = "/sellerSet" )
+    public String sellerSet( @RequestParam Map< String,Object > params, HttpServletRequest request,
+		    HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser(request);
+	    BusUser user = SessionUtils.getLoginUser( request );
 	    boolean isAdminFlag = true;//是管理员
-	    if(CommonUtil.isNotEmpty(user.getPid()) && user.getPid() > 0){
-		isAdminFlag = mallStoreService.isAdminUser(user.getId());//查询子账户是否是管理员
+	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
+		isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
 
-		if(!isAdminFlag){
-		    request.setAttribute("isNoAdminFlag", 1);
+		if ( !isAdminFlag ) {
+		    request.setAttribute( "isNoAdminFlag", 1 );
 		}
 	    }
-	    if(isAdminFlag){
-		MallSellerSet sellerSet = mallSellerService.selectByBusUserId(user.getId());
-		request.setAttribute("sellerSet", sellerSet);
+	    if ( isAdminFlag ) {
+		MallSellerSet sellerSet = mallSellerService.selectByBusUserId( user.getId() );
+		request.setAttribute( "sellerSet", sellerSet );
 
 		MallPaySet set = new MallPaySet();
-		set.setUserId(user.getId());
-		set = mallPaySetService.selectByUserId(set);
-		if(CommonUtil.isNotEmpty(set)){
-		    if(CommonUtil.isNotEmpty(set.getIsSeller())){
-			if(set.getIsSeller().toString().equals("1")){
-			    request.setAttribute("isOpenSeller", true);
+		set.setUserId( user.getId() );
+		set = mallPaySetService.selectByUserId( set );
+		if ( CommonUtil.isNotEmpty( set ) ) {
+		    if ( CommonUtil.isNotEmpty( set.getIsSeller() ) ) {
+			if ( set.getIsSeller().toString().equals( "1" ) ) {
+			    request.setAttribute( "isOpenSeller", true );
 			}
 		    }
 		}
-		request.setAttribute("user", user);
-		request.setAttribute("httpUrl", PropertiesUtil.getHomeUrl());
+		request.setAttribute( "user", user );
+		request.setAttribute( "httpUrl", PropertiesUtil.getHomeUrl() );
 	    }
-	    //todo course.urlquery("85")
-//	    request.setAttribute("videourl", course.urlquery("85"));
-	} catch (Exception e) {
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "85" ) );
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    logger.error("超级销售员设置异常："+e.getMessage());
+	    logger.error( "超级销售员设置异常：" + e.getMessage() );
 	}
 	return "mall/seller/sellerSet";
     }
@@ -200,60 +199,59 @@ public class MallSellerController extends BaseController {
     /**
      * 保存商城设置
      */
-    @SysLogAnnotation(description = "销售员——功能设置", op_function = "2")
-    @RequestMapping(value="/editSellerSet")
-    public void editSellerSet(HttpServletRequest request,HttpServletResponse response,@RequestParam Map<String, Object> params) {
-	logger.info("进入保存商城设置Controller");
+    @SysLogAnnotation( description = "销售员——功能设置", op_function = "2" )
+    @RequestMapping( value = "/editSellerSet" )
+    public void editSellerSet( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入保存商城设置Controller" );
 	PrintWriter pw = null;
-	Map<String, Object> resultMap = new HashMap<String, Object>();
+	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser(request);
+	    BusUser user = SessionUtils.getLoginUser( request );
 
-	    resultMap = mallSellerService.saveOrUpdSellerSet(user.getId(), params);
+	    resultMap = mallSellerService.saveOrUpdSellerSet( user.getId(), params );
 
-	} catch (Exception e) {
-	    logger.error("保存商城设置失败："+e.getMessage());
-	    resultMap.put("flag", false);
-	    resultMap.put("msg", "保存商城设置失败，请稍后重试");
+	} catch ( Exception e ) {
+	    logger.error( "保存商城设置失败：" + e.getMessage() );
+	    resultMap.put( "flag", false );
+	    resultMap.put( "msg", "保存商城设置失败，请稍后重试" );
 	    e.printStackTrace();
 	}
-	pw.write(JSONObject.fromObject(resultMap).toString());
+	pw.write( JSONObject.fromObject( resultMap ).toString() );
 	pw.flush();
 	pw.close();
     }
 
-
     /**
      * 销售员审核列表
      */
-    @RequestMapping(value="/sellerCheckList")
-    public String sellerCheckList(HttpServletRequest request, HttpServletResponse response,@RequestParam Map<String,Object> params) {
-	logger.info("进入超级销售员列表Controller");
+    @RequestMapping( value = "/sellerCheckList" )
+    public String sellerCheckList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入超级销售员列表Controller" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser(request);
-	    if(CommonUtil.isNotEmpty(params.get("keyWord"))){
-		String keyWord = CommonUtil.getBytes(params.get("keyWord").toString());
-		params.put("keyWord", keyWord);
-		request.setAttribute("keyWord", keyWord);
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
+		String keyWord = CommonUtil.getBytes( params.get( "keyWord" ).toString() );
+		params.put( "keyWord", keyWord );
+		request.setAttribute( "keyWord", keyWord );
 	    }
 	    MallPaySet set = new MallPaySet();
-	    set.setUserId(user.getId());
-	    set = mallPaySetService.selectByUserId(set);
+	    set.setUserId( user.getId() );
+	    set = mallPaySetService.selectByUserId( set );
 	    int check = 0;
-	    if(CommonUtil.isNotEmpty(set)){
-		if(CommonUtil.isNotEmpty(set.getIsSeller())){
-		    check = CommonUtil.toInteger(set.getIsCheckSeller());
+	    if ( CommonUtil.isNotEmpty( set ) ) {
+		if ( CommonUtil.isNotEmpty( set.getIsSeller() ) ) {
+		    check = CommonUtil.toInteger( set.getIsCheckSeller() );
 		}
 	    }
-	    if(check == 1){
-		PageUtil page = mallSellerService.selectCheckSeller(user.getId(), params);
-		request.setAttribute("page", page);
+	    if ( check == 1 ) {
+		PageUtil page = mallSellerService.selectCheckSeller( user.getId(), params );
+		request.setAttribute( "page", page );
 	    }
 
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    logger.error("销售员审核列表异常："+e.getMessage());
+	    logger.error( "销售员审核列表异常：" + e.getMessage() );
 	}
 	return "mall/seller/sellerCheckList";
     }
@@ -261,66 +259,67 @@ public class MallSellerController extends BaseController {
     /**
      * 审核销售员信息
      */
-    @SysLogAnnotation(description = "销售员——审核销售员", op_function = "3")
-    @RequestMapping(value="/checkSeller")
-    public void checkSeller(HttpServletRequest request,HttpServletResponse response,@RequestParam Map<String, Object> params) {
-	logger.info("进入保存商城设置Controller");
+    @SysLogAnnotation( description = "销售员——审核销售员", op_function = "3" )
+    @RequestMapping( value = "/checkSeller" )
+    public void checkSeller( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入保存商城设置Controller" );
 	PrintWriter pw = null;
-	Map<String, Object> resultMap = new HashMap<String, Object>();
+	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser(request);
-	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser(request);
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
 
-	    boolean flag = mallSellerService.checkSeller(user.getId(), params,wxPublicUsers);
-	    resultMap.put("flag", flag);
+	    boolean flag = mallSellerService.checkSeller( user.getId(), params, wxPublicUsers );
+	    resultMap.put( "flag", flag );
 
-	} catch (Exception e) {
-	    logger.error("审核销售员失败："+e.getMessage());
-	    resultMap.put("flag", false);
+	} catch ( Exception e ) {
+	    logger.error( "审核销售员失败：" + e.getMessage() );
+	    resultMap.put( "flag", false );
 	    e.printStackTrace();
 	}
-	pw.write(JSONObject.fromObject(resultMap).toString());
+	pw.write( JSONObject.fromObject( resultMap ).toString() );
 	pw.flush();
 	pw.close();
     }
+
     /**
      * 超级销售员列表
      */
-    @RequestMapping(value="/sellerList")
-    public String sellerList(HttpServletRequest request, HttpServletResponse response,@RequestParam Map<String,Object> params) {
-	logger.info("进入超级销售员列表Controller");
+    @RequestMapping( value = "/sellerList" )
+    public String sellerList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入超级销售员列表Controller" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser(request);
-	    if(CommonUtil.isNotEmpty(params.get("keyWord"))){
-		String keyWord = CommonUtil.getBytes(params.get("keyWord").toString());
-		params.put("keyWord", keyWord);
-		request.setAttribute("keyWord", keyWord);
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
+		String keyWord = CommonUtil.getBytes( params.get( "keyWord" ).toString() );
+		params.put( "keyWord", keyWord );
+		request.setAttribute( "keyWord", keyWord );
 	    }
 	    MallPaySet set = new MallPaySet();
-	    set.setUserId(user.getId());
-	    MallPaySet payset = mallPaySetService.selectByUserId(set);
+	    set.setUserId( user.getId() );
+	    MallPaySet payset = mallPaySetService.selectByUserId( set );
 	    int isCheck = -1;
-	    if(CommonUtil.isNotEmpty(payset)){
-		if(CommonUtil.isNotEmpty(payset.getIsCheckSeller())){
-		    if(payset.getIsCheckSeller().toString().equals("1")){
+	    if ( CommonUtil.isNotEmpty( payset ) ) {
+		if ( CommonUtil.isNotEmpty( payset.getIsCheckSeller() ) ) {
+		    if ( payset.getIsCheckSeller().toString().equals( "1" ) ) {
 			isCheck = 1;
 		    }
 		}
 	    }
-	    request.setAttribute("isCheck", isCheck);
-	    params.put("isCheck", isCheck);
-	    PageUtil page = mallSellerService.selectSellerPage(user.getId(), params);
-	    request.setAttribute("page", page);
+	    request.setAttribute( "isCheck", isCheck );
+	    params.put( "isCheck", isCheck );
+	    PageUtil page = mallSellerService.selectSellerPage( user.getId(), params );
+	    request.setAttribute( "page", page );
 
-	    if(CommonUtil.isNotEmpty(params.get("saleMemId"))){
-		MallSeller seller = mallSellerService.selectSellerByMemberId(CommonUtil.toInteger(params.get("saleMemId")));
-		request.setAttribute("seller", seller);
-		request.setAttribute("saleMemId", params.get("saleMemId"));
+	    if ( CommonUtil.isNotEmpty( params.get( "saleMemId" ) ) ) {
+		MallSeller seller = mallSellerService.selectSellerByMemberId( CommonUtil.toInteger( params.get( "saleMemId" ) ) );
+		request.setAttribute( "seller", seller );
+		request.setAttribute( "saleMemId", params.get( "saleMemId" ) );
 	    }
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    logger.error("超级销售员列表异常："+e.getMessage());
+	    logger.error( "超级销售员列表异常：" + e.getMessage() );
 	}
 	return "mall/seller/sellerList";
     }
@@ -328,34 +327,34 @@ public class MallSellerController extends BaseController {
     /**
      * 提现列表
      */
-    @RequestMapping(value="/withDrawList")
-    public String withDrawList(HttpServletRequest request, HttpServletResponse response,@RequestParam Map<String,Object> params) {
-	logger.info("进入提现列表Controller");
+    @RequestMapping( value = "/withDrawList" )
+    public String withDrawList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	logger.info( "进入提现列表Controller" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser(request);
-	    if(CommonUtil.isNotEmpty(params.get("keyWord"))){
-		String keyWord = CommonUtil.getBytes(params.get("keyWord").toString());
-		params.put("keyWord", keyWord);
-		request.setAttribute("keyWord", keyWord);
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
+		String keyWord = CommonUtil.getBytes( params.get( "keyWord" ).toString() );
+		params.put( "keyWord", keyWord );
+		request.setAttribute( "keyWord", keyWord );
 	    }
 
-	    PageUtil page = mallSellerWithdrawService.withdrawPage(user.getId(), params);
+	    PageUtil page = mallSellerWithdrawService.withdrawPage( user.getId(), params );
 
-	    request.setAttribute("page", page);
-	    if(CommonUtil.isNotEmpty(params.get("startTime"))){
-		request.setAttribute("startTime", params.get("startTime"));
+	    request.setAttribute( "page", page );
+	    if ( CommonUtil.isNotEmpty( params.get( "startTime" ) ) ) {
+		request.setAttribute( "startTime", params.get( "startTime" ) );
 	    }
-	    if(CommonUtil.isNotEmpty(params.get("endTime"))){
-		request.setAttribute("endTime", params.get("endTime"));
+	    if ( CommonUtil.isNotEmpty( params.get( "endTime" ) ) ) {
+		request.setAttribute( "endTime", params.get( "endTime" ) );
 	    }
-	    if(CommonUtil.isNotEmpty(params.get("saleMemId"))){
-		MallSeller seller = mallSellerService.selectSellerByMemberId(CommonUtil.toInteger(params.get("saleMemId")));
-		request.setAttribute("seller", seller);
-		request.setAttribute("saleMemId", params.get("saleMemId"));
+	    if ( CommonUtil.isNotEmpty( params.get( "saleMemId" ) ) ) {
+		MallSeller seller = mallSellerService.selectSellerByMemberId( CommonUtil.toInteger( params.get( "saleMemId" ) ) );
+		request.setAttribute( "seller", seller );
+		request.setAttribute( "saleMemId", params.get( "saleMemId" ) );
 	    }
-	} catch (Exception e) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    logger.error("提现异常："+e.getMessage());
+	    logger.error( "提现异常：" + e.getMessage() );
 	}
 	return "mall/seller/withDrawList";
     }
@@ -363,14 +362,14 @@ public class MallSellerController extends BaseController {
     /**
      * 获取二维码的图片
      */
-    @RequestMapping(value="/getTwoCode")
-    public void getTwoCode(@RequestParam Map<String,Object> params,HttpServletRequest request,HttpServletResponse response) {
+    @RequestMapping( value = "/getTwoCode" )
+    public void getTwoCode( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    String code = params.get("code").toString();
-	    String content = PropertiesUtil.getHomeUrl()+"/mallPage/"+code+"/79B4DE7C/phoneProduct.do?view=show";
-	    QRcodeKit.buildQRcode(content, 200, 200, response);
-	} catch (Exception e) {
-	    logger	.error("获取拍卖二维码图片失败："+e.getMessage());
+	    String code = params.get( "code" ).toString();
+	    String content = PropertiesUtil.getHomeUrl() + "/mallPage/" + code + "/79B4DE7C/phoneProduct.do?view=show";
+	    QRcodeKit.buildQRcode( content, 200, 200, response );
+	} catch ( Exception e ) {
+	    logger.error( "获取拍卖二维码图片失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
     }

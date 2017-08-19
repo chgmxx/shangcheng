@@ -2,7 +2,7 @@ package com.gt.mall.service.web.integral.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.wxshop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.integral.MallIntegralDAO;
@@ -10,7 +10,6 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.product.MallProductDetailDAO;
-import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrder;

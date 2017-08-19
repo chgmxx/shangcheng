@@ -4,6 +4,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.applet.MallOrderAppletService;
@@ -57,7 +58,9 @@ public class PhoneHomeAppletController extends BaseController {
     @Autowired
     private MallNewOrderAppletService mallNewOrderAppletService;
     @Autowired
-    private  MemberService            memberService;
+    private MemberService             memberService;
+    @Autowired
+    private WxShopService             wxShopService;
 
     /**
      * 进入店铺列表页面
@@ -273,7 +276,7 @@ public class PhoneHomeAppletController extends BaseController {
 	try {
 	    logger.info( "查询商品评价的参数：" + params );
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( CommonUtil.isNotEmpty( params.get( "proId" ) ) ) ) {
-		Member member = memberService.findMemberById(CommonUtil.toInteger(params.get("memberId")),null);
+		Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 		params.put( "isMemberType", 1 );
 		params.put( "isReply", 1 );
 		resultMap = pageService.getProductComment( params, member );
@@ -809,9 +812,7 @@ public class PhoneHomeAppletController extends BaseController {
 	try {
 	    logger.info( "进入修改地址页面的参数：" + params );
 	    //查询省份列表
-	    //TODO 查询省份 wxShopService.queryCityByLevel(2);
-	    List< Map< String,Object > > provinceList = null;
-	    //	    wxShopService.queryCityByLevel(2);
+	    List< Map > provinceList = wxShopService.queryCityByLevel( 2 );
 
 	    resultMap.put( "provinceList", provinceList );
 

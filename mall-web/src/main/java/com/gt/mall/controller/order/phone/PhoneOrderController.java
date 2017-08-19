@@ -1,10 +1,8 @@
 package com.gt.mall.controller.order.phone;
 
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
-import com.gt.mall.bean.MemberAddress;
-import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.*;
+import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
@@ -18,9 +16,11 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.seckill.MallSeckill;
-import com.gt.mall.service.inter.member.DictService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.util.*;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
@@ -35,6 +35,7 @@ import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +104,12 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     private MemberService            memberService;
     @Autowired
     private DictService              dictService;
+    @Autowired
+    private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private FenBiFlowService         fenBiFlowService;
+    @Autowired
+    private WxShopService            wxShopService;
 
     /**
      * 跳转至提交订单页面
@@ -240,10 +247,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 	    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 	    WxPublicUsers pbUser = new WxPublicUsers();
-	    /*if ( CommonUtil.isNotEmpty( member ) ) {
-		//todo 获取公众号信息
-		pbUser = orderMapper.getWpUser( member.getId() );
-	    }*/
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		pbUser = wxPublicUserService.selectByMemberId( member.getId() );
+	    }
 	    double orderTotalMoney = 0;
 	    if ( type.equals( "1" ) ) {//从购物车进入订单
 		if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
@@ -320,12 +326,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			if ( CommonUtil.isNotEmpty( proList.get( "flowId" ) ) ) {
 			    if ( CommonUtil.toInteger( proList.get( "flowId" ) ) > 0 ) {
 				request.setAttribute( "isFlow", 1 );
-				//todo 小屁孩接口 busFlowService.selectById
-				/*BusFlow flow = busFlowService.selectById( CommonUtil.toInteger( proList.get( "flowId" ) ) );
+				WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( proList.get( "flowId" ) ) );
 				if ( CommonUtil.isNotEmpty( flow ) ) {
 				    request.setAttribute( "flowType", flow.getType() );
-				    ;
-				}*/
+				}
 			    }
 			}
 		    }
@@ -704,25 +708,14 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	String orderId = params.get( "orderId" ).toString();
 	int shopId = 0;
 	try {
-	    Map< String,Object > payRresult = new HashMap< String,Object >();
+	    Map< String,Object > payRresult = new HashMap<>();
 	    double orderMoney = Double.parseDouble( params.get( "orderMoney" ).toString() );
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 	    }
 
-	    /*if ( payWay == 4 ) {//积分支付
-		//todo  memPayService.updateMemberIntergral
-		//payRresult = memPayService.updateMemberIntergral( request, member.getId(), (int) -orderMoney );
-	    } else if ( payWay == -1 || payWay == 2 || payWay == 6 || payWay == 7 ) {// -1 -- 实付金额等于0时 ,2 -- 货到付款 , 6 -- 到店付款
-		payRresult.put( "result", 2 );
-	    } else if ( payWay == 8 ) {//粉币支付
-		//todo memPayService.reduceFansCurrency
-		//payRresult = memPayService.reduceFansCurrency( request, member, member.getBusid(), orderMoney );
-	    } else {//储蓄卡支付方式
-		//todo memPayService.storePay
-		//payRresult = memPayService.storePay( member.getId(), orderMoney );
-	    }*/
-	    String result = payRresult.get( "result" ).toString();
+	    mallOrderService.paySuccessModified( params, member );//修改库存和订单状态
+	    /*String result = payRresult.get( "result" ).toString();
 	    if ( result.equals( "2" ) ) {
 		MallOrder order = mallOrderService.selectById( Integer.parseInt( orderId ) );
 		if ( userid == 0 ) {
@@ -734,7 +727,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 	    } else if ( result.equals( "1" ) && payWay != 4 && payWay != 8 ) {//4 积分支付  8粉币支付
 		return "redirect:/phoneMemberController/79B4DE7C/recharge.do?id=" + memberId;
-	    }
+	    }*/
 	} catch ( Exception e ) {
 	    logger.error( "储蓄卡支付异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -845,10 +838,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    //todo wxShopService.queryCityByLevel
 	    //查询省份数据
-	    /*List< Map< String,Object > > maps = wxShopService.queryCityByLevel( 2 );
-	    request.setAttribute( "maps", maps );*/
+	    List< Map > maps = wxShopService.queryCityByLevel( 2 );
+	    request.setAttribute( "maps", maps );
 	    Object id = params.get( "id" );
 	    if ( null != id && !id.equals( "" ) ) {//修改地址查询
 		//todo 地址
@@ -932,9 +924,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/{pid}/79B4DE7C/queryCity" )
     public void queryCity( HttpServletRequest request, HttpServletResponse response, @PathVariable( "pid" ) Integer pid ) {
 	try {
-	    //todo wxShopService.queryCityByParentId
-	    /*List< Map< String,Object > > maps = wxShopService.queryCityByParentId( pid );
-	    CommonUtil.write( response, maps );*/
+	    List< Map > maps = wxShopService.queryCityByParentId( pid );
+	    CommonUtil.write( response, maps );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}

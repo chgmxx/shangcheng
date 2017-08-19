@@ -5,11 +5,12 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
+import com.gt.mall.bean.wx.OldApiSms;
+import com.gt.mall.bean.wx.pay.WxPayOrder;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -40,9 +41,11 @@ import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.CardService;
-import com.gt.mall.service.inter.member.DictService;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
@@ -164,6 +167,24 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private MemberPayService memberPayService;
+
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
+
+    @Autowired
+    private BusUserService busUserService;
+
+    @Autowired
+    private SmsService smsService;
+
+    @Autowired
+    private PayService payService;
+
+    @Autowired
+    private PayOrderService payOrderService;
+
+    @Autowired
+    private WxAppletService wxAppletService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -685,14 +706,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Override
     public WxPublicUsers getWpUser( Integer memberId ) {
-	WxPublicUsers wpUser = new WxPublicUsers();
-	try {
-	    //todo 调用小屁孩接口 根据粉丝id查询公众号信息
-	    //wpUser = mallOrderDAO.getWpUser( memberId );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return wpUser;
+	return wxPublicUserService.selectByMemberId( memberId );
     }
 
     @Override
@@ -702,9 +716,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	MallOrder order = mallOrderDAO.selectOrderByOrderNo( orderNo );
 	member = memberService.findMemberById( order.getBuyerUserId(), member );
 
-	WxPublicUsers pbUser = null;//mallOrderDAO.getWpUser( order.getBuyerUserId() );
-
-	//todo 调用小屁孩接口 根据粉丝id查询公众号信息
+	WxPublicUsers pbUser = wxPublicUserService.selectByMemberId( order.getBuyerUserId() );
 	List< Map< String,Object > > erpList = new ArrayList<>();
 
 	Map< String,Object > map = new HashMap<>();
@@ -799,9 +811,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	}
-	//todo 调用陈丹接口，根据商家id查询商家信息
-	BusUser busUser = null;//busUserMapper.selectByPrimaryKey( member.getBusid() );
-	/*if ( !telePhone.equals( "" ) ) {
+	BusUser busUser = busUserService.selectById( member.getBusid() );
+	if ( !telePhone.equals( "" ) ) {
 	    OldApiSms oldApiSms = new OldApiSms();
 	    oldApiSms.setMobiles( telePhone.toString() );
 	    oldApiSms.setCompany( busUser.getMerchant_name() );
@@ -809,13 +820,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    oldApiSms.setModel( Constants.SMS_MODEL );
 	    oldApiSms.setContent( CommonUtil.format( "你的商城有新的订单，请登录" + Constants.doMainName + "网站查看详情。" ) );
 	    try {
-	        //TODO 发送短信
-//		smsService.sendMsg( oldApiSms );
+		smsService.sendSmsOld( oldApiSms );
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 		logger.error( "短信推送消息异常：" + e.getMessage() );
 	    }
-	}*/
+	}
 
 	if ( CommonUtil.isNotEmpty( pbUser ) ) {
 	    try {
@@ -969,19 +979,18 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				    }
 				}
 			    }
-			   /* OldApiSms oldApiSms = new OldApiSms();
+			    OldApiSms oldApiSms = new OldApiSms();
 			    oldApiSms.setMobiles( telephone );
 			    oldApiSms.setCompany( busUser.getMerchant_name() );
 			    oldApiSms.setBusId( member.getBusid() );
 			    oldApiSms.setModel( Constants.SMS_MODEL );
 			    oldApiSms.setContent( CommonUtil.format( messages ) );
 			    try {
-			        //TODO 发送短信
-//				smsService.sendMsg( oldApiSms );
+				smsService.sendSmsOld( oldApiSms );
 			    } catch ( Exception e ) {
 				e.printStackTrace();
 				logger.error( "短信推送消息异常：" + e.getMessage() );
-			    }*/
+			    }
 
 			}
 		    }
@@ -1005,8 +1014,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( order.getOrderType() == 6 ) {
 	    mallPresaleService.diffInvNum( order );
 	}
-	//todo 调用陈丹接口，根据商家id查询商家信息
-	BusUser user = null;//busUserMapper.selectByPrimaryKey( order.getBusUserId() );//查询商家信息
+	BusUser user = busUserService.selectById( order.getBusUserId() );//根据商家id查询商家信息
 	//todo 调用陈丹接口口，根据商家id查询总账号id
 	int userPId = 0;//dictService.pidUserId( order.getBusUserId() );//查询商家总账号
 	//todo 调用陈丹接口，判断商家是否有进销存
@@ -1657,11 +1665,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    orderReturn.setStatus( status );
 	    Member member = memberService.findMemberById( orderReturn.getUserId(), null );
-	    WxPublicUsers wx = null;
-	    if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
-		//todo 调用小屁孩的接口 根据公众号的id查询公众号的信息
-		/*wx = wxPublicUserMapper.selectByPrimaryKey( member.getPublicId() );*/
-	    }
+	    WxPublicUsers wx = wxPublicUserService.selectByMemberId( member.getBusid() );
 	    updateReturnStatus( wx, orderReturn, orderReturn, order );//微信退款
 
 	    //查询订单详情是否已经全部退款
@@ -1707,8 +1711,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			boolean flags = true;
 
 			if ( CommonUtil.isNotEmpty( oReturn.getReturnFenbi() ) ) {
-			    //todo 调用陈丹的接口，根据商家id查询商家信息
-			    BusUser busUser = null;//busUserMapper.selectByPrimaryKey( order.getBusUserId() );
+			    BusUser busUser = busUserService.selectById(  order.getBusUserId() );//根据商家id查询商家信息
 			    if ( busUser.getFansCurrency() - oReturn.getReturnFenbi() < 0 ) {
 				flags = false;
 				msg = "您的粉币不足，请重新充值再退给买家";
@@ -1816,8 +1819,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				}
 				if ( retMoney > 0 && flag ) {//退款金额大于0，则进行微信退款
 				    if ( daifu.getDfPayWay().toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {
-					//todo 调用小屁孩接口 根据订单号查询支付订单信息
-					WxPayOrder wxPayOrder = null;//wxPayOrderMapper.selectByOutTradeNo( daifu.getDfOrderNo() );
+					// 根据订单号查询支付订单信息
+					WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( daifu.getDfOrderNo() );
 					if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 					    map.put( "appid", pUser.getAppid() );// 公众号
 					    map.put( "mchid", pUser.getMchId() );// 商户号
@@ -1862,8 +1865,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					resultMap.put( "code", 1 );
 				    } else if ( daifu.getDfPayWay().toString().equals( "3" ) ) {//微信小程序退款
 					if ( Double.parseDouble( oReturn.getRetMoney().toString() ) > 0 ) {//退款金额大于0，则进行微信退款
-					    //todo 调用小屁孩接口 根据订单号查询支付订单信息
-					    WxPayOrder wxPayOrder = null;//wxPayOrderMapper.selectByOutTradeNo( daifu.getDfOrderNo() );
+					    //根据订单号查询支付订单信息
+					    WxPayOrder wxPayOrder =  payOrderService.selectWxOrdByOutTradeNo(  daifu.getDfOrderNo() );
 					    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 						Map< String,Object > appletMap = new HashMap<>();
 
@@ -1880,6 +1883,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 						logger.info( "appletWxReturnParams:" + JSONObject.fromObject( appletMap ).toString() );
 						//todo 调用小屁孩接口   小程序退款
 						Map< String,Object > resultmap = null;//payService.memberPayRefundByWxApplet( appletMap );
+
+						/*WxmemberPayRefund refund = new WxmemberPayRefund();
+						refund.setTotalFee( wxPayOrder.getTotalFee() );
+						refund.setSysOrderNo( wxPayOrder.getOutTradeNo() );
+						refund.setRefundFee( CommonUtil.toDouble( oReturn.getRetMoney() ) );
+						payService.wxmemberPayRefund( refund );*/
 						if ( CommonUtil.isNotEmpty( resultmap ) ) {
 						    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
 							//退款成功修改退款状态
@@ -2221,7 +2230,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	    Map< String,Object > resultMap = memberService.refundMoneyAndJifenAndFenbi( returnParams );
 	    if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == -1 ) {
-	        //同步失败，存入redis todo  定时器还未做
+		//同步失败，存入redis todo  定时器还未做
 		JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( returnParams ) );
 		//		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
 	    }

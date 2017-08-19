@@ -7,10 +7,12 @@ import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
-import com.gt.mall.util.*;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.catalina.Store;
@@ -48,6 +50,12 @@ public class MallStoreController extends BaseController {
 
     @Autowired
     private MallPaySetService mallPaySetService;
+
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
+
+    @Autowired
+    private BusUserService busUserService;
 
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -87,11 +95,10 @@ public class MallStoreController extends BaseController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    }
-	    request.setAttribute("wxPublicUsers", wxPublicUsers);
-	    //todo 调用陈丹接口 视频教程接口
-	    /*request.setAttribute("videourl", course.urlquery("8"));*/
+	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
+	    request.setAttribute("videourl", busUserService.getVoiceUrl("8"));
 	} catch ( Exception e ) {
-	    logger.error( "商城店铺管理异常："+e.getMessage() );
+	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	return "mall/store/index";
@@ -151,7 +158,7 @@ public class MallStoreController extends BaseController {
 	    //todo 调用陈丹接口，根据地区id查询地区信息
 	    //request.setAttribute("areaLs", restaurantService.findCityByPid(restaurantService.getAreaIds()));
 	} catch ( Exception e ) {
-	    logger.error( "进入修改店铺页面异常："+e.getMessage() );
+	    logger.error( "进入修改店铺页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    request.setAttribute( "pageTitle", "添加信息" );
@@ -177,7 +184,7 @@ public class MallStoreController extends BaseController {
 	} catch ( Exception e ) {
 	    msg.put( "result", false );
 	    msg.put( "message", e.getMessage() );
-	    logger.error( "保存店铺信息异常："+e.getMessage() );
+	    logger.error( "保存店铺信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    CommonUtil.write( response, msg );
@@ -197,7 +204,7 @@ public class MallStoreController extends BaseController {
 	} catch ( Exception e ) {
 	    msg.put( "result", false );
 	    msg.put( "message", e.getMessage() );
-	    logger.error( "删除店铺信息异常："+e.getMessage() );
+	    logger.error( "删除店铺信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    CommonUtil.write( response, msg );
@@ -246,14 +253,13 @@ public class MallStoreController extends BaseController {
 		List< MallCommentGive > giveList = mallCommentGiveService.getGiveByUserId( user.getId() );
 
 		//获取消息模板的内容
-		//todo 调用小屁孩接口
-		List< Map< String,Object > > messageList = null;//msgTemplateService.selectListByBusId( user.getId() );
+		List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
 
 		request.setAttribute( "messageList", messageList );
 		request.setAttribute( "giveList", giveList );
 	    }
 	} catch ( Exception e ) {
-	    logger.error( "进入商城设置页面异常："+e.getMessage() );
+	    logger.error( "进入商城设置页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	return "mall/set/set_index";

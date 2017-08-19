@@ -1,10 +1,10 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
-import com.gt.mall.bean.wxshop.OldApiSms;
+import com.gt.mall.bean.wx.OldApiSms;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.util.WxHttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -23,13 +23,11 @@ public class SmsServiceImpl implements SmsService {
 
     @Override
     public boolean sendSmsOld( OldApiSms oldApiSms ) {
+	oldApiSms.setCompany( Constants.doMainName );
 	oldApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", oldApiSms );
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, SMS_URL + "sendSmsOld.do", 1 );
-	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
-	    return true;
-	}
-	return false;
+	Map< String,Object > resultMap = WxHttpSignUtil.SignHttpInsertOrUpdate( oldApiSms, SMS_URL + "sendSmsOld.do", 1 );
+	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

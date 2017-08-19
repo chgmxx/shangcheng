@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wxshop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyPriceDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;

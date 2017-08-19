@@ -8,7 +8,8 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
-import com.gt.mall.service.inter.member.DictService;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallDaifuService;
@@ -46,7 +47,7 @@ public class MallOrderController extends BaseController {
     @Autowired
     private MallOrderService mallOrderService;
     @Autowired
-    MallStoreService mallStoreService;
+    private MallStoreService mallStoreService;
     @Autowired
     private MallGroupBuyService mallGroupBuyService;
     @Autowired
@@ -55,6 +56,8 @@ public class MallOrderController extends BaseController {
     private MallDaifuService    mallDaifuService;
     @Autowired
     private DictService         dictService;
+    @Autowired
+    private BusUserService busUserService;
 
     /**
      * 订单首页
@@ -107,8 +110,7 @@ public class MallOrderController extends BaseController {
 		request.setAttribute( "urlPath", PropertiesUtil.getArticleUrl() );
 		request.setAttribute( "user", user );
 	    }
-	    //todo  course.urlquery
-	    //	    request.setAttribute( "videourl", course.urlquery( "79" ) );
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "79" ) );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	} finally {
@@ -171,7 +173,7 @@ public class MallOrderController extends BaseController {
 	    } else {
 		count = "1";
 	    }
-	    List<Map> logisticsCompany = dictService.getDict( "1092" );
+	    List< Map > logisticsCompany = dictService.getDict( "1092" );
 	    request.setAttribute( "logisticsCompany", logisticsCompany );
 	}
 	request.setAttribute( "count", count );

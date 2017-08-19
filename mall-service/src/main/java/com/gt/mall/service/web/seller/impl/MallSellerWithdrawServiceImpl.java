@@ -3,6 +3,9 @@ package com.gt.mall.service.web.seller.impl;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.pay.ApiEnterprisePayment;
+import com.gt.mall.bean.wx.pay.EnterprisePaymentResult;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.dao.seller.MallSellerIncomeDAO;
 import com.gt.mall.dao.seller.MallSellerSetDAO;
@@ -12,6 +15,8 @@ import com.gt.mall.entity.seller.MallSellerIncome;
 import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.entity.seller.MallSellerWithdraw;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.PayService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.seller.MallSellerWithdrawService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
@@ -44,7 +49,11 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
     @Autowired
     private MallSellerIncomeDAO   mallSellerIncomeDAO;
     @Autowired
-    private  MemberService        memberService;
+    private MemberService         memberService;
+    @Autowired
+    private WxPublicUserService   wxPublicUserService;
+    @Autowired
+    private PayService            payService;
 
     /**
      * 查询销售员的提现记录
@@ -72,7 +81,7 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
     @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > saveWithdraw( int saleMemberId,
-		    Map< String,Object > params ) throws Exception {
+		    Map< String,Object > params, int paySource ) throws Exception {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 
 	MallSellerWithdraw withdraw = (MallSellerWithdraw) JSONObject.toBean( JSONObject.fromObject( params.get( "withdraw" ) ), MallSellerWithdraw.class );
@@ -169,15 +178,10 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
 	    //修改提现金额和冻结金额
 	    mallSellerDAO.updateByWithdrawSelective( sellerMap );
 
-	    Map< String,Object > result = wxWithdrawMoney( withdraw );
-	    if ( CommonUtil.isNotEmpty( result ) ) {
-		if ( CommonUtil.isNotEmpty( result.get( "code" ) ) ) {
-		    int code = CommonUtil.toInteger( result.get( "code" ) );
-		    if ( code != 1 ) {
-			resultMap.put( "msg", result.get( "msg" ) );
-			throw new Exception( "提现失败，请稍后提现" );
-		    }
-		}
+	    EnterprisePaymentResult result = wxWithdrawMoney( withdraw, paySource );
+	    if ( CommonUtil.isEmpty( result ) ) {
+		resultMap.put( "flag", false );
+		throw new Exception( "提现失败，请稍后提现" );
 	    }
 	} else {
 	    resultMap.put( "flag", false );
@@ -186,28 +190,22 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
 	return resultMap;
     }
 
-    private Map< String,Object > wxWithdrawMoney( MallSellerWithdraw withdraw ) throws Exception {
-	Map< String,Object > params = new HashMap<>();
+    private EnterprisePaymentResult wxWithdrawMoney( MallSellerWithdraw withdraw, int paySource ) throws Exception {
 	MallSeller seller = mallSellerDAO.selectSellerByMemberId( withdraw.getSaleMemberId() );
 
-	//	WxPublicUsers wxPublicUsers = wxPublicUserMapper.selectByUserId(seller.getBusUserId());
-	//	Member member = memberMapper.selectByPrimaryKey(seller.getMemberId());
-	//todo 调用小屁孩的接口，根据商家id查询公众号信息
-	WxPublicUsers wxPublicUsers = new WxPublicUsers();
-	Member member = memberService.findMemberById( seller.getMemberId() ,null);//根据粉丝id查询粉丝信息
+	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( seller.getBusUserId() );
+	Member member = memberService.findMemberById( seller.getMemberId(), null );//根据粉丝id查询粉丝信息
 
-	params.put( "appid", wxPublicUsers.getAppid() );
-	params.put( "partner_trade_no", withdraw.getWithdrawOrderNo() );
-	params.put( "openid", member.getOpenid() );
-	params.put( "desc", "超级销售员佣金提现" );
-	params.put( "amount", withdraw.getWithdrawMoney() );
-	params.put( "model", 12 );
-	params.put( "busId", wxPublicUsers.getBusUserId() );
-	params.put( "mchid", wxPublicUsers.getMchId() );
-
-	//	return wxPayService.enterprisePayment(params);
-	//todo 调用小屁孩的接口，  企业支付
-	return null;
+	ApiEnterprisePayment payment = new ApiEnterprisePayment();
+	payment.setAppid( wxPublicUsers.getAppid() );
+	payment.setPartner_trade_no( withdraw.getWithdrawOrderNo() );
+	payment.setOpenid( member.getOpenid() );
+	payment.setDesc( "超级销售员佣金提现" );
+	payment.setAmount( CommonUtil.toDouble( withdraw.getWithdrawMoney() ) );
+	payment.setBusId( member.getBusid() );
+	payment.setModel( CommonUtil.toInteger( Constants.ENTER_PAY_MODEL ) );
+	payment.setPaySource( paySource );
+	return payService.enterprisePayment( payment );
     }
 
     @Override

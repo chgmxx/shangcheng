@@ -11,6 +11,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallCollectService;
@@ -70,6 +71,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
     private MemberService        memberService;
     @Autowired
     private WxPublicUserService  wxPublicUserService;
+    @Autowired
+    private BusUserService       busUserService;
 
     /**
      * 跳转至个人中心的页面
@@ -100,9 +103,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    //TODO 用户 busUserMapper.selectByPrimaryKey( userid );
-	    BusUser user = null;
-	    //			    busUserMapper.selectByPrimaryKey( userid );
+	    BusUser user = busUserService.selectById( userid );//根据商家id查询商家信息
 	    if ( CommonUtil.isNotEmpty( user ) ) {
 		if ( CommonUtil.isNotEmpty( user.getAdvert() ) ) {
 		    if ( user.getAdvert() == 0 ) {
@@ -377,9 +378,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    StringBuffer imageUrl = new StringBuffer();
 	    boolean flag = false;
 	    Member member = memberService.findMemberById( memberId, null );
-	    //TODO 用户 busUserMapper.selectByPrimaryKey( member.getBusid() );
-	    BusUser user = null;
-	    //	    nullbusUserMapper.selectByPrimaryKey( member.getBusid() );
+	    BusUser user = busUserService.selectById( member.getBusid()  );//根据商家id查询商家信息;
 	    if ( request instanceof MultipartHttpServletRequest ) {
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		List< MultipartFile > userfile = multipartRequest.getFiles( "file" );

@@ -1,6 +1,6 @@
 package com.gt.mall.service.inter.wxshop;
 
-import com.gt.mall.bean.wxshop.OldApiSms;
+import com.gt.mall.bean.wx.OldApiSms;
 
 /**
  * 发送短信接口

@@ -8,7 +8,8 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.entity.presale.MallPresaleGive;
-import com.gt.mall.service.inter.member.DictService;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
@@ -49,6 +50,8 @@ public class MallPresaleController extends BaseController {
     private MallPaySetService         mallPaySetService;
     @Autowired
     private DictService               dictService;
+    @Autowired
+    private BusUserService            busUserService;
 
     /**
      * 预售管理列表页面
@@ -92,8 +95,7 @@ public class MallPresaleController extends BaseController {
 		}
 	    }
 	    request.setAttribute( "isOpenPresale", isOpenPresale );
-	    //todo course.urlquery
-	    //	    request.setAttribute( "videourl", course.urlquery( "83" ) );
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "83" ) );
 	} catch ( Exception e ) {
 	    logger.error( "预售列表异常：" + e );
 	    e.printStackTrace();

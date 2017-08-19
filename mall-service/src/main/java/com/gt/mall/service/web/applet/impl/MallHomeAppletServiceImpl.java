@@ -6,7 +6,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wxshop.OldApiSms;
+import com.gt.mall.bean.wx.OldApiSms;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;

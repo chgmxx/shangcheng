@@ -5,6 +5,8 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -14,9 +16,12 @@ import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerMallset;
-import com.gt.mall.service.inter.member.DictService;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.util.*;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
@@ -28,6 +33,7 @@ import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +88,14 @@ public class MallPageController extends AuthorizeOrLoginController {
     private MemberService               memberService;
     @Autowired
     private DictService                 dictService;
+    @Autowired
+    private WxShopService               wxShopService;
+    @Autowired
+    private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private FenBiFlowService            fenBiFlowService;
+    @Autowired
+    private BusUserService busUserService;
 
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -107,8 +121,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 	    }
 	    request.setAttribute( "urls", request.getHeader( "Referer" ) );
-	    //todo 调用陈丹接口   course.urlquery
-	    //request.setAttribute("videourl", course.urlquery("78"));
+	    request.setAttribute("videourl", busUserService.getVoiceUrl("78"));
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
@@ -132,7 +145,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	//获取用户店铺集合
 	List< Map< String,Object > > allSto = mallStoreService.findAllStoByUser( user );
 	//获取页面类型
-	List<Map> typeMap = dictService.getDict( "1073" );
+	List< Map > typeMap = dictService.getDict( "1073" );
 	request.setAttribute( "typeMap", typeMap );
 	request.setAttribute( "allSto", allSto );
 	request.setAttribute( "urls", request.getHeader( "Referer" ) );
@@ -739,13 +752,12 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map< String,Object > mapmessage = mallPageService.querySelct( id );//获取商品信息
 	    Map< String,Object > mapuser = mallPageService.selUser( shopid );//查询商家信息
-	    //TODO 调用小屁孩接口   根据门店id查询门店信息  wxShopService.getShopById()
-	    /*WsWxShopInfo shop = null;//wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
+	    WsWxShopInfo shop = wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
 	    if ( shop != null ) {//商家地址显示
 		Map< String,Object > province = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getProvince() ) );
 		Map< String,Object > city = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getCity() ) );
 		request.setAttribute( "storeAddress", province.get( "city_name" ) + city.get( "city_name" ).toString() );
-	    }*/
+	    }
 	    if ( CommonUtil.isNotEmpty( mapuser ) ) {
 		userid = CommonUtil.toInteger( mapuser.get( "id" ) );
 	    }
@@ -1033,13 +1045,12 @@ public class MallPageController extends AuthorizeOrLoginController {
 		request.setAttribute( "rType", rType );
 		mallPageService.getCustomer( request, userid );
 
-		/*if ( CommonUtil.isNotEmpty( mapmessage.get( "flow_id" ) ) ) {
-		    //todo 调用小屁孩接口 busFlowService.selectById
-		    BusFlow flow = busFlowService.selectById( CommonUtil.toInteger( mapmessage.get( "flow_id" ) ) );
+		if ( CommonUtil.isNotEmpty( mapmessage.get( "flow_id" ) ) ) {
+		    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( mapmessage.get( "flow_id" ) ) );
 		    if ( CommonUtil.isNotEmpty( flow ) ) {
 			request.setAttribute( "flow_desc", flow.getType() + "M流量" );
 		    }
-		}*/
+		}
 
 		if ( CommonUtil.isNotEmpty( publicUserid ) && CommonUtil.isNotEmpty( member ) ) {
 		    if ( CommonUtil.isNotEmpty( publicUserid.get( "qrcode_url" ) ) ) {
@@ -1415,8 +1426,7 @@ public class MallPageController extends AuthorizeOrLoginController {
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String shopall( HttpServletRequest request, HttpServletResponse response, @PathVariable int publicId, @RequestParam Map< String,Object > params ) throws Exception {
 	Member member = SessionUtils.getLoginMember( request );
-	//todo 调用小屁孩接口  根据公众号id查询公众号信息     wxPublicUserService.selectquery
-	WxPublicUsers wx = null;//wxPublicUserService.selectquery( publicId );
+	WxPublicUsers wx = wxPublicUserService.selectById( publicId );
 	int userid = wx.getBusUserId();
 	Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	loginMap.put( "uclogin", 1 );

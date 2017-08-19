@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -1246,7 +1247,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum ) {
+    public Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< WsWxShopInfoExtend > wxShopList ) {
 	Map< String,Object > productMap = new HashMap<>();
 	Map< String,Object > resultMap = new HashMap<>();
 	String proId = map.get( "product_id" ).toString();
@@ -1319,6 +1320,24 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		}
 		resultMap.put( "maxBuy", maxBuyNum - num );
 	    }
+	}
+	if ( CommonUtil.isEmpty( map.get( "wx_shop_id" ) ) ) {
+	    code = 0;
+	    msg = "店铺已被删除";
+	}
+	boolean isSxShop = false;
+	String wxShopId = CommonUtil.toString( map.get( "wx_shop_id" ) );
+	if ( wxShopList != null && wxShopList.size() > 0 ) {
+	    for ( WsWxShopInfoExtend wxShopInfoExtend : wxShopList ) {
+		if ( wxShopInfoExtend.getId().toString().equals( wxShopId ) ) {
+		    isSxShop = true;
+		    resultMap.put( "sto_name", wxShopInfoExtend.getBusinessName() );
+		}
+	    }
+	}
+	if ( !isSxShop ) {
+	    code = 0;
+	    msg = "门店已被删除";
 	}
 	resultMap.put( "code", code );
 	resultMap.put( "msg", msg );

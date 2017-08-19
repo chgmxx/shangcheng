@@ -4,7 +4,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wxshop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;

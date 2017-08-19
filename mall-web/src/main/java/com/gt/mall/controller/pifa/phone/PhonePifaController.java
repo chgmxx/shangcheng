@@ -1,22 +1,25 @@
 package com.gt.mall.controller.pifa.phone;
 
 import com.gt.mall.annotation.AfterAnno;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.OldApiSms;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifaApply;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.JedisUtil;
-import com.gt.mall.util.PropertiesUtil;
-import com.gt.mall.util.SessionUtils;
+import com.gt.mall.service.inter.wxshop.SmsService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.JedisUtil;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.util.SessionUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +30,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,6 +63,10 @@ public class PhonePifaController extends AuthorizeOrLoginController {
     private MallPaySetService    mallPaySetService;
     @Autowired
     private MemberService        memberService;
+    @Autowired
+    private WxPublicUserService  wxPublicUserService;
+    @Autowired
+    private SmsService           smsService;
 
     /**
      * 进入申请批发商页面
@@ -71,22 +77,16 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 	Member member = SessionUtils.getLoginMember( request );
 	int userid = 0;
 	WxPublicUsers wx = null;
-	/*if(CommonUtil.isNotEmpty(request.getParameter("uId"))){
-	    userid = CommonUtil.toInteger(request.getParameter("uId"));
-	    //todo publicUsersMapper.selectByUserId(
-	    wx = publicUsersMapper.selectByUserId(userid);
-	}else if(CommonUtil.isNotEmpty(request.getParameter("pub_id"))){//在公众号直接放链接
-		//todo publicUsersMapper.selectByPrimaryKey
-	    wx = publicUsersMapper.selectByPrimaryKey(CommonUtil.toInteger(request.getParameter("pub_id")));
-	}*/
+	if ( CommonUtil.isNotEmpty( request.getParameter( "uId" ) ) ) {
+	    userid = CommonUtil.toInteger( request.getParameter( "uId" ) );
+	    wx = wxPublicUserService.selectByUserId( userid );
+	} else if ( CommonUtil.isNotEmpty( request.getParameter( "pub_id" ) ) ) {//在公众号直接放链接
+	    wx = wxPublicUserService.selectById( CommonUtil.toInteger( request.getParameter( "pub_id" ) ) );
+	}
 	if ( userid == 0 && CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
 	    int memberid = CommonUtil.toInteger( request.getParameter( "member_id" ) );
-	    Member members = memberService.findMemberById( memberid, member );//通过会员id查询会员信息
-	    userid = members.getBusid();
-	    /*if(CommonUtil.isNotEmpty(members.getPublicId())){
-	    	//todo publicUsersMapper.selectByPrimaryKey
-		wx = publicUsersMapper.selectByPrimaryKey(members.getPublicId());
-	    }*/
+	    wx = wxPublicUserService.selectByMemberId( memberid );
+	    userid = wx.getBusUserId();
 	}
 	if ( userid == 0 && CommonUtil.isNotEmpty( wx ) ) {
 	    userid = wx.getBusUserId();
@@ -175,36 +175,30 @@ public class PhonePifaController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/sendMsg" )
     @ResponseBody
-    public Map< String,Object > sendMsg( HttpServletResponse response, HttpServletRequest request, HttpSession session,
-		    @RequestParam String telNo, @RequestParam String sType, @RequestParam String mType ) {
-	if ( logger.isDebugEnabled() ) {
-	    // 验证类型
-	    logger.debug( "进入短信发送,手机号:" + telNo + "验证类型:" + sType );
-	}
-
-	Map< String,Object > map = null;
-
+    public Map< String,Object > sendMsg( HttpServletResponse response, HttpServletRequest request, @RequestParam String telNo, @RequestParam String sType,
+		    @RequestParam String mType ) {
+	logger.debug( "进入短信发送,手机号:" + telNo + "验证类型:" + sType );
+	Map< String,Object > map = new HashMap<>();
 	Member member = SessionUtils.getLoginMember( request );
 
-	Map< String,Object > params = new HashMap<>();
-
-	params.put( "busId", member.getBusid() );
-	params.put( "model", 13 );
 	String no = CommonUtil.getPhoneCode();
 	logger.info( "短信验证码：" + no );
 	JedisUtil.set( no, no, 5 * 60 );
 
-	//todo busUserMapper.selectByPrimaryKey
-	BusUser bUser = null;//busUserMapper.selectByPrimaryKey( member.getBusid() );
-	params.put( "content", "您申请的批发商验证码:" + no + "，5分钟内有效。" );
-	params.put( "mobiles", telNo );
-	params.put( "company", bUser.getMerchant_name() );
 	try {
-	    //todo smsSpendingService.sendSms
-	    map = null;//smsSpendingService.sendSms( params );
+	    OldApiSms oldApiSms = new OldApiSms();
+	    oldApiSms.setMobiles( telNo );
+	    oldApiSms.setBusId( member.getBusid() );
+	    oldApiSms.setContent( "您申请的批发商验证码:" + no + "，5分钟内有效。" );
+
+	    boolean flag = smsService.sendSmsOld( oldApiSms );
+	    if ( flag ) {
+		map.put( "code", ResponseEnums.SUCCESS );
+		map.put( "msg", "发送成功" );
+	    }
 	} catch ( Exception e ) {
-	    map = new HashMap< String,Object >();
 	    map.put( "msg", "获取短信验证码失败" );
+	    map.put( "code", ResponseEnums.ERROR.getCode() );
 	}
 	return map;
     }

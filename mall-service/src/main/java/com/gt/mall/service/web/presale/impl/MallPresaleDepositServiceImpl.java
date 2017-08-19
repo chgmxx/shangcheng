@@ -2,9 +2,10 @@ package com.gt.mall.service.web.presale.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.member.PaySuccessBo;
+import com.gt.mall.bean.wx.pay.WxPayOrder;
+import com.gt.mall.bean.wx.pay.WxmemberPayRefund;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.*;
@@ -15,10 +16,13 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.PayOrderService;
+import com.gt.mall.service.inter.wxshop.PayService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
 import com.gt.mall.util.PageUtil;
-import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -70,6 +74,15 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 
     @Autowired
     private MemberPayService memberPayService;
+
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
+
+    @Autowired
+    private PayOrderService payOrderService;
+
+    @Autowired
+    private PayService payService;
 
     /**
      * 通过店铺id来查询拍定金
@@ -183,20 +196,20 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	sucess.setDiscountMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );//折扣后金额
 	sucess.setPay( CommonUtil.toDouble( deposit.getDepositMoney() ) );//支付金额
 	int payType = 1;//微信支付
-	if(deposit.getPayWay() == 2){
+	if ( deposit.getPayWay() == 2 ) {
 	    payType = 5;//储值卡支付
 	}
 	sucess.setPayType( payType );//支付方式
 	sucess.setUcType( 101 );//消费方式 对应字典表 1197
 	sucess.setDelay( -1 );//不赠送物品
 	sucess.setUcTable( "t_mall_presale_deposit" );
-	sucess.setDataSource( deposit.getBuyerUserType()  );
+	sucess.setDataSource( deposit.getBuyerUserType() );
 	//支付
 	Map< String,Object > resultMap = memberPayService.paySuccess( sucess );
 	int code = CommonUtil.toInteger( resultMap.get( "code" ) );
-	if ( code == 1) {//支付成功
+	if ( code == 1 ) {//支付成功
 	    return 1;
-	}else if(code == 5006){//储值卡金额不够
+	} else if ( code == 5006 ) {//储值卡金额不够
 	    return -2;
 	} else {//支付失败
 	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
@@ -254,7 +267,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public Map< String,Object > addDeposit( Map< String,Object > params, String memberId ,Integer browser ) {
+    public Map< String,Object > addDeposit( Map< String,Object > params, String memberId, Integer browser ) {
 	Map< String,Object > result = new HashMap< String,Object >();
 
 	MallPresaleDeposit deposit = (MallPresaleDeposit) JSONObject.toBean( JSONObject.fromObject( params.get( "presale" ) ), MallPresaleDeposit.class );
@@ -409,29 +422,21 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	Integer payWay = CommonUtil.toInteger( map.get( "pay_way" ) );
 	Double money = CommonUtil.toDouble( map.get( "deposit_money" ) );
 	String depNo = CommonUtil.toString( map.get( "deposit_no" ) );
-	//todo 根据粉丝id查询公众号的信息
-	WxPublicUsers pUser = new WxPublicUsers();
+	WxPublicUsers pUser = wxPublicUserService.selectByUserId( memberId );
 	String returnNo = "YSHTK" + System.currentTimeMillis();
 	map.put( "return_no", returnNo );
 
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 
-	    //todo 调用小屁孩的接口，根据订单号查询支付订单信息
-	    WxPayOrder wxPayOrder = null;//wxPayOrderMapper.selectByOutTradeNo(depNo);
+	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( depNo );
 	    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
-		map.put( "appid", pUser.getAppid() );// 公众号
-		map.put( "mchid", pUser.getMchId() );// 商户号
-		map.put( "sysOrderNo", wxPayOrder.getOutTradeNo() );// 系统订单号
-		map.put( "wx_order_no", wxPayOrder.getTransactionId() );// 微信订单号
-		map.put( "outRefundNo", returnNo );// 商户退款单号(系统生成)
-		map.put( "totalFee", wxPayOrder.getTotalFee() );// 总金额
-		map.put( "refundFee", money );// 退款金额
-		map.put( "key", pUser.getApiKey() );// 商户支付密钥
-		map.put( "wxOrdId", wxPayOrder.getId() );// 微信订单表主键
-		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject( map ).toString() );
-
-		//todo 调用小屁孩的接口，会员退款
-		Map< String,Object > resultmap = null;//payService.memberPayRefund(map);
+		WxmemberPayRefund refund = new WxmemberPayRefund();
+		refund.setAppid( pUser.getAppid() );
+		refund.setMchid( pUser.getMchId() );
+		refund.setRefundFee( money );
+		refund.setSysOrderNo( wxPayOrder.getOutTradeNo() );
+		refund.setTotalFee( wxPayOrder.getTotalFee() );
+		Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );
 		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject( resultmap ).toString() );
 		if ( resultmap != null ) {
 		    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
@@ -439,7 +444,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 			updateReturnStatus( pUser, map, returnNo );//微信退款
 		    } else {
 			resultMap.put( "result", false );
-			resultMap.put( "msg", resultmap.get( "msg" ) );
+			resultMap.put( "msg", resultmap.get( "errorMsg" ) );
 		    }
 		}
 	    }
@@ -482,12 +487,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	params.put( "return_no", returnNo );
 	params.put( "pay_way", deposit.getPayWay() );
 	params.put( "shop_id", deposit.getShopId() );
-	Member member = memberService.findMemberById( deposit.getUserId(), null );//根据会员id查询会员信息
-	// todo 调用小屁孩的接口，根据公众号id查询公众号信息
-	WxPublicUsers wx = null;
-	if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
-	    //	    wx = wxPublicUsersMapper.selectByPrimaryKey(member.getPublicId());
-	}
+	WxPublicUsers wx = wxPublicUserService.selectByMemberId( deposit.getUserId() );
 	updateReturnStatus( wx, params, returnNo );
 
     }

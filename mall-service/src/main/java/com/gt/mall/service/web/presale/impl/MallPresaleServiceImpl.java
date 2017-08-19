@@ -6,6 +6,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.SendWxMsgTemplate;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -19,12 +20,13 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.util.*;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
+import com.gt.mall.service.web.product.MallProductInventoryService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -68,6 +70,8 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     private MallOrderDAO                mallOrderDAO;
     @Autowired
     private MallPaySetService           mallPaySetService;
+    @Autowired
+    private WxPublicUserService         wxPublicUserService;
 
     /**
      * 通过店铺id来查询预售
@@ -599,7 +603,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      */
     @Override
     public void diffInvNum( MallOrder order ) {
-	String invKey = Constants.REDIS_KEY+"presale_num";//秒杀库存的key
+	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
 
 	String field = order.getGroupBuyId().toString();
 	String specificas = "";
@@ -652,7 +656,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
     @Override
     public void presaleStartRemain() {
-	String key = Constants.REDIS_KEY+"presale_message";
+	String key = Constants.REDIS_KEY + "presale_message";
 	Map< String,String > map = JedisUtil.mapGetAll( key );
 	if ( CommonUtil.isNotEmpty( map ) ) {
 	    Set< String > set = map.keySet();
@@ -740,9 +744,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
 	//		int busUserId = CommonUtil.toInteger(msgObj.get("busUserId"));
 	int memberId = CommonUtil.toInteger( msgObj.get( "wxMemberId" ) );
-	//		WxPublicUsers publicUser = wxPublicUserMapper.selectByPrimaryKey(busUserId);//通过商家id查询商家公众号id
-	// todo 调用小屁孩接口 根据粉丝id查询公众号
-	WxPublicUsers publicUser = null;//mallOrderDAO.getWpUser( memberId );
+	WxPublicUsers publicUser = wxPublicUserService.selectByMemberId( memberId );
 	MallPaySet paySet = new MallPaySet();
 	paySet.setUserId( publicUser.getBusUserId() );
 	MallPaySet set = mallPaySetService.selectByUserId( paySet );
@@ -771,23 +773,15 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    objs.add( "商品预售" );
 	    objs.add( time );
 	    objs.add( "商品预售提醒" );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "memberId", memberId );
 
-	    params.put( "id", id );
-	    params.put( "url", url );
-	    logger.info( "params参数：" + params );
-	    logger.info( "objs参数：" + objs );
-	    //todo 调用 小屁孩的  模板发送消息的接口
-	    /*Map< String,Object > resultMap = msgTemplateService.sendMsg( publicUser, params, objs );
-	    logger.info( result );
-	    if ( CommonUtil.isNotEmpty( resultMap ) ) {
-		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
-		    if ( resultMap.get( "code" ).toString().equals( "1" ) ) {
-			result = true;
-		    }
-		}
-	    }*/
+	    SendWxMsgTemplate template = new SendWxMsgTemplate();
+	    template.setId( id );
+	    template.setUrl( url );
+	    template.setMemberId( memberId );
+	    template.setPublicId( publicUser.getId() );
+	    template.setObjs( objs );
+	    logger.info( "调用发送消息模板的接口===================" );
+	    return wxPublicUserService.sendWxMsgTemplate( template );
 	}
 	return result;
     }
@@ -797,9 +791,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	List< MallPresale > presaleList = mallPresaleDAO.selectByPresaleEnd();
 	if ( presaleList != null && presaleList.size() > 0 ) {
 	    for ( MallPresale mallPresale : presaleList ) {
-		String invKey = Constants.REDIS_KEY+"presale_num";//秒杀库存的key
+		String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
 		JedisUtil.mapdel( invKey, mallPresale.getId().toString() );
-		String key = Constants.REDIS_KEY+"presale_message";
+		String key = Constants.REDIS_KEY + "presale_message";
 		JedisUtil.mapdel( key, mallPresale.getId().toString() );
 	    }
 	}

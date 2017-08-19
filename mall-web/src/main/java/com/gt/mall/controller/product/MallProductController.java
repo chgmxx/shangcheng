@@ -2,14 +2,18 @@ package com.gt.mall.controller.product;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.product.MallGroup;
-import com.gt.mall.util.*;
 import com.gt.mall.service.inter.member.CardService;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
+import java.util.*;
 
 /**
  * <p>
@@ -50,6 +51,12 @@ public class MallProductController extends BaseController {
     private MallProductSpecificaService mallProductSpecificaService;
     @Autowired
     private CardService                 cardService;
+    @Autowired
+    private FenBiFlowService            fenBiFlowService;
+    @Autowired
+    private BusUserService              busUserService;
+    @Autowired
+    private DictService                 dictService;
 
     /**
      * 进入商品管理列表页面
@@ -71,30 +78,16 @@ public class MallProductController extends BaseController {
 		    }
 		}
 		if ( isAdminFlag ) {
-		    //todo 调用陈丹接口  dictService.pidUserId
-		    int userPId = 0;//dictService.pidUserId( user.getId() );//通过用户名查询主账号id
-		    List< Map< String,Object > > shoplist = mallStoreService
-				    .findAllStoByUser( user );// 查询登陆人拥有的店铺
+		    int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
 		    if ( shoplist != null && shoplist.size() > 0 ) {
-			//todo 调用陈丹接口   erpLoginOrMenusService.isjxcCount
-			long isJxc = 0;//erpLoginOrMenusService.isjxcCount( "8", userPId );//判断商家是否有进销存 0没有 1有
+			long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 			params.put( "isJxc", isJxc );
 			params.put( "shoplist", shoplist );
 			PageUtil page = mallProductService.selectByUserId( params );
 			request.setAttribute( "page", page );
 		    }
-		    int uId = user.getId();
-		    int level = user.getLevel();
-		    //登陆人是子账户，要根据pId获取主账户的id和等级，如果是主账户则取自己的id和等级
-		    if ( CommonUtil.isNotEmpty( user.getPid() ) ) {
-			if ( user.getPid() > 0 ) {
-			    BusUser xuser = null;//userService.QuerySelect( userPId );//登陆人是子账户，要根据pId获取主账户的id和等级
-			    uId = xuser.getId();
-			    level = xuser.getLevel();
-			}
-		    }
-		    //todo  调用陈丹接口  dictService.dictBusUserNum
-		    //request.setAttribute( "proMaxNum", dictService.dictBusUserNum( uId, level, 5, "1094" ) );
+		    request.setAttribute( "proMaxNum", dictService.getDiBserNum( userPId, 5, "1094" ) );
 		    request.setAttribute( "proType", proType );
 		    request.setAttribute( "proName", params.get( "proName" ) );
 		    request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
@@ -104,8 +97,7 @@ public class MallProductController extends BaseController {
 
 		}
 	    }
-	    //todo 调用陈丹接口   course.urlquery
-	    //	    request.setAttribute( "videourl", course.urlquery( "77" ) );
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "77" ) );
 	} catch ( Exception e ) {
 	    logger.error( "进入商品列表异常" + e.getMessage() );
 	    e.printStackTrace();
@@ -159,10 +151,8 @@ public class MallProductController extends BaseController {
 	    if ( specDictMap != null && specDictMap.size() > 0 ) {
 		request.setAttribute( "specDictMap", specDictMap );
 	    }
-	    //todo 调用陈丹接口 根据商家id查询主账号id  dictService.pidUserId
-	    int userPId = 0;//dictService.pidUserId( user.getId() );//通过用户名查询主账号id
-	    //todo 调用陈丹接口 判断商家是否有进销存    erpLoginOrMenusService.isjxcCount
-	    long isJxc = 0;//erpLoginOrMenusService.isjxcCount( "8", userPId );//判断商家是否有进销存 0没有 1有
+	    int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+	    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	    if ( isJxc == 1 ) {
 		request.setAttribute( "noShowSt", 1 );//不显示实体物品
 		request.setAttribute( "noUpSpec", 1 );//不修改规格 1 修改 0 不修改
@@ -203,9 +193,8 @@ public class MallProductController extends BaseController {
 		}
 	    }
 	    //查询商家流量
-	    //todo 流量相关接口  busFlowService.getBusFlowsByUserId
-	  /*  List< BusFlow > flowList = busFlowService.getBusFlowsByUserId( user.getId() );
-	    List< BusFlow > newFlowList = new ArrayList< BusFlow >();
+	    List< BusFlow > flowList = fenBiFlowService.getBusFlowsByUserId( user.getId() );
+	    List< BusFlow > newFlowList = new ArrayList<>();
 	    if ( flowList != null && flowList.size() > 0 ) {
 		if ( flowList != null && flowList.size() > 0 ) {
 		    for ( BusFlow busFlow : flowList ) {
@@ -216,7 +205,7 @@ public class MallProductController extends BaseController {
 		    }
 		}
 		request.setAttribute( "newFlowList", newFlowList );
-	    }*/
+	    }
 
 	    //查询会员卡
 	    List< Map > cardList = mallProductService.selectMemberType( user.getId() );

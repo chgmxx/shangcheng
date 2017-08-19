@@ -7,6 +7,7 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -40,11 +41,12 @@ public class MallSeckillController extends AuthorizeOrLoginController {
     private MallStoreService   mallStoreService;
     @Autowired
     private MallSeckillService mallSeckillService;
-
     @Autowired
-    private MallPageService   mallPageService;
+    private MallPageService    mallPageService;
     @Autowired
-    private MallPaySetService mallPaySetService;
+    private MallPaySetService  mallPaySetService;
+    @Autowired
+    private BusUserService     busUserService;
 
     /**
      * 秒杀管理列表页面
@@ -73,8 +75,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    }
-	    //todo 调用陈丹接口  视频教程   course.urlquery
-	    //request.setAttribute("videourl", course.urlquery("82"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "82" ) );
 	} catch ( Exception e ) {
 	    logger.error( "秒杀列表异常：" + e );
 	    e.printStackTrace();

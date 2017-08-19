@@ -1,4 +1,4 @@
-package com.gt.mall.bean.wxshop;
+package com.gt.mall.bean.wx;
 
 import lombok.Getter;
 import lombok.Setter;

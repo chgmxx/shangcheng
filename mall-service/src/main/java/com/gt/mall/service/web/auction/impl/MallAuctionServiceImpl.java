@@ -2,7 +2,7 @@ package com.gt.mall.service.web.auction.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.wxshop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
@@ -17,7 +17,6 @@ import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

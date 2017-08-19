@@ -1,8 +1,8 @@
 package com.gt.mall.service.inter.wxshop;
 
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wxshop.QrcodeCreateFinal;
-import com.gt.mall.bean.wxshop.SendWxMsgTemplate;
+import com.gt.mall.bean.wx.QrcodeCreateFinal;
+import com.gt.mall.bean.wx.SendWxMsgTemplate;
 
 import java.util.List;
 import java.util.Map;

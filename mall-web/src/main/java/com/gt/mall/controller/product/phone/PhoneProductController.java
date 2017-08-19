@@ -3,6 +3,7 @@ package com.gt.mall.controller.product.phone;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.entity.product.MallGroup;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
@@ -29,6 +30,9 @@ public class PhoneProductController extends BaseController {
 
     @Autowired
     private MallGroupService mallGroupService;
+
+    @Autowired
+    private BusUserService busUserService;
 
     /**
      * 查询子分类

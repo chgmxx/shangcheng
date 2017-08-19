@@ -74,4 +74,19 @@ public class Constants {
      */
     public static final String SCENE_KEY = "3";
 
+    /**
+     * 门店中间表model
+     */
+    public static final String SHOP_SUB_SOP_MODEL = "2";
+
+    /**
+     * 商城提现
+     */
+    public static final String ENTER_PAY_MODEL = "12";
+
+    /**
+     * 小程序的style
+     */
+    public static final String APPLET_STYLE = "4";
+
 }

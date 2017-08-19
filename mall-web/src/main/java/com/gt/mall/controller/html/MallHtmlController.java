@@ -8,7 +8,8 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
-import com.gt.mall.service.inter.member.DictService;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
@@ -51,6 +52,8 @@ public class MallHtmlController extends BaseController {
     private DictService           dictService;
     @Autowired
     private WxPublicUserService   wxPublicUserService;
+    @Autowired
+    private BusUserService        busUserService;
 
     /**
      * h5 商城列表页
@@ -79,9 +82,8 @@ public class MallHtmlController extends BaseController {
 		//				dictService.shopuserid(user.getId());//获取是否是管理员
 		if ( isadmin == 0 ) {
 		    //TODO 需关连  dictService.pidUserId()
-		    //		    Integer zhuid = dictService.pidUserId(user.getId());//获取父类的id
-		    //TODO 需关连 BusUser
-		    //		    user  = busUserMap.selectByPrimaryKey(zhuid);
+		    /*Integer zhuid = dictService.pidUserId( user.getId() );//获取父类的id
+		    user = busUserService.selectById( zhuid );*/
 		    ispid = 1;
 		} else {
 		    ispid = 2;
@@ -321,7 +323,7 @@ public class MallHtmlController extends BaseController {
 		    if ( wxPublicUsers != null ) {
 			style = 0;
 			//TODO CommonUtil.getWxParams
-//			CommonUtil.getWxParams( publicUsers, request );
+			//			CommonUtil.getWxParams( publicUsers, request );
 		    }
 		}
 	    }
@@ -486,9 +488,8 @@ public class MallHtmlController extends BaseController {
 	    if ( user.getPid() == 0 ) {
 	    } else {
 		//TODO 需关连  dictService.pidUserId()
-		//		Integer zhuid = dictService.pidUserId(user.getId());//获取父类的id
-		//TODO 需关连  BusUser
-		//		user  = busUserMap.selectByPrimaryKey(zhuid);
+		/*Integer zhuid = dictService.pidUserId( user.getId() );//获取父类的id
+		user = busUserService.selectById( zhuid );*/
 		ispid = 1;
 	    }
 	    //TODO 需关连  dictService.dictBusUserNum()

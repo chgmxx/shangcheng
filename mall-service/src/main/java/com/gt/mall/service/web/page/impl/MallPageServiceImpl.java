@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.shop.ShopPhoto;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.dao.basic.MallCommentDAO;
@@ -35,22 +39,25 @@ import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
-import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.pifa.MallPifaService;
-import com.gt.mall.service.web.product.*;
-import com.gt.mall.util.*;
-import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
+import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
+import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -138,8 +145,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private MallProductDAO              mallProductDAO;
     @Autowired
     private MallProductService          mallProductService;
-    //    @Autowired
-    //    private WxShopService               wxShopService;//微信门店接口
+    @Autowired
+    private WxShopService               wxShopService;//微信门店接口
     @Autowired
     private MallProductGroupDAO         mallProductGroupDAO;//商品分组dao
     @Autowired
@@ -162,6 +169,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private CardService                 cardService;
     @Autowired
     private MemberService               memberService;
+    @Autowired
+    private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private BusUserService              busUserService;
 
     /**
      * 分页查询
@@ -387,11 +398,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
 	    storeMap.put( "business_name", storeMap.get( "sto_name" ) );
 	    try {
-		//TODO  wxShopService.getShopById()
-		/*WsWxShopInfo wxShop = null;//wxShopService.getShopById( CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) ) );
+		WsWxShopInfo wxShop = wxShopService.getShopById( CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) ) );
 		storeMap.put( "business_name", wxShop.getBusinessName() );
-		storeMap.put( "status", wxShop.getStatus() );*/
-		//todo 调用小屁孩接口 根据门店id查询门店图片
+		storeMap.put( "status", wxShop.getStatus() );
+
+		List< ShopPhoto > photoList = wxShopService.getShopPhotoByShopId( wxShop.getId() );
+		if ( photoList != null && photoList.size() > 0 ) {
+		    storeMap.put( "stoPicture", photoList.get( 0 ).getLocalAddress() );
+		}
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 	    }
@@ -402,17 +416,15 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > wxpublicid( Integer pagesid ) {
-	//	String sql = "SELECT a.id,a.bus_user_id,a.head_img FROM t_wx_public_users a LEFT JOIN t_mall_store b ON a.bus_user_id=b.sto_user_id LEFT JOIN t_mall_page c ON b.id=c.pag_sto_id WHERE c.id=" + pagesid;
-	//	return daoUtil.queryForMap( sql );
 	Map< String,Object > publicMap = new HashMap<>();
 	MallPage page = mallPageDAO.selectById( pagesid );
 	if ( CommonUtil.isNotEmpty( page ) ) {
-	    // todo 调用小屁孩接口 根据商家id查询公众号信息
-	    publicMap.put( "id", "" );
+	    WxPublicUsers publicUsers = wxPublicUserService.selectByUserId( page.getPagUserId() );
+	    publicMap.put( "id", publicUsers.getId() );
 	    publicMap.put( "bus_user_id", page.getPagUserId() );
-	    publicMap.put( "head_img", "" );
+	    publicMap.put( "head_img", publicUsers.getHeadImg() );
 	}
-	return null;
+	return publicMap;
     }
 
     @Override
@@ -429,9 +441,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    }
 
 	    Map< String,Object > params = new HashMap< String,Object >();
-	    //todo 调用小屁孩的接口
 	    //查询用户id
-	    List< Integer > memberList = new ArrayList<>();//memberPayService.findMemberIds( member.getId() );//查询会员信息
+	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
 	    params.put( "memberList", memberList );
 	    //查询购物车的数量
 	    params.put( "type", 0 );
@@ -621,7 +632,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	}
 	shopParams.put( "type", type );
 
-	//todo 关联小屁孩门店信息
+	List< WsWxShopInfoExtend > wxShopList = wxShopService.queryWxShopByBusId( userid );//查询商家的门店集合
 	List< Map< String,Object > > list = mallShopCartDAO.selectShopCartByMemberId( shopParams );
 	List< Map< String,Object > > shopList = new ArrayList<>();
 	List< Map< String,Object > > shopCartList = new ArrayList<>();
@@ -651,7 +662,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		String msg = "";
 		int code = 1;
 		//判断限购和商品是否正在售卖
-		Map< String,Object > xgMap = mallProductService.isshoppingCart( map, productNum );
+		Map< String,Object > xgMap = mallProductService.isshoppingCart( map, productNum, wxShopList );
 		if ( xgMap.get( "code" ).toString().equals( "1" ) ) {
 		    if ( xgMap.containsKey( "product_num" ) ) {
 			map.put( "product_num", xgMap.get( "product_num" ) );
@@ -661,6 +672,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		    }
 		    if ( xgMap.containsKey( "productMap" ) ) {
 			productMap.putAll( JSONObject.fromObject( xgMap.get( "productMap" ) ) );
+		    }
+		    if ( xgMap.containsKey( "sto_name" ) ) {
+			map.put( "sto_name", xgMap.get( "sto_name" ) );
 		    }
 		} else {
 		    code = CommonUtil.toInteger( xgMap.get( "code" ) );
@@ -973,37 +987,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( CommonUtil.isNotEmpty( stoId ) && stoId > 0 ) {
 	    params.put( "shopId", stoId );
 	} else {
-	    //todo 调用陈丹的接口，根据商家id查询门店信息
-	    params.put( "wxShopList", null );
+	    List< WsWxShopInfoExtend > shopList = wxShopService.queryWxShopByBusId( busUserId );
+	    params.put( "wxShopList", shopList );
 	}
-	/*String sql = "SELECT distinct(a.group_id) as group_id,b.group_name,b.is_child FROM t_mall_product_group a "
-			+ " LEFT JOIN t_mall_group b ON a.group_id=b.id ";
-	if ( CommonUtil.isNotEmpty( stoId ) && stoId > 0 ) {
-	    sql += " WHERE a.is_delete=0 AND b.is_delete=0 AND a.shop_id=" + stoId;
-	} else {
-
-	    sql += " LEFT JOIN t_mall_store s ON s.id=a.`shop_id` "
-		+ " LEFT JOIN t_wx_shop ws ON ws.id=s.`wx_shop_id`"
-		+ " WHERE  a.is_delete=0 AND b.is_delete=0 AND s.`is_delete`=0  AND ws.`status` != -1";
-	    if ( busUserId > 0 ) {
-		BusUser user = new BusUser();//busUserMapper.selectByPrimaryKey( busUserId );
-		List< Map< String,Object > > shoplist = new ArrayList<>(  );//mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
-		if ( shoplist != null && shoplist.size() > 0 ) {
-		    sql += " and (";
-		    for ( int i = 0; i < shoplist.size(); i++ ) {
-			Map< String,Object > map = shoplist.get( i );
-
-			if ( i > 0 ) {
-			    sql += " or ";
-			}
-			sql += " a.shop_id=" + map.get( "id" );
-		    }
-		    sql += " )";
-		}
-	    }
-	}*/
-
-	//	sql += " and b.is_first_parents=1 order by b.sort,b.id desc";
 	List< Map< String,Object > > list = mallProductGroupDAO.selectProductGroupByShopId( params );
 	if ( list != null && list.size() > 0 && type == 1 ) {
 	    for ( Map< String,Object > map : list ) {
@@ -1268,18 +1254,16 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public List< Map< String,Object > > shoppage( Integer shopid ) {
-	/*String sql = "SELECT p.id FROM t_mall_page p "
-			+ " LEFT JOIN t_mall_store s ON s.id=p.`pag_sto_id` "
-			+ " LEFT JOIN t_wx_shop ws ON ws.id=s.`wx_shop_id` "
-			+ " WHERE  p.pag_is_main=1 AND s.`is_delete`=0 AND ws.`status` != -1";
-	if ( CommonUtil.isNotEmpty( shopid ) ) {
-	    if ( shopid > 0 ) {
-		sql += " and p.pag_sto_id=" + shopid;
-	    }
-	}*/
-	//todo 调用小屁孩接口，判断门店id是否已删除
+	MallStore store = mallStoreDAO.selectById( shopid );
+	if ( CommonUtil.isEmpty( store ) ) {
+	    return null;
+	}
+	if ( CommonUtil.isEmpty( store.getWxShopId() ) ) {return null;}
+	WsWxShopInfo shopInfo = wxShopService.getShopById( store.getWxShopId() );
+	if ( shopInfo == null ) {return null;}
+	if ( shopInfo.getStatus() == -1 ) {return null;}
 	Map< String,Object > params = new HashMap<>();
-	params.put( "wxShopId", 0 );
+	params.put( "wxShopId", store.getWxShopId() );
 	return mallPageDAO.selectPageByWxShopId( params );
     }
 
@@ -1294,6 +1278,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		//  todo 调用陈丹接口  ， 通过商家id查询商家信息
 		Map< String,Object > userMap = new HashMap<>();
 		userMap.put( "id", store.getStoUserId() );//商家id
+		//todo 查询总账号
 		userMap.put( "pid", "" );//总账号id
 		userMap.put( "advert", "" );//是否显示技术支持
 		userMap.put( "sto_user_id", store.getStoUserId() );//商家id
@@ -1306,10 +1291,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > publicMapByUserId( Integer userId ) {
-	//	String sql = "SELECT p.id AS public_id,p.bus_user_id FROM  t_wx_public_users p  WHERE p.`bus_user_id`=" + userId;
+	WxPublicUsers publicUsers = wxPublicUserService.selectByUserId( userId );
 	Map< String,Object > publicMap = new HashMap<>();
-	// todo 调用小屁孩的接口，通过商家id查询公众号信息
-	publicMap.put( "public_id", "" );//公众号id
+	publicMap.put( "public_id", publicUsers.getId() );//公众号id
 	publicMap.put( "bus_user_id", userId );//商家id
 	return publicMap;
     }
@@ -1450,8 +1434,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public BusUser selUserByMember( Member member ) {
 	if ( CommonUtil.isNotEmpty( member ) ) {
-	    //todo 根据商家id查询商家信息 busUserMapper.selectByPrimaryKey
-	    BusUser user = new BusUser();// busUserMapper.selectByPrimaryKey( member.getBusid() );
+	    BusUser user = busUserService.selectById( member.getBusid() );
 	    if ( CommonUtil.isNotEmpty( user ) ) {
 		return user;
 	    }
@@ -1567,9 +1550,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			map.put( "shop_name", store.getStoName() );
 			//通过门店id查询门店信息
 			if ( CommonUtil.isNotEmpty( store.getWxShopId() ) && store.getWxShopId() > 0 ) {
-			    //TODO  根据店铺id查询门店信息 wxShopService.getShopById()
-			   /* WsWxShopInfo shop = null;//wxShopService.getShopById( store.getWxShopId() );
-			    map.put( "shop_name", shop.getBusinessName() );*/
+			    WsWxShopInfo shop = wxShopService.getShopById( store.getWxShopId() );
+			    map.put( "shop_name", shop.getBusinessName() );
 			}
 		    }
 		    //查询商品图片
@@ -1780,17 +1762,15 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
      * 查询门店或店铺是否已经删除
      */
     public boolean wxShopIsDelete( int shopId ) throws Exception {
-	//	String sql = "SELECT s.id FROM t_mall_store s LEFT JOIN t_wx_shop ws ON ws.id=s.wx_shop_id WHERE s.id=" + shopId + " AND s.`is_delete` = 0 AND ws.`status` != -1 LIMIT 1";
 	MallStore store = mallStoreService.selectById( shopId );
 	if ( store.getIsDelete() == 0 ) {
 	    if ( CommonUtil.isNotEmpty( store.getWxShopId() ) && store.getWxShopId() > 0 ) {
-		//TODO  根据门店id查询门店信息  wxShopService.getShopById()
-		/*WsWxShopInfo shop = null;//wxShopService.getShopById( store.getWxShopId() );
+		WsWxShopInfo shop = wxShopService.getShopById( store.getWxShopId() );
 		if ( CommonUtil.isNotEmpty( shop ) ) {
 		    if ( !CommonUtil.toString( shop.getStatus() ).equals( "-1" ) ) {
 			return true;
 		    }
-		}*/
+		}
 	    }
 	}
 	return false;
@@ -2232,9 +2212,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     private Map< String,Object > publicUserid( Integer userid ) {
-	//todo 调用小屁孩的接口 根据商家id查询公众号i信息
-	//	String sql = "SELECT id,qrcode_url,bus_user_id FROM t_wx_public_users WHERE bus_user_id="+userid;
-	return null;
+	Map< String,Object > resultMap = new HashMap<>();
+	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( userid );
+	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+	    resultMap.put( "id", wxPublicUsers.getId() );
+	    resultMap.put( "qrcode_url", wxPublicUsers.getQrcodeUrl() );
+	    resultMap.put( "bus_user_id", wxPublicUsers.getBusUserId() );
+	}
+	return resultMap;
     }
 
     /**

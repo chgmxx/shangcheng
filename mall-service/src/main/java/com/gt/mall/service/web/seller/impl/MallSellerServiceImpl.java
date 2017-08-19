@@ -3,6 +3,7 @@ package com.gt.mall.service.web.seller.impl;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.QrcodeCreateFinal;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.seller.*;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -10,6 +11,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.*;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.seller.MallSellerOrderService;
 import com.gt.mall.service.web.seller.MallSellerService;
@@ -54,6 +56,8 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     private MallPaySetService        mallPaySetService;
     @Autowired
     private MemberService            memberService;
+    @Autowired
+    private WxPublicUserService      wxPublicUserService;
 
     /**
      * 查询客户订单的个数
@@ -412,13 +416,10 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     }
 
     public String insertTwoCode( String scene_id, WxPublicUsers wxPublicUsers ) {
-	/*String component_appid=WxConstants.COMPONENT_APPID;
-	ComponentAccessToken component_access_token = componentAPI.api_component_token();
-	AuthorizerAccessToken token=componentAPI.api_authorizer_token(component_access_token.getComponent_access_token(), component_appid, wxPublicUsers.getAppid(), wxPublicUsers.getAuthRefreshToken());
-	QrcodeTicket qrcodeTicket=QrcodeAPI.qrcodeCreateFinal(token.getAuthorizer_access_token(), scene_id);
-	return qrcodeTicket.getTicket();*/
-	// todo 调用小屁孩 生成二维码的接口
-	return null;
+	QrcodeCreateFinal createFinal = new QrcodeCreateFinal();
+	createFinal.setScene_id( scene_id );
+	createFinal.setPublicId( wxPublicUsers.getId() );
+	return wxPublicUserService.qrcodeCreateFinal( createFinal );
     }
 
     @Override
@@ -445,16 +446,14 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
     @Override
     public int insertSelective( MallSeller seller, Member member ) {
-	/*WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByPrimaryKey(member.getPublicId());
-	if(CommonUtil.isNotEmpty(wxPublicUsers)){
-	    String scene_id=member.getBusid()+"_"+System.currentTimeMillis()+"_3";//3代表商城
-	    String ticket = insertTwoCode(scene_id, wxPublicUsers);
-	    seller.setQrCodeTicket(ticket);
-	    seller.setSceneKey(scene_id);
-	    seller.setQrCodePath("https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket="+ticket);
-	}*/
-	// todo 调用小屁孩的接口  根据公众号id查询公众号信息
-
+	WxPublicUsers wxPublicUsers = wxPublicUserService.selectById( member.getPublicId() );
+	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+	    String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
+	    String ticket = insertTwoCode( scene_id, wxPublicUsers );
+	    seller.setQrCodeTicket( ticket );
+	    seller.setSceneKey( scene_id );
+	    seller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+	}
 	return mallSellerDAO.insert( seller );
     }
 
@@ -985,9 +984,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    }
 	    seller.setQrCodePath( seller.getUcqrCodePath() );
 	} else if ( CommonUtil.isEmpty( seller.getQrCodeTicket() ) && browerType == 1 && CommonUtil.isNotEmpty( member.getPublicId() ) ) {//微信版
-	    //	    WxPublicUsers wxPublicUsers = wxPublicUsersMapper.selectByPrimaryKey(member.getPublicId());
-	    WxPublicUsers wxPublicUsers = new WxPublicUsers();
-	    //todo 调用小屁孩接口，根据公众号id查询公众号信息
+	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectById( member.getPublicId() );
 	    String newimage = seller.getQrCodePath();
 	    newimage = URLConnectionDownloader.isConnect( newimage );//判断
 	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isEmpty( newimage ) ) {

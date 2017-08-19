@@ -7,7 +7,8 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.freight.MallFreight;
-import com.gt.mall.service.inter.member.DictService;
+import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -52,6 +53,8 @@ public class MallFreightController extends BaseController {
     private MallPaySetService    paySetService;
     @Autowired
     private DictService          dictService;
+    @Autowired
+    private WxShopService        wxShopService;
 
     /**
      * 进入物流管理列表页面
@@ -217,9 +220,7 @@ public class MallFreightController extends BaseController {
      */
     @RequestMapping( value = "/provincePopUp" )
     public String provincePopUp( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > map ) {
-	//TODO 地区 areaService.getAllProvince();
-	List< Map< Integer,String > > provinceList = null;
-	//			areaService.getAllProvince();
+	List< Map > provinceList = wxShopService.queryCityByLevel( 2 );
 	request.setAttribute( "provinceList", provinceList );
 	request.setAttribute( "index", map.get( "index" ) );
 	request.setAttribute( "selectPro", map.get( "selectPro" ) );

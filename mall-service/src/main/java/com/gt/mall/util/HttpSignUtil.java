@@ -62,7 +62,7 @@ public class HttpSignUtil {
 	    logger.info( "data = " + resultObj.getString( "data" ) );
 	    return resultObj.getString( "data" );
 	} else {
-	    logger.info( "调用会员接口异常：" + resultObj.getString( "msg" ) );
+	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
 	}
 	return null;
     }
@@ -90,7 +90,10 @@ public class HttpSignUtil {
 	}
 	if ( resultObj.containsKey( "msg" ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
-	    logger.info( "调用会员接口异常：" + resultObj.getString( "msg" ) );
+	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
+	}
+	if ( resultMap.containsKey( "data" ) ) {
+	    resultMap.put( "data", resultMap.get( "data" ) );
 	}
 	return resultMap;
     }

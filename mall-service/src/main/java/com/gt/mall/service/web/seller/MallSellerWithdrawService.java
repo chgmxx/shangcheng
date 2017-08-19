@@ -20,32 +20,40 @@ public interface MallSellerWithdrawService extends BaseService< MallSellerWithdr
 
     /**
      * 查询销售员的提现记录
+     *
      * @param member 销售员
+     *
      * @return 提现记录
      */
-    List<MallSellerWithdraw> selectBySaleMemberId(Member member);
+    List< MallSellerWithdraw > selectBySaleMemberId( Member member );
 
     /**
      * 保存提现信息
+     *
      * @param saleMemberId 销售员信息
-     * @param params  提现信息
+     * @param params       提现信息
+     *
      * @return {flag：true 成功、false 失败，msg：失败提示语}
      */
-    Map<String, Object> saveWithdraw(int saleMemberId,Map<String, Object> params) throws Exception;
+    Map< String,Object > saveWithdraw( int saleMemberId, Map< String,Object > params, int paySource ) throws Exception;
 
     /**
      * 查询提现列表
+     *
      * @param busUserId 商家id
-     * @param params 参数
+     * @param params    参数
+     *
      * @return 提现列表
      */
-    PageUtil withdrawPage(int busUserId,Map<String, Object> params);
+    PageUtil withdrawPage( int busUserId, Map< String,Object > params );
 
     /**
      * 查询提现明细
+     *
      * @param params 参数
+     *
      * @return 提现明细
      */
-    List<Map<String, Object>> selectWithdrawList(Map<String, Object> params);
+    List< Map< String,Object > > selectWithdrawList( Map< String,Object > params );
 
 }

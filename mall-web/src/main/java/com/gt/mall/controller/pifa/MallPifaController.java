@@ -5,6 +5,7 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -48,6 +49,8 @@ public class MallPifaController extends BaseController {
     private MallPageService   mallPageService;
     @Autowired
     private MallPaySetService mallPaySetService;
+    @Autowired
+    private BusUserService    busUserService;
 
     /**
      * 批发商列表
@@ -59,8 +62,7 @@ public class MallPifaController extends BaseController {
 	params.put( "userId", user.getId() );
 	PageUtil page = mallPifaService.wholesalerList( params );
 	request.setAttribute( "page", page );
-	//todo course.urlquery
-	//	request.setAttribute("videourl", course.urlquery("84"));
+	request.setAttribute( "videourl", busUserService.getVoiceUrl( "84" ) );
 
 	return "mall/wholesalers/wholesalerList";
     }

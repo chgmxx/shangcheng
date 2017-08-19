@@ -3,7 +3,7 @@ package com.gt.mall.service.web.integral.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.wxshop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.dao.integral.MallIntegralImageDAO;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.service.inter.wxshop.WxShopService;

@@ -2,6 +2,7 @@ package com.gt.mall.service.web.applet.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.product.MallShopCartDAO;
@@ -9,12 +10,13 @@ import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallProductAppletService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,8 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
     private MallProductInventoryService productInventoryService;
     @Autowired
     private MemberService               memberService;
+    @Autowired
+    private WxShopService               wxShopService;
 
     @Override
     public Map< String,Object > shoppingcare( Map< String,Object > params ) {
@@ -66,7 +70,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		if(CommonUtil.isNotEmpty(params.get("type"))){
 			type = CommonUtil.toInteger(params.get("type"));
 		}*/
-
+	List< WsWxShopInfoExtend > wxShopList = wxShopService.queryWxShopByBusId( member.getBusid() );
 	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > shopCartList = new ArrayList< Map< String,Object > >();
 
@@ -115,7 +119,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		String msg = "";
 		int code = 1;
 		//判断限购和商品是否正在售卖
-		Map< String,Object > xgMap = productService.isshoppingCart( map, productNum );
+		Map< String,Object > xgMap = productService.isshoppingCart( map, productNum, wxShopList );
 		if ( xgMap.get( "code" ).toString().equals( "1" ) ) {
 		    if ( xgMap.containsKey( "product_num" ) ) {
 			cartMap.put( "product_num", xgMap.get( "product_num" ) );
@@ -125,6 +129,9 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		    }
 		    if ( xgMap.containsKey( "productMap" ) ) {
 			productMap.putAll( JSONObject.fromObject( xgMap.get( "productMap" ) ) );
+		    }
+		    if ( xgMap.containsKey( "sto_name" ) ) {
+			cartMap.put( "sto_name", xgMap.get( "sto_name" ) );
 		    }
 		} else {
 		    code = CommonUtil.toInteger( xgMap.get( "code" ) );

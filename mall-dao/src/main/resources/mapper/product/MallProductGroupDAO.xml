@@ -40,7 +40,7 @@
                 <if test="wxShopList != null and wxShopList != ''">
                     and s.wx_shop_id in
                     <foreach collection="wxShopList" index="index" item="item" open="(" separator="," close=")">
-                       #{item,jdbcType=INTEGER}
+                       #{item.id,jdbcType=INTEGER}
                     </foreach>
                 </if>
             </otherwise>

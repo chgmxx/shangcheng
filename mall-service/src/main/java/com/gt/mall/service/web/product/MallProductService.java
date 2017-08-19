@@ -3,6 +3,7 @@ package com.gt.mall.service.web.product;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.util.PageUtil;
 import org.apache.ibatis.annotations.Param;
@@ -191,7 +192,7 @@ public interface MallProductService extends BaseService< MallProduct > {
      *
      * @return
      */
-    Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum );
+    Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum ,List< WsWxShopInfoExtend > wxShopList);
 
     /**
      * 查询流量充值的商品个数
