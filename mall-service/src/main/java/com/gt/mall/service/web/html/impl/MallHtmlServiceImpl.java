@@ -5,6 +5,7 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.html.MallHtmlDAO;
 import com.gt.mall.entity.html.MallHtml;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.html.MallHtmlService;
 import com.gt.mall.util.*;
 import org.apache.log4j.Logger;
@@ -30,7 +31,9 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
     private Logger log = Logger.getLogger( MallHtmlServiceImpl.class );
 
     @Autowired
-    private MallHtmlDAO htmlDAO;
+    private MallHtmlDAO    htmlDAO;
+    @Autowired
+    private BusUserService busUserService;
 
     @Override
     public Map< String,Object > htmlList( HttpServletRequest request ) {
@@ -46,6 +49,12 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
 	Integer pagesize = 9;
 	Integer firstnum = ( pageNum - 1 ) * pagesize;
 	List< Map< String,Object > > list = htmlDAO.getHtmlByUserId( id, obj.getPid(), firstnum, pagesize );
+	for ( Map< String,Object > map3 : list ) {
+	    BusUser busUser = busUserService.selectById( CommonUtil.toInteger( map3.get( "bus_user_id" ) ) );
+	    if ( busUser != null ) {
+		map3.put( "name", busUser.getName() );
+	    }
+	}
 	int total = htmlDAO.countHtmlByUserId( id, obj.getPid() );
 	map.put( "list", list );
 	int pagetotal = total / pagesize;

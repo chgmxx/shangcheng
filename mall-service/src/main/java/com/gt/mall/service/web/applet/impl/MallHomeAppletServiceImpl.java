@@ -20,6 +20,7 @@ import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.*;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
@@ -104,7 +105,9 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     @Autowired
     private SmsService                  smsService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private BusUserService              busUserService;
 
     @Override
     public List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > params ) {
@@ -343,11 +346,9 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    proCostPrice = CommonUtil.toDouble( product.getProCostPrice() );
 	}
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-	//TODO 需关连dictService 查询主帐号方法
-	//        int userPId = dictService.pidUserId(member.getBusid());//通过用户名查询主账号id
-	//TODO 需关连erpLoginOrMenusService 判断商家有无进销存方法
+	int userPId = busUserService.getMainBusId( member.getBusid() );//通过用户名查询主账号id
 	long isJxc = 0;
-	//          erpLoginOrMenusService.isjxcCount("8", userPId);//判断商家是否有进销存 0没有 1有
+	busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	//计算会员价
 	double discount = 1;//商品折扣
 	if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( product.getIsMemberDiscount() ) ) {
@@ -670,9 +671,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	resultMap.put( "telephone", member.getPhone() );
 
 	int isAdvert = 0;
-	//TODO 需关连 busUserMapper 方法
-	BusUser user = null;
-	//                busUserMapper.selectByPrimaryKey(member.getBusid());
+	BusUser user = busUserService.selectById( member.getBusid() );
 	if ( CommonUtil.isNotEmpty( user ) ) {
 	    if ( CommonUtil.isNotEmpty( user.getAdvert() ) ) {
 		if ( user.getAdvert() == 0 ) {
@@ -743,9 +742,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     @Override
     public int getAdvert( Map< String,Object > params ) {
 	int isAdvert = 0;
-	//TODO 需关连 busUserMapper 方法
-	BusUser user = null;
-	//                busUserMapper.selectByPrimaryKey(CommonUtil.toInteger(params.get("busUserId")));
+	BusUser user = busUserService.selectById( CommonUtil.toInteger( params.get( "busUserId" ) ) );
 	if ( CommonUtil.isNotEmpty( user ) ) {
 	    if ( CommonUtil.isNotEmpty( user.getAdvert() ) ) {
 		if ( user.getAdvert() == 0 ) {
@@ -818,7 +815,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     public Map< String,Object > getValCode( Map< String,Object > params ) throws Exception {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int busId = CommonUtil.toInteger( params.get( "busId" ) );
-	WxPublicUsers pbUser = wxPublicUserService.selectByUserId(busId);
+	WxPublicUsers pbUser = wxPublicUserService.selectByUserId( busId );
 	String no = Constants.REDIS_KEY + CommonUtil.getPhoneCode();
 	JedisUtil.set( no, no, 10 * 60 );
 	System.out.println( no );

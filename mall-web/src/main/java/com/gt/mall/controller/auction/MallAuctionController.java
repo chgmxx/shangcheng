@@ -15,6 +15,7 @@ import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
@@ -81,6 +82,8 @@ public class MallAuctionController extends AuthorizeOrLoginController {
     private MallCollectService          mallCollectService;
     @Autowired
     private MemberService               memberService;
+    @Autowired
+    private BusUserService              busUserService;
 
     /**
      * 拍卖管理列表页面
@@ -115,8 +118,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    }
-	    //TODO 需关连VoiceCourseService 方法
-	    //            request.setAttribute("videourl", course.urlquery("86"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "86" ) );
 	} catch ( Exception e ) {
 	    logger.error( "拍卖列表：" + e );
 	    e.printStackTrace();
@@ -439,9 +441,9 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    MallAuctionOffer offer = new MallAuctionOffer();
 		    offer.setAucId( auction.getId() );
 		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
-		    for (MallAuctionOffer offer1: offerList ) {
-			Member member1=memberService.findMemberById( offer.getUserId(),null );
-			offer1.setNickname( member1.getNickname());
+		    for ( MallAuctionOffer offer1 : offerList ) {
+			Member member1 = memberService.findMemberById( offer.getUserId(), null );
+			offer1.setNickname( member1.getNickname() );
 		    }
 		    request.setAttribute( "offerList", offerList );
 		    if ( auction.getStatus() == -1 ) {
@@ -752,9 +754,9 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 			MallAuctionOffer offer = new MallAuctionOffer();
 			offer.setAucId( auction.getId() );
 			List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
-			for (MallAuctionOffer offer1: offerList ) {
-			    Member member1=memberService.findMemberById( offer.getUserId(),null );
-			    offer1.setNickname( member1.getNickname());
+			for ( MallAuctionOffer offer1 : offerList ) {
+			    Member member1 = memberService.findMemberById( offer.getUserId(), null );
+			    offer1.setNickname( member1.getNickname() );
 			}
 			request.setAttribute( "offerList", offerList );
 		    } else {//降价拍

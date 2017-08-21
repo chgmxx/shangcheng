@@ -11,6 +11,7 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -67,6 +68,8 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
     private MemberService               memberService;
     @Autowired
     private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private BusUserService              busUserService;
 
     /**
      * 团购管理列表页面
@@ -97,8 +100,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    }
-	    //TODO 需关连 视频方法
-	    //	    request.setAttribute("videourl", course.urlquery("81"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "81" ) );
 	} catch ( Exception e ) {
 	    logger.error( "团购列表：" + e );
 	    e.printStackTrace();
@@ -242,11 +244,9 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 			params.put( "shoplist", shoplist );
 		    }
 		}
-		//TODO 主帐号 dictService.pidUserId
-		//		int userPId = dictService.pidUserId(user.getId());//通过用户名查询主账号id
-		//TODO 有无进销存 erpLoginOrMenusService.isjxcCount
+		int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 		long isJxc = 1;
-		//			erpLoginOrMenusService.isjxcCount("8", userPId);//判断商家是否有进销存 0没有 1有
+		busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
 		params.put( "isJxc", isJxc );
 		params.put( "userId", user.getId() );
@@ -279,11 +279,9 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		Integer proId = CommonUtil.toInteger( params.get( "proId" ) );
-		//TODO 主帐号 dictService.pidUserId
-		//		int userPId = dictService.pidUserId(user.getId());//通过用户名查询主账号id
-		//TODO 有无进销存 erpLoginOrMenusService.isjxcCount
+		int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 		long isJxc = 1;
-		//			erpLoginOrMenusService.isjxcCount("8", userPId);//判断商家是否有进销存 0没有 1有
+		busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
 		int isSPec = 1;
 		if ( CommonUtil.isNotEmpty( params.get( "isSpec" ) ) ) {
@@ -597,7 +595,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    pageService.getCustomer( request, groupBuy.getUserId() );
 	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) && CommonUtil.isNotEmpty( member ) ) {
 		//TODO 公众号信息 CommonUtil.getWxParams
-//				CommonUtil.getWxParams(wxPublicUserService.selectByMemberId(member.getId()),request);
+		//				CommonUtil.getWxParams(wxPublicUserService.selectByMemberId(member.getId()),request);
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "进入我要参团/团购详情的页面出错：" + e );

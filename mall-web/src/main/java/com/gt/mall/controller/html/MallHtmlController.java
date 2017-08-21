@@ -81,18 +81,15 @@ public class MallHtmlController extends BaseController {
 		Integer isadmin = 0;
 		//				dictService.shopuserid(user.getId());//获取是否是管理员
 		if ( isadmin == 0 ) {
-		    //TODO 需关连  dictService.pidUserId()
-		    /*Integer zhuid = dictService.pidUserId( user.getId() );//获取父类的id
-		    user = busUserService.selectById( zhuid );*/
+		    Integer zhuid = busUserService.getMainBusId( user.getId() );//获取父类的id
+		    user = busUserService.selectById( zhuid );
 		    ispid = 1;
 		} else {
 		    ispid = 2;
 		}
 	    }
 	    if ( ispid != 2 ) {
-		//TODO 需关连  dictService.dictBusUserNum()
-		Integer maxcj = 0;
-		//				Integer.valueOf(dictService.dictBusUserNum(user.getId(),user.getLevel(),16,"1140"));
+		Integer maxcj = Integer.valueOf( dictService.getDiBserNum( user.getId(), 16, "1140" ) );
 		Integer ycj = htmlService.htmltotal( user.getId() );//主账户之下已创建的数量
 		if ( ycj >= maxcj ) {
 		    iscreat = 1;
@@ -100,8 +97,7 @@ public class MallHtmlController extends BaseController {
 		request.setAttribute( "iscreat", iscreat );
 	    }
 	    request.setAttribute( "ispid", ispid );
-	    //TODO 需关连 视频方法
-	    //	    request.setAttribute("videourl", course.urlquery("87"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "87" ) );
 	    jsp = "mall/htmlmall/htmllist";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
@@ -487,14 +483,12 @@ public class MallHtmlController extends BaseController {
 	    //pid==0 主账户,否则是子账户
 	    if ( user.getPid() == 0 ) {
 	    } else {
-		//TODO 需关连  dictService.pidUserId()
-		/*Integer zhuid = dictService.pidUserId( user.getId() );//获取父类的id
-		user = busUserService.selectById( zhuid );*/
+		Integer zhuid = busUserService.getMainBusId( user.getId() );//获取父类的id
+		user = busUserService.selectById( zhuid );
 		ispid = 1;
 	    }
-	    //TODO 需关连  dictService.dictBusUserNum()
 	    Integer maxcj = 0;
-	    //			    Integer.valueOf(dictService.dictBusUserNum(user.getId(),user.getLevel(),16,"1140"));
+	    Integer.valueOf( dictService.getDiBserNum( user.getId(), 16, "1140" ) );
 	    Integer ycj = htmlService.htmltotal( user.getId() );//主账户之下已创建的数量
 	    if ( ycj >= maxcj ) {
 		map.put( "error", "2" );
