@@ -8,6 +8,7 @@ import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
 import com.gt.mall.bean.wx.flow.WsFenbiFlowRecord;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.HttpSignUtil;
 import com.gt.mall.util.WxHttpSignUtil;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
     public List< BusFlow > getBusFlowsByUserId( int busUserId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", busUserId );
-	String result = WxHttpSignUtil.SignHttpSelect( params, FLOW_URL + "getBusFlowsByUserId.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, FLOW_URL + "getBusFlowsByUserId.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, BusFlow.class );
 	}

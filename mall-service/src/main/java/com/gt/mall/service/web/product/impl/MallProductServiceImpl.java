@@ -2164,9 +2164,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     @Override
     public int selectCountByFlowIds( Integer flowId ) {
 	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "a.is_delete=0" );
+	wrapper.where( "is_delete=0" );
 	if ( flowId > 0 ) {
-	    wrapper.where( "a.flow_id={0}", flowId );
+	    wrapper.where( "flow_id={0}", flowId );
 	}
 	return mallProductDAO.selectCount( wrapper );
     }
