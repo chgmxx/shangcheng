@@ -3,6 +3,7 @@ package com.gt.mall.service.inter.member.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 import com.gt.mall.service.inter.member.MemberService;
@@ -281,6 +282,17 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Map< String,Object > refundMoneyAndJifenAndFenbi( ReturnParams returnParams ) {
 	return HttpSignUtil.SignHttpInsertOrUpdate( returnParams, MEMBER_URL + "refundMoneyAndJifenAndFenbi" );
+    }
+
+    @Override
+    public MemberCard findMemberCardByMcId( int mcId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "mcId", mcId );
+	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberCardByMcId" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), MemberCard.class );
+	}
+	return null;
     }
 
 }

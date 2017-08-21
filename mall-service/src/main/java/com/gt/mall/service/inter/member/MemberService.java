@@ -1,6 +1,7 @@
 package com.gt.mall.service.inter.member;
 
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 
@@ -145,9 +146,16 @@ public interface MemberService {
 
     /**
      * 退款包括了储值卡退款(包括积分和粉币)
-     * @param returnParams
+     * @param returnParams 参数
      * @return 是否退款成功
      */
     Map<String,Object> refundMoneyAndJifenAndFenbi(ReturnParams returnParams);
+
+    /**
+     * 查询会员卡信息
+     * @param mcId 会员卡id
+     * @return 会员卡信息
+     */
+    MemberCard findMemberCardByMcId(int mcId);
 
 }
