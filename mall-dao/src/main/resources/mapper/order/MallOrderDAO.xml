@@ -378,7 +378,7 @@
             <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
             <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 t.shop_id = #{item.id,jdbcType=INTEGER}
@@ -394,7 +394,7 @@
             <if test="userId != null and userId != ''">
                 and t.bus_user_id = #{userId}
             </if>
-            <if test="shoplist != null and shoplist != ''">
+            <if test="shoplist != null ">
                 and
                 <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                     t.shop_id = #{item.id,jdbcType=INTEGER}
@@ -444,7 +444,7 @@
             <if test="userId != null and userId != ''">
                 and t.bus_user_id = #{userId}
             </if>
-            <if test="shoplist != null and shoplist != ''">
+            <if test="shoplist != null ">
                 and
                 <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                     t.shop_id = #{item.id,jdbcType=INTEGER}
@@ -478,7 +478,7 @@
         AS t
         LEFT JOIN t_mall_order_detail d ON t.`id`=d.`order_id`
         WHERE ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) or (t.order_pay_way!=5 AND d.id > 0))
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 d.shop_id = #{item.id,jdbcType=INTEGER}
@@ -515,7 +515,7 @@
             <if test="userId != null and userId != ''">
                 and t.bus_user_id = #{userId}
             </if>
-            <if test="shoplist != null and shoplist != ''">
+            <if test="shoplist != null ">
                 and
                 <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                     t.shop_id = #{item.id,jdbcType=INTEGER}
@@ -549,7 +549,7 @@
         AS t
         LEFT JOIN t_mall_order_detail d ON t.`id`=d.`order_id`
         WHERE ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) or (t.order_pay_way!=5 AND d.id > 0))
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 d.shop_id = #{item.id,jdbcType=INTEGER}
@@ -667,7 +667,7 @@
         <if test="minuteTime != null and minuteTime != ''">
             and TIMESTAMPDIFF(MINUTE,create_time,now()) > #{minuteTime}
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 shop_id = #{item.id,jdbcType=INTEGER}
@@ -716,7 +716,7 @@
         <if test="memberId != null and memberId != ''  and (oldMemberIds == null || oldMemberIds =='' )">
             and t.buyer_user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null ">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 t.buyer_user_id = #{item,jdbcType=INTEGER}
@@ -752,7 +752,7 @@
         <if test="memberId != null and memberId != ''  and (oldMemberIds == null || oldMemberIds =='' )">
             and t.buyer_user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null ">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 t.buyer_user_id = #{item,jdbcType=INTEGER}
@@ -904,7 +904,7 @@
         select id,buyer_user_id,order_no,update_time,order_money
         from t_mall_order
         where order_status = 4 and order_pid = 0
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 shop_id = #{item.id,jdbcType=INTEGER}
@@ -963,7 +963,7 @@
             <if test="orderFilter == 4">and t.receive_phone = #{orderNo}</if>
             <if test="orderFilter == 5">and t.member_name = #{orderNo}</if>
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and t.shop_id in
             <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
                 #{item.id,jdbcType=INTEGER}

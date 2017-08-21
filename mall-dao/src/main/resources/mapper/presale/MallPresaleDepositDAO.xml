@@ -106,7 +106,7 @@
         from t_mall_presale_deposit g
         LEFT JOIN t_mall_presale a ON g.`presale_id`=a.id
         <where>
-            <if test="shoplist != null and shoplist != ''">
+            <if test="shoplist != null ">
                 <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
                     a.shop_id = #{item.id,jdbcType=INTEGER}
                 </foreach>
@@ -123,7 +123,7 @@
        /* LEFT JOIN t_wx_shop ws ON s.wx_shop_id = ws.id*/
         <where>
             /*ws.`status` != -1 AND*/ s.`is_delete`=0 AND a.`is_delete`=0
-            <if test="shoplist != null and shoplist != ''">
+            <if test="shoplist != null ">
                 and
                 <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
                     a.shop_id = #{item.id,jdbcType=INTEGER}
@@ -228,7 +228,7 @@
         <if test="userId != null and userId != ''">
             and d.user_id = #{userId}
         </if>
-        <if test="oldUserIdList != null and oldUserIdList != ''">
+        <if test="oldUserIdList != null ">
             and
             <foreach collection="oldUserIdList" index="index" item="item" open="(" separator="or" close=")">
                 d.user_id = #{item,jdbcType=INTEGER}

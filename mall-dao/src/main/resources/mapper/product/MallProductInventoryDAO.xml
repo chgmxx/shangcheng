@@ -45,7 +45,7 @@
         <if test="proName != null">
             and p.pro_name like '%${proName}%'
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 p.shop_id = #{item.id,jdbcType=INTEGER}
@@ -71,7 +71,7 @@
         <if test="proName != null">
             and p.pro_name like '%${proName}%'
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 p.shop_id = #{item.id,jdbcType=INTEGER}
@@ -217,7 +217,7 @@
         FROM `t_mall_product_inventory` i
         LEFT JOIN `t_mall_product` t ON i.`product_id`=t.`id`
         WHERE b.is_delete=0
-        <if test="productIds != null and productIds != ''">
+        <if test="productIds != null">
             and i.product_id in
             <foreach collection="productIds" index="index" item="item" open="(" separator="," close=")">
                 #{item,jdbcType=INTEGER}

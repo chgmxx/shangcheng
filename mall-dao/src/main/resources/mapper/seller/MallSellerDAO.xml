@@ -118,7 +118,7 @@
         <if test="refereesMemberId != null">
             and s.referees_member_id = #{refereesMemberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 s.referees_member_id = #{item,jdbcType=INTEGER}
@@ -322,7 +322,7 @@
         from t_mall_seller s
         <where>
             s.is_merge_data=0
-            <if test="oldMemberIds != null and oldMemberIds != ''">
+            <if test="oldMemberIds != null">
                 and
                 <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                     s.member_id = #{item,jdbcType=INTEGER}
@@ -341,7 +341,7 @@
         sale_money = 0,
         is_merge_data = 1
         where
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null">
             <foreach collection="oldMemberIds" index="index" item="item" separator="or">
                 <if test="noUpd != item">
                     member_id = #{item,jdbcType=INTEGER}

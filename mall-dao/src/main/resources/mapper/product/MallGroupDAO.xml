@@ -37,7 +37,7 @@
         <if test="groupPId == 0">
             and is_first_parents = 1
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 shop_id = #{item.id,jdbcType=INTEGER}
@@ -64,7 +64,7 @@
         <if test="groupPId == 0">
             and g.is_first_parents = 1
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 g.shop_id = #{item.id,jdbcType=INTEGER}

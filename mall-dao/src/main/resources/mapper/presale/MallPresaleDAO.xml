@@ -116,7 +116,7 @@
        /* left join t_wx_shop ws on s.wx_shop_id = ws.id */
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         WHERE g.is_delete = 0 and g.id = #{id}
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and g.shop_id in
             <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
               #{item.id,jdbcType=INTEGER}

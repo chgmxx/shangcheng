@@ -89,7 +89,7 @@
         <if test="type == 2"><!-- 已结束的秒杀 -->
             and g.s_start_time &lt; now() and g.s_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and g.shop_id in
             <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
                 #{item.id,jdbcType=INTEGER}
@@ -112,7 +112,7 @@
         <if test="type == 2"><!-- 已结束的秒杀 -->
             and g.s_start_time &lt; now() and g.s_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 g.shop_id = #{item.id,jdbcType=INTEGER}
@@ -202,7 +202,7 @@
         from t_mall_seckill g
         left join t_mall_seckill_join j on j.seckill_id=g.id
         WHERE g.is_delete = 0 and g.is_use =1 and g.id = #{id}
-        <if test="shoplist != null and shoplist != ''"><!--微信门店集合 -->
+        <if test="shoplist != null"><!--微信门店集合 -->
             and g.shop_id in
             <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
                 #{item,jdbcType=INTEGER}

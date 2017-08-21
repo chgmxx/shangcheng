@@ -138,7 +138,7 @@
         <if test="feel != null and feel != ''">
             and c.feel = #{feel}
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 c.shop_id= #{item.id,jdbcType=INTEGER}
@@ -159,7 +159,7 @@
         <if test="feel != null and feel != ''">
             and c.feel = #{feel}
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 c.shop_id= #{item.id,jdbcType=INTEGER}

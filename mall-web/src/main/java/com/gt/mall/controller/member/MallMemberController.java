@@ -4,6 +4,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallComment;
@@ -130,10 +131,9 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		//TODO 会员卡方法 memberPay findCardByMemberId()
 		Map< String,Object > gradeType = memberService.findGradeType( member.getId() );//会员卡名称
-		//		Card card = memberPay.findCardByMemberId( member.getId() );//会员卡号
-		//		request.setAttribute( "card", card );
+		MemberCard card = memberService.findMemberCardByMcId( member.getId() );//会员卡号
+		request.setAttribute( "card", card );
 		request.setAttribute( "gradeType", gradeType );
 	    }
 	    request.setAttribute( "member", member );
@@ -378,7 +378,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    StringBuffer imageUrl = new StringBuffer();
 	    boolean flag = false;
 	    Member member = memberService.findMemberById( memberId, null );
-	    BusUser user = busUserService.selectById( member.getBusid()  );//根据商家id查询商家信息;
+	    BusUser user = busUserService.selectById( member.getBusid() );//根据商家id查询商家信息;
 	    if ( request instanceof MultipartHttpServletRequest ) {
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		List< MultipartFile > userfile = multipartRequest.getFiles( "file" );

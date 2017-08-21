@@ -57,7 +57,7 @@
         select <include refid="Base_Column_List" />
         from t_mall_order_return r
         <where> 1=1
-            <if test="detailIdList != null and detailIdList != ''">
+            <if test="detailIdList != null ">
                 and
                 <foreach collection="detailIdList" index="index" item="item" open="(" separator="or" close=")">
                     r.order_detail_id = #{item,jdbcType=INTEGER}

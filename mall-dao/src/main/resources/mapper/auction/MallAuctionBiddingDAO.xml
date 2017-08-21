@@ -58,7 +58,7 @@
         <if test="userId != null and userId != ''">
             and b.user_id=#{userId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 b.user_id = #{item,jdbcType=INTEGER}
@@ -72,7 +72,7 @@
         <if test="userId != null and userId != ''">
             and b.user_id=#{userId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null ">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 b.user_id = #{item,jdbcType=INTEGER}
@@ -88,7 +88,7 @@
         <if test="memberId != null and memberId != ''">
             and b.user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 b.user_id = #{item,jdbcType=INTEGER}

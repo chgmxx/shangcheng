@@ -82,7 +82,7 @@
 
     <select id="selectCountByShopId" parameterType="java.util.Map" resultType="java.lang.Integer">
         select count(id) from t_mall_freight f where is_delete = 0
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
                 shop_id = #{item.id,jdbcType=INTEGER}
@@ -96,7 +96,7 @@
         from t_mall_freight f
         left join t_mall_store s on f.shop_id=s.id
         where f.is_delete = 0
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
                 f.shop_id = #{item.id,jdbcType=INTEGER}

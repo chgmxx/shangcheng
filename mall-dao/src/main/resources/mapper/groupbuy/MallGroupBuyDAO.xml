@@ -98,7 +98,7 @@
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 g.shop_id = #{item.id,jdbcType=INTEGER}
@@ -123,7 +123,7 @@
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 g.shop_id = #{item.id,jdbcType=INTEGER}
@@ -155,7 +155,7 @@
         <if test="groupId != null and groupId != ''">
             AND a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 a.shop_id = #{item.id,jdbcType=INTEGER}
@@ -203,7 +203,7 @@
         <if test="groupId != null and groupId != ''">
             AND a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 a.shop_id = #{item.id,jdbcType=INTEGER}

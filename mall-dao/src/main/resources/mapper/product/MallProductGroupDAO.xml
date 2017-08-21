@@ -37,7 +37,7 @@
             <otherwise>
                 LEFT JOIN t_mall_store s ON s.id=a.`shop_id`
                 WHERE  a.is_delete=0 AND b.is_delete=0 AND s.`is_delete`=0
-                <if test="wxShopList != null and wxShopList != ''">
+                <if test="wxShopList != null">
                     and s.wx_shop_id in
                     <foreach collection="wxShopList" index="index" item="item" open="(" separator="," close=")">
                        #{item.id,jdbcType=INTEGER}

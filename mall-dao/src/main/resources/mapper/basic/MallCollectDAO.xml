@@ -45,7 +45,7 @@
         LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
         WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND c.is_delete=0 AND c.is_collect=1
-        <if test="memberIdList != null and memberIdList != ''">
+        <if test="memberIdList != null">
             and c.user_id in
             <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
                 #{item,jdbcType=INTEGER}

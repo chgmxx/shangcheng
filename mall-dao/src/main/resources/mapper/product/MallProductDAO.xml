@@ -104,7 +104,7 @@
         <if test="checkStatus != null">
             and p.check_status = #{checkStatus}
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 p.shop_id = #{item.id,jdbcType=INTEGER}
@@ -141,7 +141,7 @@
         <if test="checkStatus != null">
             and p.check_status = #{checkStatus}
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 p.shop_id = #{item.id,jdbcType=INTEGER}
@@ -376,7 +376,7 @@
                 and (a.is_fenbi_change_pro = 1 and a.change_fenbi > 0)
             </if>
         </if>
-        <if test="sellerFindIds != null and sellerFindIds != ''">
+        <if test="sellerFindIds != null">
             and
             <foreach collection="sellerFindIds" index="index" item="item" open="(" separator="or" close=")">
                 a.id = #{item,jdbcType=INTEGER}

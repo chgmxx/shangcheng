@@ -32,7 +32,7 @@
             <if test="memberId != null and memberId != ''">
                 sale_member_id = #{memberId}
             </if>
-            <if test="oldMemberIds != null and oldMemberIds != ''">
+            <if test="oldMemberIds != null ">
                 <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                     sale_member_id = #{item,jdbcType=INTEGER}
                 </foreach>

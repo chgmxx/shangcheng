@@ -78,7 +78,7 @@
         <if test="type == 2"><!-- 已结束的批发 -->
             and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 p.shop_id = #{item.id,jdbcType=INTEGER}
@@ -104,7 +104,7 @@
         <if test="type == 2"><!-- 已结束的批发 -->
             and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 p.shop_id = #{item.id,jdbcType=INTEGER}

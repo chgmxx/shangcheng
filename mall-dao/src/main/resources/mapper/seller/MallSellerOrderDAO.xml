@@ -60,7 +60,7 @@
         <if test="memberId != null and memberId != ''">
             and so.sale_member_id=#{memberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 so.sale_member_id = #{item,jdbcType=INTEGER}

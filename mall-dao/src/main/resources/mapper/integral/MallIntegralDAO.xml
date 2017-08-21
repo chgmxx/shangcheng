@@ -56,7 +56,7 @@
         <if test="type == 3"><!-- 已失效的积分商品 -->
             i.is_use= -1
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 i.shop_id = #{item.id,jdbcType=INTEGER}
@@ -86,7 +86,7 @@
         <if test="type == 3"><!-- 已失效的积分商品 -->
             i.is_use= -1
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 i.shop_id = #{item.id,jdbcType=INTEGER}
@@ -145,7 +145,7 @@
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
         WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0   AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 a.shop_id = #{item.id,jdbcType=INTEGER}
@@ -170,7 +170,7 @@
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
         WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0  AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 a.shop_id = #{item.id,jdbcType=INTEGER}
