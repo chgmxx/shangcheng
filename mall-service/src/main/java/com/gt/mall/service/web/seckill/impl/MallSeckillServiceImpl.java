@@ -18,8 +18,10 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.seckill.MallSeckillJoin;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.seckill.MallSeckillPriceService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
@@ -63,6 +65,12 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Autowired
     private MallProductDAO mallProductDAO;
 
+    @Autowired
+    private BusUserService busUserService;
+
+    @Autowired
+    private MallStoreService mallStoreService;
+
     /**
      * 通过店铺id来查询秒杀
      */
@@ -82,7 +90,6 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	if ( count > 0 ) {// 判断秒杀是否有数据
-	    //todo 调用陈丹接口 查询商家所拥有的店铺集合
 	    List< MallSeckill > seckillList = mallSeckillDAO.selectByPage( params );
 	    page.setSubList( seckillList );
 	}
@@ -108,7 +115,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public int editSeckill( Map< String,Object > groupMap, int userId ) {
+    public int editSeckill( Map< String,Object > groupMap, BusUser busUser ) {
 	int num = 0;
 	boolean flag = false;
 	int code = -1;
@@ -119,11 +126,11 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    // 判断选择的商品是否已经存在未开始和进行中的秒杀中
 	    List< MallSeckill > buyList = mallSeckillDAO.selectSeckillByProId( seckill );
 	    if ( buyList == null || buyList.size() == 0 ) {
-		seckill.setUserId( userId );
+		seckill.setUserId( busUser.getId() );
 		if ( CommonUtil.isNotEmpty( seckill.getId() ) ) {
-		    //todo 传商家所拥有的店铺集合
+		    List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( busUser );
 		    // 判断本商品是否正在秒杀中
-		    MallSeckill buy = mallSeckillDAO.selectSeckillByIds( seckill.getId() ,null);
+		    MallSeckill buy = mallSeckillDAO.selectSeckillByIds( seckill.getId(), storeList );
 		    if ( buy.getStatus() == 1 && buy.getJoinId() > 0 ) {// 正在进行秒杀的商品不能修改
 			code = -2;
 			status = buy.getStatus();
@@ -140,10 +147,8 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    num = mallSeckillDAO.insert( seckill );
 		}
 		if ( CommonUtil.isNotEmpty( seckill.getId() ) ) {
-		    //todo 调用陈丹的接口， 通过用户名查询主账号id
-		    int userPId = 1;//dictService.pidUserId(userId);//通过用户名查询主账号id
-		    //todo 调用陈丹的接口， 判断商家是否有进销存
-		    long isJxc = 0;//erpLoginOrMenusService.isjxcCount("8", userPId);//判断商家是否有进销存 0没有 1有
+		    int userPId = busUserService.getMainBusId( busUser.getId() );//通过用户名查询主账号id
+		    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
 		    String key = "hSeckill";
 		    String field = seckill.getId().toString();
@@ -153,17 +158,15 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 			productList = mallSeckillPriceService.editSeckillPrice( groupMap, seckill.getId(), flag, isJxc );
 		    }
 		    if ( isAdd && isJxc == 1 ) {
-			//todo 调用陈丹接口，根据商家id查询商家信息
-			BusUser user = new BusUser();
-			//			BusUser user = busUserMapper.selectByPrimaryKey(userId);//查询商家信息
+			BusUser user = busUserService.selectById( busUser.getId() );
 			MallStore store = mallStoreDAO.selectById( seckill.getShopId() );
 
 			int uType = 1;//用户类型 1总账号  0子账号
-			if ( !CommonUtil.toString( userId ).equals( CommonUtil.toString( userPId ) ) ) {
+			if ( !CommonUtil.toString( busUser.getId() ).equals( CommonUtil.toString( userPId ) ) ) {
 			    uType = 0;
 			}
 			Map< String,Object > params = new HashMap<>();
-			params.put( "uId", userId );
+			params.put( "uId", busUser.getId() );
 			params.put( "uType", uType );
 			params.put( "uName", user.getName() );
 			params.put( "rootUid", userPId );
@@ -250,7 +253,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	//新增搜索关键词
 	mallSearchKeywordService.insertSeachKeyWord( member.getId(), shopid, maps.get( "proName" ) );
 
-	List< Map< String,Object > > list = new ArrayList< >();// 存放店铺下的商品
+	List< Map< String,Object > > list = new ArrayList<>();// 存放店铺下的商品
 
 	/*double discount = 1;// 商品折扣
 	if(CommonUtil.isNotEmpty(member)){

@@ -2,6 +2,7 @@ package com.gt.mall.service.web.seckill;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseService;
+import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -34,7 +35,7 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 编辑秒杀
      */
-    int editSeckill( Map< String,Object > params, int userId );
+    int editSeckill( Map< String,Object > params, BusUser busUser );
 
     /**
      * 删除秒杀

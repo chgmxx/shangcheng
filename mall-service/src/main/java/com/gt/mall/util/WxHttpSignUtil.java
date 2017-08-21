@@ -31,7 +31,7 @@ public class WxHttpSignUtil {
 	    SignBean sign = SignUtils.sign( signKey, JSONObject.toJSONString( obj ) );
 	    requestUtils.setReqdata( obj );
 	    requestUtils.setSignKey( signKey );
-	    requestUtils.setSignKey( JSONObject.toJSONString( sign ) );
+	    requestUtils.setSign( JSONObject.toJSONString( sign ) );
 
 	    logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( requestUtils ) + "---签名key：" + signKey );
 	    Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, Map.class );

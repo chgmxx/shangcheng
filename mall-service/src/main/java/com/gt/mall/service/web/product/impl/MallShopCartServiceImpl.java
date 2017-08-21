@@ -1,20 +1,23 @@
 package com.gt.mall.service.web.product.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.dao.product.MallShopCartDAO;
-import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.util.CommonUtil;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.product.MallShopCartService;
+import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.CommonUtil;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,13 +42,13 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     @Autowired
     private MallProductService          mallProductService;
     @Autowired
-    private MallStoreDAO                mallStoreDAO;
+    private MallStoreService            mallStoreService;
     @Autowired
     private MallImageAssociativeService mallImageAssociativeService;
     @Autowired
     private MallShopCartDAO             mallShopCartDAO;
-//    @Autowired
-//    private WxShopService               wxShopService;
+    @Autowired
+    private WxShopService               wxShopService;
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
 
@@ -58,6 +61,11 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	List< Map< String,Object > > list = new ArrayList<>();
 	/*String sql = "SELECT distinct(a.shop_id),b.sto_name FROM t_mall_shop_cart a LEFT JOIN t_mall_store b ON a.shop_id=b.id "
 			+ "left join t_wx_shop s on s.id=b.wx_shop_id WHERE a.id IN(" + shopcards + ")  and s.`status` != -1 and b.is_delete=0";*/
+
+	BusUser user = new BusUser();
+	user.setId( userId );
+	List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user );
+
 	Map< String,Object > params = new HashMap<>();
 	params.put( "cartIds", shopcards.split( "," ) );
 	params.put( "busUserId", member.getBusid() );
@@ -114,7 +122,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			}
 		    }
 		    JSONObject specObj = new JSONObject();
-		    String specNames = "";
+		    StringBuilder specNames = new StringBuilder();
 		    boolean flag = true;
 		    Map< String,Object > specMap = null;
 		    if ( CommonUtil.isNotEmpty( map3.get( "pro_spec_str" ) ) ) {
@@ -126,12 +134,12 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 				if ( CommonUtil.isNotEmpty( valObj.get( "isCheck" ) ) ) {
 				    if ( valObj.get( "isCheck" ).toString().equals( "1" ) ) {
 					specObj.put( key, valObj );
-					if ( !specNames.equals( "" ) ) {
-					    specNames += "、";
+					if ( !specNames.toString().equals( "" ) ) {
+					    specNames.append( "、" );
 					} else {
-					    specNames = valObj.getString( "specName" ) + "：";
+					    specNames = new StringBuilder( valObj.getString( "specName" ) + "：" );
 					}
-					specNames += valObj.get( "value" ) + " X " + valObj.get( "num" ) + " ¥" + valObj.get( "price" );
+					specNames.append( valObj.get( "value" ) ).append( " X " ).append( valObj.get( "num" ) ).append( " ¥" ).append( valObj.get( "price" ) );
 
 					num = CommonUtil.toInteger( valObj.get( "num" ) );
 					price = valObj.get( "price" ).toString();
@@ -161,7 +169,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			proCountNum += num;
 		    }
 
-		    Map< String,Object > productMap = new HashMap< String,Object >();
+		    Map< String,Object > productMap = new HashMap<>();
 		    productMap.put( "product_id", map3.get( "product_id" ) );
 		    productMap.put( "product_num", map3.get( "product_num" ) );
 		    productMap.put( "pro_name", map3.get( "pro_name" ) );
@@ -182,8 +190,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    if ( CommonUtil.isNotEmpty( product_specificas ) ) {
 			productMap.put( "product_specificas", product_specificas );
 		    }
-		    if ( CommonUtil.isNotEmpty( specNames ) ) {
-			productMap.put( "product_speciname", specNames );
+		    if ( CommonUtil.isNotEmpty( specNames.toString() ) ) {
+			productMap.put( "product_speciname", specNames.toString() );
 		    }
 		    if ( specObj != null && specObj.size() > 0 ) {
 			productMap.put( "pro_spec_str", specObj.toString() );
@@ -212,7 +220,16 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		shopMap.put( "product_nums", listsql1.size() );//商品数量
 		shopMap.put( "proNum", proNum );//购买的商品总数（用于计算运费）
 		shopMap.put( "shop_id", shopMaps.get( "shop_id" ) );//店铺id
-		shopMap.put( "shop_name", shopMaps.get( "sto_name" ) );//店铺名称
+		if ( shopList != null && shopList.size() > 0 ) {
+		    for ( Map< String,Object > sMaps : shopList ) {
+			if ( sMaps.get( "id" ).toString().equals( shopMaps.get( "shop_id" ).toString() ) ) {
+			    shopMap.put( "shop_name", sMaps.get( "sto_name" ) );//店铺名称
+			    break;
+			}
+
+		    }
+		}
+		/*shopMap.put( "shop_name", shopMaps.get( "sto_name" ) );//店铺名称*/
 		shopMap.put( "yuanjia_total", df.format( yuanjia_total ) );
 		shopMap.put( "message", xlist );//商品详情信息
 		shopMap.put( "pro_weight", df.format( pro_weight ) );
@@ -247,8 +264,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    discount = mallProductService.getMemberDiscount( "1", member );//获取会员折扣
 	}
-	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
-	Map< String,Object > shopMap = new HashMap< String,Object >();
+	List< Map< String,Object > > list = new ArrayList<>();
+	Map< String,Object > shopMap = new HashMap<>();
 
 	List< Map< String,Object > > productList = new ArrayList< Map< String,Object > >();
 	double price_total = 0;//保存商品总价
@@ -390,13 +407,12 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	    }
 	}
 	String shopName = "";
-	MallStore mallStore = mallStoreDAO.selectById( shopId );
+	MallStore mallStore = mallStoreService.selectById( shopId );
 	if ( CommonUtil.isNotEmpty( mallStore.getWxShopId() ) ) {
-	    //TODO  根据门店id查询门店名称 wxShopService.getShopById()
-	   /* WsWxShopInfo shopInfo =null;// wxShopService.getShopById( mallStore.getWxShopId() );
+	    WsWxShopInfo shopInfo = wxShopService.getShopById( mallStore.getWxShopId() );
 	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		shopName = shopInfo.getBusinessName();
-	    }*/
+	    }
 	}
 	if ( CommonUtil.isEmpty( shopName ) ) {
 	    shopName = mallStore.getStoName();

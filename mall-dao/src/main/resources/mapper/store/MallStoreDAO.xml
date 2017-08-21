@@ -63,10 +63,10 @@
             <if test="stoName != null">
                 and o.sto_name like '%${stoName}%'
             </if>
-            <if test="wxShopList != null">
-                AND o.`wx_shop_id` in
-                <foreach close=")" collection="wxShopList" index="wxShopList" item="item" open="(" separator=",">
-                    #{item}
+            <if test="shopList != null">
+                AND o.`id` in
+                <foreach close=")" collection="shopList" index="shopList" item="item" open="(" separator=",">
+                    #{item.id}
                 </foreach>
             </if>
         </where>

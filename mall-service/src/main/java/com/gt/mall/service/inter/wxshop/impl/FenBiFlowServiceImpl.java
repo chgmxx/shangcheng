@@ -3,7 +3,9 @@ package com.gt.mall.service.inter.wxshop.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.BusFlow;
+import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
+import com.gt.mall.bean.wx.flow.WsFenbiFlowRecord;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.WxHttpSignUtil;
@@ -42,6 +44,25 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 	String result = WxHttpSignUtil.SignHttpSelect( params, FLOW_URL + "getBusFlowsByUserId.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, BusFlow.class );
+	}
+	return null;
+    }
+
+    @Override
+    public Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "reqdata", fenbiFlowRecord );
+	//todo 暂时未返回冻结id给我
+	return WxHttpSignUtil.SignHttpInsertOrUpdate( params, FLOW_URL + "saveFenbiFlowRecord.do", 1 );
+    }
+
+    @Override
+    public WsFenbiFlowRecord getFenbiFlowRecordById( int recordId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "reqdata", recordId );
+	String result = WxHttpSignUtil.SignHttpSelect( params, FLOW_URL + "getFenbiFlowRecordById.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsFenbiFlowRecord.class );
 	}
 	return null;
     }

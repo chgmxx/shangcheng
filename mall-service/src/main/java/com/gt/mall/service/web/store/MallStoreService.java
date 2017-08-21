@@ -26,7 +26,7 @@ public interface MallStoreService extends BaseService< MallStore > {
      *
      * @return 店铺信息
      */
-    public PageUtil findByPage( Map< String,Object > params );
+    public PageUtil findByPage( Map< String,Object > params ,List< Map< String,Object > > shopList);
 
     /**
      * 获取店铺集合

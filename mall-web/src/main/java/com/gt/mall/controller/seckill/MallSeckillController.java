@@ -124,9 +124,9 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 	response.setCharacterEncoding( "utf-8" );
 	int code = -1;// 编辑成功
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
-	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
-		code = mallSeckillService.editSeckill( params, userId );// 编辑商品
+	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    if ( CommonUtil.isNotEmpty( busUser ) && CommonUtil.isNotEmpty( params ) ) {
+		code = mallSeckillService.editSeckill( params, busUser );// 编辑商品
 	    }
 	} catch ( Exception e ) {
 	    code = -1;

@@ -12,6 +12,7 @@ import com.gt.mall.dao.product.MallSpecificaValueDAO;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.product.MallSpecificaService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MallJxcHttpClientUtil;
@@ -47,6 +48,9 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
     @Autowired
     private MallSpecificaValueDAO mallSpecificaValueDAO;//子类规格dao
+
+    @Autowired
+    private BusUserService busUserService;
 
     @Override
     public List< MallProductSpecifica > selectBySpecIds( String[] ids ) {
@@ -122,7 +126,11 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
     @Override
     public SortedMap< String,Object > getSpecificaByUser( Map< String,Object > maps ) {
 	Wrapper< MallSpecifica > specificaWrapper = new EntityWrapper< MallSpecifica >();
-	specificaWrapper.where( " is_delete=0 and (user_id = {0} or is_back_end=1) and type={1} " ).orderBy( "id", true );
+	int type = 1;
+	if ( CommonUtil.isNotEmpty( maps.get( "type" ) ) ) {
+	    type = CommonUtil.toInteger( maps.get( "type" ) );
+	}
+	specificaWrapper.where( " is_delete=0 and (user_id = {0} or is_back_end=1) and type={1} ", maps.get( "userId" ), type ).orderBy( "id", true );
 	List< MallSpecifica > specificaList = mallSpecificaDAO.selectList( specificaWrapper );
 	SortedMap< String,Object > map = new TreeMap< String,Object >();
 	for ( MallSpecifica specifica : specificaList ) {
@@ -561,8 +569,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public void syncAllSpecifica( BusUser user ) {
-	// todo 调用陈丹接口 dictService.pidUserId
-	int userPId = 1;//dictService.pidUserId(user.getId());
+	int userPId = busUserService.getMainBusId( user.getId() );//根据商家id查询总账号id
 	int uType = 1;//用户类型 1总账号  0子账号
 	if ( user.getId() != userPId ) {
 	    uType = 0;
@@ -631,8 +638,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public void syncAllSpecificaValue( BusUser user ) {
-	// todo 调用陈丹接口 dictService.pidUserId
-	int userPId = 1;//dictService.pidUserId(user.getId());
+	int userPId = busUserService.getMainBusId( user.getId() );//根据商家id查询总账号id
 	int uType = 1;//用户类型 1总账号  0子账号
 	if ( user.getId() != userPId ) {
 	    uType = 0;

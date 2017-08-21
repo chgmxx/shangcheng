@@ -77,26 +77,29 @@ public class MallStoreController extends BaseController {
 	    }
 
 	    if ( isAdminFlag ) {
-		params.put( "userId", user.getId() );
-		params.put( "pid", pid );
-		PageUtil page = mallStoreService.findByPage( params );
-		if ( !CommonUtil.isEmpty( params.get( "stoName" ) ) ) {
-		    request.setAttribute( "stoName", params.get( "stoName" ) );
+		/*params.put( "userId", user.getId() );*/
+		/*params.put( "pid", pid );*/
+		List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user );
+		if(shopList != null && shopList.size() > 0){
+		    PageUtil page = mallStoreService.findByPage( params, shopList );
+		    if ( !CommonUtil.isEmpty( params.get( "stoName" ) ) ) {
+			request.setAttribute( "stoName", params.get( "stoName" ) );
+		    }
+		    int branchCount = mallStoreService.countBranch( user.getId() );
+		    int shopcount = branchCount + 1;
+		    int store = mallStoreService.countStroe( user.getId() );
+		    int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
+		    if ( store >= shopcount ) {
+			countnum = 1;
+		    }
+		    request.setAttribute( "countnum", countnum );
+		    request.setAttribute( "page", page );
 		}
-		int branchCount = mallStoreService.countBranch( user.getId() );
-		int shopcount = branchCount + 1;
-		int store = mallStoreService.countStroe( user.getId() );
-		int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
-		if ( store >= shopcount ) {
-		    countnum = 1;
-		}
-		request.setAttribute( "countnum", countnum );
-		request.setAttribute( "page", page );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    }
 	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
-	    request.setAttribute("videourl", busUserService.getVoiceUrl("8"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "8" ) );
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();

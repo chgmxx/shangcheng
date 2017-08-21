@@ -52,15 +52,29 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     private BusUserService busUserService;
 
     @Override
-    public PageUtil findByPage( Map< String,Object > params ) {
+    public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shopList ) {
 	int pageSize = 10;
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int rowCount = mallStoreDao.countByPage( params );
 	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "store/index.do" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	params.put( "maxResult", pageSize );
+
+	params.put( "shopList", shopList );
+
 	List< Map< String,Object > > list = mallStoreDao.findByPage( params );
-	//todo 还需补充关联门店数据 和店铺id
+	if ( list != null && list.size() > 0 ) {
+	    for ( Map< String,Object > shopMap : list ) {
+		int id = CommonUtil.toInteger( shopMap.get( "id" ) );
+
+		for ( Map< String,Object > maps : shopList ) {
+		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
+		    if ( id == shopIds ) {
+			shopMap.put( "sto_name", maps.get( "sto_name" ) );
+		    }
+		}
+	    }
+	}
 
 	page.setSubList( list );
 	return page;
@@ -373,24 +387,33 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
      */
     @Override
     public List< Map< String,Object > > findAllStoByUser( BusUser user ) {
-	List< Map< String,Object > > ls = null;
-	Integer userId = user.getId();
 	//todo 调用陈丹接口  根据商家id  查询门店信息
-	if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-	    // 如果子账户，先获取子账户拥有的分店
-	    //			String sql = "SELECT a.id,a.sto_name FROM t_mall_store a LEFT JOIN bus_user_branch_relation b ON a.sto_branch_id=b.branchid WHERE a.is_delete=0  AND b.userid="
-	    //					+ userId;
-	    boolean isAdminFlag = isAdminUser( user.getId() );
+	List< Integer > wxShopIds = new ArrayList<>();
 
-	    if ( isAdminFlag ) {
-		//		String sql = "SELECT a.id,ws.business_name as sto_name FROM t_mall_store a LEFT JOIN bus_user_branch_relation b ON a.wx_shop_id=b.branchid left join t_wx_shop ws on ws.id =  a.wx_shop_id WHERE a.is_delete=0 and a.wx_shop_id>0 and ws.id>0  and ws.`status` != -1 AND b.userid="+userId;
-		//		ls = daoUtil.queryForList(sql);
+	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
+	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
+	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
+		wxShopIds.add( wsWxShopInfoExtend.getId() );
 	    }
-	} else {
-	    //	    String sql = "select s.id,ws.business_name as sto_name from t_mall_store s left join t_wx_shop ws on ws.id =  s.wx_shop_id where s.is_delete = 0 and s.wx_shop_id>0 and ws.id>0  and ws.`status` != -1 and s.sto_user_id ="+userId;
-	    //	    ls = daoUtil.queryForList(sql);
+	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
+	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id" );
+
+	    List< Map< String,Object > > storeList = mallStoreDao.selectMaps( wrapper );
+	    if ( storeList != null && storeList.size() > 0 ) {
+		for ( Map< String,Object > storeMap : storeList ) {
+		    int wxShopId = CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) );
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == wxShopId ) {
+			    storeMap.put( "sto_name", wxShops.getBusinessName() );
+			    break;
+			}
+		    }
+		}
+	    }
+	    return storeList;
 	}
-	return ls;
+	return null;
     }
 
     @Override

@@ -139,23 +139,39 @@ public interface MemberService {
 
     /**
      * 修改交易记录状态
+     *
      * @param consumeParams 实体类
+     *
      * @return 是否修改成功
      */
-    boolean updateUserConsume(UserConsumeParams consumeParams);
+    boolean updateUserConsume( UserConsumeParams consumeParams );
 
     /**
      * 退款包括了储值卡退款(包括积分和粉币)
+     *
      * @param returnParams 参数
+     *
      * @return 是否退款成功
      */
-    Map<String,Object> refundMoneyAndJifenAndFenbi(ReturnParams returnParams);
+    Map< String,Object > refundMoneyAndJifenAndFenbi( ReturnParams returnParams );
 
     /**
      * 查询会员卡信息
+     *
      * @param mcId 会员卡id
+     *
      * @return 会员卡信息
      */
-    MemberCard findMemberCardByMcId(int mcId);
+    MemberCard findMemberCardByMcId( int mcId );
+
+    /**
+     * 跨门店 根据memberId和门店集合查询会员数据 返回数据包含会员信息、微信卡券、多粉卡券
+     *
+     * @param memberId 会员id
+     * @param shopIds  门店id集合逗号隔开
+     *
+     * @return 会员信息、微信卡券、多粉卡券
+     */
+    Map findCardAndShopIdsByMembeId( int memberId, String shopIds );
 
 }

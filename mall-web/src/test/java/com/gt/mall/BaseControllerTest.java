@@ -1,6 +1,6 @@
 package com.gt.mall;
 
-import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.bean.wx.OldApiSms;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
@@ -8,6 +8,8 @@ import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.service.inter.wxshop.WxAppletService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.WxHttpSignUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,11 +25,11 @@ import java.util.Map;
 public class BaseControllerTest extends BasicTest {
 
     @Autowired
-    private MallStoreDAO  mallStoreDAO;
+    private MallStoreService mallStoreService;
     @Autowired
-    private MemberService memberService;
+    private MemberService    memberService;
     @Autowired
-    private DictService   dictService;
+    private DictService      dictService;
 
     @Autowired
     private SmsService smsService;
@@ -61,15 +63,16 @@ public class BaseControllerTest extends BasicTest {
 	System.out.println( "json = " + photoList.get( 0 ).getLocalAddress() );*/
 
 	//测试发送短信
-	/*OldApiSms sms = new OldApiSms();
+	OldApiSms sms = new OldApiSms();
 	sms.setBusId( 42 );
 	sms.setContent( "hahah" );
 	sms.setCompany( "5" );
 	sms.setMobiles( "15017934717" );
 	sms.setModel( 5 );
-	//	boolean flag = smsService.sendSmsOld( sms );
+	boolean flag = smsService.sendSmsOld( sms );
+
 	String result = WxHttpSignUtil.SignHttpSelect( sms, "/8A5DA52E/smsapi/79B4DE7C/sendSmsOld.do", 1 );
-	System.out.println( "result = " + result );*/
+	System.out.println( "result = " + result );
 
 	/*WxPublicUsers user = wxPublicUserService.selectByUserId( 42 );
 
@@ -104,8 +107,14 @@ public class BaseControllerTest extends BasicTest {
 
         //查询所有省份
 	wxShopService.queryWxShopByBusId( 42 );*/
-        //查询子类的城市
+	//查询子类的城市
 	/*wxShopService.queryCityByParentId( 39 );*/
+
+	/*BusUser user = new BusUser();
+	user.setId( 42 );
+	List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( user );
+
+	System.out.println( "storeList = " + JSONObject.toJSONString( storeList ) );*/
 
     }
 }

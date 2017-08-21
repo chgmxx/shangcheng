@@ -84,7 +84,7 @@ public class MallProductController extends BaseController {
 			long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 			params.put( "isJxc", isJxc );
 			params.put( "shoplist", shoplist );
-			PageUtil page = mallProductService.selectByUserId( params );
+			PageUtil page = mallProductService.selectByUserId( params, shoplist );
 			request.setAttribute( "page", page );
 		    }
 		    request.setAttribute( "proMaxNum", dictService.getDiBserNum( userPId, 5, "1094" ) );

@@ -295,4 +295,16 @@ public class MemberServiceImpl implements MemberService {
 	return null;
     }
 
+    @Override
+    public Map findCardAndShopIdsByMembeId( int memberId, String shopIds ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	params.put( "shopIds", shopIds );
+	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberCardByMcId" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+	}
+	return null;
+    }
+
 }

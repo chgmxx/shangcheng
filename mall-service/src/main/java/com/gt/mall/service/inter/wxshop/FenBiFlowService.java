@@ -1,9 +1,12 @@
 package com.gt.mall.service.inter.wxshop;
 
 import com.gt.mall.bean.BusFlow;
+import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
+import com.gt.mall.bean.wx.flow.WsFenbiFlowRecord;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 粉币流量接口
@@ -26,4 +29,18 @@ public interface FenBiFlowService {
      * @return 商家流量
      */
     List<BusFlow> getBusFlowsByUserId(int busUserId);
+
+    /**
+     * 保存粉币的冻结记录
+     * @param fenbiFlowRecord 记录
+     * @return 是否冻结成功，冻结id
+     */
+    Map<String,Object> saveFenbiFlowRecord(FenbiFlowRecord fenbiFlowRecord );
+
+    /**
+     * 根据id查询冻结流量记录
+     * @param recordId id
+     * @return 流量冻结记录
+     */
+    WsFenbiFlowRecord getFenbiFlowRecordById(int recordId);
 }
