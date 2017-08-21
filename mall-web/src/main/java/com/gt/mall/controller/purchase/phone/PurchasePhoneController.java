@@ -290,7 +290,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
      */
     @RequestMapping( "/79B4DE7C/currencyCount" )
     public void currencyCount( HttpServletResponse response, Double actualMoney, Double fansCurrency ) throws IOException {
-	//TODO 粉币方法 memberPayService.integralCount()
+	//TODO 粉币方法 memberPayService.currencyCount()
 	//	Double satisfy_fenbi = memberPayService.currencyCount( actualMoney, fansCurrency );
 	//	response.getWriter().print( satisfy_fenbi );
     }

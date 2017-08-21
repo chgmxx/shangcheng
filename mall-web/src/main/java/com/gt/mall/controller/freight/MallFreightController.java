@@ -7,6 +7,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.freight.MallFreight;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.CommonUtil;
@@ -55,6 +56,8 @@ public class MallFreightController extends BaseController {
     private DictService          dictService;
     @Autowired
     private WxShopService        wxShopService;
+    @Autowired
+    private BusUserService       busUserService;
 
     /**
      * 进入物流管理列表页面
@@ -85,8 +88,7 @@ public class MallFreightController extends BaseController {
 		    request.setAttribute( "shoplist", shoplist );
 		}
 	    }
-	    //TODO 需关连VoiceCourseService 方法
-	    //	    request.setAttribute("videourl", course.urlquery("80"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "80" ) );
 	} catch ( Exception e ) {
 	    logger.error( "物流管理列表: " + e );
 	    e.printStackTrace();

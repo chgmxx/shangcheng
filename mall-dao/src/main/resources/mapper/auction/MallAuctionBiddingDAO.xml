@@ -95,6 +95,7 @@
             </foreach>
         </if>
     </select>
+
     <select id="selectListByBidding" resultType="com.gt.mall.entity.auction.MallAuctionBidding">
         select <include refid="Base_Column_List"/>
         from t_mall_auction_bidding b

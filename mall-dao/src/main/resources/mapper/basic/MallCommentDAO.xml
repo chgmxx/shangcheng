@@ -97,6 +97,7 @@
         from t_mall_comment c
         left join t_mall_order_detail d on d.id = c.order_detail_id
         where c.product_id= #{productId} and c.is_delete=0  and c.user_type=1
+
         <choose>
             <when test="repPId == null">
                 and c.rep_p_id=0
