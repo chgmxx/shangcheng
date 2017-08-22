@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.auction.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.wx.shop.WsWxShopInfo;
@@ -15,7 +16,6 @@ import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,7 +135,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	int num = 0;
 	int code = -1;
 	if ( CommonUtil.isNotEmpty( groupMap.get( "auction" ) ) ) {
-	    MallAuction auction = (MallAuction) JSONObject.toBean( JSONObject.fromObject( groupMap.get( "auction" ) ), MallAuction.class );
+	    MallAuction auction = (MallAuction) JSONObject.toJavaObject( JSONObject.parseObject( groupMap.get( "auction" ).toString() ), MallAuction.class );
 	    // 判断选择的商品是否已经存在未开始和进行中的拍卖中
 	    List< MallAuction > buyList = auctionDAO.selectAuctionByProId( auction );
 	    if ( buyList == null || buyList.size() == 0 ) {
@@ -394,7 +394,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		    String field = bid.getAucId() + "_" + bid.getUserId();
 		    if ( JedisUtil.hExists( key, field ) ) {
 			String str = JedisUtil.maoget( key, field );
-			JSONObject obj = JSONObject.fromObject( str );
+			JSONObject obj = JSONObject.parseObject( str );
 			double secondObj = Double.parseDouble( obj.get( "second" ).toString() );
 			if ( secondObj == second ) {
 			    result.put( "result", false );

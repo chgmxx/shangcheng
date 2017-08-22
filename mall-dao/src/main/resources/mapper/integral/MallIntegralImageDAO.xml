@@ -48,7 +48,7 @@
         select  <include refid="page_Column_List" />
         from t_mall_integral_image i
         LEFT JOIN t_mall_store s ON i.shop_id = s.id
-        where i.is_delete = 0 and s.is_delete=0 and ws.status!=-1
+        where i.is_delete = 0 and s.is_delete=0
         <if test="userId != null and userId != ''">
             and i.bus_user_id=#{userId}
         </if>

@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.integral.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
@@ -10,7 +11,6 @@ import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.integral.MallIntegralImageService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,7 +67,7 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
     @Override
     public boolean editImage( Map< String,Object > params, int userId ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallIntegralImage appletImage = (MallIntegralImage) JSONObject.toBean( JSONObject.fromObject( params ), MallIntegralImage.class );
+	    MallIntegralImage appletImage = (MallIntegralImage) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallIntegralImage.class );
 	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
 		int count = 0;
 		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {

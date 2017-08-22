@@ -38,7 +38,7 @@
         WHERE j.user_id = #{joinUserId}
         AND j.auc_id=#{aucId}
     </select>
-    <select id="selectByBidding" resultType="com.gt.mall.entity.auction.MallAuctionBidding">
+    <select id="selectByBidding" parameterType="com.gt.mall.entity.auction.MallAuctionBidding" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from t_mall_auction_bidding b
@@ -96,7 +96,7 @@
         </if>
     </select>
 
-    <select id="selectListByBidding" resultType="com.gt.mall.entity.auction.MallAuctionBidding">
+    <select id="selectListByBidding" parameterType="com.gt.mall.entity.auction.MallAuctionBidding"  resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>
         from t_mall_auction_bidding b
         where b.auc_id = #{aucId}

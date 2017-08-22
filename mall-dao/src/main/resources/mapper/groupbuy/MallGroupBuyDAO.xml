@@ -64,7 +64,7 @@
     </sql>
     <sql id="group_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
-        shop_id, g.create_time, is_use,s.wx_shop_id
+        shop_id, g.create_time, is_use,s.wx_shop_id,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
@@ -75,7 +75,7 @@
     </sql>
     <sql id="group_product_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
-        g.shop_id, g.create_time, is_use,s.wx_shop_id
+        g.shop_id, g.create_time, is_use,s.wx_shop_id,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
@@ -109,6 +109,7 @@
     <select id="selectByPage" resultMap="groupResultMap" parameterType="Map">
         select
         <include refid="group_product_Column_List"/>
+
         from t_mall_group_buy g
         left join t_mall_store s on g.shop_id = s.id
         left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1

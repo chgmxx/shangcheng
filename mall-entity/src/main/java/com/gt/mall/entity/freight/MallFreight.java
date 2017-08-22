@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -114,6 +115,11 @@ public class MallFreight extends Model< MallFreight > {
      */
     @TableField( "add_money" )
     private BigDecimal addMoney;
+
+
+    private List<MallFreightDetail> detailList;
+
+    private String stoName;
 
     @Override
     protected Serializable pkVal() {

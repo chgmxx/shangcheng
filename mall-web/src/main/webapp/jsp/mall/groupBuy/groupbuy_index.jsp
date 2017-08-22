@@ -101,10 +101,10 @@
                     <c:if test="${!empty page.subList}">
                         <c:forEach var="group" items="${page.subList }">
                             <li class="txt-tle" style="min-height:50px;height:auto;">
-                                <span class="f2 fl" style="line-height:20px;padding-top:10px;width:17%;"><c:if test="${!empty group.gName}">${group.gName }</c:if></span>
+                                <span class="f2 fl" style="line-height:20px;padding-top:10px;width:17%;"><c:if test="${!empty group.GName}">${group.GName }</c:if></span>
                                 <span class="f2 fl" style="line-height:20px;padding-top:10px;width:17%;">${group.shopName }</span>
                                 <span class="f2 fl" style="width:20%;text-align:left;margin-left:10px;line-height:20px;padding-top:10px;">
-							${group.gStartTime } 至  ${group.gEndTime }
+							${group.GStartTime } 至  ${group.GEndTime }
 						</span>
                                 <span class="f2 fl">
 							<c:if test="${!empty group.status}"><div>

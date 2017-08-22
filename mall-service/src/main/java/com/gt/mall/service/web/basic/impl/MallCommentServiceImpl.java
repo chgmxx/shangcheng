@@ -1,5 +1,7 @@
 package com.gt.mall.service.web.basic.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
@@ -13,8 +15,6 @@ import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,7 +94,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     @Override
     public boolean checkComment( Map< String,Object > params ) {
 	if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
-	    String[] ids = (String[]) JSONArray.toArray( JSONArray.fromObject( params.get( "ids" ) ), String.class );
+	    String[] ids = (String[]) JSONArray.toJSON( JSONArray.parseObject( params.get( "ids" ).toString() ) );
 	    params.put( "ids", ids );
 	}
 	int count = commentDAO.batchUpdateComment( params );
@@ -107,7 +107,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     @Override
     public boolean replatComment( Map< String,Object > params, int userId ) {
 	if ( CommonUtil.isNotEmpty( params.get( "params" ) ) ) {
-	    MallComment comment = (MallComment) JSONObject.toBean( JSONObject.fromObject( params.get( "params" ) ), MallComment.class );
+	    MallComment comment = (MallComment) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "params" ).toString() ), MallComment.class );
 	    comment.setCreateTime( new Date() );
 	    comment.setUserId( userId );
 	    comment.setUserType( 2 );
@@ -175,7 +175,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    param.put( "appraise", p.get( "id" ) );//评论id
 	    List hf = commentDAO.ownerResponseList( param );//查询店家回复
 	    for ( int j = 0; j < hf.size(); j++ ) {
-		JSONObject h = JSONObject.fromObject( hf.get( j ) );
+		JSONObject h = JSONObject.parseObject( hf.get( j ).toString() );
 		if ( p.get( "id" ).equals( h.get( "rep_p_id" ) ) ) {
 		    p.put( "resContent", h );
 

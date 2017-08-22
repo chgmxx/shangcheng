@@ -54,7 +54,7 @@ $(function () {
     }
 //	console.log(daysObjs)
 
-    loadWindow();
+    parent.loadWindow();
 });
 /**
  * 验证输入框

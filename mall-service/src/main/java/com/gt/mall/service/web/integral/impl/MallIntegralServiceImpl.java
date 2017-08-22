@@ -1,7 +1,9 @@
 package com.gt.mall.service.web.integral.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
 import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
@@ -17,6 +19,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.order.MallOrderService;
@@ -25,7 +28,6 @@ import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.util.*;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,6 +76,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     private MemberService               memberService;
     @Autowired
     private WxShopService               wxShopService;
+    @Autowired
+    private FenBiFlowService            fenBiFlowService;
 
     @Override
     public PageUtil selectIntegralByUserId( Map< String,Object > params ) {
@@ -191,11 +195,10 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	resultMap.put( "recordNum", recordNum );
 
 	if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
-	    //TODO 需关连busFlowService.selectById()流量方法
-	    //            BusFlow flow = busFlowService.selectById(product.getFlowId());
-	    //            if(CommonUtil.isNotEmpty(flow)){
-	    //                resultMap.put("flow_desc", flow.getType()+"M流量");
-	    //            }
+	    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+	    if ( CommonUtil.isNotEmpty( flow ) ) {
+		resultMap.put( "flow_desc", flow.getType() + "M流量" );
+	    }
 	}
 	int proViewNum = 0;
 	if ( CommonUtil.isNotEmpty( product.getViewsNum() ) ) {
@@ -280,13 +283,12 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 		resultMap.put( "msg", map.get( "msg" ) );
 		return resultMap;
 	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
-		//TODO 需关连busFlowService 流量 方法
-		//                BusFlow flow = busFlowService.selectById(product.getFlowId());
-		//                if(map.get("supplier").equals("中国联通")&&flow.getType()==10){
-		//                    resultMap.put("code", -1);
-		//                    resultMap.put("msg", "充值失败,联通号码至少30MB");
-		//                    return resultMap;
-		//                }
+		WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
+		    resultMap.put( "code", -1 );
+		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );
+		    return resultMap;
+		}
 	    }
 	}
 
@@ -407,7 +409,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    for ( Map< String,Object > integral : integralList ) {
 		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( integral.get( "wx_shop_id" ) ) );
 		if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
-		    integral.put("shopName" ,wxShopInfo.getBusinessName());
+		    integral.put( "shopName", wxShopInfo.getBusinessName() );
 		}
 	    }
 	    page.setSubList( integralList );
@@ -425,7 +427,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	int count = 0;
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	if ( CommonUtil.isNotEmpty( params.get( "integral" ) ) ) {
-	    MallIntegral mallIntegral = (MallIntegral) JSONObject.toBean( JSONObject.fromObject( params.get( "integral" ) ), MallIntegral.class );
+	    MallIntegral mallIntegral = (MallIntegral) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "integral" ).toString() ), MallIntegral.class );
 	    MallIntegral integral = null;
 	    if ( CommonUtil.isNotEmpty( mallIntegral.getProductId() ) ) {
 		Map< String,Object > map = new HashMap< String,Object >();

@@ -16,12 +16,14 @@
     <sql id="Base_Column_List">
         id, auc_id , pro_id , offer_money, user_id , create_time
     </sql>
-    <select id="selectByOffer" resultType="com.gt.mall.entity.auction.MallAuctionOffer">
-        select <include refid="Base_Column_List" />
+    <select id="selectByOffer" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_auction_offer where auc_id=#{id} order by offer_money desc limit 1
     </select>
-    <select id="selectListByOffer" resultType="com.gt.mall.entity.auction.MallAuctionOffer">
-        select <include refid="Base_Column_List" />
+    <select id="selectListByOffer" parameterType="com.gt.mall.entity.auction.MallAuctionOffer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_auction_offer o
         where o.auc_id=#{aucId}
         order by o.offer_money desc

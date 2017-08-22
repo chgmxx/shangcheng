@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.auction.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
@@ -16,7 +17,6 @@ import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PageUtil;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -151,7 +151,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     public Map< String,Object > addMargin( Map< String,Object > params, String memberId ) {
 	Map< String,Object > result = new HashMap< String,Object >();
 
-	MallAuctionMargin margin = (MallAuctionMargin) JSONObject.toBean( JSONObject.fromObject( params.get( "margin" ) ), MallAuctionMargin.class );
+	MallAuctionMargin margin = (MallAuctionMargin) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "margin" ).toString() ), MallAuctionMargin.class );
 	margin.setUserId( CommonUtil.toInteger( memberId ) );
 	MallAuctionMargin aucMargin = auctionMarginDAO.selectByMargin( margin );//查询该拍卖是否已经加入了保证金
 	String aucNo = "PM" + System.currentTimeMillis();
@@ -273,12 +273,12 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		map.put( "refundFee", money );// 退款金额
 		map.put( "key", pUser.getApiKey() );// 商户支付密钥
 		map.put( "wxOrdId", wxPayOrder.getId() );// 微信订单表主键
-		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject( map ).toString() );
+		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.parseObject( map.toString() ).toString() );
 
 		//TODO 需关连 WxPayService.memberPayRefund(map)方法
 		Map< String,Object > resultmap = new HashMap<>();
 		//                Map<String, Object> resultmap = payService.memberPayRefund(map);
-		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject( resultmap ).toString() );
+		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.parseObject( resultmap.toString() ).toString() );
 		if ( resultmap != null ) {
 		    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
 			//退款成功修改退款状态

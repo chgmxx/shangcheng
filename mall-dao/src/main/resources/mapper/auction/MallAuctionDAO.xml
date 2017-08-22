@@ -25,6 +25,26 @@
         <result column="auc_add_price" property="aucAddPrice"/>
     </resultMap>
 
+    <resultMap id="pageResultMap" type="com.gt.mall.entity.auction.MallAuction" >
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
+        <result column="auc_type" property="aucType" jdbcType="TINYINT" />
+        <result column="auc_start_price" property="aucStartPrice" jdbcType="DECIMAL" />
+        <result column="auc_lowest_price" property="aucLowestPrice" jdbcType="DECIMAL" />
+        <result column="auc_start_time" property="aucStartTime" jdbcType="VARCHAR" />
+        <result column="auc_lower_price_time" property="aucLowerPriceTime" jdbcType="INTEGER" />
+        <result column="auc_lower_price" property="aucLowerPrice" jdbcType="DECIMAL" />
+        <result column="auc_end_time" property="aucEndTime" jdbcType="VARCHAR" />
+        <result column="auc_num" property="aucNum" jdbcType="INTEGER" />
+        <result column="auc_restriction_num" property="aucRestrictionNum" jdbcType="INTEGER" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="shopName" property="shopName" jdbcType="VARCHAR"/>
+        <result column="is_margin" jdbcType="TINYINT" property="isMargin" />
+        <result column="proName" property="proName" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER" />
+    </resultMap>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         g.id, g.product_id, shop_id, auc_type, auc_start_price, auc_lowest_price, auc_start_time,
@@ -39,7 +59,7 @@
     <sql id="page_Column_List">
         g.id, g.product_id, g.shop_id, auc_type, auc_start_price, auc_lowest_price, auc_start_time,
         auc_lower_price_time, auc_lower_price, auc_end_time, auc_num, auc_restriction_num,
-        g.user_id, g.create_time, is_use, is_margin, auc_margin, auc_add_price,s.wx_shop_id
+        g.user_id, g.create_time, is_use, is_margin, auc_margin, auc_add_price,s.wx_shop_id,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.auc_start_time > now() and g.auc_end_time > now() then 0<!--未开始  -->
@@ -67,7 +87,7 @@
             </foreach>
         </if>
     </select>
-    <select id="selectByPage" resultType="com.gt.mall.entity.auction.MallAuction">
+    <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
         select
         <include refid="page_Column_List"/>
         from t_mall_auction g
@@ -147,7 +167,7 @@
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
         where b.id =#{id}
     </select>
-    <select id="selectAuctionByProId" resultType="com.gt.mall.entity.auction.MallAuction">
+    <select id="selectAuctionByProId" parameterType="Map" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"></include>
         from t_mall_auction g
@@ -213,7 +233,7 @@
         </if>
     </select>
 
-    <select id="selectAuctionByIds" resultType="com.gt.mall.entity.auction.MallAuction">
+    <select id="selectAuctionByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
         SELECT
         <include refid="page_Column_List"></include>
         from t_mall_auction g
@@ -222,7 +242,7 @@
         WHERE g.is_delete = 0 and g.is_use =1 and g.id = #{id}
         group by g.id
     </select>
-    <select id="selectBuyByProductId" resultType="com.gt.mall.entity.auction.MallAuction">
+    <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.auction.MallAuction" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"></include>
         from t_mall_auction g
@@ -232,7 +252,7 @@
         and g.id=#{id}
         limit 1
     </select>
-    <select id="selectCountByShopId" resultType="java.lang.Integer">
+    <select id="selectCountByShopId" parameterType="Map" resultType="java.lang.Integer">
         SELECT count(gb.id)
         from t_mall_auction gb
         left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id

@@ -70,7 +70,7 @@
     <sql id="index_Column_List">
         f.id, f.name, f.user_id, f.shop_id, f.express_id, f.express, f.create_time, f.money, f.is_no_money,
         f.no_money_num, f.is_delete,f.is_result_money,f.no_money, f.price_type, f.first_nums, f.add_nums,
-        f.add_money,s.sto_name
+        f.add_money,s.sto_name as stoName
     </sql>
     <sql id="Freight_Column_List">
         f.id, f.name, f.user_id, f.shop_id, f.express_id, f.express,  f.money, f.is_no_money, f.no_money_num,f.is_result_money,f.no_money,

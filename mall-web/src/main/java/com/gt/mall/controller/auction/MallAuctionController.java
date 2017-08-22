@@ -183,7 +183,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		}
 		request.setAttribute( "auction", groupMap );
 	    }
-	    //            request.setAttribute("shoplist", shoplist);
+	    request.setAttribute( "shoplist", shoplist );
 	    request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
 	} catch ( Exception e ) {
 	    logger.error( "进入拍卖编辑页面：" + e );

@@ -219,7 +219,8 @@ function editFreight() {
     freight["name"] = name;
     freight["shopId"] = shopId;
     freight["isNoMoney"] = isNoMoney;
-    freight["noMoneyNum"] = changeTwoDecimal_f(num);
+    freight["noMoneyNum"] = num;
+    // freight["noMoneyNum"] = changeTwoDecimal_f(num);
     freight["noMoney"] = changeTwoDecimal_f(noMoney);
     freight["isResultMoney"] = isResultMoney;
     freight["expressId"] = expressId;
@@ -267,7 +268,7 @@ function editFreight() {
                         closeBtn: 0
                     }, function (index) {
                         layer.close(tip);
-                        window.location.href = "/mFreight/start.do";
+                        window.location.href = "/mFreight/index.do";
                     });
                 } else {// 编辑失败
                     layer.alert("编辑失败", {

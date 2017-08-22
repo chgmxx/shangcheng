@@ -11,6 +11,7 @@
         String setType = request.getParameter( "setType" );
         request.setAttribute( "setType", setType );
     %>
+
     <base href="<%=basePath%>"/>
     <meta charset="utf-8"/>
     <meta name="renderer" content="webkit"/>

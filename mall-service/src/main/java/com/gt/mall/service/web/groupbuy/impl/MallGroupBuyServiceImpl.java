@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.groupbuy.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
@@ -29,7 +30,6 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PageUtil;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,9 +72,9 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     @Autowired
     private WxShopService            wxShopService;
     @Autowired
-    private MallStoreDAO storeDAO;
+    private MallStoreDAO             storeDAO;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService      wxPublicUserService;
 
     @Override
     public PageUtil selectGroupBuyByShopId( Map< String,Object > params ) {
@@ -124,7 +124,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	int code = -1;
 	int status = 0;
 	if ( CommonUtil.isNotEmpty( groupMap.get( "groupBuy" ) ) ) {
-	    MallGroupBuy groupBuy = (MallGroupBuy) JSONObject.toBean( JSONObject.fromObject( groupMap.get( "groupBuy" ) ), MallGroupBuy.class );
+	    MallGroupBuy groupBuy = (MallGroupBuy) JSONObject.toJavaObject( JSONObject.parseObject( groupMap.get( "groupBuy" ).toString() ), MallGroupBuy.class );
 	    //判断选择的商品是否已经存在未开始和进行中的团购中
 	    List< MallGroupBuy > buyList = groupBuyDAO.selectGroupByProId( groupBuy );
 	    if ( buyList == null || buyList.size() == 0 ) {
@@ -214,7 +214,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 		    }
 		    if ( isCommission == 0 && isIntegral == 0 ) {
 			if ( CommonUtil.isNotEmpty( map.get( "groupMap" ) ) ) {
-			    Map< String,Object > groupMap = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( map.get( "groupMap" ) ), Map.class );
+			    Map< String,Object > groupMap = (Map< String,Object >) JSONObject.toJavaObject( JSONObject.parseObject( map.get( "groupMap" ).toString() ), Map.class );
 			    if ( CommonUtil.isNotEmpty( groupMap.get( "g_start_time" ) ) ) {
 				String startTime = groupMap.get( "g_start_time" ).toString();
 				String endTime = groupMap.get( "g_end_time" ).toString();
@@ -222,7 +222,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "seckillMap" ) ) ) {
-			    Map< String,Object > seckillMap = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( map.get( "seckillMap" ) ), Map.class );
+			    Map< String,Object > seckillMap = (Map< String,Object >) JSONObject
+					    .toJavaObject( JSONObject.parseObject( map.get( "seckillMap" ).toString() ), Map.class );
 			    if ( CommonUtil.isNotEmpty( seckillMap.get( "s_start_time" ) ) ) {
 				String startTime = seckillMap.get( "s_start_time" ).toString();
 				String endTime = seckillMap.get( "s_end_time" ).toString();
@@ -230,7 +231,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "auctionMap" ) ) ) {
-			    Map< String,Object > auctionMap = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( map.get( "auctionMap" ) ), Map.class );
+			    Map< String,Object > auctionMap = (Map< String,Object >) JSONObject
+					    .toJavaObject( JSONObject.parseObject( map.get( "auctionMap" ).toString() ), Map.class );
 			    if ( CommonUtil.isNotEmpty( auctionMap.get( "auc_start_time" ) ) ) {
 				String startTime = auctionMap.get( "auc_start_time" ).toString();
 				String endTime = auctionMap.get( "auc_end_time" ).toString();
@@ -238,7 +240,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "presaleMap" ) ) ) {
-			    Map< String,Object > presaleMap = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( map.get( "presaleMap" ) ), Map.class );
+			    Map< String,Object > presaleMap = (Map< String,Object >) JSONObject
+					    .toJavaObject( JSONObject.parseObject( map.get( "presaleMap" ).toString() ), Map.class );
 			    if ( CommonUtil.isNotEmpty( presaleMap.get( "sale_start_time" ) ) ) {
 				String startTime = presaleMap.get( "sale_start_time" ).toString();
 				String endTime = presaleMap.get( "sale_end_time" ).toString();
@@ -246,7 +249,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "pifaMap" ) ) ) {
-			    Map< String,Object > pifaMap = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( map.get( "pifaMap" ) ), Map.class );
+			    Map< String,Object > pifaMap = (Map< String,Object >) JSONObject.toJavaObject( JSONObject.parseObject( map.get( "pifaMap" ).toString() ), Map.class );
 			    if ( CommonUtil.isNotEmpty( pifaMap.get( "pf_start_time" ) ) ) {
 				String startTime = pifaMap.get( "pf_start_time" ).toString();
 				String endTime = pifaMap.get( "pf_end_time" ).toString();
@@ -458,8 +461,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     @Override
     public WxPublicUsers wxPublicByBuyId( int id ) {
 
-        MallGroupBuy groupBuy=groupBuyDAO.selectById( id );
-	MallStore store=storeDAO.selectById( groupBuy.getShopId());
+	MallGroupBuy groupBuy = groupBuyDAO.selectById( id );
+	MallStore store = storeDAO.selectById( groupBuy.getShopId() );
 	return wxPublicUserService.selectByUserId( store.getStoUserId() );
 
 	//        String sql= "
@@ -468,7 +471,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	// LEFT JOIN t_mall_group_buy c ON b.id=c.shop_id
 	// WHERE c.id="+id;
 	//        return daoUtil.queryForMap(sql);
-//	return null;
+	//	return null;
     }
 
     @Override

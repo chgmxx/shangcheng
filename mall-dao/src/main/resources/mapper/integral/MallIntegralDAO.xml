@@ -29,7 +29,7 @@
         when i.start_time > now() and   i.end_time > now() then 0<!--未开始  -->
         when i.start_time &lt;= now() and now() &lt; i.end_time  then 1<!-- 进行中 -->
         when i.start_time &lt; now()  and i.end_time &lt;= now() then -1<!-- 已结束 -->
-        end status, s.sto_name as shopName,s.wx_shop_id
+        end status, s.sto_name as shopName,s.wx_shop_id,
         p.pro_name as proName
     </sql>
     <sql id="Base2_Column_List" >
@@ -72,7 +72,7 @@
         from t_mall_integral i
         left join t_mall_store s on i.shop_id = s.id
         left join t_mall_product p on p.id= i.product_id and p.is_delete=0
-        where i.is_delete = 0 and s.is_delete=0 and ws.status!=-1
+        where i.is_delete = 0 and s.is_delete=0
         and p.is_delete=0 and p.is_publish=1 and p.check_status=1
         <if test="type == -1"><!-- 未开始积分商品-->
             and i.start_time > now() and   i.end_time > now() and i.is_use=1

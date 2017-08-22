@@ -1,17 +1,18 @@
 package com.gt.mall.service.web.freight.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.freight.MallFreightDetailDAO;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.freight.MallFreightDetail;
+import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.store.MallStoreService;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,8 +76,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     @Override
     public boolean editFreight( Map< String,Object > params, int userId ) {
 	if ( !CommonUtil.isEmpty( params.get( "freight" ) ) ) {
-
-	    MallFreight freight = (MallFreight) JSONObject.toBean( JSONObject.fromObject( params.get( "freight" ) ), MallFreight.class );
+	    MallFreight freight = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "freight" ).toString()), MallFreight.class );
 	    if ( CommonUtil.isEmpty( freight.getId() ) ) {// 新增物流
 		freight.setCreateTime( new Date() );
 		freight.setUserId( userId );
@@ -135,11 +135,11 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		proTypeId = CommonUtil.toInteger( map.get( "proTypeId" ) );
 	    }
 
-	    JSONArray orderJSON = JSONArray.fromObject( map.get( "orderArr" ) );
+	    JSONArray orderJSON = JSONArray.parseArray( map.get( "orderArr" ).toString() );
 
 	    if ( !CommonUtil.isEmpty( orderJSON ) && orderJSON.size() > 0 ) {
 		for ( Object object : orderJSON ) {
-		    JSONObject orderObj = JSONObject.fromObject( object );
+		    JSONObject orderObj = JSONObject.parseObject( object.toString() );
 		    Integer shopId = CommonUtil.toInteger( orderObj.get( "shop_id" ) );//店铺id
 
 		    float orderPrice = 0;//订单价格

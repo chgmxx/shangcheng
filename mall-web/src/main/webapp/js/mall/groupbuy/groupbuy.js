@@ -427,7 +427,7 @@ function choosePro() {
     if ((typeof defaultProId) == "undefined") {
         defaultProId = "";
     }
-    loadWindow();
+    parent.loadWindow();
     if (shopId != null && shopId != "") {
         parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
         // parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选

@@ -181,7 +181,7 @@
         您的店铺已经设置了物流信息，<a href="javascript:void(0);" onclick="shopIndex();">请前往店铺管理添加新的店铺</a>
     </c:if>
 </div>
-<script src="js/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
+<script src="/js/plugin/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
     var shopId = $(".shopId").attr("id");
     $(".shopId").find("option[value=" + shopId + "]").attr("selected", true);

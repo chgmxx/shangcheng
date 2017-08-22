@@ -30,6 +30,7 @@
         service_start , speeed_start, rep_p_id , user_id , user_type , is_rep , shop_id, createTime,
         is_delete , check_status
     </sql>
+
     <update id="batchUpdateComment" parameterType="java.util.Map">
         update t_mall_comment
         <set>

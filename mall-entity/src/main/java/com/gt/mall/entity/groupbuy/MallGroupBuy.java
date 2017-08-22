@@ -114,7 +114,8 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
     private String shopName;
 
     @TableField(exist = false)
-    private String two_code_path;
+    private String twoCodePath;
+
 
     @Override
     protected Serializable pkVal() {
