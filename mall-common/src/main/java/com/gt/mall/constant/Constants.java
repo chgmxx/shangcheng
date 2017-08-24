@@ -90,6 +90,6 @@ public class Constants {
     /**
      * 小程序的style
      */
-    public static final String APPLET_STYLE = "4";
+    public static final Integer APPLET_STYLE = 4;
 
 }

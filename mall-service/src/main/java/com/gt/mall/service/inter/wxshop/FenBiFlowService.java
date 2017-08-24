@@ -67,4 +67,9 @@ public interface FenBiFlowService {
      * @return true 成功
      */
     boolean rollbackFenbiFlowRecord( int recordId );
+
+    /**
+     * 流量充值
+     */
+    boolean adcServices(AdcServicesInfo adcServicesInfo);
 }

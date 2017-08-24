@@ -1,9 +1,7 @@
 package com.gt.mall.util;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.api.bean.sign.SignBean;
 import com.gt.api.util.HttpClienUtils;
-import com.gt.api.util.sign.SignUtils;
 import com.gt.mall.bean.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,16 +23,12 @@ public class WxHttpSignUtil {
 	try {
 	    String signKey = PropertiesUtil.getWxmpSignKey();
 	    url = PropertiesUtil.getWxmpDomain() + url;
-	    //	    String result = SignHttpUtils.postByHttp( url, obj, signKey );
 
 	    RequestUtils requestUtils = new RequestUtils();
-	    SignBean sign = SignUtils.sign( signKey, JSONObject.toJSONString( obj ) );
 	    requestUtils.setReqdata( obj );
-	    requestUtils.setSignKey( signKey );
-	    requestUtils.setSign( JSONObject.toJSONString( sign ) );
 
 	    logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( requestUtils ) + "---签名key：" + signKey );
-	    Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, Map.class );
+	    Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, Map.class, signKey );
 
 	    logger.info( "接口返回result:" + map );
 
@@ -58,6 +52,10 @@ public class WxHttpSignUtil {
     public static String SignHttpSelect( Object params, String url, int type ) {
 
 	Map resultMap = SignHttpJson( params, url );
+	if ( CommonUtil.isEmpty( resultMap ) ) {
+	    logger.error( "请求接口返回空" );
+	    return null;
+	}
 
 	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 0 ) {
 	    logger.info( "data = " + resultMap.get( "data" ) );

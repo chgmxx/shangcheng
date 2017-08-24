@@ -8,9 +8,6 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 微信小程序实现类
  * User : yangqian
@@ -24,9 +21,7 @@ public class WxAppletServiceImpl implements WxAppletService {
 
     @Override
     public MemberAppletOpenid memberAppletByMemIdAndStyle( MemberAppletByMemIdAndStyle applet ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", applet );
-	String result = HttpSignUtil.SignHttpSelect( params, APPLET_URL + "memberAppletByMemIdAndStyle.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( applet, APPLET_URL + "memberAppletByMemIdAndStyle.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAppletOpenid.class );
 	}

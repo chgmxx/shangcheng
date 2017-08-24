@@ -7,9 +7,6 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 微信支付接口实现类
  * User : yangqian
@@ -22,9 +19,7 @@ public class PayOrderServiceImpl implements PayOrderService {
 
     @Override
     public WxPayOrder selectWxOrdByOutTradeNo( String orderNo ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", orderNo );
-	String result = HttpSignUtil.SignHttpSelect( params, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( orderNo, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPayOrder.class );
 	}

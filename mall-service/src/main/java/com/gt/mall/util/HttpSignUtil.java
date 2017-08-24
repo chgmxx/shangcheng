@@ -2,7 +2,9 @@ package com.gt.mall.util;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;
+import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.mall.bean.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +34,18 @@ public class HttpSignUtil {
 		//门店
 		String signKey = PropertiesUtil.getWxmpSignKey();
 		url = PropertiesUtil.getWxmpDomain() + url;
-		logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
-		result = SignHttpUtils.WxmppostByHttp( url, obj, signKey );
+		if(type == 1){
+		    logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
+		    result = SignHttpUtils.WxmppostByHttp( url, obj, signKey );
+		}else if(type == 2){
+		    RequestUtils requestUtils = new RequestUtils();
+		    requestUtils.setReqdata( obj );
+
+		    logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( requestUtils ) + "---签名key：" + signKey );
+		    Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, Map.class, signKey );
+
+		    result = JSONObject.toJSONString( map );
+		}
 	    }
 	    logger.info( "接口返回result:" + result );
 

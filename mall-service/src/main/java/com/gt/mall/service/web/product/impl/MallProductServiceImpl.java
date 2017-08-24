@@ -580,7 +580,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     @Transactional( rollbackFor = Exception.class )
     @Override
-    public Map< String,Object > addProduct( Map< String,Object > params, BusUser user ) throws Exception {
+    public Map< String,Object > addProduct( Map< String,Object > params, BusUser user, HttpServletRequest request ) throws Exception {
 	int proId = 0;// 商品id
 	MallProduct product = null;
 	Map< String,Object > resultMap = new HashMap<>();
@@ -664,15 +664,14 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 
 	if ( proId > 0 ) {
-	    //todo 调用陈丹方法
-	   /* int Constants.WX_PUBLIC_URL = dictService.pidUserId(user.getId());//通过用户名查询主账号id
-	    long isJxc = erpLoginOrMenusService.isjxcCount("8", Constants.WX_PUBLIC_URL);//判断商家是否有进销存 0没有 1有
-	    if(isJxc == 0){
-		boolean flag = saveProductByErp(product, user);
-		if(!flag){
-		    JedisUtil.rPush( "is_no_up_erp", product.getId().toString());
+	    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	    long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有
+	    if ( isJxc == 1 ) {
+		boolean flag = saveProductByErp( product, user, userPId );
+		if ( !flag ) {
+		    JedisUtil.rPush( "is_no_up_erp", product.getId().toString() );
 		}
-	    }*/
+	    }
 	    resultMap.put( "code", 1 );
 	    resultMap.put( "id", product.getId() );
 	}
@@ -681,7 +680,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     @Transactional( rollbackFor = Exception.class )
     @Override
-    public Map< String,Object > updateProduct( Map< String,Object > params, BusUser user ) throws Exception {
+    public Map< String,Object > updateProduct( Map< String,Object > params, BusUser user, HttpServletRequest request ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
 	MallProduct product = null;
 	// 修改商品信息
@@ -811,10 +810,10 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 
 	}
-	int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
-	long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
-	if ( isJxc == 0 ) {
-	    boolean flags = saveProductByErp( product, user );
+	int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有
+	if ( isJxc == 1 ) {
+	    boolean flags = saveProductByErp( product, user, userPId );
 	    if ( !flags ) {
 		JedisUtil.rPush( Constants.REDIS_KEY + "is_no_up_erp", product.getId().toString() );
 	    }
@@ -1411,7 +1410,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public Map< String,Object > saveOrUpdateProductByErp( Map< String,Object > params ) throws Exception {
+    public Map< String,Object > saveOrUpdateProductByErp( Map< String,Object > params ,HttpServletRequest request) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
 	int code = 1;
 	String msg = "";
@@ -1490,7 +1489,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    resultMap.put( "errorMsg", msg );
 	} else {
 	    if ( CommonUtil.isNotEmpty( proIds ) && userId > 0 ) {
-		int userPId = busUserService.getMainBusId( userId );
+		int userPId = SessionUtils.getAdminUserId( userId,request );
 		Map< String,Object > syncParams = new HashMap<>();
 		syncParams.put( "productIds", proIds.substring( 0, proIds.length() - 1 ) );
 		syncParams.put( "rootUid", userPId );
@@ -1502,14 +1501,14 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     @Transactional( rollbackFor = Exception.class )
     @Override
-    public Map< String,Object > syncErpProductByWxShop( Map< String,Object > params ) throws Exception {
+    public Map< String,Object > syncErpProductByWxShop( Map< String,Object > params, HttpServletRequest request ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
 	int code = 1;
 	String msg = "";
 	List< Map > erpList = JSONArray.parseArray( params.get( "invList" ).toString(), Map.class );
 	int userId = CommonUtil.toInteger( params.get( "userId" ) );
 	if ( userId > 0 ) {
-	    syncErpPro( userId );//把未同步的商品进行同步
+	    syncErpPro( userId, request );//把未同步的商品进行同步
 	}
 	String productIds = "";
 	if ( erpList == null || erpList.size() <= 0 ) {
@@ -1636,7 +1635,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public boolean saveProductByErp( MallProduct product, BusUser user ) {
+    public boolean saveProductByErp( MallProduct product, BusUser user, int userPId ) {
 	product = mallProductDAO.selectById( product.getId() );
 	if ( product.getProTypeId().toString().equals( "1" ) ) {
 	    MallProduct pro = new MallProduct();
@@ -1648,7 +1647,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	boolean flag = true;
 	Map< String,Object > valueMaps = new HashMap<>();
 	Map< String,Object > nameMaps = new HashMap<>();
-	int userPId = busUserService.getMainBusId( user.getId() );
 	int uType = 1;//用户类型 1总账号  0子账号
 	if ( user.getId() != userPId ) {
 	    uType = 0;
@@ -1873,12 +1871,12 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public void syncErpPro( int userId ) {
-	int userPId = busUserService.getMainBusId( userId );
+    public void syncErpPro( int userId, HttpServletRequest request ) {
+	int userPId = SessionUtils.getAdminUserId( userId, request );//根据商家id查询主账号id
 	Map< String,Object > params = new HashMap<>();
 	params.put( "rootUid", userPId );
 	params.put( "sync", 0 );
-	System.out.println( params );
+	logger.info( "同步erp商品参数：" + JSONObject.toJSONString( params ) );
 	String proIds = "";
 	boolean flag = true;
 	com.alibaba.fastjson.JSONArray proArr = MallJxcHttpClientUtil.syncProductCheck( params, true );
@@ -2081,15 +2079,11 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	MallProductDetail detail = mallProductDetailService.selectByProductId( productId );
 
 	Map< String,Object > imageParam = new HashMap<>();
-		/*params.put("proId", id);
-		List<Map<String, Object>> groupList = mallProductGroupDao.selectgroupsByProductId(params);*/
-
 	imageParam.put( "assId", productId );
 	imageParam.put( "assType", 1 );
 	// 查询商品图片
 	List< MallImageAssociative > imageList = mallImageAssociativeService.getParamByProductId( imageParam );
 	// 查询商品规格
-	//			List<Map<String, Object>> specificaList = specService.getSpecificaByProductId(id);
 
 	List< MallProductSpecifica > specList = mallProductSpecificaService.selectByProductId( productId );
 	// 查询商品库存
@@ -2100,10 +2094,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	int count = mallProductDAO.insert( product );//copy商品信息
 	if ( CommonUtil.isNotEmpty( product.getId() ) && count > 0 ) {
 	    int newId = product.getId();
-	    /*MallProduct p = new MallProduct();
-	    p.setId(newId);
-	    p.setTwoCodePath(getTwoPath(newId, shopId, user.getName()));
-	    mallProductDAO.updateById(p);*/
 	    //同步商品详情
 	    if ( CommonUtil.isNotEmpty( detail ) ) {
 		if ( detail.getId() > 0 ) {

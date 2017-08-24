@@ -9,7 +9,6 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +25,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public FenBiCount getFenbiSurplus( FenbiSurplus fenbiSurplus ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", fenbiSurplus );
-	String result = HttpSignUtil.SignHttpSelect( params, FLOW_URL + "getFenbiSurplus.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( fenbiSurplus, FLOW_URL + "getFenbiSurplus.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenBiCount.class );
 	}
@@ -37,9 +34,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public WsBusFlowInfo getFlowInfoById( int flowId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", flowId );
-	String result = HttpSignUtil.SignHttpSelect( params, FLOW_URL + "getFlowInfoById.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( flowId, FLOW_URL + "getFlowInfoById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsBusFlowInfo.class );
 	}
@@ -48,9 +43,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public List< BusFlow > getBusFlowsByUserId( int busUserId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", busUserId );
-	String result = HttpSignUtil.SignHttpSelect( params, FLOW_URL + "getBusFlowsByUserId.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( busUserId, FLOW_URL + "getBusFlowsByUserId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, BusFlow.class );
 	}
@@ -59,17 +52,13 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", fenbiFlowRecord );
 	//todo 暂时未返回冻结id给我
-	return HttpSignUtil.SignHttpInsertOrUpdate( params, FLOW_URL + "saveFenbiFlowRecord.do", 1 );
+	return HttpSignUtil.SignHttpInsertOrUpdate( fenbiFlowRecord, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
     }
 
     @Override
     public WsFenbiFlowRecord getFenbiFlowRecordById( int recordId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", recordId );
-	String result = HttpSignUtil.SignHttpSelect( params, FLOW_URL + "getFenbiFlowRecordById.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( recordId, FLOW_URL + "getFenbiFlowRecordById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsFenbiFlowRecord.class );
 	}
@@ -78,9 +67,13 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public boolean rollbackFenbiFlowRecord( int recordId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", recordId );
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, FLOW_URL + "rollbackFenbiFlowRecord.do", 1 );
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( recordId, FLOW_URL + "rollbackFenbiFlowRecord.do", 2 );
+	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+    }
+
+    @Override
+    public boolean adcServices( AdcServicesInfo adcServicesInfo ) {
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( adcServicesInfo, FLOW_URL + "adcServices.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

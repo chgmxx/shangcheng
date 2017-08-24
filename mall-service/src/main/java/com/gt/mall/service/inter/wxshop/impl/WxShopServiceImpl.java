@@ -11,7 +11,6 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,9 +27,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public WsWxShopInfo getShopById( int wxShopId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", wxShopId );
-	String result = HttpSignUtil.SignHttpSelect( wxShopId, WS_SHOP_URL + "getShopById.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( wxShopId, WS_SHOP_URL + "getShopById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsWxShopInfo.class );
 	}
@@ -39,9 +36,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< ShopPhoto > getShopPhotoByShopId( int wxShopId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", wxShopId );
-	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "getShopPhotoByShopId.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( wxShopId, WS_SHOP_URL + "getShopPhotoByShopId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, ShopPhoto.class );
 	}
@@ -50,9 +45,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< WsWxShopInfoExtend > queryWxShopByBusId( int busUserId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", busUserId );
-	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "queryWxShopByBusId.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( busUserId, WS_SHOP_URL + "queryWxShopByBusId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
 	}
@@ -61,17 +54,13 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public boolean addShopSubShop( ShopSubsop shopSubsop ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", shopSubsop );
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, WS_SHOP_URL + "addShopSubShop.do", 1 );
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( shopSubsop, WS_SHOP_URL + "addShopSubShop.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public List< Map > queryCityByParentId( int parentId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", parentId );
-	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "queryCityByParentId.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( parentId, WS_SHOP_URL + "queryCityByParentId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}
@@ -80,9 +69,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< Map > queryCityByLevel( int level ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", level );
-	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "queryCityByLevel.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( level, WS_SHOP_URL + "queryCityByLevel.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}
@@ -91,12 +78,10 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< Map > queryBasisCityIds( String cityIds ) {
-        if(CommonUtil.isEmpty( cityIds )){
-            return null;
+	if ( CommonUtil.isEmpty( cityIds ) ) {
+	    return null;
 	}
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", cityIds.split( "," ) );
-	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "queryBasisCityIds.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( cityIds.split( "," ), WS_SHOP_URL + "queryBasisCityIds.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}

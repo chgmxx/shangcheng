@@ -396,14 +396,14 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	List< Map< String,Object > > storeList = new ArrayList<>();
 	//判断session里面有没有门店集合
-	List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
+	/*List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
 	if ( shopList != null && shopList.size() > 0 ) {
 	    SessionUtils.setWxShopNumBySession( user.getId(), shopList.size(), request );
 	    for ( Map shopMap : shopList ) {
 		storeList.add( shopMap );
 	    }
 	    return storeList;
-	}
+	}*/
 	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
 
@@ -494,10 +494,10 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		isAdmin = 0;
 	    }
 	    SessionUtils.setIsAdminUser( userId, isAdmin, request );
+	    return flag;
 	} else {
 	    return true;
 	}
-	return false;
     }
 
 }

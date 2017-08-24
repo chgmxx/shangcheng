@@ -74,9 +74,9 @@ public class MallProductController extends BaseController {
 		if ( isAdminFlag ) {
 		    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+		    long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
+		    params.put( "isJxc", isJxc );
 		    if ( shoplist != null && shoplist.size() > 0 ) {
-			long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
-			params.put( "isJxc", isJxc );
 			params.put( "shoplist", shoplist );
 			PageUtil page = mallProductService.selectByUserId( params, shoplist );
 			request.setAttribute( "page", page );
@@ -87,8 +87,9 @@ public class MallProductController extends BaseController {
 		    request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		    request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 
-		    mallProductService.syncErpPro( user.getId() );//把未同步的商品进行同步
-
+		    if ( isJxc == 1 ) {
+			mallProductService.syncErpPro( user.getId(), request );//把未同步的商品进行同步
+		    }
 		} else {
 		    request.setAttribute( "isNoAdminFlag", 1 );
 		}
@@ -113,8 +114,7 @@ public class MallProductController extends BaseController {
 	response.setCharacterEncoding( "utf-8" );
 	int code = 1;// 编辑成功
 	try {
-	    String[] id = (String[]) JSONArray.toArray(
-			    JSONArray.fromObject( ids ), String.class );
+	    String[] id = (String[]) JSONArray.toArray( JSONArray.fromObject( ids ), String.class );
 	    boolean flag = mallProductService.batchUpdateProduct( params, id );
 	    if ( !flag ) {
 		code = -1;// 编辑失败
@@ -229,7 +229,7 @@ public class MallProductController extends BaseController {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( user != null ) {
-		Map< String,Object > resultMap = mallProductService.addProduct( params, user );
+		Map< String,Object > resultMap = mallProductService.addProduct( params, user, request );
 		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
 		    code = CommonUtil.toInteger( resultMap.get( "code" ) );
 		}
@@ -272,7 +272,7 @@ public class MallProductController extends BaseController {
 	    p = response.getWriter();
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( user != null ) {
-		Map< String,Object > resultMap = mallProductService.updateProduct( params, user );
+		Map< String,Object > resultMap = mallProductService.updateProduct( params, user, request );
 		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
 		    code = CommonUtil.toInteger( resultMap.get( "code" ) );
 		}
@@ -405,7 +405,7 @@ public class MallProductController extends BaseController {
 		}*/
 	    }
 	    if ( code == 1 ) {
-		Map< String,Object > resultMap = mallProductService.saveOrUpdateProductByErp( params );
+		Map< String,Object > resultMap = mallProductService.saveOrUpdateProductByErp( params, request );
 		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
 		    code = CommonUtil.toInteger( resultMap.get( "code" ) );
 		}
@@ -457,7 +457,7 @@ public class MallProductController extends BaseController {
 	    }
 	    if ( code == 1 ) {
 
-		Map< String,Object > resultMap = mallProductService.syncErpProductByWxShop( params );
+		Map< String,Object > resultMap = mallProductService.syncErpProductByWxShop( params, request );
 		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
 		    code = CommonUtil.toInteger( resultMap.get( "code" ) );
 		}

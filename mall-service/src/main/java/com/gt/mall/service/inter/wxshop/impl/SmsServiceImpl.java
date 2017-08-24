@@ -7,7 +7,6 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,9 +24,7 @@ public class SmsServiceImpl implements SmsService {
     public boolean sendSmsOld( OldApiSms oldApiSms ) {
 	oldApiSms.setCompany( Constants.doMainName );
 	oldApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
-	Map< String,Object > params = new HashMap<>();
-	params.put( "reqdata", oldApiSms );
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, SMS_URL + "sendSmsOld.do", 1 );
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( oldApiSms, SMS_URL + "sendSmsOld.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

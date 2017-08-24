@@ -30,11 +30,11 @@ public class WxTest {
 	    RequestUtils requestUtils = new RequestUtils();
 	    SignBean sign = SignUtils.sign( signKey, JSONObject.toJSONString( params ) );
 	    requestUtils.setReqdata( JSONObject.toJSONString( params ) );
-	    requestUtils.setSignKey( signKey );
-	    requestUtils.setSign( JSONObject.toJSONString( sign ) );
+	   /* requestUtils.setSignKey( signKey );
+	    requestUtils.setSign( JSONObject.toJSONString( sign ) );*/
 
 	    System.out.println( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( requestUtils ) + "---签名key：" + signKey );
-	    Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, Map.class );
+	    Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, Map.class ,signKey);
 
 	    System.out.println( "接口返回result:" + map );
 
