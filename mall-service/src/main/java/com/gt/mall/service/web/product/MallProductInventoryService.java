@@ -32,6 +32,11 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
     MallProductInventory selectByIsDefault( Integer productId );
 
     /**
+     * 查询默认显示的库存
+     */
+    List< MallProductInventory > selectByIdListDefault( List< Integer > productList );
+
+    /**
      * 查询库存
      */
     List< MallProductInventory > selectInvenByProductId( Integer productId );

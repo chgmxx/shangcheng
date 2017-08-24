@@ -85,6 +85,7 @@ display: none;
 <admindraggable></admindraggable>
 <!-- 商品隐藏id -->
 <input type="hidden" id="stoId" value="${stoId}"/>
+<input type="hidden" class="userid" value="${userid }"/>
 <div style="height:100px"></div>
 	<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
 		<a href="javascirpt:void(0)" onclick="save()"
@@ -124,6 +125,38 @@ display: none;
 		dataJson.unshift({type:7,radio:true})
 		picJson.unshift({type:7,stoName:stoName,stoPicture:stoPicture,countproduct:countproduct,headImg:headImg})
 	}
+
+    var imgIdList = [];
+    var imgIds = ",";
+    picJson.forEach(function(e){
+        if(e.type==1){
+            e.imgID.forEach(function(e){
+                if(imgIds.indexOf(","+e.id+",")<0){
+                    imgIds += e.id+",";
+                }
+            })
+        }
+    })
+    function picJsonEach(data){
+        picJson.forEach(function(e){
+            if(e.type==1){
+                e.imgID.forEach(function(e){
+                    data.forEach(function(data){
+                        if(e.id == data.id){
+                            e.price = data.price;
+                            e.src = data.src;
+                            e.title = data.title;
+                            if(data.url != null && data.url != ""){
+                                e.url = data.url;
+                            }
+                        }
+                    })
+                })
+            }
+        })
+    }
+
+
 </script>
 
 

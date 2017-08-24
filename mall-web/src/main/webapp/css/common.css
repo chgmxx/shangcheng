@@ -452,10 +452,6 @@ img {
     height: 100%;
 }
 
-/*.right-float .item1{background:url(/images/rigIcon1.png) no-repeat; z-index:99999;}
-.right-float .item2{background:url(/images/rigIcon2.png) no-repeat; z-index:99999;}
-.right-float .item3{background:url(/images/rigIcon3.png) no-repeat; z-index:99999;}
-.right-float .item4{background:url(/images/rigIcon4.jpg) no-repeat; z-index:99999;}*/
 .code {
     display: none;
     border: 1px solid #dad8d8;

@@ -2,12 +2,18 @@ package com.gt.mall.controller.product.phone;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.Member;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.pifa.MallPifaApplyService;
+import com.gt.mall.service.web.product.MallGroupService;
+import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.service.web.product.MallGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,10 +35,17 @@ import java.util.Map;
 public class PhoneProductController extends BaseController {
 
     @Autowired
-    private MallGroupService mallGroupService;
-
+    private MallGroupService     mallGroupService;
     @Autowired
-    private BusUserService busUserService;
+    private BusUserService       busUserService;
+    @Autowired
+    private MallPageService      mallPageService;
+    @Autowired
+    private MallPaySetService    mallPaySetService;
+    @Autowired
+    private MallPifaApplyService mallPifaApplyService;
+    @Autowired
+    private MallProductService   mallProductService;
 
     /**
      * 查询子分类
@@ -77,5 +90,61 @@ public class PhoneProductController extends BaseController {
 	    CommonUtil.write( response, obj );
 	}
 
+    }
+
+    /**
+     * 查询商品集合
+     *
+     * @throws IOException
+     */
+    @RequestMapping( "79B4DE7C/getProductByIds" )
+    public void getProductByIds( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+	JSONObject obj = new JSONObject();
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+	    if ( CommonUtil.isNotEmpty( params.get( "proIds" ) ) ) {
+
+		String proIds = CommonUtil.toString( params.get( "proIds" ) );
+		int userid = 0;
+		if ( CommonUtil.isNotEmpty( params.get( "userid" ) ) ) {
+		    userid = CommonUtil.toInteger( params.get( "userid" ) );
+		}
+		double discount = mallProductService.getMemberDiscount( "1",member );//商品折扣
+
+		MallPaySet set = new MallPaySet();
+		set.setUserId( userid );
+		set = mallPaySetService.selectByUserId( set );
+		int state = mallPifaApplyService.getPifaApplay( member, set );
+		boolean isPifa = false;
+		if ( CommonUtil.isNotEmpty( set ) ) {
+		    if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {
+			if ( set.getIsPf().toString().equals( "1" ) ) {
+			    if ( CommonUtil.isNotEmpty( set.getIsPfCheck() ) ) {
+				if ( set.getIsPfCheck().toString().equals( "1" ) ) {
+				    if ( state == 1 ) {
+					isPifa = true;
+				    }
+				} else {
+				    isPifa = true;
+				}
+			    } else {
+				isPifa = true;
+			    }
+			}
+		    }
+		}
+
+		List< Map< String,Object > > proList = mallPageService.getProductListByIds( proIds, member, discount, set, isPifa );
+
+		obj.put( "data", proList );
+		obj.put( "code", 1 );
+	    }
+	} catch ( Exception e ) {
+	    obj.put( "code", -1 );
+	    logger.error( "查询商品列表异常:" + e );
+	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, obj );
+	}
     }
 }

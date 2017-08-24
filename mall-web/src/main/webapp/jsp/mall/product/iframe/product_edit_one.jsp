@@ -60,7 +60,7 @@
 
         <div class="go-other pad">
             <div class="mall-name">
-                <img src="/images/logo2.png"/>
+                <img src="/images/icon/logo2.png"/>
                 <p class="sName">多粉官方商店</p>
             </div>
             <div class="other-mall">
@@ -72,9 +72,9 @@
 
 <footer class="footer">
     <ul>
-        <li class="foot-item"><img src="/images/mall-person.png"/>
+        <li class="foot-item"><img src="/images/icon/mall-person.png"/>
             <p>我的</p></li>
-        <li class="foot-item"><img src="/images/mall-shop.png"/>
+        <li class="foot-item"><img src="/images/icon/mall-shop.png"/>
             <p>购物车</p></li>
         <li class="foot-item2"><a href="javascript:;" class="add-shop">加入购物车</a>
         </li>

@@ -72,7 +72,7 @@ public class MallGroupController extends BaseController {
 		    }
 		    params.put( "groupPId", groupPId );
 		    params.put( "isLabel", 0 );
-		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist );// 获取分组集合
+		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist ,userId);// 获取分组集合
 		    request.setAttribute( "page", page );
 		    if ( CommonUtil.isNotEmpty( page ) ) {
 			if ( page.getCurPage() > 1 ) {
@@ -370,7 +370,7 @@ public class MallGroupController extends BaseController {
 		    params.put( "groupPId", groupPId );
 		    params.put( "type", 1 );
 		    params.put( "isLabel", 1 );
-		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist );// 获取分组集合
+		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist ,userId);// 获取分组集合
 		    request.setAttribute( "page", page );
 		    if ( CommonUtil.isNotEmpty( page ) ) {
 			if ( page.getCurPage() > 1 ) {

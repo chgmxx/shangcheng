@@ -178,12 +178,30 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		productList = mallProductDAO.selectByUserId( param );// 查询商品总数
 	    }
 	}
+
 	String shopIds = "";
 	String proIds = "";
 	if ( productList != null && productList.size() > 0 ) {
+	    List< Integer > proIdsList = new ArrayList<>();
+	    List< Integer > proIdsInvList = new ArrayList<>();
+	    for ( Map< String,Object > map : productList ) {
+		int id = CommonUtil.toInteger( map.get( "id" ) );
+		proIdsList.add( id );
+		if ( CommonUtil.isNotEmpty( map.get( "is_specifica" ) ) ) {
+		    if ( map.get( "is_specifica" ).toString().equals( "1" ) ) {
+			proIdsInvList.add( id );
+		    }
+		}
+	    }
+	    //查看商品是否加入到团购
+	    List< Map< String,Object > > groupBuyList = mallGroupBuyDAO.selectCountByProList( proIdsList );
+	    List< Map< String,Object > > seckillList = mallSeckillDao.selectCountByProList( proIdsList );
+	    List< MallProductInventory > invenList = mallProductInventoryService.selectByIdListDefault( proIdsInvList );
+
 	    for ( Map< String,Object > map : productList ) {
 		int isGroup = 0;
 		int isSeckill = 0;
+		int id = CommonUtil.toInteger( map.get( "id" ) );
 		Map< String,Object > params = new HashMap<>();
 		params.put( "productId", map.get( "id" ) );
 		params.put( "status", "1" );
@@ -198,26 +216,20 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 			}
 		    }
 		}
-		//查看商品是否加入到团购
-		int buySize = mallGroupBuyDAO.selectCountByShopId( params );
-		if ( buySize > 0 ) {
-		    isGroup = 1;
-		}
-		map.put( "isGroup", isGroup );
-		//查看商品是否加入到秒杀
-		int seckillSize = mallSeckillDao.selectCountByShopId( params );
-		if ( seckillSize > 0 ) {
-		    isSeckill = 1;
-		}
-		map.put( "isSeckill", isSeckill );
-		if ( CommonUtil.isNotEmpty( map.get( "is_specifica" ) ) ) {
-		    if ( map.get( "is_specifica" ).toString().equals( "1" ) ) {
-			MallProductInventory inven = mallProductInventoryService.selectByIsDefault( CommonUtil.toInteger( map.get( "id" ) ) );
-			if ( CommonUtil.isNotEmpty( inven ) ) {
-			    map.put( "proPrice", inven.getInvPrice() );
+		if ( groupBuyList != null && groupBuyList.size() > 0 ) {
+		    for ( int i = 0; i < groupBuyList.size(); i++ ) {
+			Map< String,Object > groupMap = groupBuyList.get( i );
+			int product_id = CommonUtil.toInteger( groupMap.get( "product_id" ) );
+			if ( product_id == id ) {
+			    isGroup = 1;
+			    groupBuyList.remove( i );
+			    break;
 			}
 		    }
 		}
+		map.put( "isGroup", isAddActivityByProId( groupBuyList, id ) );
+		//查看商品是否加入到秒杀
+		map.put( "isSeckill", isAddActivityByProId( seckillList, id ) );
 
 		int viewNum = getViews( map.get( "id" ).toString() );
 		map.put( "viewsNum", viewNum );
@@ -289,6 +301,23 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	return page;
     }
 
+    private int isAddActivityByProId( List< Map< String,Object > > activityList, int proId ) {
+        System.out.println("activityList = " + activityList);
+	int isActivity = 0;
+	if ( activityList != null && activityList.size() > 0 ) {
+	    for ( int i = 0; i < activityList.size(); i++ ) {
+		Map< String,Object > groupMap = activityList.get( i );
+		int product_id = CommonUtil.toInteger( groupMap.get( "product_id" ) );
+		if ( product_id == proId ) {
+		    isActivity = 1;
+		    activityList.remove( i );
+		    break;
+		}
+	    }
+	}
+	return isActivity;
+    }
+
     private int getViews( String proId ) {
 	String key = "proViewNum";
 	int viewNum = 0;
@@ -320,7 +349,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    params.put( "ids", ids );
 	    num = mallProductDAO.batchUpdateProduct( params );
 	}
-	/*if ( num <= 0 ) {
+	if ( num <= 0 ) {
 	    flag = false;
 	} else if ( params.containsKey( "isDelete" ) ) {
 	    if ( ids != null && ids.length > 0 ) {
@@ -329,14 +358,13 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 			MallProduct product = mallProductDAO.selectById( CommonUtil.toInteger( id ) );
 			if ( CommonUtil.isNotEmpty( product.getFlowRecordId() ) ) {
 			    if ( product.getFlowRecordId() > 0 ) {
-				// todo 调用小屁孩的 新增冻结记录 接口  busFlowService.rollbackFenbiFlowRecord(
-								busFlowService.rollbackFenbiFlowRecord(product.getFlowRecordId());
+				fenBiFlowService.rollbackFenbiFlowRecord( product.getFlowRecordId() );
 			    }
 			}
 		    }
 		}
 	    }
-	}*/
+	}
 	return flag;
     }
 
@@ -681,7 +709,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 	    if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
 		if ( product.getFlowId() > 0 ) {
-		    // todo 调用小屁孩的流量接口  busFlowService.selectById
 		    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		    if ( CommonUtil.isNotEmpty( flow ) ) {
 			Map< String,Object > map = getFlowRecord( product, flow );
@@ -2151,6 +2178,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	flowRecord.setFlowType( flow.getType() );//流量类型
 	flowRecord.setFlowId( flow.getId() );//流量表ID
 	flowRecord.setId( product.getFlowRecordId() );
+	//todo 目前没有返回记录id
 	Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( flowRecord );
 	if ( CommonUtil.isNotEmpty( resultMap.get( "id" ) ) && CommonUtil.isNotEmpty( product.getId() ) ) {
 	    MallProduct pro = new MallProduct();

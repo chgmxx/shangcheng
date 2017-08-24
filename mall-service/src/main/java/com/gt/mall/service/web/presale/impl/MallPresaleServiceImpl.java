@@ -7,6 +7,7 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.wx.SendWxMsgTemplate;
+import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -20,6 +21,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -72,6 +74,8 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     private MallPaySetService           mallPaySetService;
     @Autowired
     private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private FenBiFlowService fenBiFlowService;
 
     /**
      * 通过店铺id来查询预售
@@ -423,9 +427,8 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     }
 
     private void saveRenbiFlowRecord( int userId ) {
-	//todo 调用小屁孩  粉币资产分配接口
 	//查询资产分配
-	/*FenbiFlowRecord fenbi = new FenbiFlowRecord();
+	FenbiFlowRecord fenbi = new FenbiFlowRecord();
 	fenbi.setBusUserId( userId );
 	fenbi.setRecType( 1 );
 	fenbi.setRecCreatetime( new Date() );
@@ -433,10 +436,11 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	fenbi.setRecFreezeType( 34 );
 	fenbi.setRecFkId( 0 );
 	fenbi.setRecCount( Double.valueOf( "0" ) );
+	//todo 调用小屁孩  判断用户是否已经资产分配过了
 	//判断用户是否已经资产分配过了
-	FenbiFlowRecord fenbis = fenbiMapper.getFenbi( fenbi.getBusUserId(), fenbi.getRecType(), fenbi.getRecFreezeType(), fenbi.getRecFkId() );
+	/*FenbiFlowRecord fenbis = fenbiMapper.getFenbi( fenbi.getBusUserId(), fenbi.getRecType(), fenbi.getRecFreezeType(), fenbi.getRecFkId() );
 	if ( CommonUtil.isEmpty( fenbis ) ) {
-	    fenbiMapper.insertSelective( fenbi );
+	    fenBiFlowService.saveFenbiFlowRecord( fenbi );
 	}*/
     }
 

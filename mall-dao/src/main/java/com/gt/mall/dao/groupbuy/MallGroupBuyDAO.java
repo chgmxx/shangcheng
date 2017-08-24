@@ -2,7 +2,6 @@ package com.gt.mall.dao.groupbuy;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
-import com.gt.mall.entity.product.MallGroup;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -113,4 +112,12 @@ public interface MallGroupBuyDAO extends BaseMapper<MallGroupBuy> {
      * @return 团购信息
      */
     Map<String, Object> selectGroupByProId(@Param("productId") String productId);
+
+    /**
+     * 统计团购
+     *
+     * @param productList 商品集合
+     * @return 数量
+     */
+    List<Map<String,Object>> selectCountByProList(@Param( "productList" ) List<Integer> productList);
 }

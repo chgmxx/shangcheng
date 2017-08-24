@@ -24,7 +24,7 @@ import java.util.Map;
 @Service
 public class WxShopServiceImpl implements WxShopService {
 
-    private static final String WS_SHOP_URL = "/8A5DA52E/shopapi/79B4DE7C/";
+    private static final String WS_SHOP_URL = "/8A5DA52E/shopapi/6F6D9AD2/79B4DE7C/";
 
     @Override
     public WsWxShopInfo getShopById( int wxShopId ) {

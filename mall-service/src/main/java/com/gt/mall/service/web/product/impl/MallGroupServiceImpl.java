@@ -47,7 +47,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
     private MallProductGroupDAO mallProductGroupDAO;//商品分组中间表dao
 
     @Override
-    public PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist ) {
+    public PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist ,int userId) {
 	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
 	param.put( "curPage", curPage );
 	int pageSize = 10;
@@ -75,7 +75,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 		for ( int i = 0; i < groupList.size(); i++ ) {
 		    Map< String,Object > map = groupList.get( i );
 		    int productNum = mallProductDAO.countProductByGroup( CommonUtil.toInteger( map.get( "shopId" ) ), CommonUtil.toInteger( map.get( "id" ) ),
-				    CommonUtil.toInteger( map.get( "userId" ) ) );
+				    userId );
 		    map.put( "COUNT", productNum );
 		}
 	    }

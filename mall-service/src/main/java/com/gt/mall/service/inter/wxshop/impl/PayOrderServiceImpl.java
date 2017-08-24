@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.wx.pay.WxPayOrder;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.WxHttpSignUtil;
+import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,13 +18,13 @@ import java.util.Map;
  */
 @Service
 public class PayOrderServiceImpl implements PayOrderService {
-    private static final String PAY_ORDER_URL = "/8A5DA52E/payorder/79B4DE7C/";
+    private static final String PAY_ORDER_URL = "/8A5DA52E/payorder/6F6D9AD2/79B4DE7C/";
 
     @Override
     public WxPayOrder selectWxOrdByOutTradeNo( String orderNo ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", orderNo );
-	String result = WxHttpSignUtil.SignHttpSelect( params, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPayOrder.class );
 	}

@@ -184,7 +184,9 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 			int nameId = CommonUtil.toInteger( specMap.get( "specNameId" ).toString() );
 			// 有相同的规格值id
 			if ( nameId == specId ) {
-			    List< Map > mapList = JSONArray.parseArray( specMap.get( "specValues" ).toString(), Map.class );
+			    System.out.println("values = " +  specMap.get( "specValues" ).toString());
+			    List<Map<String, Object>> mapList = (List<Map<String, Object>>) specMap
+					    .get("specValues");
 			    mapList.add( specValueMap );
 			    flag = false;
 			}

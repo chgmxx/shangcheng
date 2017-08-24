@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class SmsServiceImpl implements SmsService {
 
-    private static final String SMS_URL = "/8A5DA52E/smsapi/79B4DE7C/";
+    private static final String SMS_URL = "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/";
 
     @Override
     public boolean sendSmsOld( OldApiSms oldApiSms ) {

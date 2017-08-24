@@ -25,10 +25,13 @@ public class DictServiceImpl implements DictService {
     @Override
     public List< Map > getDict( String dictType ) {
 	Map< String,Object > params = new HashMap<>();
-	params.put( "dictType", dictType );
-	String data = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.do" );
+	params.put( "style", dictType );
+	String data = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
 	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONArray.parseArray( data, Map.class );
+	    JSONObject dataJson = JSONObject.parseObject( data );
+	    if(CommonUtil.isNotEmpty( dataJson.get( "dictJSON" ) )){
+		return JSONArray.parseArray( dataJson.get( "dictJSON" ).toString(), Map.class );
+	    }
 	}
 	return null;
     }
@@ -38,7 +41,7 @@ public class DictServiceImpl implements DictService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "dictType", dictType );
 	params.put( "key", key );
-	return HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictRuturnValue" );
+	return HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictRuturnValue", 1 );
     }
 
     @Override

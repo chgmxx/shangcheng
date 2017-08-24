@@ -134,6 +134,15 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
+    public List< MallProductInventory > selectByIdListDefault( List< Integer > productList ) {
+
+	Wrapper<MallProductInventory> wrapper = new EntityWrapper<>(  );
+	wrapper.where( "is_delete = 0 and is_default = 1" ).in( "product_id",productList);
+
+	return mallProductInventoryDAO.selectList( wrapper );
+    }
+
+    @Override
     public List< MallProductInventory > selectInvenByProductId( Integer productId ) {
 	Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
 	inventoryWrapper.where( "product_id =  {0} and is_delete = 0 ", productId );

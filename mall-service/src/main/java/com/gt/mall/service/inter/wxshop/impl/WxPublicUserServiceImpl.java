@@ -7,7 +7,7 @@ import com.gt.mall.bean.wx.QrcodeCreateFinal;
 import com.gt.mall.bean.wx.SendWxMsgTemplate;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.WxHttpSignUtil;
+import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -23,14 +23,14 @@ import java.util.Map;
 @Service
 public class WxPublicUserServiceImpl implements WxPublicUserService {
 
-    private static final String WS_SHOP_URL = "/8A5DA52E/wxpublicapi/79B4DE7C/";
+    private static final String WS_SHOP_URL = "/8A5DA52E/wxpublicapi/6F6D9AD2/79B4DE7C/";
 
     @Override
     public WxPublicUsers selectByUserId( int busUserId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", busUserId );
 
-	String result = WxHttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectByUserId", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectByUserId", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
@@ -42,7 +42,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", id );
 
-	String result = WxHttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectById", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectById", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
@@ -54,7 +54,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", memberId );
 
-	String result = WxHttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectByMemberId", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectByMemberId", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
@@ -66,7 +66,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", createFinal );
 
-	String result = WxHttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "qrcodeCreateFinal", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "qrcodeCreateFinal", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return result;
 	}
@@ -77,7 +77,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
     public boolean sendWxMsgTemplate( SendWxMsgTemplate template ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", template );
-	Map< String,Object > resultMap = WxHttpSignUtil.SignHttpInsertOrUpdate( params, WS_SHOP_URL + "sendWxMsgTemplate", 1 );
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, WS_SHOP_URL + "sendWxMsgTemplate", 1 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
@@ -86,7 +86,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", busUserId );
 
-	String result = WxHttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectTempObjByBusId", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "selectTempObjByBusId", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}

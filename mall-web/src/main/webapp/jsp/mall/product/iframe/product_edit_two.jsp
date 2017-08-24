@@ -44,11 +44,11 @@
 	    <footer class="footer">
 			<ul>
 				<li class="foot-item">
-					<img src="/images/mall-person.png"/>
+					<img src="/images/icon/mall-person.png"/>
 					<p>我的</p>
 				</li>
 				<li class="foot-item">
-					<img src="/images/mall-shop.png"/>
+					<img src="/images/icon/mall-shop.png"/>
 					<p>购物车</p>
 				</li>
 				<li class="foot-item2">

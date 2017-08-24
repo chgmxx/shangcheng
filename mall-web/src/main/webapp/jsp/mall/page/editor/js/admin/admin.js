@@ -3,7 +3,6 @@
  */
 
 angular.module('admin',[]).controller('adminController',["$scope","$timeout","$compile",function($scope,$timeout,$compile){
-	
     $scope.dataJson = dataJson;                 //样式数据
     $scope.picJson  = picJson;                  //图片编号数据
     
@@ -45,7 +44,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $scope.dataedit = param1;
         $timeout(function(){
         	$scope.edit = param1.type;
-        })
+        });
         $(".actions-active").removeClass("actions-active");
         $($event.target).addClass("actions-active");
     };
@@ -59,12 +58,12 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     var addpublic = function(param){
     	$scope.picJson.addAt(param,{
             "type":$scope.edit,
-            "imgID":[],
+            "imgID":[]
         });
         $timeout(function(){
             $(".module").eq(param).find(".actions").click();
         },100)
-    }
+    };
     
     //商品
     $scope.addcommodity = function(param){
@@ -77,7 +76,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "btnpage": 0,
             "name": false,
             "intro":false,
-            "price": true,
+            "price": true
         });
         $scope.edit = 1;
         addpublic(param);
@@ -108,11 +107,11 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     	if(isNaN(param))param = $scope.dataJson.length;
     	$scope.dataJson.addAt(param,{
             "type":4,
-            "height":10,
+            "height":10
         });
     	$scope.edit = 4;
     	addpublic(param);
-    }
+    };
     
     //搜索
     $scope.addsearch = function(param){
@@ -133,12 +132,12 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
                 "border":1,
                 "borderColor":"#000",
                 "color":"#000",
-                "bgColor":"#fff",
-            },
+                "bgColor":"#fff"
+            }
         });
         $scope.edit = 5;
         addpublic(param);
-    }
+    };
     
     //预售
     $scope.addreservation = function(param){
@@ -148,7 +147,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         });
     	$scope.edit = 6;
         addpublic(param);
-    }
+    };
     
     
     /************************************/
@@ -157,7 +156,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     	var str ='<div class="app-add-field"><h4>添加内容</h4><ul><li ng-click="addcommodity('+param+')"><a>商品</a></li><li ng-click="addswiper('+param+')"><a>轮播</a></li><li ng-click="addclassify('+param+')"><a>分类</a></li><li ng-click="addinterval('+param+')"><a>间隔</a></li><li ng-click="addsearch('+param+')"><a>搜索</a></li><li ng-click="addreservation('+param+')"><a>预售</a></li></ul></div>';
     	$(".app-sidebar-inner>div").html($compile(str)($scope));
     	$event.stopPropagation();
-    }
+    };
 
     /***************************************************************************************/
 
@@ -181,7 +180,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     $scope.addswiperpic_last = function(){
         $scope.dataedit.pic.push({
         	"src":imgList,
-            "title":"",
+            "title":""
         });
         $scope.picJson[$scope.pageEdit].imgID.push({})
     };
@@ -198,14 +197,14 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $timeout(function(){
             $(".module:first").click();
         },100)
-    }
+    };
     
     /**
      * 对比数据
      */
     $scope.complete=function(param){
     	if(parseInt(param/3) == param/3)return true;
-    }
+    };
     
     /*****************************************************************************************/
     
@@ -216,14 +215,39 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     //保存分类
     $scope.saveclassify = function(){
     	$scope.dataedit.dom = $(".classifyDirective table").html().replace(/\"/g, "\'");
-    }
+    };
+    
+    if(imgIds.length > 1){
+		imgIds = imgIds.substr(1,imgIds.length-2);
+		var userid = $("input.userid").val();
+		$.ajax({
+			type : "post",
+			url : "/phoneProduct/79B4DE7C/getProductByIds.do",
+			data : {
+				proIds : imgIds,
+				userid : userid
+			},
+			async : true,
+			dataType : "json",
+			success : function(data) {
+				console.log($scope.picJson)
+				if(data.code == -1){
+					return;
+				}
+				picJsonEach(data.data);
+				$timeout(function(){
+					$scope.picJson  = picJson; 
+				})
+			}
+		});
+	}
 
 }])
 .directive('admindraggable', ["$timeout",function ($timeout) {
     return {
         restrict:"E",
         templateUrl: "js/admin/admin.html",
-        link: function(){
+        link: function(scope){
         	$timeout(function(){
         		$(".app-preview-box>.module:eq(0) .actions").click();
         	},100)

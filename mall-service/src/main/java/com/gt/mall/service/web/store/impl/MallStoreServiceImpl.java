@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.store.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -23,11 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -223,7 +222,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     @Override
     public List< Map< String,Object > > selectStoreByUserId( int userId ) {
 	//SELECT id,sto_name AS name FROM t_mall_store WHERE sto_user_id=" + userid + " AND is_delete=0
-	Wrapper wrapper = new EntityWrapper();
+	Wrapper< MallStore > wrapper = new EntityWrapper< MallStore >();
 	wrapper.where( "sto_user_id={0} AND is_delete=0", userId );
 	wrapper.setSqlSelect( "id,sto_name AS name" );
 	return mallStoreDao.selectMaps( wrapper );
@@ -390,6 +389,15 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	//todo 调用陈丹接口  根据商家id  查询门店信息
 	List< Integer > wxShopIds = new ArrayList<>();
 
+	List< Map< String,Object > > storeList = new ArrayList<>();
+	//判断session里面有没有门店集合
+	/*List< Map > shopList = getShopListBySession( user.getId(), null );
+	if ( shopList != null && shopList.size() > 0 ) {
+	    for ( Map shopMap : shopList ) {
+		storeList.add( shopMap );
+	    }
+	    return storeList;
+	}*/
 	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
 	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
@@ -399,7 +407,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
 	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id" );
 
-	    List< Map< String,Object > > storeList = mallStoreDao.selectMaps( wrapper );
+	    storeList = mallStoreDao.selectMaps( wrapper );
 	    if ( storeList != null && storeList.size() > 0 ) {
 		for ( Map< String,Object > storeMap : storeList ) {
 		    int wxShopId = CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) );
@@ -414,6 +422,28 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    return storeList;
 	}
 	return null;
+    }
+
+    private void setShopListBySession( int userId, List< Map > shopList, HttpServletRequest request ) {
+	HttpSession session = request.getSession();
+	if ( CommonUtil.isNotEmpty( session ) ) {
+	    String sessionKey = Constants.SESSION_KEY + "bus_shop_list_" + userId;
+	    session.setAttribute( sessionKey, JSONArray.toJSONString( shopList ) );
+	}
+
+    }
+
+    private List< Map > getShopListBySession( int userId, HttpServletRequest request ) {
+	HttpSession session = request.getSession();
+	if ( CommonUtil.isEmpty( session ) ) {
+	    return null;
+	}
+	String sessionKey = Constants.SESSION_KEY + "bus_shop_list_" + userId;
+	Object obj = session.getAttribute( sessionKey );
+	if ( CommonUtil.isEmpty( obj ) ) {
+	    return null;
+	}
+	return JSONArray.parseArray( obj.toString(), Map.class );
     }
 
     @Override

@@ -180,7 +180,7 @@
     <!-- 查询是否存在未开始和进行中的商品 -->
     <select id="selectSeckillByProId" parameterType="Map" resultMap="BaseResultMap">
         SELECT
-        <include refid="Base_Column_List"></include>
+        <include refid="page_Column_List"></include>
         from t_mall_seckill g
         left join t_mall_seckill_join j on g.id=j.seckill_id
         WHERE g.is_delete = 0 and g.is_use =1
@@ -291,6 +291,21 @@
         <if test="shopId != null and shopId != ''">
             and gb.shop_id=#{shopId,jdbcType=INTEGER}
         </if>
+    </select>
+
+    <!-- 获取店铺下所有正在参加秒杀的商品 -->
+    <select id="selectCountByProList" parameterType="java.util.List" resultType="Map">
+        SELECT COUNT(gb.`product_id`) as count,gb.`product_id`
+        from t_mall_seckill gb
+        WHERE gb.is_delete=0 and gb.is_use=1
+        and ((gb.s_start_time &lt;= now() and now() &lt; gb.s_end_time ) or (gb.s_start_time > now() and gb.s_end_time > now()))
+        <if test="productList != null ">
+            and gb.product_id in
+            <foreach collection="productList" index="index" item="item" open="(" separator="or" close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        GROUP BY gb.`product_id`
     </select>
 
 </mapper>

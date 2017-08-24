@@ -40,6 +40,7 @@ import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionService;
@@ -173,23 +174,48 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private WxPublicUserService         wxPublicUserService;
     @Autowired
     private BusUserService              busUserService;
+    @Autowired
+    private DictService                 dictService;
 
     /**
      * 分页查询
      */
     @Override
     public PageUtil findByPage( Map< String,Object > params, BusUser user ) {
+	List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( user );// 根据商家id查询门店id
+	params.put( "storeList", storeList );
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
-	params.put( "pid", user.getPid() );
-	params.put( "userid", user.getId() );
 	int rowCount = mallPageDAO.count( params );
 	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "mallPage/index.do" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	params.put( "maxResult", pageSize );
-	//todo 调用陈丹的接口 根据商家id查询门店id
+	List< Map > typeList = dictService.getDict( "1073" );//查询页面的所属分类
+
 	//查询店铺id
 	List< Map< String,Object > > list = mallPageDAO.findByPage( params );
+	if ( list != null && list.size() > 0 ) {
+	    for ( Map< String,Object > pageMap : list ) {
+		int pag_sto_id = CommonUtil.toInteger( pageMap.get( "pag_sto_id" ) );
+		int pag_type_id = CommonUtil.toInteger( pageMap.get( "pag_type_id" ) );
+		//循环门店
+		for ( Map< String,Object > storeMap : storeList ) {
+		    int shopId = CommonUtil.toInteger( storeMap.get( "id" ) );
+		    if ( shopId == pag_sto_id ) {
+			pageMap.put( "business_name", storeMap.get( "sto_name" ) );
+			break;
+		    }
+		}
+		//循环页面分类
+		for ( Map map : typeList ) {
+		    int typeId = CommonUtil.toInteger( map.get( "item_key" ) );
+		    if ( pag_type_id == typeId ) {
+			pageMap.put( "item_value", map.get( "item_value" ) );
+			break;
+		    }
+		}
+	    }
+	}
 	page.setSubList( list );
 	return page;
     }
@@ -340,7 +366,53 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > querySelct( Integer id ) {
-	return mallProductDAO.selectProductMapById( id );
+	Map< String,Object > productMap = mallProductDAO.selectMapById( id );
+	if ( CommonUtil.isEmpty( productMap ) ) {
+	    return null;
+	}
+
+	//查询商品的订单详情
+	MallProductDetail detail = mallProductDetailService.selectByProductId( id );
+	if ( CommonUtil.isNotEmpty( detail ) ) {
+	    productMap.put( "product_detail", detail.getProductDetail() );
+	    productMap.put( "product_message", detail.getProductMessage() );
+	}
+
+	//查询商品图片
+	Map< String,Object > params = new HashMap<>();
+	params.put( "assId", id );
+	params.put( "isMainImages", 1 );
+	params.put( "assType", 1 );
+	List< Map< String,Object > > imageList = mallImageAssociativeDAO.selectByAssId( params );
+	if ( imageList != null && imageList.size() > 0 ) {
+	    productMap.put( "image_url", imageList.get( 0 ).get( "image_url" ) );
+	}
+	if ( CommonUtil.isEmpty( productMap.get( "is_specifica" ) ) ) {
+	    return productMap;
+	}
+	if ( !productMap.get( "is_specifica" ).toString().equals( "1" ) ) {
+	    return productMap;
+	}
+	//查询商品库存
+	MallProductInventory inven = mallProductInventoryService.selectByIsDefault( id );
+	if ( inven != null ) {
+	    productMap.put( "inv_price", inven.getInvPrice() );
+	    productMap.put( "inv_sale_num", inven.getInvSaleNum() );
+	    productMap.put( "specifica_img_id", inven.getSpecificaImgId() );
+	    productMap.put( "inv_code", inven.getInvCode() );
+
+	    if ( CommonUtil.isEmpty( inven.getSpecificaImgId() ) ) {
+		return productMap;
+	    }
+	    //查询商品规格图片
+	    if ( inven.getSpecificaImgId() > 0 ) {
+		MallProductSpecifica specifica = mallProductSpecificaDAO.selectById( inven.getSpecificaImgId() );
+		if ( CommonUtil.isNotEmpty( specifica ) ) {
+		    productMap.put( "specifica_img_url", specifica.getSpecificaImgUrl() );
+		}
+	    }
+	}
+	return productMap;
     }
 
     @Override
@@ -2072,18 +2144,13 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	return map;
     }
 
-    @Override
-    public Map< String,Object > getProductHome( Map< String,Object > map3, Map< String,Object > map2, Member member, String http, double discount, MallPaySet set, int state ) {
-	boolean isPifa = mallPifaApplyService.isPifaPublic( member, set );
-	if ( CommonUtil.isNotEmpty( set ) ) {
-	    if ( CommonUtil.isNotEmpty( set.getPfRemark() ) ) {
-		map2.put( "pfRemark", set.getPfRemark() );
-	    }
-	}
-	if ( CommonUtil.isNotEmpty( map2.get( "userId" ) ) ) {
+    private Map< String,Object > getProductHome( Map< String,Object > map3, Member member, String http, double discount, MallPaySet set, boolean isPifa ) {
+	Map< String,Object > map2 = new HashMap< String,Object >();
+	map2.put( "id", map3.get( "id" ) );
+	if ( CommonUtil.isNotEmpty( map3.get( "userId" ) ) ) {
 	    if ( CommonUtil.isNotEmpty( map3.get( "pro_type_id" ) ) && CommonUtil.isNotEmpty( map3.get( "member_type" ) ) ) {
 		if ( CommonUtil.toInteger( map3.get( "pro_type_id" ) ) == 2 && CommonUtil.toInteger( map3.get( "pro_type_id" ) ) > 0 ) {
-		    map2.put( "url", "/phoneMemberController/" + map2.get( "userId" ) + "/79B4DE7C/findMember_1.do" );
+		    map2.put( "url", "/phoneMemberController/" + map3.get( "userId" ) + "/79B4DE7C/findMember_1.do" );
 		}
 	    }
 	}
@@ -2091,7 +2158,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	String is_specifica = map3.get( "is_specifica" ).toString();//有规格的话，取自规格里面默认的价位和图片，没有的话获取本身的图片
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	String isMemberCount = map3.get( "is_member_discount" ).toString();
-	if ( is_specifica.equals( "1" ) && CommonUtil.isNotEmpty( map3.get( "inv_price" ) ) ) {
+	if ( ( is_specifica.equals( "1" ) || is_specifica == "1" ) && CommonUtil.isNotEmpty( map3.get( "inv_price" ) ) ) {
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		double price = Double.parseDouble( map3.get( "inv_price" ).toString() );
 		double newPrice = CommonUtil.toDouble( df.format( price * discount ) );
@@ -2111,7 +2178,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    if ( CommonUtil.isNotEmpty( map3.get( "specifica_img_id" ) ) ) {
 		specifica_img_id = map3.get( "specifica_img_id" ).toString();
 	    }
-	    if ( specifica_img_id.equals( "0" ) ) {
+	    if ( specifica_img_id == "0" || specifica_img_id.equals( "0" ) ) {
 		map2.put( "src", http + map3.get( "image_url" ) );
 	    } else {
 		map2.put( "src", http + map3.get( "specifica_img_url" ) );
@@ -2147,22 +2214,30 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	String is_publish = map3.get( "is_publish" ).toString();
 	map2.put( "is_delete", is_delete );
 	map2.put( "is_publish", is_publish );
-	Map< String,Object > params = new HashMap<>();
+	Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "pfType", 1 );
 	params.put( "product_id", map3.get( "id" ) );
 	//查询商品是否已经加入批发
-	List< MallPifa > pifaList = mallPifaDAO.selectStartPiFaByProductId( params );
-	boolean isPfPrice = false;
-	if ( pifaList != null && pifaList.size() > 0 && isPifa ) {
-	    MallPifa pifa = pifaList.get( 0 );
-	    if ( CommonUtil.isNotEmpty( pifa.getPfPrice() ) ) {
-		isPfPrice = true;
-		map2.put( "pfPrice", df.format( pifa.getPfPrice() ) );
+	if ( isPifa ) {
+	    if ( CommonUtil.isNotEmpty( set ) ) {
+		map2.put( "pfRemark", set.getPfRemark() );
+	    }
+	    if ( map3.containsKey( "pfPrice" ) ) {
+		map2.put( "pfPrice", map3.get( "pfPrice" ) );
 	    }
 	}
-	if ( !isPfPrice ) {
-	    map2.remove( "pfPrice" );
-	}
+		/*List<MallPifa> pifaList = mallPifaMapper.selectStartPiFaByProductId(params);
+		boolean isPfPrice = false;
+		if(pifaList != null && pifaList.size() > 0 && isPifa){
+			MallPifa pifa = pifaList.get(0);
+			if(CommonUtil.isNotEmpty(pifa.getPfPrice())){
+				isPfPrice = true;
+				map2.put("pfPrice", df.format(pifa.getPfPrice()));
+			}
+		}
+		if(!isPfPrice){
+			map2.remove("pfPrice");
+		}*/
 	if ( CommonUtil.isNotEmpty( map3.get( "pro_label" ) ) ) {
 	    map2.put( "pro_label", map3.get( "pro_label" ) );
 	}
@@ -2358,6 +2433,106 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    wrapper.andNew( "pro_type={0}", obj.getProType() );
 	}
 	return mallShopCartDAO.selectMaps( wrapper );
+    }
+
+    @Override
+    public List< Map< String,Object > > getProductListByIds( String ids, Member member, double discount, MallPaySet set, boolean isPifa ) {
+	if ( CommonUtil.isEmpty( ids ) ) {
+	    return null;
+	}
+	String[] idStrs = ids.split( "," );
+	Wrapper wrapper = new EntityWrapper();
+	wrapper.setSqlSelect( "id,is_delete,is_publish,pro_price ,pro_type_id,member_type,pro_name,is_specifica,is_member_discount,pro_label" );
+	wrapper.in( "id", idStrs );
+	List< Map< String,Object > > productList = mallProductDAO.selectMaps( wrapper );
+	System.out.println( "productList:" + productList );
+	if ( productList == null || productList.size() == 0 ) {
+	    return null;
+	}
+	List< Integer > specProIds = new ArrayList<>();
+	for ( Map< String,Object > map : productList ) {
+	    if ( CommonUtil.toString( map.get( "is_specifica" ) ).equals( "1" ) ) {
+		specProIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+	    }
+	}
+
+	//查询商品图片
+	Map< String,Object > params = new HashMap< String,Object >();
+	params.put( "assIds", ids.split( "," ) );
+	params.put( "isMainImages", 1 );
+	params.put( "assType", 1 );
+	List< Map< String,Object > > imageList = mallImageAssociativeDAO.selectByAssIds( params );
+	System.out.println( "imageList:" + imageList );
+	if ( imageList != null && imageList.size() >= 0 ) {
+	    productList = getProductParams( productList, imageList, -1 );
+	}
+	if ( CommonUtil.isNotEmpty( specProIds ) ) {
+	    //查询商品库存
+	    List< MallProductInventory > invList = mallProductInventoryService.selectByIdListDefault( specProIds );
+	    System.out.println( "invList:" + invList );
+	    if ( invList != null && invList.size() > 0 ) {
+		List< Map< String,Object > > newProList = new ArrayList<>();
+
+		for ( Map< String,Object > productMap : productList ) {
+		    int productId = CommonUtil.toInteger( productMap.get( "id" ) );
+		    for ( int i = 0; i < invList.size(); i++ ) {
+			MallProductInventory inventory = invList.get( i );
+			int product_id = 0;
+			if ( CommonUtil.isNotEmpty( inventory.getProductId() ) ) {
+			    product_id = CommonUtil.toInteger( inventory.getProductId() );
+			}
+			if ( product_id == productId ) {
+			    productMap.put( "inv_price", inventory.getInvPrice() );
+			    productMap.put( "inv_num", inventory.getInvNum() );
+			    productMap.put( "inv_sale_num", inventory.getInvSaleNum() );
+			    productMap.put( "specifica_img_id", inventory.getSpecificaImgId() );
+			    //productMap.putAll( inventory );
+			    invList.remove( i );
+			    break;
+			}
+		    }
+		    newProList.add( productMap );
+		}
+		if ( newProList != null && newProList.size() > 0 ) {
+		    productList = newProList;
+		}
+	    }
+	}
+	List< Map< String,Object > > newProList = new ArrayList<>();
+
+	for ( Map< String,Object > map : productList ) {
+	    map = getProductHome( map, member, PropertiesUtil.getResourceUrl(), discount, set, isPifa );
+	    newProList.add( map );
+	}
+	return newProList;
+    }
+
+    private List< Map< String,Object > > getProductParams( List< Map< String,Object > > productList, List< Map< String,Object > > imageList, int type ) {
+	List< Map< String,Object > > newProList = new ArrayList<>();
+
+	for ( Map< String,Object > productMap : productList ) {
+	    int productId = CommonUtil.toInteger( productMap.get( "id" ) );
+	    for ( int i = 0; i < imageList.size(); i++ ) {
+		Map< String,Object > imageMap = imageList.get( i );
+		int product_id = 0;
+		if ( CommonUtil.isNotEmpty( imageMap.get( "product_id" ) ) ) {
+		    product_id = CommonUtil.toInteger( imageMap.get( "product_id" ) );
+		}
+		if ( CommonUtil.isNotEmpty( imageMap.get( "ass_id" ) ) ) {
+		    product_id = CommonUtil.toInteger( imageMap.get( "ass_id" ) );
+		}
+		if ( product_id == productId ) {
+		    productMap.putAll( imageMap );
+		    imageList.remove( i );
+		    break;
+		}
+	    }
+	    newProList.add( productMap );
+	}
+	if ( newProList != null && newProList.size() > 0 ) {
+	    productList = newProList;
+	}
+	return productList;
     }
 
 }

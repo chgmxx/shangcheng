@@ -16,7 +16,7 @@ public interface MallProductDetailService extends BaseService< MallProductDetail
     /**
      * 根据商品id查询商品详情信息
      * @param productId 商品id
-     * @return
+     * @return 商品详情信息
      */
     MallProductDetail selectByProductId(int productId);
 }

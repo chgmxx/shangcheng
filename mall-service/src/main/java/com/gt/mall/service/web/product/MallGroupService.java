@@ -28,7 +28,7 @@ public interface MallGroupService extends BaseService< MallGroup > {
      *
      * @return
      */
-    PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist );
+    PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist, int userId );
 
     /**
      * 编辑商品分组
@@ -62,25 +62,31 @@ public interface MallGroupService extends BaseService< MallGroup > {
 
     /**
      * 通过shopId 查询商品分组信息
+     *
      * @param shopId 店铺id
+     *
      * @return 店铺信息
      */
-    List< MallGroup > selectGroupByShopId( Integer shopId ,Integer groupPId);
+    List< MallGroup > selectGroupByShopId( Integer shopId, Integer groupPId );
 
     /**
      * 根据店铺id查询父类的分组
+     *
      * @param params shopId  店铺id
-     * @return  父类分组信息
+     *
+     * @return 父类分组信息
      */
-    List<MallGroup> selectPGroupByShopId(Map<String, Object> params);
+    List< MallGroup > selectPGroupByShopId( Map< String,Object > params );
 
     /**
      * 通过父类分组查询子类列表
+     *
      * @param param shopId 店铺id
      * @param param group  分组id
+     *
      * @return
      */
-    List<Map<String, Object>> selectGroupByParent(Map<String, Object> param);
+    List< Map< String,Object > > selectGroupByParent( Map< String,Object > param );
 
     /**
      * 推荐或删除推荐分组
@@ -88,34 +94,41 @@ public interface MallGroupService extends BaseService< MallGroup > {
      * @param labelList 推荐分组信息
      * @param userId    商家id
      */
-    boolean saveOrUpdateGroupLabel(List<MallSearchLabel > labelList, int userId);
+    boolean saveOrUpdateGroupLabel( List< MallSearchLabel > labelList, int userId );
 
     /**
      * 通过父类id查询子类的分组
+     *
      * @param params
+     *
      * @return
      */
-    List<MallGroup> selectChildGroupByPId(Map<String, Object> params);
+    List< MallGroup > selectChildGroupByPId( Map< String,Object > params );
 
     /**
      * 清空搜索历史记录
+     *
      * @param params memberId 粉丝id
+     *
      * @return
      */
-    boolean clearSearchKeyWord(Map<String, Object> params);
+    boolean clearSearchKeyWord( Map< String,Object > params );
 
     /**
      * 复制商品分组
+     *
      * @param params  分组信息
      * @param product 商品信息
      */
-    void copyProductGroupByProduct(Map<String, Object> params,MallProduct product);
+    void copyProductGroupByProduct( Map< String,Object > params, MallProduct product );
 
     /**
      * 通过搜索名称模糊查询分组信息
+     *
      * @param searchName 搜索名称
+     *
      * @return 分组信息
      */
-    Map<String,Object> selectGroupBySearchName(String searchName);
+    Map< String,Object > selectGroupBySearchName( String searchName );
 
 }

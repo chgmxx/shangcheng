@@ -577,6 +577,38 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         dataJson.unshift({type: 7, radio: true})
         picJson.unshift({type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
     }
+
+
+    var imgIdList = [];
+    var imgIds = ",";
+    picJson.forEach(function(e){
+        if(e.type==1){
+            e.imgID.forEach(function(e){
+                if(imgIds.indexOf(","+e.id+",")<0){
+                    imgIds += e.id+",";
+                }
+            })
+        }
+    })
+    function picJsonEach(data){
+        picJson.forEach(function(e){
+            if(e.type==1){
+                e.imgID.forEach(function(e){
+                    data.forEach(function(data){
+                        if(e.id == data.id){
+                            e.price = data.price;
+                            e.src = data.src;
+                            e.title = data.title;
+                            if(data.url != null && data.url != ""){
+                                e.url = data.url;
+                            }
+                        }
+                    })
+                })
+            }
+        })
+    }
+
 </script>
 </body>
 </html>

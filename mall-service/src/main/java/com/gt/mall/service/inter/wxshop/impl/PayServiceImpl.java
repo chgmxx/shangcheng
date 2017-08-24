@@ -7,7 +7,7 @@ import com.gt.mall.bean.wx.pay.SubQrPayParams;
 import com.gt.mall.bean.wx.pay.WxmemberPayRefund;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.WxHttpSignUtil;
+import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,27 +22,27 @@ import java.util.Map;
 @Service
 public class PayServiceImpl implements PayService {
 
-    private static final String PAY_URL = "/8A5DA52E/payApi/79B4DE7C/";
+    private static final String PAY_URL = "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/";
 
     @Override
     public Map< String,Object > payapi( SubQrPayParams payParams ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", payParams );
-	return WxHttpSignUtil.SignHttpInsertOrUpdate( params, PAY_URL + "payapi.do", 1 );
+	return HttpSignUtil.SignHttpInsertOrUpdate( params, PAY_URL + "payapi.do", 1 );
     }
 
     @Override
     public Map< String,Object > wxmemberPayRefund( WxmemberPayRefund refund ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", refund );
-	return WxHttpSignUtil.SignHttpInsertOrUpdate( params, PAY_URL + "wxmemberPayRefund.do", 1 );
+	return HttpSignUtil.SignHttpInsertOrUpdate( params, PAY_URL + "wxmemberPayRefund.do", 1 );
     }
 
     @Override
     public EnterprisePaymentResult enterprisePayment( ApiEnterprisePayment payment ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", payment );
-	Map resultMap = WxHttpSignUtil.SignHttpInsertOrUpdate( params, PAY_URL + "wxmemberPayRefund.do", 1 );
+	Map resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, PAY_URL + "wxmemberPayRefund.do", 1 );
 	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
 	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
 	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), EnterprisePaymentResult.class );

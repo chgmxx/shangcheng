@@ -300,7 +300,7 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	params.put( "shopIds", shopIds );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberCardByMcId" );
+	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findCardAndShopIdsByMembeId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
 	}

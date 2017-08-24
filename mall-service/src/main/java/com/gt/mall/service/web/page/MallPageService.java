@@ -372,10 +372,6 @@ public interface MallPageService extends BaseService< MallPage > {
      */
     Map< String,Object > getProductPresale( Map< String,Object > map, Member member );
 
-    /**
-     * 首页查询商品信息
-     */
-    Map< String,Object > getProductHome( Map< String,Object > map3, Map< String,Object > map2, Member member, String http, double discount, MallPaySet set, int state );
 
     /**
      * 通过卡券包id查询卡券信息
@@ -411,5 +407,10 @@ public interface MallPageService extends BaseService< MallPage > {
      * 得到地区名称
      */
     public Map< String,Object > queryAreaById( Integer id );
+
+    /**
+     * 根据商品id获取商品部分信息
+     */
+    public List<Map<String, Object>> getProductListByIds(String ids,Member member,double discount,MallPaySet set ,boolean isPifa);
 
 }

@@ -9,7 +9,6 @@ import com.gt.mall.service.inter.wxshop.WxAppletService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.WxHttpSignUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -71,8 +70,8 @@ public class BaseControllerTest extends BasicTest {
 	sms.setModel( 5 );
 	boolean flag = smsService.sendSmsOld( sms );
 
-	String result = WxHttpSignUtil.SignHttpSelect( sms, "/8A5DA52E/smsapi/79B4DE7C/sendSmsOld.do", 1 );
-	System.out.println( "result = " + result );
+	/*String result = HttpSignUtil.SignHttpSelect( sms, "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do", 1 );
+	System.out.println( "result = " + result );*/
 
 	/*WxPublicUsers user = wxPublicUserService.selectByUserId( 42 );
 
@@ -115,6 +114,9 @@ public class BaseControllerTest extends BasicTest {
 	List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( user );
 
 	System.out.println( "storeList = " + JSONObject.toJSONString( storeList ) );*/
+
+
+	/*WsWxShopInfo shopInfo = wxShopService.getShopById( 17 );*/
 
     }
 }

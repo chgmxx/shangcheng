@@ -5,7 +5,7 @@ import com.gt.mall.bean.wx.applet.MemberAppletByMemIdAndStyle;
 import com.gt.mall.bean.wx.applet.MemberAppletOpenid;
 import com.gt.mall.service.inter.wxshop.WxAppletService;
 import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.WxHttpSignUtil;
+import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,13 +20,13 @@ import java.util.Map;
 @Service
 public class WxAppletServiceImpl implements WxAppletService {
 
-    private static final String APPLET_URL = "/8A5DA52E/memapi/79B4DE7C/";
+    private static final String APPLET_URL = "/8A5DA52E/memapi/6F6D9AD2/79B4DE7C/";
 
     @Override
     public MemberAppletOpenid memberAppletByMemIdAndStyle( MemberAppletByMemIdAndStyle applet ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", applet );
-	String result = WxHttpSignUtil.SignHttpSelect( params, APPLET_URL + "memberAppletByMemIdAndStyle.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( params, APPLET_URL + "memberAppletByMemIdAndStyle.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAppletOpenid.class );
 	}

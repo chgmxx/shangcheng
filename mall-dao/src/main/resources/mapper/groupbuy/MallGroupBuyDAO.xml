@@ -356,4 +356,19 @@
             and gb.shop_id=#{shopId,jdbcType=INTEGER}
         </if>
     </select>
+
+    <!-- 获取店铺下所有正在参加团购的商品 -->
+    <select id="selectCountByProList" parameterType="java.util.List" resultType="Map">
+        SELECT COUNT(gb.`product_id`) as count,gb.`product_id`
+        from t_mall_group_buy gb
+        WHERE gb.is_delete=0 and gb.is_use=1
+        AND ((gb.g_start_time &lt;= NOW() AND NOW() &lt; gb.g_end_time) OR (gb.g_start_time > NOW() AND gb.g_end_time > NOW()))
+        <if test="productList != null ">
+            and gb.product_id in
+            <foreach collection="productList" index="index" item="item" open="(" separator="or" close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        GROUP BY gb.`product_id`
+    </select>
 </mapper>

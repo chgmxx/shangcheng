@@ -95,7 +95,7 @@ public class MallPageController extends AuthorizeOrLoginController {
     @Autowired
     private FenBiFlowService            fenBiFlowService;
     @Autowired
-    private BusUserService busUserService;
+    private BusUserService              busUserService;
 
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -121,7 +121,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 	    }
 	    request.setAttribute( "urls", request.getHeader( "Referer" ) );
-	    request.setAttribute("videourl", busUserService.getVoiceUrl("78"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "78" ) );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
@@ -271,23 +271,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 			    Object selecttype = map2.get( "selecttype" );
 			    Boolean res = true;
 			    if ( selecttype != null ) {
-				if ( selecttype == "1" || selecttype.equals( "1" ) ) {
-				    Object mapid = map2.get( "id" );
-				    if ( mapid != null && !mapid.equals( null ) && !mapid.equals( "" ) ) {
-					Integer mapid1 = Integer.valueOf( mapid.toString() );
-					Map< String,Object > map3 = mallPageService.querySelct( mapid1 );//获取商品所有信息
-					if ( CommonUtil.isNotEmpty( map3 ) ) {
-					    map2 = mallPageService.getProductHome( map3, map2, null, http, 0, set, 1 );
-					    String is_delete = map3.get( "is_delete" ).toString();
-					    String is_publish = map3.get( "is_publish" ).toString();
-					    if ( type == "1" || type.equals( "1" ) ) {
-						if ( is_delete == "1" || is_delete.equals( "1" ) || is_publish == "-1" || is_publish.equals( "-1" ) ) {
-						    res = false;
-						}
-					    }
-					}
-				    }
-				} else if ( selecttype == "2" || selecttype.equals( "2" ) ) {
+				if ( selecttype == "2" || selecttype.equals( "2" ) ) {
 				    Object mapid = map2.get( "id" );
 				    if ( mapid != null && !mapid.equals( null ) && !mapid.equals( "" ) ) {
 					Integer mapid1 = Integer.valueOf( mapid.toString() );
@@ -546,39 +530,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 			    Boolean res = true;
 			    if ( selecttype != null ) {
 				Object mapid = map2.get( "id" );
-				if ( selecttype == "1" || selecttype.equals( "1" ) ) {
-				    if ( mapid != null && !mapid.equals( null ) && !mapid.equals( "" ) ) {
-					Integer mapid1 = Integer.valueOf( mapid.toString() );
-					Map< String,Object > map3 = mallPageService.querySelct( mapid1 );
-					if ( CommonUtil.isNotEmpty( map3 ) ) {
-
-					    double discount = 1;//商品折扣
-					    if ( CommonUtil.isNotEmpty( member ) ) {
-						discount = mallProductService.getMemberDiscount( CommonUtil.toString( map3.get( "is_member_discount" ) ), member );
-						/*String is_member_discount = map3.get( "is_member_discount" ).toString();//商品是否参加折扣
-						if ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) {
-						    Map map = memberpayService.findCardType( member.getId() );
-						    String result = map.get( "result" ).toString();
-						    if ( result == "true" || result.equals( "true" ) ) {
-							discount = Double.parseDouble( map.get( "discount" ).toString() );
-						    }
-						}*/
-					    }
-					    map2.put( "userId", obj.getPagUserId() );
-					    map2 = mallPageService.getProductHome( map3, map2, member, http, discount, set, state );
-
-					    String is_delete = map3.get( "is_delete" ).toString();
-					    String is_publish = map3.get( "is_publish" ).toString();
-					    map2.put( "is_delete", is_delete );
-					    map2.put( "is_publish", is_publish );
-					    if ( type == "1" || type.equals( "1" ) ) {
-						if ( is_delete == "1" || is_delete.equals( "1" ) || is_publish == "-1" || is_publish.equals( "-1" ) ) {
-						    res = false;
-						}
-					    }
-					}
-				    }
-				} else if ( selecttype == "2" || selecttype.equals( "2" ) ) {
+				if ( selecttype == "2" || selecttype.equals( "2" ) ) {
 				    if ( mapid != null && !mapid.equals( null ) && !mapid.equals( "" ) ) {
 					Integer mapid1 = Integer.valueOf( mapid.toString() );
 					if ( !mapid1.toString().equals( "-1" ) && !mapid1.toString().equals( "-2" ) ) {
@@ -1314,16 +1266,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		discount = mallProductService.getMemberDiscount( "1", member );
 	    }
-	    /*Map< String,Object > map = null;
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		map = memberpayService.findCardType( member.getId() );
-	    }
-	    if ( CommonUtil.isNotEmpty( map ) ) {
-		String result = map.get( "result" ).toString();
-		if ( result == "true" || result.equals( "true" ) ) {
-		    discount = Double.parseDouble( map.get( "discount" ).toString() );
-		}
-	    }*/
 	    request.setAttribute( "discount", discount );
 
 	    boolean isPifa = mallPifaApplyService.isPifa( member );

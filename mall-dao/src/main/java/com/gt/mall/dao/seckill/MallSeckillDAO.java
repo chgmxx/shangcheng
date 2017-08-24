@@ -86,4 +86,14 @@ public interface MallSeckillDAO extends BaseMapper< MallSeckill > {
      * @return 秒杀商品
      */
     int selectCountByShopId( Map< String,Object > params );
+
+
+    /**
+     * 查询店铺下所有的秒杀商品
+     *
+     * @param productList 参数
+     *
+     * @return 秒杀商品
+     */
+    List<Map<String,Object>> selectCountByProList( @Param( "productList" ) List<Integer> productList);
 }

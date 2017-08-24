@@ -20,7 +20,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, pag_name , pag_descript , pag_type_id , pag_css , pag_data , pag_user_id , pag_sto_id ,
+        id, pag_name , pag_descript , pag_type_id , pag_css  , pag_data , pag_user_id , pag_sto_id ,
         pag_create_time , pag_is_main , pag_html , codeUrl
     </sql>
 
@@ -30,21 +30,18 @@
     </sql>
 
     <select id="findByPage" resultType="java.util.Map" parameterType="java.util.Map">
-        SELECT a.*
+        SELECT
+        a.id, a.pag_name, a.pag_descript, a.pag_type_id, a.pag_css, a.pag_data, a.pag_user_id, a.pag_sto_id,
+        a.pag_create_time, a.pag_is_main, a.pag_html, a.codeUrl
         FROM t_mall_page a
         LEFT JOIN t_mall_store b ON a.pag_sto_id=b.id
         WHERE  b.is_delete=0
-
-        <if test="wxShopList != null">
+        <if test="storeList != null">
             AND pag_sto_id IN
-            <foreach close=")" collection="wxShopList" index="index" item="item" open="(" separator=",">
-                #{item}
+            <foreach close=")" collection="storeList" index="index" item="item" open="(" separator=",">
+                #{item.id}
             </foreach>
         </if>
-        <if test="wxShopList == null">
-            AND pag_sto_id IN (SELECT a.id FROM t_mall_store a WHERE a.sto_create_person=#{userid} AND a.is_delete=0 )
-        </if>
-
         <if test="pagName != null">
             and a.pag_name like '%${pagName}%'
         </if>
@@ -55,21 +52,12 @@
     <select id="count" resultType="java.lang.Integer">
         select count(id) from t_mall_page
         <where>
-            <if test="wxShopList != null">
+            <if test="storeList != null">
                 AND pag_sto_id IN
-                <foreach close=")" collection="wxShopList" index="index" item="item" open="(" separator=",">
-                    #{item}
+                <foreach close=")" collection="storeList" index="index" item="item" open="(" separator=",">
+                    #{item.id}
                 </foreach>
             </if>
-            <if test="wxShopList == null">
-                AND pag_sto_id IN (SELECT a.id FROM t_mall_store a WHERE a.sto_create_person=#{userid} AND a.is_delete=0 )
-            </if>
-            <!--<if test="pid == 0">
-                AND pag_sto_id IN (SELECT a.id FROM t_mall_store a LEFT JOIN t_wx_shop b ON a.wx_shop_id=b.id WHERE a.sto_create_person=#{userid} AND a.is_delete=0 AND b.status NOT IN (-1))
-            </if>
-            <if test="pid != 0">
-                AND pag_sto_id IN (SELECT e.id FROM t_mall_store e LEFT JOIN bus_user_branch_relation f  ON e.wx_shop_id=f.branchid LEFT JOIN t_wx_shop h ON f.branchid=h.id WHERE f.userid=#{userid} AND e.is_delete=0 AND h.status  NOT IN (-1))
-            </if>-->
             <if test="pagName != null">
                 and pag_name like '%${pagName}%'
             </if>

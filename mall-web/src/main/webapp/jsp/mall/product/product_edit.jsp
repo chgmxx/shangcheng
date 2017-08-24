@@ -24,7 +24,7 @@
     <link rel="stylesheet" type="text/css" href="/css/mall/editMallNext.css"/>
     <link rel="stylesheet" type="text/css" href="/css/plugin/chosen/chosen.css"/>
     <link rel="stylesheet" type="text/css" href="/css/plugin/jquery-ui.css"/>
-    <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="/js/plugin/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/plugin/chosen/chosen.jquery.js" charset="utf-8"></script>

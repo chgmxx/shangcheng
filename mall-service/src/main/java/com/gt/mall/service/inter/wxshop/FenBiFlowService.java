@@ -18,29 +18,46 @@ public interface FenBiFlowService {
 
     /**
      * 根据ID查询流量套餐
+     *
      * @param flowId 流量id
+     *
      * @return 流量套餐
      */
-    WsBusFlowInfo getFlowInfoById(int flowId);
+    WsBusFlowInfo getFlowInfoById( int flowId );
 
     /**
      * 根据商家id获取商家流量
+     *
      * @param busUserId 商家id
+     *
      * @return 商家流量
      */
-    List<BusFlow> getBusFlowsByUserId(int busUserId);
+    List< BusFlow > getBusFlowsByUserId( int busUserId );
 
     /**
      * 保存粉币的冻结记录
+     *
      * @param fenbiFlowRecord 记录
+     *
      * @return 是否冻结成功，冻结id
      */
-    Map<String,Object> saveFenbiFlowRecord(FenbiFlowRecord fenbiFlowRecord );
+    Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord );
 
     /**
      * 根据id查询冻结流量记录
+     *
      * @param recordId id
+     *
      * @return 流量冻结记录
      */
-    WsFenbiFlowRecord getFenbiFlowRecordById(int recordId);
+    WsFenbiFlowRecord getFenbiFlowRecordById( int recordId );
+
+    /**
+     * 回滚冻结流量
+     *
+     * @param recordId jilu id
+     *
+     * @return true 成功
+     */
+    boolean rollbackFenbiFlowRecord( int recordId );
 }
