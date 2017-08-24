@@ -78,7 +78,7 @@ public class MallFreightController extends BaseController {
 		    }
 		}
 		if ( isAdminFlag ) {
-		    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		    if ( shoplist != null && shoplist.size() > 0 ) {
 			params.put( "shoplist", shoplist );
 			PageUtil freightPage = freightService.selectFreightByShopId( shoplist, params );
@@ -105,7 +105,7 @@ public class MallFreightController extends BaseController {
     public String toEditFreight( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shopList = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shopList = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    int id = 0;
 	    // 查询物流信息
 	    if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {

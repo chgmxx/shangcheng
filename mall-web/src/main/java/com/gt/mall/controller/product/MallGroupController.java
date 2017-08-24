@@ -48,7 +48,6 @@ public class MallGroupController extends BaseController {
     @Autowired
     MallImageAssociativeService mallImageAssociativeService;
 
-
     /**
      * 商品分组主页面
      */
@@ -62,7 +61,7 @@ public class MallGroupController extends BaseController {
 		params.put( "userId", userId );
 
 		List< Map< String,Object > > shoplist = mallStoreService
-				.findAllStoByUser( user );// 查询登陆人拥有的店铺
+				.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		request.setAttribute( "shoplist", shoplist );
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    int groupPId = 0;
@@ -72,7 +71,7 @@ public class MallGroupController extends BaseController {
 		    }
 		    params.put( "groupPId", groupPId );
 		    params.put( "isLabel", 0 );
-		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist ,userId);// 获取分组集合
+		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist, userId );// 获取分组集合
 		    request.setAttribute( "page", page );
 		    if ( CommonUtil.isNotEmpty( page ) ) {
 			if ( page.getCurPage() > 1 ) {
@@ -97,7 +96,7 @@ public class MallGroupController extends BaseController {
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );// 获取登陆人id
-	    List< Map< String,Object > > list = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > list = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( list != null && list.size() > 0 ) {
 		MallGroup parentGroup = null;
 		int groupId = 0;
@@ -182,10 +181,10 @@ public class MallGroupController extends BaseController {
 	    code = -1;
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "code", code );
-	    CommonUtil.write( response,obj );
+	    CommonUtil.write( response, obj );
 	}
 
     }
@@ -216,10 +215,10 @@ public class MallGroupController extends BaseController {
 	    code = -1;
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "code", code );
-	    CommonUtil.write( response,obj );
+	    CommonUtil.write( response, obj );
 	}
     }
 
@@ -235,7 +234,7 @@ public class MallGroupController extends BaseController {
 	PrintWriter p = null;
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    // 查询会员下面的所有分组
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		if ( CommonUtil.isEmpty( params ) ) {
@@ -253,10 +252,10 @@ public class MallGroupController extends BaseController {
 	} catch ( Exception e ) {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "groupList", groupList );
-	    CommonUtil.write( response,obj );
+	    CommonUtil.write( response, obj );
 	}
     }
 
@@ -279,10 +278,10 @@ public class MallGroupController extends BaseController {
 	} catch ( Exception e ) {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "list", list );
-	    CommonUtil.write( response,obj );
+	    CommonUtil.write( response, obj );
 	}
     }
 
@@ -298,7 +297,7 @@ public class MallGroupController extends BaseController {
 	    if ( !CommonUtil.isEmpty( user ) ) {
 		params.put( "userId", user.getId() );
 		if ( CommonUtil.isEmpty( params.get( "shopId" ) ) ) {
-		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		    if ( shoplist != null && shoplist.size() > 0 ) {
 			request.setAttribute( "shoplist", shoplist );
 			params.put( "shopId", shoplist.get( 0 ).get( "id" ) );
@@ -333,7 +332,7 @@ public class MallGroupController extends BaseController {
 	    if ( !CommonUtil.isEmpty( user ) ) {
 		params.put( "userId", user.getId() );
 
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    request.setAttribute( "shoplist", shoplist );
 		    params.put( "shopId", shoplist.get( 0 ).get( "id" ) );
@@ -359,7 +358,7 @@ public class MallGroupController extends BaseController {
 		Integer userId = user.getId();// 获取登陆人id
 		params.put( "userId", userId );
 
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		request.setAttribute( "shoplist", shoplist );
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    int groupPId = 0;
@@ -370,7 +369,7 @@ public class MallGroupController extends BaseController {
 		    params.put( "groupPId", groupPId );
 		    params.put( "type", 1 );
 		    params.put( "isLabel", 1 );
-		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist ,userId);// 获取分组集合
+		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist, userId );// 获取分组集合
 		    request.setAttribute( "page", page );
 		    if ( CommonUtil.isNotEmpty( page ) ) {
 			if ( page.getCurPage() > 1 ) {
@@ -415,16 +414,15 @@ public class MallGroupController extends BaseController {
 	    code = -1;
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
-	}finally {
+	} finally {
 	    JSONObject obj = new JSONObject();
 	    obj.put( "code", code );
-	    CommonUtil.write( response,obj );
+	    CommonUtil.write( response, obj );
 	}
     }
 
     /**
      * 根据店铺id获取商品分组
-     *
      */
     @RequestMapping( "/getGroupsByShopid" )
     public void getGroupsByShopid( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {

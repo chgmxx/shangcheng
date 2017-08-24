@@ -45,9 +45,9 @@ import java.util.Map;
 public class MallOrderController extends BaseController {
 
     @Autowired
-    private MallOrderService mallOrderService;
+    private MallOrderService    mallOrderService;
     @Autowired
-    private MallStoreService mallStoreService;
+    private MallStoreService    mallStoreService;
     @Autowired
     private MallGroupBuyService mallGroupBuyService;
     @Autowired
@@ -57,7 +57,7 @@ public class MallOrderController extends BaseController {
     @Autowired
     private DictService         dictService;
     @Autowired
-    private BusUserService busUserService;
+    private BusUserService      busUserService;
 
     /**
      * 订单首页
@@ -79,8 +79,7 @@ public class MallOrderController extends BaseController {
 		}
 	    }
 	    if ( isAdminFlag ) {
-		List< Map< String,Object > > shoplist = mallStoreService
-				.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		params.put( "shoplist", shoplist );
 
 		//关闭超过30分钟未付款订单
@@ -258,8 +257,7 @@ public class MallOrderController extends BaseController {
 	BusUser user = SessionUtils.getLoginUser( request );
 	try {
 	    Map< String,Object > params = new HashMap<>();
-	    List< Map< String,Object > > shoplist = mallStoreService
-			    .findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
 
 	    map = mallOrderService.syncOrderbyPifa( params );
@@ -283,8 +281,7 @@ public class MallOrderController extends BaseController {
 	HSSFWorkbook workbook = null;
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService
-			    .findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
 	    String[] titles = new String[] { "订单编号", "商品", "单价", "数量", "实付金额", "优惠", "运费", "买家", "下单时间", "订单状态", "配送方式", "售后", "所属店铺", "付款方式", "收货信息", "买家留言", "卖家备注" };
 	    workbook = mallOrderService.exportExcel( params, titles, 1 );

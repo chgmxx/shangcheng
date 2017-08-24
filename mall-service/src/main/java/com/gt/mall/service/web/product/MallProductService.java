@@ -228,5 +228,5 @@ public interface MallProductService extends BaseService< MallProduct > {
      *
      * @param user 用户信息
      */
-    void syncAllProduct( BusUser user );
+    void syncAllProduct( BusUser user ,HttpServletRequest request);
 }

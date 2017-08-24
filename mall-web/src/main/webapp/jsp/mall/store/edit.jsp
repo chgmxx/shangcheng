@@ -39,27 +39,6 @@
 </div>
 
 <table class="table2" id="tab">
-    <%-- <tr>
-        <td class="table-td1">上级店铺：</td>
-        <td class="table-td3"><select class="text1 " id="stoPid"
-            name="stoPid" onchange="branchChange(this)">
-                <c:if test="${fn:length(allSto)==0}"><option value="0">无</option></c:if>
-                <c:if test="${fn:length(allSto)>0}">
-                <c:if test="${sto.id eq null }">
-                <option  value="-1">请选择</option>
-                </c:if>
-                <c:if test="${sto.stoPid eq '0' }">
-                <option  value="0">无</option>
-                </c:if>
-                <c:if test="${sto.stoPid ne '0' }">
-                <c:forEach items="${allSto }" var="allSto">
-                    <option  value="${allSto.id }">${allSto.sto_name}</option>
-                </c:forEach>
-                </c:if>
-                </c:if>
-        </select></td>
-        <td><span id="picCodePrompt" class="tColor"></span></td>
-    </tr> --%>
     <c:set var="isWxShopId" value="0"></c:set>
     <tr id="chooseTr">
         <td class="table-td1">选择门店：${shopsid }</td>
@@ -139,30 +118,6 @@
         <td><span class="tColor"></span></td>
     </tr>
 
-    <%-- <tr>
-        <td colspan="1" class="table-td1" style="width: 50px;">
-        </td>
-        <td class="table-td3">
-            省：<select class="abc" style="width: 120px;height: 25px;" name="stoProvince" id="stoProvince"
-            onchange="areaChange(this.value,1,2)">
-                <option value="0">请选择</option>
-                <c:forEach items="${areaLs }" var="area">
-                    <option ${area.id eq sto.stoProvince?'selected':'' }  value="${area.id }">${area.city_name }</option>
-                </c:forEach>
-            </select>
-            市：
-            <select class="abc" style="width: 125px;height: 25px;" name="stoCity" id="stoCity"
-            onchange="areaChange(this.value,2,2)">
-                <option value="0">请选择</option>
-            </select>
-            区：
-            <select class="abc" style="width: 125px;height: 25px;" name="stoArea" id="stoArea"
-            onchange="areaChange(this.value,3,2)">
-                <option value="0">请选择</option>
-            </select>
-        </td>
-        <td><span id="picCodePrompt_city" class="tColor"></span></td>
-    </tr> --%>
 
     <tr>
         <td class="table-td1">选择地址：</td>

@@ -5,6 +5,7 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.util.PageUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ public interface MallStoreService extends BaseService< MallStore > {
      *
      * @return 店铺信息
      */
-    public PageUtil findByPage( Map< String,Object > params ,List< Map< String,Object > > shopList);
+    public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shopList );
 
     /**
      * 获取店铺集合
@@ -47,15 +48,6 @@ public interface MallStoreService extends BaseService< MallStore > {
     public boolean isAdminUser( int userId );
 
     /**
-     * 根据用户id获取分店数量
-     *
-     * @param userId 商家id
-     *
-     * @return 分店数量
-     */
-    public int countBranch( Integer userId );
-
-    /**
      * 创建店铺多少
      *
      * @param userId 商家id
@@ -63,16 +55,6 @@ public interface MallStoreService extends BaseService< MallStore > {
      * @return 店铺数量
      */
     public int countStroe( Integer userId );
-
-    /**
-     * 查询所有的门店
-     *
-     * @param userId 商家id
-     * @param shopId 店铺id
-     *
-     * @return 门店信息
-     */
-    public List< Map< String,Object > > findShop( int userId, int shopId );
 
     /**
      * 通过商家id查询所有的店铺
@@ -145,7 +127,7 @@ public interface MallStoreService extends BaseService< MallStore > {
     /**
      * 获取登录人拥有的店铺集合
      */
-    public List< Map< String,Object > > findAllStoByUser( BusUser user );
+    public List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request );
 
     /**
      * 创建所有erp仓库

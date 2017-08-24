@@ -64,7 +64,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 	BusUser user = new BusUser();
 	user.setId( userId );
-	List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user );
+	List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, null );
 
 	Map< String,Object > params = new HashMap<>();
 	params.put( "cartIds", shopcards.split( "," ) );

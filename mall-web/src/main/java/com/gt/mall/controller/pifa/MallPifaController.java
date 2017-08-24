@@ -224,7 +224,7 @@ public class MallPifaController extends BaseController {
 		}
 	    }
 	    if ( isAdminFlag ) {
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
 		    PageUtil page = mallPifaService.pifaProductList( params );
@@ -260,8 +260,7 @@ public class MallPifaController extends BaseController {
 		    @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService
-			    .findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
 		// 根据批发id查询批发信息

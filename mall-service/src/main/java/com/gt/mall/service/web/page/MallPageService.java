@@ -34,7 +34,7 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return 页面信息
      */
-    public PageUtil findByPage( Map< String,Object > params, BusUser user );
+    public PageUtil findByPage( Map< String,Object > params, BusUser user ,HttpServletRequest request);
 
     /**
      * 保存或修改信息

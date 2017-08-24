@@ -70,7 +70,7 @@ public class MallPresaleController extends BaseController {
 		}
 	    }
 	    if ( isAdminFlag ) {
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
 		    PageUtil page = mallPresaleService.selectPresaleByShopId( params );
@@ -112,7 +112,7 @@ public class MallPresaleController extends BaseController {
 		    @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
 		// 根据预售id查询预售信息
@@ -224,7 +224,7 @@ public class MallPresaleController extends BaseController {
 		    @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		params.put( "shoplist", shoplist );
 		PageUtil page = mallPresaleDepositService.selectPresaleByShopId( params );
@@ -249,7 +249,7 @@ public class MallPresaleController extends BaseController {
     public String presale_set( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    List< MallPresaleGive > giveList = mallPresaleService.selectGiveByUserId( user );
 
 	    List< Map > list = dictService.getDict( "1143" );

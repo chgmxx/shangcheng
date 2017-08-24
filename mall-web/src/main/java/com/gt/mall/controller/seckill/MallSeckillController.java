@@ -64,7 +64,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( isAdminFlag ) {
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
 		    PageUtil page = mallSeckillService.selectSeckillByShopId( params );
@@ -91,7 +91,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
 		// 根据秒杀id查询秒杀信息
@@ -126,7 +126,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 	try {
 	    BusUser busUser = SessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( busUser ) && CommonUtil.isNotEmpty( params ) ) {
-		code = mallSeckillService.editSeckill( params, busUser );// 编辑商品
+		code = mallSeckillService.editSeckill( params, busUser, request );// 编辑商品
 	    }
 	} catch ( Exception e ) {
 	    code = -1;

@@ -4,11 +4,13 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -57,6 +59,9 @@ public class MallStoreController extends BaseController {
     @Autowired
     private BusUserService busUserService;
 
+    @Autowired
+    private WxShopService wxShopService;
+
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入店铺管理啦啦啦" );
@@ -64,32 +69,26 @@ public class MallStoreController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
 	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
-	    int pid = 0;
+	    int pid = SessionUtils.getAdminUserId( user.getId(), request );
 	    boolean isAdminFlag = true;
 	    //如果是子账户按照分店查询
-	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		//params.put("branchids", userService.findBranchIdByUser(user.getId()));
-		pid = user.getPid();
-		isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
-		if ( !isAdminFlag ) {
-		    request.setAttribute( "isNoAdminFlag", 1 );
-		}
+	    if ( pid != user.getId() ) {
+		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 
 	    if ( isAdminFlag ) {
-		/*params.put( "userId", user.getId() );*/
-		/*params.put( "pid", pid );*/
-		List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user );
-		if(shopList != null && shopList.size() > 0){
+		params.put( "userId", user.getId() );
+		params.put( "pid", pid );
+		List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
+		if ( shopList != null && shopList.size() > 0 ) {
 		    PageUtil page = mallStoreService.findByPage( params, shopList );
-		    if ( !CommonUtil.isEmpty( params.get( "stoName" ) ) ) {
+		    if ( CommonUtil.isNotEmpty( params.get( "stoName" ) ) ) {
 			request.setAttribute( "stoName", params.get( "stoName" ) );
 		    }
-		    int branchCount = mallStoreService.countBranch( user.getId() );
-		    int shopcount = branchCount + 1;
+		    int branchCount = SessionUtils.getWxShopNumBySession( user.getId(), request );
 		    int store = mallStoreService.countStroe( user.getId() );
 		    int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
-		    if ( store >= shopcount ) {
+		    if ( store >= branchCount + 1 ) {
 			countnum = 1;
 		    }
 		    request.setAttribute( "countnum", countnum );
@@ -115,39 +114,11 @@ public class MallStoreController extends BaseController {
 	BusUser user = SessionUtils.getLoginUser( request );
 	int shopId = 0;
 	try {
+	    request.setAttribute( "pageTitle", "添加信息" );
 	    Integer userId = user.getId();
-	    if ( CommonUtil.isEmpty( params.get( "id" ) ) ) {
-		//todo 调用陈丹信息  userService.findUserDefArea
-		Map< String,Object > defArea = null;//userService.findUserDefArea(userId);
-		if ( defArea.size() > 0 ) {
-		    MallStore sto = new MallStore();
-		    sto.setStoAddress( defArea.get( "detail_address" ).toString() );
-		    sto.setStoLatitude( defArea.get( "latitude" ).toString() );
-		    sto.setStoLongitude( defArea.get( "longitude" ).toString() );
-		    sto.setStoProvince( CommonUtil.toInteger( defArea.get( "province_id" ) ) );
-		    if ( CommonUtil.isEmpty( defArea.get( "city_id" ) ) ) {
-			defArea.put( "city_id", defArea.get( "district_id" ) );
-		    }
-		    sto.setStoCity( CommonUtil.toInteger( defArea.get( "city_id" ) ) );
-		    if ( CommonUtil.isNotEmpty( defArea.get( "district_id" ) ) ) {
-			sto.setStoArea( CommonUtil.toInteger( defArea.get( "district_id" ) ) );
-		    }
-		    request.setAttribute( "sto", sto );
-		}
-		request.setAttribute( "defArea", defArea );
-	    } else {
+	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		request.setAttribute( "pageTitle", "编辑信息" );
-		//				Store sto = storeMapper.selectByPrimaryKey(CommonUtil.toInteger(params.get("id")));
 		Map< String,Object > sto = mallStoreService.findShopByStoreId( CommonUtil.toInteger( params.get( "id" ) ) );
-		/*if(sto != null){
-		    if(CommonUtil.isNotEmpty(sto.get("wxShopId"))){
-			shopId = CommonUtil.toInteger(sto.get("wxShopId").toString());
-		    }
-		    if(CommonUtil.isEmpty(sto.get("stoPicture")) && CommonUtil.isNotEmpty(sto.get("sto_picture"))){
-			sto.put("stoPicture", sto.get("sto_picture"));
-		    }
-		}*/
-		request.setAttribute( "sto", sto );
 	    }
 	    String http = PropertiesUtil.getResourceUrl();
 	    request.setAttribute( "http", http );
@@ -155,16 +126,12 @@ public class MallStoreController extends BaseController {
 	    List< Map< String,Object > > allSto = mallStoreService.findAllStore( userId );
 	    request.setAttribute( "allSto", allSto );
 
-	    List< Map< String,Object > > list = mallStoreService.findShop( userId, shopId );
-	    request.setAttribute( "shopList", list );
+	    List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
+	    request.setAttribute( "shopList", shopInfoList );
 
-	    //todo 调用陈丹接口，根据地区id查询地区信息
-	    //request.setAttribute("areaLs", restaurantService.findCityByPid(restaurantService.getAreaIds()));
 	} catch ( Exception e ) {
 	    logger.error( "进入修改店铺页面异常：" + e.getMessage() );
 	    e.printStackTrace();
-	} finally {
-	    request.setAttribute( "pageTitle", "添加信息" );
 	}
 	return "mall/store/edit";
     }

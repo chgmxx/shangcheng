@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -115,7 +116,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public int editSeckill( Map< String,Object > groupMap, BusUser busUser ) {
+    public int editSeckill( Map< String,Object > groupMap, BusUser busUser ,HttpServletRequest request) {
 	int num = 0;
 	boolean flag = false;
 	int code = -1;
@@ -128,7 +129,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    if ( buyList == null || buyList.size() == 0 ) {
 		seckill.setUserId( busUser.getId() );
 		if ( CommonUtil.isNotEmpty( seckill.getId() ) ) {
-		    List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( busUser );
+		    List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( busUser ,request);
 		    // 判断本商品是否正在秒杀中
 		    MallSeckill buy = mallSeckillDAO.selectSeckillByIds( seckill.getId(), storeList );
 		    if ( buy.getStatus() == 1 && buy.getJoinId() > 0 ) {// 正在进行秒杀的商品不能修改

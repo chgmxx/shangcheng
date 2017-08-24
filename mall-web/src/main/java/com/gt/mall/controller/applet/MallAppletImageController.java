@@ -35,8 +35,8 @@ public class MallAppletImageController extends BaseController {
 
     @Autowired
     private MallAppletImageService appletImageService;
-//    @Autowired
-//    private WxShopService          wxShopService;
+    //    @Autowired
+    //    private WxShopService          wxShopService;
     @Autowired
     private MallStoreService       storeService;
 
@@ -58,7 +58,7 @@ public class MallAppletImageController extends BaseController {
 		}
 	    }
 	    if ( isAdminFlag ) {
-		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "userId", user.getId() );
 		    PageUtil page = appletImageService.selectImageByShopId( params );
@@ -87,7 +87,7 @@ public class MallAppletImageController extends BaseController {
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
 		// 根据小程序id查询小程序信息
@@ -107,8 +107,8 @@ public class MallAppletImageController extends BaseController {
      * 编辑小程序
      *
      * @param params
-     * @throws IOException
      *
+     * @throws IOException
      */
     @SysLogAnnotation( description = "小程序管理-编辑小程序", op_function = "2" )
     @RequestMapping( "edit" )
@@ -135,7 +135,6 @@ public class MallAppletImageController extends BaseController {
      * 删除小程序
      *
      * @throws IOException
-     *
      */
     @SysLogAnnotation( description = "小程序管理-删除小程序", op_function = "4" )
     @RequestMapping( "applet_remove" )

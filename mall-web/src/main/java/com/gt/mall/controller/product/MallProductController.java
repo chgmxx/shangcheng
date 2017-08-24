@@ -78,8 +78,8 @@ public class MallProductController extends BaseController {
 		    }
 		}
 		if ( isAdminFlag ) {
-		    int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
-		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		    if ( shoplist != null && shoplist.size() > 0 ) {
 			long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 			params.put( "isJxc", isJxc );
@@ -142,7 +142,7 @@ public class MallProductController extends BaseController {
     public String toEditProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 
 	    params.put( "userId", user.getId() );
 	    params.put( "type", 1 );
@@ -151,7 +151,7 @@ public class MallProductController extends BaseController {
 	    if ( specDictMap != null && specDictMap.size() > 0 ) {
 		request.setAttribute( "specDictMap", specDictMap );
 	    }
-	    int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+	    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 	    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	    if ( isJxc == 1 ) {
 		request.setAttribute( "noShowSt", 1 );//不显示实体物品

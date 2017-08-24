@@ -181,8 +181,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
      * 分页查询
      */
     @Override
-    public PageUtil findByPage( Map< String,Object > params, BusUser user ) {
-	List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( user );// 根据商家id查询门店id
+    public PageUtil findByPage( Map< String,Object > params, BusUser user, HttpServletRequest request ) {
+	List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( user, request );// 根据商家id查询门店id
 	params.put( "storeList", storeList );
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;

@@ -89,7 +89,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( isAdminFlag ) {
-		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
 		    PageUtil page = groupBuyService.selectGroupBuyByShopId( params );
@@ -118,7 +118,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
 		// 根据团购id查询团购信息
@@ -239,14 +239,13 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		if ( CommonUtil.isEmpty( params.get( "shopId" ) ) ) {
-		    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		    if ( shoplist != null && shoplist.size() > 0 ) {
 			params.put( "shoplist", shoplist );
 		    }
 		}
-		int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
-		long isJxc = 1;
-		busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
+		int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
 		params.put( "isJxc", isJxc );
 		params.put( "userId", user.getId() );
@@ -279,9 +278,8 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		Integer proId = CommonUtil.toInteger( params.get( "proId" ) );
-		int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
-		long isJxc = 1;
-		busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
+		int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
 		int isSPec = 1;
 		if ( CommonUtil.isNotEmpty( params.get( "isSpec" ) ) ) {

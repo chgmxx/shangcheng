@@ -61,7 +61,7 @@ public class PurchaseOrderController extends BaseController {
     @Autowired
     private MallStoreService storeService;
     @Autowired
-    MemberService    memberService;
+    MemberService memberService;
 
     /**
      * 订单首页
@@ -173,7 +173,7 @@ public class PurchaseOrderController extends BaseController {
 	    String shopIds = "";
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
-		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    for ( int i = 0; i < shoplist.size(); i++ ) {
 			if ( "".equals( shopIds ) ) {

@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.store.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -19,6 +18,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.MallJxcHttpClientUtil;
 import com.gt.mall.util.PageUtil;
+import com.gt.mall.util.SessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,10 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -89,29 +92,16 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
     @Override
     public boolean isAdminUser( int userId ) {
-	//todo 还需调用陈丹的接口
 	return busUserService.getIsAdmin( userId );
-    }
-
-    @Override
-    public int countBranch( Integer userId ) {
-	//	String sql = "SELECT count(1) from bus_user_branch_manage WHERE userid="+userId;
-	//todo 调用陈丹  分店接口
-	return 0;
     }
 
     @Override
     public int countStroe( Integer userId ) {
 	Wrapper< MallStore > storeWrapper = new EntityWrapper<>();
-	storeWrapper.where( "sto_user_id={0}", userId );
+	storeWrapper.where( "sto_user_id={0} and is_delete = 0", userId );
 	return mallStoreDao.selectCount( storeWrapper );
     }
 
-    @Override
-    public List< Map< String,Object > > findShop( int userId, int shopId ) {
-	//todo 调用小屁孩接口 根据商家id查询门店信息
-	return null;
-    }
 
     @Override
     public List< Map< String,Object > > findByUserId( Integer userId ) {
@@ -176,7 +166,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	List< Map< String,Object > > lists = new ArrayList<>();
 	MallStore mallStore = this.selectById( shopId );
 	if ( CommonUtil.isNotEmpty( mallStore ) ) {
-	    // todo 对接李逢喜的接口   根据门店id查询门店信息
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "id", mallStore.getWxShopId() );
 	    map.put( "phone", mallStore.getStoPhone() );
@@ -185,11 +174,10 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		WsWxShopInfo shopInfo = wxShopService.getShopById( mallStore.getWxShopId() );
 		if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 		    map.put( "name", shopInfo.getBusinessName() );
-		    //todo 地址不详细
-		    map.put( "address", shopInfo.getAddress() );
+		    map.put( "address", getWxShopDetailAddress( shopInfo ) );
 		}
 	    } catch ( Exception e ) {
-		logger.error( "CXF调用接口《根据门店id查询门店信息异常》：" + e.getMessage() );
+		logger.error( "调用门店接口《根据门店id查询门店信息异常》：" + e.getMessage() );
 	    }
 	    if ( !map.containsKey( "name" ) ) {
 		map.put( "name", mallStore.getStoName() );
@@ -252,29 +240,29 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		} else {
 		    storeMap.put( "stoPicture", store.getStoPicture() );
 		}
-		String details = "";
-		String cityids = shopInfo.getProvince() + "," + shopInfo.getCity() + "," + shopInfo.getDistrict();
-		List< Map > cityList = wxShopService.queryBasisCityIds( cityids );
-		if ( cityList != null && cityList.size() > 0 ) {
-		    for ( Map map : cityList ) {
-			String cityId = CommonUtil.toString( map.get( "id" ) );
-			String cityName = CommonUtil.toString( map.get( "city_name" ) );
-			if ( cityId.equals( shopInfo.getProvince() ) ) {
-			    details = cityName + details;
-			} else if ( cityId.equals( shopInfo.getCity() ) ) {
-			    details = cityName + details;
-			} else if ( cityId.equals( shopInfo.getDistrict() ) ) {
-			    details += cityName;
-			}
-			break;
-		    }
 
-		}
-
-		storeMap.put( "stoAddress", details + shopInfo.getAddress() + shopInfo.getDetail() );
+		storeMap.put( "stoAddress", getWxShopDetailAddress( shopInfo ) );
 	    }
 	}
 	return storeMap;
+    }
+
+    private String getWxShopDetailAddress( WsWxShopInfo shopInfo ) {
+	String cityids = shopInfo.getProvince() + "," + shopInfo.getCity() + "," + shopInfo.getDistrict();
+	List< Map > cityList = wxShopService.queryBasisCityIds( cityids );
+	Map< String,String > cityMap = new HashMap<>();
+	if ( cityList != null && cityList.size() > 0 ) {
+	    for ( Map map : cityList ) {
+		String cityId = CommonUtil.toString( map.get( "id" ) );
+		String cityName = CommonUtil.toString( map.get( "city_name" ) );
+		cityMap.put( cityId, cityName );
+	    }
+	}
+	String details = "";
+	if ( CommonUtil.isNotEmpty( cityMap ) ) {
+	    details = cityMap.get( shopInfo.getProvince() ) + cityMap.get( shopInfo.getCity() ) + cityMap.get( shopInfo.getDistrict() );
+	}
+	return details + shopInfo.getAddress() + shopInfo.getDetail();
     }
 
     @Override
@@ -402,21 +390,23 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
      * 获取登录人拥有的店铺集合
      */
     @Override
-    public List< Map< String,Object > > findAllStoByUser( BusUser user ) {
-	//todo 调用陈丹接口  根据商家id  查询门店信息
+    public List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request ) {
+	//todo 调用陈丹接口  没有考虑子账号
 	List< Integer > wxShopIds = new ArrayList<>();
 
 	List< Map< String,Object > > storeList = new ArrayList<>();
 	//判断session里面有没有门店集合
-	/*List< Map > shopList = getShopListBySession( user.getId(), null );
+	List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
 	if ( shopList != null && shopList.size() > 0 ) {
+	    SessionUtils.setWxShopNumBySession( user.getId(), shopList.size(), request );
 	    for ( Map shopMap : shopList ) {
 		storeList.add( shopMap );
 	    }
 	    return storeList;
-	}*/
+	}
 	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
+
 	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
 		wxShopIds.add( wsWxShopInfoExtend.getId() );
 	    }
@@ -436,31 +426,10 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		    }
 		}
 	    }
+	    SessionUtils.setShopListBySession( user.getId(), storeList, request );
 	    return storeList;
 	}
 	return null;
-    }
-
-    private void setShopListBySession( int userId, List< Map > shopList, HttpServletRequest request ) {
-	HttpSession session = request.getSession();
-	if ( CommonUtil.isNotEmpty( session ) ) {
-	    String sessionKey = Constants.SESSION_KEY + "bus_shop_list_" + userId;
-	    session.setAttribute( sessionKey, JSONArray.toJSONString( shopList ) );
-	}
-
-    }
-
-    private List< Map > getShopListBySession( int userId, HttpServletRequest request ) {
-	HttpSession session = request.getSession();
-	if ( CommonUtil.isEmpty( session ) ) {
-	    return null;
-	}
-	String sessionKey = Constants.SESSION_KEY + "bus_shop_list_" + userId;
-	Object obj = session.getAttribute( sessionKey );
-	if ( CommonUtil.isEmpty( obj ) ) {
-	    return null;
-	}
-	return JSONArray.parseArray( obj.toString(), Map.class );
     }
 
     @Override
@@ -489,9 +458,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		try {
 		    WsWxShopInfo shopInfo = wxShopService.getShopById( mallStore.getWxShopId() );
 		    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
-			//todo 地址不详细
 			map.put( "name", shopInfo.getBusinessName() );
-			map.put( "address", shopInfo.getAddress() );
+			map.put( "address", getWxShopDetailAddress( shopInfo ) );
 		    }
 		} catch ( Exception e ) {
 		    logger.error( "CXF调用接口《根据门店id查询门店信息异常》：" + e.getMessage() );

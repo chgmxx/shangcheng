@@ -9,6 +9,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.util.PageUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 编辑秒杀
      */
-    int editSeckill( Map< String,Object > params, BusUser busUser );
+    int editSeckill( Map< String,Object > params, BusUser busUser, HttpServletRequest request );
 
     /**
      * 删除秒杀

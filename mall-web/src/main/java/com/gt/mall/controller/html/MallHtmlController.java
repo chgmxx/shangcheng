@@ -81,7 +81,7 @@ public class MallHtmlController extends BaseController {
 		Integer isadmin = 0;
 		//				dictService.shopuserid(user.getId());//获取是否是管理员
 		if ( isadmin == 0 ) {
-		    Integer zhuid = busUserService.getMainBusId( user.getId() );//获取父类的id
+		    Integer zhuid = SessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
 		    user = busUserService.selectById( zhuid );
 		    ispid = 1;
 		} else {
@@ -483,7 +483,7 @@ public class MallHtmlController extends BaseController {
 	    //pid==0 主账户,否则是子账户
 	    if ( user.getPid() == 0 ) {
 	    } else {
-		Integer zhuid = busUserService.getMainBusId( user.getId() );//获取父类的id
+		Integer zhuid = SessionUtils.getAdminUserId( user.getId() ,request);//获取父类的id
 		user = busUserService.selectById( zhuid );
 		ispid = 1;
 	    }

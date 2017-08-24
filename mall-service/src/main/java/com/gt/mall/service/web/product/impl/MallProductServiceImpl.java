@@ -302,7 +302,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     private int isAddActivityByProId( List< Map< String,Object > > activityList, int proId ) {
-        System.out.println("activityList = " + activityList);
+	System.out.println( "activityList = " + activityList );
 	int isActivity = 0;
 	if ( activityList != null && activityList.size() > 0 ) {
 	    for ( int i = 0; i < activityList.size(); i++ ) {
@@ -664,9 +664,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 
 	if ( proId > 0 ) {
-	    //调用陈丹方法
-	   /* int userPId = dictService.pidUserId(user.getId());//通过用户名查询主账号id
-	    long isJxc = erpLoginOrMenusService.isjxcCount("8", userPId);//判断商家是否有进销存 0没有 1有
+	    //todo 调用陈丹方法
+	   /* int Constants.WX_PUBLIC_URL = dictService.pidUserId(user.getId());//通过用户名查询主账号id
+	    long isJxc = erpLoginOrMenusService.isjxcCount("8", Constants.WX_PUBLIC_URL);//判断商家是否有进销存 0没有 1有
 	    if(isJxc == 0){
 		boolean flag = saveProductByErp(product, user);
 		if(!flag){
@@ -2210,8 +2210,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public void syncAllProduct( BusUser user ) {
-	int userPId = busUserService.getMainBusId( user.getId() );
+    public void syncAllProduct( BusUser user, HttpServletRequest request ) {
+	int userPId = SessionUtils.getAdminUserId( user.getId(), request );
 	int uType = 1;//用户类型 1总账号  0子账号
 	if ( user.getId() != userPId ) {
 	    uType = 0;

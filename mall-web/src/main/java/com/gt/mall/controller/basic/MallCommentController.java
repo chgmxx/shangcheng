@@ -84,7 +84,7 @@ public class MallCommentController extends BaseController {
     public String to_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user );// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user ,request);// 查询登陆人拥有的店铺
 	    // 查询会员下面的评论
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		request.setAttribute( "shoplist", shoplist );

@@ -114,7 +114,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( isAdminFlag ) {
-		PageUtil page = mallPageService.findByPage( params, user );
+		PageUtil page = mallPageService.findByPage( params, user, request );
 		request.setAttribute( "page", page );
 		request.setAttribute( "pagName", params.get( "pagName" ) );
 		request.setAttribute( "path", PropertiesUtil.getArticleUrl() );
@@ -143,7 +143,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    request.setAttribute( "pageTitle", "编辑信息" );
 	}
 	//获取用户店铺集合
-	List< Map< String,Object > > allSto = mallStoreService.findAllStoByUser( user );
+	List< Map< String,Object > > allSto = mallStoreService.findAllStoByUser( user ,request);
 	//获取页面类型
 	List< Map > typeMap = dictService.getDict( "1073" );
 	request.setAttribute( "typeMap", typeMap );

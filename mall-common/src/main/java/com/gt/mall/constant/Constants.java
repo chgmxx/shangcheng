@@ -67,6 +67,9 @@ public class Constants {
     /** 会员 **/
     public static final String SESSION_MEMBER_KEY = "member";
 
+    /** 获取商家主账号的 session key **/
+    public static final String SESSION_ADMIN_KEY = "PidBusId";
+
     public static final String MEMBER_PAY_TYPE = "2";
 
     /**
