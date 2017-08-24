@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.basic.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
@@ -44,7 +45,7 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
     @Override
     public int editPaySet( Map< String,Object > params ) {
 	int count = 0;
-	MallPaySet set = (MallPaySet) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallPaySet.class );
+	MallPaySet set = (MallPaySet) JSONObject.toJavaObject( JSONObject.parseObject( JSON.toJSONString( params ) ), MallPaySet.class );
 
 	MallPaySet paySet = paySetDAO.selectOne( set );
 	if ( CommonUtil.isNotEmpty( set ) && CommonUtil.isNotEmpty( paySet ) ) {

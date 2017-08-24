@@ -1,5 +1,8 @@
 package com.gt.mall.service.web.seller.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
@@ -16,8 +19,6 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.seller.MallSellerOrderService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.util.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -324,7 +325,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	int count = 0;
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "sellerSet" ) ) ) {
-	    MallSellerSet sellerSet = (MallSellerSet) JSONObject.toBean( JSONObject.fromObject( params.get( "sellerSet" ) ), MallSellerSet.class );
+	    MallSellerSet sellerSet = (MallSellerSet) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "sellerSet" ).toString() ), MallSellerSet.class );
 	    if ( CommonUtil.isEmpty( sellerSet.getId() ) ) {
 		//判断用户是否已经保存了功能设置
 		MallSellerSet set = mallSellerSetDAO.selectByBusUserId( busUserId );
@@ -375,7 +376,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public boolean checkSeller( int busUserId, Map< String,Object > params, WxPublicUsers wxPublicUsers ) {
 	int count = 0;
 	if ( CommonUtil.isNotEmpty( params.get( "seller" ) ) ) {
-	    MallSeller seller = (MallSeller) JSONObject.toBean( JSONObject.fromObject( params.get( "seller" ) ), MallSeller.class );
+	    MallSeller seller = (MallSeller) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "seller" ).toString() ), MallSeller.class );
 	    seller.setCheckTime( new Date() );
 	    if ( CommonUtil.isNotEmpty( seller.getCheckStatus() ) ) {
 		if ( seller.getCheckStatus() == 1 ) {
@@ -385,7 +386,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    count = mallSellerDAO.updateById( seller );
 	}
 	if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
-	    String[] id = (String[]) JSONArray.toArray( JSONArray.fromObject( params.get( "ids" ) ), String.class );
+	    String[] id = (String[]) JSONArray.toJSON( JSONArray.parseObject( params.get( "ids" ).toString())) ;
 			/*params.put("ids", id);*/
 	    if ( id != null && id.length > 0 ) {
 		for ( String ids : id ) {
@@ -498,7 +499,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	int count = 0;
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "joinProduct" ) ) ) {
-	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toBean( JSONObject.fromObject( params.get( "joinProduct" ) ), MallSellerJoinProduct.class );
+	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "joinProduct" ).toString() ), MallSellerJoinProduct.class );
 	    MallSellerJoinProduct jProduct = null;
 	    if ( CommonUtil.isNotEmpty( joinProduct.getProductId() ) ) {
 		jProduct = mallSellerJoinProductDAO.selectByProId( joinProduct.getProductId() );
@@ -544,7 +545,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	Map< String,Object > resultMap = new HashMap<>();
 	int count = 0;
 	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toBean( JSONObject.fromObject( params ), MallSellerJoinProduct.class );
+	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallSellerJoinProduct.class );
 	    count = mallSellerJoinProductDAO.updateById( joinProduct );
 	}
 	if ( count > 0 ) {
@@ -885,7 +886,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    if ( CommonUtil.isNotEmpty( headPath ) ) {
 		arr.add( headPath );//存放用户头像
 	    }
-	    String[] logoPathStr = (String[]) JSONArray.toArray( JSONArray.fromObject( arr ), String.class );
+	    String[] logoPathStr = (String[]) JSONArray.toJSON( arr) ;
 
 	    String path = PropertiesUtil.getHomeUrl() + "/images/mall/seller/tg-code.png";
 	    path = URLConnectionDownloader.downloadRqcode( path, PropertiesUtil.getResImagePath() + newPath, 750, 1218 );//下载背景图片

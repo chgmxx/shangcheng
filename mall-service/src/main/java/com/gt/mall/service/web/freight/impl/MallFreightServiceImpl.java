@@ -8,6 +8,7 @@ import com.gt.mall.dao.freight.MallFreightDetailDAO;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.freight.MallFreightDetail;
 import com.gt.mall.entity.seller.MallSellerMallset;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
@@ -44,6 +45,8 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     private MallFreightDetailService freightDetailService;
     @Autowired
     private MallStoreService         storeService;
+    @Autowired
+    private WxShopService            wxShopService;
 
     @Override
     public PageUtil selectFreightByShopId( List< Map< String,Object > > shopList, Map< String,Object > param ) {
@@ -76,7 +79,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     @Override
     public boolean editFreight( Map< String,Object > params, int userId ) {
 	if ( !CommonUtil.isEmpty( params.get( "freight" ) ) ) {
-	    MallFreight freight = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "freight" ).toString()), MallFreight.class );
+	    MallFreight freight = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "freight" ).toString() ), MallFreight.class );
 	    if ( CommonUtil.isEmpty( freight.getId() ) ) {// 新增物流
 		freight.setCreateTime( new Date() );
 		freight.setUserId( userId );
@@ -318,12 +321,11 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	if ( addressMap != null && addressMap.size() > 0 ) {
 	    loginCity = addressMap.get( "mem_province" ).toString();
 	} else if ( CommonUtil.isNotEmpty( params.get( "province" ) ) ) {
-	    //TODO 需关连 busUserMapper.cityid（）根据地址查询ID   方法
-	    //            List<Map<String, Object>> list = busUserMapper.cityid(params.get("province").toString());
-	    //            if (list != null && list.size() > 0) {
-	    //                Map<String, Object> map = list.get(0);
-	    //                loginCity = map.get("id").toString();
-	    //            }
+	    List< Map > list = wxShopService.queryBasisCityIds( params.get( "province" ).toString() );
+	    if ( list != null && list.size() > 0 ) {
+		Map< String,Object > map = list.get( 0 );
+		loginCity = map.get( "id" ).toString();
+	    }
 	} else if ( CommonUtil.isNotEmpty( params.get( "latitude" ) ) && CommonUtil.isNotEmpty( params.get( "longitude" ) ) ) {
 	    double latitude = CommonUtil.toDouble( params.get( "latitude" ) );
 	    double longitude = CommonUtil.toDouble( params.get( "longitude" ) );

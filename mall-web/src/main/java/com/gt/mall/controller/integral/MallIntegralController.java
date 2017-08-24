@@ -4,6 +4,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.integral.MallIntegralImage;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.integral.MallIntegralImageService;
 import com.gt.mall.service.web.integral.MallIntegralService;
@@ -39,6 +40,8 @@ public class MallIntegralController extends BaseController {
     private MallIntegralImageService integralImageService;
     @Autowired
     private MallStoreService         storeService;
+    @Autowired
+    private BusUserService           busUserService;
 
     /**
      * 进入积分商城
@@ -205,8 +208,7 @@ public class MallIntegralController extends BaseController {
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    }
-	    //TODO 需关连 视频  方法
-	    //	    request.setAttribute("videourl", course.urlquery("86"));
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "86" ) );
 	} catch ( Exception e ) {
 	    logger.error( "积分商城图片列表：" + e );
 	    e.printStackTrace();

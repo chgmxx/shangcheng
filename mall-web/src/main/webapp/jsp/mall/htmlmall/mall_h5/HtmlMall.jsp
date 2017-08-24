@@ -110,7 +110,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 </head>
 
 <body ng-controller="adminController as admin" ng-cloak>
-<input type="hidden" id="codeurl" value="${obj.codeurl }"><!-- 值为0时，意味着还未选择值 -->
+<input type="hidden" id="codeurl" value="${obj.codeUrl }"><!-- 值为0时，意味着还未选择值 -->
 <input type="hidden" id="id" value="${obj.id }"><!-- 值为0时，意味着还未选择值 -->
 <input type="hidden" id="imageurlst" value="0"><!-- 值为0时，意味着还未选择值 -->
 <input type="hidden" id="htmlmusicurl">
@@ -1182,9 +1182,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 </section>
 <!-- end选择动画 -->
 <script>
-    var dataJson = ${obj.datajson};
-    var dataBg = ${obj.databg};
-    var dataTransverse = ${obj.datatransverse};
+    var dataJson = ${obj.dataJson};
+    var dataBg = ${obj.dataBg};
+    var dataTransverse = ${obj.dataTransverse};
     var dataPic = [];     //定义全局变量
     if (dataJson.length > dataTransverse.length) {
         dataJson.forEach(function (o, i) {

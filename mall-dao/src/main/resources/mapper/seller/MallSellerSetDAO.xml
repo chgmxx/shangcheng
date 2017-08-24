@@ -25,7 +25,7 @@
         is_remark_required , integral_reward , consume_money , withdrawal_type , withdrawal_lowest_money,
          withdrawal_multiple , seller_remark , bus_user_id
     </sql>
-    <select id="selectByBusUserId" resultType="com.gt.mall.entity.seller.MallSellerSet">
+    <select id="selectByBusUserId" parameterType="com.gt.mall.entity.seller.MallSellerSet" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from t_mall_seller_set

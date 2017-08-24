@@ -52,7 +52,7 @@ function checkSeller(sellerId, status) {
     var msg = "审核通过";
     if (status == -1) {
         msg = "审核不通过";
-
+    }
     layer.confirm("您是否要" + msg + "此销售员", {
         btn: ['确定', '取消'], //按钮
         shade:[0.1,'#fff'],
@@ -244,4 +244,4 @@ $.fn.serializeObject = function () {
         }
     });
     return o;
-};}
+};
