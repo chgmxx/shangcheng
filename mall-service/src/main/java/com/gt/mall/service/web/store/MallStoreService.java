@@ -138,4 +138,21 @@ public interface MallStoreService extends BaseService< MallStore > {
      */
     boolean createCangkuAll( BusUser user );
 
+    /**
+     * 获取商家是否开通了erp
+     *
+     * @param userId 商家id
+     *
+     * @return 1开通 0未开通
+     */
+    int getIsErpCount( int userId, HttpServletRequest request );
+
+    /**
+     * 判断账号是否是管理员
+     *
+     * @param userId 商家id
+     *
+     * @return true 是管理员
+     */
+    public boolean getIsAdminUser( int userId, HttpServletRequest request );
 }

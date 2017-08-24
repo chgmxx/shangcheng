@@ -55,14 +55,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
     public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    boolean isAdminFlag = true; //是管理员
-	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
-
-		if ( !isAdminFlag ) {
-		    request.setAttribute( "isNoAdminFlag", 1 );
-		}
-	    }
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request ); //是否是管理员
 	    if ( isAdminFlag ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
@@ -74,6 +67,8 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		request.setAttribute( "type", params.get( "type" ) );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
+	    } else {
+		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "82" ) );
 	} catch ( Exception e ) {

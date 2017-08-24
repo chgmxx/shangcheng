@@ -92,6 +92,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
     @Override
     public boolean isAdminUser( int userId ) {
+
 	return busUserService.getIsAdmin( userId );
     }
 
@@ -101,7 +102,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	storeWrapper.where( "sto_user_id={0} and is_delete = 0", userId );
 	return mallStoreDao.selectCount( storeWrapper );
     }
-
 
     @Override
     public List< Map< String,Object > > findByUserId( Integer userId ) {
@@ -471,6 +471,33 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	result = MallJxcHttpClientUtil.saveUpdateWarehouse( storeParams, true );
 
 	return result;
+    }
+
+    @Override
+    public int getIsErpCount( int userId, HttpServletRequest request ) {
+	int isJxc = SessionUtils.getIsJxc( userId, request );
+	if ( isJxc == -1 ) {//重新获取商家是否开通进销存
+	    isJxc = busUserService.getIsErpCount( 8, userId );//判断商家是否有进销存 0没有 1有
+	    SessionUtils.setIsJxc( userId, isJxc, request );
+	}
+	return isJxc;
+    }
+
+    @Override
+    public boolean getIsAdminUser( int userId, HttpServletRequest request ) {
+	int isAdmin = SessionUtils.getIsAdminUser( userId, request );
+	if ( isAdmin == -1 ) {
+	    boolean flag = busUserService.getIsAdmin( userId );
+	    if ( flag ) {
+		isAdmin = 1;
+	    } else {
+		isAdmin = 0;
+	    }
+	    SessionUtils.setIsAdminUser( userId, isAdmin, request );
+	} else {
+	    return true;
+	}
+	return false;
     }
 
 }

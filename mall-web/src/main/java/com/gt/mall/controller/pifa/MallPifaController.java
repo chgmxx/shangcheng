@@ -215,14 +215,7 @@ public class MallPifaController extends BaseController {
     public String pifaIndex( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    boolean isAdminFlag = true;//是管理员
-	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
-
-		if ( !isAdminFlag ) {
-		    request.setAttribute( "isNoAdminFlag", 1 );
-		}
-	    }
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(),request );//是否是管理员
 	    if ( isAdminFlag ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
@@ -234,6 +227,8 @@ public class MallPifaController extends BaseController {
 		request.setAttribute( "type", params.get( "type" ) );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
+	    }else{
+		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );

@@ -69,12 +69,8 @@ public class MallStoreController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
 	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
-	    int pid = SessionUtils.getAdminUserId( user.getId(), request );
-	    boolean isAdminFlag = true;
-	    //如果是子账户按照分店查询
-	    if ( pid != user.getId() ) {
-		request.setAttribute( "isNoAdminFlag", 1 );
-	    }
+	    int pid = SessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//true 是管理员
 
 	    if ( isAdminFlag ) {
 		params.put( "userId", user.getId() );
@@ -96,6 +92,8 @@ public class MallStoreController extends BaseController {
 		}
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
+	    } else {
+		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "8" ) );

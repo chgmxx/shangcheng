@@ -60,8 +60,7 @@ public class MallGroupController extends BaseController {
 		Integer userId = user.getId();// 获取登陆人id
 		params.put( "userId", userId );
 
-		List< Map< String,Object > > shoplist = mallStoreService
-				.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		request.setAttribute( "shoplist", shoplist );
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    int groupPId = 0;

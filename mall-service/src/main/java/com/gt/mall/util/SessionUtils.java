@@ -25,8 +25,7 @@ public class SessionUtils {
 
 	    if ( obj != null ) {
 
-		BusUser user = JSONObject.toJavaObject( ( JSONObject.parseObject( obj.toString() ) ), BusUser.class );
-		return user;
+		return JSONObject.toJavaObject( ( JSONObject.parseObject( obj.toString() ) ), BusUser.class );
 	    } else {
 		return null;
 	    }
@@ -45,18 +44,6 @@ public class SessionUtils {
    /* public static void setLoginUser( HttpServletRequest request, BusUser busUser ) {
 	try {
 	    request.getSession().setAttribute( Constants.SESSION_BUSINESS_KEY, JSONObject.toJSON( busUser ) );
-	} catch ( Exception e ) {
-	    log.info( e.getLocalizedMessage() );
-	    e.printStackTrace();
-	}
-    }*/
-
-    /*
-      设置session中的t_wx_public_user微信信息
-     */
-    /*public static void setLoginPbUser( HttpServletRequest request, WxPublicUsers wxPublicUsers ) {
-	try {
-	    request.getSession().setAttribute( Constants.SESSION_WXPUBLICUSERS_KEY, wxPublicUsers );
 	} catch ( Exception e ) {
 	    log.info( e.getLocalizedMessage() );
 	    e.printStackTrace();
@@ -119,7 +106,6 @@ public class SessionUtils {
      *
      * @param userId   用户id
      * @param shopList 店铺列表
-     * @param request  request
      */
     public static void setShopListBySession( int userId, List< Map< String,Object > > shopList, HttpServletRequest request ) {
 	if ( CommonUtil.isNotEmpty( request ) ) {
@@ -132,8 +118,7 @@ public class SessionUtils {
     /**
      * 获取商家的店铺列表
      *
-     * @param userId  商家id
-     * @param request request
+     * @param userId 商家id
      *
      * @return 店铺列表
      */
@@ -152,25 +137,23 @@ public class SessionUtils {
     /**
      * 把商家的门店数量存到session中
      *
-     * @param userId  商家id
-     * @param num     门店数量
-     * @param request request
+     * @param userId 商家id
+     * @param num    门店数量
      */
     public static void setWxShopNumBySession( int userId, int num, HttpServletRequest request ) {
-	String sessionKey = Constants.SESSION_KEY + "wx_shop_num";
+	String sessionKey = Constants.SESSION_KEY + "wx_shop_num" + userId;
 	request.getSession().setAttribute( sessionKey, num );
     }
 
     /**
      * 从session中获取商家门店的数量
      *
-     * @param userId  商家id
-     * @param request request
+     * @param userId 商家id
      *
      * @return 门店忽略
      */
     public static int getWxShopNumBySession( int userId, HttpServletRequest request ) {
-	String sessionKey = Constants.SESSION_KEY + "wx_shop_num";
+	String sessionKey = Constants.SESSION_KEY + "wx_shop_num" + userId;
 	Object object = request.getSession().getAttribute( sessionKey );
 	if ( CommonUtil.isNotEmpty( object ) ) {
 	    return CommonUtil.toInteger( object );
@@ -178,12 +161,69 @@ public class SessionUtils {
 	return 0;
     }
 
+    /**
+     * 从session中获取主账号id
+     *
+     * @param userId 商家id
+     *
+     * @return 主账号id
+     */
     public static int getAdminUserId( int userId, HttpServletRequest request ) {
 	Object object = request.getSession().getAttribute( Constants.SESSION_ADMIN_KEY );
 	if ( CommonUtil.isNotEmpty( object ) ) {
 	    return CommonUtil.toInteger( object );
 	}
 	return 0;
+    }
+
+    /**
+     * 从session 中获取是否已经开通了进销存
+     *
+     * @param userId 商家总账号id
+     *
+     * @return 1 开通
+     */
+    public static int getIsJxc( int userId, HttpServletRequest request ) {
+	Object object = request.getSession().getAttribute( Constants.SESSION_KEY + "is_jxc" + userId );
+	if ( CommonUtil.isNotEmpty( object ) ) {
+	    return CommonUtil.toInteger( object );
+	}
+	return -1;
+    }
+
+    /**
+     * 商家是否开通进销存存入session
+     *
+     * @param userId 商家id
+     * @param isJxc  是否开通进销存
+     */
+    public static void setIsJxc( int userId, int isJxc, HttpServletRequest request ) {
+	request.getSession().setAttribute( Constants.SESSION_KEY + "is_jxc" + userId, isJxc );
+    }
+
+    /**
+     * 从session 中获取是否是管理员
+     *
+     * @param userId 商家总账号id
+     *
+     * @return 1 开通
+     */
+    public static int getIsAdminUser( int userId, HttpServletRequest request ) {
+	Object object = request.getSession().getAttribute( Constants.SESSION_KEY + "is_admin_user" + userId );
+	if ( CommonUtil.isNotEmpty( object ) ) {
+	    return CommonUtil.toInteger( object );
+	}
+	return -1;
+    }
+
+    /**
+     * 商家是否是管理员存入session
+     *
+     * @param userId  商家id
+     * @param isAdmin 是否是管理员
+     */
+    public static void setIsAdminUser( int userId, int isAdmin, HttpServletRequest request ) {
+	request.getSession().setAttribute( Constants.SESSION_KEY + "is_admin_user" + userId, isAdmin );
     }
 
 }

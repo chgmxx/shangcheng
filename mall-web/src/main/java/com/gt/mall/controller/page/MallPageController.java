@@ -105,20 +105,15 @@ public class MallPageController extends AuthorizeOrLoginController {
 			params.put("stoIds", stoIds);
 		}*/
 	try {
-	    boolean isAdminFlag = true;//是管理员
-	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
-
-		if ( !isAdminFlag ) {
-		    request.setAttribute( "isNoAdminFlag", 1 );
-		}
-	    }
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是管理员
 	    if ( isAdminFlag ) {
 		PageUtil page = mallPageService.findByPage( params, user, request );
 		request.setAttribute( "page", page );
 		request.setAttribute( "pagName", params.get( "pagName" ) );
 		request.setAttribute( "path", PropertiesUtil.getArticleUrl() );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
+	    }else{
+		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    request.setAttribute( "urls", request.getHeader( "Referer" ) );
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "78" ) );
@@ -143,7 +138,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    request.setAttribute( "pageTitle", "编辑信息" );
 	}
 	//获取用户店铺集合
-	List< Map< String,Object > > allSto = mallStoreService.findAllStoByUser( user ,request);
+	List< Map< String,Object > > allSto = mallStoreService.findAllStoByUser( user, request );
 	//获取页面类型
 	List< Map > typeMap = dictService.getDict( "1073" );
 	request.setAttribute( "typeMap", typeMap );

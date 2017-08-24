@@ -70,18 +70,12 @@ public class MallProductController extends BaseController {
 		if ( !CommonUtil.isEmpty( params.get( "proType" ) ) ) {
 		    proType = CommonUtil.toInteger( params.get( "proType" ) );
 		}
-		boolean isAdminFlag = true;//是管理员
-		if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		    isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
-		    if ( !isAdminFlag ) {
-			request.setAttribute( "isNoAdminFlag", 1 );
-		    }
-		}
+		boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//查询子账户是否是管理员
 		if ( isAdminFlag ) {
 		    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		    if ( shoplist != null && shoplist.size() > 0 ) {
-			long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
+			long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
 			params.put( "isJxc", isJxc );
 			params.put( "shoplist", shoplist );
 			PageUtil page = mallProductService.selectByUserId( params, shoplist );
@@ -95,6 +89,8 @@ public class MallProductController extends BaseController {
 
 		    mallProductService.syncErpPro( user.getId() );//把未同步的商品进行同步
 
+		} else {
+		    request.setAttribute( "isNoAdminFlag", 1 );
 		}
 	    }
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "77" ) );
@@ -159,7 +155,7 @@ public class MallProductController extends BaseController {
 	    }
 	    request.setAttribute( "isJxc", isJxc );
 	    // 查询商品信息
-	    if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
+	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		int id = CommonUtil.toInteger( params.get( "id" ) );
 		Map< String,Object > map = mallProductService.selectProductById( id, user, isJxc );
 		if ( map != null && map.size() > 0 ) {
@@ -173,10 +169,10 @@ public class MallProductController extends BaseController {
 	    //查询卡券包
 	    List< Map > cardReceiveList = cardService.findReceiveByBusUserId( user.getId() );
 	    if ( cardReceiveList != null && cardReceiveList.size() > 0 ) {
-		for ( Map< String,Object > map2 : cardReceiveList ) {
+		for ( Map map2 : cardReceiveList ) {
 
 		    if ( CommonUtil.isNotEmpty( map2.get( "cardMessage" ) ) ) {
-			List< Map< String,Object > > messageList = (List< Map< String,Object > >) JSONArray.fromObject( map2.get( "cardMessage" ) );
+			List< Map > messageList = com.alibaba.fastjson.JSONArray.parseArray( map2.get( "cardMessage" ).toString(), Map.class );
 			map2.put( "messageList", messageList );
 		    }
 		}

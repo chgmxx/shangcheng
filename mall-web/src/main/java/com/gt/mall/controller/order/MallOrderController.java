@@ -69,15 +69,7 @@ public class MallOrderController extends BaseController {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
-	    boolean isAdminFlag = true;//是管理员
-	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		params.put( "userId", user.getPid() );
-		isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
-
-		if ( !isAdminFlag ) {
-		    request.setAttribute( "isNoAdminFlag", 1 );
-		}
-	    }
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是管理员
 	    if ( isAdminFlag ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		params.put( "shoplist", shoplist );
@@ -108,6 +100,8 @@ public class MallOrderController extends BaseController {
 		request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "urlPath", PropertiesUtil.getArticleUrl() );
 		request.setAttribute( "user", user );
+	    } else {
+		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "79" ) );
 	} catch ( Exception e ) {

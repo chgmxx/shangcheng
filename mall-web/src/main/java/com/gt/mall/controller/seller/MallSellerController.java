@@ -163,14 +163,7 @@ public class MallSellerController extends BaseController {
 		    HttpServletResponse response ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    boolean isAdminFlag = true;//是管理员
-	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		isAdminFlag = mallStoreService.isAdminUser( user.getId() );//查询子账户是否是管理员
-
-		if ( !isAdminFlag ) {
-		    request.setAttribute( "isNoAdminFlag", 1 );
-		}
-	    }
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是管理员
 	    if ( isAdminFlag ) {
 		MallSellerSet sellerSet = mallSellerService.selectByBusUserId( user.getId() );
 		request.setAttribute( "sellerSet", sellerSet );
@@ -187,6 +180,8 @@ public class MallSellerController extends BaseController {
 		}
 		request.setAttribute( "user", user );
 		request.setAttribute( "httpUrl", PropertiesUtil.getHomeUrl() );
+	    }else{
+		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "85" ) );
 	} catch ( Exception e ) {
