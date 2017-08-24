@@ -3,9 +3,7 @@ package com.gt.mall.service.inter.wxshop.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.BusFlow;
-import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
-import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
-import com.gt.mall.bean.wx.flow.WsFenbiFlowRecord;
+import com.gt.mall.bean.wx.flow.*;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
@@ -25,6 +23,17 @@ import java.util.Map;
 public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     private static final String FLOW_URL = "/8A5DA52E/fenbiflow/6F6D9AD2/79B4DE7C/";
+
+    @Override
+    public FenBiCount getFenbiSurplus( FenbiSurplus fenbiSurplus ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "reqdata", fenbiSurplus );
+	String result = HttpSignUtil.SignHttpSelect( params, FLOW_URL + "getFenbiSurplus.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenBiCount.class );
+	}
+	return null;
+    }
 
     @Override
     public WsBusFlowInfo getFlowInfoById( int flowId ) {
@@ -71,7 +80,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
     public boolean rollbackFenbiFlowRecord( int recordId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", recordId );
-	Map< String,Object >  resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, FLOW_URL + "rollbackFenbiFlowRecord.do", 1 );
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, FLOW_URL + "rollbackFenbiFlowRecord.do", 1 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

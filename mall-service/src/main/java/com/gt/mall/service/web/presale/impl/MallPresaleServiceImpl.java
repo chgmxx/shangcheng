@@ -7,7 +7,9 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.wx.SendWxMsgTemplate;
+import com.gt.mall.bean.wx.flow.FenBiCount;
 import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
+import com.gt.mall.bean.wx.flow.FenbiSurplus;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -75,7 +77,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     @Autowired
     private WxPublicUserService         wxPublicUserService;
     @Autowired
-    private FenBiFlowService fenBiFlowService;
+    private FenBiFlowService            fenBiFlowService;
 
     /**
      * 通过店铺id来查询预售
@@ -436,12 +438,18 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	fenbi.setRecFreezeType( 34 );
 	fenbi.setRecFkId( 0 );
 	fenbi.setRecCount( Double.valueOf( "0" ) );
-	//todo 调用小屁孩  判断用户是否已经资产分配过了
+
+	//查询粉币数量 的参数
+	FenbiSurplus fenbiSurplus = new FenbiSurplus();
+	fenbiSurplus.setBusId( userId );
+	fenbiSurplus.setFkId( fenbi.getRecFkId() );
+	fenbiSurplus.setFre_type( fenbi.getRecFreezeType() );
+	fenbiSurplus.setRec_type( fenbi.getRecType() );
 	//判断用户是否已经资产分配过了
-	/*FenbiFlowRecord fenbis = fenbiMapper.getFenbi( fenbi.getBusUserId(), fenbi.getRecType(), fenbi.getRecFreezeType(), fenbi.getRecFkId() );
-	if ( CommonUtil.isEmpty( fenbis ) ) {
+	FenBiCount fenBiCount = fenBiFlowService.getFenbiSurplus( fenbiSurplus );
+	if ( CommonUtil.isEmpty( fenBiCount ) ) {
 	    fenBiFlowService.saveFenbiFlowRecord( fenbi );
-	}*/
+	}
     }
 
     /**

@@ -252,9 +252,26 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		} else {
 		    storeMap.put( "stoPicture", store.getStoPicture() );
 		}
+		String details = "";
+		String cityids = shopInfo.getProvince() + "," + shopInfo.getCity() + "," + shopInfo.getDistrict();
+		List< Map > cityList = wxShopService.queryBasisCityIds( cityids );
+		if ( cityList != null && cityList.size() > 0 ) {
+		    for ( Map map : cityList ) {
+			String cityId = CommonUtil.toString( map.get( "id" ) );
+			String cityName = CommonUtil.toString( map.get( "city_name" ) );
+			if ( cityId.equals( shopInfo.getProvince() ) ) {
+			    details = cityName + details;
+			} else if ( cityId.equals( shopInfo.getCity() ) ) {
+			    details = cityName + details;
+			} else if ( cityId.equals( shopInfo.getDistrict() ) ) {
+			    details += cityName;
+			}
+			break;
+		    }
 
-		//todo 调用陈丹接口，根据城市id查询城市名称
-		storeMap.put( "stoAddress", shopInfo.getAddress() + shopInfo.getDetail() );
+		}
+
+		storeMap.put( "stoAddress", details + shopInfo.getAddress() + shopInfo.getDetail() );
 	    }
 	}
 	return storeMap;

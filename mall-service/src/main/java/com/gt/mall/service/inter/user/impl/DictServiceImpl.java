@@ -20,7 +20,7 @@ import java.util.Map;
 @Service
 public class DictServiceImpl implements DictService {
 
-    public static final String DICT_URL = "/8A5DA52E/dictApi/";//字典链接
+    private static final String DICT_URL = "/8A5DA52E/dictApi/";//字典链接
 
     @Override
     public List< Map > getDict( String dictType ) {
@@ -29,7 +29,7 @@ public class DictServiceImpl implements DictService {
 	String data = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject dataJson = JSONObject.parseObject( data );
-	    if(CommonUtil.isNotEmpty( dataJson.get( "dictJSON" ) )){
+	    if ( CommonUtil.isNotEmpty( dataJson.get( "dictJSON" ) ) ) {
 		return JSONArray.parseArray( dataJson.get( "dictJSON" ).toString(), Map.class );
 	    }
 	}
@@ -41,7 +41,17 @@ public class DictServiceImpl implements DictService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "dictType", dictType );
 	params.put( "key", key );
-	return HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictRuturnValue", 1 );
+	String data = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    JSONObject dataJson = JSONObject.parseObject( data );
+	    if ( CommonUtil.isNotEmpty( dataJson.get( "dictJSON" ) ) ) {
+		List< Map > list = JSONArray.parseArray( dataJson.get( "dictJSON" ).toString(), Map.class );
+		if ( list != null && list.size() > 0 ) {
+		    return list.get( 0 ).get( "item_value" ).toString();
+		}
+	    }
+	}
+	return HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.dood", 1 );
     }
 
     @Override

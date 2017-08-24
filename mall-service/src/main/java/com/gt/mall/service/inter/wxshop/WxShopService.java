@@ -70,4 +70,11 @@ public interface WxShopService {
      */
     List< Map > queryCityByLevel( int level );
 
+    /**
+     * 根据城市id查询城市名称
+     * @param cityIds 城市id 查询多个用逗号隔开
+     * @return 城市信息
+     */
+    List<Map> queryBasisCityIds(String cityIds);
+
 }

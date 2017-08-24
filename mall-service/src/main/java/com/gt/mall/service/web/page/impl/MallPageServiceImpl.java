@@ -1341,19 +1341,15 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > selUser( Integer shopid ) {
-
-	//	String sql = "SELECT b.id,b.pid,b.advert,a.sto_user_id as bus_user_id,a.wx_shop_id FROM t_mall_store a LEFT JOIN bus_user b ON a.sto_user_id=b.id WHERE a.id=" + shopid;
-	//	return daoUtil.queryForMap( sql );
 	MallStore store = mallStoreService.selectById( shopid );
 	if ( CommonUtil.isNotEmpty( store ) ) {
 	    if ( store.getIsDelete() == 0 ) {
-		//  todo 调用陈丹接口  ， 通过商家id查询商家信息
+		BusUser user = busUserService.selectById( store.getStoUserId() );
 		Map< String,Object > userMap = new HashMap<>();
 		userMap.put( "id", store.getStoUserId() );//商家id
-		//todo 查询总账号
-		userMap.put( "pid", "" );//总账号id
-		userMap.put( "advert", "" );//是否显示技术支持
-		userMap.put( "sto_user_id", store.getStoUserId() );//商家id
+		userMap.put( "pid", busUserService.getMainBusId( store.getStoUserId() ) );//总账号id
+		userMap.put( "advert", user.getAdvert() );//是否显示技术支持
+		userMap.put( "bus_user_id", store.getStoUserId() );//商家id
 		userMap.put( "wx_shop_id", store.getWxShopId() );//微信门店id
 		return userMap;
 	    }
@@ -1422,11 +1418,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    if ( address == null || address.equals( "" ) ) {
 		address = "广东省";
 	    }
-	    //todo 通过地址获取地址id
-	    List list = new ArrayList();//busUserMapper.cityid( address );
+	    List< Map > list = wxShopService.queryBasisCityIds( address );
 	    if ( list != null ) {
-		if ( list.size() == 1 ) {
-		    Map map = (Map) list.get( 0 );
+		if ( list.size() > 0 ) {
+		    Map map = list.get( 0 );
 		    logCity = map.get( "id" ).toString();
 		} else {
 		    logCity = "2136";
@@ -2397,11 +2392,11 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public Map< String,Object > queryAreaById( Integer id ) {
-	//	String sql = "SELECT  * FROM `basis_city` where id =" + id;
-	//	return daoUtil.queryForMap( sql );
-
-	//todo 调用陈丹的接口，通过城市id查询城市信息
+    public Map queryAreaById( Integer id ) {
+	List< Map > addressList = wxShopService.queryBasisCityIds( CommonUtil.toString( id ) );
+	if ( addressList != null && addressList.size() > 0 ) {
+	    return addressList.get( 0 );
+	}
 	return null;
     }
 

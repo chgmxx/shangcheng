@@ -1,9 +1,7 @@
 package com.gt.mall.service.inter.wxshop;
 
 import com.gt.mall.bean.BusFlow;
-import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
-import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
-import com.gt.mall.bean.wx.flow.WsFenbiFlowRecord;
+import com.gt.mall.bean.wx.flow.*;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +13,15 @@ import java.util.Map;
  * Time : 10:35
  */
 public interface FenBiFlowService {
+
+    /**
+     * 查询剩余粉币数量(针对某个活动)
+     *
+     * @param fenbiSurplus 参数
+     *
+     * @return 数量
+     */
+    FenBiCount getFenbiSurplus( FenbiSurplus fenbiSurplus );
 
     /**
      * 根据ID查询流量套餐

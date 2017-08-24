@@ -406,7 +406,7 @@ public interface MallPageService extends BaseService< MallPage > {
     /**
      * 得到地区名称
      */
-    public Map< String,Object > queryAreaById( Integer id );
+    public Map queryAreaById( Integer id );
 
     /**
      * 根据商品id获取商品部分信息

@@ -30,7 +30,7 @@ public class WxShopServiceImpl implements WxShopService {
     public WsWxShopInfo getShopById( int wxShopId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", wxShopId );
-	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "getShopById.do", 1 );
+	String result = HttpSignUtil.SignHttpSelect( wxShopId, WS_SHOP_URL + "getShopById.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsWxShopInfo.class );
 	}
@@ -83,6 +83,20 @@ public class WxShopServiceImpl implements WxShopService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "reqdata", level );
 	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "queryCityByLevel.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONArray.parseArray( result, Map.class );
+	}
+	return null;
+    }
+
+    @Override
+    public List< Map > queryBasisCityIds( String cityIds ) {
+        if(CommonUtil.isEmpty( cityIds )){
+            return null;
+	}
+	Map< String,Object > params = new HashMap<>();
+	params.put( "reqdata", cityIds.split( "," ) );
+	String result = HttpSignUtil.SignHttpSelect( params, WS_SHOP_URL + "queryBasisCityIds.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}

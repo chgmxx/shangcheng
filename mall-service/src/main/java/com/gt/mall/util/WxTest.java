@@ -76,9 +76,9 @@ public class WxTest {
 	sms.setCompany( "5" );
 	sms.setMobiles( "15017934717" );
 	sms.setModel( 5 );
-	SignHttpByJSON( sms, "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do" );
+//	SignHttpByJSON( sms, "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do" );
 
-//	SignHttpJson( sms, "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do" );
+	SignHttpJson( sms, "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do" );
     }
 
 }

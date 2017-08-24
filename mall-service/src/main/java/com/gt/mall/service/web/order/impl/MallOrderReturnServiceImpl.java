@@ -1,8 +1,8 @@
 package com.gt.mall.service.web.order.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.pay.WxPayOrder;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
@@ -13,10 +13,12 @@ import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.service.inter.wxshop.PayOrderService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
+import com.gt.mall.util.CommonUtil;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,12 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
+
+    @Autowired
+    private PayOrderService payOrderService;
+
     /**
      * 系统退款（不是买家申请的）
      *
@@ -67,19 +75,17 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	if ( orderId > 0 && orderDetailId > 0 ) {
 	    Map< String,Object > detailMap = mallOrderDAO.selectByDIdOrder( orderDetailId );
 	    if ( CommonUtil.isNotEmpty( detailMap ) ) {
-		/*Integer memberId = CommonUtil.toInteger( detailMap.get( "buyer_user_id" ) );*/
+		Integer memberId = CommonUtil.toInteger( detailMap.get( "buyer_user_id" ) );
 		Integer orderPayWay = CommonUtil.toInteger( detailMap.get( "order_pay_way" ) );
 		Double orderMoney = CommonUtil.toDouble( detailMap.get( "orderMoney" ) );
 		String orderNo = CommonUtil.toString( detailMap.get( "orderNo" ) );
 		int busUserId = CommonUtil.toInteger( detailMap.get( "bus_user_id" ) );
-		//todo 调用小屁孩接口，根据粉丝id查询公众号信息
-		WxPublicUsers pUser = null;
+		WxPublicUsers pUser = wxPublicUserService.selectByMemberId( memberId );
 		String returnNo = "TK" + System.currentTimeMillis();
 		if ( detailMap.get( "orderStatus" ).toString().equals( "2" ) ) {
 
 		    if ( orderPayWay == 1 && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
-			//todo 调用小屁孩接口    根据订单号查询微信订单信息
-			WxPayOrder wxPayOrder = null;//wxPayOrderMapper.selectByOutTradeNo(orderNo);
+			WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( orderNo );//根据订单号查询微信订单信息
 			if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 			    map.put( "appid", pUser.getAppid() );// 公众号
 			    map.put( "mchid", pUser.getMchId() );// 商户号
@@ -155,8 +161,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		} else if ( detailMap.get( "orderStatus" ).toString().equals( "9" ) ) {//支付宝退款
 
 		} else if ( detailMap.get( "orderStatus" ).toString().equals( "10" ) ) {//小程序退款
-		    //todo 调用小屁孩接口    根据订单号查询微信订单信息
-		    WxPayOrder wxPayOrder = null;//wxPayOrderMapper.selectByOutTradeNo(orderNo);
+		    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( orderNo );//根据订单号查询微信订单信息
 		    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 			Map< String,Object > appletMap = new HashMap<>();
 			appletMap.put( "sysOrderNo", wxPayOrder.getOutTradeNo() );//系统单号
