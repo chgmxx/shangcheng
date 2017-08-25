@@ -1,5 +1,7 @@
 package com.gt.mall.service.web.presale.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
@@ -10,6 +12,8 @@ import com.gt.mall.bean.wx.SendWxMsgTemplate;
 import com.gt.mall.bean.wx.flow.FenBiCount;
 import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.bean.wx.flow.FenbiSurplus;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -25,14 +29,13 @@ import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.util.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,6 +81,8 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     private WxPublicUserService         wxPublicUserService;
     @Autowired
     private FenBiFlowService            fenBiFlowService;
+    @Autowired
+    private WxShopService               wxShopService;
 
     /**
      * 通过店铺id来查询预售
@@ -85,11 +90,10 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      * @Title: selectFreightByShopId
      */
     @Override
-    public PageUtil selectPresaleByShopId( Map< String,Object > params ) {
+    public PageUtil selectPresaleByShopId( Map< String,Object > params, int userId ) {
 	int pageSize = 10;
 
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
-			: CommonUtil.toInteger( params.get( "curPage" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 	int count = mallPresaleDAO.selectByCount( params );
 
@@ -100,9 +104,18 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( count > 0 ) {// 判断预售是否有数据
 	    List< MallPresale > presaleList = mallPresaleDAO.selectByPage( params );
 	    if ( presaleList != null ) {
+		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
 		for ( MallPresale presale : presaleList ) {
 		    int status = isJoinPresale( presale );
 		    presale.setJoinId( status );
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == presale.getWx_shop_id() ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				presale.setShopName( wxShops.getBusinessName() );
+			    }
+			    break;
+			}
+		    }
 		}
 	    }
 	    page.setSubList( presaleList );
@@ -158,14 +171,19 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     public int editPresale( Map< String,Object > presaleMap, int userId ) {
 	int code = -1;
 	if ( CommonUtil.isNotEmpty( presaleMap.get( "presale" ) ) ) {
-	    MallPresale presale = (MallPresale) JSONObject.toBean( JSONObject.fromObject( presaleMap.get( "presale" ) ),
-			    MallPresale.class );
+	    MallPresale presale = (MallPresale) JSONObject.toJavaObject( JSONObject.parseObject( presaleMap.get( "presale" ).toString() ), MallPresale.class );
 	    // 判断选择的商品是否已经存在未开始和进行中的预售中
 	    /*List<MallPresale> presaleList = mallPresaleDAO.selectDepositByProId(presale);
 	    if (presaleList == null || presaleList.size() == 0) {*/
 	    if ( CommonUtil.isNotEmpty( presale.getId() ) ) {
 		// 判断本商品是否正在预售中
 		MallPresale pre = mallPresaleDAO.selectDepositByIds( presale.getId() );
+
+		WsWxShopInfo wxShopInfo = wxShopService.getShopById( pre.getWx_shop_id() );
+		if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
+		    pre.setShopName( wxShopInfo.getBusinessName() );
+		}
+
 		int status = isJoinPresale( pre );
 		if ( pre.getStatus() == 1 && status > 0 ) {// 正在进行预售的信息不能修改
 		    code = -2;
@@ -207,8 +225,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      * 获取店铺下所有的预售
      */
     @Override
-    public List< Map< String,Object > > getPresaleAll( Member member,
-		    Map< String,Object > maps ) {
+    public List< Map< String,Object > > getPresaleAll( Member member, Map< String,Object > maps ) {
 	int shopid = 0;
 	if ( CommonUtil.isNotEmpty( maps.get( "shopId" ) ) ) {
 	    shopid = CommonUtil.toInteger( maps.get( "shopId" ) );
@@ -227,8 +244,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		discount = Double.parseDouble(map.get("discount").toString());
 	}*/
 	maps.put( "status", 1 );
-	List< Map< String,Object > > productList = mallPresaleDAO
-			.selectgbProductByShopId( maps );
+	List< Map< String,Object > > productList = mallPresaleDAO.selectgbProductByShopId( maps );
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( Map< String,Object > map2 : productList ) {
 		//				int id = Integer.valueOf(map2.get("preId").toString());
@@ -304,12 +320,13 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    if ( JedisUtil.hExists( key, field ) ) {
 		String str = JedisUtil.maoget( key, field );
 		if ( CommonUtil.isNotEmpty( str ) ) {
-		    JSONObject obj = JSONObject.fromObject( str );
+		    JSONObject obj = JSONObject.parseObject( str );
 		    if ( CommonUtil.isNotEmpty( obj.get( "invNum" ) ) ) {
 			presale.setInvNum( CommonUtil.toInteger( obj.get( "invNum" ) ) );
 		    }
 		    if ( CommonUtil.isNotEmpty( obj.get( "specArr" ) ) ) {
-			JSONArray preSpecArr = JSONArray.fromObject( obj.get( "specArr" ) );
+			List< Map< String,Object > > preSpecArr = (List< Map< String,Object > >) JSONArray
+					.toJavaObject( JSONArray.parseArray( obj.get( "specArr" ).toString() ), Map.class );
 			if ( preSpecArr != null && preSpecArr.size() > 0 ) {
 			    presale.setList( preSpecArr );
 			}
@@ -341,8 +358,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      * 根据店铺id查询预售信息
      */
     @Override
-    public List< Map< String,Object > > selectgbPresaleByShopId(
-		    Map< String,Object > maps ) {
+    public List< Map< String,Object > > selectgbPresaleByShopId( Map< String,Object > maps ) {
 	return mallPresaleDAO.selectgbProductByShopId( maps );
     }
 
@@ -388,9 +404,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	boolean fenbiFlag = false;
 	// 逻辑删除预售送礼
 	if ( !CommonUtil.isEmpty( params.get( "delPresaleSet" ) ) ) {
-	    List< MallPresaleGive > giveList = (List< MallPresaleGive >)
-			    JSONArray.toList( JSONArray.fromObject( params.get( "delPresaleSet" ) ),
-					    MallPresaleGive.class );
+	    List< MallPresaleGive > giveList = JSONArray.parseArray( params.get( "delPresaleSet" ).toString(), MallPresaleGive.class );
 	    if ( giveList != null && giveList.size() > 0 ) {
 		for ( MallPresaleGive give : giveList ) {
 		    num = mallPresaleGiveDAO.updateById( give );
@@ -401,9 +415,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( params.get( "presaleSet" ) ) ) {
-	    List< MallPresaleGive > setList = (List< MallPresaleGive >)
-			    JSONArray.toList( JSONArray.fromObject( params.get( "presaleSet" ) ),
-					    MallPresaleGive.class );
+	    List< MallPresaleGive > setList = JSONArray.parseArray( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
 	    if ( setList != null && setList.size() > 0 ) {
 		for ( MallPresaleGive give : setList ) {
 		    if ( CommonUtil.isNotEmpty( give.getId() ) ) {
@@ -516,8 +528,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		List< Map< String,Object > > specList = new ArrayList<>();
 		if ( is_specifica.equals( "1" ) ) {
 		    //规格库存
-		    List< MallProductInventory > invenList = mallProductInventoryService
-				    .selectInvenByProductId( Integer.parseInt( proId ) );
+		    List< MallProductInventory > invenList = mallProductInventoryService.selectInvenByProductId( Integer.parseInt( proId ) );
 		    if ( invenList != null && invenList.size() > 0 ) {
 			for ( MallProductInventory inven : invenList ) {
 			    Map< String,Object > invMap = new HashMap<>();
@@ -544,7 +555,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    map.put( "specArr", specList );
 		}
 		map.put( "is_specifica", is_specifica );
-		JedisUtil.map( key, preId, JSONObject.fromObject( map ).toString() );
+		JedisUtil.map( key, preId, JSONObject.parseObject( map.toString() ).toString() );
 	    }
 	}
 
@@ -559,11 +570,11 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	String preId = params.get( "groupBuyId" ).toString();
 	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
 	String specificas = "";
-	JSONArray dobj = JSONArray.fromObject( params.get( "detail" ).toString() );
-	JSONArray arr = JSONArray.fromObject( dobj );
+	JSONArray dobj = JSONArray.parseArray( params.get( "detail" ).toString() );
+	JSONArray arr = dobj;
 	if ( arr != null && arr.size() > 0 ) {
 	    for ( Object object : arr ) {
-		JSONObject detailObj = JSONObject.fromObject( object );
+		JSONObject detailObj = JSONObject.parseObject( object.toString() );
 		//判断商品是否有规格
 		if ( CommonUtil.isNotEmpty( detailObj.get( "product_specificas" ) ) ) {
 		    specificas = detailObj.get( "product_specificas" ).toString();
@@ -572,14 +583,14 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		Integer invNum = 0;
 		String value = JedisUtil.maoget( invKey, preId + "" );
 		if ( CommonUtil.isNotEmpty( value ) ) {
-		    JSONObject specObj = JSONObject.fromObject( value );
+		    JSONObject specObj = JSONObject.parseObject( value );
 		    if ( !specificas.equals( "" ) ) {
 			//有规格，取规格的库存
 			if ( CommonUtil.isNotEmpty( specObj.get( "specArr" ) ) ) {
-			    JSONArray preSpecArr = JSONArray.fromObject( specObj.get( "specArr" ) );
+			    JSONArray preSpecArr = JSONArray.parseArray( specObj.get( "specArr" ).toString() );
 			    if ( preSpecArr != null && preSpecArr.size() > 0 ) {
 				for ( Object obj : preSpecArr ) {
-				    JSONObject preObj = JSONObject.fromObject( obj );
+				    JSONObject preObj = JSONObject.parseObject( obj.toString() );
 				    if ( preObj.get( "specId" ).toString().equals( specificas ) ) {
 					invNum = CommonUtil.toInteger( preObj.get( "invNum" ) );
 					break;
@@ -596,7 +607,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    }
 		}
 
-		int proNum = detailObj.getInt( "totalnum" );//购买商品的用户
+		int proNum = detailObj.getInteger( "totalnum" );//购买商品的用户
 		//判断库存是否够
 		if ( invNum >= proNum && invNum > 0 ) {
 		    result.put( "result", true );
@@ -634,15 +645,15 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		Integer invNum = 0;
 		String value = JedisUtil.maoget( invKey, field );
 		if ( CommonUtil.isNotEmpty( value ) ) {
-		    JSONObject specObj = JSONObject.fromObject( value );
+		    JSONObject specObj = JSONObject.parseObject( value );
 		    JSONArray arr = new JSONArray();
 		    if ( !specificas.equals( "" ) ) {
 			//有规格，取规格的库存
 			if ( CommonUtil.isNotEmpty( specObj.get( "specArr" ) ) ) {
-			    JSONArray preSpecArr = JSONArray.fromObject( specObj.get( "specArr" ) );
+			    JSONArray preSpecArr = JSONArray.parseArray( specObj.get( "specArr" ).toString() );
 			    if ( preSpecArr != null && preSpecArr.size() > 0 ) {
 				for ( Object obj : preSpecArr ) {
-				    JSONObject preObj = JSONObject.fromObject( obj );
+				    JSONObject preObj = JSONObject.parseObject( obj.toString() );
 				    if ( preObj.get( "specId" ).toString().equals( specificas ) ) {
 					invNum = CommonUtil.toInteger( preObj.get( "invNum" ) );
 					//break;
@@ -688,12 +699,12 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 			    String url = PropertiesUtil.getHomeUrl() + "/mallPage/" + preMap.get( "product_id" ) + "/" + preMap.get( "shop_id" ) + "/79B4DE7C/phoneProduct.do";
 			    long startHour = DateTimeKit.minsBetween( nowDate, startTimes, 3600000, format );
 			    if ( CommonUtil.isNotEmpty( map.get( str ) ) ) {
-				JSONArray arr = JSONArray.fromObject( map.get( str ) );
+				JSONArray arr = JSONArray.parseArray( map.get( str ) );
 				JSONArray msgArr = new JSONArray();
 				if ( arr != null && arr.size() > 0 ) {
 				    for ( Object object : arr ) {
 					boolean flag = false;
-					JSONObject obj = JSONObject.fromObject( object );
+					JSONObject obj = JSONObject.parseObject( object.toString() );
 					int isStartRemain = 0;
 					int isEndRemain = 0;
 					if ( CommonUtil.isNotEmpty( obj ) ) {
@@ -763,10 +774,10 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( CommonUtil.isNotEmpty( set ) && CommonUtil.isNotEmpty( title ) ) {
 	    if ( set.getIsMessage().toString().equals( "1" ) ) {//判断是否开启了消息模板的功能
 		if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
-		    JSONArray arr = JSONArray.fromObject( set.getMessageJson() );
+		    JSONArray arr = JSONArray.parseArray( set.getMessageJson() );
 		    if ( arr != null && arr.size() > 0 ) {
 			for ( Object object : arr ) {
-			    JSONObject obj = JSONObject.fromObject( object );
+			    JSONObject obj = JSONObject.parseObject( object.toString() );
 			    if ( obj.getString( "title" ).equals( title ) ) {
 				if ( CommonUtil.isNotEmpty( obj.get( "id" ) ) ) {
 				    id = CommonUtil.toInteger( obj.get( "id" ) );

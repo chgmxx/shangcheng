@@ -91,7 +91,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     @Autowired
     private DictService                 dictService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService         wxPublicUserService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -859,28 +859,28 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     @Override
     public Map< String,Object > addressList( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
-	//TODO 会员信息，地址方法 t_eat_member_address
-	//        int memberId = CommonUtil.toInteger(params.get("memberId"));
-	//        List<Integer> memberList = memberPayService.findMemberIds(memberId);//查询会员信息
-	//        if (memberList != null && memberList.size() > 0) {
-	//            params.put("oldMemberIds", memberList);
-	//        }
-	//        List<Map<String, Object>> addressList = new ArrayList<Map<String, Object>>();
-	//        List<Map<String, Object>> list = orderDAO.selectShipAddress(params);
-	//        int is_default = 2;
-	//        if (list != null && list.size() > 0) {
-	//            for (Map<String, Object> map : list) {
-	//                Map<String, Object> addressMap = getAddressParams(map);
-	//                if (is_default == 2) {
-	//                    is_default = CommonUtil.toInteger(addressMap.get("is_default"));
-	//                } else if (is_default == 1 && addressMap.get("is_default").toString().equals("1")) {
-	//                    addressMap.put("is_default", "2");
-	//                    daoUtil.update("UPDATE t_eat_member_address SET mem_default = 2 WHERE id =" + addressMap.get("id"));
-	//                }
-	//                addressList.add(addressMap);
-	//            }
-	//        }
-	//        resultMap.put("addressList", addressList);
+	//TODO 地址方法 t_eat_member_address
+	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
+	        if (memberList != null && memberList.size() > 0) {
+	            params.put("oldMemberIds", memberList);
+	        }
+	        List<Map<String, Object>> addressList = new ArrayList<Map<String, Object>>();
+//	        List<Map<String, Object>> list = orderDAO.selectShipAddress(params);
+//	        int is_default = 2;
+//	        if (list != null && list.size() > 0) {
+//	            for (Map<String, Object> map : list) {
+//	                Map<String, Object> addressMap = getAddressParams(map);
+//	                if (is_default == 2) {
+//	                    is_default = CommonUtil.toInteger(addressMap.get("is_default"));
+//	                } else if (is_default == 1 && addressMap.get("is_default").toString().equals("1")) {
+//	                    addressMap.put("is_default", "2");
+//	                    daoUtil.update("UPDATE t_eat_member_address SET mem_default = 2 WHERE id =" + addressMap.get("id"));
+//	                }
+//	                addressList.add(addressMap);
+//	            }
+//	        }
+	        resultMap.put("addressList", addressList);
 	return resultMap;
     }
 
@@ -889,26 +889,26 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int id = CommonUtil.toInteger( params.get( "id" ) );
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
-	//TODO 会员信息，地址方法 t_eat_member_address
-	//        List<Integer> memberList = memberPayService.findMemberIds(memberId);//查询会员信息
-	//        String memberIds = "";
-	//        if (memberList != null && memberList.size() > 0) {
-	//            for (Integer dfMemberId : memberList) {
-	//                if (CommonUtil.isNotEmpty(memberIds)) {
-	//                    memberIds += ",";
-	//                }
-	//                memberIds += dfMemberId;
-	//            }
-	//        }
-	//        daoUtil.update("UPDATE t_eat_member_address SET mem_default = 2 WHERE df_member_id in (" + memberIds + ")");
-	//        int count = daoUtil.update("UPDATE t_eat_member_address SET mem_default = 1 WHERE id=?", id);
-	//
-	//        if (count > 0) {
-	//            resultMap.put("code", 1);
-	//        } else {
-	//            resultMap.put("code", -1);
-	//            resultMap.put("errorMsg", "设置默认地址失败");
-	//        }
+	//TODO 地址方法 t_eat_member_address
+	        List<Integer> memberList = memberService.findMemberListByIds(memberId);//查询会员信息
+	        String memberIds = "";
+	        if (memberList != null && memberList.size() > 0) {
+	            for (Integer dfMemberId : memberList) {
+	                if (CommonUtil.isNotEmpty(memberIds)) {
+	                    memberIds += ",";
+	                }
+	                memberIds += dfMemberId;
+	            }
+	        }
+//	        daoUtil.update("UPDATE t_eat_member_address SET mem_default = 2 WHERE df_member_id in (" + memberIds + ")");
+//	        int count = daoUtil.update("UPDATE t_eat_member_address SET mem_default = 1 WHERE id=?", id);
+//
+//	        if (count > 0) {
+//	            resultMap.put("code", 1);
+//	        } else {
+//	            resultMap.put("code", -1);
+//	            resultMap.put("errorMsg", "设置默认地址失败");
+//	        }
 
 	return resultMap;
     }
@@ -1208,7 +1208,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 
 	Member member = memberService.findMemberById( memberId, null );
-	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId(member.getBusid());
+	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( member.getBusid() );
 
 	int orderPayWay = 0;
 	//判断库存

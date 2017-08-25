@@ -25,7 +25,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 通过店铺id来查询预售
      *
      */
-    PageUtil selectPresaleByShopId( Map< String,Object > param );
+    PageUtil selectPresaleByShopId( Map< String,Object > param ,int userId);
 
     /**
      * 通过预售id查询预售信息

@@ -6,6 +6,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.wx.shop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
@@ -50,7 +51,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     private WxPublicUserService  wxPublicUserService;
 
     @Override
-    public PageUtil selectMarginByShopId( Map< String,Object > params ) {
+    public PageUtil selectMarginByShopId( Map< String,Object > params, int userId ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -66,11 +67,17 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    List< MallAuctionMargin > auctionList = auctionMarginDAO.selectByPage( params );
 	    List< MallAuctionMargin > marginList = new ArrayList< MallAuctionMargin >();
 	    if ( auctionList != null && auctionList.size() > 0 ) {
+		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
 		for ( MallAuctionMargin margin : auctionList ) {
-		    WsWxShopInfo wxShopInfo = wxShopService.getShopById( margin.getWx_shop_id() );
-		    if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
-			margin.setShopName( wxShopInfo.getBusinessName() );
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == margin.getWx_shop_id() ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				margin.setShopName( wxShops.getBusinessName() );
+			    }
+			    break;
+			}
 		    }
+
 		    boolean isReturn = true;
 		    if ( ( margin.getAuctionStatus() == -1 || margin.getAuctionStatus() == -2 ) && margin.getMarginStatus().toString().equals( "1" ) ) {
 			if ( margin.getAuctionStatus() == -1 ) {

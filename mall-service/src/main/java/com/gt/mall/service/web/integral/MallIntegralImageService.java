@@ -23,7 +23,7 @@ public interface MallIntegralImageService extends BaseService<MallIntegralImage>
      * @param params userId:用户id，curPage：当前页
      * @return 积分商城图片列表
      */
-    PageUtil selectImageByShopId(Map<String, Object> params);
+    PageUtil selectImageByShopId(Map<String, Object> params,int userId);
 
     /**
      * 通过积分商城图片id查询积分商城图片

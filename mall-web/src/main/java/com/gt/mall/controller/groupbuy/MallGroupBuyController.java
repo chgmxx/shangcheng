@@ -92,7 +92,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = groupBuyService.selectGroupBuyByShopId( params );
+		    PageUtil page = groupBuyService.selectGroupBuyByShopId( params, user.getId() );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}

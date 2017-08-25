@@ -20,7 +20,6 @@
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
     <script type="text/javascript" src="/js/plugin/jquery-form.js?<%= System.currentTimeMillis()%>"></script>
     <script src="/js/plugin/layer/layer.js?<%= System.currentTimeMillis()%>"></script>
-    <script src="/js/mall/mall_public.js"></script>
     <script type="text/javascript">
 
         $(function () {

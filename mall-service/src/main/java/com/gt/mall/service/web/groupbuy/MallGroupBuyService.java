@@ -24,7 +24,7 @@ public interface MallGroupBuyService extends BaseService<MallGroupBuy> {
      * @param param curPage：当前页，type：状态，shoplist：店铺Id集合
      * @return 团购列表
      */
-    PageUtil selectGroupBuyByShopId(Map<String, Object> param);
+    PageUtil selectGroupBuyByShopId(Map<String, Object> param, int userId);
 
     /**
      * 通过团购id查询团购信息
