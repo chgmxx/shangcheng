@@ -267,13 +267,13 @@
 
     function showImages(img) {
         $(".layers img").attr("src", img);
-        var index = parentOpenIframe("","","",$(".layers").html());
-//        var index = parent.layer.open({
-//            type: 1,
-//            content: $(".layers").html(),
-//            maxmin: true,
-//            offset: "10%",
-//        });
+        var index = layer.open({
+            type: 1,
+            shade: [0.3, '#fff'],
+            content: $(".layers").html(),
+            maxmin: true,
+            offset: "5%",
+        });
         //parent.layer.full(index);
     }
 

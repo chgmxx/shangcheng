@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.applet.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
@@ -35,7 +36,6 @@ import com.gt.mall.util.*;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -536,7 +536,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	MallShopCart cart = new MallShopCart();
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	if ( CommonUtil.isNotEmpty( params.get( "shopCart" ) ) ) {
-	    cart = (MallShopCart) JSONObject.toBean( JSONObject.fromObject( params.get( "shopCart" ) ), MallShopCart.class );
+	    cart = (MallShopCart) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "shopCart" ).toString() ), MallShopCart.class );
 	} else {
 	    resultMap.put( "errorMsg", "缺少参数" );
 	    resultMap.put( "code", -1 );
@@ -566,10 +566,10 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 
 	//判断商品库存,限购
 	if ( CommonUtil.isNotEmpty( cart.getProSpecStr() ) ) {
-	    Map map = JSONObject.fromObject( cart.getProSpecStr() );
+	    Map map = JSONObject.parseObject( cart.getProSpecStr() );
 	    for ( Object key : map.keySet() ) {
 		String proSpecificas = key.toString();
-		Map p = JSONObject.fromObject( map.get( key ) );
+		Map p = JSONObject.parseObject( map.get( key ).toString() );
 		int proNum = CommonUtil.toInteger( p.get( "num" ) );
 		result = productService.calculateInventory( cart.getProductId(), proSpecificas, proNum, cart.getUserId() );
 	    }
@@ -619,18 +619,18 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( CommonUtil.isNotEmpty( map.get( "pro_spec_str" ) ) ) {
 	    JSONObject specIdObj = new JSONObject();
 
-	    JSONObject speObj = JSONObject.fromObject( map.get( "pro_spec_str" ) );//商品规格和数量
+	    JSONObject speObj = JSONObject.parseObject( map.get( "pro_spec_str" ).toString() );//商品规格和数量
 
 	    if ( CommonUtil.isNotEmpty( cart.getProSpecStr() ) ) {
-		JSONObject speObj2 = JSONObject.fromObject( cart.getProSpecStr() );
+		JSONObject speObj2 = JSONObject.parseObject( cart.getProSpecStr() );
 
-		Iterator it = speObj.keys();
+		Iterator it = (Iterator) speObj.keySet();
 
 		while ( it.hasNext() ) {
 		    String str = it.next().toString();
 		    if ( CommonUtil.isNotEmpty( speObj2.get( str ) ) ) {
-			JSONObject proObj = JSONObject.fromObject( speObj.get( str ) );
-			JSONObject proObj2 = JSONObject.fromObject( speObj2.get( str ) );
+			JSONObject proObj = JSONObject.parseObject( speObj.get( str ).toString() );
+			JSONObject proObj2 = JSONObject.parseObject( speObj2.get( str ).toString() );
 
 			int num = CommonUtil.toInteger( proObj.get( "num" ) );
 			int num2 = CommonUtil.toInteger( proObj2.get( "num" ) );
@@ -648,7 +648,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		    }
 		}
 		if ( speObj2 != null && speObj2.size() > 0 ) {
-		    Iterator it2 = speObj2.keys();
+		    Iterator it2 = (Iterator) speObj2.keySet();
 
 		    while ( it2.hasNext() ) {
 			String str = it2.next().toString();

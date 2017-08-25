@@ -2351,7 +2351,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		MallProductInventory inventory = new MallProductInventory();
 		inventory.setId( CommonUtil.toInteger( invMap.getId() ) );
 		inventory.setErpSpecvalueId( ids );
-		mallProductInventoryDAO.updateAllColumnById( inventory );
+		mallProductInventoryDAO.updateById( inventory );
 
 		if ( invs.containsKey( ids ) ) {//是否存在
 		    inv = invs.get( ids );

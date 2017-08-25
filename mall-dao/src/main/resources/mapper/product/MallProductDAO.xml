@@ -389,10 +389,12 @@
         LEFT JOIN t_mall_store s ON p.shop_id = s.id
         WHERE i.is_main_images=1
         AND i.is_delete=0 AND p.is_delete=0 AND p.check_status=1 AND p.is_publish=1 AND i.ass_type = 1 AND s.is_delete=0
-        AND s.id IN
-        <foreach close=")" collection="shopIds" index="index" item="item" open="(" separator=",">
-            #{item,jdbcType=INTEGER}
-        </foreach>
+        <if test="shoplist != null ">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                s.id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
         <if test="proName != null and proName != ''">
             AND p.pro_name LIKE '%${proName}%'
         </if>
@@ -405,10 +407,12 @@
         LEFT JOIN t_mall_product_detail d ON d.product_id=p.id
         WHERE i.is_main_images=1
         AND i.is_delete=0 AND p.is_delete=0 AND p.check_status=1 AND p.is_publish=1 AND i.ass_type = 1 AND s.is_delete=0
-        AND s.id IN
-        <foreach close=")" collection="shopIds" index="index" item="item" open="(" separator=",">
-            #{item,jdbcType=INTEGER}
-        </foreach>
+        <if test="shoplist != null ">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                s.id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
         <if test="proName != null and proName != ''">
             AND p.pro_name LIKE '%${proName}%'
         </if>

@@ -424,7 +424,7 @@ function chooseImage() {
 function image(imageArray, url) {
 
     layer.closeAll();
-    $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
+    fhmateriallayer(imageArray, url); // 父类调用子类的方法
 }
 /**
  * 上传图片回调函数

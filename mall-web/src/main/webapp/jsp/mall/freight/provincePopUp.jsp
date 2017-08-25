@@ -12,7 +12,7 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>城市弹出框</title>
     <link rel="stylesheet" type="text/css" href="/css/mall/order.css"/>
-    <script src="/js/plugin/jquery-1.8.0.min.js"></script>
+    <script src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script src="/js/plugin/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/plugin/layer/layer.js"></script>
     <style>
@@ -77,7 +77,7 @@
                     province += $(this).attr("tip");
                 }
             });
-            getProvinces(id, province, index);
+            parent.getProvinces(id, province, index);
             layer.closeAll();
         });
 

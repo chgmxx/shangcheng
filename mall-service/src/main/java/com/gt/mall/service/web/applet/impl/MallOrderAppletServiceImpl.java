@@ -1,5 +1,7 @@
 package com.gt.mall.service.web.applet.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.Member;
@@ -34,8 +36,6 @@ import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -137,7 +137,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	String orderStatus = CommonUtil.toString( order.getOrderStatus() );
 	String deliveryMethod = CommonUtil.toString( order.getDeliveryMethod() );
 	JSONArray detailArr = new JSONArray();
-	JSONArray arr = JSONArray.fromObject( order.getMallOrderDetail() );
+	JSONArray arr = JSONArray.parseArray( order.getMallOrderDetail().toString() );
 	int isShouHuo = 0;//是否能显示收货按钮
 	int groupBuyId = CommonUtil.toInteger( order.getGroupBuyId() );
 	int shopId = 0;
@@ -163,10 +163,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    statusName = "订单已关闭";
 	}
 	for ( Object dObject2 : arr ) {
-	    JSONObject dObj = JSONObject.fromObject( dObject2 );
+	    JSONObject dObj = JSONObject.parseObject( dObject2.toString() );
 	    Map< String,Object > detailMap = new HashMap< String,Object >();
-	    int productId = dObj.getInt( "productId" );
-	    shopId = dObj.getInt( "shopId" );
+	    int productId = dObj.getInteger( "productId" );
+	    shopId = dObj.getInteger( "shopId" );
 	    String proTypeId = CommonUtil.toString( dObj.get( "proTypeId" ) );
 	    int cardReceiveId = 0;
 	    int groupIsReturn = groupBuyService.groupIsReturn( groupBuyId, orderType, order.getId(), dObj.get( "id" ), buy );
@@ -305,7 +305,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		detailMap.put( "product_num", 1 );
 		detailMap.put( "product_price", order.getOrderMoney() );
 	    }
-	    if ( dObj.getInt( "id" ) > 0 || orderPayWay.equals( "5" ) ) {
+	    if ( dObj.getInteger( "id" ) > 0 || orderPayWay.equals( "5" ) ) {
 		detailArr.add( detailMap );
 	    }
 	}
@@ -615,10 +615,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
 			if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType().toString().equals( "7" ) && CommonUtil
 					.isNotEmpty( detail.getProSpecStr() ) ) {//批发商品判断库存
-			    JSONObject map = JSONObject.fromObject( detail.getProSpecStr() );
+			    JSONObject map = JSONObject.parseObject( detail.getProSpecStr() );
 			    for ( Object key : map.keySet() ) {
 				String proSpecificas = key.toString();
-				JSONObject p = JSONObject.fromObject( map.get( key ) );
+				JSONObject p = JSONObject.parseObject( map.get( key ).toString() );
 				int proNum = CommonUtil.toInteger( p.get( "num" ) );
 				Map< String,Object > result = productService.calculateInventory( detail.getProductId(), proSpecificas, proNum, order.getBuyerUserId() );
 				if ( CommonUtil.isNotEmpty( result.get( "msg" ) ) ) {
@@ -808,7 +808,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     public Map< String,Object > submitReturnOrder( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 
-	MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toBean( JSONObject.fromObject( params ), MallOrderReturn.class );
+	MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallOrderReturn.class );
 	if ( CommonUtil.isNotEmpty( orderReturn.getWlCompanyId() ) ) {
 	    orderReturn.setStatus( 3 );
 	} else {
@@ -996,7 +996,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
 	    List< Map< String,Object > > cartList = new ArrayList< Map< String,Object > >();
 	    if ( CommonUtil.isNotEmpty( params.get( "cartIds" ) ) ) {
-		JSONArray cartArrs = JSONArray.fromObject( params.get( "cartIds" ) );
+		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 		params.put( "cartIds", cartArrs );
 	    }
 	    List< Map< String,Object > > shopList = shopCartDAO.selectCheckShopByParam( params );
@@ -1219,13 +1219,13 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	double orderTotalMoneys = 0;
 	double orderTotalFreightMoney = 0;
 	//判断库存
-	JSONArray orderArray = JSONArray.fromObject( params.get( "order" ) );
+	JSONArray orderArray = JSONArray.parseArray( params.get( "order" ).toString() );
 	if ( orderArray != null && orderArray.size() > 0 ) {
 	    for ( Object object : orderArray ) {
 		if ( code == -1 ) {
 		    break;
 		}
-		JSONObject orderObj = JSONObject.fromObject( object );
+		JSONObject orderObj = JSONObject.parseObject( object.toString() );
 		MallOrder order = getOrderByParam( orderObj, member );
 		order.setShopId( CommonUtil.toInteger( orderObj.get( "shopId" ) ) );
 		order.setMemCardType( memType );
@@ -1249,13 +1249,13 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		}
 		List< MallOrderDetail > detailList = new ArrayList< MallOrderDetail >();
 		if ( CommonUtil.isNotEmpty( orderObj.get( "orderDetail" ) ) ) {
-		    JSONArray detailArr = JSONArray.fromObject( orderObj.get( "orderDetail" ) );
+		    JSONArray detailArr = JSONArray.parseArray( orderObj.get( "orderDetail" ).toString() );
 		    if ( detailArr != null && detailArr.size() > 0 ) {
 			for ( Object object2 : detailArr ) {
 			    if ( code == -1 ) {
 				break;
 			    }
-			    JSONObject detailObj = JSONObject.fromObject( object2 );
+			    JSONObject detailObj = JSONObject.parseObject( object2.toString() );
 
 			    MallOrderDetail detail = getOrderDetailByParam( detailObj );
 
@@ -1366,7 +1366,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    }
 
 	    if ( CommonUtil.isNotEmpty( params.get( "cartIds" ) ) ) {
-		JSONArray cartArrs = JSONArray.fromObject( params.get( "cartIds" ) );
+		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 				/*params.put("cartIds", cartArrs);*/
 		if ( cartArrs != null && cartArrs.size() > 0 ) {
 		    for ( Object obj : cartArrs ) {
@@ -1426,14 +1426,14 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	int memType = memberService.isCardType( member.getId() );
 	//判断库存
 	List< MallOrder > orderList = new ArrayList<>();
-	JSONArray orderArray = JSONArray.fromObject( params.get( "order" ) );
+	JSONArray orderArray = JSONArray.parseArray( params.get( "order" ).toString() );
 	double totalPrimary = 0;
 	if ( orderArray != null && orderArray.size() > 0 ) {
 	    for ( Object object : orderArray ) {
 		if ( code == -1 ) {
 		    break;
 		}
-		JSONObject orderObj = JSONObject.fromObject( object );
+		JSONObject orderObj = JSONObject.parseObject( object.toString() );
 		MallOrder order = getOrderByParam( orderObj, member );
 		order.setShopId( CommonUtil.toInteger( orderObj.get( "shopId" ) ) );
 		order.setMemCardType( memType );
@@ -1457,14 +1457,14 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
 		List< MallOrderDetail > detailList = new ArrayList< MallOrderDetail >();
 		if ( CommonUtil.isNotEmpty( orderObj.get( "orderDetail" ) ) ) {
-		    JSONArray detailArr = JSONArray.fromObject( orderObj.get( "orderDetail" ) );
+		    JSONArray detailArr = JSONArray.parseArray( orderObj.get( "orderDetail" ).toString() );
 		    if ( detailArr != null && detailArr.size() > 0 ) {
 			for ( Object object2 : detailArr ) {
 
 			    if ( code == -1 ) {
 				break;
 			    }
-			    JSONObject detailObj = JSONObject.fromObject( object2 );
+			    JSONObject detailObj = JSONObject.parseObject( object2.toString() );
 
 			    MallOrderDetail detail = getOrderDetailByParam( detailObj );
 
@@ -1496,7 +1496,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( code == 1 ) {
 	    System.out.println( orderList );
-	    resultMap.put( "orderList", JSONArray.fromObject( orderList ) );
+	    resultMap.put( "orderList", JSONArray.parse( orderList.toString() ) );
 	    resultMap.put( "totalPrimary", totalPrimary );
 	}
 	resultMap.put( "code", code );
@@ -1511,10 +1511,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	int code = 1;
 	//判断商品的库存
 	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType() == 7 && CommonUtil.isNotEmpty( detail.getProSpecStr() ) ) {//判断批发商品的库存
-	    JSONObject map = JSONObject.fromObject( detail.getProSpecStr() );
+	    JSONObject map = JSONObject.parseObject( detail.getProSpecStr() );
 	    for ( Object key : map.keySet() ) {
 		Object proSpecificas = key;
-		JSONObject p = JSONObject.fromObject( map.get( key ) );
+		JSONObject p = JSONObject.parseObject( map.get( key ).toString() );
 		int proNum = CommonUtil.toInteger( p.get( "num" ) );
 		Map< String,Object > result = productService.calculateInventory( detail.getProductId(), proSpecificas, proNum, order.getBuyerUserId() );
 		if ( result.get( "result" ).toString().equals( "false" ) ) {
@@ -1535,7 +1535,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		Map< String,Object > cardMap = pageService.getCardReceive( detail.getCardReceiveId() );
 		if ( CommonUtil.isNotEmpty( cardMap ) ) {
 		    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
-			JSONObject cardObj = JSONObject.fromObject( cardMap.get( "recevieMap" ) );
+			JSONObject cardObj = JSONObject.parseObject( cardMap.get( "recevieMap" ).toString() );
 			if ( CommonUtil.isNotEmpty( cardObj.get( "guoqi" ) ) && cardObj.get( "guoqi" ).toString().equals( "1" ) ) {
 			    msg = "卡券包已过期不能购买";
 			}

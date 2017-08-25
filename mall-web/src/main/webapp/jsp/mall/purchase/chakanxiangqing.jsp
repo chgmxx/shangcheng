@@ -18,6 +18,7 @@
     <link rel="stylesheet" type="text/css" href="/js/plugin/laydate/skins/lan/laydate.css"/>
     <script src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script src="/js/plugin/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/plugin/layer/layer.js" type="text/javascript" charset="utf-8"></script>
     <title>查看详情</title>
 </head>
 <body>

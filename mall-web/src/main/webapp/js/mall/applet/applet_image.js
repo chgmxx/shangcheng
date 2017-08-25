@@ -31,7 +31,7 @@ function deleteImage(obj, type) {
         // 询问框
         layer.confirm('您确定要' + msg + '？', {
             offset: "10%",
-            shade:[0.1,'#fff'],
+            shade: [0.1, '#fff'],
             btn: ['确定', '取消']
             // 按钮
         }, function () {
@@ -52,7 +52,7 @@ function deleteImage(obj, type) {
                     layer.close(layerLoad);
                     if (data.code == 1) {
                         var tip = layer.alert(msg + "成功", {
-                            shade:[0.1,"#fff"],
+                            shade: [0.1, "#fff"],
                             offset: "10%",
                             closeBtn: 0
                         }, function (index) {
@@ -61,7 +61,7 @@ function deleteImage(obj, type) {
                         });
                     } else {// 编辑失败
                         var tip = layer.alert(msg + "失败", {
-                            shade:[0.1,"#fff"],
+                            shade: [0.1, "#fff"],
                             offset: "10%"
                         });
                     }
@@ -69,7 +69,7 @@ function deleteImage(obj, type) {
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     layer.close(layerLoad);
                     layer.alert(msg + "失败", {
-                        shade:[0.1,"#fff"],
+                        shade: [0.1, "#fff"],
                         offset: "10%"
                     });
                     return;
@@ -131,7 +131,7 @@ function editAuction() {
     var shopId = $("#shopId").val();
     if (imageUrl == null || imageUrl == "" || typeof(imageUrl) == "undefined") {
         layer.msg('请上传图片', {
-            shade:[0.1,"#fff"],
+            shade: [0.1, "#fff"],
             offset: "10%",
             icon: 1
         });
@@ -140,7 +140,7 @@ function editAuction() {
     if (type == 1) {//跳转到商品详情
         if (productId == null || productId == "") {
             layer.msg('请选择要跳转的商品', {
-                shade:[0.1,"#fff"],
+                shade: [0.1, "#fff"],
                 offset: "10%",
                 icon: 1
             });
@@ -174,7 +174,7 @@ function editAuction() {
             if (data.code == 1) {
                 var tip = layer.alert("编辑成功", {
                     offset: "10%",
-                    shade:[0.1,"#fff"],
+                    shade: [0.1, "#fff"],
                     closeBtn: 0
                 }, function (index) {
                     layer.close(tip);
@@ -182,7 +182,7 @@ function editAuction() {
                 });
             } else {// 编辑失败
                 layer.alert("编辑失败", {
-                    shade:[0.1,"#fff"],
+                    shade: [0.1, "#fff"],
                     offset: "10%"
                 });
             }
@@ -191,7 +191,7 @@ function editAuction() {
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             layer.close(layerLoad);
             layer.alert("编辑失败", {
-                shade:[0.1,"#fff"],
+                shade: [0.1, "#fff"],
                 offset: "10%"
             });
             return;
@@ -402,7 +402,8 @@ function chooseImage() {
 //素材库里面返回信息
 function image(imageArray, url) {
     layer.closeAll();
-    $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
+    // $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
+    fhmateriallayer(imageArray, url);
 }
 /**
  * 上传图片回调函数

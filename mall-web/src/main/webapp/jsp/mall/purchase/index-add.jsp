@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="/css/mall/purchase/index.css"/>
     <link rel="stylesheet" type="text/css" href="/js/plugin/laydate/skins/lan/laydate.css"/>
     <script src="/js/plugin/jquery-1.8.3.min.js"></script>
+    <script src="/js/plugin/layer/layer.js" type="text/javascript" charset="utf-8"></script>
     <script src="/js/plugin/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
     <title>报价管理-新增</title>
 
@@ -377,7 +378,7 @@
     function getImageUrl(id) {
         imageId = id;
 //        materiallayer();
-        fhmater(2);
+        fhmater(0);
     }
     //素材库里面返回信息
     function image(id, url) {
@@ -393,7 +394,7 @@
     function removeTerm(_this) {
         //询问框
         layer.confirm("确定要删除该条数据吗?", {
-            shade:[0.1,'#fff'],
+            shade: [0.1, '#fff'],
             btn: ['确定', '取消'],
             offset: '10%'
         }, function () {
@@ -429,6 +430,10 @@
             window.alertMsg("轮播图最多添加三张!");
             return;
         }
+        if (idIndex == undefined || idIndex == null) {
+            idIndex = 0;
+        }
+
         idIndex++;
         var content = " <tr>" +
             "<td><input type='checkbox' class='gt-form-checkbox' name='sex' /><input type='hidden' name='carouselImg' id='hidden" + idIndex + "' /></td>" +

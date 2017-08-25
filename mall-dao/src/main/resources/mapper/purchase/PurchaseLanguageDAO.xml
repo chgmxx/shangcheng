@@ -20,14 +20,10 @@
     <select id="findLanguangeList" resultType="Map" parameterType="java.lang.Integer">
         select
         l.id,
-        m.headimgurl,
-        m.nickname,
         l.order_id,
         l.member_id
         from
         purchase_language l
-        left join
-        t_wx_bus_member m on m.id = l.member_id
         where order_id =#{orderId} GROUP BY
         l.member_id order by language_time
         desc

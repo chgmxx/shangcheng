@@ -20,6 +20,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <script src="/js/plugin/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
+    <script src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript">
         //iframe直接输入URL情况下，跳转到对应的URL中
 
@@ -66,6 +67,7 @@
         }
         function closeWindow() {
             layer.closeAll();
+            parentCloseAll();
         }
     </script>
 </head>

@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.integral.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -75,7 +76,7 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
     @Override
     public boolean editImage( Map< String,Object > params, int userId ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallIntegralImage appletImage = (MallIntegralImage) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallIntegralImage.class );
+	    MallIntegralImage appletImage = (MallIntegralImage) JSONObject.toJavaObject( JSONObject.parseObject( JSON.toJSONString( params ) ), MallIntegralImage.class );
 	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
 		int count = 0;
 		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {
