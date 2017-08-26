@@ -116,7 +116,7 @@
                 </div> --%>
             <div class="groupDiv">
                 <a href="javascript:editAuction();" class="addBtn">确定</a>
-                <a href="mAuction/index.do" style="cursor: pointer;color:white;" class="backBtn">返回</a>
+                <a href="mallIntegral/image_index.do" style="cursor: pointer;color:white;" class="backBtn">返回</a>
             </div>
         </form>
     </c:if>

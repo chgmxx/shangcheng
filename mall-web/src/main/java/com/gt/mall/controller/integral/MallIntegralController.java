@@ -62,7 +62,7 @@ public class MallIntegralController extends BaseController {
 		} else {
 		    params.put( "shoplist", shoplist );
 		}
-		PageUtil page = integralService.selectIntegralByPage( params );
+		PageUtil page = integralService.selectIntegralByPage( params,user.getId() );
 		request.setAttribute( "page", page );
 		request.setAttribute( "shoplist", shoplist );
 	    }
@@ -200,7 +200,7 @@ public class MallIntegralController extends BaseController {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "userId", user.getId() );
-		    PageUtil page = integralImageService.selectImageByShopId( params );
+		    PageUtil page = integralImageService.selectImageByShopId( params, user.getId() );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}

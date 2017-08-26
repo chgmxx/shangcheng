@@ -7,6 +7,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.wx.shop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyPriceDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
@@ -77,7 +78,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     private WxPublicUserService      wxPublicUserService;
 
     @Override
-    public PageUtil selectGroupBuyByShopId( Map< String,Object > params ) {
+    public PageUtil selectGroupBuyByShopId( Map< String,Object > params, int userId ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -91,10 +92,17 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 
 	if ( count > 0 ) {// 判断团购是否有数据
 	    List< MallGroupBuy > groupBuyList = groupBuyDAO.selectByPage( params );
-	    for ( MallGroupBuy buy : groupBuyList ) {
-		WsWxShopInfo wsWxShopInfo = wxShopService.getShopById( buy.getWx_shop_id() );
-		if ( CommonUtil.isNotEmpty( wsWxShopInfo.getBusinessName() ) ) {
-		    buy.setShopName( wsWxShopInfo.getBusinessName() );
+	    if ( groupBuyList != null && groupBuyList.size() > 0 ) {
+		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
+		for ( MallGroupBuy buy : groupBuyList ) {
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == buy.getWx_shop_id() ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				buy.setShopName( wxShops.getBusinessName() );
+			    }
+			    break;
+			}
+		    }
 		}
 	    }
 	    page.setSubList( groupBuyList );

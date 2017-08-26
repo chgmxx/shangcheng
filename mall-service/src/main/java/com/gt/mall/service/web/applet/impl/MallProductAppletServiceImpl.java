@@ -1,5 +1,7 @@
 package com.gt.mall.service.web.applet.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
@@ -17,8 +19,6 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -128,7 +128,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 			cartMap.put( "maxBuy", xgMap.get( "maxBuy" ) );
 		    }
 		    if ( xgMap.containsKey( "productMap" ) ) {
-			productMap.putAll( JSONObject.fromObject( xgMap.get( "productMap" ) ) );
+			productMap.putAll( JSONObject.parseObject( xgMap.get( "productMap" ).toString() ) );
 		    }
 		    if ( xgMap.containsKey( "sto_name" ) ) {
 			cartMap.put( "sto_name", xgMap.get( "sto_name" ) );
@@ -381,9 +381,9 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 	    params.put( "memberList", memberList );
 	    shopCartDAO.updateCheckByShopCart( params );
 	}
-	JSONArray jsonArray = JSONArray.fromObject( params.get( "cart" ) );
+	JSONArray jsonArray = JSONArray.parseArray( params.get( "cart" ).toString() );
 	for ( int i = 0; i < jsonArray.size(); i++ ) {
-	    JSONObject obj = JSONObject.fromObject( jsonArray.get( i ) );
+	    JSONObject obj = JSONObject.parseObject( jsonArray.get( i ).toString() );
 	    MallShopCart cart = new MallShopCart();
 	    cart.setId( CommonUtil.toInteger( obj.get( "id" ) ) );
 	    cart.setIsCheck( CommonUtil.toInteger( obj.get( "check" ) ) );

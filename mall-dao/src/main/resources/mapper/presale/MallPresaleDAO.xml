@@ -54,7 +54,7 @@
         when g.sale_start_time > now() and   g.sale_end_time > now() then 0<!--未开始  -->
         when g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time  then 1<!-- 进行中 -->
         when g.sale_start_time &lt; now()  and g.sale_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status,/*if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,*/
+        end status,s.sto_name as shopName, s.wx_shop_id,
         p.pro_name as proName,p.two_code_path as twoCodePath
     </sql>
 
@@ -71,7 +71,7 @@
         <if test="type == 2"><!-- 已结束的预售 -->
             and p.sale_start_time &lt; now()  and p.sale_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 p.shop_id = #{item.id,jdbcType=INTEGER}
@@ -80,11 +80,9 @@
     </select>
     <!-- 根据预售分页 -->
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
-        /* todo 调用小屁孩的接口*/
         select  <include refid="page_Column_List" />
         from t_mall_presale g
         left join t_mall_store s on g.shop_id = s.id
-        /* left join t_wx_shop ws on s.wx_shop_id = ws.id*/
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         where g.is_delete = 0
         <if test="type == -1"><!-- 未开始预售 -->
@@ -96,7 +94,7 @@
         <if test="type == 2"><!-- 已结束的预售 -->
             and g.sale_start_time &lt; now()  and g.sale_end_time &lt;= now()
         </if>
-        <if test="shoplist != null and shoplist != ''">
+        <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 g.shop_id = #{item.id,jdbcType=INTEGER}
@@ -109,11 +107,9 @@
 
     <!-- 查询预售商品的状态 -->
     <select id="selectDepositByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
-        <!-- todo 调用小屁孩门店接口  t_wx_shop -->
         SELECT <include refid="page_Column_List"></include>
         from t_mall_presale  g
         left join t_mall_store s on g.shop_id = s.id
-       /* left join t_wx_shop ws on s.wx_shop_id = ws.id */
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         WHERE g.is_delete = 0 and g.id = #{id}
         <if test="shoplist != null ">

@@ -1,10 +1,12 @@
 package com.gt.mall.service.web.integral.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.wx.shop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.dao.integral.MallIntegralImageDAO;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -38,7 +40,7 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
     private WxShopService        wxShopService;
 
     @Override
-    public PageUtil selectImageByShopId( Map< String,Object > params ) {
+    public PageUtil selectImageByShopId( Map< String,Object > params, int userId ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -52,10 +54,17 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
 
 	if ( count > 0 ) {// 判断拍卖是否有数据
 	    List< Map< String,Object > > imageList = integralImageDAO.selectByPage( params );
-	    for ( Map< String,Object > image : imageList ) {
-		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( image.get( "wx_shop_id" ) ) );
-		if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
-		    image.put( "shopName", wxShopInfo.getBusinessName() );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
+		for ( Map< String,Object > image : imageList ) {
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == CommonUtil.toInteger( image.get( "wx_shop_id" ) ) ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				image.put( "shopName", wxShops.getBusinessName() );
+			    }
+			    break;
+			}
+		    }
 		}
 	    }
 	    page.setSubList( imageList );
@@ -67,7 +76,7 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
     @Override
     public boolean editImage( Map< String,Object > params, int userId ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallIntegralImage appletImage = (MallIntegralImage) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallIntegralImage.class );
+	    MallIntegralImage appletImage = (MallIntegralImage) JSONObject.toJavaObject( JSONObject.parseObject( JSON.toJSONString( params ) ), MallIntegralImage.class );
 	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
 		int count = 0;
 		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {

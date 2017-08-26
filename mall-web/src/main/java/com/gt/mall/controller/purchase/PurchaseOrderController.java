@@ -175,14 +175,7 @@ public class PurchaseOrderController extends BaseController {
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
-		    for ( int i = 0; i < shoplist.size(); i++ ) {
-			if ( "".equals( shopIds ) ) {
-			    shopIds += shoplist.get( 0 ).get( "id" );
-			} else {
-			    shopIds += "," + shoplist.get( 0 ).get( "id" );
-			}
-		    }
-		    params.put( "shopIds", shopIds );
+		    params.put( "shoplist", shoplist );
 		    PageUtil page = purchaseOrderService.productList( params );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "map", params );
@@ -449,14 +442,17 @@ public class PurchaseOrderController extends BaseController {
 	//查询留言
 	List< Map< String,Object > > languageList = languageDAO.findLanguangeList( orderId );
 	for ( int i = 0; i < languageList.size(); i++ ) {
-	    if ( languageList.get( i ).containsKey( "nickname" ) ) {
-		try {
-		    byte[] bytes = (byte[]) languageList.get( i ).get( "nickname" );
-		    languageList.get( i ).put( "nickname", new String( bytes, "UTF-8" ) );
-		} catch ( Exception e ) {
-		    languageList.get( i ).put( "nickname", null );
-		}
-	    }
+	  Member member=  memberService.findMemberById( CommonUtil.toInteger( languageList.get( i ).get( "member_id" ) ) ,null);
+	    languageList.get( i ).put( "headimgurl", member.getHeadimgurl() );
+	  if ( CommonUtil.isNotEmpty( member.getNickname()) ) {
+	      try {
+		  String bytes = member.getNickname();
+		  languageList.get( i ).put( "nickname", new String( bytes.getBytes(), "UTF-8" ) );
+	      } catch ( Exception e ) {
+		  languageList.get( i ).put( "nickname", null );
+	      }
+	  }
+
 	}
 	//设置订单的留言为已阅状态
 	languageDAO.updateLanguangeByOrderId( orderId );

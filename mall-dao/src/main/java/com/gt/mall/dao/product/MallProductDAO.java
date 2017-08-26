@@ -159,7 +159,7 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
     /**
      * 统计店铺下商品-对外报价
      *
-     * @param params shopIds 店铺id集合，proName：商品名称
+     * @param params shoplist 店铺id集合，proName：商品名称
      *
      * @return 数量
      */
@@ -168,7 +168,7 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
     /**
      * 搜索店铺下的商品-对外报价
      *
-     * @param params shopIds 店铺id集合，proName：商品名称,firstNum：页数，maxNum：记录数
+     * @param params shoplist 店铺id集合，proName：商品名称,firstNum：页数，maxNum：记录数
      *
      * @return list
      */

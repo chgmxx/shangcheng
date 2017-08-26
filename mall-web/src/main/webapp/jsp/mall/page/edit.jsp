@@ -20,6 +20,7 @@
     <link rel="stylesheet" type="text/css" href="/css/common.css"/>
     <link rel="stylesheet" type="text/css" href="/css/common/comm.css"/>
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/util.js"></script>
     <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>

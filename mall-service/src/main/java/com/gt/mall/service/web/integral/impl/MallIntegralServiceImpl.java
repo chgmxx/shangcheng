@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
-import com.gt.mall.bean.wx.shop.WsWxShopInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.integral.MallIntegralDAO;
@@ -392,7 +392,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     }
 
     @Override
-    public PageUtil selectIntegralByPage( Map< String,Object > params ) {
+    public PageUtil selectIntegralByPage( Map< String,Object > params, int userId ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -406,10 +406,17 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 
 	if ( count > 0 ) {// 判断团购是否有数据
 	    List< Map< String,Object > > integralList = integralDAO.selectByPage( params );
-	    for ( Map< String,Object > integral : integralList ) {
-		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( integral.get( "wx_shop_id" ) ) );
-		if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
-		    integral.put( "shopName", wxShopInfo.getBusinessName() );
+	    if ( integralList != null && integralList.size() > 0 ) {
+		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
+		for ( Map< String,Object > integral : integralList ) {
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == CommonUtil.toInteger( integral.get( "wx_shop_id" ) ) ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				integral.put( "shopName", wxShops.getBusinessName() );
+			    }
+			    break;
+			}
+		    }
 		}
 	    }
 	    page.setSubList( integralList );

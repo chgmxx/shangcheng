@@ -625,7 +625,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 			MallSpecifica specifica = new MallSpecifica();
 			specifica.setId( mall_id );
 			specifica.setErpNameId( erpNameId );
-			mallSpecificaDAO.updateAllColumnById( specifica );
+			mallSpecificaDAO.updateById( specifica );
 			//保存erp规格名称Id
 			Wrapper< MallProductSpecifica > keywordWrapper = new EntityWrapper<>();
 			keywordWrapper.where( " is_delete =0 AND specifica_name_id=" + mall_id );
@@ -690,7 +690,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 			MallSpecificaValue specificaValue = new MallSpecificaValue();
 			specificaValue.setId( mall_id );
 			specificaValue.setErpValueId( erpValueId );
-			mallSpecificaValueDAO.updateAllColumnById( specificaValue );
+			mallSpecificaValueDAO.updateById( specificaValue );
 
 			Wrapper< MallProductSpecifica > keywordWrapper = new EntityWrapper<>();
 			String sql1 = " is_delete =0 AND specifica_value_id=" + mall_id;

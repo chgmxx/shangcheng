@@ -57,23 +57,22 @@ public class MallPresaleController extends BaseController {
      * 预售管理列表页面
      */
     @RequestMapping( "index" )
-    public String index( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    boolean isAdminFlag = mallStoreService.getIsAdminUser(user.getId(),request);//是否是管理员
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是否是管理员
 	    if ( isAdminFlag ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = mallPresaleService.selectPresaleByShopId( params );
+		    PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId() );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}
 		request.setAttribute( "type", params.get( "type" ) );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
-	    }else{
+	    } else {
 		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 
@@ -103,8 +102,7 @@ public class MallPresaleController extends BaseController {
      * 进入预售编辑页面
      */
     @RequestMapping( "to_edit" )
-    public String to_edit( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -136,9 +134,7 @@ public class MallPresaleController extends BaseController {
      */
     @SysLogAnnotation( description = "预售管理-编辑预售", op_function = "2" )
     @RequestMapping( "edit_presale" )
-    public void editPresale( HttpServletRequest request,
-		    HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public void editPresale( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入编辑辑预售controller" );
 	response.setCharacterEncoding( "utf-8" );
 	int code = -1;// 编辑成功
@@ -170,9 +166,7 @@ public class MallPresaleController extends BaseController {
      */
     @SysLogAnnotation( description = "预售管理-删除预售", op_function = "4" )
     @RequestMapping( "presale_remove" )
-    public void removeGroup( HttpServletRequest request,
-		    HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) throws IOException {
+    public void removeGroup( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入删除预售controller" );
 	response.setCharacterEncoding( "utf-8" );
 	int code = 1;// 删除成功
@@ -215,8 +209,7 @@ public class MallPresaleController extends BaseController {
      * 拍卖定金管理列表页面
      */
     @RequestMapping( "deposit" )
-    public String deposit( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public String deposit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -266,9 +259,7 @@ public class MallPresaleController extends BaseController {
      */
     @SysLogAnnotation( description = "预售管理-编辑预售设置", op_function = "2" )
     @RequestMapping( "edit_presale_set" )
-    public void editPresaleSet( HttpServletRequest request,
-		    HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) throws IOException {
+    public void editPresaleSet( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入编辑辑预售设置controller" );
 	response.setCharacterEncoding( "utf-8" );
 	int code = -1;// 编辑成功
@@ -312,8 +303,7 @@ public class MallPresaleController extends BaseController {
     }
 
     @RequestMapping( "79B4DE7C/loadPresale" )
-    public void loadSeckill( HttpServletRequest request,
-		    HttpServletResponse response ) throws Exception {
+    public void loadSeckill( HttpServletRequest request, HttpServletResponse response ) throws Exception {
 	Map< String,Object > map = new HashMap<>();
 	try {
 	    mallPresaleService.loadPresaleByJedis( null );
@@ -334,8 +324,7 @@ public class MallPresaleController extends BaseController {
      * 进入退定金的页面
      */
     @RequestMapping( "returnPresalePopUp" )
-    public String returnPresalePopUp( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public String returnPresalePopUp( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    int depositId = CommonUtil.toInteger( params.get( "depositId" ) );
 	    BusUser user = SessionUtils.getLoginUser( request );

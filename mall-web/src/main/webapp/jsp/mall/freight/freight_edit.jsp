@@ -33,6 +33,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <div class="con-head">
     <a class="navColor" href="/mFreight/index.do">物流管理</a>
     <a class="" href="/mFreight/takeindex.do">上门自提</a>

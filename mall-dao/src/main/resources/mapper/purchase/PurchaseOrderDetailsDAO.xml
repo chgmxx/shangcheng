@@ -30,7 +30,7 @@
 		(${detailIds}) and
 		order_id=#{orderId}
 	</delete>
-    <select id="findOrderDetails" resultType="java.util.Map" parameterType="java.lang.Integer">
+    <select id="findOrderDetails" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         from purchase_order_details

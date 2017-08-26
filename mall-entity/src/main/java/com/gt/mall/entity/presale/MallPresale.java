@@ -117,6 +117,9 @@ public class MallPresale extends Model< MallPresale > {
     @TableField(exist = false)
     private List<Map<String, Object> > list;
 
+    @TableField(exist = false)
+    private int wx_shop_id; //门店ID 关联wx_shop表的id
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

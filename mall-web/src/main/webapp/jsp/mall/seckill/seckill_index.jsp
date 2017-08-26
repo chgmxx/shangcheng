@@ -92,10 +92,10 @@
                         <c:if test="${!empty page.subList}">
                             <c:forEach var="seckill" items="${page.subList }">
                                 <li class="txt-tle" style="min-height:50px;height:auto;">
-                                    <span class="f2 fl" style="line-height:20px;padding-top:10px;width:17%;"><c:if test="${!empty seckill.sName}">${seckill.sName }</c:if></span>
+                                    <span class="f2 fl" style="line-height:20px;padding-top:10px;width:17%;"><c:if test="${!empty seckill.SName}">${seckill.SName }</c:if></span>
                                     <span class="f2 fl" style="line-height:20px;padding-top:10px;width:17%;">${seckill.shopName }</span>
                                     <span class="f2 fl" style="width:20%;text-align:left;margin-left:10px;line-height:20px;padding-top:10px;">
-							${seckill.sStartTime } 至 ${seckill.sEndTime }
+							${seckill.SStartTime } 至 ${seckill.SEndTime }
 						</span>
                                     <span class="f2 fl">
 							<c:if test="${!empty seckill.status}"><div>
