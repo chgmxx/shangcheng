@@ -58,8 +58,6 @@
     if (flag) {
         var orderPayWay = $("input.orderPayWay").val();
         if ((type == 1 || type == 3) && orderPayWay == 9) {
-            parentOpenIframe("钱包支付", 700, 650, '4%', url, true);
-            // parent.openIframeNoScoll2("钱包支付", 700, 650, '4%', url, true);
         } else {
             updReturn(payParams, returnOrder, tip, type);
         }
@@ -67,7 +65,7 @@
 });
 
 function updReturn(order, returnOrder, tips, type) {
-    var layerLoad = layer.load(1, {
+    var layerLoad = parent.layer.load(1, {
         shade: [0.3, '#fff'],
         offset: "10%"
     });
@@ -80,10 +78,10 @@ function updReturn(order, returnOrder, tips, type) {
         },
         dataType: "json",
         success: function (data) {
-            layer.close(layerLoad);
+            parent.layer.close(layerLoad);
             if (data.flag == true) {// 重新登录
                 alert(tips + "成功");
-                location.href = "/mallOrder/indexstart.do";
+                parent.location.href = window.parent.location.href;
             } else {// 编辑失败
                 if (typeof data.msg != "undefined" && data.msg != null && data.msg != "" && type == 1) {
                     alert(data.msg);
@@ -94,7 +92,7 @@ function updReturn(order, returnOrder, tips, type) {
 
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            layer.close(layerLoad);
+            parent.layer.close(layerLoad);
             alert(tips + "失败");
             return;
         }

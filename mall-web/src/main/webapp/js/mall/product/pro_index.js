@@ -9,15 +9,24 @@ $(".delete").click(function () {
         ids: JSON.stringify(id),
         isDelete: 1
     };
-    // 询问框
-    layer.confirm('您确定要删除此产品？', {
-        btn: ['确定', '取消'],
-        shade:[0.1,'#fff'],
-        offset: '10%'
-    }, function () {
-        layer.closeAll();
-        deletePro(data, "删除", 1);
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        // 询问框
+        layer.confirm('您确定要删除此产品？', {
+            btn: ['确定', '取消'],
+            shade: [0.1, '#fff'],
+            shift: 0,
+            offset: scrollHeight + "px"
+        }, function () {
+            layer.closeAll();
+            deletePro(data, "删除", 1);
+        });
+    }, timeout);
+
+    /*if(confirm("您确定要删除此产品？")){
+     deletePro(data, "删除", 1);
+     }*/
+
 });
 $(".js-batch-viewNum").click(function () {
     var id = [];
@@ -33,13 +42,16 @@ $(".js-batch-viewNum").click(function () {
          }*/
     });
     if (id.length == 0 && !flag) {
+        SonScrollTop(0);
+        setTimeout(function () {
             parentLayer.alert("请选择需要修改浏览量的商品", {
-            offset: "10%",
-                shade:[0.1,"#fff"],
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                closeBtn: 0
+            }, function (index) {
+                parentLayer.closeAll();
+            });
+        }, timeout);
     } else {
         var data = {
             ids: JSON.stringify(id)
@@ -64,13 +76,16 @@ $(".js-batch-sale").click(function () {
          }*/
     });
     if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要修改销量基数的商品", {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
+        SonScrollTop(0);
+        setTimeout(function () {
+            parentLayer.alert("请选择需要修改销量基数的商品", {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                closeBtn: 0
+            }, function (index) {
+                parentLayer.closeAll();
+            });
+        }, timeout);
     } else {
         var data = {
             ids: JSON.stringify(id)
@@ -92,52 +107,55 @@ $(".viewNum").click(function () {
     upViewsNum(nums, isView, data);
 });
 function upViewsNum(nums, isView, data) {
-    parentLayer.open({
-        area: ["400px", "200px"],
-        shade:[0.1,"#fff"],
-        offset: '10%',
-        title: "修改浏览量",
-        type: 1,
-        content: $("div.viewNum").html(),
-        btn: ['确定', '取消'],
-        success: function (layero, index) {
-            if (nums * 1 > 0) {
-                layero.find(".vNums").val(nums);
-            }
-            if (isView == 1) {
-                layero.find(".isShowViews").attr("checked", "checked");
-                layero.find(".viewDiv").show();
-            }
-            layero.find(".isShowViews").change(function () {
-                var checked = $(this).is(":checked");
-                if (checked) {
+    SonScrollTop(0);
+    setTimeout(function () {
+        parentLayer.open({
+            area: ["400px", "200px"],
+            shade: [0.1, "#fff"],
+            offset: scrollHeight + "px",
+            title: "修改浏览量",
+            type: 1,
+            content: $("div.viewNum").html(),
+            btn: ['确定', '取消'],
+            success: function (layero, index) {
+                if (nums * 1 > 0) {
+                    layero.find(".vNums").val(nums);
+                }
+                if (isView == 1) {
+                    layero.find(".isShowViews").attr("checked", "checked");
                     layero.find(".viewDiv").show();
-                } else {
-                    layero.find(".viewDiv").hide();
                 }
-            });
+                layero.find(".isShowViews").change(function () {
+                    var checked = $(this).is(":checked");
+                    if (checked) {
+                        layero.find(".viewDiv").show();
+                    } else {
+                        layero.find(".viewDiv").hide();
+                    }
+                });
 
-        },
-        yes: function (index, layero) {
-            var viewsNum = layero.find(".vNums").val();
-            var checked = layero.find(".isShowViews").is(":checked");
-            var test = /^\d{0,9}$/;
-            if (checked) {
-                if (!test.test(viewsNum)) {
-                    alert("请输入大于0的9位数字");
-                    return;
+            },
+            yes: function (index, layero) {
+                var viewsNum = layero.find(".vNums").val();
+                var checked = layero.find(".isShowViews").is(":checked");
+                var test = /^\d{0,9}$/;
+                if (checked) {
+                    if (!test.test(viewsNum)) {
+                        alert("请输入大于0的9位数字");
+                        return;
+                    }
+                    isShowViews = 1;
+                } else {
+                    viewsNum = 0;
+                    isShowViews = 0;
                 }
-                isShowViews = 1;
-            } else {
-                viewsNum = 0;
-                isShowViews = 0;
+                data.isShowViews = isShowViews;
+                data.viewsNum = viewsNum;
+                parentLayer.closeAll();
+                deletePro(data, "修改浏览量", 0);
             }
-            data.isShowViews = isShowViews;
-            data.viewsNum = viewsNum;
-            parentLayer.closeAll();
-            deletePro(data, "修改浏览量", 0);
-        }
-    });
+        });
+    }, timeout);
 }
 
 
@@ -154,31 +172,34 @@ $(".sales").click(function () {
     upSaleBase(saleBase, data);
 });
 function upSaleBase(saleBase, data) {
-    parentLayer.open({
-        area: ["400px", "200px"],
-        offset: '10%',
-        title: "修改销量基数",
-        shade:[0.1,"#fff"],
-        type: 1,
-        content: $("div.saleBase").html(),
-        btn: ['确定', '取消'],
-        success: function (layero, index) {
-            if (saleBase * 1 > 0) {
-                layero.find("input.saleBase").val(saleBase);
+    SonScrollTop(0);
+    setTimeout(function () {
+        parentLayer.open({
+            area: ["400px", "200px"],
+            offset: scrollHeight + "px",
+            title: "修改销量基数",
+            shade: [0.1, "#fff"],
+            type: 1,
+            content: $("div.saleBase").html(),
+            btn: ['确定', '取消'],
+            success: function (layero, index) {
+                if (saleBase * 1 > 0) {
+                    layero.find("input.saleBase").val(saleBase);
+                }
+            },
+            yes: function (index, layero) {
+                var saleBase = layero.find("input.saleBase").val();
+                var test = /^\d{0,9}$/;
+                if (!test.test(saleBase)) {
+                    alert("请输入大于0的9位数字");
+                    return;
+                }
+                data.salesBase = saleBase;
+                parentLayer.closeAll();
+                deletePro(data, "修改销量基数", 0);
             }
-        },
-        yes: function (index, layero) {
-            var saleBase = layero.find("input.saleBase").val();
-            var test = /^\d{0,9}$/;
-            if (!test.test(saleBase)) {
-                alert("请输入大于0的9位数字");
-                return;
-            }
-            data.salesBase = saleBase;
-            parentLayer.closeAll();
-            deletePro(data, "修改销量基数", 0);
-        }
-    });
+        });
+    }, timeout);
 }
 /**
  * 单独送审
@@ -186,18 +207,21 @@ function upSaleBase(saleBase, data) {
 $(".send_valid").click(function () {
     var id = [];
     id.push($(this).attr("id"));
-    parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
-        btn: ['确定', '取消'],
-        shade:[0.1,'#fff'],
-        offset: '10%'
-    }, function () {
-        parentLayer.closeAll();
-        var data = {
-            ids: JSON.stringify(id),
-            checkStatus: 0
-        };
-        deletePro(data, "送审", 0);
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
+            btn: ['确定', '取消'],
+            shade: [0.1, '#fff'],
+            offset: scrollHeight + "px"
+        }, function () {
+            parentLayer.closeAll();
+            var data = {
+                ids: JSON.stringify(id),
+                checkStatus: 0
+            };
+            deletePro(data, "送审", 0);
+        });
+    }, timeout);
 });
 /**
  * 批量送审
@@ -214,39 +238,44 @@ $(".js-batch-valid").click(function () {
             id.push($(this).attr("id"));
         }
     });
-    if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要送审的商品", {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
-    } else {
-        if (id.length == 0 && flag) {
-            parentLayer.alert("未送审的商品才能进行送审操作", {
-                offset: "10%",
-                shade:[0.1,"#fff"],
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (id.length == 0 && !flag) {
+
+            parentLayer.alert("请选择需要送审的商品", {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
             });
-        } else {
-            parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
-                btn: ['确定', '取消'],
-                shade:[0.1,'#fff'],
-                offset: '10%'
-            }, function () {
-                parentLayer.closeAll();
-                var data = {
-                    ids: JSON.stringify(id),
-                    checkStatus: 0
-                };
-                deletePro(data, "批量送审", 0);
-            });
 
+        } else {
+            if (id.length == 0 && flag) {
+                parentLayer.alert("未送审的商品才能进行送审操作", {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    parentLayer.closeAll();
+                });
+            } else {
+                parentLayer.confirm('送审后商品不允许修改，您确定要送审选中的产品？', {
+                    btn: ['确定', '取消'],
+                    shade: [0.1, '#fff'],
+                    offset: scrollHeight + "px",
+                }, function () {
+                    parentLayer.closeAll();
+                    var data = {
+                        ids: JSON.stringify(id),
+                        checkStatus: 0
+                    };
+                    deletePro(data, "批量送审", 0);
+                });
+
+            }
         }
-    }
+    }, timeout);
 });
 /**
  * 单独上架
@@ -254,18 +283,21 @@ $(".js-batch-valid").click(function () {
 $("a.sj").click(function () {
     var id = [];
     id.push($(this).attr("id"));
-    parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
-        btn: ['确定', '取消'],
-        shade:[0.1,'#fff'],
-        offset: '10%'
-    }, function () {
-        parentLayer.closeAll();
-        var data = {
-            ids: JSON.stringify(id),
-            isPublish: 1
-        };
-        deletePro(data, "上架", 0);
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
+            btn: ['确定', '取消'],
+            shade: [0.1, '#fff'],
+            offset: scrollHeight + "px"
+        }, function () {
+            parentLayer.closeAll();
+            var data = {
+                ids: JSON.stringify(id),
+                isPublish: 1
+            };
+            deletePro(data, "上架", 0);
+        });
+    }, timeout);
 });
 /**
  * 批量上架
@@ -283,39 +315,42 @@ $(".js-batch-load").click(function () {
             id.push($(this).attr("id"));
         }
     });
-    if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要上架的商品", {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
-    } else {
-        if (id.length == 0 && flag) {
-            parentLayer.alert("审核通过后的商品才能上架商品", {
-                offset: "10%",
-                shade:[0.1,"#fff"],
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (id.length == 0 && !flag) {
+            parentLayer.alert("请选择需要上架的商品", {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
             });
         } else {
-            parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
-                btn: ['确定', '取消'],
-                shade:[0.1,'#fff'],
-                offset: '10%'
-            }, function () {
-                parentLayer.closeAll();
-                var data = {
-                    ids: JSON.stringify(id),
-                    isPublish: 1
-                };
-                deletePro(data, "上架", 0);
-            });
+            if (id.length == 0 && flag) {
+                parentLayer.alert("审核通过后的商品才能上架商品", {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    parentLayer.closeAll();
+                });
+            } else {
+                parentLayer.confirm('只能上架审核通过的商品，您确定要上架选中的商品？', {
+                    btn: ['确定', '取消'],
+                    shade: [0.1, '#fff'],
+                    offset: scrollHeight + "px"
+                }, function () {
+                    parentLayer.closeAll();
+                    var data = {
+                        ids: JSON.stringify(id),
+                        isPublish: 1
+                    };
+                    deletePro(data, "上架", 0);
+                });
 
+            }
         }
-    }
+    }, timeout);
 
 });
 /**
@@ -324,18 +359,21 @@ $(".js-batch-load").click(function () {
 $("a.xj").click(function () {
     var id = [];
     id.push($(this).attr("id"));
-    parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
-        btn: ['确定', '取消'],
-        shade:[0.1,'#fff'],
-        offset: '10%'
-    }, function () {
-        parentLayer.closeAll();
-        var data = {
-            ids: JSON.stringify(id),
-            isPublish: -1
-        };
-        deletePro(data, "下架", 0);
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
+            btn: ['确定', '取消'],
+            shade: [0.1, '#fff'],
+            offset: scrollHeight + "px"
+        }, function () {
+            parentLayer.closeAll();
+            var data = {
+                ids: JSON.stringify(id),
+                isPublish: -1
+            };
+            deletePro(data, "下架", 0);
+        });
+    }, timeout);
 });
 /**
  * 批量下架
@@ -354,40 +392,43 @@ $(".js-batch-unload").click(function () {
             id.push($(this).attr("id"));
         }
     });
-    if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要下架的商品", {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
-    } else {
-        if (id.length == 0 && flag) {
-            parentLayer.alert("审核通过后的商品才能下架商品", {
-                offset: "10%",
-                shade:[0.1,"#fff"],
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (id.length == 0 && !flag) {
+            parentLayer.alert("请选择需要下架的商品", {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
             });
         } else {
-            parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
-                btn: ['确定', '取消'],
-                shade:[0.1,'#fff'],
-                offset: '10%'
-            }, function () {
-                parentLayer.closeAll();
-                var data = {
-                    ids: JSON.stringify(id),
-                    isPublish: -1
-                };
-                deletePro(data, "下架", 0);
-            });
+            if (id.length == 0 && flag) {
+                parentLayer.alert("审核通过后的商品才能下架商品", {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    parentLayer.closeAll();
+                });
+            } else {
+                parentLayer.confirm('只能下架审核通过的商品，您确定要下架选中的产品？', {
+                    btn: ['确定', '取消'],
+                    shade: [0.1, '#fff'],
+                    offset: scrollHeight + "px"
+                }, function () {
+                    parentLayer.closeAll();
+                    var data = {
+                        ids: JSON.stringify(id),
+                        isPublish: -1
+                    };
+                    deletePro(data, "下架", 0);
+                });
 
+            }
         }
-    }
 
+    }, timeout);
 });
 
 /**
@@ -405,40 +446,42 @@ $(".js-batch-delete").click(function () {
             id.push($(this).attr("id"));
         }
     });
-    if (id.length == 0 && !flag) {
-        parentLayer.alert("请选择需要删除的商品", {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            closeBtn: 0
-        }, function (index) {
-            parentLayer.closeAll();
-        });
-    } else {
-        if (id.length == 0 && flag) {
-            parentLayer.alert("未上架的商品才能进行删除操作", {
-                offset: "10%",
-                shade:[0.1,"#fff"],
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (id.length == 0 && !flag) {
+            parentLayer.alert("请选择需要删除的商品", {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
                 closeBtn: 0
             }, function (index) {
                 parentLayer.closeAll();
             });
         } else {
-            parentLayer.confirm('您确定要批量删除选中的产品？', {
-                btn: ['确定', '取消'],
-                shade:[0.1,'#fff'],
-                offset: '10%'
-            }, function () {
-                parentLayer.closeAll();
-                var data = {
-                    ids: JSON.stringify(id),
-                    isDelete: 1
-                };
-                deletePro(data, "批量删除", 1);
-            });
+            if (id.length == 0 && flag) {
+                parentLayer.alert("未上架的商品才能进行删除操作", {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    parentLayer.closeAll();
+                });
+            } else {
+                parentLayer.confirm('您确定要批量删除选中的产品？', {
+                    btn: ['确定', '取消'],
+                    shade: [0.1, '#fff'],
+                    offset: scrollHeight + "px"
+                }, function () {
+                    parentLayer.closeAll();
+                    var data = {
+                        ids: JSON.stringify(id),
+                        isDelete: 1
+                    };
+                    deletePro(data, "批量删除", 1);
+                });
 
+            }
         }
-    }
-
+    }, timeout);
 
 });
 
@@ -454,41 +497,48 @@ function deletePro(data, tip, index) {
         success: function (data) {
             layer.close(layerLoad);
             // parent.layer.closeAll();
-            if (data.code == 0) {// 重新登录
-                layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                }, function (index) {
-                    location.href = "/user/tologin.do";
-                });
-            } else if (data.code == 1) {
-                var tipLayer = layer.alert(tip + "成功", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                }, function (index) {
-                    layer.close(tipLayer);
-                    if (index == 1) {
-                        location.href = "/mPro/index.do";
-                    } else {
-                        location.href = window.location.href;
-                    }
-                });
-            } else {// 编辑失败
-                layer.alert(tip + "失败", {
-                    shade:[0.1,"#fff"],
-                    offset: "10%"
-                });
-            }
+            SonScrollTop(0);
+            setTimeout(function () {
+                if (data.code == 0) {// 重新登录
+
+                    layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        location.href = "/user/tologin.do";
+                    });
+                } else if (data.code == 1) {
+                    var tipLayer = layer.alert(tip + "成功", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        layer.close(tipLayer);
+                        if (index == 1) {
+                            location.href = "/mPro/index.do";
+                        } else {
+                            location.href = window.location.href;
+                        }
+                    });
+                } else {// 编辑失败
+                    layer.alert(tip + "失败", {
+                        shade: [0.1, "#fff"],
+                        offset: scrollHeight + "px"
+                    });
+                }
+            }, timeout);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            layer.closeAll();
-            layer.alert(tip + "失败", {
-                shade:[0.1,"#fff"],
-                offset: "10%"
-            });
-            return;
+            SonScrollTop(0);
+            setTimeout(function () {
+                layer.closeAll();
+                layer.alert(tip + "失败", {
+                    shade: [0.1, "#fff"],
+                    offset: scrollHeight + "px"
+                });
+                return;
+            }, timeout);
         }
     });
 }
@@ -546,43 +596,75 @@ function getProduct(type, proName) {
  * @param id
  */
 $(".qrcode").click(function () {
-    layer.open({
-        type: 1,
-        title: "商品预览",
-        skin: 'layui-layer-rim', //加上边框
-        area: ['200px', '240px'], //宽高
-        offset: "10%",
-        content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.open({
+            type: 1,
+            title: "商品预览",
+            skin: 'layui-layer-rim', //加上边框
+            area: ['200px', '240px'], //宽高
+            offset: scrollHeight + "px",
+            shade: [0.1, "#fff"],
+            content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
+        });
+    }, timeout);
 });
 
 $(".toShops").click(function () {
     var id = $(this).attr("id");
     var shopId = $(this).attr("sId");
-    layer.open({
-        type: 2,
-        title: "到店购买",
-        skin: 'layui-layer-rim', //加上边框
-        area: ['300px', '300px'], //宽高
-        offset: "10%",
-        bth: ["下载二维码"],
-        content: "/mPro/79B4DE7C/codeIframs.do?id=" + id + "&shopId=" + shopId + ""
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.open({
+            type: 2,
+            title: "到店购买",
+            skin: 'layui-layer-rim', //加上边框
+            area: ['300px', '300px'], //宽高
+            offset: scrollHeight + "px",
+            shade: [0.1, "#fff"],
+            bth: ["下载二维码"],
+            content: "/mPro/79B4DE7C/codeIframs.do?id=" + id + "&shopId=" + shopId + ""
+        });
+    }, timeout);
 });
-function viewQR(id) {
+/*function viewQR(id) {
     parentOpenIframe("店铺二维码", "400px", "300px", "store/viewQR.do?id=" + id);
-}
+}*/
 /**
  * 同步
  */
 $(".sync").click(function () {
     var proId = $(this).attr("id");
-    parentOpenIframe("同步商品", "500px", "530px", "/mPro/group/getGroups.do?proId=" + proId + "&type=1");
+
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.open({
+            type: 2,
+            title: "同步商品",
+            skin: 'layui-layer-rim', //加上边框
+            area: ['500px', '530px'], //宽高
+            offset: scrollHeight + "px",
+            shade: [0.1, "#fff"],
+            content: "/mPro/group/getGroups.do?proId=" + proId + "&type=1"
+        });
+    }, timeout);
 });
 /**
  * 一键同步
  */
 function syncProductByShop() {
-    parentOpenIframe("一键同步商品", "500px", "200px", "/mPro/group/syncProduct.do");
+
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.open({
+            type: 2,
+            title: "一键同步商品",
+            skin: 'layui-layer-rim', //加上边框
+            area: ['500px', '200px'], //宽高
+            offset: scrollHeight + "px",
+            shade: [0.1, "#fff"],
+            content: "/mPro/group/syncProduct.do"
+        });
+    }, timeout);
 }
 

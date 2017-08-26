@@ -18,6 +18,9 @@ function save() {
             shade: [0.4, '#fff']
         });
         var obj = $("#tab").serializeObject();
+        if(obj.id == null || obj.id == ""){
+            delete obj.id;
+        }
         var params = {
             obj: JSON.stringify(obj)
         };
@@ -28,10 +31,17 @@ function save() {
             dataType: "json",
             success: function (data) {
                 layer.close(index);
-                alertMsg(data.message);
-                if (data.result) {
-                    location.href = $(".urls").val();
-                }
+                layer.alert(data.message, {
+                    offset: "10%",
+                    shade:[0.1,"#fff"],
+                    closeBtn: 0
+                }, function (index) {
+                    if (data.result) {
+                        location.href = $(".urls").val();
+                    }else{
+                        layer.closeAll();
+                    }
+                });
             }
         });
     }

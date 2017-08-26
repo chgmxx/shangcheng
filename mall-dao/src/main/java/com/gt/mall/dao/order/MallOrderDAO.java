@@ -65,10 +65,12 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
 
     /**
      * 根据父类id查询订单信息
+     *
      * @param orderId 订单id
+     *
      * @return 订单信息
      */
-    List<MallOrder> getOrderByOrderPId(int orderId);
+    List< MallOrder > getOrderByOrderPId( int orderId );
 
     /**
      * 手机端订单列表
@@ -189,4 +191,12 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * 查询退款订单信息
      */
     List< MallOrder > findReturnByPage( Map< String,Object > params );
+
+    /**
+     * 根据订单id查询订单信息
+     *
+     * @param id 订单id
+     *
+     */
+    Map< String,Object > selectMapById( int id );
 }

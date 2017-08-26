@@ -74,7 +74,21 @@
         <if test="firstNum != null and maxNum != null">limit #{firstNum},#{maxNum}</if>
     </select>
     <select id="selectGroupByParent" resultType="java.util.Map">
-
+        select
+        g.id as id ,g.group_name as groupName,g.is_first_parents as  isFirstParents,g.is_child as isChild,g.shop_id as shopId,g.group_p_id as groupPId,s.sto_name
+        from t_mall_group g
+        left join t_mall_store s on s.id=g.shop_id
+        where g.is_delete=0
+        <!-- <if test="groupPId != null">
+            and g.group_p_id = #{groupPId}
+        </if>
+        <if test="groupPId == 0">
+            and g.is_first_parents = 1
+        </if> -->
+        <if test="shopId != null and shopId != ''">
+            and shop_id = #{shopId}
+        </if>
+        order by g.id,g.group_p_id
     </select>
     <update id="updateByGroupId">
         update t_mall_group set is_delete = 1

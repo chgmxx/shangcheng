@@ -129,7 +129,7 @@
     <div class="groupDiv">
         <span class="font14">排&nbsp;&nbsp;&nbsp;&nbsp;序：</span>
         <input type="text" class="inpt" placeholder="" name="sort" id="sort" size="4" maxlength="4"
-               value="<c:if test="${!empty group }"> ${group.sort }</c:if><c:if test="${empty group }">0</c:if>">
+               value="<c:if test="${!empty group }">${group.sort }</c:if><c:if test="${empty group }">0</c:if>">
         <span class="red">默认升级排序，最多能输入四位数字</span>
     </div>
     <div class="groupDiv">

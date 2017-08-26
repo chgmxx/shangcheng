@@ -2,6 +2,7 @@ package com.gt.mall;
 
 import com.gt.mall.bean.wx.OldApiSms;
 import com.gt.mall.service.inter.wxshop.SmsService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ public class WxControllerTest extends BasicTest {
     private WxShopService wxShopService;
     @Autowired
     private SmsService    smsService;
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
 
     @Test
     public void shop() {
@@ -44,5 +47,16 @@ public class WxControllerTest extends BasicTest {
 	sms.setModel( 5 );
 
 	smsService.sendSmsOld( sms );
+    }
+
+    @Test
+    public void wxpublic(){
+
+
+	System.out.println("byUserId = " + wxPublicUserService.selectByUserId( 42 ));
+
+
+	System.out.println("byMemberId = " + wxPublicUserService.selectByMemberId( 1225352 ));
+
     }
 }

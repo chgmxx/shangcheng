@@ -81,10 +81,17 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( CommonUtil.isEmpty( cityIds ) ) {
 	    return null;
 	}
-	String result = HttpSignUtil.SignHttpSelect( cityIds.split( "," ), WS_SHOP_URL + "queryBasisCityIds.do", 2 );
+	String result = HttpSignUtil.SignHttpSelect( cityIds, WS_SHOP_URL + "queryBasisCityIds.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}
 	return null;
     }
+
+    @Override
+    public boolean updateBySubShop( ShopSubsop shopSubsop ) {
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( shopSubsop, WS_SHOP_URL + "updateBySubShop.do", 2 );
+	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+    }
+
 }

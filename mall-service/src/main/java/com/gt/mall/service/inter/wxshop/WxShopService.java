@@ -77,4 +77,10 @@ public interface WxShopService {
      */
     List<Map> queryBasisCityIds(String cityIds);
 
+    /**
+     * 删除门店中间表
+     * @param shopSubsop 门店对象
+     * @return true 成功
+     */
+    boolean updateBySubShop(ShopSubsop shopSubsop);
 }

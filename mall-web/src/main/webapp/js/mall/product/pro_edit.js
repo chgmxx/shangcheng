@@ -9,16 +9,21 @@ var paramsArray = new Array();
  * 下一步
  */
 $(".subBtn").click(function () {
+    SonScrollTop(0);
     var flag = true;
     // 验证信息
     productObj = $("#productForm").serializeObject();
     shopId = $(".shop-contain option:selected").val();
     if (shopId == null || $.trim(shopId) == "") {
-        layer.alert("请选择所属商铺", {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            closeBtn: 0
-        });
+        parentScrollTops(100);
+        SonScrollTop(0);
+        setTimeout(function () {
+            layer.alert("请选择所属商铺", {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                closeBtn: 0
+            });
+        }, timeout);
         return;
     }
     productObj.shopId = shopId;
@@ -34,12 +39,16 @@ $(".subBtn").click(function () {
     //var groupList = eachGroup();// 遍历产品分组
     var groupList = eachProGroup();// 遍历产品分组
     if (groupList.length == 0 && updGroupList.length == 0 && flag) {
-        layer.alert("请选择商品分组", {
-            shade:[0.1,"#fff"],
-            offset: "10%",
-            closeBtn: 0
-        });
-        $(window.parent).scrollTop(400);
+        parentScrollTops(400);
+        SonScrollTop(0);
+        setTimeout(function () {
+            layer.alert("请选择商品分组", {
+                shade: [0.1, "#fff"],
+                offset: scrollHeight + "px",
+                closeBtn: 0
+            });
+        }, timeout);
+        /*$(window.parent).scrollTop(400);*/
         $('.group-contain input').focus();
         flag = false;
     }
@@ -92,7 +101,8 @@ $(".subBtn").click(function () {
         if (time.val() == null || $.trim(time.val()) == "") {
             time.next().html("请选择预售结束时间");
             time.css("border-color", "red");
-            $(window.parent).scrollTop(450);
+            /*$(window.parent).scrollTop(450);*/
+            parentScrollTops(450);
             flag = false;
         }
         //预售发货开始时间不能为空
@@ -100,7 +110,8 @@ $(".subBtn").click(function () {
         if (starttime.val() == null || $.trim(starttime.val()) == "") {
             starttime.parent().find("p.red").html("请选择预计发货时间");
             starttime.css("border-color", "red");
-            $(window.parent).scrollTop(450);
+            /*$(window.parent).scrollTop(450);*/
+            parentScrollTops(450);
             flag = false;
         }
 //		//预售发货结束时间不能为空
@@ -112,38 +123,48 @@ $(".subBtn").click(function () {
 //			flag = false;
 //		}
     }
-
     if (flag) {
         tip = eachSpecifica();// 遍历规格
         if (tip != null) {
             flag = false;
-            layer.alert(tip, {
-                offset: "10%",
-                shade:[0.1,"#fff"],
-                closeBtn: 0
-            });
-            $(window.parent).scrollTop(400);
+            parentScrollTops(400);
+            SonScrollTop(0);
+            setTimeout(function () {
+                layer.alert(tip, {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    closeBtn: 0
+                });
+            }, timeout);
         } else {
             flag = eachInven();// 遍历库存
             if (!flag) {
-                layer.alert("请完善商品库存", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                });
-                $(window.parent).scrollTop(400);
+                parentScrollTops(400);
+                SonScrollTop(0);
+                setTimeout(function () {
+                    layer.alert("请完善商品库存", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    });
+                }, timeout);
+               /* $(window.parent).scrollTop(400);*/
             }
 
         }
         tip = eachParams();//遍历参数
         if (tip != null && tip != "") {
             flag = false;
-            layer.alert(tip, {
-                offset: "10%",
-                shade:[0.1,"#fff"],
-                closeBtn: 0
-            });
-            $(window.parent).scrollTop(400);
+            parentScrollTops(400);
+            SonScrollTop(0);
+            setTimeout(function () {
+                layer.alert(tip, {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    closeBtn: 0
+                });
+            }, timeout);
+           /* $(window.parent).scrollTop(400);*/
         }
 
         var isSpecifica = 0;
@@ -161,11 +182,13 @@ $(".subBtn").click(function () {
         }
 
         if (imageList.length == 0 && delimageList.length == 0 && flag) {
-            layer.alert("商品图至少上传一张", {
-                shade:[0.1,"#fff"],
-                offset: "10%",
-                closeBtn: 0
-            });
+            setTimeout(function () {
+                layer.alert("商品图至少上传一张", {
+                    shade: [0.1, "#fff"],
+                    offset: scrollHeight + "px",
+                    closeBtn: 0
+                });
+            }, timeout);
             $(".imageVali").html("商品图至少上传一张");
             flag = false;
         }
@@ -186,11 +209,13 @@ $(".subBtn").click(function () {
         if (isFenbiChangePro) {
             var changeFenbi = $(".changeFenbi").val();
             if (changeFenbi == null || changeFenbi == "") {
-                layer.alert("请填写兑换粉币值", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                });
+                setTimeout(function () {
+                    layer.alert("请填写兑换粉币值", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    });
+                }, timeout);
                 flag = false;
             }
         } else {
@@ -200,11 +225,13 @@ $(".subBtn").click(function () {
         if (isShowViews) {
             var viewsNum = $(".viewsNum").val();
             if (viewsNum == null || viewsNum == "") {
-                layer.alert("请填写浏览量", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                });
+                setTimeout(function () {
+                    layer.alert("请填写浏览量", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    });
+                }, timeout);
                 flag = false;
             }
         } else {
@@ -218,11 +245,13 @@ $(".subBtn").click(function () {
          }*/
         if (flag) {
             if (!validateForm()) {
-                layer.alert("请完善商品信息", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                });
+                setTimeout(function () {
+                    layer.alert("请完善商品信息", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    });
+                }, timeout);
             } else {
                 params = {
                     imageList: JSON.stringify(imageList),
@@ -240,10 +269,10 @@ $(".subBtn").click(function () {
                 if (invenArray != null && invenArray.length > 0) {
                     params.invenList = JSON.stringify(invenArray);
                 }
-                if (inveDefaultObj != null) {// 库存与原本的数据
+                if (inveDefaultObj != null && inveDefaultObj.length > 0) {// 库存与原本的数据
                     params.inveDefaultObj = JSON.stringify(inveDefaultObj);
                 }
-                if (specDefaultObj != null) {// 规格原本的数据
+                if (specDefaultObj != null && specDefaultObj.length > 0) {// 规格原本的数据
                     params.specDefaultObj = JSON.stringify(specDefaultObj);
                 }
                 if (paramsArray != null && paramsArray.length > 0) {
@@ -305,14 +334,17 @@ $(".savePage").click(function () {
  * 保存并送审
  */
 $(".saveStatusPage").click(function () {
-    layer.confirm('保存并送审后商品不允许修改，您确定要保存并送审商品？', {
-        btn: ['确定', '取消'],
-        shade:[0.1,'#fff'],
-        offset: '10%'
-    }, function () {
-        layer.closeAll();
-        saveUpd(2);
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.confirm('保存并送审后商品不允许修改，您确定要保存并送审商品？', {
+            btn: ['确定', '取消'],
+            shade: [0.1, '#fff'],
+            offset: scrollHeight + "px"
+        }, function () {
+            layer.closeAll();
+            saveUpd(2);
+        });
+    }, timeout);
 });
 /**
  * 保存信息
@@ -373,52 +405,63 @@ function saveUpd(type) {
         timeout: 60000 * 60,//一小时的超时时间
         success: function (data) {
             layer.closeAll();
-            if (data.code == 0) {// 重新登录
-                layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                }, function (index) {
-                    location.href = "/user/tologin.do";
-                });
-            } else if (data.code == 1) {
-                var tip = layer.alert("编辑成功", {
-                    offset: "10%",
-                    shade:[0.1,"#fff"],
-                    closeBtn: 0
-                }, function (index) {
-                    layer.close(tip);
-                    if (type == 0) {
-                        var pId = data.id;
-                        window.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
-                    } else {
-                        var urls = $("input.urls").val();
-                        if (urls == null || urls == "") {
-                            location.href = "/mPro/index.do";
+            SonScrollTop(0);
+            setTimeout(function () {
+                if (data.code == 0) {// 重新登录
+
+                    layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        location.href = "/user/tologin.do";
+                    });
+
+                } else if (data.code == 1) {
+
+                    var tip = layer.alert("编辑成功", {
+                        offset: scrollHeight + "px",
+                        shade: [0.1, "#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        layer.close(tip);
+                        if (type == 0) {
+                            var pId = data.id;
+                            window.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
                         } else {
-                            location.href = urls;
+                            var urls = $("input.urls").val();
+                            if (urls == null || urls == "") {
+                                location.href = "/mPro/index.do";
+                            } else {
+                                location.href = urls;
+                            }
                         }
+
+                    });
+                } else {// 编辑失败
+                    var msg = "编辑失败";
+                    if (data.msg != "") {
+                        msg = data.msg;
                     }
-
-                });
-            } else {// 编辑失败
-                var msg = "编辑失败";
-                if (data.msg != "") {
-                    msg = data.msg;
+                    SonScrollTop(0);
+                    setTimeout(function () {
+                        layer.alert(msg, {
+                            shade: [0.1, "#fff"],
+                            offset: scrollHeight + "px"
+                        });
+                    }, timeout);
                 }
-                layer.alert(msg, {
-                    shade:[0.1,"#fff"],
-                    offset: "10%"
-                });
-            }
-
+            }, timeout);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            layer.alert("编辑失败", {
-                shade:[0.1,"#fff"],
-                offset: "10%"
-            });
-            return;
+            SonScrollTop(0);
+            setTimeout(function () {
+                layer.alert("编辑失败", {
+                    shade: [0.1, "#fff"],
+                    offset: scrollHeight + "px"
+                });
+                return;
+            }, timeout);
         }
     });
 //	parent.layer.closeAll();

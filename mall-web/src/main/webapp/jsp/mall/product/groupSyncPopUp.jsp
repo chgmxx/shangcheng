@@ -73,7 +73,7 @@
 
 <script type="text/javascript">
     function cancel() {
-        layer.closeAll();
+        parent.layer.closeAll();
     }
     function subtmit() {
         var array = new Array();
@@ -81,21 +81,21 @@
         var toShopId = $(".toShopSel option:selected").attr("id");
         if (shopId == null || shopId == "") {
             layer.alert("请选择来源店铺", {
-                shade:[0.1,"#fff"],
+                shade: [0.1, "#fff"],
                 offset: "10%"
             });
             return false;
         }
         if (toShopId == null || toShopId.length == 0) {
             layer.alert("请选择目标店铺", {
-                shade:[0.1,"#fff"],
+                shade: [0.1, "#fff"],
                 offset: "10%"
             });
             return false;
         }
         if (shopId == toShopId) {
             layer.alert("来源店铺和目标店铺不能相同！", {
-                shade:[0.1,"#fff"],
+                shade: [0.1, "#fff"],
                 offset: "10%"
             });
             return false;
@@ -117,32 +117,36 @@
             success: function (data) {
                 layer.close(layerLoad);
                 //layer.closeAll();
-                if (data.code == 0) {// 重新登录
-                    layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                        offset: "10%",
-                        shade:[0.1,"#fff"],
-                        closeBtn: 0
-                    }, function (index) {
-                        location.href = "/user/tologin.do";
-                    });
-                } else if (data.code == 1) {
-                    var tipLayer = layer.alert("同步商品成功", {
-                        offset: "10%",
-                        closeBtn: 0
-                    }, function (index) {
-                        location.href = window.parent.location.href;
-                    });
-                } else {// 编辑失败
-                    layer.alert("同步商品失败", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%"
-                    });
-                }
+                SonScrollTop(0);
+                setTimeout(function () {
+                    if (data.code == 0) {// 重新登录
+                        layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                            offset: scrollHeight + "px",
+                            shade: [0.1, "#fff"],
+                            closeBtn: 0
+                        }, function (index) {
+                            location.href = "/user/tologin.do";
+                        });
+                    } else if (data.code == 1) {
+                        var tipLayer = layer.alert("同步商品成功", {
+                            offset: scrollHeight + "px",
+                            shade: [0.1, "#fff"],
+                            closeBtn: 0
+                        }, function (index) {
+                            parent.location.href = window.parent.location.href;
+                        });
+                    } else {// 编辑失败
+                        layer.alert("同步商品失败", {
+                            shade: [0.1, "#fff"],
+                            offset: scrollHeight + "px"
+                        });
+                    }
+                }, timeout);
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 layer.close(layerLoad);
                 layer.alert("同步商品失败", {
-                    shade:[0.1,"#fff"],
+                    shade: [0.1, "#fff"],
                     offset: "10%"
                 });
                 return;

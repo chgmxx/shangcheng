@@ -139,9 +139,9 @@
 		var data = [];
 		var parentObj = $(this).parent(); 
 		// 询问框
-		layer.confirm('您确定要删除推荐？', {
+		window.layer.confirm('您确定要删除推荐？', {
             shade:[0.1,'#fff'],
-            offset: "10%",
+            offset: "200px",
 			btn : [ '确定', '取消' ]
 		// 按钮
 		}, function() {
@@ -189,7 +189,7 @@
 		}else{
 			layer.alert("您还没有要选择批量的推荐", {
                 shade:[0.1,"#fff"],
-				offset : "10%"
+				offset : "200px"
 			});
 		}
 		
@@ -225,7 +225,7 @@
 				// 询问框
 				layer.confirm('您确定要批量删除推荐？', {
                     shade:[0.1,'#fff'],
-                    offset: "10%",
+                    offset: "200px",
 					btn : [ '确定', '取消' ]
 				// 按钮
 				}, function() {
@@ -234,13 +234,13 @@
 			}else{
 				layer.alert("没有能被批量删除的推荐", {
                     shade:[0.1,"#fff"],
-					offset : "10%"
+					offset : "200px"
 				});
 			}
 		}else{
 			layer.alert("您还没有选择要批量删除的推荐", {
                 shade:[0.1,"#fff"],
-				offset : "10%"
+				offset : "200px"
 			});
 		}
 		
@@ -265,7 +265,7 @@
 					if (data.code == 0) {// 重新登录
 						layer.alert("操作失败，长时间没操作，跳转到登录页面", {
                             shade:[0.1,"#fff"],
-							offset : "10%",
+							offset : "200px",
 							closeBtn : 0
 						}, function(index) {
 							location.href = "/user/tologin.do";
@@ -273,7 +273,7 @@
 					} else if (data.code == 1) {
 						var tip = layer.alert(msg+"成功", {
                             shade:[0.1,"#fff"],
-							offset : "10%",
+							offset : "200px",
 							closeBtn : 0
 						}, function(index) {
 							layer.close(tip);
@@ -282,7 +282,7 @@
 					} else {// 编辑失败
 						var tip = layer.alert(msg+"失败", {
                             shade:[0.1,"#fff"],
-							offset : "10%"
+							offset : "200px"
 						});
 					}
 				},
@@ -290,7 +290,7 @@
 					layer.close(layerLoad);
 					layer.alert(msg+"失败", {
                         shade:[0.1,"#fff"],
-						offset : "10%"
+						offset : "200px"
 					});
 					return;
 				}
@@ -299,7 +299,7 @@
 		}else{
 			var tip = layer.alert("没有能被"+msg, {
                 shade:[0.1,"#fff"],
-				offset : "10%",
+				offset : "200px",
 				closeBtn : 0
 			}, function(index) {
 				layer.closeAll();

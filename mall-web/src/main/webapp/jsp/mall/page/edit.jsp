@@ -22,10 +22,12 @@
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/util.js"></script>
+    <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/mall/page/edit.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
 </head>
 <body>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <input type="hidden" class="urls" value="${urls }"/>
 <div class="con_body">
     <div class="fansTitle">

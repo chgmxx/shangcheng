@@ -189,19 +189,8 @@ public class MallProductController extends BaseController {
 		}
 	    }
 	    //查询商家流量
-	    List< BusFlow > flowList = fenBiFlowService.getBusFlowsByUserId( user.getId() );
-	    List< BusFlow > newFlowList = new ArrayList<>();
-	    if ( flowList != null && flowList.size() > 0 ) {
-		if ( flowList != null && flowList.size() > 0 ) {
-		    for ( BusFlow busFlow : flowList ) {
-			int count = mallProductService.selectCountByFlowIds( busFlow.getId() );
-			if ( count <= 0 ) {
-			    newFlowList.add( busFlow );
-			}
-		    }
-		}
-		request.setAttribute( "newFlowList", newFlowList );
-	    }
+	    List< BusFlow > flowList = mallProductService.selectCountByFlowIds( user.getId() );
+	    request.setAttribute( "newFlowList", flowList );
 
 	    //查询会员卡
 	    List< Map > cardList = mallProductService.selectMemberType( user.getId() );

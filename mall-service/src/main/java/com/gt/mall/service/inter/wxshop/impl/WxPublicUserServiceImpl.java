@@ -26,7 +26,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public WxPublicUsers selectByUserId( int busUserId ) {
-	String result = HttpSignUtil.SignHttpSelect( busUserId, WS_SHOP_URL + "selectByUserId", 2 );
+	String result = HttpSignUtil.SignHttpSelect( busUserId, WS_SHOP_URL + "selectByUserId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
@@ -35,7 +35,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public WxPublicUsers selectById( int id ) {
-	String result = HttpSignUtil.SignHttpSelect( id, WS_SHOP_URL + "selectById", 2 );
+	String result = HttpSignUtil.SignHttpSelect( id, WS_SHOP_URL + "selectById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
@@ -44,7 +44,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public WxPublicUsers selectByMemberId( int memberId ) {
-	String result = HttpSignUtil.SignHttpSelect( memberId, WS_SHOP_URL + "selectByMemberId", 2 );
+	String result = HttpSignUtil.SignHttpSelect( memberId, WS_SHOP_URL + "selectByMemberId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
@@ -53,7 +53,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public String qrcodeCreateFinal( QrcodeCreateFinal createFinal ) {
-	String result = HttpSignUtil.SignHttpSelect( createFinal, WS_SHOP_URL + "qrcodeCreateFinal", 2 );
+	String result = HttpSignUtil.SignHttpSelect( createFinal, WS_SHOP_URL + "qrcodeCreateFinal.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return result;
 	}
@@ -62,13 +62,13 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public boolean sendWxMsgTemplate( SendWxMsgTemplate template ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( template, WS_SHOP_URL + "sendWxMsgTemplate", 2 );
+	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( template, WS_SHOP_URL + "sendWxMsgTemplate.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public List< Map > selectTempObjByBusId( int busUserId ) {
-	String result = HttpSignUtil.SignHttpSelect( busUserId, WS_SHOP_URL + "selectTempObjByBusId", 2 );
+	String result = HttpSignUtil.SignHttpSelect( busUserId, WS_SHOP_URL + "selectTempObjByBusId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}

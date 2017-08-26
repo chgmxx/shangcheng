@@ -125,14 +125,14 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public SortedMap< String,Object > getSpecificaByUser( Map< String,Object > maps ) {
-	Wrapper< MallSpecifica > specificaWrapper = new EntityWrapper< MallSpecifica >();
+	Wrapper< MallSpecifica > specificaWrapper = new EntityWrapper< >();
 	int type = 1;
 	if ( CommonUtil.isNotEmpty( maps.get( "type" ) ) ) {
 	    type = CommonUtil.toInteger( maps.get( "type" ) );
 	}
 	specificaWrapper.where( " is_delete=0 and (user_id = {0} or is_back_end=1) and type={1} ", maps.get( "userId" ), type ).orderBy( "id", true );
 	List< MallSpecifica > specificaList = mallSpecificaDAO.selectList( specificaWrapper );
-	SortedMap< String,Object > map = new TreeMap< String,Object >();
+	SortedMap< String,Object > map = new TreeMap<>();
 	for ( MallSpecifica specifica : specificaList ) {
 	    map.put( CommonUtil.toString( specifica.getId() ), specifica.getSpecName() );
 	}
@@ -142,11 +142,11 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
     @Override
     public SortedMap< String,Object > getSpecificaValueById( Map< String,Object > params ) {
 
-	Wrapper< MallSpecificaValue > specificaWrapper = new EntityWrapper< MallSpecificaValue >();
-	specificaWrapper.where( " spec_id = {0} and type={1} and is_delete = 0 " );
+	Wrapper< MallSpecificaValue > specificaWrapper = new EntityWrapper<>();
+	specificaWrapper.where( " spec_id = {0} and type = {1} and is_delete = 0 ", params.get( "id" ), params.get( "type" ) );
 	List< MallSpecificaValue > list = mallSpecificaValueDAO.selectList( specificaWrapper );
 
-	SortedMap< String,Object > map = new TreeMap< String,Object >();
+	SortedMap< String,Object > map = new TreeMap<>();
 	for ( MallSpecificaValue value : list ) {
 	    map.put( CommonUtil.toString( value.getId() ), value.getSpecValue() );
 	}
@@ -155,7 +155,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public List< Map< String,Object > > getSpecificaByProductId( Integer proId ) {
-	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > list = new ArrayList<>();
 
 	Wrapper< MallProductSpecifica > productSpecificaWrapper = new EntityWrapper<>();
 	productSpecificaWrapper.where( "product_id = {0} and is_delete = 0", proId );
@@ -184,9 +184,9 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 			int nameId = CommonUtil.toInteger( specMap.get( "specNameId" ).toString() );
 			// 有相同的规格值id
 			if ( nameId == specId ) {
-			    System.out.println("values = " +  specMap.get( "specValues" ).toString());
-			    List<Map<String, Object>> mapList = (List<Map<String, Object>>) specMap
-					    .get("specValues");
+			    System.out.println( "values = " + specMap.get( "specValues" ).toString() );
+			    List< Map< String,Object > > mapList = (List< Map< String,Object > >) specMap
+					    .get( "specValues" );
 			    mapList.add( specValueMap );
 			    flag = false;
 			}

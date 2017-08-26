@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.product.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -137,7 +138,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	    MallGroup group = new MallGroup();
 	    group.setId( id );
 	    group.setIsDelete( 1 );
-	    mallGroupDAO.updateById( group );//逻辑删除商品分组
+	    int count = mallGroupDAO.updateById( group );//逻辑删除商品分组
 
 	    //查询父类的分组
 	    Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
@@ -145,6 +146,9 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	    List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
 	    if ( groupList != null && groupList.size() > 0 ) {
 		mallGroupDAO.updateByGroupId( groupList );// 删除父类商品分组
+	    }
+	    if(count > 0){
+	        return true;
 	    }
 	} catch ( Exception e ) {
 	    throw new Exception( "删除商品分组失败：" + e.getMessage() );
@@ -215,7 +219,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 			    if ( map2.get( "id" ).toString().equals( map.get( "groupPId" ).toString() ) ) {
 				List< Map > childList = new ArrayList<>();
 				if ( CommonUtil.isNotEmpty( map2.get( "childGroupList" ) ) ) {
-				    childList = JSONArray.parseArray( map2.get( "childGroupList" ).toString(), Map.class );
+				    childList = JSONArray.parseArray( JSON.toJSONString( map2.get( "childGroupList" ) ), Map.class );
 				}
 				childList.add( map );
 				map2.put( "childGroupList", childList );

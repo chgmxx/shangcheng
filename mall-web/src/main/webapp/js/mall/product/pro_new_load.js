@@ -350,7 +350,20 @@ function loadGroups() {
         }
         //console.log(group)
 
-        parentOpenIframe("选择分组", "500px", "530px", "/mPro/group/getGroups.do?shopId=" + shopId + "&proId=" + proId + "&group=" + group)
+        /*parentOpenIframe("选择分组", "500px", "530px", "/mPro/group/getGroups.do?shopId=" + shopId + "&proId=" + proId + "&group=" + group)*/
+        SonScrollTop(0);
+        setTimeout(function () {
+            layer.open({
+                type: 2,
+                title: "选择分组",
+                shadeClose: true,
+                shade: [0.1, "#fff"],
+                offset: scrollHeight + "px",
+                shadeClose: false,
+                area: ["500px", "530px"],
+                content: "/mPro/group/getGroups.do?shopId=" + shopId + "&proId=" + proId + "&group=" + group
+            });
+        }, timeout);
     });
 }
 

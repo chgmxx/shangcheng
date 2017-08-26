@@ -88,13 +88,11 @@
     </update>
 
     <select id="selectByShopId" parameterType="java.lang.Integer" resultType="Map">
-        /* todo 关联门店接口*/
         select
         p.id, pag_name, pag_descript, pag_type_id, pag_css, pag_data, pag_user_id, pag_sto_id,
         pag_create_time, pag_is_main, pag_html, p.codeUrl
         FROM t_mall_page p
         LEFT JOIN t_mall_store s ON p.`pag_sto_id`=s.`id` AND s.`is_delete`=0
-        /*LEFT JOIN t_wx_shop ws ON s.`wx_shop_id`=ws.`id`AND ws.`status` != -1*/
         WHERE s.`id`=#{shopId}
         <if test="firstNum != null and maxNum != null">
             limit #{firstNum},#{maxNum}
@@ -106,7 +104,6 @@
         count(p.id)
         FROM t_mall_page p
         LEFT JOIN t_mall_store s ON p.`pag_sto_id`=s.`id` AND s.`is_delete`=0
-        /*LEFT JOIN t_wx_shop ws ON s.`wx_shop_id`=ws.`id`AND ws.`status` != -1*/
         WHERE s.`id`=#{shopId}
     </select>
 

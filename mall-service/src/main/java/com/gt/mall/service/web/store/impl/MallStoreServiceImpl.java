@@ -73,6 +73,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
 		    if ( id == shopIds ) {
 			shopMap.put( "sto_name", maps.get( "sto_name" ) );
+			shopMap.put( "sto_address", maps.get( "address" ) );
+			break;
 		    }
 		}
 	    }
@@ -85,8 +87,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     @Override
     public List< Map< String,Object > > findAllStore( Integer userId ) {
 	Wrapper< MallStore > storeWrapper = new EntityWrapper<>();
-	storeWrapper.setSqlSelect( "id,sto_name" );
-	storeWrapper.where( "is_delete = 0 and sto_pid = 0 and sto_user_id = {0}", userId );
+	storeWrapper.setSqlSelect( "id,sto_name,wx_shop_id" );
+	storeWrapper.where( "is_delete = 0 and sto_user_id = {0}", userId );
 	return mallStoreDao.selectMaps( storeWrapper );
     }
 
@@ -242,6 +244,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		}
 
 		storeMap.put( "stoAddress", getWxShopDetailAddress( shopInfo ) );
+		storeMap.put( "wxShopId", shopInfo.getId() );
 	    }
 	}
 	return storeMap;
@@ -259,7 +262,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    }
 	}
 	String details = "";
-	if ( CommonUtil.isNotEmpty( cityMap ) ) {
+	if ( CommonUtil.isNotEmpty( cityMap ) && cityMap.size() > 0 ) {
 	    details = cityMap.get( shopInfo.getProvince() ) + cityMap.get( shopInfo.getCity() ) + cityMap.get( shopInfo.getDistrict() );
 	}
 	return details + shopInfo.getAddress() + shopInfo.getDetail();
@@ -298,7 +301,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    throw new Exception( "编辑店铺失败" );
 			} else {
 			    ShopSubsop shopSubsop = new ShopSubsop();
-			    shopSubsop.setModel( CommonUtil.toInteger( Constants.SHOP_SUB_SOP_MODEL ) );
+			    shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
 			    shopSubsop.setShopId( sto.getWxShopId() );
 			    shopSubsop.setSubShop( sto.getId() );
 			    boolean flag = wxShopService.addShopSubShop( shopSubsop );
@@ -340,14 +343,16 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	Map< String,Object > msg = new HashMap< String,Object >();
 	try {
 	    mallStoreDao.updateByIds( ids );//逻辑删除店铺
-	    //todo 调用小屁孩接口 删除中间门店记录 shopSubsopService.updateBySubShop
-	    /*if(ids != null && ids.length > 0){
-		for (String string : ids) {
-		    if(CommonUtil.isNotEmpty(string)){
-			shopSubsopService.updateBySubShop(CommonUtil.toInteger(string),shopSubSopModel);
+	    if ( ids != null && ids.length > 0 ) {
+		for ( String string : ids ) {
+		    if ( CommonUtil.isNotEmpty( string ) ) {
+			ShopSubsop shopSubsop = new ShopSubsop();
+			shopSubsop.setSubShop( CommonUtil.toInteger( string ) );
+			shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
+			wxShopService.updateBySubShop( shopSubsop );
 		    }
 		}
-	    }*/
+	    }
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    throw new Exception( "删除失败，系统异常！" );
@@ -396,14 +401,14 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	List< Map< String,Object > > storeList = new ArrayList<>();
 	//判断session里面有没有门店集合
-	/*List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
+	List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
 	if ( shopList != null && shopList.size() > 0 ) {
 	    SessionUtils.setWxShopNumBySession( user.getId(), shopList.size(), request );
 	    for ( Map shopMap : shopList ) {
 		storeList.add( shopMap );
 	    }
 	    return storeList;
-	}*/
+	}
 	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
 
@@ -421,6 +426,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
 			if ( wxShops.getId() == wxShopId ) {
 			    storeMap.put( "sto_name", wxShops.getBusinessName() );
+			    storeMap.put( "address", wxShops.getAddress() );
 			    break;
 			}
 		    }

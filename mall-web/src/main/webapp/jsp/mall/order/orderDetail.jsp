@@ -52,7 +52,7 @@
 			            <dt class="s-num">4</dt>
 			            <dd class="s-text">4.订单完成<s></s><b></b></dd>
 			        </dl>
-			        <c:if test="${result.orderInfo[0].order_status ==5 }">
+			        <c:if test="${result.orderInfo.order_status ==5 }">
 				        <dl class="normal last" id="five">
 				            <dt class="s-num">2</dt>
 				            <dd class="s-text">2.订单已关闭<s></s><b></b></dd>
@@ -66,57 +66,57 @@
 				<label>订单信息</label>
 				<div class="order_detail">
 					<ul>
-						<li>订单编号：${result.orderInfo[0].order_no }</li>
-						<li>所属店铺：${result.orderInfo[0].shopName }</li>
-						<li>买家：${result.orderInfo[0].nickname }</li>
+						<li>订单编号：${result.orderInfo.order_no }</li>
+						<li>所属店铺：${result.orderInfo.shopName }</li>
+						<li>买家：${result.orderInfo.nickname }</li>
 						<li>付款方式：
-							<c:if test="${result.orderInfo[0].order_pay_way == 1 }">微信支付</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 2 }">货到付款</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 3 }">储值卡支付</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 4 }">积分支付</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 5 }">扫码支付</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 6 }">到店支付</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 7 }">找人代付</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 8 }">粉币支付</c:if>
-							<c:if test="${result.orderInfo[0].order_pay_way == 9 }">支付宝支付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 1 }">微信支付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 2 }">货到付款</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 3 }">储值卡支付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 4 }">积分支付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 5 }">扫码支付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 6 }">到店支付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 7 }">找人代付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 8 }">粉币支付</c:if>
+							<c:if test="${result.orderInfo.order_pay_way == 9 }">支付宝支付</c:if>
 						</li>
-						<li>下单时间：<fmt:formatDate value="${result.orderInfo[0].create_time}" pattern="yyyy-MM-dd HH:mm:ss" /></li>
+						<li>下单时间：<fmt:formatDate value="${result.orderInfo.create_time}" pattern="yyyy-MM-dd HH:mm:ss" /></li>
 						<li>配送方式：
-							<c:if test="${result.orderInfo[0].delivery_method == 1 }">快递配送</c:if>
-							<c:if test="${result.orderInfo[0].delivery_method == 2 }">上门自提</c:if>
+							<c:if test="${result.orderInfo.delivery_method == 1 }">快递配送</c:if>
+							<c:if test="${result.orderInfo.delivery_method == 2 }">上门自提</c:if>
 						</li>
-						<c:if test="${result.orderInfo[0].delivery_method == 1 }">
+						<c:if test="${result.orderInfo.delivery_method == 1 }">
 						<li>收货信息：
-							${result.orderInfo[0].pName}${result.orderInfo[0].cName}${result.orderInfo[0].mem_address },
-							${result.orderInfo[0].mem_name }(收),${result.orderInfo[0].mem_phone }</li>
+							${result.orderInfo.pName}${result.orderInfo.cName}${result.orderInfo.mem_address },
+							${result.orderInfo.mem_name }(收),${result.orderInfo.mem_phone }</li>
 						</c:if>
 						<c:if test="${!empty result.expressName}">
 							<li>快递公司：${result.expressName }</li>
 						</c:if>
-						<c:if test="${!empty result.orderInfo[0].express_number }">
-						<li>快递单号：${result.orderInfo[0].express_number }</li>
+						<c:if test="${!empty result.orderInfo.express_number }">
+						<li>快递单号：${result.orderInfo.express_number }</li>
 						</c:if>
-						<c:if test="${result.orderInfo[0].delivery_method == 2 }">
-						<li>提货人姓名： ${result.orderInfo[0].appointment_name}  ${result.orderInfo[0].appointment_telephone}</li>
+						<c:if test="${result.orderInfo.delivery_method == 2 }">
+						<li>提货人姓名： ${result.orderInfo.appointment_name}  ${result.orderInfo.appointment_telephone}</li>
 						<li>自提点地址： ${result.take.visitAddressDetail}</li>
 						</c:if>
-						<li>买家留言：${result.orderInfo[0].order_buyer_message }</li>
+						<li>买家留言：${result.orderInfo.order_buyer_message }</li>
 					</ul>
 				</div>
 			</div>
 			<div class="fl">
 				<div class="status_btn">
 					<label>
-						<c:if test="${result.orderInfo[0].order_status == 1}">等待买家付款</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 2 && result.orderInfo[0].delivery_method == 1 }">待发货</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 2 && result.orderInfo[0].delivery_method == 2}">待提货</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 3}">已发货</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 4}">订单完成</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 5}">订单关闭</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 6}">退款中</c:if>
+						<c:if test="${result.orderInfo.order_status == 1}">等待买家付款</c:if>
+						<c:if test="${result.orderInfo.order_status == 2 && result.orderInfo.delivery_method == 1 }">待发货</c:if>
+						<c:if test="${result.orderInfo.order_status == 2 && result.orderInfo.delivery_method == 2}">待提货</c:if>
+						<c:if test="${result.orderInfo.order_status == 3}">已发货</c:if>
+						<c:if test="${result.orderInfo.order_status == 4}">订单完成</c:if>
+						<c:if test="${result.orderInfo.order_status == 5}">订单关闭</c:if>
+						<c:if test="${result.orderInfo.order_status == 6}">退款中</c:if>
 					</label>
 				</div>
-				<div>卖家备注：${result.orderInfo[0].order_seller_remark}</div>
+				<div>卖家备注：${result.orderInfo.order_seller_remark}</div>
 			</div>
 		</div>
 		<div class="ui-box">
@@ -133,7 +133,7 @@
 				</tr>
 			 </thead>
 			 <c:set var="orderDetailStatus" value="-3"></c:set>
-			 <c:if test="${result.orderInfo[0].order_pay_way != 5 }">
+			 <c:if test="${result.orderInfo.order_pay_way != 5 }">
 			 <c:forEach var="order" items="${result.orderDetail }">
 					<c:if test="${order.status == 1 || order.status == 5 }">
 						<c:set var="orderDetailStatus" value="1"></c:set>
@@ -171,35 +171,35 @@
 			            	<c:if test="${order.discount == 100 }">0</c:if>
 			            	<c:if test="${order.discount < 100 }">${(order.discount*order.det_pro_price*order.det_pro_num)/100}</c:if>
 			            	<c:if test="${order.det_pro_price != null && order.det_pro_price != '' && order.discount < 100}">
-			            		<c:if test="${result.orderInfo[0].order_pay_way != 4 && result.orderInfo[0].order_pay_way != 8}">元</c:if>
-			            		<c:if test="${result.orderInfo[0].order_pay_way == 4 }">积分</c:if>
-			            		<c:if test="${result.orderInfo[0].order_pay_way == 8 }">粉币</c:if>
+			            		<c:if test="${result.orderInfo.order_pay_way != 4 && result.orderInfo.order_pay_way != 8}">元</c:if>
+			            		<c:if test="${result.orderInfo.order_pay_way == 4 }">积分</c:if>
+			            		<c:if test="${result.orderInfo.order_pay_way == 8 }">粉币</c:if>
 			            	</c:if>
 			            </p>
 			        </td>
 			        <td class="customer-cell" rowspan="1">
 			            ${(order.det_pro_price*order.det_pro_num)}
 			            <c:if test="${order.det_pro_price != null && order.det_pro_price != ''}">
-		            		<c:if test="${result.orderInfo[0].order_pay_way != 4 && result.orderInfo[0].order_pay_way != 8}">元</c:if>
-		            		<c:if test="${result.orderInfo[0].order_pay_way == 4 }">积分</c:if>
-		            		<c:if test="${result.orderInfo[0].order_pay_way == 8 }">粉币</c:if>
+		            		<c:if test="${result.orderInfo.order_pay_way != 4 && result.orderInfo.order_pay_way != 8}">元</c:if>
+		            		<c:if test="${result.orderInfo.order_pay_way == 4 }">积分</c:if>
+		            		<c:if test="${result.orderInfo.order_pay_way == 8 }">粉币</c:if>
 		            	</c:if>
 			        </td>
 			        <td class="customer-cell" rowspan="1">
-			            <c:if test="${result.orderInfo[0].order_status == 1}">等付款</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 2}">待发货</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 3}">已发货</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 4}">订单完成</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 5}">订单关闭</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 6}">退款中</c:if>
+			            <c:if test="${result.orderInfo.order_status == 1}">等付款</c:if>
+						<c:if test="${result.orderInfo.order_status == 2}">待发货</c:if>
+						<c:if test="${result.orderInfo.order_status == 3}">已发货</c:if>
+						<c:if test="${result.orderInfo.order_status == 4}">订单完成</c:if>
+						<c:if test="${result.orderInfo.order_status == 5}">订单关闭</c:if>
+						<c:if test="${result.orderInfo.order_status == 6}">退款中</c:if>
 			        </td>
 			        <td class="time-cell" rowspan="1">
 			        	<c:choose>
-			        		<c:when test="${result.orderInfo[0].order_freight_money > 0}">
-			        			${result.orderInfo[0].order_freight_money}
-			            		<c:if test="${result.orderInfo[0].order_pay_way != 4 && result.orderInfo[0].order_pay_way != 8}">元</c:if>
-			            		<c:if test="${result.orderInfo[0].order_pay_way == 4 }">积分</c:if>
-			            		<c:if test="${result.orderInfo[0].order_pay_way == 8 }">粉币</c:if>
+			        		<c:when test="${result.orderInfo.order_freight_money > 0}">
+			        			${result.orderInfo.order_freight_money}
+			            		<c:if test="${result.orderInfo.order_pay_way != 4 && result.orderInfo.order_pay_way != 8}">元</c:if>
+			            		<c:if test="${result.orderInfo.order_pay_way == 4 }">积分</c:if>
+			            		<c:if test="${result.orderInfo.order_pay_way == 8 }">粉币</c:if>
 			        		</c:when>
 			        		<c:otherwise>
 			            		免运费
@@ -210,7 +210,7 @@
 			</tbody>
 		</c:forEach>
 		</c:if>
-		<c:if test="${result.orderInfo[0].order_pay_way == 5 }"><!-- 扫码支付 -->
+		<c:if test="${result.orderInfo.order_pay_way == 5 }"><!-- 扫码支付 -->
 			 <tbody class="widget-list-item">
 				 <tr class="separation-row">
 				    <td colspan="8"></td>
@@ -221,7 +221,7 @@
 			            <p class="goods-title">扫码支付</p>
 			        </td>
 			        <td class="price-cell">
-			            <p> ${result.orderInfo[0].order_money }</p>
+			            <p> ${result.orderInfo.order_money }</p>
 			        </td>
 			        <td class="price-cell">
 			            <p>1</p>
@@ -229,17 +229,17 @@
 			        <td class="price-cell">
 			            <p>
 			            	<c:if test="${order.discount == 100 }">0</c:if>
-			            	<c:if test="${order.discount < 100 }">${(order.discount*result.orderInfo[0].order_money)/100}</c:if>
+			            	<c:if test="${order.discount < 100 }">${(order.discount*result.orderInfo.order_money)/100}</c:if>
 			            </p>
 			        </td>
 			        <td class="customer-cell" rowspan="1">
-			            ${result.orderInfo[0].order_money }
+			            ${result.orderInfo.order_money }
 			        </td>
 			        <td class="customer-cell" rowspan="1">
-			            <c:if test="${result.orderInfo[0].order_status == 1}">等付款</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 2}">已付款</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 4}">订单完成</c:if>
-						<c:if test="${result.orderInfo[0].order_status == 5}">订单关闭</c:if>
+			            <c:if test="${result.orderInfo.order_status == 1}">等付款</c:if>
+						<c:if test="${result.orderInfo.order_status == 2}">已付款</c:if>
+						<c:if test="${result.orderInfo.order_status == 4}">订单完成</c:if>
+						<c:if test="${result.orderInfo.order_status == 5}">订单关闭</c:if>
 			        </td>
 			        <td class="time-cell" rowspan="1">
 			        </td>
@@ -248,10 +248,10 @@
 		</c:if>
 	</table>
 	<div class="detail_footer">
-		<div>应收总额：<label>￥${result.orderInfo[0].order_money }</label>
-         		<c:if test="${result.orderInfo[0].order_pay_way != 4 && result.orderInfo[0].order_pay_way != 8}">元</c:if>
-         		<c:if test="${result.orderInfo[0].order_pay_way == 4 }">积分</c:if>
-         		<c:if test="${result.orderInfo[0].order_pay_way == 8 }">粉币</c:if>
+		<div>应收总额：<label>￥${result.orderInfo.order_money }</label>
+         		<c:if test="${result.orderInfo.order_pay_way != 4 && result.orderInfo.order_pay_way != 8}">元</c:if>
+         		<c:if test="${result.orderInfo.order_pay_way == 4 }">积分</c:if>
+         		<c:if test="${result.orderInfo.order_pay_way == 8 }">粉币</c:if>
       	</div>
 	</div>
 </div>
@@ -260,7 +260,7 @@
 </body>
 <script type="text/javascript">
 $(function(){
-	var status = "${result.orderInfo[0].order_status}";
+	var status = "${result.orderInfo.order_status}";
 	var detailStatus = "${orderDetailStatus}";
 	if(status == 1){
 		

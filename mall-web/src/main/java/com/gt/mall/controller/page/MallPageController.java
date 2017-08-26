@@ -16,9 +16,9 @@ import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerMallset;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -112,7 +112,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		request.setAttribute( "pagName", params.get( "pagName" ) );
 		request.setAttribute( "path", PropertiesUtil.getArticleUrl() );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
-	    }else{
+	    } else {
 		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    request.setAttribute( "urls", request.getHeader( "Referer" ) );
@@ -155,9 +155,8 @@ public class MallPageController extends AuthorizeOrLoginController {
     public void saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > msg = new HashMap< String,Object >();
 	try {
-			/*WxPublicUsers wx = CommonUtil.getLoginPbUser(request);*/
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    MallPage page = (MallPage) JSONObject.toBean( JSONObject.fromObject( params.get( "obj" ) ), MallPage.class );
+	    MallPage page = com.alibaba.fastjson.JSONObject.parseObject( params.get( "obj" ).toString(), MallPage.class );
 	    page.setPagUserId( SessionUtils.getLoginUser( request ).getId() );
 	    page.setPagCreateTime( new Date() );
 	    msg = mallPageService.saveOrUpdate( page, user );

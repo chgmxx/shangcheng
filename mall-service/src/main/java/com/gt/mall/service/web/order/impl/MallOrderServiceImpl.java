@@ -428,21 +428,20 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     @Override
     public Map< String,Object > selectOrderList( Map< String,Object > params ) {
 	Map< String,Object > orderMap = new HashMap<>();
-	List< Map< String,Object > > orderList = mallOrderDAO.selectOrder( params );
-	orderList.get( 0 ).put( "nickname", CommonUtil.Blob2String( orderList.get( 0 ).get( "nickname" ) ) );//修改值
+	Map< String,Object > orders = mallOrderDAO.selectMapById( CommonUtil.toInteger( params.get( "orderId" ) ) );
+	orders.put( "nickname", CommonUtil.Blob2String( orders.get( "nickname" ) ) );//修改值
 	List< Map< String,Object > > orderDetail = mallOrderDAO.selectOrderDetail( params );
-	orderMap.put( "orderInfo", orderList );
+	orderMap.put( "orderInfo", orders );
 	orderMap.put( "orderDetail", orderDetail );
 
-	if ( CommonUtil.isNotEmpty( orderList ) ) {
-	    Map< String,Object > maps = orderList.get( 0 );
-	    if ( maps.get( "delivery_method" ).toString().equals( "2" ) && CommonUtil.isNotEmpty( maps.get( "take_their_id" ) ) ) {//配送方式是到店自提
-		int takeId = CommonUtil.toInteger( maps.get( "take_their_id" ) );
+	if ( CommonUtil.isNotEmpty( orders ) ) {
+	    if ( orders.get( "delivery_method" ).toString().equals( "2" ) && CommonUtil.isNotEmpty( orders.get( "take_their_id" ) ) ) {//配送方式是到店自提
+		int takeId = CommonUtil.toInteger( orders.get( "take_their_id" ) );
 		MallTakeTheir take = mallTakeTheirService.selectById( takeId );
 		orderMap.put( "take", take );
 	    }
-	    if ( CommonUtil.isNotEmpty( maps.get( "express_id" ) ) ) {
-		String expressName = dictService.getDictRuturnValue( "1092", CommonUtil.toInteger( maps.get( "express_id" ) ) );
+	    if ( CommonUtil.isNotEmpty( orders.get( "express_id" ) ) ) {
+		String expressName = dictService.getDictRuturnValue( "1092", CommonUtil.toInteger( orders.get( "express_id" ) ) );
 		if ( CommonUtil.isNotEmpty( expressName ) ) {
 		    orderMap.put( "expressName", expressName );
 		}

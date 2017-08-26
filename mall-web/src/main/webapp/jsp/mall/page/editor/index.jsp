@@ -30,8 +30,8 @@ display: none;
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="css/base.css?<%=System.currentTimeMillis()%>"/>
-    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js?<%=System.currentTimeMillis()%>"></script>
-    <script src="js/angular.min.js?<%=System.currentTimeMillis()%>"></script>
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js?"></script>
+    <script src="js/angular.min.js"></script>
     <script src="js/app.js?<%=System.currentTimeMillis()%>"></script>
 	
     <link rel="stylesheet" href="js/admin/admin.css?<%=System.currentTimeMillis()%>"/>
@@ -42,8 +42,8 @@ display: none;
     <script src="js/commodity/commodity.js?<%=System.currentTimeMillis()%>"></script>
 
     <!--轮播图-->
-    <link rel="stylesheet" href="js/swiper/swiper.css?<%=System.currentTimeMillis()%>"/>
-    <script src="js/swiper/swiper.js?<%=System.currentTimeMillis()%>"></script>
+    <link rel="stylesheet" href="js/swiper/swiper.css"/>
+    <script src="js/swiper/swiper.js"></script>
     
     <!--分类-->
     <link rel="stylesheet" href="js/classify/classify.css?<%=System.currentTimeMillis()%>"/>
@@ -63,9 +63,9 @@ display: none;
     <script type="text/javascript" src="js/action/myPlanDirective.js?<%=System.currentTimeMillis()%>"></script>
     
     <!--layer-->
-    <script type="text/javascript" src="/js/plugin/layer/layer.js?<%=System.currentTimeMillis()%>"></script>
+    <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
     
-    <script type="text/javascript" src="js/action/Sortable.js?<%=System.currentTimeMillis()%>"></script>
+    <script type="text/javascript" src="js/action/Sortable.js"></script>
     
     <!--搜索框-->
     <link rel="stylesheet" href="js/search/search.css?<%=System.currentTimeMillis()%>"/>
@@ -215,7 +215,10 @@ function center(obj) {
 	var pic_type = 0;  //0表示重新选择图片,  1表示第一次添加图片,  2表示添加分类图片
 	function materiallayer(param){
 		pic_type = param;
-		openIframe('素材库','820px','500px','/common/material.do');
+        fhmater(0);
+		//openIframe('素材库','820px','500px','/common/material.do');
+
+
 	}
 	
 	/**素材库里面返回信息**/

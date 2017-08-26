@@ -141,39 +141,44 @@ public class MallOrderController extends BaseController {
      */
     @RequestMapping( value = "/orderPopUp" )
     public String orderPopUp( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	String type = params.get( "type" ).toString();
-	String orderId = params.get( "orderId" ).toString();
-	String count = "0";
-	Map< String,Object > result = new HashMap< String,Object >();
-	if ( type.equals( "1" ) ) {        //备注
+	try {
+	    String type = params.get( "type" ).toString();
+	    String orderId = params.get( "orderId" ).toString();
+	    String count = "0";
+	    Map< String,Object > result = new HashMap< String,Object >();
+	    if ( type.equals( "1" ) ) {        //备注
 
-	} else if ( type.equals( "2" ) ) {                //取消订单
-	    List< Map > cancelReason = dictService.getDict( "1079" );
-	    request.setAttribute( "cancelReason", cancelReason );
-	} else if ( type.equals( "3" ) ) {                //修改价格
+	    } else if ( type.equals( "2" ) ) {                //取消订单
+		List< Map > cancelReason = dictService.getDict( "1079" );
+		request.setAttribute( "cancelReason", cancelReason );
+	    } else if ( type.equals( "3" ) ) {                //修改价格
 
-	} else {        //发货
-	    Object groupBuyId = params.get( "groupBuyId" );
-	    //团购商品要凑单购买
-	    if ( null != groupBuyId && !groupBuyId.equals( "" ) && groupBuyId != "" && !groupBuyId.equals( "0" ) && groupBuyId.equals( "1" ) ) {
-		//查询团购需要参与的人数
-		Map< String,Object > map = mallGroupBuyService.selectGroupBuyById( Integer.parseInt( groupBuyId.toString() ) );
-		//查询已参加团购人数
-		Map< String,Object > map1 = mallOrderDAO.groupJoinPeopleNum( params );
-		if ( Integer.parseInt( map.get( "gPeopleNum" ).toString() ) == Integer.parseInt( map1.get( "num" ).toString() ) ) {
-		    count = "1";//团购商品可以发货
+	    } else {        //发货
+		Object groupBuyId = params.get( "groupBuyId" );
+		//团购商品要凑单购买
+		if ( null != groupBuyId && !groupBuyId.equals( "" ) && groupBuyId != "" && !groupBuyId.equals( "0" ) && groupBuyId.equals( "1" ) ) {
+		    //查询团购需要参与的人数
+		    Map< String,Object > map = mallGroupBuyService.selectGroupBuyById( Integer.parseInt( groupBuyId.toString() ) );
+		    //查询已参加团购人数
+		    Map< String,Object > map1 = mallOrderDAO.groupJoinPeopleNum( params );
+		    if ( Integer.parseInt( map.get( "gPeopleNum" ).toString() ) == Integer.parseInt( map1.get( "num" ).toString() ) ) {
+			count = "1";//团购商品可以发货
+		    }
+		} else {
+		    count = "1";
 		}
-	    } else {
-		count = "1";
+		List< Map > logisticsCompany = dictService.getDict( "1092" );
+		request.setAttribute( "logisticsCompany", logisticsCompany );
 	    }
-	    List< Map > logisticsCompany = dictService.getDict( "1092" );
-	    request.setAttribute( "logisticsCompany", logisticsCompany );
+	    request.setAttribute( "count", count );
+	    result = mallOrderService.selectOrderList( params );
+	    request.setAttribute( "result", result );
+	    request.setAttribute( "type", type );
+	    request.setAttribute( "orderId", orderId );
+	} catch ( Exception e ) {
+	    this.logger.error( "订单弹出框方法异常：" + e.getMessage() );
+	    e.printStackTrace();
 	}
-	request.setAttribute( "count", count );
-	result = mallOrderService.selectOrderList( params );
-	request.setAttribute( "result", result );
-	request.setAttribute( "type", type );
-	request.setAttribute( "orderId", orderId );
 	return "mall/order/orderPopUp";
     }
 
@@ -182,11 +187,16 @@ public class MallOrderController extends BaseController {
      */
     @RequestMapping( value = "/orderDetail" )
     public String orderDetail( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	String orderId = params.get( "orderId" ).toString();
-	Map< String,Object > result = mallOrderService.selectOrderList( params );
-	request.setAttribute( "result", result );
-	request.setAttribute( "orderId", orderId );
-	request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
+	try {
+	    String orderId = params.get( "orderId" ).toString();
+	    Map< String,Object > result = mallOrderService.selectOrderList( params );
+	    request.setAttribute( "result", result );
+	    request.setAttribute( "orderId", orderId );
+	    request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
+	} catch ( Exception e ) {
+	    this.logger.error( "进入订单详情方法异常：" + e.getMessage() );
+	    e.printStackTrace();
+	}
 	return "mall/order/orderDetail";
     }
 

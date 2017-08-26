@@ -676,8 +676,8 @@ function loadSpecImg() {
             loadWindow();
         });
 
-    $(".upload-img-wrap").click(function () {
-        materiallayer();
+    $(".upload-img-wrap .add-image").click(function () {
+        materiallayer(1,this);
     });
 
 }
@@ -871,18 +871,22 @@ function delGroup() {
         });
 
 }
+var imgType = 0;
+var imgObj;
 /**
  * 上传图片回调函数
  *
  * @param id
  * @param url
  */
-function fhmateriallayer(imageArray, url) {
+function image(imageArray, url) {
     // console.log(JSON.stringify(imageArray) + "===" + url)
     var imageSize = $(".picture-list li").length;
     var html = "";
     var preHtml = "";
+    //console.log(imgObj.html())
     if (imgType == 0) {// 上传商品图片
+        imageArray = JSON.parse(imageArray)
         if (imageArray != null && imageArray.length > 0) {
             for (var i = 0; i < imageArray.length; i++) {
                 var imageUrl = imageArray[i].url;
@@ -919,7 +923,6 @@ function fhmateriallayer(imageArray, url) {
         }
 
     } else {// 上传商品规格图片
-        // console.log(imgObj.html())
         var imgUrl = url.split("/upload/")[1];
         html = "<img src='" + (imgResource + imgUrl) + "' />"
             + "<input type='hidden' class='imageInp' value='" + imgUrl
@@ -929,35 +932,21 @@ function fhmateriallayer(imageArray, url) {
 
     loadWindow();
 }
-var imgType = 0;
-var imgObj;
 
-// 弹出素材库
+/**
+ * 弹出素材库
+ * @param type
+ * @param obj
+ */
 function materiallayer(type, obj) {
     imgType = type;
     imgObj = $(obj);
-    var url = "/common/material.do";
     if (type == 0) {
-        url += "?selectType=checked";
         fhmater(1);
     }else{
         fhmater(0);
     }
 
-    // parent.layer.open({
-    //     type: 2,
-    //     title: '素材库',
-    //     shadeClose: true,
-    //     shade: 0.2,
-    //     area: ['820px', '500px'],
-    //     offset: "10px",
-    //     content: url,
-    // });
-}
-// 素材库里面返回信息
-function image(imageArray, url) {
-    layer.closeAll();
-    $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
 }
 /**
  * 刷新商品分组

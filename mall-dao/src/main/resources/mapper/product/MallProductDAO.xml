@@ -247,31 +247,40 @@
         where id = #{product_id}
     </update>
     <select id="selectProductByShopids" resultType="java.util.Map">
-        SELECT
-        distinct(a.id),a.pro_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id
-        from t_mall_product a
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
-        is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1
-        AND is_delete=0)d ON a.id=d.product_id
+        SELECT a.id,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id
+        from (
+            SELECT DISTINCT(a.id),a.pro_price,a.pro_name,a.is_specifica,a.is_publish,a.check_status,a.is_delete
+            FROM t_mall_product a
+
+            <if test="groupId != null and groupId != ''">
+                LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+            </if>
+
+            WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+
+            <if test="shopId != null and shopId != ''">
+                and a.shop_id=#{shopId}
+            </if>
+            <if test="proName != null and proName != ''">
+                and a.pro_name like '%${proName}%'
+            </if>
+            <if test="groupId != null and groupId != ''">
+                and pg.group_id = #{groupId}
+            </if>
+            <if test="firstNum != null and maxNum != null">
+                limit #{firstNum},#{maxNum}
+            </if>
+        ) a
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.`is_delete`=0
-        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
-        <if test="shopId != null and shopId != ''">
-            and a.shop_id=#{shopId}
-        </if>
-        <if test="proName != null and proName != ''">
-            and a.pro_name like '%${proName}%'
-        </if>
-        <if test="groupId != null and groupId != ''">
-            and a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
-        </if>
-        <if test="firstNum != null and maxNum != null">
-            limit #{firstNum},#{maxNum}
-        </if>
     </select>
     <select id="selectCountByShopids" resultType="java.lang.Integer">
         SELECT count(a.id)
         from t_mall_product a
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
         WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
         <if test="shopId != null and shopId != ''">
             and a.shop_id=#{shopId}
@@ -280,7 +289,7 @@
             and a.pro_name like '%${proName}%'
         </if>
         <if test="groupId != null and groupId != ''">
-            and a.id in (select product_id from t_mall_product_group where group_id = #{groupId})
+            and pg.group_id = #{groupId}
         </if>
     </select>
     <select id="selectProductAllByShopids" resultType="java.util.Map">

@@ -370,13 +370,21 @@ function save() {
             success: function (data) {
                 layer.close(index);
                 if (data.message != null && data.message != "") {
-                    alertMsg(data.message);
+                    layer.alert(data.message, {
+                        offset: "10%",
+                        shade:[0.1,"#fff"],
+                        closeBtn: 0
+                    }, function (index) {
+                        if (data.result) {
+                            location.href = "/store/index.do";
+                        }else{
+                            layer.closeAll();
+                        }
+                    });
                 } else {
                     alertMsg("保存店铺失败，请稍后重试");
                 }
-                if (data.result) {
-                    location.href = "/store/index.do";
-                }
+
             }
         });
     }

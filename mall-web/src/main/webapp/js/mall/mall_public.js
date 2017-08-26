@@ -6,11 +6,11 @@ $(function () {
         loadWindow();
     });
 });
-*/
+
 
 function loadWindow() {
     //清空内容高度
-    /*$(winParents.document.getElementById('ifr')).height(0);
+    $(winParents.document.getElementById('ifr')).height(0);
     $(winParents.document.getElementById('content')).height(0);
     var rightHeight = document.body.scrollHeight;//网页正文全文高，包括有滚动条时的未见区域
     if (rightHeight > leftNav) {
@@ -26,7 +26,7 @@ function loadWindow() {
     $(winParents.document.getElementById('ifr')).height(leftHeight);
     $(winParents.document.getElementById('content')).height(leftHeight);
     //改变菜单栏的高度
-    $(winParents.document.getElementById('nav')).height(leftHeight + 167);*/
+    $(winParents.document.getElementById('nav')).height(leftHeight + 167);
 
-}
+}*/
 

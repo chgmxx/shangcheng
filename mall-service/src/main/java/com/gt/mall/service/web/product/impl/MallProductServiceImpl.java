@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
@@ -197,7 +198,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    List< Map< String,Object > > groupBuyList = mallGroupBuyDAO.selectCountByProList( proIdsList );
 	    List< Map< String,Object > > seckillList = mallSeckillDao.selectCountByProList( proIdsList );
 	    List< MallProductInventory > invenList = mallProductInventoryService.selectByIdListDefault( proIdsInvList );
-
+	    logger.info( "团购商品数据 = " + JSONObject.toJSONString( groupBuyList ) );
+	    logger.info( "秒杀商品数据 = " + JSONObject.toJSONString( seckillList ) );
 	    for ( Map< String,Object > map : productList ) {
 		int isGroup = 0;
 		int isSeckill = 0;
@@ -216,20 +218,20 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 			}
 		    }
 		}
-		if ( groupBuyList != null && groupBuyList.size() > 0 ) {
-		    for ( int i = 0; i < groupBuyList.size(); i++ ) {
-			Map< String,Object > groupMap = groupBuyList.get( i );
-			int product_id = CommonUtil.toInteger( groupMap.get( "product_id" ) );
-			if ( product_id == id ) {
-			    isGroup = 1;
-			    groupBuyList.remove( i );
-			    break;
-			}
-		    }
-		}
 		map.put( "isGroup", isAddActivityByProId( groupBuyList, id ) );
 		//查看商品是否加入到秒杀
 		map.put( "isSeckill", isAddActivityByProId( seckillList, id ) );
+
+		if ( CommonUtil.isNotEmpty( map.get( "is_specifica" ) ) && invenList != null ) {
+		    if ( map.get( "is_specifica" ).toString().equals( "1" ) && invenList.size() > 0 ) {
+			for ( MallProductInventory inventory : invenList ) {
+			    if ( CommonUtil.toInteger( inventory.getProductId() ) == id ) {
+				map.put( "proPrice", inventory.getInvPrice() );
+				break;
+			    }
+			}
+		    }
+		}
 
 		int viewNum = getViews( map.get( "id" ).toString() );
 		map.put( "viewsNum", viewNum );
@@ -302,7 +304,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     private int isAddActivityByProId( List< Map< String,Object > > activityList, int proId ) {
-	System.out.println( "activityList = " + activityList );
 	int isActivity = 0;
 	if ( activityList != null && activityList.size() > 0 ) {
 	    for ( int i = 0; i < activityList.size(); i++ ) {
@@ -727,11 +728,13 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	if ( !CommonUtil.isEmpty( params.get( "detail" ) ) ) {
 	    MallProductDetail detail = JSONObject.parseObject( params.get( "detail" ).toString(), MallProductDetail.class );
 	    if ( detail != null ) {
-		if ( !CommonUtil.isEmpty( detail.getId() ) ) {
-		    mallProductDetailService.updateById( detail );
-		} else {
-		    detail.setProductId( product.getId() );
-		    mallProductDetailService.insert( detail );
+	        if(CommonUtil.isNotEmpty( detail.getProductDetail() ) && CommonUtil.isNotEmpty( detail.getProductIntrodu() ) && CommonUtil.isNotEmpty( detail.getProductMessage() )){
+		    if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
+			mallProductDetailService.updateById( detail );
+		    } else {
+			detail.setProductId( product.getId() );
+			mallProductDetailService.insert( detail );
+		    }
 		}
 	    }
 
@@ -751,14 +754,14 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    flag = false;
 	}
 	// 需要修改的规格数据
-	if ( !CommonUtil.isEmpty( params.get( "speList" ) ) ) {
+	if ( CommonUtil.isNotEmpty( params.get( "speList" ) ) ) {
 	    if ( params.get( "speList" ) != null ) {
 		specObj = params.get( "speList" );
 	    }
 	}
-	Map< String,Object > defaultSpecMap = new HashMap<>();
+	Map< String,Object > defaultSpecMap = null;
 	// 还未修改的规格数据
-	if ( !CommonUtil.isEmpty( params.get( "specDefaultObj" ) ) ) {
+	if ( CommonUtil.isNotEmpty( params.get( "specDefaultObj" ) ) ) {
 	    defaultSpecMap = JSONObject.parseObject( params.get( "specDefaultObj" ).toString() );
 	}
 	// 批量添加或修改商品规格
@@ -1377,13 +1380,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public int selectCountByFlowIds( int flowIds ) {
-	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete=0 and flow_id={0}", flowIds );
-	return mallProductDAO.selectCount( wrapper );
-    }
-
-    @Override
     public int setIsShopBySession( int toshop, int shopid, int userid, HttpServletRequest request ) {
 	request.getSession().setAttribute( Constants.SESSION_KEY + "toshop_" + shopid + "_" + userid, toshop );
 	request.setAttribute( Constants.SESSION_KEY + "toshop", toshop );
@@ -1410,7 +1406,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public Map< String,Object > saveOrUpdateProductByErp( Map< String,Object > params ,HttpServletRequest request) throws Exception {
+    public Map< String,Object > saveOrUpdateProductByErp( Map< String,Object > params, HttpServletRequest request ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
 	int code = 1;
 	String msg = "";
@@ -1489,7 +1485,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    resultMap.put( "errorMsg", msg );
 	} else {
 	    if ( CommonUtil.isNotEmpty( proIds ) && userId > 0 ) {
-		int userPId = SessionUtils.getAdminUserId( userId,request );
+		int userPId = SessionUtils.getAdminUserId( userId, request );
 		Map< String,Object > syncParams = new HashMap<>();
 		syncParams.put( "productIds", proIds.substring( 0, proIds.length() - 1 ) );
 		syncParams.put( "rootUid", userPId );
@@ -2180,13 +2176,39 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public int selectCountByFlowIds( Integer flowId ) {
-	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete=0" );
-	if ( flowId > 0 ) {
-	    wrapper.where( "flow_id={0}", flowId );
+    public List< BusFlow > selectCountByFlowIds( int userId ) {
+	List< BusFlow > flowList = fenBiFlowService.getBusFlowsByUserId( userId );
+	if ( flowList == null || flowList.size() == 0 ) {
+	    return null;
 	}
-	return mallProductDAO.selectCount( wrapper );
+	List< Integer > list = new ArrayList<>();
+	if ( flowList != null && flowList.size() > 0 ) {
+	    for ( BusFlow busFlow : flowList ) {
+		list.add( busFlow.getId() );
+	    }
+	}
+	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
+	wrapper.setSqlSelect( "id,flow_id" );
+	wrapper.where( "is_delete=0" ).in( "flow_id", list );
+
+	List< Map< String,Object > > productList = mallProductDAO.selectMaps( wrapper );
+	List< BusFlow > newFlowList = new ArrayList<>();
+	if ( flowList != null && flowList.size() > 0 && productList != null && productList.size() > 0 ) {
+
+	    for ( BusFlow busFlow : flowList ) {
+		boolean flag = true;
+		for ( Map< String,Object > productMap : productList ) {
+		    if ( productMap.get( "flow_id" ).toString().equals( busFlow.getId().toString() ) ) {
+			flag = false;
+		    }
+		}
+		if ( flag ) {
+		    newFlowList.add( busFlow );
+		}
+	    }
+	    flowList = newFlowList;
+	}
+	return flowList;
     }
 
     @Override

@@ -1,12 +1,13 @@
 package com.gt.mall.controller.product;
 
+import com.alibaba.fastjson.JSON;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
+import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,9 +42,9 @@ public class MallSpecificaController extends BaseController {
     @RequestMapping( "getSpec" )
     public void getSpec( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	response.setCharacterEncoding( "utf-8" );
-	SortedMap< String,Object > map = null;
 	JSONObject obj = new JSONObject();
 	try {
+	    SortedMap< String,Object > map;
 	    Integer userId = SessionUtils.getLoginUser( request ).getId();
 
 	    /*int userPId = dictService.pidUserId(userId);//通过用户名查询主账号id
@@ -82,12 +83,12 @@ public class MallSpecificaController extends BaseController {
 	    Integer userId = SessionUtils.getLoginUser( request ).getId();
 
 	    if ( !CommonUtil.isEmpty( map.get( "specId" ) ) ) {// 添加规格值
-		MallSpecificaValue value = (MallSpecificaValue) JSONObject.toBean( JSONObject.fromObject( map ), MallSpecificaValue.class );
+		MallSpecificaValue value = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ),MallSpecificaValue.class );
 		value.setUserId( userId );
 		mallProductSpecificaService.insertSpecificaValue( value );
 		id = value.getId();
 	    } else {// 添加规格名称
-		MallSpecifica spe = (MallSpecifica) JSONObject.toBean( JSONObject.fromObject( map ), MallSpecifica.class );
+		MallSpecifica spe = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ),MallSpecifica.class );
 		spe.setUserId( userId );
 		spe.setCreateTime( new Date() );
 		mallProductSpecificaService.insertSpecifica( spe );

@@ -70,8 +70,6 @@ public class Constants {
     /** 获取商家主账号的 session key **/
     public static final String SESSION_ADMIN_KEY = "PidBusId";
 
-    public static final String MEMBER_PAY_TYPE = "2";
-
     /**
      * 生成二维码所需的场景值
      */
@@ -80,7 +78,7 @@ public class Constants {
     /**
      * 门店中间表model
      */
-    public static final String SHOP_SUB_SOP_MODEL = "2";
+    public static final Integer SHOP_SUB_SOP_MODEL = 2;
 
     /**
      * 商城提现

@@ -32,7 +32,8 @@
             array[array.length] = obj;
         }
     });
-    returnVal(array);
+    //returnVal(array);
+    parent.returnVal(array);
 }
 function cancel() {
    layer.closeAll();
@@ -253,7 +254,7 @@ function subtmit() {
                     closeBtn: 0
                 }, function (index) {
                     //parentLayer.closeAll();
-                    location.href = window.parent.location.href;
+                    parent.location.href = window.parent.location.href;
                 });
             } else {// 编辑失败
                 parentLayer.alert("同步商品失败", {

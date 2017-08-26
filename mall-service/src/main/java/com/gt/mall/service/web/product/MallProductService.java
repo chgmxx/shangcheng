@@ -1,12 +1,12 @@
 package com.gt.mall.service.web.product;
 
 import com.gt.mall.base.BaseService;
+import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.util.PageUtil;
-import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -145,11 +145,6 @@ public interface MallProductService extends BaseService< MallProduct > {
      */
     Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< WsWxShopInfoExtend > wxShopList );
 
-    /**
-     * 查询流量充值的商品个数
-     */
-    int selectCountByFlowIds( int flowIds );
-
     int setIsShopBySession( int toshop, int shopid, int userid, HttpServletRequest request );
 
     int getIsShopBySession( int shopid, int userid, HttpServletRequest request );
@@ -192,7 +187,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 根据流量id查询商品数量
      */
-    int selectCountByFlowIds( @Param( "flowId" ) Integer flowId );
+    List< BusFlow > selectCountByFlowIds( int userId );
 
     /**
      * 根据erp的商品id查询

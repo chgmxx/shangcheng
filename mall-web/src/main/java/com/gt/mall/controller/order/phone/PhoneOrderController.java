@@ -1638,7 +1638,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 		int orderId = CommonUtil.toInteger( param.get( "id" ) );
 
-		MallOrder order = mallOrderService.selectById( orderId );
+		MallOrder order = mallOrderService.getOrderById( orderId );
 		if ( CommonUtil.isNotEmpty( order ) ) {
 					/*Order newOrder = new Order();
 					newOrder.setId(order.getId());

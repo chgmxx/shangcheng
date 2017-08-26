@@ -6,13 +6,13 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.entity.product.MallSearchLabel;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
+import com.gt.mall.service.web.product.MallGroupService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.service.web.basic.MallImageAssociativeService;
-import com.gt.mall.service.web.product.MallGroupService;
-import com.gt.mall.service.web.store.MallStoreService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,9 +161,8 @@ public class MallGroupController extends BaseController {
 	    Integer userId = SessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 
-		MallGroup group = (MallGroup) JSONObject.toBean(
-				JSONObject.fromObject( params.get( "group" ) ),
-				MallGroup.class );
+		MallGroup group = com.alibaba.fastjson.JSONObject.toJavaObject( ( com.alibaba.fastjson.JSONObject.parseObject(  params.get( "group" ) .toString() ) ), MallGroup.class );
+
 		if ( !CommonUtil.isEmpty( params.get( "imageArr" ) ) ) {
 		    imageList = (List< MallImageAssociative >) JSONArray.toList( JSONArray.fromObject( params.get( "imageArr" ) ), MallImageAssociative.class );
 		}
@@ -187,6 +186,7 @@ public class MallGroupController extends BaseController {
 	}
 
     }
+
 
     /**
      * 删除商品分组
@@ -400,7 +400,7 @@ public class MallGroupController extends BaseController {
 	    Integer userId = SessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 
-		List< MallSearchLabel > labelList = (List< MallSearchLabel >) JSONArray.toList( JSONArray.fromObject( params.get( "param" ) ), MallSearchLabel.class );
+		List< MallSearchLabel > labelList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "param" ).toString() ,MallSearchLabel.class);
 		boolean flag = mallGroupService.saveOrUpdateGroupLabel( labelList, userId );
 		if ( !flag ) {
 		    code = -1;// 编辑失败

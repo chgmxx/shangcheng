@@ -21,6 +21,7 @@
     <link rel="stylesheet" type="text/css" href="/css/common.css"/>
     <link rel="stylesheet" type="text/css" href="/css/common/comm.css"/>
     <script charset="utf-8" type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
     <script type="text/javascript" src="/js/public.js"></script>
     <script type="text/javascript" src="/js/util.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
@@ -51,7 +52,7 @@
                 >
                     <option value="-1">请选择</option>
                     <c:forEach items="${shopList }" var="shops">
-                        <option value="${shops.id }" <c:if test="${!empty sto.wxShopId && sto.wxShopId == shops.id }">selected='selected'</c:if>>${shops.name}</option>
+                        <option value="${shops.id }" <c:if test="${!empty sto.wxShopId && sto.wxShopId == shops.id }">selected='selected'</c:if>>${shops.businessName}</option>
                         <c:if test="${!empty sto.wxShopId && sto.wxShopId == shops.id }">
                             <c:set var="isWxShopId" value="1"></c:set>
                         </c:if>
@@ -64,15 +65,15 @@
 							<input type="hidden" ids="id" value="${shops.id }"/>
 							<input type="hidden" ids="latitude" value="${shops.latitude }"/>
 							<input type="hidden" ids="longitude" value="${shops.longitude }"/>
-							<input type="hidden" ids="url" value="${shops.url }"/>
+							<%--<input type="hidden" ids="url" value="${shops.url }"/>--%>
 							<input type="hidden" ids="province" value="${shops.province }"/>
 							<input type="hidden" ids="city" value="${shops.city }"/>
 							<input type="hidden" ids="district" value="${shops.district }"/>
-							<input type="hidden" ids="name" value="${shops.name }"/>
+							<input type="hidden" ids="name" value="${shops.businessName }"/>
 							<input type="hidden" ids="adder" value="${shops.adder }"/>
 							<input type="hidden" ids="address" value="${shops.address }"/>
 							<input type="hidden" ids="detail" value="${shops.detail }"/>
-							<input type="hidden" ids="startTime" value="${shops.create_time }"/>
+							<input type="hidden" ids="startTime" value="${shops.startTime }"/>
 							<input type="hidden" ids="telephone" value="${shops.telephone }"/>
 							<input type="hidden" ids="imageUrl" value="${http }${shops.imageUrl }"/>
 						</span>
@@ -100,7 +101,7 @@
         <td class="table-td1">店铺图片：</td>
         <td class="table-td3" style="width:auto;">
             <c:if test="${empty sto.stoPicture }">
-                <img onclick="choosePicture('stoPicture')" class="abc imgURL" src="/images/add_Image.png" width="50" style="cursor: pointer;"/>
+                <img onclick="choosePicture('stoPicture')" class="abc imgURL" src="/images/mall/add_Image.png" width="50" style="cursor: pointer;"/>
             </c:if>
             <img id="img1" class="stoPicture" src="${http}${sto.stoPicture}" width="50"
                  <c:if test="${empty sto.stoPicture}">style="display:none;"</c:if> />
@@ -111,7 +112,7 @@
     <tr>
         <td class="table-td1">店铺头像：</td>
         <td class="table-td3" style="width:auto;">
-            <img onclick="choosePicture('stoHeadImg')" class="imgURL" src="/images/add_Image.png" width="50" style="cursor: pointer;"/>
+            <img onclick="choosePicture('stoHeadImg')" class="imgURL" src="/images/mall/add_Image.png" width="50" style="cursor: pointer;"/>
             <img id="img2" class="stoHeadImg" src="${http}${sto.stoHeadImg}" width="50" <c:if test="${empty sto.stoHeadImg}">style="display:none;"</c:if>/>
             <input type="hidden" value="${sto.stoHeadImg }" name="stoHeadImg" id="stoHeadImg"/>
         </td>

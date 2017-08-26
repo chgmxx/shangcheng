@@ -21,7 +21,7 @@ function del(ids) {
             shade: [0.4, '#fff']//#8E8E8E
         });
         $.post("mallPage/delete.do", params, function (data) {
-            alertMsg(data.message);
+            parentAlertMsg(data.message);
             layer.close(index2);
             if (data.result) {
                 location.reload();
@@ -46,7 +46,7 @@ function batchdel() {
     if (ids != "" && ids != undefined) {
         del(ids);
     } else {
-        alertMsg("请至少选择一条数据！");
+        parentAlertMsg("请至少选择一条数据！");
     }
 }
 
@@ -66,7 +66,7 @@ function setMian(id, shopid) {
             shade: [0.4, '#fff']//#8E8E8E
         });
         $.post("mallPage/setMain.do", params, function (data) {
-            alertMsg(data.message);
+            layer.alert(data.message);
             if (data.result) {
                 layer.close(index2);
                 location.reload();

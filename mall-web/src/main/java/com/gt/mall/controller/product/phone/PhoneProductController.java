@@ -15,6 +15,7 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,6 +33,8 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
+@Controller
+@RequestMapping( "/phoneProduct" )
 public class PhoneProductController extends BaseController {
 
     @Autowired
@@ -109,30 +112,12 @@ public class PhoneProductController extends BaseController {
 		if ( CommonUtil.isNotEmpty( params.get( "userid" ) ) ) {
 		    userid = CommonUtil.toInteger( params.get( "userid" ) );
 		}
-		double discount = mallProductService.getMemberDiscount( "1",member );//商品折扣
+		double discount = mallProductService.getMemberDiscount( "1", member );//商品折扣
 
 		MallPaySet set = new MallPaySet();
 		set.setUserId( userid );
 		set = mallPaySetService.selectByUserId( set );
-		int state = mallPifaApplyService.getPifaApplay( member, set );
-		boolean isPifa = false;
-		if ( CommonUtil.isNotEmpty( set ) ) {
-		    if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {
-			if ( set.getIsPf().toString().equals( "1" ) ) {
-			    if ( CommonUtil.isNotEmpty( set.getIsPfCheck() ) ) {
-				if ( set.getIsPfCheck().toString().equals( "1" ) ) {
-				    if ( state == 1 ) {
-					isPifa = true;
-				    }
-				} else {
-				    isPifa = true;
-				}
-			    } else {
-				isPifa = true;
-			    }
-			}
-		    }
-		}
+		boolean isPifa = mallPifaApplyService.isPifaPublic( member, set );
 
 		List< Map< String,Object > > proList = mallPageService.getProductListByIds( proIds, member, discount, set, isPifa );
 
