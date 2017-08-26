@@ -60,7 +60,7 @@ public class MallSellerController extends BaseController {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		params.put( "shoplist", shoplist );
-		PageUtil page = mallSellerService.selectProductByShopId( params );
+		PageUtil page = mallSellerService.selectProductByShopId( params, shoplist );
 		request.setAttribute( "page", page );
 		request.setAttribute( "shoplist", shoplist );
 	    }
@@ -68,8 +68,8 @@ public class MallSellerController extends BaseController {
 	    request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 	    request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	} catch ( Exception e ) {
-	    e.printStackTrace();
 	    logger.error( "商品佣金设置异常：" + e.getMessage() );
+	    e.printStackTrace();
 	}
 	return "mall/seller/joinProduct";
     }
@@ -180,7 +180,7 @@ public class MallSellerController extends BaseController {
 		}
 		request.setAttribute( "user", user );
 		request.setAttribute( "httpUrl", PropertiesUtil.getHomeUrl() );
-	    }else{
+	    } else {
 		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "85" ) );

@@ -13,7 +13,6 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
-import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.integral.MallIntegralDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.page.MallPageDAO;
@@ -44,7 +43,6 @@ import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionService;
-import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
@@ -115,8 +113,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Autowired
     private MallCommentDAO              mallCommentDAO;
     @Autowired
-    private MallPaySetDAO               mallPaySetDAO;
-    @Autowired
     private MallImageAssociativeService mallImageAssociativeService;
     @Autowired
     private MallPresaleService          mallPresaleService;
@@ -134,8 +130,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private MallPifaService             mallPifaService;
     @Autowired
     private MallPifaDAO                 mallPifaDAO;
-    @Autowired
-    private MallProductInventoryDAO     mallProductInventoryDAO;
     @Autowired
     private MallPifaApplyService        mallPifaApplyService;
     @Autowired
@@ -162,8 +156,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private MallGroupService            mallGroupService;
     @Autowired
     private MallGroupJoinService        mallGroupJoinService;
-    @Autowired
-    private MallCollectService          mallCollectService;
     @Autowired
     private MallImageAssociativeDAO     mallImageAssociativeDAO;
     @Autowired

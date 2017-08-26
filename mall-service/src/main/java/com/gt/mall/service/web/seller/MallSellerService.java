@@ -199,7 +199,7 @@ public interface MallSellerService extends BaseService< MallSeller > {
     /**
      * 通过店铺id来查询商品佣金设置
      */
-    PageUtil selectProductByShopId( Map< String,Object > param );
+    PageUtil selectProductByShopId( Map< String,Object > param, List< Map< String,Object > > shoplist );
 
     /**
      * 保存或修改商品佣金设置

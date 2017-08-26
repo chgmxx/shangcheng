@@ -42,7 +42,7 @@
                 var proId = json.id;
                 getProductId(proId, json);
             } else if (isSpe == 0) {
-                getProductGroup(json, null);//方法回调
+                parent.getProductGroup(json, null);//方法回调
                 closeWindow();
             }
         }
@@ -54,8 +54,9 @@
 
         function closeWindow() {
             //当你在iframe页面关闭自身时
-            var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            layer.close(index); //再执行关闭
+            /*var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            layer.close(index); //再执行关闭*/
+            parent.layer.closeAll();
         }
 
         function getProductId(proId, json) {
@@ -71,7 +72,7 @@
                     if (data != null && data.list != null) {
                         proSpecArr = data.list;
                     }
-                    getProductGroup(json, proSpecArr);//方法回调
+                    parent.getProductGroup(json, proSpecArr);//方法回调
                     closeWindow();
                 }
 
@@ -88,7 +89,7 @@
                 <input type="hidden" name="shopId" id="shopId" class="srh" value='<c:if test="${!empty map }">${map.shopId }</c:if>'/>
                 <input type="hidden" name="defaultProId" id="defaultProId" class="srh" value="<c:if test="${!empty map }">${map.defaultProId }</c:if>"/>
                 商品名称：<input type="text" placeholder="请输商品名称(模糊匹配)" value="<c:if test="${!empty map }">${map.proName }</c:if>"
-                            id="proName" name="proName" class="srh">
+                            id="proName" name="proName" class="srh" style="float: none;display: inline-block;">
                 <%--  所属分类：
                 <select style="width: 162px" id="groupId" name="groupId">
                     <option value="">全部分类</option>

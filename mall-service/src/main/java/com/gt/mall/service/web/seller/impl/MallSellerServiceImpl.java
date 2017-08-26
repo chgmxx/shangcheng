@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.seller.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
@@ -386,7 +385,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    count = mallSellerDAO.updateById( seller );
 	}
 	if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
-	    String[] id = (String[]) JSONArray.toJSON( JSONArray.parseObject( params.get( "ids" ).toString())) ;
+	    String[] id = (String[]) JSONArray.toJSON( JSONArray.parseObject( params.get( "ids" ).toString() ) );
 			/*params.put("ids", id);*/
 	    if ( id != null && id.length > 0 ) {
 		for ( String ids : id ) {
@@ -469,7 +468,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     }
 
     @Override
-    public PageUtil selectProductByShopId( Map< String,Object > params ) {
+    public PageUtil selectProductByShopId( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
@@ -485,6 +484,18 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
 	if ( count > 0 ) {// 判断团购是否有数据
 	    List< Map< String,Object > > joinProductlist = mallSellerJoinProductDAO.selectByPage( params );
+	    if ( shoplist != null && shoplist.size() > 0 && joinProductlist != null && joinProductlist.size() > 0 ) {
+		for ( Map< String,Object > joinMap : joinProductlist ) {
+		    int shopId = CommonUtil.toInteger( joinMap.get( "shop_id" ) );
+		    for ( Map< String,Object > shopMap : shoplist ) {
+			int shop_id = CommonUtil.toInteger( shopMap.get( "id" ) );
+			if ( shop_id == shopId ) {
+			    joinMap.put( "shopName", shopMap.get( "sto_name" ) );
+			    break;
+			}
+		    }
+		}
+	    }
 	    page.setSubList( joinProductlist );
 	}
 	return page;
@@ -499,7 +510,8 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	int count = 0;
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "joinProduct" ) ) ) {
-	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "joinProduct" ).toString() ), MallSellerJoinProduct.class );
+	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject
+			    .toJavaObject( JSONObject.parseObject( params.get( "joinProduct" ).toString() ), MallSellerJoinProduct.class );
 	    MallSellerJoinProduct jProduct = null;
 	    if ( CommonUtil.isNotEmpty( joinProduct.getProductId() ) ) {
 		jProduct = mallSellerJoinProductDAO.selectByProId( joinProduct.getProductId() );
@@ -886,7 +898,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    if ( CommonUtil.isNotEmpty( headPath ) ) {
 		arr.add( headPath );//存放用户头像
 	    }
-	    String[] logoPathStr = (String[]) JSONArray.toJSON( arr) ;
+	    String[] logoPathStr = (String[]) JSONArray.toJSON( arr );
 
 	    String path = PropertiesUtil.getHomeUrl() + "/images/mall/seller/tg-code.png";
 	    path = URLConnectionDownloader.downloadRqcode( path, PropertiesUtil.getResImagePath() + newPath, 750, 1218 );//下载背景图片
