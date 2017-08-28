@@ -296,60 +296,60 @@
         SELECT  a.id as id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,
         a.pro_sale_total,a.sales_base ,d.inv_num,d.inv_price,d.specifica_img_id
         from (
-        select distinct a.id AS id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,
-        a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,a.pro_sale_total,a.sales_base
-        from t_mall_product a
-        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
-        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+            select distinct a.id AS id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,
+            a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,a.pro_sale_total,a.sales_base
+            from t_mall_product a
+            LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+            LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
 
-        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0
+            WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0
 
-        <if test="shopId != null and shopId != ''">
-            and a.shop_id=#{shopId}
-        </if>
-        <if test="proName != null and proName != ''">
-            and (a.pro_name like '%${proName}%' or g.group_name like '%${proName}%')
-        </if>
-        <if test="id != null and id != ''">
-            and a.id=#{id}
-        </if>
-        <if test="groupId != null and groupId != ''">
-            and pg.group_id =#{groupId}
-        </if>
-        <if test="rType != null">
-            <if test="rType == 1">
-                and (a.is_integral_change_pro = 1 and a.change_integral > 0)
+            <if test="shopId != null and shopId != ''">
+                and a.shop_id=#{shopId}
             </if>
-            <if test="rType == 2">
-                and (a.is_fenbi_change_pro = 1 and a.change_fenbi > 0)
+            <if test="proName != null and proName != ''">
+                and (a.pro_name like '%${proName}%' or g.group_name like '%${proName}%')
             </if>
-        </if>
-        <choose>
-            <when test="type == 1">
-                ORDER BY a.id
-            </when>
-            <when test="type == 2">
-                ORDER BY a.pro_sale_total+a.sales_base
-            </when>
-            <otherwise>
-                <if test="rType > 0">
-                    <if test="rType == 1">
-                        ORDER BY a.change_integral
-                    </if>
-                    <if test="rType == 2">
-                        ORDER BY a.change_fenbi
-                    </if>
+            <if test="id != null and id != ''">
+                and a.id=#{id}
+            </if>
+            <if test="groupId != null and groupId != ''">
+                and pg.group_id =#{groupId}
+            </if>
+            <if test="rType != null">
+                <if test="rType == 1">
+                    and (a.is_integral_change_pro = 1 and a.change_integral > 0)
                 </if>
-            </otherwise>
-        </choose>
-        <if test="type !=3">
-            <if test="desc != null and desc != '' and desc == 1">
-                desc
+                <if test="rType == 2">
+                    and (a.is_fenbi_change_pro = 1 and a.change_fenbi > 0)
+                </if>
             </if>
-            <if test="firstNum != null and maxNum != null">
-                limit #{firstNum},#{maxNum}
+            <choose>
+                <when test="type == 1">
+                    ORDER BY a.id
+                </when>
+                <when test="type == 2">
+                    ORDER BY a.pro_sale_total+a.sales_base
+                </when>
+                <otherwise>
+                    <if test="rType > 0">
+                        <if test="rType == 1">
+                            ORDER BY a.change_integral
+                        </if>
+                        <if test="rType == 2">
+                            ORDER BY a.change_fenbi
+                        </if>
+                    </if>
+                </otherwise>
+            </choose>
+            <if test="type !=3">
+                <if test="desc != null and desc != '' and desc == 1">
+                    desc
+                </if>
+                <if test="firstNum != null and maxNum != null">
+                    limit #{firstNum},#{maxNum}
+                </if>
             </if>
-        </if>
         ) a
         LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0) d ON a.id=d.product_id
         <if test="type == 3">

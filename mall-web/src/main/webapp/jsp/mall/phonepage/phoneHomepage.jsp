@@ -115,7 +115,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <div class="attr-lay" style="display:none">
     <div class="lay-header">
         <div class="img-box">
-            <img src="/images/detail1.jpg" id="image_srcs">
+            <img src="" id="image_srcs">
         </div>
         <div class="header-box">
             <div class="info">

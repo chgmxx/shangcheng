@@ -334,12 +334,13 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		//"UPDATE t_mall_page set pag_is_main=0 WHERE pag_sto_id=" + shopid + " AND pag_is_main=1"
 		MallPage page = new MallPage();
 		page.setPagIsMain( 0 );
-
+		page.setId( id );
 		mallPageDAO.update( page, pageWrapper );
 
 	    }
 	    MallPage page = new MallPage();
 	    page.setPagIsMain( 1 );
+	    page.setId( id );
 	    mallPageDAO.updateById( page );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
@@ -452,12 +453,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public Map< String,Object > shopmessage( Integer shopid ) {
-	/*String sql = "SELECT a.*,"
-			+ "IF(s.business_name IS NOT NULL ,s.business_name,a.`sto_name`) AS business_name,s.`status` AS STATUS,"
-			+ "(SELECT p.local_address FROM t_wx_shop_photo p WHERE p.shop_id = a.wx_shop_id  ORDER BY p.id LIMIT 1) AS stoPicture,"
-			+ "a.sto_head_img  "
-			+ "FROM t_mall_store a LEFT JOIN t_wx_shop s ON a.wx_shop_id=s.id WHERE a.id="
-			+ shopid;*/
 	Map< String,Object > storeMap = mallStoreDAO.selectMapById( shopid );
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
 	    storeMap.put( "business_name", storeMap.get( "sto_name" ) );
@@ -494,12 +489,13 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public void isAddShopCart( HttpServletRequest request, Member member ) throws Exception {
 	if ( CommonUtil.isNotEmpty( member ) ) {
-	    Object obj = request.getSession().getAttribute( "mallShopCart" );
+	    Object obj = SessionUtils.getShopCart( request );
+
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
 		MallShopCart shopCart = (MallShopCart) JSONObject.toBean( JSONObject.fromObject( obj ), MallShopCart.class );
 		int count = addshopping( shopCart, member, request, null );
 		if ( count > 0 ) {
-		    request.getSession().setAttribute( "mallShopCart", null );
+		    SessionUtils.setShopCart( null, request );
 		    request.setAttribute( "isAddShop", 1 );
 		}
 	    }
@@ -688,7 +684,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		shopParams.put( "memberId", member.getId() );
 	    } else {
 		String shopCartIds = CookieUtil.findCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
-		shopParams.put( "checkIds", shopCartIds.split( "," ) );
+		if(CommonUtil.isNotEmpty( shopCartIds )){
+		    shopParams.put( "checkIds", shopCartIds.split( "," ) );
+		}
 	    }
 	}
 	if ( userid > 0 ) {
@@ -1262,7 +1260,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		image_url = CommonUtil.toString( map1.get( "specifica_img_url" ) );
 	    }
 	}
-	if ( CommonUtil.isEmpty( image_url ) ) {
+	if ( CommonUtil.isEmpty( image_url ) && CommonUtil.isNotEmpty( map1.get( "image_url" ) ) ) {
 	    image_url = CommonUtil.toString( map1.get( "image_url" ) );
 	}
 	if ( price <= 0 ) {
@@ -2320,6 +2318,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	JedisUtil.set( redisKey, url, 5 * 60 );
 	loginMap.put( "redisKey", redisKey );
 	loginMap.put( "busId", userid );
+	loginMap.put( "requestUrl", url );
 	request.setAttribute( "userid", userid );
 	return loginMap;
     }

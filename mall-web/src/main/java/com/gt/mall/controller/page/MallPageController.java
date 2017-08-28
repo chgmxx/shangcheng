@@ -429,7 +429,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	mallProductService.clearJifenByRedis( member, request, userid );
 	mallProductService.clearIsShopSession( obj.getPagStoId(), userid, request );
 
-	return "redirect:/mallPage/" + id + "/79B4DE7CIndex.do";
+	return "redirect:/mallPage/" + id + "/79B4DE7C/pageIndex.do";
     }
 
     /**
@@ -598,15 +598,8 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    }
 	    request.setAttribute( "shopid", obj.getPagStoId() );
 
-	    if ( CommonUtil.isNotEmpty( obj.getPagStoId() ) ) {
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-		    request.getSession().setAttribute( "shopId", obj.getPagStoId() );
-		} else {
-		    if ( !request.getSession().getAttribute( "shopId" ).toString().equals( obj.getPagStoId().toString() ) ) {
-			request.getSession().setAttribute( "shopId", obj.getPagStoId() );
-		    }
-		}
-	    }
+	    SessionUtils.setMallShopId( obj.getPagStoId(), request );
+
 	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( userid );//查询商城底部菜单
 	    request.setAttribute( "footerMenuMap", footerMenuMap );
 	    mallPageService.getCustomer( request, userid );
@@ -973,13 +966,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		if ( CommonUtil.isNotEmpty( member ) ) {//已登陆
 		    mallPageService.mergeShoppCart( member, request, response );//把cookie商品，合并到购物车
 		}
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-		    request.getSession().setAttribute( "shopId", shopid );
-		} else {
-		    if ( !request.getSession().getAttribute( "shopId" ).toString().equals( String.valueOf( shopid ) ) ) {
-			request.getSession().setAttribute( "shopId", shopid );
-		    }
-		}
+		SessionUtils.setMallShopId( shopid, request );
 
 		if ( CommonUtil.isNotEmpty( member ) ) {
 		    mallCollectService.getProductCollect( request, id, member.getId() );//查询买家是否已经收藏
@@ -1045,7 +1032,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		mallPageService.addshopping( obj, member, request, response );
 		map.put( "error", "0" );
 	    } else {
-		request.getSession().setAttribute( "mallShopCart", JSONObject.fromObject( obj ) );
+		SessionUtils.setShopCart( net.sf.json.JSONObject.fromObject( obj ), request );
 		mallPageService.addshopping( obj, null, request, response );
 
 		map.put( "error", "0" );
@@ -1098,15 +1085,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 
 	    String http = PropertiesUtil.getResourceUrl();
 	    request.setAttribute( "http", http );
-	    if ( CommonUtil.isNotEmpty( request.getParameter( "shopId" ) ) ) {
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-		    request.getSession().setAttribute( "shopId", request.getParameter( "shopId" ) );
-		} else {
-		    if ( !request.getSession().getAttribute( "shopId" ).toString().equals( request.getParameter( "shopId" ).toString() ) ) {
-			request.getSession().setAttribute( "shopId", request.getParameter( "shopId" ) );
-		    }
-		}
-	    }
+	    SessionUtils.setMallShopId( request.getParameter( "shopId" ), request );
 	    mallPageService.getCustomer( request, userid );
 	    request.setAttribute( "type", type );
 	    request.setAttribute( "discount", discount );
@@ -1401,7 +1380,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 	request.setAttribute( "http", http );
 	mallPageService.getCustomer( request, userId );
 	return "mall/store/phone/shopall";
-
     }
 
     /**
@@ -1442,11 +1420,9 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    map.put( "error", "1" );
 	    map.put( "message", "该商品可能已下架" );
 	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, JSONObject.fromObject( map ).toString() );
 	}
-	PrintWriter p = response.getWriter();
-	p.write( net.sf.json.JSONObject.fromObject( map ).toString() );
-	p.flush();
-	p.close();
     }
 
     /**

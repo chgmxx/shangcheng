@@ -6,7 +6,6 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.common.AuthorizeOrLoginController;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -14,7 +13,6 @@ import com.gt.mall.entity.seller.MallSellerSet;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -22,6 +20,10 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.seller.MallSellerService;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.PageUtil;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.util.SessionUtils;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -74,6 +76,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
     private WxPublicUserService  wxPublicUserService;
     @Autowired
     private BusUserService       busUserService;
+    @Autowired
+    private MallPageService      mallPageService;
 
     /**
      * 跳转至个人中心的页面
@@ -474,27 +478,14 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		}
 		request.getSession().setAttribute( keys, params.get( "data" ) );//清空缓存
 	    }
-	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-	    if ( ( CommonUtil.judgeBrowser( request ) != 1 || CommonUtil.isEmpty( publicMap ) ) ) {
-		boolean isLogin = true;
-		if ( CommonUtil.isNotEmpty( member ) ) {
-		    if ( !member.getBusid().toString().equals( CommonUtil.toString( userid ) ) ) {
-			request.getSession().setAttribute( "member", null );//清空缓存
-			member = null;
-			isLogin = false;
-		    }
-		} else {
-		    isLogin = false;
-		}
-		if ( !isLogin ) {
-		    String redisKey = Constants.REDIS_KEY + CommonUtil.getCode();
-		    JedisUtil.set( redisKey, params.get( "urls" ).toString(), 5 * 60 );
-		    result.put( "returnUrl", redisKey );
-		}
+	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		result.put( "returnUrl", returnUrl );
 	    }
-	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) {
+	    /*if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) {
 		result.put( "isWx", 1 );
-	    }
+	    }*/
 	    out.write( JSONObject.fromObject( result ).toString() );
 	    out.flush();
 	    out.close();

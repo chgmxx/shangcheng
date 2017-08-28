@@ -101,7 +101,7 @@
 		
 	<c:if test="${!empty isAdvert }">
 	   	<div class="isAdvert">
-	   		<jsp:include page="/jsp/merchants/common/technicalSupport.jsp"></jsp:include>
+	   		<jsp:include page="/jsp/common/technicalSupport.jsp"></jsp:include>
 	   	</div>
 	</c:if>
 	</div>

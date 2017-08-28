@@ -25,6 +25,8 @@ public class BusUserServiceImpl implements BusUserService {
 
     public static final String VOICE_URL = "/8A5DA52E/videoCourceApi/";
 
+    public static final String USER_GUOQ_URL = "/8A5DA52E/busUserApi/";
+
     @Override
     public BusUser selectById( int busUserId ) {
 	Map< String,Object > params = new HashMap<>();
@@ -91,5 +93,17 @@ public class BusUserServiceImpl implements BusUserService {
 	return null;
     }
 
+    @Override
+    public JSONObject isUserGuoQi( int busUserId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "busId", busUserId );
+	//判断商家信息 1是否过期 2公众号是否变更过
+
+	String result = HttpSignUtil.SignHttpSelect( params, USER_GUOQ_URL + "getWxPulbicMsg.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.parseObject( result );
+	}
+	return null;
+    }
 
 }

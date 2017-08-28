@@ -25,7 +25,8 @@
         dataType: "json",
         success: function (data) {
             if (data.returnUrl != null) {
-                location.href = "/phoneLoginController/" + userid + "/79B4DE7C/phonelogin.do?returnKey=" + data.returnUrl;
+                //location.href = "/phoneLoginController/" + userid + "/79B4DE7C/phonelogin.do?returnKey=" + data.returnUrl;
+                location.href = data.returnUrl;
             } else if (data.isWx != null) {
                 location.href = window.location.href;
             }

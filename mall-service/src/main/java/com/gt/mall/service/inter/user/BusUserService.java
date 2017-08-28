@@ -1,5 +1,6 @@
 package com.gt.mall.service.inter.user;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.BusUser;
 
 /**
@@ -55,5 +56,11 @@ public interface BusUserService {
      */
     String getVoiceUrl( String courceModel );
 
+    /**
+     * 判断 商家是否已过期
+     * @param busUserId 商家id
+     * @return 是否已过期
+     */
+    JSONObject isUserGuoQi(int busUserId);
 
 }

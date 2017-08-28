@@ -214,14 +214,13 @@
 
     <select id="selectShopCartByMemberId" parameterType="Map" resultType="Map">
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
-        b.sto_pid,e.image_url,d.specifica_img_url,f.id AS pageid ,
+        b.sto_pid,e.image_url,f.id AS pageid ,
         d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons as isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num,
         d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id as flowId,
         b.wx_shop_id,b.sto_name
-        /*,IF(s.business_name IS NULL,b.sto_name,s.business_name) AS sto_name*/
         FROM
         (
-            SELECT  a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.`discount`,a.`pro_spec_str`, a.`pro_type`, a.`sale_member_id`,a.`commission`
+            SELECT  a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`
             FROM t_mall_shop_cart a
             <where>
                 <if test="memberList != null ">
@@ -257,11 +256,10 @@
             ORDER BY a.shop_id
         ) a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
-        /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
         LEFT JOIN t_mall_product d ON a.product_id=d.id
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
         LEFT JOIN (SELECT id,pag_sto_id FROM t_mall_page WHERE pag_is_main=1) f ON a.shop_id=f.pag_sto_id
-        WHERE  b.is_delete=0  /*AND s.`status` != -1*/
+        WHERE  b.is_delete=0
     </select>
 
     <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">

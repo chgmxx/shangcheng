@@ -353,7 +353,7 @@
 <script type="text/javascript" src="/js/mall/product/noDelay.js"></script>
 <script type="text/javascript" src="/js/mall/phone/phone_public.js?<%= System.currentTimeMillis()%>"></script>
 <script type="text/javascript" src="/js/mall/product/shoppingcare.js?<%= System.currentTimeMillis()%>"></script>
-<script type="text/javascript"> 
+<script type="text/javascript">
 
 wx.config({
 	debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
@@ -391,7 +391,7 @@ $("div.fixRig a").css({
 	"width":"1.02rem",
 	"height":"1.02rem",
 	"background-size":"auto 0.6rem"
-});	
+});
 $("div.fixRig a.top").css({
 	"margin-bottom":"0.5rem"
 });

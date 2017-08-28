@@ -18,12 +18,12 @@ p{ text-align:justify; text-justify:distribute;} /*为了使文本段落左右�
   margin: 0;
   padding: 0;
   outline: none;
-  Font-size: 62.5%;
-} 
+  Font-size=62.5%;
+}
 
 body{
-	max-width: 1920px;
-	margin: 0 auto;
+  max-width: 1920px;
+  margin: 0 auto;
 }
 *:not(input,textarea) {
   -webkit-touch-callout: inherit;

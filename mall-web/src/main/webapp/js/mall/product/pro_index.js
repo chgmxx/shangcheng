@@ -644,7 +644,7 @@ $(".sync").click(function () {
             skin: 'layui-layer-rim', //加上边框
             area: ['500px', '530px'], //宽高
             offset: scrollHeight + "px",
-            shade: [0.1, "#fff"],
+                shade: [0.1, "#fff"],
             content: "/mPro/group/getGroups.do?proId=" + proId + "&type=1"
         });
     }, timeout);

@@ -9,6 +9,7 @@ import com.gt.mall.constant.Constants;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -224,6 +225,51 @@ public class SessionUtils {
      */
     public static void setIsAdminUser( int userId, int isAdmin, HttpServletRequest request ) {
 	request.getSession().setAttribute( Constants.SESSION_KEY + "is_admin_user" + userId, isAdmin );
+    }
+
+    /**
+     * 把商城的店铺id存到session
+     *
+     * @param shopIdObj 店铺id
+     */
+    public static void setMallShopId( Object shopIdObj, HttpServletRequest request ) {
+	HttpSession session = request.getSession();
+	if ( CommonUtil.isNotEmpty( shopIdObj ) ) {
+	    if ( CommonUtil.isEmpty( session.getAttribute( Constants.SESSION_KEY + "shopId" ) ) ) {
+		session.setAttribute( Constants.SESSION_KEY + "shopId", shopIdObj );
+	    } else {
+		if ( !session.getAttribute( Constants.SESSION_KEY + "shopId" ).toString().equals( shopIdObj ) ) {
+		    session.setAttribute( Constants.SESSION_KEY + "shopId", shopIdObj );
+		}
+	    }
+	}
+    }
+
+    /**
+     * 获取店铺id
+     */
+    public static int getMallShopId( HttpServletRequest request ) {
+	Object shopIdObj = request.getSession().getAttribute( Constants.SESSION_KEY + "shopId" );
+	if ( CommonUtil.isNotEmpty( shopIdObj ) ) {
+	    return CommonUtil.toInteger( shopIdObj );
+	}
+	return 0;
+    }
+
+    /**
+     * 购物车信息存到session
+     *
+     * @param obj 购物车内容
+     */
+    public static void setShopCart( Object obj, HttpServletRequest request ) {
+	request.getSession().setAttribute( Constants.SESSION_KEY + "mallShopCart", obj );
+    }
+
+    /**
+     * 从session取出购物车信息
+     */
+    public static Object getShopCart( HttpServletRequest request ) {
+	return request.getSession().getAttribute( Constants.SESSION_KEY + "mallShopCart" );
     }
 
 }
