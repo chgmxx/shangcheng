@@ -116,9 +116,10 @@ public class MallFreight extends Model< MallFreight > {
     @TableField( "add_money" )
     private BigDecimal addMoney;
 
-
+    @TableField(exist = false)
     private List<MallFreightDetail> detailList;
 
+    @TableField(exist = false)
     private String stoName;
 
     @Override
