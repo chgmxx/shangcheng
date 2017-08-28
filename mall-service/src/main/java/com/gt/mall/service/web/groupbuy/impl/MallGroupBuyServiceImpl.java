@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.groupbuy.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -222,7 +223,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 		    }
 		    if ( isCommission == 0 && isIntegral == 0 ) {
 			if ( CommonUtil.isNotEmpty( map.get( "groupMap" ) ) ) {
-			    Map< String,Object > groupMap = (Map< String,Object >) JSONObject.toJavaObject( JSONObject.parseObject( map.get( "groupMap" ).toString() ), Map.class );
+			    Map groupMap = JSONObject.parseObject( JSON.toJSONString( map.get( "groupMap" ) ), Map.class );
 			    if ( CommonUtil.isNotEmpty( groupMap.get( "g_start_time" ) ) ) {
 				String startTime = groupMap.get( "g_start_time" ).toString();
 				String endTime = groupMap.get( "g_end_time" ).toString();
@@ -230,8 +231,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "seckillMap" ) ) ) {
-			    Map< String,Object > seckillMap = (Map< String,Object >) JSONObject
-					    .toJavaObject( JSONObject.parseObject( map.get( "seckillMap" ).toString() ), Map.class );
+			    Map seckillMap = JSONObject.parseObject( JSON.toJSONString( map.get( "seckillMap" ) ), Map.class );
 			    if ( CommonUtil.isNotEmpty( seckillMap.get( "s_start_time" ) ) ) {
 				String startTime = seckillMap.get( "s_start_time" ).toString();
 				String endTime = seckillMap.get( "s_end_time" ).toString();
@@ -239,8 +239,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "auctionMap" ) ) ) {
-			    Map< String,Object > auctionMap = (Map< String,Object >) JSONObject
-					    .toJavaObject( JSONObject.parseObject( map.get( "auctionMap" ).toString() ), Map.class );
+			    Map auctionMap = JSONObject.parseObject( JSON.toJSONString( map.get( "auctionMap" ) ), Map.class );
 			    if ( CommonUtil.isNotEmpty( auctionMap.get( "auc_start_time" ) ) ) {
 				String startTime = auctionMap.get( "auc_start_time" ).toString();
 				String endTime = auctionMap.get( "auc_end_time" ).toString();
@@ -248,8 +247,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "presaleMap" ) ) ) {
-			    Map< String,Object > presaleMap = (Map< String,Object >) JSONObject
-					    .toJavaObject( JSONObject.parseObject( map.get( "presaleMap" ).toString() ), Map.class );
+			    Map presaleMap = JSONObject.parseObject( JSON.toJSONString( map.get( "presaleMap" ) ), Map.class );
 			    if ( CommonUtil.isNotEmpty( presaleMap.get( "sale_start_time" ) ) ) {
 				String startTime = presaleMap.get( "sale_start_time" ).toString();
 				String endTime = presaleMap.get( "sale_end_time" ).toString();
@@ -257,7 +255,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( map.get( "pifaMap" ) ) ) {
-			    Map< String,Object > pifaMap = (Map< String,Object >) JSONObject.toJavaObject( JSONObject.parseObject( map.get( "pifaMap" ).toString() ), Map.class );
+			    Map pifaMap = JSONObject.parseObject( JSON.toJSONString( map.get( "pifaMap" ) ), Map.class );
 			    if ( CommonUtil.isNotEmpty( pifaMap.get( "pf_start_time" ) ) ) {
 				String startTime = pifaMap.get( "pf_start_time" ).toString();
 				String endTime = pifaMap.get( "pf_end_time" ).toString();
