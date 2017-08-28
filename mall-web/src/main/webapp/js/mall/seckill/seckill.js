@@ -8,56 +8,59 @@ function deleteGroup(obj, type) {
         if (type * 1 == -2) {
             msg = "使失效";
         }
-        // 询问框
-        layer.confirm('您确定要' + msg + '？', {
-            offset: "10%",
-            shade:[0.1,'#fff'],
-            btn: ['确定', '取消']
-            // 按钮
-        }, function () {
-            // loading层
-            var layerLoad = layer.load(1, {
-                offset: "10%",
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
-            $.ajax({
-                type: "post",
-                url: "mSeckill/group_remove.do",
-                data: {
-                    id: id,
-                    type: type
-                },
-                dataType: "json",
-                success: function (data) {
-                    layer.close(layerLoad);
-                    if (data.code == 1) {
-                        var tip = layer.alert(msg + "成功", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        }, function (index) {
-                            layer.close(tip);
-                            location.href = window.location.href;
+        SonScrollTop(0);
+        setTimeout(function () {
+            // 询问框
+            layer.confirm('您确定要' + msg + '？', {
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff'],
+                btn: ['确定', '取消']
+                // 按钮
+            }, function () {
+                // loading层
+                var layerLoad = layer.load(1, {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, '#fff']
+                    // 0.1透明度的白色背景
+                });
+                $.ajax({
+                    type: "post",
+                    url: "mSeckill/group_remove.do",
+                    data: {
+                        id: id,
+                        type: type
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(layerLoad);
+                        if (data.code == 1) {
+                            var tip = layer.alert(msg + "成功", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            }, function (index) {
+                                layer.close(tip);
+                                location.href = window.location.href;
+                            });
+                        } else {// 编辑失败
+                            var tip = layer.alert(msg + "失败", {
+                                shade: [0.1, "#fff"],
+                                offset: scrollHeight + "px"
+                            });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.close(layerLoad);
+                        layer.alert(msg + "失败", {
+                            shade: [0.1, "#fff"],
+                            offset: scrollHeight + "px"
                         });
-                    } else {// 编辑失败
-                        var tip = layer.alert(msg + "失败", {
-                            shade:[0.1,"#fff"],
-                            offset: "10%"
-                        });
+                        return false;
                     }
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    layer.close(layerLoad);
-                    layer.alert(msg + "失败", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%"
-                    });
-                    return;
-                }
+                });
+                layer.closeAll();
             });
-            layer.closeAll();
-        });
+        }, timeout);
     }
 
 }
@@ -101,7 +104,10 @@ function loadLayDate() {
         datebox_2.min = startTime;
         datebox_2.start = startTime;
     }
-    getProductId($("#productId").val());
+    var proId = $("#productId").val();
+    if(proId != null && proId != ""){
+        getProductId($("#productId").val());
+    }
 
     loadWindow();
 }
@@ -144,183 +150,186 @@ function editGroup() {
     var isSpec = $("#isSpec").val();//商品是否存在规格
     var productId = $("#productId").val();
     var ids = $("#ids").val();
-    if (productId == null || productId == "") {
-        layer.msg('请选择商品', {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            icon: 1
-        });
-    } else if (name == null || $.trim(name) == "") {
-        $("gName").focus();
-        layer.msg('请填写活动名称', {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            icon: 1
-        });
-    } else if (!valName($("#sName"))) {
-        $("#sName").focus();
-        layer.msg('活动名称最多输入50位汉字或100位字符', {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            icon: 1
-        });
-    } else if (gStartTime == null || $.trim(gStartTime) == "") {
-        layer.msg('请选择活动开始时间', {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            icon: 1
-        });
-    } else if (gEndTime == null || $.trim(gEndTime) == "") {
-        layer.msg('请选择活动结束时间', {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            icon: 1
-        });
-    } else if (gStartTime >= gEndTime) {
-        layer.msg('活动开始时间要小于活动结束时间', {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            icon: 1
-        });
-    } else {
-        var flag = true;
-        $("input[datatype!=null]").each(function () {
-            var bol = true;
-            if ($(this).attr("name") == "sPrice" && isSpec == 1) {
-                bol = false;
-            }
-            if (bol && flag) {
-                flag = valiReg($(this));
-                if (!flag) {
-                    return;
-                }
-            }
-        });
-        var seckill = $("#groupForm").serializeObject();
-        var checkLen = 0;
-        var specArr = new Array();
-        var proInvNum = 0;
-        if (flag) {
-            if (isSpec == 1) {//存在规格
-                //判断参团规格的价格
-                $("#createTable tbody tr").each(function (i) {
-                    var check = $(this).find(".js-default").is(":checked");
-                    var invenId = $(this).find(".js-default").attr("invenid");
-                    var specId = "";
-                    var id = $(this).find(".js-default").attr("id");
-                    var seckillPrice = $(this).find(".js-price").val();
-                    var invNum = $(this).find(".invNum").text();
-                    proInvNum += $.trim(invNum) * 1;
-                    $(this).find("td.specCla").each(function () {
-                        if (specId != "") {
-                            specId += ",";
-                        }
-                        specId += $(this).attr("id");
-                    });
-                    var obj = {
-                        seckillPrice: seckillPrice,
-                        invenId: invenId,
-                        specificaIds: specId,
-                        isJoinGroup: 1,
-                        seckillNum: $.trim(invNum)
-                    };
-                    if (id != null && id != "") {
-                        if (id * 1 > 0) {
-                            obj.id = id;
-                        }
-                    }
-                    if (check) {
-                        flag = valiTable($(this).find(".js-price"));
-                        if (i == 0) {
-                            seckill.sPrice = seckillPrice;
-                        }
-                        if (!flag) {
-                            return;
-                        }
-                        obj["isJoinGroup"] = 1;
-                        checkLen++;
-                    } else {
-                        obj["isJoinGroup"] = 0;
-                    }
-                    specArr[specArr.length] = obj;
-                });
-            }
-        }
-
-        if (!flag) {
-            layer.msg('请填写已经勾选的秒杀价', {
-                offset: "10%",
-                shade:[0.1,"#fff"],
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (productId == null || productId == "") {
+            layer.msg('请选择商品', {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
                 icon: 1
             });
-        } else if (isSpec == 1 && checkLen == 0) {
-            layer.msg('请勾选的参加秒杀的规格', {
-                offset: "10%",
-                shade:[0.1,"#fff"],
+        } else if (name == null || $.trim(name) == "") {
+            $("gName").focus();
+            layer.msg('请填写活动名称', {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                icon: 1
+            });
+        } else if (!valName($("#sName"))) {
+            $("#sName").focus();
+            layer.msg('活动名称最多输入50位汉字或100位字符', {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                icon: 1
+            });
+        } else if (gStartTime == null || $.trim(gStartTime) == "") {
+            layer.msg('请选择活动开始时间', {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                icon: 1
+            });
+        } else if (gEndTime == null || $.trim(gEndTime) == "") {
+            layer.msg('请选择活动结束时间', {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                icon: 1
+            });
+        } else if (gStartTime >= gEndTime) {
+            layer.msg('活动开始时间要小于活动结束时间', {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
                 icon: 1
             });
         } else {
-            var isSpec = $("#isSpec").val();
-            if (proInvNum == 0 && isSpec == 0) {
-                proInvNum = $("#sNums").val();
-            }
-            seckill.sNum = proInvNum;
-            // loading层
-            var layerLoad = parent.layer.load(1, {
-                offset: "10%",
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
-            $.ajax({
-                type: "post",
-                url: "mSeckill/edit_seckill.do",
-                data: {
-                    seckill: JSON.stringify(seckill),
-                    specArr: JSON.stringify(specArr)
-                },
-                dataType: "json",
-                success: function (data) {
-                    layer.close(layerLoad);
-                    if (data.code == 1){
-                        var tip = layer.alert("编辑成功", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        }, function (index) {
-                            layer.close(tip);
-                            location.href = "/mSeckill/index.do";
-                        });
-                    } else if (data.code == -2) {
-                        var tip = layer.alert("正在进行秒杀的商品不能修改", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        });
-                    } else if (data.code == 0) {
-                        var tip = layer.alert("同一个商品只能参与一个秒杀活动", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        });
-                    } else {// 编辑失败
-                        layer.alert("编辑失败", {
-                            shade:[0.1,"#fff"],
-                            offset: "10%"
-                        });
+            var flag = true;
+            $("input[datatype!=null]").each(function () {
+                var bol = true;
+                if ($(this).attr("name") == "sPrice" && isSpec == 1) {
+                    bol = false;
+                }
+                if (bol && flag) {
+                    flag = valiReg($(this));
+                    if (!flag) {
+                        return;
                     }
-
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    layer.close(layerLoad);
-                    layer.alert("编辑失败", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%"
-                    });
-                    return;
                 }
             });
+            var seckill = $("#groupForm").serializeObject();
+            var checkLen = 0;
+            var specArr = new Array();
+            var proInvNum = 0;
+            if (flag) {
+                if (isSpec == 1) {//存在规格
+                    //判断参团规格的价格
+                    $("#createTable tbody tr").each(function (i) {
+                        var check = $(this).find(".js-default").is(":checked");
+                        var invenId = $(this).find(".js-default").attr("invenid");
+                        var specId = "";
+                        var id = $(this).find(".js-default").attr("id");
+                        var seckillPrice = $(this).find(".js-price").val();
+                        var invNum = $(this).find(".invNum").text();
+                        proInvNum += $.trim(invNum) * 1;
+                        $(this).find("td.specCla").each(function () {
+                            if (specId != "") {
+                                specId += ",";
+                            }
+                            specId += $(this).attr("id");
+                        });
+                        var obj = {
+                            seckillPrice: seckillPrice,
+                            invenId: invenId,
+                            specificaIds: specId,
+                            isJoinGroup: 1,
+                            seckillNum: $.trim(invNum)
+                        };
+                        if (id != null && id != "") {
+                            if (id * 1 > 0) {
+                                obj.id = id;
+                            }
+                        }
+                        if (check) {
+                            flag = valiTable($(this).find(".js-price"));
+                            if (i == 0) {
+                                seckill.sPrice = seckillPrice;
+                            }
+                            if (!flag) {
+                                return;
+                            }
+                            obj["isJoinGroup"] = 1;
+                            checkLen++;
+                        } else {
+                            obj["isJoinGroup"] = 0;
+                        }
+                        specArr[specArr.length] = obj;
+                    });
+                }
+            }
+
+            if (!flag) {
+                layer.msg('请填写已经勾选的秒杀价', {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    icon: 1
+                });
+            } else if (isSpec == 1 && checkLen == 0) {
+                layer.msg('请勾选的参加秒杀的规格', {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, "#fff"],
+                    icon: 1
+                });
+            } else {
+                var isSpec = $("#isSpec").val();
+                if (proInvNum == 0 && isSpec == 0) {
+                    proInvNum = $("#sNums").val();
+                }
+                seckill.sNum = proInvNum;
+                // loading层
+                var layerLoad = layer.load(1, {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, '#fff']
+                    // 0.1透明度的白色背景
+                });
+                $.ajax({
+                    type: "post",
+                    url: "mSeckill/edit_seckill.do",
+                    data: {
+                        seckill: JSON.stringify(seckill),
+                        specArr: JSON.stringify(specArr)
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(layerLoad);
+                        if (data.code == 1) {
+                            var tip = layer.alert("编辑成功", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            }, function (index) {
+                                layer.close(tip);
+                                location.href = "/mSeckill/index.do";
+                            });
+                        } else if (data.code == -2) {
+                            var tip = layer.alert("正在进行秒杀的商品不能修改", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            });
+                        } else if (data.code == 0) {
+                            var tip = layer.alert("同一个商品只能参与一个秒杀活动", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            });
+                        } else {// 编辑失败
+                            layer.alert("编辑失败", {
+                                shade: [0.1, "#fff"],
+                                offset: scrollHeight + "px"
+                            });
+                        }
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.close(layerLoad);
+                        layer.alert("编辑失败", {
+                            shade: [0.1, "#fff"],
+                            offset: scrollHeight + "px"
+                        });
+                        return;
+                    }
+                });
+            }
         }
-    }
+    }, timeout);
 }
 $("#gName").focus(function () {
     valName($(this));
@@ -443,14 +452,26 @@ function choosePro() {
         defaultProId = "";
     }
     loadWindow();
-    if (shopId != null && shopId != "") {
-        parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
-    } else {
-        layer.msg("请选择商品", {
-            shade:[0.1,"#fff"],
-            offset: "10%"
-        });
-    }
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (shopId != null && shopId != "") {
+            //parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+            layer.open({
+                type: 2,
+                title: "选择商品",
+                skin: 'layui-layer-rim', //加上边框
+                area: ['600px', '480px'], //宽高
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                content: "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId
+            });
+        } else {
+            layer.msg("请选择商品", {
+                shade: [0.1, "#fff"],
+                offset: scrollHeight + "px",
+            });
+        }
+    }, timeout);
 };
 /**
  * 选择商品回调函数

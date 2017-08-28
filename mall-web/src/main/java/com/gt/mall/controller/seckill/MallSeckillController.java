@@ -101,7 +101,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		request.setAttribute( "seckill", groupMap );
 	    }
 	    request.setAttribute( "shoplist", shoplist );
-	    request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
+	    request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
 	} catch ( Exception e ) {
 	    logger.error( "进入秒杀编辑页面：" + e );
 	    e.printStackTrace();

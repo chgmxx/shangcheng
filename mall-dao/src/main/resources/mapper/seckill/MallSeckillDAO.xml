@@ -196,16 +196,16 @@
         ) and j.id>0
     </select>
     <!-- 查询秒杀商品的状态 -->
-    <select id="selectSeckillByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
+    <select id="selectSeckillByIds" resultMap="pageResultMap">
         SELECT
         <include refid="page_Column_List"></include>
         from t_mall_seckill g
         left join t_mall_seckill_join j on j.seckill_id=g.id
         WHERE g.is_delete = 0 and g.is_use =1 and g.id = #{id}
-        <if test="shoplist != null"><!--微信门店集合 -->
+        <if test="shoplist != null">
             and g.shop_id in
             <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
-                #{item,jdbcType=INTEGER}
+                #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
         group by g.id
