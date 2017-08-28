@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.presale.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -555,7 +556,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    map.put( "specArr", specList );
 		}
 		map.put( "is_specifica", is_specifica );
-		JedisUtil.map( key, preId, JSONObject.parseObject( map.toString() ).toString() );
+		JedisUtil.map( key, preId, JSONObject.parseObject( JSON.toJSONString( map ) ).toString() );
 	    }
 	}
 

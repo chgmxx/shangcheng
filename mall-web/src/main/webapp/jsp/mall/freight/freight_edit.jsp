@@ -308,7 +308,7 @@
 			</span>
         </td>
         <td><input type="text" value="" class="input-text dNoMoneyNum inp_test" name="dNoMoneyNum" style="width:100px;" maxlength="5"
-                   dataType="^[0-9]{0,5}$" dataClass="dNoMoneyNumSpan"
+                   dataType="^[0-9]$" dataClass="dNoMoneyNumSpan"
                    dataMsg="包邮数量最多只能是大于0的5位数字" dataNull="1">件
             <p>不填写代表此省份不免邮</p>
         </td>

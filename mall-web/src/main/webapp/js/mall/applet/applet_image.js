@@ -320,8 +320,20 @@ function choosePro() {
         defaultProId = "";
     }
     loadWindow();
-    parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?defaultProId=" + defaultProId);
+    // parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?defaultProId=" + defaultProId);
     // parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.open({
+            type: 2,
+            title: "选择商品",
+            skin: 'layui-layer-rim', //加上边框
+            area: ['600px', '480px'], //宽高
+            offset: scrollHeight + "px",
+            shade: [0.1, "#fff"],
+            content: "/mGroupBuy/getProductByGroup.do?defaultProId=" + defaultProId
+        });
+    }, timeout);
 };
 /**
  * 选择商品回调函数

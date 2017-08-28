@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.freight.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
@@ -51,7 +52,7 @@ public class MallFreightDetailServiceImpl extends BaseServiceImpl< MallFreightDe
 
 	if ( !CommonUtil.isEmpty( params.get( "detail" ) ) ) {
 	    // 物流详情
-	    List< MallFreightDetail > detailList =  JSONArray.parseArray( params.get( "detail" ).toString() , MallFreightDetail.class );
+	    List< MallFreightDetail > detailList = JSONArray.parseArray( params.get( "detail" ).toString(), MallFreightDetail.class );
 	    if ( detailList != null && detailList.size() > 0 ) {
 		// 根据物流id查询物流详情
 		for ( MallFreightDetail detail : detailList ) {
@@ -83,7 +84,7 @@ public class MallFreightDetailServiceImpl extends BaseServiceImpl< MallFreightDe
     @SuppressWarnings( { "deprecation", "unchecked" } )
     private void updateFreightProvince( MallFreightDetail detail, int freightId, Map< String,Object > delProMap ) {
 	if ( detail.getProvinceList() != null && detail.getId() != null ) {
-	    List< MallFreightProvinces > proList =  JSONArray.parseArray( detail.getProvinceList().toString(), MallFreightProvinces.class );
+	    List< MallFreightProvinces > proList = JSONArray.parseArray( JSON.toJSONString( detail.getProvinceList() ), MallFreightProvinces.class );
 	    for ( MallFreightProvinces fProvince : proList ) {
 		if ( CommonUtil.isEmpty( fProvince.getId() ) ) {// 新增物流配送区域
 		    fProvince.setFreightId( freightId );
