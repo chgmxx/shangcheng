@@ -15,8 +15,7 @@
     <meta http-equiv="expires" content="0">
     <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
     <meta http-equiv="description" content="This is my page">
-    <link rel="stylesheet" type="text/css"
-          href="css/scene/music.css">
+    <link rel="stylesheet" type="text/css" href="/css/scene/music.css">
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
     <script type="text/javascript" src="/js/plugin/jquery-form.js?<%= System.currentTimeMillis()%>"></script>
     <script src="/js/plugin/layer/layer.js?<%= System.currentTimeMillis()%>"></script>
@@ -109,8 +108,8 @@
                 }
             })
             //TODO parent.layer.getFrameIndex   parent.layerwindow
-            var index = layer.getFrameIndex(window.name);
-            layerwindow(musicurl, musicname, player_style, addres, index);
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layerwindow(musicurl, musicname, player_style, addres, index);
 
         }
         /**

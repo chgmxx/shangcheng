@@ -13,7 +13,7 @@ $scope.save = function(){
 	$.ajax({   
 		type:"post",
 		url:"/mallhtml/htmlSave.do",
-		data:{datajson:datajson,databg:databg,datatransverse:datatransverse,playerStyle:playerStyle,addres:addres,musicname:musicname,musicurl:musicurl,id:id},
+		data:{dataJson:datajson,dataBg:databg,dataTransverse:datatransverse,playerStyle:playerStyle,addres:addres,musicname:musicname,musicurl:musicurl,id:id},
 		async:false,
 		dataType:"json",
 		success:function(data){
@@ -45,7 +45,7 @@ $scope.preview = function(){
 	$.ajax({   
 		type:"post",
 		url:"/mallhtml/htmlSave.do",
-		data:{datajson:datajson,databg:databg,datatransverse:datatransverse,playerStyle:playerStyle,addres:addres,musicname:musicname,musicurl:musicurl,id:id},
+		data:{dataJson:datajson,dataBg:databg,dataTransverse:datatransverse,playerStyle:playerStyle,addres:addres,musicname:musicname,musicurl:musicurl,id:id},
 		async:false,
 		dataType:"json",
 		success:function(data){
