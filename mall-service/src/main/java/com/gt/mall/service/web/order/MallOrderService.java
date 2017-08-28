@@ -156,7 +156,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
      *
      * @return
      */
-    public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type );
+    public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type ,List< Map< String,Object > > shoplist);
 
     /**
      * 查询订单详情

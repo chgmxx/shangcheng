@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,7 +62,7 @@ public class MallStoreController extends BaseController {
     private WxShopService wxShopService;
 
     @RequestMapping( "/index" )
-    public ModelAndView res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入店铺管理啦啦啦" );
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
@@ -102,8 +101,7 @@ public class MallStoreController extends BaseController {
 	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	ModelAndView view = new ModelAndView( "mall/store/index");
-	return view;
+	return "mall/store/index";
     }
 
     /**

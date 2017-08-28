@@ -33,9 +33,6 @@
 		layer.alert("参数错误，将调回前一个页面");
 		window.history.back(-1);
 	}
-	if(top==self){
-		 window.location.href="mallSellers/start.do";
-	}
 </script>
 </head>
 <body>
@@ -98,38 +95,38 @@
         	<c:if test="${!empty page }">
             	<c:if test="${!empty page.subList }">
             		<c:forEach var="seller" items="${page.subList }">
-	            		<c:set var="userName" value="${seller.user_name }"></c:set>
+	            		<c:set var="userName" value="${seller.userName }"></c:set>
 	            		<c:set var="telephone" value="${seller.telephone }"></c:set>
-	                   	<c:if test="${empty seller.user_name }">
+	                   	<%--<c:if test="${empty seller.userName && !empty seller.nickname}">
 	                   		<c:set var="userName" value="${seller.nickname }"></c:set>
 	                   	</c:if>
-	                   	<c:if test="${empty telephone }">
+	                   	<c:if test="${empty telephone && !empty seller.phone}">
 	                   		<c:set var="telephone" value="${seller.phone }"></c:set>
-	                   	</c:if>
+	                   	</c:if>--%>
                 <tr>
                     <td class="td-column-5"><input type="checkbox" class="check" value="${seller.id }"></td>
                     <td>${userName }</td>
                     <td>${telephone}</td>
-                    <td>${seller.income_integral }</td>
-                    <td>${seller.sale_money }</td>
-                    <td>${seller.total_commission }</td>
-                    <td>${seller.freeze_commission }</td>
-                    <td><c:if test="${!empty seller.add_time}"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${seller.add_time }" /></c:if></td>
+                    <td>${seller.incomeIntegral }</td>
+                    <td>${seller.saleMoney }</td>
+                    <td>${seller.totalCommission }</td>
+                    <td>${seller.freezeCommission }</td>
+                    <td><c:if test="${!empty seller.addTime}"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${seller.addTime }" /></c:if></td>
                     <td>
                     	<c:if test="${empty saleMemId }">
-                        <a href="/mallSellers/sellerList.do?saleMemId=${seller.member_id }" class="iconfont icon-zan icon-edit" title="推荐列表"></a>
+                        <a href="/mallSellers/sellerList.do?saleMemId=${seller.memberId }" class="iconfont icon-zan icon-edit" title="推荐列表"></a>
                         </c:if>
-                        <c:if test="${seller.is_start_use == 0}">
+                        <c:if test="${seller.isStartUse == 0}">
                         	<a href="javascript:void(0)" class="iconfont icon-ok icon-edit" onclick="sellerStart(${seller.id},1);" title="启用"></a>
                         </c:if>
-                        <c:if test="${seller.is_start_use == -1 }">
+                        <c:if test="${seller.isStartUse == -1 }">
                         	<a href="javascript:void(0)" class="iconfont icon-start icon-edit" onclick="sellerStart(${seller.id},1);" title="启用"></a>
                         </c:if>
-                        <c:if test="${seller.is_start_use == 1 }">
+                        <c:if test="${seller.isStartUse == 1 }">
                         	<a href="javascript:void(0)" class="iconfont icon-stop icon-edit" onclick="sellerStart(${seller.id},-1);" title="暂停"></a>
                         </c:if>
                         <c:if test="${empty saleMemId }">
-                        <a href="/mallSellers/withDrawList.do?saleMemId=${seller.member_id }" class="iconfont icon-tMoney icon-edit" title="提现记录"></a>
+                        <a href="/mallSellers/withDrawList.do?saleMemId=${seller.memberId }" class="iconfont icon-tMoney icon-edit" title="提现记录"></a>
                         </c:if>
                     </td>
                 </tr>

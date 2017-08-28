@@ -52,12 +52,10 @@
         WHERE a.`bus_user_id` = #{userId}
     </select>
 
-    <select id="wholesalerList" parameterType="map" resultType="map">
-        /* todo 调用彭江丽的方法*/
+    <select id="wholesalerList" parameterType="Map" resultType="Map">
         SELECT a.`id`,a.`create_time`,a.`status`,a.`check_time`,a.`is_use`,a.member_id,
-        a.`company_name`,a.`telephone`,a.`remark`,a.`name`/*,m.`nickname`*/
+        a.`company_name`,a.`telephone`,a.`remark`,a.`name`
         FROM t_mall_pifa_apply a
-       /* LEFT JOIN t_wx_bus_member m ON m.`id` = a.`member_id`*/
         WHERE a.`bus_user_id` = #{userId}
         ORDER BY a.create_time desc
         limit #{firstResult},#{maxResult}
@@ -69,7 +67,7 @@
             <if test="status != null and status != ''">
                 status = #{status},
             </if>
-            <if test="checkTime != null and checkTime != ''">
+            <if test="checkTime != null ">
                 check_time = #{checkTime},
             </if>
             <if test="isUse != null and isUse != ''">

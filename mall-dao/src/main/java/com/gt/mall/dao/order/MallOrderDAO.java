@@ -43,10 +43,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      */
     int upOrderByorderNo( Map< String,Object > params );
 
-    /**
-     * 查询订单信息
-     */
-    List< Map< String,Object > > selectOrder( Map< String,Object > params );
 
     /**
      * 查询订单详细信息

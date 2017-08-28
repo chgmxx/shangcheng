@@ -100,22 +100,19 @@ function editJoinProduct() {
     SonScrollTop(0);
     setTimeout(function () {
         if (shopId == null || shopId == "") {
-            layer.msg('请选择店铺', {
+            layer.alert('请选择店铺', {
                 offset: scrollHeight + "px",
-                shade: [0.1, "#fff"],
-                icon: 1
+                shade: [0.1, "#fff"]
             });
         } else if (productId == null || productId == "") {
-            layer.msg('请选择商品', {
+            layer.alert('请选择商品', {
                 offset: scrollHeight + "px",
-                shade: [0.1, "#fff"],
-                icon: 1
+                shade: [0.1, "#fff"]
             });
         } else if (commissionType == null || commissionType == "") {
-            layer.msg('请选择佣金类型', {
+            layer.alert('请选择佣金类型', {
                 offset: scrollHeight + "px",
-                shade: [0.1, "#fff"],
-                icon: 1
+                shade: [0.1, "#fff"]
             });
         } else {
             var flag = true;
@@ -136,10 +133,9 @@ function editJoinProduct() {
                 joinProduct["id"] = ids;
             }
             if (!flag) {
-                layer.msg('请完善商品佣金', {
-                    icon: 1,
+                layer.alert('请完善商品佣金', {
                     shade: [0.1, "#fff"],
-                    offset: "10%"
+                    offset: scrollHeight + "px"
                 });
             } else {
                 // loading层

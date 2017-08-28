@@ -633,18 +633,6 @@
         where id = #{orderId}
     </update>
 
-    <select id="selectOrder" resultType="Map" parameterType="map">
-        /* todo 关联地址和粉丝*/
-        select t.*,/*r.mem_name,r.mem_phone,u.nickname,r.mem_address,r.mem_zip_code,
-        (SELECT city_name FROM basis_city WHERE id=r.mem_province) AS pName,
-        (SELECT city_name FROM basis_city WHERE id=r.mem_city) AS cName,*/s.sto_name as shopName
-        from t_mall_order t
-        /*left join t_eat_member_address r on r.id = t.receive_id
-        left join t_wx_bus_member u on u.id = t.buyer_user_id*/
-        left join t_mall_store s on s.id = t.shop_id
-        where t.id = #{orderId}
-    </select>
-
     <select id="selectOrderDetail" resultType="Map" parameterType="map">
         select t.*,
         (
@@ -914,18 +902,13 @@
     </select>
 
     <select id="explodOrder" resultMap="MoreResultMap" parameterType="map">
-        <!-- todo 关联 门店 -->
         SELECT
         DISTINCT(t.id), t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,
         t.order_pay_way,t.order_buyer_message,t.order_seller_remark,t.receive_id,#{status} as status, t.delivery_method,
-        t.receive_name  ,t.receive_phone ,t.receive_address ,t.member_name
+        t.receive_name  ,t.receive_phone ,t.receive_address ,t.member_name,
         d.product_id,d.id AS dId,d.det_pro_num,d.det_pro_price,d.det_pro_name,d.det_privivilege,d.status,d.discounted_prices
-        /*,
-        IF(ws.`business_name` IS NOT NULL ,ws.`business_name`,s.`sto_name`)AS sto_name  */
         FROM t_mall_order t
         LEFT JOIN t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
-        /*LEFT JOIN t_mall_store s ON s.id=t.`shop_id`
-        LEFT JOIN t_wx_shop ws ON ws.`id`=s.`wx_shop_id`*/
         WHERE 1=1
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 AND d.id IS NOT NULL) )
         <if test="userId != null and userId != ''">

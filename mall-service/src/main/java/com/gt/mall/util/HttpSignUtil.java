@@ -21,6 +21,13 @@ public class HttpSignUtil {
 
     private static Logger logger = LoggerFactory.getLogger( HttpSignUtil.class );
 
+    /**
+     *
+     * @param obj 参数
+     * @param url 地址
+     * @param types 0 会员  1 商家相关   2 微信相关
+     * @return 返回对象
+     */
     private static JSONObject SignHttpJson( Object obj, String url, int... types ) {
 	try {
 	    String result = null;

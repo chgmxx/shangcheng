@@ -85,68 +85,63 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
     @Override
     public PageUtil wholesalerList( Map< String,Object > params ) {
 	PageUtil page = null;
-	try {
-	    params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
-			    : CommonUtil.toInteger( params.get( "curPage" ) ) );
-	    int pageSize = 10;
-	    int rowCount = mallPifaApplyDAO.count( params );//查询批发商总条数
-	    page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ),
-			    pageSize, rowCount, "mallWholesalers/wholesaleList.do" );
-	    params.put( "firstResult", pageSize
-			    * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
-	    params.put( "maxResult", pageSize );
-	    //查询批发商列表
-	    List< Map< String,Object > > list = mallPifaApplyDAO.wholesalerList( params );
-	    List list1 = new ArrayList();
-	    for ( int i = 0; i < list.size(); i++ ) {
-		//微信昵称转换
-		String nickname = CommonUtil.Blob2String( list.get( i ).get( "nickname" ) );
-		JSONObject obj = JSONObject.fromObject( list.get( i ) );
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" );
-		JSONObject jsonObj = JSONObject.fromObject( obj.get( "create_time" ) );
-		JSONObject jsonObj1 = JSONObject.fromObject( obj.get( "check_time" ) );
-		//申请时间转换
-		if ( jsonObj.containsKey( "time" ) ) {
-		    long time = Long.valueOf( ( jsonObj.get( "time" ).toString() ) );
-		    obj.put( "create_time", sdf.format( new Date( time ) ) );
-		}
-		//审核时间转换
-		if ( jsonObj1.containsKey( "time" ) ) {
-		    long time = Long.valueOf( ( jsonObj1.get( "time" ).toString() ) );
-		    obj.put( "check_time", sdf.format( new Date( time ) ) );
-		}
-		obj.put( "nickname", nickname );
-
-		String key = Constants.REDIS_KEY+"syncOrderCount";
-		String member_id = obj.get( "member_id" ).toString();
-		if ( JedisUtil.hExists( key, member_id ) ) {
-		    String str = JedisUtil.maoget( key, member_id );
-		    if ( CommonUtil.isNotEmpty( str ) ) {
-			JSONObject orderObj = JSONObject.fromObject( str );
-			if ( CommonUtil.isNotEmpty( orderObj.get( "num" ) ) )
-			    obj.put( "num", orderObj.get( "num" ) );
-			if ( CommonUtil.isNotEmpty( orderObj.get( "proPrice" ) ) )
-			    obj.put( "money", orderObj.get( "proPrice" ) );
-		    }
-		}
-
-		list1.add( obj );
+	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
+			: CommonUtil.toInteger( params.get( "curPage" ) ) );
+	int pageSize = 10;
+	int rowCount = mallPifaApplyDAO.count( params );//查询批发商总条数
+	page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ),
+			pageSize, rowCount, "mallWholesalers/wholesaleList.do" );
+	params.put( "firstResult", pageSize
+			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	params.put( "maxResult", pageSize );
+	//查询批发商列表
+	List< Map< String,Object > > list = mallPifaApplyDAO.wholesalerList( params );
+	List list1 = new ArrayList();
+	for ( Map< String,Object > pifaMap : list ) {
+	    //微信昵称转换
+	    String nickname = CommonUtil.Blob2String( pifaMap.get( "nickname" ) );
+	    JSONObject obj = JSONObject.fromObject( pifaMap );
+	    SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" );
+	    JSONObject jsonObj = JSONObject.fromObject( obj.get( "create_time" ) );
+	    JSONObject jsonObj1 = JSONObject.fromObject( obj.get( "check_time" ) );
+	    //申请时间转换
+	    if ( jsonObj.containsKey( "time" ) ) {
+		long time = Long.valueOf( ( jsonObj.get( "time" ).toString() ) );
+		obj.put( "create_time", sdf.format( new Date( time ) ) );
 	    }
-	    page.setSubList( list1 );
-	} catch ( Exception e ) {
-	    logger.error( "查询批发商列表service异常：" + e.getMessage() );
+	    //审核时间转换
+	    if ( jsonObj1.containsKey( "time" ) ) {
+		long time = Long.valueOf( ( jsonObj1.get( "time" ).toString() ) );
+		obj.put( "check_time", sdf.format( new Date( time ) ) );
+	    }
+	    obj.put( "nickname", nickname );
+
+	    String key = Constants.REDIS_KEY + "syncOrderCount";
+	    String member_id = obj.get( "member_id" ).toString();
+	    if ( JedisUtil.hExists( key, member_id ) ) {
+		String str = JedisUtil.maoget( key, member_id );
+		if ( CommonUtil.isNotEmpty( str ) ) {
+		    JSONObject orderObj = JSONObject.fromObject( str );
+		    if ( CommonUtil.isNotEmpty( orderObj.get( "num" ) ) )
+			obj.put( "num", orderObj.get( "num" ) );
+		    if ( CommonUtil.isNotEmpty( orderObj.get( "proPrice" ) ) )
+			obj.put( "money", orderObj.get( "proPrice" ) );
+		}
+	    }
+
+	    list1.add( obj );
 	}
+	page.setSubList( list1 );
 	return page;
     }
 
     @Override
     public int updateStatus( Map< String,Object > params ) {
-	int count = mallPifaApplyDAO.updateStatus( params );
-	return count;
+	return mallPifaApplyDAO.updateStatus( params );
     }
 
     @Override
-    public PageUtil pifaProductList( Map< String,Object > params ) {
+    public PageUtil pifaProductList( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
@@ -162,6 +157,18 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 
 	if ( count > 0 ) {// 判断批发是否有数据
 	    List< MallPifa > pifaList = mallPifaDAO.selectByPage( params );
+	    if ( pifaList != null && pifaList.size() > 0 ) {
+		for ( MallPifa pifa : pifaList ) {
+		    //循环门店
+		    for ( Map< String,Object > storeMap : shoplist ) {
+			int shopId = CommonUtil.toInteger( storeMap.get( "id" ) );
+			if ( shopId == pifa.getShopId() ) {
+			    pifa.setShopName( storeMap.get( "sto_name" ).toString() );
+			    break;
+			}
+		    }
+		}
+	    }
 	    page.setSubList( pifaList );
 	}
 
@@ -193,8 +200,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	int code = -1;
 	int status = 0;
 	if ( CommonUtil.isNotEmpty( pifaMap.get( "pifa" ) ) ) {
-	    MallPifa pifa = (MallPifa) JSONObject.toBean( JSONObject.fromObject( pifaMap.get( "pifa" ) ),
-			    MallPifa.class );
+	    MallPifa pifa = com.alibaba.fastjson.JSONObject.parseObject( pifaMap.get( "pifa" ).toString(), MallPifa.class );
 	    // 判断选择的商品是否已经存在未开始和进行中的批发中
 	    List< MallPifa > buyList = mallPifaDAO.selectStartPifaByProId( pifa );
 	    if ( buyList == null || buyList.size() == 0 ) {
@@ -270,7 +276,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    shopid = CommonUtil.toInteger( maps.get( "shopId" ) );
 	}
 	//新增搜索关键词
-	mallSearchKeywordService.insertSeachKeyWord( member.getId(),shopid, maps.get( "proName" ) );
+	mallSearchKeywordService.insertSeachKeyWord( member.getId(), shopid, maps.get( "proName" ) );
 
 	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();// 存放店铺下的商品
 
@@ -372,7 +378,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
     }
 
     @Override
-    public double getPifaPriceByProIds(boolean isPifa,int productId) {
+    public double getPifaPriceByProIds( boolean isPifa, int productId ) {
 	if ( isPifa ) {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "pfType", 1 );

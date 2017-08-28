@@ -288,7 +288,7 @@ public class MallOrderController extends BaseController {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
 	    String[] titles = new String[] { "订单编号", "商品", "单价", "数量", "实付金额", "优惠", "运费", "买家", "下单时间", "订单状态", "配送方式", "售后", "所属店铺", "付款方式", "收货信息", "买家留言", "卖家备注" };
-	    workbook = mallOrderService.exportExcel( params, titles, 1 );
+	    workbook = mallOrderService.exportExcel( params, titles, 1, shoplist );
 
 	    String filename = "商城订单" + DateTimeKit.getDateIsLink() + ".xls";//设置下载时客户端Excel的名称
 	    filename = URLEncoder.encode( filename, "UTF-8" );

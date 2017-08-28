@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="/css/mall/wholesalers/pcWholesale.css?<%=System.currentTimeMillis()%>"/>
     <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="/js/mall/mall_public.js"></script>
+    <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
 </head>
 <%
     String path = request.getContextPath();
@@ -69,10 +70,9 @@
                     </c:if>
                 </td>
                 <td>${wholesaler.id }</td>
-                <td>${wholesaler.nickname }</td>
-                <td>${wholesaler.num }</td>
-                <td><c:if test="${empty wholesaler.money }">0</c:if>
-                    <c:if test="${!empty wholesaler.money }">${wholesaler.money}</c:if>(元)
+                <td>${wholesaler.name }</td>
+                <td>${!empty wholesaler.num ? wholesaler.num : 0 }</td>
+                <td>${!empty wholesaler.money ? wholesaler.money : 0}(元)
                 </td>
                 <td>
                     <p>${wholesaler.create_time }</p>
@@ -124,17 +124,20 @@
 </div>
 <script type="text/javascript">
     function pifaDetail(name, company, tel, remark) {
-        layer.open({
-            type: 1,
-            skin: 'layui-layer-rim', //加上边框
-            area: ['350px', '230px'], //宽高
-            shade:[0.1,"#fff"],
-            offset: '10%',
-            content: '<div id="pifaDetail"><div><dl style="margin: 10px;"><dd><dt>姓名：' + name +
-            '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>公司名称：' + company + '</dt></dd></dl><dl style="margin: 10px;"><dd>' +
-            '<dt>电话号码：' + tel + '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>备注：' + remark +
-            '</dt></dd></dl></div></div>'
-        });
+        SonScrollTop(0);
+        setTimeout(function () {
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['350px', '230px'], //宽高
+                shade: [0.1, "#fff"],
+                offset: scrollHeight + "px",
+                content: '<div id="pifaDetail"><div><dl style="margin: 10px;"><dd><dt>姓名：' + name +
+                '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>公司名称：' + company + '</dt></dd></dl><dl style="margin: 10px;"><dd>' +
+                '<dt>电话号码：' + tel + '</dt></dd></dl><dl style="margin: 10px;"><dd><dt>备注：' + remark +
+                '</dt></dd></dl></div></div>'
+            });
+        }, timeout);
     }
 
     /*开关切换*/
@@ -270,13 +273,16 @@
         });
     }
     function promMsg(msgContent) {
-        layer.alert(msgContent, {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            end: function () {
-                location.reload();//刷新本页面
-            }
-        });
+        SonScrollTop(0);
+        setTimeout(function () {
+            layer.alert(msgContent, {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                end: function () {
+                    location.reload();//刷新本页面
+                }
+            });
+        }, timeout);
     }
 
 </script>

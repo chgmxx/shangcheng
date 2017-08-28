@@ -56,14 +56,17 @@ public class MallPifaController extends BaseController {
      * 批发商列表
      */
     @RequestMapping( value = "/wholesaleList" )
-    public String wholesaleList( @RequestParam Map< String,Object > params, HttpServletRequest request,
-		    HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
-	params.put( "userId", user.getId() );
-	PageUtil page = mallPifaService.wholesalerList( params );
-	request.setAttribute( "page", page );
-	request.setAttribute( "videourl", busUserService.getVoiceUrl( "84" ) );
-
+    public String wholesaleList( @RequestParam Map< String,Object > params, HttpServletRequest request ) {
+	try {
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    params.put( "userId", user.getId() );
+	    PageUtil page = mallPifaService.wholesalerList( params );
+	    request.setAttribute( "page", page );
+	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "84" ) );
+	} catch ( Exception e ) {
+	    this.logger.error( "MallPifaController.wholesaleList方法异常：" + e.getMessage() );
+	    e.printStackTrace();
+	}
 	return "mall/wholesalers/wholesalerList";
     }
 
@@ -202,6 +205,7 @@ public class MallPifaController extends BaseController {
 	    out.write( net.sf.json.JSONObject.fromObject( map ).toString() );
 	} catch ( Exception e ) {
 	    logger.error( "设置批发商审核通不通过异常：" + e.getMessage() );
+	    e.printStackTrace();
 	} finally {
 	    out.flush();
 	    out.close();
@@ -215,19 +219,19 @@ public class MallPifaController extends BaseController {
     public String pifaIndex( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(),request );//是否是管理员
+	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是否是管理员
 	    if ( isAdminFlag ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = mallPifaService.pifaProductList( params );
+		    PageUtil page = mallPifaService.pifaProductList( params, shoplist );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}
 		request.setAttribute( "type", params.get( "type" ) );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
-	    }else{
+	    } else {
 		request.setAttribute( "isNoAdminFlag", 1 );
 	    }
 	    MallPaySet set = new MallPaySet();
@@ -244,7 +248,7 @@ public class MallPifaController extends BaseController {
 	    logger.error( "批发管理列表异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	return "mall/wholesalers/wholesalersIndex";
+	return "mall/wholesalers/wholesalerIndex";
     }
 
     /**
@@ -275,7 +279,7 @@ public class MallPifaController extends BaseController {
 	    logger.error( "进入批发编辑页面：" + e );
 	    e.printStackTrace();
 	}
-	return "mall/wholesalers/wholesalersEdit";
+	return "mall/wholesalers/wholesalerEdit";
     }
 
     /**

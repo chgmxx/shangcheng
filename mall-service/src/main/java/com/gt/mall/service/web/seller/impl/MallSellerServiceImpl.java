@@ -668,6 +668,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		    saleSelelr.setBusUserId( seller.getBusUserId() );
 		    saleSelelr.setMemberId( memberId );
 		    saleSelelr.setCheckStatus( -2 );
+		    saleSelelr.setAddTime( new Date() );
 		    mallSellerDAO.insert( saleSelelr );
 		} else {
 		    saleSelelr.setId( mallseller.getId() );
@@ -804,6 +805,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		saleSelelr.setBusUserId( seller.getBusUserId() );
 		saleSelelr.setMemberId( member.getId() );
 		saleSelelr.setCheckStatus( -2 );
+		saleSelelr.setAddTime( new Date() );
 		mallSellerDAO.insert( saleSelelr );
 	    }
 	}

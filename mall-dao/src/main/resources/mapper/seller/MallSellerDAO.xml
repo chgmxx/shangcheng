@@ -67,34 +67,34 @@
         </if>
     </select>
     <!-- 查询销售员的信息 -->
-    <select id="selectSellerBySaleId" resultType="Map" parameterType="java.lang.Integer" >
+    <select id="selectSellerBySaleId" resultType="Map" parameterType="java.lang.Integer">
         /* todo 调用彭江丽粉丝表 */
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller s
         /*LEFT JOIN t_wx_bus_member m ON m.id=s.`member_id`*/
         where s.member_id = #{memberId,jdbcType=INTEGER}
     </select>
     <select id="selectMallSeller" parameterType="com.gt.mall.entity.seller.MallSeller" resultMap="BaseResultMap">
         SELECT
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         FROM t_mall_seller
         WHERE member_id = #{memberId} AND bus_user_id = #{busUserId}
     </select>
 
     <!-- 查询销售员的信息 -->
-    <select id="selectSellerByMemberId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <select id="selectSellerByMemberId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller s
         where s.member_id = #{memberId,jdbcType=INTEGER}
     </select>
 
     <!-- 查询销售员排行榜的信息 -->
-    <select id="selectSellerByBusUserId" resultType="Map" parameterType="java.lang.Integer" >
+    <select id="selectSellerByBusUserId" resultType="Map" parameterType="java.lang.Integer">
         /* todo 调用 彭江丽 粉丝表 */
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller s
         /*LEFT JOIN t_wx_bus_member m ON m.id=s.`member_id`*/
         where s.is_start_use = 1
@@ -140,10 +140,10 @@
         </if>
     </select>
 
-    <update id="updateByWithdrawSelective" parameterType="Map" >
+    <update id="updateByWithdrawSelective" parameterType="Map">
         update t_mall_seller
-        <set >
-            <if test="money != null and type != null" >
+        <set>
+            <if test="money != null and type != null">
                 <!-- <if test="type == 1">提现申请
               freeze_commission = IFNULL(freeze_commission,0)+#{money},
               can_presented_commission = IFNULL(can_presented_commission,0)-#{money},
@@ -161,8 +161,8 @@
         where member_id = #{saleMemberId}
     </update>
 
-    <select id="selectCountByBusUserId" resultType="java.lang.Integer" parameterType="Map" >
-        select  count(s.id) from t_mall_seller s
+    <select id="selectCountByBusUserId" resultType="java.lang.Integer" parameterType="Map">
+        select count(s.id) from t_mall_seller s
         LEFT JOIN t_mall_seller s2 ON s.referees_member_id=s.member_id AND s2.bus_user_id=s.bus_user_id
         where s.bus_user_id = #{busUserId,jdbcType=INTEGER}
         <if test="saleMemId != null">
@@ -181,12 +181,10 @@
         </if>
     </select>
 
-    <select id="selectPageCheckByBusUserId" resultMap="BaseResultMap" parameterType="Map" >
-        SELECT  s.id,s.`user_name`,s.`telephone`,s2.`user_name` AS tj_user_name,s.`apply_time`,s.`check_status`
-       /* ,m.nickname,m.phone*/
+    <select id="selectPageCheckByBusUserId" resultType="Map" parameterType="Map">
+        SELECT s.id,s.`user_name`,s.`telephone`,s2.`user_name` AS tj_user_name,s.`apply_time`,s.`check_status`
         FROM t_mall_seller s
         LEFT JOIN t_mall_seller s2 ON s.referees_member_id=s.member_id AND s2.bus_user_id=s.bus_user_id
-        /*left join t_wx_bus_member m on m.id=s.member_id*/
         where s.bus_user_id = #{busUserId,jdbcType=INTEGER}
         <if test="status != null">
             and s.check_status = #{status}
@@ -200,11 +198,10 @@
         </if>
     </select>
 
-    <select id="selectPageSellerByBusUserId" resultMap="BaseResultMap"  parameterType="Map" >
-        SELECT /*s.* ,m.nickname,m.phone*/
+    <select id="selectPageSellerByBusUserId" resultMap="BaseResultMap" parameterType="Map">
+        SELECT
         <include refid="Base_Column_List"/>
         FROM t_mall_seller s
-        /*left join t_wx_bus_member m on m.id=s.member_id */
         where s.bus_user_id = #{busUserId,jdbcType=INTEGER}
         <if test="saleMemId != null">
             and s.referees_member_id = #{saleMemId}
@@ -230,13 +227,13 @@
     <update id="batchUpdateSeller" parameterType="java.util.Map">
         update t_mall_seller
         <set>
-            <if test="addTime != null" >
+            <if test="addTime != null">
                 add_time = #{addTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="checkTime != null" >
+            <if test="checkTime != null">
                 check_time = #{checkTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="checkStatus != null" >
+            <if test="checkStatus != null">
                 check_status = #{checkStatus,jdbcType=INTEGER},
             </if>
             <if test="isStartUse != null">
@@ -250,10 +247,10 @@
         </foreach>
     </update>
 
-    <update id="updateBySellerIncome" parameterType="Map" >
+    <update id="updateBySellerIncome" parameterType="Map">
         update t_mall_seller
-        <set >
-            <if test="commission != null" >
+        <set>
+            <if test="commission != null">
                 <if test="type == 1">
                     total_commission = IFNULL(total_commission,0) + #{commission},
                     commission = IFNULL(commission,0) + #{commission},
@@ -291,9 +288,9 @@
         where member_id = #{saleMemberId}
     </update>
 
-    <update id="updateMember" parameterType="Map" >
+    <update id="updateMember" parameterType="Map">
         update t_wx_bus_member
-        <set >
+        <set>
             <if test="incomeIntegral != null">
                 <if test="type == 1">
                     integral = IFNULL(integral,0) + #{incomeIntegral},
@@ -307,14 +304,14 @@
     </update>
 
     <!-- 通过key查询销售员的信息 -->
-    <select id="selectSellerBySecenId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    <select id="selectSellerBySecenId" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller s
         where s.scene_key = #{sceneKey}
         limit 1
     </select>
-    <select id="selectDataByOldMemberId" resultMap="BaseResultMap" parameterType="Map" >
+    <select id="selectDataByOldMemberId" resultMap="BaseResultMap" parameterType="Map">
         select sum(s.commission) as commission,sum(s.total_commission) as total_commission,
         sum(s.freeze_commission) as freeze_commission,sum(s.can_presented_commission) as can_presented_commission,
         sum(s.already_presented_commission) as already_presented_commission,sum(s.income_integral) as income_integral,
@@ -330,7 +327,7 @@
             </if>
         </where>
     </select>
-    <update id="updateDataByOldMemberId" parameterType="com.gt.mall.entity.seller.MallSeller" >
+    <update id="updateDataByOldMemberId" parameterType="com.gt.mall.entity.seller.MallSeller">
         update t_mall_seller
         set commission = 0,
         total_commission = 0,
@@ -349,7 +346,6 @@
             </foreach>
         </if>
     </update>
-
 
 
 </mapper>

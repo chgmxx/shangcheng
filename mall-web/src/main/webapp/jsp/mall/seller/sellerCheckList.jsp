@@ -81,14 +81,14 @@
                 <c:forEach var="seller" items="${page.subList }">
                     <c:set var="userName" value="${seller.user_name }"></c:set>
                     <c:set var="telephone" value="${seller.telephone }"></c:set>
-                    <c:if test="${empty seller.user_name }">
+                    <c:if test="${empty seller.user_name && !empty seller.nickname}">
                         <c:set var="userName" value="${seller.nickname }"></c:set>
                     </c:if>
-                    <c:if test="${empty telephone }">
+                    <c:if test="${empty telephone && !empty seller.phone}">
                         <c:set var="telephone" value="${seller.phone }"></c:set>
                     </c:if>
                     <tr>
-                        <td class="td-column-5"><input type="checkbox" class="check" value="${seller.id }" status="${seller.check_status }"></td>
+                        <td class="td-column-5"><input type="checkbox" class="check" value="${seller.id }" status="${seller.check_status }" /></td>
                         <td>${userName }</td>
                         <td>${telephone }</td>
                         <td>${seller.tj_user_name }</td>

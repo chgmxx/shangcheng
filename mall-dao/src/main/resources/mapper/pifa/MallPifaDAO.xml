@@ -87,11 +87,9 @@
     </select>
     <!-- 根据批发分页 -->
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
-        /* todo 调用 小屁孩接口 门店信息 */
         select  <include refid="page_product_Column_List" />
         from t_mall_pifa p
         left join t_mall_store s on p.shop_id = s.id
-        /*left join t_wx_shop ws on s.wx_shop_id = ws.id*/
         left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
         left join t_mall_product mp on mp.id= p.product_id
         where p.is_delete = 0
@@ -164,12 +162,10 @@
 
     <!-- 查询批发商品的状态 -->
     <select id="selecPifaByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
-        /* todo 调用小屁孩的接口 */
         SELECT <include refid="page_Column_List"></include>
         from t_mall_pifa  p
         left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
         left join t_mall_store s on p.shop_id = s.id
-        /*left join t_wx_shop ws on s.wx_shop_id = ws.id*/
         WHERE p.is_delete = 0 and p.is_use  =1 and p.id = #{id}
         group by p.id
     </select>

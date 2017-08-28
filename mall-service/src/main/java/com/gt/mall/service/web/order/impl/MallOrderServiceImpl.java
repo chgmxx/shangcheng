@@ -2884,7 +2884,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
      * type 1 商城订单导出
      */
     @Override
-    public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type ) {
+    public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist ) {
 	HSSFWorkbook workbook = new HSSFWorkbook();//创建一个webbook，对应一个Excel文件
 	HSSFSheet sheet = workbook.createSheet( "商城订单" );//在webbook中添加一个sheet,对应Excel文件中的sheet
 	HSSFRow rowTitle = sheet.createRow( 0 );//在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
@@ -2915,14 +2915,14 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    List< MallOrder > data = mallOrderDAO.explodOrder( params );
 	    int j = 1;
 	    for ( MallOrder order : data ) {
-		j = getOrderList( sheet, centerStyle, leftStyle, order, j );
+		j = getOrderList( sheet, centerStyle, leftStyle, order, j, shoplist );
 	    }
 	}
 
 	return workbook;
     }
 
-    private int getOrderList( HSSFSheet sheet, HSSFCellStyle valueStyle, HSSFCellStyle leftStyle, MallOrder order, int i ) {
+    private int getOrderList( HSSFSheet sheet, HSSFCellStyle valueStyle, HSSFCellStyle leftStyle, MallOrder order, int i, List< Map< String,Object > > shopList ) {
 	String unit = "元";//单位
 	String state = "";//订单状态
 	String method = "快递配送";//配送方式
@@ -3043,7 +3043,17 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 		    createCell( row, 10, method, valueStyle );
 		    createCell( row, 11, sale, valueStyle );
-		    createCell( row, 12, order.getShopName(), valueStyle );
+		    String shopname = "";
+		    if(shopList != null && shopList.size() > 0){
+			for ( Map< String,Object > shopMap : shopList ) {
+			    if(CommonUtil.toInteger( shopMap.get( "id" ) ) == order.getShopId()){
+			        shopname = shopMap.get( "sto_name" ).toString();
+			        break;
+			    }
+			}
+		    }
+
+		    createCell( row, 12, shopname, valueStyle );
 		    createCell( row, 13, payWay, valueStyle );
 		    createCell( row, 14, address, leftStyle );
 		    createCell( row, 15, order.getOrderBuyerMessage(), valueStyle );

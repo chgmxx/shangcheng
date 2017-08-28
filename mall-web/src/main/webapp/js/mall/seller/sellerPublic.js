@@ -53,18 +53,21 @@ function checkSeller(sellerId, status) {
     if (status == -1) {
         msg = "审核不通过";
     }
-    layer.confirm("您是否要" + msg + "此销售员", {
-        btn: ['确定', '取消'], //按钮
-        shade:[0.1,'#fff'],
-        offset: "10%"
-    }, function () {
-        var data = {
-            "id": sellerId,
-            "checkStatus": status
-        }
-        data = {seller: JSON.stringify(data)};
-        editSeller(data, msg);
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.confirm("您是否要" + msg + "此销售员", {
+            btn: ['确定', '取消'], //按钮
+            shade: [0.1, '#fff'],
+            offset: scrollHeight + "px"
+        }, function () {
+            var data = {
+                "id": sellerId,
+                "checkStatus": status
+            }
+            data = {seller: JSON.stringify(data)};
+            editSeller(data, msg);
+        });
+    }, timeout);
 }
 /**
  * 启用禁用销售员
@@ -76,18 +79,21 @@ function sellerStart(sellerId, status) {
     if (status == -1) {
         msg = "暂停";
     }
-    layer.confirm("您是否要" + msg + "此销售员", {
-        btn: ['确定', '取消'], //按钮
-        shade:[0.1,'#fff'],
-        offset: "10%"
-    }, function () {
-        var data = {
-            "id": sellerId,
-            "isStartUse": status
-        }
-        data = {seller: JSON.stringify(data)};
-        editSeller(data, msg);
-    });
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.confirm("您是否要" + msg + "此销售员", {
+            btn: ['确定', '取消'], //按钮
+            shade: [0.1, '#fff'],
+            offset: scrollHeight + "px"
+        }, function () {
+            var data = {
+                "id": sellerId,
+                "isStartUse": status
+            }
+            data = {seller: JSON.stringify(data)};
+            editSeller(data, msg);
+        });
+    }, timeout);
 }
 
 /**
@@ -110,17 +116,20 @@ function batchCheck(status) {
         }
     });
     if (id.length == 0 && !flag) {
-        layer.alert("请选择需要" + msg + "的销售员", {
-            offset: "10%",
-            shade:[0.1,"#fff"],
-            closeBtn: 0
-        }, function (index) {
-            layer.closeAll();
-        });
+        SonScrollTop(0);
+        setTimeout(function () {
+            layer.alert("请选择需要" + msg + "的销售员", {
+                offset: scrollHeight + "px",
+                shade: [0.1, "#fff"],
+                closeBtn: 0
+            }, function (index) {
+                layer.closeAll();
+            });
+        }, timeout);
     } else {
         layer.confirm("您是否要" + msg + "选中的销售员", {
             btn: ['确定', '取消'],
-            shade:[0.1,'#fff'],
+            shade: [0.1, '#fff'],
             offset: '10%'
         }, function () {
             layer.closeAll();
@@ -151,7 +160,7 @@ function editSeller(data, msg) {
             if (data.flag) {
                 var tip = layer.alert(msg + "成功", {
                     offset: "10%",
-                    shade:[0.1,"#fff"],
+                    shade: [0.1, "#fff"],
                     closeBtn: 0
                 }, function (index) {
                     layer.close(tip);
@@ -159,7 +168,7 @@ function editSeller(data, msg) {
                 });
             } else {// 编辑失败
                 layer.alert(msg + "失败，请稍后重试", {
-                    shade:[0.1,"#fff"],
+                    shade: [0.1, "#fff"],
                     offset: "10%"
                 });
             }
@@ -169,7 +178,7 @@ function editSeller(data, msg) {
             layer.closeAll();
 
             layer.alert(msg + "失败，请稍后重试", {
-                shade:[0.1,"#fff"],
+                shade: [0.1, "#fff"],
                 offset: "10%"
             });
             return;
