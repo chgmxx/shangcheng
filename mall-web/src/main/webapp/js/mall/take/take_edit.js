@@ -138,13 +138,14 @@ function choosePicture() {
 }
 /**选择图片回调**/
 function image(imageArray, url) {
+    imageArray = JSON.parse(imageArray);
     var imgHttp = $(".imgHttp").val();
     var html = "";
     if (imageArray != null && imageArray.length > 0) {
         for (var i = 0; i < imageArray.length; i++) {
+
             var imageUrl = imageArray[i].url;
             var url = imageUrl.split("/upload/")[1];
-
 
             html += "<li class='sort delParent'>";
             html += "<img id='img1' aId='' src='" + (imgHttp + url) + "' width='50'/>";

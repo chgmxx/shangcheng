@@ -78,7 +78,7 @@
                 }
             });
             parent.getProvinces(id, province, index);
-            layer.closeAll();
+            parent.layer.closeAll();
         });
 
         //取消按钮

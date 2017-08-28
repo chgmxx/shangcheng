@@ -487,8 +487,7 @@ public class MallHtmlController extends BaseController {
 		user = busUserService.selectById( zhuid );
 		ispid = 1;
 	    }
-	    Integer maxcj = 0;
-	    Integer.valueOf( dictService.getDiBserNum( user.getId(), 16, "1140" ) );
+	    Integer maxcj = Integer.valueOf( dictService.getDiBserNum( user.getId(), 16, "1140" ) );
 	    Integer ycj = htmlService.htmltotal( user.getId() );//主账户之下已创建的数量
 	    if ( ycj >= maxcj ) {
 		map.put( "error", "2" );

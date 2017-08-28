@@ -167,28 +167,28 @@
     </select>
     <select id="selectGroupsByProId" parameterType="Map" resultType="Map">
         select gb.g_start_time,gb.g_end_time from t_mall_group_buy gb
-        where  ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time) or (gb.g_start_time > now() and gb.g_end_time > now()))
-        and gb.is_delete = 0 and gb.is_use = 1 and gb.product_id=#{id} limit 1
+        where gb.is_delete = 0 and gb.is_use = 1 and gb.product_id=#{id}
+         and ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time) or (gb.g_start_time > now() and gb.g_end_time > now())) limit 1
     </select>
     <select id="selectSeckillByProId" parameterType="Map" resultType="Map">
         select ms.s_start_time,ms.s_end_time from t_mall_seckill ms
-        where  ((ms.s_start_time &lt;= now() and now() &lt; ms.s_end_time) or (ms.s_start_time > now() and ms.s_end_time > now()))
-        and ms.is_delete = 0 and ms.is_use = 1 and ms.product_id=#{id} limit 1
+        where ms.is_delete = 0 and ms.is_use = 1 and ms.product_id=#{id}
+        and  ((ms.s_start_time &lt;= now() and now() &lt; ms.s_end_time) or (ms.s_start_time > now() and ms.s_end_time > now())) limit 1
     </select>
     <select id="selectAuctionByProId" parameterType="Map" resultType="Map">
         select ma.auc_start_time,ma.auc_end_time  from t_mall_auction ma
-        where ((ma.auc_start_time &lt;= now() and now() &lt; ma.auc_end_time) or (ma.auc_start_time > now() and ma.auc_end_time > now()))
-        and ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id} limit 1
+        where  ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id}
+        and ((ma.auc_start_time &lt;= now() and now() &lt; ma.auc_end_time) or (ma.auc_start_time > now() and ma.auc_end_time > now())) limit 1
     </select>
     <select id="selectPresaleByProId" parameterType="Map" resultType="Map">
         select ma.sale_start_time,ma.sale_end_time  from t_mall_presale ma
-        where ((ma.sale_start_time &lt;= now() and now() &lt; ma.sale_end_time) or (ma.sale_start_time > now() and ma.sale_end_time > now()))
-        and ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id} limit 1
+        where ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id}
+        and  ((ma.sale_start_time &lt;= now() and now() &lt; ma.sale_end_time) or (ma.sale_start_time > now() and ma.sale_end_time > now())) limit 1
     </select>
     <select id="selectpifaByProId" parameterType="Map" resultType="Map">
         select ma.pf_start_time,ma.pf_end_time  from t_mall_pifa ma
-        where ((ma.pf_start_time &lt;= now() and now() &lt; ma.pf_end_time) or (ma.pf_start_time > now() and ma.pf_end_time > now()))
-        and ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id} limit 1
+        where ma.is_delete = 0 and ma.is_use = 1  and ma.product_id=#{id}
+        and ((ma.pf_start_time &lt;= now() and now() &lt; ma.pf_end_time) or (ma.pf_start_time > now() and ma.pf_end_time > now())) limit 1
     </select>
     <!-- 统计未开团的商品 -->
     <select id="selectCountProByGroup" resultType="java.lang.Integer" parameterType="Map">

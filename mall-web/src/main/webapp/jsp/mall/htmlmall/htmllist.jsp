@@ -21,6 +21,8 @@
     <link rel="stylesheet" type="text/css" href="/css/common/comm.css"/>
     <link rel="stylesheet" type="text/css"  href="/css/mall/html/htmllist.css?<%= System.currentTimeMillis()%>"/>
     <script type="text/javascript"  src="/js/plugin/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
+    <script type="text/javascript" src="/js/plugin/copy/clipboard.min.js"></script>
+    <script type="text/javascript" src="/js/plugin/copy/copypublic.js"></script>
     <script src="/js/plugin/layer/layer.js"></script>
     <%--<script type="text/javascript"  src="/js/zclip/zclip.js?<%= System.currentTimeMillis()%>"></script>--%>
     <style>
@@ -298,10 +300,11 @@
     //背景图切换
     function uploadImg(id) {
         $("#changgeidimg").val(id);
-        materiallayer();
+//        materiallayer();
+        fhmater(0);
     }
 
-    function fhmateriallayer(imgid, imgurl) {
+    function image(imgid, imgurl) {
         var id = $("#changgeidimg").val();
         $.ajax({
             url: "/mallhtml/updateimage.do",

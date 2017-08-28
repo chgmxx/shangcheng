@@ -237,11 +237,15 @@ function editFreight() {
     }
 
     if (!flag || !detailFlag) {
-        layer.msg('请完善物流信息', {
-            shade:[0.1,"#fff"],
-            offset: "10%",
-            icon: 1
-        });
+        SonScrollTop(0);
+        setTimeout(function () {
+            layer.msg('请完善物流信息', {
+                shade:[0.1,"#fff"],
+                offset: scrollHeight + "px",
+                icon: 1
+            });
+        }, timeout);
+
     } else {
 
 //		if(isResultMoney == 1){
@@ -262,28 +266,36 @@ function editFreight() {
             success: function (data) {
                 layer.close(layerLoad);
                 if (data.flag == true) {
-                    var tip = layer.alert("编辑成功", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%",
-                        closeBtn: 0
-                    }, function (index) {
-                        layer.close(tip);
-                        window.location.href = "/mFreight/index.do";
-                    });
+                    SonScrollTop(0);
+                    setTimeout(function () {
+                        var tip = layer.alert("编辑成功", {
+                            shade:[0.1,"#fff"],
+                            offset: scrollHeight + "px",
+                            closeBtn: 0
+                        }, function (index) {
+                            layer.close(tip);
+                            window.location.href = "/mFreight/index.do";
+                        });
+                    }, timeout);
                 } else {// 编辑失败
-                    layer.alert("编辑失败", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%"
-                    });
+                    SonScrollTop(0);
+                    setTimeout(function () {
+                        layer.alert("编辑失败", {
+                            shade:[0.1,"#fff"],
+                            offset: scrollHeight + "px",
+                        });
+                    }, timeout);
                 }
-
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 layer.close(layerLoad);
-                layer.alert("编辑失败", {
-                    shade:[0.1,"#fff"],
-                    offset: "10%"
-                });
+                SonScrollTop(0);
+                setTimeout(function () {
+                    layer.alert("编辑失败", {
+                        shade:[0.1,"#fff"],
+                        offset: scrollHeight + "px",
+                    });
+                }, timeout);
                 return;
             }
         });
@@ -416,7 +428,8 @@ function eachDetail() {
             detailObj["money"] = changeTwoDecimal_f(dMoney);
             detailObj["expressId"] = expressId;
             detailObj["express"] = express;
-            detailObj["noMoneyNum"] = changeTwoDecimal_f(dNoMoneyNum);
+            // detailObj["noMoneyNum"] = changeTwoDecimal_f(dNoMoneyNum);
+            detailObj["noMoneyNum"] = dNoMoneyNum;
             detailObj["noMoney"] = changeTwoDecimal_f(dNoMoney);
             detailObj["firstNums"] = changeTwoDecimal_f(firstNums);
             detailObj["addNums"] = changeTwoDecimal_f(addNums);
@@ -443,7 +456,7 @@ function eachDetail() {
                     proArr[proArr.length] = provinceObj;
                 }
             }
-            detailObj["provinceList"] = JSON.stringify(proArr);
+            detailObj["provinceList"] = proArr;
             detailArr[detailArr.length] = detailObj;
             loadFrame();
         } else {
@@ -538,8 +551,20 @@ function selectPro(obj) {
     if ($.trim(hidePro) != "") {
         url += "&hidePro=," + hidePro + ",";
     }
-    parentOpenIframe("选择可配送区域", "450px", "350px", url);
+    // parentOpenIframe("选择可配送区域", "450px", "350px", url);
     // parent.openIframeNoScoll("选择可配送区域", "450px", "350px", url);
+    SonScrollTop(0);
+    setTimeout(function () {
+        layer.open({
+            type: 2,
+            title: "选择可配送区域",
+            skin: 'layui-layer-rim', //加上边框
+            area: ['450px', '350px'], //宽高
+            offset: scrollHeight + "px",
+            shade: [0.1, "#fff"],
+            content: url
+        });
+    }, timeout);
 }
 
 
