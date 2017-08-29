@@ -32,6 +32,7 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PageUtil;
+import io.swagger.models.auth.In;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -206,6 +207,15 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	    List< Map< String,Object > > productList = groupBuyDAO.selectProByGroup( params );
 	    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 	    if ( productList != null && productList.size() > 0 ) {
+		List< Integer > products = new ArrayList< Integer >();
+		for ( Map< String,Object > map : productList ) {
+		    products.add( CommonUtil.toInteger( map.get( "id" ) ) );
+		}
+		List< Map< String,Object > > groupLIst = groupBuyDAO.selectGroupsByProId( products );
+		List< Map< String,Object > > seckillList = groupBuyDAO.selectSeckillByProId( products );
+		List< Map< String,Object > > auctionList = groupBuyDAO.selectAuctionByProId( products );
+		List< Map< String,Object > > presaleList = groupBuyDAO.selectPresaleByProId( products );
+		List< Map< String,Object > > pifaList = groupBuyDAO.selectpifaByProId( products );
 		for ( Map< String,Object > map : productList ) {
 		    String pId = map.get( "id" ).toString();
 		    int groupStatus = -1;
@@ -222,7 +232,72 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			isIntegral = CommonUtil.toInteger( params.get( "isIntegral" ) );
 		    }
 		    if ( isCommission == 0 && isIntegral == 0 ) {
-			if ( CommonUtil.isNotEmpty( map.get( "groupMap" ) ) ) {
+			if ( groupLIst != null && groupLIst.size() > 0 ) {
+			    for ( Map< String,Object > group : groupLIst ) {
+				if ( group.get( "product_id" ).equals( map.get( "id" ) ) ) {
+				    Map groupMap = JSONObject.parseObject( JSON.toJSONString( group ), Map.class );
+				    if ( CommonUtil.isNotEmpty( groupMap.get( "g_start_time" ) ) ) {
+					String startTime = groupMap.get( "g_start_time" ).toString();
+					String endTime = groupMap.get( "g_end_time" ).toString();
+					groupStatus = isAddPro( startTime, endTime, defaultProId, pId );
+				    }
+				    break;
+				}
+			    }
+			}
+			if ( seckillList != null && seckillList.size() > 0 ) {
+			    for ( Map< String,Object > seckill : seckillList ) {
+				if ( seckill.get( "product_id" ).equals( map.get( "id" ) ) ) {
+				    Map seckillMap = JSONObject.parseObject( JSON.toJSONString( seckill ), Map.class );
+				    if ( CommonUtil.isNotEmpty( seckillMap.get( "s_start_time" ) ) ) {
+					String startTime = seckillMap.get( "s_start_time" ).toString();
+					String endTime = seckillMap.get( "s_end_time" ).toString();
+					seckillStatus = isAddPro( startTime, endTime, defaultProId, pId );
+				    }
+				    break;
+				}
+			    }
+			}
+			if ( auctionList != null && auctionList.size() > 0 ) {
+			    for ( Map< String,Object > auction : auctionList ) {
+				if ( auction.get( "product_id" ).equals( map.get( "id" ) ) ) {
+				    Map auctionMap = JSONObject.parseObject( JSON.toJSONString( auction ), Map.class );
+				    if ( CommonUtil.isNotEmpty( auctionMap.get( "auc_start_time" ) ) ) {
+					String startTime = auctionMap.get( "auc_start_time" ).toString();
+					String endTime = auctionMap.get( "auc_end_time" ).toString();
+					auctionStatus = isAddPro( startTime, endTime, defaultProId, pId );
+				    }
+				    break;
+				}
+			    }
+			}
+			if ( presaleList != null && presaleList.size() > 0 ) {
+			    for ( Map< String,Object > presale : presaleList ) {
+				if ( presale.get( "product_id" ).equals( map.get( "id" ) ) ) {
+				    Map presaleMap = JSONObject.parseObject( JSON.toJSONString( presale ), Map.class );
+				    if ( CommonUtil.isNotEmpty( presaleMap.get( "sale_start_time" ) ) ) {
+					String startTime = presaleMap.get( "sale_start_time" ).toString();
+					String endTime = presaleMap.get( "sale_end_time" ).toString();
+					presaleStatus = isAddPro( startTime, endTime, defaultProId, pId );
+				    }
+				    break;
+				}
+			    }
+			}
+			if ( pifaList != null && pifaList.size() > 0 ) {
+			    for ( Map< String,Object > pifa : pifaList ) {
+				if ( pifa.get( "product_id" ).equals( map.get( "id" ) ) ) {
+				    Map pifaMap = JSONObject.parseObject( JSON.toJSONString( pifa ), Map.class );
+				    if ( CommonUtil.isNotEmpty( pifaMap.get( "pf_start_time" ) ) ) {
+					String startTime = pifaMap.get( "pf_start_time" ).toString();
+					String endTime = pifaMap.get( "pf_end_time" ).toString();
+					pifaStatus = isAddPro( startTime, endTime, defaultProId, pId );
+				    }
+				    break;
+				}
+			    }
+			}
+			/*if ( CommonUtil.isNotEmpty( map.get( "groupMap" ) ) ) {
 			    Map groupMap = JSONObject.parseObject( JSON.toJSONString( map.get( "groupMap" ) ), Map.class );
 			    if ( CommonUtil.isNotEmpty( groupMap.get( "g_start_time" ) ) ) {
 				String startTime = groupMap.get( "g_start_time" ).toString();
@@ -261,7 +336,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 				String endTime = pifaMap.get( "pf_end_time" ).toString();
 				pifaStatus = isAddPro( startTime, endTime, defaultProId, pId );
 			    }
-			}
+			}*/
 		    } else if ( isCommission != 0 ) {
 			Map< String,Object > sellerMap = new HashMap< String,Object >();
 			sellerMap.put( "userId", params.get( "userId" ) );
