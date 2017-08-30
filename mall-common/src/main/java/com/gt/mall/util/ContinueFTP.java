@@ -221,7 +221,7 @@ public class ContinueFTP {
             if (remote.contains("/")) {
                 remoteFileName = remote.substring(remote.lastIndexOf("/") + 1);
                 // 创建服务器远程目录结构，创建失败直接返回
-                if (CreateDirecroty(remote, ftpClient) == UploadStatus.Create_Directory_Fail) {
+                if ( createDirecroty(remote, ftpClient) == UploadStatus.Create_Directory_Fail) {
                     return UploadStatus.Create_Directory_Fail;
                 }
             }
@@ -333,7 +333,7 @@ public class ContinueFTP {
      * @return 目录创建是否成功
      * @throws IOException
      */
-    public UploadStatus CreateDirecroty(String remote, FTPClient ftpClient) throws IOException {
+    public UploadStatus createDirecroty(String remote, FTPClient ftpClient) throws IOException {
         UploadStatus status = UploadStatus.Create_Directory_Success;
         String directory = remote.substring(0, remote.lastIndexOf("/") + 1);
         if (!directory.equalsIgnoreCase("/")

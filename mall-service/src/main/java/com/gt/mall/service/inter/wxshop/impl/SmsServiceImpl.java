@@ -24,7 +24,7 @@ public class SmsServiceImpl implements SmsService {
     public boolean sendSmsOld( OldApiSms oldApiSms ) {
 	oldApiSms.setCompany( Constants.doMainName );
 	oldApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( oldApiSms, SMS_URL + "sendSmsOld.do", 2 );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( oldApiSms, SMS_URL + "sendSmsOld.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

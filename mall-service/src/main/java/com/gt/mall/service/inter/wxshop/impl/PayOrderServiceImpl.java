@@ -19,7 +19,7 @@ public class PayOrderServiceImpl implements PayOrderService {
 
     @Override
     public WxPayOrder selectWxOrdByOutTradeNo( String orderNo ) {
-	String result = HttpSignUtil.SignHttpSelect( orderNo, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( orderNo, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPayOrder.class );
 	}

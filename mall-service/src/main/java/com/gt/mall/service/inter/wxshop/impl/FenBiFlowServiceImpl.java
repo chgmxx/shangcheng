@@ -25,7 +25,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public FenBiCount getFenbiSurplus( FenbiSurplus fenbiSurplus ) {
-	String result = HttpSignUtil.SignHttpSelect( fenbiSurplus, FLOW_URL + "getFenbiSurplus.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( fenbiSurplus, FLOW_URL + "getFenbiSurplus.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenBiCount.class );
 	}
@@ -34,7 +34,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public WsBusFlowInfo getFlowInfoById( int flowId ) {
-	String result = HttpSignUtil.SignHttpSelect( flowId, FLOW_URL + "getFlowInfoById.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( flowId, FLOW_URL + "getFlowInfoById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsBusFlowInfo.class );
 	}
@@ -43,7 +43,7 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public List< BusFlow > getBusFlowsByUserId( int busUserId ) {
-	String result = HttpSignUtil.SignHttpSelect( busUserId, FLOW_URL + "getBusFlowsByUserId.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( busUserId, FLOW_URL + "getBusFlowsByUserId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, BusFlow.class );
 	}
@@ -52,12 +52,12 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord ) {
-	return HttpSignUtil.SignHttpInsertOrUpdate( fenbiFlowRecord, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
+	return HttpSignUtil.signHttpInsertOrUpdate( fenbiFlowRecord, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
     }
 
     @Override
     public WsFenbiFlowRecord getFenbiFlowRecordById( int recordId ) {
-	String result = HttpSignUtil.SignHttpSelect( recordId, FLOW_URL + "getFenbiFlowRecordById.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( recordId, FLOW_URL + "getFenbiFlowRecordById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsFenbiFlowRecord.class );
 	}
@@ -66,13 +66,13 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public boolean rollbackFenbiFlowRecord( int recordId ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( recordId, FLOW_URL + "rollbackFenbiFlowRecord.do", 2 );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( recordId, FLOW_URL + "rollbackFenbiFlowRecord.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public boolean adcServices( AdcServicesInfo adcServicesInfo ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( adcServicesInfo, FLOW_URL + "adcServices.do", 2 );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( adcServicesInfo, FLOW_URL + "adcServices.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

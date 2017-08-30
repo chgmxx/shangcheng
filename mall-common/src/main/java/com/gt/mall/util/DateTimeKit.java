@@ -1631,7 +1631,7 @@ public class DateTimeKit {
      * -1：source比traget时间小
      * @throws Exception
      */
-    public static int DateCompare(String source, String traget, String type) throws Exception {
+    public static int dateCompare(String source, String traget, String type) throws Exception {
         int ret = 2;
         SimpleDateFormat format = new SimpleDateFormat(type);
         Date sourcedate = format.parse(source);

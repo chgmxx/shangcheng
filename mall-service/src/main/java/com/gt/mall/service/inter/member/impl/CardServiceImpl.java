@@ -32,7 +32,7 @@ public class CardServiceImpl implements CardService {
     public Map< String,Object > findDuofenCardByReceiveId( int receiveId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "receiveId", receiveId );
-	String data = HttpSignUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findDuofenCardByReceiveId" );
+	String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findDuofenCardByReceiveId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
 	}
@@ -49,7 +49,7 @@ public class CardServiceImpl implements CardService {
     public List< Map > findReceiveByBusUserId( int busUserId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "busId", busUserId );
-	String data = HttpSignUtil.SignHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
+	String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}
@@ -58,7 +58,7 @@ public class CardServiceImpl implements CardService {
 
     @Override
     public boolean successPayBack( Map< String,Object > params ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, "/memberAPI/cardCouponseApi/successPayBack" );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, "/memberAPI/cardCouponseApi/successPayBack" );
 	if ( CommonUtil.isNotEmpty( resultMap ) ) {
 	    int code = CommonUtil.toInteger( resultMap.get( "code" ) );
 	    if(code == 1){

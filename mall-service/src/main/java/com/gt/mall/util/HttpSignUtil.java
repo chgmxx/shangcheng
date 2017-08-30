@@ -74,7 +74,7 @@ public class HttpSignUtil {
      *
      * @return 返回
      */
-    public static String SignHttpSelect( Object params, String url, int... type ) {
+    public static String signHttpSelect( Object params, String url, int... type ) {
 	JSONObject resultObj = SignHttpJson( params, url, type );
 
 	if ( resultObj.getInteger( "code" ) == 0 ) {
@@ -95,7 +95,7 @@ public class HttpSignUtil {
      *
      * @return 返回
      */
-    public static Map< String,Object > SignHttpInsertOrUpdate( Object params, String url, int... type ) {
+    public static Map< String,Object > signHttpInsertOrUpdate( Object params, String url, int... type ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	JSONObject resultObj = SignHttpJson( params, url, type );
 	/*logger.info( "调用接口返回值 = " + resultObj.getString( "data" ) );*/

@@ -8,7 +8,6 @@ import com.gt.mall.bean.wx.pay.WxmemberPayRefund;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
-import com.gt.mall.util.WxHttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -26,17 +25,17 @@ public class PayServiceImpl implements PayService {
 
     @Override
     public Map< String,Object > payapi( SubQrPayParams payParams ) {
-	return HttpSignUtil.SignHttpInsertOrUpdate( payParams, PAY_URL + "payapi.do", 2 );
+	return HttpSignUtil.signHttpInsertOrUpdate( payParams, PAY_URL + "payapi.do", 2 );
     }
 
     @Override
     public Map< String,Object > wxmemberPayRefund( WxmemberPayRefund refund ) {
-	return HttpSignUtil.SignHttpInsertOrUpdate( refund, PAY_URL + "wxmemberPayRefund.do", 2 );
+	return HttpSignUtil.signHttpInsertOrUpdate( refund, PAY_URL + "wxmemberPayRefund.do", 2 );
     }
 
     @Override
     public EnterprisePaymentResult enterprisePayment( ApiEnterprisePayment payment ) {
-	Map resultMap = WxHttpSignUtil.SignHttpInsertOrUpdate( payment, PAY_URL + "wxmemberPayRefund.do", 2 );
+	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( payment, PAY_URL + "wxmemberPayRefund.do", 2 );
 	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
 	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
 	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), EnterprisePaymentResult.class );

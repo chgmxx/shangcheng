@@ -27,7 +27,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public WsWxShopInfo getShopById( int wxShopId ) {
-	String result = HttpSignUtil.SignHttpSelect( wxShopId, WS_SHOP_URL + "getShopById.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( wxShopId, WS_SHOP_URL + "getShopById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsWxShopInfo.class );
 	}
@@ -36,7 +36,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< ShopPhoto > getShopPhotoByShopId( int wxShopId ) {
-	String result = HttpSignUtil.SignHttpSelect( wxShopId, WS_SHOP_URL + "getShopPhotoByShopId.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( wxShopId, WS_SHOP_URL + "getShopPhotoByShopId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, ShopPhoto.class );
 	}
@@ -45,7 +45,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< WsWxShopInfoExtend > queryWxShopByBusId( int busUserId ) {
-	String result = HttpSignUtil.SignHttpSelect( busUserId, WS_SHOP_URL + "queryWxShopByBusId.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( busUserId, WS_SHOP_URL + "queryWxShopByBusId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
 	}
@@ -54,13 +54,13 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public boolean addShopSubShop( ShopSubsop shopSubsop ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( shopSubsop, WS_SHOP_URL + "addShopSubShop.do", 2 );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( shopSubsop, WS_SHOP_URL + "addShopSubShop.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public List< Map > queryCityByParentId( int parentId ) {
-	String result = HttpSignUtil.SignHttpSelect( parentId, WS_SHOP_URL + "queryCityByParentId.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( parentId, WS_SHOP_URL + "queryCityByParentId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}
@@ -69,7 +69,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< Map > queryCityByLevel( int level ) {
-	String result = HttpSignUtil.SignHttpSelect( level, WS_SHOP_URL + "queryCityByLevel.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( level, WS_SHOP_URL + "queryCityByLevel.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}
@@ -81,7 +81,7 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( CommonUtil.isEmpty( cityIds ) ) {
 	    return null;
 	}
-	String result = HttpSignUtil.SignHttpSelect( cityIds, WS_SHOP_URL + "queryBasisCityIds.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( cityIds, WS_SHOP_URL + "queryBasisCityIds.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
 	}
@@ -90,7 +90,7 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public boolean updateBySubShop( ShopSubsop shopSubsop ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( shopSubsop, WS_SHOP_URL + "updateBySubShop.do", 2 );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( shopSubsop, WS_SHOP_URL + "updateBySubShop.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 

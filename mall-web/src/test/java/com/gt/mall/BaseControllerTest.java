@@ -52,11 +52,11 @@ public class BaseControllerTest extends BasicTest {
 	params.put( "reqdata", 17 );
 
 
-	/*String result = HttpSignUtil.SignHttpSelect( params, "/8A5DA52E/shopapi/79B4DE7C/getShopById.do", 1 );
+	/*String result = HttpSignUtil.signHttpSelect( params, "/8A5DA52E/shopapi/79B4DE7C/getShopById.do", 1 );
 	WsWxShopInfo shop = JSONObject.toJavaObject( JSONObject.parseObject( result ), WsWxShopInfo.class );
 	System.out.println("json = " + shop.getBusinessName());*/
 
-	/*String result = HttpSignUtil.SignHttpSelect( params, "/8A5DA52E/shopapi/79B4DE7C/getShopPhotoByShopId.do", 1 );
+	/*String result = HttpSignUtil.signHttpSelect( params, "/8A5DA52E/shopapi/79B4DE7C/getShopPhotoByShopId.do", 1 );
 	System.out.println( "result = " + result );
 	List< ShopPhoto > photoList = JSONArray.parseArray( result, ShopPhoto.class );
 	System.out.println( "json = " + photoList.get( 0 ).getLocalAddress() );*/
@@ -70,7 +70,7 @@ public class BaseControllerTest extends BasicTest {
 	sms.setModel( 5 );
 	boolean flag = smsService.sendSmsOld( sms );
 
-	/*String result = HttpSignUtil.SignHttpSelect( sms, "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do", 1 );
+	/*String result = HttpSignUtil.signHttpSelect( sms, "/8A5DA52E/smsapi/6F6D9AD2/79B4DE7C/sendSmsOld.do", 1 );
 	System.out.println( "result = " + result );*/
 
 	/*WxPublicUsers user = wxPublicUserService.selectByUserId( 42 );

@@ -69,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
     public Member findMemberById( int memberId, Member member ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findByMemberId" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findByMemberId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject memberObj = JSONObject.parseObject( data );
 	    member = isEmptyMember( memberObj, member );
@@ -88,7 +88,7 @@ public class MemberServiceImpl implements MemberService {
      * @return 会员对象
      */
     public Member bingdingPhone( Map< String,Object > params, Member member ) {
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "bingdingPhone" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "bingdingPhone" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject memberObj = JSONObject.parseObject( data );
 	    member.setPhone( memberObj.getString( "phone" ) );
@@ -106,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
     public double getMemberDiscount( int memberId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findCardTypeReturnDiscount" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardTypeReturnDiscount" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return CommonUtil.toDouble( data );
 	}
@@ -125,7 +125,7 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	params.put( "shopId", shopId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findCardByMembeId" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardByMembeId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
 	}
@@ -144,7 +144,7 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	params.put( "money", money );
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, MEMBER_URL + "isAdequateMoney" );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "isAdequateMoney" );
 	if ( CommonUtil.isNotEmpty( resultMap ) ) {
 	    return resultMap;
 	}
@@ -159,7 +159,7 @@ public class MemberServiceImpl implements MemberService {
      * @return 消费是否充足
      */
     public Map< String,Object > refundMoney( Map< String,Object > params ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( params, MEMBER_URL + "refundMoney" );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "refundMoney" );
 	if ( CommonUtil.isNotEmpty( resultMap ) ) {
 	    return resultMap;
 	}
@@ -176,7 +176,7 @@ public class MemberServiceImpl implements MemberService {
     public boolean isMember( int memberId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String result = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "isMember" );
+	String result = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isMember" );
 	return CommonUtil.isNotEmpty( result );
     }
 
@@ -189,7 +189,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public Map< String,Object > updateJifen( Map< String,Object > params ) {
-	return HttpSignUtil.SignHttpInsertOrUpdate( params, MEMBER_URL + "updateJifen" );
+	return HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateJifen" );
     }
 
     /**
@@ -203,7 +203,7 @@ public class MemberServiceImpl implements MemberService {
     public List< Integer > findMemberListByIds( int memberId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberIdsByid" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberIdsByid" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Integer.class );
 	}
@@ -221,7 +221,7 @@ public class MemberServiceImpl implements MemberService {
     public Integer isCardType( int memberId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "isCardType" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isCardType" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return CommonUtil.toInteger( data );
 	}
@@ -239,7 +239,7 @@ public class MemberServiceImpl implements MemberService {
     public Map findGradeType( int memberId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findGradeType" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findGradeType" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
 	}
@@ -255,7 +255,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public List< Map > findCardrecordList( Map< String,Object > params ) {
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findCardrecord" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardrecord" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}
@@ -266,7 +266,7 @@ public class MemberServiceImpl implements MemberService {
     public List< Map > findBuyGradeType( int userId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "busId", userId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findBuyGradeType" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findBuyGradeType" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}
@@ -275,20 +275,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean updateUserConsume( UserConsumeParams consumeParams ) {
-	Map< String,Object > resultMap = HttpSignUtil.SignHttpInsertOrUpdate( consumeParams, MEMBER_URL + "updateJifen" );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( consumeParams, MEMBER_URL + "updateJifen" );
 	return CommonUtil.toString( resultMap.get( "code" ) ).equals( "1" );
     }
 
     @Override
     public Map< String,Object > refundMoneyAndJifenAndFenbi( ReturnParams returnParams ) {
-	return HttpSignUtil.SignHttpInsertOrUpdate( returnParams, MEMBER_URL + "refundMoneyAndJifenAndFenbi" );
+	return HttpSignUtil.signHttpInsertOrUpdate( returnParams, MEMBER_URL + "refundMoneyAndJifenAndFenbi" );
     }
 
     @Override
     public MemberCard findMemberCardByMcId( int mcId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "mcId", mcId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberCardByMcId" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberCardByMcId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), MemberCard.class );
 	}
@@ -300,7 +300,7 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	params.put( "shopIds", shopIds );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findCardAndShopIdsByMembeId" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardAndShopIdsByMembeId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
 	}
@@ -312,7 +312,7 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "ids", memberIds );
 	params.put( "busId", busId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberByIds" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByIds" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}
@@ -324,7 +324,7 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "phone", phone );
 	params.put( "busId", busId );
-	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberByPhone" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByPhone" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}

@@ -376,7 +376,10 @@ public class ImageWaterMarkUtil {
 	    //System.out.println(newPath);
 	    File file = new File( newPath.substring( 0, newPath.lastIndexOf( "/" ) ) );
 	    if ( !file.exists() && !file.isDirectory() ) {
-		file.mkdirs();
+		boolean flag = file.mkdirs();
+		if ( !flag ) {
+		    System.out.println( "创建文件失败 = " );
+		}
 	    }
 	    os = new FileOutputStream( newPath );
 	    // 生成图片
@@ -475,7 +478,10 @@ public class ImageWaterMarkUtil {
 		for ( int i = 0; i < logoPathStr.length; i++ ) {
 		    File files = new File( logoPathStr[i] );
 		    if ( files.exists() ) {
-			files.delete();//删除水印图片
+			boolean flag = files.delete();//删除水印图片
+			if ( !flag ) {
+			    System.out.println( "删除图片失败 = " );
+			}
 		    }
 		}
 	    }

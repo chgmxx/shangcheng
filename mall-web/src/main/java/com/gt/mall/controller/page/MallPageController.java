@@ -411,7 +411,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 
     @RequestMapping( "{id}/79B4DE7C/viewHomepage" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
-    public String ViewHomepage( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws Exception {
+    public String viewHomepage( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws Exception {
 	int userid = 0;
 	Member member = SessionUtils.getLoginMember( request );
 	MallPage obj = mallPageService.select( id );//根据页面id查询页面信息
@@ -870,7 +870,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		Map shopmessage = mallPageService.shopmessage( shopid );
 		double discount = 1;//商品折扣
 		String is_member_discount = mapmessage.get( "is_member_discount" ).toString();//商品是否参加折扣
-		if ( ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {
+		if ( is_member_discount.equals( "1" ) && CommonUtil.isNotEmpty( member ) ) {
 		    discount = mallProductService.getMemberDiscount( CommonUtil.toString( mapmessage.get( "is_member_discount" ) ), member );
 		}
 		request.setAttribute( "discount", discount );//折扣价
@@ -881,7 +881,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		Map guige = new HashMap();
 		List< Map< String,Object > > specificaList = new ArrayList< Map< String,Object > >();
 		List< Map< String,Object > > guigePrice = new ArrayList< Map< String,Object > >();//获取商品所有规格值价钱，图片，库存，价钱等
-		if ( is_specifica.equals( "1" ) || is_specifica == "1" ) {
+		if ( is_specifica.equals( "1" ) ) {
 		    guige = mallPageService.productSpecifications( id, inv_id );
 		    specificaList = mallProductSpecificaService.getSpecificaByProductId( id );//获取商品规格值
 		    guigePrice = mallPageService.guigePrice( id );

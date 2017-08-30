@@ -474,7 +474,7 @@ public class MallHtmlController extends BaseController {
      * @throws IOException
      */
     @RequestMapping( "/SetmallHtml" )
-    public void SetmallHtml( HttpServletRequest request, HttpServletResponse response ) throws IOException {
+    public void setmallHtml( HttpServletRequest request, HttpServletResponse response ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息

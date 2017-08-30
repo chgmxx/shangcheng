@@ -26,7 +26,7 @@ public class DictServiceImpl implements DictService {
     public List< Map > getDict( String dictType ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "style", dictType );
-	String data = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
+	String data = HttpSignUtil.signHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject dataJson = JSONObject.parseObject( data );
 	    if ( CommonUtil.isNotEmpty( dataJson.get( "dictJSON" ) ) ) {
@@ -41,7 +41,7 @@ public class DictServiceImpl implements DictService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "dictType", dictType );
 	params.put( "key", key );
-	String data = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
+	String data = HttpSignUtil.signHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject dataJson = JSONObject.parseObject( data );
 	    if ( CommonUtil.isNotEmpty( dataJson.get( "dictJSON" ) ) ) {
@@ -51,7 +51,7 @@ public class DictServiceImpl implements DictService {
 		}
 	    }
 	}
-	return HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDictApi.dood", 1 );
+	return HttpSignUtil.signHttpSelect( params, DICT_URL + "getDictApi.dood", 1 );
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DictServiceImpl implements DictService {
 	params.put( "userId", userId );
 	params.put( "dictstyle", dictstyle );
 	params.put( "modelStyle", modelStyle );
-	String result = HttpSignUtil.SignHttpSelect( params, DICT_URL + "getDiBserNum.do", 1 );
+	String result = HttpSignUtil.signHttpSelect( params, DICT_URL + "getDiBserNum.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    JSONObject resultObj = JSONObject.parseObject( result );
 	    if ( CommonUtil.isNotEmpty( resultObj.get( "dictBusUserNum" ) ) ) {

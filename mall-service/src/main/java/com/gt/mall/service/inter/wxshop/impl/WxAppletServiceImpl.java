@@ -21,7 +21,7 @@ public class WxAppletServiceImpl implements WxAppletService {
 
     @Override
     public MemberAppletOpenid memberAppletByMemIdAndStyle( MemberAppletByMemIdAndStyle applet ) {
-	String result = HttpSignUtil.SignHttpSelect( applet, APPLET_URL + "memberAppletByMemIdAndStyle.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( applet, APPLET_URL + "memberAppletByMemIdAndStyle.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAppletOpenid.class );
 	}
