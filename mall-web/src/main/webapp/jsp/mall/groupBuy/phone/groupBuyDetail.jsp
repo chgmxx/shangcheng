@@ -45,7 +45,7 @@
 <link id="link" rel="stylesheet" type="text/css" href="/css/mall/groupbuy/reset.css"/>
 <script src="/js/plugin/jquery-1.8.3.min.js?<%=System.currentTimeMillis()%>"></script>
 <script type="text/javascript" src="/js/plugin/html5shiv.min.js?<%= System.currentTimeMillis()%>"></script>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
 <c:set var="joinId" value="0"></c:set>
 <c:set var="groupBuyId" value="0"></c:set>

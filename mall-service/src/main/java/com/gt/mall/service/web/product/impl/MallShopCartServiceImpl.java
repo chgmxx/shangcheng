@@ -59,8 +59,6 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	    discount = mallProductService.getMemberDiscount( "1", member );//获取会员折扣
 	}
 	List< Map< String,Object > > list = new ArrayList<>();
-	/*String sql = "SELECT distinct(a.shop_id),b.sto_name FROM t_mall_shop_cart a LEFT JOIN t_mall_store b ON a.shop_id=b.id "
-			+ "left join t_wx_shop s on s.id=b.wx_shop_id WHERE a.id IN(" + shopcards + ")  and s.`status` != -1 and b.is_delete=0";*/
 
 	BusUser user = new BusUser();
 	user.setId( userId );
@@ -69,21 +67,11 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	Map< String,Object > params = new HashMap<>();
 	params.put( "cartIds", shopcards.split( "," ) );
 	params.put( "busUserId", member.getBusid() );
-	//todo 传门店id进去
 	int proTypeId = 0;
 	List< Map< String,Object > > shoplist = mallShopCartDAO.selectCheckShopByParam( params );//获取所有的店铺
 	if ( shoplist != null && shoplist.size() > 0 ) {
 	    for ( Map< String,Object > shopMaps : shoplist ) {
 		Map< String,Object > shopMap = new HashMap<>();
-		/*String sql1 = "SELECT a.id,a.product_id,a.shop_id,a.product_specificas,a.product_num,a.product_speciname,a.price,a.primary_price,a.user_type,a.pro_spec_str,a.pro_type,a.sale_member_id as saleMemberId,a.commission,"
-				+ " e.image_url,d.specifica_img_url,"
-				+ " b.return_day,b.pro_name,b.is_coupons as isCoupons,b.is_member_discount,b.pro_type_id,b.is_integral_deduction ,b.is_fenbi_deduction,b.pro_weight,b.flow_id as flowId "
-				+ " FROM t_mall_shop_cart a "
-				+ " LEFT JOIN t_mall_product b ON a.product_id=b.id "
-				+ " LEFT JOIN t_mall_product_inventory c ON a.product_specificas=c.specifica_ids  AND c.`product_id`=a.`product_id` "
-				+ " LEFT JOIN  t_mall_product_specifica d ON c.specifica_img_id=d.id  AND d.`product_id`=a.`product_id` "
-				+ " LEFT JOIN (SELECT image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_main_images=1 AND is_delete=0) e ON a.product_id=e.ass_id "
-				+ " WHERE a.shop_id =" + shopMaps.get( "shop_id" ) + " AND a.id IN (" + shopcards + ")";*/
 		Map< String,Object > shopParams = new HashMap<>();
 		shopParams.put( "shopId", shopMaps.get( "shop_id" ) );
 		shopParams.put( "checkIds", shopcards.split( "," ) );

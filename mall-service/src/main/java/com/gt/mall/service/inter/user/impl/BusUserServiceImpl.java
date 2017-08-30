@@ -1,13 +1,16 @@
 package com.gt.mall.service.inter.user.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,9 +26,11 @@ public class BusUserServiceImpl implements BusUserService {
 
     private static final String CHILD_USER_URL = "/8A5DA52E/childBusUserApi/";
 
-    public static final String VOICE_URL = "/8A5DA52E/videoCourceApi/";
+    private static final String VOICE_URL = "/8A5DA52E/videoCourceApi/";
 
-    public static final String USER_GUOQ_URL = "/8A5DA52E/busUserApi/";
+    private static final String USER_GUOQ_URL = "/8A5DA52E/busUserApi/";
+
+    private static final String USER_SHOP_URL = "/8A5DA52E/busCommonApi/";
 
     @Override
     public BusUser selectById( int busUserId ) {
@@ -40,7 +45,7 @@ public class BusUserServiceImpl implements BusUserService {
 
     @Override
     public int getIsErpCount( int modelstyle, int busUserId ) {
-	Map< String,Object > params = new HashMap<>();
+	/*Map< String,Object > params = new HashMap<>();
 	params.put( "userId", busUserId );
 	params.put( "modelstyle", modelstyle > 0 ? modelstyle : 8 );//默认是8  为进销存
 	String result = HttpSignUtil.SignHttpSelect( params, USER_URL + "getIsErpCount.do", 1 );
@@ -49,7 +54,7 @@ public class BusUserServiceImpl implements BusUserService {
 	    if ( resultObj.getInteger( "erpCount" ) == 1 ) {//已开通
 		return 1;
 	    }
-	}
+	}*/
 	return 0;
     }
 
@@ -102,6 +107,18 @@ public class BusUserServiceImpl implements BusUserService {
 	String result = HttpSignUtil.SignHttpSelect( params, USER_GUOQ_URL + "getWxPulbicMsg.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.parseObject( result );
+	}
+	return null;
+    }
+
+    @Override
+    public List< WsWxShopInfoExtend > getShopIdListByUserId( int userId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "userId", userId );
+
+	String result = HttpSignUtil.SignHttpSelect( params, USER_SHOP_URL + "getShopIdList.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
 	}
 	return null;
     }

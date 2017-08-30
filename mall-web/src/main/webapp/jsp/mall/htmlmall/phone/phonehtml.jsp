@@ -1,6 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8" %>
 <%
-    String basePath = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + request.getServletPath()
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + request.getServletPath()
             .substring( 0, request.getServletPath().lastIndexOf( "/" ) + 1 );
 
 %>

@@ -193,7 +193,7 @@
 <input type="hidden" class="userid" value="${userid }"/>
 
 <script type="text/javascript" src="/js/plugin/jquery-form.js"></script>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/plugin/layer-mobile/layer/layer.js"></script>
 <script type="text/javascript" src="/js/mall/seller/phone/sellerPublic.js"></script>
 <script type="text/javascript" src="/js/mall/seller/phone/sellerMallSet.js"></script>

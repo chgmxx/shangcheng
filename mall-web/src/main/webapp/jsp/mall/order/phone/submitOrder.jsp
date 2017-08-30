@@ -777,7 +777,7 @@
 </c:if>
 
 <!-- <script src="/js/plugin/jquery-1.8.3.min.js"></script> -->
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script> 
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
 <script> 
 	wx.config({

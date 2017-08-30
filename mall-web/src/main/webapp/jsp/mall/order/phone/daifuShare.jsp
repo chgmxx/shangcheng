@@ -71,7 +71,7 @@ String basePath = request.getScheme() + "://"
 	</div>
 </div>
 <input type="hidden" class="isWx" value="${isWx }"/>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript">
 var title = "帮我付款才是真友谊";
 var desc = "你的一笔小开支，是我们关系的一大步，为我付款吧！";

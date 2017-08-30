@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8" %>
 <%
     /* String path=application.getRealPath(request.getRequestURI());   */
-    String basePath = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + request.getServletPath()
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + request.getServletPath()
             .substring( 0, request.getServletPath().lastIndexOf( "/" ) + 1 );
 /* String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/"; */
@@ -31,7 +31,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <link rel="stylesheet" href="js/map/map.css?<%= System.currentTimeMillis()%>">
     <link rel="stylesheet" href="css/transverse.css?<%= System.currentTimeMillis()%>">
 
-    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU?<%= System.currentTimeMillis()%>"></script>
+    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU?<%= System.currentTimeMillis()%>"></script>
     <script src="js/jquery-1.8.0.min.js?<%= System.currentTimeMillis()%>"></script>
     <script src="js/swiper.min.js?<%= System.currentTimeMillis()%>"></script>
     <script src="js/angular.min.js?<%= System.currentTimeMillis()%>"></script>

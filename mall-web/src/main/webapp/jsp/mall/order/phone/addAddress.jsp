@@ -132,7 +132,7 @@ body{min-height: 100%;position: relative;font-family: SimHei,"微软雅黑"; fon
 	</div>
 </div>
 <input type="hidden" class="userid" value="${userid }"/>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZpmmFnpf7ZalTwV2Urf3Q4N2"></script>
 <c:if test="${!empty isJuliFreight }">
 	<input type="hidden" class="isJuliFreight" value="${isJuliFreight }"/>

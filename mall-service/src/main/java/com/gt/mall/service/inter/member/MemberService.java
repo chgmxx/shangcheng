@@ -174,4 +174,24 @@ public interface MemberService {
      */
     Map findCardAndShopIdsByMembeId( int memberId, String shopIds );
 
+    /**
+     * 根据ids集合查询粉丝信息返回包含数据(id,昵称，手机号码,头像)
+     *
+     * @param memberIds 粉丝id  用逗号隔开
+     * @param busId     商家id
+     *
+     * @return id, 昵称，手机号码,头像
+     */
+    List< Map > findMemberByIds( String memberIds, int busId );
+
+    /**
+     * 根据粉丝手机号码查询粉丝信息返回包含数据((id,昵称，手机号码,头像))
+     *
+     * @param phone 手机号码
+     * @param busId 商家id
+     *
+     * @return id, 昵称，手机号码,头像
+     */
+    List< Map > findMemberByPhone( String phone, int busId );
+
 }

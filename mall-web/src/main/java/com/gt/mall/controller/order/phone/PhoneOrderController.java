@@ -1,7 +1,10 @@
 package com.gt.mall.controller.order.phone;
 
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.bean.*;
+import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.Member;
+import com.gt.mall.bean.MemberAddress;
+import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.freight.MallFreightDAO;
@@ -16,8 +19,8 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.seckill.MallSeckill;
-import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -110,6 +113,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     private FenBiFlowService         fenBiFlowService;
     @Autowired
     private WxShopService            wxShopService;
+    @Autowired
+    private MallPageService          mallPageService;
 
     /**
      * 跳转至提交订单页面
@@ -230,7 +235,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 
 	    Object takeId = data.get( "takeId" );//到店自提的提货地址id
-	    if ( null == takeId || takeId.equals( "" ) || takeId == "" ) {
+	    if ( CommonUtil.isEmpty( takeId ) ) {
 		takeId = "0";
 	    } else {
 		JSONObject json = JSONObject.fromObject( dataObj );
@@ -579,7 +584,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    }
 		}
 		Object p = result.get( "payWays" );
-		if ( null != p && !p.equals( "" ) && p != "" ) {
+		if ( CommonUtil.isNotEmpty( p ) ) {
 		    orderPayWay = Integer.parseInt( p.toString() );
 		}
 		result.put( "payWay", orderPayWay );
@@ -1054,7 +1059,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( result.equals( "0" ) ) {
-		List< Map< String,Object > > pageId = mallOrderService.selectPageIdByUserId( member.getBusid() );
+		List< Map< String,Object > > shopList = mallStoreService.findByUserId( member.getId() );
+		List< Map< String,Object > > pageId = mallPageService.selectPageIdByUserId( member.getBusid(), shopList );
 		if ( pageId.size() > 0 ) {
 		    result = pageId.get( 0 ).get( "id" ).toString();
 		}

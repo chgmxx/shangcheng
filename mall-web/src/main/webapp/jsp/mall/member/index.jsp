@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="/css/mall/my/mallStyle.css?<%=System.currentTimeMillis()%>">
     <!-- <link rel="stylesheet" href="/css/trade/mall/my/public.css"> -->
     <link rel="stylesheet" href="/css/mall/public.css?<%=System.currentTimeMillis()%>">
+    <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
     <title>我的</title>
 </head>
 <body>
@@ -160,8 +161,7 @@
 <input type="hidden" class="memberId" value="${member.id}"/>
 </body>
 <%--<script type="text/javascript" src="/js/jquery.min.js"></script>--%>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
-<script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
 <script type="text/javascript">
     wx.config({

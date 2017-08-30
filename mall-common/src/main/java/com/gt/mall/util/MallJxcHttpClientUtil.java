@@ -2,6 +2,8 @@ package com.gt.mall.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -12,18 +14,20 @@ import java.util.Map;
  */
 public class MallJxcHttpClientUtil {
 
+    private static Logger logger    = LoggerFactory.getLogger( MallJxcHttpClientUtil.class );
     private static String TOKEN_STR = "";
 
     private static String login() {
-	System.out.println( "第一次登陆" );
+	logger.info( "第一次登陆" );
 	String url = PropertiesUtil.getJxcUrl() + "/erp/b/login";
 	Map< String,Object > params = new HashMap<>();
 	params.put( "account", PropertiesUtil.getJxcAccount() );
 	params.put( "pwd", PropertiesUtil.getJxcPwd() );
-	System.out.println( url );
+	logger.info( url );
+	logger.info( "登陆用户名和密码 = " + params );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params ) );
-	    System.out.println( jsonObject );
+	    logger.info( "登陆返回值：" + jsonObject.toJSONString() );
 	    if ( jsonObject.getString( "code" ).equals( "1001" ) ) {
 		JSONObject tokens = jsonObject.getJSONObject( "data" );
 		TOKEN_STR = tokens.getString( "token" );
@@ -44,17 +48,20 @@ public class MallJxcHttpClientUtil {
      * @return 返回
      */
     public static JSONArray batchSave( Map< String,Object > params, boolean isFirst ) {
-	System.out.println( "批量新增或修改商品和商品库存:" + params );
+	logger.info( "批量新增或修改商品和商品库存:" + params );
 	String url = PropertiesUtil.getJxcUrl() + "/erp/batchSave";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return null;
+	}
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( jsonObject );
+	    logger.info( "批量新增或修改商品和商品库存 返回值" + jsonObject.toJSONString() );
 	    if ( code.equals( "1001" ) ) {
-		System.out.println( jsonObject.getJSONArray( "data" ) );
 
 		return jsonObject.getJSONArray( "data" );
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -80,19 +87,21 @@ public class MallJxcHttpClientUtil {
      * @return JSONArray
      */
     public static JSONArray batchAttrSave( Map< String,Object > params, boolean isFirst ) {
-	System.out.println( "批量新增或修改商品规格：" + params );
+	logger.info( "批量新增或修改商品规格：" + params );
 	String url = PropertiesUtil.getJxcUrl() + "/erp/attr/batchSave";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
-	System.out.println( "规格传参：" + JSONObject.toJSONString( params ) );
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return null;
+	}
+	logger.info( "规格传参：" + JSONObject.toJSONString( params ) );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( jsonObject );
+	    logger.info( "批量新增或修改商品规格返回值：" + jsonObject.toJSONString() );
 	    if ( code.equals( "1001" ) ) {
-		System.out.println( "规格返回值:" + jsonObject.getJSONArray( "data" ) );
-
 		return jsonObject.getJSONArray( "data" );
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
 		if ( isFirst ) {
@@ -115,15 +124,19 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static boolean saveUpdateWarehouse( Map< String,Object > params, boolean isFirst ) {
-	System.out.println( "保存或修改仓库：" + params );
+	logger.info( "保存或修改仓库：" + params );
 	String url = PropertiesUtil.getJxcUrl() + "/erp/updateWarehouse";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return false;
+	}
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( jsonObject );
+	    logger.info( "保存或修改仓库返回值：" + jsonObject.toJSONString() );
 	    if ( code.equals( "1000" ) ) {
 		return true;
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -147,15 +160,19 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static boolean inventoryOperation( Map< String,Object > params, boolean isFirst ) {
-	System.out.println( "发货退货时调用修改库存：" + params );
+	logger.info( "发货退货时调用修改库存：" + params );
 	String url = PropertiesUtil.getJxcUrl() + "/erp/order/inventory/operation";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return false;
+	}
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( jsonObject );
+	    logger.info( "发货退货时调用修改库存返回值" + jsonObject.toJSONString() );
 	    if ( code.equals( "1001" ) ) {
 		return true;
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -183,13 +200,16 @@ public class MallJxcHttpClientUtil {
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
-	System.out.println( "查询同步/未同步的商品：" + params );
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return null;
+	}
+	logger.info( "查询同步/未同步的商品参数：" + params );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( jsonObject );
+	    logger.info( "查询同步/未同步的商品返回值：" + jsonObject.toJSONString() );
 	    if ( code.equals( "1001" ) ) {
-		System.out.println( "查询同步/未同步的商品返回值：" + jsonObject.getJSONArray( "data" ) );
 		return jsonObject.getJSONArray( "data" );
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
 		if ( isFirst ) {
@@ -216,11 +236,16 @@ public class MallJxcHttpClientUtil {
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
-	System.out.println( "查询单个商品的规格详情和库存：" + params );
+
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return null;
+	}
+	logger.info( "查询单个商品的规格详情和库存：" + params );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( "查询单个商品的规格详情和库存返回：" + jsonObject );
+	    logger.info( "查询单个商品的规格详情和库存返回：" + jsonObject );
 	    if ( code.equals( "1001" ) ) {
 		return jsonObject.getJSONObject( "data" );
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -244,15 +269,19 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONArray getProductAttrs( Map< String,Object > params, boolean isFirst ) {
-	System.out.println( "查询商品规格：" + params );
+	logger.info( "查询商品规格：" + params );
 	String url = PropertiesUtil.getJxcUrl() + "/erp/query/getProductAttrs/shop";
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return null;
+	}
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( jsonObject );
+	    logger.info( "查询商品规格返回值：" + jsonObject.toJSONString() );
 	    if ( code.equals( "1001" ) ) {
 		return jsonObject.getJSONArray( "data" );
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -280,11 +309,15 @@ public class MallJxcHttpClientUtil {
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
-	System.out.println( "根据商品id查询库存数量：" + params );
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return null;
+	}
+	logger.info( "根据商品id查询库存数量：" + params );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( "根据商品id查询库存数量返回:" + jsonObject );
+	    logger.info( "根据商品id查询库存数量返回:" + jsonObject );
 	    if ( code.equals( "1001" ) ) {
 		return jsonObject.getJSONArray( "data" );
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -312,11 +345,15 @@ public class MallJxcHttpClientUtil {
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
-	System.out.println( "根据商品详情id查询库存：" + params );
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return null;
+	}
+	logger.info( "根据商品详情id查询库存：" + params );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( "根据商品详情id查询库存返回：" + jsonObject );
+	    logger.info( "根据商品详情id查询库存返回：" + jsonObject );
 	    if ( code.equals( "1001" ) ) {
 		return jsonObject.get( "data" );
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -344,11 +381,15 @@ public class MallJxcHttpClientUtil {
 	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
 	    TOKEN_STR = login();
 	}
-	System.out.println( "同步接口回调：" + params );
+	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+	    logger.info( "获取进销存token失败" );
+	    return false;
+	}
+	logger.info( "同步接口回调：" + params );
 	try {
 	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
 	    String code = jsonObject.getString( "code" );
-	    System.out.println( "同步接口回调返回：" + jsonObject );
+	    logger.info( "同步接口回调返回：" + jsonObject );
 	    if ( code.equals( "1001" ) ) {
 		return true;
 	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
@@ -382,13 +423,13 @@ public class MallJxcHttpClientUtil {
     	/*Map<String, Object> params = new HashMap<String, Object>();
     	params.put("shopIds", "17");
     	params.put("proIds", "36");
-    	System.out.println(params);
+    	logger.info(params);
     	JSONArray arr = inventoryByProduct(params, true);
-    	System.out.println(arr);
+    	logger.info(arr);
     	if(arr != null && arr.size() > 0){
     		for (Object object : arr) {
 				JSONArray proArr = JSONArray.parseArray(object.toString());
-				System.out.println(proArr.get(0)+"---"+proArr.get(1));
+				logger.info(proArr.get(0)+"---"+proArr.get(1));
 			}
     	}*/
 
@@ -401,7 +442,7 @@ public class MallJxcHttpClientUtil {
 				JSONObject specObj = JSONObject.parseObject(object.toString());
 				int erpNameId = specObj.getInteger("id");
 				String erpName = specObj.getString("name");
-				System.out.println("父类规格："+erpNameId+"---"+erpName);
+				logger.info("父类规格："+erpNameId+"---"+erpName);
 
 				if(CommonUtil.isNotEmpty(specObj.get("childs"))){
 					JSONArray childArr = specObj.getJSONArray("childs");
@@ -411,7 +452,7 @@ public class MallJxcHttpClientUtil {
 							int erpValueId = childObj.getInteger("id");
 							String erpValue = childObj.getString("name");
 
-							System.out.println("子类规格："+erpValueId+"---"+erpValue);
+							logger.info("子类规格："+erpValueId+"---"+erpValue);
 						}
 					}
 				}
@@ -424,13 +465,13 @@ public class MallJxcHttpClientUtil {
     	params.put("shopId", 18);
     	params.put("productId", 29);
     	JSONObject obj = getInventoryById(params, true);
-    	System.out.println(obj);
+    	logger.info(obj);
     	if(CommonUtil.isNotEmpty(obj.get("attrs"))){
     		JSONArray arr = JSONArray.parseArray(obj.getString("attrs"));
     		if(arr != null && obj.size() > 0){
     			for (Object object : arr) {
 					JSONObject attrObj = JSONObject.parseObject(object.toString());
-					System.out.println(attrObj.get("amount"));
+					logger.info(attrObj.get("amount"));
 				}
     		}
     	}*/
@@ -440,23 +481,23 @@ public class MallJxcHttpClientUtil {
     	params.put("shopId", 17);
     	params.put("attrsId", 99);
     	Object obj = getInvNumByInvenId(params, true);
-    	System.out.println(obj);*/
+    	logger.info(obj);*/
 
 	//查询未同步的商品
 	/*Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "rootUid", 42 );
 	params.put( "sync", 0 );
-	System.out.println( params );
+	logger.info( params );
 	JSONArray proArr = syncProductCheck( params, true );
 	if ( proArr != null && proArr.size() > 0 ) {
 	    for ( Object object : proArr ) {//循环商品
 		JSONObject proObj = JSONObject.parseObject( object.toString() );
-		System.out.println( "商品名称:" + proObj.getString( "name" ) );
-		System.out.println( "是否参与网售：" + proObj.getBoolean( "netSales" ) );
-		System.out.println( "是否打折：" + proObj.getBoolean( "discount" ) );
-		System.out.println( "是否允许退货：" + proObj.getBoolean( "returns" ) );
+		logger.info( "商品名称:" + proObj.getString( "name" ) );
+		logger.info( "是否参与网售：" + proObj.getBoolean( "netSales" ) );
+		logger.info( "是否打折：" + proObj.getBoolean( "discount" ) );
+		logger.info( "是否允许退货：" + proObj.getBoolean( "returns" ) );
 		//商品库存详情
-		System.out.println( "商品库存：" + proObj.getJSONArray( "attrs" ) );
+		logger.info( "商品库存：" + proObj.getJSONArray( "attrs" ) );
 
 		JSONArray invenArr = proObj.getJSONArray( "attrs" );
 		if ( invenArr != null && invenArr.size() > 0 ) {
@@ -465,8 +506,8 @@ public class MallJxcHttpClientUtil {
 			System.out.print( "规格详情id：" + invenObj.getInteger( "id" ) );
 			System.out.print( "--父类规格id：" + invenObj.getString( "attrIds" ) );
 			System.out.print( "--父类规格：" + invenObj.getString( "attrNames" ) );
-			System.out.println( "--规格价：" + invenObj.getDouble( "retailPrice" ) );
-			System.out.println( "---门店id：" + invenObj.getInteger( "shopId" ) );
+			logger.info( "--规格价：" + invenObj.getDouble( "retailPrice" ) );
+			logger.info( "---门店id：" + invenObj.getInteger( "shopId" ) );
 
 			if ( CommonUtil.isNotEmpty( invenObj.get( "norms" ) ) ) {
 			    JSONArray specArr = invenObj.getJSONArray( "norms" );
@@ -479,14 +520,14 @@ public class MallJxcHttpClientUtil {
 
 				    JSONObject childSpecObj = specObj.getJSONObject( "child" );
 				    System.out.print( "----子类规格id:" + childSpecObj.getInteger( "id" ) );
-				    System.out.println( "--子类规格：" + childSpecObj.getString( "name" ) );
+				    logger.info( "--子类规格：" + childSpecObj.getString( "name" ) );
 				}
 			    }
 			}
 
 		    }
 		}
-		System.out.println( "-----------------" );
+		logger.info( "-----------------" );
 	    }
 	}*/
 
@@ -495,26 +536,26 @@ public class MallJxcHttpClientUtil {
     		for (Object object : arr) {
 				JSONObject obj = JSONObject.parseObject(object.toString());
 
-				System.out.println("规格值id："+obj.getString("attrIds"));
-				System.out.println("规格值："+obj.getString("attrNames"));
-				System.out.println("规格详情id："+obj.getInteger("id"));
-				System.out.println("商品单价："+obj.getDoubleValue("lsj"));
+				logger.info("规格值id："+obj.getString("attrIds"));
+				logger.info("规格值："+obj.getString("attrNames"));
+				logger.info("规格详情id："+obj.getInteger("id"));
+				logger.info("商品单价："+obj.getDoubleValue("lsj"));
 
 				if(CommonUtil.isNotEmpty(obj.get("product"))){
 					JSONObject productObj = JSONObject.parseObject(obj.get("product").toString());
 
-					System.out.println("商品名称："+productObj.getString("name"));
-					System.out.println("是否参与网售："+productObj.getBoolean("netSales"));
-					System.out.println("是否打折："+productObj.getBoolean("discount"));
-					System.out.println("是否允许退货："+productObj.getBoolean("returns"));
+					logger.info("商品名称："+productObj.getString("name"));
+					logger.info("是否参与网售："+productObj.getBoolean("netSales"));
+					logger.info("是否打折："+productObj.getBoolean("discount"));
+					logger.info("是否允许退货："+productObj.getBoolean("returns"));
 
 				}
 
-				System.out.println("-------------");
+				logger.info("-------------");
 
 			}
     	}
-    	System.out.println(arr);*/
+    	logger.info(arr);*/
 
 	//    	//批量新增规格
 	//    	Map<String, Object> attrParams = new HashMap<String, Object>();
@@ -532,11 +573,11 @@ public class MallJxcHttpClientUtil {
 	//    	specParams.put("norms", list);
 	//    	attrParams.put("attrs", specParams);
 	//
-	////    	System.out.println(attrParams);
+	////    	logger.info(attrParams);
 	//    	JSONArray arr = batchAttrSave(attrParams,true);
 	//    	JSONObject jObj = JSONObject.parseObject(arr.get(0).toString());
 	//    	int nameId = jObj.getInteger("id") ;
-	//    	System.out.println("父类规格id："+nameId);
+	//    	logger.info("父类规格id："+nameId);
 	//
 	//    	attrParams = new JSONObject();
 	//    	Map<String, Object> specParams3 = new HashMap<String, Object>();
@@ -555,7 +596,7 @@ public class MallJxcHttpClientUtil {
 	//    	arr = batchAttrSave(attrParams,true);
 	//    	jObj = JSONObject.parseObject(arr.get(0).toString());
 	//    	int valueId = jObj.getInteger("id") ;
-	//    	System.out.println("子类规格id："+valueId);
+	//    	logger.info("子类规格id："+valueId);
 	//
 	//    	Map<String, Object> storeParams = new HashMap<String, Object>();
 	//    	storeParams.put("createUid", "42");
@@ -602,7 +643,7 @@ public class MallJxcHttpClientUtil {
 	//    	Map<String, Object> proParams = new HashMap<String, Object>();
 	//    	proParams.put("pros", JSONObject.toJSON(params));
 	//
-	//    	System.out.println(proParams);
+	//    	logger.info(proParams);
 	//    	batchSave(proParams,true);
     }
 

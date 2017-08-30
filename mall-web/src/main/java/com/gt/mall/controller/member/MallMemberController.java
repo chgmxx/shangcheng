@@ -20,6 +20,7 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.seller.MallSellerService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -78,6 +79,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
     private BusUserService       busUserService;
     @Autowired
     private MallPageService      mallPageService;
+    @Autowired
+    private MallStoreService     mallStoreService;
 
     /**
      * 跳转至个人中心的页面
@@ -128,11 +131,16 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( shopId == 0 ) {
-		List< Map< String,Object > > pageId = morderService.selectPageIdByUserId( userid );
+
+		List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
+		List< Map< String,Object > > pageId = mallPageService.selectPageIdByUserId( userid, shopList );
 		if ( pageId.size() > 0 ) {//获取首页的pageId
 		    shopId = CommonUtil.toInteger( pageId.get( 0 ).get( "pag_sto_id" ) );
 		    request.setAttribute( "pageid", pageId.get( 0 ).get( "id" ) );
 		}
+	    }
+	    if ( shopId > 0 ) {
+		SessionUtils.setMallShopId( shopId, request );
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		Map< String,Object > gradeType = memberService.findGradeType( member.getId() );//会员卡名称
@@ -471,14 +479,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "data" ) ) ) {
-		String keys = "mall_isnoLogin";
-		if ( CommonUtil.isNotEmpty( params.get( "keys" ) ) ) {
-		    keys = CommonUtil.toString( params.get( "keys" ) );
-		}
-		request.getSession().setAttribute( keys, params.get( "data" ) );//清空缓存
-	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
+	    loginMap.put( "requestUrl", params.get( "urls" ).toString() );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		result.put( "returnUrl", returnUrl );

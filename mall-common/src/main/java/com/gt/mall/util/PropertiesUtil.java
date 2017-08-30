@@ -38,6 +38,8 @@ public class PropertiesUtil {
 
     private static String redisPassword;// redis 密码
 
+    private static Integer redisDataBase;//redis Database
+
     private static String resImagePath;//获取图片存放路径
 
     private static String resourceUrl;//访问资源URL
@@ -106,19 +108,24 @@ public class PropertiesUtil {
 	PropertiesUtil.staticSourceFtpPwd = staticSourceFtpPwd;
     }
 
-    @Value( "${spring.redis.host}" )
+    @Value( "${redis.host}" )
     public void setRedisHost( String redisHost ) {
 	PropertiesUtil.redisHost = redisHost;
     }
 
-    @Value( "${spring.redis.port}" )
+    @Value( "${redis.port}" )
     public void setRedisPort( String redisPort ) {
 	PropertiesUtil.redisPort = redisPort;
     }
 
-    @Value( "${spring.redis.password}" )
+    @Value( "${redis.password}" )
     public void setRedisPassword( String redisPassword ) {
 	PropertiesUtil.redisPassword = redisPassword;
+    }
+
+    @Value( "${redis.database}" )
+    public void setRedisDataBase( Integer redisDataBase ) {
+	PropertiesUtil.redisDataBase = redisDataBase;
     }
 
     @Value( "${res.image.path}" )
@@ -267,5 +274,9 @@ public class PropertiesUtil {
 
     public static String getRedisPassword() {
 	return redisPassword;
+    }
+
+    public static Integer getRedisDataBase() {
+	return redisDataBase;
     }
 }

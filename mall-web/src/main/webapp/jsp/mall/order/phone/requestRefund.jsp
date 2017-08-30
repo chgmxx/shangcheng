@@ -309,7 +309,7 @@ body { font-size: 12px; }
 		</section>
 		<input type="hidden" value="${map.order_pay_way }" class="payWay" />
 		<input type="button" name="" id="" value="提交" class="inp-submit"/>
-		<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+		<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 		<script src="/js/plugin/layer/layer.js"></script>
 		<script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
 		<script type="text/javascript">

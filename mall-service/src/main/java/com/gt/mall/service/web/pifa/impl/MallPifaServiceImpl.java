@@ -99,7 +99,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	List list1 = new ArrayList();
 	for ( Map< String,Object > pifaMap : list ) {
 	    //微信昵称转换
-	    String nickname = CommonUtil.Blob2String( pifaMap.get( "nickname" ) );
+	    String nickname = CommonUtil.blob2String( pifaMap.get( "nickname" ) );
 	    JSONObject obj = JSONObject.fromObject( pifaMap );
 	    SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" );
 	    JSONObject jsonObj = JSONObject.fromObject( obj.get( "create_time" ) );
@@ -294,7 +294,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		    //					map2.put("old_price", map2.get("inv_price"));
 		    map2.put( "price", map2.get( "inv_price" ) );
 		    String specifica_img_id = map2.get( "specifica_img_id" ).toString();
-		    if ( specifica_img_id == "0" || specifica_img_id.equals( "0" ) ) {
+		    if ( specifica_img_id.equals( "0" ) ) {
 			map2.put( "image_url", map2.get( "image_url" ) );
 		    } else {
 			map2.put( "image_url", map2.get( "specifica_img_url" ) );
@@ -307,7 +307,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		map2.put( "old_price", map2.get( "pro_cost_price" ) );
 		String is_member_discount = map2.get( "is_member_discount" )
 				.toString();// 商品是否参加折扣,1参加折扣
-		if ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) {
+		if ( is_member_discount.equals( "1" ) ) {
 					/*map2.put("price", Math.ceil((Double.parseDouble(map2.get(
 							"price").toString()) * discount) * 100) / 100);*/
 		}

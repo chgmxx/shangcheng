@@ -728,7 +728,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	if ( !CommonUtil.isEmpty( params.get( "detail" ) ) ) {
 	    MallProductDetail detail = JSONObject.parseObject( params.get( "detail" ).toString(), MallProductDetail.class );
 	    if ( detail != null ) {
-	        if(CommonUtil.isNotEmpty( detail.getProductDetail() ) && CommonUtil.isNotEmpty( detail.getProductIntrodu() ) && CommonUtil.isNotEmpty( detail.getProductMessage() )){
+		if ( CommonUtil.isNotEmpty( detail.getProductDetail() ) && CommonUtil.isNotEmpty( detail.getProductIntrodu() ) && CommonUtil
+				.isNotEmpty( detail.getProductMessage() ) ) {
 		    if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
 			mallProductDetailService.updateById( detail );
 		    } else {
@@ -1309,6 +1310,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    break;
 		case "-2":
 		    msg = "商品还未审核";
+		    break;
+		default:
 		    break;
 	    }
 	}
@@ -2164,7 +2167,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	flowRecord.setFlowType( flow.getType() );//流量类型
 	flowRecord.setFlowId( flow.getId() );//流量表ID
 	flowRecord.setId( product.getFlowRecordId() );
-	//todo 目前没有返回记录id
 	Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( flowRecord );
 	if ( CommonUtil.isNotEmpty( resultMap.get( "id" ) ) && CommonUtil.isNotEmpty( product.getId() ) ) {
 	    MallProduct pro = new MallProduct();

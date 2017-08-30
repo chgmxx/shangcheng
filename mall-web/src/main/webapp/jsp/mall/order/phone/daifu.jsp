@@ -115,7 +115,7 @@ String basePath = request.getScheme() + "://"
 </form>
 <input type="hidden" class="isWx" value="${isWxPay }"/>
 <input type="hidden" class="alipaySubject" value="${alipaySubject }"/>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
 <script src="/js/plugin/layer-mobile/layer/layer.js"></script>
 <script type="text/javascript">

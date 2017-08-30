@@ -177,12 +177,21 @@
             </if>
         </if>
         <if test="keyWord != null and keyWord != ''">
-            and (s.telephone like '%${keyWord}%' or s.user_name like '%${keyWord}%' or s2.user_name like '%${keyWord}%')
+            and (
+            s.telephone = '${keyWord}'
+
+            <if test="memberList != null">
+                or s.member_id in
+                <foreach close=")" collection="memberList" index="index" item="item" open="(" separator=",">
+                    #{item.id ,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            )
         </if>
     </select>
 
     <select id="selectPageCheckByBusUserId" resultType="Map" parameterType="Map">
-        SELECT s.id,s.`user_name`,s.`telephone`,s2.`user_name` AS tj_user_name,s.`apply_time`,s.`check_status`
+        SELECT s.id,s.`user_name`,s.`telephone`,s2.`user_name` AS tj_user_name,s.`apply_time`,s.`check_status`,s.member_id
         FROM t_mall_seller s
         LEFT JOIN t_mall_seller s2 ON s.referees_member_id=s.member_id AND s2.bus_user_id=s.bus_user_id
         where s.bus_user_id = #{busUserId,jdbcType=INTEGER}
@@ -190,7 +199,16 @@
             and s.check_status = #{status}
         </if>
         <if test="keyWord != null and keyWord != ''">
-            and (s.telephone like '%${keyWord}%' or s.user_name like '%${keyWord}%' or s2.user_name like '%${keyWord}%')
+            and (
+            s.telephone = '${keyWord}'
+
+            <if test="memberList != null">
+                or s.member_id in
+                <foreach close=")" collection="memberList" index="index" item="item" open="(" separator=",">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            )
         </if>
         order by s.id desc
         <if test="firstNum != null and maxNum != null">
@@ -198,7 +216,7 @@
         </if>
     </select>
 
-    <select id="selectPageSellerByBusUserId" resultMap="BaseResultMap" parameterType="Map">
+    <select id="selectPageSellerByBusUserId" resultType="Map" parameterType="Map">
         SELECT
         <include refid="Base_Column_List"/>
         FROM t_mall_seller s
@@ -215,7 +233,15 @@
             </if>
         </if>
         <if test="keyWord != null and keyWord != ''">
-            and (s.telephone like '%${keyWord}%' or s.user_name like '%${keyWord}%' or m.nickname like '%${keyWord}%' or m.phone like '%${keyWord}%')
+            and (
+            s.telephone = '${keyWord}'
+            <if test="memberList != null">
+                or s.member_id in
+                <foreach close=")" collection="memberList" index="index" item="item" open="(" separator=",">
+                    #{item.id }
+                </foreach>
+            </if>
+            )
         </if>
         order by s.id desc
         <if test="firstNum != null and maxNum != null">

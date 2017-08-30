@@ -13,11 +13,15 @@ app.directive('onLoad', function ($timeout) {
                 $timeout(function () {
                 	var img = $(dom).parent().find(".img_class");
                     if(img.length > 0){
-            			img.lazyload({
-            				effect: "fadeIn",
-            				threshold : 200,
-            				skip_invisible : true
-            			});
+                    	setTimeout((function(img){
+                    		return function(){
+                    			img.lazyload({
+                    				effect: "fadeIn",
+                    				threshold : 200,
+                    				skip_invisible : true
+                    			});
+                    		}
+                    	})(img),200);
                 	}
                 });
             }

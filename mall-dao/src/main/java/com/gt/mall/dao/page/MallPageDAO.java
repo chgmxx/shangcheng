@@ -83,6 +83,6 @@ public interface MallPageDAO extends BaseMapper< MallPage > {
     /**
      * 根据memberId查询pageId
      */
-    List< Map< String,Object > > selectPageIdByUserId( @Param( "userId" ) Integer userId );
+    List< Map< String,Object > > selectPageIdByUserId( @Param( "userId" ) Integer userId, @Param( "storeList" ) List< Map< String,Object > > shopList );
 
 }

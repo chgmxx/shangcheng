@@ -307,4 +307,28 @@ public class MemberServiceImpl implements MemberService {
 	return null;
     }
 
+    @Override
+    public List< Map > findMemberByIds( String memberIds, int busId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "ids", memberIds );
+	params.put( "busId", busId );
+	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberByIds" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONArray.parseArray( data, Map.class );
+	}
+	return null;
+    }
+
+    @Override
+    public List< Map > findMemberByPhone( String phone, int busId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "phone", phone );
+	params.put( "busId", busId );
+	String data = HttpSignUtil.SignHttpSelect( params, MEMBER_URL + "findMemberByPhone" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONArray.parseArray( data, Map.class );
+	}
+	return null;
+    }
+
 }

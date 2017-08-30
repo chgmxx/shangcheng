@@ -214,7 +214,7 @@ public interface MallSellerService extends BaseService< MallSeller > {
     /**
      * 修改商品佣金设置
      */
-    Map< String,Object > UpdSellerJoinProduct( int busUserId, Map< String,Object > params );
+    Map< String,Object > updSellerJoinProduct( int busUserId, Map< String,Object > params );
 
     /**
      * 删除redis里的销售员id

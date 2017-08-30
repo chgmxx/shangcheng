@@ -35,7 +35,7 @@
         a.pag_create_time, a.pag_is_main, a.pag_html, a.codeUrl
         FROM t_mall_page a
         LEFT JOIN t_mall_store b ON a.pag_sto_id=b.id
-        WHERE  b.is_delete=0
+        WHERE b.is_delete=0
         <if test="storeList != null">
             AND pag_sto_id IN
             <foreach close=")" collection="storeList" index="index" item="item" open="(" separator=",">
@@ -118,9 +118,9 @@
     <select id="selectPageByWxShopId" parameterType="Map" resultType="Map">
         SELECT p.id
         FROM t_mall_page p
-		LEFT JOIN t_mall_store s ON s.id=p.`pag_sto_id`
-		WHERE  p.pag_is_main=1 AND s.`is_delete`=0
-		<if test="wxShopId != null and wxShopId != ''">
+        LEFT JOIN t_mall_store s ON s.id=p.`pag_sto_id`
+        WHERE p.pag_is_main=1 AND s.`is_delete`=0
+        <if test="wxShopId != null and wxShopId != ''">
             and s.wx_shop_id = #{wxShopId}
         </if>
         <if test="userId != null and userId != ''">
@@ -129,12 +129,16 @@
     </select>
 
 
-    <select id="selectPageIdByUserId" resultType="map" parameterType="java.lang.Integer">
-        /* todo 关联小屁孩门店接口 */
+    <select id="selectPageIdByUserId" resultType="map" parameterType="Map">
         SELECT a.id,a.pag_sto_id FROM t_mall_page a
-        LEFT JOIN t_mall_store b ON a.pag_sto_id=b.id
-        /*LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
-        WHERE a.pag_is_main=1 AND b.is_delete=0 AND a.pag_user_id=#{userId} /*AND s.`status` != -1*/
+        WHERE a.pag_is_main=1 AND a.pag_user_id=#{userId}
+        <if test="storeList != null">
+            AND a.pag_sto_id IN
+            <foreach close=")" collection="storeList" index="index" item="item" open="(" separator=",">
+                #{item.id}
+            </foreach>
+        </if>
+
     </select>
 
 

@@ -45,8 +45,8 @@ datasource:
   minEvictableIdleTimeMillis: 30000
   validationQuery: select 'x'
   testWhileIdle: true
-  testOnBorrow: false
-  testOnReturn: false
+  testOnBorrow: true
+  testOnReturn: true
   # 打开PSCache，并且指定每个连接上PSCache的大小
   poolPreparedStatements: true
   maxPoolPreparedStatementPerConnectionSize: 20
@@ -64,6 +64,13 @@ server:
 
 
 ######################## 开发环境配置 ########################
+#JedisUtil 用到的配置
+redis:
+ host: 113.106.202.51
+ port: 6379
+ password: gt@123456
+ database: 0
+
 web:
  #域名
  domain: mall.yifriend.net:8080

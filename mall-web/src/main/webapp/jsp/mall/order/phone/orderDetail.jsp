@@ -244,7 +244,7 @@
 </div>
 <jsp:include page="/jsp/mall/customer.jsp"></jsp:include>
 <input type="hidden" id="groupBuyTime" value="${endTime}" />
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
 <script src="/js/plugin/layer/layer.js"></script>
 <script> 

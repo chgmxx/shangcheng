@@ -1,7 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8" %>
 <%
     /* String path=application.getRealPath(request.getRequestURI());   */
-    String basePath = "http://" + request.getServerName() + ":" +
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" +
             request.getServerPort() +
             request.getContextPath() +
             request.getServletPath().substring( 0, request.getServletPath().lastIndexOf( "/" ) + 1 );
@@ -40,57 +40,26 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	</div>
 </section> -->
 
-<link rel="stylesheet" href="css/base.css"/>
+<link rel="stylesheet" href="css/base.css?<%=System.currentTimeMillis()%>"/>
 
 <link rel="stylesheet" href="css/swiper.min.css"/>
-<link rel="stylesheet" href="css/main.css"/>
+<link rel="stylesheet" href="css/main.css?<%=System.currentTimeMillis()%>"/>
 <link rel="stylesheet" href="css/reservation.css"/>
 
 <script src="/js/plugin/jquery-1.8.3.min.js"></script>
 <script src="js/angular.min.js"></script>
-<script src="js/app.js"></script>
+<script src="js/app.js?<%=System.currentTimeMillis()%>"></script>
 <script src="js/swiper.min.js"></script>
 
 <link rel="stylesheet" href="js/admin/admin.css?<%=System.currentTimeMillis()%>"/>
 <script src="js/admin/admin.js?<%=System.currentTimeMillis()%>"></script>
 
-<script src="js/directive/countdown.js"></script>
+<script src="js/directive/countdown.js?<%=System.currentTimeMillis()%>"></script>
 
 <script src="js/directive/swiper.js"></script>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 
-<script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
-
-<%-- <div class="tpl-shop">
-    <div class="tpl-shop-header" style="background-color:#ffffff; background-image: url('${http}${mapbranch.sto_picture}');">
-        <div class="tpl-shop-title">${name}</div>
-        <div class="tpl-shop-avatar">
-            <img src="${headImg}" alt="头像">
-        </div>
-    </div>
-    <div class="tpl-shop-content">
-        <ul class="clearfix">
-            <li class="js-all-goods">
-                <a href="/mallPage/${shopid}/79B4DE7C/shoppingall.do">
-                    <span class="count">${countproduct}</span>
-                    <span class="text">全部商品</span>
-                </a>
-            </li>
-             <li class="js-new-goods">
-                <a href="/mallPage/${shopid}/79B4DE7C/shoppingall.do">
-                    <span class="count">${xincound}</span>
-                    <span class="text">新上商品</span>
-                </a>
-            </li> 
-            <li class="js-order">
-                <a href="javascript:void(0);" onclick="toOrder();">
-                    <span class="count user"></span>
-                    <span class="text">我的订单</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-</div> --%>
+<script type="text/javascript" src="/js/mall/phone/phone_public.js?<%=System.currentTimeMillis()%>"></script>
 
 <div class="pfj">
     <div style="height:51px;"></div>
@@ -581,25 +550,25 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
     var imgIdList = [];
     var imgIds = ",";
-    picJson.forEach(function(e){
-        if(e.type==1){
-            e.imgID.forEach(function(e){
-                if(imgIds.indexOf(","+e.id+",")<0){
-                    imgIds += e.id+",";
+    picJson.forEach(function (e) {
+        if (e.type == 1) {
+            e.imgID.forEach(function (e) {
+                if (imgIds.indexOf("," + e.id + ",") < 0) {
+                    imgIds += e.id + ",";
                 }
             })
         }
     })
-    function picJsonEach(data){
-        picJson.forEach(function(e){
-            if(e.type==1){
-                e.imgID.forEach(function(e){
-                    data.forEach(function(data){
-                        if(e.id == data.id){
+    function picJsonEach(data) {
+        picJson.forEach(function (e) {
+            if (e.type == 1) {
+                e.imgID.forEach(function (e) {
+                    data.forEach(function (data) {
+                        if (e.id == data.id) {
                             e.price = data.price;
                             e.src = data.src;
                             e.title = data.title;
-                            if(data.url != null && data.url != ""){
+                            if (data.url != null && data.url != "") {
                                 e.url = data.url;
                             }
                         }

@@ -1,4 +1,4 @@
-﻿function toLogin(data, keys) {
+﻿function toLogin(data) {
     var userid = $("input.userid").val();
     /*location.href = "/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+returnKey;*/
     var urls = window.location.href;
@@ -13,9 +13,6 @@
     if (datas != null && datas != "" && typeof(datas) != "undefined") {
         datas["datas"] = data;
     }
-    if (keys != null && keys != "" && typeof(keys) != "undefined") {
-        datas["keys"] = keys;
-    }
     $.ajax({
         url: "/mMember/79B4DE7C/isLogin.do",
         type: "POST",
@@ -26,7 +23,11 @@
         success: function (data) {
             if (data.returnUrl != null) {
                 //location.href = "/phoneLoginController/" + userid + "/79B4DE7C/phonelogin.do?returnKey=" + data.returnUrl;
-                location.href = data.returnUrl;
+                var urls = data.returnUrl;
+                if (urls.indexOf("redirect:") >= 0) {
+                    urls = urls.substr(9, urls.length);
+                }
+                location.href = urls;
             } else if (data.isWx != null) {
                 location.href = window.location.href;
             }

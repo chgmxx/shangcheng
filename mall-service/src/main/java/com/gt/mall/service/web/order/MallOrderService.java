@@ -101,11 +101,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public MallOrderReturn selectByDId( Integer id );
 
     /**
-     * 通过memberId查询pageId
-     */
-    public List< Map< String,Object > > selectPageIdByUserId( Integer userId );
-
-    /**
      * 根据规格值Id查询规格Id
      */
     public Integer selectSpeBySpeValueId( Map< String,Object > params );
@@ -156,7 +151,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
      *
      * @return
      */
-    public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type ,List< Map< String,Object > > shoplist);
+    public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist );
 
     /**
      * 查询订单详情
@@ -247,5 +242,5 @@ public interface MallOrderService extends BaseService< MallOrder > {
      */
     Map< String,Object > calculateInventory( String proId, Object proSpecificas, String proNum );
 
-    boolean isReturnSuccess(MallOrder order);
+    boolean isReturnSuccess( MallOrder order );
 }

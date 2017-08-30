@@ -2,6 +2,9 @@ package com.gt.mall.service.inter.user;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
+
+import java.util.List;
 
 /**
  * 商家接口
@@ -58,9 +61,20 @@ public interface BusUserService {
 
     /**
      * 判断 商家是否已过期
+     *
      * @param busUserId 商家id
+     *
      * @return 是否已过期
      */
-    JSONObject isUserGuoQi(int busUserId);
+    JSONObject isUserGuoQi( int busUserId );
+
+    /**
+     * 根据用户信息获取管理店铺列表
+     *
+     * @param userId 商家id
+     *
+     * @return 店铺列表
+     */
+    List<WsWxShopInfoExtend> getShopIdListByUserId( int userId );
 
 }

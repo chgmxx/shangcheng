@@ -52,7 +52,7 @@
             <a href="javascript:void(0)" onclick="pageclick('${pageId}');" class="t-btn">去商城逛逛</a>
         </div>
     </div>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/mall/seller/phone/sellerPublic.js"></script>
 <script type="text/javascript">
 

@@ -10,6 +10,7 @@ import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 import com.gt.mall.bean.wx.OldApiSms;
+import com.gt.mall.bean.wx.SendWxMsgTemplate;
 import com.gt.mall.bean.wx.flow.AdcServicesInfo;
 import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
 import com.gt.mall.bean.wx.pay.WxPayOrder;
@@ -429,7 +430,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     public Map< String,Object > selectOrderList( Map< String,Object > params ) {
 	Map< String,Object > orderMap = new HashMap<>();
 	Map< String,Object > orders = mallOrderDAO.selectMapById( CommonUtil.toInteger( params.get( "orderId" ) ) );
-	orders.put( "nickname", CommonUtil.Blob2String( orders.get( "nickname" ) ) );//修改值
+	orders.put( "nickname", CommonUtil.blob2String( orders.get( "nickname" ) ) );//修改值
 	List< Map< String,Object > > orderDetail = mallOrderDAO.selectOrderDetail( params );
 	orderMap.put( "orderInfo", orders );
 	orderMap.put( "orderDetail", orderDetail );
@@ -2237,11 +2238,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     }
 
     @Override
-    public List< Map< String,Object > > selectPageIdByUserId( Integer userId ) {
-	return mallPageDAO.selectPageIdByUserId( userId );
-    }
-
-    @Override
     public Integer selectSpeBySpeValueId( Map< String,Object > params ) {
 	MallProductSpecifica spe = mallProductSpecificaService.selectByNameValueId( params );
 	return spe.getId();
@@ -2289,7 +2285,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    order.setOrderFreightMoney( CommonUtil.toBigDecimal( params.get( "orderFreightMoney" ) ) );
 	    order.setOrderMoney( CommonUtil.toBigDecimal( params.get( "orderMoney" ) ) );
 	    order.setOrderPayWay( Integer.parseInt( params.get( "orderPayWay" ).toString() ) );
-	    if ( null != receiveId && !receiveId.equals( "" ) && receiveId != "" ) {
+	    if ( CommonUtil.isNotEmpty( receiveId ) ) {
 		order.setReceiveId( Integer.parseInt( receiveId.toString() ) );
 
 		if ( order.getReceiveId() > 0 ) {
@@ -2400,7 +2396,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		orderType = Integer.parseInt( list.get( "groupType" ).toString() );
 	    }
 	    //团购id
-	    if ( null != groupBuyId && !groupBuyId.equals( "" ) && groupBuyId != "" ) {
+	    if ( CommonUtil.isNotEmpty( groupBuyId ) ) {
 		groupBuyId = list.get( "groupBuyId" );
 	    } else {
 		groupBuyId = "0";
@@ -2408,7 +2404,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	    Object p = list.get( "pJoinId" );
 	    int pJoinId = 0;//参团表的父id
-	    if ( null != p && !p.equals( "" ) && p != "" ) {
+	    if ( CommonUtil.isNotEmpty( p ) ) {
 		pJoinId = Integer.parseInt( p.toString() );
 	    }
 	    //买家留言
@@ -2427,7 +2423,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		order1.setAppointmentStartTime( params.get( "appStartTime" ).toString() );
 		order1.setAppointmentEndTime( params.get( "appEndTime" ).toString() );
 	    } else {
-		if ( null != receiveId && !receiveId.equals( "" ) && receiveId != "" ) {
+		if ( CommonUtil.isNotEmpty( receiveId ) ) {
 		    order1.setReceiveId( Integer.parseInt( receiveId.toString() ) );
 
 		    //todo 调用陈丹接口  根据地址id查询地址信息
@@ -2812,6 +2808,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    msg = "您的朋友已经退款了，不用再付钱了";
 			    flag = false;
 			    break;
+			default:
+			    break;
 		    }
 		} else {
 		    code = mallDaifuDAO.updateById( daifu );
@@ -3044,11 +3042,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    createCell( row, 10, method, valueStyle );
 		    createCell( row, 11, sale, valueStyle );
 		    String shopname = "";
-		    if(shopList != null && shopList.size() > 0){
+		    if ( shopList != null && shopList.size() > 0 ) {
 			for ( Map< String,Object > shopMap : shopList ) {
-			    if(CommonUtil.toInteger( shopMap.get( "id" ) ) == order.getShopId()){
-			        shopname = shopMap.get( "sto_name" ).toString();
-			        break;
+			    if ( CommonUtil.toInteger( shopMap.get( "id" ) ) == order.getShopId() ) {
+				shopname = shopMap.get( "sto_name" ).toString();
+				break;
 			    }
 			}
 		    }
@@ -3197,16 +3195,17 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    List< Object > objs = new ArrayList<>();
 	    objs.add( "您好，您已购买成功" );
 	    objs.add( "您的商品已经购买成功，请耐心等待商家发货" );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "memberId", order.getBuyerUserId() );
+	    String url = PropertiesUtil.getHomeUrl() + "/mMember/79B4DE7C/toUser.do?member_id=" + order.getBuyerUserId() + "&uId=" + order.getSellerUserId();
 
-	    params.put( "id", id );
-	    params.put( "url", PropertiesUtil.getHomeUrl() + "/mMember/79B4DE7C/toUser.do?member_id=" + order.getBuyerUserId() + "&uId=" + order.getSellerUserId() );
-	    logger.info( "params参数：" + params );
-	    logger.info( "objs参数：" + objs );
-	    //todo 调用小屁孩接口
-	    /*Map< String,Object > result = msgTemplateService.sendMsg( publicUser, params, objs );
-	    logger.info( JSONObject.fromObject( result ).toString() );*/
+	    SendWxMsgTemplate template = new SendWxMsgTemplate();
+	    template.setId( id );
+	    template.setUrl( url );
+	    template.setMemberId( order.getBuyerUserId() );
+	    template.setPublicId( order.getSellerUserId() );
+	    template.setObjs( objs );
+
+	    logger.info( "发送消息模板参数：" + objs );
+	    wxPublicUserService.sendWxMsgTemplate( template );
 	}
     }
 

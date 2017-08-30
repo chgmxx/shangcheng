@@ -14,7 +14,7 @@ import java.util.*;
 public class JedisUtil {
     private static JedisPool pool = null;
 
-    public static JedisPool getPool() {
+    private static JedisPool getPool() {
 	if ( pool == null ) {
 	    JedisPoolConfig config = new JedisPoolConfig();
 	    // 控制一个pool可分配多少个jedis实例，通过pool.getResource()来获取；
@@ -27,7 +27,8 @@ public class JedisUtil {
 	    // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
 	    config.setTestOnBorrow( true );
 	    if ( CommonUtil.isNotEmpty( PropertiesUtil.getRedisPassword() ) ) {
-		pool = new JedisPool( config, PropertiesUtil.getRedisHost(), CommonUtil.toInteger( PropertiesUtil.getRedisPort() ), 60000, PropertiesUtil.getRedisPassword() );
+		pool = new JedisPool( config, PropertiesUtil.getRedisHost(), CommonUtil.toInteger( PropertiesUtil.getRedisPort() ), 60000, PropertiesUtil.getRedisPassword(),
+				PropertiesUtil.getRedisDataBase() );
 	    } else {
 		pool = new JedisPool( config, PropertiesUtil.getRedisHost(), CommonUtil.toInteger( PropertiesUtil.getRedisPort() ), 60000 );
 	    }

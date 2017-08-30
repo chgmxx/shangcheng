@@ -132,6 +132,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    storeMap.put( "longitude", shopInfo.getLongitude() );
 			    storeMap.put( "latitude", shopInfo.getLatitude() );
 			    storeMap.put( "telephone", shopInfo.getTelephone() );
+			    storeMap.put( "id", map.get( "id" ) );
+			    storeMap.put( "wx_shop_id", shopInfo.getId() );
 			    shopInfoList.remove( i );
 			    break;
 			}
@@ -396,7 +398,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
      */
     @Override
     public List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request ) {
-	//todo 调用陈丹接口  没有考虑子账号
 	List< Integer > wxShopIds = new ArrayList<>();
 
 	List< Map< String,Object > > storeList = new ArrayList<>();
@@ -409,7 +410,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    }
 	    return storeList;
 	}
-	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
+	List< WsWxShopInfoExtend > shopInfoList = busUserService.getShopIdListByUserId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
 
 	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {

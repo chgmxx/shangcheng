@@ -52,7 +52,6 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord ) {
-	//todo 暂时未返回冻结id给我
 	return HttpSignUtil.SignHttpInsertOrUpdate( fenbiFlowRecord, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
     }
 

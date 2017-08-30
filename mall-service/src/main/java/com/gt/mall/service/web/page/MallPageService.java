@@ -34,7 +34,7 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return 页面信息
      */
-    public PageUtil findByPage( Map< String,Object > params, BusUser user ,HttpServletRequest request);
+    public PageUtil findByPage( Map< String,Object > params, BusUser user, HttpServletRequest request );
 
     /**
      * 保存或修改信息
@@ -229,7 +229,7 @@ public interface MallPageService extends BaseService< MallPage > {
     /**
      * 获取商品图片
      */
-    public List<Map<String, Object>> getProductImages(List<Map<String, Object>> xlist, List<Integer> proIds,String[] specImgIds);
+    public List< Map< String,Object > > getProductImages( List< Map< String,Object > > xlist, List< Integer > proIds, String[] specImgIds );
 
     /**
      * 重新组装对象
@@ -274,7 +274,7 @@ public interface MallPageService extends BaseService< MallPage > {
     /**
      * 根据用户id查询 主页id
      *
-     * @param userid 商家id
+     * @param userid   商家id
      * @param wxShopId 门店id
      *
      * @return 主页id
@@ -372,7 +372,6 @@ public interface MallPageService extends BaseService< MallPage > {
      */
     Map< String,Object > getProductPresale( Map< String,Object > map, Member member );
 
-
     /**
      * 通过卡券包id查询卡券信息
      */
@@ -411,6 +410,11 @@ public interface MallPageService extends BaseService< MallPage > {
     /**
      * 根据商品id获取商品部分信息
      */
-    public List<Map<String, Object>> getProductListByIds(String ids,Member member,double discount,MallPaySet set ,boolean isPifa);
+    public List< Map< String,Object > > getProductListByIds( String ids, Member member, double discount, MallPaySet set, boolean isPifa );
 
+    /**
+     * 根据memberId查询pageId
+     *
+     */
+    List< Map< String,Object > > selectPageIdByUserId( Integer userId, List< Map< String,Object > > shopList );
 }

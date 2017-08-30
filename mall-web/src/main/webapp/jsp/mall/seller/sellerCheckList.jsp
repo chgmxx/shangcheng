@@ -55,7 +55,7 @@
     <form id="searchForms">
         <div class="page-oper">
             <div class="oper-srh">
-                <input type="text" class="srh-input keyWord" name="keyWord" placeholder="请输入推荐人名字或手机" value="<c:if test="${!empty keyWord }">${keyWord }</c:if>"
+                <input type="text" class="srh-input keyWord" name="keyWord" placeholder="请输入推荐人手机" value="<c:if test="${!empty keyWord }">${keyWord }</c:if>"
                        onkeypress="pressSearch(event)">
                 <span class="srh-icon"><i class="iconfont icon-search" onclick="searchUrl();"></i></span>
             </div>

@@ -365,17 +365,59 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
+	List< Map > memberList = null;
+	if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
+	    memberList = memberService.findMemberByPhone( params.get( "keyWord" ).toString(), busUserId );
+	    if ( memberList != null && memberList.size() > 0 ) {
+		params.put( "memberList", memberList );
+	    }
+	}
 	List< Map< String,Object > > sellerList = mallSellerDAO.selectPageCheckByBusUserId( params );
+
+	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
 
 	page.setSubList( sellerList );
 	return page;
+    }
+
+    private List< Map< String,Object > > getSellerMemberNick( List< Map< String,Object > > sellerList, int busUserId, List< Map > memberList ) {
+	if ( sellerList == null || sellerList.size() == 0 ) {
+	    return null;
+	}
+	if ( memberList == null || memberList.size() == 0 ) {
+	    StringBuilder memberIds = new StringBuilder();
+	    for ( Map< String,Object > sellerMap : sellerList ) {
+		Object obj = sellerMap.get( "member_id" );
+		if ( memberIds == null || ( CommonUtil.isNotEmpty( obj ) && !memberIds.toString().contains( obj + "," ) ) ) {
+		    memberIds.append( obj ).append( "," );
+		}
+	    }
+	    memberIds = new StringBuilder( memberIds.substring( 0, memberIds.length() - 1 ) );
+
+	    memberList = memberService.findMemberByIds( memberIds.toString(), busUserId );
+	}
+
+	if ( memberList != null && memberList.size() > 0 ) {
+	    for ( Map< String,Object > sellerMap : sellerList ) {
+		Object obj = sellerMap.get( "member_id" );
+		for ( Map memberMap : memberList ) {
+		    Object id = memberMap.get( "id" );
+		    if ( obj.toString().equals( id.toString() ) ) {
+			sellerMap.put( "nickname", memberMap.get( "nickname" ) );
+			sellerMap.put( "phone", memberMap.get( "phone" ) );
+			break;
+		    }
+		}
+	    }
+	}
+	return sellerList;
     }
 
     @Override
     public boolean checkSeller( int busUserId, Map< String,Object > params, WxPublicUsers wxPublicUsers ) {
 	int count = 0;
 	if ( CommonUtil.isNotEmpty( params.get( "seller" ) ) ) {
-	    MallSeller seller = (MallSeller) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "seller" ).toString() ), MallSeller.class );
+	    MallSeller seller = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "seller" ).toString() ), MallSeller.class );
 	    seller.setCheckTime( new Date() );
 	    if ( CommonUtil.isNotEmpty( seller.getCheckStatus() ) ) {
 		if ( seller.getCheckStatus() == 1 ) {
@@ -426,7 +468,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public PageUtil selectSellerPage( int busUserId, Map< String,Object > params ) {
 	params.put( "status", "1" );
 	params.put( "busUserId", busUserId );
-	List< MallSeller > countList = mallSellerDAO.selectPageSellerByBusUserId( params );
+	List< Map< String,Object > > countList = mallSellerDAO.selectPageSellerByBusUserId( params );
 	int count = countList.size();
 
 	int pageSize = 10;
@@ -438,7 +480,17 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
-	List< MallSeller > sellerList = mallSellerDAO.selectPageSellerByBusUserId( params );
+	List< Map > memberList = null;
+	if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
+	    memberList = memberService.findMemberByPhone( params.get( "keyWord" ).toString(), busUserId );
+	    if ( memberList != null && memberList.size() > 0 ) {
+		params.put( "memberList", memberList );
+	    }
+	}
+
+	List< Map< String,Object > > sellerList = mallSellerDAO.selectPageSellerByBusUserId( params );
+
+	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
 
 	page.setSubList( sellerList );
 	return page;
@@ -510,7 +562,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	int count = 0;
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "joinProduct" ) ) ) {
-	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject
+	    MallSellerJoinProduct joinProduct = JSONObject
 			    .toJavaObject( JSONObject.parseObject( params.get( "joinProduct" ).toString() ), MallSellerJoinProduct.class );
 	    MallSellerJoinProduct jProduct = null;
 	    if ( CommonUtil.isNotEmpty( joinProduct.getProductId() ) ) {
@@ -552,12 +604,12 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     }
 
     @Override
-    public Map< String,Object > UpdSellerJoinProduct( int busUserId,
+    public Map< String,Object > updSellerJoinProduct( int busUserId,
 		    Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	int count = 0;
 	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallSellerJoinProduct joinProduct = (MallSellerJoinProduct) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallSellerJoinProduct.class );
+	    MallSellerJoinProduct joinProduct = JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallSellerJoinProduct.class );
 	    count = mallSellerJoinProductDAO.updateById( joinProduct );
 	}
 	if ( count > 0 ) {
@@ -950,13 +1002,15 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		for ( String aLogoPathStr : logoPathStr ) {
 		    File files = new File( aLogoPathStr );
 		    if ( files.exists() ) {
-			files.delete();//删除水印图片
+			boolean flag = files.delete();//删除水印图片
+			logger.info( "删除水印图片："+flag );
 		    }
 		}
 	    }
 	    File pathFile = new File( path );
 	    if ( pathFile.exists() ) {
-		pathFile.delete();//删除背景图片
+		boolean flag = pathFile.delete();//删除背景图片
+		logger.info( "删除背景图片："+flag );
 	    }
 	    newPath = "/image/" + newPath;
 	    //setRedisSellerImage(seller.getMemberId().toString(), newPath);

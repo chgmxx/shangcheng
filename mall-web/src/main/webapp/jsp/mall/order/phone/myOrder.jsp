@@ -262,7 +262,7 @@ body,html{height:100%;width: 100%;font-size: 30px; position: relative;}
 <input type="hidden" class="memberId" value="${memberId }"/>
 <input type="hidden" class="userid" value="${userid }"/>
 <input type="hidden" class="alipaySubject" value="${alipaySubject }"/>
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="/js/jquery-2.2.2.js"></script>
 <script type="text/javascript" src="/js/plugin/gt/js/gt_common.js"></script>

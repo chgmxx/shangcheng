@@ -62,7 +62,7 @@
 <img class="mallHeadPath" src="<c:if test="${!empty mallSet }">${http }${mallSet.mallHeadPath }</c:if>" style="display: none;"/>
 <img class="headimgurl" src="${member.headimgurl }" style="display: none;"/>
 
-<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script src="/js/plugin/layer-mobile/layer/layer.js"></script>
 <script type="text/javascript" src="/js/mall/seller/phone/sellerPublic.js"></script>
 <script type="text/javascript">

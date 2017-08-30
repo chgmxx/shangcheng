@@ -1,6 +1,8 @@
 package com.gt.mall.common;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
@@ -37,8 +39,15 @@ public class AuthorizeOrLoginController {
 	Integer browser = CommonUtil.judgeBrowser( request );
 	Object uclogin = map.get( "uclogin" );
 
-	JSONObject json = busUserService.isUserGuoQi( busId );
-	if ( CommonUtil.isEmpty( json ) ) {
+	String wxmpSign = "WXMP2017";
+	Map< String,Object > getWxPublicMap = new HashMap<>();
+	getWxPublicMap.put( "busId", busId );
+	//判断商家信息 1是否过期 2公众号是否变更过
+	String wxpublic = SignHttpUtils.WxmppostByHttp("http://wxmp.yifriend.net:13882//8A5DA52E/busUserApi/getWxPulbicMsg.do", getWxPublicMap, wxmpSign );
+	JSONObject json = JSONObject.parseObject( wxpublic );
+
+//	JSONObject json = busUserService.isUserGuoQi( busId );
+	if ( CommonUtil.isEmpty( json ) || json.size() == 0) {
 	    return null;
 	}
 	Integer code = CommonUtil.toInteger( json.get( "code" ) );
@@ -65,7 +74,7 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
-	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryParam=" + queryMap;
+	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(queryMap);
 	return url;
     }
 
@@ -83,7 +92,7 @@ public class AuthorizeOrLoginController {
 	return null;
     }
 
-    @RequestMapping( value = "/79B4DE7C/clearMember" )
+	@RequestMapping( value = "/79B4DE7C/clearMember" )
     public void clearMember( HttpServletRequest request, HttpServletResponse response) {
 	try {
 	    SessionUtils.setLoginMember( request, null );

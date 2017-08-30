@@ -160,7 +160,7 @@ public class CommonUtil {
 	return pattern.matcher( str ).matches();
     }
 
-    public static String Blob2String( Object obj ) {
+    public static String blob2String( Object obj ) {
 	String string = null;
 	try {
 	    if ( obj == null || obj.equals( "" ) ) {
@@ -188,7 +188,7 @@ public class CommonUtil {
     /**
      * url中文参数乱码
      */
-    public static String UrlEncode( String str ) {
+    public static String urlEncode( String str ) {
 
 	try {
 	    return URLEncoder.encode( str, "UTF-8" );
@@ -207,7 +207,7 @@ public class CommonUtil {
     }
 
     public static String getpath( HttpServletRequest request ) {
-	String url = "http://" + request.getServerName() // 服务器地址
+	String url = request.getScheme() + "://" + request.getServerName() // 服务器地址
 			+ request.getContextPath() // 项目名称
 			+ request.getServletPath() // 请求页面或其他地址
 			+ ( CommonUtil.isEmpty( request.getQueryString() ) ? "" : "?" + request.getQueryString() ); // 参数
@@ -417,7 +417,10 @@ public class CommonUtil {
 
 	File file = new File( path );
 	if ( !file.exists() && !file.isDirectory() ) {
-	    file.mkdirs();
+	    boolean flag = file.mkdirs();
+	    if ( !flag ) {
+		System.out.println( "创建文件失败 " );
+	    }
 	}
 	Long time = System.currentTimeMillis();
 	path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
