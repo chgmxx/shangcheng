@@ -12,7 +12,7 @@ spring:
   host: 113.106.202.51
   port: 6379
   password: gt@123456
-  database: 8
+  database: 2
 #redis session共享
  session:
    store-type: redis
@@ -124,7 +124,7 @@ redisSession:
 http:
  #总项目请求地址
  wxmp:
-  domain: http://wxmp.yifriend.net:13882/
+  domain: http://wxmp.yifriend.net:12882/
 #  domain: http://yifriend.net/
   key: WXMP2017
  #会员key 和 请求地址
