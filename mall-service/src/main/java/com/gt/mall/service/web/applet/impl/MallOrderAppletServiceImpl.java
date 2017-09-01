@@ -1,11 +1,15 @@
 package com.gt.mall.service.web.applet.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
@@ -25,11 +29,14 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallOrderAppletService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
@@ -92,6 +99,12 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private DictService                 dictService;
     @Autowired
     private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private MallStoreService            mallStoreService;
+    @Autowired
+    private FenBiFlowService            fenBiFlowService;
+    @Autowired
+    private WxShopService               wxShopService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -137,7 +150,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	String orderStatus = CommonUtil.toString( order.getOrderStatus() );
 	String deliveryMethod = CommonUtil.toString( order.getDeliveryMethod() );
 	JSONArray detailArr = new JSONArray();
-	JSONArray arr = JSONArray.parseArray( order.getMallOrderDetail().toString() );
+	JSONArray arr = JSONArray.parseArray( JSON.toJSONString( order.getMallOrderDetail() ) );
 	int isShouHuo = 0;//是否能显示收货按钮
 	int groupBuyId = CommonUtil.toInteger( order.getGroupBuyId() );
 	int shopId = 0;
@@ -313,14 +326,15 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 			detailArr.addAll(arr);
 		}*/
 
-	Map< String,Object > params = new HashMap< String,Object >();
-	params.put( "id", shopId );
-	//TODO 需调用 storeDAO.selectByStoreId(map);方法
 	Map< String,Object > storeMap = null;
-	//                storeDAO.selectByStoreId(params);
+	try {
+	    storeMap = mallStoreService.findShopByStoreId( shopId );
+	} catch ( Exception e ) {
+	    logger.error( "查询店铺信息异常:" + e.getMessage() );
+	}
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
-	    resultMap.put( "store_name", storeMap.get( "business_name" ) );
-	    resultMap.put( "store_image", storeMap.get( "shopPicture" ) );
+	    resultMap.put( "store_name", storeMap.get( "stoName" ) );
+	    resultMap.put( "store_image", storeMap.get( "stoPicture" ) );
 	}
 	resultMap.put( "order_id", order.getId() );
 	resultMap.put( "order_no", order.getOrderNo() );
@@ -396,16 +410,21 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
 	    //查询店铺信息
 	    params.put( "id", order.getShopId() );
-	    //TODO 需调用 storeDAO.selectByStoreId(map);方法
 	    Map< String,Object > storeMap = null;
-	    //                    storeMapper.selectByStoreId(params);
+	    try {
+		storeMap = mallStoreService.findShopByStoreId( order.getShopId() );
+	    } catch ( Exception e ) {
+		logger.error( "查询店铺信息异常:" + e.getMessage() );
+	    }
+
 	    if ( CommonUtil.isNotEmpty( storeMap ) ) {
-		resultMap.put( "shop_name", storeMap.get( "business_name" ) );
-		if ( CommonUtil.isNotEmpty( storeMap.get( "shopPicture" ) ) ) {
-		    resultMap.put( "shop_image", PropertiesUtil.getResourceUrl() + storeMap.get( "shopPicture" ) );
-		} else {
-		    resultMap.put( "shop_image", PropertiesUtil.getResourceUrl() + storeMap.get( "stoPicture" ) );
-		}
+		resultMap.put( "shop_name", storeMap.get( "stoName" ) );
+		resultMap.put( "shop_image", PropertiesUtil.getResourceUrl() + storeMap.get( "stoPicture" ) );
+		//		if ( CommonUtil.isNotEmpty( storeMap.get( "shopPicture" ) ) ) {
+		//		    resultMap.put( "shop_image", PropertiesUtil.getResourceUrl() + storeMap.get( "stoPicture" ) );
+		//		} else {
+		//		    resultMap.put( "shop_image", PropertiesUtil.getResourceUrl() + storeMap.get( "stoPicture" ) );
+		//		}
 	    }
 	    String orderPayWay = order.getOrderPayWay().toString();
 	    MallGroupBuy buy = null;
@@ -808,7 +827,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     public Map< String,Object > submitReturnOrder( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 
-	MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toJavaObject( JSONObject.parseObject( params.toString() ), MallOrderReturn.class );
+	MallOrderReturn orderReturn = JSONObject.parseObject( JSON.toJSONString( params ), MallOrderReturn.class );
 	if ( CommonUtil.isNotEmpty( orderReturn.getWlCompanyId() ) ) {
 	    orderReturn.setStatus( 3 );
 	} else {
@@ -862,25 +881,25 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	//TODO 地址方法 t_eat_member_address
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
-	        if (memberList != null && memberList.size() > 0) {
-	            params.put("oldMemberIds", memberList);
-	        }
-	        List<Map<String, Object>> addressList = new ArrayList<Map<String, Object>>();
-//	        List<Map<String, Object>> list = orderDAO.selectShipAddress(params);
-//	        int is_default = 2;
-//	        if (list != null && list.size() > 0) {
-//	            for (Map<String, Object> map : list) {
-//	                Map<String, Object> addressMap = getAddressParams(map);
-//	                if (is_default == 2) {
-//	                    is_default = CommonUtil.toInteger(addressMap.get("is_default"));
-//	                } else if (is_default == 1 && addressMap.get("is_default").toString().equals("1")) {
-//	                    addressMap.put("is_default", "2");
-//	                    daoUtil.update("UPDATE t_eat_member_address SET mem_default = 2 WHERE id =" + addressMap.get("id"));
-//	                }
-//	                addressList.add(addressMap);
-//	            }
-//	        }
-	        resultMap.put("addressList", addressList);
+	if ( memberList != null && memberList.size() > 0 ) {
+	    params.put( "oldMemberIds", memberList );
+	}
+	List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
+	/*List< Map< String,Object > > list = orderDAO.selectShipAddress( params );
+	int is_default = 2;
+	if ( list != null && list.size() > 0 ) {
+	    for ( Map< String,Object > map : list ) {
+		Map< String,Object > addressMap = getAddressParams( map );
+		if ( is_default == 2 ) {
+		    is_default = CommonUtil.toInteger( addressMap.get( "is_default" ) );
+		} else if ( is_default == 1 && addressMap.get( "is_default" ).toString().equals( "1" ) ) {
+		    addressMap.put( "is_default", "2" );
+		    daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 2 WHERE id =" + addressMap.get( "id" ) );
+		}
+		addressList.add( addressMap );
+	    }
+	}*/
+	resultMap.put( "addressList", addressList );
 	return resultMap;
     }
 
@@ -889,26 +908,27 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int id = CommonUtil.toInteger( params.get( "id" ) );
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+
+	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
+	String memberIds = "";
+	if ( memberList != null && memberList.size() > 0 ) {
+	    for ( Integer dfMemberId : memberList ) {
+		if ( CommonUtil.isNotEmpty( memberIds ) ) {
+		    memberIds += ",";
+		}
+		memberIds += dfMemberId;
+	    }
+	}
 	//TODO 地址方法 t_eat_member_address
-	        List<Integer> memberList = memberService.findMemberListByIds(memberId);//查询会员信息
-	        String memberIds = "";
-	        if (memberList != null && memberList.size() > 0) {
-	            for (Integer dfMemberId : memberList) {
-	                if (CommonUtil.isNotEmpty(memberIds)) {
-	                    memberIds += ",";
-	                }
-	                memberIds += dfMemberId;
-	            }
-	        }
-//	        daoUtil.update("UPDATE t_eat_member_address SET mem_default = 2 WHERE df_member_id in (" + memberIds + ")");
-//	        int count = daoUtil.update("UPDATE t_eat_member_address SET mem_default = 1 WHERE id=?", id);
-//
-//	        if (count > 0) {
-//	            resultMap.put("code", 1);
-//	        } else {
-//	            resultMap.put("code", -1);
-//	            resultMap.put("errorMsg", "设置默认地址失败");
-//	        }
+	/*daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 2 WHERE df_member_id in (" + memberIds + ")" );
+	int count = daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 1 WHERE id=?", id );
+
+	if ( count > 0 ) {
+	    resultMap.put( "code", 1 );
+	} else {
+	    resultMap.put( "code", -1 );
+	    resultMap.put( "errorMsg", "设置默认地址失败" );
+	}*/
 
 	return resultMap;
     }
@@ -916,45 +936,44 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     @Override
     public Map< String,Object > addressSubmit( Map< String,Object > params ) {
 	//TODO 需关连会员地址方法 basis_city，t_eat_member_address
-	//        Map<String, Object> resultMap = new HashMap<String, Object>();
-	//
-	//        MemberAddress memAddress = (MemberAddress) JSONObject.toBean(JSONObject.fromObject(params), MemberAddress.class);
-	//        int count = daoUtil.queryForInt("select count(id) from t_eat_member_address where mem_default = 1 and df_member_id=?", memAddress.getDfMemberId());
-	//        if(count == 0){
-	//            memAddress.setMemDefault(1);
-	//        }
-	//        if(CommonUtil.isEmpty(memAddress.getMemLatitude()) || CommonUtil.isEmpty(memAddress.getMemLongitude())){
-	//            Map<String, Object> provinceMaps = daoUtil.queryForMap("SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemProvince());
-	//            Map<String, Object> cityMap = daoUtil.queryForMap("SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemCity());
-	//            Map<String, Object> areaMap = daoUtil.queryForMap("SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemArea());
-	//            String address = "";
-	//            String city = "";
-	//            if(CommonUtil.isNotEmpty(provinceMaps)){
-	//                address += provinceMaps.get("city_name").toString();
-	//            }
-	//            if(CommonUtil.isNotEmpty(cityMap)){
-	//                city = cityMap.get("city_name").toString();
-	//                address += city;
-	//            }
-	//            if(CommonUtil.isNotEmpty(areaMap)){
-	//                address += areaMap.get("city_name").toString();
-	//            }
-	//            Map<String, Object> addressMap = storeService.getlnglatByAddress(address+memAddress.getMemAddress(), city);
-	//            if(CommonUtil.isNotEmpty(addressMap)){
-	//                memAddress.setMemLatitude(addressMap.get("lat").toString());
-	//                memAddress.setMemLongitude(addressMap.get("lng").toString());
-	//            }
-	//        }
-	//        Map<String, Object> msg = eatPhoneService.saveOrderAddress(memAddress);
-	//
-	//        if(msg.get("result").toString().equals("true")){
-	//            resultMap.put("code", 1);
-	//        }else{
-	//            resultMap.put("code", -1);
-	//            resultMap.put("errorMsg", "保存地址信息失败");
-	//        }
-	//        return resultMap;
-	return null;
+	Map< String,Object > resultMap = new HashMap< String,Object >();
+	MemberAddress memAddress = JSONObject.parseObject( JSON.toJSONString( params ), MemberAddress.class );
+	System.out.println( memAddress.getMemAddress() );
+/*	int count = daoUtil.queryForInt( "select count(id) from t_eat_member_address where mem_default = 1 and df_member_id=?", memAddress.getDfMemberId() );
+	if ( count == 0 ) {
+	    memAddress.setMemDefault( 1 );
+	}
+	if ( CommonUtil.isEmpty( memAddress.getMemLatitude() ) || CommonUtil.isEmpty( memAddress.getMemLongitude() ) ) {
+	    Map< String,Object > provinceMaps = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemProvince() );
+	    Map< String,Object > cityMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemCity() );
+	    Map< String,Object > areaMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemArea() );
+	    String address = "";
+	    String city = "";
+	    if ( CommonUtil.isNotEmpty( provinceMaps ) ) {
+		address += provinceMaps.get( "city_name" ).toString();
+	    }
+	    if ( CommonUtil.isNotEmpty( cityMap ) ) {
+		city = cityMap.get( "city_name" ).toString();
+		address += city;
+	    }
+	    if ( CommonUtil.isNotEmpty( areaMap ) ) {
+		address += areaMap.get( "city_name" ).toString();
+	    }
+	    Map< String,Object > addressMap = storeService.getlnglatByAddress( address + memAddress.getMemAddress(), city );
+	    if ( CommonUtil.isNotEmpty( addressMap ) ) {
+		memAddress.setMemLatitude( addressMap.get( "lat" ).toString() );
+		memAddress.setMemLongitude( addressMap.get( "lng" ).toString() );
+	    }
+	}
+	Map< String,Object > msg = eatPhoneService.saveOrderAddress( memAddress );
+
+	if ( msg.get( "result" ).toString().equals( "true" ) ) {
+	    resultMap.put( "code", 1 );
+	} else {
+	    resultMap.put( "code", -1 );
+	    resultMap.put( "errorMsg", "保存地址信息失败" );
+	}*/
+	return resultMap;
     }
 
     @Override
@@ -999,6 +1018,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 		params.put( "cartIds", cartArrs );
 	    }
+	    List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );
 	    List< Map< String,Object > > shopList = shopCartDAO.selectCheckShopByParam( params );
 	    if ( shopList != null && shopList.size() > 0 ) {
 		for ( Map< String,Object > shopMap : shopList ) {
@@ -1060,16 +1080,25 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		    shopMap.put( "proList", proList );
 
 		    shopMap.put( "totalNum", totalNum );
+		    Integer wxShopId = CommonUtil.toInteger( shopMap.get( "wx_shop_id" ) );
+		    String shopPicture = "";
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == wxShopId ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				shopMap.put( "sto_name", wxShops.getBusinessName() );
+			    }
+			    shopPicture = wxShops.getImageUrl();
+			    break;
+			}
+		    }
 
-		    if ( CommonUtil.isNotEmpty( shopMap.get( "shopPicture" ) ) ) {
-			shopMap.put( "sto_image", shopMap.get( "shopPicture" ) );
+		    if ( CommonUtil.isNotEmpty( shopPicture ) ) {
+			shopMap.put( "sto_image", shopPicture );
 		    } else {
 			shopMap.put( "sto_image", shopMap.get( "stoPicture" ) );
 		    }
-		    shopMap.put( "sto_name", shopMap.get( "business_name" ) );
 
 		    shopMap.remove( "stoPicture" );
-		    shopMap.remove( "shopPicture" );
 		    shopMap.remove( "wx_shop_id" );
 		    cartList.add( shopMap );
 		}
@@ -1147,21 +1176,23 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    totalFreightMoney += freightPrice;
 
 	    //查询店铺名称
-	    Map< String,Object > map = new HashMap< String,Object >();
-	    map.put( "id", product.getShopId() );
-	    //TODO  storeMapper.selectByStoreId(map);
 	    Map< String,Object > storeMap = null;
-	    //                    storeMapper.selectByStoreId(map);
-
+	    try {
+		storeMap = mallStoreService.findShopByStoreId( product.getShopId() );
+	    } catch ( Exception e ) {
+		logger.error( "查询店铺信息异常:" + e.getMessage() );
+	    }
 	    Map< String,Object > shopMap = new HashMap< String,Object >();
 	    shopMap.put( "shop_id", product.getShopId() );
-	    shopMap.put( "sto_name", storeMap.get( "business_name" ) );
-	    if ( CommonUtil.isNotEmpty( storeMap.get( "shopPicture" ) ) ) {
-		shopMap.put( "sto_image", storeMap.get( "shopPicture" ) );
-	    } else {
+	    if ( CommonUtil.isNotEmpty( storeMap ) ) {
+		shopMap.put( "sto_name", storeMap.get( "stoName" ) );
 		shopMap.put( "sto_image", storeMap.get( "stoPicture" ) );
+		/*if ( CommonUtil.isNotEmpty( storeMap.get( "shopPicture" ) ) ) {
+		    shopMap.put( "sto_image", storeMap.get( "stoPicture" ) );
+		} else {
+		    shopMap.put( "sto_image", storeMap.get( "stoPicture" ) );
+		}*/
 	    }
-
 	    shopMap.put( "totalNum", totalNum );
 
 	    shopMap.put( "freightPrice", freightPrice );
@@ -1551,9 +1582,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		resultMap.put( "msg", map.get( "msg" ) );
 		return resultMap;
 	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
-		//TODO 充值  busFlowService.selectById(product.getFlowId());
-		BusFlow flow = null;
-		//                        busFlowService.selectById(product.getFlowId());
+		WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
 		    resultMap.put( "code", -1 );
 		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );

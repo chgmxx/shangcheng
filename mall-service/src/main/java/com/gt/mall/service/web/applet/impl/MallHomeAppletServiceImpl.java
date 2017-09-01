@@ -8,6 +8,8 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.wx.OldApiSms;
+import com.gt.mall.bean.wx.shop.ShopPhoto;
+import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
@@ -24,6 +26,7 @@ import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.freight.MallFreightService;
@@ -108,6 +111,8 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     private WxPublicUserService         wxPublicUserService;
     @Autowired
     private BusUserService              busUserService;
+    @Autowired
+    private WxShopService               wxShopService;
 
     @Override
     public List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > params ) {
@@ -229,7 +234,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( CommonUtil.isEmpty( price ) || price <= 0 ) {
 	    price = CommonUtil.toDouble( map1.get( "pro_price" ) );
 	}
-	if ( CommonUtil.isEmpty( imageUrl ) ) {
+	if ( CommonUtil.isEmpty( imageUrl ) && CommonUtil.isNotEmpty( map1.get( "image_url" ) ) ) {
 	    imageUrl = CommonUtil.toString( map1.get( "image_url" ) );
 	}
 
@@ -506,6 +511,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	}
 
 	//查询商品图片
+	params.put( "assId" ,productId);
 	List< Map< String,Object > > imageList = imageAssociativeDAO.selectByAssId( params );
 	List< Map< String,Object > > newImageList = new ArrayList< Map< String,Object > >();
 	if ( imageList != null && imageList.size() > 0 ) {
@@ -769,22 +775,32 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map : list ) {
+		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( map.get( "wx_shop_id" ) ) );
+		List< ShopPhoto > shopPhotoList = wxShopService.getShopPhotoByShopId( wxShopInfo.getId() );
 		Map< String,Object > shopMap = new HashMap< String,Object >();
 		if ( longitude > 0 && latitude > 0 ) {
-		    Double raill = CommonUtil.getDistance( longitude, latitude, CommonUtil.toDouble( map.get( "longitude" ) ), CommonUtil.toDouble( map.get( "latitude" ) ) );
+		    Double raill = CommonUtil.getDistance( longitude, latitude, CommonUtil.toDouble( wxShopInfo.getLongitude() ), CommonUtil.toDouble( wxShopInfo.getLatitude() ) );
 		    raill = raill / 1000;
 		    shopMap.put( "raill", df.format( raill ) );
 		} else {
 		    shopMap.put( "raill", "-1" );
 		}
-		if ( CommonUtil.isNotEmpty( map.get( "shopPicture" ) ) ) {
-		    shopMap.put( "shopImage", PropertiesUtil.getResourceUrl() + map.get( "shopPicture" ) );
-		} else {
-		    shopMap.put( "shopImage", PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
+		if ( shopPhotoList != null && shopPhotoList.size() > 0 ) {
+		    if ( CommonUtil.isNotEmpty( shopPhotoList.get( 0 ).getLocalAddress() ) ) {
+			shopMap.put( "shopImage", PropertiesUtil.getResourceUrl() + shopPhotoList.get( 0 ).getLocalAddress() );
+		    } else {
+			shopMap.put( "shopImage", PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
+		    }
 		}
-		shopMap.put( "shopName", map.get( "shopName" ) );
-		shopMap.put( "shopAddress", map.get( "sto_address" ) );
-		shopMap.put( "telephone", map.get( "telephone" ) );
+		//TODO 地址方法
+		String province = "";
+		String city = "";
+		String area = "";
+		String address = wxShopInfo.getAddress() + wxShopInfo.getDetail();
+
+		shopMap.put( "shopName", wxShopInfo.getBusinessName() );
+		shopMap.put( "shopAddress", province + city + area + address );
+		shopMap.put( "telephone", wxShopInfo.getTelephone() );
 		shopMap.put( "id", map.get( "id" ) );
 		shopList.add( shopMap );
 	    }

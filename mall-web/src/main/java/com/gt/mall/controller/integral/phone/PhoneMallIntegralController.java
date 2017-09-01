@@ -9,6 +9,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -58,7 +59,9 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     @Autowired
     private MemberService            memberService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private WxShopService            wxShopService;
 
     /**
      * 进入积分商城
@@ -392,10 +395,10 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    }
 	    pageService.getCustomer( request, userid );
 	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( member ) ) {
-		WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId(userid);
-		if ( wxPublicUsers !=null ){
+		WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( userid );
+		if ( wxPublicUsers != null ) {
 		    //TODO  CommonUtil.getWxParams
-//		    CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
+		    //		    CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
 		}
 	    }
 	    Object obj = request.getSession().getAttribute( Constants.SESSION_KEY + "integral_order" );
@@ -435,9 +438,8 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		return returnUrl;
 	    }
 	    //查询省份数据
-	    //TODO 需关连 省份 方法
-	    //	    List<Map<String, Object>> maps=wxShopService.queryCityByLevel(2);
-	    //	    request.setAttribute("maps", maps);
+	    List< Map > maps = wxShopService.queryCityByLevel( 2 );
+	    request.setAttribute( "maps", maps );
 	    Object id = params.get( "id" );
 	    if ( null != id && !id.equals( "" ) ) {//修改地址查询
 		//TODO 需关连地址 方法
@@ -461,8 +463,8 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    }
 	    pageService.getCustomer( request, userid );
 	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( member ) ) {
-		WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId(userid);
-		if ( wxPublicUsers !=null ){
+		WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( userid );
+		if ( wxPublicUsers != null ) {
 		    //TODO  CommonUtil.getWxParams
 		    //CommonUtil.getWxParams(morderService.getWpUser(member.getId()),request);
 		}

@@ -62,17 +62,17 @@
 
     <update id="updateByShopCart" parameterType="com.gt.mall.entity.product.MallShopCart">
         update t_mall_shop_cart
-        <set >
-            <if test="productNum != null" >
+        <set>
+            <if test="productNum != null">
                 product_num = product_num+#{productNum,jdbcType=INTEGER},
             </if>
-            <if test="price != null" >
+            <if test="price != null">
                 price = #{price,jdbcType=DECIMAL},
             </if>
-            <if test="primaryPrice != null" >
+            <if test="primaryPrice != null">
                 primary_price = #{primaryPrice,jdbcType=DECIMAL},
             </if>
-            <if test="proSpecStr != null" >
+            <if test="proSpecStr != null">
                 pro_spec_str = #{proSpecStr,jdbcType=VARCHAR},
             </if>
         </set>
@@ -80,22 +80,20 @@
     </update>
 
     <select id="selectAppletByParams" parameterType="Map" resultType="Map">
-        /* todo 关联小屁孩门店*/
+
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.`discount`,a.`pro_spec_str`,
-        a.`pro_type`,a.`sale_member_id`,a.`commission`,
-        b.sto_pid,
-        /*IF(s.business_name IS NULL,b.sto_name,s.business_name) AS sto_name,
-        (SELECT p.local_address FROM t_wx_shop_photo p WHERE p.shop_id = s.id ORDER BY p.id LIMIT 1) AS shopPicture,*/
+        a.`pro_type`,a.`sale_member_id`,a.`commission`,b.wx_shop_id,
+        b.sto_pid,b.sto_name AS sto_name,
         b.sto_picture AS stoPicture,
         e.image_url,d.is_specifica AS isSpec,
-        d.pro_name,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.is_member_discount,d.pro_stock_total AS stockNum,d.pro_restriction_num,
+        d.pro_name,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.is_member_discount,d.pro_stock_total AS
+        stockNum,d.pro_restriction_num,
         d.pro_type_id,d.member_type
         FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
-       /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
         LEFT JOIN t_mall_product d ON a.product_id=d.id
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
-        WHERE  b.is_delete=0  /*AND s.`status` != -1*/
+        WHERE b.is_delete=0
         <if test="memberList != null">
             and a.user_id in
             <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
@@ -116,17 +114,16 @@
     </select>
 
     <select id="selectCheckCartByParams" parameterType="Map" resultType="Map">
-        /* todo 关联小屁孩门店 t_wx_shop  */
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.`discount`,a.`pro_spec_str`,
         a.`pro_type`,a.`sale_member_id`,a.`commission`,
         e.image_url,d.is_specifica,
         d.pro_name,d.return_day,d.is_coupons,d.is_member_discount,d.pro_weight,d.is_integral_deduction,d.is_fenbi_deduction,d.pro_type_id
         FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
-        /*LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id*/
+
         LEFT JOIN t_mall_product d ON a.product_id=d.id
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
-        WHERE  b.is_delete=0  /*AND s.`status` != -1*/ and a.is_check=1 and d.is_delete=0 and d.is_publish=1 and d.check_status=1
+        WHERE b.is_delete=0 and a.is_check=1 and d.is_delete=0 and d.is_publish=1 and d.check_status=1
         <if test="cartIds != null">
             and a.id in
             <foreach collection="cartIds" index="index" item="item" open="(" separator="," close=")">
@@ -149,15 +146,11 @@
         order by a.shop_id
     </select>
     <select id="selectCheckShopByParam" parameterType="Map" resultType="Map">
-        <!-- todo 调用小屁孩的接口 关联 t_wx_shop_photo  t_wx_shop  -->
-        SELECT DISTINCT(a.shop_id) as shop_id,b.wx_shop_id,
-        /*IF(s.business_name IS NOT NULL ,s.business_name,b.`sto_name`) AS business_name ,
-        (SELECT p.local_address FROM t_wx_shop_photo p WHERE p.shop_id = s.id  ORDER BY p.id LIMIT 1) AS shopPicture,*/
+        SELECT DISTINCT(a.shop_id) as shop_id,b.wx_shop_id,b.`sto_name` ,
         b.sto_picture AS stoPicture
         FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
-       /* LEFT JOIN t_wx_shop s ON s.id=b.wx_shop_id */
-        WHERE  /*s.`status` != -1 AND*/ b.is_delete=0
+        WHERE b.is_delete=0
         <if test="isCheck == 1">
             and a.is_check=1
         </if>
@@ -185,7 +178,7 @@
     </select>
 
     <update id="updateCheckByShopCart" parameterType="Map">
-        update t_mall_shop_cart  set is_check=0
+        update t_mall_shop_cart set is_check=0
         <where>
             <if test="memberList != null">
                 user_id in
@@ -200,7 +193,7 @@
         SELECT IFNULL(SUM(a.`product_num`),0) AS proNum
         FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
-        WHERE  b.is_delete=0 and a.pro_type = 0
+        WHERE b.is_delete=0 and a.pro_type = 0
         <if test="busUserId != null and busUserId != ''">
             and a.bus_user_id=#{busUserId}
         </if>
@@ -213,58 +206,61 @@
     </select>
 
     <select id="selectShopCartByMemberId" parameterType="Map" resultType="Map">
-        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
+        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
+        a.`pro_type`,a.`sale_member_id`,a.`commission`,
         b.sto_pid,e.image_url,f.id AS pageid ,
-        d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons as isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num,
+        d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons as isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS
+        isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num,
         d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id as flowId,
         b.wx_shop_id,b.sto_name
         FROM
         (
-            SELECT  a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`
-            FROM t_mall_shop_cart a
-            <where>
-                <if test="memberList != null ">
-                    and a.user_id in
-                    <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
-                        #{item,jdbcType=INTEGER}
-                    </foreach>
-                </if>
-                <if test="memberId != null and memberId != ''">
-                    and a.user_id = #{memberId}
-                </if>
-                <if test="checkIds != null">
-                    and a.id in
-                    <foreach collection="checkIds" index="index" item="item" open="(" separator="," close=")">
-                        #{item,jdbcType=INTEGER}
-                    </foreach>
-                </if>
-                <if test="userId != null and userId != '' and userId != 0">
-                    and a.bus_user_id= #{userId}
-                </if>
-                <if test="type == 0">
-                    and a.pro_type = 0
-                </if>
-                <if test="type == 1">
-                    and (a.pro_type = 1 or a.pro_type = 2)
-                </if>
-                <if test="shopId != null and shopId != ''">
-                    a.shop_id = #{shopId}
-                </if>
+        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
+        a.`pro_type`,a.`sale_member_id`,a.`commission`
+        FROM t_mall_shop_cart a
+        <where>
+            <if test="memberList != null ">
+                and a.user_id in
+                <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="memberId != null and memberId != ''">
+                and a.user_id = #{memberId}
+            </if>
+            <if test="checkIds != null">
+                and a.id in
+                <foreach collection="checkIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="userId != null and userId != '' and userId != 0">
+                and a.bus_user_id= #{userId}
+            </if>
+            <if test="type == 0">
+                and a.pro_type = 0
+            </if>
+            <if test="type == 1">
+                and (a.pro_type = 1 or a.pro_type = 2)
+            </if>
+            <if test="shopId != null and shopId != ''">
+                a.shop_id = #{shopId}
+            </if>
 
-            </where>
-            GROUP BY a.id
-            ORDER BY a.shop_id
+        </where>
+        GROUP BY a.id
+        ORDER BY a.shop_id
         ) a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
         LEFT JOIN t_mall_product d ON a.product_id=d.id
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
         LEFT JOIN (SELECT id,pag_sto_id FROM t_mall_page WHERE pag_is_main=1) f ON a.shop_id=f.pag_sto_id
-        WHERE  b.is_delete=0
+        WHERE b.is_delete=0
     </select>
 
     <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_shop_cart
         where id = #{id,jdbcType=INTEGER}
     </select>

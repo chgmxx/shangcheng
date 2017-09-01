@@ -1,11 +1,14 @@
 package com.gt.mall.service.web.applet.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
+import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -20,12 +23,15 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.MobileLocationUtil;
@@ -79,6 +85,12 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private DictService         dictService;
     @Autowired
     private WxPublicUserService wxPublicUserService;
+    @Autowired
+    private MallStoreService    mallStoreService;
+    @Autowired
+    private FenBiFlowService    fenBiFlowService;
+    @Autowired
+    private WxShopService       wxShopService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -130,7 +142,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	int totalNum = 0;//商品小计
 	int proTypeId = 0;//商品类型
 	double discount = productService.getMemberDiscount( "1", member );//获取会员折扣
-
+	Map memberCard = null;
 	if ( from == 1 ) {//购物车结算
 
 	    List< Map< String,Object > > cartList = new ArrayList< Map< String,Object > >();
@@ -138,6 +150,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 		params.put( "cartIds", cartArrs );
 	    }
+	    List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );
 	    List< Map< String,Object > > shopList = shopCartDAO.selectCheckShopByParam( params );
 	    if ( shopList != null && shopList.size() > 0 ) {
 		for ( Map< String,Object > shopMap : shopList ) {
@@ -179,20 +192,20 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    proTypeId = CommonUtil.toInteger( map.get( "pro_type_id" ) );
 
 			    //新版本新增内容  1.1 开始    计算商品的会员价
-							/*double price = 0;
-							if(CommonUtil.isNotEmpty(productMap.get("product_price"))){
-								price = CommonUtil.toDouble(productMap.get("product_price"));
-							}
-							if(CommonUtil.isNotEmpty(map.get("is_member_discount"))){
-								if(CommonUtil.toString(map.get("is_member_discount")).equals("1")){
-									if(discount > 0 && discount < 1){
-										double memberProPrice = CommonUtil.toDouble(df.format(price*discount));
+			    /*double price = 0;
+			    if(CommonUtil.isNotEmpty(productMap.get("product_price"))){
+				    price = CommonUtil.toDouble(productMap.get("product_price"));
+			    }
+			    if(CommonUtil.isNotEmpty(map.get("is_member_discount"))){
+				    if(CommonUtil.toString(map.get("is_member_discount")).equals("1")){
+					    if(discount > 0 && discount < 1){
+						    double memberProPrice = CommonUtil.toDouble(df.format(price*discount));
 
-										productMap.put("primary_price", price);
-										productMap.put("product_price", memberProPrice);
-									}
-								}
-							}*/
+						    productMap.put("primary_price", price);
+						    productMap.put("product_price", memberProPrice);
+					    }
+				    }
+			    }*/
 			    //新版本新增内容  1.1 结束
 
 			    if ( CommonUtil.isNotEmpty( map.get( "product_specificas" ) ) ) {
@@ -243,7 +256,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 		    shopMap.put( "totalNum", totalNum );
 
-					/*Store store = storeMapper.selectByPrimaryKey(shopId);*/
+		    /*Store store = storeMapper.selectByPrimaryKey(shopId);*/
 		    Map< String,Object > map = new HashMap< String,Object >();
 		    map.put( "id", shopId );
 		    //Map<String, Object> storeMap = storeMapper.selectByStoreId(map);
@@ -252,45 +265,52 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			wxShopId = CommonUtil.toInteger( shopMap.get( "wx_shop_id" ) );
 		    }
 		    if ( proTypeId == 0 && isYhq ) {
-			//TODO 需关连 wxCardService.findWxCardByShopId 方法
-			//                        List<Map<String,Object>> coupon =wxCardService.findWxCardByShopId(wxShopId, wxPublicUsers, member);
-			//                        if(null != coupon && coupon.size() > 0){
-			//                            coupon = getCouponDuofen(coupon, yhqMoney, 1);
-			//                            shopMap.put("coupon", coupon);
-			//                        }
+			memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), shopMap.get( "wx_shop_id" ).toString() );
+			List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + wxShopId );
+			if ( null != coupon && coupon.size() > 0 ) {
+			    coupon = getCouponDuofen( coupon, yhqMoney, 1 );
+			    shopMap.put( "coupon", coupon );
+			}
 
 			//查询多粉优惠券
-			//TODO 需关连 粉优惠券 duofenCardService.findDuofenCardByMemberId 方法
-			//                        List<Map<String, Object>> duofenCoupon = duofenCardService.findDuofenCardByMemberId(member.getId(), wxShopId);
-			//                        if(duofenCoupon != null && duofenCoupon.size() > 0){
-			//                            duofenCoupon = getCouponDuofen(duofenCoupon, yhqMoney, 0);
-			//                            shopMap.put("duofenCoupon", duofenCoupon);
-			//                        }
+			List< Map< String,Object > > duofenCoupon = (List< Map< String,Object > >) memberCard.get( "duofenCards" + wxShopId );
+			if ( duofenCoupon != null && duofenCoupon.size() > 0 ) {
+			    duofenCoupon = getCouponDuofen( duofenCoupon, yhqMoney, 0 );
+			    shopMap.put( "duofenCoupon", duofenCoupon );
+			}
 		    }
-		    if ( CommonUtil.isNotEmpty( shopMap.get( "shopPicture" ) ) ) {
-			shopMap.put( "sto_image", shopMap.get( "shopPicture" ) );
+		    String shopPicture = "";
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == wxShopId ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				shopMap.put( "sto_name", wxShops.getBusinessName() );
+			    }
+			    shopPicture = wxShops.getImageUrl();
+			    break;
+			}
+		    }
+		    if ( CommonUtil.isNotEmpty( shopPicture ) ) {
+			shopMap.put( "sto_image", shopPicture );
 		    } else {
 			shopMap.put( "sto_image", shopMap.get( "stoPicture" ) );
 		    }
-		    shopMap.put( "sto_name", shopMap.get( "business_name" ) );
 
 		    shopMap.remove( "stoPicture" );
-		    shopMap.remove( "shopPicture" );
 		    shopMap.remove( "wx_shop_id" );
 
 		    //版本1.1新增开始
-					/*shopMap.put("jifenProNum", jifenNum);//能使用积分的商品数量
-					shopMap.put("jifenProMoney", jifenMoney);//能使用积分的商品总价
+		    /*shopMap.put("jifenProNum", jifenNum);//能使用积分的商品数量
+		    shopMap.put("jifenProMoney", jifenMoney);//能使用积分的商品总价
 
-					shopMap.put("fenbiProNum", fenbiNum);//能使用粉币的商品数量
-					shopMap.put("fenbiProMoney", fenbiMoney);//能使用粉币的商品总价
-*/
+		    shopMap.put("fenbiProNum", fenbiNum);//能使用粉币的商品数量
+		    shopMap.put("fenbiProMoney", fenbiMoney);//能使用粉币的商品总价
+			*/
 		    shopMap.put( "yhqProNum", yhqNum );//能使用优惠券的商品数量
 		    shopMap.put( "yhqProMoney", yhqMoney );//能使用优惠券的商品总价
 
-					/*shopMap.put("unionProNum", unionNum);//能使用商家联盟的商品数量
-					shopMap.put("unionProMoney", unionMoney);//能使用商家联盟的商品总价
-*/                    //版本1.1新增结束
+		    /*shopMap.put("unionProNum", unionNum);//能使用商家联盟的商品数量
+		     shopMap.put("unionProMoney", unionMoney);//能使用商家联盟的商品总价
+		    */                    //版本1.1新增结束
 
 		    cartList.add( shopMap );
 		}
@@ -404,20 +424,17 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    totalFreightMoney += freightPrice;
 
 	    //查询店铺名称
-	    Map< String,Object > map = new HashMap< String,Object >();
-	    map.put( "id", product.getShopId() );
-	    //TODO 需调用 storeDAO.selectByStoreId(map);方法
 	    Map< String,Object > storeMap = null;
-	    //                    storeDAO.selectByStoreId(map);
-
 	    Map< String,Object > shopMap = new HashMap< String,Object >();
-	    shopMap.put( "shop_id", product.getShopId() );
-	    shopMap.put( "sto_name", storeMap.get( "business_name" ) );
-	    if ( CommonUtil.isNotEmpty( storeMap.get( "shopPicture" ) ) ) {
-		shopMap.put( "sto_image", storeMap.get( "shopPicture" ) );
-	    } else {
-		shopMap.put( "sto_image", storeMap.get( "stoPicture" ) );
+	    try {
+		storeMap = mallStoreService.findShopByStoreId( product.getShopId() );
+	    } catch ( Exception e ) {
+		logger.error( "查询店铺信息异常:" + e.getMessage() );
 	    }
+	    shopMap.put( "shop_id", product.getShopId() );
+
+	    shopMap.put( "sto_name", storeMap.get( "stoName" ) );
+	    shopMap.put( "sto_image", storeMap.get( "stoPicture" ) );
 
 	    shopMap.put( "totalNum", totalNum );
 
@@ -426,20 +443,19 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    shopMap.put( "totalProPrice", df.format( totalPrice ) );
 	    if ( proTypeId == 0 && isYhq ) {
 		MallStore store = storeDAO.selectById( product.getShopId() );
-		//TODO 需关连 卡券信息wxCardService.findWxCardByShopId(）
-		//                List<Map<String,Object>> coupon =wxCardService.findWxCardByShopId(store.getWxShopId(), wxPublicUsers, member);
-		//                if(null != coupon && coupon.size() > 0){
-		//                    coupon = getCouponDuofen(coupon, yhqMoney, 1);
-		//                    shopMap.put("coupon", coupon);
-		//                }
+		memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), store.getWxShopId().toString() );
+		List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + store.getWxShopId() );
+		if ( null != coupon && coupon.size() > 0 ) {
+		    coupon = getCouponDuofen( coupon, yhqMoney, 1 );
+		    shopMap.put( "coupon", coupon );
+		}
 
 		//查询多粉优惠券
-		//TODO 需关连 优惠券duofenCardService.findDuofenCardByMemberId()
-		//                List<Map<String, Object>> duofenCoupon = duofenCardService.findDuofenCardByMemberId(member.getId(), store.getWxShopId());
-		//                if(duofenCoupon != null && duofenCoupon.size() > 0){
-		//                    duofenCoupon = getCouponDuofen(duofenCoupon, yhqMoney, 0);
-		//                    shopMap.put("duofenCoupon", duofenCoupon);
-		//                }
+		List< Map< String,Object > > duofenCoupon = (List< Map< String,Object > >) memberCard.get( "duofenCards" + store.getWxShopId() );
+		if ( duofenCoupon != null && duofenCoupon.size() > 0 ) {
+		    duofenCoupon = getCouponDuofen( duofenCoupon, yhqMoney, 0 );
+		    shopMap.put( "duofenCoupon", duofenCoupon );
+		}
 	    }
 
 	    //版本1.1新增开始
@@ -483,10 +499,11 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	if ( proTypeId == 0 ) {
 	    Map< String,Object > fenbiParams = new HashMap< String,Object >();
-	    fenbiParams.put( "jifenNum", jifenNum );
-	    fenbiParams.put( "fenbiNum", fenbiNum );
-	    fenbiParams.put( "jifenMoney", jifenMoney );
-	    fenbiParams.put( "fenbiMoney", fenbiMoney );
+	    fenbiParams.put( "jifenNum", memberCard.get( "integral" ) );
+	    fenbiParams.put( "fenbiNum", memberCard.get( "fans_currency" ) );
+	    fenbiParams.put( "jifenMoney", memberCard.get( "jifenMoeny" ) );
+	    fenbiParams.put( "fenbiMoney", memberCard.get( "fenbiMoeny" ) );
+
 	    Map< String,Object > map = countIntegralFenbi( member, fenbiParams );//获取积分、粉币抵扣金额
 	    resultMap.putAll( map );
 	}
@@ -586,7 +603,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    if ( ps.getIntegralratio() > 0 ) {
 		resultMap.put( "jifen_dk_num", ps.getIntegralratio() );
 	    }
-	}
+	}*/
 	//查询粉币抵扣的比例
 	List< Map > currencyList = dictService.getDict( "1058" );
 	if ( currencyList != null && currencyList.size() > 0 ) {
@@ -594,7 +611,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	    double itemValue = Double.parseDouble( fenbiMap.get( "item_value" ).toString() );
 	    resultMap.put( "fenbi_dk_num", itemValue );
-	}*/
+	}
 	return resultMap;
     }
 
@@ -608,7 +625,6 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
      */
     public Map< String,Object > countIntegralFenbi( Member member, Map< String,Object > params ) {
 	Map< String,Object > map = new HashMap< String,Object >();
-	DecimalFormat df = new DecimalFormat( "######0.00" );
 	double jifenNum = 0;
 	double fenbiNum = 0;
 	double jifenMoney = 0;
@@ -625,71 +641,15 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( CommonUtil.isNotEmpty( params.get( "fenbiMoney" ) ) ) {
 	    fenbiMoney = CommonUtil.toDouble( params.get( "fenbiMoney" ) );
 	}
-
 	//查询积分抵扣的信息
-	//TODO 需关连 paramSetMapper.findBybusId（）方法
-	/*PublicParameterSet ps = null;
-	//                paramSetMapper.findBybusId(member.getBusid());
-
-	Integer userIntegral = member.getIntegral();//用户积分
-	double userFenbi = member.getFansCurrency();//用户粉币
-	if ( CommonUtil.isNotEmpty( ps ) && jifenMoney > 0 ) {
-	    if ( ps.getIntegralratio() > 0 ) {
-		String numIntegral = userIntegral / ps.getIntegralratio() + "";//
-		//使用多少积分
-		double integral = ps.getIntegralratio() * Double.parseDouble( ( numIntegral.substring( 0, numIntegral.indexOf( "." ) ) ) );
-		//积分抵扣多少钱
-		double integral_money = ( integral / ps.getIntegralratio() ) * ps.getChangemoney();
-		int money = (int) Math.ceil( jifenMoney );
-		if ( money < 1 ) {
-		    money = 1;
-		}
-		if ( money >= 1 && money < integral_money ) {
-		    integral_money = money;
-		    integral = ps.getIntegralratio() * integral_money;
-		}
-		int startType = CommonUtil.toInteger( ps.getStarttype() );
-		boolean flag = false;
-		if ( startType == 0 && userIntegral > ps.getIntegralratio() * ps.getStartmoney() ) {//积分启兑，用户积分要大于启兑金额所需要的积分
-		    flag = true;
-		}
-		if ( startType == 1 && money > ps.getStartmoney() ) {//订单启兑，能积分兑换商品的总额大于启兑金额
-		    flag = true;
-		}
-		if ( flag && integral > 0 && integral_money > 0 && jifenNum > 0 ) {
-		    map.put( "integral_money", CommonUtil.toDouble( df.format( integral_money ) ) );//积分可抵扣的金额
-		    map.put( "integral", CommonUtil.toDouble( df.format( integral ) ) );//积分数量
-		}
-	    }
+	if ( jifenMoney > 0 ) {
+	    map.put( "integral_money", jifenMoney );//积分可抵扣的金额
+	    map.put( "integral", jifenNum );//积分数量
 	}
 	if ( fenbiMoney > 0 ) {
-	    //查询粉币抵扣的比例
-	    List< Map > currencyList = dictService.getDict( "1058" );
-	    if ( currencyList != null && currencyList.size() > 0 ) {
-		Map< String,Object > fenbiMap = currencyList.get( 0 );
-
-		double itemValue = Double.parseDouble( fenbiMap.get( "item_value" ).toString() );
-
-		Integer numFenbi = (int) Double.parseDouble( userFenbi / itemValue + "" );//
-		//使用多少粉币
-		double m = Double.parseDouble( ( numFenbi - numFenbi % 10 ) + "" );
-		double fenbi = itemValue * m;
-		//粉币抵扣多少钱
-		double fenbi_money = fenbi / itemValue;
-
-		if ( fenbiMoney > 0 && CommonUtil.toDouble( fenbiMoney ) < CommonUtil.toDouble( fenbi_money ) ) {
-		    if ( fenbiMoney < 10 ) {
-			fenbiMoney = 10;
-		    }
-		    fenbi_money = fenbiMoney;
-		    fenbi = itemValue * fenbi_money;
-		}
-		if ( userFenbi >= itemValue * 10 && fenbiNum > 0 && fenbi > 0 && fenbi_money > 0 ) {
-		    map.put( "fenbi_money", CommonUtil.toDouble( df.format( fenbi_money ) ) );//粉币可抵扣的金额
-		    map.put( "fenbi", CommonUtil.toDouble( df.format( fenbi ) ) );//粉币数量
-		}
-	    }
-	}*/
+	    map.put( "fenbi_money", fenbiMoney );//粉币可抵扣的金额
+	    map.put( "fenbi", fenbiNum );//粉币数量
+	}
 	int isJifen = 0;
 	if ( map.containsKey( "integral_money" ) ) {
 	    isJifen = 1;
@@ -736,6 +696,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	Member member = memberService.findMemberById( memberId, null );
+	int shop_id = 0;
+	Map memberCard = null;
 	//判断库存
 	List< MallOrder > orderList = new ArrayList<>();
 
@@ -762,7 +724,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		Object object = orderArray.get( i );
 		JSONObject orderObj = JSONObject.parseObject( object.toString() );
 		MallOrder order = getOrderByParam( orderObj, member );
-
+		shop_id = order.getShopId();
+		memberCard = memberService.findMemberCardByMemberId( memberId, order.getShopId() );
 		if ( CommonUtil.isNotEmpty( orderObj.get( "wxCoupon" ) ) ) {//已使用微信优惠券
 		    wxduofenCouponMap.put( order.getShopId() + "", JSONObject.parseObject( orderObj.get( "wxCoupon" ).toString() ) );
 		}
@@ -785,13 +748,13 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 			    if ( CommonUtil.isEmpty( proMap ) ) {
 				product = productService.selectByPrimaryKey( productId );
-				proMap.put( product.getId().toString(), JSONObject.parseObject( product.toString() ) );
+				proMap.put( product.getId().toString(), JSONObject.parseObject( JSON.toJSONString( product ) ) );
 			    } else {
 				if ( !proMap.containsKey( productId ) ) {
 				    product = productService.selectByPrimaryKey( productId );
-				    proMap.put( product.getId().toString(), JSONObject.parseObject( product.toString() ) );
+				    proMap.put( product.getId().toString(), JSONObject.parseObject( JSON.toJSONString( product ) ) );
 				} else {
-				    product = (MallProduct) JSONObject.toJavaObject( JSONObject.parseObject( proMap.get( productId ).toString() ), MallProduct.class );
+				    product = JSONObject.parseObject( proMap.get( productId ).toString(), MallProduct.class );
 				}
 			    }
 
@@ -809,7 +772,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	youhuiMaps.put( "fenbi", params.get( "fenbi" ) );
 	youhuiMaps.put( "integral_money", params.get( "integral_money" ) );
 	youhuiMaps.put( "integral", params.get( "integral" ) );
-
+	params.put( "shop_id", shop_id );
 	List< MallOrder > newOrderList = curYouhuiOrder( params, orderList, proMap, duofenCouponMap, wxduofenCouponMap, youhuiMaps, member );
 
 	if ( CommonUtil.isNotEmpty( newOrderList ) ) {
@@ -824,46 +787,21 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( CommonUtil.isNotEmpty( params.get( "isUseJifen" ) ) ) {
 	    isUseJifen = CommonUtil.toInteger( params.get( "isUseJifen" ) );
 	}
-	double jifenProMoney = 0;
-	double fenbiProMoney = 0;
-	int jifenProNum = 0;
-	int fenbiProNum = 0;
+
 	for ( MallOrder order : orderList ) {
 	    totalMoneys += order.getOrderMoney().doubleValue();
 	    unionDiscountMoney += order.getUnionDiscountMoney();
 	    yhqDiscountMoney += order.getYhqDiscountMoney();
 	    fenbiDiscountMoney += order.getFenbiDiscountMoney();
 	    jifenDiscountMoney += order.getJifenDiscountMoney();
-
-	    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-
-		logger.info( "商品优惠后的价格：" + detail.getTotalPrice() + ";商品优惠前的价格：" + detail.getNewTotalPrice() + "商品优惠了：" + detail.getDiscountedPrices() );
-		MallProduct product = (MallProduct) JSONObject.toJavaObject( JSONObject.parseObject( proMap.get( detail.getProductId() ).toString() ), MallProduct.class );
-
-		if ( product.getIsFenbiDeduction().toString().equals( "1" ) ) {
-		    if ( detail.getFenbiBeforeTotalPrice() > 0 ) {
-			fenbiProMoney += detail.getFenbiBeforeTotalPrice();
-		    } else if ( isUseFenbi != 1 ) {
-			fenbiProMoney += detail.getTotalPrice();
-		    }
-		    fenbiProNum++;
-		}
-		if ( product.getIsIntegralDeduction().toString().equals( "1" ) ) {
-		    if ( detail.getJifenBeforeTotalPrice() > 0 ) {
-			jifenProMoney += detail.getJifenBeforeTotalPrice();
-		    } else if ( isUseJifen != 1 ) {
-			jifenProMoney += detail.getTotalPrice();
-		    }
-		    jifenProNum++;
-		}
-	    }
 	}
 	if ( isUseFenbi != 1 || isUseJifen != 1 ) {
 	    Map< String,Object > fenbiParams = new HashMap< String,Object >();
-	    fenbiParams.put( "jifenNum", jifenProNum );
-	    fenbiParams.put( "fenbiNum", fenbiProNum );
-	    fenbiParams.put( "jifenMoney", jifenProMoney );
-	    fenbiParams.put( "fenbiMoney", fenbiProMoney );
+	    fenbiParams.put( "jifenNum", memberCard.get( "integral" ) );
+	    fenbiParams.put( "fenbiNum", memberCard.get( "fans_currency" ) );
+	    fenbiParams.put( "jifenMoney", memberCard.get( "jifenMoeny" ) );
+	    fenbiParams.put( "fenbiMoney", memberCard.get( "fenbiMoeny" ) );
+
 	    Map< String,Object > map = countIntegralFenbi( member, fenbiParams );//获取积分、粉币抵扣金额
 	    if ( CommonUtil.isNotEmpty( map.get( "integral_money" ) ) ) {
 		resultMap.put( "integral_money", map.get( "integral_money" ) );//积分可抵扣的金额
@@ -947,6 +885,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( list == null || list.size() <= 0 ) {
 	    return null;
 	}
+	MallStore store = storeDAO.selectById( CommonUtil.toInteger( params.get( "shop_id" ) ) );
+	Map memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), store.getWxShopId().toString() );
 	Map< Integer,Object > yhqProductObj = new HashMap< Integer,Object >();//保存能使用优惠券的商品数量金额
 	List< MallOrder > newOrderList = new ArrayList< MallOrder >();
 	boolean isCur = false;
@@ -974,8 +914,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    youhuiParams.put( "isUseFenbi", 1 );
 		    youhuiParams.put( "fenbi_dk_num", params.get( "fenbi_dk_num" ) );
 		    Map< String,Object > fenbiParams = new HashMap< String,Object >();
-		    fenbiParams.put( "fenbiNum", fenbiProNum );
-		    fenbiParams.put( "fenbiMoney", fenbiProMoney );
+		    if ( CommonUtil.isNotEmpty( memberCard ) ) {
+			fenbiParams.put( "fenbiNum", memberCard.get( "fans_currency" ) );
+			fenbiParams.put( "fenbiMoney", memberCard.get( "fenbiMoeny" ) );
+		    }
 		    Map< String,Object > fenbi = countIntegralFenbi( member, fenbiParams );
 		    youhuiParams.putAll( fenbi );
 		    logger.info( fenbi );
@@ -984,8 +926,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    youhuiParams.put( "isUseJifen", 1 );
 		    youhuiParams.put( "jifen_dk_num", params.get( "jifen_dk_num" ) );
 		    Map< String,Object > jifenParams = new HashMap< String,Object >();
-		    jifenParams.put( "jifenNum", jifenProNum );
-		    jifenParams.put( "jifenMoney", jifenProMoney );
+		    if ( CommonUtil.isNotEmpty( memberCard ) ) {
+			jifenParams.put( "jifenNum", memberCard.get( "integral" ) );
+			jifenParams.put( "jifenMoney", memberCard.get( "jifenMoeny" ) );
+		    }
 		    Map< String,Object > jifen = countIntegralFenbi( member, jifenParams );
 		    youhuiParams.putAll( jifen );
 		    logger.info( jifen );
@@ -1011,9 +955,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			List< MallOrderDetail > newDetailList = new ArrayList< MallOrderDetail >();
 			for ( int j = 0; j < order.getMallOrderDetail().size(); j++ ) {
 			    MallOrderDetail detail = order.getMallOrderDetail().get( j );
-			    MallProduct product = (MallProduct) JSONObject
-					    .toJavaObject( JSONObject.parseObject( proMap.get( detail.getProductId() ).toString() ), MallProduct.class );
-
+			    MallProduct product = JSONObject.parseObject( proMap.get( detail.getProductId().toString() ).toString(), MallProduct.class );
 			    if ( isCur ) {
 				Map< String,Object > youhuiMap = calculateYouhui( youhuiParams, detail, product, index, duofenCouponMap, wxduofenCouponMap, i, yhqProductObj,
 						member );
@@ -1048,7 +990,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 					detail.setCouponCode( CommonUtil.toString( youhuiMap.get( "coupon_code" ) ) );
 				    }
 				    if ( CommonUtil.isNotEmpty( youhuiMap.get( "detail" ) ) ) {
-					detail = (MallOrderDetail) JSONObject.toJavaObject( JSONObject.parseObject( youhuiMap.get( "detail" ).toString() ), MallOrderDetail.class );
+					Object aaa = youhuiMap.get( "detail" );
+					detail = JSONObject.parseObject( JSON.toJSONString( aaa ), MallOrderDetail.class );
 				    }
 				    if ( j + 1 == order.getMallOrderDetail().size() ) {
 					youhuiMap.put( "yhqMoneyCount", 0 );
@@ -1189,7 +1132,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    System.out.println( "优惠券信息：" + yhqProductObj );
 	    System.out.println( "店铺id：" + detail.getShopId() );
 	    if ( CommonUtil.isNotEmpty( yhqProductObj.get( detail.getShopId() ) ) ) {
-		JSONObject obj = JSONObject.parseObject( yhqProductObj.get( detail.getShopId() ).toString() );
+		JSONObject obj = JSONObject.parseObject( JSON.toJSONString( yhqProductObj.get( detail.getShopId() ) ) );
 		if ( CommonUtil.isNotEmpty( obj.get( "yhqProNum" ) ) ) {
 		    yhqProNum = CommonUtil.toInteger( obj.get( "yhqProNum" ) );
 		}
@@ -1328,7 +1271,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    //获取微信优惠券的 满减优惠或折扣
 	    if ( CommonUtil.isNotEmpty( wxduofenCouponMap ) ) {//已使用微信优惠券
 		if ( CommonUtil.isNotEmpty( wxduofenCouponMap.get( detail.getShopId().toString() ) ) ) {
-		    JSONObject wxCouponObj = JSONObject.parseObject( wxduofenCouponMap.get( detail.getShopId() ).toString() );
+		    JSONObject wxCouponObj = JSONObject.parseObject( wxduofenCouponMap.get( detail.getShopId().toString() ).toString() );
 		    couponObjs = wxCouponObj;
 		    if ( CommonUtil.isNotEmpty( wxCouponObj.get( "card_type" ) ) ) {
 			if ( wxCouponObj.getString( "card_type" ).equals( "CASH" ) ) {//代金券
@@ -1351,7 +1294,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    if ( CommonUtil.isNotEmpty( duofenCouponMap ) ) {//已使用微信优惠券
 		if ( CommonUtil.isNotEmpty( duofenCouponMap.get( detail.getShopId().toString() ) ) ) {
 		    System.out.println( duofenCouponMap.get( detail.getShopId().toString() ) );
-		    JSONObject duofenCouponObj = JSONObject.parseObject( duofenCouponMap.get( detail.getShopId() ).toString() );
+		    JSONObject duofenCouponObj = JSONObject.parseObject( JSON.toJSONString( duofenCouponMap.get( detail.getShopId().toString() ) ) );
 		    couponObjs = duofenCouponObj;
 		    if ( CommonUtil.isNotEmpty( duofenCouponObj.get( "card_type" ) ) ) {
 			cardType = CommonUtil.toInteger( duofenCouponObj.get( "card_type" ) );
@@ -1364,7 +1307,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 				int cardId = Integer.parseInt( duofenCouponObj.get( "cId" ).toString() );
 				//TODO 需关连卡券方法
-				//                                couponCode = duofenCardService.findCardCode(cardId, member.getId(), count);
+				//  couponCode = duofenCardService.findCardCode(cardId, member.getId(), count);
 
 			    }
 			} else {
@@ -1780,6 +1723,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    return resultMap;
 	}
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+	int shop_id = 0;
 	Member member = memberService.findMemberById( memberId, null );
 	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( member.getBusid() );
 	int orderPayWay = 0;
@@ -1806,7 +1750,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		order.setShopId( CommonUtil.toInteger( orderObj.get( "shopId" ) ) );
 		order.setMemCardType( memType );
 		orderPayWay = order.getOrderPayWay();
-
+		shop_id = order.getShopId();
 		if ( CommonUtil.isNotEmpty( orderObj.get( "wxCoupon" ) ) ) {//已使用微信优惠券
 		    wxduofenCouponMap.put( order.getShopId() + "", JSONObject.parseObject( orderObj.get( "wxCoupon" ).toString() ) );
 		}
@@ -1854,7 +1798,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 				    product = productService.selectByPrimaryKey( productId );
 				    proMap.put( product.getId().toString(), JSONObject.parseObject( product.toString() ) );
 				} else {
-				    product = (MallProduct) JSONObject.toJavaObject( JSONObject.parseObject( proMap.get( productId ).toString() ), MallProduct.class );
+				    product = JSONObject.parseObject( proMap.get( productId ).toString(), MallProduct.class );
 				}
 			    }
 
@@ -1897,7 +1841,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	youhuiMaps.put( "fenbi", params.get( "fenbi" ) );
 	youhuiMaps.put( "integral_money", params.get( "integral_money" ) );
 	youhuiMaps.put( "integral", params.get( "integral" ) );
-
+	params.put( "shop_id", shop_id );
 	List< MallOrder > newOrderList = curYouhuiOrder( params, orderList, proMap, duofenCouponMap, wxduofenCouponMap, youhuiMaps, member );
 
 	if ( CommonUtil.isNotEmpty( newOrderList ) ) {
@@ -2090,9 +2034,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		resultMap.put( "msg", map.get( "msg" ) );
 		return resultMap;
 	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
-		//TODO 需关连 busFlowService.selectById(product.getFlowId());方法
-		BusFlow flow = null;
-		//                        busFlowService.selectById(product.getFlowId());
+		WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
 		    resultMap.put( "code", -1 );
 		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );

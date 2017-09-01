@@ -3,8 +3,8 @@ package com.gt.mall.service.web.auction.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.pay.WxPayOrder;
 import com.gt.mall.bean.wx.shop.WsWxShopInfo;
 import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
@@ -12,6 +12,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
@@ -49,6 +50,8 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     private WxShopService        wxShopService;
     @Autowired
     private WxPublicUserService  wxPublicUserService;
+    @Autowired
+    private PayOrderService      payOrderService;
 
     @Override
     public PageUtil selectMarginByShopId( Map< String,Object > params, int userId ) {
@@ -267,9 +270,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	map.put( "return_no", returnNo );
 
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
-	    //TODO 需关连 WxPayOrder 数据
-	    WxPayOrder wxPayOrder = new WxPayOrder();
-	    //            WxPayOrder wxPayOrder=wxPayOrderMapper.selectByOutTradeNo(aucNo);
+	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( aucNo );
 	    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 		map.put( "appid", pUser.getAppid() );// 公众号
 		map.put( "mchid", pUser.getMchId() );// 商户号

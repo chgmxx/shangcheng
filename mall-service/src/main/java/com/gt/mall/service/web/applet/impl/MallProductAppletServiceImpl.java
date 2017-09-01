@@ -64,7 +64,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	params.put( "memberList", memberList );
 	double discount = productService.getMemberDiscount( "1", member );//获取会员折扣
-
+	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );
 	List< Map< String,Object > > list = shopCartDAO.selectAppletByParams( params );
 	/*int type = 0;
 		if(CommonUtil.isNotEmpty(params.get("type"))){
@@ -288,7 +288,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		}
 		if ( ( !next_shop_id.equals( CommonUtil.toString( shopId ) ) && CommonUtil.isNotEmpty( next_shop_id ) ) || j + 1 == list.size() ) {
 		    if ( null != shopList && shopList.size() > 0 ) {
-			shopMap = getShopMaps( shopMap, map, pro_type );
+			shopMap = getShopMaps( shopMap, map, pro_type, shopInfoList );
 			shopMap.put( "proList", shopList );
 			shopCartList.add( shopMap );
 
@@ -296,7 +296,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 			shopMap = new HashMap< String,Object >();
 		    }
 		    if ( null != sxCartList && sxCartList.size() > 0 ) {
-			sxShopMap = getShopMaps( sxShopMap, map, pro_type );
+			sxShopMap = getShopMaps( sxShopMap, map, pro_type, shopInfoList );
 			sxShopMap.put( "proList", sxCartList );
 			sxshopCartList.add( sxShopMap );
 
@@ -350,14 +350,23 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 	return resultMap;
     }
 
-    public Map< String,Object > getShopMaps( Map< String,Object > shopMap, Map< String,Object > map, int pro_type ) {
-
+    public Map< String,Object > getShopMaps( Map< String,Object > shopMap, Map< String,Object > map, int pro_type, List< WsWxShopInfoExtend > shopInfoList ) {
+	Integer wxShopId = CommonUtil.toInteger( map.get( "wx_shop_id" ) );
+	String shopPicture = "";
+	for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+	    if ( wxShops.getId() == wxShopId ) {
+		if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+		    shopMap.put( "sto_name", wxShops.getBusinessName() );
+		}
+		shopPicture = wxShops.getImageUrl();
+		break;
+	    }
+	}
 	shopMap.put( "shop_id", map.get( "shop_id" ) );
-	shopMap.put( "sto_name", map.get( "sto_name" ) );
 	shopMap.put( "pageid", map.get( "pageid" ) );
 	shopMap.put( "pro_type", pro_type );
-	if ( CommonUtil.isNotEmpty( map.get( "shopPicture" ) ) ) {
-	    shopMap.put( "sto_image", PropertiesUtil.getResourceUrl() + map.get( "shopPicture" ) );
+	if ( CommonUtil.isNotEmpty( shopPicture ) ) {
+	    shopMap.put( "sto_image", PropertiesUtil.getResourceUrl() + shopPicture );
 	} else if ( CommonUtil.isNotEmpty( map.get( "stoPicture" ) ) ) {
 	    shopMap.put( "sto_image", PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
 	}

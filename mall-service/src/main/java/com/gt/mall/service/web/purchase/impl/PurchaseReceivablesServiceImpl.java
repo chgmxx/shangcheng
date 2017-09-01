@@ -1,7 +1,9 @@
 package com.gt.mall.service.web.purchase.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.*;
+import com.gt.mall.bean.Member;
+import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.pay.WxPayOrder;
 import com.gt.mall.dao.purchase.PurchaseOrderDAO;
 import com.gt.mall.dao.purchase.PurchaseReceivablesDAO;
 import com.gt.mall.dao.purchase.PurchaseTermDAO;
@@ -9,6 +11,7 @@ import com.gt.mall.entity.purchase.PurchaseOrder;
 import com.gt.mall.entity.purchase.PurchaseReceivables;
 import com.gt.mall.entity.purchase.PurchaseTerm;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
@@ -41,6 +44,8 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
     private MemberService          memberService;
     @Autowired
     private WxPublicUserService    wxPublicUserService;
+    @Autowired
+    private PayOrderService        payOrderService;
 
     @Override
     public SortedMap< Object,Object > cgPay( String url, Integer memberId, Integer busId, String termId, Double money, Double discountmoney, Double fenbi, Integer jifen,
@@ -77,10 +82,8 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	receivables.setReceivablesNumber( receivablesNumber );
 	receivables.setTermId( termId == null || termId.equals( "" ) ? null : Integer.parseInt( termId ) );
 	purchaseReceivablesDAO.insert( receivables );
-	//TODO 需关连 wxPayOrderMapper.selectByOutTradeNo 方法
-	WxPayOrder wxPayOrder = null;
 	WxPublicUsers wxPublicUsers = wxPublicUserService.selectById( member.getPublicId() );
-	//        WxPayOrder wxPayOrder = wxPayOrderMapper.selectByOutTradeNo(receivablesNumber);
+	WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( receivablesNumber );
 	if ( wxPayOrder != null ) {
 	    receivablesNumber = "CG" + System.currentTimeMillis();
 	    receivables.setReceivablesNumber( receivablesNumber );
@@ -148,9 +151,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    purchaseReceivablesDAO.insert( receivables );
 
 	    Member member = memberService.findMemberById( memberId, null );
-	    //TODO 需关连wxPayOrderMapper 方法
-	    WxPayOrder wxPayOrder = null;
-	    //            WxPayOrder wxPayOrder = wxPayOrderMapper.selectByOutTradeNo(receivablesNumber);
+	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo(receivablesNumber);
 	    if ( wxPayOrder != null ) {
 		receivablesNumber = "CG" + System.currentTimeMillis();
 		receivables.setReceivablesNumber( receivablesNumber );

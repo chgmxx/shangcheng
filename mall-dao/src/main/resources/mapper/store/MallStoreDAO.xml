@@ -133,7 +133,7 @@
         where s.wx_shop_id=#{wxShopId} and s.is_delete=0
     </select>
     <select id="findByUserId" resultType="java.util.Map" parameterType="java.lang.Integer">
-        SELECT s.sto_picture AS stoPicture , s.id,mp.id AS pageId
+        SELECT s.sto_picture AS stoPicture , s.id,mp.id AS pageId ,s.wx_shop_id
         FROM t_mall_store s
         LEFT JOIN t_mall_page mp ON mp.pag_sto_id=s.id AND pag_is_main=1
         WHERE  is_delete = 0 AND  s.sto_user_id = #{userId}

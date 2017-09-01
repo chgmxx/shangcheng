@@ -874,9 +874,7 @@ public class PhoneHomeAppletController extends BaseController {
     public void queryCity( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    int id = CommonUtil.toInteger( params.get( "id" ) );
-	    //TODO 查询城市列表 wxShopService.queryCityByParentId(id);
-	    List< Map< String,Object > > maps = null;
-	    //	    wxShopService.queryCityByParentId(id);
+	    List< Map > maps = wxShopService.queryCityByParentId( id );
 	    CommonUtil.write( response, maps );
 	} catch ( IOException e ) {
 	    e.printStackTrace();
