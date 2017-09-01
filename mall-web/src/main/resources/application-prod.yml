@@ -6,14 +6,24 @@
 #  注意 "---" 表示：一组配置
 # 生产环境配置
 spring:
-# profiles: prod
-  #redis配置
+# profiles: dev
+ #redis配置
  redis:
-  host: 127.0.0.1
+  host: 113.106.202.51
   port: 6379
-  #password: gt@123456
+  password: gt@123456
+  database: 2
+#redis session共享
  session:
    store-type: redis
+#自动重启默认开发时开启
+ devtools:
+  restart:
+   enabled: true
+ thymeleaf:
+   cache: false
+
+
 datasource:
  druid:
   url: jdbc:mysql://113.106.202.51:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
@@ -24,9 +34,9 @@ datasource:
   type: com.alibaba.druid.pool.DruidDataSource
   # 下面为连接池的补充设置，应用到上面所有数据源中
   # 初始化大小，最小，最大
-  initialSize: 10
-  minIdle: 20
-  maxActive: 200
+  initialSize: 5
+  minIdle: 5
+  maxActive: 20
   # 配置获取连接等待超时的时间
   maxWait: 60000
   # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -35,8 +45,8 @@ datasource:
   minEvictableIdleTimeMillis: 30000
   validationQuery: select 'x'
   testWhileIdle: true
-  testOnBorrow: false
-  testOnReturn: false
+  testOnBorrow: true
+  testOnReturn: true
   # 打开PSCache，并且指定每个连接上PSCache的大小
   poolPreparedStatements: true
   maxPoolPreparedStatementPerConnectionSize: 20
@@ -49,22 +59,25 @@ datasource:
 
 
 
-######################## 开发环境配置 ########################
-web:
- #主域名
- wxmp:
-  domain: http://sz.yifriend.net
- #域名
- domain: 192.168.2.100:8081
- #网页访问路径
- homeUrl: http://192.168.2.100:8081/
- #进销存 地址
- jxcUrl: http://jxc.duofee.com/jxc/
- #进销存token用户名
- jxcAccount: e_shop
- #进销存token密码
- jxcPwd: shop12345
+server:
+ port: 8080
+ session:
+  timeout: 30
 
+
+######################## 生产环境配置 ########################
+#JedisUtil 用到的配置
+redis:
+ host: 113.106.202.51
+ port: 6379
+ password: gt@123456
+ database: 0
+
+web:
+ #域名
+ domain: mall.yifriend.net:8080
+ #网页访问路径
+ homeUrl: http://mall.yifriend.net:8080/
 
 ####图片资源ftp 配置
 static:
@@ -81,7 +94,7 @@ static:
 #访问文章资源URL
 article:
  url:
-  prefix: http://192.168.2.100:8081/
+  prefix: http://mall.yifriend.net:8080/
 #访问资源URL
 resource:
  url:
@@ -103,3 +116,28 @@ mq:
  #队列名称
  queueName: gt.queueName.message
 
+
+### 设置 Redis session 共享
+redisSession:
+ domainName: .yifriend.net
+ cookiePath: /
+ cookieName: JSESSIONID
+
+http:
+ #总项目请求地址
+ wxmp:
+  domain: http://wxmp.yifriend.net:12882/
+#  domain: http://yifriend.net/
+  key: WXMP2017
+ #会员key 和 请求地址
+ member:
+  domain: http://member.deeptel.com.cn/
+  key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
+ #进销存的请求地址、token 用户名  和token密码
+ jxc:
+  #进销存 地址
+  domain: http://jxc.duofee.com/jxc/
+  #进销存token用户名
+  account: e_shop
+  #进销存token密码
+  pwx: shop12345

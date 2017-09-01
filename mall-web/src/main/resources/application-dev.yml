@@ -129,7 +129,7 @@ http:
   key: WXMP2017
  #会员key 和 请求地址
  member:
-  domain: http://113.106.202.53:13885/
+  domain: http://member.deeptel.com.cn/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
  #进销存的请求地址、token 用户名  和token密码
  jxc:
