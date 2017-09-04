@@ -8,7 +8,6 @@ import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
@@ -27,7 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * <p>
@@ -52,8 +54,6 @@ public class MallProductController extends BaseController {
     @Autowired
     private CardService                 cardService;
     @Autowired
-    private FenBiFlowService            fenBiFlowService;
-    @Autowired
     private BusUserService              busUserService;
     @Autowired
     private DictService                 dictService;
@@ -61,7 +61,7 @@ public class MallProductController extends BaseController {
     /**
      * 进入商品管理列表页面
      */
-    @RequestMapping( "/index" )
+    @RequestMapping( "index" )
     public String productIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	BusUser user = SessionUtils.getLoginUser( request );
 	try {

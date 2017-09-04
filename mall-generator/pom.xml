@@ -19,11 +19,7 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.gt.mall</groupId>
-            <artifactId>mall-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
     </dependencies>
 
 </project>

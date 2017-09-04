@@ -1,7 +1,7 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.wx.pay.WxPayOrder;
+import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;

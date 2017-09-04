@@ -3,10 +3,15 @@ package com.gt.mall.service.inter.wxshop.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.BusFlow;
-import com.gt.mall.bean.wx.flow.*;
+import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
+import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
+import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.WsFenbiFlowRecord;
+import com.gt.util.entity.result.fenbi.FenBiCount;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

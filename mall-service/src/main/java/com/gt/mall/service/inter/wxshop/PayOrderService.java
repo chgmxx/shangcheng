@@ -1,6 +1,6 @@
 package com.gt.mall.service.inter.wxshop;
 
-import com.gt.mall.bean.wx.pay.WxPayOrder;
+import com.gt.mall.bean.WxPayOrder;
 
 /**
  * 微信订单接口

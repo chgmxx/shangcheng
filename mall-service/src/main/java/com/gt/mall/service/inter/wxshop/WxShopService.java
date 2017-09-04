@@ -2,8 +2,8 @@ package com.gt.mall.service.inter.wxshop;
 
 import com.gt.mall.bean.wx.shop.ShopPhoto;
 import com.gt.mall.bean.wx.shop.ShopSubsop;
-import com.gt.mall.bean.wx.shop.WsWxShopInfo;
-import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 
 import java.util.List;
 import java.util.Map;

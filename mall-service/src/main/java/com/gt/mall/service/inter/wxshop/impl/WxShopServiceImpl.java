@@ -4,11 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.wx.shop.ShopPhoto;
 import com.gt.mall.bean.wx.shop.ShopSubsop;
-import com.gt.mall.bean.wx.shop.WsWxShopInfo;
-import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

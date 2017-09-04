@@ -3,8 +3,8 @@ package com.gt.mall.util;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.HttpClienUtils;
+import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.mall.bean.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

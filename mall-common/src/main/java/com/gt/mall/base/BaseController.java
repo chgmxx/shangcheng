@@ -1,8 +1,6 @@
 package com.gt.mall.base;
 
-import org.apache.log4j.Logger;
-
-import javax.servlet.http.HttpSession;
+import org.slf4j.LoggerFactory;
 
 /**
  * BaseController
@@ -14,17 +12,6 @@ public abstract class BaseController {
     /**
      * 日志
      */
-    protected Logger logger = Logger.getLogger(BaseController.class);
-
-    /**
-     * 获取Sessionid
-     *
-     * @param session HttpSession
-     *
-     */
-    public String getSessionId( HttpSession session ) {
-	return session.getId();
-    }
-
+    protected static final org.slf4j.Logger logger = LoggerFactory.getLogger( BaseController.class );
 
 }

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.product.MallShopCartDAO;
@@ -19,6 +18,7 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

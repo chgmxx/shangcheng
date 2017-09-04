@@ -1,9 +1,9 @@
 package com.gt.mall.service.inter.wxshop;
 
-import com.gt.mall.bean.wx.pay.ApiEnterprisePayment;
-import com.gt.mall.bean.wx.pay.EnterprisePaymentResult;
-import com.gt.mall.bean.wx.pay.SubQrPayParams;
-import com.gt.mall.bean.wx.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.pay.ApiEnterprisePayment;
+import com.gt.util.entity.param.pay.SubQrPayParams;
+import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.result.pay.EnterprisePaymentResult;
 
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public interface PayService {
      * @param refund 退款参数
      * @return 是否成功
      */
-    Map<String,Object> wxmemberPayRefund(WxmemberPayRefund  refund);
+    Map<String,Object> wxmemberPayRefund(WxmemberPayRefund refund);
 
     /**
      * 商家提现

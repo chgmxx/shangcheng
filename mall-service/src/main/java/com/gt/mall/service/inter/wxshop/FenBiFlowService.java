@@ -1,7 +1,12 @@
 package com.gt.mall.service.inter.wxshop;
 
 import com.gt.mall.bean.BusFlow;
-import com.gt.mall.bean.wx.flow.*;
+import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
+import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
+import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
+import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.WsFenbiFlowRecord;
+import com.gt.util.entity.result.fenbi.FenBiCount;
 
 import java.util.List;
 import java.util.Map;

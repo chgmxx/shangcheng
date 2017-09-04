@@ -3,10 +3,10 @@ package com.gt.mall.service.inter.user.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.wx.shop.WsWxShopInfoExtend;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

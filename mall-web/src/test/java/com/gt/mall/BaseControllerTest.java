@@ -1,6 +1,5 @@
 package com.gt.mall;
 
-import com.gt.mall.bean.wx.OldApiSms;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
@@ -9,6 +8,7 @@ import com.gt.mall.service.inter.wxshop.WxAppletService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.util.entity.param.sms.OldApiSms;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

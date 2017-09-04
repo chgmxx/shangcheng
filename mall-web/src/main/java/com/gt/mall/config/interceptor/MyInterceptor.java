@@ -7,11 +7,13 @@ import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,8 +64,12 @@ public class MyInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler )
 		    throws Exception {
-	System.out.println( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	System.out.println( "basePath = " + request.getRequestURL() );
+
+	logger.error( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+	logger.error( "basePath = " + request.getRequestURL() );
+
+	long startTime = System.currentTimeMillis();
+	request.setAttribute( "runStartTime", startTime );
 
 	// 获得在下面代码中要用的request,response,session对象
 
@@ -76,21 +82,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	    String tmp = url.substring( 0, url.lastIndexOf( "/" ) );
 	    urlwx = tmp.substring( tmp.lastIndexOf( "/" ) + 1, tmp.length() );
 	}
-	//如果URL是登录页面或者是登录界面时或者是微信接口，继续
-	/*if ( url.equals( "/" ) ) {
-	    response.sendRedirect( "http://www." + PropertiesUtil.getDomain() + "" );
-	    return false;
-	} else */
 	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.contains( "79B4DE7C" ) ) {//移动端
-	   /* Member member = SessionUtils.getLoginMember( request );
-	    if ( CommonUtil.isNotEmpty( member ) && member.isPass() ) {//商家已过期，清空会员登录session
-		request.getSession().removeAttribute( "member" );
-		String upGradeUrl = request.getContextPath() + "/jsp/error/warning.jsp";
-		response.sendRedirect( upGradeUrl );
-		return false;
-	    } else {
-		return true;// 只有返回true才会继续向下执行，返回false取消当前请求
-	    }*/
 	    Member member = SessionUtils.getLoginMember( request );
 	    request.setAttribute( "member", member );
 	    return true;
@@ -123,6 +115,19 @@ public class MyInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler,
 		    ModelAndView modelAndView ) throws Exception {
+
+	long startTime = (Long) request.getAttribute( "runStartTime" );
+
+	long endTime = System.currentTimeMillis();
+
+	long executeTime = endTime - startTime;
+
+	HandlerMethod handlerMethod = (HandlerMethod) handler;
+	Method method = handlerMethod.getMethod();
+	/*if ( logger.isDebugEnabled() ) {*/
+	logger.debug( "方法:"+handlerMethod.getBean() + "." + method.getName()+"  ；  请求参数："+handlerMethod.getMethodParameters() );
+	logger.debug( "访问的执行时间 : " + executeTime + "ms" );
+	/*}*/
 
     }
 

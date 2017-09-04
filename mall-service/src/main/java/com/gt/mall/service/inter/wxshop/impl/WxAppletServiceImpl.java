@@ -1,11 +1,11 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.wx.applet.MemberAppletByMemIdAndStyle;
 import com.gt.mall.bean.wx.applet.MemberAppletOpenid;
 import com.gt.mall.service.inter.wxshop.WxAppletService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
+import com.gt.util.entity.param.member.MemberAppletByMemIdAndStyle;
 import org.springframework.stereotype.Service;
 
 /**

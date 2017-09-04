@@ -1,13 +1,13 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.wx.pay.ApiEnterprisePayment;
-import com.gt.mall.bean.wx.pay.EnterprisePaymentResult;
-import com.gt.mall.bean.wx.pay.SubQrPayParams;
-import com.gt.mall.bean.wx.pay.WxmemberPayRefund;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
+import com.gt.util.entity.param.pay.ApiEnterprisePayment;
+import com.gt.util.entity.param.pay.SubQrPayParams;
+import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.result.pay.EnterprisePaymentResult;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

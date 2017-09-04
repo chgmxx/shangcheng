@@ -3,12 +3,12 @@ package com.gt.mall.service.inter.wxshop.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wx.QrcodeCreateFinal;
-import com.gt.mall.bean.wx.SendWxMsgTemplate;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
+import com.gt.util.entity.param.wx.QrcodeCreateFinal;
+import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.wx.ApiWxApplet;
 import org.springframework.stereotype.Service;
 

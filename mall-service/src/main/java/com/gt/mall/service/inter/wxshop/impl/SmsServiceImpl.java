@@ -1,10 +1,10 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
-import com.gt.mall.bean.wx.OldApiSms;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
+import com.gt.util.entity.param.sms.OldApiSms;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

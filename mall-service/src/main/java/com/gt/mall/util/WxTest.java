@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.sign.SignBean;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.HttpClienUtils;
+import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.api.util.sign.SignUtils;
-import com.gt.mall.bean.RequestUtils;
-import com.gt.mall.bean.wx.OldApiSms;
+import com.gt.util.entity.param.sms.OldApiSms;
 
 import java.util.Map;
 

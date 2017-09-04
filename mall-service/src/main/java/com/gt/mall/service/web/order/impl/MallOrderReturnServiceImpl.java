@@ -1,9 +1,8 @@
 package com.gt.mall.service.web.order.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wx.pay.WxPayOrder;
-import com.gt.mall.bean.wx.pay.WxmemberPayRefund;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
@@ -21,6 +20,7 @@ import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.util.CommonUtil;
+import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
