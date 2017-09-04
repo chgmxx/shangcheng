@@ -264,8 +264,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    if ( CommonUtil.isNotEmpty( shopMap.get( "wx_shop_id" ) ) ) {
 			wxShopId = CommonUtil.toInteger( shopMap.get( "wx_shop_id" ) );
 		    }
+		    memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), shopMap.get( "wx_shop_id" ).toString() );
 		    if ( proTypeId == 0 && isYhq ) {
-			memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), shopMap.get( "wx_shop_id" ).toString() );
 			List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + wxShopId );
 			if ( null != coupon && coupon.size() > 0 ) {
 			    coupon = getCouponDuofen( coupon, yhqMoney, 1 );
@@ -441,9 +441,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    shopMap.put( "freightPrice", freightPrice );
 	    shopMap.put( "proList", proList );
 	    shopMap.put( "totalProPrice", df.format( totalPrice ) );
+	    MallStore store = storeDAO.selectById( product.getShopId() );
+	    memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), store.getWxShopId().toString() );
+
 	    if ( proTypeId == 0 && isYhq ) {
-		MallStore store = storeDAO.selectById( product.getShopId() );
-		memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), store.getWxShopId().toString() );
 		List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + store.getWxShopId() );
 		if ( null != coupon && coupon.size() > 0 ) {
 		    coupon = getCouponDuofen( coupon, yhqMoney, 1 );

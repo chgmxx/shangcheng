@@ -10,7 +10,6 @@ import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
-import com.gt.mall.service.web.purchase.impl.PurchaseReceivablesServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,11 +60,9 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
     PurchaseContractOrderDAO    contractOrderDAO;
 
     @Autowired
-    private PurchaseReceivablesService     receivablesService;
+    private PurchaseReceivablesService receivablesService;
     @Autowired
-    private PurchaseReceivablesServiceImpl receivablesServiceImpl;
-    @Autowired
-    private PurchaseOrderStatisticsDAO     orderStatisticsDAO;
+    private PurchaseOrderStatisticsDAO orderStatisticsDAO;
 
     /**
      * 手机端订单详情首页
@@ -398,7 +395,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
     public String addReceivables( HttpServletRequest request, @RequestParam Integer memberId, @RequestParam Integer orderId, @RequestParam Integer busId,
 		    @RequestParam String buyMode, @RequestParam Double money, Double fansCurrency, Double integral, String coupon, String termId, Integer discount ) {
 	try {
-	    receivablesServiceImpl.addReceivables( request, memberId, orderId, busId, buyMode, money, fansCurrency, integral, coupon, termId, discount );
+	    receivablesService.addReceivables( request, memberId, orderId, busId, buyMode, money, fansCurrency, integral, coupon, termId, discount );
 	    return "true";
 	} catch ( Exception e ) {
 	    logger.error( "新增收款记录异常:" + e.getMessage() );
