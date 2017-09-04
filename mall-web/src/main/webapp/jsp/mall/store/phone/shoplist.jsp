@@ -158,7 +158,7 @@
     //调用地图
     function txMap(latitude, longitude) {
         var address = "";
-        var url = "http://apis.map.qq.com/tools/poimarker?key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&&referer=test&type=0";
+        var url = "https://apis.map.qq.com/tools/poimarker?key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&&referer=test&type=0";
         if (latitude != "-1" && longitude != "-1") {
             address = latitude + "," + longitude;
             url += "&marker=coord:" + address;

@@ -11,7 +11,7 @@
     %>
     <base href="<%=basePath%>"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="/js/plugin/jquery-1.8.3.min.js"></script>
     <title>404</title>
     <script type="text/javascript">
         $(function () {

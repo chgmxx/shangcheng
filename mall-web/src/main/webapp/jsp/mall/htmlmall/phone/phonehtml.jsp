@@ -136,7 +136,7 @@
                                     <a class="map_call" href="tel:{{data.dataMap.phone}}"><img src="images/map_phone.png"
                                                                                                style="width: 17px;vertical-align: text-bottom;margin-right: 7px;">打电话</a>
                                     <a class="map_navigation"
-                                       href="http://apis.map.qq.com/tools/routeplan/eword={{data.dataMap.address}}&epointx={{getlatlng(data.dataMap.latlng,1)}}&epointy={{getlatlng(data.dataMap.latlng,0)}}?referer=myapp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"><img
+                                       href="https://apis.map.qq.com/tools/routeplan/eword={{data.dataMap.address}}&epointx={{getlatlng(data.dataMap.latlng,1)}}&epointy={{getlatlng(data.dataMap.latlng,0)}}?referer=myapp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"><img
                                             src="images/navigation.png" style="width: 17px;vertical-align: text-bottom;margin-right: 7px">导航</a>
                                 </div>
                             </div>
@@ -221,7 +221,7 @@
                     <div class="map_btn">
                         <a class="map_call" href="tel:{{data.dataMap.phone}}"><img src="images/map_phone.png" style="width: 17px;vertical-align: text-bottom;margin-right: 7px;">打电话</a>
                         <a class="map_navigation"
-                           href="http://apis.map.qq.com/tools/routeplan/eword={{data.dataMap.address}}&epointx={{getlatlng(data.dataMap.latlng,1)}}&epointy={{getlatlng(data.dataMap.latlng,0)}}?referer=myapp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"><img
+                           href="https://apis.map.qq.com/tools/routeplan/eword={{data.dataMap.address}}&epointx={{getlatlng(data.dataMap.latlng,1)}}&epointy={{getlatlng(data.dataMap.latlng,0)}}?referer=myapp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"><img
                                 src="images/navigation.png" style="width: 17px;vertical-align: text-bottom;margin-right: 7px">导航</a>
                     </div>
                 </div>

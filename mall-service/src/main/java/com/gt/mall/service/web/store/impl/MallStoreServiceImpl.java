@@ -221,7 +221,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     }
 
     @Override
-    public Map< String,Object > findShopByStoreId( Integer id ) throws Exception {
+    public Map< String,Object > findShopByStoreId( Integer id ) {
 	MallStore store = mallStoreDao.selectById( id );
 
 	Map< String,Object > storeMap = JSONObject.parseObject( JSONObject.toJSONString( store ), Map.class );
@@ -428,6 +428,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			if ( wxShops.getId() == wxShopId ) {
 			    storeMap.put( "sto_name", wxShops.getBusinessName() );
 			    storeMap.put( "address", wxShops.getAddress() );
+			    storeMap.put( "wxShopId", wxShops.getId() );
 			    break;
 			}
 		    }

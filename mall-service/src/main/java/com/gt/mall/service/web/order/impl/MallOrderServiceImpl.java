@@ -65,6 +65,8 @@ import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.util.*;
+import com.gt.util.entity.param.wx.BusIdAndindustry;
+import com.gt.util.entity.result.wx.ApiWxApplet;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
@@ -1856,16 +1858,17 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					    //根据订单号查询支付订单信息
 					    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( daifu.getDfOrderNo() );
 					    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
-						//						String sql = "select appid,mch_id from t_wx_applet where industry_code=4 and bus_id=" + order.getBusUserId();
-						//todo 调用小屁孩接口，查询商家设置小程序的信息
+						BusIdAndindustry busIdAndindustry = new BusIdAndindustry();
+						busIdAndindustry.setBusId( order.getBusUserId() );
+						busIdAndindustry.setIndustry( 4 );
+						ApiWxApplet applet = wxPublicUserService.selectBybusIdAndindustry(busIdAndindustry);
 						WxmemberPayRefund refund = new WxmemberPayRefund();
-						refund.setMchid( null );// 商户号
-						refund.setAppid( null );// 公众号
+						refund.setMchid( applet.getMchId() );// 商户号
+						refund.setAppid( applet.getAppid() );// 公众号
 						refund.setTotalFee( wxPayOrder.getTotalFee() );//支付总金额
 						refund.setSysOrderNo( wxPayOrder.getOutTradeNo() );//系统单号
 						refund.setRefundFee( CommonUtil.toDouble( oReturn.getRetMoney() ) );//退款金额
 						logger.info( "小程序退款参数：" + JSONObject.fromObject( refund ).toString() );
-						//todo 调用小屁孩接口   小程序退款
 						Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );//小程序退款
 						logger.info( "小程序退款返回值：" + JSONObject.fromObject( resultmap ) );
 						if ( CommonUtil.isNotEmpty( resultmap ) ) {
@@ -1908,16 +1911,17 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				if ( Double.parseDouble( oReturn.getRetMoney().toString() ) > 0 ) {//退款金额大于0，则进行微信退款
 				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( payMap.get( "orderNo" ).toString() );
 				    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
-					//					String sql = "select appid,mch_id from t_wx_applet where industry_code=4 and bus_id=" + order.getBusUserId();
-					//todo 调用小屁孩接口，查询商家设置小程序的信息
+					BusIdAndindustry busIdAndindustry = new BusIdAndindustry();
+					busIdAndindustry.setBusId( order.getBusUserId() );
+					busIdAndindustry.setIndustry( 4 );
+					ApiWxApplet applet = wxPublicUserService.selectBybusIdAndindustry(busIdAndindustry);
 					WxmemberPayRefund refund = new WxmemberPayRefund();
-					refund.setMchid( null );// 商户号
-					refund.setAppid( null );// 公众号
+					refund.setMchid( applet.getMchId() );// 商户号
+					refund.setAppid( applet.getAppid() );// 公众号
 					refund.setTotalFee( wxPayOrder.getTotalFee() );//支付总金额
 					refund.setSysOrderNo( wxPayOrder.getOutTradeNo() );//系统单号
 					refund.setRefundFee( CommonUtil.toDouble( oReturn.getRetMoney() ) );//退款金额
 					logger.info( "小程序退款参数：" + JSONObject.fromObject( refund ).toString() );
-					//todo 调用小屁孩接口   小程序退款
 					Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );//小程序退款
 					logger.info( "小程序退款返回值：" + JSONObject.fromObject( resultmap ) );
 					if ( resultmap != null ) {
@@ -3275,10 +3279,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( userMap ) ) {
-	    Set< String > set = userMap.keySet();
 	    String key = Constants.REDIS_KEY + "syncOrderCount";
-	    for ( String str : set ) {
-		JedisUtil.map( key, str, userMap.get( str ).toString() );
+	    for ( Map.Entry< String,Object > e : userMap.entrySet() ) {
+		JedisUtil.map( key, e.getKey(), e.getValue().toString() );
 	    }
 	}
 	resultMap.put( "flag", flag );

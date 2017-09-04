@@ -239,6 +239,8 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) ) {
 		isWxPay = 1;//可以微信支付
+	    }else{
+		isAliPay = 1;
 	    }
 	    //todo alipayUserService.findAlipayUserByBusId
 	    /*AlipayUser alipayUser = alipayUserService.findAlipayUserByBusId( member.getBusid() );

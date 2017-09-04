@@ -185,7 +185,7 @@ function getLng(o) {
         dataType: 'jsonp',
         data: data,
         jsonp: "callback",
-        url: "http://apis.map.qq.com/ws/geocoder/v1",
+        url: "https://apis.map.qq.com/ws/geocoder/v1",
         jsonpCallback: "QQmap",
         success: function (json) {
             if (json.status == 0) {

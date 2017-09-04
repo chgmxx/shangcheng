@@ -1,6 +1,7 @@
 package com.gt.mall.config.interceptor;
 
 import com.gt.mall.bean.BusUser;
+import com.gt.mall.bean.Member;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PropertiesUtil;
 import com.gt.mall.util.SessionUtils;
@@ -90,10 +91,12 @@ public class MyInterceptor implements HandlerInterceptor {
 	    } else {
 		return true;// 只有返回true才会继续向下执行，返回false取消当前请求
 	    }*/
+	    Member member = SessionUtils.getLoginMember( request );
+	    request.setAttribute( "member", member );
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) ) {
 	    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
-	} else if ( user == null ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
+	} else if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
 	    response.setCharacterEncoding( "UTF-8" );
 	    String script = "<script type='text/javascript'>"
 			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "/user/tologin.do';"

@@ -143,7 +143,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	}
 	
 	$(function(){
-		var url ="http://apis.map.qq.com/tools/locpicker?search=1&type=1&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&referer=test&coordtype=5&coord=";
+		var url ="https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&referer=test&coordtype=5&coord=";
 		//url += "25.22,114.66";
 		url += address.memLatitude+","+address.memLongitude;
 		$("#ifr").attr("src",url);

@@ -3,6 +3,8 @@ package com.gt.mall.service.inter.wxshop;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.wx.QrcodeCreateFinal;
 import com.gt.mall.bean.wx.SendWxMsgTemplate;
+import com.gt.util.entity.param.wx.BusIdAndindustry;
+import com.gt.util.entity.result.wx.ApiWxApplet;
 
 import java.util.List;
 import java.util.Map;
@@ -68,4 +70,9 @@ public interface WxPublicUserService {
      * @return 消息模板
      */
     List< Map > selectTempObjByBusId( int busUserId );
+
+    /**
+     * 7、根据商家ID行业id查询小程序账号
+     */
+    ApiWxApplet selectBybusIdAndindustry(BusIdAndindustry busIdAndindustry);
 }

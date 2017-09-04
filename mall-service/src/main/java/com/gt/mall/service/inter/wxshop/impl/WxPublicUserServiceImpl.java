@@ -8,6 +8,8 @@ import com.gt.mall.bean.wx.SendWxMsgTemplate;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
+import com.gt.util.entity.param.wx.BusIdAndindustry;
+import com.gt.util.entity.result.wx.ApiWxApplet;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,6 +73,15 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 	String result = HttpSignUtil.signHttpSelect( busUserId, WS_SHOP_URL + "selectTempObjByBusId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, Map.class );
+	}
+	return null;
+    }
+
+    @Override
+    public ApiWxApplet selectBybusIdAndindustry( BusIdAndindustry busIdAndindustry ) {
+	String result = HttpSignUtil.signHttpSelect( busIdAndindustry, WS_SHOP_URL + "selectBybusIdAndindustry.do", 2 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), ApiWxApplet.class );
 	}
 	return null;
     }

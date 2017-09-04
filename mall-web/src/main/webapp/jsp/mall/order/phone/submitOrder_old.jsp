@@ -690,11 +690,11 @@
 			</c:if>
 			<span class="fenbi_open_span" style="<c:if test="${isOpenFenbi == 0 }">display: none;</c:if>">
 				<span class="pay-explan ">共${map.fenbi }粉币，可抵扣¥${map.fenbi_money }</span>
-				<i onclick="selectFenbi(this);" class="fenbiyouhui"><img class="off"  src="images/off_icon.jpg" /><img class="on" src="images/on_icon.jpg" /></i>
+				<i onclick="selectFenbi(this);" class="fenbiyouhui"><img class="off"  src="/images/icon/off_icon.jpg" /><img class="on" src="/images/icon/on_icon.jpg" /></i>
 			</span>
 			<span class="fenbi_noopen_span" style="<c:if test="${isOpenFenbi == 1 }">display: none;</c:if>">
 				<span class="pay-explan" style="color: #535353;">无可用</span>
-				<i><img src="images/off_icon.jpg" /></i>
+				<i><img src="/images/icon/off_icon.jpg" /></i>
 			</span>
 			<%-- <lable class="text-left">使用${map.fenbi }粉币抵扣${map.fenbi_money }元
 				<font style="margin-top: -50px;font-size: 90%;color: #ff8e33;">
@@ -747,12 +747,12 @@
 			<span class="jifen_open_span" style="<c:if test="${isOpenJifen == 0 }">display: none;</c:if>">
 				<span class="pay-explan" style="color: #f20000;">共${map.integral }积分，可抵扣¥${map.integral_money }</span>
 				<i onclick="selectJifen(${map.paramSet.starttype},this);" class="jifenyouhui">
-					<img class="off" src="images/off_icon.jpg" /><img class="on" src="images/on_icon.jpg" />
+					<img class="off" src="/images/icon/off_icon.jpg" /><img class="on" src="/images/icon/on_icon.jpg" />
 				</i>
 			</span>
 			<span class="jifen_noopen_span" style="<c:if test="${isOpenJifen == 1 }">display: none;</c:if>">
 				<span class="pay-explan" style="color: #535353;">无可用</span>
-				<i><img src="images/off_icon.jpg" /></i>
+				<i><img src="/images/icon/off_icon.jpg" /></i>
 			</span>
 			
 			<%-- <lable class="text-left">使用${map.intergral }积分抵扣${map.integral_money }元
@@ -1016,7 +1016,7 @@
 <input type="hidden" class="alipaySubject" value="${alipaySubject }"/>
 <c:if test="${empty addressList && empty loginCity}">
  <iframe id="geoPage" width="100%" height="30%" frameborder=0 scrolling="no" style="display:none;"
-    src="http://apis.map.qq.com/tools/geolocation?key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&referer=myapp&effect=zoom"></iframe>
+    src="https://apis.map.qq.com/tools/geolocation?key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&referer=myapp&effect=zoom"></iframe>
     
 <!-- 接收到位置信息后 通过 iframe 嵌入位置标注组件 -->
 <iframe id="markPage" width="100%" height="70%" frameborder=0 scrolling="no" src="" style="display:none;"></iframe> 

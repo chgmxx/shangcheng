@@ -167,11 +167,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 		    Map< String,Object > param = new HashMap< String,Object >();
 		    param.put( "userId", userId );
 		    int count = mallTakeTheirDAO.selectCountByBusUserId( param );
-		    if ( count > 0 ) {
-			return true;
-		    } else {
-			return false;
-		    }
+		    return count > 0;
 		}
 	    }
 	}

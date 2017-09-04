@@ -1,4 +1,4 @@
-﻿var invenArray = new Array();
+﻿﻿var invenArray = new Array();
 var specificaArray = new Array();
 var params = new Object();
 var shopId = 0;
@@ -181,7 +181,7 @@ $(".subBtn").click(function () {
             delimageList.concat(imageObj.delimageList);
         }
 
-        if (imageList.length == 0 && delimageList.length == 0 && flag) {
+        if ($(".imageId").length <= 0 && flag) {
             setTimeout(function () {
                 layer.alert("商品图至少上传一张", {
                     shade: [0.1, "#fff"],

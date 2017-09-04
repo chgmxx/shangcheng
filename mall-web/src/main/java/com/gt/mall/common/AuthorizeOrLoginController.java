@@ -43,11 +43,11 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
 	//判断商家信息 1是否过期 2公众号是否变更过
-	String wxpublic = SignHttpUtils.WxmppostByHttp("http://wxmp.yifriend.net:13882//8A5DA52E/busUserApi/getWxPulbicMsg.do", getWxPublicMap, wxmpSign );
+	String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/busUserApi/getWxPulbicMsg.do", getWxPublicMap, wxmpSign );
 	JSONObject json = JSONObject.parseObject( wxpublic );
 
-//	JSONObject json = busUserService.isUserGuoQi( busId );
-	if ( CommonUtil.isEmpty( json ) || json.size() == 0) {
+	//	JSONObject json = busUserService.isUserGuoQi( busId );
+	if ( CommonUtil.isEmpty( json ) || json.size() == 0 ) {
 	    return null;
 	}
 	Integer code = CommonUtil.toInteger( json.get( "code" ) );
@@ -65,7 +65,7 @@ public class AuthorizeOrLoginController {
 
 	}
 
-	String requestUrl = CommonUtil.toString( map.get( "requestUrl" ) );
+	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
 	String otherRedisKey = CommonUtil.getCode();
 	JedisUtil.set( otherRedisKey, requestUrl, 5 * 60 );
 	Map< String,Object > queryMap = new HashMap< String,Object >();
@@ -74,7 +74,7 @@ public class AuthorizeOrLoginController {
 	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
-	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString(queryMap);
+	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap );
 	return url;
     }
 
@@ -92,8 +92,8 @@ public class AuthorizeOrLoginController {
 	return null;
     }
 
-	@RequestMapping( value = "/79B4DE7C/clearMember" )
-    public void clearMember( HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping( value = "/79B4DE7C/clearMember" )
+    public void clearMember( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    SessionUtils.setLoginMember( request, null );
 	} catch ( Exception e ) {

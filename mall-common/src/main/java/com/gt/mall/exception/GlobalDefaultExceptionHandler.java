@@ -35,9 +35,10 @@ public class GlobalDefaultExceptionHandler {
 	modelAndView.addObject( "ex", e );
 	modelAndView.addObject( "url", request.getRequestURL() );
 	modelAndView.setViewName( DEFAULT_ERROR_VIEW );
+	logger.error( e.getMessage() );
+	e.printStackTrace();
 	return modelAndView;
     }
-
 
     // 统一异常处理 Ajax请求
     @ResponseBody

@@ -58,15 +58,15 @@ public class UploadManager {
 	    int cHeight = height;                                        // 剪切后图片高度
 	    int x = 0;
 	    int y = 0;
-	    double oR = new Double( oWidth ) / new Double( oHeight ); // 原图宽高比
-	    double r = new Double( width ) / new Double( height );         // 剪切宽高比
+	    double oR = CommonUtil.toDouble( oWidth ) / CommonUtil.toDouble( oHeight ); // 原图宽高比
+	    double r = CommonUtil.toDouble( width ) / CommonUtil.toDouble( height );         // 剪切宽高比
 
 	    // 当宽高都是 大于剪切宽高时, 进行压缩
 	    if ( oWidth > width && oHeight > height ) {
 		if ( oR > r ) {        // 宽度偏长
-		    cWidth = new Double( new Double( height ) / new Double( oHeight ) * oWidth ).intValue();
+		    cWidth = CommonUtil.toDouble( CommonUtil.toDouble( height ) / CommonUtil.toDouble( oHeight ) * oWidth ).intValue();
 		} else if ( oR < r ) { // 高度偏长
-		    cHeight = new Double( new Double( width ) / new Double( oWidth ) * oHeight ).intValue();
+		    cHeight = CommonUtil.toDouble( CommonUtil.toDouble( width ) / CommonUtil.toDouble( oWidth ) * oHeight ).intValue();
 		}
 		// 压缩图片
 		BufferedImage image = new BufferedImage( cWidth, cHeight, BufferedImage.TYPE_INT_RGB );
@@ -108,7 +108,8 @@ public class UploadManager {
 	    }
 	    bufImg = null;
 	    subImg = null;
-	    int size = CommonUtil.toInteger( new Long( file.length() / 1024 ).intValue() );
+	    Long l = Long.valueOf( file.length() / 1024 );
+	    int size = CommonUtil.toInteger( l.intValue() );
 	    // 封装剪切后的信息
 	    List< Integer > list = new ArrayList<>();
 	    list.add( width );
@@ -398,7 +399,7 @@ public class UploadManager {
      *
      * @author 伟杰
      */
-    public class Image {
+    public static class Image {
 	/**
 	 * 图片路径
 	 */
@@ -480,7 +481,7 @@ public class UploadManager {
      *
      * @author 伟杰
      */
-    public class Video {
+    public static class Video {
 	/**
 	 * 存放路径
 	 */
@@ -551,7 +552,7 @@ public class UploadManager {
      *
      * @author 伟杰
      */
-    public class Voice {
+    public static class Voice {
 	/**
 	 * 存放路径
 	 */

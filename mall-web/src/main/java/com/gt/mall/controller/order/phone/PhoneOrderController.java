@@ -5,31 +5,29 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wx.flow.WsBusFlowInfo;
+import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.common.AuthorizeOrLoginController;
-import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
-import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
-import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.order.MallOrderNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
@@ -78,8 +76,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @Autowired
     private MallProductService       mallProductService;
     @Autowired
-    private MallFreightService       mallFreightService;
-    @Autowired
     private MallGroupBuyService      mallGroupBuyService;
     @Autowired
     private MallStoreService         mallStoreService;
@@ -100,8 +96,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @Autowired
     private MallGroupJoinDAO         mallGroupJoinDAO;
     @Autowired
-    private MallFreightDAO           mallFreightDAO;
-    @Autowired
     private MallShopCartService      mallShopCartService;
     @Autowired
     private MemberService            memberService;
@@ -110,11 +104,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @Autowired
     private WxPublicUserService      wxPublicUserService;
     @Autowired
-    private FenBiFlowService         fenBiFlowService;
-    @Autowired
     private WxShopService            wxShopService;
     @Autowired
     private MallPageService          mallPageService;
+    @Autowired
+    private MallOrderNewService      mallOrderNewService;
 
     /**
      * 跳转至提交订单页面
@@ -160,11 +154,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( data.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-	    int shopId = 0;
-	    if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-		shopId = Integer.parseInt( request.getSession().getAttribute( "shopId" ).toString() );
+	    WxPublicUsers pbUser = null;
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		pbUser = wxPublicUserService.selectByMemberId( member.getId() );
 	    }
-	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
@@ -175,8 +168,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    int isWxPay = 0;//不能微信支付
 	    int isAliPay = 0;//不能支付宝支付
-	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) ) {
+	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( pbUser ) ) ) {
 		isWxPay = 1;//可以微信支付
+	    }else{
+		isAliPay = 1;
 	    }
 
 	    //todo alipayUserService.findAlipayUserByBusId
@@ -187,9 +182,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "isWxPay", isWxPay );
 	    request.setAttribute( "isAliPay", isAliPay );
 
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		member = memberService.findMemberById( member.getId(), member );
-	    }
 	    List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		Map< String,Object > params = new HashMap< String,Object >();
@@ -216,10 +208,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		if ( CommonUtil.isNotEmpty( addressMap.get( "mem_latitude" ) ) ) {
 		    mem_latitude = CommonUtil.toDouble( addressMap.get( "mem_latitude" ) );
 		}
+		request.setAttribute( "loginCity", loginCity );
 	    }
-	    request.setAttribute( "loginCity", loginCity );
 
-	    int memType = memberService.isCardType( member.getId() );
 	    Object dataObj = request.getSession().getAttribute( "dataOrder" );
 	    Object addTypeObj = request.getSession().getAttribute( "addressType" );
 	    Object deliveryMethodObj = request.getSession().getAttribute( "deliveryMethod" );
@@ -250,12 +241,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		obj = JSONObject.fromObject( msg );
 	    }
 
-	    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
-	    WxPublicUsers pbUser = new WxPublicUsers();
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		pbUser = wxPublicUserService.selectByMemberId( member.getId() );
-	    }
-	    double orderTotalMoney = 0;
+	    List< Map< String,Object > > list = new ArrayList<>();
+
 	    if ( type.equals( "1" ) ) {//从购物车进入订单
 		if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
 		    String msg = request.getSession().getAttribute( "cartToOrderData" ).toString();
@@ -264,7 +251,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 		String id = obj.get( "shop_ids" ).toString();
 		String shopcards = id.substring( 0, id.length() );
-		//list = pageService.shopcare(id.substring(0, id.length()),pbUser,member);//从购物车获取数据
 		list = mallShopCartService.getProductByShopCart( shopcards, pbUser, member, userid );
 	    } else {
 		if ( CommonUtil.isNotEmpty( data.get( "detail" ) ) ) {
@@ -275,82 +261,15 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		}
 
 		JSONObject maps = JSONObject.fromObject( list.get( 0 ) );
-		list = new ArrayList< Map< String,Object > >();
 		list = mallShopCartService.getProductByIds( maps, pbUser, member, userid );
 	    }
-	    int toshop = 0;
-	    toshop = mallProductService.getIsShopBySession( shopId, userid, request );
 	    Object appointName = data.get( "appointName" );//提货人姓名
 	    Object appointTel = data.get( "appointTel" );//提货人手机
 	    request.setAttribute( "appointName", appointName );
 	    request.setAttribute( "appointTel", appointTel );
 
-	    //计算运费如下
-	    if ( loginCity != null && !loginCity.equals( "" ) ) {
-		Map< String,Object > map = new HashMap< String,Object >();
-		map.put( "province_id", loginCity );
-		map.put( "orderArr", list );
-		String shopIds = "";
-		int proTypeId = 0;
-		if ( list != null && list.size() > 0 ) {
-		    for ( Map< String,Object > proList : list ) {
-			if ( CommonUtil.isNotEmpty( proList.get( "pro_type_id" ) ) ) {
-			    proTypeId = CommonUtil.toInteger( proList.get( "pro_type_id" ) );
-			}
-			if ( CommonUtil.isNotEmpty( proList.get( "totalprice" ) ) ) {
-			    orderTotalMoney += CommonUtil.toDouble( proList.get( "totalprice" ) );
-			} else if ( CommonUtil.isNotEmpty( proList.get( "price_total" ) ) ) {
-			    orderTotalMoney += CommonUtil.toDouble( proList.get( "price_total" ) );
-			}
-			shopId = CommonUtil.toInteger( proList.get( "shop_id" ) );//店铺id
-
-			MallFreight freight = mallFreightDAO.selectFreightByShopId( shopId );
-			if ( CommonUtil.isNotEmpty( freight ) ) {
-			    if ( freight.getPriceType().toString().equals( "3" ) ) {//按距离算
-				request.setAttribute( "isKm", 1 );
-			    }
-			}
-			//计算粉丝跟店铺的距离
-			if ( CommonUtil.isNotEmpty( mem_longitude ) && CommonUtil.isNotEmpty( mem_latitude ) ) {
-			    //获取微信门店的经度纬度
-			    Map< String,Object > stores = mallStoreService.findShopByStoreId( shopId );
-			    if ( CommonUtil.isNotEmpty( stores ) ) {
-				if ( CommonUtil.isNotEmpty( stores.get( "stoLongitude" ) ) && CommonUtil.isNotEmpty( stores.get( "stoLatitude" ) ) ) {
-				    Double raill = CommonUtil.getDistance( mem_longitude, mem_latitude, CommonUtil.toDouble( stores.get( "stoLongitude" ) ),
-						    CommonUtil.toDouble( stores.get( "stoLatitude" ) ) );
-				    raill = raill / 1000;
-				    map.put( "juli", raill );
-				}
-			    }
-			}
-			if ( CommonUtil.isNotEmpty( shopIds ) ) {
-			    shopIds += ",";
-			}
-			shopIds += proList.get( "shop_id" ).toString();
-
-			if ( CommonUtil.isNotEmpty( proList.get( "flowId" ) ) ) {
-			    if ( CommonUtil.toInteger( proList.get( "flowId" ) ) > 0 ) {
-				request.setAttribute( "isFlow", 1 );
-				WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( proList.get( "flowId" ) ) );
-				if ( CommonUtil.isNotEmpty( flow ) ) {
-				    request.setAttribute( "flowType", flow.getType() );
-				}
-			    }
-			}
-		    }
-		}
-		if ( CommonUtil.isNotEmpty( shopIds ) ) {
-		    request.getSession().setAttribute( "order_shopIds", shopIds );
-		    boolean isJuli = mallOrderService.isJuliByFreight( shopIds );
-		    if ( isJuli ) {
-			request.setAttribute( "isJuliFreight", 1 );
-		    }
-		}
-		map.put( "toshop", toshop );
-		map.put( "proTypeId", proTypeId );
-		Map< Integer,Object > priceMap = mallFreightService.getFreightMoney( map );//运费
-		request.setAttribute( "priceMap", priceMap );
-	    }
+	    //获取参数
+	    mallShopCartService.getOrdersParams( request, loginCity, userid, list, mem_longitude, mem_latitude, member );
 
 	    //商户是否允许买家货到付款,找人代付（true 允许  false 不允许）
 	    mallPaySetService.isHuoDaoByUserId( userid, request );
@@ -358,40 +277,29 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    //商户是否允许使用上门自提（true 允许 false不允许）
 	    boolean takeTheir = mallTakeTheirService.isTakeTheirByUserId( userid );
 	    String isTakeTheir = "0";//不允许到店自提
-	    MallTakeTheir mallTakeTheir = null;
 
 	    if ( takeTheir ) {
 		isTakeTheir = "1";//允许到店自提
-		mallTakeTheir = mallTakeTheirTimeService.selectDefaultTakeByUserId( userid, CommonUtil.toInteger( loginCity ),
-				CommonUtil.toInteger( takeId ) );//查询到店自提的默认地址
+		MallTakeTheir mallTakeTheir = mallTakeTheirTimeService
+				.selectDefaultTakeByUserId( userid, CommonUtil.toInteger( loginCity ), CommonUtil.toInteger( takeId ) );//查询到店自提的默认地址
+		request.setAttribute( "mallTakeTheir", mallTakeTheir );
 	    }
-	    if ( memType > 0 && CommonUtil.isNotEmpty( member ) ) {
-		Map< String,Object > map = mallOrderService.countIntegralFenbi( member, orderTotalMoney );//获取积分、粉币抵扣金额
-		request.setAttribute( "map", map );
-	    } else if ( CommonUtil.isNotEmpty( member ) ) {
+	    if ( CommonUtil.isNotEmpty( member ) ) {
 		//查询商家是否已经开启了商家联盟
 		Map< String,Object > unionMap = new HashMap< String,Object >();
 		unionMap.put( "memberId", member.getId() );
 		unionMap.put( "busId", member.getBusid() );
-		//unionMobileService.modifyGetUnionDiscount
-		//		unionMap = unionMobileService.modifyGetUnionDiscount( unionMap );
 		request.setAttribute( "unionMap", unionMap );
 	    }
 
-	    request.setAttribute( "mallTakeTheir", mallTakeTheir );
 	    request.setAttribute( "orderDetail", JSONArray.fromObject( list ) );
 	    request.setAttribute( "data", obj );
 	    request.setAttribute( "type", type );
 	    request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
-	    request.setAttribute( "memType", memType );
 	    request.setAttribute( "isTakeTheir", isTakeTheir );
-	    request.setAttribute( "member", member );
 	    request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
-	    //KeysUtil keysUtil = new KeysUtil();
-	    //request.setAttribute("alipaySubject", keysUtil.getEncString("商城下单"));
-	    String subject = URLEncoder.encode( "商城下单", "UTF-8" );
-	    request.setAttribute( "alipaySubject", subject );
 
+	    int shopId = SessionUtils.getMallShopId( request );
 	    if ( shopId > 0 ) {
 		List list1 = pageService.shoppage( shopId );
 		if ( list1.size() > 0 ) {
@@ -869,13 +777,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		//todo CommonUtil.getWxParams
 		CommonUtil.getWxParams( mallOrderService.getWpUser( member.getId() ), request );
 	    }*/
-	    Object shopObj = request.getSession().getAttribute( "order_shopIds" );
+
+	    Object shopObj = SessionUtils.getSession( request, "isJuliFreight" );
 	    if ( CommonUtil.isNotEmpty( shopObj ) ) {
-		String shopIds = shopObj.toString();
-		boolean isJuli = mallOrderService.isJuliByFreight( shopIds );
-		if ( isJuli ) {
-		    request.setAttribute( "isJuliFreight", 1 );
-		}
+		request.setAttribute( "isJuliFreight", shopObj );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "跳转至新增/修改收货地址页面异常：" + e.getMessage() );
@@ -1316,8 +1221,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		Map< String,Object > groupBuy = mallGroupBuyService.selectGroupBuyById( orders.getGroupBuyId() );
 		String endTime = groupBuy.get( "gEndTime" ).toString();
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-		String e = String.valueOf( sdf.parse( endTime ).getTime() / 1000 );
-		long time = Long.valueOf( e ) - ( System.currentTimeMillis() ) / 1000;
+		long e = sdf.parse( endTime ).getTime() / 1000;
+		long time = e - System.currentTimeMillis() / 1000;
 		request.setAttribute( "endTime", time );
 
 		request.setAttribute( "groupBuy", groupBuy );
@@ -1603,10 +1508,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	Object groupType = detail.get( "groupType" );
 	Object proSpecStr = detail.get( "pro_spec_str" );
 	if ( null != groupType && groupType.equals( "7" ) && CommonUtil.isNotEmpty( proSpecStr ) ) {//批发商品判断库存
-	    Map map = JSONObject.fromObject( proSpecStr );
-	    for ( Object key : map.keySet() ) {
-		proSpecificas = key;
-		Map p = JSONObject.fromObject( map.get( key ) );
+	    Map< String,Object > map = JSONObject.fromObject( proSpecStr );
+	    for ( Map.Entry< String,Object > e : map.entrySet() ) {
+		proSpecificas = e.getKey();
+		Map p = com.alibaba.fastjson.JSONObject.parseObject( e.getValue().toString(), Map.class );
 		proNum = CommonUtil.toInteger( p.get( "num" ) );
 		result = mallProductService.calculateInventory( proId, proSpecificas, proNum, memberId );
 		if ( !( result.get( "result" ) ).equals( "true" ) ) {
@@ -1744,6 +1649,34 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    out.write( JSONObject.fromObject( result ).toString() );
 	    out.flush();
 	    out.close();
+	}
+    }
+
+    /**
+     * 计算订单价格
+     */
+    @RequestMapping( value = "/79B4DE7C/calculateOrder" )
+    @Transactional( rollbackFor = Exception.class )
+    public void calculateOrder( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
+	logger.info( "进入计算controller" );
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+	    MallAllEntity mallAllEntity = mallOrderNewService.calculateOrder( params, member );
+
+	    if ( CommonUtil.isNotEmpty( mallAllEntity ) ) {
+		result =  mallOrderNewService.getCalculateData( mallAllEntity );
+	    } else {
+		code = ResponseEnums.NULL_ERROR.getCode();
+	    }
+	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
+	    logger.error( "计算异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    result.put( "code", code );
+	    CommonUtil.write( response, result );
 	}
     }
 

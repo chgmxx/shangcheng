@@ -196,7 +196,6 @@
         WHERE b.is_delete=0 and a.pro_type = 0
         <if test="busUserId != null and busUserId != ''">
             and a.bus_user_id=#{busUserId}
-        </if>
         <if test="memberList != null">
             and a.user_id in
             <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
@@ -274,6 +273,62 @@
             </foreach>
         </where>
     </update>
+
+
+    <select id="selectShopCartByCheckIds" parameterType="Map" resultType="Map">
+        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,
+        a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`, e.image_url, d.return_day,d.pro_name,d.is_specifica AS isSpec,
+        d.is_coupons AS isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,
+        d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num, d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id AS flowId
+        FROM
+        (
+        SELECT distinct
+        a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
+        a.`pro_type`,a.`sale_member_id`,a.`commission`
+        FROM t_mall_shop_cart a
+        <where>
+            <if test="id != null">
+                and a.id = #{id}
+            </if>
+            <if test="checkIds != null">
+                <if test="checkIds.length == 1">
+                    and a.id = checkIds
+                </if>
+                <if test="checkIds.length > 1">
+                    and a.id in
+                    <foreach collection="checkIds" index="index" item="item" open="(" separator="," close=")">
+                        #{item,jdbcType=INTEGER}
+                    </foreach>
+                </if>
+            </if>
+            <if test="shopIds != null">
+                <if test="shopIds.length == 1">
+                    and a.shop_id = #{shopIds}
+                </if>
+                <if test="shopIds.length > 1">
+                    and a.shop_id in
+                    <foreach collection="shopIds" index="index" item="item" open="(" separator="," close=")">
+                        #{item,jdbcType=INTEGER}
+                    </foreach>
+                </if>
+            </if>
+            <if test="userId != null and userId != '' and userId != 0">
+                and a.bus_user_id= #{userId}
+            </if>
+            <if test="type == 0">
+                and a.pro_type = 0
+            </if>
+            <if test="type == 1">
+                and (a.pro_type = 1 or a.pro_type = 2)
+            </if>
+
+        </where>
+        GROUP BY a.id
+        ORDER BY a.shop_id
+        ) a
+        LEFT JOIN t_mall_product d ON a.product_id=d.id
+        LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
+    </select>
 
 
 </mapper>

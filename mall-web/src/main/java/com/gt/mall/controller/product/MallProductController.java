@@ -159,8 +159,8 @@ public class MallProductController extends BaseController {
 		int id = CommonUtil.toInteger( params.get( "id" ) );
 		Map< String,Object > map = mallProductService.selectProductById( id, user, isJxc );
 		if ( map != null && map.size() > 0 ) {
-		    for ( String str : map.keySet() ) {
-			request.setAttribute( str, map.get( str ) );
+		    for ( Map.Entry< String,Object > e : map.entrySet() ) {
+			request.setAttribute( e.getKey(), e.getValue() );
 		    }
 		}
 		request.setAttribute( "map", map );

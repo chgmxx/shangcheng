@@ -83,4 +83,11 @@ public interface WxShopService {
      * @return true 成功
      */
     boolean updateBySubShop(ShopSubsop shopSubsop);
+
+    /**
+     * 根据城市名称查询城市id
+     * @param name 城市名称
+     * @return 城市id
+     */
+    Map queryBasisByName(String name);
 }

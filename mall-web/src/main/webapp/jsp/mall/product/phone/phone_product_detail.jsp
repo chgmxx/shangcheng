@@ -865,7 +865,7 @@
 
 <c:if test="${empty addressMap && empty loginCity}">
     <iframe id="geoPage" width="100%" height="30%" frameborder=0 scrolling="no" style="display:none;"
-            src="http://apis.map.qq.com/tools/geolocation?key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&referer=myapp&effect=zoom"></iframe>
+            src="https://apis.map.qq.com/tools/geolocation?key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&referer=myapp&effect=zoom"></iframe>
 
     <!-- 接收到位置信息后 通过 iframe 嵌入位置标注组件 -->
     <iframe id="markPage" width="100%" height="70%" frameborder=0 scrolling="no" src="" style="display:none;"></iframe>

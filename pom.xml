@@ -298,6 +298,12 @@
             <version>1.3.7-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.gt.wxmp</groupId>
+            <artifactId>lfx_wxmp_entity1.0.1</artifactId>
+            <version>lfx_wxmp_entity1.0.1</version>
+        </dependency>
+
     </dependencies>
 
 

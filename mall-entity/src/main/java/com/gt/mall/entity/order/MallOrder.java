@@ -304,6 +304,15 @@ public class MallOrder extends Model< MallOrder > {
     @TableField( exist = false )
     double unionDiscountMoney = 0;//使用商家联盟总共优惠的金额
 
+    @TableField( exist = false )
+    double productAllMoney = 0;//订单商品总金额
+
+    @TableField( exist = false )
+    private Integer wxShopId;//微信门店
+
+    @TableField(exist = false)
+    private Integer useCoupon;//是否使用优惠券  用于计算
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

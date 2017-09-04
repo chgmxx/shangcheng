@@ -112,7 +112,7 @@ public interface MallStoreService extends BaseService< MallStore > {
      *
      * @return 店铺信息
      */
-    Map< String,Object > findShopByStoreId( Integer id ) throws Exception;
+    Map< String,Object > findShopByStoreId( Integer id );
 
     /**
      * 保存或修改店铺

@@ -94,4 +94,13 @@ public class WxShopServiceImpl implements WxShopService {
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
+    @Override
+    public Map queryBasisByName( String name ) {
+	String result = HttpSignUtil.signHttpSelect( name, WS_SHOP_URL + "queryBasisByName.do", 2 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.parseObject( result, Map.class );
+	}
+	return null;
+    }
+
 }

@@ -738,7 +738,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    }
 	    int type = 1;
 	    if ( CommonUtil.isNotEmpty( param.get( "type" ) ) ) {
-		type = Integer.valueOf( param.get( "type" ).toString() );
+		type = CommonUtil.toInteger( param.get( "type" ) );
 	    }
 	    MallAuction auction = auctionService.getAuctionByProId( id, shopid, auctionId );
 	    if ( type == 1 ) {//拍品详情

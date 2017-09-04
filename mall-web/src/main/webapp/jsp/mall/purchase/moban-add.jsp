@@ -136,7 +136,7 @@
             var latitude = $("#latitude").val();//纬度
             var longitude = $("#longitude").val();//经度
             var address = "";
-            var url = "http://apis.map.qq.com/tools/locpicker?search=1&type=1&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&referer=test";
+            var url = "https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&referer=test";
             address = "&coord=" + latitude + "," + longitude;
             url += "&coordtype=5";
             if (latitude != "" && longitude != "") {

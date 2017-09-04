@@ -252,7 +252,7 @@ function openMap() {
             data: data,
             async: false,
             jsonp: "callback",
-            url: "http://apis.map.qq.com/ws/geocoder/v1",
+            url: "https://apis.map.qq.com/ws/geocoder/v1",
             jsonpCallback: "QQmap",
             success: function (json) {
                 console.info(json);
@@ -260,7 +260,7 @@ function openMap() {
                 var latitude = json.result.location.lat;
                 $("#longitude").val(longitude);
                 $("#latitude").val(latitude);
-                var url = "http://apis.map.qq.com/tools/locpicker?search=1&type=1&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&referer=test";
+                var url = "https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU&referer=test";
                 if (latitude != "" && longitude != "") {
                     url += "&coordtype=5&coord=" + latitude + "," + longitude;
                 }

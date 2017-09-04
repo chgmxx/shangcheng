@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.freight.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
@@ -7,13 +8,12 @@ import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.freight.MallFreightDetailDAO;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.freight.MallFreightDetail;
-import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.service.inter.wxshop.WxShopService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.PageUtil;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.CommonUtil;
+import com.gt.mall.util.PageUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -138,7 +138,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		proTypeId = CommonUtil.toInteger( map.get( "proTypeId" ) );
 	    }
 
-	    JSONArray orderJSON = JSONArray.parseArray( map.get( "orderArr" ).toString() );
+	   JSONArray orderJSON = JSONArray.parseArray( JSON.toJSONString( map.get( "orderArr" ) ) );
 
 	    if ( !CommonUtil.isEmpty( orderJSON ) && orderJSON.size() > 0 ) {
 		for ( Object object : orderJSON ) {
@@ -321,6 +321,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	if ( addressMap != null && addressMap.size() > 0 ) {
 	    loginCity = addressMap.get( "mem_province" ).toString();
 	} else if ( CommonUtil.isNotEmpty( params.get( "province" ) ) ) {
+	    //todo 根据城市名称获取城市id
 	    List< Map > list = wxShopService.queryBasisCityIds( params.get( "province" ).toString() );
 	    if ( list != null && list.size() > 0 ) {
 		Map< String,Object > map = list.get( 0 );

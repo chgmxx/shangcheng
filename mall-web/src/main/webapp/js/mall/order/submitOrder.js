@@ -38,6 +38,7 @@ $(function () {
     });
     $('#money').html(total.toFixed(2));
     $("#proMoneyAll").val(total.toFixed(2));
+    $('#proMoneyAllOld').val(total.toFixed(2));
     $('#sum-money').html((total + fare).toFixed(2));
     $('#fare').html(fare);
     $('#orderFreightMoney').val(fare);
@@ -91,31 +92,15 @@ $(function () {
         var o = {};
         $(this).find("input").each(function (index) {
             if ($(this).attr("name") != undefined) {
-                if ($(this).attr("type") == "text" || $(this).attr("type") == "password" || $(this).attr("type") == "hidden") {
-                    o[$(this).attr("name")] = $(this).val();
-                }
-
-                if ($(this).attr("type") == "checkbox" || $(this).attr("type") == "radio") {
-                    if ($(this).is(":checked")) {
-                        o[$(this).attr("name")] = 1;
-                    } else {
-                        o[$(this).attr("name")] = 0;
+                if ( $(this).attr("type") == "hidden") {
+                    if( $(this).val() != null &&  $(this).val() != ""){
+                        o[$(this).attr("name")] = $(this).val();
                     }
                 }
+
             }
         });
 
-        $(this).find("select").each(function (index) {
-            if ($(this).attr("name") != undefined) {
-                o[$(this).attr("name")] = $(this).val();
-            }
-        });
-
-        $(this).find("textarea").each(function (index) {
-            if ($(this).attr("name") != undefined) {
-                o[$(this).attr("name")] = $(this).val();
-            }
-        });
         return o;
     };
 
@@ -160,6 +145,9 @@ $(function () {
             youhui(3, $("#unionDiscountDiv .unionItem:eq(0)"));
         }
     }
+
+    //计算会员卡
+    jisuan(0);
 
 });
 
@@ -487,13 +475,11 @@ function coupon(obj, tag) {
 
     var flag = true;
     if (tag == 0) {
-        /*$("#sum-money").html($("#sumOldMoney").val());
-         $("#orderMoney").val($("#sumOldMoney").val());
-         $("#proMoneyAll").val($("#sumOldMoney").val());*/
         $(obj).parent().find(".selected").removeClass("selected");
         var parentObj = $(obj).parents("#couponDiv");
         parentObj.find("#useCoupon").html("");
         parentObj.removeClass("selected");
+        parentObj.removeAttr("couponType");
 
         var coupon = {};
         var shopId = parentObj.find('.shopId').val();
@@ -597,19 +583,6 @@ function coupon(obj, tag) {
             $(obj).addClass("selected");
             $(obj).parents("#couponDiv").addClass("selected");
         }
-        /*var shopId = $(obj).parents("#couponDiv").find('.shopId').val();
-         var couponObj = {
-         "couponCode":code,"fullCoupon":money,"discountCoupon":discount,"shopId":shopId,"proDisAll":sumCoupon
-         };
-         var coupon= {};
-
-         var cArr = $("#couponList").val();
-         if(cArr != null && cArr != ""){
-         coupon = JSON.parse(cArr);
-         }
-         coupon[shopId] = couponObj;
-
-         $("#couponList").val(JSON.stringify(coupon));*/
     }
     if (flag) {
         //计算各种优惠的方法

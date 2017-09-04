@@ -21,15 +21,15 @@ public class MallAllEntity {
     private Double discountMemberMoney = 0.0; //会员优惠券金额
     private Double discountConponMoney = 0.0;   //优惠券券优惠金额
 
-    private Integer useFenbi = 0;  //是否使用粉币 not null
+    private Integer useFenbi = 0;  //是否使用粉币 not null 1使用
     private Double fenbiNum = 0.0;  //使用粉币数量
     private Double discountfenbiMoney = 0.0; //粉币抵扣金额
-    private Integer canUsefenbi = 0;  //是否能用粉币
+    private Integer canUsefenbi = 0;  //是否能用粉币 1 能用
 
-    private Integer userJifen = 0;  //是否使用积分 not null
+    private Integer userJifen = 0;  //是否使用积分 not null  1使用
     private Integer jifenNum = 0;  //使用积分数量
     private Double discountjifenMoney = 0.0; //积分抵扣金额
-    private Integer canUseJifen = 0;  //是否能用积分
+    private Integer canUseJifen = 0;  //是否能用积分 1 能用
 
     private Integer userLeague = 0;  //是否使用联盟卡 not null  0未使用 1使用
     private Double leagueDiscount = 1.0; //联盟折扣   userLeague=1 not null

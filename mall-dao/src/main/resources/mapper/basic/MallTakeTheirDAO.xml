@@ -52,10 +52,9 @@
     <select id="selectByUserId" parameterType="Map" resultMap="BaseResultMap">
         select <include refid="Base_Column_List" />
         from t_mall_take_their t
-        LEFT JOIN t_wx_bus_member p ON p.`busId`=t.user_id
         where  t.is_delete=0
         <if test="userId != null and userId != ''">
-            and p.busId= #{userId}
+            and t.user_id= #{userId}
         </if>
         <if test="provinceId != null and provinceId != ''">
             and t.visit_province_id= #{provinceId}
@@ -63,7 +62,6 @@
         <if test="takeId != null and takeId != ''">
             and t.id= #{takeId}
         </if>
-        group by t.id
     </select>
 
     <select id="selectCountByBusUserId" parameterType="Map" resultType="java.lang.Integer">

@@ -272,4 +272,12 @@ public class SessionUtils {
 	return request.getSession().getAttribute( Constants.SESSION_KEY + "mallShopCart" );
     }
 
+    public static void setSession( Object obj, HttpServletRequest request, String key ) {
+	request.getSession().setAttribute( Constants.SESSION_KEY + key, obj );
+    }
+
+    public static Object getSession( HttpServletRequest request, String key ) {
+	return request.getSession().getAttribute( Constants.SESSION_KEY + key );
+    }
+
 }

@@ -57,7 +57,7 @@
                         <c:if test="${member != null && !empty member }">
                             <p class="pdb mh-name">${member.nickname }</p>
                             <c:if test="${!empty member.mcId }">
-                                <p class="mh-phone"><span>${gradeType.gtName }</span><span class="pdlr">${card.cardno }</span></p>
+                                <p class="mh-phone"><span>${gradeType.gtName }</span><span class="pdlr">${card.cardNo }</span></p>
                             </c:if>
                             <c:if test="${empty member.mcId }">
                                 <p class="mh-phone"><span>非会员</span><span class="pdlr"></span></p>
