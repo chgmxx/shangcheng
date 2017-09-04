@@ -191,11 +191,12 @@
 
     <select id="selectShopCartNum" parameterType="Map" resultType="java.lang.Integer">
         SELECT IFNULL(SUM(a.`product_num`),0) AS proNum
-        FROM t_mall_shop_cart a
+        FROM t_mall_shop_cart a3
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
         WHERE b.is_delete=0 and a.pro_type = 0
         <if test="busUserId != null and busUserId != ''">
             and a.bus_user_id=#{busUserId}
+        </if>
         <if test="memberList != null">
             and a.user_id in
             <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">

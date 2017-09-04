@@ -1056,27 +1056,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    params.put( "wxShopList", shopList );
 	}
 	List< Map< String,Object > > list = mallProductGroupDAO.selectProductGroupByShopId( params );
-	if ( list != null && list.size() > 0 && type == 1 ) {
-	    for ( Map< String,Object > map : list ) {
-		String groupId = map.get( "group_id" ).toString();
-		if ( CommonUtil.isNotEmpty( map.get( "is_child" ) ) ) {
-		    if ( map.get( "is_child" ).toString().equals( "1" ) ) {//存在子类的分类
-			/*sql = "SELECT distinct(a.group_id) as group_id,b.group_name,b.is_child,i.image_url FROM t_mall_product_group a "
-					+ "LEFT JOIN t_mall_group b ON a.group_id=b.id "
-					+ "left join t_mall_image_associative i on i.ass_type=2 and i.ass_id=b.id "
-					+ "WHERE  a.is_delete=0 AND b.is_delete=0 AND a.shop_id="
-					+ stoId + " and b.group_p_id=" + groupId + " order by b.sort,b.id desc";*/
-			Map< String,Object > childParams = new HashMap<>();
-			childParams.put( "shopId", stoId );
-			childParams.put( "groupParentId", groupId );
-			List< Map< String,Object > > childList = mallProductGroupDAO.selectGroupByParentId( childParams );
-			if ( childList != null && childList.size() > 0 ) {
-			    map.put( "childList", childList );
-			}
-		    }
-		}
-	    }
-	}
 	return list;
     }
 
