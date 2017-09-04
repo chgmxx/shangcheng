@@ -191,7 +191,7 @@
 
     <select id="selectShopCartNum" parameterType="Map" resultType="java.lang.Integer">
         SELECT IFNULL(SUM(a.`product_num`),0) AS proNum
-        FROM t_mall_shop_cart a3
+        FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
         WHERE b.is_delete=0 and a.pro_type = 0
         <if test="busUserId != null and busUserId != ''">
