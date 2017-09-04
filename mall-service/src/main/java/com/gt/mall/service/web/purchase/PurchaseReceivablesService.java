@@ -4,6 +4,7 @@ import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.purchase.PurchaseReceivables;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -70,4 +71,21 @@ public interface PurchaseReceivablesService extends BaseService<PurchaseReceivab
      * @param receivablesNumber
      */
     void addReceivables(@RequestParam String receivablesNumber) throws Exception;
+
+    /**
+     * 新增收款记录
+     * @param request
+     * @param memberId
+     * @param orderId
+     * @param busId
+     * @param buyMode
+     * @param money
+     * @param fansCurrency
+     * @param integral
+     * @param coupon
+     * @param termId
+     * @param discount
+     */
+    void addReceivables( HttpServletRequest request, Integer memberId, Integer orderId, Integer busId, String buyMode, Double money, Double fansCurrency, Double integral,
+                    String coupon, String termId, Integer discount );
 }
