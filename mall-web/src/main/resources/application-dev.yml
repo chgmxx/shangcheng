@@ -12,7 +12,7 @@ spring:
   host: 113.106.202.51
   port: 6379
   password: gt@123456
-  database: 2
+  database: 3
 #redis session共享
  session:
    store-type: redis
@@ -124,7 +124,9 @@ mq:
 redisSession:
  domainName: .yifriend.net
  cookiePath: /
- cookieName: JSESSIONID
+# cookieName: JSESSIONID
+ cookieName: WXMPJSESSIONID
+
 
 http:
  #总项目请求地址
