@@ -22,29 +22,31 @@ public class HttpSignUtil {
     private static Logger logger = LoggerFactory.getLogger( HttpSignUtil.class );
 
     /**
-     *
-     * @param obj 参数
-     * @param url 地址
+     * @param obj   参数
+     * @param url   地址
      * @param types 0 会员  1 商家相关   2 微信相关
+     *
      * @return 返回对象
      */
     private static JSONObject SignHttpJson( Object obj, String url, int... types ) {
+	long startTime = System.currentTimeMillis();
 	try {
 	    String result = null;
 	    int type = CommonUtil.isNotEmpty( types ) && types.length > 0 ? types[0] : 0;
 	    if ( type == 0 ) {//会员
 		String signKey = PropertiesUtil.getMemberSignKey();
-		url = PropertiesUtil.getMemberDomain() + url;
+		//		url = PropertiesUtil.getMemberDomain() + url;
+		url = "http://113.106.202.53:13885/" + url;
 		logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 		result = SignHttpUtils.postByHttp( url, obj, signKey );
 	    } else {
 		//门店
 		String signKey = PropertiesUtil.getWxmpSignKey();
 		url = PropertiesUtil.getWxmpDomain() + url;
-		if(type == 1){
+		if ( type == 1 ) {
 		    logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 		    result = SignHttpUtils.WxmppostByHttp( url, obj, signKey );
-		}else if(type == 2){
+		} else if ( type == 2 ) {
 		    RequestUtils requestUtils = new RequestUtils();
 		    requestUtils.setReqdata( obj );
 
@@ -54,6 +56,11 @@ public class HttpSignUtil {
 		    result = JSONObject.toJSONString( map );
 		}
 	    }
+	    long endTime = System.currentTimeMillis();
+
+	    long executeTime = endTime - startTime;
+
+	    logger.info( "请求接口的执行时间 : " + executeTime + "ms" );
 	    logger.info( "接口返回result:" + result );
 
 	    if ( CommonUtil.isNotEmpty( result ) ) {
