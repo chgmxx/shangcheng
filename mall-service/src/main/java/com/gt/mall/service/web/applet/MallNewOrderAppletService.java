@@ -40,4 +40,12 @@ public interface MallNewOrderAppletService extends BaseService<MallAppletImage> 
      * @return
      */
     Map<String, Object> submitOrder(Map<String, Object> params);
+
+    /**
+     * 计算订单的优惠信息（积分抵扣、粉币抵扣、优惠券、商家联盟折扣） 调用会员接口
+     *
+     * @param params
+     * @return
+     */
+    Map<String, Object> newCalculationPreferential(Map<String, Object> params);
 }

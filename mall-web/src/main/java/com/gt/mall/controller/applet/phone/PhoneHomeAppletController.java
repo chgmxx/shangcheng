@@ -949,8 +949,8 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = null;
 	logger.info( "商城小程序计算订单的优惠信息：" + params );
 	try {
-	    resultMap = mallNewOrderAppletService.calculationPreferential( params );
-
+	   /* resultMap = mallNewOrderAppletService.calculationPreferential( params );*/
+	    resultMap = mallNewOrderAppletService.newCalculationPreferential( params );
 	} catch ( Exception e ) {
 	    resultMap = new HashMap<>();
 	    resultMap.put( "code", "-1" );
