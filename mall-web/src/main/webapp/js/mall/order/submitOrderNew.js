@@ -2,11 +2,11 @@ function submitOrders() {
     var data = getSubmitParams();
     console.log(data);
 
-    var flag = validateSubmit();
-    if (!flag) {
-        return false;
-    }
-
+    /*var flag = validateSubmit();
+     if (!flag) {
+     return false;
+     }
+     */
     var index = layer.open({
         title: "",
         content: "",
@@ -22,21 +22,19 @@ function submitOrders() {
         success: function (data) {
             if (data.code === 1) {
                 //微信支付
-                if (data.payWay == 1) {
+                if (data.payWay === 1) {
                     location.href = "/wxPay/79B4DE7C/wxMallAnOrder.do?orderId=" + data.orderId;
-                } else if (data.payWay == -1 || data.payWay == 3 || data.payWay == 4 || data.payWay == 7 || data.payWay == 2 || data.payWay == 6 || data.payWay == 8) {
-                    var orderMoney = $('#orderMoney').val();
-                    //payWay: -1 订单金额为0 2 货到付款  3 储值卡支付   4积分支付  6 到店支付   7招人代付  8粉币支付
-                    location.href = "/phoneOrder/79B4DE7C/payWay.do?orderMoney=" + orderMoney + "&orderId=" + data.orderId + "&payWay=" + data.payWay + "&uId=" + data.busId;
-                } else if (data.payWay == 9) {
+                } else if (data.payWay === 9) {
                     var model = 3;
-                    if (data.proTypeId == 2) {
+                    if (data.proTypeId === 2) {
                         model = 13;
                     }
                     //var return_url = "${path}/phoneOrder/79B4DE7C/orderList.do?isPayGive=1&&orderId="+data.orderId+"&&uId="+data.busId;
                     var alipaySubject = $("input.alipaySubject").val();
                     var return_url = "${http}/phoneOrder/" + data.orderId + "/" + data.busId + "/1/79B4DE7C/orderPaySuccess.do";
                     location.href = "/alipay/79B4DE7C/alipayApi.do?out_trade_no=" + data.out_trade_no + "&subject=" + alipaySubject + "&total_fee=" + data.orderMoney + "&busId=" + data.busId + "&model=" + model + "&businessUtilName=mallOrderAlipayNotifyUrlBuinessService&return_url=" + return_url;
+                } else {
+                    location.href = data.url;
                 }
                 layer.closeAll();
 
@@ -88,8 +86,8 @@ function getSubmitParams() {
         var orderMoney = $(this).find(".orderCountMoney").val() * 1;
         $(this).find(".mall-item").each(function () {
             var detailObj = $(this).next().serializeObject();
-            if(detailObj.discount !== null && detailObj.discount !== ""){
-                detailObj.discount = detailObj.discount*1;
+            if (detailObj.discount !== null && detailObj.discount !== "") {
+                detailObj.discount = detailObj.discount * 1;
             }
             detailArr.push(detailObj);
         });
@@ -106,7 +104,7 @@ function getSubmitParams() {
         orderObj.mallOrderDetail = detailArr;
         orderObj.orderMoney = orderMoney;
         var message = $(this).find(".remark-txt").val();
-        if(message !== null && message !== ""){
+        if (message !== null && message !== "") {
             orderObj.orderBuyerMessage = message;
         }
 
@@ -133,14 +131,20 @@ function getSubmitParams() {
     var useFenbi = $("#isFenbi").val();
     var userJifen = $("#isJifen").val();
     var couponJson = $("#couponList").val();
-    return {
+    var data = {
         "order": JSON.stringify(orderArr),
         "productAll": oldProductAll,
         "useFenbi": useFenbi,//是否使用粉币
         "useJifen": userJifen, //是否使用积分
         "couponArr": couponJson,
-        "orderAllMoneys": orderAllMoneys.toFixed(2)
+        "orderAllMoneys": orderAllMoneys.toFixed(2),
+        "uId": $(".userid").val(),
+        "type": $(".buyType").val()
     };
+    if ($(".shopcards").val() !== null && $(".shopcards").val() !== "" && type === 1) {
+        data["shopcards"] = $(".shopcards").val();
+    }
+    return data;
 }
 
 function validateSubmit() {

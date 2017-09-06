@@ -3,18 +3,17 @@ package com.gt.mall.controller.presale;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.entity.presale.MallPresaleGive;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.util.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -286,7 +285,7 @@ public class MallPresaleController extends BaseController {
 	PrintWriter p = null;
 	Map< String,String > map = new HashMap<>();
 	try {
-	    String key = Constants.REDIS_KEY + "presale_num";
+	    String key = "presale_num";
 	    if ( JedisUtil.exists( key ) ) {
 		map.put( "presale_num", JedisUtil.mapGetAll( key ).toString() );
 	    } else {

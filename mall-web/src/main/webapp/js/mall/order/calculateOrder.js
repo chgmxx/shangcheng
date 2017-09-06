@@ -73,6 +73,9 @@ function jisuan(type, couponObj, flag) {
                 var flag = true;
                 if (data.userJifen == 1) {
                     if (data.canUseJifen === 1) {//能使用
+                       /* $(".jifen_open_span .pay-explan .num").html(data.jifenNum);
+                        $(".jifen_open_span .pay-explan .money").html(data.discountjifenMoney);*/
+
                         $("#jf").text(data.discountjifenMoney);
                         $(".jifen_open_span").show();
                         $(".jifen_noopen_span").hide();
@@ -84,6 +87,9 @@ function jisuan(type, couponObj, flag) {
                 }
                 if (data.useFenbi === 1) {//能使用
                     if (data.canUsefenbi === 1) {//能使用
+                        /*$(".fenbi_open_span .pay-explan .num").html(data.fenbiNum);
+                        $(".fenbi_open_span .pay-explan .money").html(data.discountfenbiMoney);*/
+
                         $("#fb").text(data.discountfenbiMoney);
                         $(".fenbi_open_span").show();
                         $(".fenbi_noopen_span").hide();

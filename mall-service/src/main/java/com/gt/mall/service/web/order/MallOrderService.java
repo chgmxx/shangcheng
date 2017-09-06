@@ -46,11 +46,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public List< Map< String,Object > > selectShipAddress( Map< String,Object > params );
 
     /**
-     * 添加订单
-     */
-    public Map< String,Object > addOrder( Map< String,Object > params, HttpServletRequest request );
-
-    /**
      * 关闭未付款订单
      */
     public void updateByNoMoney( Map< String,Object > params );
@@ -105,31 +100,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
      */
     public Integer selectSpeBySpeValueId( Map< String,Object > params );
 
-    /**
-     * 修改订单号信息
-     */
-    public Map< String,Object > upOrderNoById( MallOrder order );
-
-    /**
-     * 根据主订单id查询其他子订单
-     */
-    public List selectOrderPid( Integer orderId );
-
-    /**
-     * 添加订单(组成订单数据)
-     */
-    public Map< String,Object > addSeckillOrder( Map< String,Object > params, Member member, Map< String,Object > result,
-		    HttpServletRequest request );
-
-    /**
-     * 计算积分和粉币的比例
-     */
-    public Map< String,Object > getCurrencyFenbi( Member member );
-
-    /**
-     * 计算粉币和积分抵扣的最大值
-     */
-    public Map< String,Object > countIntegralFenbi( Member member, double orderTotalMoney );
 
     /**
      * 找人代付成功的回调方法

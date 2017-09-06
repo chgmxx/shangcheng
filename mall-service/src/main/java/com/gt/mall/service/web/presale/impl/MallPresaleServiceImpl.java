@@ -316,7 +316,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	presale = mallPresaleDAO.selectBuyByProductId( presale );
 	if ( presale != null && CommonUtil.isNotEmpty( presale.getId() ) ) {
 
-	    String key = Constants.REDIS_KEY + "presale_num";
+	    String key = "presale_num";
 	    String field = presale.getId().toString();
 	    if ( JedisUtil.hExists( key, field ) ) {
 		String str = JedisUtil.maoget( key, field );
@@ -372,19 +372,18 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      * @return
      */
     @Override
-    public Map< String,Object > isMaxNum( Map< String,Object > map, String memberId ) {
-	Map< String,Object > result = new HashMap< String,Object >();
+    public Map< String,Object > isMaxNum( Map< String,Object > map, String memberId, MallOrderDetail mallOrderDetail ) {
+	Map< String,Object > result = new HashMap<>();
 	int presaleId = Integer.parseInt( map.get( "groupBuyId" ).toString() );
 
 	Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "joinUserId", memberId );
 	params.put( "presaleId", presaleId );
-	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectCountByPresaleId( params );//判断用户是否已经交纳定金
 	//判断是否已经加入到预售竞拍中
-	//		MallPresale presale = mallPresaleDAO.selectByPrimaryKey(presaleId);
+	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectCountByPresaleId( params );//判断用户是否已经交纳定金
 	if ( deposit == null ) {//没有交纳定金的用户来判断库存
 
-	    result = isInvNum( map );
+	    result = isInvNum( map, mallOrderDetail );
 	} else {
 	    result.put( "result", true );
 	}
@@ -491,7 +490,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     @Override
     public void loadPresaleByJedis( MallPresale pre ) {
 
-	String key = Constants.REDIS_KEY + "presale_num";
+	String key = "presale_num";
 	/*List<MallSeckill> seckillList = seckillMapper.selectByPage(null);
 	if(seckillList != null && seckillList.size() > 0){
 		for (MallSeckill mallSeckill : seckillList) {
@@ -565,59 +564,50 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     /**
      * 判断秒杀的库存是否能够秒杀
      */
-    @Override
-    public Map< String,Object > isInvNum( Map< String,Object > params ) {
+    private Map< String,Object > isInvNum( Map< String,Object > params, MallOrderDetail mallOrderDetail ) {
 	Map< String,Object > result = new HashMap<>();
 	String preId = params.get( "groupBuyId" ).toString();
-	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
+	String invKey = "presale_num";//秒杀库存的key
 	String specificas = "";
-	JSONArray dobj = JSONArray.parseArray( params.get( "detail" ).toString() );
-	JSONArray arr = dobj;
-	if ( arr != null && arr.size() > 0 ) {
-	    for ( Object object : arr ) {
-		JSONObject detailObj = JSONObject.parseObject( object.toString() );
-		//判断商品是否有规格
-		if ( CommonUtil.isNotEmpty( detailObj.get( "product_specificas" ) ) ) {
-		    specificas = detailObj.get( "product_specificas" ).toString();
-		}
-		//查询秒杀商品的库存
-		Integer invNum = 0;
-		String value = JedisUtil.maoget( invKey, preId + "" );
-		if ( CommonUtil.isNotEmpty( value ) ) {
-		    JSONObject specObj = JSONObject.parseObject( value );
-		    if ( !specificas.equals( "" ) ) {
-			//有规格，取规格的库存
-			if ( CommonUtil.isNotEmpty( specObj.get( "specArr" ) ) ) {
-			    JSONArray preSpecArr = JSONArray.parseArray( specObj.get( "specArr" ).toString() );
-			    if ( preSpecArr != null && preSpecArr.size() > 0 ) {
-				for ( Object obj : preSpecArr ) {
-				    JSONObject preObj = JSONObject.parseObject( obj.toString() );
-				    if ( preObj.get( "specId" ).toString().equals( specificas ) ) {
-					invNum = CommonUtil.toInteger( preObj.get( "invNum" ) );
-					break;
-				    }
-				}
+	//判断商品是否有规格
+	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
+	    specificas = mallOrderDetail.getProductSpecificas();
+	}
+	//查询秒杀商品的库存
+	Integer invNum = 0;
+	String value = JedisUtil.maoget( invKey, preId + "" );
+	if ( CommonUtil.isNotEmpty( value ) ) {
+	    JSONObject specObj = JSONObject.parseObject( value );
+	    if ( !specificas.equals( "" ) ) {
+		//有规格，取规格的库存
+		if ( CommonUtil.isNotEmpty( specObj.get( "specArr" ) ) ) {
+		    JSONArray preSpecArr = JSONArray.parseArray( specObj.get( "specArr" ).toString() );
+		    if ( preSpecArr != null && preSpecArr.size() > 0 ) {
+			for ( Object obj : preSpecArr ) {
+			    JSONObject preObj = JSONObject.parseObject( obj.toString() );
+			    if ( preObj.get( "specId" ).toString().equals( specificas ) ) {
+				invNum = CommonUtil.toInteger( preObj.get( "invNum" ) );
+				break;
 			    }
 			}
 		    }
-		    if ( CommonUtil.isEmpty( specificas ) || invNum == 0 ) {
-			//无规格，则取商品库存
-			if ( CommonUtil.isNotEmpty( specObj.get( "invNum" ) ) ) {
-			    invNum = CommonUtil.toInteger( specObj.get( "invNum" ) );
-			}
-		    }
-		}
-
-		int proNum = detailObj.getInteger( "totalnum" );//购买商品的用户
-		//判断库存是否够
-		if ( invNum >= proNum && invNum > 0 ) {
-		    result.put( "result", true );
-		} else {
-		    result.put( "msg", "预售商品的库存不够" );
-		    result.put( "result", false );
-		    break;
 		}
 	    }
+	    if ( CommonUtil.isEmpty( specificas ) || invNum == 0 ) {
+		//无规格，则取商品库存
+		if ( CommonUtil.isNotEmpty( specObj.get( "invNum" ) ) ) {
+		    invNum = CommonUtil.toInteger( specObj.get( "invNum" ) );
+		}
+	    }
+	}
+
+	int proNum = mallOrderDetail.getDetProNum();//购买商品的用户
+	//判断库存是否够
+	if ( invNum >= proNum && invNum > 0 ) {
+	    result.put( "result", true );
+	} else {
+	    result.put( "msg", "预售商品的库存不够" );
+	    result.put( "result", false );
 	}
 	return result;
     }
@@ -627,7 +617,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      */
     @Override
     public void diffInvNum( MallOrder order ) {
-	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
+	String invKey = "presale_num";//秒杀库存的key
 
 	String field = order.getGroupBuyId().toString();
 	String specificas = "";
@@ -674,6 +664,38 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    }
 		    JedisUtil.map( invKey, field, specObj.toString() );
 		}
+	    }
+	}
+    }
+
+    @Override
+    public void paySucessPresale(MallOrder order) {
+	MallPresaleDeposit preDeposit = new MallPresaleDeposit();
+	preDeposit.setPresaleId( order.getGroupBuyId() );
+	preDeposit.setIsSubmit( 0 );
+	preDeposit.setDepositStatus( 1 );
+	preDeposit.setUserId( order.getBuyerUserId() );
+	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByDeposit( preDeposit );
+	if ( deposit != null ) {
+	    MallPresaleDeposit presaleDeposit = new MallPresaleDeposit();
+	    presaleDeposit.setId( deposit.getId() );
+	    presaleDeposit.setIsSubmit( 1 );
+	    if ( CommonUtil.isNotEmpty( order.getOrderPayNo() ) ) {
+		presaleDeposit.setPayNo( order.getOrderPayNo() );
+	    }
+	    //修改预售定金的状态
+	    mallPresaleDepositDAO.updateById( presaleDeposit );
+
+	    MallPresaleRank rank = new MallPresaleRank();
+	    rank.setDepositId( deposit.getId() );
+	    rank.setPresaleId( deposit.getPresaleId() );
+	    rank.setMemberId( order.getBuyerUserId() );
+	    MallPresaleRank presaleRank = mallPresaleRankDAO.selectByPresale( rank );
+	    if ( CommonUtil.isNotEmpty( presaleRank ) ) {
+		rank.setId( presaleRank.getId() );
+		rank.setOrderId( order.getId() );
+		//修改排名信息
+		mallPresaleRankDAO.updateById( rank );
 	    }
 	}
     }
@@ -815,7 +837,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	List< MallPresale > presaleList = mallPresaleDAO.selectByPresaleEnd();
 	if ( presaleList != null && presaleList.size() > 0 ) {
 	    for ( MallPresale mallPresale : presaleList ) {
-		String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
+		String invKey = "presale_num";//秒杀库存的key
 		JedisUtil.mapdel( invKey, mallPresale.getId().toString() );
 		String key = Constants.REDIS_KEY + "presale_message";
 		JedisUtil.mapdel( key, mallPresale.getId().toString() );

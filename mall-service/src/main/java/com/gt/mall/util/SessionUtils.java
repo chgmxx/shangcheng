@@ -89,7 +89,9 @@ public class SessionUtils {
 	try {
 	    Object obj = request.getSession().getAttribute( Constants.SESSION_MEMBER_KEY );
 	    if ( obj != null ) {
+
 		return JSONObject.parseObject( obj.toString(), Member.class );
+
 	    } else {
 		return null;
 	    }

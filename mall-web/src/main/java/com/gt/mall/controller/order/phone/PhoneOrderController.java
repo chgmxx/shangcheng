@@ -19,6 +19,7 @@ import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.union.UnionCardService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -109,6 +110,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     private MallPageService          mallPageService;
     @Autowired
     private MallOrderNewService      mallOrderNewService;
+    @Autowired
+    private UnionCardService         unionCardService;
 
     /**
      * 跳转至提交订单页面
@@ -131,16 +134,25 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    Map< String,Object > maps = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( orderObj ), Map.class );
 		    data.putAll( maps );
 
-		    if ( CommonUtil.isNotEmpty( maps ) ) {
-			if ( CommonUtil.isNotEmpty( maps.get( "orderPayWay" ) ) ) {
-			    request.setAttribute( "orderPayWays", maps.get( "orderPayWay" ) );
+		    if ( CommonUtil.isNotEmpty( maps.get( "order" ) ) ) {
+			List< MallOrder > orderList = com.alibaba.fastjson.JSONArray.parseArray( maps.get( "order" ).toString(), MallOrder.class );
+			if ( orderList != null && orderList.size() > 0 ) {
+			    MallOrder order = orderList.get( 0 );
+			    request.setAttribute( "orderPayWays", order.getOrderPayWay() );
+			    request.setAttribute( "deliveryMethod", order.getDeliveryMethod() );
+			    if ( CommonUtil.isNotEmpty( order.getFlowPhone() ) ) {
+				request.setAttribute( "flowPhone", order.getFlowPhone() );
+			    }
 			}
-			if ( CommonUtil.isNotEmpty( maps.get( "payWayName" ) ) ) {
-			    request.setAttribute( "payWayName", maps.get( "payWayName" ) );
-			}
-			if ( CommonUtil.isNotEmpty( maps.get( "flowPhone" ) ) ) {
-			    request.setAttribute( "flowPhone", maps.get( "flowPhone" ) );
-			}
+		    }
+		    if ( CommonUtil.isNotEmpty( maps.get( "useFenbi" ) ) ) {
+			request.setAttribute( "useFenbi", maps.get( "useFenbi" ) );
+		    }
+		    if ( CommonUtil.isNotEmpty( maps.get( "useJifen" ) ) ) {
+			request.setAttribute( "useJifen", maps.get( "useJifen" ) );
+		    }
+		    if ( CommonUtil.isNotEmpty( maps.get( "couponArr" ) ) ) {
+			request.setAttribute( "couponArr", com.alibaba.fastjson.JSONArray.parseArray( maps.get( "couponArr" ).toString() ) );
 		    }
 		}
 	    }
@@ -153,6 +165,18 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( data.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( data.get( "uId" ) );
 		request.setAttribute( "userid", userid );
+	    }
+	    BusUser user = new BusUser();
+	    user.setId( userid );
+	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
+
+	    if ( userid > 0 && CommonUtil.isEmpty( data.get( "data" ) ) && CommonUtil.isEmpty( orderObj ) ) {
+		List< Map< String,Object > > pageId = mallPageService.selectPageIdByUserId( userid, shopList );
+		if ( pageId.size() > 0 ) {//获取首页的pageId
+		    return "redirect:/mallPage/" + pageId.get( 0 ).get( "id" ) + "/79B4DE7C/pageIndex.do";
+		} else {
+		    return "redirect:/mMember/79B4DE7C/toUser.do?uId=" + userid;
+		}
 	    }
 	    WxPublicUsers pbUser = null;
 	    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -182,9 +206,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "isWxPay", isWxPay );
 	    request.setAttribute( "isAliPay", isAliPay );
 
-	    List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
+	    List< Map< String,Object > > addressList = new ArrayList<>();
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		Map< String,Object > params = new HashMap< String,Object >();
+		Map< String,Object > params = new HashMap<>();
 		params = mallOrderService.getMemberParams( member, params );
 		params.put( "memDefault", 1 );
 		//获取粉丝的默认收货地址
@@ -242,11 +266,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 
 	    List< Map< String,Object > > list = new ArrayList<>();
-
-	    BusUser user = new BusUser();
-	    user.setId( userid );
-	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
-
 	    if ( type.equals( "1" ) ) {//从购物车进入订单
 		if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
 		    String msg = SessionUtils.getSession( request, "cartToOrderData" ).toString();
@@ -255,6 +274,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 		String id = obj.get( "shop_ids" ).toString();
 		String shopcards = id.substring( 0, id.length() );
+		request.setAttribute( "shopcards", shopcards );
 		list = mallShopCartService.getProductByShopCart( shopcards, pbUser, member, userid, shopList );
 	    } else {
 		if ( CommonUtil.isNotEmpty( data.get( "detail" ) ) ) {
@@ -293,6 +313,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		Map< String,Object > unionMap = new HashMap< String,Object >();
 		unionMap.put( "memberId", member.getId() );
 		unionMap.put( "busId", member.getBusid() );
+		unionMap = unionCardService.consumeUnionDiscount( member.getBusid() );
 		request.setAttribute( "unionMap", unionMap );
 	    }
 
@@ -326,336 +347,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    logger.info( "访问提交订单页面花费：" + second + "秒" );
 	}
 	return "mall/order/phone/submitOrder";
-    }
-
-    @SuppressWarnings( { "unchecked", "unused" } )
-    @RequestMapping( value = "/79B4DE7C/addOrder" )
-    @SysLogAnnotation( op_function = "2", description = "添加订单" )
-    public void addOrder( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) {
-	logger.info( "进入生成订单页面" );
-	boolean flag = true;
-	PrintWriter out = null;
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    out = response.getWriter();
-
-	    String ip = IPKit.getRemoteIP( request );
-	    String key = "mall:add_order_" + ip;
-	    if ( CommonUtil.isEmpty( param.get( "params" ) ) ) {
-		if ( JedisUtil.exists( key ) ) {
-		    param = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( JedisUtil.get( key ) ), Map.class );
-		}
-	    }
-
-	    Member member = SessionUtils.getLoginMember( request );
-	    int userid = 0;
-	    if ( CommonUtil.isNotEmpty( param.get( "uId" ) ) ) {
-		userid = CommonUtil.toInteger( param.get( "uId" ) );
-		request.setAttribute( "userid", userid );
-	    }
-	    String data = param.get( "params" ).toString();
-	    JSONObject obj = JSONObject.fromObject( data );
-	    Map< String,Object > params = obj;
-
-	    JSONArray arr = new JSONArray();
-	    String data1 = params.get( "detail" ).toString();
-	    String type = params.get( "type" ).toString();
-	    JSONArray dobj = JSONArray.fromObject( data1 );
-	    arr = JSONArray.fromObject( dobj );
-
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		member = memberService.findMemberById( member.getId(), member );
-	    }
-
-	    if ( arr != null && arr.size() > 0 && CommonUtil.isNotEmpty( member ) ) {
-		JSONObject details = JSONObject.fromObject( arr.get( 0 ) );
-		if ( CommonUtil.isNotEmpty( details.get( "pro_type_id" ) ) ) {
-		    if ( details.get( "pro_type_id" ).toString().equals( "2" ) ) {//虚拟物品（会员卡）
-			result.put( "result", false );
-			flag = false;
-			/*Map< String,Object > cardResult = memPayService.findBuyCard( member );//购买会员卡
-						*//*cardResult.put("code", 1);*//*//测试用
-			if ( cardResult.get( "code" ).equals( "-1" ) || cardResult.get( "code" ).equals( "-2" ) ) {//-1购买成功，跳转完善资料链接，-2已购买会员卡
-			    result.put( "result", false );
-			    result.put( "cardResult", cardResult );
-			    flag = false;
-			}*/
-		    }
-		}
-	    }
-	    int orderPayWay = 1;
-	    double orderMoney = 0;
-	    if ( CommonUtil.isNotEmpty( params.get( "orderPayWay" ) ) ) {
-		orderPayWay = CommonUtil.toInteger( params.get( "orderPayWay" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "orderMoney" ) ) ) {
-		orderMoney = CommonUtil.toDouble( params.get( "orderMoney" ).toString() );
-	    }
-	    SessionUtils.setSession( params.get( "deliveryMethod" ), request, "deliveryMethod" );
-	    //判断是否用积分抵扣来兑换商品
-	    /*if(flag){
-		    if(orderPayWay == 4){//积分支付
-			    Integer mIntergral = member.getIntegral();
-			    if (mIntergral < orderMoney || mIntergral < 0) {
-				    result.put("result", false);
-				    result.put("msg", "您的积分不够，不能用积分来兑换这件商品");
-			    }
-		    }
-		    if(orderPayWay == 8){//粉币支付
-			    double fenbi = member.getFansCurrency();
-			    if (fenbi < orderMoney || fenbi < 0) {
-				    result.put("result", false);
-				    result.put("msg", "您的粉币不够，不能用粉币来兑换这件商品");
-			    }
-		    }
-	    }*/
-	    int memberId = 0;
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		memberId = member.getId();
-	    }
-	    if ( flag ) {
-		//int intergral = 0;
-		for ( int i = 0; i < arr.size(); i++ ) {
-		    JSONObject list = JSONObject.fromObject( arr.get( i ) );
-		    JSONArray list1 = JSONArray.fromObject( list.get( "message" ) );
-		    for ( int k = 0; k < list1.size(); k++ ) {
-			JSONObject detail = JSONObject.fromObject( list1.get( k ) );
-			result = judgeStock( detail, result, type, memberId );//判断商品库存，库存不够跳出循环
-			if ( !result.get( "result" ).toString().equals( "true" ) ) {
-			    flag = false;
-			    break;
-			}
-		    }
-		    /*if(type.equals("1")){//购物车判断库存
-			    JSONArray list1 = JSONArray.fromObject(list.get("message"));
-			    for (int k = 0; k < list1.size(); k++) {
-				    JSONObject detail = JSONObject.fromObject(list1.get(k));
-				    result = judgeStock(detail, result, type,memberId);//判断商品库存，库存不够跳出循环
-				    if(!result.get("result").toString().equals("true")){
-					    flag = false;
-					    break;
-				    }
-			    }
-		    }else{//立即购买判断库存
-			    result = judgeStock(list, result, type,memberId);
-			    if(!result.get("result").toString().equals("true")){
-				    flag = false;
-				    break;
-			    }
-		    }*/
-		}
-		//					int orderPayWay = Integer.parseInt(params.get("orderPayWay").toString());
-		if ( result.get( "result" ).toString().equals( "true" ) ) {
-		    //拍卖商品
-		    if ( CommonUtil.isNotEmpty( params.get( "groupType" ) ) ) {
-			if ( params.get( "groupType" ).toString().equals( "4" ) ) {
-			    result = mallAuctionService.isMaxNum( params, member.getId().toString() );
-			} else if ( params.get( "groupType" ).toString().equals( "6" ) ) {//商品预售
-			    result = mallPresaleService.isMaxNum( params, member.getId().toString() );
-			}
-			if ( !result.get( "result" ).toString().equals( "true" ) ) {
-			    flag = false;
-			}
-		    }
-		    if ( result.get( "result" ).toString().equals( "true" ) ) {
-			if ( CommonUtil.isNotEmpty( params.get( "flowPhone" ) ) ) {//流量充值，判断手机号码
-			    Map< String,String > map = MobileLocationUtil.getMobileLocation( CommonUtil.toString( params.get( "flowPhone" ) ) );
-			    if ( map.get( "code" ).toString().equals( "-1" ) ) {
-				result.put( "result", false );
-				result.put( "msg", map.get( "msg" ) );
-				flag = false;
-			    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
-				if ( map.get( "supplier" ).equals( "中国联通" ) && CommonUtil.toInteger( params.get( "prizeCount" ) ) == 10 ) {
-				    result.put( "result", false );
-				    result.put( "msg", "充值失败,联通号码至少30MB" );
-				    flag = false;
-				}
-			    }
-			}
-		    }
-		    if ( result.get( "result" ).toString().equals( "true" ) ) {
-			Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-			if ( ( CommonUtil.judgeBrowser( request ) != 1 || CommonUtil.isEmpty( publicMap ) ) ) {
-			    boolean isLogin = pageService.isLogin( member, userid, request );
-			    if ( !isLogin ) {
-				SessionUtils.setSession( JSONObject.fromObject( data ).toString(), request, "to_order" );
-				result.put( "result", false );
-				result.put( "msg", "您还未登陆，请前往登陆页面登陆" );
-				result.put( "isLogin", "1" );
-				flag = false;
-			    }
-			}
-		    }
-		    if ( result.get( "result" ).toString().equals( "true" ) ) {
-			result = mallOrderService.addSeckillOrder( params, member, result, request );
-		    }
-		}
-		Object p = result.get( "payWays" );
-		if ( CommonUtil.isNotEmpty( p ) ) {
-		    orderPayWay = Integer.parseInt( p.toString() );
-		}
-		result.put( "payWay", orderPayWay );
-	    }
-
-	} catch ( Exception e ) {
-	    logger.error( "生成订单异常：" + e );
-	    e.printStackTrace();
-
-	    result.put( "result", false );
-	    result.put( "msg", "提交订单失败" );
-	} finally {
-	    out.write( JSONObject.fromObject( result ).toString() );
-	    out.flush();
-	    out.close();
-	}
-    }
-
-    @SuppressWarnings( { "unchecked", "unused" } )
-    @RequestMapping( value = "/79B4DE7C/addSeckillOrder" )
-    @SysLogAnnotation( op_function = "2", description = "添加订单-秒杀" )
-    public void addSeckillOrder( HttpServletRequest request,
-		    @RequestParam Map< String,Object > param,
-		    HttpServletResponse response ) {
-	logger.info( "进入生成订单页面-秒杀" );
-	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	PrintWriter out = null;
-	Map< String,Object > result = new HashMap< String,Object >();
-	try {
-	    out = response.getWriter();
-	    String data = param.get( "params" ).toString();
-	    JSONObject obj = JSONObject.fromObject( data );
-	    Map< String,Object > params = obj;
-	    boolean flag = true;
-
-	    String ip = IPKit.getRemoteIP( request );
-	    String key = "mall:add_order_" + ip;
-	    if ( CommonUtil.isEmpty( param.get( "params" ) ) ) {
-		if ( JedisUtil.exists( key ) ) {
-		    param = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( JedisUtil.get( key ) ), Map.class );
-		}
-	    }
-
-	    Member member = SessionUtils.getLoginMember( request );
-	    int userid = 0;
-	    if ( CommonUtil.isNotEmpty( param.get( "uId" ) ) ) {
-		userid = CommonUtil.toInteger( param.get( "uId" ) );
-		request.setAttribute( "userid", userid );
-	    }
-	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-	    if ( ( CommonUtil.judgeBrowser( request ) != 1 || CommonUtil.isEmpty( publicMap ) ) ) {
-		boolean isLogin = pageService.isLogin( member, userid, request );
-		if ( !isLogin ) {
-		    JedisUtil.set( key, JSONObject.fromObject( param ).toString(), 60 * 60 );
-		    result.put( "result", false );
-		    result.put( "msg", "您还未登陆，请前往登陆页面登陆" );
-		    result.put( "isLogin", "1" );
-		    flag = false;
-		}
-	    }
-
-	    if ( flag ) {
-		JSONArray arr = new JSONArray();
-		JSONArray dobj = JSONArray.fromObject( params.get( "detail" ).toString() );
-		arr = JSONArray.fromObject( dobj );
-		com.alibaba.fastjson.JSONObject detailObj = com.alibaba.fastjson.JSONObject.parseObject( arr.get( 0 ).toString() );
-		int intergral = 0;
-		//判断库存
-		result = mallSeckillService.isInvNum( detailObj );
-
-		int orderPayWay = Integer.parseInt( params.get( "orderPayWay" ).toString() );
-		if ( result.get( "result" ).toString().equals( "true" ) ) {
-
-		    result = mallOrderService.addSeckillOrder( params, member, result, request );
-		    if ( result.get( "result" ).toString().equals( "true" ) ) {
-			//修改库存
-			mallSeckillService.invNum( detailObj, member.getId().toString(), result.get( "orderId" ).toString() );
-		    }
-		}
-		result.put( "payWay", orderPayWay );
-	    }
-
-	} catch ( Exception e ) {
-	    result.put( "result", false );
-	    result.put( "msg", "提交订单失败，稍后请重新提交" );
-	    logger.error( "生成秒杀订单异常：" + e.getMessage() );
-	    e.printStackTrace();
-	} finally {
-	    String endTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( startTime + "---" + endTime );
-	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( "生成订单花费：" + second + "秒" );
-
-	    out.write( JSONObject.fromObject( result ).toString() );
-	    out.flush();
-	    out.close();
-	}
-    }
-
-    /**
-     * 订单支付方式
-     */
-    @RequestMapping( value = "/79B4DE7C/payWay" )
-    @SysLogAnnotation( op_function = "2", description = "订单储蓄卡支付成功添加记录和修改" )
-    @Transactional( rollbackFor = Exception.class )
-    public String payWay( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
-	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	Member member = SessionUtils.getLoginMember( request );
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	    request.setAttribute( "userid", userid );
-	}
-	try {
-	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    String returnUrl = userLogin( request, response, loginMap );
-	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-		return returnUrl;
-	    }
-	} catch ( Exception e ) {
-	    this.logger.error( "PhoneOrderController方法异常：" + e.getMessage() );
-	    e.printStackTrace();
-	}
-	String memberId = member.getId().toString();
-	Integer payWay = CommonUtil.toInteger( params.get( "payWay" ) );
-	String orderId = params.get( "orderId" ).toString();
-	int shopId = 0;
-	try {
-	    Map< String,Object > payRresult = new HashMap<>();
-	    double orderMoney = Double.parseDouble( params.get( "orderMoney" ).toString() );
-	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
-		shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-	    }
-
-	    mallOrderService.paySuccessModified( params, member );//修改库存和订单状态
-	    /*String result = payRresult.get( "result" ).toString();
-	    if ( result.equals( "2" ) ) {
-		MallOrder order = mallOrderService.selectById( Integer.parseInt( orderId ) );
-		if ( userid == 0 ) {
-		    userid = order.getBusUserId();
-		}
-		params.put( "status", 2 );
-		params.put( "out_trade_no", order.getOrderNo() );
-		mallOrderService.paySuccessModified( params, member );//修改库存和订单状态
-
-	    } else if ( result.equals( "1" ) && payWay != 4 && payWay != 8 ) {//4 积分支付  8粉币支付
-		return "redirect:/phoneMemberController/79B4DE7C/recharge.do?id=" + memberId;
-	    }*/
-	} catch ( Exception e ) {
-	    logger.error( "储蓄卡支付异常：" + e.getMessage() );
-	    e.printStackTrace();
-	} finally {
-	    String endTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( startTime + "---" + endTime );
-	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( "储蓄卡支付花费：" + second + "秒" );
-	}
-	if ( payWay == 7 ) {
-	    return "redirect:/phoneOrder/" + orderId + "/79B4DE7C/getDaiFu.do?uId=" + userid;
-	} else if ( payWay == 4 ) {
-	    return "redirect:/phoneIntegral/" + shopId + "/79B4DE7C/recordList.do?uId=" + userid + "&&orderId=" + orderId;
-	} else {
-	    return "redirect:/phoneOrder/79B4DE7C/orderList.do?isPayGive=1&&orderId=" + orderId + "&&uId=" + userid;
-	}
     }
 
     /**
@@ -870,7 +561,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 支付成功跳转页面
      */
     @RequestMapping( value = "{orderId}/{busId}/{type}/79B4DE7C/orderPaySuccess" )
-    public String orderPaySuccess( HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params
+    public String orderPaySuccess( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params
 		    , @PathVariable int orderId, @PathVariable int busId, @PathVariable int type ) {
 	logger.info( "进入支付成功跳转页面" );
 	try {
@@ -896,7 +587,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 预售定金跳转页面
      */
     @RequestMapping( value = "{proId}/{busId}/{shopId}/79B4DE7C/presalePaySuccess" )
-    public String presalePaySuccess( HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params
+    public String presalePaySuccess( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params
 		    , @PathVariable int proId, @PathVariable int busId, @PathVariable int shopId ) {
 	logger.info( "进入支付成功跳转页面" );
 	try {
@@ -921,36 +612,19 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     public String orderList( HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入我的订单列表页面" );
 	try {
-	    Member sMember = SessionUtils.getLoginMember( request );
+	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-	    Map< String,Object > loginMap = pageService.saveRedisByUrl( sMember, userid, request );
+	    mallOrderService.clearSession( request );
+
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
-	    }
-	    Member member = memberService.findMemberById( sMember.getId(), sMember );
-	    //查询的积分、粉币跟session里面的积分、粉币不同，则更新session
-	    if ( CommonUtil.isNotEmpty( sMember ) && CommonUtil.isNotEmpty( member ) ) {
-		boolean flag = false;
-		if ( CommonUtil.isNotEmpty( member.getIntegral() ) && CommonUtil.isNotEmpty( sMember.getIntegral() ) ) {
-		    if ( member.getIntegral() < sMember.getIntegral() ) {
-			flag = true;
-		    }
-		}
-		if ( CommonUtil.isNotEmpty( member.getFansCurrency() ) && CommonUtil.isNotEmpty( sMember.getFansCurrency() ) ) {
-		    if ( member.getFansCurrency() < sMember.getFansCurrency() ) {
-			flag = true;
-		    }
-		}
-		//todo 更新session数据
-		/*if ( flag ) {
-		    CommonUtil.setLoginMember( request, member );
-		}*/
 	    }
 
 	    String result = "0";
@@ -1008,7 +682,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    //关闭超过30分钟未付款订单
 	    mallOrderService.updateByNoMoney( params );
 	    request.setAttribute( "orderList", orderList );
-	    request.setAttribute( "memberId", sMember.getId() );
+	    request.setAttribute( "memberId", member.getId() );
 	    request.setAttribute( "pageid", result );
 	    request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
 	    request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
@@ -1026,8 +700,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( userid );//查询商城底部菜单
 	    request.setAttribute( "footerMenuMap", footerMenuMap );
 
-	    //KeysUtil keysUtil = new KeysUtil();
-	    //request.setAttribute("alipaySubject", keysUtil.getEncString("商城下单"));
 	    String subject = URLEncoder.encode( "商城下单", "UTF-8" );
 	    request.setAttribute( "alipaySubject", subject );
 	    //todo CommonUtil.getWxParams
@@ -1685,6 +1357,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     public void submitOrder( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) throws IOException {
 	logger.info( "提交订单" );
 	Map< String,Object > result = new HashMap<>();
+	int code = 1;
 	try {
 	    String ip = IPKit.getRemoteIP( request );
 	    String key = "mall:add_order_" + ip;
@@ -1703,6 +1376,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		member = memberService.findMemberById( member.getId(), member );
+		userid = member.getBusid();
+		request.setAttribute( "userid", member.getBusid() );
 	    }
 	    SessionUtils.setSession( param.get( "deliveryMethod" ), request, "deliveryMethod" );
 
@@ -1713,8 +1388,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		result.put( "code", ResponseEnums.ERROR.getCode() );
 		result.put( "errorMsg", "您还未登陆，请前往登陆页面登陆" );
 		result.put( "isLogin", "1" );
+		code = -1;
 	    }
-	    if ( result.get( "code" ).toString().equals( "1" ) ) {
+	    if ( code == 1 ) {
 		Integer browser = CommonUtil.judgeBrowser( request );
 		if ( browser != 1 ) {
 		    browser = 2;
@@ -1729,7 +1405,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    result.put( "code", ResponseEnums.ERROR.getCode() );
 	    result.put( "msg", "提交订单失败" );
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( result ).toString() );
+	    CommonUtil.write( response, result );
 	}
     }
 

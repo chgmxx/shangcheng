@@ -4,6 +4,7 @@ import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
 import com.gt.mall.util.PageUtil;
@@ -65,7 +66,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     /**
      * 判断是否超过了限购
      */
-    Map< String,Object > isMaxNum( Map< String,Object > map, String memberId );
+    Map< String,Object > isMaxNum( Map< String,Object > map, String memberId, MallOrderDetail mallOrderDetail);
 
     /**
      * 获取送礼设置的信息
@@ -88,11 +89,6 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     void loadPresaleByJedis( MallPresale pre );
 
     /**
-     * 判断预售商品的库存
-     */
-    Map< String,Object > isInvNum( Map< String,Object > params );
-
-    /**
      * 预售商品开售提醒
      */
     void presaleStartRemain();
@@ -106,4 +102,9 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 扣库存
      */
     void diffInvNum( MallOrder order );
+
+    /**
+     * 预售支付成功后的回调
+     */
+    void paySucessPresale(MallOrder order);
 }

@@ -79,8 +79,8 @@
 <form action="/phoneOrder/79B4DE7C/addOrder.do" method="post" id="orderForm">
     <input type="hidden" class="buyType" value="${type }"/><!-- 类型 1购物车 -->
     <input type="hidden" id="freightMoney" value="">
-    <input type="hidden" id="isJifen" value="0">
-    <input type="hidden" id="isFenbi" value="0">
+    <input type="hidden" id="isJifen" value="${!empty useFenbi ? useFenbi: 0}">
+    <input type="hidden" id="isFenbi" value="${!empty useJifen ? useJifen: 0}">
     <input type="hidden" id="sumCoupon"/>
 
     <div class="orderDivForm">
@@ -278,7 +278,7 @@
 
                         <div class="productDivForm">
                             <input type="hidden" name="index" value="${orderDetail.index}"/>
-                            <input type="hidden" name="productId" value="${orderDetail.productId}"/>
+                            <input type="hidden" name="productId" value="${orderDetail.product_id}"/>
                             <input type="hidden" name="shopId" value="${order.shop_id}"/>
                             <input type="hidden" name="productSpecificas" value="${orderDetail.product_specificas}"/>
                             <input type="hidden" name="productImageUrl" value="${orderDetail.image_url}"/>
@@ -465,7 +465,7 @@
             <span>粉币</span><br/>
 
             <span class="fenbi_open_span" style="<c:if test="${isOpenFenbi == 0 }">display: none;</c:if>">
-				<span class="pay-explan ">共${fenbiNum }粉币，可抵扣¥${fenbiMoney }</span>
+                <span class="pay-explan ">有<em class="num">${fenbiNum }</em>粉币，可抵扣<em class="money">¥${fenbiMoney }</em></span>
 				<i onclick="jisuan(2);" class="fenbiyouhui"><img class="off" src="/images/icon/off_icon.jpg"/><img class="on" src="/images/icon/on_icon.jpg"/></i>
 			</span>
             <span class="fenbi_noopen_span" style="<c:if test="${isOpenFenbi == 1 }">display: none;</c:if>">
@@ -480,7 +480,7 @@
             <input type="hidden" id="orderStartMoney" value="${map.paramSet.startmoney }"/>
             <span>积分</span><br/>
             <span class="jifen_open_span" style="<c:if test="${isOpenJifen == 0 }">display: none;</c:if>">
-				<span class="pay-explan" style="color: #f20000;">共${jifenNum }积分，可抵扣¥${jifenMoeny }</span>
+                <span class="pay-explan" style="color: #f20000;">有<em class="num">${jifenNum }</em>积分，可抵扣<em class="money">¥${jifenMoeny }</em></span>
 				<i onclick="jisuan(3);" class="jifenyouhui">
 					<img class="off" src="/images/icon/off_icon.jpg"/><img class="on" src="/images/icon/on_icon.jpg"/>
 				</i>
@@ -748,6 +748,7 @@
 </c:if>
 
 <input type="hidden" class="memberId" value="${!empty member && !empty member.id?member.id:'' }"/>
+<input type="hidden" class="shopcards" value="${shopcards}"/>
 
 <!-- <script src="/js/plugin/jquery-1.8.3.min.js"></script> -->
 <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
@@ -780,188 +781,9 @@
     });
     var userId = "${userid }";
     var freightMoney = '${priceMap}';
-    if(freightMoney !== null && freightMoney !== ""){
+    if (freightMoney !== null && freightMoney !== "") {
         freightMoney = JSON.parse(freightMoney);
     }
-    $('#submit-ordersss').click(function () {
-        var receiveId = $('#receiveId').val();
-        var deliveryMethod = $('#deliveryMethod').val();
-        var orderPayWay = $("#orderPayWay").val();
-        if (orderPayWay == null || orderPayWay == "") {
-            alert("请选择支付方式");
-            return false;
-        }
-        if (deliveryMethod == 2) {
-            var appointName = $("#appointName").val();
-            var appointTel = $("#appointTelphone").val();
-            var deliveryAddress = $("#deliveryAddress").html();
-            var deliveryTime = $("#deliveryTime").html();
-            var reg = /^0?(13[0-9]|15[012356789]|17[0678]|18[0123456789]|14[57])[0-9]{8}$/;
-            if (appointName == "") {
-                alert("提货人姓名不能为空");
-                return false;
-            }
-            if (appointTel == "") {
-                alert("手机号码不能为空");
-                return false;
-            } else if (!reg.test(appointTel)) {
-                alert("手机号码有误");
-                return false;
-            } else {
-                $("#appointTel").val(appointTel);
-            }
-            if (deliveryAddress == "") {
-                alert("请选择提货地址");
-                return false;
-            }
-            if (deliveryTime == "") {
-                alert("请选择提货时间");
-                return false;
-            }
-        }
-        var proTypeId = $("#proTypeId").val();
-        if (proTypeId > 0) {
-            receiveId = "0";
-        }
-        var isJuliFreight = $(".isJuliFreight").val();
-        var mem_latitude = $(".mem_latitude").val();
-        var mem_longitude = $(".mem_longitude").val();
-        var isKm = $(".isKm").val();
-        if ((receiveId == undefined || receiveId == '') && deliveryMethod == 1) {
-            alert("请选择收货地址");
-            return false;
-        } else {
-            if (isJuliFreight != null && isJuliFreight != "" && typeof(isJuliFreight) != "undefined" && isJuliFreight == 1 && deliveryMethod == 1) {
-                if ((mem_latitude == null || mem_latitude == "" || mem_longitude == null || mem_longitude == "" || isKm == 1) && proTypeId == 0) {
-                    alert("请重新编辑您的收货地址");
-                    return false;
-                }
-            }
-            var flowCzPhone = $(".flowCzPhone").val();
-            var isFlow = $(".isFlow").val();
-            var flowPhone = $("#flowPhone").val();
-            if (isFlow != null && isFlow != "" && typeof(isFlow) != "undefined" && (flowCzPhone == "" || flowCzPhone == null || typeof(flowCzPhone) == "undefined")) {
-                if (flowPhone == "" || flowPhone == null || typeof(flowPhone) == "undefined") {
-                    showFlow();
-                    return false;
-                } else {
-                    $(".flowCzPhone").val(flowPhone);
-                }
-            }
-
-            if ($("#orderPayWay").val() == 7 && $("#orderMoney").val() * 1 == 0) {
-                alert("您的实付金额为0元，无需找人代付，请重新选择支付方式");
-                return false;
-            }
-            var yhqNum = new Object();
-            var unionNum = 0;
-            $(".couponDivs").each(function () {
-                var shopId = $(this).attr("stoId");
-                yhqNum[shopId] = {
-                    num: $(this).find("#yhqNum").val(),
-                    money: $(this).find(".orderCountMoney").val(),
-                    shopId: shopId
-                };
-                unionNum += $(this).find(".unionNum").val() * 1;
-            });
-            //console.log(yhqNum)
-            $("#yhqNum").val(JSON.stringify(yhqNum));
-            $('#submit-order').attr("disabled", true);
-            var orderDetail = ${orderDetail};
-            $('#detail').val(JSON.stringify(orderDetail));
-            $('#freightMoney').val(JSON.stringify(freightMoney));
-            var order = $("#orderForm").serializeObject();
-            var groupType = $(".groupType").val();
-            if (groupType == 2 || groupType == 5) {
-                freightMoney = "";
-            }
-            if (order != null) {
-                order.groupType = groupType;
-                order.groupBuyId = $("input.groupBuyId").val();
-            }
-            if ($(".unionStatus").length > 0) {
-                var unionDiscountVal = $(".unionDiscountVal").val();
-                var unionStatus = $(".unionStatus").val();
-                if (unionStatus == 1 && unionDiscountVal != "") {//联盟卡
-                    var cardId = $(".cardId").val();
-                    var unionDiscount = $(".unionDiscount").val();
-                    var union_id = $(".union_id").val();
-
-                    order.unionDiscount = unionDiscount;
-                    order.cardId = cardId;
-                    order.union_id = union_id;
-                    order.unionNum = unionNum
-                    //order.unionNum = unionNum
-                }
-            }
-            var obj = JSON.stringify(order);
-            var url = "phoneOrder/79B4DE7C/addOrder.do?uId=" + userId;
-            if (groupType == 3) {
-                url = "/phoneOrder/79B4DE7C/addSeckillOrder.do?uId=" + userId;
-            }
-            var index = layer.open({
-                title: "",
-                content: "",
-                type: 2,
-                shadeClose: false
-            });
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: {params: obj},
-                timeout: 300000,
-                dataType: "json",
-                success: function (data) {
-                    if (data.result) {
-                        //微信支付
-                        if (data.payWay == 1) {
-                            location.href = "/wxPay/79B4DE7C/wxMallAnOrder.do?orderId=" + data.orderId;
-                        } else if (data.payWay == -1 || data.payWay == 3 || data.payWay == 4 || data.payWay == 7 || data.payWay == 2 || data.payWay == 6 || data.payWay == 8) {
-                            var orderMoney = $('#orderMoney').val();
-                            //payWay: -1 订单金额为0 2 货到付款  3 储值卡支付   4积分支付  6 到店支付   7招人代付  8粉币支付
-                            location.href = "/phoneOrder/79B4DE7C/payWay.do?orderMoney=" + orderMoney + "&orderId=" + data.orderId + "&payWay=" + data.payWay + "&uId=" + data.busId;
-                        } else if (data.payWay == 9) {
-                            var model = 3;
-                            if (data.proTypeId == 2) {
-                                model = 13;
-                            }
-                            //var return_url = "${path}/phoneOrder/79B4DE7C/orderList.do?isPayGive=1&&orderId="+data.orderId+"&&uId="+data.busId;
-                            var alipaySubject = $("input.alipaySubject").val();
-                            var return_url = "${http}/phoneOrder/" + data.orderId + "/" + data.busId + "/1/79B4DE7C/orderPaySuccess.do";
-                            location.href = "/alipay/79B4DE7C/alipayApi.do?out_trade_no=" + data.out_trade_no + "&subject=" + alipaySubject + "&total_fee=" + data.orderMoney + "&busId=" + data.busId + "&model=" + model + "&businessUtilName=mallOrderAlipayNotifyUrlBuinessService&return_url=" + return_url;
-                        }
-                        layer.closeAll();
-                    } else {
-                        if (data.isLogin != null && data.isLogin == 1) {
-                            //location.reload(true);
-                            /* var loginData = {
-                             data : orderDetail,
-                             payWayName : $(".paywaynames").text(),
-                             orderPayWays: $("#orderPayWay").val()
-                             }; */
-                            toLogin(null);
-                        } else {
-                            layer.closeAll();
-                            $('#submit-order').attr("disabled", false);
-                            var txt = "";
-                            if (null != data.cardResult && data.cardResult != "") {
-                                txt = data.cardResult.msg;
-                                if (data.cardResult.code == -1) {
-                                    location.href = data.cardResult.url;
-                                }
-                            } else {
-                                txt = data.msg;
-                            }
-                            alert(txt);
-                        }
-                    }
-                }, error: function () {
-                    $('#submit-order').attr("disabled", false);
-                    layer.closeAll();
-                }
-            });
-        }
-    });
 
     function selectAddress() {
         var data = ${data};

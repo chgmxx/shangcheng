@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.seckill;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
@@ -66,16 +65,16 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 判断秒杀的库存是否能够秒杀
      */
-    Map< String,Object > isInvNum( JSONObject detailObj );
+    Map< String,Object > isInvNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail );
 
     /**
      * 减商品的库存（在redis中）
      *
-     * @param detailObj 订单详情
-     * @param memberId  下单用户id
-     * @param orderId   订单id
+     * @param mallOrderDetail 订单详情
+     * @param memberId        下单用户id
+     * @param orderId         订单id
      */
-    void invNum( JSONObject detailObj, String memberId, String orderId );
+    void invNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail, String memberId, String orderId );
 
     /**
      * 把要修改的库存丢到redis里

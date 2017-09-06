@@ -274,7 +274,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean updateUserConsume( UserConsumeParams consumeParams ) {
+    public boolean updateJifen( UserConsumeParams consumeParams ) {
 	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( consumeParams, MEMBER_URL + "updateJifen" );
 	return CommonUtil.toString( resultMap.get( "code" ) ).equals( "1" );
     }
@@ -329,6 +329,12 @@ public class MemberServiceImpl implements MemberService {
 	    return JSONArray.parseArray( data, Map.class );
 	}
 	return null;
+    }
+
+    @Override
+    public boolean updateUserConsume( Map< String,Object > params ) {
+	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateUserConsume" );
+	return result.get( "code" ).toString().equals( "1" );
     }
 
 }

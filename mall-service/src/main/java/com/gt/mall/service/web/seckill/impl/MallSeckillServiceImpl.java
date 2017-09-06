@@ -116,7 +116,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public int editSeckill( Map< String,Object > groupMap, BusUser busUser ,HttpServletRequest request) {
+    public int editSeckill( Map< String,Object > groupMap, BusUser busUser, HttpServletRequest request ) {
 	int num = 0;
 	boolean flag = false;
 	int code = -1;
@@ -129,7 +129,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    if ( buyList == null || buyList.size() == 0 ) {
 		seckill.setUserId( busUser.getId() );
 		if ( CommonUtil.isNotEmpty( seckill.getId() ) ) {
-		    List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( busUser ,request);
+		    List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( busUser, request );
 		    // 判断本商品是否正在秒杀中
 		    MallSeckill buy = mallSeckillDAO.selectSeckillByIds( seckill.getId(), storeList );
 		    if ( buy.getStatus() == 1 && buy.getJoinId() > 0 ) {// 正在进行秒杀的商品不能修改
@@ -375,14 +375,14 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * 判断秒杀的库存是否能够秒杀
      */
     @Override
-    public Map< String,Object > isInvNum( JSONObject detailObj ) {
+    public Map< String,Object > isInvNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail ) {
 	Map< String,Object > result = new HashMap<>();
-	String seckillId = detailObj.get( "groupBuyId" ).toString();
+	String seckillId = mallOrder.getGroupBuyId().toString();
 	String invKey = "hSeckill";//秒杀库存的key
 	String specificas = "";
 	//判断商品是否有规格
-	if ( CommonUtil.isNotEmpty( detailObj.get( "product_specificas" ) ) ) {
-	    specificas = detailObj.get( "product_specificas" ).toString();
+	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
+	    specificas = mallOrderDetail.getProductSpecificas();
 	}
 	//查询秒杀商品的库存
 	Integer invNum;
@@ -393,7 +393,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    //无规格，则取商品库存
 	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId ) );
 	}
-	int proNum = detailObj.getInteger( "totalnum" );//购买商品的用户
+	int proNum = mallOrderDetail.getDetProNum();//购买商品的用户
 	//判断库存是否够
 	if ( invNum >= proNum && invNum > 0 ) {
 	    result.put( "result", true );
@@ -407,19 +407,19 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     /**
      * 生成订单成功，减商品的库存（在redis中）
      *
-     * @param detailObj 订单详情
-     * @param memberId  下单用户id
-     * @param orderId   订单id
+     * @param mallOrderDetail 订单详情
+     * @param memberId        下单用户id
+     * @param orderId         订单id
      */
-    public void invNum( JSONObject detailObj, String memberId, String orderId ) {
-	String seckillId = detailObj.get( "groupBuyId" ).toString();
-	String proId = detailObj.get( "product_id" ).toString();
+    public void invNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail, String memberId, String orderId ) {
+	String seckillId = mallOrder.getGroupBuyId().toString();
+	String proId = mallOrderDetail.getProductId().toString();
 	String key = "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
 	String invKey = "hSeckill";//秒杀库存的key
 	String specificas = "";
 	//判断商品是否有规格
-	if ( CommonUtil.isNotEmpty( detailObj.get( "product_specificas" ) ) ) {
-	    specificas = detailObj.get( "product_specificas" ).toString();
+	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
+	    specificas = mallOrderDetail.getProductSpecificas();
 	}
 	//查询秒杀商品的库存
 	Integer invNum;
@@ -439,7 +439,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	obj.put( "proId", proId );
 	obj.put( "orderId", orderId );
 	obj.put( "memberId", memberId );
-	obj.put( "proSpec", detailObj.get( "product_specificas" ) );
+	obj.put( "proSpec", mallOrderDetail.getProductSpecificas() );
 	obj.put( "times", times );
 	obj.put( "orderTypes", 3 );
 	JedisUtil.map( key, orderId, obj.toString() );

@@ -3,6 +3,7 @@ package com.gt.mall.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.mall.bean.Member;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.JedisUtil;
@@ -39,6 +40,14 @@ public class AuthorizeOrLoginController {
 	Integer browser = CommonUtil.judgeBrowser( request );
 	Object uclogin = map.get( "uclogin" );
 
+	Member member = SessionUtils.getLoginMember( request );
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    //用户的所属商家和传进来的商家id相同不必登陆
+	    if ( member.getBusid().toString().equals( CommonUtil.toString( busId ) ) ) {
+		return null;
+	    }
+	}
+
 	String wxmpSign = "WXMP2017";
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
@@ -71,7 +80,7 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > queryMap = new HashMap< String,Object >();
 	queryMap.put( "otherRedisKey", otherRedisKey );
 	queryMap.put( "browser", browser );
-	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
+	/*queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );*/
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
 	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap );

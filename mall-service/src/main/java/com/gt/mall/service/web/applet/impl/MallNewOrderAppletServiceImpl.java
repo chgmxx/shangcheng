@@ -29,11 +29,14 @@ import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
+import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
@@ -98,6 +101,12 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private WxShopService       wxShopService;
     @Autowired
     private MemberPayService    memberPayService;
+    @Autowired
+    private MallAuctionService  mallAuctionService;
+    @Autowired
+    private MallPresaleService  mallPresaleService;
+    @Autowired
+    private MallSeckillService  mallSeckillService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -1735,6 +1744,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	Member member = memberService.findMemberById( memberId, null );
 	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( member.getBusid() );
 	int orderPayWay = 0;
+	int orderTypeId = 0;
 	//判断库存
 	List< MallOrder > orderList = new ArrayList<>();
 	double totalPrimary = 0;
@@ -1758,6 +1768,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		order.setShopId( CommonUtil.toInteger( orderObj.get( "shopId" ) ) );
 		order.setMemCardType( memType );
 		orderPayWay = order.getOrderPayWay();
+		orderTypeId = order.getOrderType();
 		shop_id = order.getShopId();
 		if ( CommonUtil.isNotEmpty( orderObj.get( "wxCoupon" ) ) ) {//已使用微信优惠券
 		    wxduofenCouponMap.put( order.getShopId() + "", JSONObject.parseObject( orderObj.get( "wxCoupon" ).toString() ) );
@@ -1875,9 +1886,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	logger.info( "订单总金额：" + orderTotalMoney );
 	String orderNo = "";
+	MallOrderDetail orderDetail = null;
+	int orderPId = 0;
 	//保存订单信息
 	if ( orderList != null && orderList.size() > 0 && code > 0 ) {
-	    int orderPId = 0;
 	    for ( int i = 0; i < orderList.size(); i++ ) {
 		MallOrder order = orderList.get( i );
 		if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
@@ -1919,6 +1931,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		}
 		if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+			orderDetail = detail;
 			detail.setOrderId( order.getId() );
 			detail.setCreateTime( new Date() );
 			orderDetailDAO.insert( detail );
@@ -1934,42 +1947,14 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    msg = "提交订单失败，请稍后重试";
 	}
 	if ( code > 0 ) {//提交订单成功，并且是货到付款，
-	    if ( orderPayWay == 3 ) {
-		//TODO 需关连  memberPayService.storePay() 方法
-		Map< String,Object > payRresult = null;
-		//                        memberPayService.storePay(member.getId(), orderTotalMoney);
-		if ( CommonUtil.toString( payRresult.get( "result" ) ).equals( "2" ) ) {
-		    params = new HashMap< String,Object >();
-		    params.put( "status", 2 );
-		    params.put( "out_trade_no", orderNo );
-		    orderService.paySuccessModified( params, member );//修改库存和订单状态
-		} else {
-		    code = -1;
-		    msg = payRresult.get( "message" ).toString();
-		}
-	    }
-	    //积分抵扣商品
-	    if ( orderPayWay == 4 ) {
-		//TODO 需关连  memberPayService.updateMemberIntergral 方法
-		Map< String,Object > payRresult = null;
-		//                        memberPayService.updateMemberIntergral(null,member.getId(), CommonUtil.toInteger(-orderTotalMoney));
-		if ( CommonUtil.isNotEmpty( payRresult.get( "result" ) ) ) {
-		    if ( CommonUtil.toString( payRresult.get( "result" ) ).equals( "2" ) ) {
-			params = new HashMap< String,Object >();
-			params.put( "status", 2 );
-			params.put( "out_trade_no", orderNo );
-			orderService.paySuccessModified( params, member );//修改库存和订单状态
-		    }
-		}
-	    }
 	    //货到付款或支付金额为0的订单，直接修改订单状态为已支付，且修改商品库存和销量
-	    if ( orderPayWay == 2 || orderTotalMoney == 0 ) {
-		params = new HashMap< String,Object >();
+	    if ( orderPayWay != 10 ) {
+		params = new HashMap<>();
 		params.put( "status", 2 );
 		params.put( "out_trade_no", orderNo );
 		orderService.paySuccessModified( params, member );//修改库存和订单状态
 	    }
-
+	    //删除购物车的商品
 	    if ( CommonUtil.isNotEmpty( params.get( "cartIds" ) ) ) {
 		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 		if ( cartArrs != null && cartArrs.size() > 0 ) {
@@ -1980,7 +1965,6 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    }
 		}
 	    }
-
 	    resultMap.put( "orderNo", orderNo );
 	}
 	resultMap.put( "code", code );
@@ -1989,7 +1973,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     }
 
     @Override
-    public Map<String,Object> validateOrder(MallOrder order,Member member){
+    public Map< String,Object > validateOrder( MallOrder order, Member member ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	String msg = "";
 	int code = 1;
@@ -2053,21 +2037,20 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 
 	//拍卖商品
-	/*if ( CommonUtil.isNotEmpty( order.getOrderType() ) ) {
+	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && code > 0 ) {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "groupBuyId", order.getGroupBuyId() );
 	    if ( order.getOrderType().toString().equals( "4" ) ) {
-		params.put( "groupBuyId", order.getGroupBuyId() );
-		result = mallAuctionService.isMaxNum( params, member.getId().toString() );
+		resultMap = mallAuctionService.isMaxNum( params, order.getBuyerUserId().toString() );
 	    } else if ( order.getOrderType().toString().equals( "6" ) ) {//商品预售
-		result = mallPresaleService.isMaxNum( params, member.getId().toString() );
+		resultMap = mallPresaleService.isMaxNum( params, order.getBuyerUserId().toString(), detail );
 	    }
-	    if ( result.get( "result" ).toString().equals( "false" ) ) {
-		result.put( "code", ResponseEnums.ERROR.getCode() );
-		result.put( "errorMsg", "您的粉币不够，不能用粉币来兑换这件商品" );
-		return result;
-	    } else {
-		result.put( "code", ResponseEnums.SUCCESS.getCode() );
+	    if ( CommonUtil.isNotEmpty( resultMap ) ) {
+		if ( !resultMap.get( "result" ).toString().equals( "true" ) ) {
+		    return resultMap;
+		}
 	    }
-	}*/
+	}
 
 	if ( CommonUtil.isNotEmpty( order.getFlowPhone() ) && code > 0 ) {//流量充值，判断手机号码
 	    MallProduct product = productService.selectByPrimaryKey( detail.getProductId() );
@@ -2094,6 +2077,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( detail.getProTypeId() == 0 && CommonUtil.isEmpty( order.getReceiveId() ) && code > 0 ) {
 	    msg = "请选择收货地址";
 	    code = -1;
+	}
+	if ( code > 0 && order.getOrderType() == 3 ) {
+	    //判断库存
+	    resultMap = mallSeckillService.isInvNum( order, detail );
 	}
 	resultMap.put( "code", code );
 	resultMap.put( "errorMsg", msg );

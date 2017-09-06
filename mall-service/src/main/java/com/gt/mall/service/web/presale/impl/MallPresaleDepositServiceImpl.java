@@ -220,7 +220,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
      * 减去预售商品的库存（redis）
      */
     private void diffInvNum( MallPresaleDeposit dep ) {
-	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
+	String invKey = "presale_num";//秒杀库存的key
 	String field = dep.getPresaleId().toString();
 	String specificas = "";
 
@@ -319,7 +319,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 
     private Map< String,Object > isInvNum( MallPresaleDeposit dep ) {
 	Map< String,Object > result = new HashMap<>();
-	String invKey = Constants.REDIS_KEY + "presale_num";//秒杀库存的key
+	String invKey = "presale_num";//秒杀库存的key
 	String specificas = "";
 
 	//判断商品是否有规格

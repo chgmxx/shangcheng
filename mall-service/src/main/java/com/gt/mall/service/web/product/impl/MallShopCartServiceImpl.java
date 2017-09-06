@@ -122,7 +122,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    }
 		    JSONObject specObj = new JSONObject();
 		    StringBuilder specNames = new StringBuilder();
-		    if(CommonUtil.isNotEmpty( map3.get( "product_speciname" ) )){
+		    if ( CommonUtil.isNotEmpty( map3.get( "product_speciname" ) ) ) {
 			specNames.append( map3.get( "product_speciname" ) );
 		    }
 		    boolean flag = true;
@@ -442,7 +442,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		}
 		shopId = CommonUtil.toInteger( shopMap.get( "shop_id" ) );//店铺id
 
-		if(shopId > 0){
+		if ( shopId > 0 ) {
 		    MallFreight freight = mallFreightDao.selectFreightByShopId( shopId );
 		    if ( CommonUtil.isNotEmpty( freight ) ) {
 			if ( freight.getPriceType().toString().equals( "3" ) ) {//按距离算

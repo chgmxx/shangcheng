@@ -131,7 +131,6 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( shopId == 0 ) {
-
 		List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
 		List< Map< String,Object > > pageId = mallPageService.selectPageIdByUserId( userid, shopList );
 		if ( pageId.size() > 0 ) {//获取首页的pageId

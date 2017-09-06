@@ -492,7 +492,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    Object obj = SessionUtils.getShopCart( request );
 
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
-		MallShopCart shopCart = (MallShopCart) JSONObject.toBean( JSONObject.fromObject( obj ), MallShopCart.class );
+		MallShopCart shopCart = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( obj ), MallShopCart.class );
+
 		int count = addshopping( shopCart, member, request, null );
 		if ( count > 0 ) {
 		    SessionUtils.setShopCart( null, request );
@@ -743,8 +744,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			code = CommonUtil.toInteger( xgMap.get( "code" ) );
 			msg = CommonUtil.toString( xgMap.get( "msg" ) );
 		    }
-		    String proSpec = map.get( "product_specificas" ).toString();
 		    if ( map.get( "isSpec" ).toString().equals( "1" ) && code == 1 && pro_type == 0 ) {//商品存在规格
+			String proSpec = map.get( "product_specificas" ).toString();
 			if ( proSpec.equals( "" ) ) {
 			    code = 0;
 			    msg = "商品存在规格";
@@ -797,7 +798,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			    }
 			}
 		    } else if ( map.get( "isSpec" ).toString().equals( "0" ) && code == 1 && pro_type == 0 ) {//商品部存在规格
-			if ( !proSpec.equals( "" ) ) {
+			if ( CommonUtil.isNotEmpty( map.get( "product_specificas" ) ) ) {
 			    code = 0;
 			    msg = "商品不存在规格";
 			}

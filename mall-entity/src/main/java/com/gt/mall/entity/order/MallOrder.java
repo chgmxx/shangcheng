@@ -24,10 +24,9 @@ import java.util.List;
 @Data
 @Accessors( chain = true )
 @TableName( "t_mall_order" )
-public class MallOrder extends Model< MallOrder > {
+public class MallOrder extends Model< MallOrder > implements Serializable, Cloneable {
 
-    private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 4083441605166952158L;
     /**
      * 订单标识
      */
@@ -280,6 +279,18 @@ public class MallOrder extends Model< MallOrder > {
     @TableField( "member_name" )
     private String     memberName;
 
+    /**
+     * 订单使用积分的数量
+     */
+    @TableField( "use_jifen" )
+    private double useJifen;
+
+    /**
+     * 订单使用粉币的数量
+     */
+    @TableField( "use_fenbi" )
+    private double useFenbi;
+
     @TableField( exist = false )
     private Integer updateDay;//修改订单的天数
 
@@ -310,7 +321,7 @@ public class MallOrder extends Model< MallOrder > {
     @TableField( exist = false )
     private Integer wxShopId;//微信门店
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer useCoupon;//是否使用优惠券  用于计算
 
     @Override
@@ -319,58 +330,14 @@ public class MallOrder extends Model< MallOrder > {
     }
 
     @Override
-    public String toString() {
-	return "MallOrder{" +
-			"id=" + id +
-			", orderNo=" + orderNo +
-			", wxOrderNo=" + wxOrderNo +
-			", receiveId=" + receiveId +
-			", orderMoney=" + orderMoney +
-			", orderFreightMoney=" + orderFreightMoney +
-			", orderOldMoney=" + orderOldMoney +
-			", orderBuyerMessage=" + orderBuyerMessage +
-			", orderSellerRemark=" + orderSellerRemark +
-			", orderStart=" + orderStart +
-			", orderPayWay=" + orderPayWay +
-			", deliveryMethod=" + deliveryMethod +
-			", appointmentName=" + appointmentName +
-			", appointmentTelephone=" + appointmentTelephone +
-			", appointmentTime=" + appointmentTime +
-			", invoiceTitle=" + invoiceTitle +
-			", takeTheirId=" + takeTheirId +
-			", isMessageNotice=" + isMessageNotice +
-			", buyerUserId=" + buyerUserId +
-			", sellerUserId=" + sellerUserId +
-			", shopId=" + shopId +
-			", orderStatus=" + orderStatus +
-			", createTime=" + createTime +
-			", orderPayNo=" + orderPayNo +
-			", payTime=" + payTime +
-			", expressWay=" + expressWay +
-			", expressId=" + expressId +
-			", expressNumber=" + expressNumber +
-			", expressTime=" + expressTime +
-			", buyerCancelReason=" + buyerCancelReason +
-			", sellerCancelReason=" + sellerCancelReason +
-			", updateTime=" + updateTime +
-			", buyerUserType=" + buyerUserType +
-			", orderPid=" + orderPid +
-			", memCardType=" + memCardType +
-			", giveStatus=" + giveStatus +
-			", groupBuyId=" + groupBuyId +
-			", orderType=" + orderType +
-			", pJoinId=" + pJoinId +
-			", couponCode=" + couponCode +
-			", appointmentStartTime=" + appointmentStartTime +
-			", appointmentEndTime=" + appointmentEndTime +
-			", isWallet=" + isWallet +
-			", busUserId=" + busUserId +
-			", receiveAddress=" + receiveAddress +
-			", receiveName=" + receiveName +
-			", receivePhone=" + receivePhone +
-			", flowPhone=" + flowPhone +
-			", flowRechargeStatus=" + flowRechargeStatus +
-			", memberName=" + memberName +
-			"}";
+    public MallOrder clone() {
+	MallOrder mallOrder = null;
+	try {
+	    mallOrder = (MallOrder) super.clone();
+	} catch ( CloneNotSupportedException e ) {
+	    e.printStackTrace();
+	}
+	return mallOrder;
     }
+
 }

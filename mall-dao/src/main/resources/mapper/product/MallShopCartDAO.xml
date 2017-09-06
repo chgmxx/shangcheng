@@ -293,7 +293,7 @@
             </if>
             <if test="checkIds != null">
                 <if test="checkIds.length == 1">
-                    and a.id = checkIds
+                    and a.id = #{checkIds[0] }
                 </if>
                 <if test="checkIds.length > 1">
                     and a.id in

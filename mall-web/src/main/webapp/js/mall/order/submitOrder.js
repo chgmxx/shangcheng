@@ -141,10 +141,20 @@ $(function () {
     if ($(".unionStatus").length > 0) {
         var unionStatus = $(".unionStatus").val();
         var objs = $("#unionDiscountDiv .unionItem:eq(0)");
-        if (unionStatus == 1 && objs.length > 0) {
+        if (unionStatus === 1 && objs.length > 0) {
             youhui(3, $("#unionDiscountDiv .unionItem:eq(0)"));
         }
     }
+
+    var isJifen = $("#isJifen").val();
+    var isFenbi = $("#isFenbi").val();
+    if(isJifen === "1"){
+        showJifenFenbiHideYouhui(2);
+    }
+    if(isFenbi === "1"){
+        showJifenFenbiHideYouhui(3);
+    }
+
     var memberId = $(".memberId").val();
     if (memberId != null && memberId != "") {
         //计算会员卡
