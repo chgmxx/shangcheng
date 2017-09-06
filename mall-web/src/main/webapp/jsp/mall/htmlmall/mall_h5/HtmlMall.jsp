@@ -110,6 +110,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 </head>
 
 <body ng-controller="adminController as admin" ng-cloak>
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <input type="hidden" id="codeurl" value="${obj.codeUrl }"><!-- 值为0时，意味着还未选择值 -->
 <input type="hidden" id="id" value="${obj.id }"><!-- 值为0时，意味着还未选择值 -->
 <input type="hidden" id="imageurlst" value="0"><!-- 值为0时，意味着还未选择值 -->

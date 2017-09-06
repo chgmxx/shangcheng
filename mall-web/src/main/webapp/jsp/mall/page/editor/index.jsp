@@ -85,6 +85,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 </head>
 <body style="overflow-y:scroll;">
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <admindraggable></admindraggable>
 <!-- 商品隐藏id -->
 <input type="hidden" id="stoId" value="${stoId}"/>
@@ -222,14 +223,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     var pic_type = 0;  //0表示重新选择图片,  1表示第一次添加图片,  2表示添加分类图片
     function materiallayer(param) {
         pic_type = param;
-        fhmater(0);
-        //openIframe('素材库','820px','500px','/common/material.do');
+
+        openIframe('素材库','820px','500px',crossDomainUrl+'/common/material.do?retUrl=' + window.location.href);
 
 
     }
 
     /**素材库里面返回信息**/
-    function image(id, url) {
+    function image(id,url){
         //alert(url);
         imgList = url;
         if (pic_type == 0) {

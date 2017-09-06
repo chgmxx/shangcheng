@@ -30,7 +30,8 @@ angular.module('music', []).controller("musicController",["$scope",function($sco
             shift : 1,
             maxmin: false,
             area: ['550px', '520px'],//定义宽、高
-            content: '/common/musicmatre.do?musicscene=1',
+            // content: '/common/musicmatre.do?musicscene=1',
+            content: crossDomainUrl+"/common/musicmatre.do?musicscene=1&etUrl="+window.location.href
 
         });
     }

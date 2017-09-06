@@ -1238,8 +1238,9 @@ angular.module('app', ['data','dragModule', 'dragPlan', 'colorTo', 'farbtastic',
      			    shade: 0.2,
      			    area: ['820px', '500px'],
      			    offset : "10px",
-     			    content: '/common/material.do?selectType=1',
-     			 }); 
+                     content: crossDomainUrl+"/common/material.do?selectType=1&retUrl="+window.location.href
+
+     			 });
                 return false;
             }
             layer.open({
@@ -1249,8 +1250,9 @@ angular.module('app', ['data','dragModule', 'dragPlan', 'colorTo', 'farbtastic',
 			    shade: 0.2,
 			    area: ['820px', '500px'],
 			    offset : "10px",
-			    content: '/common/material.do',
-			 }); 
+                content: crossDomainUrl+"/common/material.do?retUrl="+window.location.href
+
+			 });
             provenance = arguments;
             $scope.mask('show');
         };

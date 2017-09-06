@@ -21,7 +21,7 @@
     //别人推送给我的方法推送给我的方法
     window.addEventListener("message", function (event) {
         // 把父窗口发送过来的数据显示在子窗口中
-        console.log("回调："+event.data);
+        console.log("回调：" + event.data);
         eval(event.data);
     }, false);
 
@@ -70,6 +70,11 @@
     }
 
     /**
+     * 外嵌项目素材库调用地址
+     */
+    var crossDomainUrl = "https://suc.deeptel.com.cn";
+
+     /**
      * 关闭所有弹出框  layer.closeAll();
      */
     function parentCloseAll() {
@@ -91,8 +96,8 @@
         }
     }
 
-    function parentScrollTops(height){
-        messageSocket("scrollZiTop("+height+")");
+    function parentScrollTops(height) {
+        messageSocket("scrollZiTop(" + height + ")");
     }
 
 

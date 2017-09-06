@@ -142,7 +142,7 @@
                 shift: 1,
                 maxmin: false,
                 area: ['550px', '520px'],//定义宽、高
-                content: '/common/musicmatre.do',
+                content: crossDomainUrl+'/common/musicmatre.do?retUrl=' + window.location.href
 
             });
         }
