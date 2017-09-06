@@ -1,7 +1,6 @@
 package com.gt.mall.service.web.product.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.dao.freight.MallFreightDAO;
@@ -11,7 +10,6 @@ import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallShopCart;
-import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -25,7 +23,6 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.SessionUtils;
 import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,12 +69,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     private MallOrderService            mallOrderService;
 
     @Override
-    public List< Map< String,Object > > getProductByShopCart( String shopcards, WxPublicUsers pbUser, Member member, int userId ) {
+    public List< Map< String,Object > > getProductByShopCart( String shopcards, WxPublicUsers pbUser, Member member, int userId, List< Map< String,Object > > shopList ) {
 	List< Map< String,Object > > list = new ArrayList<>();
-
-	BusUser user = new BusUser();
-	user.setId( userId );
-	List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, null );
 
 	Map< String,Object > params = new HashMap<>();
 	params.put( "cartIds", shopcards.split( "," ) );
@@ -93,7 +86,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		shopIds += shopMap.get( "shop_id" ).toString();
 	    }*/
 	    Map< String,Object > shopcartParams = new HashMap<>();
-//	    shopcartParams.put( "shopIds", shopIds.split( "," ) );
+	    //	    shopcartParams.put( "shopIds", shopIds.split( "," ) );
 	    shopcartParams.put( "checkIds", shopcards.split( "," ) );
 	    shopcartParams.put( "userId", userId );
 
@@ -109,7 +102,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		double pro_weight = 0;
 		for ( Map< String,Object > map3 : shopCartList ) {
 		    if ( !map3.get( "shop_id" ).toString().equals( shopMaps.get( "shop_id" ).toString() ) ) {
-			break;
+			continue;
 		    }
 		    String price = map3.get( "price" ).toString();
 		    double proPriceTotal = 0;
@@ -129,6 +122,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    }
 		    JSONObject specObj = new JSONObject();
 		    StringBuilder specNames = new StringBuilder();
+		    if(CommonUtil.isNotEmpty( map3.get( "product_speciname" ) )){
+			specNames.append( map3.get( "product_speciname" ) );
+		    }
 		    boolean flag = true;
 		    Map< String,Object > specMap = null;
 		    if ( CommonUtil.isNotEmpty( map3.get( "pro_spec_str" ) ) ) {
@@ -217,6 +213,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    xlist.add( productMap );
 		    index++;
 		}
+		if ( xlist == null || xlist.size() == 0 ) {
+		    continue;
+		}
 		DecimalFormat df = new DecimalFormat( "######0.00" );
 		shopMap.put( "price_total", df.format( price_total ) );//该店铺的总价钱
 		shopMap.put( "primary_price", df.format( primary_price ) );
@@ -245,7 +244,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     }
 
     @Override
-    public List< Map< String,Object > > getProductByIds( Map< String,Object > maps, WxPublicUsers pbUser, Member member, int userId ) throws Exception {
+    public List< Map< String,Object > > getProductByIds( Map< String,Object > maps, WxPublicUsers pbUser, Member member, int userId, List< Map< String,Object > > shopList )
+		    throws Exception {
 	List< Map< String,Object > > list = new ArrayList<>();
 	Map< String,Object > shopMap = new HashMap<>();
 
@@ -397,17 +397,14 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		}
 	    }
 	}
-	String shopName = "";
-	MallStore mallStore = mallStoreService.selectById( shopId );
-	if ( CommonUtil.isNotEmpty( mallStore.getWxShopId() ) ) {
-	    WsWxShopInfo shopInfo = wxShopService.getShopById( mallStore.getWxShopId() );
-	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
-		shopName = shopInfo.getBusinessName();
+	if ( shopList != null && shopList.size() > 0 ) {
+	    for ( Map< String,Object > storeMap : shopList ) {
+		if ( storeMap.get( "id" ).toString().equals( CommonUtil.toString( shopId ) ) ) {
+		    shopMap.put( "wxShopId", storeMap.get( "wxShopId" ) );
+		    shopMap.put( "shop_name", storeMap.get( "sto_name" ) );//店铺名称
+		    break;
+		}
 	    }
-	    shopMap.put( "wxShopId", mallStore.getWxShopId() );
-	}
-	if ( CommonUtil.isEmpty( shopName ) ) {
-	    shopName = mallStore.getStoName();
 	}
 
 	DecimalFormat df = new DecimalFormat( "######0.00" );
@@ -415,7 +412,6 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	shopMap.put( "primary_price", df.format( primary_price ) );
 	shopMap.put( "proNum", proNum );//购买的商品总数（用于计算运费）
 	shopMap.put( "shop_id", shopId );//店铺id
-	shopMap.put( "shop_name", shopName );//店铺名称
 	shopMap.put( "yuanjia_total", df.format( yuanjia_total ) );
 	shopMap.put( "message", productList );//商品详情信息
 	shopMap.put( "pro_weight", df.format( pro_weight ) );
@@ -427,7 +423,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
     @Override
     public void getOrdersParams( HttpServletRequest request, String loginCity, int userid, List< Map< String,Object > > list, double mem_longitude, double mem_latitude,
-		    Member member ) {
+		    Member member, List< Map< String,Object > > shopList ) {
 	int shopId = SessionUtils.getMallShopId( request );
 	int toshop = mallProductService.getIsShopBySession( shopId, userid, request );
 	//计算运费如下
@@ -446,22 +442,27 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		}
 		shopId = CommonUtil.toInteger( shopMap.get( "shop_id" ) );//店铺id
 
-		MallFreight freight = mallFreightDao.selectFreightByShopId( shopId );
-		if ( CommonUtil.isNotEmpty( freight ) ) {
-		    if ( freight.getPriceType().toString().equals( "3" ) ) {//按距离算
-			request.setAttribute( "isKm", 1 );
+		if(shopId > 0){
+		    MallFreight freight = mallFreightDao.selectFreightByShopId( shopId );
+		    if ( CommonUtil.isNotEmpty( freight ) ) {
+			if ( freight.getPriceType().toString().equals( "3" ) ) {//按距离算
+			    request.setAttribute( "isKm", 1 );
+			}
 		    }
 		}
 		//计算粉丝跟店铺的距离
 		if ( CommonUtil.isNotEmpty( mem_longitude ) && CommonUtil.isNotEmpty( mem_latitude ) ) {
-		    //获取微信门店的经度纬度
-		    Map< String,Object > stores = mallStoreService.findShopByStoreId( shopId );
-		    if ( CommonUtil.isNotEmpty( stores ) ) {
-			if ( CommonUtil.isNotEmpty( stores.get( "stoLongitude" ) ) && CommonUtil.isNotEmpty( stores.get( "stoLatitude" ) ) ) {
-			    Double raill = CommonUtil.getDistance( mem_longitude, mem_latitude, CommonUtil.toDouble( stores.get( "stoLongitude" ) ),
-					    CommonUtil.toDouble( stores.get( "stoLatitude" ) ) );
-			    raill = raill / 1000;
-			    map.put( "juli", raill );
+		    if ( shopList != null && shopList.size() > 0 ) {
+			for ( Map< String,Object > storeMap : shopList ) {
+			    if ( storeMap.get( "id" ).toString().equals( CommonUtil.toString( shopId ) ) ) {
+				if ( CommonUtil.isNotEmpty( storeMap.get( "stoLongitude" ) ) && CommonUtil.isNotEmpty( storeMap.get( "stoLatitude" ) ) ) {
+				    Double raill = CommonUtil.getDistance( mem_longitude, mem_latitude, CommonUtil.toDouble( storeMap.get( "stoLongitude" ) ),
+						    CommonUtil.toDouble( storeMap.get( "stoLatitude" ) ) );
+				    raill = raill / 1000;
+				    map.put( "juli", raill );
+				    break;
+				}
+			    }
 			}
 		    }
 		}
@@ -486,7 +487,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	map.put( "toshop", toshop );
 	map.put( "proTypeId", proTypeId );
 	Map< Integer,Object > priceMap = mallFreightService.getFreightMoney( map );//计算运费
-	request.setAttribute( "priceMap", priceMap );
+	request.setAttribute( "priceMap", com.alibaba.fastjson.JSONObject.toJSON( priceMap ) );
 
 	if ( CommonUtil.isNotEmpty( shopIds ) ) {
 	    boolean isJuli = mallOrderService.isJuliByFreight( shopIds );
@@ -511,7 +512,6 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 	    }
 	    request.setAttribute( "cardMap", cardMap );
-	    System.out.println( "card = " + com.alibaba.fastjson.JSONObject.toJSONString( cardMap ) );
 	}
 
     }

@@ -2078,7 +2078,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
     }
 
-    private void updateOrderInvNum( MallOrder order, int orderDetailId, double returnFenbi, int returnJifen, double returnMoney ) {
+    private void updateOrderInvNum( MallOrder order, int orderDetailId, double returnFenbi, double returnJifen, double returnMoney ) {
 	Map< String,Object > detailMap = mallOrderDAO.selectByDIdOrder( orderDetailId );
 	Integer productId = 0;
 	Integer productNum = 0;
@@ -3574,7 +3574,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	MallOrderDetail od = new MallOrderDetail();
 	od.setUseFenbi( useFenbi );
-	od.setUseJifen( useJifen );
+	od.setUseJifen( CommonUtil.toDouble( useJifen ) );
 	od.setFenbiYouhui( BigDecimal.valueOf( fenbiPrefer ) );
 	od.setIntegralYouhui( BigDecimal.valueOf( jifenPrefer ) );
 

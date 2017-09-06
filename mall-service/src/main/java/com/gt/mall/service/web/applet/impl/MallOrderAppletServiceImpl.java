@@ -29,6 +29,7 @@ import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.applet.MallOrderAppletService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
@@ -40,7 +41,6 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,6 +104,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private FenBiFlowService            fenBiFlowService;
     @Autowired
     private WxShopService               wxShopService;
+    @Autowired
+    private MallNewOrderAppletService   mallNewOrderAppletService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -1261,21 +1263,13 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		order.setMemCardType( memType );
 		orderPayWay = order.getOrderPayWay();
 
-		if ( order.getOrderPayWay() == 4 ) {//积分支付
-		    Integer mIntergral = member.getIntegral();
-		    if ( mIntergral < order.getOrderMoney().intValue() || mIntergral < 0 ) {
-			code = -1;
-			msg = "您的积分不够，不能用积分来兑换这件商品";
-			break;
+		Map< String,Object > result = mallNewOrderAppletService.validateOrder( order, member );
+		code = CommonUtil.toInteger( result.get( "code" ) );
+		if ( code == -1 ) {
+		    if ( CommonUtil.isNotEmpty( result.get( "errorMsg" ) ) ) {
+			msg = result.get( "errorMsg" ).toString();
 		    }
-		}
-		if ( order.getOrderPayWay() == 8 ) {//粉币支付
-		    double fenbi = member.getFansCurrency();
-		    if ( fenbi < order.getOrderMoney().doubleValue() || fenbi < 0 ) {
-			code = -1;
-			msg = "您的粉币不够，不能用粉币来兑换这件商品";
-			break;
-		    }
+		    break;
 		}
 		List< MallOrderDetail > detailList = new ArrayList< MallOrderDetail >();
 		if ( CommonUtil.isNotEmpty( orderObj.get( "orderDetail" ) ) ) {
@@ -1292,7 +1286,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 			    if ( CommonUtil.isNotEmpty( detail.getDetPrivivilege() ) ) {
 				totalPrimary = detail.getDetPrivivilege().multiply( CommonUtil.toBigDecimal( detail.getDetProNum() ) );
 			    }
-			    Map< String,Object > dresultMap = orderDetailIsGo( order, detail );
+			    Map< String,Object > dresultMap = mallNewOrderAppletService.validateOrderDetail( order, detail );
 			    code = CommonUtil.toInteger( dresultMap.get( "code" ) );
 			    if ( code == -1 ) {
 				if ( CommonUtil.isNotEmpty( dresultMap.get( "errorMsg" ) ) ) {
@@ -1468,21 +1462,13 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		order.setShopId( CommonUtil.toInteger( orderObj.get( "shopId" ) ) );
 		order.setMemCardType( memType );
 
-		if ( order.getOrderPayWay() == 4 ) {//积分支付
-		    Integer mIntergral = member.getIntegral();
-		    if ( mIntergral < order.getOrderMoney().intValue() || mIntergral < 0 ) {
-			code = -1;
-			msg = "您的积分不够，不能用积分来兑换这件商品";
-			break;
+		Map< String,Object > result = mallNewOrderAppletService.validateOrder( order, member );
+		code = CommonUtil.toInteger( result.get( "code" ) );
+		if ( code == -1 ) {
+		    if ( CommonUtil.isNotEmpty( result.get( "errorMsg" ) ) ) {
+			msg = result.get( "errorMsg" ).toString();
 		    }
-		}
-		if ( order.getOrderPayWay() == 8 ) {//粉币支付
-		    double fenbi = member.getFansCurrency();
-		    if ( fenbi < order.getOrderMoney().doubleValue() || fenbi < 0 ) {
-			code = -1;
-			msg = "您的粉币不够，不能用粉币来兑换这件商品";
-			break;
-		    }
+		    break;
 		}
 
 		List< MallOrderDetail > detailList = new ArrayList< MallOrderDetail >();
@@ -1490,7 +1476,6 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		    JSONArray detailArr = JSONArray.parseArray( orderObj.get( "orderDetail" ).toString() );
 		    if ( detailArr != null && detailArr.size() > 0 ) {
 			for ( Object object2 : detailArr ) {
-
 			    if ( code == -1 ) {
 				break;
 			    }
@@ -1501,7 +1486,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 			    if ( CommonUtil.isNotEmpty( detail.getDetPrivivilege() ) ) {
 				totalPrimary = CommonUtil.toDouble( detail.getDetPrivivilege() ) * detail.getDetProNum();
 			    }
-			    Map< String,Object > dresultMap = orderDetailIsGo( order, detail );
+			    Map< String,Object > dresultMap = mallNewOrderAppletService.validateOrderDetail( order, detail );
 			    code = CommonUtil.toInteger( dresultMap.get( "code" ) );
 			    if ( code == -1 ) {
 				if ( CommonUtil.isNotEmpty( dresultMap.get( "errorMsg" ) ) ) {
@@ -1532,69 +1517,6 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	resultMap.put( "code", code );
 	resultMap.put( "errorMsg", msg );
 	System.out.println( resultMap );
-	return resultMap;
-    }
-
-    private Map< String,Object > orderDetailIsGo( MallOrder order, MallOrderDetail detail ) {
-	Map< String,Object > resultMap = new HashMap<>();
-	String msg = "";
-	int code = 1;
-	//判断商品的库存
-	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType() == 7 && CommonUtil.isNotEmpty( detail.getProSpecStr() ) ) {//判断批发商品的库存
-	    JSONObject map = JSONObject.parseObject( detail.getProSpecStr() );
-	    for ( Object key : map.keySet() ) {
-		Object proSpecificas = key;
-		JSONObject p = JSONObject.parseObject( map.get( key ).toString() );
-		int proNum = CommonUtil.toInteger( p.get( "num" ) );
-		Map< String,Object > result = productService.calculateInventory( detail.getProductId(), proSpecificas, proNum, order.getBuyerUserId() );
-		if ( result.get( "result" ).toString().equals( "false" ) ) {
-		    msg = result.get( "msg" ).toString();
-		    code = -1;
-		}
-	    }
-	} else {
-	    Map< String,Object > result = productService.calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
-	    if ( result.get( "result" ).toString().equals( "false" ) ) {
-		msg = result.get( "msg" ).toString();
-		code = -1;
-	    }
-	}
-	if ( CommonUtil.isNotEmpty( detail.getProTypeId() ) && code > 0 ) {
-	    //卡全包购买判断是否已经过期
-	    if ( detail.getProTypeId().toString().equals( "3" ) && CommonUtil.isNotEmpty( detail.getCardReceiveId() ) ) {
-		Map< String,Object > cardMap = pageService.getCardReceive( detail.getCardReceiveId() );
-		if ( CommonUtil.isNotEmpty( cardMap ) ) {
-		    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
-			JSONObject cardObj = JSONObject.parseObject( cardMap.get( "recevieMap" ).toString() );
-			if ( CommonUtil.isNotEmpty( cardObj.get( "guoqi" ) ) && cardObj.get( "guoqi" ).toString().equals( "1" ) ) {
-			    msg = "卡券包已过期不能购买";
-			}
-		    }
-		}
-	    }
-	}
-	if ( CommonUtil.isNotEmpty( order.getFlowPhone() ) && code > 0 ) {//流量充值，判断手机号码
-	    MallProduct product = productService.selectByPrimaryKey( detail.getProductId() );
-	    Map< String,String > map = MobileLocationUtil.getMobileLocation( order.getFlowPhone() );
-	    if ( map.get( "code" ).toString().equals( "-1" ) ) {
-		resultMap.put( "code", -1 );
-		resultMap.put( "msg", map.get( "msg" ) );
-		return resultMap;
-	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
-		WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
-		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
-		    resultMap.put( "code", -1 );
-		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );
-		    return resultMap;
-		}
-	    }
-	}
-	if ( detail.getProTypeId() == 0 && CommonUtil.isEmpty( order.getReceiveId() ) && code > 0 ) {
-	    msg = "请选择收货地址";
-	    code = -1;
-	}
-	resultMap.put( "code", code );
-	resultMap.put( "errorMsg", msg );
 	return resultMap;
     }
 

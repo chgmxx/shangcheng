@@ -833,7 +833,6 @@ function product_Buy(types) {
         alert("你购买的数量大于商品现有的库存，请重新输入购买数量");
         return;
     }
-
     if (types == 1) {//立即开团
         groupBuyId = $(".groupBuyId").val();
         if (groupBuyId == undefined || groupBuyId == null || groupBuyId == "") {
@@ -896,11 +895,11 @@ function product_Buy(types) {
         }
 
         if (discount != null && discount != "") {
-            if (discount * 1 > 0 && discount * 1 < 1) {
+            /*if (discount * 1 > 0 && discount * 1 < 1) {
                 //price = $(".attr-lay .huiyuan").text();
                 price = price * discount;
                 totalprice = parseInt(product_num) * price;
-            }
+            }*/
         }
     }
     var maxBuy = $("#maxBuy").val();

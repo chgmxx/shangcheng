@@ -13,7 +13,7 @@ public class MallShopEntity {
 
     private Double discountMemberMoney=0.0; //会员优惠券金额
 
-    private Integer useCoupon=0;  //是否使用优惠券  0未使用 1使用 not null
+    private Integer useCoupon=0;  //是否使用了优惠券  0未使用 1使用 not null
     private Integer couponType; //优惠券类型 0微信 1多粉优惠券   useCoupon=1 必填
     private Integer coupondId;  //卡券id     useCoupon=1 必填
     private String codes;  //使用优惠券code值 用来核销卡券

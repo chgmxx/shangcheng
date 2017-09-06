@@ -98,7 +98,7 @@
         <input type="hidden" name="memCardType" id="memCardType" value="${memType }"/>
         <input type="hidden" name="flowPhone" class="flowCzPhone" value="${flowPhone }"/><!-- 流量充值手机号 -->
 
-        <input type="hidden" name="productAllMoney"  value=""/>
+        <input type="hidden" name="productAllMoney" value=""/>
 
         <input type="hidden" name="useCoupon" value="0"/><!-- 是否使用优惠券 -->
 
@@ -295,6 +295,9 @@
                             <input type="hidden" name="userFenbi" id="fenbiDeduction" value="${orderDetail.is_fenbi_deduction }"/>
 
                             <input type="hidden" name="wxShopId" value="${order.wxShopId}"/>
+                            <c:if test="${!empty cardMap && !empty cardMap.discount}">
+                                <input type="hidden" name="discount" value="${cardMap.discount*10}"/>
+                            </c:if>
                         </div>
 
                         <input type="hidden" id="detailProPrice" value="${price }"/><!-- 价格不能改 -->
@@ -337,7 +340,9 @@
 				运费：
 				<span style="color:#f20000;">
 				<c:forEach var="shipment" items="${priceMap }">
-                    <c:if test="${order.message[0].shop_id == shipment.key }">${shipment.value}</c:if>
+                    <c:if test="${order.message[0].shop_id == shipment.key }">
+                        <em class="freight_em">${shipment.value}</em>
+                    </c:if>
                 </c:forEach>元
 				</span>
 			</span>
@@ -565,7 +570,7 @@
             </div>
             <div class="footer-box footer-right">
                 <!-- <input type="button" name="submit-order" id="submit-order" class="submit-order" value="提交订单" /> -->
-                <a href="javascript:void(0);" name="submit-order" id="submit-order" class="submit-order">提交订单</a>
+                <a href="javascript:void(0);" name="submit-order" id="submit-order" class="submit-order" onclick="submitOrders();">提交订单</a>
             </div>
         </footer>
         <input type="hidden" class="userid" value="${userid }"/>
@@ -774,7 +779,11 @@
         }, 200)
     });
     var userId = "${userid }";
-    $('#submit-order').click(function () {
+    var freightMoney = '${priceMap}';
+    if(freightMoney !== null && freightMoney !== ""){
+        freightMoney = JSON.parse(freightMoney);
+    }
+    $('#submit-ordersss').click(function () {
         var receiveId = $('#receiveId').val();
         var deliveryMethod = $('#deliveryMethod').val();
         var orderPayWay = $("#orderPayWay").val();
@@ -859,7 +868,6 @@
             $("#yhqNum").val(JSON.stringify(yhqNum));
             $('#submit-order').attr("disabled", true);
             var orderDetail = ${orderDetail};
-            var freightMoney = "${priceMap}";
             $('#detail').val(JSON.stringify(orderDetail));
             $('#freightMoney').val(JSON.stringify(freightMoney));
             var order = $("#orderForm").serializeObject();

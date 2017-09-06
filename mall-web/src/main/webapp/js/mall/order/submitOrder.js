@@ -29,7 +29,7 @@ $(function () {
     });
     var proTypeId = $("#proTypeId").val();
     if (proTypeId == 0) {
-        $('.shopShipment').find("span").each(function (index) {
+        $('.shopShipment').find("em.freight_em").each(function (index) {
             fare += parseFloat($(this).html());//总运费
         });
     }
@@ -92,8 +92,8 @@ $(function () {
         var o = {};
         $(this).find("input").each(function (index) {
             if ($(this).attr("name") != undefined) {
-                if ( $(this).attr("type") == "hidden") {
-                    if( $(this).val() != null &&  $(this).val() != ""){
+                if ($(this).attr("type") == "hidden") {
+                    if ($(this).val() != null && $(this).val() != "") {
                         o[$(this).attr("name")] = $(this).val();
                     }
                 }
@@ -145,9 +145,11 @@ $(function () {
             youhui(3, $("#unionDiscountDiv .unionItem:eq(0)"));
         }
     }
-
-    //计算会员卡
-    jisuan(0);
+    var memberId = $(".memberId").val();
+    if (memberId != null && memberId != "") {
+        //计算会员卡
+        jisuan(0);
+    }
 
 });
 
@@ -260,11 +262,14 @@ function valUnionMobile(obj) {
 function bindOk() {
     location.reload(true);
 }
-function gtcommonDialog(tip, cal) {
+function gtcommonDialog(tip, cal, title) {
+    if (title == null || title == "") {
+        title = "联盟卡绑定提示";
+    }
     if (cal == null) {
-        gtcom.dialog(tip, "a", cal, "联盟卡绑定提示")
+        gtcom.dialog(tip, "a", cal, title)
     } else {
-        gtcom.dialog(tip, "b", cal, "联盟卡绑定提示")
+        gtcom.dialog(tip, "b", cal, title)
     }
 }
 /**
@@ -343,8 +348,11 @@ function showLay(divName, obj) {
         $(obj).parents("#couponDiv").find("#" + divName).show();
     }
 }
-
+var isDaodian = false;
 function payWay(num) {
+    if(isDaodian){
+        getFreightMoney(1);
+    }
     if (num == 1) {
         $('#orderPayWay').val(1);
         $('#onlinePayment').html("微信支付");
@@ -362,6 +370,8 @@ function payWay(num) {
     } else if (num == 6) {
         $('#orderPayWay').val(6);
         $('#onlinePayment').html("到店支付");
+        isDaodian = true;
+        getFreightMoney(0);
     } else if (num == 7) {
         $('#orderPayWay').val(7);
         $('#onlinePayment').html("找人代付");
@@ -374,7 +384,38 @@ function payWay(num) {
     }
     hideLay();
 }
+/**
+ * 获取运费
+ * @param type
+ */
+function getFreightMoney(type) {
+    if (freightMoney === null || freightMoney === "") {
+        return false;
+    }
+    var productFreightMoneys = 0;
+    $(".couponDivs").each(function () {
+        var shopId = $(this).attr("stoId");
+        var fMoneys = 0;
+        if (type !== 0 && fMoneys !== null && fMoneys !== "") {
+            fMoneys = freightMoney[shopId];
+            productFreightMoneys += fMoneys*1;
+        }
+        $(this).find(".freight_em").text(fMoneys);
+    });
+    $("#fare").text(productFreightMoneys);
+    var productAll = $("#proMoneyAllOld").val()*1;
 
+    var hy = $("#hy").text();
+    var fb = $("#fb").text();
+    var jf = $("#jf").text();
+    var lm = $("#lm").text();
+    hy = hy === null || hy === "" ? 0 :hy*1;
+    fb = fb === null || fb === "" ? 0 :fb*1;
+    jf = jf === null || jf === "" ? 0 :jf*1;
+    lm = lm === null || lm === "" ? 0 :lm*1;
+
+    $("#sum-money").text((productAll+productFreightMoneys-hy-fb-jf-lm).toFixed(2));
+}
 function delivery(num) {
     if (num == 1) {
         $('#deliveryMethod').val(1);

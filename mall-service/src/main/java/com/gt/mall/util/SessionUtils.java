@@ -280,4 +280,8 @@ public class SessionUtils {
 	return request.getSession().getAttribute( Constants.SESSION_KEY + key );
     }
 
+    public static void removeSession( HttpServletRequest request, String key ) {
+	request.getSession().removeAttribute( Constants.SESSION_KEY + key );
+    }
+
 }

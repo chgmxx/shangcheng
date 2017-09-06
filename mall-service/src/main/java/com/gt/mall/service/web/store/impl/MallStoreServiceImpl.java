@@ -418,17 +418,19 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    }
 	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
 	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
-	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id" );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude" );
 
 	    storeList = mallStoreDao.selectMaps( wrapper );
 	    if ( storeList != null && storeList.size() > 0 ) {
 		for ( Map< String,Object > storeMap : storeList ) {
-		    int wxShopId = CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) );
+		    int wxShopId = CommonUtil.toInteger( storeMap.get( "wxShopId" ) );
 		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
 			if ( wxShops.getId() == wxShopId ) {
 			    storeMap.put( "sto_name", wxShops.getBusinessName() );
 			    storeMap.put( "address", wxShops.getAddress() );
 			    storeMap.put( "wxShopId", wxShops.getId() );
+			    storeMap.put( "stoLongitude", wxShops.getLongitude() );
+			    storeMap.put( "stoLatitude", wxShops.getLatitude() );
 			    break;
 			}
 		    }

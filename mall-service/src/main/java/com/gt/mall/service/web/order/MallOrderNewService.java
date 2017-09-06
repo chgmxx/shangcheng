@@ -5,6 +5,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.entity.order.MallOrder;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,10 +21,15 @@ public interface MallOrderNewService extends BaseService< MallOrder > {
     /**
      * 计算订单
      */
-    MallAllEntity calculateOrder( Map< String,Object > params, Member member );
+    MallAllEntity calculateOrder( Map< String,Object > params, Member member ,List< MallOrder > orderList);
 
     /**
      * 计算值
      */
     Map< String,Object > getCalculateData( MallAllEntity allEntity );
+
+    /**
+     * 提交订单
+     */
+    Map<String,Object> submitOrder(Map<String,Object> params, Member member ,Integer browser);
 }

@@ -43,14 +43,15 @@ function jisuan(type, couponObj, flag) {
             }
             sObj.couponType = couponObj.couponType;//优惠券类型 0微信 1多粉优惠券
             sObj.coupondId = couponObj.cardId;//卡券id
+            sObj.cardType = couponObj.cardType;//卡券类型
 
-            $("input[name='useCoupon']").val(1);
+            /* $(this).find("input[name='useCoupon']").val(1);*/
 
 
             couponList[couponList.length] = sObj;
             $("#couponList").val(JSON.stringify(couponList));
         } else {
-            $("input[name='useCoupon']").val(0);
+            /* $(this).find("input[name='useCoupon']").val(0);*/
         }
     });
 
@@ -66,12 +67,37 @@ function jisuan(type, couponObj, flag) {
         success: function (data) {
             if (data.code === 1) {
 
-                $("#hy").text(data.hyDiscountMoney);
-                $("#yhj").text(data.yhqDiscountMoney);
-                $("#jf").text(data.jfDiscountMoney);
-                $("#fb").text(data.fbDiscountMoney);
+
+                $("#hy").text(data.discountMemberMoney);
+                $("#yhj").text(data.discountConponMoney);
+                var flag = true;
+                if (data.userJifen == 1) {
+                    if (data.canUseJifen === 1) {//能使用
+                        $("#jf").text(data.discountjifenMoney);
+                        $(".jifen_open_span").show();
+                        $(".jifen_noopen_span").hide();
+                    } else {
+                        $(".jifen_open_span").hide();
+                        $(".jifen_noopen_span").show();
+                        flag = false;
+                    }
+                }
+                if (data.useFenbi === 1) {//能使用
+                    if (data.canUsefenbi === 1) {//能使用
+                        $("#fb").text(data.discountfenbiMoney);
+                        $(".fenbi_open_span").show();
+                        $(".fenbi_noopen_span").hide();
+                    } else {
+                        $(".fenbi_open_span").hide();
+                        $(".fenbi_noopen_span").show();
+                        flag = false;
+                    }
+                }
+                if (!flag) {
+                    return false;
+                }
                 if ($("#lm").length > 0) {
-                    $("#lm").text(data.leagueMoney);
+                    $("#lm").text(data.leagueDiscount);
                 }
                 if (data.balanceMoney != null && data.balanceMoney != "") {
                     var freight = 0;
@@ -83,14 +109,13 @@ function jisuan(type, couponObj, flag) {
 
                     $("#sum-money").text((  freight + youhui).toFixed(2));
                 }
-
                 return true;
             } else {
-                gtcommonDialog("计算失败", null);
+                console.log("计算失败");
                 return false;
             }
         }, error: function () {
-            gtcommonDialog("计算失败", null);
+            console.log("计算失败");
             return false;
         }
     });

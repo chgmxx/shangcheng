@@ -884,6 +884,8 @@
 <input type="hidden" class="userid" value="${userid }"/>
 <input type="hidden" class="inpPrice"
        value="<c:if test="${mapmessage.is_specifica eq 1 }">${((mapmessage.inv_price*100) * (discount*100))/10000}</c:if><c:if test="${mapmessage.is_specifica ne 1 }">${((mapmessage.pro_price*100) * (discount*100))/10000}</c:if>"/>
+<input type="hidden" class="pricePro"
+       value="<c:if test="${mapmessage.is_specifica eq 1 }">${mapmessage.inv_price}</c:if><c:if test="${mapmessage.is_specifica ne 1 }">${mapmessage.pro_price}</c:if>"/>
 
 <script type="text/javascript" src="/js/plugin/swiper.min.js"></script>
 <script type='text/javascript' src="/js/plugin/lazyload/jquery.lazyload.min.js"></script>
@@ -949,7 +951,7 @@
     var isCardBuy = false;
     var saleLen = $(".commissionRate").length;
     var memberId = $("input.memberId").val();
-    $("#prodect_price").val($(".inpPrice").val());
+    $("#prodect_price").val($(".pricePro").val());
     var speSelect = "";//保存选择的规格id
     $(function () {
         var yjMoney = 0;//佣金价

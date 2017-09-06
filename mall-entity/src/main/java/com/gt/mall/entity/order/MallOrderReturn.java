@@ -152,7 +152,7 @@ public class MallOrderReturn extends Model< MallOrderReturn > {
      * 退还积分
      */
     @TableField( "return_jifen" )
-    private Integer    returnJifen;
+    private Double     returnJifen;
 
     @Override
     protected Serializable pkVal() {

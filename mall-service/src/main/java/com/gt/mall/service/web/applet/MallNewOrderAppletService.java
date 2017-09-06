@@ -1,10 +1,11 @@
 package com.gt.mall.service.web.applet;
 
 import com.gt.mall.base.BaseService;
+import com.gt.mall.bean.Member;
 import com.gt.mall.entity.applet.MallAppletImage;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,4 +49,14 @@ public interface MallNewOrderAppletService extends BaseService<MallAppletImage> 
      * @return
      */
     Map<String, Object> newCalculationPreferential(Map<String, Object> params);
+
+    /**
+     * 验证订单信息
+     */
+    public Map<String,Object> validateOrder(MallOrder order,Member member);
+
+    /**
+     * 验证订单详情信息
+     */
+    public Map< String,Object > validateOrderDetail( MallOrder order, MallOrderDetail detail );
 }

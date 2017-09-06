@@ -122,9 +122,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    String key = "to_order";
-	    Object orderObj = request.getSession().getAttribute( key );
-	    Object payWayObj = request.getSession().getAttribute( "orderpayway" );
-	    Object payWayNameObj = request.getSession().getAttribute( "orderpaywayname" );
+	    Object orderObj = SessionUtils.getSession( request, key );
+	    Object payWayObj = SessionUtils.getSession( request, "orderpayway" );
+	    Object payWayNameObj = SessionUtils.getSession( request, "orderpaywayname" );
 	    int userid = 0;
 	    if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
 		if ( CommonUtil.isNotEmpty( orderObj ) ) {
@@ -163,14 +163,14 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-		request.getSession().setAttribute( key, JSONObject.fromObject( data ).toString() );
+		SessionUtils.setSession( JSONObject.fromObject( data ).toString(), request, key );
 		return returnUrl;
 	    }
 	    int isWxPay = 0;//不能微信支付
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( pbUser ) ) ) {
 		isWxPay = 1;//可以微信支付
-	    }else{
+	    } else {
 		isAliPay = 1;
 	    }
 
@@ -211,9 +211,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		request.setAttribute( "loginCity", loginCity );
 	    }
 
-	    Object dataObj = request.getSession().getAttribute( "dataOrder" );
-	    Object addTypeObj = request.getSession().getAttribute( "addressType" );
-	    Object deliveryMethodObj = request.getSession().getAttribute( "deliveryMethod" );
+	    Object dataObj = SessionUtils.getSession( request, "dataOrder" );
+	    Object addTypeObj = SessionUtils.getSession( request, "addressType" );
+	    Object deliveryMethodObj = SessionUtils.getSession( request, "deliveryMethod" );
 
 	    Object address = data.get( "address" );
 	    String type = "";
@@ -236,22 +236,26 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    JSONObject obj = new JSONObject();
 	    if ( CommonUtil.isNotEmpty( data.get( "data" ) ) ) {
-		request.getSession().setAttribute( "cartToOrderData", data.get( "data" ) );
+		SessionUtils.setSession( data.get( "data" ), request, "cartToOrderData" );
 		String msg = data.get( "data" ).toString();
 		obj = JSONObject.fromObject( msg );
 	    }
 
 	    List< Map< String,Object > > list = new ArrayList<>();
 
+	    BusUser user = new BusUser();
+	    user.setId( userid );
+	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
+
 	    if ( type.equals( "1" ) ) {//从购物车进入订单
 		if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
-		    String msg = request.getSession().getAttribute( "cartToOrderData" ).toString();
+		    String msg = SessionUtils.getSession( request, "cartToOrderData" ).toString();
 		    obj = JSONObject.fromObject( msg );
 		}
 
 		String id = obj.get( "shop_ids" ).toString();
 		String shopcards = id.substring( 0, id.length() );
-		list = mallShopCartService.getProductByShopCart( shopcards, pbUser, member, userid );
+		list = mallShopCartService.getProductByShopCart( shopcards, pbUser, member, userid, shopList );
 	    } else {
 		if ( CommonUtil.isNotEmpty( data.get( "detail" ) ) ) {
 		    obj.put( "data", data.get( "detail" ) );
@@ -261,7 +265,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		}
 
 		JSONObject maps = JSONObject.fromObject( list.get( 0 ) );
-		list = mallShopCartService.getProductByIds( maps, pbUser, member, userid );
+		list = mallShopCartService.getProductByIds( maps, pbUser, member, userid, shopList );
 	    }
 	    Object appointName = data.get( "appointName" );//提货人姓名
 	    Object appointTel = data.get( "appointTel" );//提货人手机
@@ -269,7 +273,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "appointTel", appointTel );
 
 	    //获取参数
-	    mallShopCartService.getOrdersParams( request, loginCity, userid, list, mem_longitude, mem_latitude, member );
+	    mallShopCartService.getOrdersParams( request, loginCity, userid, list, mem_longitude, mem_latitude, member, shopList );
 
 	    //商户是否允许买家货到付款,找人代付（true 允许  false 不允许）
 	    mallPaySetService.isHuoDaoByUserId( userid, request );
@@ -327,13 +331,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @SuppressWarnings( { "unchecked", "unused" } )
     @RequestMapping( value = "/79B4DE7C/addOrder" )
     @SysLogAnnotation( op_function = "2", description = "添加订单" )
-    public void addOrder( HttpServletRequest request,
-		    @RequestParam Map< String,Object > param,
-		    HttpServletResponse response ) {
+    public void addOrder( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) {
 	logger.info( "进入生成订单页面" );
 	boolean flag = true;
 	PrintWriter out = null;
-	Map< String,Object > result = new HashMap< String,Object >();
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    out = response.getWriter();
 
@@ -389,7 +391,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( params.get( "orderMoney" ) ) ) {
 		orderMoney = CommonUtil.toDouble( params.get( "orderMoney" ).toString() );
 	    }
-	    request.getSession().setAttribute( "deliveryMethod", params.get( "deliveryMethod" ) );
+	    SessionUtils.setSession( params.get( "deliveryMethod" ), request, "deliveryMethod" );
 	    //判断是否用积分抵扣来兑换商品
 	    /*if(flag){
 		    if(orderPayWay == 4){//积分支付
@@ -476,10 +478,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			if ( ( CommonUtil.judgeBrowser( request ) != 1 || CommonUtil.isEmpty( publicMap ) ) ) {
 			    boolean isLogin = pageService.isLogin( member, userid, request );
 			    if ( !isLogin ) {
-				//JedisUtil.set(key, JSONObject.fromObject(param).toString(), 60*60);
-								/*obj.put("data", JSONObject.fromObject(obj.get("detail")).toString());
-								obj.remove("detail");*/
-				request.getSession().setAttribute( "to_order", JSONObject.fromObject( data ).toString() );
+				SessionUtils.setSession( JSONObject.fromObject( data ).toString(), request, "to_order" );
 				result.put( "result", false );
 				result.put( "msg", "您还未登陆，请前往登陆页面登陆" );
 				result.put( "isLogin", "1" );
@@ -686,15 +685,15 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		if ( CommonUtil.isEmpty( addType ) && CommonUtil.isNotEmpty( params ) ) {
 		    if ( CommonUtil.isNotEmpty( params.get( "addressType" ) ) && CommonUtil.isNotEmpty( params.get( "payWay" ) ) && CommonUtil
 				    .isNotEmpty( params.get( "payWayName" ) ) && CommonUtil.isNotEmpty( params.get( "data" ) ) ) {
-			request.getSession().setAttribute( "addressType", params.get( "addressType" ).toString() );
-			request.getSession().setAttribute( "orderpayway", params.get( "payWay" ).toString() );
-			request.getSession().setAttribute( "orderpaywayname", params.get( "payWayName" ).toString() );
-			request.getSession().setAttribute( "dataOrder", params.get( "data" ).toString() );
+			SessionUtils.setSession( params.get( "addressType" ).toString(), request, "addressType" );
+			SessionUtils.setSession( params.get( "payWay" ).toString(), request, "orderpayway" );
+			SessionUtils.setSession( params.get( "data" ).toString(), request, "dataOrder" );
+
 			params.remove( "payWayName" );
 		    }
-		    Object deliveryMethodObj = request.getSession().getAttribute( "deliveryMethod" );
+		    Object deliveryMethodObj = SessionUtils.getSession( request, "deliveryMethod" );
 		    if ( CommonUtil.isNotEmpty( deliveryMethodObj ) ) {
-			request.getSession().removeAttribute( "deliveryMethod" );
+			SessionUtils.removeSession( request, "deliveryMethod" );
 		    }
 		    request.setAttribute( "addType", addType );
 		}
@@ -955,8 +954,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 
 	    String result = "0";
-	    if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-		Integer shopId = CommonUtil.toInteger( request.getSession().getAttribute( "shopId" ) );
+	    Integer shopId = SessionUtils.getMallShopId( request );
+	    if ( shopId > 0 ) {
 		List list1 = pageService.shoppage( shopId );
 		if ( list1.size() > 0 ) {
 		    Map map1 = (Map) list1.get( 0 );
@@ -1014,8 +1013,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
 	    request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
 	    pageService.getCustomer( request, 0 );
-	    if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-		request.setAttribute( "shopid", request.getSession().getAttribute( "shopId" ) );
+	    if ( shopId > 0 ) {
+		request.setAttribute( "shopid", shopId );
 	    }
 	    MallPaySet set = mallPaySetService.selectByMember( member );
 	    request.setAttribute( "mallPaySet", set );
@@ -1296,15 +1295,15 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		request.setAttribute( "checkId", params.get( "id" ) );
 	    }
 	    if ( CommonUtil.isNotEmpty( params.get( "deliveryType" ) ) && CommonUtil.isNotEmpty( params.get( "payWay" ) ) && CommonUtil.isNotEmpty( params.get( "payWayName" ) ) ) {
-		request.getSession().setAttribute( "deliveryMethod", params.get( "deliveryType" ).toString() );
-		request.getSession().setAttribute( "orderpayway", params.get( "payWay" ).toString() );
-		request.getSession().setAttribute( "orderpaywayname", params.get( "payWayName" ).toString() );
-		params.remove( "payWayName" );
+		SessionUtils.setSession( params.get( "deliveryType" ), request, "deliveryMethod" );
+		SessionUtils.setSession( params.get( "payWay" ), request, "orderpayway" );
+		SessionUtils.setSession( params.get( "deliveryType" ), request, "deliveryMethod" );
+
 	    }
-	    request.getSession().setAttribute( "dataOrder", params.toString() );
-	    Object addTypeObj = request.getSession().getAttribute( "addressType" );
+	    SessionUtils.setSession( com.alibaba.fastjson.JSONObject.toJSON( params ), request, "dataOrder" );
+	    Object addTypeObj = SessionUtils.getSession( request, "addressType" );
 	    if ( CommonUtil.isNotEmpty( addTypeObj ) ) {
-		request.getSession().removeAttribute( "addressType" );
+		SessionUtils.removeSession( request, "addressType" );
 	    }
 	} catch ( Exception e ) {
 	    e.printStackTrace();
@@ -1348,8 +1347,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    }
 		    if ( CommonUtil.isNotEmpty( map.get( "shop_id" ) ) ) {
 			int shopId = CommonUtil.toInteger( map.get( "shop_id" ) );
-			if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-			    shopId = CommonUtil.toInteger( request.getSession().getAttribute( "shopId" ) );
+			if ( SessionUtils.getMallShopId( request ) > 0 ) {
+			    shopId = SessionUtils.getMallShopId( request );
 			}
 			List list1 = pageService.shoppage( shopId );
 			if ( list1.size() > 0 ) {
@@ -1423,8 +1422,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    Map< String,Object > map = detailList.get( 0 );
 		    if ( CommonUtil.isNotEmpty( map.get( "shop_id" ) ) ) {
 			int shopId = CommonUtil.toInteger( map.get( "shop_id" ) );
-			if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-			    shopId = CommonUtil.toInteger( request.getSession().getAttribute( "shopId" ) );
+			if ( SessionUtils.getMallShopId( request ) > 0 ) {
+			    shopId = SessionUtils.getMallShopId( request );
 			}
 			List list1 = pageService.shoppage( shopId );
 			String pageId = "0";
@@ -1663,10 +1662,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
-	    MallAllEntity mallAllEntity = mallOrderNewService.calculateOrder( params, member );
+	    List< MallOrder > orderList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "order" ).toString(), MallOrder.class );
+	    MallAllEntity mallAllEntity = mallOrderNewService.calculateOrder( params, member, orderList );
 
 	    if ( CommonUtil.isNotEmpty( mallAllEntity ) ) {
-		result =  mallOrderNewService.getCalculateData( mallAllEntity );
+		result = mallOrderNewService.getCalculateData( mallAllEntity );
 	    } else {
 		code = ResponseEnums.NULL_ERROR.getCode();
 	    }
@@ -1677,6 +1677,59 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	} finally {
 	    result.put( "code", code );
 	    CommonUtil.write( response, result );
+	}
+    }
+
+    @RequestMapping( value = "/79B4DE7C/submitOrder" )
+    @SysLogAnnotation( op_function = "2", description = "提交订单" )
+    public void submitOrder( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) throws IOException {
+	logger.info( "提交订单" );
+	Map< String,Object > result = new HashMap<>();
+	try {
+	    String ip = IPKit.getRemoteIP( request );
+	    String key = "mall:add_order_" + ip;
+	    if ( CommonUtil.isEmpty( param.get( "params" ) ) ) {
+		if ( JedisUtil.exists( key ) ) {
+		    param = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( JedisUtil.get( key ) ), Map.class );
+		}
+	    }
+
+	    Member member = SessionUtils.getLoginMember( request );
+	    int userid = 0;
+	    if ( CommonUtil.isNotEmpty( param.get( "uId" ) ) ) {
+		userid = CommonUtil.toInteger( param.get( "uId" ) );
+		request.setAttribute( "userid", userid );
+	    }
+
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		member = memberService.findMemberById( member.getId(), member );
+	    }
+	    SessionUtils.setSession( param.get( "deliveryMethod" ), request, "deliveryMethod" );
+
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		SessionUtils.setSession( JSONObject.fromObject( param ).toString(), request, "to_order" );
+		result.put( "code", ResponseEnums.ERROR.getCode() );
+		result.put( "errorMsg", "您还未登陆，请前往登陆页面登陆" );
+		result.put( "isLogin", "1" );
+	    }
+	    if ( result.get( "code" ).toString().equals( "1" ) ) {
+		Integer browser = CommonUtil.judgeBrowser( request );
+		if ( browser != 1 ) {
+		    browser = 2;
+		}
+		result = mallOrderNewService.submitOrder( param, member, browser );
+	    }
+
+	} catch ( Exception e ) {
+	    logger.error( "生成订单异常：" + e );
+	    e.printStackTrace();
+
+	    result.put( "code", ResponseEnums.ERROR.getCode() );
+	    result.put( "msg", "提交订单失败" );
+	} finally {
+	    CommonUtil.write( response, JSONObject.fromObject( result ).toString() );
 	}
     }
 

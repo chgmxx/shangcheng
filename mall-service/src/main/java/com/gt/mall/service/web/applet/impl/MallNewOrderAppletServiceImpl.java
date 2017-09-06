@@ -37,9 +37,10 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
-import com.gt.mall.util.MobileLocationUtil;
 import com.gt.mall.util.PropertiesUtil;
+import com.gt.util.entity.param.fenbiFlow.ReqGetMobileInfo;
 import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.result.fenbi.GetMobileInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1535,7 +1536,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( jifenDiscountMoney > 0 ) {
 	    detail.setIntegralYouhui( BigDecimal.valueOf( jifenDiscountMoney ) );
 	    if ( useJifen > 0 ) {
-		detail.setUseJifen( (int) useJifen );
+		detail.setUseJifen( useJifen );
 		logger.info( "使用了积分：" + detail.getUseJifen() + "，优惠了：" + jifenDiscountMoney );
 	    }
 	}
@@ -1766,21 +1767,13 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    duofenCouponMap.put( order.getShopId() + "", JSONObject.parseObject( orderObj.get( "duofenCoupon" ).toString() ) );
 		}
 
-		if ( order.getOrderPayWay() == 4 ) {//积分支付
-		    Integer mIntergral = member.getIntegral();
-		    if ( mIntergral < order.getOrderMoney().intValue() || mIntergral < 0 ) {
-			code = -1;
-			msg = "您的积分不够，不能用积分来兑换这件商品";
-			break;
+		Map< String,Object > result = validateOrder( order, member );
+		code = CommonUtil.toInteger( result.get( "code" ) );
+		if ( code == -1 ) {
+		    if ( CommonUtil.isNotEmpty( result.get( "errorMsg" ) ) ) {
+			msg = result.get( "errorMsg" ).toString();
 		    }
-		}
-		if ( order.getOrderPayWay() == 8 ) {//粉币支付
-		    double fenbi = member.getFansCurrency();
-		    if ( fenbi < order.getOrderMoney().intValue() || fenbi < 0 ) {
-			code = -1;
-			msg = "您的粉币不够，不能用粉币来兑换这件商品";
-			break;
-		    }
+		    break;
 		}
 
 		double orderMoneys = 0;
@@ -1814,7 +1807,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    if ( CommonUtil.isNotEmpty( detail.getDetPrivivilege() ) ) {
 				totalPrimary = CommonUtil.toDouble( detail.getDetPrivivilege() ) * detail.getDetProNum();
 			    }
-			    Map< String,Object > dresultMap = orderDetailIsGo( order, detail );
+			    Map< String,Object > dresultMap = validateOrderDetail( order, detail );
 			    code = CommonUtil.toInteger( dresultMap.get( "code" ) );
 			    if ( code == -1 ) {
 				if ( CommonUtil.isNotEmpty( dresultMap.get( "errorMsg" ) ) ) {
@@ -1995,7 +1988,32 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	return resultMap;
     }
 
-    private Map< String,Object > orderDetailIsGo( MallOrder order, MallOrderDetail detail ) {
+    @Override
+    public Map<String,Object> validateOrder(MallOrder order,Member member){
+	Map< String,Object > resultMap = new HashMap<>();
+	String msg = "";
+	int code = 1;
+	if ( order.getOrderPayWay() == 4 ) {//积分支付
+	    Integer mIntergral = member.getIntegral();
+	    if ( mIntergral < order.getOrderMoney().intValue() || mIntergral < 0 ) {
+		code = -1;
+		msg = "您的积分不够，不能用积分来兑换这件商品";
+	    }
+	}
+	if ( order.getOrderPayWay() == 8 ) {//粉币支付
+	    double fenbi = member.getFansCurrency();
+	    if ( fenbi < order.getOrderMoney().intValue() || fenbi < 0 ) {
+		code = -1;
+		msg = "您的粉币不够，不能用粉币来兑换这件商品";
+	    }
+	}
+	resultMap.put( "code", code );
+	resultMap.put( "errorMsg", msg );
+	return resultMap;
+    }
+
+    @Override
+    public Map< String,Object > validateOrderDetail( MallOrder order, MallOrderDetail detail ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	String msg = "";
 	int code = 1;
@@ -2033,18 +2051,42 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		}
 	    }
 	}
+
+	//拍卖商品
+	/*if ( CommonUtil.isNotEmpty( order.getOrderType() ) ) {
+	    if ( order.getOrderType().toString().equals( "4" ) ) {
+		params.put( "groupBuyId", order.getGroupBuyId() );
+		result = mallAuctionService.isMaxNum( params, member.getId().toString() );
+	    } else if ( order.getOrderType().toString().equals( "6" ) ) {//商品预售
+		result = mallPresaleService.isMaxNum( params, member.getId().toString() );
+	    }
+	    if ( result.get( "result" ).toString().equals( "false" ) ) {
+		result.put( "code", ResponseEnums.ERROR.getCode() );
+		result.put( "errorMsg", "您的粉币不够，不能用粉币来兑换这件商品" );
+		return result;
+	    } else {
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );
+	    }
+	}*/
+
 	if ( CommonUtil.isNotEmpty( order.getFlowPhone() ) && code > 0 ) {//流量充值，判断手机号码
 	    MallProduct product = productService.selectByPrimaryKey( detail.getProductId() );
-	    Map< String,String > map = MobileLocationUtil.getMobileLocation( order.getFlowPhone() );
-	    if ( map.get( "code" ).toString().equals( "-1" ) ) {
-		resultMap.put( "code", -1 );
-		resultMap.put( "msg", map.get( "msg" ) );
+
+	    ReqGetMobileInfo reqGetMobileInfo = new ReqGetMobileInfo();
+	    reqGetMobileInfo.setPhone( order.getFlowPhone() );
+	    Map map = fenBiFlowService.getMobileInfo( reqGetMobileInfo );
+	    if ( map.get( "code" ).toString().equals( "1" ) ) {
+		resultMap.put( "code", ResponseEnums.ERROR.getCode() );
+		resultMap.put( "errorMsg", map.get( "errorMsg" ) );
 		return resultMap;
-	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
+	    } else if ( map.get( "code" ).equals( "1" ) ) {
+		GetMobileInfo mobileInfo = JSONObject.toJavaObject( JSONObject.parseObject( map.get( "data" ).toString() ), GetMobileInfo.class );
+
 		WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
-		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
-		    resultMap.put( "code", -1 );
-		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );
+
+		if ( mobileInfo.getSupplier().equals( "中国联通" ) && flow.getCount() == 10 ) {
+		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
+		    resultMap.put( "errorMsg", "充值失败,联通号码至少30MB" );
 		    return resultMap;
 		}
 	    }

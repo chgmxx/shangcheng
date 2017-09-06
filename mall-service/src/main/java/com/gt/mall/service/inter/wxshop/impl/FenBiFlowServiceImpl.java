@@ -7,10 +7,7 @@ import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
-import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
-import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
-import com.gt.util.entity.param.fenbiFlow.WsFenbiFlowRecord;
+import com.gt.util.entity.param.fenbiFlow.*;
 import com.gt.util.entity.result.fenbi.FenBiCount;
 import org.springframework.stereotype.Service;
 
@@ -79,5 +76,10 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
     public boolean adcServices( AdcServicesInfo adcServicesInfo ) {
 	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( adcServicesInfo, FLOW_URL + "adcServices.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+    }
+
+    @Override
+    public Map getMobileInfo( ReqGetMobileInfo reqGetMobileInfo ) {
+	return HttpSignUtil.signHttpInsertOrUpdate( reqGetMobileInfo, FLOW_URL + "getMobileInfo.do", 2 );
     }
 }

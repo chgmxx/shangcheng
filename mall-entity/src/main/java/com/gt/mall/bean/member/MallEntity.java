@@ -13,24 +13,24 @@ public class MallEntity {
     private Double discountMemberMoney = 0.0; //会员优惠券金额
     private Integer canUserCard = 0;  //是否用了会员
 
-    private Integer useCoupon = 0;  //是否使用优惠券  not null
+    private Integer useCoupon = 0;  //是否允许使用优惠券  not null
     private Double discountConponMoney = 0.0;
     private Integer canUseConpon = 0;  //是否能用优惠券
 
 
-    private Integer useFenbi = 0;  //是否使用粉币  not null
+    private Integer useFenbi = 0;  //是否允许使用粉币  not null
     private Double fenbiNum = 0.0;  //使用粉币数量
     private Double discountfenbiMoney = 0.0; //粉币抵扣金额
     private Integer canUsefenbi = 0;  //是否能用粉币
 
 
-    private Integer userJifen = 0;  //是否使用积分  not null
+    private Integer userJifen = 0;  //是否允许使用积分  not null
     private Double jifenNum = 0.0;  //使用积分数量
     private Double discountjifenMoney = 0.0; //积分抵扣金额
     private Integer canUseJifen = 0;  //是否能用积分
 
 
-    private Integer useLeague = 1;     //商品是否能使用联盟卡
+    private Integer useLeague = 1;     //商品是否允许使用联盟卡
     private Double leagueJifen = 0.0;   //  商品联盟积分使用数量
     private Double leagueMoney = 0.0;  //联盟卡优惠券金额
     private Integer canUseLeagueJifen = 1;  //是否能用联盟积分

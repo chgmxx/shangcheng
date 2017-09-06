@@ -22,12 +22,12 @@ public interface MallShopCartService extends BaseService< MallShopCart > {
     /**
      * 查询购物车的商品信息（立即结算进入提交订单页面所需的）
      */
-    List< Map< String,Object > > getProductByShopCart( String shopcards, WxPublicUsers pbUser, Member member, int userId );
+    List< Map< String,Object > > getProductByShopCart( String shopcards, WxPublicUsers pbUser, Member member, int userId ,List< Map< String,Object > > shopList);
 
     /**
      * 查询商品信息（立即购买进入提交订单页面所需的）
      */
-    List< Map< String,Object > > getProductByIds( Map< String,Object > maps, WxPublicUsers pbUser, Member member, int userId ) throws Exception;
+    List< Map< String,Object > > getProductByIds( Map< String,Object > maps, WxPublicUsers pbUser, Member member, int userId ,List< Map< String,Object > > shopList) throws Exception;
 
     /**
      * 获取进入提交订单的参数
@@ -39,5 +39,5 @@ public interface MallShopCartService extends BaseService< MallShopCart > {
      * @param mem_longitude 经度
      * @param mem_latitude  纬度
      */
-    void getOrdersParams( HttpServletRequest request, String loginCity, int userid, List< Map< String,Object > > list, double mem_longitude, double mem_latitude ,Member member);
+    void getOrdersParams( HttpServletRequest request, String loginCity, int userid, List< Map< String,Object > > list, double mem_longitude, double mem_latitude ,Member member,List< Map< String,Object > > shopList);
 }

@@ -330,7 +330,7 @@ public class MallProductController extends BaseController {
 	    String id = params.get( "id" ).toString();
 	    String shopId = params.get( "shopId" ).toString();
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    String content = PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/" + shopId + "/79B4DE7C/phoneProduct.do?uId=" + user.getId() + "&toshop=1";
+	    String content = PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/" + shopId + "/79B4DE7C/phoneProduct.do?toshop=1";
 	    QRcodeKit.buildQRcode( content, 200, 200, response );
 	} catch ( Exception e ) {
 	    logger.error( "获取到店支付二维码的图片失败：" + e.getMessage() );
