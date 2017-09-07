@@ -17,4 +17,11 @@ public interface MemberAddressService {
      * @return 默认地址
      */
     Map addressDefault(String memberIds);
+
+    /**
+     * 根据地址id查询地址
+     * @param addresssId 地址id
+     */
+    Map addreSelectId(String addresssId);
+
 }

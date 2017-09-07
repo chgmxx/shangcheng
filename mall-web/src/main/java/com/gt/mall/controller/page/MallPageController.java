@@ -884,7 +884,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		}
 		int userPId = SessionUtils.getAdminUserId( userid, request );//通过用户名查询主账号id
 		long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
-		if(isJxc == 1){
+		if ( isJxc == 1 ) {
 		    List< Map< String,Object > > erpInvList = mallProductService
 				    .getErpInvByProId( CommonUtil.toInteger( mapmessage.get( "erp_pro_id" ) ), CommonUtil.toInteger( mapmessage.get( "shop_id" ) ) );
 		    if ( erpInvList != null && erpInvList.size() > 0 ) {
@@ -1547,5 +1547,26 @@ public class MallPageController extends AuthorizeOrLoginController {
 	p.write( obj.toString() );
 	p.flush();
 	p.close();
+    }
+
+    /**
+     * 查询公众号下面所有的门店
+     */
+    @RequestMapping( "{shopId}/79B4DE7C/toMallIndex" )
+    @AfterAnno( style = "9", remark = "微商城访问记录" )
+    public String toMallIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopId ) {
+	int pageId = 0;
+	try {
+	    if ( shopId > 0 ) {
+		List list1 = mallPageService.shoppage( shopId );
+		if ( list1.size() > 0 ) {
+		    Map map1 = (Map) list1.get( 0 );
+		    request.setAttribute( "pageid", map1.get( "id" ).toString() );
+		}
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "查询公众号下面所有的门店异常：" + e.getMessage() );
+	}
+	return "redirect:/mallPage/" + pageId + "/79B4DE7C/pageIndex.do";
     }
 }

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -114,9 +115,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 			break;
 		    }
 		}
-
 	    }
-
 	    mallShops.put( mallOrder.getWxShopId(), shopEntity );
 	}
 
@@ -159,6 +158,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > submitOrder( Map< String,Object > params, Member member, Integer browser ) {
+	DecimalFormat df = new DecimalFormat( "######0.00" );
 	Map< String,Object > result = new HashMap<>();
 	List< MallOrder > orderList = JSONArray.parseArray( params.get( "order" ).toString(), MallOrder.class );
 	List< Map > couponList = null;
@@ -222,9 +222,12 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		    useJifen += orderDetail.getUseJifen();
 		}
 	    }
-
-	    mallOrder.setUseJifen( useJifen );
-	    mallOrder.setUseFenbi( useFenbi );
+	    if ( useJifen > 0 ) {
+		mallOrder.setUseJifen( CommonUtil.toDouble( df.format( useJifen ) ) );
+	    }
+	    if ( useFenbi > 0 ) {
+		mallOrder.setUseFenbi( CommonUtil.toDouble( df.format( useFenbi ) ) );
+	    }
 	}
 
 	if ( code == -1 ) {

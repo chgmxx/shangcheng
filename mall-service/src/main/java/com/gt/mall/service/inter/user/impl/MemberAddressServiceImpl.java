@@ -30,4 +30,15 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 	}
 	return null;
     }
+
+    @Override
+    public Map addreSelectId( String addresssId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "addid", addresssId );
+	String result = HttpSignUtil.signHttpSelect( params, url + "addreSelectId.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), Map.class );
+	}
+	return null;
+    }
 }
