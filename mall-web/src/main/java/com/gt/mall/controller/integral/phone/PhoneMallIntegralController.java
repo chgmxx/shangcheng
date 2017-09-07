@@ -87,7 +87,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		return returnUrl;
 	    }
 	    if ( shopId > 0 ) {
-		boolean isShop = pageService.wxShopIsDelete( shopId );
+		boolean isShop = pageService.wxShopIsDelete( shopId, null );
 		if ( !isShop ) {
 		    return "mall/product/phone/shopdelect";
 		}

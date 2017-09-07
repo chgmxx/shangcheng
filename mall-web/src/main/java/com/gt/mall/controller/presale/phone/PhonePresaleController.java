@@ -86,7 +86,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    boolean isShop = pageService.wxShopIsDelete( shopid );
+	    boolean isShop = pageService.wxShopIsDelete( shopid, null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
@@ -239,7 +239,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) ) {
 		isWxPay = 1;//可以微信支付
-	    }else{
+	    } else {
 		isAliPay = 1;
 	    }
 	    //todo alipayUserService.findAlipayUserByBusId

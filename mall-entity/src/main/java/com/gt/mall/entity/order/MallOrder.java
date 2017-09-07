@@ -217,67 +217,67 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
      * 订单类型（1.拼团 2积分 3.秒杀 4.拍卖 5 粉币 6预售 7批发）
      */
     @TableField( "order_type" )
-    private Integer    orderType;
+    private Integer orderType = 0;
     /**
      * 参团表的父id  根据订单类型 来决定关联表
      */
     @TableField( "p_join_id" )
-    private Integer    pJoinId;
+    private Integer pJoinId;
     /**
      * 优惠券code
      */
     @TableField( "coupon_code" )
-    private String     couponCode;
+    private String  couponCode;
     /**
      * 预约开始时间 小时:分钟的格式
      */
     @TableField( "appointment_start_time" )
-    private String     appointmentStartTime;
+    private String  appointmentStartTime;
     /**
      * 预约结束时间    小时:分钟的格式
      */
     @TableField( "appointment_end_time" )
-    private String     appointmentEndTime;
+    private String  appointmentEndTime;
     /**
      * 是否使用钱包支付   1已使用  0未使用 -1正在支付
      */
     @TableField( "is_wallet" )
-    private Integer    isWallet;
+    private Integer isWallet;
     /**
      * 商家id  关联bus_user表的id
      */
     @TableField( "bus_user_id" )
-    private Integer    busUserId;
+    private Integer busUserId;
     /**
      * 买家的收货地址
      */
     @TableField( "receive_address" )
-    private String     receiveAddress;
+    private String  receiveAddress;
     /**
      * 收货人姓名
      */
     @TableField( "receive_name" )
-    private String     receiveName;
+    private String  receiveName;
     /**
      * 收货人联系方式
      */
     @TableField( "receive_phone" )
-    private String     receivePhone;
+    private String  receivePhone;
     /**
      * 流量充值手机号
      */
     @TableField( "flow_phone" )
-    private String     flowPhone;
+    private String  flowPhone;
     /**
      * 流量充值的状态 -1不用充值 0未充值 1已充值 2充值失败且需要退款 3退款成功
      */
     @TableField( "flow_recharge_status" )
-    private Integer    flowRechargeStatus;
+    private Integer flowRechargeStatus;
     /**
      * 买家用户名称
      */
     @TableField( "member_name" )
-    private String     memberName;
+    private String  memberName;
 
     /**
      * 订单使用积分的数量

@@ -24,7 +24,7 @@ public class HttpSignUtil {
     /**
      * @param obj   参数
      * @param url   地址
-     * @param types 0 会员  1 商家相关   2 微信相关
+     * @param types 0 会员  1 商家相关   2 微信相关 3 联盟
      *
      * @return 返回对象
      */
@@ -33,31 +33,26 @@ public class HttpSignUtil {
 	try {
 	    String result = null;
 	    int type = CommonUtil.isNotEmpty( types ) && types.length > 0 ? types[0] : 0;
-	    if ( type == 0 ) {//会员
-		String signKey = PropertiesUtil.getMemberSignKey();
-		//		url = PropertiesUtil.getMemberDomain() + url;
-		url = "http://113.106.202.53:13885/" + url;
-		logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
-		result = SignHttpUtils.postByHttp( url, obj, signKey );
-	    } else {
-		//门店
-		String signKey = PropertiesUtil.getWxmpSignKey();
-		url = PropertiesUtil.getWxmpDomain() + url;
-		if ( type == 1 ) {
-		    logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
-		    result = SignHttpUtils.WxmppostByHttp( url, obj, signKey );
-		} else if ( type == 2 ) {
-		    RequestUtils requestUtils = new RequestUtils();
-		    requestUtils.setReqdata( obj );
-
-		    logger.info( "请求接口URL：" + url + "---参数：" + JSONObject.toJSONString( requestUtils ) + "---签名key：" + signKey );
-		    Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( requestUtils ), url, Map.class, signKey );
-
-		    result = JSONObject.toJSONString( map );
-		}
+	    String signKey = CommonUtil.getHttpSignKey( type );
+	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
+	    if ( type == 0 ) {
+		newUrl = "http://113.106.202.53:13885/" + url;
+	    }
+	    if ( type == 2 || type == 3 ) {//联盟和 微信相关接口需要封装一层
+		RequestUtils requestUtils = new RequestUtils();
+		requestUtils.setReqdata( obj );
+		obj = requestUtils;
+	    }
+	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
+	    if ( type == 1 ) {//商家
+		result = SignHttpUtils.WxmppostByHttp( newUrl, obj, signKey );
+	    } else if ( type == 2 ) {//微信、门店、支付
+		Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( obj ), newUrl, Map.class, signKey );
+		result = JSONObject.toJSONString( map );
+	    } else {//会员、联盟
+		result = SignHttpUtils.postByHttp( newUrl, obj, signKey );
 	    }
 	    long endTime = System.currentTimeMillis();
-
 	    long executeTime = endTime - startTime;
 
 	    logger.info( "请求接口的执行时间 : " + executeTime + "ms" );

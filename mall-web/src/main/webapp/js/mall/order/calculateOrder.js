@@ -7,6 +7,8 @@ function jisuan(type, couponObj, flag) {
         showJifenFenbiHideYouhui(type);
     } else if (type === 1) { // 使用优惠券
         couponShow(couponObj, flag);
+    } else if (type == 4) {
+        unionDiscount(couponObj)
     }
     var memberId = $("input.memberId").val();
     var useFenbi = $("#isFenbi").val();
@@ -73,8 +75,8 @@ function jisuan(type, couponObj, flag) {
                 var flag = true;
                 if (data.userJifen == 1) {
                     if (data.canUseJifen === 1) {//能使用
-                       /* $(".jifen_open_span .pay-explan .num").html(data.jifenNum);
-                        $(".jifen_open_span .pay-explan .money").html(data.discountjifenMoney);*/
+                        /* $(".jifen_open_span .pay-explan .num").html(data.jifenNum);
+                         $(".jifen_open_span .pay-explan .money").html(data.discountjifenMoney);*/
 
                         $("#jf").text(data.discountjifenMoney);
                         $(".jifen_open_span").show();
@@ -88,7 +90,7 @@ function jisuan(type, couponObj, flag) {
                 if (data.useFenbi === 1) {//能使用
                     if (data.canUsefenbi === 1) {//能使用
                         /*$(".fenbi_open_span .pay-explan .num").html(data.fenbiNum);
-                        $(".fenbi_open_span .pay-explan .money").html(data.discountfenbiMoney);*/
+                         $(".fenbi_open_span .pay-explan .money").html(data.discountfenbiMoney);*/
 
                         $("#fb").text(data.discountfenbiMoney);
                         $(".fenbi_open_span").show();
@@ -226,4 +228,21 @@ function couponShow(obj, tag) {
         }
         parentObj.find(".couponJson").val(JSON.stringify(couponObj));
     }
+}
+
+/**
+ * 计算联盟卡的折扣
+ */
+function unionDiscount(obj) {
+    if (obj === "" || obj === null) {
+        $("input.unionDiscountVal").val("");
+        $("#unionSpan").html("您还没选择优惠");
+    } else {
+        var unionDiscount = $(obj).find("#unionDiscountSpan").text();
+        if (unionDiscount !== null && unionDiscount !== "") {
+            $("#unionSpan").html(unionDiscount + "折");
+            $("input.unionDiscountVal").val(unionDiscount);
+        }
+    }
+    hideLay();
 }

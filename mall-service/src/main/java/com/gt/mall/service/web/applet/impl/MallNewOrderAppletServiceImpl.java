@@ -25,6 +25,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -78,35 +79,37 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private MallOrderDetailDAO      orderDetailDAO;
 
     @Autowired
-    private MallProductService  productService;
+    private MallProductService   productService;
     @Autowired
-    private MallFreightService  freightService;
+    private MallFreightService   freightService;
     @Autowired
-    private MallPaySetService   paySetService;
+    private MallPaySetService    paySetService;
     @Autowired
-    private MallOrderService    orderService;
+    private MallOrderService     orderService;
     @Autowired
-    private MallPageService     pageService;
+    private MallPageService      pageService;
     @Autowired
-    private MemberService       memberService;
+    private MemberService        memberService;
     @Autowired
-    private DictService         dictService;
+    private DictService          dictService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService  wxPublicUserService;
     @Autowired
-    private MallStoreService    mallStoreService;
+    private MallStoreService     mallStoreService;
     @Autowired
-    private FenBiFlowService    fenBiFlowService;
+    private FenBiFlowService     fenBiFlowService;
     @Autowired
-    private WxShopService       wxShopService;
+    private WxShopService        wxShopService;
     @Autowired
-    private MemberPayService    memberPayService;
+    private MemberPayService     memberPayService;
     @Autowired
-    private MallAuctionService  mallAuctionService;
+    private MallAuctionService   mallAuctionService;
     @Autowired
-    private MallPresaleService  mallPresaleService;
+    private MallPresaleService   mallPresaleService;
     @Autowired
-    private MallSeckillService  mallSeckillService;
+    private MallSeckillService   mallSeckillService;
+    @Autowired
+    private MemberAddressService memberAddressService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -120,20 +123,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	//查询用户默认的地址
-	Map< String,Object > addressParams = new HashMap< String,Object >();
-	Map< String,Object > addressMap = new HashMap< String,Object >();//保存默认地址信息
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
-	if ( memberList != null && memberList.size() > 0 ) {
-	    addressParams.put( "oldMemberIds", memberList );
-	} else {
-	    addressParams.put( "memberId", memberId );
-	}
-	addressParams.put( "memDefault", 1 );
-	List< Map< String,Object > > addressList = orderService.selectShipAddress( addressParams );
-	if ( addressList != null && addressList.size() > 0 ) {
-	    addressMap = addressList.get( 0 );
+	Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, memberId ) );
+	if ( addressMap != null && addressMap.size() > 0 ) {
 	    resultMap.put( "addressMap", getAddressParams( addressMap ) );
-
 	    params.put( "mem_province", addressMap.get( "mem_province" ) );
 	}
 	resultMap.put( "memberPhone", member.getPhone() );

@@ -100,7 +100,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
      */
     public Integer selectSpeBySpeValueId( Map< String,Object > params );
 
-
     /**
      * 找人代付成功的回调方法
      */

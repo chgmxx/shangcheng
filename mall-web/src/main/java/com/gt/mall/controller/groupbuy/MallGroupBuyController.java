@@ -409,7 +409,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    boolean isShop = pageService.wxShopIsDelete( shopid );
+	    boolean isShop = pageService.wxShopIsDelete( shopid, null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
@@ -542,7 +542,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		    }
 		}
 	    }
-	    Map shopmessage = pageService.shopmessage( CommonUtil.toInteger( productMap.get( "shopId" ) ) );//查询店铺信息
+	    Map shopmessage = pageService.shopmessage( CommonUtil.toInteger( productMap.get( "shopId" ) ), null );//查询店铺信息
 	    request.setAttribute( "shopMap", shopmessage );
 	    double discount = 1;//商品折扣
 

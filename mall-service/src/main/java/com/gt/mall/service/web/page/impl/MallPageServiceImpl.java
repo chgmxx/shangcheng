@@ -452,12 +452,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public Map< String,Object > shopmessage( Integer shopid ) {
+    public Map< String,Object > shopmessage( Integer shopid ,WsWxShopInfo wxShop) {
 	Map< String,Object > storeMap = mallStoreDAO.selectMapById( shopid );
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
 	    storeMap.put( "business_name", storeMap.get( "sto_name" ) );
 	    try {
-		WsWxShopInfo wxShop = wxShopService.getShopById( CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) ) );
+	        if(CommonUtil.isEmpty( wxShop )){
+		    wxShop = wxShopService.getShopById( CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) ) );
+		}
 		storeMap.put( "business_name", wxShop.getBusinessName() );
 		storeMap.put( "status", wxShop.getStatus() );
 
@@ -1796,13 +1798,15 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     /**
      * 查询门店或店铺是否已经删除
      */
-    public boolean wxShopIsDelete( int shopId ) throws Exception {
+    public boolean wxShopIsDelete( int shopId, WsWxShopInfo wsWxShopInfo ) throws Exception {
 	MallStore store = mallStoreService.selectById( shopId );
 	if ( store.getIsDelete() == 0 ) {
 	    if ( CommonUtil.isNotEmpty( store.getWxShopId() ) && store.getWxShopId() > 0 ) {
-		WsWxShopInfo shop = wxShopService.getShopById( store.getWxShopId() );
-		if ( CommonUtil.isNotEmpty( shop ) ) {
-		    if ( !CommonUtil.toString( shop.getStatus() ).equals( "-1" ) ) {
+		if ( CommonUtil.isEmpty( wsWxShopInfo ) ) {
+		    wsWxShopInfo = wxShopService.getShopById( store.getWxShopId() );
+		}
+		if ( CommonUtil.isNotEmpty( wsWxShopInfo ) ) {
+		    if ( !CommonUtil.toString( wsWxShopInfo.getStatus() ).equals( "-1" ) ) {
 			return true;
 		    }
 		}
@@ -2355,10 +2359,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public Map queryAreaById( Integer id ) {
-	List< Map > addressList = wxShopService.queryBasisCityIds( CommonUtil.toString( id ) );
+    public String queryAreaById( String citys ) {
+	List< Map > addressList = wxShopService.queryBasisCityIds(citys );
 	if ( addressList != null && addressList.size() > 0 ) {
-	    return addressList.get( 0 );
+	    StringBuilder address = new StringBuilder();
+	    for ( Map map : addressList ) {
+		address.append( map.get( "city_name" ) );
+	    }
+	    return address.toString();
 	}
 	return null;
     }

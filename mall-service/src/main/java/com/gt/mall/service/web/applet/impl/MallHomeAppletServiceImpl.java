@@ -22,6 +22,7 @@ import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.*;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -113,6 +114,8 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     private BusUserService              busUserService;
     @Autowired
     private WxShopService               wxShopService;
+    @Autowired
+    private MemberAddressService        memberAddressService;
 
     @Override
     public List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > params ) {
@@ -451,26 +454,16 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    }
 	}
 
+	Map addressMap = null;
 	//获取收货地址
-	List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
 	if ( CommonUtil.isNotEmpty( member ) ) {
-	    Map< String,Object > addressParams = new HashMap< String,Object >();
 	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
-	    if ( memberList != null && memberList.size() > 0 ) {
-		addressParams.put( "oldMemberIds", memberList );
-	    } else {
-		addressParams.put( "memberId", member.getId() );
-	    }
-	    addressParams.put( "memDefault", 1 );
-	    addressList = orderService.selectShipAddress( addressParams );//获取默认地址
+	    addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
 	}
-	Map< String,Object > addressMap = new HashMap< String,Object >();
-		/*String loginCity = "";*/
-	if ( addressList != null && addressList.size() > 0 ) {
-	    addressMap = addressList.get( 0 );
+	if ( addressMap != null && addressMap.size() > 0 ) {
 	    if ( CommonUtil.isNotEmpty( addressMap ) ) {
-		String address = CommonUtil.toString( addressMap.get( "pName" ) ) + CommonUtil.toString( addressMap.get( "cName" ) ) + CommonUtil
-				.toString( addressMap.get( "aName" ) ) + CommonUtil.toString( addressMap.get( "mem_address" ) );
+		String address = CommonUtil.toString( addressMap.get( "provincename" ) ) + CommonUtil.toString( addressMap.get( "cityname" ) ) + CommonUtil
+				.toString( addressMap.get( "areaname" ) ) + CommonUtil.toString( addressMap.get( "memAddress" ) );
 		productMap.put( "address", address );
 		productMap.put( "address_id", addressMap.get( "id" ) );
 	    }
@@ -480,7 +473,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 			freightService.getFreightByProvinces( params, addressMap, product.getShopId(), proPrice * discount, CommonUtil.toDouble( product.getProWeight() ) ) );
 
 	//查询店铺信息
-	Map< String,Object > shopMap = pageService.shopmessage( product.getShopId() );
+	Map< String,Object > shopMap = pageService.shopmessage( product.getShopId(), null );
 	if ( CommonUtil.isNotEmpty( shopMap ) ) {
 	    //店铺图片
 	    if ( CommonUtil.isNotEmpty( shopMap.get( "stoPicture" ) ) ) {
@@ -511,7 +504,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	}
 
 	//查询商品图片
-	params.put( "assId" ,productId);
+	params.put( "assId", productId );
 	List< Map< String,Object > > imageList = imageAssociativeDAO.selectByAssId( params );
 	List< Map< String,Object > > newImageList = new ArrayList< Map< String,Object > >();
 	if ( imageList != null && imageList.size() > 0 ) {
@@ -804,7 +797,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		shopMap.put( "id", map.get( "id" ) );
 		shopList.add( shopMap );
 	    }
-	    Collections.sort( shopList, new MallComparator( "raill" ) );
+	    Collections.sort( shopList, new MallComparatorUtil( "raill" ) );
 	}
 
 	return shopList;

@@ -203,12 +203,6 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="shopCartIds != null">
-            and a.id  in
-            <foreach item="item" index="index" collection="shopCartIds" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
     </select>
 
     <select id="selectShopCartByMemberId" parameterType="Map" resultType="Map">

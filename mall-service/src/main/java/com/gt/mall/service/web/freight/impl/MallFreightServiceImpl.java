@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.freight.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
@@ -138,7 +137,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		proTypeId = CommonUtil.toInteger( map.get( "proTypeId" ) );
 	    }
 
-	   JSONArray orderJSON = JSONArray.parseArray( JSON.toJSONString( map.get( "orderArr" ) ) );
+	    JSONArray orderJSON = JSONArray.parseArray( JSONArray.toJSONString( map.get( "orderArr" ) ) );
 
 	    if ( !CommonUtil.isEmpty( orderJSON ) && orderJSON.size() > 0 ) {
 		for ( Object object : orderJSON ) {

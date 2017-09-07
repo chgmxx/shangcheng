@@ -1,5 +1,8 @@
 package com.gt.mall.service.inter.union;
 
+import com.gt.union.api.entity.param.BindCardParam;
+import com.gt.union.api.entity.result.UnionDiscountResult;
+
 import java.util.Map;
 
 /**
@@ -17,7 +20,7 @@ public interface UnionCardService {
      *
      * @return 联盟折扣
      */
-    Map consumeUnionDiscount( int busUserId );
+    UnionDiscountResult consumeUnionDiscount( int busUserId );
 
     /**
      * 绑定联盟卡，获取手机验证码
@@ -26,13 +29,12 @@ public interface UnionCardService {
      *
      * @return 验证码
      */
-    String phoneCode( String phone );
+    Map phoneCode( String phone );
 
     /**
      * 绑定联盟卡
-     * @param phone 手机号码
-     * @param code 手机code
+     *
      * @return true 成功
      */
-    boolean uionCardBind(String phone,String code);
+    Map uionCardBind( BindCardParam bindCardParam );
 }

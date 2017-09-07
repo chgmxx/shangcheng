@@ -15,6 +15,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
@@ -197,16 +198,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		    shopEntity = mallShops.get( mallOrder.getWxShopId() );
 		}
 	    }
-	    mallOrder.setBuyerUserType( browser );
-	    mallOrder.setBuyerUserId( member.getId() );
-	    mallOrder.setBusUserId( member.getBusid() );
-	    mallOrder.setSellerUserId( member.getPublicId() );
-	    mallOrder.setOrderStatus( 1 );
-	    mallOrder.setCreateTime( new Date() );
-	    mallOrder.setMemberName( member.getNickname() );
-	    if ( CommonUtil.isNotEmpty( shopEntity ) ) {
-		mallOrder.setOrderMoney( CommonUtil.toBigDecimal( shopEntity.getBalanceMoney() ) );
-	    }
+	    mallOrder = getOrderParams( mallOrder, browser, member, shopEntity );
 
 	    freightMoney += CommonUtil.toDouble( mallOrder.getOrderFreightMoney() );
 
@@ -258,6 +250,10 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    orderList.add( 0, parentOrder );
 	}
 	logger.info( "orderParams" + JSONArray.toJSON( orderList ) );
+	if ( orderList.size() > 0 ) {
+	    throw new BusinessException( "ss" );
+	}
+
 	int orderPId = 0;
 	String orderNo = "";
 
@@ -365,6 +361,27 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 	result.put( "url", url );
 	return result;
+    }
+
+    private MallOrder getOrderParams( MallOrder mallOrder, int browser, Member member, MallShopEntity shopEntity ) {
+	mallOrder.setBuyerUserType( browser );
+	mallOrder.setBuyerUserId( member.getId() );
+	mallOrder.setBusUserId( member.getBusid() );
+	mallOrder.setSellerUserId( member.getPublicId() );
+	mallOrder.setOrderStatus( 1 );
+	mallOrder.setCreateTime( new Date() );
+	mallOrder.setMemberName( member.getNickname() );
+	double freightMoney = 0;
+	if ( CommonUtil.isNotEmpty( mallOrder.getOrderFreightMoney() ) ) {
+	    freightMoney = CommonUtil.toDouble( mallOrder.getOrderFreightMoney() );
+	}
+	if ( CommonUtil.isNotEmpty( shopEntity ) ) {
+	    mallOrder.setOrderMoney( CommonUtil.toBigDecimal( CommonUtil.add( shopEntity.getBalanceMoney(), freightMoney ) ) );
+	}
+	if ( CommonUtil.isEmpty( mallOrder.getOrderType() ) ) {
+	    mallOrder.setOrderType( 0 );
+	}
+	return mallOrder;
     }
 
     private MallOrderDetail getOrderDetailParams( MallOrder mallOrder, MallOrderDetail orderDetail, MallShopEntity shopEntity, List< Map > couponList ) {

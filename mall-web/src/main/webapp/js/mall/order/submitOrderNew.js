@@ -2,11 +2,10 @@ function submitOrders() {
     var data = getSubmitParams();
     console.log(data);
 
-    /*var flag = validateSubmit();
+    var flag = validateSubmit();
      if (!flag) {
      return false;
      }
-     */
     var index = layer.open({
         title: "",
         content: "",
@@ -141,7 +140,7 @@ function getSubmitParams() {
         "uId": $(".userid").val(),
         "type": $(".buyType").val()
     };
-    if ($(".shopcards").val() !== null && $(".shopcards").val() !== "" && type === 1) {
+    if ($(".shopcards").val() !== null && $(".shopcards").val() !== "" && $(".buyType").val() === "1") {
         data["shopcards"] = $(".shopcards").val();
     }
     return data;
