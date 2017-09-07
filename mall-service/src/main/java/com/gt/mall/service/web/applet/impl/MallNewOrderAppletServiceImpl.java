@@ -146,6 +146,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	//	double totalMoney = 0;//实付金额
 	double totalProMoney = 0;//	商品总价
 	double totalFreightMoney = 0;//运费总价
+	double totalDiscountMoney = 0; //商品会员折扣金额
 	int isFlow = 0;//是否是流量充值商品  1是  0 不是
 
 	int totalNum = 0;//商品小计
@@ -189,8 +190,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    productMap.put( "product_specificas", map.get( "product_specificas" ) );
 			    productMap.put( "product_specificaname", map.get( "product_speciname" ) );
 			    productMap.put( "product_num", map.get( "product_num" ) );
-			    productMap.put( "product_price", map.get( "price" ) );
-			    productMap.put( "primary_price", map.get( "primary_price" ) );
+			    productMap.put( "product_price", map.get( "price" ) );//会员折扣后价格
+			    productMap.put( "primary_price", map.get( "primary_price" ) );//原价
 			    productMap.put( "is_member_discount", map.get( "is_member_discount" ) );
 			    productMap.put( "is_coupons", map.get( "is_coupons" ) );
 			    productMap.put( "is_integral_deduction", map.get( "is_integral_deduction" ) );
@@ -199,6 +200,9 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    productMap.put( "product_type_id", map.get( "pro_type_id" ) );
 			    totalNum += CommonUtil.toInteger( map.get( "product_num" ) );
 			    proTypeId = CommonUtil.toInteger( map.get( "pro_type_id" ) );
+			    double discountPrice = CommonUtil.toDouble( map.get( "primary_price" ) ) - CommonUtil.toDouble( map.get( "price" ) );
+			    discountPrice = CommonUtil.toDouble( df.format( discountPrice ) );
+			    productMap.put( "discount_price", discountPrice );//折扣金额
 
 			    //新版本新增内容  1.1 开始    计算商品的会员价
 			    /*double price = 0;
@@ -228,11 +232,14 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    }
 
 			    proList.add( productMap );
-			    double proTotalPrice = CommonUtil.toDouble( productMap.get( "product_price" ) ) * CommonUtil.toInteger( map.get( "product_num" ) );
+			    double proTotalPrice = CommonUtil.toDouble( productMap.get( "primary_price" ) ) * CommonUtil.toInteger( map.get( "product_num" ) );
 			    totalPrice += proTotalPrice;
 			    //countProPrice += proTotalPrice;
 
 			    totalProMoney += proTotalPrice;
+
+			    double proTotalDiscount = discountPrice * CommonUtil.toInteger( map.get( "product_num" ) );
+			    totalDiscountMoney += proTotalDiscount;
 
 			    pro_weight += CommonUtil.toDouble( map.get( "pro_weight" ) );
 
@@ -379,6 +386,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	    totalNum += CommonUtil.toInteger( params.get( "product_num" ) );
 
+	    double discountPrice = 0;
 	    //新版本新增内容  1.1 开始    计算商品的会员价
 	    double memberProPrice = 0;
 	    double price = 0;
@@ -393,6 +401,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 			productMap.put( "primary_price", price );
 			productMap.put( "product_price", memberProPrice );
+
+			discountPrice = price - memberProPrice;
+			discountPrice = CommonUtil.toDouble( df.format( discountPrice ) );
+			productMap.put( "discount_price", discountPrice );//折扣金额
 		    }
 		}
 	    }
@@ -407,8 +419,12 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	    proList.add( productMap );
 
-	    double proTotalPrice = memberProPrice * CommonUtil.toInteger( params.get( "product_num" ) );
+	    //	    double proTotalPrice = memberProPrice * CommonUtil.toInteger( params.get( "product_num" ) );
+	    double proTotalPrice = CommonUtil.toDouble( productMap.get( "primary_price" ) ) * CommonUtil.toInteger( params.get( "product_num" ) );
 	    totalProMoney += proTotalPrice;
+
+	    double proTotalDiscount = discountPrice * CommonUtil.toInteger( params.get( "product_num" ) );
+	    totalDiscountMoney += proTotalDiscount;
 
 	    if ( CommonUtil.toString( product.getIsIntegralDeduction() ).equals( "1" ) ) {
 		++jifenNum;
@@ -523,6 +539,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	resultMap.put( "totalProMoney", totalProMoney );//商品总价
 	resultMap.put( "totalFreightMoney", totalFreightMoney );//运费
 	resultMap.put( "totalMoney", df.format( totalProMoney + totalFreightMoney ) );//实付金额
+	resultMap.put( "totalDiscountMoney", totalDiscountMoney );//商品会员折扣总价
 
 	resultMap.put( "isFlow", isFlow );//是否是流量充值商品   1是  0 不是
 
@@ -2088,11 +2105,16 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    resultMap.put( "errorMsg", "参数不完整" );
 	    return resultMap;
 	}
+
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	Integer shopId = null;
 	double orderTotalMoney = 0;//商品总价
 	if ( CommonUtil.isNotEmpty( params.get( "totalAllMoney" ) ) ) {
 	    orderTotalMoney = CommonUtil.toDouble( params.get( "totalAllMoney" ) );
+	}
+	double totalDiscountMoney = 0;//商品会员折扣总价
+	if ( CommonUtil.isNotEmpty( params.get( "totalDiscountMoney" ) ) ) {
+	    totalDiscountMoney = CommonUtil.toDouble( params.get( "totalDiscountMoney" ) );
 	}
 
 	Map< Integer,MallShopEntity > mallShops = new HashMap<>();
@@ -2207,17 +2229,27 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    } else {
 		resultMap.put( "fenbi", 0 );//粉币数量
 	    }
-
+	    Integer canUsefenbi = resultAllEntity.getCanUsefenbi();
+	    Integer canUseJifen = resultAllEntity.getCanUseJifen();
+	    double discountjifenMoney = 0;
+	    double discountfenbiMoney = 0;
+	    if ( canUsefenbi == 1 ) {//能用
+		discountfenbiMoney = resultAllEntity.getDiscountfenbiMoney();
+	    }
+	    if ( canUseJifen == 1 ) {//能用
+		discountjifenMoney = resultAllEntity.getDiscountjifenMoney();
+	    }
 	    resultMap.put( "code", 1 );
 	    resultMap.put( "errorMsg", "" );
 
+	    resultMap.put( "canUsefenbi", canUsefenbi );
+	    resultMap.put( "canUseJifen", canUseJifen );
 	    resultMap.put( "unionDiscountMoney", resultAllEntity.getLeagueMoney() );
 	    resultMap.put( "yhqDiscountMoney", resultAllEntity.getDiscountConponMoney() );
-	    resultMap.put( "fenbiDiscountMoney", resultAllEntity.getDiscountfenbiMoney() );
-	    resultMap.put( "jifenDiscountMoney", resultAllEntity.getDiscountjifenMoney() );
+	    resultMap.put( "fenbiDiscountMoney", discountfenbiMoney );
+	    resultMap.put( "jifenDiscountMoney", discountjifenMoney );
 	    DecimalFormat df = new DecimalFormat( "######0.00" );
-	    double youhuiMoney = resultAllEntity.getLeagueMoney() + resultAllEntity.getDiscountConponMoney() + resultAllEntity.getDiscountfenbiMoney() + resultAllEntity
-			    .getDiscountjifenMoney();
+	    double youhuiMoney = resultAllEntity.getLeagueMoney() + resultAllEntity.getDiscountConponMoney() + discountfenbiMoney + discountjifenMoney + totalDiscountMoney;
 	    resultMap.put( "orderTotalMoney", df.format( orderTotalMoney - youhuiMoney ) );
 
 	} else {

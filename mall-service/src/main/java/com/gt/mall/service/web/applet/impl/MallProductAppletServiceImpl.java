@@ -137,9 +137,9 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		    code = CommonUtil.toInteger( xgMap.get( "code" ) );
 		    msg = CommonUtil.toString( xgMap.get( "msg" ) );
 		}
-		String proSpec = map.get( "product_specificas" ).toString();
+		String proSpec = CommonUtil.toString( map.get( "product_specificas" ));
 		if ( map.get( "isSpec" ).toString().equals( "1" ) && code == 1 && pro_type == 0 ) {//商品存在规格
-		    if ( proSpec.equals( "" ) ) {
+		    if ( proSpec== null || proSpec.equals( "" ) ) {
 			code = 0;
 			msg = "商品存在规格";
 		    } else {
@@ -198,7 +198,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 
 		    }
 		} else if ( map.get( "isSpec" ).toString().equals( "0" ) && code == 1 && pro_type == 0 ) {//商品部存在规格
-		    if ( !proSpec.equals( "" ) ) {
+		    if ( proSpec != null && !proSpec.equals( "" ) ) {
 			code = 0;
 			msg = "商品不存在规格";
 		    }
