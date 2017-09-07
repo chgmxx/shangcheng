@@ -309,7 +309,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    }
 
 	    if ( CommonUtil.isNotEmpty( map.get( "pag_sto_id" ) ) ) {
-		Map storeMap = mallPageService.shopmessage( CommonUtil.toInteger( map.get( "pag_sto_id" ) ) );//获取店铺信息
+		Map storeMap = mallPageService.shopmessage( CommonUtil.toInteger( map.get( "pag_sto_id" ) ), null );//获取店铺信息
 
 		String name = "";//店铺名称
 		if ( CommonUtil.isEmpty( storeMap.get( "business_name" ) ) ) {
@@ -457,11 +457,11 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    }
 	    sellerService.clearSaleMemberIdByRedis( member, request, userid );
 
-	    boolean isShop = mallPageService.wxShopIsDelete( obj.getPagStoId() );
+	    boolean isShop = mallPageService.wxShopIsDelete( obj.getPagStoId(), null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
-	    Map storeMap = mallPageService.shopmessage( obj.getPagStoId() );//获取店铺信息
+	    Map storeMap = mallPageService.shopmessage( obj.getPagStoId(), null );//获取店铺信息
 
 	    String name = "";//店铺名称
 	    if ( CommonUtil.isEmpty( storeMap.get( "business_name" ) ) ) {
@@ -684,7 +684,6 @@ public class MallPageController extends AuthorizeOrLoginController {
     public String phoneProduct( HttpServletRequest request, HttpServletResponse response, @PathVariable int id, @PathVariable int shopid, @RequestParam Map< String,Object > param )
 		    throws Exception {
 	logger.info( "进入商城商品详细页面。。。" );
-	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	String jsp = "/mall/product/phone/phone_product_detail";
 	int userid = 0;
 	try {
@@ -693,17 +692,11 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Map< String,Object > mapuser = mallPageService.selUser( shopid );//查询商家信息
 	    WsWxShopInfo shop = wxShopService.getShopById( CommonUtil.toInteger( mapuser.get( "wx_shop_id" ) ) );
 	    if ( shop != null ) {//商家地址显示
-		Map< String,Object > province = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getProvince() ) );
-		Map< String,Object > city = mallPageService.queryAreaById( CommonUtil.toInteger( shop.getCity() ) );
-		request.setAttribute( "storeAddress", province.get( "city_name" ) + city.get( "city_name" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( mapuser ) ) {
-		userid = CommonUtil.toInteger( mapuser.get( "id" ) );
+		String address = mallPageService.queryAreaById( shop.getProvince() + "," + shop.getCity() );
+		request.setAttribute( "storeAddress", address );
 	    }
 	    Map< String,Object > publicUserid = mallPageService.getPublicByUserMap( mapuser );//查询公众号信息
-	    if ( CommonUtil.isNotEmpty( publicUserid ) ) {
-		userid = CommonUtil.toInteger( publicUserid.get( "bus_user_id" ) );
-	    }
+	    userid = CommonUtil.toInteger( mapmessage.get( "user_id" ) );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -715,7 +708,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    int rType = 0;//0 普通商品 1积分商品 2粉币商品
 	    String inv_id = "";//存放默认库存id
 
-	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
+	    boolean isShop = mallPageService.wxShopIsDelete( shopid, shop );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
@@ -867,7 +860,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		request.setAttribute( "imagelist", imagelist );
 		request.setAttribute( "http", http );
 		request.setAttribute( "mapmessage", mapmessage );
-		Map shopmessage = mallPageService.shopmessage( shopid );
+		Map shopmessage = mallPageService.shopmessage( shopid, shop );
 		double discount = 1;//商品折扣
 		String is_member_discount = mapmessage.get( "is_member_discount" ).toString();//商品是否参加折扣
 		if ( is_member_discount.equals( "1" ) && CommonUtil.isNotEmpty( member ) ) {
@@ -889,30 +882,34 @@ public class MallPageController extends AuthorizeOrLoginController {
 			mapmessage.put( "is_specifica", 0 );
 		    }
 		}
-		List< Map< String,Object > > erpInvList = mallProductService
-				.getErpInvByProId( CommonUtil.toInteger( mapmessage.get( "erp_pro_id" ) ), CommonUtil.toInteger( mapmessage.get( "shop_id" ) ) );
-		if ( erpInvList != null && erpInvList.size() > 0 ) {
-		    int totalInvNum = 0;
-		    for ( Map< String,Object > erpMap : erpInvList ) {
-			int erpInvId = CommonUtil.toInteger( erpMap.get( "erpInvId" ) );
-			int invNum = CommonUtil.toInteger( erpMap.get( "invNum" ) );
-			if ( guigePrice != null && guigePrice.size() > 0 ) {
-			    for ( Map< String,Object > map : guigePrice ) {
-				int erp_inv_id = CommonUtil.toInteger( map.get( "erp_inv_id" ) );
-				if ( erp_inv_id == erpInvId ) {
-				    totalInvNum += invNum;
-				    map.put( "inv_num", invNum );
+		int userPId = SessionUtils.getAdminUserId( userid, request );//通过用户名查询主账号id
+		long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
+		if(isJxc == 1){
+		    List< Map< String,Object > > erpInvList = mallProductService
+				    .getErpInvByProId( CommonUtil.toInteger( mapmessage.get( "erp_pro_id" ) ), CommonUtil.toInteger( mapmessage.get( "shop_id" ) ) );
+		    if ( erpInvList != null && erpInvList.size() > 0 ) {
+			int totalInvNum = 0;
+			for ( Map< String,Object > erpMap : erpInvList ) {
+			    int erpInvId = CommonUtil.toInteger( erpMap.get( "erpInvId" ) );
+			    int invNum = CommonUtil.toInteger( erpMap.get( "invNum" ) );
+			    if ( guigePrice != null && guigePrice.size() > 0 ) {
+				for ( Map< String,Object > map : guigePrice ) {
+				    int erp_inv_id = CommonUtil.toInteger( map.get( "erp_inv_id" ) );
+				    if ( erp_inv_id == erpInvId ) {
+					totalInvNum += invNum;
+					map.put( "inv_num", invNum );
+				    }
+				}
+			    } else {
+				int erp_inv_id = CommonUtil.toInteger( mapmessage.get( "erp_inv_id" ) );
+				if ( erp_inv_id > 0 && erp_inv_id == erpInvId ) {
+				    mapmessage.put( "pro_stock_total", invNum );
 				}
 			    }
-			} else {
-			    int erp_inv_id = CommonUtil.toInteger( mapmessage.get( "erp_inv_id" ) );
-			    if ( erp_inv_id > 0 && erp_inv_id == erpInvId ) {
-				mapmessage.put( "pro_stock_total", invNum );
-			    }
 			}
-		    }
-		    if ( totalInvNum > 0 ) {
-			mapmessage.put( "pro_stock_total", totalInvNum );
+			if ( totalInvNum > 0 ) {
+			    mapmessage.put( "pro_stock_total", totalInvNum );
+			}
 		    }
 		}
 
@@ -1009,12 +1006,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    logger.error( "访问商城商品详细页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-
-	String endTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	logger.info( startTime + "---" + endTime );
-	long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	logger.info( "访问商品详细页面花费：" + second + "秒" );
-
 	return jsp;
 
     }
@@ -1192,7 +1183,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
+	    boolean isShop = mallPageService.wxShopIsDelete( shopid, null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }

@@ -118,13 +118,15 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
 	Wrapper< MallIntegralImage > groupWrapper = new EntityWrapper<>();
 	String sql = "";
 	if ( CommonUtil.isNotEmpty( params.get( "userId" ) ) ) {
-	    sql += " and bus_user_id = " + params.get( "userId" );
+	    sql += " and i.bus_user_id = " + params.get( "userId" );
 	}
 	if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
-	    sql += " and shop_id = " + params.get( "shopId" );
+	    sql += " and i.shop_id = " + params.get( "shopId" );
 	}
-	groupWrapper.where( "is_delete = 0 and is_show = 1 " + sql );
-	groupWrapper.orderBy( "create_time desc" );
+	sql += "order by i.create_time desc";
+	groupWrapper.where( "i.is_delete = 0 and i.is_show = 1 " + sql );
+
 	return integralImageDAO.selectList( groupWrapper );
+	//        return integralImageDAO.selectByImage(params);
     }
 }

@@ -1,5 +1,6 @@
 package com.gt.mall.controller.order.phone;
 
+import com.alibaba.fastjson.JSON;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
@@ -21,9 +22,9 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
-import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
@@ -31,13 +32,14 @@ import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallOrderNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
+import com.gt.union.api.entity.param.BindCardParam;
+import com.gt.union.api.entity.result.UnionDiscountResult;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -87,10 +92,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @Autowired
     private MallTakeTheirService     mallTakeTheirService;
     @Autowired
-    private MallAuctionService       mallAuctionService;
-    @Autowired
-    private MallPresaleService       mallPresaleService;
-    @Autowired
     private MallSellerService        mallSellerService;
     @Autowired
     private MallPaySetService        mallPaySetService;
@@ -112,6 +113,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     private MallOrderNewService      mallOrderNewService;
     @Autowired
     private UnionCardService         unionCardService;
+    @Autowired
+    private MemberAddressService     memberAddressService;
 
     /**
      * 跳转至提交订单页面
@@ -121,7 +124,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     public String toOrder( HttpServletRequest request, HttpServletResponse response,
 		    @RequestParam Map< String,Object > data ) {
 	logger.info( "进入手机订单页面" );
-	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    String key = "to_order";
@@ -206,31 +208,27 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "isWxPay", isWxPay );
 	    request.setAttribute( "isAliPay", isAliPay );
 
-	    List< Map< String,Object > > addressList = new ArrayList<>();
+	    Map addressMap = null;
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		Map< String,Object > params = new HashMap<>();
-		params = mallOrderService.getMemberParams( member, params );
-		params.put( "memDefault", 1 );
-		//获取粉丝的默认收货地址
-		addressList = mallOrderService.selectShipAddress( params );
+		List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+		addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
 	    }
 	    double mem_longitude = 0;//保存经度信息
 	    double mem_latitude = 0;//保存纬度信息
 	    String loginCity = "";
-	    if ( addressList == null || addressList.size() == 0 ) {
+	    if ( CommonUtil.isEmpty( addressMap ) || addressMap.size() == 0 ) {
 		String ip = IPKit.getRemoteIP( request );
 		loginCity = pageService.getProvince( ip );
 	    } else {
-		Map< String,Object > addressMap = addressList.get( 0 );
+		loginCity = addressMap.get( "memProvince" ).toString();
 
-		loginCity = addressMap.get( "mem_province" ).toString();
 		request.setAttribute( "address", addressMap );
 
-		if ( CommonUtil.isNotEmpty( addressMap.get( "mem_longitude" ) ) ) {
-		    mem_longitude = CommonUtil.toDouble( addressMap.get( "mem_longitude" ) );
+		if ( CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) ) {
+		    mem_longitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
 		}
-		if ( CommonUtil.isNotEmpty( addressMap.get( "mem_latitude" ) ) ) {
-		    mem_latitude = CommonUtil.toDouble( addressMap.get( "mem_latitude" ) );
+		if ( CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) ) {
+		    mem_latitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
 		}
 		request.setAttribute( "loginCity", loginCity );
 	    }
@@ -310,11 +308,12 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		//查询商家是否已经开启了商家联盟
-		Map< String,Object > unionMap = new HashMap< String,Object >();
-		unionMap.put( "memberId", member.getId() );
-		unionMap.put( "busId", member.getBusid() );
-		unionMap = unionCardService.consumeUnionDiscount( member.getBusid() );
-		request.setAttribute( "unionMap", unionMap );
+		UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( member.getBusid() );
+		if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
+		    if ( unionDiscountResult.getCode() != -1 ) {
+			request.setAttribute( "unionMap", unionDiscountResult );
+		    }
+		}
 	    }
 
 	    request.setAttribute( "orderDetail", JSONArray.fromObject( list ) );
@@ -340,87 +339,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	} catch ( Exception e ) {
 	    logger.error( "手机订单页面异常：" + e );
 	    e.printStackTrace();
-	} finally {
-	    String endTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( startTime + "---" + endTime );
-	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( "访问提交订单页面花费：" + second + "秒" );
 	}
 	return "mall/order/phone/submitOrder";
-    }
-
-    /**
-     * 收货地址列表
-     */
-    @RequestMapping( value = "/79B4DE7C/addressList" )
-    public String addressList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params, HttpSession session ) {
-	logger.info( "进入收货地址列表页面" );
-	try {
-	    Member member = SessionUtils.getLoginMember( request );
-	    int userid = 0;
-	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-		userid = CommonUtil.toInteger( params.get( "uId" ) );
-		request.setAttribute( "userid", userid );
-	    }
-	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-			/*if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
-				boolean isLogin = pageService.isLogin(member, userid, request);
-				if(!isLogin){
-					return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
-				}
-			}*/
-	    Object addressManage = params.get( "addressManage" );//从我的页面，地址管理跳转至地址列表
-	    if ( CommonUtil.isEmpty( addressManage ) ) {
-		Object addType = params.get( "addType" );
-		if ( CommonUtil.isEmpty( addType ) && CommonUtil.isNotEmpty( params ) ) {
-		    if ( CommonUtil.isNotEmpty( params.get( "addressType" ) ) && CommonUtil.isNotEmpty( params.get( "payWay" ) ) && CommonUtil
-				    .isNotEmpty( params.get( "payWayName" ) ) && CommonUtil.isNotEmpty( params.get( "data" ) ) ) {
-			SessionUtils.setSession( params.get( "addressType" ).toString(), request, "addressType" );
-			SessionUtils.setSession( params.get( "payWay" ).toString(), request, "orderpayway" );
-			SessionUtils.setSession( params.get( "data" ).toString(), request, "dataOrder" );
-
-			params.remove( "payWayName" );
-		    }
-		    Object deliveryMethodObj = SessionUtils.getSession( request, "deliveryMethod" );
-		    if ( CommonUtil.isNotEmpty( deliveryMethodObj ) ) {
-			SessionUtils.removeSession( request, "deliveryMethod" );
-		    }
-		    request.setAttribute( "addType", addType );
-		}
-	    }
-	    request.setAttribute( "addressManage", addressManage );
-
-	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    String returnUrl = userLogin( request, response, loginMap );
-	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-		return returnUrl;
-	    }
-
-	    String memberId = member.getId().toString();
-
-	    params = mallOrderService.getMemberParams( member, params );
-	    params.put( "busUserId", member.getBusid() );
-	    List< Map< String,Object > > addressList = mallOrderService.selectShipAddress( params );
-	    request.setAttribute( "addressList", addressList );
-
-	    BusUser user = pageService.selUserByMember( member );
-	    if ( CommonUtil.isNotEmpty( user ) ) {
-		if ( CommonUtil.isNotEmpty( user.getAdvert() ) ) {
-		    if ( user.getAdvert() == 0 ) {
-			request.setAttribute( "isAdvert", 1 );
-		    }
-		}
-	    }
-	    /*if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) && CommonUtil.isNotEmpty( memberId ) ) {
-	    	//todo CommonUtil.getWxParams
-		CommonUtil.getWxParams( mallOrderService.getWpUser( member.getId() ), request );
-	    }*/
-	} catch ( Exception e ) {
-	    logger.error( "收货地址列表页面异常：" + e.getMessage() );
-	    e.printStackTrace();
-	}
-	return "mall/order/phone/addressList";
     }
 
     /**
@@ -875,8 +795,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 	    if ( orders.getReceiveId() != null ) {
 		params.put( "id", orders.getReceiveId() );
-		List< Map< String,Object > > addressList = mallOrderService.selectShipAddress( params );
-		request.setAttribute( "addressList", addressList );
+		//todo 根据地址id查询地址信息
+		//		List< Map< String,Object > > addressList = mallOrderService.selectShipAddress( params );
+		//		request.setAttribute( "addressList", addressList );
 	    }
 	    if ( CommonUtil.isNotEmpty( orders.getExpressId() ) ) {
 		String expressName = dictService.getDictRuturnValue( "1092", orders.getExpressId() );
@@ -1405,6 +1326,60 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    result.put( "code", ResponseEnums.ERROR.getCode() );
 	    result.put( "msg", "提交订单失败" );
 	} finally {
+	    CommonUtil.write( response, result );
+	}
+    }
+
+    /**
+     * 联盟绑定手机号码
+     */
+    @RequestMapping( value = "/79B4DE7C/bindUnionCard" )
+    public void bindUnionCard( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
+	logger.info( "进入联盟绑定controller" );
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
+	try {
+	    BindCardParam bindCardParam = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), BindCardParam.class );
+	    Map resultMap = unionCardService.uionCardBind( bindCardParam );
+	    if ( resultMap.get( "code" ).toString().equals( "1" ) ) {
+		code = ResponseEnums.ERROR.getCode();
+	    }
+	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
+		result.put( "errorMsg", resultMap.get( "errorMsg" ) );
+	    }
+
+	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
+	    logger.error( "联盟绑定异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    result.put( "code", code );
+	    CommonUtil.write( response, result );
+	}
+    }
+
+    /**
+     * 联盟发送手机验证码
+     */
+    @RequestMapping( value = "/79B4DE7C/getPhoneCode" )
+    public void getPhoneCode( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
+	logger.info( "进入联盟发送手机验证码controller" );
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
+	try {
+	    Map resultMap = unionCardService.phoneCode( params.get( "phone" ).toString() );
+	    if ( resultMap.get( "code" ).toString().equals( "1" ) ) {
+		code = ResponseEnums.ERROR.getCode();
+	    }
+	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
+		result.put( "errorMsg", resultMap.get( "errorMsg" ) );
+	    }
+	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
+	    logger.error( "联盟发送手机验证码异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    result.put( "code", code );
 	    CommonUtil.write( response, result );
 	}
     }

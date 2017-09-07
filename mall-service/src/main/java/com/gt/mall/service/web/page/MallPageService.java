@@ -9,6 +9,7 @@ import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.util.PageUtil;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import net.sf.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -136,7 +137,7 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return 详情信息
      */
-    public Map< String,Object > shopmessage( Integer shopid );
+    public Map< String,Object > shopmessage( Integer shopid ,WsWxShopInfo wxShop);
 
     /**
      * 根据主页面id，获取商家公众号id
@@ -350,7 +351,7 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return true 已删除   false 未删除
      */
-    public boolean wxShopIsDelete( int shopId ) throws Exception;
+    public boolean wxShopIsDelete( int shopId,WsWxShopInfo wsWxShopInfo ) throws Exception;
 
     /**
      * 添加关键词搜索记录
@@ -405,7 +406,7 @@ public interface MallPageService extends BaseService< MallPage > {
     /**
      * 得到地区名称
      */
-    public Map queryAreaById( Integer id );
+    public String queryAreaById(String citys);
 
     /**
      * 根据商品id获取商品部分信息

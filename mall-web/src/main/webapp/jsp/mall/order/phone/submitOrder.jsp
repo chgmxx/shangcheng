@@ -84,7 +84,7 @@
     <input type="hidden" id="sumCoupon"/>
 
     <div class="orderDivForm">
-        <input type="hidden" name="receiveId"/>
+        <input type="hidden" name="receiveId" value="<c:if test="${!empty address}">${address.id }</c:if>"/>
         <input type="hidden" name="orderMoney" id="orderMoney" value=""/>
         <input type="hidden" name="orderFreightMoney" id="orderFreightMoney" value=""/>
         <input type="hidden" name="orderOldMoney" id="orderOldMoney" value=""/>
@@ -126,23 +126,23 @@
             <section class="delivery-info" id="addressDiv">
                 <c:if test="${! empty address}">
                     <div>
-                        <input type="hidden" class="mem_latitude" value="${address.mem_latitude }"/>
-                        <input type="hidden" class="mem_longitude" value="${address.mem_longitude }"/>
+                        <input type="hidden" class="mem_latitude" value="${address.memLatitude }"/>
+                        <input type="hidden" class="mem_longitude" value="${address.memLongitude }"/>
                         <input type="hidden" id="receiveId" value="${address.id }"/>
                         <div onclick="toAddress();">
                             <div class="left_div">
                                 <div class="info info1">
                                     <div class="">
-                                        收件人：<label class="name">${address.mem_name }</label>
+                                        收件人：<label class="name">${address.memName }</label>
                                     </div>
                                     <div class="phone">
-                                            ${address.mem_phone }
+                                            ${address.memPhone }
                                     </div>
                                 </div>
                                 <div class="info info2">
-                                        ${address.pName}${address.cName}${address.aName}${address.mem_address }
-                                    <c:if test="${address.mem_zip_code != null && address.mem_zip_code != ''}">
-                                        (${address.mem_zip_code })
+                                        ${address.provincename}${address.cityname}${address.cityname}${address.memAddress }
+                                    <c:if test="${address.memAddress != null && address.memAddress != ''}">
+                                        (${address.memAddress })
                                     </c:if>
                                 </div>
                             </div>
@@ -405,22 +405,22 @@
         <input type="hidden" class="fenbiNum" name="fenbiNum" value="${fenbiNum }"/>
         <input type="hidden" class="fenbiProMoney" name="fenbiProMoney" value="${fenbiProMoney }">
         <c:if test="${!empty unionMap }">
-            <c:if test="${unionMap.status == 1 || unionMap.status == -2 }">
+            <c:if test="${unionMap.code == 1 || unionMap.code == 0 }">
 
                 <div class="pay-way" onclick="showUnionLayer()">
                     <lable class="text-left">联盟优惠</lable>
                     <span class="text-right right_img" style="float:right;margin-left:10px;"></span>
                     <span class="text-right" id="unionSpan" style="float:right">
-					<c:if test="${unionMap.status == 1 && !empty unionMap.discount }">${unionMap.discount }折</c:if>
-					<c:if test="${unionMap.status == -2 }">您还没绑定联盟卡</c:if>
+					<c:if test="${unionMap.code == 1 && !empty unionMap.discount }">${unionMap.discount }折</c:if>
+					<c:if test="${unionMap.code == 0}">您还没绑定联盟卡</c:if>
 				</span>
                 </div>
             </c:if>
-            <input type="hidden" class="unionStatus" value="${unionMap.status }"/>
-            <c:if test="${unionMap.status == 1 }">
+            <input type="hidden" class="unionStatus" value="${unionMap.code }"/>
+            <c:if test="${unionMap.code == 1 }">
                 <input type="hidden" class="cardId" value="${unionMap.cardId }"/>
                 <input type="hidden" class="unionDiscount" value="${unionMap.discount }"/>
-                <input type="hidden" class="union_id" value="${unionMap.union_id }"/>
+                <input type="hidden" class="union_id" value="${unionMap.cardId }"/>
                 <%-- <input type="hidden" class="default" value="${unionMap.default }"/> --%>
             </c:if>
         </c:if>
@@ -540,10 +540,12 @@
                 <label>运费</label>
                 <div class="red-txt">+ ￥<span id="fare"></span></div>
             </div>
-            <div class="fare-box">
-                <label>会员</label>
-                <div class="red-txt">- ￥<span id="hy">0.00</span></div>
-            </div>
+            <c:if test="${!empty cardMap && cardMap.ctId == 2}">
+                <div class="fare-box">
+                    <label>会员</label>
+                    <div class="red-txt">- ￥<span id="hy">0.00</span></div>
+                </div>
+            </c:if>
             <div class="fare-box">
                 <label>优惠券</label>
                 <div class="red-txt">- ￥<span id="yhj">0.00</span></div>
@@ -556,7 +558,7 @@
                 <label>积分</label>
                 <div class="red-txt">- ￥<span id="jf">0.00</span></div>
             </div>
-            <c:if test="${!empty unionMap && unionMap.status == 1}">
+            <c:if test="${!empty unionMap && unionMap.code == 1}">
                 <div class="fare-box">
                     <label>联盟优惠</label>
                     <div class="red-txt">- ￥<span id="lm">0.00</span></div>
@@ -577,7 +579,7 @@
     </div>
 </form>
 <c:if test="${!empty unionMap }">
-    <c:if test="${unionMap.status == -2 || unionMap.status == 1}">
+    <c:if test="${unionMap.code == 0 || unionMap.code == 1}">
         <jsp:include page="/jsp/mall/order/layer/unionPhone.jsp"></jsp:include>
     </c:if>
 </c:if>

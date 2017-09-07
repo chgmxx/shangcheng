@@ -526,4 +526,57 @@ public class CommonUtil {
 	}
 	return uctype;
     }
+
+    /**
+     * 获取接口的域名
+     *
+     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟
+     *
+     * @return 域名
+     */
+    public static String getHttpSignUrl( int type ) {
+	if ( type == 1 || type == 2 ) {
+	    return PropertiesUtil.getWxmpDomain();
+	} else if ( type == 3 ) {
+	    return PropertiesUtil.getUnionDomain();
+	}
+	return PropertiesUtil.getMemberDomain();
+    }
+
+    /**
+     * 获取接口的签名key
+     *
+     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟
+     *
+     * @return 签名key
+     */
+    public static String getHttpSignKey( int type ) {
+	if ( type == 1 || type == 2 ) {
+	    return PropertiesUtil.getWxmpSignKey();
+	} else if ( type == 3 ) {
+	    return PropertiesUtil.getUnionSignKey();
+	}
+	return PropertiesUtil.getMemberSignKey();
+    }
+
+    /**
+     * 把用户集合改成用逗号隔开的字符串
+     *
+     * @param memberList
+     * @param memberId
+     *
+     * @return
+     */
+    public static String getMememberIds( List< Integer > memberList, int memberId ) {
+	StringBuilder memberIds = new StringBuilder();
+	if ( memberList != null && memberList.size() > 0 ) {
+	    for ( Integer id : memberList ) {
+		memberIds.append( id ).append( "," );
+	    }
+	    memberIds = new StringBuilder( memberIds.substring( 0, memberIds.length() - 1 ) );
+	} else {
+	    memberIds = new StringBuilder( CommonUtil.toString( memberId ) );
+	}
+	return memberIds.toString();
+    }
 }

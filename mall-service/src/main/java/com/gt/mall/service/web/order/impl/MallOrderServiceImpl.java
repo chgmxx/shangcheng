@@ -18,9 +18,6 @@ import com.gt.mall.dao.order.MallDaifuDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
-import com.gt.mall.dao.page.MallPageDAO;
-import com.gt.mall.dao.presale.MallPresaleDepositDAO;
-import com.gt.mall.dao.presale.MallPresaleRankDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -48,13 +45,11 @@ import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.order.MallOrderService;
-import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
-import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.util.*;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
@@ -97,9 +92,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallOrderDAO mallOrderDAO;
 
     @Autowired
-    private MallPageService mallPageService;
-
-    @Autowired
     private MallProductDAO mallProductDAO;
 
     @Autowired
@@ -124,19 +116,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallDaifuDAO mallDaifuDAO;
 
     @Autowired
-    private MallPresaleDepositDAO mallPresaleDepositDAO;
-
-    @Autowired
-    private MallPresaleRankDAO mallPresaleRankDAO;
-
-    @Autowired
     private MallPresaleService mallPresaleService;
 
     @Autowired
     private MallOrderDetailDAO mallOrderDetailDAO;
-
-    @Autowired
-    private MallSellerMallsetService mallSellerMallsetService;
 
     @Autowired
     private MallSellerService mallSellerService;
@@ -158,9 +141,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private MallFreightDAO mallFreightDAO;
-
-    @Autowired
-    private MallPageDAO mallPageDAO;
 
     @Autowired
     private MemberService memberService;

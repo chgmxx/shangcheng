@@ -148,10 +148,10 @@ $(function () {
 
     var isJifen = $("#isJifen").val();
     var isFenbi = $("#isFenbi").val();
-    if(isJifen === "1"){
+    if (isJifen === "1") {
         showJifenFenbiHideYouhui(2);
     }
-    if(isFenbi === "1"){
+    if (isFenbi === "1") {
         showJifenFenbiHideYouhui(3);
     }
 
@@ -184,12 +184,13 @@ function hideLay() {
  * 商家联盟绑定弹出框
  */
 function showUnionLayer() {
-    $(".fade").show();
     var unionStatus = $(".unionStatus").val();
-    if (unionStatus == -2) {
+    if (unionStatus === "0") {
+        $(".fade").show();
         //弹出绑定联盟卡的页面
         $("#unionPhoneDiv").show();
-    } else if (unionStatus == 1) {
+    } else if (unionStatus === "1") {
+        $(".fade").show();
         $("#unionDiscountDiv").show();
     }
 }
@@ -204,7 +205,7 @@ function getCode(obj) {
     if (phoneFlag) {
         time($(obj));
         $.ajax({
-            url: "/unionMobile/79B4DE7C/getPhoneCode.do",
+            url: "/phoneOrder/79B4DE7C/getPhoneCode.do",
             type: "POST",
             data: {phone: tel},
             timeout: 300000,
@@ -243,7 +244,7 @@ function valUnionMobile(obj) {
         gtcommonDialog("请填写正确的验证码", null);
     } else {
         $.ajax({
-            url: "/unionMobile/79B4DE7C/bindUnionCard.do",
+            url: "/phoneOrder/79B4DE7C/bindUnionCard.do",
             type: "POST",
             data: {
                 phone: tel,
@@ -251,11 +252,11 @@ function valUnionMobile(obj) {
             },
             dataType: "json",
             success: function (data) {
-                if (data.status == "1") {
+                if (data.status === "1") {
                     //gtcommonDialog("绑定成功",bindOk);
                     location.reload(true);
-                } else if (data.message != null) {
-                    gtcommonDialog(data.message, null);
+                } else if (data.errorMsg !== null) {
+                    gtcommonDialog(data.errorMsg, null);
                 } else {
                     gtcommonDialog("绑定联盟卡失败,请稍后重新绑定", null);
                 }
@@ -360,7 +361,7 @@ function showLay(divName, obj) {
 }
 var isDaodian = false;
 function payWay(num) {
-    if(isDaodian){
+    if (isDaodian) {
         getFreightMoney(1);
     }
     if (num == 1) {
@@ -408,23 +409,23 @@ function getFreightMoney(type) {
         var fMoneys = 0;
         if (type !== 0 && fMoneys !== null && fMoneys !== "") {
             fMoneys = freightMoney[shopId];
-            productFreightMoneys += fMoneys*1;
+            productFreightMoneys += fMoneys * 1;
         }
         $(this).find(".freight_em").text(fMoneys);
     });
     $("#fare").text(productFreightMoneys);
-    var productAll = $("#proMoneyAllOld").val()*1;
+    var productAll = $("#proMoneyAllOld").val() * 1;
 
     var hy = $("#hy").text();
     var fb = $("#fb").text();
     var jf = $("#jf").text();
     var lm = $("#lm").text();
-    hy = hy === null || hy === "" ? 0 :hy*1;
-    fb = fb === null || fb === "" ? 0 :fb*1;
-    jf = jf === null || jf === "" ? 0 :jf*1;
-    lm = lm === null || lm === "" ? 0 :lm*1;
+    hy = hy === null || hy === "" ? 0 : hy * 1;
+    fb = fb === null || fb === "" ? 0 : fb * 1;
+    jf = jf === null || jf === "" ? 0 : jf * 1;
+    lm = lm === null || lm === "" ? 0 : lm * 1;
 
-    $("#sum-money").text((productAll+productFreightMoneys-hy-fb-jf-lm).toFixed(2));
+    $("#sum-money").text((productAll + productFreightMoneys - hy - fb - jf - lm).toFixed(2));
 }
 function delivery(num) {
     if (num == 1) {

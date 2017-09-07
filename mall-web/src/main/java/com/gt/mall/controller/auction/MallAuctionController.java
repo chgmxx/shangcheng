@@ -313,7 +313,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    boolean isShop = pageService.wxShopIsDelete( shopid );
+	    boolean isShop = pageService.wxShopIsDelete( shopid, null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
@@ -404,7 +404,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		return returnUrl;
 	    }
 
-	    boolean isShop = pageService.wxShopIsDelete( shopid );
+	    boolean isShop = pageService.wxShopIsDelete( shopid, null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
@@ -502,7 +502,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		request.setAttribute( "imagelist", imagelist );
 		request.setAttribute( "http", http );
 		request.setAttribute( "mapmessage", mapmessage );
-		Map shopmessage = pageService.shopmessage( shopid );
+		Map shopmessage = pageService.shopmessage( shopid ,null);
 		double discount = 1;//商品折扣
 		String is_member_discount = mapmessage.get( "is_member_discount" ).toString();//商品是否参加折扣
 		if ( ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {

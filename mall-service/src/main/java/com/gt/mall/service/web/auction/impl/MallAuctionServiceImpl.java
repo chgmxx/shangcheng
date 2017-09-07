@@ -303,7 +303,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		Object desc = maps.get( "desc" );
 		if ( CommonUtil.isNotEmpty( desc ) ) {
 		    if ( CommonUtil.toString( desc ).equals( "1" ) ) {
-			Collections.sort( list, new MallComparator( "nowPrice" ) );
+			Collections.sort( list, new MallComparatorUtil( "nowPrice" ) );
 		    }
 		}
 	    }

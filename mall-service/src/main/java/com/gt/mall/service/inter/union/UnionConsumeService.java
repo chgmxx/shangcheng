@@ -1,6 +1,7 @@
 package com.gt.mall.service.inter.union;
 
-import java.util.Map;
+import com.gt.union.api.entity.param.UnionConsumeParam;
+import com.gt.union.api.entity.param.UnionRefundParam;
 
 /**
  * 调用联盟卡核销接口
@@ -15,12 +16,12 @@ public interface UnionConsumeService {
      *
      * @return true 成功
      */
-    boolean unionConsume( Map< String,Object > params );
+    boolean unionConsume( UnionConsumeParam unionConsumeParam );
 
     /**
      * 联盟卡核销后退款
      *
      * @return true 成功
      */
-    boolean unionRefund( Map< String,Object > params );
+    boolean unionRefund( UnionRefundParam unionRefundParam );
 }

@@ -58,6 +58,10 @@ public class PropertiesUtil {
 
     private static String memberSignKey;//调用会员接口的签名key
 
+    private static String unionDomain;//调用联盟接口的链接
+
+    private static String unionSignKey;//调用联盟接口的签名key
+
     @Value( "${web.domain}" )
     public void setDomain( String domain ) {
 	PropertiesUtil.domain = domain;
@@ -171,6 +175,30 @@ public class PropertiesUtil {
     @Value( "${http.member.key}" )
     public void setMemberSignKey( String memberSignKey ) {
 	PropertiesUtil.memberSignKey = memberSignKey;
+    }
+
+    @Value( "${http.union.domain}" )
+    public void setUnionDomain( String unionDomain ) {
+	PropertiesUtil.unionDomain = unionDomain;
+    }
+
+    @Value( "${http.union.key}" )
+    public void setUnionSignKey( String unionSignKey ) {
+	PropertiesUtil.unionSignKey = unionSignKey;
+    }
+
+    /**
+     * 获取联盟的签名key
+     */
+    public static String getUnionDomain() {
+	return unionDomain;
+    }
+
+    /**
+     * 获取联盟的链接
+     */
+    public static String getUnionSignKey() {
+	return unionSignKey;
     }
 
     /**

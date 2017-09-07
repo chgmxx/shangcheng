@@ -261,7 +261,7 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    boolean isShop = mallPageService.wxShopIsDelete( shopid );
+	    boolean isShop = mallPageService.wxShopIsDelete( shopid, null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }

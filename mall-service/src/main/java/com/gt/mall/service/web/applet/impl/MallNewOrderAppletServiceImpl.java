@@ -25,6 +25,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -78,35 +79,37 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private MallOrderDetailDAO      orderDetailDAO;
 
     @Autowired
-    private MallProductService  productService;
+    private MallProductService   productService;
     @Autowired
-    private MallFreightService  freightService;
+    private MallFreightService   freightService;
     @Autowired
-    private MallPaySetService   paySetService;
+    private MallPaySetService    paySetService;
     @Autowired
-    private MallOrderService    orderService;
+    private MallOrderService     orderService;
     @Autowired
-    private MallPageService     pageService;
+    private MallPageService      pageService;
     @Autowired
-    private MemberService       memberService;
+    private MemberService        memberService;
     @Autowired
-    private DictService         dictService;
+    private DictService          dictService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService  wxPublicUserService;
     @Autowired
-    private MallStoreService    mallStoreService;
+    private MallStoreService     mallStoreService;
     @Autowired
-    private FenBiFlowService    fenBiFlowService;
+    private FenBiFlowService     fenBiFlowService;
     @Autowired
-    private WxShopService       wxShopService;
+    private WxShopService        wxShopService;
     @Autowired
-    private MemberPayService    memberPayService;
+    private MemberPayService     memberPayService;
     @Autowired
-    private MallAuctionService  mallAuctionService;
+    private MallAuctionService   mallAuctionService;
     @Autowired
-    private MallPresaleService  mallPresaleService;
+    private MallPresaleService   mallPresaleService;
     @Autowired
-    private MallSeckillService  mallSeckillService;
+    private MallSeckillService   mallSeckillService;
+    @Autowired
+    private MemberAddressService memberAddressService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -120,20 +123,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	//查询用户默认的地址
-	Map< String,Object > addressParams = new HashMap< String,Object >();
-	Map< String,Object > addressMap = new HashMap< String,Object >();//保存默认地址信息
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
-	if ( memberList != null && memberList.size() > 0 ) {
-	    addressParams.put( "oldMemberIds", memberList );
-	} else {
-	    addressParams.put( "memberId", memberId );
-	}
-	addressParams.put( "memDefault", 1 );
-	List< Map< String,Object > > addressList = orderService.selectShipAddress( addressParams );
-	if ( addressList != null && addressList.size() > 0 ) {
-	    addressMap = addressList.get( 0 );
+	Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, memberId ) );
+	if ( addressMap != null && addressMap.size() > 0 ) {
 	    resultMap.put( "addressMap", getAddressParams( addressMap ) );
-
 	    params.put( "mem_province", addressMap.get( "mem_province" ) );
 	}
 	resultMap.put( "memberPhone", member.getPhone() );
@@ -681,21 +674,21 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     }
 
     private Map< String,Object > getAddressParams( Map< String,Object > map ) {
-	Map< String,Object > addressMap = new HashMap< String,Object >();
+	Map< String,Object > addressMap = new HashMap<>();
 	addressMap.put( "id", map.get( "id" ) );//地址id
-	String address = CommonUtil.toString( map.get( "pName" ) ) + CommonUtil.toString( map.get( "cName" ) );
-	if ( CommonUtil.isNotEmpty( map.get( "aName" ) ) ) {
-	    address += CommonUtil.toString( map.get( "aName" ) );
+	String address = CommonUtil.toString( map.get( "provincename" ) ) + CommonUtil.toString( map.get( "cityname" ) );
+	if ( CommonUtil.isNotEmpty( map.get( "areaname" ) ) ) {
+	    address += CommonUtil.toString( map.get( "areaname" ) );
 	}
-	address += CommonUtil.toString( map.get( "mem_address" ) );
-	if ( CommonUtil.isNotEmpty( map.get( "mem_zip_code" ) ) ) {
-	    address += CommonUtil.toInteger( map.get( "mem_zip_code" ) );
+	address += CommonUtil.toString( map.get( "memAddress" ) );
+	if ( CommonUtil.isNotEmpty( map.get( "memZipCode" ) ) ) {
+	    address += CommonUtil.toInteger( map.get( "memZipCode" ) );
 	}
 	addressMap.put( "address_detail", address );//详细地址
-	addressMap.put( "member_name", map.get( "mem_name" ) );//联系人姓名
-	addressMap.put( "member_phone", map.get( "mem_phone" ) );//联系人手机号码
-	if ( CommonUtil.isNotEmpty( map.get( "mem_default" ) ) ) {
-	    addressMap.put( "is_default", map.get( "mem_default" ) );//是否是默认选中地址
+	addressMap.put( "member_name", map.get( "memName" ) );//联系人姓名
+	addressMap.put( "member_phone", map.get( "memPhone" ) );//联系人手机号码
+	if ( CommonUtil.isNotEmpty( map.get( "memDefault" ) ) ) {
+	    addressMap.put( "is_default", map.get( "memDefault" ) );//是否是默认选中地址
 	}
 	return addressMap;
     }
@@ -2045,7 +2038,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    } else if ( order.getOrderType().toString().equals( "6" ) ) {//商品预售
 		resultMap = mallPresaleService.isMaxNum( params, order.getBuyerUserId().toString(), detail );
 	    }
-	    if ( CommonUtil.isNotEmpty( resultMap ) ) {
+	    if ( CommonUtil.isNotEmpty( resultMap ) && resultMap.size() > 0) {
 		if ( !resultMap.get( "result" ).toString().equals( "true" ) ) {
 		    return resultMap;
 		}
@@ -2074,11 +2067,11 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		}
 	    }
 	}
-	if ( detail.getProTypeId() == 0 && CommonUtil.isEmpty( order.getReceiveId() ) && code > 0 ) {
+	if ( ( CommonUtil.isEmpty( detail.getProTypeId() ) || detail.getProTypeId() == 0 ) && CommonUtil.isEmpty( order.getReceiveId() ) && code > 0 ) {
 	    msg = "请选择收货地址";
 	    code = -1;
 	}
-	if ( code > 0 && order.getOrderType() == 3 ) {
+	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && code > 0 && order.getOrderType() == 3 ) {
 	    //判断库存
 	    resultMap = mallSeckillService.isInvNum( order, detail );
 	}

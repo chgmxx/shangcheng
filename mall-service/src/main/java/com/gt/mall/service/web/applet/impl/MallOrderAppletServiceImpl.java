@@ -26,6 +26,7 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -106,6 +107,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private WxShopService               wxShopService;
     @Autowired
     private MallNewOrderAppletService   mallNewOrderAppletService;
+    @Autowired
+    private MemberAddressService        memberAddressService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -988,18 +991,18 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	//查询用户默认的地址
-	Map< String,Object > addressParams = new HashMap< String,Object >();
-	Map< String,Object > addressMap = new HashMap< String,Object >();//保存默认地址信息
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
+	StringBuilder memberIds = new StringBuilder();
 	if ( memberList != null && memberList.size() > 0 ) {
-	    addressParams.put( "oldMemberIds", memberList );
+	    for ( Integer id : memberList ) {
+		memberIds.append( id ).append( "," );
+	    }
+	    memberIds = new StringBuilder( memberIds.substring( 0, memberIds.length() - 1 ) );
 	} else {
-	    addressParams.put( "memberId", memberId );
+	    memberIds = new StringBuilder( CommonUtil.toString( member.getId() ) );
 	}
-	addressParams.put( "memDefault", 1 );
-	List< Map< String,Object > > addressList = orderService.selectShipAddress( addressParams );
-	if ( addressList != null && addressList.size() > 0 ) {
-	    addressMap = addressList.get( 0 );
+	Map addressMap = memberAddressService.addressDefault( memberIds.toString() );
+	if ( addressMap != null && addressMap.size() > 0 ) {
 	    resultMap.put( "addressMap", getAddressParams( addressMap ) );
 
 	    params.put( "mem_province", addressMap.get( "mem_province" ) );
