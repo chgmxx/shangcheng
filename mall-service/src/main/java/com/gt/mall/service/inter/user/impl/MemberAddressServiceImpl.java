@@ -1,12 +1,15 @@
 package com.gt.mall.service.inter.user.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,4 +44,22 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 	}
 	return null;
     }
+
+    @Override
+    public List< MemberAddress > addressList( String memberids ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberids", memberids );
+	String result = HttpSignUtil.signHttpSelect( params, url + "addressList.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONArray.parseArray( result, MemberAddress.class );
+	}
+	return null;
+    }
+
+    @Override
+    public boolean addOrUpdateAddre( MemberAddress memberAddress ) {
+	Map result = HttpSignUtil.signHttpInsertOrUpdate( memberAddress, url + "AddOrUpdateAddre.do", 1 );
+	return result.get( "code" ).toString().equals( "1" );
+    }
+
 }

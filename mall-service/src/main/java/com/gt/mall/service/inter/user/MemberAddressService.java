@@ -1,5 +1,8 @@
 package com.gt.mall.service.inter.user;
 
+import com.gt.mall.bean.MemberAddress;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,19 +12,37 @@ import java.util.Map;
  * Time : 10:41
  */
 public interface MemberAddressService {
-    public static final String url = "/8A5DA52E/fanAddress/";
 
     /**
      * 根据粉丝ID查询默认地址
+     *
      * @param memberIds 粉丝id
+     *
      * @return 默认地址
      */
-    Map addressDefault(String memberIds);
+    Map addressDefault( String memberIds );
 
     /**
      * 根据地址id查询地址
+     *
      * @param addresssId 地址id
      */
-    Map addreSelectId(int addresssId);
+    Map addreSelectId( int addresssId );
+
+    /**
+     * 查询粉丝的收货地址
+     *
+     * @param memberids 粉丝id
+     *
+     * @return 收货地址列表
+     */
+    List< MemberAddress > addressList( String memberids );
+
+    /**
+     * 新增或修改收回地址
+     *
+     * @return true 新增或修改成功
+     */
+    boolean addOrUpdateAddre( MemberAddress memberAddress );
 
 }
