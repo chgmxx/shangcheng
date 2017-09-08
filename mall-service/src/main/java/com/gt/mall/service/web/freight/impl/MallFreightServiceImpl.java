@@ -72,7 +72,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 
     @Override
     public MallFreight selectFreightById( Integer id ) {
-	return freightDAO.selectById( id );
+	return freightDAO.selectFreightById( id );
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 
     @Override
     public boolean deleteFreight( Map< String,Object > ids ) {
-	int num = freightDAO.deleteById( ids );
+	int num = freightDAO.deleteFreightById( ids );
 	if ( num > 0 ) {
 	    return true;
 	}
@@ -317,7 +317,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     public double getFreightByProvinces( Map< String,Object > params, Map< String,Object > addressMap, int shopId, double totalPrice, double pro_weight ) {
 	String loginCity = "";
 	if ( addressMap != null && addressMap.size() > 0 ) {
-	    loginCity = addressMap.get( "mem_province" ).toString();
+	    loginCity = addressMap.get( "memProvince" ).toString();
 	} else if ( CommonUtil.isNotEmpty( params.get( "province" ) ) ) {
 	    //todo 根据城市名称获取城市id
 	    List< Map > list = wxShopService.queryBasisCityIds( params.get( "province" ).toString() );

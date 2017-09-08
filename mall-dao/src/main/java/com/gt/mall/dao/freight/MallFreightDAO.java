@@ -37,14 +37,14 @@ public interface MallFreightDAO extends BaseMapper<MallFreight> {
      *
      * @param: ids 物流id集合
      */
-    int deleteById(Map<String, Object> ids);
+    int deleteFreightById(Map<String, Object> ids);
 
     /**
      * 通过物流id查询物流信息
      *
      * @param: id 物流id
      */
-    MallFreight selectById(Integer id);
+    MallFreight selectFreightById(Integer id);
 
     /**
      * 通过店铺id查询物流信息

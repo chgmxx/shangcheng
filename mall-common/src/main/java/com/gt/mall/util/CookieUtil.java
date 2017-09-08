@@ -14,7 +14,7 @@ import java.util.Map;
 public class CookieUtil {
 	
 	/** 用户的购物车商品cookie key */
-	public static String SHOP_CART_COOKIE_KEY = "mall:mall_shopCart_id" ;
+	public static String SHOP_CART_COOKIE_KEY = "Mall-mall_shopCart_id" ;
 	
 	
 	/**
@@ -27,6 +27,7 @@ public class CookieUtil {
 	public static void addCookie(HttpServletResponse response,String name,String value,int maxAge){
 		Cookie cookie = new Cookie(name,value);
 	    cookie.setPath("/");
+	   /* cookie.setDomain(".yifriend.net");*/
 	    if(maxAge>0)  cookie.setMaxAge(maxAge);
 	    response.addCookie(cookie);
 	}

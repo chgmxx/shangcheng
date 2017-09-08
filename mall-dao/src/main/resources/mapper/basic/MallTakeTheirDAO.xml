@@ -30,10 +30,10 @@
         create_time , is_delete
     </sql>
  
-    <select id="selectCount" parameterType="Map" resultType="java.lang.Integer">
-        select count(id) from t_mall_take_their where is_delete = 0 and user_id = #{userId}
-    </select>
-    <select id="selectList" parameterType="Map" resultMap="BaseResultMap">
+    <!--<select id="selectCount" parameterType="Map" resultType="java.lang.Integer">-->
+        <!--select count(id) from t_mall_take_their where is_delete = 0 and user_id = #{userId}-->
+    <!--</select>-->
+    <select id="selectTakeTheirList" parameterType="Map" resultMap="BaseResultMap">
         select <include refid="Base_Column_List" />
         from t_mall_take_their t
         where is_delete = 0 and user_id = #{userId}

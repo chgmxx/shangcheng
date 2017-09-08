@@ -343,7 +343,7 @@
         d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,t.shop_id,s.sto_name,t.order_old_money,t.coupon_code as couponCode,p.is_return,
         d.pro_type_id,t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time
         ,t.order_pid,d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
-        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id, t.flow_phone,t.buyer_user_type
+        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id, t.flow_phone,t.buyer_user_type,t.is_wallet
     </sql>
 
     <select id="selectOrderByAuctId" resultType="java.util.Map">

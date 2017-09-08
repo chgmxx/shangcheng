@@ -107,7 +107,7 @@
             limit #{firstNum},#{maxNum}
         </if>
     </select>
-    <update id="deleteById" parameterType="java.util.Map">
+    <update id="deleteFreightById" parameterType="java.util.Map">
         update t_mall_freight set is_delete = 1 , edit_time=now()
         where id in
         <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
@@ -115,7 +115,7 @@
         </foreach>
     </update>
 
-    <select id="selectById" parameterType="java.lang.Integer" resultMap="FreightResultMap">
+    <select id="selectFreightById" parameterType="java.lang.Integer" resultMap="FreightResultMap">
         select  <include refid="Freight_Column_List" />
         from t_mall_freight f
         left join t_mall_freight_detail d on d.freight_id = f.id and d.is_delete = 0

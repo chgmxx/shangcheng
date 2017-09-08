@@ -3,6 +3,8 @@ package com.gt.mall.service.web.basic.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
@@ -13,6 +15,7 @@ import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.basic.MallTakeTheirTime;
+import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.util.CommonUtil;
@@ -56,7 +59,9 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
 	param.put( "curPage", curPage );
 
-	int count = mallTakeTheirDAO.selectCount( param );
+	Wrapper< MallTakeTheir > pageWrapper = new EntityWrapper<>();
+	pageWrapper.where( "is_delete = 0 and user_id = {0}", param.get( "userId" ) );
+	int count = mallTakeTheirDAO.selectCount( pageWrapper );
 
 	PageUtil page = new PageUtil( curPage, pageSize, count, "mFreight/takeindex.do" );
 	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
@@ -64,7 +69,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	param.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	if ( count > 0 ) {// 判断上门自提是否有数据
-	    List< MallTakeTheir > takeList = mallTakeTheirDAO.selectList( param );
+	    List< MallTakeTheir > takeList = mallTakeTheirDAO.selectTakeTheirList( param );
 	    page.setSubList( takeList );
 	}
 	return page;
@@ -137,7 +142,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 
     @Override
     public List< MallTakeTheir > selectListByUserId( Map< String,Object > param ) {
-	return mallTakeTheirDAO.selectList( param );
+	return mallTakeTheirDAO.selectTakeTheirList( param );
     }
 
     @Override
