@@ -713,13 +713,18 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		fenbiNum += CommonUtil.toDouble( order.getOrderMoney() );
 	    }
 	}
+	int isWallet = 0;
+	if ( CommonUtil.isNotEmpty( order.getIsWallet() ) ) {
+	    isWallet = order.getIsWallet();
+	}
+
 	PaySuccessBo successBo = new PaySuccessBo();
 	successBo.setMemberId( order.getBuyerUserId() );//会员id
 	successBo.setOrderCode( order.getOrderNo() );//订单号
 	successBo.setTotalMoney( CommonUtil.toDouble( order.getOrderOldMoney() ) );//订单原价
 	successBo.setDiscountMoney( discountMoney );//折扣后的价格（不包含运费）
 	successBo.setPay( CommonUtil.toDouble( order.getOrderMoney() ) );
-	successBo.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );////支付方式 查询看字典1198
+	successBo.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), isWallet ) );////支付方式 查询看字典1198
 	successBo.setUcType( CommonUtil.getMemberUcType( order.getOrderType() ) );//消费类型 字典1197
 	if ( useCoupon ) {
 	    successBo.setUseCoupon( useCoupon );//是否使用优惠券
@@ -751,42 +756,37 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private void smsMessageTel( MallOrder order, Member member, BusUser busUser ) {
 	String messages = "支付成功，请您耐心等待，我们将稍后为您发货";
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
-	    // String sql = "select mem_phone from t_eat_member_address where id = " + order.getReceiveId();
-	    //todo 调用陈丹的接口 根据地址id查询地址信息
-	    Map< String,Object > map = null;//daoUtil.queryForMap( sql );
-	    if ( CommonUtil.isNotEmpty( map ) ) {
-		if ( CommonUtil.isNotEmpty( map.get( "mem_phone" ) ) ) {
-		    String telephone = map.get( "mem_phone" ).toString();
-		    MallPaySet paySet = new MallPaySet();
-		    paySet.setUserId( member.getBusid() );
-		    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-		    if ( CommonUtil.isNotEmpty( set ) ) {
-			if ( set.getIsSmsMember().toString().equals( "1" ) ) {
-			    if ( CommonUtil.isNotEmpty( set.getSmsMessage() ) ) {
-				JSONObject obj = JSONObject.fromObject( set.getSmsMessage() );
-				if ( obj != null ) {
-				    if ( CommonUtil.isNotEmpty( obj.get( "1" ) ) ) {
-					messages = obj.getString( "1" );
-				    }
+	    if ( CommonUtil.isNotEmpty( order.getReceivePhone() ) ) {
+		String telephone = order.getReceivePhone().toString();
+		MallPaySet paySet = new MallPaySet();
+		paySet.setUserId( member.getBusid() );
+		MallPaySet set = mallPaySetService.selectByUserId( paySet );
+		if ( CommonUtil.isNotEmpty( set ) ) {
+		    if ( set.getIsSmsMember().toString().equals( "1" ) ) {
+			if ( CommonUtil.isNotEmpty( set.getSmsMessage() ) ) {
+			    JSONObject obj = JSONObject.fromObject( set.getSmsMessage() );
+			    if ( obj != null ) {
+				if ( CommonUtil.isNotEmpty( obj.get( "1" ) ) ) {
+				    messages = obj.getString( "1" );
 				}
 			    }
-			    OldApiSms oldApiSms = new OldApiSms();
-			    oldApiSms.setMobiles( telephone );
-			    oldApiSms.setCompany( busUser.getMerchant_name() );
-			    oldApiSms.setBusId( member.getBusid() );
-			    oldApiSms.setModel( Constants.SMS_MODEL );
-			    oldApiSms.setContent( CommonUtil.format( messages ) );
-			    try {
-				smsService.sendSmsOld( oldApiSms );
-			    } catch ( Exception e ) {
-				e.printStackTrace();
-				logger.error( "短信推送消息异常：" + e.getMessage() );
-			    }
-
 			}
-		    }
+			OldApiSms oldApiSms = new OldApiSms();
+			oldApiSms.setMobiles( telephone );
+			oldApiSms.setCompany( busUser.getMerchant_name() );
+			oldApiSms.setBusId( member.getBusid() );
+			oldApiSms.setModel( Constants.SMS_MODEL );
+			oldApiSms.setContent( CommonUtil.format( messages ) );
+			try {
+			    smsService.sendSmsOld( oldApiSms );
+			} catch ( Exception e ) {
+			    e.printStackTrace();
+			    logger.error( "短信推送消息异常：" + e.getMessage() );
+			}
 
+		    }
 		}
+
 	    }
 	}
 
@@ -811,6 +811,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	int flowId = 0;//流量id
 	int flowRecordId = 0;//流量冻结id
 	int totalNum = 0;
+	int count = 0;
 	//扫码支付和找人代付不修改库存
 	if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) && order.getOrderPayWay() != 5 && order.getOrderPayWay() != 7 ) {
 	    List< MallOrderDetail > orderDetail = order.getMallOrderDetail();
@@ -831,7 +832,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    params.put( "status", 4 );
 		}
 	    }
-	    int count = 0;
 	    if ( CommonUtil.isNotEmpty( order ) ) {//找人代付不更改状态
 		if ( order.getOrderStatus() == 1 ) {
 		    count = mallOrderDAO.upOrderByorderNo( params );
@@ -948,7 +948,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    params.put( "payTime", new Date() );
 	    params.put( "out_trade_no", order.getOrderNo() );
 	    params.put( "status", 2 );
-	    int count = 0;
 	    if ( CommonUtil.isNotEmpty( order ) ) {
 		count = mallOrderDAO.upOrderByorderNo( params );
 	    }
@@ -1088,6 +1087,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 
 	map.put( "shopIds", shopIds.substring( 0, shopIds.length() - 1 ) );
+	map.put( "count", count );
 	return map;
     }
 

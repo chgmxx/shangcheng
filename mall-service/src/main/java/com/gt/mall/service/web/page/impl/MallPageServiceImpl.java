@@ -363,14 +363,12 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( CommonUtil.isEmpty( productMap ) ) {
 	    return null;
 	}
-
 	//查询商品的订单详情
 	MallProductDetail detail = mallProductDetailService.selectByProductId( id );
 	if ( CommonUtil.isNotEmpty( detail ) ) {
 	    productMap.put( "product_detail", detail.getProductDetail() );
 	    productMap.put( "product_message", detail.getProductMessage() );
 	}
-
 	//查询商品图片
 	Map< String,Object > params = new HashMap<>();
 	params.put( "assId", id );
@@ -398,13 +396,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		return productMap;
 	    }
 	    //查询商品规格图片
-	    if ( inven.getSpecificaImgId() > 0 ) {
+	    /*if ( inven.getSpecificaImgId() > 0 ) {
 		MallProductSpecifica specifica = mallProductSpecificaDAO.selectById( inven.getSpecificaImgId() );
 		if ( CommonUtil.isNotEmpty( specifica ) ) {
 		    productMap.put( "specifica_img_url", specifica.getSpecificaImgUrl() );
 		}
-	    }
+	    }*/
 	}
+
 	return productMap;
     }
 
@@ -452,12 +451,12 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public Map< String,Object > shopmessage( Integer shopid ,WsWxShopInfo wxShop) {
+    public Map< String,Object > shopmessage( Integer shopid, WsWxShopInfo wxShop ) {
 	Map< String,Object > storeMap = mallStoreDAO.selectMapById( shopid );
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
 	    storeMap.put( "business_name", storeMap.get( "sto_name" ) );
 	    try {
-	        if(CommonUtil.isEmpty( wxShop )){
+		if ( CommonUtil.isEmpty( wxShop ) ) {
 		    wxShop = wxShopService.getShopById( CommonUtil.toInteger( storeMap.get( "wx_shop_id" ) ) );
 		}
 		storeMap.put( "business_name", wxShop.getBusinessName() );
@@ -489,7 +488,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public void isAddShopCart( HttpServletRequest request, Member member ) throws Exception {
+    public void isAddShopCart( HttpServletRequest request, Member member, List< Integer > memberList ) throws Exception {
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    Object obj = SessionUtils.getShopCart( request );
 
@@ -505,7 +504,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
 	    Map< String,Object > params = new HashMap< String,Object >();
 	    //查询用户id
-	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
+	    //	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
 	    params.put( "memberList", memberList );
 	    //查询购物车的数量
 	    params.put( "type", 0 );
@@ -2360,7 +2359,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public String queryAreaById( String citys ) {
-	List< Map > addressList = wxShopService.queryBasisCityIds(citys );
+	List< Map > addressList = wxShopService.queryBasisCityIds( citys );
 	if ( addressList != null && addressList.size() > 0 ) {
 	    StringBuilder address = new StringBuilder();
 	    for ( Map map : addressList ) {
@@ -2432,7 +2431,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( imageList != null && imageList.size() >= 0 ) {
 	    productList = getProductParams( productList, imageList );
 	}
-	if ( CommonUtil.isNotEmpty( specProIds ) ) {
+	if ( CommonUtil.isNotEmpty( specProIds ) && specProIds.size() > 0 ) {
 	    //查询商品库存
 	    List< MallProductInventory > invList = mallProductInventoryService.selectByIdListDefault( specProIds );
 	    /*System.out.println( "invList:" + invList );*/

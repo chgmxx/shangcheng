@@ -227,7 +227,7 @@ html, body {
 }
 
 .app-preview .photo-block {
-	min-height: 100px;
+	height: 100px;
 	margin: 4px;
 	text-align: center;
 	overflow: hidden;
@@ -245,6 +245,10 @@ html, body {
 
 .goods-card01 ul li:nth-child(3n-2) {
 	width: 100%;
+}
+
+.goods-card01 ul li:nth-child(3n-2) .photo-block{
+	height:292px;
 }
 
 .goods-card01 ul li:nth-child(3n-1), .goods-card01 ul li:nth-child(3n) {

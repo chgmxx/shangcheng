@@ -4,7 +4,7 @@
  */
 function jisuan(type, couponObj, flag) {
     if (type === 2 || type === 3) {
-        showJifenFenbiHideYouhui(type);
+        clickJifenFenbiHideYouhui(type);
     } else if (type === 1) { // 使用优惠券
         couponShow(couponObj, flag);
     } else if (type == 4) {
@@ -16,8 +16,7 @@ function jisuan(type, couponObj, flag) {
     var totalMoney = $("#proMoneyAll").val();
 
     var orderObj = {
-        "productAllMoney": $("#proMoneyAll").val(),
-
+        "productAllMoney": $("#proMoneyAll").val()
     };
 
 
@@ -72,20 +71,21 @@ function jisuan(type, couponObj, flag) {
 
                 $("#hy").text(data.discountMemberMoney);
                 $("#yhj").text(data.discountConponMoney);
-                var flag = true;
-                if (data.userJifen == 1) {
+                if (data.userJifen === 1) {
                     if (data.canUseJifen === 1) {//能使用
                         /* $(".jifen_open_span .pay-explan .num").html(data.jifenNum);
                          $(".jifen_open_span .pay-explan .money").html(data.discountjifenMoney);*/
 
                         $("#jf").text(data.discountjifenMoney);
-                        $(".jifen_open_span").show();
-                        $(".jifen_noopen_span").hide();
+                        showHideJifen(3, true);
                     } else {
-                        $(".jifen_open_span").hide();
-                        $(".jifen_noopen_span").show();
-                        flag = false;
+                        showHideJifen(3, false);
                     }
+                } else if ($(".jifen_open_span").length > 0) {
+                    $("#isJifen").val(0);
+                    $("#fb").text(0);
+
+                    showHideJifen(3, true);
                 }
                 if (data.useFenbi === 1) {//能使用
                     if (data.canUsefenbi === 1) {//能使用
@@ -93,30 +93,31 @@ function jisuan(type, couponObj, flag) {
                          $(".fenbi_open_span .pay-explan .money").html(data.discountfenbiMoney);*/
 
                         $("#fb").text(data.discountfenbiMoney);
-                        $(".fenbi_open_span").show();
-                        $(".fenbi_noopen_span").hide();
+                        showHideJifen(2, true);
                     } else {
-                        $(".fenbi_open_span").hide();
-                        $(".fenbi_noopen_span").show();
-                        flag = false;
+                        showHideJifen(2, false);
                     }
-                }
-                if (!flag) {
-                    return false;
+                } else if ($(".fenbi_open_span").length > 0) {
+                    $("#isFenbi").val(0);
+                    $("#fb").text(0);
+                    showHideJifen(2, true);
                 }
                 if ($("#lm").length > 0) {
                     $("#lm").text(data.leagueDiscount);
                 }
+                var balanceMoney = 0;
                 if (data.balanceMoney != null && data.balanceMoney != "") {
-                    var freight = 0;
-                    if ($("#orderFreightMoney").val() != null && $("#orderFreightMoney").val() != "") {
-                        freight = $("#orderFreightMoney").val() * 1;
-                    }
-                    var youhui = data.balanceMoney;
-
-
-                    $("#sum-money").text((  freight + youhui).toFixed(2));
+                    balanceMoney = data.balanceMoney * 1;
                 }
+                var freight = 0;
+                if ($("#orderFreightMoney").val() != null && $("#orderFreightMoney").val() != "") {
+                    freight = $("#orderFreightMoney").val() * 1;
+                }
+                var youhui = data.balanceMoney;
+
+
+                $("#sum-money").text((  freight + youhui).toFixed(2));
+
                 return true;
             } else {
                 console.log("计算失败");
@@ -133,26 +134,67 @@ function jisuan(type, couponObj, flag) {
 
 }
 
+function showHideJifen(type, flag) {
+    if (type === 2) {
+        if (flag) {
+            $(".fenbi_open_span").show();
+            $(".fenbi_noopen_span").hide();
+            var isFenbi = $("#isFenbi").val();
+            if(isFenbi === "1"){
+                $(".fenbiyouhui").addClass("slide_on");
+            }else{
+                $(".fenbiyouhui").removeClass("slide_on");
+            }
+        } else {
+            $(".fenbi_open_span").hide();
+            $(".fenbi_noopen_span").show();
+            $(".fenbi_noopen_span .pay-explan").text("不可用");
+
+            $("#fb").text(0);
+            $("#isFenbi").val(0);
+        }
+    } else {
+        if (flag) {
+            $(".jifen_open_span").show();
+            $(".jifen_noopen_span").hide();
+            var isJifen = $("#isJifen").val();
+            if(isJifen === "1"){
+                $(".jifenyouhui").addClass("slide_on");
+            }else{
+                $(".jifenyouhui").removeClass("slide_on");
+            }
+        } else {
+            $(".jifen_open_span").hide();
+            $(".jifen_noopen_span").show();
+            $(".jifen_noopen_span .pay-explan").text("不可用");
+
+            $("#jf").text(0);
+            $("#isJifen").val(0);
+        }
+    }
+}
+
+
 /**
  * 积分粉币
  * @param tag
  */
-function showJifenFenbiHideYouhui(tag) {
+function clickJifenFenbiHideYouhui(tag) {
     if (tag === 2) {//粉币
-        if (!$(".fenbiyouhui").hasClass("slide_on")) {
-            $(".fenbiyouhui").addClass("slide_on");
-            $("#isFenbi").val(1);
-        } else {
+        if ($(".fenbiyouhui").hasClass("slide_on")) {
             $(".fenbiyouhui").removeClass("slide_on");
             $("#isFenbi").val(0);
+        } else {
+            $(".fenbiyouhui").addClass("slide_on");
+            $("#isFenbi").val(1);
         }
     } else if (tag === 3) {//积分
-        if (!$(".jifenyouhui").hasClass("slide_on")) {
-            $(".jifenyouhui").addClass("slide_on");
-            $("#isJifen").val(1);
-        } else {
+        if ($(".jifenyouhui").hasClass("slide_on")) {
             $(".jifenyouhui").removeClass("slide_on");
             $("#isJifen").val(0);
+        } else {
+            $(".jifenyouhui").addClass("slide_on");
+            $("#isJifen").val(1);
         }
     }
 }
@@ -220,10 +262,8 @@ function couponShow(obj, tag) {
         var couponObj = {"couponCode": code, "shopId": shopId, "wxShopId": wxShopId, "cardId": id, "couponType": couponType};
         if (type === "CASH" || type === "DISCOUNT") {//折扣
             couponObj.discountCoupon = discount;
-            //couponObj.couponType = 1;
             couponObj.cardType = 0;
         } else {
-            // couponObj.couponType = 2;
             couponObj.cardType = type;
         }
         parentObj.find(".couponJson").val(JSON.stringify(couponObj));

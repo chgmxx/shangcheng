@@ -348,8 +348,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			}
 		    }
 		    if ( flag ) {
-			price_total = price_total + ( price * num );
-			totalPrice = totalPrice + ( price * num );
+//			price_total = price_total + ( price * num );
+//			totalPrice = totalPrice + ( price * num );
 			yuanjia_total += num * Double.parseDouble( maps.get( "primary_price" ).toString() );
 			primary_price += Double.parseDouble( maps.get( "primary_price" ).toString() ) * num;
 			proNum += num;

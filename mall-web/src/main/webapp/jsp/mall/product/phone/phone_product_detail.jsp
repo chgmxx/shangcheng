@@ -375,7 +375,7 @@
                 <c:if test="${!empty addressMap }">
                     <div class="addr-box">
                         <label>送至：<em style="vertical-align: middle;"></em></label> <span
-                            class="addr">${addressMap.pName }${addressMap.cName }${addressMap.aName }${addressMap.mem_address }</span>
+                            class="addr">${addressMap.provincename }${addressMap.cityname }${addressMap.areaname }${addressMap.memAddress }</span>
                     </div>
                 </c:if>
                 <div style="<c:if test="${!empty addressMap }">line-height:30px;</c:if>">
@@ -450,7 +450,7 @@
             </div>
             <div class="other-mall">
                 <a href="javascript:void(0)" onclick="shoppingalls();">全部商品</a>
-                <a href="javascript:void(0)" onclick="pageclick('${pageid}')">进入店铺</a>
+                <a href="javascript:void(0)" onclick="location.href='/mallPage/${mapmessage.shop_id}/79B4DE7C/toMallIndex'">进入店铺</a>
                 <%-- <a href="mallPage/${id}/79B4DE7C/shopdetails.do">商品详情</a> --%>
             </div>
 

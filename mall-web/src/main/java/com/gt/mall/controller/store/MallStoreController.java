@@ -96,7 +96,8 @@ public class MallStoreController extends BaseController {
 	    }
 	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
 	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "8" ) );
-	    request.setAttribute( "payUrl",PropertiesUtil.getWxmpDomain() );
+	    request.setAttribute( "payUrl", PropertiesUtil.getWxmpDomain() );
+
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -119,8 +120,8 @@ public class MallStoreController extends BaseController {
 		request.setAttribute( "pageTitle", "编辑信息" );
 		Map< String,Object > sto = mallStoreService.findShopByStoreId( CommonUtil.toInteger( params.get( "id" ) ) );
 		request.setAttribute( "sto", sto );
-		if(CommonUtil.isNotEmpty( sto )){
-		    if(CommonUtil.isNotEmpty( sto.get( "wxShopId" ) )){
+		if ( CommonUtil.isNotEmpty( sto ) ) {
+		    if ( CommonUtil.isNotEmpty( sto.get( "wxShopId" ) ) ) {
 			wxShopId = CommonUtil.toInteger( sto.get( "wxShopId" ) );
 		    }
 		}

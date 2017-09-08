@@ -360,7 +360,7 @@
                                 <div class="lay-item duofenCouponDiv" onclick="jisuan(1,this,1);" wxShopId="${order.wxShopId}">
                                     <input type="hidden" id="cardId" value="${dfCoupon.gId}"/>
                                     <input type="hidden" id="cardCode" value="${dfCoupon.code }"/>
-                                    <input type="hidden" id="couponType" value="1"/>
+                                    <input type="hidden" id="couponType" value="2"/>
                                     <img src="${path}${dfCoupon.image }" width="100px;" height="65px;"/>
                                     <c:if test="${dfCoupon.card_type == 1 }">
                                         <label id="couponExplain">满${dfCoupon.cash_least_cost }减${dfCoupon.reduce_cost }元</label>
@@ -380,7 +380,7 @@
                                 <div class="lay-item" onclick="jisuan(1,this,1);" wxShopId="${order.wxShopId}">
                                     <input type="hidden" id="cardId" value="${coupon.id}"/>
                                     <input type="hidden" id="cardCode" value="${coupon.user_card_code }"/>
-                                    <input type="hidden" id="couponType" value="0"/>
+                                    <input type="hidden" id="couponType" value="1"/>
                                     <img src="${coupon.image }" width="100px;" height="65px;"/>
                                     <c:if test="${coupon.card_type == 'DISCOUNT' }">
                                         <label id="couponExplain">${coupon.discount }折</label>
@@ -464,10 +464,12 @@
             </c:if>
             <span>粉币</span><br/>
 
+            <c:if test="${fenbiNum > 0 && fenbiMoney > 0}">
             <span class="fenbi_open_span" style="<c:if test="${isOpenFenbi == 0 }">display: none;</c:if>">
                 <span class="pay-explan ">有<em class="num">${fenbiNum }</em>粉币，可抵扣<em class="money">¥${fenbiMoney }</em></span>
 				<i onclick="jisuan(2);" class="fenbiyouhui"><img class="off" src="/images/icon/off_icon.jpg"/><img class="on" src="/images/icon/on_icon.jpg"/></i>
 			</span>
+            </c:if>
             <span class="fenbi_noopen_span" style="<c:if test="${isOpenFenbi == 1 }">display: none;</c:if>">
 				<span class="pay-explan" style="color: #535353;">无可用</span>
 				<i><img src="/images/icon/off_icon.jpg"/></i>
@@ -479,12 +481,14 @@
             <input type="hidden" id="starttype" value="${map.paramSet.starttype }"/>
             <input type="hidden" id="orderStartMoney" value="${map.paramSet.startmoney }"/>
             <span>积分</span><br/>
+            <c:if test="${jifenNum > 0 && jifenMoeny > 0}">
             <span class="jifen_open_span" style="<c:if test="${isOpenJifen == 0 }">display: none;</c:if>">
                 <span class="pay-explan" style="color: #f20000;">有<em class="num">${jifenNum }</em>积分，可抵扣<em class="money">¥${jifenMoeny }</em></span>
 				<i onclick="jisuan(3);" class="jifenyouhui">
 					<img class="off" src="/images/icon/off_icon.jpg"/><img class="on" src="/images/icon/on_icon.jpg"/>
 				</i>
 			</span>
+            </c:if>
             <span class="jifen_noopen_span" style="<c:if test="${isOpenJifen == 1 }">display: none;</c:if>">
 				<span class="pay-explan" style="color: #535353;">无可用</span>
 				<i><img src="/images/icon/off_icon.jpg"/></i>

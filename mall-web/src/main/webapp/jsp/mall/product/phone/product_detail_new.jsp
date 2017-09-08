@@ -90,7 +90,7 @@
 
 <div class="other-box">
 	<div class="other-list">
-		<a href="javascript:void(0);" onclick="pageclick('${pageid}')" class="other-a">店铺主页</a>
+		<a href="javascript:void(0);" onclick="location.href='/mallPage/${mapmessage.shop_id}/79B4DE7C/toMallIndex'" class="other-a">店铺主页</a>
 		<a href="javascript:void(0);" onclick="PersonalCenter()" class="other-a">会员中心</a>
 		<c:if test="${!empty qrcode_url }">
 		<a href="javascript:void(0);" class="other-a" onclick="showCode();">关注我们</a></li>

@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.*;
@@ -198,64 +197,30 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
      */
     @Override
     public int getSaleMemberIdByRedis( Member member, int saleMemberId, HttpServletRequest request, int userid ) {
-	HttpSession session = request.getSession();
-		/*String key = Constants.REDIS_KEY+"mallSaleMemberId_";
-		String field = IPKit.getRemoteIP(request);
-		if(CommonUtil.isNotEmpty(member)){
-			//field = member.getId().toString();
-			if(!JedisUtil.exists(key+member.getId()) && JedisUtil.exists(key+field)){
-				JedisUtil.set(key+member.getId(), JedisUtil.get(key+field), 60*60);
-			}
-			key += member.getId();
-		}else{
-			key += field;
-		}*/
 	if ( saleMemberId > 0 ) {
 	    boolean isSellers = isSeller( saleMemberId );
 	    if ( !isSellers ) {
 		saleMemberId = 0;
 	    } else {
-		session.setAttribute( "mall_mallSaleMemberId_" + userid, saleMemberId );
+		SessionUtils.setSession( saleMemberId, request, "mall_mallSaleMemberId_" + userid );
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( session.getAttribute( "mall_mallSaleMemberId_" + userid ) ) ) {
-	    return CommonUtil.toInteger( session.getAttribute( "mall_mallSaleMemberId_" + userid ) );
+	if ( CommonUtil.isNotEmpty( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) ) ) {
+	    return CommonUtil.toInteger( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) );
 	}
-		/*if(JedisUtil.exists(key)){
-			return CommonUtil.toInteger(JedisUtil.get(key));
-		}else if(saleMemberId > 0){
-			JedisUtil.set(key, saleMemberId+"", 60*60);
-		}*/
 	return saleMemberId;
     }
 
     @Override
     public void setSaleMemberIdByRedis( Member member, int saleMemberId, HttpServletRequest request, int userid ) {
 	if ( saleMemberId > 0 ) {
-	    request.getSession().setAttribute( "mall_mallSaleMemberId_" + userid, saleMemberId );
+	    SessionUtils.setSession( saleMemberId, request, "mall_mallSaleMemberId_" + userid );
 	}
-		/*String key = Constants.REDIS_KEY+"mallSaleMemberId_";
-		String field = IPKit.getRemoteIP(request);
-		if(CommonUtil.isNotEmpty(member)){
-			//field = member.getId().toString();
-			key += member.getId();
-		}else{
-			key += field;
-		}
-		JedisUtil.set(key, saleMemberId+"", 60*60);*/
     }
 
     @Override
     public void clearSaleMemberIdByRedis( Member member, HttpServletRequest request, int userid ) {
-	request.getSession().setAttribute( "mall_mallSaleMemberId_" + userid, null );
-		/*String key = Constants.REDIS_KEY+"mallSaleMemberId_";
-		String field = IPKit.getRemoteIP(request);
-		if(CommonUtil.isNotEmpty(member)){
-			key += member.getId();
-		}else{
-			key += field;
-		}
-		JedisUtil.del(key);*/
+	SessionUtils.removeSession( request, "mall_mallSaleMemberId_" + userid );
     }
 
     @Override
@@ -1003,14 +968,14 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		    File files = new File( aLogoPathStr );
 		    if ( files.exists() ) {
 			boolean flag = files.delete();//删除水印图片
-			logger.info( "删除水印图片："+flag );
+			logger.info( "删除水印图片：" + flag );
 		    }
 		}
 	    }
 	    File pathFile = new File( path );
 	    if ( pathFile.exists() ) {
 		boolean flag = pathFile.delete();//删除背景图片
-		logger.info( "删除背景图片："+flag );
+		logger.info( "删除背景图片：" + flag );
 	    }
 	    newPath = "/image/" + newPath;
 	    //setRedisSellerImage(seller.getMemberId().toString(), newPath);

@@ -6,7 +6,7 @@
                 <a ng-href="{{pic.url}}" class="link clearfix" ng-class="{1:'simpleness'}[data.css]">
                     <div class="photo-block">
                         <!-- <img class="img_class" data-original="{{pic.src}}">  -->
-                        <div class="img_class" style="height:100px;background: 50% 50% no-repeat;background-size:contain;background-repeat: no-repeat;background-position: center center;" data-original="{{pic.src}}">
+                        <div class="img_class" style="height:292px;background: 50% 50% no-repeat;background-size:contain;background-repeat: no-repeat;background-position: center center;" data-original="{{pic.src}}">
                     	</div>
                     </div>
 
@@ -92,9 +92,9 @@
         <ul class="sc-goods-list clearfix" ng-if="picJson[$index].imgID.length>0">
             <li ng-repeat="pic in picJson[$index].imgID" on-load>
                 <a ng-href="{{pic.url}}" class="link clearfix" ng-class="{1:'simpleness'}[data.css]">
-                    <!-- <div class="photo-block" style="height:100px;background:url({{pic.src}}) 50% 50% no-repeat;background-size:contain;" >
+                    <!-- <div class="photo-block" style="background:url({{pic.src}}) 50% 50% no-repeat;background-size:contain;" >
                     </div> -->
-                    <div class="photo-block img_class" style="height:100px;;background-size:contain;background-repeat: no-repeat;background-position: center center;" data-original="{{pic.src}}">
+                    <div class="photo-block img_class" style="background-size:contain;background-repeat: no-repeat;background-position: center center;" data-original="{{pic.src}}">
                     </div>
                     <div ng-if="data.css == 0">
                         <div class="clearfix  info-price" ng-if="data.name || data.price">

@@ -15,14 +15,13 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberPayService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.order.MallOrderNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.JedisUtil;
@@ -68,7 +67,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     @Autowired
     private MallAuctionBiddingService mallAuctionBiddingService;
     @Autowired
-    private MallSeckillService        mallSeckillService;
+    private MemberAddressService      memberAddressService;
 
     @Override
     public MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList ) {
@@ -110,7 +109,9 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		for ( Map map : couponList ) {
 		    String wxShopId = map.get( "wxShopId" ).toString();
 		    if ( wxShopId.equals( mallOrder.getWxShopId().toString() ) ) {
-			shopEntity.setCouponType( CommonUtil.toInteger( map.get( "couponType" ) ) );
+			int couponType = CommonUtil.toInteger( map.get( "couponType" ) );
+			couponType = couponType == 2 ? 1 : 0;
+			shopEntity.setCouponType( couponType );
 			shopEntity.setCoupondId( CommonUtil.toInteger( map.get( "coupondId" ) ) );
 			break;
 		    }
@@ -176,6 +177,11 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    allEntity = calculateOrder( params, member, orderList );
 	}
 	MallOrder order = orderList.get( 0 );
+	Map addressMap = null;
+	//根据地址id查询地址信息
+	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
+	    addressMap = memberAddressService.addreSelectId( order.getReceiveId() );
+	}
 	int code = 1;
 	String errorMsg = "";
 	double freightMoney = 0;
@@ -198,7 +204,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		    shopEntity = mallShops.get( mallOrder.getWxShopId() );
 		}
 	    }
-	    mallOrder = getOrderParams( mallOrder, browser, member, shopEntity );
+	    mallOrder = getOrderParams( mallOrder, browser, member, shopEntity, addressMap );
 
 	    freightMoney += CommonUtil.toDouble( mallOrder.getOrderFreightMoney() );
 
@@ -253,9 +259,10 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    orderList.add( 0, parentOrder );
 	}
 	logger.info( "orderParams" + JSONArray.toJSON( orderList ) );
-	if ( orderList.size() > 0 ) {
+
+	/*if ( orderList.size() > 0 ) {
 	    throw new BusinessException( "ss" );
-	}
+	}*/
 
 	int orderPId = 0;
 	String orderNo = "";
@@ -366,7 +373,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	return result;
     }
 
-    private MallOrder getOrderParams( MallOrder mallOrder, int browser, Member member, MallShopEntity shopEntity ) {
+    private MallOrder getOrderParams( MallOrder mallOrder, int browser, Member member, MallShopEntity shopEntity, Map addressMap ) {
 	mallOrder.setBuyerUserType( browser );
 	mallOrder.setBuyerUserId( member.getId() );
 	mallOrder.setBusUserId( member.getBusid() );
@@ -383,6 +390,14 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 	if ( CommonUtil.isEmpty( mallOrder.getOrderType() ) ) {
 	    mallOrder.setOrderType( 0 );
+	}
+	if ( CommonUtil.isNotEmpty( addressMap ) && addressMap.size() > 0 ) {
+	    mallOrder.setReceiveName( addressMap.get( "memName" ).toString() );
+	    mallOrder.setReceivePhone( addressMap.get( "memPhone" ).toString() );
+	    mallOrder.setReceiveAddress(
+			    addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
+					    .get( "memAddress" ).toString() );
+
 	}
 	return mallOrder;
     }
@@ -425,6 +440,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		    for ( Map couponMap : couponList ) {
 			String wxShopId = couponMap.get( "wxShopId" ).toString();
 			if ( wxShopId.equals( mallOrder.getWxShopId().toString() ) ) {
+			    couponMap.put( "couponCode", shopEntity.getCodes() );
 			    orderDetail.setDuofenCoupon( JSONObject.toJSONString( couponMap ) );
 			    orderDetail.setUseCardId( CommonUtil.toInteger( couponMap.get( "coupondId" ) ) );
 			    break;

@@ -39,7 +39,6 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
 import com.gt.union.api.entity.param.BindCardParam;
-import com.gt.union.api.entity.result.UnionDiscountResult;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -308,12 +307,12 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		//查询商家是否已经开启了商家联盟
-		UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( member.getBusid() );
+		/*UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( member.getBusid() );
 		if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
 		    if ( unionDiscountResult.getCode() != -1 ) {
 			request.setAttribute( "unionMap", unionDiscountResult );
 		    }
-		}
+		}*/
 	    }
 
 	    request.setAttribute( "orderDetail", JSONArray.fromObject( list ) );

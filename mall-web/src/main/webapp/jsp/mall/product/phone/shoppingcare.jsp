@@ -107,7 +107,7 @@
     <div class="sc-box">
         <div class="box-top">
             <div class="ck-hei-2 ck-icon " onclick="isStoreCheck(this)"></div>
-            <a href="javascript:void(0)" class="ck-dp"  onclick="pageclick('${shop.pageid}')">${shop.sto_name}</a>
+            <a href="javascript:void(0)" class="ck-dp"  onclick="location.href='/mallPage/${shop.shop_id}/79B4DE7C/toMallIndex'">${shop.sto_name}</a>
         </div>
         <div class="box-list">
         	<c:if test="${!empty shop.proList }">

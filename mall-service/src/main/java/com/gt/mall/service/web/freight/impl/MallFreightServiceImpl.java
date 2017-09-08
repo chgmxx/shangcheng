@@ -173,7 +173,6 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    freight.setShopId( shopId );
 		    freight.setIsDelete( 0 );
 		    freight = freightDAO.selectOne( freight );
-		    //                    MallFreight freight = freightDAO.selectFreightByShopId(shopId);
 		    if ( freight != null && toshop == 0 ) {
 			freightPrice = 0;//物流数量
 			float noMoney = 0;//免邮价格

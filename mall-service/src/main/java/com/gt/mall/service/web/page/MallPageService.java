@@ -159,7 +159,7 @@ public interface MallPageService extends BaseService< MallPage > {
      * @param request request
      * @param member  粉丝对象
      */
-    public void isAddShopCart( HttpServletRequest request, Member member ) throws Exception;
+    public void isAddShopCart( HttpServletRequest request, Member member , List< Integer > memberList ) throws Exception;
 
     /**
      * 根据会员id获取公众号，根据公众号获取所有店面，根据店面获取所有购物车订单

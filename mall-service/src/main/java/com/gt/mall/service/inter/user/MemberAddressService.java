@@ -22,6 +22,6 @@ public interface MemberAddressService {
      * 根据地址id查询地址
      * @param addresssId 地址id
      */
-    Map addreSelectId(String addresssId);
+    Map addreSelectId(int addresssId);
 
 }

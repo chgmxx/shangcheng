@@ -32,7 +32,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     }
 
     @Override
-    public Map addreSelectId( String addresssId ) {
+    public Map addreSelectId( int addresssId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "addid", addresssId );
 	String result = HttpSignUtil.signHttpSelect( params, url + "addreSelectId.do", 1 );

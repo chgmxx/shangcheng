@@ -17,13 +17,13 @@ import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
-import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -67,8 +67,6 @@ public class MallPageController extends AuthorizeOrLoginController {
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
     @Autowired
-    private MallOrderService            mallOrderService;
-    @Autowired
     private MallFreightService          mallFreightService;
     @Autowired
     private MallPifaApplyService        mallPifaApplyService;
@@ -96,6 +94,8 @@ public class MallPageController extends AuthorizeOrLoginController {
     private FenBiFlowService            fenBiFlowService;
     @Autowired
     private BusUserService              busUserService;
+    @Autowired
+    private MemberAddressService        memberAddressService;
 
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -234,7 +234,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 		MallPaySet set = new MallPaySet();
 		set.setIsPf( 1 );
 		set.setIsPfCheck( 1 );
-		set = mallPaySetService.selectByUserId( set );
 		String http = PropertiesUtil.getResourceUrl();
 		JSONArray jsonobj = JSONArray.fromObject( map.get( "pag_data" ).toString() );//转换成JSON数据
 		JSONArray XinJson = new JSONArray();//获取新的数组对象
@@ -338,6 +337,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    request.setAttribute( "countproduct", countproduct );
 
 	    request.setAttribute( "headImg", headImg );
+	    request.setAttribute( "userid", obj.getId() );
 
 	} catch ( Exception e ) {
 	    e.printStackTrace();
@@ -695,6 +695,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		String address = mallPageService.queryAreaById( shop.getProvince() + "," + shop.getCity() );
 		request.setAttribute( "storeAddress", address );
 	    }
+
 	    Map< String,Object > publicUserid = mallPageService.getPublicByUserMap( mapuser );//查询公众号信息
 	    userid = CommonUtil.toInteger( mapmessage.get( "user_id" ) );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
@@ -777,26 +778,28 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    }
 	    if ( is_delete.equals( "0" ) && is_publish.equals( "1" ) && check_status.equals( "1" ) ) {
 		int proId = CommonUtil.toInteger( mapmessage.get( "id" ) );
-		int saleMemberId = 0;//保存销售员id
-		if ( CommonUtil.isNotEmpty( param.get( "saleMemberId" ) ) ) {
-		    saleMemberId = CommonUtil.toInteger( param.get( "saleMemberId" ) );
-		    sellerService.setSaleMemberIdByRedis( member, saleMemberId, request, userid );
-		}
+
 		if ( CommonUtil.isNotEmpty( mapmessage.get( "product_detail" ) ) ) {
 		    request.setAttribute( "proDetail", ( mapmessage.get( "product_detail" ).toString() ).replaceAll( "\"", "&quot;" ).replaceAll( "'", "&apos;" )
 				    .replaceAll( "(\r\n|\r|\n|\n\r)", "" ) );
 		}
 
+		int saleMemberId = 0;//保存销售员id
+		if ( CommonUtil.isNotEmpty( param.get( "saleMemberId" ) ) ) {
+		    saleMemberId = CommonUtil.toInteger( param.get( "saleMemberId" ) );
+		    sellerService.setSaleMemberIdByRedis( member, saleMemberId, request, userid );
+		}
 		saleMemberId = sellerService.getSaleMemberIdByRedis( member, saleMemberId, request, userid );
 
-		MallSeller mallSeller = sellerService.selectSellerByMemberId( saleMemberId );//查询销售员的信息
+		if ( saleMemberId > 0 ) {
+		    MallSeller mallSeller = sellerService.selectSellerByMemberId( saleMemberId );//查询销售员的信息
 
-		if ( saleMemberId > 0 && CommonUtil.isNotEmpty( mallSeller ) ) {//分享的用户 判断是否是销售员
-		    sellerService.shareSellerIsSale( member, saleMemberId, mallSeller );
+		    if ( saleMemberId > 0 && CommonUtil.isNotEmpty( mallSeller ) ) {//分享的用户 判断是否是销售员
+			sellerService.shareSellerIsSale( member, saleMemberId, mallSeller );
+		    }
+		    //查询销售商品信息
+		    mallSellerMallsetService.selectSellerProduct( request, proId, saleMemberId, param, member );
 		}
-
-		//查询销售商品信息
-		mallSellerMallsetService.selectSellerProduct( request, proId, saleMemberId, param, member );
 
 		if ( CommonUtil.isNotEmpty( param.get( "view" ) ) ) {
 		    request.setAttribute( "view", param.get( "view" ) );
@@ -817,12 +820,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 		    }
 		}
 		List imagelist = mallPageService.imageProductList( id, 1 );//获取轮播图列表
-		String pageid = "0";
-		List list1 = mallPageService.shoppage( shopid );
-		if ( list1.size() > 0 ) {
-		    Map map1 = (Map) list1.get( 0 );
-		    pageid = map1.get( "id" ).toString();
-		}
 		if ( mapmessage.get( "pro_type_id" ).toString().equals( "2" ) ) {//购买会员卡判断商家是否已经购买了会员卡
 		    int code = 0;
 		    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -855,7 +852,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 		}
 		int viewNum = mallPageService.updateProViewPage( id + "", mapmessage );
 		request.setAttribute( "viewNum", viewNum );
-		request.setAttribute( "pageid", pageid );//商品主页面
 		String http = PropertiesUtil.getResourceUrl();
 		request.setAttribute( "imagelist", imagelist );
 		request.setAttribute( "http", http );
@@ -912,21 +908,19 @@ public class MallPageController extends AuthorizeOrLoginController {
 			}
 		    }
 		}
-
-		List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
+		Map addressMap = null;
+		List< Integer > memberList = new ArrayList<>();
 		if ( CommonUtil.isNotEmpty( member ) ) {
-		    Map< String,Object > params = new HashMap< String,Object >();
-		    params.put( "memberId", member.getId() );
-		    params.put( "memDefault", 1 );
-		    addressList = mallOrderService.selectShipAddress( params );//获取默认地址
+		    memberList = memberService.findMemberListByIds( member.getId() );
+		    addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
 		}
 		String loginCity = "";
-		if ( addressList == null || addressList.size() == 0 ) {
+		if ( addressMap == null || addressMap.size() == 0 ) {
 		    String ip = IPKit.getRemoteIP( request );
 		    loginCity = mallPageService.getProvince( ip );
 		} else {
-		    loginCity = addressList.get( 0 ).get( "mem_province" ).toString();
-		    request.setAttribute( "addressMap", addressList.get( 0 ) );
+		    loginCity = addressMap.get( "memProvince" ).toString();
+		    request.setAttribute( "addressMap", addressMap );
 		}
 		if ( loginCity.equals( "" ) ) {
 		    loginCity = "";
@@ -959,7 +953,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 			request.setAttribute( "priceMap", priceMap.get( shopid ) );
 		    }
 		}
-		mallPageService.isAddShopCart( request, member );
+		mallPageService.isAddShopCart( request, member, memberList );
 		if ( CommonUtil.isNotEmpty( member ) ) {//已登陆
 		    mallPageService.mergeShoppCart( member, request, response );//把cookie商品，合并到购物车
 		}
@@ -976,12 +970,14 @@ public class MallPageController extends AuthorizeOrLoginController {
 		mallPageService.getCustomer( request, userid );
 
 		if ( CommonUtil.isNotEmpty( mapmessage.get( "flow_id" ) ) ) {
-		    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( mapmessage.get( "flow_id" ) ) );
-		    if ( CommonUtil.isNotEmpty( flow ) ) {
-			request.setAttribute( "flow_desc", flow.getType() + "M流量" );
+		    int flowId = CommonUtil.toInteger( mapmessage.get( "flow_id" ) );
+		    if ( flowId > 0 ) {
+			WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( flowId );
+			if ( CommonUtil.isNotEmpty( flow ) ) {
+			    request.setAttribute( "flow_desc", flow.getType() + "M流量" );
+			}
 		    }
 		}
-
 		if ( CommonUtil.isNotEmpty( publicUserid ) && CommonUtil.isNotEmpty( member ) ) {
 		    if ( CommonUtil.isNotEmpty( publicUserid.get( "qrcode_url" ) ) ) {
 			request.setAttribute( "qrcode_url", publicUserid.get( "qrcode_url" ) );
@@ -994,7 +990,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 			}
 		    }
 		}
-
 		//商品已下架或者已删除
 	    } else if ( is_delete.equals( "1" ) || is_publish.equals( "-1" ) ) {
 		jsp = "mall/product/phone/shopdelect";
@@ -1561,7 +1556,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		List list1 = mallPageService.shoppage( shopId );
 		if ( list1.size() > 0 ) {
 		    Map map1 = (Map) list1.get( 0 );
-		    request.setAttribute( "pageid", map1.get( "id" ).toString() );
+		    pageId = CommonUtil.toInteger( map1.get( "id" ) );
 		}
 	    }
 	} catch ( Exception e ) {
