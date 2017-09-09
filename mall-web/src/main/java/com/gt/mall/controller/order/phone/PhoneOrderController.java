@@ -120,8 +120,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @SuppressWarnings( { "unchecked", "rawtypes" } )
     @RequestMapping( value = "/79B4DE7C/toOrder" )
-    public String toOrder( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > data ) {
+    public String toOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > data ) {
 	logger.info( "进入手机订单页面" );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
@@ -480,8 +479,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 支付成功跳转页面
      */
     @RequestMapping( value = "{orderId}/{busId}/{type}/79B4DE7C/orderPaySuccess" )
-    public String orderPaySuccess( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params
-		    , @PathVariable int orderId, @PathVariable int busId, @PathVariable int type ) {
+    public String orderPaySuccess( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params, @PathVariable int orderId,
+		    @PathVariable int busId, @PathVariable int type ) {
 	logger.info( "进入支付成功跳转页面" );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
@@ -506,8 +505,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 预售定金跳转页面
      */
     @RequestMapping( value = "{proId}/{busId}/{shopId}/79B4DE7C/presalePaySuccess" )
-    public String presalePaySuccess( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params
-		    , @PathVariable int proId, @PathVariable int busId, @PathVariable int shopId ) {
+    public String presalePaySuccess( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params, @PathVariable int proId,
+		    @PathVariable int busId, @PathVariable int shopId ) {
 	logger.info( "进入支付成功跳转页面" );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
@@ -582,8 +581,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    Object orderType = params.get( "orderType" );//订单类型
 	    if ( ( null != orderType && !orderType.equals( "" ) ) ) {
-		if ( !orderType.equals( "1" ) && !orderType.equals( "3" )
-				&& !orderType.equals( "4" ) ) {
+		if ( !orderType.equals( "1" ) && !orderType.equals( "3" ) && !orderType.equals( "4" ) ) {
 		    orderType = "";
 		}
 	    }
@@ -636,8 +634,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 进入申请退款页面
      */
     @RequestMapping( value = "/79B4DE7C/toReturn" )
-    public String toReturn( HttpSession session, HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public String toReturn( HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入申请退款页面" );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
@@ -706,8 +703,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	Map< String,Object > map = new HashMap< String,Object >();
 
 	try {
-	    MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toBean(
-			    JSONObject.fromObject( params ), MallOrderReturn.class );
+	    MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toBean( JSONObject.fromObject( params ), MallOrderReturn.class );
 	    orderReturn.setUserId( memberId );
 	    // 申请退款
 	    boolean flag = mallOrderService.addOrderReturn( orderReturn );
@@ -728,14 +724,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @SysLogAnnotation( op_function = "3", description = "撤销申请退款" )
     @RequestMapping( value = "/79B4DE7C/closeReturnOrder" )
-    public void closeReturnOrder( HttpServletRequest request,
-		    HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) throws IOException {
+    public void closeReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入撤销退款申请" );
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toBean(
-			    JSONObject.fromObject( params ), MallOrderReturn.class );
+	    MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toBean( JSONObject.fromObject( params ), MallOrderReturn.class );
 	    // 撤销退款申请
 	    map = mallOrderService.updateOrderReturn( orderReturn, null, null );
 
@@ -794,9 +787,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 	    if ( orders.getReceiveId() != null ) {
 		params.put( "id", orders.getReceiveId() );
-		//todo 根据地址id查询地址信息
-		//		List< Map< String,Object > > addressList = mallOrderService.selectShipAddress( params );
-		//		request.setAttribute( "addressList", addressList );
+		List< MemberAddress > addressList = mallOrderService.selectShipAddress( params );
+		request.setAttribute( "addressList", addressList );
 	    }
 	    if ( CommonUtil.isNotEmpty( orders.getExpressId() ) ) {
 		String expressName = dictService.getDictRuturnValue( "1092", orders.getExpressId() );
@@ -856,8 +848,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 根据公众号id查询到店自提的信息
      */
     @RequestMapping( "/79B4DE7C/getTakeTheir" )
-    public String getTakeTheir( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params, HttpSession session ) {
+    public String getTakeTheir( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params, HttpSession session ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -908,8 +899,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @SuppressWarnings( "rawtypes" )
     @RequestMapping( "/{orderId}/79B4DE7C/shareDaiFu" )
-    public String shareDaiFu( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params, @PathVariable int orderId ) {
+    public String shareDaiFu( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params, @PathVariable int orderId ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -969,8 +959,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @SuppressWarnings( "rawtypes" )
     @RequestMapping( "/{orderId}/79B4DE7C/getDaiFu" )
-    public String getDaiFu( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params, @PathVariable int orderId ) {
+    public String getDaiFu( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params, @PathVariable int orderId ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -1127,9 +1116,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/goPay" )
     @Transactional( rollbackFor = Exception.class )
-    public void goPay( HttpServletRequest request,
-		    @RequestParam Map< String,Object > param,
-		    HttpServletResponse response ) {
+    public void goPay( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) {
 	logger.info( "进入去支付controller" );
 	PrintWriter out = null;
 	Map< String,Object > result = new HashMap< String,Object >();

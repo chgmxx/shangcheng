@@ -4,6 +4,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
@@ -61,6 +62,8 @@ public class PhoneHomeAppletController extends BaseController {
     private MemberService             memberService;
     @Autowired
     private WxShopService             wxShopService;
+    @Autowired
+    private MemberAddressService      memberAddressService;
 
     /**
      * 进入店铺列表页面
@@ -817,9 +820,8 @@ public class PhoneHomeAppletController extends BaseController {
 	    resultMap.put( "provinceList", provinceList );
 
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
-		//TODO 查询会员地址 eatPhoneService.getMemberAddress
-		//		MemberAddress address = eatPhoneService.getMemberAddress(CommonUtil.toInteger(params.get("id")));
-		//		resultMap.put("address", address);
+		Map address = memberAddressService.addreSelectId( CommonUtil.toInteger( params.get( "id" ) ) );
+		resultMap.put( "address", address );
 	    }
 
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {

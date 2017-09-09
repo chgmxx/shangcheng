@@ -5,6 +5,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.bean.AlipayUser;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
@@ -527,7 +528,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    guigePrice = pageService.guigePrice( id );
 		}
 		Map< String,Object > params = new HashMap< String,Object >();
-		List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
+		List< MemberAddress > addressList = new ArrayList< MemberAddress>();
 		if ( CommonUtil.isNotEmpty( member ) ) {
 		    params.put( "memberId", member.getId() );
 		    params.put( "memDefault", 1 );
@@ -538,7 +539,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    String ip = IPKit.getRemoteIP( request );
 		    loginCity = pageService.getProvince( ip );
 		} else {
-		    loginCity = addressList.get( 0 ).get( "mem_province" ).toString();
+		    loginCity = addressList.get( 0 ).getMemProvince().toString();
 		    request.setAttribute( "addressMap", addressList.get( 0 ) );
 		}
 		if ( loginCity.equals( "" ) ) {

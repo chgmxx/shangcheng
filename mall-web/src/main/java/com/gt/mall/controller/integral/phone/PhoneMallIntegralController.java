@@ -8,6 +8,7 @@ import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.util.CommonUtil;
@@ -62,6 +63,8 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     private WxPublicUserService      wxPublicUserService;
     @Autowired
     private WxShopService            wxShopService;
+    @Autowired
+    private MemberAddressService     memberAddressService;
 
     /**
      * 进入积分商城
@@ -442,9 +445,8 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    request.setAttribute( "maps", maps );
 	    Object id = params.get( "id" );
 	    if ( null != id && !id.equals( "" ) ) {//修改地址查询
-		//TODO 需关连地址 方法
-		//		MemberAddress mem = eatPhoneService.getMemberAddress(Integer.parseInt(id.toString()));
-		//		request.setAttribute("mem", mem);
+		Map mem = memberAddressService.addreSelectId( Integer.parseInt( id.toString() ) );
+		request.setAttribute( "mem", mem );
 	    }
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );

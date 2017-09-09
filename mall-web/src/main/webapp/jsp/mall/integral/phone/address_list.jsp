@@ -57,7 +57,7 @@
             <c:forEach var="address" items="${addressList }">
                 <li class="line-item">
                     <c:set var="cla" value=""></c:set>
-                    <c:if test="${address.mem_default == 1 }">
+                    <c:if test="${address.memDefault == 1 }">
                         <c:set var="cla" value="on-check"></c:set>
                     </c:if>
                     <div class="item-gou ${cla } isChecks" id="${address.id }">
@@ -68,13 +68,13 @@
                     <div class="item-bd">
                         <p class="bd-txt ">
 		                    <span>
-		                        ${address.pName }${address.cName }${address.mem_address } 
-		    					<c:if test="${address.mem_zip_code != null && address.mem_zip_code != ''}">（${address.mem_zip_code}）</c:if>
+		                        ${address.provincename }${address.cityname }${address.areaname }
+		    					<c:if test="${address.memZipCode != null && address.memZipCode != ''}">（${address.memZipCode}）</c:if>
 		                    </span>
                         </p>
                         <div class="bd-tt flex flex-pack-justify">
 		                       <span>
-		                        ${address.mem_name }　${address.mem_phone }
+		                        ${address.memName }　${address.memPhone }
 		                      </span>
                             <div class="clear">
                                 <!-- <p class="  fr operation-wrap flex flex-align-center">

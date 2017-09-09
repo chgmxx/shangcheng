@@ -3,6 +3,7 @@ package com.gt.mall.service.web.order;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
@@ -43,7 +44,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 根据会员id 查询收货地址
      */
-    public List< Map< String,Object > > selectShipAddress( Map< String,Object > params );
+    public List< MemberAddress > selectShipAddress( Map< String,Object > params );
 
     /**
      * 关闭未付款订单

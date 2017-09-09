@@ -3,10 +3,7 @@ package com.gt.mall.service.web.order.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPayOrder;
-import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.*;
 import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -39,6 +36,7 @@ import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
@@ -179,12 +177,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private FenBiFlowService fenBiFlowService;
 
     @Autowired
-    private WxShopService wxShopService;
+    private WxShopService        wxShopService;
+    @Autowired
+    private MemberAddressService memberAddressService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
-	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
-			: CommonUtil.toInteger( params.get( "curPage" ) ) );
+	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
 	int status = 0;
 	if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
@@ -196,10 +195,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	} else {
 	    rowCount = mallOrderDAO.countReturn( params );
 	}
-	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ),
-			pageSize, rowCount, "mallOrder/toIndex.do" );
-	params.put( "firstResult", pageSize
-			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "mallOrder/toIndex.do" );
+	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	params.put( "maxResult", pageSize );
 	List< MallOrder > list = new ArrayList< MallOrder >();
 	if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
@@ -296,8 +293,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    if ( detail.getStatus() != -3 ) {
 				for ( int i = 0; i < orderReturnList.size(); i++ ) {
 				    MallOrderReturn mallOrderReturn = orderReturnList.get( i );
-				    if ( CommonUtil.toString( mallOrderReturn.getOrderDetailId() ).equals( CommonUtil.toString( detail.getId() ) ) &&
-						    CommonUtil.toString( mallOrderReturn.getOrderId() ).equals( CommonUtil.toString( detail.getOrderId() ) ) ) {
+				    if ( CommonUtil.toString( mallOrderReturn.getOrderDetailId() ).equals( CommonUtil.toString( detail.getId() ) ) && CommonUtil
+						    .toString( mallOrderReturn.getOrderId() ).equals( CommonUtil.toString( detail.getOrderId() ) ) ) {
 					detail.setOrderReturn( mallOrderReturn );
 					orderReturnList.remove( i );
 					break;
@@ -433,23 +430,28 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     }
 
     @Override
-    public List< Map< String,Object > > selectShipAddress( Map< String,Object > params ) {
-	List< Map< String,Object > > addressList = new ArrayList<>();
+    public List< MemberAddress > selectShipAddress( Map< String,Object > params ) {
+	List< MemberAddress > addressList = new ArrayList<>();
 	//todo 调用陈丹接口，地址相关
-	List< Map< String,Object > > list = null;// mallOrderDAO.selectShipAddress( params );
+	List< MemberAddress > list = memberAddressService.addressList( params.get( "memberId" ).toString() );
 	int is_default = 2;
 	if ( list != null && list.size() > 0 ) {
-	    for ( Map< String,Object > map : list ) {
-		if ( CommonUtil.isNotEmpty( map.get( "mem_default" ) ) ) {
-		    int memberDefault = CommonUtil.toInteger( map.get( "mem_default" ) );
+	    for ( MemberAddress address : list ) {
+		if ( CommonUtil.isNotEmpty( address.getMemDefault() ) ) {
+		    int memberDefault = address.getMemDefault();
 		    if ( is_default == 2 ) {
 			is_default = memberDefault;
 		    } else if ( is_default == 1 && memberDefault == 1 ) {//如果用户拥有两个默认地址，修改第二个默认地址
-			map.put( "mem_default", "2" );
-			//			daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 2 WHERE id =" + map.get( "id" ) );
+			address.setMemDefault( 2 );
+
+			MemberAddress address1 = new MemberAddress();
+			address1.setId( address.getId() );
+			address1.setMemDefault( 2 );
+			memberAddressService.addOrUpdateAddre( address1 );
+
 		    }
 		}
-		addressList.add( map );
+		addressList.add( address );
 	    }
 	}
 	return addressList;
@@ -1422,8 +1424,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public Map< String,Object > updateOrderReturn( MallOrderReturn orderReturn, Object oObj, WxPublicUsers pUser )
-		    throws Exception {
+    public Map< String,Object > updateOrderReturn( MallOrderReturn orderReturn, Object oObj, WxPublicUsers pUser ) throws Exception {
 	logger.error( "13131313133" );
 	Map< String,Object > resultMap = new HashMap<>();
 	boolean rFlag = false;
@@ -1832,8 +1833,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    MallProduct p = new MallProduct();
 		    p.setId( product.getId() );
 		    p.setProStockTotal( product.getProStockTotal() + productNum );//商品库存
-		    if ( product.getProSaleTotal() - productNum > 0 )
-			p.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
+		    if ( product.getProSaleTotal() - productNum > 0 ) p.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
 		    mallProductDAO.updateById( p );
 		}
 
@@ -1971,8 +1971,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     private MallOrder getAdressOrder( MallOrder order, Map< String,Object > addressMap ) {
 	if ( CommonUtil.isNotEmpty( addressMap ) ) {
-	    String address = CommonUtil.toString( addressMap.get( "pName" ) ) +
-			    CommonUtil.toString( addressMap.get( "cName" ) );
+	    String address = CommonUtil.toString( addressMap.get( "pName" ) ) + CommonUtil.toString( addressMap.get( "cName" ) );
 	    address += CommonUtil.toString( addressMap.get( "mem_address" ) );
 	    if ( CommonUtil.isNotEmpty( addressMap.get( "mem_zip_code" ) ) ) {
 		address += CommonUtil.toInteger( addressMap.get( "mem_zip_code" ) );
@@ -2306,10 +2305,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( orderStatus == 1 ) {
 	    state = "待付款";
 	} else if ( orderStatus == 2 ) {
-	    if ( order.getDeliveryMethod() == 1 )
-		state = "待发货";
-	    else if ( order.getDeliveryMethod() == 2 )
-		state = "待提货";
+	    if ( order.getDeliveryMethod() == 1 ) state = "待发货";
+	    else if ( order.getDeliveryMethod() == 2 ) state = "待提货";
 	    if ( orderPayWay == 5 ) {
 		state = "已付款";
 	    }
@@ -2436,8 +2433,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    createCell( row, 16, order.getOrderSellerRemark(), valueStyle );
 	    i++;
 	}
-	if ( order.getMallOrderDetail().size() < 1 && orderPayWay != 5 )
-	    i++;
+	if ( order.getMallOrderDetail().size() < 1 && orderPayWay != 5 ) i++;
 	return i;
     }
 

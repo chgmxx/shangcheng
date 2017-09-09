@@ -397,7 +397,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
 	    if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
 		params.put( "id", order.getReceiveId() );
-		List< Map< String,Object > > list = orderService.selectShipAddress( params );
+		List< MemberAddress > list = orderService.selectShipAddress( params );
 		if ( list != null && list.size() > 0 ) {
 		    Map< String,Object > addressMap = getAddressParams( list.get( 0 ) );
 		    resultMap.putAll( addressMap );
@@ -882,27 +882,30 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     @Override
     public Map< String,Object > addressList( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
-	//TODO 地址方法 t_eat_member_address
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	if ( memberList != null && memberList.size() > 0 ) {
 	    params.put( "oldMemberIds", memberList );
 	}
 	List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
-	/*List< Map< String,Object > > list = orderDAO.selectShipAddress( params );
+	List< MemberAddress > list = orderService.selectShipAddress( params );
 	int is_default = 2;
 	if ( list != null && list.size() > 0 ) {
-	    for ( Map< String,Object > map : list ) {
+	    for ( MemberAddress map : list ) {
 		Map< String,Object > addressMap = getAddressParams( map );
 		if ( is_default == 2 ) {
 		    is_default = CommonUtil.toInteger( addressMap.get( "is_default" ) );
 		} else if ( is_default == 1 && addressMap.get( "is_default" ).toString().equals( "1" ) ) {
 		    addressMap.put( "is_default", "2" );
-		    daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 2 WHERE id =" + addressMap.get( "id" ) );
+
+		    MemberAddress address = new MemberAddress();
+		    address.setId( CommonUtil.toInteger( addressMap.get( "id" ) ) );
+		    address.setMemDefault( 2 );
+		    memberAddressService.addOrUpdateAddre( address );
 		}
 		addressList.add( addressMap );
 	    }
-	}*/
+	}
 	resultMap.put( "addressList", addressList );
 	return resultMap;
     }
@@ -924,15 +927,18 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    }
 	}
 	//TODO 地址方法 t_eat_member_address
-	/*daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 2 WHERE df_member_id in (" + memberIds + ")" );
-	int count = daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 1 WHERE id=?", id );
-
-	if ( count > 0 ) {
+	//	daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 2 WHERE df_member_id in (" + memberIds + ")" );
+	MemberAddress address = new MemberAddress();
+	address.setId( id );
+	address.setMemDefault( 1 );
+	boolean reuslt = memberAddressService.addOrUpdateAddre( address );
+	//	int count = daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 1 WHERE id=?", id );
+	if ( reuslt ) {
 	    resultMap.put( "code", 1 );
 	} else {
 	    resultMap.put( "code", -1 );
 	    resultMap.put( "errorMsg", "设置默认地址失败" );
-	}*/
+	}
 
 	return resultMap;
     }
@@ -943,40 +949,44 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	MemberAddress memAddress = JSONObject.parseObject( JSON.toJSONString( params ), MemberAddress.class );
 	System.out.println( memAddress.getMemAddress() );
-/*	int count = daoUtil.queryForInt( "select count(id) from t_eat_member_address where mem_default = 1 and df_member_id=?", memAddress.getDfMemberId() );
+	/*int count = daoUtil.queryForInt( "select count(id) from t_eat_member_address where mem_default = 1 and df_member_id=?", memAddress.getDfMemberId() );
 	if ( count == 0 ) {
 	    memAddress.setMemDefault( 1 );
-	}
+	}*/
 	if ( CommonUtil.isEmpty( memAddress.getMemLatitude() ) || CommonUtil.isEmpty( memAddress.getMemLongitude() ) ) {
-	    Map< String,Object > provinceMaps = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemProvince() );
+	   /* Map< String,Object > provinceMaps = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemProvince() );
 	    Map< String,Object > cityMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemCity() );
-	    Map< String,Object > areaMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemArea() );
+	    Map< String,Object > areaMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemArea() );*/
+	    List< Map > provinceMaps = wxShopService.queryBasisCityIds( memAddress.getMemProvince().toString() );
+	    List< Map > cityMap = wxShopService.queryBasisCityIds( memAddress.getMemCity().toString() );
+	    List< Map > areaMap = wxShopService.queryBasisCityIds( memAddress.getMemArea().toString() );
+
 	    String address = "";
 	    String city = "";
 	    if ( CommonUtil.isNotEmpty( provinceMaps ) ) {
-		address += provinceMaps.get( "city_name" ).toString();
+		address += provinceMaps.get( 0 ).get( "city_name" ).toString();
 	    }
 	    if ( CommonUtil.isNotEmpty( cityMap ) ) {
-		city = cityMap.get( "city_name" ).toString();
+		city = cityMap.get( 0 ).get( "city_name" ).toString();
 		address += city;
 	    }
 	    if ( CommonUtil.isNotEmpty( areaMap ) ) {
-		address += areaMap.get( "city_name" ).toString();
+		address += areaMap.get( 0 ).get( "city_name" ).toString();
 	    }
-	    Map< String,Object > addressMap = storeService.getlnglatByAddress( address + memAddress.getMemAddress(), city );
+	    /*Map< String,Object > addressMap = mallStoreService.getlnglatByAddress( address + memAddress.getMemAddress(), city );
 	    if ( CommonUtil.isNotEmpty( addressMap ) ) {
 		memAddress.setMemLatitude( addressMap.get( "lat" ).toString() );
 		memAddress.setMemLongitude( addressMap.get( "lng" ).toString() );
-	    }
+	    }*/
 	}
-	Map< String,Object > msg = eatPhoneService.saveOrderAddress( memAddress );
+	boolean msg = memberAddressService.addOrUpdateAddre( memAddress );
 
-	if ( msg.get( "result" ).toString().equals( "true" ) ) {
+	if ( msg ) {
 	    resultMap.put( "code", 1 );
 	} else {
 	    resultMap.put( "code", -1 );
 	    resultMap.put( "errorMsg", "保存地址信息失败" );
-	}*/
+	}
 	return resultMap;
     }
 
@@ -1003,9 +1013,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	Map addressMap = memberAddressService.addressDefault( memberIds.toString() );
 	if ( addressMap != null && addressMap.size() > 0 ) {
-	    resultMap.put( "addressMap", getAddressParams( addressMap ) );
+	    MemberAddress address = JSONObject.parseObject( JSON.toJSONString( addressMap ), MemberAddress.class );
+	    resultMap.put( "addressMap", getAddressParams( address ) );
 
-	    params.put( "mem_province", addressMap.get( "mem_province" ) );
+	    params.put( "mem_province", addressMap.get( "memProvince" ) );
 	}
 	resultMap.put( "memberPhone", member.getPhone() );
 	double totalProMoney = 0;//	商品总价
@@ -1531,11 +1542,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
 	    if ( order.getReceiveId() > 0 ) {
-		//TODO 地址方法 orderDAO.selectAddressByReceiveId()
-		Map< String,Object > addressMap = null;
-		//                        orderDAO.selectAddressByReceiveId(order.getReceiveId());
+		Map< String,Object > addressMap = memberAddressService.addreSelectId( order.getReceiveId() );
 		if ( CommonUtil.isNotEmpty( addressMap ) ) {
-		    addressMap = getAddressParams( addressMap );
+		    MemberAddress address = JSONObject.parseObject( JSON.toJSONString( addressMap ), MemberAddress.class );
+		    addressMap = getAddressParams( address );
 		    order.setReceiveName( CommonUtil.toString( addressMap.get( "member_name" ) ) );
 		    order.setReceivePhone( CommonUtil.toString( addressMap.get( "member_phone" ) ) );
 		    order.setReceiveAddress( CommonUtil.toString( addressMap.get( "address_detail" ) ) );
@@ -1673,22 +1683,22 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	return detail;
     }
 
-    private Map< String,Object > getAddressParams( Map< String,Object > map ) {
+    private Map< String,Object > getAddressParams( MemberAddress map ) {
 	Map< String,Object > addressMap = new HashMap< String,Object >();
-	addressMap.put( "id", map.get( "id" ) );//地址id
-	String address = CommonUtil.toString( map.get( "pName" ) ) + CommonUtil.toString( map.get( "cName" ) );
-	if ( CommonUtil.isNotEmpty( map.get( "aName" ) ) ) {
-	    address += CommonUtil.toString( map.get( "aName" ) );
+	addressMap.put( "id", map.getId() );//地址id
+	String address = CommonUtil.toString( map.getProvincename() ) + CommonUtil.toString( map.getCityname() );
+	if ( CommonUtil.isNotEmpty( map.getAreaname() ) ) {
+	    address += CommonUtil.toString( map.getAreaname() );
 	}
-	address += CommonUtil.toString( map.get( "mem_address" ) );
-	if ( CommonUtil.isNotEmpty( map.get( "mem_zip_code" ) ) ) {
-	    address += CommonUtil.toInteger( map.get( "mem_zip_code" ) );
+	address += CommonUtil.toString( map.getMemAddress() );
+	if ( CommonUtil.isNotEmpty( map.getMemZipCode() ) ) {
+	    address += CommonUtil.toInteger( map.getMemZipCode() );
 	}
 	addressMap.put( "address_detail", address );//详细地址
-	addressMap.put( "member_name", map.get( "mem_name" ) );//联系人姓名
-	addressMap.put( "member_phone", map.get( "mem_phone" ) );//联系人手机号码
-	if ( CommonUtil.isNotEmpty( map.get( "mem_default" ) ) ) {
-	    addressMap.put( "is_default", map.get( "mem_default" ) );//是否是默认选中地址
+	addressMap.put( "member_name", map.getMemName() );//联系人姓名
+	addressMap.put( "member_phone", map.getMemPhone() );//联系人手机号码
+	if ( CommonUtil.isNotEmpty( map.getMemDefault() ) ) {
+	    addressMap.put( "is_default", map.getMemDefault() );//是否是默认选中地址
 	}
 	return addressMap;
     }

@@ -72,7 +72,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 
     @Override
     public MallFreight selectFreightById( Integer id ) {
-	return freightDAO.selectFreightById( id );
+	return freightDAO.selectById( id );
     }
 
     @Override

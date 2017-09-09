@@ -1590,9 +1590,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
 	    if ( order.getReceiveId() > 0 ) {
-		//TODO 需调用 收货地址方法 orderDAO.selectAddressByReceiveId(order.getReceiveId());
-		Map< String,Object > addressMap = null;
-		//                        orderDAO.selectAddressByReceiveId(order.getReceiveId());
+		Map< String,Object > addressMap =memberAddressService.addreSelectId( order.getReceiveId() );
 		if ( CommonUtil.isNotEmpty( addressMap ) ) {
 		    addressMap = getAddressParams( addressMap );
 		    order.setReceiveName( CommonUtil.toString( addressMap.get( "member_name" ) ) );
