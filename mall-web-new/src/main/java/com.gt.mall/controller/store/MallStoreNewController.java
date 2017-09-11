@@ -25,9 +25,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +45,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping( "/mallStore" )
-public class MallStoreController extends BaseController {
+public class MallStoreNewController extends BaseController {
 
     @Autowired
     private MallStoreService mallStoreService;
@@ -67,10 +65,11 @@ public class MallStoreController extends BaseController {
     @Autowired
     private WxShopService wxShopService;
 
-    @ApiOperation( value = "进入店铺管理接口" ,notes = "获取商家的所有店铺列表",produces = "application/json")
-    @ApiImplicitParams( @ApiImplicitParam( name = "page", value = "商家id", paramType = "query", required = false, dataType = "int" )  )
-    @RequestMapping( value = "/index", method = RequestMethod.POST )
-    public ServerResponse index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @ApiOperation( value = "进入店铺管理接口", notes = "获取商家的所有店铺列表", produces = "application/json" )
+    @ApiImplicitParams( @ApiImplicitParam( name = "params", value = "商家id", paramType = "query", required = true, dataType = "int" ) )
+    @ResponseBody
+    @RequestMapping( value = "/index", method = RequestMethod.GET )
+    public ServerResponse index( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
@@ -117,8 +116,8 @@ public class MallStoreController extends BaseController {
     /**
      * 进入编辑页面
      */
-    @RequestMapping( "/to_edit" )
-    public ServerResponse to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @RequestMapping( value = "/to_edit", method = RequestMethod.GET )
+    public ServerResponse to_edit( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	Map< String,Object > result = new HashMap<>();
 	BusUser user = SessionUtils.getLoginUser( request );
 	int shopId = 0;
@@ -170,8 +169,8 @@ public class MallStoreController extends BaseController {
      * 保存或修改店铺信息
      */
     @SysLogAnnotation( description = "店铺管理-保存店铺信息", op_function = "2" )
-    @RequestMapping( "/saveOrUpdate" )
-    public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    @RequestMapping( value = "/saveOrUpdate", method = RequestMethod.POST )
+    public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 
@@ -200,8 +199,8 @@ public class MallStoreController extends BaseController {
      * 删除店铺信息
      */
     @SysLogAnnotation( description = "店铺管理-删除店铺信息", op_function = "4" )
-    @RequestMapping( "/delete" )
-    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    @RequestMapping( value = "/delete", method = RequestMethod.DELETE )
+    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
@@ -226,8 +225,8 @@ public class MallStoreController extends BaseController {
     /**
      * 进入商城设置列表页面
      */
-    @RequestMapping( "/setindex" )
-    public ServerResponse setindex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @RequestMapping( value = "/setindex", method = RequestMethod.GET )
+    public ServerResponse setindex( HttpServletRequest request, HttpServletResponse response ) {
 	Map< String,Object > result = new HashMap<>();
 	BusUser user = SessionUtils.getLoginUser( request );
 	try {
@@ -271,8 +270,8 @@ public class MallStoreController extends BaseController {
      * 编辑设置
      */
     @SysLogAnnotation( description = "商城设置-编辑设置", op_function = "2" )
-    @RequestMapping( "edit_set" )
-    public ServerResponse editSet( HttpServletRequest request, @RequestParam Map< String,Object > params ) throws IOException {
+    @RequestMapping( value = "edit_set", method = RequestMethod.POST )
+    public ServerResponse editSet( HttpServletRequest request, @RequestBody Map< String,Object > params ) throws IOException {
 	logger.info( "进入编辑设置的controller" );
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -299,8 +298,8 @@ public class MallStoreController extends BaseController {
     /**
      * 自动生成二维码
      */
-    @RequestMapping( value = "/79B4DE7C/getTwoCode" )
-    public void getTwoCode( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
+    @RequestMapping( value = "/79B4DE7C/getTwoCode", method = RequestMethod.GET )
+    public void getTwoCode( @RequestBody Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    String url = params.get( "url" ).toString();
