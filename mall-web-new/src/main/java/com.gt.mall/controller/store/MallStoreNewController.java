@@ -65,16 +65,21 @@ public class MallStoreNewController extends BaseController {
     @Autowired
     private WxShopService wxShopService;
 
-    @ApiOperation( value = "进入店铺管理接口", notes = "获取商家的所有店铺列表", produces = "application/json" )
-    @ApiImplicitParams( @ApiImplicitParam( name = "params", value = "商家id", paramType = "query", required = true, dataType = "int" ) )
+    @ApiOperation( value = "进入店铺管理接口", notes = "获取商家的所有店铺列表" )
+    @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "/index", method = RequestMethod.GET )
-    public ServerResponse index( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public ServerResponse index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
-	    result.put( "wxPublicUsers", wxPublicUsers );
+	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+		if ( CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) && CommonUtil.isNotEmpty( wxPublicUsers.getApiKey() ) ) {
+		    result.put( "isShowAdd", 1 );
+		}
+	    }
+//	    result.put( "wxPublicUsers", wxPublicUsers );
 	    int pid = SessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//true 是管理员
 
@@ -101,7 +106,7 @@ public class MallStoreNewController extends BaseController {
 	    } else {
 		result.put( "isNoAdminFlag", 1 );
 	    }
-	    result.put( "wxPublicUsers", wxPublicUsers );
+//	    result.put( "wxPublicUsers", wxPublicUsers );
 	    result.put( "videourl", busUserService.getVoiceUrl( "8" ) );
 	    result.put( "payUrl", PropertiesUtil.getWxmpDomain() );
 
