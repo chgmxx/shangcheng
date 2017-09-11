@@ -117,12 +117,12 @@ public interface MallStoreService extends BaseService< MallStore > {
     /**
      * 保存或修改店铺
      */
-    Map< String,Object > saveOrUpdate( MallStore sto, BusUser user ) throws Exception;
+    boolean saveOrUpdate( MallStore sto, BusUser user ) throws Exception;
 
     /**
      * 逻辑删除店铺信息
      */
-    Map< String,Object > deleteShop( String[] ids ) throws Exception;
+    boolean deleteShop( String[] ids ) throws Exception;
 
     /**
      * 获取登录人拥有的店铺集合

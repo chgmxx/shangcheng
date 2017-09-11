@@ -27,7 +27,7 @@ public interface MemberAddressService {
      *
      * @param addresssId 地址id
      */
-    Map addreSelectId( int addresssId );
+    MemberAddress addreSelectId( int addresssId );
 
     /**
      * 查询粉丝的收货地址

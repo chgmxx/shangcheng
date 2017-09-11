@@ -4,9 +4,11 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -16,17 +18,20 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,14 +39,14 @@ import java.util.Map;
 
 /**
  * <p>
- * 前端控制器
+ * 店铺管理前端控制器
  * </p>
  *
  * @author yangqian
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "/store" )
+@RequestMapping( "/mallStore" )
 public class MallStoreController extends BaseController {
 
     @Autowired
@@ -62,13 +67,15 @@ public class MallStoreController extends BaseController {
     @Autowired
     private WxShopService wxShopService;
 
-    @RequestMapping( "/index" )
-    public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	logger.info( "进入店铺管理啦啦啦" );
+    @ApiOperation( value = "进入店铺管理接口" ,notes = "获取商家的所有店铺列表",produces = "application/json")
+    @ApiImplicitParams( @ApiImplicitParam( name = "page", value = "商家id", paramType = "query", required = false, dataType = "int" )  )
+    @RequestMapping( value = "/index", method = RequestMethod.POST )
+    public ServerResponse index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
-	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
+	    result.put( "wxPublicUsers", wxPublicUsers );
 	    int pid = SessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//true 是管理员
 
@@ -79,7 +86,7 @@ public class MallStoreController extends BaseController {
 		if ( shopList != null && shopList.size() > 0 ) {
 		    PageUtil page = mallStoreService.findByPage( params, shopList );
 		    if ( CommonUtil.isNotEmpty( params.get( "stoName" ) ) ) {
-			request.setAttribute( "stoName", params.get( "stoName" ) );
+			result.put( "stoName", params.get( "stoName" ) );
 		    }
 		    int branchCount = SessionUtils.getWxShopNumBySession( user.getId(), request );
 		    int store = mallStoreService.countStroe( user.getId() );
@@ -87,40 +94,40 @@ public class MallStoreController extends BaseController {
 		    if ( store >= branchCount ) {
 			countnum = 1;
 		    }
-		    request.setAttribute( "countnum", countnum );
-		    request.setAttribute( "page", page );
+		    result.put( "countnum", countnum );
+		    result.put( "page", page );
 		}
-		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
-		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
+		result.put( "imgUrl", PropertiesUtil.getResourceUrl() );
+		result.put( "path", PropertiesUtil.getHomeUrl() );
 	    } else {
-		request.setAttribute( "isNoAdminFlag", 1 );
+		result.put( "isNoAdminFlag", 1 );
 	    }
-	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
-	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "8" ) );
-	    request.setAttribute( "payUrl", PropertiesUtil.getWxmpDomain() );
+	    result.put( "wxPublicUsers", wxPublicUsers );
+	    result.put( "videourl", busUserService.getVoiceUrl( "8" ) );
+	    result.put( "payUrl", PropertiesUtil.getWxmpDomain() );
 
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商城店铺管理异常" );
 	}
-	return "mall/store/index";
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
      * 进入编辑页面
      */
     @RequestMapping( "/to_edit" )
-    public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public ServerResponse to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
 	BusUser user = SessionUtils.getLoginUser( request );
 	int shopId = 0;
 	try {
-	    request.setAttribute( "pageTitle", "添加信息" );
 	    Integer userId = user.getId();
 	    int wxShopId = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
-		request.setAttribute( "pageTitle", "编辑信息" );
 		Map< String,Object > sto = mallStoreService.findShopByStoreId( CommonUtil.toInteger( params.get( "id" ) ) );
-		request.setAttribute( "sto", sto );
+		result.put( "sto", sto );
 		if ( CommonUtil.isNotEmpty( sto ) ) {
 		    if ( CommonUtil.isNotEmpty( sto.get( "wxShopId" ) ) ) {
 			wxShopId = CommonUtil.toInteger( sto.get( "wxShopId" ) );
@@ -128,7 +135,7 @@ public class MallStoreController extends BaseController {
 		}
 	    }
 	    String http = PropertiesUtil.getResourceUrl();
-	    request.setAttribute( "http", http );
+	    result.put( "http", http );
 	    //获取用户店铺集合
 	    List< Map< String,Object > > allSto = mallStoreService.findAllStore( userId );
 
@@ -149,13 +156,14 @@ public class MallStoreController extends BaseController {
 		    }
 		}
 	    }
-	    request.setAttribute( "shopList", shopInfoList );
+	    result.put( "shopList", shopInfoList );
 
 	} catch ( Exception e ) {
 	    logger.error( "进入修改店铺页面异常：" + e.getMessage() );
 	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "进入修改店铺页面异常" );
 	}
-	return "mall/store/edit";
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -163,8 +171,7 @@ public class MallStoreController extends BaseController {
      */
     @SysLogAnnotation( description = "店铺管理-保存店铺信息", op_function = "2" )
     @RequestMapping( "/saveOrUpdate" )
-    public void saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< String,Object > msg = new HashMap<>();
+    public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 
@@ -174,23 +181,19 @@ public class MallStoreController extends BaseController {
 	    sto.setStoCreateTime( new Date() );
 	    boolean flag = mallStoreService.saveOrUpdate( sto, user );
 	    if ( flag ) {
-		msg.put( "result", true );
 		SessionUtils.setShopListBySession( user.getId(), null, request );
 		mallStoreService.findAllStoByUser( user, request );
 	    }
 	} catch ( BusinessException e ) {
-	    msg.put( "result", false );
-	    msg.put( "message", e.getMessage() );
-	    e.printStackTrace();
 	    logger.error( "保存店铺信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    msg.put( "result", false );
-	    msg.put( "message", e.getMessage() );
-	    e.printStackTrace();
 	    logger.error( "保存店铺信息异常：" + e.getMessage() );
-	} finally {
-	    CommonUtil.write( response, msg );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -198,68 +201,53 @@ public class MallStoreController extends BaseController {
      */
     @SysLogAnnotation( description = "店铺管理-删除店铺信息", op_function = "4" )
     @RequestMapping( "/delete" )
-    public void delete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< String,Object > msg = new HashMap<>();
+    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    String ids[] = params.get( "ids" ).toString().split( "," );
 	    boolean flag = mallStoreService.deleteShop( ids );
 	    if ( flag ) {
-		msg.put( "result", true );
 		SessionUtils.setShopListBySession( user.getId(), null, request );
 		mallStoreService.findAllStoByUser( user, request );
 	    }
 	} catch ( BusinessException e ) {
-	    msg.put( "result", false );
-	    msg.put( "message", e.getMessage() );
-	    e.printStackTrace();
 	    logger.error( "删除店铺信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    msg.put( "result", false );
-	    msg.put( "message", e.getMessage() );
 	    logger.error( "删除店铺信息异常：" + e.getMessage() );
 	    e.printStackTrace();
-	} finally {
-	    CommonUtil.write( response, msg );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "进入修改店铺页面异常" );
 	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
-
-    /**
-     * 查看二维码信息
-     */
-    /*@RequestMapping( "/viewQR" )
-    public String viewQR( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	MallStore sto = mallStoreService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
-	request.setAttribute( "qrCode", sto.getStoQrCode() );
-	return "mall/store/viewQR";
-    }*/
 
     /**
      * 进入商城设置列表页面
      */
     @RequestMapping( "/setindex" )
-    public String setindex( HttpServletRequest request,
-		    HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public ServerResponse setindex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
 	BusUser user = SessionUtils.getLoginUser( request );
 	try {
 	    if ( user != null ) {
 		MallPaySet paySet = new MallPaySet();
 		paySet.setUserId( user.getId() );
 		MallPaySet set = mallPaySetService.selectByUserId( paySet );
-		request.setAttribute( "set", set );
+		result.put( "set", set );
 		if ( CommonUtil.isNotEmpty( set ) ) {
 		    if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
 			JSONArray msgArr = JSONArray.fromObject( set.getMessageJson() );
-			request.setAttribute( "msgArr", msgArr );
+			result.put( "msgArr", msgArr );
 		    }
 		    if ( CommonUtil.isNotEmpty( set.getSmsMessage() ) ) {
 			JSONObject smsMsgObj = JSONObject.fromObject( set.getSmsMessage() );
-			request.setAttribute( "smsMsgObj", smsMsgObj );
+			result.put( "smsMsgObj", smsMsgObj );
 		    }
 		    if ( CommonUtil.isNotEmpty( set.getFooterJson() ) ) {
 			JSONObject foorerObj = JSONObject.fromObject( set.getFooterJson() );
-			request.setAttribute( "foorerObj", foorerObj );
+			result.put( "foorerObj", foorerObj );
 		    }
 		}
 
@@ -268,14 +256,15 @@ public class MallStoreController extends BaseController {
 		//获取消息模板的内容
 		List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
 
-		request.setAttribute( "messageList", messageList );
-		request.setAttribute( "giveList", giveList );
+		result.put( "messageList", messageList );
+		result.put( "giveList", giveList );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "进入商城设置页面异常：" + e.getMessage() );
 	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "进入修改店铺页面异常" );
 	}
-	return "mall/set/set_index";
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -283,31 +272,28 @@ public class MallStoreController extends BaseController {
      */
     @SysLogAnnotation( description = "商城设置-编辑设置", op_function = "2" )
     @RequestMapping( "edit_set" )
-    public void editSet( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public ServerResponse editSet( HttpServletRequest request, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入编辑设置的controller" );
-	boolean flag = false;
-	PrintWriter p = null;
+	Map< String,Object > result = new HashMap<>();
 	try {
-	    p = response.getWriter();
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		if ( params != null ) {
 		    params.put( "userId", user.getId() );
-		    int num = mallPaySetService.editPaySet( params );
-		    if ( num > 0 ) {
-			flag = true;
-		    }
+		    mallPaySetService.editPaySet( params );
+		} else {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
 		}
+	    } else {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc() );
 	    }
 	} catch ( Exception e ) {
-	    flag = false;
 	    logger.debug( "编辑商城设置异常：" + e.getMessage() );
 	    e.printStackTrace();
-	} finally {
-	    JSONObject obj = new JSONObject();
-	    obj.put( "flag", flag );
-	    CommonUtil.write( response, obj );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "进入修改店铺页面异常" );
 	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+
     }
 
     /**
@@ -315,6 +301,7 @@ public class MallStoreController extends BaseController {
      */
     @RequestMapping( value = "/79B4DE7C/getTwoCode" )
     public void getTwoCode( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    String url = params.get( "url" ).toString();
 	    String content = PropertiesUtil.getHomeUrl() + url;

@@ -7,6 +7,8 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.util.CommonUtil;
 import org.apache.log4j.Logger;
@@ -70,6 +72,9 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 		    }
 		}
 	    }
+	}
+	if ( count < 0 ) {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return count;
     }

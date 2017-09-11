@@ -385,7 +385,7 @@ function productBuy(types) {
         }
     }
 
-    if (is_specifica == '1') {//该商品存在规格
+    if (is_specifica == '1' && types != 6) {//该商品存在规格
         showDiv();
         return;
     }

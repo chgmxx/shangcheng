@@ -14,10 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Administrator on 2017/7/24 0024.
@@ -27,10 +24,12 @@ public class MyInterceptor implements HandlerInterceptor {
     private Logger logger = Logger.getLogger( MyInterceptor.class );
 
     //不需要登录就可访问的url
-    private static final Map< String,String > urls = new HashMap< String,String >();
+    private static final Map< String,String > urls = new HashMap<>();
 
     //可通过的文件类型
-    private static final List< String > suffixs = new ArrayList< String >();
+    private static final List< String > suffixs = new ArrayList<>();
+
+    private static final Map< String,Object > noIntercepor = new HashMap<>();
 
     static {
 
@@ -43,6 +42,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	urls.put( "/user/toregister.do", "/user/toregister.do" );
 	urls.put( "/dxuser/login.do", "/dxuser/login.do" );
 	urls.put( "/dxuser/login_success.do", "/dxuser/login_success.do" );
+	urls.put( "/swagger-resources/configuration/ui", "/swagger-resources/configuration/ui" );
 
 	suffixs.add( "js" );
 	suffixs.add( "css" );
@@ -56,6 +56,9 @@ public class MyInterceptor implements HandlerInterceptor {
 	suffixs.add( "txt" );
 	suffixs.add( "woff" );
 	suffixs.add( "ttf" );
+
+	noIntercepor.put( "swagger-resources", "swagger-resources" );
+	noIntercepor.put( "api-docs", "api-docs" );
     }
 
     /**
@@ -86,7 +89,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	    Member member = SessionUtils.getLoginMember( request );
 	    request.setAttribute( "member", member );
 	    return true;
-	} else if ( passSuffixs( url ) || passUrl( url ) ) {
+	} else if ( passSuffixs( url ) || passUrl( url ) || passIntercepto( url ) ) {
 	    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
 	} else if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
 	    response.setCharacterEncoding( "UTF-8" );
@@ -125,7 +128,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	HandlerMethod handlerMethod = (HandlerMethod) handler;
 	Method method = handlerMethod.getMethod();
 	/*if ( logger.isDebugEnabled() ) {*/
-	logger.debug( "方法:"+handlerMethod.getBean() + "." + method.getName()+"  ；  请求参数："+handlerMethod.getMethodParameters() );
+	logger.debug( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
 	logger.debug( "访问的执行时间 : " + executeTime + "ms" );
 	/*}*/
 
@@ -152,6 +155,21 @@ public class MyInterceptor implements HandlerInterceptor {
 		break;
 	    }
 	}
+	return reuslt;
+    }
+
+    private boolean passIntercepto( String url ) {
+	boolean reuslt = false;
+	Iterator it = noIntercepor.entrySet().iterator();
+	while ( it.hasNext() ) {
+	    Map.Entry< String,Integer > entry = (Map.Entry< String,Integer >) it.next();
+	    String key = entry.getKey();
+	    if ( url.contains( key ) ) {
+		reuslt = true;
+		break;
+	    }
+	}
+
 	return reuslt;
     }
 

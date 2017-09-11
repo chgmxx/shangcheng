@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.constant.Constants;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -14,6 +15,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -561,11 +563,6 @@ public class CommonUtil {
 
     /**
      * 把用户集合改成用逗号隔开的字符串
-     *
-     * @param memberList
-     * @param memberId
-     *
-     * @return
      */
     public static String getMememberIds( List< Integer > memberList, int memberId ) {
 	StringBuilder memberIds = new StringBuilder();
@@ -578,5 +575,17 @@ public class CommonUtil {
 	    memberIds = new StringBuilder( CommonUtil.toString( memberId ) );
 	}
 	return memberIds.toString();
+    }
+
+    /**
+     * 手机号验证
+     */
+    public static boolean isPhone( String phone ) {
+	if ( StringUtils.isEmpty( phone ) ) {
+	    return false;
+	}
+	Pattern pattern = Pattern.compile( "(^(13[0123456789][0-9]{8}|15[0123456789][0-9]{8}|18[0123456789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$)" );
+	Matcher matcher = pattern.matcher( phone );
+	return matcher.matches();
     }
 }

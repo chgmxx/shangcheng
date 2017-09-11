@@ -21,6 +21,7 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -114,6 +115,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     private UnionCardService         unionCardService;
     @Autowired
     private MemberAddressService     memberAddressService;
+    @Autowired
+    private BusUserService           busUserService;
 
     /**
      * 跳转至提交订单页面
@@ -126,8 +129,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    String key = "to_order";
 	    Object orderObj = SessionUtils.getSession( request, key );
-	    Object payWayObj = SessionUtils.getSession( request, "orderpayway" );
-	    Object payWayNameObj = SessionUtils.getSession( request, "orderpaywayname" );
 	    int userid = 0;
 	    if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
 		if ( CommonUtil.isNotEmpty( orderObj ) ) {
@@ -155,12 +156,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			request.setAttribute( "couponArr", com.alibaba.fastjson.JSONArray.parseArray( maps.get( "couponArr" ).toString() ) );
 		    }
 		}
-	    }
-	    if ( CommonUtil.isNotEmpty( payWayObj ) ) {
-		request.setAttribute( "orderPayWays", payWayObj );
-	    }
-	    if ( CommonUtil.isNotEmpty( payWayNameObj ) ) {
-		request.setAttribute( "payWayName", payWayNameObj );
 	    }
 	    if ( CommonUtil.isNotEmpty( data.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( data.get( "uId" ) );
@@ -342,6 +337,60 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     }
 
     /**
+     * 收货地址列表
+     */
+    @RequestMapping( value = "/79B4DE7C/addressList" )
+    public String addressList( HttpServletRequest request, HttpServletResponse response,
+		    @RequestParam Map< String,Object > params, HttpSession session ) {
+	logger.info( "进入收货地址列表页面" );
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+	    int userid = 0;
+	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "uId" ) );
+		request.setAttribute( "userid", userid );
+	    }
+	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
+			/*if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
+				boolean isLogin = pageService.isLogin(member, userid, request);
+				if(!isLogin){
+					return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
+				}
+			}*/
+
+	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		return returnUrl;
+	    }
+
+	    params = mallOrderService.getMemberParams( member, params );
+	    params.put( "busUserId", member.getBusid() );
+
+	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+	    List< MemberAddress > addressList = memberAddressService.addressList( CommonUtil.getMememberIds( memberList, member.getId() ) );
+	    request.setAttribute( "addressList", addressList );
+
+	    BusUser user = busUserService.selectById( member.getBusid() );
+	    if ( CommonUtil.isNotEmpty( user ) ) {
+		if ( CommonUtil.isNotEmpty( user.getAdvert() ) ) {
+		    if ( user.getAdvert() == 0 ) {
+			request.setAttribute( "isAdvert", 1 );
+		    }
+		}
+	    }
+	    /*if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) && CommonUtil.isNotEmpty( memberId ) ) {
+	    	//todo CommonUtil.getWxParams
+		CommonUtil.getWxParams( mallOrderService.getWpUser( member.getId() ), request );
+	    }*/
+	} catch ( Exception e ) {
+	    logger.error( "收货地址列表页面异常：" + e.getMessage() );
+	    e.printStackTrace();
+	}
+	return "mall/order/phone/addressList";
+    }
+
+    /**
      * 跳转至新增/修改收货地址页面
      */
     @RequestMapping( value = "/79B4DE7C/toAddress" )
@@ -364,8 +413,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "maps", maps );
 	    Object id = params.get( "id" );
 	    if ( null != id && !id.equals( "" ) ) {//修改地址查询
-		//todo 地址
-		MemberAddress mem = null;//eatPhoneService.getMemberAddress( Integer.parseInt( id.toString() ) );
+		MemberAddress mem = memberAddressService.addreSelectId( CommonUtil.toInteger( id ) );
 		request.setAttribute( "mem", mem );
 		request.setAttribute( "updateAddress", "修改地址" );
 	    } else {
@@ -397,47 +445,42 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	return "mall/order/phone/addAddress";
     }
 
-   /* *//**
-     * 新增/修改收货地址
-     *
-     *//*
+    /*
+      * 新增/修改收货地址
+      *
+      */
     @RequestMapping( value = "/79B4DE7C/addAddress" )
     @SysLogAnnotation( op_function = "2", description = "新增/修改收货地址" )
-    public void addAddress( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) {
+    public void addAddress( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
 	logger.info( "进入新增/修改收货地址页面" );
-	int memberId = SessionUtils.getLoginMember( request ).getId();
-	PrintWriter out = null;
+	Map< String,Object > resultMap = new HashMap<>();
 	try {
-	    out = response.getWriter();
-	    MemberAddress memAddress = (MemberAddress) JSONObject.toBean( JSONObject.fromObject( params.get( "params" ) ), MemberAddress.class );
-	    String memPhone = memAddress.getMemPhone();
-	    Map< String,Object > msg = new HashMap< String,Object >();
-
-	    MemberAddress address = memberAddressMapper.findDefault( memberId );
-	    if ( CommonUtil.isEmpty( address ) ) {
-		memAddress.setMemDefault( 1 );
-	    }
-	    if ( !GTUtils.isPhone( memPhone.trim() ) ) {
-		msg.put( "result", false );
-		msg.put( "message", "手机号码格式不正确" );
+	    Member member = SessionUtils.getLoginMember( request );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		resultMap.put( "code", ResponseEnums.SUCCESS.getCode() );
 	    } else {
-		memAddress.setDfMemberId( memberId );
-		msg = eatPhoneService.saveOrderAddress( memAddress );
+		MemberAddress memAddress = (MemberAddress) JSONObject.toBean( JSONObject.fromObject( params.get( "params" ) ), MemberAddress.class );
+
+		memAddress.setDfMemberId( member.getId() );
+		boolean flag = memberAddressService.addOrUpdateAddre( memAddress );
+		if ( flag ) {
+		    resultMap.put( "code", ResponseEnums.SUCCESS.getCode() );
+		} else {
+		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
+		}
 	    }
-	    out.write( new Gson().toJson( msg ) );
+
 	} catch ( Exception e ) {
+	    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 	    logger.error( "新增/修改收货地址异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    out.flush();
-	    out.close();
+	    CommonUtil.write( response, resultMap );
 	}
-    }*/
+    }
 
     /**
      * 查询城市数据
-     *
-     * @param pid
      */
     @RequestMapping( value = "/{pid}/79B4DE7C/queryCity" )
     public void queryCity( HttpServletRequest request, HttpServletResponse response, @PathVariable( "pid" ) Integer pid ) {
@@ -451,29 +494,29 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
     /**
      * 修改默认收获地址
-     *
-     *//*
+     */
     @RequestMapping( value = "/79B4DE7C/updateDefault" )
     @SysLogAnnotation( op_function = "3", description = "修改默认收获地址" )
-    public void updateDefault( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Integer id ) {
+    public void updateDefault( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) throws IOException {
+	Map< String,Object > resultMap = new HashMap<>();
 	try {
-	    String memberId = SessionUtils.getLoginMember( request ).getId().toString();
-			*//*String memberId= "200";*//*
-	    String msg = "false";
-	    int count = eatPhoneService.updateDefaultArea( id, Integer.parseInt( memberId ) );
-	    if ( count > 0 ) {
-		msg = "true";
+	    MemberAddress memAddress = new MemberAddress();
+	    memAddress.setId( id );
+	    memAddress.setMemDefault( 1 );
+	    boolean flag = memberAddressService.addOrUpdateAddre( memAddress );
+	    if ( flag ) {
+		resultMap.put( "code", ResponseEnums.SUCCESS.getCode() );
+	    } else {
+		resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 	    }
-	    PrintWriter p = response.getWriter();
-	    p.write( msg );
-	    p.flush();
-	    p.close();
 	} catch ( Exception e ) {
+	    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 	    logger.error( "修改默认收货地址异常：" + e.getMessage() );
 	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, resultMap );
 	}
-    }*/
+    }
 
     /**
      * 支付成功跳转页面

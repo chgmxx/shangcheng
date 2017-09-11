@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.bean.member.MallEntity;
 import com.gt.mall.bean.member.MallShopEntity;
@@ -177,10 +178,10 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    allEntity = calculateOrder( params, member, orderList );
 	}
 	MallOrder order = orderList.get( 0 );
-	Map addressMap = null;
+	MemberAddress memberAddress = null;
 	//根据地址id查询地址信息
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
-	    addressMap = memberAddressService.addreSelectId( order.getReceiveId() );
+	    memberAddress = memberAddressService.addreSelectId( order.getReceiveId() );
 	}
 	int code = 1;
 	String errorMsg = "";
@@ -204,7 +205,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		    shopEntity = mallShops.get( mallOrder.getWxShopId() );
 		}
 	    }
-	    mallOrder = getOrderParams( mallOrder, browser, member, shopEntity, addressMap );
+	    mallOrder = getOrderParams( mallOrder, browser, member, shopEntity, memberAddress );
 
 	    freightMoney += CommonUtil.toDouble( mallOrder.getOrderFreightMoney() );
 
@@ -373,7 +374,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	return result;
     }
 
-    private MallOrder getOrderParams( MallOrder mallOrder, int browser, Member member, MallShopEntity shopEntity, Map addressMap ) {
+    private MallOrder getOrderParams( MallOrder mallOrder, int browser, Member member, MallShopEntity shopEntity, MemberAddress memberAddress ) {
 	mallOrder.setBuyerUserType( browser );
 	mallOrder.setBuyerUserId( member.getId() );
 	mallOrder.setBusUserId( member.getBusid() );
@@ -391,12 +392,10 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	if ( CommonUtil.isEmpty( mallOrder.getOrderType() ) ) {
 	    mallOrder.setOrderType( 0 );
 	}
-	if ( CommonUtil.isNotEmpty( addressMap ) && addressMap.size() > 0 ) {
-	    mallOrder.setReceiveName( addressMap.get( "memName" ).toString() );
-	    mallOrder.setReceivePhone( addressMap.get( "memPhone" ).toString() );
-	    mallOrder.setReceiveAddress(
-			    addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
-					    .get( "memAddress" ).toString() );
+	if ( CommonUtil.isNotEmpty( memberAddress ) ) {
+	    mallOrder.setReceiveName( memberAddress.getMemName() );
+	    mallOrder.setReceivePhone( memberAddress.getMemPhone() );
+	    mallOrder.setReceiveAddress( memberAddress.getProvincename() + memberAddress.getCityname() + memberAddress.getCityname() + memberAddress.getMemAddress() );
 
 	}
 	return mallOrder;

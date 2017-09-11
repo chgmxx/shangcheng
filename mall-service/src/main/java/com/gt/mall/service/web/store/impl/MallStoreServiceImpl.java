@@ -10,6 +10,8 @@ import com.gt.mall.bean.wx.shop.ShopSubsop;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -271,20 +273,12 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     }
 
     @Override
-    public Map< String,Object > saveOrUpdate( MallStore sto, BusUser user ) throws Exception {
-	boolean result = true;
-	String message = "操作成功！";
-	Map< String,Object > msg = new HashMap< String,Object >();
+    public boolean saveOrUpdate( MallStore sto, BusUser user ) throws BusinessException {
 	try {
-	    message = valtion( sto );
+	    String message = valtion( sto );
 	    if ( CommonUtil.isNotEmpty( message ) ) {
-		result = false;
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "店铺数据不能为空" );
 	    } else {
-		/*if (CommonUtil.isEmpty(sto.getStoPid()) || sto.getStoPid() == 0) {
-			sto.setStoIsMain(1);
-		} else {
-			sto.setStoIsMain(2);
-		}*/
 		sto.setStoIsMain( -1 );
 		int count = 0;
 		int id = 0;
@@ -294,13 +288,12 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		//判断是否已经选择店铺id
 		List< MallStore > list = findByShopId( sto.getWxShopId(), id );
 		if ( list != null && list.size() > 0 ) {
-		    result = false;
-		    message = "请重新选择店铺，该店铺已经被添加";
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "请重新选择店铺，该店铺已经被添加" );
 		} else {
 		    if ( CommonUtil.isEmpty( sto.getId() ) ) {
 			count = mallStoreDao.insert( sto );
 			if ( count <= 0 ) {
-			    throw new Exception( "编辑店铺失败" );
+			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 			} else {
 			    ShopSubsop shopSubsop = new ShopSubsop();
 			    shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
@@ -308,41 +301,26 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    shopSubsop.setSubShop( sto.getId() );
 			    boolean flag = wxShopService.addShopSubShop( shopSubsop );
 			    if ( !flag ) {
-				throw new Exception( "添加门店中间表异常" );
+				throw new BusinessException( ResponseEnums.ERROR.getCode(), "添加门店中间表异常" );
 			    }
 			}
 		    } else {
 			count = mallStoreDao.updateById( sto );
 			if ( count <= 0 ) {
-			    throw new Exception( "编辑店铺失败" );
+			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 			}
 		    }
-
-		    if ( CommonUtil.isEmpty( sto.getStoQrCode() ) ) {
-			logger.info( "进入二维码生成！" );
-			count = mallStoreDao.updateById( sto );
-			if ( count <= 0 ) {
-			    throw new Exception( "操作失败，店铺二维码生成失败！" );
-			}
-		    }
-		    message = "操作成功！";
 		}
 	    }
 	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    throw new Exception( "编辑店铺失败" );
-	} finally {
-	    msg.put( "result", result );
-	    msg.put( "message", message );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 	}
-	return msg;
+	return true;
     }
 
     @Override
-    public Map< String,Object > deleteShop( String[] ids ) throws Exception {
-	boolean result = true;
-	String message = "删除成功！";
-	Map< String,Object > msg = new HashMap< String,Object >();
+    public boolean deleteShop( String[] ids ) throws Exception {
 	try {
 	    mallStoreDao.updateByIds( ids );//逻辑删除店铺
 	    if ( ids != null && ids.length > 0 ) {
@@ -357,12 +335,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    }
 	} catch ( Exception e ) {
 	    e.printStackTrace();
-	    throw new Exception( "删除失败，系统异常！" );
-	} finally {
-	    msg.put( "result", result );
-	    msg.put( "message", message );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "删除失败，系统异常！" );
 	}
-	return msg;
+	return true;
     }
 
     /**

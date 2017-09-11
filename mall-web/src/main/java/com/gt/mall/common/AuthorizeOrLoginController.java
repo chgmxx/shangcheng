@@ -77,10 +77,10 @@ public class AuthorizeOrLoginController {
 	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
 	String otherRedisKey = CommonUtil.getCode();
 	JedisUtil.set( otherRedisKey, requestUrl, 5 * 60 );
-	Map< String,Object > queryMap = new HashMap< String,Object >();
+	Map< String,Object > queryMap = new HashMap<>();
 	queryMap.put( "otherRedisKey", otherRedisKey );
 	queryMap.put( "browser", browser );
-	/*queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );*/
+	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
 	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap );

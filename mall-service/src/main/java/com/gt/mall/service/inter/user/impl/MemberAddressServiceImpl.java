@@ -35,12 +35,12 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     }
 
     @Override
-    public Map addreSelectId( int addresssId ) {
+    public MemberAddress addreSelectId( int addresssId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "addid", addresssId );
 	String result = HttpSignUtil.signHttpSelect( params, url + "addreSelectId.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), Map.class );
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAddress.class );
 	}
 	return null;
     }

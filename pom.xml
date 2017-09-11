@@ -12,6 +12,7 @@
         <module>mall-service</module>
         <module>mall-entity</module>
         <module>mall-generator</module>
+        <module>mall-web-new</module>
     </modules>
     <packaging>pom</packaging>
     <name>parent</name>

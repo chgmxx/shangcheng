@@ -22,8 +22,7 @@ public class SwaggerConfig {
     // 扫描包
     private static final String  BASEPACKAGE         = "com.gt.mall.controller";
     // 标题
-    private static final String  TITLE               = "Mall" +
-		    " API";
+    private static final String  TITLE               = "Mall API";
     // 描述
     private static final String  DESC                = "商城行业版";
     // 版本

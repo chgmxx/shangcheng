@@ -96,14 +96,38 @@ public class ServerResponse< T > implements Serializable {
     /**
      * 创建响应成功
      *
-     * @param status 状态码
-     * @param msg    消息
-     * @param data   数据包
+     * @param code 状态码
+     * @param msg  消息
+     * @param data 数据包
      *
      * @return ServerResponse
      */
-    public static < T > ServerResponse< T > createBySuccessCodeMessage( int status, String msg, T data ) {
-	return new ServerResponse<>( status, msg, data );
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, T data ) {
+	return new ServerResponse<>( code, msg, data );
+    }
+
+    /**
+     * 创建响应成功
+     *
+     * @param code 状态码
+     * @param msg  消息
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg ) {
+	return new ServerResponse<>( code, msg );
+    }
+
+    /**
+     * 创建响应成功
+     *
+     * @param code 状态吗
+     * @param data 数据
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessCodeData( int code, T data ) {
+	return new ServerResponse< T >( code, data );
     }
 
     /**

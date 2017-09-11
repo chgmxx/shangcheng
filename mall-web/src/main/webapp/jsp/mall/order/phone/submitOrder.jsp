@@ -792,7 +792,7 @@
     }
 
     function selectAddress() {
-        var data = ${data};
+        var data = getSubmitParams();
         $('#addressType').val($('#type').val());
         $('#data').val(JSON.stringify(data));
         $("#adresspay").val($("#orderPayWay").val());
@@ -801,22 +801,17 @@
     }
 
     function toAddress() {
-        var data = ${data};
+        var data = getSubmitParams();
         $('#addressType').val($('#type').val());
         $('#data').val(JSON.stringify(data));
-        $("#adresspay").val($("#orderPayWay").val());
-        $("#adresspayName").val($(".paywaynames").text());
         document.toAddList.action = "phoneOrder/79B4DE7C/addressList.do?uId=${userid}";
         document.toAddList.submit();
     }
 
     function getTakeTheirs(id) {
-        var data = ${data};
+        var data = getSubmitParams();
         $('#id').val(id);
         $('#datas').val(JSON.stringify(data));
-        $("#deliveryType").val($("#deliveryMethod").val());
-        $("#takePayWay").val($("#orderPayWay").val());
-        $("#takePayWayName").val($(".paywaynames").text());
         document.getTakeTheir.submit();
     }
 

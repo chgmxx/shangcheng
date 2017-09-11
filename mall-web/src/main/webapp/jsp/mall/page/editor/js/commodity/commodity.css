@@ -81,13 +81,16 @@
     margin-bottom: 10px;
 }
 .app-preview .photo-block{
-    height: 100px;
+    min-height: 100px;
     margin: 4px;
     text-align: center;
     overflow: hidden;
     position: relative;
     background-color: #f8f8f8;
     background-size: 6px 6px;
+}
+.app-preview .photo-block .img_class{
+	height: 100px;
 }
 .goods-card ul li{
     display: inline-block;
