@@ -3,6 +3,7 @@ package com.gt.mall.controller.applet.phone;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -820,7 +821,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    resultMap.put( "provinceList", provinceList );
 
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
-		Map address = memberAddressService.addreSelectId( CommonUtil.toInteger( params.get( "id" ) ) );
+		MemberAddress address = memberAddressService.addreSelectId( CommonUtil.toInteger( params.get( "id" ) ) );
 		resultMap.put( "address", address );
 	    }
 

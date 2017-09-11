@@ -445,7 +445,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    request.setAttribute( "maps", maps );
 	    Object id = params.get( "id" );
 	    if ( null != id && !id.equals( "" ) ) {//修改地址查询
-		Map mem = memberAddressService.addreSelectId( Integer.parseInt( id.toString() ) );
+		MemberAddress mem = memberAddressService.addreSelectId( Integer.parseInt( id.toString() ) );
 		request.setAttribute( "mem", mem );
 	    }
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
