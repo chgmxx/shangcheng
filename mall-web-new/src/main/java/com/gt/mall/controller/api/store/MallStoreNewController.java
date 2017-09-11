@@ -1,4 +1,4 @@
-package com.gt.mall.controller.store;
+package com.gt.mall.controller.api.store;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
