@@ -588,4 +588,5 @@ public class CommonUtil {
 	Matcher matcher = pattern.matcher( phone );
 	return matcher.matches();
     }
+
 }

@@ -1542,13 +1542,19 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
 	    if ( order.getReceiveId() > 0 ) {
-		Map< String,Object > addressMap = memberAddressService.addreSelectId( order.getReceiveId() );
-		if ( CommonUtil.isNotEmpty( addressMap ) ) {
-		    MemberAddress address = JSONObject.parseObject( JSON.toJSONString( addressMap ), MemberAddress.class );
-		    addressMap = getAddressParams( address );
-		    order.setReceiveName( CommonUtil.toString( addressMap.get( "member_name" ) ) );
-		    order.setReceivePhone( CommonUtil.toString( addressMap.get( "member_phone" ) ) );
-		    order.setReceiveAddress( CommonUtil.toString( addressMap.get( "address_detail" ) ) );
+		MemberAddress memberAddress = memberAddressService.addreSelectId( order.getReceiveId() );
+		if ( CommonUtil.isNotEmpty( memberAddress ) ) {
+		    order.setReceiveName( CommonUtil.toString( memberAddress.getMemName() ) );
+		    order.setReceivePhone( CommonUtil.toString( memberAddress.getMemPhone() ) );
+		    String addDetail = memberAddress.getProvincename() + memberAddress.getCityname();
+		    if ( CommonUtil.isNotEmpty( memberAddress.getAreaname() ) ) {
+			addDetail += memberAddress.getAreaname();
+		    }
+		    addDetail += memberAddress.getMemAddress();
+		    if ( CommonUtil.isNotEmpty( memberAddress.getMemZipCode() ) ) {
+			addDetail += memberAddress.getMemZipCode();
+		    }
+		    order.setReceiveAddress( addDetail );
 		}
 	    }
 	}

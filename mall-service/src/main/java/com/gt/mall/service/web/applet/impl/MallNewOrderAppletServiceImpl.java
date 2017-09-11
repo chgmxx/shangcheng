@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.bean.member.MallEntity;
@@ -1414,16 +1415,16 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 		if ( couponType > 0 ) {
 		    JSONObject duofenObj = new JSONObject();
-		   MallStore store=mallStoreService.selectById( detail.getShopId() );
+		    MallStore store = mallStoreService.selectById( detail.getShopId() );
 		    duofenObj.put( "wxShopId", store.getWxShopId() );
 		    duofenObj.put( "couponCode", couponCode );//优惠券的code
 		    duofenObj.put( "shopId", detail.getShopId() );//店铺id
 		    duofenObj.put( "couponType", couponType );
 		    duofenObj.put( "cardType", cardType );//卡券类型 0折扣券 1代金券
 		    duofenObj.put( "useCoupon", 1 );
-		    if ( couponType ==1 ){
+		    if ( couponType == 1 ) {
 			duofenObj.put( "coupondId", couponObjs.get( "id" ) );//领取卡券Id
-		    }else{
+		    } else {
 			duofenObj.put( "coupondId", couponObjs.get( "gId" ) );//领取卡券Id
 		    }
 		    detail.setUseCardId( CommonUtil.toInteger( duofenObj.get( "coupondId" ) ) );
@@ -1590,12 +1591,19 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	}
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
 	    if ( order.getReceiveId() > 0 ) {
-		Map< String,Object > addressMap =memberAddressService.addreSelectId( order.getReceiveId() );
-		if ( CommonUtil.isNotEmpty( addressMap ) ) {
-		    addressMap = getAddressParams( addressMap );
-		    order.setReceiveName( CommonUtil.toString( addressMap.get( "member_name" ) ) );
-		    order.setReceivePhone( CommonUtil.toString( addressMap.get( "member_phone" ) ) );
-		    order.setReceiveAddress( CommonUtil.toString( addressMap.get( "address_detail" ) ) );
+		MemberAddress address = memberAddressService.addreSelectId( order.getReceiveId() );
+		if ( CommonUtil.isNotEmpty( address ) ) {
+		    order.setReceiveName( CommonUtil.toString( address.getMemName() ) );
+		    order.setReceivePhone( CommonUtil.toString( address.getMemPhone() ) );
+		    String addDetail = address.getProvincename() + address.getCityname();
+		    if ( CommonUtil.isNotEmpty( address.getAreaname() ) ) {
+			addDetail += address.getAreaname();
+		    }
+		    addDetail += address.getMemAddress();
+		    if ( CommonUtil.isNotEmpty( address.getMemZipCode() ) ) {
+			addDetail += address.getMemZipCode();
+		    }
+		    order.setReceiveAddress( addDetail );
 		}
 	    }
 	}
@@ -1895,7 +1903,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
 		    order.setSellerUserId( wxPublicUsers.getId() );
 		}
-		order.setOrderOldMoney(new BigDecimal( 0 ));
+		order.setOrderOldMoney( new BigDecimal( 0 ) );
 		if ( totalPrimary > 0 ) {
 		    order.setOrderOldMoney( CommonUtil.toBigDecimal( totalPrimary ) );
 		}
