@@ -1044,7 +1044,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    shopcart.setId( id );
 	    mallShopCartDAO.updateById( shopcart );
 	}
-	map.put( "shop_ids", shop_ids.substring( 0, shop_ids.length() - 1 ) );
+	map.put( "shopcards", shop_ids.substring( 0, shop_ids.length() - 1 ) );
 	return map;
     }
 

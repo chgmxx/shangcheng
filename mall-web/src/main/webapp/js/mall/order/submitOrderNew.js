@@ -107,12 +107,18 @@ function getSubmitParams() {
             orderObj.orderBuyerMessage = message;
         }
 
-        if (orderObj.deliveryMethod !== 2) {
+        if (orderObj.deliveryMethod !== "2") {
             delete orderObj.appointmentName;
             delete orderObj.appointmentTelephone;
             delete orderObj.appointmentTime;
             delete orderObj.appointmentStartTime;
             delete orderObj.appointmentEndTime;
+        }else{
+            orderObj.appointmentName = $("#appointName").val();
+            orderObj.appointmentTelephone = $("#appointTelphone").val();
+            orderObj.appointmentTime = $("#appointTime").val();
+            orderObj.appointmentStartTime = $("#appStartTime").val();
+            orderObj.appointmentEndTime = $("#appEndTime").val();
         }
         var proPrimaryPrice = $(this).find(".primaryPrice").val();
         if (proPrimaryPrice !== null && proPrimaryPrice !== "") {

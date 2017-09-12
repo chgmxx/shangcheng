@@ -225,7 +225,7 @@
 </c:if>
 
 <form action="" method="post" id="getMaps" name="getMaps">
-
+    <input name="params" type="hidden" class="params"/>
 </form>
 
 <script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
@@ -384,9 +384,9 @@
             $.post("phoneOrder/79B4DE7C/addAddress.do", {
                 params: obj
             }, function (result) {
-                if (!result.result) {
+                if (result.code !== 1) {
                     $('#save').attr("disabled", false);
-                    alert(result.message);
+                    alert("保存地址信息失败");
                     return false;
                 } else {
                     var addressManage = $("#addressManage").val();
@@ -537,7 +537,7 @@
             getLng(0);
         } else {
             var obj = JSON.stringify(memOrderAddress);
-            var url = "/mMember/79B4DE7C/tencentMap.do?params=" + obj + "&uId=${userid }";
+            var url = "/mMember/79B4DE7C/tencentMap.do?uId=${userid }";
 
             var addressManage = $("#addressManage").val();
             var addType = $("#addType").val();
@@ -548,7 +548,7 @@
                 url += "&addressManage=" + addressManage;
             }
             //location.href = url;
-
+            $(".params").val(obj);
             document.getMaps.action = url;
             document.getMaps.submit();
         }

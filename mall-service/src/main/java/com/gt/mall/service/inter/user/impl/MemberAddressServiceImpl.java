@@ -62,4 +62,12 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 	return result.get( "code" ).toString().equals( "1" );
     }
 
+    @Override
+    public boolean updateDefault( int addressId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "addid", addressId );
+	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, url + "updateDefault.do", 1 );
+	return result.get( "code" ).toString().equals( "1" );
+    }
+
 }

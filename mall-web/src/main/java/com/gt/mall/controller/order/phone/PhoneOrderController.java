@@ -19,6 +19,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -40,6 +41,7 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
 import com.gt.union.api.entity.param.BindCardParam;
+import com.gt.union.api.entity.result.UnionDiscountResult;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +131,12 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    String key = "to_order";
 	    Object orderObj = SessionUtils.getSession( request, key );
+
 	    int userid = 0;
+	    String type = "";
+	    if ( data.containsKey( "type" ) ) {
+		type = CommonUtil.toString( data.get( "type" ) );
+	    }
 	    if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
 		if ( CommonUtil.isNotEmpty( orderObj ) ) {
 		    Map< String,Object > maps = (Map< String,Object >) JSONObject.toBean( JSONObject.fromObject( orderObj ), Map.class );
@@ -139,6 +146,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			List< MallOrder > orderList = com.alibaba.fastjson.JSONArray.parseArray( maps.get( "order" ).toString(), MallOrder.class );
 			if ( orderList != null && orderList.size() > 0 ) {
 			    MallOrder order = orderList.get( 0 );
+			    request.setAttribute( "mallOrder", order );
 			    request.setAttribute( "orderPayWays", order.getOrderPayWay() );
 			    request.setAttribute( "deliveryMethod", order.getDeliveryMethod() );
 			    if ( CommonUtil.isNotEmpty( order.getFlowPhone() ) ) {
@@ -155,6 +163,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    if ( CommonUtil.isNotEmpty( maps.get( "couponArr" ) ) ) {
 			request.setAttribute( "couponArr", com.alibaba.fastjson.JSONArray.parseArray( maps.get( "couponArr" ).toString() ) );
 		    }
+		    if ( maps.containsKey( "type" ) ) {
+			type = CommonUtil.toString( maps.get( "type" ) );
+		    }
+
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( data.get( "uId" ) ) ) {
@@ -226,28 +238,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		request.setAttribute( "loginCity", loginCity );
 	    }
 
-	    Object dataObj = SessionUtils.getSession( request, "dataOrder" );
-	    Object addTypeObj = SessionUtils.getSession( request, "addressType" );
-	    Object deliveryMethodObj = SessionUtils.getSession( request, "deliveryMethod" );
-
-	    Object address = data.get( "address" );
-	    String type = "";
-	    if ( null != address && !address.equals( "" ) ) {
-		JSONObject obj = JSONObject.fromObject( dataObj );
-		type = addTypeObj.toString();
-		data.put( "data", obj );
-	    } else if ( CommonUtil.isNotEmpty( data.get( "type" ) ) ) {
-		type = data.get( "type" ).toString();
-	    }
-
 	    Object takeId = data.get( "takeId" );//到店自提的提货地址id
 	    if ( CommonUtil.isEmpty( takeId ) ) {
 		takeId = "0";
-	    } else {
-		JSONObject json = JSONObject.fromObject( dataObj );
-		type = json.get( "type" ).toString();
-		data.put( "data", json.get( "datas" ) );
-		request.setAttribute( "deliveryMethod", deliveryMethodObj );
 	    }
 	    JSONObject obj = new JSONObject();
 	    if ( CommonUtil.isNotEmpty( data.get( "data" ) ) ) {
@@ -262,15 +255,15 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    String msg = SessionUtils.getSession( request, "cartToOrderData" ).toString();
 		    obj = JSONObject.fromObject( msg );
 		}
-
-		String id = obj.get( "shop_ids" ).toString();
+		String id = CommonUtil.isNotEmpty( data.get( "shopcards" ) ) ? data.get( "shopcards" ).toString() : obj.getString( "shopcards" );
 		String shopcards = id.substring( 0, id.length() );
 		request.setAttribute( "shopcards", shopcards );
 		list = mallShopCartService.getProductByShopCart( shopcards, pbUser, member, userid, shopList );
 	    } else {
-		if ( CommonUtil.isNotEmpty( data.get( "detail" ) ) ) {
-		    obj.put( "data", data.get( "detail" ) );
-		    list = JSONArray.fromObject( data.get( "detail" ) );
+		if ( CommonUtil.isNotEmpty( data.get( "order" ) ) ) {
+		    list = JSONArray.fromObject( data.get( "order" ) );
+
+		    list = JSONArray.fromObject( list.get( 0 ).get( "mallOrderDetail" ) );
 		} else {
 		    list = JSONArray.fromObject( obj );
 		}
@@ -301,12 +294,12 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		//查询商家是否已经开启了商家联盟
-		/*UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( member.getBusid() );
+		UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( member.getBusid() );
 		if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
 		    if ( unionDiscountResult.getCode() != -1 ) {
 			request.setAttribute( "unionMap", unionDiscountResult );
 		    }
-		}*/
+		}
 	    }
 
 	    request.setAttribute( "orderDetail", JSONArray.fromObject( list ) );
@@ -341,7 +334,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/addressList" )
     public String addressList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params, HttpSession session ) {
+		    @RequestParam Map< String,Object > params ) {
 	logger.info( "进入收货地址列表页面" );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
@@ -350,23 +343,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-			/*if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
-				boolean isLogin = pageService.isLogin(member, userid, request);
-				if(!isLogin){
-					return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
-				}
-			}*/
-
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-
-	    params = mallOrderService.getMemberParams( member, params );
-	    params.put( "busUserId", member.getBusid() );
-
 	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
 	    List< MemberAddress > addressList = memberAddressService.addressList( CommonUtil.getMememberIds( memberList, member.getId() ) );
 	    request.setAttribute( "addressList", addressList );
@@ -378,6 +359,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			request.setAttribute( "isAdvert", 1 );
 		    }
 		}
+	    }
+	    if ( params.containsKey( "data" ) ) {
+		SessionUtils.setSession( params.get( "data" ), request, "to_order" );
 	    }
 	    /*if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) && CommonUtil.isNotEmpty( memberId ) ) {
 	    	//todo CommonUtil.getWxParams
@@ -500,10 +484,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     public void updateDefault( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer id ) throws IOException {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
-	    MemberAddress memAddress = new MemberAddress();
-	    memAddress.setId( id );
-	    memAddress.setMemDefault( 1 );
-	    boolean flag = memberAddressService.addOrUpdateAddre( memAddress );
+	    boolean flag = memberAddressService.updateDefault( id );
 	    if ( flag ) {
 		resultMap.put( "code", ResponseEnums.SUCCESS.getCode() );
 	    } else {
@@ -899,13 +880,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-			/*Map<String, Object> publicMap = pageService.memberMap(userid);
-			if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
-				boolean isLogin = pageService.isLogin(member, userid, request);
-				if(!isLogin){
-					return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
-				}
-			}*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -920,16 +894,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		request.setAttribute( "checkId", params.get( "id" ) );
 	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "deliveryType" ) ) && CommonUtil.isNotEmpty( params.get( "payWay" ) ) && CommonUtil.isNotEmpty( params.get( "payWayName" ) ) ) {
-		SessionUtils.setSession( params.get( "deliveryType" ), request, "deliveryMethod" );
-		SessionUtils.setSession( params.get( "payWay" ), request, "orderpayway" );
-		SessionUtils.setSession( params.get( "deliveryType" ), request, "deliveryMethod" );
-
-	    }
-	    SessionUtils.setSession( com.alibaba.fastjson.JSONObject.toJSON( params ), request, "dataOrder" );
-	    Object addTypeObj = SessionUtils.getSession( request, "addressType" );
-	    if ( CommonUtil.isNotEmpty( addTypeObj ) ) {
-		SessionUtils.removeSession( request, "addressType" );
+	    if ( params.containsKey( "data" ) ) {
+		SessionUtils.setSession( params.get( "data" ), request, "to_order" );
 	    }
 	} catch ( Exception e ) {
 	    e.printStackTrace();
@@ -1348,10 +1314,13 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		result = mallOrderNewService.submitOrder( param, member, browser );
 	    }
 
+	} catch ( BusinessException be ) {
+	    result.put( "code", be.getCode() );
+	    result.put( "msg", be.getMessage() );
+	    logger.error( "生成订单异常：" + be.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "生成订单异常：" + e );
 	    e.printStackTrace();
-
 	    result.put( "code", ResponseEnums.ERROR.getCode() );
 	    result.put( "msg", "提交订单失败" );
 	} finally {
@@ -1406,6 +1375,59 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	} catch ( Exception e ) {
 	    code = ResponseEnums.ERROR.getCode();
 	    logger.error( "联盟发送手机验证码异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    result.put( "code", code );
+	    CommonUtil.write( response, result );
+	}
+    }
+
+    /**
+     * 钱包支付
+     */
+    @RequestMapping( value = "/79B4DE7C/paySuccessModified" )
+    public void paySuccessModified( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
+	logger.info( " 钱包支付controller" );
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
+	try {
+	    mallOrderService.paySuccessModified( params, SessionUtils.getLoginMember( request ) );
+	} catch ( BusinessException be ) {
+	    code = be.getCode();
+	    result.put( "errorMsg", be.getMessage() );
+	    logger.error( "钱包支付异常：" + be.getMessage() );
+	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
+	    logger.error( "钱包支付异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    result.put( "code", code );
+	    CommonUtil.write( response, result );
+	}
+    }
+
+    /**
+     * 钱包支付
+     */
+    @RequestMapping( value = "/79B4DE7C/walletPayWay" )
+    public void walletPayWay( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
+	logger.info( " 钱包支付controller" );
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
+	try {
+	    MallOrder mallOrder = mallOrderService.selectById( params.get( "id" ).toString() );
+	    String url = "/phoneOrder/79B4DE7C/orderList.do?isPayGive=1&&orderId=" + mallOrder.getId() + "&&uId=" + mallOrder.getBusUserId();
+	    boolean flag = mallOrderNewService.wxPayWay( 0, "", url, mallOrder );
+	    if ( !flag ) {
+		code = ResponseEnums.ERROR.getCode();
+	    }
+	} catch ( BusinessException be ) {
+	    code = be.getCode();
+	    result.put( "errorMsg", be.getMessage() );
+	    logger.error( "钱包支付异常：" + be.getMessage() );
+	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
+	    logger.error( "钱包支付异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    result.put( "code", code );

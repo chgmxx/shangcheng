@@ -119,10 +119,9 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		    }
 		}
 	    }
-	    int shopId = 0;
-	    if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( "shopId" ) ) ) {//获取shopId
-		shopId = CommonUtil.toInteger( request.getSession().getAttribute( "shopId" ) );
-		request.setAttribute( "shopid", request.getSession().getAttribute( "shopId" ) );
+	    int shopId = SessionUtils.getMallShopId( request );
+	    if ( shopId > 0 ) {//获取shopId
+		request.setAttribute( "shopid", shopId );
 
 		List list1 = pageService.shoppage( shopId );
 		if ( list1.size() > 0 ) {
@@ -135,6 +134,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		List< Map< String,Object > > pageId = mallPageService.selectPageIdByUserId( userid, shopList );
 		if ( pageId.size() > 0 ) {//获取首页的pageId
 		    shopId = CommonUtil.toInteger( pageId.get( 0 ).get( "pag_sto_id" ) );
+		    request.setAttribute( "shopid", shopId );
 		    request.setAttribute( "pageid", pageId.get( 0 ).get( "id" ) );
 		}
 	    }
@@ -143,7 +143,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		Map< String,Object > gradeType = memberService.findGradeType( member.getId() );//会员卡名称
-		MemberCard card = memberService.findMemberCardByMcId( member.getMcId());//会员卡号
+		MemberCard card = memberService.findMemberCardByMcId( member.getMcId() );//会员卡号
 		request.setAttribute( "card", card );
 		request.setAttribute( "gradeType", gradeType );
 	    }

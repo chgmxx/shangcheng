@@ -3,6 +3,7 @@ package com.gt.mall.service.web.order.impl;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
@@ -21,6 +22,8 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.wx.BusIdAndindustry;
+import com.gt.util.entity.result.wx.ApiWxApplet;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,16 +167,18 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		} else if ( detailMap.get( "orderStatus" ).toString().equals( "10" ) ) {//小程序退款
 		    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( orderNo );//根据订单号查询微信订单信息
 		    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
-			//						String sql = "select appid,mch_id from t_wx_applet where industry_code=4 and bus_id=" + order.getBusUserId();
-			//todo 调用小屁孩接口，查询商家设置小程序的信息
+			BusIdAndindustry busIdAndindustry = new BusIdAndindustry();
+			busIdAndindustry.setBusId( wxPayOrder.getBus_id() );
+			busIdAndindustry.setIndustry( Constants.APPLET_STYLE );
+			ApiWxApplet applet = wxPublicUserService.selectBybusIdAndindustry( busIdAndindustry );
+
 			WxmemberPayRefund refund = new WxmemberPayRefund();
-			refund.setMchid( null );// 商户号
-			refund.setAppid( null );// 公众号
+			refund.setMchid( applet.getMchId() );// 商户号
+			refund.setAppid( applet.getAppid() );// 公众号
 			refund.setTotalFee( wxPayOrder.getTotalFee() );//支付总金额
 			refund.setSysOrderNo( wxPayOrder.getOutTradeNo() );//系统单号
 			refund.setRefundFee( orderMoney );//退款金额
 			logger.info( "小程序退款参数：" + JSONObject.fromObject( refund ).toString() );
-			//todo 调用小屁孩接口   小程序退款
 			Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );//小程序退款
 			logger.info( "小程序退款返回值：" + JSONObject.fromObject( resultmap ) );
 			if ( resultmap != null ) {

@@ -20,7 +20,7 @@ public interface PayService {
      * @param payParams 支付接口参数
      * @return 是否成功
      */
-    Map<String,Object> payapi(SubQrPayParams payParams);
+    Map<String,Object> payapi(SubQrPayParams payParams) throws Exception;
 
     /**
      * 退款接口（微信，小程序，钱包和支付宝退款接口）

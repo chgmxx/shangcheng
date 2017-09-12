@@ -259,8 +259,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	int proTypeId = 0;
 
 	if ( CommonUtil.isNotEmpty( maps ) ) {
-	    if ( CommonUtil.isNotEmpty( maps.get( "product_id" ) ) ) {
-		int productId = CommonUtil.toInteger( maps.get( "product_id" ) );
+	    if ( CommonUtil.isNotEmpty( maps.get( "productId" ) ) ) {
+		int productId = CommonUtil.toInteger( maps.get( "productId" ) );
 		MallProduct product = mallProductService.selectById( productId );
 		if ( CommonUtil.isNotEmpty( product ) ) {
 		    String imageUrl = "";
@@ -272,12 +272,12 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 		    String specificaValue = "";
 		    //查询规格信息
-		    if ( CommonUtil.isNotEmpty( maps.get( "product_specificas" ) ) ) {
+		    if ( CommonUtil.isNotEmpty( maps.get( "productSpecificas" ) ) ) {
 			/*String specSql = "SELECT id,specifica_value,specifica_img_url FROM t_mall_product_specifica WHERE is_delete=0 AND specifica_value_id IN(" + maps
-					.get( "product_specificas" ) + ")  AND product_id=" + productId + " ORDER BY sort";
+					.get( "productSpecificas" ) + ")  AND product_id=" + productId + " ORDER BY sort";
 			List< Map< String,Object > > specMapList = daoUtil.queryForList( specSql );*/
 			List< MallProductSpecifica > specificaList = mallProductSpecificaService
-					.selectByValueIds( productId, maps.get( "product_specificas" ).toString().split( "," ) );
+					.selectByValueIds( productId, maps.get( "productSpecificas" ).toString().split( "," ) );
 			if ( specificaList != null && specificaList.size() > 0 ) {
 			    for ( MallProductSpecifica spec : specificaList ) {
 				if ( CommonUtil.isNotEmpty( specificaValue ) ) {
@@ -301,22 +301,22 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			    imageUrl = imageList.get( 0 ).getImageUrl();
 			}
 		    }
-		    double price = CommonUtil.toDouble( maps.get( "price" ) );
-		    int num = CommonUtil.toInteger( maps.get( "totalnum" ) );
+		    double price = CommonUtil.toDouble( maps.get( "detProPrice" ) );
+		    int num = CommonUtil.toInteger( maps.get( "detProNum" ) );
 		    DecimalFormat df = new DecimalFormat( "######0.00" );
 		    double totalPrice = CommonUtil.toDouble( df.format( price * num ) );
 		    proNum += num;
 		    price_total += totalPrice;
-		    double primaryPrice = Double.parseDouble( maps.get( "primary_price" ).toString() );
+		    double primaryPrice = Double.parseDouble( maps.get( "detPrivivilege" ).toString() );
 		    primary_price += primaryPrice * num;
 		    yuanjia_total += primaryPrice;
 
 		    Map< String,Object > specMap = null;
 		    boolean flag = true;
 		    JSONObject specObj = new JSONObject();
-		    if ( CommonUtil.isNotEmpty( maps.get( "pro_spec_str" ) ) ) {
+		    if ( CommonUtil.isNotEmpty( maps.get( "proSpecStr" ) ) ) {
 			num = 0;
-			JSONObject obj = JSONObject.fromObject( maps.get( "pro_spec_str" ) );
+			JSONObject obj = JSONObject.fromObject( maps.get( "proSpecStr" ) );
 			specMap = new HashMap< String,Object >();
 			if ( obj != null && obj.size() > 0 ) {
 			    for ( Object key : obj.keySet() ) {
@@ -336,8 +336,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 					price_total = price_total + ( price * num );
 					totalPrice += ( price * num );
-					yuanjia_total += num * Double.parseDouble( maps.get( "primary_price" ).toString() );
-					primary_price += Double.parseDouble( maps.get( "primary_price" ).toString() ) * num;
+					yuanjia_total += num * Double.parseDouble( maps.get( "detPrivivilege" ).toString() );
+					primary_price += Double.parseDouble( maps.get( "detPrivivilege" ).toString() ) * num;
 					proNum += num;
 					flag = false;
 
@@ -350,8 +350,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    if ( flag ) {
 //			price_total = price_total + ( price * num );
 //			totalPrice = totalPrice + ( price * num );
-			yuanjia_total += num * Double.parseDouble( maps.get( "primary_price" ).toString() );
-			primary_price += Double.parseDouble( maps.get( "primary_price" ).toString() ) * num;
+			yuanjia_total += num * Double.parseDouble( maps.get( "detPrivivilege" ).toString() );
+			primary_price += Double.parseDouble( maps.get( "detPrivivilege" ).toString() ) * num;
 			proNum += num;
 		    }
 
@@ -374,8 +374,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			}
 		    }
 		    productMap.put( "primary_price", primary_price );
-		    if ( CommonUtil.isNotEmpty( maps.get( "product_specificas" ) ) ) {
-			productMap.put( "product_specificas", maps.get( "product_specificas" ) );
+		    if ( CommonUtil.isNotEmpty( maps.get( "productSpecificas" ) ) ) {
+			productMap.put( "product_specificas", maps.get( "productSpecificas" ) );
 		    }
 		    if ( CommonUtil.isNotEmpty( specificaValue ) ) {
 			productMap.put( "product_speciname", specificaValue );

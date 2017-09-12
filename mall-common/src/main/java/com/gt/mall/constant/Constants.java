@@ -90,4 +90,15 @@ public class Constants {
      */
     public static final Integer APPLET_STYLE = 4;
 
+    /**
+     * 联盟 model
+     */
+    public static final Integer UNION_MODEL = 1;
+
+    /**
+     * 支付model
+     */
+    public static final Integer PAY_MODEL = 3;
+
+
 }

@@ -15,4 +15,10 @@ public interface SocketService {
      * @param params 参数
      */
     void getSocketApi( Map< String,Object > params );
+
+    /**
+     * MQ 消息队列发送消息
+     * @param message 消息
+     */
+    Map mqSendMessage(String message);
 }

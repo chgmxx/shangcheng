@@ -45,4 +45,11 @@ public interface MemberAddressService {
      */
     boolean addOrUpdateAddre( MemberAddress memberAddress );
 
+    /**
+     * 把地址设为默认地址
+     * @param addressId 地址id
+     * @return true 成功
+     */
+    boolean updateDefault(int addressId);
+
 }

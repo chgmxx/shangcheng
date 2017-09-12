@@ -21,7 +21,7 @@ public interface MallOrderNewService extends BaseService< MallOrder > {
     /**
      * 计算订单
      */
-    MallAllEntity calculateOrder( Map< String,Object > params, Member member ,List< MallOrder > orderList);
+    MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList );
 
     /**
      * 计算值
@@ -31,5 +31,17 @@ public interface MallOrderNewService extends BaseService< MallOrder > {
     /**
      * 提交订单
      */
-    Map<String,Object> submitOrder(Map<String,Object> params, Member member ,Integer browser);
+    Map< String,Object > submitOrder( Map< String,Object > params, Member member, Integer browser ) throws Exception;
+
+    /**
+     * 微信支付
+     *
+     * @param orderAllMoney 订单总额
+     * @param orderNo       订单号
+     * @param url           回调地址
+     * @param order         订单
+     *
+     * @return true 成功
+     */
+    boolean wxPayWay( double orderAllMoney, String orderNo, String url, MallOrder order ) throws Exception;
 }

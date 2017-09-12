@@ -206,7 +206,7 @@
                     </div>
                     <div class="box">
                         <label>地址</label>
-                        <p>${address.provincename }${address.cityname }${address.memAddress }
+                        <p>${address.provincename }${address.cityname }${address.areaname}${address.memAddress }
                             <c:if test="${address.memZipCode != null && address.memZipCode != ''}">（${address.memZipCode}）</c:if>
                         </p>
                     </div>
@@ -224,6 +224,11 @@
     </footer>
 </div>
 <input type="hidden" class="userid" value="${userid }"/>
+
+
+<form action="" method="post" id="toOrder" name="toOrder">
+    <input name="addressId" type="hidden" class="addressId"/>
+</form>
 
 <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
@@ -263,8 +268,10 @@
         $.post("phoneOrder/79B4DE7C/updateDefault.do", {
             id: id
         }, function (result) {
-            if (result) {
-                location.href = "/phoneOrder/79B4DE7C/toOrder.do?address=1&uId=${userid }";
+            if (result.code == 1) {
+                $(".addressId").val(id);
+                document.toOrder.action="/phoneOrder/79B4DE7C/toOrder.do?uId=${userid }";
+                document.toOrder.submit();
             } else {
                 alert("设置默认地址失败，请稍后再试。");
             }

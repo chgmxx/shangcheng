@@ -55,8 +55,8 @@ String basePath = request.getScheme() + "://"
 	 	<div class="payMoney" <c:if test="${!empty times && order.orderStatus > 1 && order.orderStatus < 5}">style="background: url(/images/mall/pay3.jpg)"</c:if>>
 	 		<div>代付金额</div>
 	 		<div>￥<span class="price">${order.orderMoney }</span></div>
-	 		<c:if test="${!empty expressName }">
-	 		<div>收货人：${expressName }</div>
+	 		<c:if test="${!empty order.receiveName }">
+	 		<div>收货人：${order.receiveName }</div>
 	 		</c:if>
 	 	</div>
 	 	<div class="timeDiv">

@@ -19,6 +19,7 @@ import com.gt.mall.entity.seckill.MallSeckillJoin;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -71,6 +72,9 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
     @Autowired
     private MallStoreService mallStoreService;
+
+    @Autowired
+    private SocketService socketService;
 
     /**
      * 通过店铺id来查询秒杀
@@ -483,10 +487,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    logger.info( "exchange：" + PropertiesUtil.getExchange() );
 		    logger.info( "queueName：" + PropertiesUtil.getQueueName() );
 		    logger.info( "mq参数：" + obj );
-		    // todo 调用陈丹消息队列接口
-		    /*MqUtil mq = new MqUtil();
-		    mq.MqMessage( exchange, queueName, obj.toString() );*/
-		    //MqUtil.MqMessage(exchange, queueName,obj.toString());
+		    socketService.mqSendMessage( obj.toString() );
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		}

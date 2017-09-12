@@ -1,6 +1,7 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.HttpSignUtil;
@@ -24,8 +25,10 @@ public class PayServiceImpl implements PayService {
     private static final String PAY_URL = "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/";
 
     @Override
-    public Map< String,Object > payapi( SubQrPayParams payParams ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( payParams, PAY_URL + "payapi.do", 2 );
+    public Map< String,Object > payapi( SubQrPayParams payParams ) throws Exception {
+	KeysUtil keyUtil = new KeysUtil();
+	String params = keyUtil.getDesString( JSONObject.toJSONString( payParams ) );
+	return HttpSignUtil.signHttpInsertOrUpdate( params, PAY_URL + "payapi.do", 2 );
     }
 
     @Override

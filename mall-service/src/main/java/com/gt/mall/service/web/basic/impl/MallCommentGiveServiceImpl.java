@@ -6,24 +6,29 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallCommentGiveDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.SessionUtils;
+import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
+import com.gt.util.entity.result.fenbi.FenBiCount;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +55,8 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
     private MemberService       memberService;
     @Autowired
     private WxPublicUserService wxPublicUserService;
+    @Autowired
+    private FenBiFlowService    fenBiFlowService;
 
     @Override
     public void commentGive( int commentId, HttpServletRequest request, int memberId ) {
@@ -99,25 +106,33 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 			    member.setTotalintegral( totalIntegral + give.getNum() );
 			    flag = true;
 			} else if ( giveType == 2 ) {//送粉币
-			    int rec_type = 1;//1：粉币 2：流量
-			    int fre_type = 30;//冻结类型    30 评论送礼（赠送粉币）
-			    int fkId = 0;//外键ID
-			    //TODO 需关连 粉币方法
-			    //                            Integer fenbiCount = fenbiMapper.getFenbiSurplus(userId, rec_type, fre_type, fkId);
-			    //                            if (fenbiCount >= Double.valueOf(give.getNum())) {
-			    //                                member.setCurrencydate(new Date());
-			    //                                member.setFansCurrency(CommonUtil.toDouble(fenbi + give.getNum()));
-			    //
-			    //                                FenbiFlowRecord record = fenbiMapper.getFenbi(userId, rec_type, fre_type, fkId);
-			    //                                if (CommonUtil.isNotEmpty(record)) {
-			    //                                    FenbiFlowRecord fenbiFlow = new FenbiFlowRecord();
-			    //                                    fenbiFlow.setId(record.getId());
-			    //                                    fenbiFlow.setRecUseCount(CommonUtil.toDouble(record.getRecUseCount() + give.getNum()));
-			    //
-			    //                                    fenbiMapper.updateByPrimaryKeySelective(fenbiFlow);
-			    //                                    flag = true;
-			    //                                }
-			    //                            }
+			    int rec_type = 1;
+			    int fre_type = 30;
+			    int fkId = 0;
+			    FenbiSurplus fenbiSurplus = new FenbiSurplus();
+			    fenbiSurplus.setBusId( userId );//商家id
+			    fenbiSurplus.setFkId( fkId );//外键ID
+			    fenbiSurplus.setFre_type( 30 );//冻结类型    30 评论送礼（赠送粉币）
+			    fenbiSurplus.setRec_type( 1 );//1：粉币 2：流量
+			    FenBiCount fenBiCount = fenBiFlowService.getFenbiSurplus( fenbiSurplus );
+			    if ( CommonUtil.isNotEmpty( fenBiCount ) && fenBiCount.getCount() > 0 ) {
+				if ( fenBiCount.getCount() >= Double.valueOf( give.getNum() ) ) {
+				    member.setCurrencydate( new Date() );
+				    member.setFansCurrency( CommonUtil.toDouble( fenbi + give.getNum() ) );
+
+				    //todo 冻结流量
+				   /* FenbiFlowRecord record = fenbiMapper.getFenbi( userId, rec_type, fre_type, fkId );
+
+				    if ( CommonUtil.isNotEmpty( record ) ) {
+					FenbiFlowRecord fenbiFlow = new FenbiFlowRecord();
+					fenbiFlow.setId( record.getId() );
+					fenbiFlow.setRecUseCount( CommonUtil.toDouble( record.getRecUseCount() + give.getNum() ) );
+
+					fenbiMapper.updateByPrimaryKeySelective( fenbiFlow );
+					flag = true;
+				    }*/
+				}
+			    }
 			}
 			if ( flag ) {
 			    member.setId( memberId );
@@ -162,21 +177,18 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 		}
 		if ( count > 0 ) {
 		    if ( mallCommentGive.getGiveType().toString().equals( "2" ) ) {
-			//TODO 需关连 粉币方法
-			//查询资产分配
-			//                        FenbiFlowRecord fenbi = new FenbiFlowRecord();
-			//                        fenbi.setBusUserId(user.getId());
-			//                        fenbi.setRecType(1);
-			//                        fenbi.setRecCreatetime(new Date());
-			//                        fenbi.setRecDesc("评论赠送粉币");
-			//                        fenbi.setRecFreezeType(30);
-			//                        fenbi.setRecFkId(0);
-			//                        fenbi.setRecCount(Double.valueOf("0"));
-			//                        //判断用户是否已经资产分配过了
-			//                        FenbiFlowRecord fenbis = fenbiMapper.getFenbi(fenbi.getBusUserId(), fenbi.getRecType(), fenbi.getRecFreezeType(), fenbi.getRecFkId());
-			//                        if(CommonUtil.isEmpty(fenbis)){
-			//                            fenbiMapper.insertSelective(fenbi);
-			//                        }
+			FenbiFlowRecord fenbiFlowRecord = new FenbiFlowRecord();
+			fenbiFlowRecord.setBusUserId( user.getId() );
+			fenbiFlowRecord.setRecType( 1 );
+			fenbiFlowRecord.setRecCreatetime( new Date() );
+			fenbiFlowRecord.setRecDesc( "评论赠送粉币" );
+			fenbiFlowRecord.setRecFreezeType( 30 );
+			fenbiFlowRecord.setRecFkId( 0 );
+			fenbiFlowRecord.setRecCount( Double.valueOf( "0" ) );
+			Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( fenbiFlowRecord );
+			if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
+			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "冻结流量失败" );
+			}
 		    }
 		    flag = true;
 		} else {

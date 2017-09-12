@@ -54,21 +54,32 @@
         <span class="btn_go_home" onclick="pages(${pageId});">首页</span>
     </c:if>
 </div>
-<c:set var="payWay" value=""></c:set>
-<c:set var="orderPayWayName" value=""></c:set>
+<c:set var="payWay" value=""/>
+<c:set var="appointmentName" value=""/>
+<c:set var="appointmentTelephone" value=""/>
 <c:if test="${isWxPay ==1}">
     <c:set var="payWay" value="1"></c:set>
-    <c:set var="orderPayWayName" value="微信支付"></c:set>
 </c:if>
 <c:if test="${isWxPay ==0 && isAliPay ==1}">
     <c:set var="payWay" value="9"></c:set>
-    <c:set var="orderPayWayName" value="支付宝支付"></c:set>
 </c:if>
-<c:if test="${!empty orderPayWays && orderPayWays != '' }">
-    <c:set var="payWay" value="${orderPayWays }"></c:set>
-</c:if>
-<c:if test="${!empty payWayName && payWayName != '' }">
-    <c:set var="orderPayWayName" value="${payWayName }"></c:set>
+<c:if test="${!empty mallOrder}">
+    <c:if test="${!empty mallOrder.orderPayWay}">
+        <c:set var="payWay" value="${mallOrder.orderPayWay }"></c:set>
+    </c:if>
+    <c:if test="${!empty mallOrder.deliveryMethod}">
+        <c:set var="deliveryMethod" value="${mallOrder.deliveryMethod }"></c:set>
+    </c:if>
+    <c:if test="${deliveryMethod == 2}">
+        <c:if test="${!empty mallOrder.appointmentName}">
+            <c:set var="appointmentName" value="${mallOrder.appointmentName }"></c:set>
+        </c:if>
+        <c:if test="${!empty mallOrder.appointmentTelephone}">
+            <c:set var="appointmentTelephone" value="${mallOrder.appointmentTelephone }"></c:set>
+        </c:if>
+
+    </c:if>
+
 </c:if>
 <c:if test="${empty deliveryMethod || deliveryMethod != 2 }">
     <c:set var="deliveryMethod" value="1"></c:set>
@@ -455,55 +466,57 @@
                 <c:set var="jifenMoeny" value="${cardMap.jifenMoeny }"/>
             </c:if>
         </c:if>
-        <div class="pay-way pay-way-slide-btn"><!-- showLay('fenbiDiv',null) -->
-            <input type="hidden" id="fenbi_money" name="fenbi_money" value="${fenbiMoney }"/>
-            <input type="hidden" id="fenbi" name="fenbi" value="${fenbiNum }"/>
-            <c:set var="fenbiFlag" value="true"></c:set>
-            <c:if test="${groupTypes == 2 || groupTypes == 5 }"><!-- 积分兑换和粉币兑换 -->
-            <c:set var="fenbiFlag" value="false"></c:set>
-            </c:if>
-            <span>粉币</span><br/>
+        <c:if test="${fenbiNum > 0 && fenbiMoney > 0}">
+            <div class="pay-way pay-way-slide-btn"><!-- showLay('fenbiDiv',null) -->
+                <input type="hidden" id="fenbi_money" name="fenbi_money" value="${fenbiMoney }"/>
+                <input type="hidden" id="fenbi" name="fenbi" value="${fenbiNum }"/>
+                <c:set var="fenbiFlag" value="true"></c:set>
+                <c:if test="${groupTypes == 2 || groupTypes == 5 }"><!-- 积分兑换和粉币兑换 -->
+                <c:set var="fenbiFlag" value="false"></c:set>
+                </c:if>
+                <span>粉币</span><br/>
 
-            <c:if test="${fenbiNum > 0 && fenbiMoney > 0}">
-            <span class="fenbi_open_span" style="<c:if test="${isOpenFenbi == 0 }">display: none;</c:if>">
+
+                <span class="fenbi_open_span" style="<c:if test="${isOpenFenbi == 0 }">display: none;</c:if>">
                 <span class="pay-explan ">有<em class="num">${fenbiNum }</em>粉币，可抵扣<em class="money">¥${fenbiMoney }</em></span>
 				<i onclick="jisuan(2);" class="fenbiyouhui"><img class="off" src="/images/icon/off_icon.jpg"/><img class="on" src="/images/icon/on_icon.jpg"/></i>
 			</span>
-            </c:if>
-            <span class="fenbi_noopen_span" style="<c:if test="${isOpenFenbi == 1 }">display: none;</c:if>">
+                <span class="fenbi_noopen_span" style="<c:if test="${isOpenFenbi == 1 }">display: none;</c:if>">
 				<span class="pay-explan" style="color: #535353;">无可用</span>
 				<i><img src="/images/icon/off_icon.jpg"/></i>
 			</span>
-        </div>
-        <div class="pay-way pay-way-slide-btn"><!-- showLay('jifenDiv',null) -->
-            <input type="hidden" id="integral_money" name="integral_money" value="${jifenMoeny }"/>
-            <input type="hidden" id="integral" name="integral" value="${jifenNum }"/>
-            <input type="hidden" id="starttype" value="${map.paramSet.starttype }"/>
-            <input type="hidden" id="orderStartMoney" value="${map.paramSet.startmoney }"/>
-            <span>积分</span><br/>
-            <c:if test="${jifenNum > 0 && jifenMoeny > 0}">
-            <span class="jifen_open_span" style="<c:if test="${isOpenJifen == 0 }">display: none;</c:if>">
+            </div>
+        </c:if>
+        <c:if test="${jifenNum > 0 && jifenMoeny > 0}">
+            <div class="pay-way pay-way-slide-btn"><!-- showLay('jifenDiv',null) -->
+                <input type="hidden" id="integral_money" name="integral_money" value="${jifenMoeny }"/>
+                <input type="hidden" id="integral" name="integral" value="${jifenNum }"/>
+                <input type="hidden" id="starttype" value="${map.paramSet.starttype }"/>
+                <input type="hidden" id="orderStartMoney" value="${map.paramSet.startmoney }"/>
+                <span>积分</span><br/>
+
+                <span class="jifen_open_span" style="<c:if test="${isOpenJifen == 0 }">display: none;</c:if>">
                 <span class="pay-explan" style="color: #f20000;">有<em class="num">${jifenNum }</em>积分，可抵扣<em class="money">¥${jifenMoeny }</em></span>
 				<i onclick="jisuan(3);" class="jifenyouhui">
 					<img class="off" src="/images/icon/off_icon.jpg"/><img class="on" src="/images/icon/on_icon.jpg"/>
 				</i>
 			</span>
-            </c:if>
-            <span class="jifen_noopen_span" style="<c:if test="${isOpenJifen == 1 }">display: none;</c:if>">
+                <span class="jifen_noopen_span" style="<c:if test="${isOpenJifen == 1 }">display: none;</c:if>">
 				<span class="pay-explan" style="color: #535353;">无可用</span>
 				<i><img src="/images/icon/off_icon.jpg"/></i>
 			</span>
+            </div>
+        </c:if>
 
-        </div>
         <div class="delivery_way" style="display: none;" id="delivery_way">
             <ul>
                 <li class="flex">
                     <div>提货人：</div>
-                    <div><input type="text" id="appointName" placeholder="请填写提货人姓名" value="${appointName}"/></div>
+                    <div><input type="text" id="appointName" placeholder="请填写提货人姓名" value="${appointmentName}"/></div>
                 </li>
                 <li class="flex">
                     <div>手机号码：</div>
-                    <div><input type="tel" id="appointTelphone" placeholder="请填写提货人手机号码" value="${appointTel}"
+                    <div><input type="tel" id="appointTelphone" placeholder="请填写提货人手机号码" value="${appointmentTelephone}"
                                 maxlength="11"/></div>
                 </li>
                 <li class="flex" style="height: auto;">
@@ -597,7 +610,7 @@
     <input type="hidden" name="payWayName" id="adresspayName"/>
 </form>
 <form action="/phoneOrder/79B4DE7C/getTakeTheir.do?uId=${userid }" method="post" id="getTakeTheir" name="getTakeTheir">
-    <input type="hidden" name="datas" id="datas" value=""/>
+    <input type="hidden" name="data" id="datas" value=""/>
     <input type="hidden" name="id" id="id" value=""/>
     <input type="hidden" name="deliveryType" id="deliveryType"/>
     <input type="hidden" name="payWay" id="takePayWay"/>

@@ -784,11 +784,11 @@ function pfProductBuy() {
     if (flag) {
         //product_name = $.trim(product_name)
         var hs = {
-            product_id: product_id,
-            product_specificas: product_specificas,
-            totalnum: product_num,
-            price: price,
-            primary_price: primary_price,
+            productId: product_id,
+            productSpecificas: product_specificas,
+            detProNum: product_num,
+            detProPrice: price,
+            detPrivivilege: primary_price,
             discount: discount,
             isCoupons: isCoupons
         };
@@ -816,7 +816,7 @@ function pfProductBuy() {
         //hs["is_integral_deduction"] = $(".is_integral_deduction").val();
         //hs["is_fenbi_deduction"] = $(".is_fenbi_deduction").val();
         //批发
-        hs["pro_spec_str"] = proSpecStr;
+        hs["proSpecStr"] = proSpecStr;
         $("#json").val(JSON.stringify(hs));
         //console.log(hs)
         sumbit();

@@ -79,7 +79,7 @@ public class HttpSignUtil {
     public static String signHttpSelect( Object params, String url, int... type ) {
 	JSONObject resultObj = SignHttpJson( params, url, type );
 
-	if ( resultObj.getInteger( "code" ) == 0 ) {
+	if ( resultObj.containsKey( "code" ) && resultObj.getInteger( "code" ) == 0 ) {
 	    logger.info( "data = " + resultObj.getString( "data" ) );
 	    return resultObj.getString( "data" );
 	} else {

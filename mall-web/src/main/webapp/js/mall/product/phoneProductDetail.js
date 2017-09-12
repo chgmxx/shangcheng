@@ -463,7 +463,7 @@ function productBuy(types) {
     }
     if (flag) {
         //console.log(types+"==="+price)
-        var hs = {product_id: product_id, product_specificas: product_specificas, totalnum: product_num, price: price, primary_price: primary_price, discount: discount};
+        var hs = {productId: product_id, productSpecificas: product_specificas, detProNum: product_num, detProPrice: price, detPrivivilege: primary_price, discount: discount};
         if (groupBuyId > 0) {
             hs["groupBuyId"] = groupBuyId;
         }
@@ -1002,7 +1002,7 @@ function product_Buy(types) {
         return;
     }
     if (flag) {
-        var hs = {product_id: product_id, product_specificas: product_specificas, totalnum: product_num, price: price, primary_price: primary_price, discount: discount};
+        var hs = {productId: product_id, productSpecificas: product_specificas, detProNum: product_num, detProPrice: price, detPrivivilege: primary_price, discount: discount};
         if (groupBuyId > 0) {
             hs["groupBuyId"] = groupBuyId;
         }

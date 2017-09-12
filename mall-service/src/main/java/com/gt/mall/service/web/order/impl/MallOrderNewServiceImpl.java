@@ -16,8 +16,11 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.user.MemberAddressService;
+import com.gt.mall.service.inter.wxshop.PayService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.order.MallOrderNewService;
@@ -26,6 +29,8 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.JedisUtil;
+import com.gt.mall.util.PropertiesUtil;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +74,10 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     private MallAuctionBiddingService mallAuctionBiddingService;
     @Autowired
     private MemberAddressService      memberAddressService;
+    @Autowired
+    private WxPublicUserService       wxPublicUserService;
+    @Autowired
+    private PayService                payService;
 
     @Override
     public MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList ) {
@@ -159,7 +168,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 
     @Transactional( rollbackFor = Exception.class )
     @Override
-    public Map< String,Object > submitOrder( Map< String,Object > params, Member member, Integer browser ) {
+    public Map< String,Object > submitOrder( Map< String,Object > params, Member member, Integer browser ) throws Exception {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	Map< String,Object > result = new HashMap<>();
 	List< MallOrder > orderList = JSONArray.parseArray( params.get( "order" ).toString(), MallOrder.class );
@@ -167,17 +176,18 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	if ( CommonUtil.isNotEmpty( params.get( "couponArr" ) ) ) {
 	    couponList = JSONArray.parseArray( params.get( "couponArr" ).toString(), Map.class );
 	}
-	MallAllEntity allEntity = null;
+
 	if ( orderList == null || orderList.size() == 0 ) {
 	    result.put( "code", ResponseEnums.NULL_ERROR.getCode() );
 	    result.put( "errorMsg", ResponseEnums.NULL_ERROR.getDesc() );
 	    return result;
 	}
+	MallOrder order = orderList.get( 0 );
 	//计算订单
+	MallAllEntity allEntity = null;
 	if ( params.containsKey( "useFenbi" ) || params.containsKey( "useJifen" ) || params.containsKey( "couponArr" ) ) {
 	    allEntity = calculateOrder( params, member, orderList );
 	}
-	MallOrder order = orderList.get( 0 );
 	MemberAddress memberAddress = null;
 	//根据地址id查询地址信息
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
@@ -186,6 +196,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	int code = 1;
 	String errorMsg = "";
 	double freightMoney = 0;
+	double orderMoneyAll = 0;
 	for ( MallOrder mallOrder : orderList ) {
 	    if ( code == -1 ) {
 		break;
@@ -208,6 +219,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    mallOrder = getOrderParams( mallOrder, browser, member, shopEntity, memberAddress );
 
 	    freightMoney += CommonUtil.toDouble( mallOrder.getOrderFreightMoney() );
+	    orderMoneyAll += CommonUtil.toDouble( mallOrder.getOrderMoney() );
 
 	    double useFenbi = 0;
 	    double useJifen = 0;
@@ -245,15 +257,18 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	MallOrderDetail detail = new MallOrderDetail();
 	MallOrder parentOrder = orderList.get( 0 ).clone();
 	int shopId = 0;
+	double orderAllMoney = 0;
 	//如果有多个订单，则生成一个主订单
 	if ( orderList.size() > 1 ) {
-	    double money = CommonUtil.toDouble( parentOrder.getOrderMoney() );
 	    if ( CommonUtil.isNotEmpty( allEntity ) ) {
-		money = allEntity.getBalanceMoney();
+		orderAllMoney = allEntity.getBalanceMoney();
 		parentOrder.setUseFenbi( allEntity.getFenbiNum() );
 		parentOrder.setUseJifen( allEntity.getJifenNum() );
+		orderAllMoney = CommonUtil.add( freightMoney, orderAllMoney );
+	    } else {
+		orderAllMoney = CommonUtil.toDouble( df.format( orderMoneyAll ) );
 	    }
-	    double orderAllMoney = CommonUtil.add( freightMoney, money );
+
 	    parentOrder.setOrderMoney( CommonUtil.toBigDecimal( orderAllMoney ) );
 	    parentOrder.setOrderFreightMoney( CommonUtil.toBigDecimal( freightMoney ) );
 	    parentOrder.setMallOrderDetail( null );
@@ -261,9 +276,9 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 	logger.info( "orderParams" + JSONArray.toJSON( orderList ) );
 
-	/*if ( orderList.size() > 0 ) {
+	if ( orderList.size() > 0 ) {
 	    throw new BusinessException( "ss" );
-	}*/
+	}
 
 	int orderPId = 0;
 	String orderNo = "";
@@ -279,18 +294,9 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    if ( i == 0 ) {
 		orderNo = mallOrder.getOrderNo();
 	    }
-	    int count = 0;
-	    if ( orderList.size() > 1 && i == 0 ) {
-		count = mallOrderDAO.insert( mallOrder );
-		if ( count > 0 ) {
-		    orderPId = mallOrder.getId();
-		    continue;
-		}
-	    } else {
-		count = mallOrderDAO.insert( mallOrder );
-		if ( i == 0 && count > 0 ) {
-		    orderPId = mallOrder.getId();
-		}
+	    int count = mallOrderDAO.insert( mallOrder );
+	    if ( i == 0 && count > 0 ) {
+		orderPId = mallOrder.getId();
 	    }
 	    if ( count < 0 ) {
 		code = -1;
@@ -352,8 +358,9 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		}
 	    }
 	}
+
 	//货到付款或支付金额为0的订单，直接修改订单状态为已支付，且修改商品库存和销量
-	if ( CommonUtil.toDouble( order.getOrderMoney() ) == 0 || ( order.getOrderPayWay() != 1 && order.getOrderPayWay() != 9 ) ) {
+	if ( orderAllMoney == 0 || ( order.getOrderPayWay() != 1 && order.getOrderPayWay() != 9 ) ) {
 	    Map< String,Object > payParams = new HashMap<>();
 	    payParams.put( "status", 2 );
 	    payParams.put( "out_trade_no", orderNo );
@@ -370,8 +377,60 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	} else if ( order.getOrderPayWay() == 4 ) {
 	    url = "/phoneIntegral/" + shopId + "/79B4DE7C/recordList.do?uId=" + member.getBusid() + "&&orderId=" + orderPId;
 	}
+	if ( orderAllMoney > 0 && ( order.getOrderPayWay() == 1 || order.getOrderPayWay() == 9 ) ) {
+
+	    wxPayWay( orderAllMoney, orderNo, url, order );
+	    url = PropertiesUtil.getWxmpDomain() + "8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=";
+	}
 	result.put( "url", url );
 	return result;
+    }
+
+    @Override
+    public boolean wxPayWay( double orderAllMoney, String orderNo, String url, MallOrder order ) throws Exception {
+	if ( orderAllMoney == 0 ) {
+	    orderAllMoney = CommonUtil.toDouble( order.getOrderMoney() );
+	}
+	if ( CommonUtil.isEmpty( orderNo ) ) {
+	    orderNo = order.getOrderNo();
+	}
+	SubQrPayParams subQrPayParams = new SubQrPayParams();
+	subQrPayParams.setTotalFee( orderAllMoney );
+	subQrPayParams.setModel( Constants.PAY_MODEL );
+	subQrPayParams.setBusId( order.getBusUserId() );
+	subQrPayParams.setAppidType( 0 );
+	    /*subQrPayParams.setAppid( 0 );*///微信支付和小程序支付可以不传
+	subQrPayParams.setOrderNum( orderNo );//订单号
+	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
+	subQrPayParams.setDesc( "商城下单" );//描述
+	if ( CommonUtil.isNotEmpty( url ) ) {
+	    subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
+	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + url );
+	    subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
+			    + "/phoneOrder/79B4DE7C/paySuccessModified.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	} else {
+	    subQrPayParams.setIsreturn( 0 );
+	}
+	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/indexstart.do" );//推送路径(尽量不要带参数)
+	int payWay = 1;
+	if ( order.getOrderPayWay() == 9 ) {
+	    payWay = 2;
+	}
+	if ( order.getIsWallet() == 1 ) {
+	    payWay = 3;
+	}
+	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+
+	Map< String,Object > resultMap = payService.payapi( subQrPayParams );
+	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
+	    String errorMsg = "支付失败";
+	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
+		errorMsg = resultMap.get( "errorMsg" ).toString();
+	    }
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
+	}
+	return true;
     }
 
     private MallOrder getOrderParams( MallOrder mallOrder, int browser, Member member, MallShopEntity shopEntity, MemberAddress memberAddress ) {

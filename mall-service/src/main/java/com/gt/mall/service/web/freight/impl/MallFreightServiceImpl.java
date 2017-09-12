@@ -11,6 +11,7 @@ import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.util.AddressUtil;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.PageUtil;
 import org.apache.log4j.Logger;
@@ -302,14 +303,12 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 
     @Override
     public int getProvinceId( String province ) {
-	//TODO 需关连basis_city城市数据
-	//        String sql = "SELECT  id FROM `basis_city` where city_name like '%" + province + "%'";
-	//        Map<String, Object> map = daoUtil.queryForMap(sql);
-	//        if (map != null) {
-	//            if (CommonUtil.isNotEmpty(map.get("id"))) {
-	//                return CommonUtil.toInteger(map.get("id"));
-	//            }
-	//        }
+	Map map = wxShopService.queryBasisByName( province );
+	if ( CommonUtil.isNotEmpty( map ) ) {
+	    if ( CommonUtil.isNotEmpty( map.get( "id" ) ) ) {
+		return CommonUtil.toInteger( map.get( "id" ) );
+	    }
+	}
 	return 0;
     }
 
@@ -319,27 +318,28 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	if ( addressMap != null && addressMap.size() > 0 ) {
 	    loginCity = addressMap.get( "memProvince" ).toString();
 	} else if ( CommonUtil.isNotEmpty( params.get( "province" ) ) ) {
-	    //todo 根据城市名称获取城市id
-	    List< Map > list = wxShopService.queryBasisCityIds( params.get( "province" ).toString() );
-	    if ( list != null && list.size() > 0 ) {
-		Map< String,Object > map = list.get( 0 );
-		loginCity = map.get( "id" ).toString();
+	    int city = getProvinceId( params.get( "province" ).toString() );
+	    if ( city > 0 ) {
+		loginCity = CommonUtil.toString( city );
 	    }
 	} else if ( CommonUtil.isNotEmpty( params.get( "latitude" ) ) && CommonUtil.isNotEmpty( params.get( "longitude" ) ) ) {
 	    double latitude = CommonUtil.toDouble( params.get( "latitude" ) );
 	    double longitude = CommonUtil.toDouble( params.get( "longitude" ) );
 	    if ( latitude > 0 && longitude > 0 ) {
-		//TODO 需调用storeService.getAddressBylnglat()方法
-		//                Map<String, Object> map = storeService.getAddressBylnglat(latitude + "", longitude + "");
-		//                if (CommonUtil.isNotEmpty(map)) {
-		//                    if (CommonUtil.isNotEmpty(map.get("city"))) {
-		//                        String city = map.get("city").toString();
-		//                        int cityId = getProvinceId(city);
-		//                        if (cityId > 0) {
-		//                            loginCity = cityId + "";
-		//                        }
-		//                    }
-		//                }
+		try {
+		    Map< String,Object > map = AddressUtil.getAddressBylnglat( latitude + "", longitude + "" );
+		    if ( CommonUtil.isNotEmpty( map ) ) {
+			if ( CommonUtil.isNotEmpty( map.get( "city" ) ) ) {
+			    String city = map.get( "city" ).toString();
+			    int cityId = getProvinceId( city );
+			    if ( cityId > 0 ) {
+				loginCity = cityId + "";
+			    }
+			}
+		    }
+		} catch ( Exception e ) {
+		    e.printStackTrace();
+		}
 	    }
 	}
 	if ( loginCity.equals( "" ) ) {

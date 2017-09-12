@@ -11,12 +11,14 @@ import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.util.CommonUtil;
 import com.gt.mall.util.DateTimeKit;
 import com.gt.mall.util.PageUtil;
+import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,8 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     private WxPublicUserService  wxPublicUserService;
     @Autowired
     private PayOrderService      payOrderService;
+    @Autowired
+    private PayService           payService;
 
     @Override
     public PageUtil selectMarginByShopId( Map< String,Object > params, int userId ) {
@@ -271,21 +275,19 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( aucNo );
 	    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
-		map.put( "appid", pUser.getAppid() );// 公众号
-		map.put( "mchid", pUser.getMchId() );// 商户号
-		map.put( "sysOrderNo", wxPayOrder.getOutTradeNo() );// 系统订单号
-		map.put( "wx_order_no", wxPayOrder.getTransactionId() );// 微信订单号
-		map.put( "outRefundNo", returnNo );// 商户退款单号(系统生成)
-		map.put( "totalFee", wxPayOrder.getTotalFee() );// 总金额
-		map.put( "refundFee", money );// 退款金额
-		map.put( "key", pUser.getApiKey() );// 商户支付密钥
-		map.put( "wxOrdId", wxPayOrder.getId() );// 微信订单表主键
-		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.parseObject( map.toString() ).toString() );
 
-		//TODO 需关连 WxPayService.memberPayRefund(map)方法
-		Map< String,Object > resultmap = new HashMap<>();
-		//                Map<String, Object> resultmap = payService.memberPayRefund(map);
-		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.parseObject( resultmap.toString() ).toString() );
+		WxmemberPayRefund refund = new WxmemberPayRefund();
+		refund.setMchid( pUser.getMchId() );// 商户号
+		refund.setAppid( pUser.getAppid() );// 公众号
+		refund.setTotalFee( wxPayOrder.getTotalFee() );//支付总金额
+		refund.setSysOrderNo( wxPayOrder.getOutTradeNo() );//系统单号
+
+		refund.setRefundFee( money );//退款金额
+
+		logger.error( "微信退款的参数：" + net.sf.json.JSONObject.fromObject( refund ).toString() );
+		Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );  //微信退款
+		logger.error( "微信退款的返回值：" + net.sf.json.JSONObject.fromObject( resultmap ) );
+
 		if ( resultmap != null ) {
 		    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
 			//退款成功修改退款状态
@@ -295,6 +297,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 			resultMap.put( "msg", resultmap.get( "msg" ) );
 		    }
 		}
+
 	    }
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
 	    Map< String,Object > returnParams = new HashMap<>();

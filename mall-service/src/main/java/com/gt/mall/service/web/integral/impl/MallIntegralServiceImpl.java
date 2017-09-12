@@ -317,8 +317,6 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	}
 	if ( CommonUtil.isNotEmpty( params.get( "receiveId" ) ) ) {
 	    order.setReceiveId( CommonUtil.toInteger( params.get( "receiveId" ) ) );
-	    //TODO 需调用 微餐饮IEatPhoneService.updateDefaultArea()方法
-	    //            eatPhoneService.updateDefaultArea(order.getReceiveId(), member.getId());
 	}
 	if ( CommonUtil.isNotEmpty( browser ) ) {
 	    order.setBuyerUserType( browser );
@@ -370,19 +368,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    if ( count > 0 ) {
 		params.put( "status", 2 );
 		params.put( "out_trade_no", order.getOrderNo() );
-		//TODO 需调用 会员memberPayService.updateIntergral()方法
-		Map< String,Object > payRresult = new HashMap<>();
-		//                Map<String, Object> payRresult = memberPayService.updateIntergral(request, member.getId(), (int) -order.getOrderMoney());
-		if ( CommonUtil.isNotEmpty( payRresult.get( "result" ) ) ) {
-		    if ( CommonUtil.toString( payRresult.get( "result" ) ).equals( "2" ) ) {
-			orderService.paySuccessModified( params, member );//修改库存和订单状态
-			code = 1;
-		    } else {
-			code = -1;
-		    }
-		} else {
-		    code = -1;
-		}
+		orderService.paySuccessModified( params, member );//修改库存和订单状态
+		code = 1;
 	    }
 	}
 
