@@ -211,10 +211,10 @@ function getCode(obj) {
             timeout: 300000,
             dataType: "json",
             success: function (data) {
-                if (data.status == "success") {
-                    telCode = data.code;
+                if (data.code == "1") {
+                    // telCode = data.code;
                     return true;
-                } else if (data.status == "error") {
+                } else{
                     gtcommonDialog("发送失败，重新发送", null);
                     return false;
                 }
@@ -240,8 +240,8 @@ function valUnionMobile(obj) {
         gtcommonDialog("请填写正确的手机号", null);
     } else if (unionCode == null || unionCode == "") {
         gtcommonDialog("请填写验证码", null);
-    } else if ((unionCode != telCode && telCode != "" ) || telCode == "") {
-        gtcommonDialog("请填写正确的验证码", null);
+    // } else if ((unionCode != telCode && telCode != "" ) || telCode == "") {
+    //     gtcommonDialog("请填写正确的验证码", null);
     } else {
         $.ajax({
             url: "/phoneOrder/79B4DE7C/bindUnionCard.do",
@@ -252,7 +252,7 @@ function valUnionMobile(obj) {
             },
             dataType: "json",
             success: function (data) {
-                if (data.status === "1") {
+                if (data.code === "1") {
                     //gtcommonDialog("绑定成功",bindOk);
                     location.reload(true);
                 } else if (data.errorMsg !== null) {

@@ -87,7 +87,7 @@ public interface MallOrderAppletService extends BaseService<MallAppletImage> {
      * @param params
      * @return
      */
-    Map<String, Object> addressDefault(Map<String, Object> params);
+//    Map<String, Object> addressDefault(Map<String, Object> params);
 
     /**
      * 提交地址信息
@@ -95,7 +95,7 @@ public interface MallOrderAppletService extends BaseService<MallAppletImage> {
      * @param params
      * @return
      */
-    Map<String, Object> addressSubmit(Map<String, Object> params);
+//    Map<String, Object> addressSubmit(Map<String, Object> params);
 
     /**
      * 进入提交订单的页面
@@ -120,7 +120,7 @@ public interface MallOrderAppletService extends BaseService<MallAppletImage> {
      * @param url
      * @return
      */
-    Map<Object, Object> appletWxOrder(Map<String, Object> params, String url) throws Exception;
+    Map<String, Object> appletWxOrder(Map<String, Object> params, String url) throws Exception;
 
     /**
      * 商品立即购买

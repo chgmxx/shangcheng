@@ -99,7 +99,7 @@ $(function () {
         $.post("phoneOrder/79B4DE7C/addAddress.do", {
             params: obj
         }, function (result) {
-            if (!result.result) {
+            if (result.code != 1) {
                 $('#save').attr("disabled", false);
                 alert(result.message);
                 return false;

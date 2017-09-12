@@ -17,6 +17,7 @@ import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.util.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
@@ -85,6 +86,8 @@ public class MallAuctionController extends AuthorizeOrLoginController {
     private MemberService               memberService;
     @Autowired
     private BusUserService              busUserService;
+    @Autowired
+    private MemberAddressService        memberAddressService;
 
     /**
      * 拍卖管理列表页面
@@ -503,7 +506,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		request.setAttribute( "imagelist", imagelist );
 		request.setAttribute( "http", http );
 		request.setAttribute( "mapmessage", mapmessage );
-		Map shopmessage = pageService.shopmessage( shopid ,null);
+		Map shopmessage = pageService.shopmessage( shopid, null );
 		double discount = 1;//商品折扣
 		String is_member_discount = mapmessage.get( "is_member_discount" ).toString();//商品是否参加折扣
 		if ( ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {
@@ -527,12 +530,11 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    specificaList = productSpecificaService.getSpecificaByProductId( id );//获取商品规格值
 		    guigePrice = pageService.guigePrice( id );
 		}
-		Map< String,Object > params = new HashMap< String,Object >();
-		List< MemberAddress > addressList = new ArrayList< MemberAddress>();
+
+		List< MemberAddress > addressList = new ArrayList< MemberAddress >();
 		if ( CommonUtil.isNotEmpty( member ) ) {
-		    params.put( "memberId", member.getId() );
-		    params.put( "memDefault", 1 );
-		    addressList = orderService.selectShipAddress( params );//获取默认地址
+		    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+		    addressList = memberAddressService.addressList( CommonUtil.getMememberIds( memberList, member.getId() ) );
 		}
 		String loginCity = "";
 		if ( addressList == null || addressList.size() == 0 ) {

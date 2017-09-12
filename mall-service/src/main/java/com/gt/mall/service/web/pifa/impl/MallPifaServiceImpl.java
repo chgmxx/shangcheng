@@ -361,7 +361,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(),
 			    "yyyy-MM-dd HH:mm:ss" );
 	    pifa.setTimes( ( endTime.getTime() - nowTime.getTime() ) / 1000 );
-	    if ( pifa.getStatus() == 0 ) {
+	    if ( pifa.getStatus()==null || pifa.getStatus() == 0 ) {
 		pifa.setStartTimes( ( startTime.getTime() - nowTime.getTime() ) / 1000 );
 	    }
 

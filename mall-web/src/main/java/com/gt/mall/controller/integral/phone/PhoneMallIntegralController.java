@@ -332,7 +332,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		member = memberService.findMemberById( member.getId(), member );
 		boolean isMember = memberService.isMember( member.getId() );
-		if ( isMember ) {
+		if (! isMember ) {
 		    request.setAttribute( "isMember", 1 );
 		}
 	    }
@@ -378,19 +378,10 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		return returnUrl;
 	    }
 
-	    params = orderService.getMemberParams( member, params );
-	    List addressList = orderService.selectShipAddress( params );
+	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+	    List< MemberAddress > addressList = memberAddressService.addressList( CommonUtil.getMememberIds( memberList, member.getId() ) );
 	    request.setAttribute( "addressList", addressList );
 
-
-	    /*BusUser user = pageService.selUserByMember(member);
-	    if(CommonUtil.isNotEmpty(user)){
-		    if(CommonUtil.isNotEmpty(user.getAdvert())){
-			    if(user.getAdvert() == 0){
-				    request.setAttribute("isAdvert", 1);
-			    }
-		    }
-	    }*/
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 		shopId = storeService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session

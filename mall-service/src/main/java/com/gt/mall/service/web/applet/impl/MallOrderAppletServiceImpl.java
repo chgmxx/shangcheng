@@ -24,10 +24,13 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
@@ -42,6 +45,7 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.util.*;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -109,6 +113,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private MallNewOrderAppletService   mallNewOrderAppletService;
     @Autowired
     private MemberAddressService        memberAddressService;
+    @Autowired
+    private PayService                  payService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -396,10 +402,9 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    resultMap.put( "order_time", dateFormat.format( new Date() ) );
 
 	    if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
-		params.put( "id", order.getReceiveId() );
-		List< MemberAddress > list = orderService.selectShipAddress( params );
-		if ( list != null && list.size() > 0 ) {
-		    Map< String,Object > addressMap = getAddressParams( list.get( 0 ) );
+		MemberAddress mem = memberAddressService.addreSelectId( order.getReceiveId() );
+		if ( mem != null ) {
+		    Map< String,Object > addressMap = getAddressParams( mem );
 		    resultMap.putAll( addressMap );
 		}
 	    }
@@ -678,7 +683,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		appletParam.put( "memberId", params.get( "memberId" ) );
 		appletParam.put( "orderNo", order.getOrderNo() );
 		appletParam.put( "appid", params.get( "appid" ) );
-		Map< Object,Object > parameters = appletWxOrder( appletParam, url );
+		Map< String,Object > parameters = appletWxOrder( appletParam, url );
 		resultMap.putAll( parameters );
 	    }
 
@@ -884,25 +889,23 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
-	if ( memberList != null && memberList.size() > 0 ) {
-	    params.put( "oldMemberIds", memberList );
-	}
 	List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
-	List< MemberAddress > list = orderService.selectShipAddress( params );
-	int is_default = 2;
+	List< MemberAddress > list = memberAddressService.addressList( CommonUtil.getMememberIds( memberList, memberId ) );
+
+	//	int is_default = 2;
 	if ( list != null && list.size() > 0 ) {
 	    for ( MemberAddress map : list ) {
 		Map< String,Object > addressMap = getAddressParams( map );
-		if ( is_default == 2 ) {
-		    is_default = CommonUtil.toInteger( addressMap.get( "is_default" ) );
-		} else if ( is_default == 1 && addressMap.get( "is_default" ).toString().equals( "1" ) ) {
-		    addressMap.put( "is_default", "2" );
-
-		    MemberAddress address = new MemberAddress();
-		    address.setId( CommonUtil.toInteger( addressMap.get( "id" ) ) );
-		    address.setMemDefault( 2 );
-		    memberAddressService.addOrUpdateAddre( address );
-		}
+		//		if ( is_default == 2 ) {
+		//		    is_default = CommonUtil.toInteger( addressMap.get( "is_default" ) );
+		//		} else if ( is_default == 1 && addressMap.get( "is_default" ).toString().equals( "1" ) ) {
+		//		    addressMap.put( "is_default", "2" );
+		//
+		//		    MemberAddress address = new MemberAddress();
+		//		    address.setId( CommonUtil.toInteger( addressMap.get( "id" ) ) );
+		//		    address.setMemDefault( 2 );
+		//		    memberAddressService.addOrUpdateAddre( address );
+		//		}
 		addressList.add( addressMap );
 	    }
 	}
@@ -910,29 +913,13 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	return resultMap;
     }
 
-    @Override
+    /*@Override
     public Map< String,Object > addressDefault( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int id = CommonUtil.toInteger( params.get( "id" ) );
-	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 
-	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
-	String memberIds = "";
-	if ( memberList != null && memberList.size() > 0 ) {
-	    for ( Integer dfMemberId : memberList ) {
-		if ( CommonUtil.isNotEmpty( memberIds ) ) {
-		    memberIds += ",";
-		}
-		memberIds += dfMemberId;
-	    }
-	}
-	//TODO 地址方法 t_eat_member_address
-	//	daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 2 WHERE df_member_id in (" + memberIds + ")" );
-	MemberAddress address = new MemberAddress();
-	address.setId( id );
-	address.setMemDefault( 1 );
-	boolean reuslt = memberAddressService.addOrUpdateAddre( address );
-	//	int count = daoUtil.update( "UPDATE t_eat_member_address SET mem_default = 1 WHERE id=?", id );
+	boolean reuslt = memberAddressService.updateDefault( id );
+
 	if ( reuslt ) {
 	    resultMap.put( "code", 1 );
 	} else {
@@ -941,44 +928,49 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 
 	return resultMap;
-    }
+    }*/
 
-    @Override
+   /* @Override
     public Map< String,Object > addressSubmit( Map< String,Object > params ) {
 	//TODO 需关连会员地址方法 basis_city，t_eat_member_address
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	MemberAddress memAddress = JSONObject.parseObject( JSON.toJSONString( params ), MemberAddress.class );
-	System.out.println( memAddress.getMemAddress() );
-	/*int count = daoUtil.queryForInt( "select count(id) from t_eat_member_address where mem_default = 1 and df_member_id=?", memAddress.getDfMemberId() );
+	//	System.out.println( memAddress.getMemAddress() );
+	*//*int count = daoUtil.queryForInt( "select count(id) from t_eat_member_address where mem_default = 1 and df_member_id=?", memAddress.getDfMemberId() );
 	if ( count == 0 ) {
 	    memAddress.setMemDefault( 1 );
-	}*/
-	if ( CommonUtil.isEmpty( memAddress.getMemLatitude() ) || CommonUtil.isEmpty( memAddress.getMemLongitude() ) ) {
-	   /* Map< String,Object > provinceMaps = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemProvince() );
-	    Map< String,Object > cityMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemCity() );
-	    Map< String,Object > areaMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemArea() );*/
-	    List< Map > provinceMaps = wxShopService.queryBasisCityIds( memAddress.getMemProvince().toString() );
-	    List< Map > cityMap = wxShopService.queryBasisCityIds( memAddress.getMemCity().toString() );
-	    List< Map > areaMap = wxShopService.queryBasisCityIds( memAddress.getMemArea().toString() );
-
-	    String address = "";
-	    String city = "";
-	    if ( CommonUtil.isNotEmpty( provinceMaps ) ) {
-		address += provinceMaps.get( 0 ).get( "city_name" ).toString();
-	    }
-	    if ( CommonUtil.isNotEmpty( cityMap ) ) {
-		city = cityMap.get( 0 ).get( "city_name" ).toString();
-		address += city;
-	    }
-	    if ( CommonUtil.isNotEmpty( areaMap ) ) {
-		address += areaMap.get( 0 ).get( "city_name" ).toString();
-	    }
-	    /*Map< String,Object > addressMap = mallStoreService.getlnglatByAddress( address + memAddress.getMemAddress(), city );
-	    if ( CommonUtil.isNotEmpty( addressMap ) ) {
-		memAddress.setMemLatitude( addressMap.get( "lat" ).toString() );
-		memAddress.setMemLongitude( addressMap.get( "lng" ).toString() );
-	    }*/
-	}
+	}*//*
+	//	List< Integer > memberList = memberService.findMemberListByIds( memAddress.getDfMemberId() );
+	//	Map map = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, memAddress.getDfMemberId() ) );
+	//	if ( map!=null ){
+	//	    memAddress.setMemDefault( 1 );
+	//	}
+	//	if ( CommonUtil.isEmpty( memAddress.getMemLatitude() ) || CommonUtil.isEmpty( memAddress.getMemLongitude() ) ) {
+	//	   *//* Map< String,Object > provinceMaps = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemProvince() );
+	//	    Map< String,Object > cityMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemCity() );
+	//	    Map< String,Object > areaMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemArea() );*//*
+	//	    List< Map > provinceMaps = wxShopService.queryBasisCityIds( memAddress.getMemProvince().toString() );
+	//	    List< Map > cityMap = wxShopService.queryBasisCityIds( memAddress.getMemCity().toString() );
+	//	    List< Map > areaMap = wxShopService.queryBasisCityIds( memAddress.getMemArea().toString() );
+	//
+	//	    String address = "";
+	//	    String city = "";
+	//	    if ( CommonUtil.isNotEmpty( provinceMaps ) ) {
+	//		address += provinceMaps.get( 0 ).get( "city_name" ).toString();
+	//	    }
+	//	    if ( CommonUtil.isNotEmpty( cityMap ) ) {
+	//		city = cityMap.get( 0 ).get( "city_name" ).toString();
+	//		address += city;
+	//	    }
+	//	    if ( CommonUtil.isNotEmpty( areaMap ) ) {
+	//		address += areaMap.get( 0 ).get( "city_name" ).toString();
+	//	    }
+	//	    *//*Map< String,Object > addressMap = mallStoreService.getlnglatByAddress( address + memAddress.getMemAddress(), city );
+	//	    if ( CommonUtil.isNotEmpty( addressMap ) ) {
+	//		memAddress.setMemLatitude( addressMap.get( "lat" ).toString() );
+	//		memAddress.setMemLongitude( addressMap.get( "lng" ).toString() );
+	//	    }*//*
+	//	}
 	boolean msg = memberAddressService.addOrUpdateAddre( memAddress );
 
 	if ( msg ) {
@@ -988,7 +980,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    resultMap.put( "errorMsg", "保存地址信息失败" );
 	}
 	return resultMap;
-    }
+    }*/
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -1423,14 +1415,53 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     }
 
     @Override
-    public Map< Object,Object > appletWxOrder( Map< String,Object > params, String url ) throws Exception {
+    public Map< String,Object > appletWxOrder( Map< String,Object > params, String url ) throws Exception {
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
+	MallOrder order = orderDAO.selectOrderByOrderNo( CommonUtil.toString( params.get( "orderNo" ) ) );
+
+	SubQrPayParams subQrPayParams = new SubQrPayParams();
+	subQrPayParams.setTotalFee( CommonUtil.toDouble( order.getOrderMoney() ) );
+	subQrPayParams.setModel( Constants.PAY_MODEL );
+	subQrPayParams.setBusId( member.getBusid() );
+	subQrPayParams.setAppidType( 1 );
+	subQrPayParams.setAppid( CommonUtil.toString( params.get( "appid" ) ) );//微信支付和支付宝可以不传
+	subQrPayParams.setOrderNum( order.getOrderNo() );//订单号
+	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
+	subQrPayParams.setDesc( "商城下单" );//描述
+	if ( CommonUtil.isNotEmpty( url ) ) {
+	    subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
+	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + url );
+	    subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
+			    + "/phoneOrder/79B4DE7C/paySuccessModified.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	} else {
+	    subQrPayParams.setIsreturn( 0 );
+	}
+	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/indexstart.do" );//推送路径(尽量不要带参数)
+	int payWay = 1;
+	/*if ( order.getOrderPayWay() == 9 ) {
+	    payWay = 2;
+	}
+	if ( order.getIsWallet() == 1 ) {
+	    payWay = 3;
+	}*/
+	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+
+	Map< String,Object > resultMap = payService.payapi( subQrPayParams );
+	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
+	    String errorMsg = "支付失败";
+	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
+		errorMsg = resultMap.get( "errorMsg" ).toString();
+	    }
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
+	}
+	return resultMap;
+	/*Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 
 	//TODO  t_wx_member_applet_openid
 	//        String sql = "select openid from t_wx_member_applet_openid where style=4 and member_id=" + member.getId();
 	//        Map<String, Object> openMap = daoUtil.queryForMap(sql);
 
-	MallOrder order = orderDAO.selectOrderByOrderNo( CommonUtil.toString( params.get( "orderNo" ) ) );
 	Map< String,Object > appletParams = new HashMap< String,Object >();
 	appletParams.put( "paySource", 1 );//支付来源
 	appletParams.put( "busId", member.getBusid() );//商家ID
@@ -1442,11 +1473,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	//        appletParams.put("openid", openMap.get("openid"));
 	appletParams.put( "model", 3 );
 	appletParams.put( "url", url );
-	appletParams.put( "appid", CommonUtil.toString( params.get( "appid" ) ) );
+	appletParams.put( "appid", CommonUtil.toString( params.get( "appid" ) ) );*/
 	//TODO 下单 wxPayService.memberPayByWxApplet()
 	//        Map<Object, Object> parameters = wxPayService.memberPayByWxApplet(appletParams);
 	//        return parameters;
-	return null;
     }
 
     @Override

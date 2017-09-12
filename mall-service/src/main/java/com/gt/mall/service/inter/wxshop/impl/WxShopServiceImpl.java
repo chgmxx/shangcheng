@@ -1,5 +1,6 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.wx.shop.ShopPhoto;
@@ -98,7 +99,7 @@ public class WxShopServiceImpl implements WxShopService {
     public Map queryBasisByName( String name ) {
 	String result = HttpSignUtil.signHttpSelect( name, WS_SHOP_URL + "queryBasisByName.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.parseObject( result, Map.class );
+	    return JSONObject.parseObject( JSON.toJSONString( result), Map.class );
 	}
 	return null;
     }

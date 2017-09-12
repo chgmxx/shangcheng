@@ -1,5 +1,6 @@
 package com.gt.mall.controller.applet.phone;
 
+import com.alibaba.fastjson.JSON;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.Member;
@@ -583,7 +584,7 @@ public class PhoneHomeAppletController extends BaseController {
     @RequestMapping( "/79B4DE7C/appletWxOrder" )
 
     public void appletWxOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< Object,Object > resultMap = new HashMap< Object,Object >();
+	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "微信订单支付的参数：" + params );
 	    resultMap = mallOrderAppletService.appletWxOrder( params, CommonUtil.getpath( request ) );
@@ -764,7 +765,15 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "设置默认地址的参数：" + params );
-	    resultMap = mallOrderAppletService.addressDefault( params );
+
+	    int id = CommonUtil.toInteger( params.get( "id" ) );
+	    boolean reuslt = memberAddressService.updateDefault( id );
+	    if ( reuslt ) {
+		resultMap.put( "code", 1 );
+	    } else {
+		resultMap.put( "code", -1 );
+		resultMap.put( "errorMsg", "设置默认地址失败" );
+	    }
 
 	} catch ( Exception e ) {
 	    resultMap.put( "code", "-1" );
@@ -790,7 +799,7 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "删除地址的参数：" + params );
-	    resultMap = mallOrderAppletService.addressDefault( params );
+//	    resultMap = mallOrderAppletService.addressDefault( params );
 
 	} catch ( Exception e ) {
 	    resultMap.put( "code", "-1" );
@@ -856,7 +865,16 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "提交地址信息的参数：" + params );
-	    resultMap = mallOrderAppletService.addressSubmit( params );
+
+	    MemberAddress memAddress = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MemberAddress.class );
+	    boolean msg = memberAddressService.addOrUpdateAddre( memAddress );
+
+	    if ( msg ) {
+		resultMap.put( "code", 1 );
+	    } else {
+		resultMap.put( "code", -1 );
+		resultMap.put( "errorMsg", "保存地址信息失败" );
+	    }
 
 	} catch ( Exception e ) {
 	    resultMap.put( "code", "-1" );

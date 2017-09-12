@@ -333,8 +333,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 收货地址列表
      */
     @RequestMapping( value = "/79B4DE7C/addressList" )
-    public String addressList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) {
+    public String addressList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入收货地址列表页面" );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
@@ -1339,7 +1338,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	try {
 	    BindCardParam bindCardParam = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), BindCardParam.class );
 	    Map resultMap = unionCardService.uionCardBind( bindCardParam );
-	    if ( resultMap.get( "code" ).toString().equals( "1" ) ) {
+	    if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 		code = ResponseEnums.ERROR.getCode();
 	    }
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
@@ -1366,7 +1365,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
 	    Map resultMap = unionCardService.phoneCode( params.get( "phone" ).toString() );
-	    if ( resultMap.get( "code" ).toString().equals( "1" ) ) {
+	    if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 		code = ResponseEnums.ERROR.getCode();
 	    }
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
