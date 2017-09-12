@@ -1361,10 +1361,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	int payWay = 1;
 	/*if ( order.getOrderPayWay() == 9 ) {
 	    payWay = 2;
-	}
+	}*/
 	if ( order.getIsWallet() == 1 ) {
 	    payWay = 3;
-	}*/
+	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 
 	Map< String,Object > resultMap = payService.payapi( subQrPayParams );
@@ -1376,27 +1376,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
 	}
 	return resultMap;
-	/*Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 
-	//TODO  t_wx_member_applet_openid
-	//        String sql = "select openid from t_wx_member_applet_openid where style=4 and member_id=" + member.getId();
-	//        Map<String, Object> openMap = daoUtil.queryForMap(sql);
-
-	Map< String,Object > appletParams = new HashMap< String,Object >();
-	appletParams.put( "paySource", 1 );//支付来源
-	appletParams.put( "busId", member.getBusid() );//商家ID
-	appletParams.put( "sysOrderNo", order.getOrderNo() );//订单号
-	appletParams.put( "productId", order.getOrderNo() );
-	appletParams.put( "desc", "商城下单" );
-	appletParams.put( "totalFee", order.getOrderMoney() );
-	appletParams.put( "ip", "127.0.0.1" );
-	//        appletParams.put("openid", openMap.get("openid"));
-	appletParams.put( "model", 3 );
-	appletParams.put( "url", url );
-	appletParams.put( "appid", CommonUtil.toString( params.get( "appid" ) ) );*/
-	//TODO 下单 wxPayService.memberPayByWxApplet()
-	//        Map<Object, Object> parameters = wxPayService.memberPayByWxApplet(appletParams);
-	//        return parameters;
     }
 
     @Override
