@@ -332,7 +332,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		member = memberService.findMemberById( member.getId(), member );
 		boolean isMember = memberService.isMember( member.getId() );
-		if (! isMember ) {
+		if ( isMember ) {
 		    request.setAttribute( "isMember", 1 );
 		}
 	    }

@@ -177,7 +177,11 @@ public class MemberServiceImpl implements MemberService {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
 	String result = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isMember" );
-	return CommonUtil.isNotEmpty( result );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return false;
+	}else{
+	    return true;
+	}
     }
 
     /**

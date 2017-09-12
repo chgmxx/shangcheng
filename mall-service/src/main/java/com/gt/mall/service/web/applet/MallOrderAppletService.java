@@ -81,21 +81,6 @@ public interface MallOrderAppletService extends BaseService<MallAppletImage> {
      */
     Map<String, Object> addressList(Map<String, Object> params);
 
-    /**
-     * 设置默认地址
-     *
-     * @param params
-     * @return
-     */
-//    Map<String, Object> addressDefault(Map<String, Object> params);
-
-    /**
-     * 提交地址信息
-     *
-     * @param params
-     * @return
-     */
-//    Map<String, Object> addressSubmit(Map<String, Object> params);
 
     /**
      * 进入提交订单的页面

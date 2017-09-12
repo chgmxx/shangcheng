@@ -321,7 +321,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	if ( CommonUtil.isNotEmpty( browser ) ) {
 	    order.setBuyerUserType( browser );
 	}
-	order.setMemberName( member.getName());
+	order.setMemberName( member.getNickname() );
 	int count = orderDAO.insert( order );
 
 	if ( count > 0 ) {

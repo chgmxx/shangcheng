@@ -892,95 +892,15 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	List< Map< String,Object > > addressList = new ArrayList< Map< String,Object > >();
 	List< MemberAddress > list = memberAddressService.addressList( CommonUtil.getMememberIds( memberList, memberId ) );
 
-	//	int is_default = 2;
 	if ( list != null && list.size() > 0 ) {
 	    for ( MemberAddress map : list ) {
 		Map< String,Object > addressMap = getAddressParams( map );
-		//		if ( is_default == 2 ) {
-		//		    is_default = CommonUtil.toInteger( addressMap.get( "is_default" ) );
-		//		} else if ( is_default == 1 && addressMap.get( "is_default" ).toString().equals( "1" ) ) {
-		//		    addressMap.put( "is_default", "2" );
-		//
-		//		    MemberAddress address = new MemberAddress();
-		//		    address.setId( CommonUtil.toInteger( addressMap.get( "id" ) ) );
-		//		    address.setMemDefault( 2 );
-		//		    memberAddressService.addOrUpdateAddre( address );
-		//		}
 		addressList.add( addressMap );
 	    }
 	}
 	resultMap.put( "addressList", addressList );
 	return resultMap;
     }
-
-    /*@Override
-    public Map< String,Object > addressDefault( Map< String,Object > params ) {
-	Map< String,Object > resultMap = new HashMap< String,Object >();
-	int id = CommonUtil.toInteger( params.get( "id" ) );
-
-	boolean reuslt = memberAddressService.updateDefault( id );
-
-	if ( reuslt ) {
-	    resultMap.put( "code", 1 );
-	} else {
-	    resultMap.put( "code", -1 );
-	    resultMap.put( "errorMsg", "设置默认地址失败" );
-	}
-
-	return resultMap;
-    }*/
-
-   /* @Override
-    public Map< String,Object > addressSubmit( Map< String,Object > params ) {
-	//TODO 需关连会员地址方法 basis_city，t_eat_member_address
-	Map< String,Object > resultMap = new HashMap< String,Object >();
-	MemberAddress memAddress = JSONObject.parseObject( JSON.toJSONString( params ), MemberAddress.class );
-	//	System.out.println( memAddress.getMemAddress() );
-	*//*int count = daoUtil.queryForInt( "select count(id) from t_eat_member_address where mem_default = 1 and df_member_id=?", memAddress.getDfMemberId() );
-	if ( count == 0 ) {
-	    memAddress.setMemDefault( 1 );
-	}*//*
-	//	List< Integer > memberList = memberService.findMemberListByIds( memAddress.getDfMemberId() );
-	//	Map map = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, memAddress.getDfMemberId() ) );
-	//	if ( map!=null ){
-	//	    memAddress.setMemDefault( 1 );
-	//	}
-	//	if ( CommonUtil.isEmpty( memAddress.getMemLatitude() ) || CommonUtil.isEmpty( memAddress.getMemLongitude() ) ) {
-	//	   *//* Map< String,Object > provinceMaps = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemProvince() );
-	//	    Map< String,Object > cityMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemCity() );
-	//	    Map< String,Object > areaMap = daoUtil.queryForMap( "SELECT id,city_name FROM basis_city WHERE id=?", memAddress.getMemArea() );*//*
-	//	    List< Map > provinceMaps = wxShopService.queryBasisCityIds( memAddress.getMemProvince().toString() );
-	//	    List< Map > cityMap = wxShopService.queryBasisCityIds( memAddress.getMemCity().toString() );
-	//	    List< Map > areaMap = wxShopService.queryBasisCityIds( memAddress.getMemArea().toString() );
-	//
-	//	    String address = "";
-	//	    String city = "";
-	//	    if ( CommonUtil.isNotEmpty( provinceMaps ) ) {
-	//		address += provinceMaps.get( 0 ).get( "city_name" ).toString();
-	//	    }
-	//	    if ( CommonUtil.isNotEmpty( cityMap ) ) {
-	//		city = cityMap.get( 0 ).get( "city_name" ).toString();
-	//		address += city;
-	//	    }
-	//	    if ( CommonUtil.isNotEmpty( areaMap ) ) {
-	//		address += areaMap.get( 0 ).get( "city_name" ).toString();
-	//	    }
-	//	    *//*Map< String,Object > addressMap = mallStoreService.getlnglatByAddress( address + memAddress.getMemAddress(), city );
-	//	    if ( CommonUtil.isNotEmpty( addressMap ) ) {
-	//		memAddress.setMemLatitude( addressMap.get( "lat" ).toString() );
-	//		memAddress.setMemLongitude( addressMap.get( "lng" ).toString() );
-	//	    }*//*
-	//	}
-	boolean msg = memberAddressService.addOrUpdateAddre( memAddress );
-
-	if ( msg ) {
-	    resultMap.put( "code", 1 );
-	} else {
-	    resultMap.put( "code", -1 );
-	    resultMap.put( "errorMsg", "保存地址信息失败" );
-	}
-	return resultMap;
-    }*/
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
