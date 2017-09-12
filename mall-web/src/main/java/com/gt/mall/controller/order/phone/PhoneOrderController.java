@@ -1383,11 +1383,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     }
 
     /**
-     * 钱包支付
+     * 支付成功回调
      */
     @RequestMapping( value = "/79B4DE7C/paySuccessModified" )
     public void paySuccessModified( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
-	logger.info( " 钱包支付controller" );
+	logger.info( " 支付成功回调controller" );
 	Map< String,Object > result = new HashMap<>();
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
@@ -1395,10 +1395,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	} catch ( BusinessException be ) {
 	    code = be.getCode();
 	    result.put( "errorMsg", be.getMessage() );
-	    logger.error( "钱包支付异常：" + be.getMessage() );
+	    logger.error( "支付成功回调异常：" + be.getMessage() );
 	} catch ( Exception e ) {
 	    code = ResponseEnums.ERROR.getCode();
-	    logger.error( "钱包支付异常：" + e.getMessage() );
+	    logger.error( "支付成功回调异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    result.put( "code", code );
