@@ -303,7 +303,7 @@
         id, order_no, wx_order_no, receive_id, order_money, order_freight_money, order_buyer_message, order_seller_remark,
         order_start, order_pay_way, delivery_method, appointment_name, appointment_telephone, appointment_time,invoice_title,
         take_their_id, is_message_notice, buyer_user_id, seller_user_id, shop_id, order_status, create_time,order_pay_no,
-        pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,is_wallet,
+        pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,
         order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi
     </sql>
 
@@ -798,7 +798,7 @@
                 order_pay_no = #{transaction_id},
             </if>
             <if test="payTime != null and payTime != ''">
-                pay_time = #{payTime},
+                pay_time = #{payTime,jdbcType=TIMESTAMP},
             </if>
             <if test="isWallet != null and isWallet != ''">
                 is_wallet = #{isWallet},

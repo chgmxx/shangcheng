@@ -554,7 +554,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	} else {
 	    MallOrder mallOrder = mallOrderDAO.getOrderById( order.getId() );
-	    map = updateStatusStock( order, params, member, pbUser );
+	    map = updateStatusStock( mallOrder, params, member, pbUser );
 	    if ( CommonUtil.isNotEmpty( map.get( "erpMap" ) ) ) {
 		Map< String,Object > erpMap = (Map< String,Object >) JSONObject.fromObject( map.get( "erpMap" ) );
 		erpList.add( erpMap );
@@ -806,6 +806,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
      */
     private Map updateStatusStock( MallOrder order, Map< String,Object > params, Member member, WxPublicUsers wxPublicUser ) {
 
+	if ( order != null && order.getMallOrderDetail() == null ) {
+	    order = mallOrderDAO.getOrderById( order.getId() );
+	}
 	Map< String,Object > map = new HashMap<>();
 	String shopIds = order.getShopId() + ",";
 	if ( null != params.get( "shopIds" ) && !params.get( "shopIds" ).equals( "" ) ) {
@@ -827,7 +830,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( order.getOrderType() == 1 ) {//拼团
 		addGroupBuyJoin( order, orderDetail.get( 0 ) );//添加数据到参团表
 	    }
-	    params.put( "payTime", new Date() );
+	    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+	    String newDate=df.format(new Date());// 当前系统时间
+
+	    params.put( "payTime", newDate);
 	    params.put( "out_trade_no", order.getOrderNo() );
 	    if ( orderDetail.size() == 1 ) {
 		if ( CommonUtil.isNotEmpty( orderDetail.get( 0 ).getProTypeId() ) ) {
