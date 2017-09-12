@@ -27,7 +27,7 @@ public class PayServiceImpl implements PayService {
     @Override
     public Map< String,Object > payapi( SubQrPayParams payParams ) throws Exception {
 	KeysUtil keyUtil = new KeysUtil();
-	String params = keyUtil.getDesString( JSONObject.toJSONString( payParams ) );
+	String params = keyUtil.getEncString( JSONObject.toJSONString( payParams ) );
 	return HttpSignUtil.signHttpInsertOrUpdate( params, PAY_URL + "payapi.do", 2 );
     }
 
