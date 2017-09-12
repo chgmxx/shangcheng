@@ -76,6 +76,14 @@ redis:
  password: gt@123456
  database: 3
 
+
+### 设置 Redis session 共享
+redisSession:
+ domainName: .yifriend.net
+ cookiePath: /
+# cookieName: JSESSIONID
+ cookieName: WXMPJSESSIONID
+
 web:
  #域名
  domain: mall.yifriend.net:8080
@@ -118,15 +126,6 @@ mq:
  exchange: gt.exchange.message
  #队列名称
  queueName: gt.queueName.message
-
-
-### 设置 Redis session 共享
-redisSession:
- domainName: .yifriend.net
- cookiePath: /
-# cookieName: JSESSIONID
- cookieName: WXMPJSESSIONID
-
 
 http:
  #总项目请求地址

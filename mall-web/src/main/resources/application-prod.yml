@@ -75,6 +75,12 @@ redis:
  password: gt@123456
  database: 0
 
+### 设置 Redis session 共享
+redisSession:
+ domainName: .yifriend.net
+ cookiePath: /
+ cookieName: JSESSIONID
+
 web:
  #域名
  domain: mall.yifriend.net:8080
@@ -118,13 +124,6 @@ mq:
  #队列名称
  queueName: gt.queueName.message
 
-
-### 设置 Redis session 共享
-redisSession:
- domainName: .yifriend.net
- cookiePath: /
- cookieName: JSESSIONID
-
 http:
  #总项目请求地址
  wxmp:
@@ -135,6 +134,9 @@ http:
  member:
   domain: http://member.deeptel.com.cn/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
+ union:
+  domain: http://union.duofee.com/
+  key: SR36E9KIYDLIU1VB6WX20HCW494QL97T
  #进销存的请求地址、token 用户名  和token密码
  jxc:
   #进销存 地址
