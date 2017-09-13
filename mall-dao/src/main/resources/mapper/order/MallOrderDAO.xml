@@ -853,7 +853,7 @@
                 order_pay_no = #{transaction_id},
             </if>
             <if test="payTime != null and payTime != ''">
-                pay_time = #{payTime},
+                pay_time = #{payTime,jdbcType=TIMESTAMP},
             </if>
             <if test="isWallet != null and isWallet != ''">
                 is_wallet = #{isWallet},
