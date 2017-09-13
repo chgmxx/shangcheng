@@ -8,7 +8,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerSet;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

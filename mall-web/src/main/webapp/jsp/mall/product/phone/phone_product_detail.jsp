@@ -103,8 +103,8 @@
             <div class="price_div">
                 <div class="left_div">
                     <div class="span_price redColor newPriceDiv">
-                        <c:if test="${!empty groupBuy }">
-                            ${groupBuy.gPeopleNum }人团:
+                        <c:if test="${!empty groupBuy  }">
+                            ${groupBuy.GPeopleNum }人团:
                         </c:if>
                         <c:if test="${!empty seckill}">
                             秒杀价：
@@ -202,7 +202,7 @@
             <%-- <div class="price pad">
                 <span class="span_price">
                     <c:if test="${!empty groupBuy }">
-                    ${groupBuy.gPeopleNum }人团:
+                    ${groupBuy.GPeopleNum }人团:
                     </c:if>
                     <c:if test="${!empty seckill}">
                     秒杀价：
@@ -515,7 +515,7 @@
                     <li class="foot-item2 group_li">
                         <a href="javascript:void(0)" class="now-shop shop-btn" onclick="productBuy(1)">
                             <p class="groupLiPrice">￥<em>123.00</em></p>
-                            <p>${groupBuy.gPeopleNum } 人拼团价</p>
+                            <p>${groupBuy.GPeopleNum } 人拼团价</p>
                         </a>
                     </li>
                 </c:if>
@@ -669,7 +669,7 @@
                         <li>
                             <a href="javascript:void(0)" class="now-shop shop-btn" onclick="product_Buy(1)">
                                 <p class="groupLiPrice">￥<em>123.00</em></p>
-                                <p>${groupBuy.gPeopleNum } 人拼团价</p>
+                                <p>${groupBuy.GPeopleNum } 人拼团价</p>
                             </a>
                         </li>
                     </ul>
@@ -734,15 +734,15 @@
                        value="${buy.groupPrice }"/>
             </c:forEach>
         </c:if>
-        <input type="hidden" class="groupPrice" value="${groupBuy.gPrice }"/>
+        <input type="hidden" class="groupPrice" value="${groupBuy.GPrice }"/>
         <input type="hidden" class="groupBuyId" value="${groupBuy.id }"/>
-        <input type="hidden" id="groupMaxBuy" value="${groupBuy.gMaxBuyNum }"/>
+        <input type="hidden" id="groupMaxBuy" value="${groupBuy.GMaxBuyNum }"/>
     </c:if>
     <c:if test="${!empty seckill }">
-        <input type="hidden" class="seckillPrice" value="${seckill.sPrice }"/>
+        <input type="hidden" class="seckillPrice" value="${seckill.SPrice }"/>
         <input type="hidden" class="seckillId" value="${seckill.id }"/>
-        <input type="hidden" id="seckillMaxBuy" value="${seckill.sMaxBuyNum }"/>
-        <input type="hidden" id="sNum" value="${seckill.sNum }"/>
+        <input type="hidden" id="seckillMaxBuy" value="${seckill.SMaxBuyNum }"/>
+        <input type="hidden" id="sNum" value="${seckill.SNum }"/>
         <c:if test="${!empty seckill.priceList }">
             <c:forEach var="buy" items="${seckill.priceList }">
                 <input type="hidden" class="seckillPrice_arr" spec="${buy.specificaIds }" specIds=",${buy.specificaIds }," inven="${buy.invenId }" isjoin="${buy.isJoinGroup }"

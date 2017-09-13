@@ -8,7 +8,7 @@ import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.product.MallShopCart;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import net.sf.json.JSONObject;
 

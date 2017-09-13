@@ -13,7 +13,7 @@ import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.groupbuy.MallGroupJoinService;

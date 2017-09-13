@@ -21,22 +21,10 @@ function submitOrders() {
         success: function (data) {
             if (data.code === 1) {
                 //微信支付
-                if (data.payWay === 1) {
-                    location.href = "/wxPay/79B4DE7C/wxMallAnOrder.do?orderId=" + data.orderId;
-                } else if (data.payWay === 9) {
-                    var model = 3;
-                    if (data.proTypeId === 2) {
-                        model = 13;
-                    }
-                    //var return_url = "${path}/phoneOrder/79B4DE7C/orderList.do?isPayGive=1&&orderId="+data.orderId+"&&uId="+data.busId;
-                    var alipaySubject = $("input.alipaySubject").val();
-                    var return_url = "${http}/phoneOrder/" + data.orderId + "/" + data.busId + "/1/79B4DE7C/orderPaySuccess.do";
-                    location.href = "/alipay/79B4DE7C/alipayApi.do?out_trade_no=" + data.out_trade_no + "&subject=" + alipaySubject + "&total_fee=" + data.orderMoney + "&busId=" + data.busId + "&model=" + model + "&businessUtilName=mallOrderAlipayNotifyUrlBuinessService&return_url=" + return_url;
-                } else {
+                if (data.url !== null && data.url !== "") {
                     location.href = data.url;
                 }
                 layer.closeAll();
-
                 return true;
             } else {
 
@@ -87,6 +75,15 @@ function getSubmitParams() {
             var detailObj = $(this).next().serializeObject();
             if (detailObj.discount !== null && detailObj.discount !== "") {
                 detailObj.discount = detailObj.discount * 1;
+            }
+            if(detailObj.groupBuyId !== null && detailObj.groupBuyId !== ""){
+                obj.groupBuyId = detailObj.groupBuyId;
+            }
+            if(detailObj.pJoinId !== null && detailObj.pJoinId !== ""){
+                obj.pJoinId = detailObj.pJoinId;
+            }
+            if(detailObj.groupType !== null && detailObj.groupType !== ""){
+                obj.groupType = detailObj.groupType;
             }
             detailArr.push(detailObj);
         });

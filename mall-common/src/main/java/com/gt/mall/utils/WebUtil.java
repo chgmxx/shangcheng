@@ -1,4 +1,4 @@
-package com.gt.mall.util;
+package com.gt.mall.utils;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -3,7 +3,7 @@ package com.gt.mall;
 import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

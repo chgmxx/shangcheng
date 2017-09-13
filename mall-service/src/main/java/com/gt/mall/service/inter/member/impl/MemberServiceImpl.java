@@ -7,8 +7,8 @@ import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

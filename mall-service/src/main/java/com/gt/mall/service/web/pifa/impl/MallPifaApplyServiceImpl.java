@@ -5,7 +5,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.dao.pifa.MallPifaApplyDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifaApply;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import org.springframework.beans.factory.annotation.Autowired;

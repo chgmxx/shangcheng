@@ -1,4 +1,4 @@
-package com.gt.mall.util;
+package com.gt.mall.utils;
 
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;

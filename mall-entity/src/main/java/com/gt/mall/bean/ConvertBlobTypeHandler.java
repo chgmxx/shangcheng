@@ -12,8 +12,8 @@ import java.sql.*;
  * 
  * 自定义typehandler，解决mybatis存储blob字段后，出现乱码的问题
  * 配置mapper.xml：
- * <result  typeHandler="cn.ffcs.drive.common.util.ConvertBlobTypeHandler"/>
- * 
+ * <result  typeHandler="cn.ffcs.drive.common.utils.ConvertBlobTypeHandler"/>
+ *
  * @author lfx
  * @version 1.0.0
  * @date 2014-07-09 11:15:23

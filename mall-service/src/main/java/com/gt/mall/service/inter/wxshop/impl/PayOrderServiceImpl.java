@@ -3,8 +3,8 @@ package com.gt.mall.service.inter.wxshop.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 /**

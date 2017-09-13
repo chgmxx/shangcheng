@@ -2,7 +2,7 @@ package com.gt.mall.service.web.basic;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.basic.MallComment;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;

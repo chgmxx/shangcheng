@@ -5,7 +5,7 @@ import com.gt.mall.entity.purchase.PurchaseCarousel;
 import com.gt.mall.entity.purchase.PurchaseOrder;
 import com.gt.mall.entity.purchase.PurchaseOrderDetails;
 import com.gt.mall.entity.purchase.PurchaseTerm;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
 import java.util.Map;

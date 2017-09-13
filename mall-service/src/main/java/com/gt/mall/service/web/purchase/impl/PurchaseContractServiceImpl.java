@@ -4,8 +4,8 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.purchase.PurchaseContractDAO;
 import com.gt.mall.entity.purchase.PurchaseContract;
 import com.gt.mall.service.web.purchase.PurchaseContractService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

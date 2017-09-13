@@ -9,8 +9,8 @@ import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.product.*;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.*;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
 import com.gt.mall.service.web.product.MallGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
     private MallProductGroupDAO mallProductGroupDAO;//商品分组中间表dao
 
     @Override
-    public PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist ,int userId) {
+    public PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist, int userId ) {
 	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
 	param.put( "curPage", curPage );
 	int pageSize = 10;
@@ -147,8 +147,8 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	    if ( groupList != null && groupList.size() > 0 ) {
 		mallGroupDAO.updateByGroupId( groupList );// 删除父类商品分组
 	    }
-	    if(count > 0){
-	        return true;
+	    if ( count > 0 ) {
+		return true;
 	    }
 	} catch ( Exception e ) {
 	    throw new Exception( "删除商品分组失败：" + e.getMessage() );
@@ -336,12 +336,12 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 
     @Override
     public Map< String,Object > selectGroupBySearchName( String searchName ) {
-        //select id,group_p_id,id from t_mall_group where group_name like '%" + params.get( "proName" ) + "%'
-	Wrapper wrapper = new EntityWrapper(  );
+	//select id,group_p_id,id from t_mall_group where group_name like '%" + params.get( "proName" ) + "%'
+	Wrapper wrapper = new EntityWrapper();
 	wrapper.setSqlSelect( "id,group_p_id" );
-	wrapper.like( "group_name",  searchName);
-	List<Map<String,Object>> groupList = mallGroupDAO.selectList( wrapper );
-	if(groupList != null && groupList.size() > 0){
+	wrapper.like( "group_name", searchName );
+	List< Map< String,Object > > groupList = mallGroupDAO.selectList( wrapper );
+	if ( groupList != null && groupList.size() > 0 ) {
 	    return groupList.get( 0 );
 	}
 	return null;

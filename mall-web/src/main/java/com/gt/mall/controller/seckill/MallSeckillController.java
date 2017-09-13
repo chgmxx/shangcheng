@@ -8,7 +8,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.seckill.MallSeckillService;

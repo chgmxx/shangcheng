@@ -7,7 +7,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.groupbuy.MallGroupBuyPriceDAO;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyPriceService;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

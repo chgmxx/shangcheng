@@ -44,7 +44,7 @@ import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1357,7 +1357,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    subQrPayParams.setIsreturn( 0 );
 	}
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/indexstart.do" );//推送路径(尽量不要带参数)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;
 	/*if ( order.getOrderPayWay() == 9 ) {
 	    payWay = 2;

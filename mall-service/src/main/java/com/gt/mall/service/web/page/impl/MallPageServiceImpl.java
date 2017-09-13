@@ -54,7 +54,7 @@ import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import net.sf.json.JSONArray;
@@ -1407,7 +1407,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public int updateProViewPage( String proId, Map proMap ) {
-	String key = "proViewNum";
+	String key = Constants.REDIS_KEY + "proViewNum";
 	int viewNum = 0;
 	String viewNums = "";
 	if ( JedisUtil.hExists( key, proId ) ) {

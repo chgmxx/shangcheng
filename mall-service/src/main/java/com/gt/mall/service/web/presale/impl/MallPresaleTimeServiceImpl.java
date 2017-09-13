@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.presale.MallPresaleTimeDAO;
 import com.gt.mall.entity.presale.MallPresaleTime;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

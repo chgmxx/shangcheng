@@ -5,7 +5,7 @@ import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.product.MallProduct;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 
 import javax.servlet.http.HttpServletRequest;

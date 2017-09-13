@@ -12,7 +12,7 @@ import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,7 +201,6 @@ public class MallProductController extends BaseController {
 	    logger.error( e.getMessage() );
 	    e.printStackTrace();
 	}
-
 	return "mall/product/product_edit";
     }
 

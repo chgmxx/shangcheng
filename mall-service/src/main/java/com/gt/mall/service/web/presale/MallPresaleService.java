@@ -7,7 +7,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
 import java.util.Map;

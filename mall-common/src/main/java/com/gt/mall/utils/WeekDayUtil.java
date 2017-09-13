@@ -1,4 +1,4 @@
-package com.gt.mall.util;
+package com.gt.mall.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

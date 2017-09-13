@@ -695,6 +695,61 @@
     </select>
 
 
+    <select id="mobileMyOrderList" resultMap="MoreResultMap" parameterType="map">
+        select
+        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
+        t.express_time,t.updateDay, t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method,t.order_pid,
+        t.is_wallet,t.bus_user_id ,t.`member_name` AS nickname,
+
+        d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,
+        d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname, d.return_day AS returnDay,
+        d.pro_type_id,d.det_privivilege, d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,
+
+        re.ret_reason,re.id AS rId,re.no_return_reason,re.return_no,  re.ret_reason,re.ret_handling_way,re.ret_money
+
+        FROM (
+
+        SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time, t.express_time,
+        TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS updateDay, t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method,t.order_pid,
+        t.is_wallet,t.bus_user_id ,t.`member_name` ,t.shop_id
+        FROM t_mall_order t
+
+        where 1=1 and t.shop_id > 0
+        <if test="busUserId != null and busUserId != ''">
+            and t.bus_user_id = #{busUserId}
+        </if>
+        <if test="memberId != null and memberId != ''  and (oldMemberIds == null || oldMemberIds =='' )">
+            and t.buyer_user_id = #{memberId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds != ''">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                t.buyer_user_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="orderType != null and orderType != ''">
+            and t.order_type = #{orderType}
+        </if>
+        <if test="id != null and id != ''">
+            and t.id=#{id}
+        </if>
+        <if test="type != null and type != '' and type != 0">
+            and t.order_status = #{type}
+        </if>
+        <if test="appraiseStatus != null and appraiseStatus != ''">
+            <if test="appraiseStatus == 0"><!-- 查询未评价的订单(订单状态必须为已完成) -->
+                and t.order_status = 4
+            </if>
+        </if>
+        ORDER BY t.create_time desc,t.pay_time desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+        ) t
+        left join  t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
+        left join t_mall_order_return re on re.order_detail_id=d.id
+    </select>
+
     <select id="mobileOrderList" resultMap="MoreResultMap" parameterType="map">
         select
         <include refid="Buyer_Order_Column_List"/>

@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.service.inter.user.MemberAddressService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

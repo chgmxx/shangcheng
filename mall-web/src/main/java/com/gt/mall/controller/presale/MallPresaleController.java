@@ -13,7 +13,7 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -8,8 +8,8 @@ import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.service.web.applet.MallAppletImageService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

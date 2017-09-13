@@ -2,9 +2,9 @@ package com.gt.mall.config.interceptor;
 
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.PropertiesUtil;
-import com.gt.mall.util.SessionUtils;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.SessionUtils;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.web.method.HandlerMethod;

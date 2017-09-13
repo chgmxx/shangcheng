@@ -2,8 +2,8 @@ package com.gt.mall.service.inter.union.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.service.inter.union.UnionCardService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.HttpSignUtil;
 import com.gt.union.api.entity.param.BindCardParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
 import org.springframework.stereotype.Service;

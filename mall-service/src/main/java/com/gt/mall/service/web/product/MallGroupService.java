@@ -5,7 +5,7 @@ import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallSearchLabel;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
 import java.util.Map;

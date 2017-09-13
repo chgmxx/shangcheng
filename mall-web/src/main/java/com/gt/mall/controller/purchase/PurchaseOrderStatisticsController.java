@@ -2,8 +2,8 @@ package com.gt.mall.controller.purchase;
 
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.util.PageUtil;
-import com.gt.mall.util.SessionUtils;
+import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.SessionUtils;
 import com.gt.mall.service.web.purchase.PurchaseOrderStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

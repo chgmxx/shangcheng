@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.service.inter.member.MemberPayService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;

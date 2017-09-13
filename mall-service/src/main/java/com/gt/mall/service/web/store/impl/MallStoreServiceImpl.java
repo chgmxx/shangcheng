@@ -15,16 +15,17 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.MallJxcHttpClientUtil;
-import com.gt.mall.util.PageUtil;
-import com.gt.mall.util.SessionUtils;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallJxcHttpClientUtil;
+import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.SessionUtils;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -272,6 +273,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return details + shopInfo.getAddress() + shopInfo.getDetail();
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public boolean saveOrUpdate( MallStore sto, BusUser user ) throws BusinessException {
 	try {

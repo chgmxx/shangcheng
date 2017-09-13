@@ -1,4 +1,4 @@
-package com.gt.mall.util;
+package com.gt.mall.utils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

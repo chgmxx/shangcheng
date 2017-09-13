@@ -18,7 +18,7 @@ import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.MemberAddressService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionOfferService;

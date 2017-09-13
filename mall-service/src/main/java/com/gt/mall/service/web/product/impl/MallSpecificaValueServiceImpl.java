@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.product.MallSpecificaValueDAO;
 import com.gt.mall.entity.product.MallSpecificaValue;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.product.MallSpecificaValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

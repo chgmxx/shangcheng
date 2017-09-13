@@ -2,7 +2,7 @@ package com.gt.mall.controller;
 
 import com.gt.mall.base.BaseController;
 import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;

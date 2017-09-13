@@ -25,7 +25,7 @@ import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;

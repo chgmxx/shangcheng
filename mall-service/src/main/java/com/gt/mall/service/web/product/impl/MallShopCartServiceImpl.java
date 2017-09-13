@@ -11,17 +11,17 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.union.UnionCardService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.product.MallShopCartService;
-import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.SessionUtils;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.SessionUtils;
+import com.gt.union.api.entity.result.UnionDiscountResult;
 import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +48,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     @Autowired
     private MallProductService          mallProductService;
     @Autowired
-    private MallStoreService            mallStoreService;
-    @Autowired
     private MallImageAssociativeService mallImageAssociativeService;
     @Autowired
     private MallShopCartDAO             mallShopCartDAO;
-    @Autowired
-    private WxShopService               wxShopService;
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
     @Autowired
@@ -67,6 +63,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     private FenBiFlowService            fenBiFlowService;
     @Autowired
     private MallOrderService            mallOrderService;
+    @Autowired
+    private UnionCardService            unionCardService;
 
     @Override
     public List< Map< String,Object > > getProductByShopCart( String shopcards, WxPublicUsers pbUser, Member member, int userId, List< Map< String,Object > > shopList ) {
@@ -348,8 +346,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			}
 		    }
 		    if ( flag ) {
-//			price_total = price_total + ( price * num );
-//			totalPrice = totalPrice + ( price * num );
+			//			price_total = price_total + ( price * num );
+			//			totalPrice = totalPrice + ( price * num );
 			yuanjia_total += num * Double.parseDouble( maps.get( "detPrivivilege" ).toString() );
 			primary_price += Double.parseDouble( maps.get( "detPrivivilege" ).toString() ) * num;
 			proNum += num;
@@ -415,6 +413,15 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	shopMap.put( "yuanjia_total", df.format( yuanjia_total ) );
 	shopMap.put( "message", productList );//商品详情信息
 	shopMap.put( "pro_weight", df.format( pro_weight ) );
+	if ( maps.containsKey( "groupBuyId" ) ) {
+	    shopMap.put( "groupBuyId", maps.get( "groupBuyId" ) );
+	}
+	if ( maps.containsKey( "pJoinId" ) ) {
+	    shopMap.put( "pJoinId", maps.get( "pJoinId" ) );
+	}
+	if ( maps.containsKey( "groupType" ) ) {
+	    shopMap.put( "groupType", maps.get( "groupType" ) );
+	}
 
 	list.add( shopMap );
 
@@ -434,11 +441,15 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	String shopIds = "";
 	String wxShopIds = ",";
 	int proTypeId = 0;
+	int groupType = 0;
 	int index = 1;
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > shopMap : list ) {
 		if ( CommonUtil.isNotEmpty( shopMap.get( "pro_type_id" ) ) ) {
 		    proTypeId = CommonUtil.toInteger( shopMap.get( "pro_type_id" ) );
+		}
+		if ( CommonUtil.isNotEmpty( shopMap.get( "groupType" ) ) ) {
+		    groupType = CommonUtil.toInteger( shopMap.get( "groupType" ) );
 		}
 		shopId = CommonUtil.toInteger( shopMap.get( "shop_id" ) );//店铺id
 
@@ -496,22 +507,31 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		request.setAttribute( "isJuliFreight", 1 );
 	    }
 	}
+	if ( CommonUtil.isNotEmpty( member ) && groupType == 0 ) {
+	    if ( wxShopIds.length() >= 2 ) {
+		wxShopIds = wxShopIds.substring( 1, wxShopIds.length() - 1 );
+		Map cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds );
 
-	if ( wxShopIds.length() >= 2 && CommonUtil.isNotEmpty( member ) ) {
-	    wxShopIds = wxShopIds.substring( 1, wxShopIds.length() - 1 );
-	    Map< String,Object > cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds );
+		for ( Map< String,Object > shopMap : list ) {
+		    int wxShopId = CommonUtil.toInteger( shopMap.get( "wxShopId" ) );
+		    if ( cardMap.containsKey( "cardList" + wxShopId ) ) {
+			shopMap.put( "coupon", cardMap.get( "cardList" + wxShopId ) );
+		    }
+		    if ( cardMap.containsKey( "duofenCards" + wxShopId ) ) {
+			shopMap.put( "duofenCoupon", cardMap.get( "duofenCards" + wxShopId ) );
+		    }
 
-	    for ( Map< String,Object > shopMap : list ) {
-		int wxShopId = CommonUtil.toInteger( shopMap.get( "wxShopId" ) );
-		if ( cardMap.containsKey( "cardList" + wxShopId ) ) {
-		    shopMap.put( "coupon", cardMap.get( "cardList" + wxShopId ) );
 		}
-		if ( cardMap.containsKey( "duofenCards" + wxShopId ) ) {
-		    shopMap.put( "duofenCoupon", cardMap.get( "duofenCards" + wxShopId ) );
-		}
-
+		request.setAttribute( "cardMap", cardMap );
 	    }
-	    request.setAttribute( "cardMap", cardMap );
+
+	    //查询商家是否已经开启了商家联盟
+	    UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( member.getBusid() );
+	    if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
+		if ( unionDiscountResult.getCode() != -1 ) {
+		    request.setAttribute( "unionMap", unionDiscountResult );
+		}
+	    }
 	}
 
     }

@@ -7,7 +7,7 @@ import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.service.quartz.MallQuartzService;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;

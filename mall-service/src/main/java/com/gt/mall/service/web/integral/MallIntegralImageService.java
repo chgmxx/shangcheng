@@ -2,7 +2,7 @@ package com.gt.mall.service.web.integral;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.integral.MallIntegralImage;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
 import java.util.Map;

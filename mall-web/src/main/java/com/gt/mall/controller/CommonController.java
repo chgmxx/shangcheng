@@ -7,7 +7,7 @@ package com.gt.mall.controller;
  * Time : 10:57
  */
 
-import com.gt.mall.util.QRcodeKit;
+import com.gt.mall.utils.QRcodeKit;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

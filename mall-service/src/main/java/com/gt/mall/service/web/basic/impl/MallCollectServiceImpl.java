@@ -6,7 +6,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.entity.basic.MallCollect;
 import com.gt.mall.service.web.basic.MallCollectService;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

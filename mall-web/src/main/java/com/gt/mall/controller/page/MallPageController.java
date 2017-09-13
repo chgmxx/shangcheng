@@ -31,7 +31,7 @@ import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import net.sf.json.JSONArray;

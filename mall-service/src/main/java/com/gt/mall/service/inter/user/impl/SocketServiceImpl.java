@@ -1,8 +1,8 @@
 package com.gt.mall.service.inter.user.impl;
 
 import com.gt.mall.service.inter.user.SocketService;
-import com.gt.mall.util.HttpSignUtil;
-import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.utils.HttpSignUtil;
+import com.gt.mall.utils.PropertiesUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

@@ -6,7 +6,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.product.MallSearchKeywordDAO;
 import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

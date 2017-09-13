@@ -7,7 +7,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.entity.purchase.*;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.mall.service.web.purchase.PurchaseCompanyModeService;
 import com.gt.mall.service.web.purchase.PurchaseOrderService;
 import com.gt.mall.service.web.store.MallStoreService;

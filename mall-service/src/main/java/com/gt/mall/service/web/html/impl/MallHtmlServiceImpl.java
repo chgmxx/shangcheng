@@ -7,7 +7,7 @@ import com.gt.mall.dao.html.MallHtmlDAO;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.gt.mall.util;
+package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;

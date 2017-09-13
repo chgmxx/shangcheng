@@ -1,4 +1,4 @@
-﻿﻿var invenArray = new Array();
+﻿var invenArray = new Array();
 var specificaArray = new Array();
 var params = new Object();
 var shopId = 0;

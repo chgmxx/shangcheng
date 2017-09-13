@@ -25,7 +25,7 @@ import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerOrderService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.seller.MallSellerWithdrawService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.sms.OldApiSms;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

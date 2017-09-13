@@ -4,7 +4,7 @@ import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
 import java.util.Map;

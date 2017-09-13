@@ -26,10 +26,10 @@ import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.order.MallOrderNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.DateTimeKit;
-import com.gt.mall.util.JedisUtil;
-import com.gt.mall.util.PropertiesUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.JedisUtil;
+import com.gt.mall.utils.PropertiesUtil;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -325,7 +325,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 
 	//订单生成成功，把订单加入到未支付的队列中（秒杀商品除外）
 	if ( order.getOrderType() != 3 ) {
-	    String key = "hOrder_nopay";
+	    String key = Constants.REDIS_KEY + "hOrder_nopay";
 	    net.sf.json.JSONObject objs = new net.sf.json.JSONObject();
 	    String times = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    objs.put( "times", times );
@@ -399,7 +399,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	subQrPayParams.setModel( Constants.PAY_MODEL );
 	subQrPayParams.setBusId( order.getBusUserId() );
 	subQrPayParams.setAppidType( 0 );
-	    /*subQrPayParams.setAppid( 0 );*///微信支付和小程序支付可以不传
+	    /*subQrPayParams.setAppid( 0 );*///微信支付和支付宝支付可以不传
 	subQrPayParams.setOrderNum( orderNo );//订单号
 	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
 	subQrPayParams.setDesc( "商城下单" );//描述
@@ -412,7 +412,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    subQrPayParams.setIsreturn( 0 );
 	}
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/indexstart.do" );//推送路径(尽量不要带参数)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;
 	if ( order.getOrderPayWay() == 9 ) {
 	    payWay = 2;

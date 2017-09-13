@@ -2,7 +2,7 @@ package com.gt.mall.service.web.applet;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.applet.MallAppletImage;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import java.util.Map;
 

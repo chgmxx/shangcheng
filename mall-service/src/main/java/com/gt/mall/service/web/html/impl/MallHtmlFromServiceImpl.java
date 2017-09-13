@@ -4,7 +4,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.html.MallHtmlFromDAO;
 import com.gt.mall.entity.html.MallHtmlFrom;
-import com.gt.mall.util.SessionUtils;
+import com.gt.mall.utils.SessionUtils;
 import com.gt.mall.service.web.html.MallHtmlFromService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.CardService;
-import com.gt.mall.util.CommonUtil;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

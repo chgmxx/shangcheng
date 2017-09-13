@@ -5,7 +5,7 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.mall.service.web.integral.MallIntegralImageService;
 import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.store.MallStoreService;

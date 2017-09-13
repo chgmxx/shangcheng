@@ -1,6 +1,6 @@
 package com.gt.mall.exception;
 
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 
 /**
  * @author 李逢喜

@@ -31,7 +31,7 @@ import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.fenbi.FenBiCount;

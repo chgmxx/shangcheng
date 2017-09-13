@@ -37,7 +37,7 @@ import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductParamService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import org.springframework.beans.factory.annotation.Autowired;

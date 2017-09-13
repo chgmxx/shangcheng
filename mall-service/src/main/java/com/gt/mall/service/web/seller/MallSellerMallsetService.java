@@ -5,7 +5,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
-import com.gt.mall.util.PageUtil;
+import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

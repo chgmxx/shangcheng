@@ -2,7 +2,7 @@ package com.gt.mall.controller.product;
 
 import com.gt.mall.base.BaseController;
 import com.gt.mall.entity.product.MallProductInventory;
-import com.gt.mall.util.CommonUtil;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

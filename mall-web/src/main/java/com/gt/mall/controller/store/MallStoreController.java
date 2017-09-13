@@ -14,7 +14,7 @@ import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;

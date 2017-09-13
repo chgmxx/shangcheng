@@ -28,6 +28,8 @@ import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.product.*;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
@@ -38,7 +40,7 @@ import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.slf4j.Logger;
@@ -320,7 +322,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     private int getViews( String proId ) {
-	String key = "proViewNum";
+	String key = Constants.REDIS_KEY + "proViewNum";
 	int viewNum = 0;
 	String viewNums = "";
 	String field = proId;
@@ -341,7 +343,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	// 判断分组id是否为空
 	if ( ids.length > 0 ) {
 	    if ( CommonUtil.isNotEmpty( params.get( "viewsNum" ) ) ) {
-		String key = "proViewNum";
+		String key = Constants.REDIS_KEY + "proViewNum";
 		for ( String id : ids ) {
 		    JedisUtil.map( key, id, params.get( "viewsNum" ).toString() );
 		}
@@ -624,7 +626,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 	    MallProduct mallProduct = new MallProduct();
 	    mallProduct.setId( product.getId() );
-	    String key = "proViewNum";
+	    String key = Constants.REDIS_KEY + "proViewNum";
 	    if ( CommonUtil.isNotEmpty( product.getViewsNum() ) ) {
 		JedisUtil.map( key, product.getId().toString(), product.getViewsNum().toString() );
 	    }
@@ -689,7 +691,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    product = JSONObject.parseObject( params.get( "product" ).toString(), MallProduct.class );
 	    product.setEditTime( new Date() );
 	    product.setIsPublish( 0 );
-	    String key = "proViewNum";
+	    String key = Constants.REDIS_KEY + "proViewNum";
 	    if ( CommonUtil.isNotEmpty( product.getViewsNum() ) ) {
 		JedisUtil.map( key, product.getId().toString(), product.getViewsNum().toString() );
 	    }
@@ -2173,6 +2175,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    pro.setId( product.getId() );
 	    pro.setFlowRecordId( CommonUtil.toInteger( resultMap.get( "id" ) ) );
 	    mallProductDAO.updateById( pro );
+	}else{
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), resultMap.get( "errorMsg" ).toString());
 	}
 	return resultMap;
     }

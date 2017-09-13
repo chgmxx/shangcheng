@@ -176,6 +176,7 @@
                 <c:set var="yhqNum" value="0"></c:set>
                 <c:set var="totalMoneys" value="0"></c:set>
                 <div id="couponDiv" class="couponDivs" stoId="${order.shop_id }" wxShopId="${order.wxShopId }">
+                    <input type="hidden" class="groupBuyId" value="${order.groupBuyId}"/>
                     <input type="hidden" class="couponJson"/>
                     <h2 class="store-name">${order.shop_name }</h2>
                     <c:forEach var="orderDetail" items="${order.message }">
@@ -308,6 +309,15 @@
                             <input type="hidden" name="wxShopId" value="${order.wxShopId}"/>
                             <c:if test="${!empty cardMap && !empty cardMap.discount}">
                                 <input type="hidden" name="discount" value="${cardMap.discount*10}"/>
+                            </c:if>
+                            <c:if test="${!empty orderDetail.groupBuyId}">
+                                <input type="hidden" class="groupBuyId" value="${orderDetail.groupBuyId }"/>
+                            </c:if>
+                            <c:if test="${!empty orderDetail.pJoinId}">
+                                <input type="hidden" class="pJoinId" value="${orderDetail.pJoinId }"/>
+                            </c:if>
+                            <c:if test="${!empty orderDetail.groupType}">
+                                <input type="hidden" class="groupType" value="${orderDetail.groupType }"/>
                             </c:if>
                         </div>
 

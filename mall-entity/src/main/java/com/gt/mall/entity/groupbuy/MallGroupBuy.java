@@ -94,28 +94,26 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
     @TableField( "is_use" )
     private Integer    isUse;
 
-
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer joinId;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer status;//状态id
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Long times;//剩余时间
 
-    @TableField(exist = false)
-    private List<MallGroupBuyPrice> priceList;
+    @TableField( exist = false )
+    private List< MallGroupBuyPrice > priceList;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int wx_shop_id; //门店ID 关联wx_shop表的id
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String shopName;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String twoCodePath;
-
 
     @Override
     protected Serializable pkVal() {

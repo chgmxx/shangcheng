@@ -23,7 +23,7 @@ import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.util.*;
+import com.gt.mall.utils.*;
 import com.gt.mall.service.web.seckill.MallSeckillPriceService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import org.apache.log4j.Logger;

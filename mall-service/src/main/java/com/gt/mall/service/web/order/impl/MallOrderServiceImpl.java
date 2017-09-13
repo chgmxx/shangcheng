@@ -50,7 +50,8 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerService;
-import com.gt.mall.util.*;
+import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.*;
 import com.gt.union.api.entity.param.UnionConsumeParam;
 import com.gt.union.api.entity.param.UnionRefundParam;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
@@ -184,6 +185,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private UnionConsumeService unionConsumeService;
+
+    @Autowired
+    private MallStoreService mallStoreService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -579,7 +583,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	//微信支付，支付宝支付，小程序支付  在支付时已经消息推送了
 	if ( CommonUtil.toDouble( order.getOrderMoney() ) > 0 && ( order.getOrderPayWay() != 1 && order.getOrderPayWay() != 9 && order.getOrderPayWay() != 10 ) ) {
-	    String url = PropertiesUtil.getHomeUrl() + "mallOrder/indexstart.do";
+	    String url = PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do";
 	    if ( CommonUtil.isNotEmpty( member.getBusid() ) ) {
 		try {
 		    Map< String,Object > socketParams = new HashMap<>();
@@ -943,7 +947,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		mallSeckillService.addInvNumRedis( order, orderDetail );
 	    } else {
 		//订单生成成功，把订单加入到未支付的队列中
-		String key = "hOrder_nopay";
+		String key = Constants.REDIS_KEY + "hOrder_nopay";
 		if ( JedisUtil.hExists( key, order.getId().toString() ) ) {
 		    JedisUtil.mapdel( key, order.getId().toString() );
 		}
@@ -1175,10 +1179,50 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	params.put("firstNum", firstNum);// 起始页
 	params.put("maxNum", pageSize);// 每页显示商品的数量 */
 	params.put( "busUserId", busUserId );
-	List list = mallOrderDAO.mobileOrderList( params );
+	List list = null;
+	if ( params.containsKey( "appraiseStatus" ) ) {
+	    list = mallOrderDAO.mobileOrderList( params );
+	} else {
+	    list = mallOrderDAO.mobileMyOrderList( params );
+	}
+	List shopIds = new ArrayList();
+	for ( Object obj : list ) {
+	    JSONObject orderMap = JSONObject.fromObject( obj );
+	    if ( CommonUtil.isNotEmpty( orderMap.get( "shopId" ) ) && CommonUtil.isEmpty( orderMap.get( "shopName" ) ) ) {
+		if ( !shopIds.contains( orderMap.get( "shopId" ) ) ) {
+		    shopIds.add( orderMap.get( "shopId" ) );
+		}
+	    }
+	}
+
+	BusUser user = new BusUser();
+	user.setId( busUserId );
+	Wrapper< MallStore > wrapper = new EntityWrapper<>();
+	wrapper.in( "id", shopIds );
+	List< MallStore > shopList = mallStoreDAO.selectList( wrapper );
 	if ( list != null && list.size() > 0 ) {
 	    for ( Object obj : list ) {
 		JSONObject orderMap = JSONObject.fromObject( obj );
+
+		if ( !orderMap.containsKey( "orderPNo" ) ) {
+		    String orderPNo = orderMap.getString( "orderNo" );
+		    int orderPid = CommonUtil.toInteger( orderMap.get( "orderPid" ) );
+		    if ( orderPid > 0 ) {
+			MallOrder pOrder = mallOrderDAO.selectById( orderPid );
+			if ( CommonUtil.isNotEmpty( pOrder ) ) {
+			    orderPNo = pOrder.getOrderNo();
+			}
+		    }
+		    orderMap.put( "orderPNo", orderPNo );
+		}
+		if ( shopList != null && shopList.size() > 0 && CommonUtil.isNotEmpty( orderMap.get( "shopId" ) ) ) {
+		    for ( MallStore store : shopList ) {
+			if ( store.getId().toString().equals( orderMap.get( "shopId" ).toString() ) ) {
+			    orderMap.put( "shopName", store.getStoName() );
+			}
+		    }
+		}
+
 		SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 		String orderType = CommonUtil.toString( orderMap.get( "orderType" ) );
 		String orderPayWay = CommonUtil.toString( orderMap.get( "orderPayWay" ) );
@@ -1589,7 +1633,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 						BusIdAndindustry busIdAndindustry = new BusIdAndindustry();
 						busIdAndindustry.setBusId( order.getBusUserId() );
-						busIdAndindustry.setIndustry( 4 );
+						busIdAndindustry.setIndustry( Constants.APPLET_STYLE );
 						ApiWxApplet applet = wxPublicUserService.selectBybusIdAndindustry( busIdAndindustry );
 						WxmemberPayRefund refund = new WxmemberPayRefund();
 						refund.setMchid( applet.getMchId() );// 商户号

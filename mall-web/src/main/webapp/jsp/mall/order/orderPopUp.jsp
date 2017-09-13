@@ -278,7 +278,7 @@
                     $('#orderMoney').val("");
                 } else {
                     alert("价格不能为空。");
-                    /* parent.location.href = "mallOrder/indexstart.do";
+                    /* parent.location.href = "mallOrder/toIndex.do";
                      parent.layer.closeAll(); */
                 }
             }

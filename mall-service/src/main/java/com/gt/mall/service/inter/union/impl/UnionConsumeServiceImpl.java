@@ -1,7 +1,7 @@
 package com.gt.mall.service.inter.union.impl;
 
 import com.gt.mall.service.inter.union.UnionConsumeService;
-import com.gt.mall.util.HttpSignUtil;
+import com.gt.mall.utils.HttpSignUtil;
 import com.gt.union.api.entity.param.UnionConsumeParam;
 import com.gt.union.api.entity.param.UnionRefundParam;
 import org.springframework.stereotype.Service;
