@@ -1,5 +1,6 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
+import com.gt.api.util.RequestUtils;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.utils.CommonUtil;
@@ -24,7 +25,9 @@ public class SmsServiceImpl implements SmsService {
     public boolean sendSmsOld( OldApiSms oldApiSms ) {
 	oldApiSms.setCompany( Constants.doMainName );
 	oldApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( oldApiSms, SMS_URL + "sendSmsOld.do", 2 );
+	RequestUtils< OldApiSms > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( oldApiSms );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, SMS_URL + "sendSmsOld.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

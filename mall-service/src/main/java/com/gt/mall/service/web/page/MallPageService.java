@@ -137,7 +137,7 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return 详情信息
      */
-    public Map< String,Object > shopmessage( Integer shopid ,WsWxShopInfo wxShop);
+    public Map< String,Object > shopmessage( Integer shopid, WsWxShopInfo wxShop );
 
     /**
      * 根据主页面id，获取商家公众号id
@@ -159,7 +159,7 @@ public interface MallPageService extends BaseService< MallPage > {
      * @param request request
      * @param member  粉丝对象
      */
-    public void isAddShopCart( HttpServletRequest request, Member member , List< Integer > memberList ) throws Exception;
+    public void isAddShopCart( HttpServletRequest request, Member member, List< Integer > memberList ) throws Exception;
 
     /**
      * 根据会员id获取公众号，根据公众号获取所有店面，根据店面获取所有购物车订单
@@ -302,11 +302,6 @@ public interface MallPageService extends BaseService< MallPage > {
      */
     List< Integer > shopIsFenbi( List< Integer > list );
 
-    /**
-     * 根据用户查询商家信息
-     */
-    BusUser selUserByMember( Member member );
-
     public List< Map< String,Object > > typePage( int stoId, BusUser user );
 
     /**
@@ -351,7 +346,7 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return true 已删除   false 未删除
      */
-    public boolean wxShopIsDelete( int shopId,WsWxShopInfo wsWxShopInfo ) throws Exception;
+    public boolean wxShopIsDelete( int shopId, WsWxShopInfo wsWxShopInfo ) throws Exception;
 
     /**
      * 添加关键词搜索记录
@@ -406,7 +401,7 @@ public interface MallPageService extends BaseService< MallPage > {
     /**
      * 得到地区名称
      */
-    public String queryAreaById(String citys);
+    public String queryAreaById( String citys );
 
     /**
      * 根据商品id获取商品部分信息
@@ -415,7 +410,13 @@ public interface MallPageService extends BaseService< MallPage > {
 
     /**
      * 根据memberId查询pageId
-     *
      */
     List< Map< String,Object > > selectPageIdByUserId( Integer userId, List< Map< String,Object > > shopList );
+
+    /**
+     * 微信分享
+     *
+     * @param userId 商家id
+     */
+    String wxShare( int userId, HttpServletRequest request, Map< String,Object > params ) throws Exception;
 }

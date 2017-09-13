@@ -1,11 +1,12 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.wx.applet.MemberAppletOpenid;
+import com.gt.api.util.RequestUtils;
 import com.gt.mall.service.inter.wxshop.WxAppletService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
 import com.gt.util.entity.param.member.MemberAppletByMemIdAndStyle;
+import com.gt.util.entity.result.member.MemberAppletOpenid;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,7 +22,9 @@ public class WxAppletServiceImpl implements WxAppletService {
 
     @Override
     public MemberAppletOpenid memberAppletByMemIdAndStyle( MemberAppletByMemIdAndStyle applet ) {
-	String result = HttpSignUtil.signHttpSelect( applet, APPLET_URL + "memberAppletByMemIdAndStyle.do", 2 );
+	RequestUtils< MemberAppletByMemIdAndStyle > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( applet );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, APPLET_URL + "memberAppletByMemIdAndStyle.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAppletOpenid.class );
 	}

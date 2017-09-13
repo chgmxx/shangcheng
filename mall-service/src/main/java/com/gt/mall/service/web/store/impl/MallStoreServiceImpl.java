@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.wx.shop.ShopPhoto;
-import com.gt.mall.bean.wx.shop.ShopSubsop;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
@@ -19,6 +17,8 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallJxcHttpClientUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.SessionUtils;
+import com.gt.util.entity.param.shop.ShopSubsop;
+import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.slf4j.Logger;
@@ -241,7 +241,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		storeMap.put( "stoArea", shopInfo.getDistrict() );
 		storeMap.put( "adder", shopInfo.getAddress() );
 		storeMap.put( "stoHouseMember", shopInfo.getDetail() );
-		List< ShopPhoto > photoList = wxShopService.getShopPhotoByShopId( store.getWxShopId() );
+		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( store.getWxShopId() );
 		if ( photoList != null && photoList.size() > 0 ) {
 		    storeMap.put( "stoPicture", photoList.get( 0 ).getLocalAddress() );
 		} else {

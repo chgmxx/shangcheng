@@ -74,5 +74,6 @@ public interface WxPublicUserService {
     /**
      * 7、根据商家ID行业id查询小程序账号
      */
-    ApiWxApplet selectBybusIdAndindustry(BusIdAndindustry busIdAndindustry);
+    ApiWxApplet selectBybusIdAndindustry( BusIdAndindustry busIdAndindustry );
+
 }

@@ -1,6 +1,7 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.RequestUtils;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.utils.CommonUtil;
@@ -19,7 +20,9 @@ public class PayOrderServiceImpl implements PayOrderService {
 
     @Override
     public WxPayOrder selectWxOrdByOutTradeNo( String orderNo ) {
-	String result = HttpSignUtil.signHttpSelect( orderNo, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 2 );
+	RequestUtils< String > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( orderNo );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, PAY_ORDER_URL + "selectWxOrdByOutTradeNo.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPayOrder.class );
 	}

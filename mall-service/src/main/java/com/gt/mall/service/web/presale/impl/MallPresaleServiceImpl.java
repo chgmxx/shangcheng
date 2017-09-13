@@ -9,7 +9,6 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -32,6 +31,7 @@ import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.utils.*;
+import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.fenbi.FenBiCount;
@@ -445,7 +445,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	FenbiFlowRecord fenbi = new FenbiFlowRecord();
 	fenbi.setBusUserId( userId );
 	fenbi.setRecType( 1 );
-	fenbi.setRecCreatetime( new Date() );
+	fenbi.setRecCreatetime( DateTimeKit.getDateTime() );
 	fenbi.setRecDesc( "商城预售送粉币" );
 	fenbi.setRecFreezeType( 34 );
 	fenbi.setRecFkId( 0 );
@@ -669,7 +669,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     }
 
     @Override
-    public void paySucessPresale(MallOrder order) {
+    public void paySucessPresale( MallOrder order ) {
 	MallPresaleDeposit preDeposit = new MallPresaleDeposit();
 	preDeposit.setPresaleId( order.getGroupBuyId() );
 	preDeposit.setIsSubmit( 0 );

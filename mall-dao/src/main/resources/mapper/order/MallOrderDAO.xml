@@ -718,10 +718,10 @@
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id = #{busUserId}
         </if>
-        <if test="memberId != null and memberId != ''  and (oldMemberIds == null || oldMemberIds =='' )">
+        <if test="memberId != null and memberId != ''  and (oldMemberIds == null   )">
             and t.buyer_user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null  ">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 t.buyer_user_id = #{item,jdbcType=INTEGER}

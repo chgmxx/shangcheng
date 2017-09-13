@@ -55,7 +55,7 @@ import com.gt.mall.utils.*;
 import com.gt.union.api.entity.param.UnionConsumeParam;
 import com.gt.union.api.entity.param.UnionRefundParam;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
@@ -834,10 +834,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( order.getOrderType() == 1 ) {//拼团
 		addGroupBuyJoin( order, orderDetail.get( 0 ) );//添加数据到参团表
 	    }
-	    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-	    String newDate=df.format(new Date());// 当前系统时间
+	    SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );//设置日期格式
+	    String newDate = df.format( new Date() );// 当前系统时间
 
-	    params.put( "payTime", newDate);
+	    params.put( "payTime", newDate );
 	    params.put( "out_trade_no", order.getOrderNo() );
 	    if ( orderDetail.size() == 1 ) {
 		if ( CommonUtil.isNotEmpty( orderDetail.get( 0 ).getProTypeId() ) ) {
@@ -1111,7 +1111,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     private String flowPhoneChong( int flowId, int flowRecordId, Member member, WxPublicUsers pbUser, MallOrder orders ) {
 	if ( CommonUtil.isNotEmpty( orders.getFlowPhone() ) && flowId > 0 ) {
-	    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( flowId );
+	    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( flowId );
 	    try {
 		AdcServicesInfo adcServicesInfo = new AdcServicesInfo();
 		adcServicesInfo.setModel( 101 );//模块ID

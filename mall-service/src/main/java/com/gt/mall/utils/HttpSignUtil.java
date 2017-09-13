@@ -3,7 +3,6 @@ package com.gt.mall.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.HttpClienUtils;
-import com.gt.api.util.RequestUtils;
 import com.gt.api.util.sign.SignHttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +36,6 @@ public class HttpSignUtil {
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
 	    if ( type == 0 ) {
 		newUrl = "http://113.106.202.53:13885/" + url;
-	    }
-	    if ( type == 2 || type == 3 ) {//联盟和 微信相关接口需要封装一层
-		RequestUtils requestUtils = new RequestUtils();
-		requestUtils.setReqdata( obj );
-		obj = requestUtils;
 	    }
 	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 	    if ( type == 1 ) {//商家

@@ -32,7 +32,7 @@ import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -445,10 +445,45 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Member member = SessionUtils.getLoginMember( request );
 	    Map wxPubMap = mallPageService.wxpublicid( id );//根据页面id查询商家公众号
 	    MallPage obj = mallPageService.select( id );//根据页面id查询页面信息
+	    Map storeMap = mallPageService.shopmessage( obj.getPagStoId(), null );//获取店铺信息
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
 		userid = obj.getPagUserId();
 		request.setAttribute( "userid", userid );
 	    }
+	    String headImg = "";
+	    String http = PropertiesUtil.getResourceUrl();
+	    if ( CommonUtil.isNotEmpty( wxPubMap ) ) {
+		if ( CommonUtil.isNotEmpty( wxPubMap.get( "head_img" ) ) ) {
+		    headImg = wxPubMap.get( "head_img" ).toString();
+		}
+	    }
+	    if ( CommonUtil.isEmpty( headImg ) ) {
+		if ( CommonUtil.isNotEmpty( storeMap ) ) {
+		    if ( CommonUtil.isNotEmpty( storeMap.get( "sto_head_img" ) ) ) {
+			headImg = http + storeMap.get( "sto_head_img" ).toString();
+		    }
+		}
+	    }
+	    request.setAttribute( "headImg", headImg );
+	    String name = "";//店铺名称
+	    if ( CommonUtil.isEmpty( storeMap.get( "business_name" ) ) ) {
+		name = storeMap.get( "sto_name" ).toString();
+	    } else {
+		name = storeMap.get( "business_name" ).toString();
+	    }
+
+	    if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.judgeBrowser( request ) == 99 && CommonUtil.isEmpty( request.getParameter( "url" ) ) ) {
+		Map< String,Object > shareParam = new HashMap<>();
+		shareParam.put( "share", "onMenuShareTimeline,onMenuShareAppMessage,showAllNonBaseMenuItem" );
+		shareParam.put( "imagesUrl", headImg );
+		shareParam.put( "title", name + "-" + obj.getPagName() );
+		shareParam.put( "url", PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/79B4DE7C/pageIndex.do" );
+		shareParam.put( "userid", userid );
+		String url = mallPageService.wxShare( userid, request, shareParam );
+		response.sendRedirect( url );
+		return null;
+	    }
+
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -461,14 +496,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
-	    Map storeMap = mallPageService.shopmessage( obj.getPagStoId(), null );//获取店铺信息
 
-	    String name = "";//店铺名称
-	    if ( CommonUtil.isEmpty( storeMap.get( "business_name" ) ) ) {
-		name = storeMap.get( "sto_name" ).toString();
-	    } else {
-		name = storeMap.get( "business_name" ).toString();
-	    }
 	    String dataJson = "[]";
 	    String picJson = "[]";
 	    if ( CommonUtil.isEmpty( storeMap.get( "stoPicture" ) ) ) {
@@ -493,7 +521,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 		set = mallPaySetService.selectByUserId( set );
 		int state = mallPifaApplyService.getPifaApplay( member, set );
 
-		String http = PropertiesUtil.getResourceUrl();
 		JSONArray jsonobj = JSONArray.fromObject( obj.getPagData() );//转换成JSON数据
 		JSONArray XinJson = new JSONArray();//获取新的数组对象
 		for ( int i = 0; i < jsonobj.size(); i++ ) {
@@ -555,21 +582,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    if ( obj.getPagCss() != null ) {
 		dataJson = obj.getPagCss();
 	    }
-	    String http = PropertiesUtil.getResourceUrl();
-	    String headImg = "";
-	    if ( CommonUtil.isNotEmpty( wxPubMap ) ) {
-		if ( CommonUtil.isNotEmpty( wxPubMap.get( "head_img" ) ) ) {
-		    headImg = wxPubMap.get( "head_img" ).toString();
-		}
-	    }
-	    if ( CommonUtil.isEmpty( headImg ) ) {
-		if ( CommonUtil.isNotEmpty( storeMap ) ) {
-		    if ( CommonUtil.isNotEmpty( storeMap.get( "sto_head_img" ) ) ) {
-			headImg = http + storeMap.get( "sto_head_img" ).toString();
-		    }
-		}
-	    }
-	    request.setAttribute( "headImg", headImg );
 
 	    //int countproduct = mallPageService.countproduct(obj.getPagStoId());
 	    Map< String,Object > params = new HashMap< String,Object >();
@@ -603,10 +615,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( userid );//查询商城底部菜单
 	    request.setAttribute( "footerMenuMap", footerMenuMap );
 	    mallPageService.getCustomer( request, userid );
-	    // todo  调用小屁孩接口 CommonUtil.getWxParams(
-	    /*if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.isNotEmpty( member ) && CommonUtil.judgeBrowser( request ) == 1 ) {
-		CommonUtil.getWxParams( mallOrderService.getWpUser( member.getId() ), request );
-	    }*/
 	} catch ( Exception e ) {
 	    logger.error( "访问商城首页异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -972,7 +980,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		if ( CommonUtil.isNotEmpty( mapmessage.get( "flow_id" ) ) ) {
 		    int flowId = CommonUtil.toInteger( mapmessage.get( "flow_id" ) );
 		    if ( flowId > 0 ) {
-			WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( flowId );
+			BusFlowInfo flow = fenBiFlowService.getFlowInfoById( flowId );
 			if ( CommonUtil.isNotEmpty( flow ) ) {
 			    request.setAttribute( "flow_desc", flow.getType() + "M流量" );
 			}
@@ -1564,4 +1572,5 @@ public class MallPageController extends AuthorizeOrLoginController {
 	}
 	return "redirect:/mallPage/" + pageId + "/79B4DE7C/pageIndex.do";
     }
+
 }

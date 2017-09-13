@@ -8,7 +8,6 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -41,7 +40,8 @@ import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -381,7 +381,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    product.setViewsNum( viewNum );
 	    if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
 		if ( product.getFlowId() > 0 ) {
-		    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		    map.put( "busFlow", flow );
 
 		    map.put( "noChangeFlow", 1 );
@@ -609,7 +609,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    //新增流量冻结
 	    if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
 		if ( product.getFlowId() > 0 ) {
-		    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		    if ( CommonUtil.isNotEmpty( flow ) ) {
 
 			Map< String,Object > map = getFlowRecord( product, flow );
@@ -711,7 +711,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 	    if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
 		if ( product.getFlowId() > 0 ) {
-		    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		    if ( CommonUtil.isNotEmpty( flow ) ) {
 			Map< String,Object > map = getFlowRecord( product, flow );
 			if ( CommonUtil.isNotEmpty( map ) ) {
@@ -2158,7 +2158,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	return memberService.findBuyGradeType( userId );
     }
 
-    private Map< String,Object > getFlowRecord( MallProduct product, WsBusFlowInfo flow ) {
+    private Map< String,Object > getFlowRecord( MallProduct product, BusFlowInfo flow ) {
 	FenbiFlowRecord flowRecord = new FenbiFlowRecord();
 	flowRecord.setBusUserId( product.getUserId() );//用户ID
 	flowRecord.setRecType( 2 );//1：粉币 2：流量

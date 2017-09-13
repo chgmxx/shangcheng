@@ -2,6 +2,7 @@ package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.util.KeysUtil;
+import com.gt.api.util.RequestUtils;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
@@ -33,12 +34,16 @@ public class PayServiceImpl implements PayService {
 
     @Override
     public Map< String,Object > wxmemberPayRefund( WxmemberPayRefund refund ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( refund, PAY_URL + "wxmemberPayRefund.do", 2 );
+	RequestUtils< WxmemberPayRefund > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( refund );
+	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2 );
     }
 
     @Override
     public EnterprisePaymentResult enterprisePayment( ApiEnterprisePayment payment ) {
-	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( payment, PAY_URL + "wxmemberPayRefund.do", 2 );
+	RequestUtils< ApiEnterprisePayment > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( payment );
+	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2 );
 	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
 	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
 	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), EnterprisePaymentResult.class );

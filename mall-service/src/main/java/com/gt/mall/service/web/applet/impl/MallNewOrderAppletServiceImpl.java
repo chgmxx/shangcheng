@@ -43,8 +43,8 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.PropertiesUtil;
+import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.fenbiFlow.ReqGetMobileInfo;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
 import com.gt.util.entity.result.fenbi.GetMobileInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
@@ -2074,7 +2074,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    } else if ( map.get( "code" ).equals( "1" ) ) {
 		GetMobileInfo mobileInfo = JSONObject.toJavaObject( JSONObject.parseObject( map.get( "data" ).toString() ), GetMobileInfo.class );
 
-		WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 
 		if ( mobileInfo.getSupplier().equals( "中国联通" ) && flow.getCount() == 10 ) {
 		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );

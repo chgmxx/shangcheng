@@ -76,15 +76,6 @@ function getSubmitParams() {
             if (detailObj.discount !== null && detailObj.discount !== "") {
                 detailObj.discount = detailObj.discount * 1;
             }
-            if(detailObj.groupBuyId !== null && detailObj.groupBuyId !== ""){
-                obj.groupBuyId = detailObj.groupBuyId;
-            }
-            if(detailObj.pJoinId !== null && detailObj.pJoinId !== ""){
-                obj.pJoinId = detailObj.pJoinId;
-            }
-            if(detailObj.groupType !== null && detailObj.groupType !== ""){
-                obj.groupType = detailObj.groupType;
-            }
             detailArr.push(detailObj);
         });
         var couponJson = $(this).find(".couponJson").val();

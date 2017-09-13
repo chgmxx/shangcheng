@@ -2,8 +2,8 @@ package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.RequestUtils;
 import com.gt.mall.bean.BusFlow;
-import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
@@ -27,7 +27,9 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public FenBiCount getFenbiSurplus( FenbiSurplus fenbiSurplus ) {
-	String result = HttpSignUtil.signHttpSelect( fenbiSurplus, FLOW_URL + "getFenbiSurplus.do", 2 );
+	RequestUtils< FenbiSurplus > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( fenbiSurplus );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiSurplus.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenBiCount.class );
 	}
@@ -35,17 +37,21 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
     }
 
     @Override
-    public WsBusFlowInfo getFlowInfoById( int flowId ) {
-	String result = HttpSignUtil.signHttpSelect( flowId, FLOW_URL + "getFlowInfoById.do", 2 );
+    public BusFlowInfo getFlowInfoById( int flowId ) {
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( flowId );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFlowInfoById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsBusFlowInfo.class );
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), BusFlowInfo.class );
 	}
 	return null;
     }
 
     @Override
     public List< BusFlow > getBusFlowsByUserId( int busUserId ) {
-	String result = HttpSignUtil.signHttpSelect( busUserId, FLOW_URL + "getBusFlowsByUserId.do", 2 );
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( busUserId );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getBusFlowsByUserId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, BusFlow.class );
 	}
@@ -54,32 +60,42 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( fenbiFlowRecord, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
+	RequestUtils< FenbiFlowRecord > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( fenbiFlowRecord );
+	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
     }
 
     @Override
-    public WsFenbiFlowRecord getFenbiFlowRecordById( int recordId ) {
-	String result = HttpSignUtil.signHttpSelect( recordId, FLOW_URL + "getFenbiFlowRecordById.do", 2 );
+    public FenbiFlowRecord getFenbiFlowRecordById( int recordId ) {
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( recordId );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiFlowRecordById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsFenbiFlowRecord.class );
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenbiFlowRecord.class );
 	}
 	return null;
     }
 
     @Override
     public boolean rollbackFenbiFlowRecord( int recordId ) {
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( recordId, FLOW_URL + "rollbackFenbiFlowRecord.do", 2 );
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( recordId );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "rollbackFenbiFlowRecord.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public boolean adcServices( AdcServicesInfo adcServicesInfo ) {
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( adcServicesInfo, FLOW_URL + "adcServices.do", 2 );
+	RequestUtils< AdcServicesInfo > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( adcServicesInfo );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "adcServices.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public Map getMobileInfo( ReqGetMobileInfo reqGetMobileInfo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( reqGetMobileInfo, FLOW_URL + "getMobileInfo.do", 2 );
+	RequestUtils< ReqGetMobileInfo > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( reqGetMobileInfo );
+	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "getMobileInfo.do", 2 );
     }
 }

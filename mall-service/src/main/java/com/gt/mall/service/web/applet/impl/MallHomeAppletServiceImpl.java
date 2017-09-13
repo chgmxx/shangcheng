@@ -7,7 +7,6 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
-import com.gt.mall.bean.wx.shop.ShopPhoto;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
@@ -39,6 +38,7 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.sms.OldApiSms;
+import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -769,7 +769,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map : list ) {
 		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( map.get( "wx_shop_id" ) ) );
-		List< ShopPhoto > shopPhotoList = wxShopService.getShopPhotoByShopId( wxShopInfo.getId() );
+		List< WsShopPhoto > shopPhotoList = wxShopService.getShopPhotoByShopId( wxShopInfo.getId() );
 		Map< String,Object > shopMap = new HashMap< String,Object >();
 		if ( longitude > 0 && latitude > 0 ) {
 		    Double raill = CommonUtil.getDistance( longitude, latitude, CommonUtil.toDouble( wxShopInfo.getLongitude() ), CommonUtil.toDouble( wxShopInfo.getLatitude() ) );

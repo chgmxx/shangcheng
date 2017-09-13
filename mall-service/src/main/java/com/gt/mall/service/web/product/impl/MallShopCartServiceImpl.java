@@ -22,7 +22,7 @@ import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.SessionUtils;
 import com.gt.union.api.entity.result.UnionDiscountResult;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -486,7 +486,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		if ( CommonUtil.isNotEmpty( shopMap.get( "flowId" ) ) ) {
 		    if ( CommonUtil.toInteger( shopMap.get( "flowId" ) ) > 0 ) {
 			request.setAttribute( "isFlow", 1 );
-			WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( shopMap.get( "flowId" ) ) );
+			BusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( shopMap.get( "flowId" ) ) );
 			if ( CommonUtil.isNotEmpty( flow ) ) {
 			    request.setAttribute( "flowType", flow.getType() );
 			}

@@ -26,7 +26,7 @@ import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.param.fenbiFlow.WsBusFlowInfo;
+import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,7 +195,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	resultMap.put( "recordNum", recordNum );
 
 	if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
-	    WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+	    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 	    if ( CommonUtil.isNotEmpty( flow ) ) {
 		resultMap.put( "flow_desc", flow.getType() + "M流量" );
 	    }
@@ -283,7 +283,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 		resultMap.put( "msg", map.get( "msg" ) );
 		return resultMap;
 	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
-		WsBusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
 		    resultMap.put( "code", -1 );
 		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );

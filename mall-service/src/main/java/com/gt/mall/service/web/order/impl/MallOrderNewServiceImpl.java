@@ -276,9 +276,9 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 	logger.info( "orderParams" + JSONArray.toJSON( orderList ) );
 
-	if ( orderList.size() > 0 ) {
+	/*if ( orderList.size() > 0 ) {
 	    throw new BusinessException( "ss" );
-	}
+	}*/
 
 	int orderPId = 0;
 	String orderNo = "";
@@ -454,7 +454,11 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	if ( CommonUtil.isNotEmpty( memberAddress ) ) {
 	    mallOrder.setReceiveName( memberAddress.getMemName() );
 	    mallOrder.setReceivePhone( memberAddress.getMemPhone() );
-	    mallOrder.setReceiveAddress( memberAddress.getProvincename() + memberAddress.getCityname() + memberAddress.getCityname() + memberAddress.getMemAddress() );
+	    String address = memberAddress.getProvincename() + memberAddress.getCityname() + memberAddress.getAreaname() + memberAddress.getMemAddress();
+	    if ( CommonUtil.isNotEmpty( memberAddress.getMemZipCode() ) ) {
+		address += memberAddress.getMemZipCode();
+	    }
+	    mallOrder.setReceiveAddress( address );
 
 	}
 	return mallOrder;

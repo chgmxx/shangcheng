@@ -1,7 +1,7 @@
 package com.gt.mall.service.inter.wxshop;
 
-import com.gt.mall.bean.wx.applet.MemberAppletOpenid;
 import com.gt.util.entity.param.member.MemberAppletByMemIdAndStyle;
+import com.gt.util.entity.result.member.MemberAppletOpenid;
 
 /**
  * 微信小程序相关接口

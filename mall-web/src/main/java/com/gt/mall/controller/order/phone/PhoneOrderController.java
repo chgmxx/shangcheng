@@ -167,6 +167,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    }
 
 		}
+	    } else {
+		SessionUtils.removeSession( request, "to_order" );
 	    }
 	    if ( CommonUtil.isNotEmpty( data.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( data.get( "uId" ) );
@@ -292,7 +294,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		request.setAttribute( "mallTakeTheir", mallTakeTheir );
 	    }
 
-	    request.setAttribute( "orderDetail", JSONArray.fromObject( list ) );
+	    request.setAttribute( "orderList", JSONArray.fromObject( list ) );
 	    request.setAttribute( "data", obj );
 	    request.setAttribute( "type", type );
 	    request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
@@ -332,6 +334,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    if ( params.containsKey( "data" ) ) {
+		SessionUtils.setSession( params.get( "data" ), request, "to_order" );
+	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -348,9 +353,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			request.setAttribute( "isAdvert", 1 );
 		    }
 		}
-	    }
-	    if ( params.containsKey( "data" ) ) {
-		SessionUtils.setSession( params.get( "data" ), request, "to_order" );
 	    }
 	    /*if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) && CommonUtil.isNotEmpty( memberId ) ) {
 	    	//todo CommonUtil.getWxParams
@@ -798,11 +800,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    List orderList = mallOrderService.mobileOrderList( params, userid );
 	    JSONObject orderObj = JSONObject.fromObject( orderList.get( 0 ) );
 
-	    if ( orders.getReceiveId() != null ) {
-		params.put( "id", orders.getReceiveId() );
-		List< MemberAddress > addressList = mallOrderService.selectShipAddress( params );
-		request.setAttribute( "addressList", addressList );
-	    }
 	    if ( CommonUtil.isNotEmpty( orders.getExpressId() ) ) {
 		String expressName = dictService.getDictRuturnValue( "1092", orders.getExpressId() );
 		if ( CommonUtil.isNotEmpty( expressName ) ) {
@@ -869,6 +866,9 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    if ( params.containsKey( "data" ) ) {
+		SessionUtils.setSession( params.get( "data" ), request, "to_order" );
+	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -882,9 +882,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    request.setAttribute( "takeList", takeList );
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		request.setAttribute( "checkId", params.get( "id" ) );
-	    }
-	    if ( params.containsKey( "data" ) ) {
-		SessionUtils.setSession( params.get( "data" ), request, "to_order" );
 	    }
 	} catch ( Exception e ) {
 	    e.printStackTrace();

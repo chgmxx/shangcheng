@@ -1,7 +1,7 @@
 package com.gt.mall.service.inter.wxshop;
 
-import com.gt.mall.bean.wx.shop.ShopPhoto;
-import com.gt.mall.bean.wx.shop.ShopSubsop;
+import com.gt.util.entity.param.shop.ShopSubsop;
+import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 
@@ -32,7 +32,7 @@ public interface WxShopService {
      *
      * @return 门店信息
      */
-    List< ShopPhoto > getShopPhotoByShopId( int wxShopId );
+    List< WsShopPhoto > getShopPhotoByShopId( int wxShopId );
 
     /**
      * 根据商家id获取所有门店
@@ -72,22 +72,28 @@ public interface WxShopService {
 
     /**
      * 根据城市id查询城市名称
+     *
      * @param cityIds 城市id 查询多个用逗号隔开
+     *
      * @return 城市信息
      */
-    List<Map> queryBasisCityIds(String cityIds);
+    List< Map > queryBasisCityIds( String cityIds );
 
     /**
      * 删除门店中间表
+     *
      * @param shopSubsop 门店对象
+     *
      * @return true 成功
      */
-    boolean updateBySubShop(ShopSubsop shopSubsop);
+    boolean updateBySubShop( ShopSubsop shopSubsop );
 
     /**
      * 根据城市名称查询城市id
+     *
      * @param name 城市名称
+     *
      * @return 城市id
      */
-    Map queryBasisByName(String name);
+    Map queryBasisByName( String name );
 }

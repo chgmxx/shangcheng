@@ -10,14 +10,14 @@ import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.SessionUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -135,8 +135,8 @@ public class MallFreightController extends BaseController {
 
 	    //查询物流公司
 	    List< Map > list = dictService.getDict( "1092" );
-	    SortedMap< String,Object > map = new TreeMap< String,Object >();
-	    for ( Map< String,Object > map2 : list ) {
+	    SortedMap< String,Object > map = new TreeMap<>();
+	    for ( Map map2 : list ) {
 		map.put( map2.get( "item_key" ).toString(), map2.get( "item_value" ) );
 	    }
 	    request.setAttribute( "comMap", map );
@@ -150,12 +150,10 @@ public class MallFreightController extends BaseController {
 
     /**
      * 编辑物流信息
-     *
-     * @Title: editFreight
      */
     @SysLogAnnotation( description = "物流管理-添加物流", op_function = "2" )
     @RequestMapping( "editFreight" )
-    public void editFreight( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public void editFreight( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入编辑物流信息的controller" );
 	boolean flag = false;
 	PrintWriter p = null;
@@ -170,23 +168,16 @@ public class MallFreightController extends BaseController {
 	    flag = false;
 	    logger.debug( "编辑物流信息：" + e.getMessage() );
 	    e.printStackTrace();
+	} finally {
+	    JSONObject obj = new JSONObject();
+	    obj.put( "flag", flag );
+	    CommonUtil.write( response, obj );
 	}
 
-	JSONObject obj = new JSONObject();
-	try {
-	    obj.put( "flag", flag );
-	    p.write( obj.toString() );
-	    p.flush();
-	    p.close();
-	} catch ( JSONException e ) {
-	    e.printStackTrace();
-	}
     }
 
     /**
      * 删除物流信息
-     *
-     * @Title: deleteFreight
      */
     @SysLogAnnotation( description = "物流管理-删除物流", op_function = "4" )
     @RequestMapping( "deleteFreight" )
@@ -214,11 +205,6 @@ public class MallFreightController extends BaseController {
 
     /**
      * 查询退款信息
-     *
-     * @param request
-     * @param map
-     *
-     * @return
      */
     @RequestMapping( value = "/provincePopUp" )
     public String provincePopUp( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > map ) {
@@ -265,8 +251,6 @@ public class MallFreightController extends BaseController {
 
     /**
      * 进入上门自提列表页面
-     *
-     * @Title: takeindex
      */
     @RequestMapping( "takeindex" )
     public String takeindex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -328,8 +312,7 @@ public class MallFreightController extends BaseController {
 	    }
 
 	    request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
-	    //TODO 下级城市集合  restaurantService.findCityByPid
-	    //	    request.setAttribute("areaLs", restaurantService.findCityByPid(restaurantService.getAreaIds()));
+	    request.setAttribute( "areaLs", wxShopService.queryCityByLevel( 2 ) );
 	} catch ( Exception e ) {
 	    logger.error( "进入编辑上门自提失败：" + e );
 	    e.printStackTrace();
@@ -344,12 +327,10 @@ public class MallFreightController extends BaseController {
      */
     @SysLogAnnotation( description = "上门自提-编辑上门自提", op_function = "2" )
     @RequestMapping( "editTake" )
-    public void editTake( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public void editTake( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入编辑上门自提的controller" );
 	boolean flag = false;
-	PrintWriter p = null;
 	try {
-	    p = response.getWriter();
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		// 编辑上门自提
@@ -359,17 +340,12 @@ public class MallFreightController extends BaseController {
 	    flag = false;
 	    logger.debug( "编辑上门自提：" + e.getMessage() );
 	    e.printStackTrace();
+	} finally {
+	    JSONObject obj = new JSONObject();
+	    obj.put( "flag", flag );
+	    CommonUtil.write( response, obj );
 	}
 
-	JSONObject obj = new JSONObject();
-	try {
-	    obj.put( "flag", flag );
-	    p.write( obj.toString() );
-	    p.flush();
-	    p.close();
-	} catch ( JSONException e ) {
-	    e.printStackTrace();
-	}
     }
 
     /**

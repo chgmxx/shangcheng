@@ -301,8 +301,8 @@
         <!-- 微信相关实体类 -->
         <dependency>
             <groupId>com.gt.wxmp</groupId>
-            <artifactId>lfx_wxmp_entity1.0.1</artifactId>
-            <version>lfx_wxmp_entity1.0.1</version>
+            <artifactId>lfx_wxmp_entity</artifactId>
+            <version>1.0.5</version>
         </dependency>
 
         <!-- 联盟实体类 -->
@@ -311,6 +311,7 @@
             <artifactId>union_entity1.0.1</artifactId>
             <version>1.0.1</version>
         </dependency>
+
 
     </dependencies>
 

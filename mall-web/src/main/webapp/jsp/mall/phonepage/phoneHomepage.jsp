@@ -178,6 +178,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             }
         });
     });
+
     $("div.fixRig").css({
         "right": "1.12rem"
     });
@@ -200,8 +201,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         var fade = $("#fade");
         fade.hide();
         $(".attr-lay").hide();
-        ;
     }
+
     /**
      * 购买
      */

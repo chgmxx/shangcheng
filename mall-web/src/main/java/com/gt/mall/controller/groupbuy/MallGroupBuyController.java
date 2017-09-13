@@ -432,14 +432,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    }
 	    params.put( "shopId", shopid );
 	    List< Map< String,Object > > productList = groupBuyService.getGroupBuyAll( member, params );// 查询店铺下所有加入团购的商品
-	    String mall_shopId = Constants.SESSION_KEY + "shopId";
-	    if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
-		request.getSession().setAttribute( mall_shopId, shopid );
-	    } else {
-		if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( String.valueOf( shopid ) ) ) {
-		    request.getSession().setAttribute( mall_shopId, shopid );
-		}
-	    }
+	    SessionUtils.setMallShopId( shopid, request );
 	    //查询搜索标签，历史记录
 	    pageService.getSearchLabel( request, shopid, member, params );
 
@@ -533,14 +526,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( productMap ) ) {
-		String mall_shopId = Constants.SESSION_KEY + "shopId";
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) && CommonUtil.isNotEmpty( productMap.get( "shopId" ) ) ) {
-		    request.getSession().setAttribute( mall_shopId, productMap.get( "shopId" ) );
-		} else {
-		    if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( productMap.get( "shopId" ).toString() ) ) {
-			request.getSession().setAttribute( mall_shopId, productMap.get( "shopId" ) );
-		    }
-		}
+		SessionUtils.setMallShopId( productMap.get( "shopId" ), request );
 	    }
 	    Map shopmessage = pageService.shopmessage( CommonUtil.toInteger( productMap.get( "shopId" ) ), null );//查询店铺信息
 	    request.setAttribute( "shopMap", shopmessage );
@@ -616,35 +602,24 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-	/*Map<String, Object> publicMap = pageService.memberMap(userid);
-	if(CommonUtil.isEmpty(member) && (CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
-		boolean isLogin = pageService.isLogin(member, userid, request);
-		if(!isLogin){
-			return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
-		}
-	}*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
 	    Map< String,Object > mapuser = pageService.selUser( shopid );//查询商家信息
-	    if ( CommonUtil.isNotEmpty( mapuser ) ) {
-		userid = CommonUtil.toInteger( mapuser.get( "id" ) );
-	    }
-	    Map publicUserid = pageService.getPublicByUserMap( mapuser );//查询公众号信息
-	    if ( CommonUtil.isNotEmpty( publicUserid ) ) {
-		userid = CommonUtil.toInteger( mapuser.get( "bus_user_id" ) );
-	    }
-
-	    String mall_shopId = Constants.SESSION_KEY + "shopId";
-	    if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
-		request.getSession().setAttribute( mall_shopId, shopid );
-	    } else {
-		if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( String.valueOf( shopid ) ) ) {
-		    request.getSession().setAttribute( mall_shopId, shopid );
+	    if ( userid == 0 ) {
+		if ( CommonUtil.isNotEmpty( mapuser ) ) {
+		    userid = CommonUtil.toInteger( mapuser.get( "id" ) );
 		}
 	    }
+	    if ( userid == 0 ) {
+		Map publicUserid = pageService.getPublicByUserMap( mapuser );//查询公众号信息
+		if ( CommonUtil.isNotEmpty( publicUserid ) ) {
+		    userid = CommonUtil.toInteger( mapuser.get( "bus_user_id" ) );
+		}
+	    }
+	    SessionUtils.setMallShopId( shopid, request );
 	    pageService.getCustomer( request, userid );
 	} catch ( Exception e ) {
 	    logger.error( "玩法详情异常：" + e.getMessage() );

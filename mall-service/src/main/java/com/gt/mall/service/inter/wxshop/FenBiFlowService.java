@@ -1,7 +1,6 @@
 package com.gt.mall.service.inter.wxshop;
 
 import com.gt.mall.bean.BusFlow;
-import com.gt.mall.bean.wx.flow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.*;
 import com.gt.util.entity.result.fenbi.FenBiCount;
 
@@ -32,7 +31,7 @@ public interface FenBiFlowService {
      *
      * @return 流量套餐
      */
-    WsBusFlowInfo getFlowInfoById( int flowId );
+    BusFlowInfo getFlowInfoById( int flowId );
 
     /**
      * 根据商家id获取商家流量
@@ -59,7 +58,7 @@ public interface FenBiFlowService {
      *
      * @return 流量冻结记录
      */
-    WsFenbiFlowRecord getFenbiFlowRecordById( int recordId );
+    FenbiFlowRecord getFenbiFlowRecordById( int recordId );
 
     /**
      * 回滚冻结流量

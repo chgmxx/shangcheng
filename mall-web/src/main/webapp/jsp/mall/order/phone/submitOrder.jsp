@@ -113,6 +113,19 @@
 
         <input type="hidden" name="useCoupon" value="0"/><!-- 是否使用优惠券 -->
 
+
+        <c:if test="${!empty orderList}">
+            <c:if test="${!empty orderList[0].groupBuyId}">
+                <input type="hidden" name="groupBuyId" class="groupBuyId" value="${orderList[0].groupBuyId }"/>
+            </c:if>
+            <c:if test="${!empty orderList[0].pJoinId}">
+                <input type="hidden" name="pJoinId" class="pJoinId" value="${orderList[0].pJoinId }"/>
+            </c:if>
+            <c:if test="${!empty orderList[0].groupType}">
+                <input type="hidden" name="orderType" class="groupType" value="${orderList[0].groupType }"/>
+            </c:if>
+        </c:if>
+
     </div>
 
     <input type="hidden" name="detail" id="detail" value="">
@@ -124,7 +137,7 @@
     </c:if>
     <c:set var="pro_type_id" value="0"></c:set>
     <c:set var="url" value=""></c:set>
-    <c:set var="pro_type_id" value="${orderDetail[0].message[0].pro_type_id}"></c:set>
+    <c:set var="pro_type_id" value="${orderList[0].message[0].pro_type_id}"></c:set>
     <c:if test="${type == 1}">
         <c:set var="url" value="/mallPage/79B4DE7C/shoppingcare.do?member_id=${member.id }&uId=${userid }"></c:set>
     </c:if>
@@ -151,9 +164,9 @@
                                     </div>
                                 </div>
                                 <div class="info info2">
-                                        ${address.provincename}${address.cityname}${address.cityname}${address.memAddress }
-                                    <c:if test="${address.memAddress != null && address.memAddress != ''}">
-                                        (${address.memAddress })
+                                        ${address.provincename}${address.cityname}${address.areaname}${address.memAddress }
+                                    <c:if test="${address.memZipCode != null && address.memZipCode != ''}">
+                                        (${address.memZipCode })
                                     </c:if>
                                 </div>
                             </div>
@@ -172,7 +185,7 @@
         <c:set var="jifenNum" value="0"></c:set>
         <c:set var="jifenProMoney" value="0"></c:set>
         <section class="main">
-            <c:forEach var="order" items="${orderDetail }">
+            <c:forEach var="order" items="${orderList }">
                 <c:set var="yhqNum" value="0"></c:set>
                 <c:set var="totalMoneys" value="0"></c:set>
                 <div id="couponDiv" class="couponDivs" stoId="${order.shop_id }" wxShopId="${order.wxShopId }">
@@ -309,15 +322,6 @@
                             <input type="hidden" name="wxShopId" value="${order.wxShopId}"/>
                             <c:if test="${!empty cardMap && !empty cardMap.discount}">
                                 <input type="hidden" name="discount" value="${cardMap.discount*10}"/>
-                            </c:if>
-                            <c:if test="${!empty orderDetail.groupBuyId}">
-                                <input type="hidden" class="groupBuyId" value="${orderDetail.groupBuyId }"/>
-                            </c:if>
-                            <c:if test="${!empty orderDetail.pJoinId}">
-                                <input type="hidden" class="pJoinId" value="${orderDetail.pJoinId }"/>
-                            </c:if>
-                            <c:if test="${!empty orderDetail.groupType}">
-                                <input type="hidden" class="groupType" value="${orderDetail.groupType }"/>
                             </c:if>
                         </div>
 

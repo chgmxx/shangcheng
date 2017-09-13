@@ -235,11 +235,13 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    }
 	    request.setAttribute( "imgHttp", PropertiesUtil.getResourceUrl() );
 
-	    BusUser user = pageService.selUserByMember( member );
-	    if ( CommonUtil.isNotEmpty( user ) ) {
-		if ( CommonUtil.isNotEmpty( user.getAdvert() ) ) {
-		    if ( user.getAdvert() == 0 ) {
-			request.setAttribute( "isAdvert", 1 );
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		BusUser user = busUserService.selectById( member.getBusid() );
+		if ( CommonUtil.isNotEmpty( user ) ) {
+		    if ( CommonUtil.isNotEmpty( user.getAdvert() ) ) {
+			if ( user.getAdvert() == 0 ) {
+			    request.setAttribute( "isAdvert", 1 );
+			}
 		    }
 		}
 	    }
@@ -522,4 +524,5 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	}
 	return "mall/order/phone/tencentMap";
     }
+
 }
