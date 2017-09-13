@@ -68,11 +68,9 @@
     </select>
     <!-- 查询销售员的信息 -->
     <select id="selectSellerBySaleId" resultType="Map" parameterType="java.lang.Integer">
-        /* todo 调用彭江丽粉丝表 */
         select
         <include refid="Base_Column_List"/>
         from t_mall_seller s
-        /*LEFT JOIN t_wx_bus_member m ON m.id=s.`member_id`*/
         where s.member_id = #{memberId,jdbcType=INTEGER}
     </select>
     <select id="selectMallSeller" parameterType="com.gt.mall.entity.seller.MallSeller" resultMap="BaseResultMap">
@@ -92,11 +90,9 @@
 
     <!-- 查询销售员排行榜的信息 -->
     <select id="selectSellerByBusUserId" resultType="Map" parameterType="java.lang.Integer">
-        /* todo 调用 彭江丽 粉丝表 */
         select
         <include refid="Base_Column_List"/>
         from t_mall_seller s
-        /*LEFT JOIN t_wx_bus_member m ON m.id=s.`member_id`*/
         where s.is_start_use = 1
         <if test="isCheck == -1">
             and (s.check_status = 1 or s.check_status = 0 or s.check_status = -2)
