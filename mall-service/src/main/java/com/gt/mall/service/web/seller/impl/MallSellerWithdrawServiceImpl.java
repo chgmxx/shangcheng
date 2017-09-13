@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.seller.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPublicUsers;
@@ -20,7 +21,6 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.result.pay.EnterprisePaymentResult;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,11 +80,10 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
      */
     @Transactional( rollbackFor = Exception.class )
     @Override
-    public Map< String,Object > saveWithdraw( int saleMemberId,
-		    Map< String,Object > params, int paySource ) throws Exception {
+    public Map< String,Object > saveWithdraw( int saleMemberId, Map< String,Object > params, int paySource ) throws Exception {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 
-	MallSellerWithdraw withdraw = (MallSellerWithdraw) JSONObject.toBean( JSONObject.fromObject( params.get( "withdraw" ) ), MallSellerWithdraw.class );
+	MallSellerWithdraw withdraw = JSONObject.parseObject( params.get( "withdraw" ).toString(), MallSellerWithdraw.class );
 	double withdrawMoney = CommonUtil.toDouble( withdraw.getWithdrawMoney() );
 	if ( withdrawMoney < 1 ) {
 	    resultMap.put( "flag", false );
@@ -229,8 +228,7 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
     }
 
     @Override
-    public List< Map< String,Object > > selectWithdrawList(
-		    Map< String,Object > params ) {
+    public List< Map< String,Object > > selectWithdrawList( Map< String,Object > params ) {
 	return mallSellerWithdrawDAO.selectWithdrawList( params );
     }
 

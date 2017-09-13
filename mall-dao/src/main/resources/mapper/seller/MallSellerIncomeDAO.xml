@@ -28,11 +28,9 @@
 
 
     <select id="selectTotalIncome" parameterType="Map" resultType="Map">
-        /* todo 调用 彭江丽 粉丝表*/
-        SELECT DISTINCT i.id/*,m.`headimgurl`,m.`nickname`*/,d.`det_pro_name`,d.`product_speciname` ,i.income_commission,i.`income_integral`,
+        SELECT DISTINCT i.id,i.`buyer_user_id`,d.`det_pro_name`,d.`product_speciname` ,i.income_commission,i.`income_integral`,
         i.income_money,i.income_time,i.income_type,i.is_get ,i.commission_type
         FROM t_mall_seller_income i
-        /* LEFT JOIN t_wx_bus_member m ON m.id=i.`buyer_user_id`*/
         LEFT JOIN t_mall_order_detail d ON d.id=i.`order_detail_id`
         LEFT JOIN t_mall_order o ON o.id=i.order_id
         WHERE (i.income_type=2 AND (d.`id` > 0 AND d.status != 5 AND d.status != 1 AND o.`order_status`&lt; 5) OR i.income_type=1)

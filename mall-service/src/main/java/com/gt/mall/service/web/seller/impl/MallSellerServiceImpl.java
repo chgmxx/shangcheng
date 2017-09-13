@@ -88,9 +88,19 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
      * 查询累计收益
      */
     @Override
-    public List< Map< String,Object > > selectTotalIncome(
-		    Map< String,Object > params ) {
-	return mallSellerIncomeDAO.selectTotalIncome( params );
+    public List< Map< String,Object > > selectTotalIncome( Map< String,Object > params ) {
+	List< Map< String,Object > > mapList = mallSellerIncomeDAO.selectTotalIncome( params );
+	if ( mapList != null && mapList.size() > 0 ) {
+	    for ( Map< String,Object > map : mapList ) {
+		Member member = memberService.findMemberById( CommonUtil.toInteger( map.get( "buyer_user_id" ) ), null );
+		if ( member != null ) {
+		    map.put( "nickname", member.getNickname() );
+		    map.put( "headimgurl", member.getHeadimgurl() );
+		}
+	    }
+	}
+
+	return mapList;
     }
 
     /**
@@ -138,8 +148,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	int pageSize = 10;
 	int count = countList.size();
 
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil
-			.toInteger( params.get( "curPage" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 
 	PageUtil page = new PageUtil( curPage, pageSize, count, params.get( "url" ).toString() );
@@ -284,8 +293,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
      * 保存或修改功能设置
      */
     @Override
-    public Map< String,Object > saveOrUpdSellerSet( int busUserId,
-		    Map< String,Object > params ) {
+    public Map< String,Object > saveOrUpdSellerSet( int busUserId, Map< String,Object > params ) {
 	int count = 0;
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "sellerSet" ) ) ) {
@@ -488,14 +496,12 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public PageUtil selectProductByShopId( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
-			: CommonUtil.toInteger( params.get( "curPage" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 	int count = mallSellerJoinProductDAO.selectCountByPage( params );
 
 	PageUtil page = new PageUtil( curPage, pageSize, count, "/mallSellers/joinProduct.do" );
-	int firstNum = pageSize
-			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
@@ -522,13 +528,11 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
      * 保存或修改商品佣金设置
      */
     @Override
-    public Map< String,Object > saveOrUpdSellerJoinProduct( int busUserId,
-		    Map< String,Object > params ) {
+    public Map< String,Object > saveOrUpdSellerJoinProduct( int busUserId, Map< String,Object > params ) {
 	int count = 0;
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "joinProduct" ) ) ) {
-	    MallSellerJoinProduct joinProduct = JSONObject
-			    .toJavaObject( JSONObject.parseObject( params.get( "joinProduct" ).toString() ), MallSellerJoinProduct.class );
+	    MallSellerJoinProduct joinProduct = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "joinProduct" ).toString() ), MallSellerJoinProduct.class );
 	    MallSellerJoinProduct jProduct = null;
 	    if ( CommonUtil.isNotEmpty( joinProduct.getProductId() ) ) {
 		jProduct = mallSellerJoinProductDAO.selectByProId( joinProduct.getProductId() );
@@ -569,8 +573,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     }
 
     @Override
-    public Map< String,Object > updSellerJoinProduct( int busUserId,
-		    Map< String,Object > params ) {
+    public Map< String,Object > updSellerJoinProduct( int busUserId, Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	int count = 0;
 	if ( CommonUtil.isNotEmpty( params ) ) {
@@ -917,7 +920,14 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    if ( CommonUtil.isNotEmpty( headPath ) ) {
 		arr.add( headPath );//存放用户头像
 	    }
-	    String[] logoPathStr = (String[]) JSONArray.toJSON( arr );
+	    String[] logoPathStr = null;
+	    List< String > arrList = (List< String >) JSONArray.toJSON( arr );
+	    if ( arrList != null && arrList.size() > 0 ) {
+		logoPathStr = new String[arrList.size()];
+		for ( int i = 0; i < arrList.size(); i++ ) {
+		    logoPathStr[i] = arrList.get( i );
+		}
+	    }
 
 	    String path = PropertiesUtil.getHomeUrl() + "/images/mall/seller/tg-code.png";
 	    path = URLConnectionDownloader.downloadRqcode( path, PropertiesUtil.getResImagePath() + newPath, 750, 1218 );//下载背景图片
