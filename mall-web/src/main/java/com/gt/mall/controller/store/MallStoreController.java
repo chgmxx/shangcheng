@@ -301,7 +301,7 @@ public class MallStoreController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    flag = false;
-	    logger.debug( "编辑商城设置异常：" + e.getMessage() );
+	    logger.error( "编辑商城设置异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    JSONObject obj = new JSONObject();

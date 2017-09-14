@@ -136,7 +136,7 @@ public class UploadManager {
     public Image paserImage( MultipartFile mpf, String rootDir, int id, int width, int height ) {
 	try {
 	    if ( logger.isDebugEnabled() ) {
-		logger.debug( "paserImage called" );
+		logger.error( "paserImage called" );
 	    }
 	    // 参数验证
 	    if ( mpf.isEmpty() || StringUtils.isEmpty( rootDir ) ) {
@@ -192,7 +192,7 @@ public class UploadManager {
     public Image paserImage( MultipartFile mpf, String rootDir ) {
 	try {
 	    if ( logger.isDebugEnabled() ) {
-		logger.debug( "paserImage called" );
+		logger.error( "paserImage called" );
 	    }
 	    // 参数验证
 	    if ( mpf.isEmpty() || StringUtils.isEmpty( rootDir ) ) {
@@ -256,7 +256,7 @@ public class UploadManager {
     /*public Video parseVideo( MultipartFile mpf, String rootDir ) {
 	try {
 	    if ( logger.isDebugEnabled() ) {
-		logger.debug( "paserImage called" );
+		logger.error( "paserImage called" );
 	    }
 	    // 参数验证
 	    if ( mpf.isEmpty() || StringUtils.isEmpty( rootDir ) ) {
@@ -313,7 +313,7 @@ public class UploadManager {
     /*public Voice parseVoice( MultipartFile mpf, String rootDir ) {
 	try {
 	    if ( logger.isDebugEnabled() ) {
-		logger.debug( "paserImage called" );
+		logger.error( "paserImage called" );
 	    }
 
 	    //

@@ -68,7 +68,7 @@ public class MallCommentController extends BaseController {
 	    flag = commentGiveService.editCommentGive( giveList, user );
 	} catch ( Exception e ) {
 	    flag = false;
-	    logger.debug( "编辑评论送礼：" + e.getMessage() );
+	    logger.error( "编辑评论送礼：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	JSONObject obj = new JSONObject();
@@ -136,7 +136,7 @@ public class MallCommentController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    result = false;
-	    logger.debug( "删除,审核评论失败：" + e.getMessage() );
+	    logger.error( "删除,审核评论失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	if ( !result ) {
@@ -167,7 +167,7 @@ public class MallCommentController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    result = false;
-	    logger.debug( "回复评论失败：" + e.getMessage() );
+	    logger.error( "回复评论失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	if ( !result ) {

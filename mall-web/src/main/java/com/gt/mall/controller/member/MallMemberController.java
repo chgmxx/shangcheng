@@ -452,7 +452,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 
 	} catch ( Exception e ) {
 	    result = false;
-	    logger.debug( "删除收藏失败：" + e.getMessage() );
+	    logger.error( "删除收藏失败：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	if ( !result ) {

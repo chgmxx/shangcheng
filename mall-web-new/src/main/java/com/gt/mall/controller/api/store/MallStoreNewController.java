@@ -293,7 +293,7 @@ public class MallStoreNewController extends BaseController {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc() );
 	    }
 	} catch ( Exception e ) {
-	    logger.debug( "编辑商城设置异常：" + e.getMessage() );
+	    logger.error( "编辑商城设置异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "进入修改店铺页面异常" );
 	}

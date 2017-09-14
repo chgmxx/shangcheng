@@ -1392,7 +1392,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 		    HttpServletRequest request, HttpSession session ) {
 	if ( logger.isDebugEnabled() ) {
 	    // 验证类型
-	    logger.debug( "进入短信发送,手机号:" + telNo + "验证类型:" + sType );
+	    logger.error( "进入短信发送,手机号:" + telNo + "验证类型:" + sType );
 	}
 
 	Map< String,Object > map = null;

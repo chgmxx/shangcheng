@@ -34,6 +34,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -834,12 +835,10 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 
     /**
      * 储值卡支付成功的回调
-     *
-     * @param params
      */
     @RequestMapping( value = "/79B4DE7C/payWay" )
     @SysLogAnnotation( op_function = "2", description = "保证金储蓄卡支付成功添加记录和修改" )
-    public String payWay( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
+    public String payWay( @RequestBody Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );

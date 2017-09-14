@@ -121,7 +121,7 @@ public class MallProductController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    code = -1;
-	    logger.debug( "批量处理商品信息：" + e.getMessage() );
+	    logger.error( "批量处理商品信息：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    JSONObject obj = new JSONObject();
@@ -232,7 +232,7 @@ public class MallProductController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    code = -1;
-	    logger.debug( "添加商品：" + e.getMessage() );
+	    logger.error( "添加商品：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	JSONObject obj = new JSONObject();
@@ -275,7 +275,7 @@ public class MallProductController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    code = -1;
-	    logger.debug( "修改商品：" + e.getMessage() );
+	    logger.error( "修改商品：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 
@@ -309,7 +309,7 @@ public class MallProductController extends BaseController {
 	} catch ( Exception e ) {
 	    map.put( "msg", "同步商品信息失败，请稍后重试" );
 	    map.put( "code", -1 );
-	    logger.debug( "同步商品：" + e.getMessage() );
+	    logger.error( "同步商品：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 	if ( CommonUtil.isEmpty( map.get( "code" ) ) ) {
@@ -404,7 +404,7 @@ public class MallProductController extends BaseController {
 	} catch ( Exception e ) {
 	    code = -1;
 	    msg = "添加或修改商品失败";
-	    logger.debug( "添加或修改商品异常：" + e.getMessage() );
+	    logger.error( "添加或修改商品异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    obj.put( "errorMsg", msg );
@@ -457,7 +457,7 @@ public class MallProductController extends BaseController {
 	} catch ( Exception e ) {
 	    code = -1;
 	    msg = "添加或修改商品失败";
-	    logger.debug( "添加或修改商品异常：" + e.getMessage() );
+	    logger.error( "添加或修改商品异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    obj.put( "errorMsg", msg );

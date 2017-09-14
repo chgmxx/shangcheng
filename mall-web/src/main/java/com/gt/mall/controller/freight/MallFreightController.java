@@ -166,7 +166,7 @@ public class MallFreightController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    flag = false;
-	    logger.debug( "编辑物流信息：" + e.getMessage() );
+	    logger.error( "编辑物流信息：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    JSONObject obj = new JSONObject();
@@ -193,7 +193,7 @@ public class MallFreightController extends BaseController {
 	    flag = freightService.deleteFreight( params );
 	} catch ( Exception e ) {
 	    flag = false;
-	    logger.debug( "删除物流信息：" + e.getMessage() );
+	    logger.error( "删除物流信息：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    JSONObject obj = new JSONObject();
@@ -234,7 +234,7 @@ public class MallFreightController extends BaseController {
 		request.getSession().setAttribute( Constants.SESSION_KEY + "province", params.get( "province" ) );
 	    }
 	} catch ( Exception e ) {
-	    logger.debug( "通过省份id来获取运费：" + e.getMessage() );
+	    logger.error( "通过省份id来获取运费：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 
@@ -338,7 +338,7 @@ public class MallFreightController extends BaseController {
 	    }
 	} catch ( Exception e ) {
 	    flag = false;
-	    logger.debug( "编辑上门自提：" + e.getMessage() );
+	    logger.error( "编辑上门自提：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
 	    JSONObject obj = new JSONObject();
@@ -365,7 +365,7 @@ public class MallFreightController extends BaseController {
 	    flag = takeTheirService.deleteTake( params );
 	} catch ( Exception e ) {
 	    flag = false;
-	    logger.debug( "删除上门自提：" + e.getMessage() );
+	    logger.error( "删除上门自提：" + e.getMessage() );
 	    e.printStackTrace();
 	}
 

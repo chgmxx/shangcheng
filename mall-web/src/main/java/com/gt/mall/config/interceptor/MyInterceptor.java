@@ -128,8 +128,8 @@ public class MyInterceptor implements HandlerInterceptor {
 	HandlerMethod handlerMethod = (HandlerMethod) handler;
 	Method method = handlerMethod.getMethod();
 	/*if ( logger.isDebugEnabled() ) {*/
-	logger.debug( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
-	logger.debug( "访问的执行时间 : " + executeTime + "ms" );
+	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
+	logger.error( "访问的执行时间 : " + executeTime + "ms" );
 	/*}*/
 
     }
