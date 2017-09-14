@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.util.RequestUtils;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
+import com.gt.mall.utils.JedisUtil;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.param.wx.QrcodeCreateFinal;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
@@ -31,10 +33,18 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public WxPublicUsers selectByUserId( int busUserId ) {
+	String key = Constants.REDIS_KEY + "wx_public_userid_" + busUserId;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
+	    }
+	}
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( busUserId );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectByUserId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
 	return null;
@@ -42,10 +52,18 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public WxPublicUsers selectById( int id ) {
+	String key = Constants.REDIS_KEY + "wx_public_id_" + id;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
+	    }
+	}
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( id );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
 	return null;
@@ -53,10 +71,18 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public WxPublicUsers selectByMemberId( int memberId ) {
+	String key = Constants.REDIS_KEY + "wx_public_memberid_" + memberId;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
+	    }
+	}
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( memberId );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectByMemberId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
 	}
 	return null;

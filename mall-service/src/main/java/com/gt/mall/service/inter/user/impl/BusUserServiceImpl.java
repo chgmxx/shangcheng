@@ -51,7 +51,7 @@ public class BusUserServiceImpl implements BusUserService {
 	String result = HttpSignUtil.signHttpSelect( params, USER_URL + "getBusUserApi.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    BusUser user = JSONObject.toJavaObject( JSONObject.parseObject( result ), BusUser.class );
-	    JedisUtil.set( key, JSONObject.toJSONString( user ), 60 * 30 );
+	    JedisUtil.set( key, JSONObject.toJSONString( user ), Constants.REDIS_SECONDS );
 	    return user;
 	}
 	return null;
@@ -86,7 +86,7 @@ public class BusUserServiceImpl implements BusUserService {
 	String result = HttpSignUtil.signHttpSelect( params, CHILD_USER_URL + "getIsAdmin.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    JSONObject resultObj = JSONObject.parseObject( result );
-	    JedisUtil.set( key, resultObj.getString( "isadmin" ), 60 * 30 );
+	    JedisUtil.set( key, resultObj.getString( "isadmin" ), Constants.REDIS_SECONDS );
 	    if ( resultObj.getInteger( "isadmin" ) == 1 ) {
 		return true;
 	    }
@@ -109,7 +109,7 @@ public class BusUserServiceImpl implements BusUserService {
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    JSONObject resultObj = JSONObject.parseObject( result );
 	    int isMain = resultObj.getInteger( "mainBusId" );
-	    JedisUtil.set( key, isMain + "", 60 * 30 );
+	    JedisUtil.set( key, isMain + "", Constants.REDIS_SECONDS );
 	    return isMain;
 	}
 	return -1;
@@ -129,7 +129,7 @@ public class BusUserServiceImpl implements BusUserService {
 	String result = HttpSignUtil.signHttpSelect( params, VOICE_URL + "getVoiceUrl.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    JSONObject resultObj = JSONObject.parseObject( result );
-	    JedisUtil.set( key, resultObj.get( "voiceUrl" ).toString(), 60 * 30 );
+	    JedisUtil.set( key, resultObj.get( "voiceUrl" ).toString(), Constants.REDIS_SECONDS );
 	    if ( CommonUtil.isNotEmpty( resultObj.get( "voiceUrl" ) ) ) {
 		return CommonUtil.toString( resultObj.get( "voiceUrl" ) );
 	    }

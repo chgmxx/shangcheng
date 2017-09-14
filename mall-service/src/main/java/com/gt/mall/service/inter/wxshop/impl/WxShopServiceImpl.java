@@ -36,7 +36,7 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( wxShopId == 0 ) {
 	    return null;
 	}
-	String key = Constants.REDIS_KEY + "wx_shop" + wxShopId;
+	String key = Constants.REDIS_KEY + "wx_shop_"+ wxShopId;
 	if ( JedisUtil.exists( key ) ) {
 	    Object obj = JedisUtil.get( key );
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
@@ -47,7 +47,7 @@ public class WxShopServiceImpl implements WxShopService {
 	requestUtils.setReqdata( wxShopId );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "getShopById.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
-	    JedisUtil.set( key, result, 60 * 30 );
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsWxShopInfo.class );
 	}
 	return null;
@@ -58,11 +58,23 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( wxShopId == 0 ) {
 	    return null;
 	}
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( wxShopId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "getShopPhotoByShopId.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONArray.parseArray( result, WsShopPhoto.class );
+	try {
+	    String key = Constants.REDIS_KEY + "wx_shop_photo_" + wxShopId;
+	    if ( JedisUtil.exists( key ) ) {
+		Object obj = JedisUtil.get( key );
+		if ( CommonUtil.isNotEmpty( obj ) ) {
+		    return JSONArray.parseArray( obj.toString(), WsShopPhoto.class );
+		}
+	    }
+	    RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	    requestUtils.setReqdata( wxShopId );
+	    String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "getShopPhotoByShopId.do", 2 );
+	    if ( CommonUtil.isNotEmpty( result ) ) {
+		JedisUtil.set( key, result, Constants.REDIS_SECONDS );
+		return JSONArray.parseArray( result, WsShopPhoto.class );
+	    }
+	} catch ( Exception e ) {
+	    e.printStackTrace();
 	}
 	return null;
     }
@@ -97,10 +109,18 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( parentId == 0 ) {
 	    return null;
 	}
+	String key = Constants.REDIS_KEY + "area_parent_" + parentId;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONArray.parseArray( obj.toString(), Map.class );
+	    }
+	}
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( parentId );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "queryCityByParentId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONArray.parseArray( result, Map.class );
 	}
 	return null;
@@ -108,10 +128,18 @@ public class WxShopServiceImpl implements WxShopService {
 
     @Override
     public List< Map > queryCityByLevel( int level ) {
+	String key = Constants.REDIS_KEY + "area_" + level;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONArray.parseArray( obj.toString(), Map.class );
+	    }
+	}
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( level );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "queryCityByLevel.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONArray.parseArray( result, Map.class );
 	}
 	return null;
@@ -122,10 +150,18 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( CommonUtil.isEmpty( cityIds ) ) {
 	    return null;
 	}
+	String key = Constants.REDIS_KEY + "area_id_" + cityIds;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONArray.parseArray( obj.toString(), Map.class );
+	    }
+	}
 	RequestUtils< String > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( cityIds );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "queryBasisCityIds.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONArray.parseArray( result, Map.class );
 	}
 	return null;

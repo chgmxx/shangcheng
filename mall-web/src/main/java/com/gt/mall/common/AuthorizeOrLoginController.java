@@ -68,13 +68,13 @@ public class AuthorizeOrLoginController {
 		return "redirect:" + guoqiUrl;
 	    }
 	    Object remoteUcLogin = json.get( "remoteUcLogin" );
-	    if ( CommonUtil.isNotEmpty( uclogin ) && CommonUtil.isNotEmpty( remoteUcLogin ) ) {
+	    if (browser==99 && (CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin )) ) {
 		return null;
 	    }
 
 	}
 
-	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
+ 	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
 	String otherRedisKey = CommonUtil.getCode();
 	JedisUtil.set( otherRedisKey, requestUrl, 5 * 60 );
 	Map< String,Object > queryMap = new HashMap<>();

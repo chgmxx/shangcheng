@@ -100,5 +100,9 @@ public class Constants {
      */
     public static final Integer PAY_MODEL = 3;
 
+    /**
+     * redis 缓存时间
+     */
+    public static final int REDIS_SECONDS = 60 * 30;
 
 }
