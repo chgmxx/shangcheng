@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.presale.impl;
 
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
@@ -22,6 +23,8 @@ import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -86,11 +89,9 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 
     /**
      * 通过店铺id来查询拍定金
-     *
-     * @Title: selectFreightByShopId
      */
     @Override
-    public PageUtil selectPresaleByShopId( Map< String,Object > params ) {
+    public PageUtil selectPresaleByShopId( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
@@ -106,6 +107,19 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 
 	if ( count > 0 ) {// 判断预售是否有数据
 	    List< MallPresaleDeposit > depositList = mallPresaleDepositDAO.selectByPage( params );
+	    if ( depositList != null && depositList.size() > 0 ) {
+		for ( MallPresaleDeposit mallPresaleDeposit : depositList ) {
+		    if ( shoplist != null && shoplist.size() > 0 ) {
+			for ( Map< String,Object > shopMaps : shoplist ) {
+			    int shop_id = CommonUtil.toInteger( shopMaps.get( "id" ) );
+			    if ( mallPresaleDeposit.getShopId() == shop_id ) {
+				mallPresaleDeposit.setShopName( shopMaps.get( "sto_name" ).toString() );
+				break;
+			    }
+			}
+		    }
+		}
+	    }
 	    page.setSubList( depositList );
 	}
 	return page;
@@ -267,11 +281,11 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public Map< String,Object > addDeposit( Map< String,Object > params, String memberId, Integer browser ) {
-	Map< String,Object > result = new HashMap< String,Object >();
+    public Map< String,Object > addDeposit( Map< String,Object > params, Member member, Integer browser ) throws Exception {
+	Map< String,Object > result = new HashMap<>();
 
-	MallPresaleDeposit deposit = (MallPresaleDeposit) JSONObject.toBean( JSONObject.fromObject( params.get( "presale" ) ), MallPresaleDeposit.class );
-	deposit.setUserId( CommonUtil.toInteger( memberId ) );
+	MallPresaleDeposit deposit = com.alibaba.fastjson.JSONObject.parseObject( params.get( "presale" ).toString(), MallPresaleDeposit.class );
+	deposit.setUserId( member.getId() );
 	deposit.setIsSubmit( 0 );
 	MallPresaleDeposit dep = mallPresaleDepositDAO.selectByDeposit( deposit );
 
@@ -282,39 +296,76 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	if ( dep == null ) {
 	    deposit.setCreateTime( new Date() );
 	    deposit.setDepositNo( depNo );
-	    deposit.setUserId( Integer.parseInt( memberId ) );
+	    deposit.setUserId( member.getId() );
 	    mallPresaleDepositDAO.insert( deposit );
 	} else {//已经交纳了定金，无需再次交纳
 	    if ( dep.getDepositStatus().toString().equals( "1" ) ) {
-		result.put( "msg", "您已经交纳了定金，无需再次交纳" );
-		result.put( "code", 1 );
-		result.put( "result", false );
+		result.put( "errorMsg", "您已经交纳了定金，无需再次交纳" );
+		result.put( "isReturn", 1 );
+		result.put( "code", ResponseEnums.ERROR.getCode() );
 	    } else {
 		deposit.setId( dep.getId() );
 		mallPresaleDepositDAO.updateById( deposit );
-		result.put( "result", true );
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );
 		deposit.setDepositNo( dep.getDepositNo() );
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( deposit.getId() ) ) {
 
 	    result = isInvNum( deposit );//判断商品的库存
-	    if ( result.get( "result" ).toString().equals( "false" ) ) {
+	    if ( result.get( "code" ).toString().equals( CommonUtil.toString( ResponseEnums.ERROR.getCode() ) ) ) {
 		return result;
 	    }
 
 	    if ( deposit.getId() > 0 ) {
-		result.put( "result", true );
-		result.put( "msg", "交纳定金成功" );
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );
 		result.put( "id", deposit.getId() );
 		result.put( "no", deposit.getDepositNo() );
 		result.put( "payWay", deposit.getPayWay() );
+
+		if ( deposit.getPayWay() == 1 || deposit.getPayWay() == 3 ) {
+		    String url = getWxAlipay( deposit, member );
+		    result.put( "payUrl", url );
+		} else if ( deposit.getPayWay() == 2 ) {
+		    params.put( "out_trade_no", deposit.getDepositNo() );
+		    paySuccessPresale( params );
+		    result.put( "payUrl", "/mallPage/" + deposit.getProductId() + "/" + deposit.getShopId() + "/79B4DE7C/phoneProduct.do" );
+		}
+
 	    } else {
-		result.put( "result", false );
-		result.put( "msg", "交纳定金失败" );
+		result.put( "code", ResponseEnums.ERROR.getCode() );
+		result.put( "errorMsg", "交纳定金失败" );
 	    }
 	}
 	return result;
+    }
+
+    private String getWxAlipay( MallPresaleDeposit deposit, Member member ) throws Exception {
+	SubQrPayParams subQrPayParams = new SubQrPayParams();
+	subQrPayParams.setTotalFee( CommonUtil.toDouble( deposit.getDepositMoney() ) );
+	subQrPayParams.setModel( Constants.PAY_MODEL );
+	subQrPayParams.setBusId( member.getBusid() );
+	subQrPayParams.setAppidType( 0 );
+	    /*subQrPayParams.setAppid( 0 );*///微信支付和支付宝支付可以不传
+	subQrPayParams.setOrderNum( deposit.getDepositNo() );//订单号
+	subQrPayParams.setMemberId( member.getId() );//会员id
+	subQrPayParams.setDesc( "预售缴纳定金" );//描述
+	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
+	subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/mallPage/" + deposit.getProductId() + "/" + deposit.getShopId() + "/79B4DE7C/phoneProduct.do" );
+	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
+			+ "/phonePresale/79B4DE7C/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/mPresale/deposit.do" );//推送路径(尽量不要带参数)
+	int payWay = 1;
+	if ( deposit.getPayWay() == 3 ) {
+	    payWay = 2;
+	}
+	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+
+	logger.info( "预售缴纳定金参数：" + com.alibaba.fastjson.JSONObject.toJSONString( subQrPayParams ) );
+	KeysUtil keyUtil = new KeysUtil();
+	String params = keyUtil.getEncString( com.alibaba.fastjson.JSONObject.toJSONString( subQrPayParams ) );
+	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
     }
 
     private Map< String,Object > isInvNum( MallPresaleDeposit dep ) {
@@ -359,10 +410,10 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	int proNum = dep.getProNum();//购买商品的用户
 	//判断库存是否够
 	if ( invNum >= proNum && invNum > 0 ) {
-	    result.put( "result", true );
+	    result.put( "code", ResponseEnums.SUCCESS.getCode() );
 	} else {
-	    result.put( "msg", "预售商品的库存不够" );
-	    result.put( "result", false );
+	    result.put( "errorMsg", "预售商品的库存不够" );
+	    result.put( "code", ResponseEnums.ERROR.getCode() );
 	}
 	return result;
     }

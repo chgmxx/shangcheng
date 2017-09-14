@@ -35,8 +35,6 @@ import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.fenbi.FenBiCount;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,7 +89,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      * @Title: selectFreightByShopId
      */
     @Override
-    public PageUtil selectPresaleByShopId( Map< String,Object > params, int userId ) {
+    public PageUtil selectPresaleByShopId( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -105,16 +103,16 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( count > 0 ) {// 判断预售是否有数据
 	    List< MallPresale > presaleList = mallPresaleDAO.selectByPage( params );
 	    if ( presaleList != null ) {
-		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
 		for ( MallPresale presale : presaleList ) {
 		    int status = isJoinPresale( presale );
 		    presale.setJoinId( status );
-		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == presale.getWx_shop_id() ) {
-			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
-				presale.setShopName( wxShops.getBusinessName() );
+		    if ( shoplist != null && shoplist.size() > 0 ) {
+			for ( Map< String,Object > shopMaps : shoplist ) {
+			    int shop_id = CommonUtil.toInteger( shopMaps.get( "id" ) );
+			    if ( presale.getShopId() == shop_id ) {
+				presale.setShopName( shopMaps.get( "sto_name" ).toString() );
+				break;
 			    }
-			    break;
 			}
 		    }
 		}
@@ -137,7 +135,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	} else {
 	    //是否已经有人购买了预售的商品
 	    Wrapper< MallOrder > orderWrapper = new EntityWrapper<>();
-	    orderWrapper.where( "order_type = 5 and order_status > 1 and p_join_id ={0}", presale.getId() );
+	    orderWrapper.where( "order_type = 5 and order_status > 1 and p_join_id ={0} and bus_user_id={1}", presale.getId(), presale.getUserId() );
 	    List< MallOrder > mapList = mallOrderDAO.selectList( orderWrapper );
 	    if ( mapList != null && mapList.size() > 0 ) {
 		status = 1;
@@ -179,11 +177,6 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    if ( CommonUtil.isNotEmpty( presale.getId() ) ) {
 		// 判断本商品是否正在预售中
 		MallPresale pre = mallPresaleDAO.selectDepositByIds( presale.getId() );
-
-		WsWxShopInfo wxShopInfo = wxShopService.getShopById( pre.getWx_shop_id() );
-		if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
-		    pre.setShopName( wxShopInfo.getBusinessName() );
-		}
 
 		int status = isJoinPresale( pre );
 		if ( pre.getStatus() == 1 && status > 0 ) {// 正在进行预售的信息不能修改
@@ -326,8 +319,8 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 			presale.setInvNum( CommonUtil.toInteger( obj.get( "invNum" ) ) );
 		    }
 		    if ( CommonUtil.isNotEmpty( obj.get( "specArr" ) ) ) {
-			List< Map< String,Object > > preSpecArr = (List< Map< String,Object > >) JSONArray
-					.toJavaObject( JSONArray.parseArray( obj.get( "specArr" ).toString() ), Map.class );
+			List< Map< String,Object > > preSpecArr = (List< Map< String,Object > >) net.sf.json.JSONArray
+					.toList( net.sf.json.JSONArray.fromObject( obj.get( "specArr" ) ), Map.class );
 			if ( preSpecArr != null && preSpecArr.size() > 0 ) {
 			    presale.setList( preSpecArr );
 			}
@@ -491,23 +484,6 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     public void loadPresaleByJedis( MallPresale pre ) {
 
 	String key = "presale_num";
-	/*List<MallSeckill> seckillList = seckillMapper.selectByPage(null);
-	if(seckillList != null && seckillList.size() > 0){
-		for (MallSeckill mallSeckill : seckillList) {
-			String field = mallSeckill.getId().toString();
-
-			JedisUtil.map(key, field, mallSeckill.getsNum()+"");
-
-			List<MallSeckillPrice> priceList = priceService.selectPriceByGroupId(mallSeckill.getId());
-			if(priceList != null && priceList.size() > 0){
-				for (MallSeckillPrice mallSeckillPrice : priceList) {
-					field = mallSeckill.getId()+"_"+mallSeckillPrice.getSpecificaIds();
-					JedisUtil.map(key, field, mallSeckillPrice.getSeckillNum()+"");
-				}
-			}
-		}
-	}*/
-
 	Map< String,Object > maps = new HashMap<>();
 	maps.put( "status", 1 );
 	if ( CommonUtil.isNotEmpty( pre ) ) {

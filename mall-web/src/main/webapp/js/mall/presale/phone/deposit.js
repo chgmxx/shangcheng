@@ -46,8 +46,9 @@ $(".recog-btn").click(function () {
             success: function (data) {
                 layer.closeAll();
                 if (data != null) {
-                    if (data.result == true) {
-                        if (data.payWay == 2) {//储值卡支付，进入支付回调
+                    if (data.code == 1) {
+                        location.href = data.payUrl;
+                        /*if (data.payWay == 2) {//储值卡支付，进入支付回调
                             var marginMoney = $('.marginMoney').val();
                             var userid = $(".userid").val();
                             location.href = "/phonePresale/79B4DE7C/payWay.do?orderMoney=" + marginMoney + "&orderId=" + data.id + "&payWay=" + data.payWay + "&no=" + data.no + "&uId=" + userid;
@@ -62,14 +63,14 @@ $(".recog-btn").click(function () {
                             location.href = "/alipay/79B4DE7C/alipayApi.do?out_trade_no=" + data.no + "&subject=商城预售缴纳定金&total_fee=" + marginMoney + "&busId=" + data.busId + "&model=3&businessUtilName=mallDepositAlipayNotifyUrlBuinessService&return_url=" + return_url;
                         } else {
                             location.href = "/wxPay/79B4DE7C/wxMallAnDeposit.do?id=" + data.id;
-                        }
+                        }*/
                     } else {
                         var tip = layer.open({
-                            content: data.msg,
+                            content: data.errorMsg,
                             btn: ['确认'],
                             shadeClose: false,
                             yes: function () {
-                                if (data.code == 1) {
+                                if (data.isReturn == 1) {
                                     var proId = $(".proId").val();
                                     var aucId = $(".aucId").val();
                                     var shopId = $(".shopId").val();

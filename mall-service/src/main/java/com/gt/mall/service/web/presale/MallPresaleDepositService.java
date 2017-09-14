@@ -1,6 +1,7 @@
 package com.gt.mall.service.web.presale;
 
 import com.gt.mall.base.BaseService;
+import com.gt.mall.bean.Member;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.utils.PageUtil;
 
@@ -21,7 +22,7 @@ public interface MallPresaleDepositService extends BaseService< MallPresaleDepos
      * 通过店铺id来查询保证金
      *
      */
-    PageUtil selectPresaleByShopId(Map<String, Object> param);
+    PageUtil selectPresaleByShopId(Map<String, Object> param, List< Map< String,Object > > shoplist);
 
     /**
      * 交纳保证金成功返回
@@ -31,7 +32,7 @@ public interface MallPresaleDepositService extends BaseService< MallPresaleDepos
     /**
      * 交纳保证金
      */
-    Map<String, Object> addDeposit(Map<String, Object> params,String memberId,Integer browser);
+    Map<String, Object> addDeposit(Map<String, Object> params,Member member,Integer browser) throws Exception;
 
     /**
      * 根据用户id查询我的所有的保证金

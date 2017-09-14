@@ -4,58 +4,62 @@
 function deletePresale(obj, type) {
     var id = $(obj).attr("id");
     if (id != null && id != "") {
-        var msg = "删除预售";
-        if (type * 1 == -2) {
-            msg = "使失效";
-        }
-        // 询问框
-        layer.confirm('您确定要' + msg + '？', {
-            btn: ['确定', '取消'],
-            offset: "10%",
-            shade: [0.1, '#fff']
-            // 按钮
-        }, function () {
-            // loading层
-            var layerLoad = layer.load(1, {
-                shade: [0.1, '#fff'],
-                offset: "10%"
-                // 0.1透明度的白色背景
-            });
-            $.ajax({
-                type: "post",
-                url: "mPresale/presale_remove.do",
-                data: {
-                    id: id,
-                    type: type
-                },
-                dataType: "json",
-                success: function (data) {
-                    layer.close(layerLoad);
-                    if (data.code == 1) {
-                        var tip = layer.alert(msg + "成功", {
-                            offset: "10%",
-                            closeBtn: 0
-                        }, function (index) {
-                            layer.close(tip);
-                            location.href = window.location.href;
-                        });
-                    } else {// 编辑失败
-                        var tip = layer.alert(msg + "失败", {
-                            offset: "10%"
-                        });
-                    }
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
+        parentScrollTops(100);
+        SonScrollTop(0);
+        setTimeout(function () {
+            var msg = "删除预售";
+            if (type * 1 == -2) {
+                msg = "使失效";
+            }
+            // 询问框
+            layer.confirm('您确定要' + msg + '？', {
+                btn: ['确定', '取消'],
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff']
+                // 按钮
+            }, function () {
+                // loading层
+                var layerLoad = layer.load(1, {
+                    shade: [0.1, '#fff'],
+                    offset: scrollHeight + "px"
+                    // 0.1透明度的白色背景
+                });
+                $.ajax({
+                    type: "post",
+                    url: "mPresale/presale_remove.do",
+                    data: {
+                        id: id,
+                        type: type
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(layerLoad);
+                        if (data.code == 1) {
+                            var tip = layer.alert(msg + "成功", {
+                                offset: scrollHeight + "px",
+                                closeBtn: 0
+                            }, function (index) {
+                                layer.close(tip);
+                                location.href = window.location.href;
+                            });
+                        } else {// 编辑失败
+                            var tip = layer.alert(msg + "失败", {
+                                offset: scrollHeight + "px"
+                            });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
 
-                    layer.close(layerLoad);
-                    layer.alert(msg + "失败", {
-                        offset: "10%"
-                    });
-                    return;
-                }
+                        layer.close(layerLoad);
+                        layer.alert(msg + "失败", {
+                            offset: scrollHeight + "px"
+                        });
+                        return;
+                    }
+                });
+                layer.closeAll();
             });
-            layer.closeAll();
-        });
+        }, timeout);
     }
 
 }
@@ -296,126 +300,130 @@ function editPresale() {
 
     var start = new Date(sStartTime.replace("-", "/").replace("-", "/"));
     var end = new Date(sEndTime.replace("-", "/").replace("-", "/"));
-    if (shopId == null || shopId == "") {
-        layer.msg('请选择店铺', {
-            icon: 1,
-            offset: "10%",
-            shade: [0.1, '#fff']
-        });
-    } else if (productId == null || productId == "") {
-        layer.msg('请选择商品', {
-            icon: 1,
-            offset: "10%",
-            shade: [0.1, '#fff']
-        });
-    } else if (sStartTime == null || $.trim(sStartTime) == "") {
-        layer.msg('请选择活动开始时间', {
-            icon: 1,
-            offset: "10%",
-            shade: [0.1, '#fff']
-        });
-    } else if (sEndTime == null || sEndTime == "") {
-        layer.msg('请选择活动结束时间', {
-            icon: 1,
-            offset: "10%",
-            shade: [0.1, '#fff']
-        });
-    } else if (start * 1 > end * 1) {
-        layer.msg('活动开始时间必须要早于活动结束时间', {
-            icon: 1,
-            offset: "10%",
-            shade: [0.1, '#fff']
-        });
-    } else if (!flag) {
-        layer.msg('请完善商品信息', {
-            icon: 1,
-            offset: "10%",
-            shade: [0.1, '#fff']
-        });
-    } else {
-        var presale = $("#groupForm").serializeObject();
-
-        flag = validatePriceTime();
-        var datas = {
-            presale: JSON.stringify(presale),
-            presaleTimes: JSON.stringify(presaleTimesArray)
-        };
-        if (delTimeList != null && delTimeList.length > 0) {
-            datas["delPresaleTimes"] = JSON.stringify(delTimeList);
-        }
-        /*var isSpec = $(".isSpec").val();
-         var invNum = $(".invNum").val();
-         if(invNum != null && invNum != "" && typeof(invNum) != "undefined"){
-         datas["invNum"] = JSON.stringify(invNum);
-         }
-         if(isSpec != null && isSpec != "" && typeof(isSpec) != "undefined"){
-         datas["isSpec"] = JSON.stringify(isSpec);
-         if(isSpec == 1 && specArray != null && specArray.length > 0){
-         datas["specArr"] = JSON.stringify(specArr);
-         }
-         }*/
-
-
-        if (flag) {
-            // loading层
-            var layerLoad = layer.load(1, {
-                offset: "10%",
+    parentScrollTops(100);
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (shopId == null || shopId == "") {
+            layer.msg('请选择店铺', {
+                icon: 1,
+                offset: scrollHeight + "px",
                 shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
             });
-            $.ajax({
-                type: "post",
-                url: "mPresale/edit_presale.do",
-                data: datas,
-                dataType: "json",
-                success: function (data) {
-                    layer.close(layerLoad);
-                    if (data.code == 1) {
-                        var tip = layer.alert("编辑成功", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        }, function (index) {
-                            layer.close(tip);
-                            location.href = "/mPresale/index.do";
-                        });
-                    } else if (data.code == -2) {
-                        var tip = layer.alert("正在进行预售的活动不能修改", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        });
-                    } else if (data.code == -3) {
-                        var tip = layer.alert("已失效的预售不能进行修改", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        });
-                    } else if (data.code == 0) {
-                        var tip = layer.alert("同一个商品只能参与一个预售活动", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        });
-                    } else {// 编辑失败
-                        layer.alert("编辑失败", {
-                            shade:[0.1,"#fff"],
-                            offset: "10%"
-                        });
-                    }
+        } else if (productId == null || productId == "") {
+            layer.msg('请选择商品', {
+                icon: 1,
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff']
+            });
+        } else if (sStartTime == null || $.trim(sStartTime) == "") {
+            layer.msg('请选择活动开始时间', {
+                icon: 1,
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff']
+            });
+        } else if (sEndTime == null || sEndTime == "") {
+            layer.msg('请选择活动结束时间', {
+                icon: 1,
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff']
+            });
+        } else if (start * 1 > end * 1) {
+            layer.msg('活动开始时间必须要早于活动结束时间', {
+                icon: 1,
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff']
+            });
+        } else if (!flag) {
+            layer.msg('请完善商品信息', {
+                icon: 1,
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff']
+            });
+        } else {
+            var presale = $("#groupForm").serializeObject();
 
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    layer.close(layerLoad);
-                    layer.alert("编辑失败", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%"
-                    });
-                    return;
-                }
-            });
+            flag = validatePriceTime();
+            var datas = {
+                presale: JSON.stringify(presale),
+                presaleTimes: JSON.stringify(presaleTimesArray)
+            };
+            if (delTimeList != null && delTimeList.length > 0) {
+                datas["delPresaleTimes"] = JSON.stringify(delTimeList);
+            }
+            /*var isSpec = $(".isSpec").val();
+             var invNum = $(".invNum").val();
+             if(invNum != null && invNum != "" && typeof(invNum) != "undefined"){
+             datas["invNum"] = JSON.stringify(invNum);
+             }
+             if(isSpec != null && isSpec != "" && typeof(isSpec) != "undefined"){
+             datas["isSpec"] = JSON.stringify(isSpec);
+             if(isSpec == 1 && specArray != null && specArray.length > 0){
+             datas["specArr"] = JSON.stringify(specArr);
+             }
+             }*/
+
+
+            if (flag) {
+                // loading层
+                var layerLoad = layer.load(1, {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, '#fff']
+                    // 0.1透明度的白色背景
+                });
+                $.ajax({
+                    type: "post",
+                    url: "mPresale/edit_presale.do",
+                    data: datas,
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(layerLoad);
+                        if (data.code == 1) {
+                            var tip = layer.alert("编辑成功", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            }, function (index) {
+                                layer.close(tip);
+                                location.href = "/mPresale/index.do";
+                            });
+                        } else if (data.code == -2) {
+                            var tip = layer.alert("正在进行预售的活动不能修改", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            });
+                        } else if (data.code == -3) {
+                            var tip = layer.alert("已失效的预售不能进行修改", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            });
+                        } else if (data.code == 0) {
+                            var tip = layer.alert("同一个商品只能参与一个预售活动", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            });
+                        } else {// 编辑失败
+                            layer.alert("编辑失败", {
+                                shade: [0.1, "#fff"],
+                                offset: scrollHeight + "px"
+                            });
+                        }
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.close(layerLoad);
+                        layer.alert("编辑失败", {
+                            shade: [0.1, "#fff"],
+                            offset: scrollHeight + "px"
+                        });
+                        return;
+                    }
+                });
+            }
         }
-    }
+    }, timeout);
 }
 /**
  * 验证价格调整
@@ -529,11 +537,15 @@ function validatePriceTime() {
 
         }
         if (!flag) {
-            layer.msg(msg, {
-                icon: 1,
-                offset: "10%",
-                shade: [0.1, '#fff']
-            });
+            parentScrollTops(100);
+            SonScrollTop(0);
+            setTimeout(function () {
+                layer.msg(msg, {
+                    icon: 1,
+                    offset: scrollHeight + "px",
+                    shade: [0.1, '#fff']
+                });
+            }, timeout);
             return false;
         } else if (!isNull) {
             var obj = {
@@ -657,11 +669,12 @@ function choosePro() {
     if ((typeof defaultProId) == "undefined") {
         defaultProId = "";
     }
-    loadWindow();
-    if (shopId != null && shopId != "") {
-        // parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
-        SonScrollTop(0);
-        setTimeout(function () {
+    SonScrollTop(0);
+    setTimeout(function () {
+        loadWindow();
+        if (shopId != null && shopId != "") {
+            // parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+
             layer.open({
                 type: 2,
                 title: "选择商品",
@@ -671,13 +684,14 @@ function choosePro() {
                 shade: [0.1, "#fff"],
                 content: "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId
             });
-        }, timeout);
-    } else {
-        layer.alert("请选择商品", {
-            shade:[0.1,"#fff"],
-            offset: "10%"
-        });
-    }
+
+        } else {
+            layer.alert("请选择商品", {
+                shade: [0.1, "#fff"],
+                offset: scrollHeight + "px"
+            });
+        }
+    }, timeout);
 };
 /**
  * 选择商品回调函数

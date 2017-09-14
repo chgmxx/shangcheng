@@ -48,30 +48,15 @@ $(".recog-btn").click(function () {
                 var userid = $(".userid").val();
                 layer.closeAll();
                 if (data != null) {
-                    if (data.result == true) {
-                        var marginMoney = $('.marginMoney').val();
-                        if (data.payWay === 1 || data.payWay == 3) {
-                            location.href = data.payUrl;
-                        } else {
-                            location.href = "/mAuction/79B4DE7C/payWay.do?orderMoney=" + marginMoney + "&orderId=" + data.id + "&payWay=" + data.payWay + "&out_trade_no=" + data.no + "&busId=" + userid;
-                        }
-                        /*if (data.payWay == 2) {//储值卡支付，进入支付回调
-
-                         } else if (data.payWay == 3) {//支付宝支付
-                         var path = $("input.path").val();
-                         var alipaySubject = $("input.alipaySubject").val();
-                         var return_url = path + "/phoneOrder/" + data.id + "/" + data.busId + "/3/79B4DE7C/orderPaySuccess.do";
-                         location.href = "/alipay/79B4DE7C/alipayApi.do?out_trade_no=" + data.no + "&subject=" + alipaySubject + "&total_fee=" + marginMoney + "&busId=" + data.busId + "&model=3&businessUtilName=mallAuctionAlipayNotifyUrlBuinessService&return_url=" + return_url;
-                         } else {
-                         location.href = "/wxPay/79B4DE7C/wxMallAnAuction.do?id=" + data.id;
-                         }*/
+                    if (data.code == 1) {
+                        location.href = data.payUrl;
                     } else {
                         var tip = layer.open({
-                            content: data.msg,
+                            content: data.errorMsg,
                             btn: ['确认'],
                             shadeClose: false,
                             yes: function () {
-                                if (data.code == 1) {
+                                if (data.isReturn == 1) {
                                     var proId = $(".proId").val();
                                     var aucId = $(".aucId").val();
                                     var shopId = $(".shopId").val();

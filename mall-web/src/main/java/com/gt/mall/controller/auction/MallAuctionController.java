@@ -14,6 +14,7 @@ import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.product.MallProductDetail;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.MemberAddressService;
@@ -808,19 +809,14 @@ public class MallAuctionController extends AuthorizeOrLoginController {
     public void addMargin( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) throws IOException {
 	logger.info( "进入生成订单页面-拍卖" );
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	Map< String,Object > result = new HashMap< String,Object >();
+	Map< String,Object > result = new HashMap<>();
 	try {
-	    /*String memberId = SessionUtils.getLoginMember( request ).getId().toString();
-	    if ( CommonUtil.isNotEmpty( param.get( "userId" ) ) ) {
-		memberId = param.get( "userId" ).toString();
-	    }*/
-
 	    if ( param != null ) {
 		result = auctionMarginService.addMargin( param, SessionUtils.getLoginMember( request ) );
 	    }
 	} catch ( Exception e ) {
-	    result.put( "result", false );
-	    result.put( "msg", "交纳保证金失败，稍后请重新提交" );
+	    result.put( "code", ResponseEnums.ERROR.getCode() );
+	    result.put( "errorMsg", "交纳保证金失败，稍后请重新提交" );
 	    logger.error( "交纳拍卖保证金异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
@@ -838,43 +834,23 @@ public class MallAuctionController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/payWay" )
     @SysLogAnnotation( op_function = "2", description = "保证金储蓄卡支付成功添加记录和修改" )
-    public String payWay( @RequestBody Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
+    public String payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
+
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "busId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "busId" ) );
-	    }
-	    if ( CommonUtil.isEmpty( member ) && CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
-		member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-	    }
-	    if ( userid > 0 ) {
 		request.setAttribute( "userid", userid );
 	    }
-
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    String memberId = member.getId().toString();
-	    Integer payWay = CommonUtil.toInteger( params.get( "payWay" ) );
-	    Map< String,Object > payRresult = new HashMap< String,Object >();
-	    double orderMoney = Double.parseDouble( params.get( "orderMoney" ).toString() );
-
 	    auctionMarginService.paySuccessAuction( params );
 
-	    /*if ( payWay == 2 ) {//储蓄卡支付方式
-		//TODO 需调用 memberpayService.storePay() 方法
-		//		payRresult = memberpayService.storePay(Integer.parseInt(memberId), orderMoney);
-		String result = payRresult.get( "result" ).toString();
-		if ( result.equals( "2" ) ) {
-		    auctionMarginService.paySuccessAuction( params );
-		} else if ( result.equals( "1" ) && payWay != 4 ) {
-		    return "redirect:/phoneMemberController/79B4DE7C/recharge.do?id=" + memberId;
-		}
-	    }*/
 	} catch ( Exception e ) {
 	    logger.error( "保证金储蓄卡支付保证金异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -1064,8 +1040,6 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 
     /**
      * 进入退定金的页面
-     *
-     * @return
      */
     @RequestMapping( "returnMarginPopUp" )
     public String returnMarginPopUp( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -1088,22 +1062,18 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 
     /**
      * 退保证金
-     *
-     * @param params
      */
     @RequestMapping( value = "/agreedReturnMargin" )
     @SysLogAnnotation( op_function = "3", description = "退保证金" )
-    public void agreedReturnMargin( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
-	PrintWriter out = null;
-	Map< String,Object > result = new HashMap< String,Object >();
+    public void agreedReturnMargin( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) throws IOException {
+	Map< String,Object > result = new HashMap<>();
 	try {
-	    out = response.getWriter();
 
 	    int marginId = CommonUtil.toInteger( params.get( "marginId" ) );
 
 	    MallAuctionMargin margin = auctionMarginService.selectById( marginId );
 
-	    Map< String,Object > map = new HashMap< String,Object >();
+	    Map< String,Object > map = new HashMap<>();
 	    map.put( "id", margin.getId() );
 	    map.put( "user_id", margin.getUserId() );
 	    map.put( "pay_way", margin.getPayWay() );
@@ -1118,10 +1088,10 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    result.put( "msg", "退保证金失败，稍后请重新提交" );
 	    logger.error( "退保证金异常：" + e.getMessage() );
 	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, request );
 	}
-	out.write( JSONObject.fromObject( result ).toString() );
-	out.flush();
-	out.close();
+
     }
 
 }

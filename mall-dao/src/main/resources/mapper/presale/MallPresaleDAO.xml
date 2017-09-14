@@ -54,7 +54,7 @@
         when g.sale_start_time > now() and   g.sale_end_time > now() then 0<!--未开始  -->
         when g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time  then 1<!-- 进行中 -->
         when g.sale_start_time &lt; now()  and g.sale_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status,s.sto_name as shopName, s.wx_shop_id,
+        end status,
         p.pro_name as proName,p.two_code_path as twoCodePath
     </sql>
 
@@ -82,7 +82,6 @@
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
         select  <include refid="page_Column_List" />
         from t_mall_presale g
-        left join t_mall_store s on g.shop_id = s.id
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         where g.is_delete = 0
         <if test="type == -1"><!-- 未开始预售 -->

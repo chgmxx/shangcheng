@@ -64,7 +64,7 @@ public class MallPresaleController extends BaseController {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId() );
+		    PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId(), shoplist );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}
@@ -214,7 +214,7 @@ public class MallPresaleController extends BaseController {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		params.put( "shoplist", shoplist );
-		PageUtil page = mallPresaleDepositService.selectPresaleByShopId( params );
+		PageUtil page = mallPresaleDepositService.selectPresaleByShopId( params, shoplist );
 		request.setAttribute( "page", page );
 		request.setAttribute( "shoplist", shoplist );
 	    }

@@ -7,23 +7,26 @@ import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.presale.MallPresaleDepositDAO;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.DateTimeKit;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.SessionUtils;
 import net.sf.json.JSONObject;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
@@ -38,7 +41,12 @@ import java.util.*;
  * @author yangqian
  * @since 2017-07-20
  */
+@Controller
+@RequestMapping( "/phonePresale" )
 public class PhonePresaleController extends AuthorizeOrLoginController {
+
+    private static final Logger logger = Logger.getLogger( PhonePresaleController.class );
+
     @Autowired
     private MallPresaleService        mallPresaleService;
     @Autowired
@@ -55,12 +63,10 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
     /**
      * 获取店铺下所有的预售（手机）
      */
-    @SuppressWarnings( "rawtypes" )
+    @SuppressWarnings( { "rawtypes" } )
     @RequestMapping( "{shopid}/79B4DE7C/presaleall" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
-    public String presaleall( HttpServletRequest request,
-		    HttpServletResponse response, @PathVariable int shopid,
-		    @RequestParam Map< String,Object > params ) throws Exception {
+    public String presaleall( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopid, @RequestParam Map< String,Object > params ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -68,10 +74,6 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
-			/*Map<String, Object> publicMap = pageService.memberMap(userid);
-			if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
-				pageService.isLogin(member, userid, request);
-			}*/
 	    Map< String,Object > mapuser = pageService.selUser( shopid );//查询商家信息
 	    if ( CommonUtil.isNotEmpty( mapuser ) ) {
 		userid = CommonUtil.toInteger( mapuser.get( "id" ) );
@@ -165,7 +167,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
     @SuppressWarnings( { "rawtypes" } )
     @RequestMapping( "{proId}/{invId}/{presaleId}/79B4DE7C/toAddDeposit" )
     public String toAddDeposit( HttpServletRequest request, HttpServletResponse response,
-		    @PathVariable int proId, @PathVariable int invId, @PathVariable int presaleId, @RequestParam Map< String,Object > param ) throws Exception {
+		    @PathVariable int proId, @PathVariable int invId, @PathVariable int presaleId, @RequestParam Map< String,Object > param ) {
 	logger.info( "进入交纳定金的页面...." );
 	String jsp = "mall/presale/phone/toAddDeposit";
 	try {
@@ -276,28 +278,22 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	logger.info( "进入生成订单页面-预售交纳定金" );
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	PrintWriter out = null;
-	Map< String,Object > result = new HashMap< String,Object >();
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    out = response.getWriter();
 
 	    Member member = SessionUtils.getLoginMember( request );
-	    String memberId = member.getId().toString();
-			/*String memberId = "200";*/
-	    if ( CommonUtil.isNotEmpty( param.get( "userId" ) ) ) {
-		memberId = param.get( "userId" ).toString();
-	    }
 	    Integer browser = CommonUtil.judgeBrowser( request );
 	    if ( browser != 1 ) {//UC浏览器
 		browser = 2;
 	    }
-
 	    if ( param != null ) {
-		result = mallPresaleDepositService.addDeposit( param, memberId, browser );
+		result = mallPresaleDepositService.addDeposit( param, member, browser );
 	    }
 	    result.put( "busId", member.getBusid() );
 	} catch ( Exception e ) {
-	    result.put( "result", false );
-	    result.put( "msg", "交纳定金失败，稍后请重新提交" );
+	    result.put( "code", ResponseEnums.ERROR.getCode() );
+	    result.put( "errorMsg", "交纳定金失败，稍后请重新提交" );
 	    logger.error( "交纳预售定金异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
@@ -323,8 +319,8 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
-	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-		userid = CommonUtil.toInteger( params.get( "uId" ) );
+	    if ( CommonUtil.isNotEmpty( params.get( "busId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "busId" ) );
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
@@ -332,21 +328,9 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;
 	    }
-	    String memberId = member.getId().toString();
 
-	    Integer payWay = CommonUtil.toInteger( params.get( "payWay" ) );
+	    mallPresaleDepositService.paySuccessPresale( params );
 
-	    Map< String,Object > payRresult = new HashMap<>();
-	    double orderMoney = Double.parseDouble( params.get( "orderMoney" ).toString() );
-
-	    if ( payWay == 2 ) {//储蓄卡支付方式
-		params.put( "out_trade_no", params.get( "no" ) );
-
-		int num = mallPresaleDepositService.paySuccessPresale( params );
-		if ( num == -2 ) {//储值卡金额不够，跳转到充值页面
-		   /* return "redirect:/phoneMemberController/79B4DE7C/recharge.do?id=" + memberId;*/
-		}
-	    }
 	} catch ( Exception e ) {
 	    logger.error( "储蓄卡支付定金异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -366,7 +350,6 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/messageRemind" )
     @SysLogAnnotation( op_function = "2", description = "预售提醒" )
-    @Transactional( rollbackFor = Exception.class )
     public void messageRemind( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) {
 	logger.info( "预售提醒controller" );
 	PrintWriter out = null;
@@ -397,11 +380,9 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 
     /**
      * 进入我的定金
-     *
-     * @param params
      */
     @RequestMapping( value = "/79B4DE7C/myDeposit" )
-    public String myMargin( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
+    public String myMargin( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
@@ -422,7 +403,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 
 	    MallPresaleDeposit deposit = new MallPresaleDeposit();
 	    if ( CommonUtil.isNotEmpty( member.getOldid() ) ) {
-		List< String > lists = new ArrayList< String >();
+		List< String > lists = new ArrayList<>();
 		for ( String oldMemberId : member.getOldid().split( "," ) ) {
 		    if ( CommonUtil.isNotEmpty( oldMemberId ) ) {
 			lists.add( oldMemberId );

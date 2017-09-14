@@ -23,55 +23,56 @@
         <result column="create_time" property="createTime"/>
         <result column="is_submit" property="isSubmit"/>
         <result column="pro_num" property="proNum"/>
-        <result column="buyer_user_type" property="buyerUserType" />
+        <result column="buyer_user_type" property="buyerUserType"/>
     </resultMap>
 
     <resultMap id="pageResultMap" type="com.gt.mall.entity.presale.MallPresaleDeposit">
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="presale_id" property="presaleId" jdbcType="INTEGER" />
-        <result column="product_id" property="productId" jdbcType="INTEGER" />
-        <result column="pro_specifica_ids" property="proSpecificaIds" jdbcType="VARCHAR" />
-        <result column="pro_name" property="proName" jdbcType="VARCHAR" />
-        <result column="pro_img_url" property="proImgUrl" jdbcType="VARCHAR" />
-        <result column="deposit_no" property="depositNo" jdbcType="VARCHAR" />
-        <result column="deposit_money" property="depositMoney" jdbcType="DECIMAL" />
-        <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
-        <result column="deposit_status" property="depositStatus" jdbcType="TINYINT" />
-        <result column="pay_way" property="payWay" jdbcType="TINYINT" />
-        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
-        <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
-        <result column="return_no" property="returnNo" jdbcType="VARCHAR" />
-        <result column="return_time" property="returnTime" jdbcType="TIMESTAMP" />
-        <result column="user_id" property="userId" jdbcType="INTEGER" />
-        <result column="shopName" jdbcType="VARCHAR" property="shopName" />
-        <result column="is_submit" property="isSubmit" jdbcType="TINYINT" />
-        <result column="pro_num" property="proNum" jdbcType="INTEGER" />
-        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="presale_id" property="presaleId" jdbcType="INTEGER"/>
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="pro_specifica_ids" property="proSpecificaIds" jdbcType="VARCHAR"/>
+        <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+        <result column="pro_img_url" property="proImgUrl" jdbcType="VARCHAR"/>
+        <result column="deposit_no" property="depositNo" jdbcType="VARCHAR"/>
+        <result column="deposit_money" property="depositMoney" jdbcType="DECIMAL"/>
+        <result column="order_money" property="orderMoney" jdbcType="DECIMAL"/>
+        <result column="deposit_status" property="depositStatus" jdbcType="TINYINT"/>
+        <result column="pay_way" property="payWay" jdbcType="TINYINT"/>
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_no" property="payNo" jdbcType="VARCHAR"/>
+        <result column="return_no" property="returnNo" jdbcType="VARCHAR"/>
+        <result column="return_time" property="returnTime" jdbcType="TIMESTAMP"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="shopName" jdbcType="VARCHAR" property="shopName"/>
+        <result column="is_submit" property="isSubmit" jdbcType="TINYINT"/>
+        <result column="pro_num" property="proNum" jdbcType="INTEGER"/>
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
         <result column="presaleStatus" property="presaleStatus" jdbcType="INTEGER"/>
-        <result column="buyer_user_type" property="buyerUserType" />
+        <result column="buyer_user_type" property="buyerUserType"/>
+        <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
     </resultMap>
     <resultMap id="depositMap" type="com.gt.mall.entity.presale.MallPresaleDeposit">
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="presale_id" property="presaleId" jdbcType="INTEGER" />
-        <result column="product_id" property="productId" jdbcType="INTEGER" />
-        <result column="pro_specifica_ids" property="proSpecificaIds" jdbcType="VARCHAR" />
-        <result column="pro_name" property="proName" jdbcType="VARCHAR" />
-        <result column="pro_img_url" property="proImgUrl" jdbcType="VARCHAR" />
-        <result column="deposit_no" property="depositNo" jdbcType="VARCHAR" />
-        <result column="deposit_money" property="depositMoney" jdbcType="DECIMAL" />
-        <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
-        <result column="deposit_status" property="depositStatus" jdbcType="TINYINT" />
-        <result column="pay_way" property="payWay" jdbcType="TINYINT" />
-        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
-        <result column="pay_no" property="payNo" jdbcType="VARCHAR" />
-        <result column="return_no" property="returnNo" jdbcType="VARCHAR" />
-        <result column="return_time" property="returnTime" jdbcType="TIMESTAMP" />
-        <result column="user_id" property="userId" jdbcType="INTEGER" />
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="is_submit" property="isSubmit" jdbcType="TINYINT" />
-        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
-        <result column="pro_num" property="proNum" jdbcType="INTEGER" />
-        <result column="buyer_user_type" property="buyerUserType" />
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="presale_id" property="presaleId" jdbcType="INTEGER"/>
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="pro_specifica_ids" property="proSpecificaIds" jdbcType="VARCHAR"/>
+        <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
+        <result column="pro_img_url" property="proImgUrl" jdbcType="VARCHAR"/>
+        <result column="deposit_no" property="depositNo" jdbcType="VARCHAR"/>
+        <result column="deposit_money" property="depositMoney" jdbcType="DECIMAL"/>
+        <result column="order_money" property="orderMoney" jdbcType="DECIMAL"/>
+        <result column="deposit_status" property="depositStatus" jdbcType="TINYINT"/>
+        <result column="pay_way" property="payWay" jdbcType="TINYINT"/>
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP"/>
+        <result column="pay_no" property="payNo" jdbcType="VARCHAR"/>
+        <result column="return_no" property="returnNo" jdbcType="VARCHAR"/>
+        <result column="return_time" property="returnTime" jdbcType="TIMESTAMP"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="is_submit" property="isSubmit" jdbcType="TINYINT"/>
+        <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
+        <result column="pro_num" property="proNum" jdbcType="INTEGER"/>
+        <result column="buyer_user_type" property="buyerUserType"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -84,14 +85,14 @@
     <sql id="page_Column_List">
         g.id, g.presale_id, g.product_id, pro_specifica_ids, g.pro_name, pro_img_url, deposit_no,
         deposit_money, g.order_money, g.deposit_status, g.pay_way, g.pay_time, g.pay_no, g.return_no,
-        return_time, g.user_id, /*IF(ws.business_name IS NOT NULL ,ws.business_name, s.sto_name) AS shopName,*/is_submit,
+        return_time, g.user_id,is_submit,
         g.pro_num, g.buyer_user_type,(SELECT order_no FROM t_mall_order WHERE order_type = 6 AND group_buy_id=g.`presale_id` AND buyer_user_id=g.`user_id` LIMIT 1) AS order_no,
         case
         when a.is_use = -1 then -2<!--已失效  -->
-        when a.sale_start_time > now() and   a.sale_end_time > now() then 0<!--未开始  -->
-        when a.sale_start_time &lt;= now() and now() &lt; a.sale_end_time  then 1<!-- 进行中 -->
-        when a.sale_start_time &lt; now()  and a.sale_end_time &lt;= now() then -1<!-- 已结束 -->
-        end presaleStatus
+        when a.sale_start_time > now() and a.sale_end_time > now() then 0<!--未开始  -->
+        when a.sale_start_time &lt;= now() and now() &lt; a.sale_end_time then 1<!-- 进行中 -->
+        when a.sale_start_time &lt; now() and a.sale_end_time &lt;= now() then -1<!-- 已结束 -->
+        end presaleStatus,a.shop_id
     </sql>
     <sql id="deposit_Column_List">
         d.id, presale_id, d.product_id, pro_specifica_ids, pro_name, pro_img_url, deposit_no,
@@ -102,7 +103,7 @@
 
     <!-- 统计定金 -->
     <select id="selectByCount" parameterType="Map" resultType="java.lang.Integer">
-        select  count(g.id)
+        select count(g.id)
         from t_mall_presale_deposit g
         LEFT JOIN t_mall_presale a ON g.`presale_id`=a.id
         <where>
@@ -115,14 +116,12 @@
     </select>
     <!-- 定金分页 -->
     <select id="selectByPage" parameterType="Map" resultMap="pageResultMap">
-        /* todo 调用小屁孩的接口 */
-        select  <include refid="page_Column_List" />
+        select
+        <include refid="page_Column_List"/>
         from t_mall_presale_deposit g
         LEFT JOIN t_mall_presale a ON g.`presale_id`=a.id
-        LEFT JOIN t_mall_store s ON a.shop_id = s.id
-       /* LEFT JOIN t_wx_shop ws ON s.wx_shop_id = ws.id*/
         <where>
-            /*ws.`status` != -1 AND*/ s.`is_delete`=0 AND a.`is_delete`=0
+            a.`is_delete`=0
             <if test="shoplist != null ">
                 and
                 <foreach close=")" collection="shoplist" index="index" item="item" open="(" separator="or">
@@ -139,14 +138,14 @@
 
     <select id="selectByPreNo" parameterType="java.lang.String" resultMap="depositMap">
         select
-        <include refid="deposit_Column_List" />
+        <include refid="deposit_Column_List"/>
         from t_mall_presale_deposit d
         LEFT JOIN t_mall_presale p ON d.presale_id = p.id
         where d.deposit_no = #{depositNo}
     </select>
     <select id="selectByDeposit" parameterType="com.gt.mall.entity.presale.MallPresaleDeposit" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_presale_deposit m
         <where>
             <if test="presaleId != null and presaleId != ''">
@@ -167,7 +166,8 @@
         </where>
     </select>
     <select id="selectListByDeposit" parameterType="com.gt.mall.entity.presale.MallPresaleDeposit" resultMap="depositMap">
-        select <include refid="deposit_Column_List" />
+        select
+        <include refid="deposit_Column_List"/>
         from t_mall_presale_deposit d
         left join t_mall_presale p on p.id=d.presale_id
         <where>
@@ -203,7 +203,8 @@
 
     <!-- 查询用户参加拍卖的数量 -->
     <select id="selectCountByPresaleId" parameterType="Map" resultMap="BaseResultMap">
-        select  <include refid="Base_Column_List" />
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_presale_deposit d
         where d.user_id = #{joinUserId}
         and d.presale_id= #{presaleId} and d.deposit_status >=0 and d.is_submit=0

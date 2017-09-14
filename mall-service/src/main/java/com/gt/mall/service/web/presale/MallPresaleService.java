@@ -24,9 +24,8 @@ public interface MallPresaleService extends BaseService< MallPresale > {
 
     /**
      * 通过店铺id来查询预售
-     *
      */
-    PageUtil selectPresaleByShopId( Map< String,Object > param ,int userId);
+    PageUtil selectPresaleByShopId( Map< String,Object > param, int userId, List< Map< String,Object > > shoplist );
 
     /**
      * 通过预售id查询预售信息
@@ -66,7 +65,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     /**
      * 判断是否超过了限购
      */
-    Map< String,Object > isMaxNum( Map< String,Object > map, String memberId, MallOrderDetail mallOrderDetail);
+    Map< String,Object > isMaxNum( Map< String,Object > map, String memberId, MallOrderDetail mallOrderDetail );
 
     /**
      * 获取送礼设置的信息
@@ -106,5 +105,5 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     /**
      * 预售支付成功后的回调
      */
-    void paySucessPresale(MallOrder order);
+    void paySucessPresale( MallOrder order );
 }

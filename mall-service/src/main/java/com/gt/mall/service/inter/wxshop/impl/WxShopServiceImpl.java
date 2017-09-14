@@ -1,6 +1,5 @@
 package com.gt.mall.service.inter.wxshop.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.util.RequestUtils;
@@ -36,7 +35,7 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( wxShopId == 0 ) {
 	    return null;
 	}
-	String key = Constants.REDIS_KEY + "wx_shop_"+ wxShopId;
+	String key = Constants.REDIS_KEY + "wx_shop_" + wxShopId;
 	if ( JedisUtil.exists( key ) ) {
 	    Object obj = JedisUtil.get( key );
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
@@ -181,7 +180,10 @@ public class WxShopServiceImpl implements WxShopService {
 	requestUtils.setReqdata( name );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "queryBasisByName.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.parseObject( JSON.toJSONString( result ), Map.class );
+	    List< Map > list = JSONArray.parseArray( result, Map.class );
+	    if ( CommonUtil.isNotEmpty( list ) ) {
+		return list.get( 0 );
+	    }
 	}
 	return null;
     }

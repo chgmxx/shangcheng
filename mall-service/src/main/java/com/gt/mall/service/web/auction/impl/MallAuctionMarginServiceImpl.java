@@ -11,6 +11,7 @@ import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.auction.MallAuctionMargin;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
@@ -156,8 +157,8 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    aucMargin.setPayTime( new Date() );
 	    num = auctionMarginDAO.updateById( aucMargin );
 	    if ( num > 0 && margin.getPayWay().toString().equals( "2" ) ) {
-		//添加总的消费记录  暂不加记录
-		//addUserConsume(margin);
+		//储值卡支付
+		//todo 储值卡支付
 	    }
 	}
 
@@ -168,7 +169,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     public Map< String,Object > addMargin( Map< String,Object > params, Member member ) throws Exception {
 	Map< String,Object > result = new HashMap<>();
 
-	MallAuctionMargin margin = (MallAuctionMargin) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "margin" ).toString() ), MallAuctionMargin.class );
+	MallAuctionMargin margin = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "margin" ).toString() ), MallAuctionMargin.class );
 	margin.setUserId( member.getId() );
 	MallAuctionMargin aucMargin = auctionMarginDAO.selectByMargin( margin );//查询该拍卖是否已经加入了保证金
 	String aucNo = "PM" + System.currentTimeMillis();
@@ -179,20 +180,19 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    auctionMarginDAO.insert( margin );
 	} else {//已经交纳了保证金，无需再次交纳
 	    if ( aucMargin.getMarginStatus().toString().equals( "1" ) ) {
-		result.put( "msg", "您已经交纳了保证金，无需再次交纳" );
-		result.put( "code", 1 );
-		result.put( "result", false );
+		result.put( "isReturn", "1" );
+		result.put( "errorMsg", "您已经交纳了保证金，无需再次交纳" );
+		result.put( "code", ResponseEnums.ERROR.getCode() );
 	    } else {
 		margin.setId( aucMargin.getId() );
 		auctionMarginDAO.updateById( margin );
-		result.put( "result", true );
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );
 		margin.setAucNo( aucMargin.getAucNo() );
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( margin.getId() ) ) {
 	    if ( margin.getId() > 0 ) {
-		result.put( "result", true );
-		result.put( "msg", "交纳保证金成功" );
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );
 		result.put( "id", margin.getId() );
 		result.put( "no", margin.getAucNo() );
 		result.put( "payWay", margin.getPayWay() );
@@ -201,11 +201,15 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		if ( margin.getPayWay() == 1 || margin.getPayWay() == 3 ) {
 		    String url = getWxAlipay( margin, member );
 		    result.put( "payUrl", url );
+		} else if ( margin.getPayWay() == 2 ) {
+		    params.put( "out_trade_no", margin.getAucNo() );
+		    paySuccessAuction( params );
+		    result.put( "payUrl", "/mAuction/79B4DE7C/myMargin.do?busId=" + member.getBusid() );
 		}
 
 	    } else {
-		result.put( "result", false );
-		result.put( "msg", "交纳保证金失败" );
+		result.put( "code", ResponseEnums.ERROR.getCode() );
+		result.put( "errorMsg", "交纳保证金失败" );
 	    }
 	}
 	return result;
@@ -223,7 +227,8 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	subQrPayParams.setDesc( "商城缴纳拍卖定金" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
 	subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/mAuction/79B4DE7C/myMargin.do" );
-	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/mAuction/79B4DE7C/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
+			+ "/mAuction/79B4DE7C/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/mAuction/margin.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;
