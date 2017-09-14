@@ -842,15 +842,16 @@ public class MallAuctionController extends AuthorizeOrLoginController {
     public String payWay( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
-	    logger.info( "this path：" + CommonUtil.getpath( request ) );
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
-	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-		userid = CommonUtil.toInteger( params.get( "uId" ) );
-		request.setAttribute( "userid", userid );
+	    if ( CommonUtil.isNotEmpty( params.get( "busId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "busId" ) );
 	    }
-	    if ( userid == 0 && CommonUtil.isNotEmpty( member ) ) {
-		userid = member.getBusid();
+	    if ( CommonUtil.isEmpty( member ) && CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
+		member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
+	    }
+	    if ( userid > 0 ) {
+		request.setAttribute( "userid", userid );
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
@@ -889,8 +890,6 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 
     /**
      * 拍卖出价
-     *
-     * @param params
      */
     @RequestMapping( value = "/79B4DE7C/addOffer" )
     @SysLogAnnotation( op_function = "2", description = "拍卖出价" )
@@ -921,21 +920,20 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 
     /**
      * 进入我的保证金页面
-     *
-     * @param params
      */
     @RequestMapping( value = "/79B4DE7C/myMargin" )
     public String myMargin( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    logger.info( "this path：" + CommonUtil.getpath( request ) );
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
-		request.setAttribute( "userid", userid );
 	    }
-	    if ( userid == 0 && CommonUtil.isNotEmpty( member ) ) {
-		userid = member.getBusid();
+	    if ( CommonUtil.isNotEmpty( params.get( "busId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "busId" ) );
+	    }
+	    if ( userid > 0 ) {
+		request.setAttribute( "userid", userid );
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );

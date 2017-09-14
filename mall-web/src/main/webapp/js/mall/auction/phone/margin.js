@@ -53,7 +53,7 @@ $(".recog-btn").click(function () {
                         if (data.payWay === 1 || data.payWay == 3) {
                             location.href = data.payUrl;
                         } else {
-                            location.href = "/mAuction/79B4DE7C/payWay.do?orderMoney=" + marginMoney + "&orderId=" + data.id + "&payWay=" + data.payWay + "&out_trade_no=" + data.no + "&uId=" + userid;
+                            location.href = "/mAuction/79B4DE7C/payWay.do?orderMoney=" + marginMoney + "&orderId=" + data.id + "&payWay=" + data.payWay + "&out_trade_no=" + data.no + "&busId=" + userid;
                         }
                         /*if (data.payWay == 2) {//储值卡支付，进入支付回调
 

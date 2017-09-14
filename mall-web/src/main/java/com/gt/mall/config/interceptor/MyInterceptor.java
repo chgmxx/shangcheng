@@ -69,7 +69,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		    throws Exception {
 
 	logger.error( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.error( "basePath = " + request.getRequestURL() );
+	logger.error( "basePath = " + CommonUtil.getpath( request ) );
 
 	long startTime = System.currentTimeMillis();
 	request.setAttribute( "runStartTime", startTime );
