@@ -21,6 +21,7 @@ import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.SessionUtils;
+import com.gt.union.api.entity.param.UnionCardDiscountParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import net.sf.json.JSONObject;
@@ -514,19 +515,24 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 		for ( Map< String,Object > shopMap : list ) {
 		    int wxShopId = CommonUtil.toInteger( shopMap.get( "wxShopId" ) );
-		    if ( cardMap.containsKey( "cardList" + wxShopId ) ) {
-			shopMap.put( "coupon", cardMap.get( "cardList" + wxShopId ) );
+		    if ( cardMap != null ) {
+			if ( cardMap.containsKey( "cardList" + wxShopId ) ) {
+			    shopMap.put( "coupon", cardMap.get( "cardList" + wxShopId ) );
+			}
+			if ( cardMap.containsKey( "duofenCards" + wxShopId ) ) {
+			    shopMap.put( "duofenCoupon", cardMap.get( "duofenCards" + wxShopId ) );
+			}
 		    }
-		    if ( cardMap.containsKey( "duofenCards" + wxShopId ) ) {
-			shopMap.put( "duofenCoupon", cardMap.get( "duofenCards" + wxShopId ) );
-		    }
-
 		}
 		request.setAttribute( "cardMap", cardMap );
 	    }
 
 	    //查询商家是否已经开启了商家联盟
-	    UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( member.getBusid() );
+	    UnionCardDiscountParam param = new UnionCardDiscountParam();
+	    param.setBusId( member.getBusid() );
+	    param.setMemberId( member.getId() );
+	    param.setPhone( member.getPhone() );
+	    UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( param );
 	    if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
 		if ( unionDiscountResult.getCode() != -1 ) {
 		    request.setAttribute( "unionMap", unionDiscountResult );

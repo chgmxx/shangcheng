@@ -41,6 +41,7 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import com.gt.union.api.entity.param.BindCardParam;
+import com.gt.union.api.entity.param.UnionPhoneCodeParam;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1351,7 +1352,15 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	Map< String,Object > result = new HashMap<>();
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
-	    Map resultMap = unionCardService.phoneCode( params.get( "phone" ).toString() );
+	    Member member = SessionUtils.getLoginMember( request );
+
+	    UnionPhoneCodeParam phoneCodeParam = new UnionPhoneCodeParam();
+	    phoneCodeParam.setBusId( member.getBusid() );
+	    phoneCodeParam.setMemberId( member.getId() );
+	    phoneCodeParam.setPhone( params.get( "phone" ).toString() );
+
+	    Map resultMap = unionCardService.phoneCode( phoneCodeParam );
+
 	    if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 		code = ResponseEnums.ERROR.getCode();
 	    }
