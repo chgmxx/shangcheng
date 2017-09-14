@@ -109,7 +109,7 @@ article:
 #访问资源URL
 resource:
  url:
-  prefix: http://maint.duofriend.com/upload/
+  prefix: http://maint.yifriend.net/upload/
 
 #图片存放路径
 res:

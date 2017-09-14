@@ -6,6 +6,8 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
 import com.gt.union.api.entity.param.BindCardParam;
 import com.gt.union.api.entity.param.RequestApiParam;
+import com.gt.union.api.entity.param.UnionCardDiscountParam;
+import com.gt.union.api.entity.param.UnionPhoneCodeParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +25,9 @@ public class UnionCardServiceImpl implements UnionCardService {
     private static final String url = "/api/card/8A5DA52E/";
 
     @Override
-    public UnionDiscountResult consumeUnionDiscount( int busUserId ) {
-	RequestApiParam< Integer > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( busUserId );
+    public UnionDiscountResult consumeUnionDiscount( UnionCardDiscountParam param ) {
+	RequestApiParam< UnionCardDiscountParam > requestApiParam = new RequestApiParam<>();
+	requestApiParam.setReqdata( param );
 	String result = HttpSignUtil.signHttpSelect( requestApiParam, url + "consumeUnionDiscount", 3 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), UnionDiscountResult.class );
@@ -34,9 +36,9 @@ public class UnionCardServiceImpl implements UnionCardService {
     }
 
     @Override
-    public Map phoneCode( String phone ) {
-	RequestApiParam< String > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( phone );
+    public Map phoneCode( UnionPhoneCodeParam phoneCodeParam ) {
+	RequestApiParam< UnionPhoneCodeParam > requestApiParam = new RequestApiParam<>();
+	requestApiParam.setReqdata( phoneCodeParam );
 	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "phoneCode", 3 );
     }
 
