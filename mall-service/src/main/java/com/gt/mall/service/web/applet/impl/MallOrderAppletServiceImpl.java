@@ -3,6 +3,7 @@ package com.gt.mall.service.web.applet.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
@@ -683,8 +684,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		appletParam.put( "memberId", params.get( "memberId" ) );
 		appletParam.put( "orderNo", order.getOrderNo() );
 		appletParam.put( "appid", params.get( "appid" ) );
-		Map< String,Object > parameters = appletWxOrder( appletParam, url );
-		resultMap.putAll( parameters );
+		String parameters = appletWxOrder( appletParam );
+		resultMap.put( "params", parameters );
 	    }
 
 	}
@@ -1335,7 +1336,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     }
 
     @Override
-    public Map< String,Object > appletWxOrder( Map< String,Object > params, String url ) throws Exception {
+    public String appletWxOrder( Map< String,Object > params ) throws Exception {
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	MallOrder order = orderDAO.selectOrderByOrderNo( CommonUtil.toString( params.get( "orderNo" ) ) );
 
@@ -1348,14 +1349,13 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	subQrPayParams.setOrderNum( order.getOrderNo() );//订单号
 	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
 	subQrPayParams.setDesc( "商城下单" );//描述
-	if ( CommonUtil.isNotEmpty( url ) ) {
-	    subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + url );
-	    subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
-			    + "/phoneOrder/79B4DE7C/paySuccessModified.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
-	} else {
-	    subQrPayParams.setIsreturn( 0 );
-	}
+
+	subQrPayParams.setIsreturn( 0 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
+	   /* subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + url );*/
+
+	//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/phoneOrder/79B4DE7C/paySuccessModified.do" );
+
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;
@@ -1367,7 +1367,12 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 
-	Map< String,Object > resultMap = payService.payapi( subQrPayParams );
+	logger.info( "小程序订单支付的参数：" + JSONObject.toJSONString( subQrPayParams ) );
+	KeysUtil keyUtil = new KeysUtil();
+	String objParams = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
+	return objParams;
+
+	/*Map< String,Object > resultMap = payService.payapi( subQrPayParams );
 	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 	    String errorMsg = "支付失败";
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
@@ -1375,7 +1380,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    }
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
 	}
-	return resultMap;
+	return resultMap;*/
 
     }
 
