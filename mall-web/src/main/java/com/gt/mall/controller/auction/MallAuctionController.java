@@ -487,7 +487,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( mapmessage.get( "inv_id" ) ) ) {
 		inv_id = mapmessage.get( "inv_id" ).toString();
 	    }
-	    if ( ( is_delete == "0" || is_delete.equals( "0" ) ) && ( is_publish == "1" || is_publish.equals( "1" ) ) && ( check_status == "1" || check_status.equals( "1" ) ) ) {
+	    if ( is_delete.equals( "0" ) && is_publish.equals( "1" ) && check_status.equals( "1" ) ) {
 		List imagelist = pageService.imageProductList( id, 1 );//获取轮播图列表
 		String pageid = "0";
 		List list1 = pageService.shoppage( shopid );
@@ -508,13 +508,8 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		Map shopmessage = pageService.shopmessage( shopid, null );
 		double discount = 1;//商品折扣
 		String is_member_discount = mapmessage.get( "is_member_discount" ).toString();//商品是否参加折扣
-		if ( ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) && CommonUtil.isNotEmpty( member ) ) {
+		if ( is_member_discount.equals( "1" ) && CommonUtil.isNotEmpty( member ) ) {
 		    discount = memberService.getMemberDiscount( member.getId() );//商品折扣
-		    /*Map map = memberpayService.findCardType(member.getId());
-		    String result = map.get( "result" ).toString();
-		    if ( result == "true" || result.equals( "true" ) ) {
-			discount = map.get( "discount" ).toString();
-		    }*/
 		}
 		request.setAttribute( "discount", discount );//折扣价
 		request.setAttribute( "shopid", shopid );
@@ -522,20 +517,20 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		request.setAttribute( "shopmessage", shopmessage );
 		String is_specifica = mapmessage.get( "is_specifica" ).toString();
 		Map guige = new HashMap();
-		List< Map< String,Object > > specificaList = new ArrayList< Map< String,Object > >();
-		List< Map< String,Object > > guigePrice = new ArrayList< Map< String,Object > >();//获取商品所有规格值价钱，图片，库存，价钱等
-		if ( is_specifica.equals( "1" ) || is_specifica == "1" ) {
+		List< Map< String,Object > > specificaList = new ArrayList<>();
+		List< Map< String,Object > > guigePrice = new ArrayList<>();//获取商品所有规格值价钱，图片，库存，价钱等
+		if ( is_specifica.equals( "1" ) ) {
 		    guige = pageService.productSpecifications( id, inv_id );
 		    specificaList = productSpecificaService.getSpecificaByProductId( id );//获取商品规格值
 		    guigePrice = pageService.guigePrice( id );
 		}
 
-		List< MemberAddress > addressList = new ArrayList< MemberAddress >();
+		List< MemberAddress > addressList = new ArrayList<>();
 		if ( CommonUtil.isNotEmpty( member ) ) {
 		    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
 		    addressList = memberAddressService.addressList( CommonUtil.getMememberIds( memberList, member.getId() ) );
 		}
-		String loginCity = "";
+		String loginCity;
 		if ( addressList == null || addressList.size() == 0 ) {
 		    String ip = IPKit.getRemoteIP( request );
 		    loginCity = pageService.getProvince( ip );
@@ -548,7 +543,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		}
 		request.setAttribute( "loginCity", loginCity );
 		if ( loginCity != null && CommonUtil.isNotEmpty( loginCity ) ) {
-		    Map< String,Object > map = new HashMap< String,Object >();
+		    Map< String,Object > map = new HashMap<>();
 		    map.put( "province_id", loginCity );
 		    JSONArray arr = new JSONArray();
 		    JSONObject obj = new JSONObject();
@@ -600,7 +595,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		pageService.getCustomer( request, userid );
 
 		//商品已下架或者已删除
-	    } else if ( is_delete == "1" || is_delete.equals( "1" ) || is_publish == "-1" || is_publish.equals( "-1" ) ) {
+	    } else if ( is_delete.equals( "1" ) || is_publish.equals( "-1" ) ) {
 		jsp = "mall/product/phone/shopdelect";
 		//商品审核中或者未上架
 	    } else {
@@ -847,11 +842,15 @@ public class MallAuctionController extends AuthorizeOrLoginController {
     public String payWay( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
+	    logger.info( "this path：" + CommonUtil.getpath( request ) );
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
+	    }
+	    if ( userid == 0 && CommonUtil.isNotEmpty( member ) ) {
+		userid = member.getBusid();
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
@@ -928,11 +927,15 @@ public class MallAuctionController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/79B4DE7C/myMargin" )
     public String myMargin( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
+	    logger.info( "this path：" + CommonUtil.getpath( request ) );
 	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
+	    }
+	    if ( userid == 0 && CommonUtil.isNotEmpty( member ) ) {
+		userid = member.getBusid();
 	    }
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );

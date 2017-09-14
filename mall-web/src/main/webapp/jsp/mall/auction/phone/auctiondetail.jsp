@@ -233,7 +233,7 @@
                     </c:if>
                     <c:if test="${isMargin == 0 && auction.aucType == 1}">
                         <div class="flex-1">
-                            <div class="auction-hammer now-shop" style="width: 203px;">
+                            <div class="auction-hammer now-shop" style="width: 200px;margin-left:0px;">
                                 <a href="javascript:void(0);" onclick="productBuy(4,1)" class="">
                                     <img src="/images/mall/hammer.png" class="hammer"/>
                                     <span>立即拍下</span>

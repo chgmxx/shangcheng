@@ -52,6 +52,7 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
 	//判断商家信息 1是否过期 2公众号是否变更过
+	System.out.println("wxmpDomain = " + PropertiesUtil.getWxmpDomain());
 	String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/busUserApi/getWxPulbicMsg.do", getWxPublicMap, wxmpSign );
 	JSONObject json = JSONObject.parseObject( wxpublic );
 
