@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -314,7 +315,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/79B4DE7C/payWay" )
     @SysLogAnnotation( op_function = "2", description = "定金储蓄卡支付成功添加记录和修改" )
     @Transactional( rollbackFor = Exception.class )
-    public String payWay( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
+    public String payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
