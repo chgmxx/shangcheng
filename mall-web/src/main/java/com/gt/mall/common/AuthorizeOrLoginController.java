@@ -68,7 +68,7 @@ public class AuthorizeOrLoginController {
 		return "redirect:" + guoqiUrl;
 	    }
 	    Object remoteUcLogin = json.get( "remoteUcLogin" );
-	    if ( CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) {
+	    if ( CommonUtil.isNotEmpty( uclogin ) && CommonUtil.isNotEmpty( remoteUcLogin ) ) {
 		return null;
 	    }
 
