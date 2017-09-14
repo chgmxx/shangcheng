@@ -2,6 +2,7 @@ package com.gt.mall.service.web.order.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
@@ -16,7 +17,6 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.PayService;
@@ -379,15 +379,14 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 	if ( orderAllMoney > 0 && ( order.getOrderPayWay() == 1 || order.getOrderPayWay() == 9 ) ) {
 
-	    wxPayWay( orderAllMoney, orderNo, url, order );
-	    url = PropertiesUtil.getWxmpDomain() + "8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=";
+	    url = wxPayWay( orderAllMoney, orderNo, url, order );
 	}
 	result.put( "url", url );
 	return result;
     }
 
     @Override
-    public boolean wxPayWay( double orderAllMoney, String orderNo, String url, MallOrder order ) throws Exception {
+    public String wxPayWay( double orderAllMoney, String orderNo, String url, MallOrder order ) throws Exception {
 	if ( orderAllMoney == 0 ) {
 	    orderAllMoney = CommonUtil.toDouble( order.getOrderMoney() );
 	}
@@ -422,15 +421,9 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 
-	Map< String,Object > resultMap = payService.payapi( subQrPayParams );
-	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
-	    String errorMsg = "支付失败";
-	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
-		errorMsg = resultMap.get( "errorMsg" ).toString();
-	    }
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
-	}
-	return true;
+	KeysUtil keyUtil = new KeysUtil();
+	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
+	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
     }
 
     private MallOrder getOrderParams( MallOrder mallOrder, int browser, Member member, MallShopEntity shopEntity, MemberAddress memberAddress ) {

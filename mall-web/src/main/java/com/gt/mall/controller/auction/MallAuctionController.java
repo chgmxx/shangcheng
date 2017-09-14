@@ -2,7 +2,6 @@ package com.gt.mall.controller.auction;
 
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.bean.AlipayUser;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
@@ -18,7 +17,6 @@ import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.MemberAddressService;
-import com.gt.mall.utils.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionOfferService;
@@ -30,6 +28,7 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -687,13 +686,14 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicUserid ) ) ) {
 		isWxPay = 1;//可以微信支付
-	    }
-	    //TODO 需关连 alipayUserService.findAlipayUserByBusId()方法
-	    AlipayUser alipayUser = null;
-	    //			    alipayUserService.findAlipayUserByBusId(member.getBusid());
-	    if ( CommonUtil.isNotEmpty( alipayUser ) && isWxPay == 0 ) {
+	    } else {
 		isAliPay = 1;//可以支付宝支付
 	    }
+	    //TODO 需关连 alipayUserService.findAlipayUserByBusId()方法
+	    /*AlipayUser alipayUser = alipayUserService.findAlipayUserByBusId( member.getBusid() );
+	    if ( CommonUtil.isNotEmpty( alipayUser ) && isWxPay == 0 ) {
+		isAliPay = 1;//可以支付宝支付
+	    }*/
 	    request.setAttribute( "isWxPay", isWxPay );
 	    request.setAttribute( "isAliPay", isAliPay );
 	    request.setAttribute( "memType", memType );
@@ -814,13 +814,13 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	Map< String,Object > result = new HashMap< String,Object >();
 	try {
-	    String memberId = SessionUtils.getLoginMember( request ).getId().toString();
+	    /*String memberId = SessionUtils.getLoginMember( request ).getId().toString();
 	    if ( CommonUtil.isNotEmpty( param.get( "userId" ) ) ) {
 		memberId = param.get( "userId" ).toString();
-	    }
+	    }*/
 
 	    if ( param != null ) {
-		result = auctionMarginService.addMargin( param, memberId );
+		result = auctionMarginService.addMargin( param, SessionUtils.getLoginMember( request ) );
 	    }
 	} catch ( Exception e ) {
 	    result.put( "result", false );
@@ -864,17 +864,18 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    Map< String,Object > payRresult = new HashMap< String,Object >();
 	    double orderMoney = Double.parseDouble( params.get( "orderMoney" ).toString() );
 
-	    if ( payWay == 2 ) {//储蓄卡支付方式
+	    auctionMarginService.paySuccessAuction( params );
+
+	    /*if ( payWay == 2 ) {//储蓄卡支付方式
 		//TODO 需调用 memberpayService.storePay() 方法
 		//		payRresult = memberpayService.storePay(Integer.parseInt(memberId), orderMoney);
 		String result = payRresult.get( "result" ).toString();
 		if ( result.equals( "2" ) ) {
-		    params.put( "out_trade_no", params.get( "no" ) );
 		    auctionMarginService.paySuccessAuction( params );
 		} else if ( result.equals( "1" ) && payWay != 4 ) {
 		    return "redirect:/phoneMemberController/79B4DE7C/recharge.do?id=" + memberId;
 		}
-	    }
+	    }*/
 	} catch ( Exception e ) {
 	    logger.error( "保证金储蓄卡支付保证金异常：" + e.getMessage() );
 	    e.printStackTrace();

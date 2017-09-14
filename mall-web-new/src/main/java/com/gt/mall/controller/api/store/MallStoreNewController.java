@@ -76,7 +76,7 @@ public class MallStoreNewController extends BaseController {
 	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
 	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
 		if ( CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) && CommonUtil.isNotEmpty( wxPublicUsers.getApiKey() ) ) {
-		    result.put( "isShowAdd", 1 );
+		    result.put( "isShowUpd", 1 );
 		}
 	    }
 //	    result.put( "wxPublicUsers", wxPublicUsers );
@@ -97,8 +97,9 @@ public class MallStoreNewController extends BaseController {
 		    int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
 		    if ( store >= branchCount ) {
 			countnum = 1;
+			result.put( "isShopAdd", countnum );
 		    }
-		    result.put( "countnum", countnum );
+
 		    result.put( "page", page );
 		}
 		result.put( "imgUrl", PropertiesUtil.getResourceUrl() );

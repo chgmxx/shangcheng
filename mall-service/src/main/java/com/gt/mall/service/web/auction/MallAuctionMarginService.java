@@ -1,6 +1,7 @@
 package com.gt.mall.service.web.auction;
 
 import com.gt.mall.base.BaseService;
+import com.gt.mall.bean.Member;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.utils.PageUtil;
 
@@ -39,11 +40,11 @@ public interface MallAuctionMarginService extends BaseService< MallAuctionMargin
      * 交纳保证金
      *
      * @param params   margin:保证金信息
-     * @param memberId 用户Id
+     * @param member 用户
      *
      * @return map
      */
-    Map< String,Object > addMargin( Map< String,Object > params, String memberId );
+    Map< String,Object > addMargin( Map< String,Object > params, Member member ) throws Exception;
 
     /**
      * 根据用户id查询我的所有的保证金

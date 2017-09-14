@@ -1,10 +1,12 @@
 package com.gt.mall.service.web.auction.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.WxPayOrder;
 import com.gt.mall.bean.WxPublicUsers;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
@@ -18,6 +20,8 @@ import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
@@ -161,17 +165,17 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     }
 
     @Override
-    public Map< String,Object > addMargin( Map< String,Object > params, String memberId ) {
-	Map< String,Object > result = new HashMap< String,Object >();
+    public Map< String,Object > addMargin( Map< String,Object > params, Member member ) throws Exception {
+	Map< String,Object > result = new HashMap<>();
 
 	MallAuctionMargin margin = (MallAuctionMargin) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "margin" ).toString() ), MallAuctionMargin.class );
-	margin.setUserId( CommonUtil.toInteger( memberId ) );
+	margin.setUserId( member.getId() );
 	MallAuctionMargin aucMargin = auctionMarginDAO.selectByMargin( margin );//查询该拍卖是否已经加入了保证金
 	String aucNo = "PM" + System.currentTimeMillis();
 	if ( aucMargin == null ) {
 	    margin.setCreateTime( new Date() );
 	    margin.setAucNo( aucNo );
-	    margin.setUserId( Integer.parseInt( memberId ) );
+	    margin.setUserId( member.getId() );
 	    auctionMarginDAO.insert( margin );
 	} else {//已经交纳了保证金，无需再次交纳
 	    if ( aucMargin.getMarginStatus().toString().equals( "1" ) ) {
@@ -192,15 +196,54 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		result.put( "id", margin.getId() );
 		result.put( "no", margin.getAucNo() );
 		result.put( "payWay", margin.getPayWay() );
-
-		Member member = memberService.findMemberById( CommonUtil.toInteger( memberId ), null );
 		result.put( "busId", member.getBusid() );
+
+		if ( margin.getPayWay() == 1 || margin.getPayWay() == 3 ) {
+		    String url = getWxAlipay( margin, member );
+		    result.put( "payUrl", url );
+		}
+
 	    } else {
 		result.put( "result", false );
 		result.put( "msg", "交纳保证金失败" );
 	    }
 	}
 	return result;
+    }
+
+    private String getWxAlipay( MallAuctionMargin mallAuctionMargin, Member member ) throws Exception {
+	SubQrPayParams subQrPayParams = new SubQrPayParams();
+	subQrPayParams.setTotalFee( CommonUtil.toDouble( mallAuctionMargin.getMarginMoney() ) );
+	subQrPayParams.setModel( Constants.PAY_MODEL );
+	subQrPayParams.setBusId( member.getBusid() );
+	subQrPayParams.setAppidType( 0 );
+	    /*subQrPayParams.setAppid( 0 );*///微信支付和支付宝支付可以不传
+	subQrPayParams.setOrderNum( mallAuctionMargin.getAucNo() );//订单号
+	subQrPayParams.setMemberId( member.getId() );//会员id
+	subQrPayParams.setDesc( "商城下单" );//描述
+	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
+	subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/mAuction/79B4DE7C/myMargin.do?uId=" + member.getBusid() );
+	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
+			+ "/mAuction/79B4DE7C/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
+	int payWay = 1;
+	if ( mallAuctionMargin.getPayWay() == 3 ) {
+	    payWay = 2;
+	}
+	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+
+	/*Map< String,Object > resultMap = payService.payapi( subQrPayParams );
+	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
+	    String errorMsg = "支付失败";
+	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
+		errorMsg = resultMap.get( "errorMsg" ).toString();
+	    }
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
+	}*/
+	KeysUtil keyUtil = new KeysUtil();
+	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
+	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
     }
 
     @Override

@@ -28,7 +28,7 @@
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
     <title>${mapmessage.pro_name }</title>
-    <link rel="stylesheet" type="text/css" href="css/trade/init.css?<%=System.currentTimeMillis()%>"/>
+    <link rel="stylesheet" type="text/css" href="/css/common/init.css?<%=System.currentTimeMillis()%>"/>
 </head>
 <body>
 <!--加载动画-->
@@ -320,7 +320,7 @@
             <div class="add_div" style="width:715px;float:left;">
                 <c:if test="${!empty addressMap }">
                     <div class="addr-box">
-                        送至：<em></em><span class="addr">${addressMap.pName }${addressMap.cName }${addressMap.aName }${addressMap.mem_address }</span>
+                        送至：<em></em><span class="addr">${addressMap.provincename }${addressMap.cityname }${addressMap.areaname }${addressMap.memAddress }</span>
                     </div>
                 </c:if>
                 <div style="<c:if test="${!empty addressMap }">line-height:30px;</c:if>">

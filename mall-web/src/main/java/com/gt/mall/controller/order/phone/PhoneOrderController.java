@@ -1403,9 +1403,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	try {
 	    MallOrder mallOrder = mallOrderService.selectById( params.get( "id" ).toString() );
 	    String url = "/phoneOrder/79B4DE7C/orderList.do?isPayGive=1&&orderId=" + mallOrder.getId() + "&&uId=" + mallOrder.getBusUserId();
-	    boolean flag = mallOrderNewService.wxPayWay( 0, "", url, mallOrder );
-	    if ( !flag ) {
+	    String returnUrl = mallOrderNewService.wxPayWay( 0, "", url, mallOrder );
+	    if ( CommonUtil.isEmpty( returnUrl ) ) {
 		code = ResponseEnums.ERROR.getCode();
+	    } else {
+		result.put( "returnUrl", returnUrl );
 	    }
 	} catch ( BusinessException be ) {
 	    code = be.getCode();

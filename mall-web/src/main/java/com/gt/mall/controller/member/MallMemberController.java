@@ -105,6 +105,17 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		request.setAttribute( "userid", member.getBusid() );
 	    }
 	    wx = wxPublicUserService.selectByUserId( userid );
+
+	    /*if ( CommonUtil.isNotEmpty( wx ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "url" ) ) ) {
+		Map< String,Object > shareParam = new HashMap<>();
+		shareParam.put( "menu", "hideOptionMenu" );
+		shareParam.put( "url", CommonUtil.getpath( request ) );
+		shareParam.put( "userid", userid );
+		String url = mallPageService.wxShare( userid, request, shareParam );
+		response.sendRedirect( url );
+		return null;
+	    }*/
+
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -190,10 +201,6 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		request.setAttribute( "saleMemberId", saleMemberId );
 	    }
 
-	    if ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( wx ) && CommonUtil.isNotEmpty( member ) ) {
-		//TODO CommonUtil.getWxParams()
-		//		CommonUtil.getWxParams( morderService.getWpUser( member.getId() ), request );
-	    }
 	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( userid );//查询商城底部菜单
 	    request.setAttribute( "footerMenuMap", footerMenuMap );
 	} catch ( Exception e ) {

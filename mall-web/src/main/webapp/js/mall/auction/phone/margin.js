@@ -50,16 +50,21 @@ $(".recog-btn").click(function () {
                 if (data != null) {
                     if (data.result == true) {
                         var marginMoney = $('.marginMoney').val();
-                        if (data.payWay == 2) {//储值卡支付，进入支付回调
-                            location.href = "/mAuction/79B4DE7C/payWay.do?orderMoney=" + marginMoney + "&orderId=" + data.id + "&payWay=" + data.payWay + "&no=" + data.no + "&uId=" + userid;
-                        } else if (data.payWay == 3) {//支付宝支付
-                            var path = $("input.path").val();
-                            var alipaySubject = $("input.alipaySubject").val();
-                            var return_url = path + "/phoneOrder/" + data.id + "/" + data.busId + "/3/79B4DE7C/orderPaySuccess.do";
-                            location.href = "/alipay/79B4DE7C/alipayApi.do?out_trade_no=" + data.no + "&subject=" + alipaySubject + "&total_fee=" + marginMoney + "&busId=" + data.busId + "&model=3&businessUtilName=mallAuctionAlipayNotifyUrlBuinessService&return_url=" + return_url;
+                        if (data.payWay === 1 || data.payWay == 3) {
+                            location.href = data.payUrl;
                         } else {
-                            location.href = "/wxPay/79B4DE7C/wxMallAnAuction.do?id=" + data.id;
+                            location.href = "/mAuction/79B4DE7C/payWay.do?orderMoney=" + marginMoney + "&orderId=" + data.id + "&payWay=" + data.payWay + "&out_trade_no=" + data.no + "&uId=" + userid;
                         }
+                        /*if (data.payWay == 2) {//储值卡支付，进入支付回调
+
+                         } else if (data.payWay == 3) {//支付宝支付
+                         var path = $("input.path").val();
+                         var alipaySubject = $("input.alipaySubject").val();
+                         var return_url = path + "/phoneOrder/" + data.id + "/" + data.busId + "/3/79B4DE7C/orderPaySuccess.do";
+                         location.href = "/alipay/79B4DE7C/alipayApi.do?out_trade_no=" + data.no + "&subject=" + alipaySubject + "&total_fee=" + marginMoney + "&busId=" + data.busId + "&model=3&businessUtilName=mallAuctionAlipayNotifyUrlBuinessService&return_url=" + return_url;
+                         } else {
+                         location.href = "/wxPay/79B4DE7C/wxMallAnAuction.do?id=" + data.id;
+                         }*/
                     } else {
                         var tip = layer.open({
                             content: data.msg,

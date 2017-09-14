@@ -209,7 +209,7 @@ public class CommonUtil {
     }
 
     public static String getpath( HttpServletRequest request ) {
-	String url = request.getScheme() + "://" + request.getServerName() // 服务器地址
+	String url = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()  // 服务器地址
 			+ request.getContextPath() // 项目名称
 			+ request.getServletPath() // 请求页面或其他地址
 			+ ( CommonUtil.isEmpty( request.getQueryString() ) ? "" : "?" + request.getQueryString() ); // 参数

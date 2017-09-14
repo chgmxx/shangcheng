@@ -164,7 +164,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 	    // 遍历商品规格
 	    for ( MallProductSpecifica spec : specList ) {
 		if ( CommonUtil.isEmpty( spec.getSpecificaNameId() ) || CommonUtil.isEmpty( spec.getSpecificaValueId() ) ) {
-		    break;
+		    continue;
 		}
 		int specId = spec.getSpecificaNameId();// 规格id
 		int valueId = spec.getSpecificaValueId();// 规格值id
@@ -565,7 +565,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
     @Override
     public List< MallProductSpecifica > selectByValueIds( int productIds, String[] valueIds ) {
 	Wrapper< MallProductSpecifica > productSpecificaWrapper = new EntityWrapper<>();
-	productSpecificaWrapper.where( "is_delete = 0 and product_id = {0}", productIds ).in( "specifica_value_id", valueIds ).orderBy( "sort", true );
+	productSpecificaWrapper.where( "is_delete = 0 and product_id = {0} and specifica_name_id>0", productIds ).in( "specifica_value_id", valueIds ).orderBy( "sort", true );
 	return mallProductSpecificaDAO.selectList( productSpecificaWrapper );
     }
 

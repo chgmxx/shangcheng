@@ -308,8 +308,8 @@
         <!-- 联盟实体类 -->
         <dependency>
             <groupId>com.gt.union</groupId>
-            <artifactId>union_entity1.0.1</artifactId>
-            <version>1.0.1</version>
+            <artifactId>union_entity1.0.4</artifactId>
+            <version>1.0.4</version>
         </dependency>
 
 
