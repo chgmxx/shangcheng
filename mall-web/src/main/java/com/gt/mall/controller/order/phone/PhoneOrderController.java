@@ -48,6 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -550,8 +551,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
-		request.setAttribute( "userid", userid );
 	    }
+	    if ( CommonUtil.isNotEmpty( params.get( "busId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "busId" ) );
+	    }
+	    request.setAttribute( "userid", userid );
 	    mallOrderService.clearSession( request );
 
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
@@ -1316,6 +1320,30 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     }
 
     /**
+     * 支付成功回调
+     */
+    @RequestMapping( value = "/79B4DE7C/paySuccessModified" )
+    public void paySuccessModified( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
+	logger.info( " 支付成功回调controller" );
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
+	try {
+	    mallOrderService.paySuccessModified( params, SessionUtils.getLoginMember( request ) );
+	} catch ( BusinessException be ) {
+	    code = be.getCode();
+	    result.put( "errorMsg", be.getMessage() );
+	    logger.error( "支付成功回调异常：" + be.getMessage() );
+	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
+	    logger.error( "支付成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    result.put( "code", code );
+	    CommonUtil.write( response, result );
+	}
+    }
+
+    /**
      * 联盟绑定手机号码
      */
     @RequestMapping( value = "/79B4DE7C/bindUnionCard" )
@@ -1378,30 +1406,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     }
 
     /**
-     * 支付成功回调
-     */
-    @RequestMapping( value = "/79B4DE7C/paySuccessModified" )
-    public void paySuccessModified( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
-	logger.info( " 支付成功回调controller" );
-	Map< String,Object > result = new HashMap<>();
-	int code = ResponseEnums.SUCCESS.getCode();
-	try {
-	    mallOrderService.paySuccessModified( params, SessionUtils.getLoginMember( request ) );
-	} catch ( BusinessException be ) {
-	    code = be.getCode();
-	    result.put( "errorMsg", be.getMessage() );
-	    logger.error( "支付成功回调异常：" + be.getMessage() );
-	} catch ( Exception e ) {
-	    code = ResponseEnums.ERROR.getCode();
-	    logger.error( "支付成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	} finally {
-	    result.put( "code", code );
-	    CommonUtil.write( response, result );
-	}
-    }
-
-    /**
      * 钱包支付
      */
     @RequestMapping( value = "/79B4DE7C/walletPayWay" )
@@ -1411,8 +1415,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
 	    MallOrder mallOrder = mallOrderService.selectById( params.get( "id" ).toString() );
-	    String url = "/phoneOrder/79B4DE7C/orderList.do?isPayGive=1&&orderId=" + mallOrder.getId() + "&&uId=" + mallOrder.getBusUserId();
-	    String returnUrl = mallOrderNewService.wxPayWay( 0, "", url, mallOrder );
+	    String returnUrl = mallOrderNewService.wxPayWay( 0, "", mallOrder );
 	    if ( CommonUtil.isEmpty( returnUrl ) ) {
 		code = ResponseEnums.ERROR.getCode();
 	    } else {

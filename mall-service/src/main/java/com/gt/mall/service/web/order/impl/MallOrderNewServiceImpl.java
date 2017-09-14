@@ -379,14 +379,14 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 	if ( orderAllMoney > 0 && ( order.getOrderPayWay() == 1 || order.getOrderPayWay() == 9 ) ) {
 
-	    url = wxPayWay( orderAllMoney, orderNo, url, order );
+	    url = wxPayWay( orderAllMoney, orderNo, order );
 	}
 	result.put( "url", url );
 	return result;
     }
 
     @Override
-    public String wxPayWay( double orderAllMoney, String orderNo, String url, MallOrder order ) throws Exception {
+    public String wxPayWay( double orderAllMoney, String orderNo, MallOrder order ) throws Exception {
 	if ( orderAllMoney == 0 ) {
 	    orderAllMoney = CommonUtil.toDouble( order.getOrderMoney() );
 	}
@@ -402,14 +402,10 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	subQrPayParams.setOrderNum( orderNo );//订单号
 	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
 	subQrPayParams.setDesc( "商城下单" );//描述
-	if ( CommonUtil.isNotEmpty( url ) ) {
-	    subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + url );
-	    subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
-			    + "/phoneOrder/79B4DE7C/paySuccessModified.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
-	} else {
-	    subQrPayParams.setIsreturn( 0 );
-	}
+	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
+	subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/phoneOrder/79B4DE7C/orderList.do" );
+	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
+			+ "/phoneOrder/79B4DE7C/paySuccessModified.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;
