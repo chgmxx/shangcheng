@@ -102,10 +102,9 @@ public interface MallOrderAppletService extends BaseService<MallAppletImage> {
      * 微信下单的接口
      *
      * @param params
-     * @param url
      * @return
      */
-    Map<String, Object> appletWxOrder(Map<String, Object> params, String url) throws Exception;
+    String appletWxOrder(Map<String, Object> params) throws Exception;
 
     /**
      * 商品立即购买

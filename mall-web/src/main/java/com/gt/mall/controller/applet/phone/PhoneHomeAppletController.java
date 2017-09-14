@@ -587,8 +587,8 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "微信订单支付的参数：" + params );
-	    resultMap = mallOrderAppletService.appletWxOrder( params, CommonUtil.getpath( request ) );
-
+	    String obj = mallOrderAppletService.appletWxOrder( params );
+	    resultMap.put( "params", obj );
 	} catch ( Exception e ) {
 	    logger.error( "微信订单支付异常。。。" + e.getMessage() );
 	    e.printStackTrace();
@@ -799,7 +799,7 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "删除地址的参数：" + params );
-//	    resultMap = mallOrderAppletService.addressDefault( params );
+	    //	    resultMap = mallOrderAppletService.addressDefault( params );
 
 	} catch ( Exception e ) {
 	    resultMap.put( "code", "-1" );
