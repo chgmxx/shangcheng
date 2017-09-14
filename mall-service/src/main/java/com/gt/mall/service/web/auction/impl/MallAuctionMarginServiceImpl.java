@@ -241,6 +241,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    }
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
 	}*/
+	logger.info( "拍卖缴纳定金参数：" + JSONObject.toJSONString( subQrPayParams ) );
 	KeysUtil keyUtil = new KeysUtil();
 	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
 	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
