@@ -291,7 +291,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 
 	deposit.setBuyerUserType( browser );
 
-	String depNo = "YSH" + System.currentTimeMillis();
+	String depNo = "YS" + System.currentTimeMillis();
 
 	if ( dep == null ) {
 	    deposit.setCreateTime( new Date() );
