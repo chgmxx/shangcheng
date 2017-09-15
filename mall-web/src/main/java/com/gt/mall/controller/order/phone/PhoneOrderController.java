@@ -1324,7 +1324,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/paySuccessModified" )
     public void paySuccessModified( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
-	logger.info( " 支付成功回调controller" );
+	logger.info( " 支付成功回调controller" + JSONObject.fromObject( params ) );
 	Map< String,Object > result = new HashMap<>();
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {

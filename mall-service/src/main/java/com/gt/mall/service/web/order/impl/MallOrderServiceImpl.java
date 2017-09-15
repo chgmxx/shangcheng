@@ -535,6 +535,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	String orderNo = params.get( "out_trade_no" ).toString();
 	MallOrder order = mallOrderDAO.selectOrderByOrderNo( orderNo );
 
+	if ( CommonUtil.isEmpty( member ) ) {
+	    member = memberService.findMemberById( order.getBuyerUserId(), null );
+	}
+
 	WxPublicUsers pbUser = wxPublicUserService.selectByMemberId( order.getBuyerUserId() );
 	List< Map< String,Object > > erpList = new ArrayList<>();
 

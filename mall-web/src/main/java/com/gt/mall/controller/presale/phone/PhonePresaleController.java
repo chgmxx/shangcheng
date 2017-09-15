@@ -313,33 +313,17 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
      * 储值卡支付成功的回调
      */
     @RequestMapping( value = "/79B4DE7C/payWay" )
-    @SysLogAnnotation( op_function = "2", description = "定金储蓄卡支付成功添加记录和修改" )
+    @SysLogAnnotation( op_function = "2", description = "预售缴纳定金回调" )
     @Transactional( rollbackFor = Exception.class )
     public String payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
-	    int userid = 0;
-	    if ( CommonUtil.isNotEmpty( params.get( "busId" ) ) ) {
-		userid = CommonUtil.toInteger( params.get( "busId" ) );
-		request.setAttribute( "userid", userid );
-	    }
-	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
-	    String returnUrl = userLogin( request, response, loginMap );
-	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-		return returnUrl;
-	    }
+	    logger.error( "预售缴纳定金回调参数：" + JSONObject.fromObject( params ) );
 
 	    mallPresaleDepositService.paySuccessPresale( params );
 
 	} catch ( Exception e ) {
-	    logger.error( "储蓄卡支付定金异常：" + e.getMessage() );
+	    logger.error( "预售缴纳定金回调异常：" + e.getMessage() );
 	    e.printStackTrace();
-	} finally {
-	    String endTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( startTime + "---" + endTime );
-	    long second = DateTimeKit.minsBetween( startTime, endTime, 1000, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	    logger.info( "储蓄卡支付花费：" + second + "秒" );
 	}
 	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( params.get( "no" ).toString() );
 
