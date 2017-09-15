@@ -25,7 +25,7 @@
         <div class="double-bounce2"></div>
     </div>
 </section>
-<script src="/js/plugin/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
+<script src="/js/plugin/jquery-1.8.3.min.js"></script>
 	
     <div class="mWrapper">
         <!-- <form action="mMember/79B4DE7C/addAppraise.do" method="post" id="aForm"> -->
@@ -112,8 +112,8 @@
             </div>
         <!-- </form> -->
     </div>
-    <script src="/js/plugin/layer-mobile/layer/layer.js?<%= System.currentTimeMillis()%>"></script>
-	<script type="text/javascript" src="/js/plugin/jquery-form.js?<%= System.currentTimeMillis()%>"></script>
+    <script src="/js/plugin/layer-mobile/layer/layer.js"></script>
+	<script type="text/javascript" src="/js/plugin/jquery-form.js"></script>
 	<script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
     <script>
     $(window).load(function() {
@@ -294,7 +294,7 @@
 	    				var http = data.path;
 	    				var imagePath = data.imagePath;
 	    				if(imagePath != null && imagePath != ""){
-	    					var imgArr = imagePath.split(";");
+	    					var imgArr = imagePath.split(",");
 	    					for(var i in imgArr){
 	    						//console.log(imgArr[i])
 	    						if(imgArr[i] != null && imgArr[i] != ""){
