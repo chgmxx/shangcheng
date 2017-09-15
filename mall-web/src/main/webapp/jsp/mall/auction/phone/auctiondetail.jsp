@@ -598,17 +598,17 @@
         if (flag) {
             //console.log(types+"==="+price)
             var hs = {
-                product_id: product_id,
+                productId: product_id,
                 shop_id: shopid,
-                product_specificas: product_specificas,
-                product_speciname: product_speciname,
-                totalnum: product_num,
+                productSpecificas: product_specificas,
+                productSpeciname: product_speciname,
+                detProNum: product_num,
                 totalprice: totalprice,
-                price: price,
+                detProPrice: price,
                 shop_name: shop_namemessg,
                 product_name: product_name,
                 image_url: image_url,
-                primary_price: primary_price,
+                detPrivivilege: primary_price,
                 pro_code: pro_code,
                 return_day: return_day,
                 discount: discount,

@@ -99,8 +99,9 @@
     <!-- 根据秒杀分页 -->
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map">
         select
-        <include refid="page_Column_List"/>
+        <include refid="page_Column_List"/> ,s.wx_shop_id
         from t_mall_seckill g
+        left join t_mall_store s on g.shop_id = s.id
         left join t_mall_seckill_join j on g.id=j.seckill_id
         where g.is_delete = 0
         <if test="type == -1"><!-- 未开始秒杀 -->

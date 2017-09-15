@@ -447,7 +447,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    offer.setAucId( auction.getId() );
 		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
 		    for ( MallAuctionOffer offer1 : offerList ) {
-			Member member1 = memberService.findMemberById( offer.getUserId(), null );
+			Member member1 = memberService.findMemberById( offer1.getUserId(), null );
 			offer1.setNickname( member1.getNickname() );
 		    }
 		    request.setAttribute( "offerList", offerList );

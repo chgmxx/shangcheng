@@ -20,12 +20,14 @@ import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.SocketService;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
-import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.*;
 import com.gt.mall.service.web.seckill.MallSeckillPriceService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
+import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.*;
+import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,27 +77,40 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
     @Autowired
     private SocketService socketService;
+    @Autowired
+    private WxShopService wxShopService;
 
     /**
      * 通过店铺id来查询秒杀
      */
     @Override
-    public PageUtil selectSeckillByShopId( Map< String,Object > params ) {
+    public PageUtil selectSeckillByShopId( Map< String,Object > params, int userId ) {
 	int pageSize = 10;
 
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
-			: CommonUtil.toInteger( params.get( "curPage" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 	int count = mallSeckillDAO.selectByCount( params );
 
 	PageUtil page = new PageUtil( curPage, pageSize, count, "mSeckill/index.do" );
-	int firstNum = pageSize
-			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	if ( count > 0 ) {// 判断秒杀是否有数据
 	    List< MallSeckill > seckillList = mallSeckillDAO.selectByPage( params );
+	    if ( seckillList != null ) {
+		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
+		for ( MallSeckill seckill : seckillList ) {
+		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+			if ( wxShops.getId() == seckill.getWx_shop_id() ) {
+			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
+				seckill.setShopName( wxShops.getBusinessName() );
+			    }
+			    break;
+			}
+		    }
+		}
+	    }
 	    page.setSubList( seckillList );
 	}
 
@@ -109,8 +124,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     public Map< String,Object > selectSeckillById( Integer id ) {
 	Map< String,Object > map = mallSeckillDAO.selectBySeckillId( id );
 	int SeckillId = CommonUtil.toInteger( map.get( "id" ) );
-	List< MallSeckillPrice > priceList = mallSeckillPriceService
-			.selectPriceByGroupId( SeckillId );
+	List< MallSeckillPrice > priceList = mallSeckillPriceService.selectPriceByGroupId( SeckillId );
 	map.put( "priceList", priceList );
 	return map;
     }
@@ -248,8 +262,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * 获取店铺下所有的秒杀
      */
     @Override
-    public List< Map< String,Object > > getSeckillAll( Member member,
-		    Map< String,Object > maps ) {
+    public List< Map< String,Object > > getSeckillAll( Member member, Map< String,Object > maps ) {
 
 	int shopid = 0;
 	if ( CommonUtil.isNotEmpty( maps.get( "shopId" ) ) ) {
@@ -269,8 +282,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		}
 	}*/
 	maps.put( "status", 1 );
-	List< Map< String,Object > > productList = mallSeckillDAO
-			.selectgbProductByShopId( maps );
+	List< Map< String,Object > > productList = mallSeckillDAO.selectgbProductByShopId( maps );
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( Map< String,Object > map2 : productList ) {
 		String is_specifica = map2.get( "is_specifica" ).toString();// 是否有规格，1有规格，有规格取规格里面的值
@@ -333,30 +345,26 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		String str = JedisUtil.maoget( key, field );
 		if ( CommonUtil.isNotEmpty( str ) ) {
 		    int invNum = CommonUtil.toInteger( str );
-		    if ( invNum > 0 )
-			seckill.setSNum( invNum );
+		    if ( invNum > 0 ) seckill.setSNum( invNum );
 		}
 	    }
 
 	    Date endTime = DateTimeKit.parse( seckill.getSEndTime(), "yyyy-MM-dd HH:mm:ss" );
 	    Date startTime = DateTimeKit.parse( seckill.getSStartTime(), "yyyy-MM-dd HH:mm:ss" );
-	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(),
-			    "yyyy-MM-dd HH:mm:ss" );
+	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
 	    seckill.setTimes( ( endTime.getTime() - nowTime.getTime() ) / 1000 );
 	    if ( seckill.getStatus() == 0 ) {
 		seckill.setStartTimes( ( startTime.getTime() - nowTime.getTime() ) / 1000 );
 	    }
 
-	    List< MallSeckillPrice > priceList = mallSeckillPriceService
-			    .selectPriceByGroupId( seckill.getId() );
+	    List< MallSeckillPrice > priceList = mallSeckillPriceService.selectPriceByGroupId( seckill.getId() );
 	    List< MallSeckillPrice > list = new ArrayList<>();
 	    if ( priceList != null && priceList.size() > 0 ) {
 		for ( MallSeckillPrice price : priceList ) {
 		    field = seckill.getId() + "_" + price.getSpecificaIds();
 		    if ( CommonUtil.isNotEmpty( price.getSpecificaIds() ) && JedisUtil.hExists( key, field ) ) {
 			int invNum = CommonUtil.toInteger( JedisUtil.maoget( key, field ) );
-			if ( invNum > 0 )
-			    price.setSeckillNum( invNum );
+			if ( invNum > 0 ) price.setSeckillNum( invNum );
 		    }
 		    list.add( price );
 		}
@@ -497,8 +505,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     }
 
     @Override
-    public List< Map< String,Object > > selectgbSeckillByShopId(
-		    Map< String,Object > maps ) {
+    public List< Map< String,Object > > selectgbSeckillByShopId( Map< String,Object > maps ) {
 	return mallSeckillDAO.selectgbProductByShopId( maps );
     }
 
@@ -525,8 +532,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
 	Map< String,Object > maps = new HashMap<>();
 	maps.put( "status", 1 );
-	List< Map< String,Object > > productList = mallSeckillDAO
-			.selectgbProductByShopId( maps );
+	List< Map< String,Object > > productList = mallSeckillDAO.selectgbProductByShopId( maps );
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( Map< String,Object > map2 : productList ) {
 		String proId = map2.get( "id" ).toString();
@@ -538,8 +544,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
 		if ( is_specifica.equals( "1" ) ) {
 		    //规格库存
-		    List< MallProductInventory > invenList = mallProductInventoryService
-				    .selectInvenByProductId( Integer.parseInt( proId ) );
+		    List< MallProductInventory > invenList = mallProductInventoryService.selectInvenByProductId( Integer.parseInt( proId ) );
 		    if ( invenList != null && invenList.size() > 0 ) {
 			for ( MallProductInventory inven : invenList ) {
 			    StringBuilder specIds = new StringBuilder();

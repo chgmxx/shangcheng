@@ -1361,10 +1361,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	int payWay = 1;
 	/*if ( order.getOrderPayWay() == 9 ) {
 	    payWay = 2;
-	}*/
+	}
 	if ( order.getIsWallet() == 1 ) {
 	    payWay = 3;
-	}
+	}*/
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 
 	logger.info( "小程序订单支付的参数：" + JSONObject.toJSONString( subQrPayParams ) );

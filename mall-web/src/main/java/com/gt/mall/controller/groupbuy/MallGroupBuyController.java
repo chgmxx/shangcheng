@@ -528,6 +528,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    if ( CommonUtil.isNotEmpty( productMap ) ) {
 		SessionUtils.setMallShopId( productMap.get( "shopId" ), request );
 	    }
+	    request.setAttribute( "shopId", productMap.get( "shopId" ) );
 	    Map shopmessage = pageService.shopmessage( CommonUtil.toInteger( productMap.get( "shopId" ) ), null );//查询店铺信息
 	    request.setAttribute( "shopMap", shopmessage );
 	    double discount = 1;//商品折扣

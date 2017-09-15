@@ -77,10 +77,8 @@ public class MallHtmlController extends BaseController {
 	    //pid==0 主账户,否则是子账户
 	    if ( user.getPid() == 0 ) {
 	    } else {
-		//TODO 需关连  dictService.shopuserid()
-		Integer isadmin = 0;
-		//				dictService.shopuserid(user.getId());//获取是否是管理员
-		if ( isadmin == 0 ) {
+		boolean isadmin = busUserService.getIsAdmin( user.getId() );
+		if ( isadmin ) {
 		    Integer zhuid = SessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
 		    user = busUserService.selectById( zhuid );
 		    ispid = 1;
@@ -483,7 +481,7 @@ public class MallHtmlController extends BaseController {
 	    //pid==0 主账户,否则是子账户
 	    if ( user.getPid() == 0 ) {
 	    } else {
-		Integer zhuid = SessionUtils.getAdminUserId( user.getId() ,request);//获取父类的id
+		Integer zhuid = SessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
 		user = busUserService.selectById( zhuid );
 		ispid = 1;
 	    }

@@ -96,7 +96,7 @@
                                 <span class="tuan-badge">团长</span>
                             </c:if>
                         </div>
-                        <div class="color878"><fmt:formatDate pattern="yyyy-MM-dd hh:mm:ss" value="${join.joinTime }"/>开团</div>
+                        <div class="color878"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${join.joinTime }"/>开团</div>
                     </li>
                 </c:forEach>
             </c:if>
@@ -155,17 +155,17 @@
     <input type="hidden" id="type" name="type" value="0">
 </form>
 <form id="buyForm">
-    <input type="hidden" name="product_id" value="${productMap.id }"/>
+    <input type="hidden" name="productId" value="${productMap.id }"/>
     <input type="hidden" name="shop_id" value="${productMap.shopId }"/>
-    <input type="hidden" name="product_specificas" value="<c:if test='${productMap.is_specifica eq 1 }'>${guige.xids }</c:if>"/>
-    <input type="hidden" name="product_speciname" value="<c:if test='${productMap.is_specifica eq 1 }'>${guige.specifica_name }</c:if>"/>
-    <input type="hidden" name="totalnum" value="1"/>
+    <input type="hidden" name="productSpecificas" value="<c:if test='${productMap.is_specifica eq 1 }'>${guige.xids }</c:if>"/>
+    <input type="hidden" name="productSpeciname" value="<c:if test='${productMap.is_specifica eq 1 }'>${guige.specifica_name }</c:if>"/>
+    <input type="hidden" name="detProNum" value="1"/>
     <input type="hidden" name="totalprice" value="${productMap.price }"/>
-    <input type="hidden" name="price" class="price" value="${productMap.price }"/>
+    <input type="hidden" name="detProPrice" class="price" value="${productMap.price }"/>
     <input type="hidden" name="shop_name" value="${shopMap.name1 }"/>
     <input type="hidden" name="product_name" class="product_name" value="${productMap.pro_name }"/>
     <input type="hidden" name="image_url" value="${imgHttp }${productMap.image_url }"/>
-    <input type="hidden" name="primary_price" class="primary_price" value="${productMap.old_price }"/>
+    <input type="hidden" name="detPrivivilege" class="primary_price" value="${productMap.old_price }"/>
     <input type="hidden" name="pro_code"
            value="<c:if test="${productMap.is_specifica eq 1 }">${productMap.inv_code }</c:if><c:if test="${productMap.is_specifica ne 1 }">${productMap.pro_code }</c:if>"/>
     <input type="hidden" name="return_day" value="${productMap.return_day }"/>
@@ -174,7 +174,7 @@
     <input type="hidden" name="groupBuyId" value="${groupBuyId }"/>
     <input type="hidden" name="pJoinId" value="${joinId }"/>
 </form>
-<input class="groupBuyCount" type="hidden" value="<c:if test='${!empty groupBuyCount }'>${groupBuyCount }</c:if>"/>
+<input class="groupBuyCount" type="hidden" value="<c:if test='${!empty groupBuyCount }'>$ {groupBuyCount }</c:if>"/>
 <input class="maxNum" type="hidden" value="${productMap.maxNum }">
 <!--底部开始-->
 <input type="hidden" class="userid" value="${userid }"/>

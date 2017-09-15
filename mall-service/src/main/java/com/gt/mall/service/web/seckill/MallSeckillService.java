@@ -25,7 +25,7 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 通过店铺id来查询秒杀
      */
-    PageUtil selectSeckillByShopId( Map< String,Object > param );
+    PageUtil selectSeckillByShopId( Map< String,Object > param, int userId );
 
     /**
      * 通过秒杀id查询秒杀信息

@@ -136,6 +136,9 @@ public class MallSeckill extends Model< MallSeckill > {
     @TableField(exist = false)
     private String twoCodePath;
 
+    @TableField(exist = false)
+    private int wx_shop_id; //门店ID 关联wx_shop表的id
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

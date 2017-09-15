@@ -1,5 +1,5 @@
 ﻿var userid = $("input.userid").val();
-﻿
+
 $(document).ready(function () {
     var is_specifica = $("input.is_specifica").val();
     var proPrice = 0;

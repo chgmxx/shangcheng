@@ -157,8 +157,8 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    aucMargin.setPayTime( new Date() );
 	    num = auctionMarginDAO.updateById( aucMargin );
 	    if ( num > 0 && margin.getPayWay().toString().equals( "2" ) ) {
-		//储值卡支付
-		//todo 储值卡支付
+		//添加总的消费记录  暂不加记录
+		//addUserConsume(margin);
 	    }
 	}
 

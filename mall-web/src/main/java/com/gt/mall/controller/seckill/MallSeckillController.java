@@ -60,7 +60,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = mallSeckillService.selectSeckillByShopId( params );
+		    PageUtil page = mallSeckillService.selectSeckillByShopId( params, user.getId() );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}
@@ -140,9 +140,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
      */
     @SysLogAnnotation( description = "秒杀管理-删除秒杀", op_function = "4" )
     @RequestMapping( "group_remove" )
-    public void removeGroup( HttpServletRequest request,
-		    HttpServletResponse response,
-		    @RequestParam Map< String,Object > params ) throws IOException {
+    public void removeGroup( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入删除秒杀controller" );
 	response.setCharacterEncoding( "utf-8" );
 	int code = 1;// 删除成功
@@ -205,7 +203,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		return returnUrl;
 	    }
 
-	    boolean isShop = mallPageService.wxShopIsDelete( shopid,null );
+	    boolean isShop = mallPageService.wxShopIsDelete( shopid, null );
 	    if ( !isShop ) {
 		return "mall/product/phone/shopdelect";
 	    }
@@ -227,8 +225,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		desc = params.get( "desc" ).toString();
 	    }
 	    params.put( "shopId", shopid );
-	    List< Map< String,Object > > productList = mallSeckillService
-			    .getSeckillAll( member, params );// 查询店铺下所有加入秒杀的商品
+	    List< Map< String,Object > > productList = mallSeckillService.getSeckillAll( member, params );// 查询店铺下所有加入秒杀的商品
 
 	    if ( CommonUtil.isEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
 		request.getSession().setAttribute( "shopId", shopid );

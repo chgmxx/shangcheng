@@ -785,14 +785,20 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 			shopMap.put( "shopImage", PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
 		    }
 		}
-		//TODO 地址方法
-		String province = "";
-		String city = "";
-		String area = "";
+
+		String cityids = wxShopInfo.getProvince() + "," + wxShopInfo.getCity() + "," + wxShopInfo.getDistrict();
+		List< Map > cityList = wxShopService.queryBasisCityIds( cityids );
 		String address = wxShopInfo.getAddress() + wxShopInfo.getDetail();
+		StringBuilder shopAddress = new StringBuilder();
+		if ( cityList != null && cityList.size() > 0 ) {
+		    for ( Map map1 : cityList ) {
+			shopAddress.append( map1.get( "city_name" ) );
+		    }
+		}
+		shopAddress.append( address );
 
 		shopMap.put( "shopName", wxShopInfo.getBusinessName() );
-		shopMap.put( "shopAddress", province + city + area + address );
+		shopMap.put( "shopAddress", shopAddress.toString() );
 		shopMap.put( "telephone", wxShopInfo.getTelephone() );
 		shopMap.put( "id", map.get( "id" ) );
 		shopList.add( shopMap );
