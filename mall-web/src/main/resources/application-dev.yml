@@ -114,7 +114,7 @@ resource:
 #图片存放路径
 res:
  image:
-  path: D:/apache-tomcat-7.0.59/wtpwebapps/wxmp/upload/image
+  path: D:/apache-tomcat7_new_idea/webapps/upload/image
 
 #电信流量订单前缀
 dianxin:

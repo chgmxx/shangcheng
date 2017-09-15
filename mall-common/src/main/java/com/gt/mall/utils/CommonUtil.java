@@ -1,5 +1,6 @@
 package com.gt.mall.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.constant.Constants;
 import net.sf.json.JSONObject;
@@ -365,7 +366,7 @@ public class CommonUtil {
 	    result.put( "status", obj );
 	    response.getWriter().print( JSONObject.fromObject( result ) );
 	} else {
-	    response.getWriter().print( JSONObject.fromObject( obj ) );
+	    response.getWriter().print( com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( obj ) ) );
 	}
 	response.getWriter().flush();
 	response.getWriter().close();
@@ -432,12 +433,12 @@ public class CommonUtil {
 	    InputStream is = new ByteArrayInputStream( bytes );
 	    BufferedImage bufimg = ImageIO.read( is );
 	    ImageIO.write( bufimg, phonejsp, new File( path ) );
-	    ContinueFTP myFtp = new ContinueFTP();
+	    /*ContinueFTP myFtp = new ContinueFTP();
 	    try {
 		myFtp.upload( path );
 	    } catch ( Exception e ) {
 		e.printStackTrace();
-	    }
+	    }*/
 	    is.close();
 	    String url = "/image/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD )
 			    + "/jietu/" + MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;

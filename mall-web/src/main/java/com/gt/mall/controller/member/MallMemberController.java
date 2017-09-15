@@ -408,7 +408,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 			Map< String,Object > returnMap = CommonUtil.fileUploadByBusUser( file, user.getId() );
 			if ( "1".equals( returnMap.get( "reTurn" ) ) ) {
 			    if ( CommonUtil.isNotEmpty( imageUrl ) ) {
-				imageUrl.append( ";" );
+				imageUrl.append( "," );
 			    }
 			    imageUrl.append( returnMap.get( "message" ) );
 			    flag = true;
@@ -429,7 +429,8 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    logger.error( "商城评论上传图片异常:", e );
 	    map.put( "result", false );
 	}
-	CommonUtil.write( response, map );
+	System.out.println( "imagePath = " + com.alibaba.fastjson.JSONObject.toJSONString( map ) );
+	CommonUtil.write( response,  map );
     }
 
     /**
