@@ -348,7 +348,7 @@
                                         </label>
                                         <br/>
                                         <script type="text/javascript">
-                                            cardMessage["${card.id}"] = ${card.messageList };
+                                            cardMessage["${card.id}"] = ${card.cardMessage };
                                         </script>
                                     </c:forEach>
                                     <table class="cardTab">

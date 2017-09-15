@@ -148,7 +148,7 @@ $(".subBtn").click(function () {
                         closeBtn: 0
                     });
                 }, timeout);
-               /* $(window.parent).scrollTop(400);*/
+                /* $(window.parent).scrollTop(400);*/
             }
 
         }
@@ -164,7 +164,7 @@ $(".subBtn").click(function () {
                     closeBtn: 0
                 });
             }, timeout);
-           /* $(window.parent).scrollTop(400);*/
+            /* $(window.parent).scrollTop(400);*/
         }
 
         var isSpecifica = 0;
@@ -269,16 +269,16 @@ $(".subBtn").click(function () {
                 if (invenArray != null && invenArray.length > 0) {
                     params.invenList = JSON.stringify(invenArray);
                 }
-                if (inveDefaultObj != null && inveDefaultObj.length > 0) {// 库存与原本的数据
+                if (inveDefaultObj !== null && inveDefaultObj !== "") {// 库存与原本的数据
                     params.inveDefaultObj = JSON.stringify(inveDefaultObj);
                 }
-                if (specDefaultObj != null && specDefaultObj.length > 0) {// 规格原本的数据
+                if (specDefaultObj !== null && specDefaultObj !== "") {// 规格原本的数据
                     params.specDefaultObj = JSON.stringify(specDefaultObj);
                 }
-                if (paramsArray != null && paramsArray.length > 0) {
+                if (paramsArray !== null && paramsArray.length > 0) {
                     params.paramsList = JSON.stringify(paramsArray);
                 }
-                if (paramDefaultObj != null) {// 参数原本的数据
+                if (paramDefaultObj !== null && paramDefaultObj !== "") {// 参数原本的数据
                     params.paramDefaultObj = JSON.stringify(paramDefaultObj);
                 }
                 var isInvoice = $("input[name='isInvoice']:checked").val();
@@ -289,7 +289,8 @@ $(".subBtn").click(function () {
                 $(".onePro").hide();
                 $(".twoPro").show();
 
-                $(window.parent).scrollTop(270);
+                /*$(window.parent).scrollTop(270);*/
+                parentScrollTops(270);
 
                 $(".twoDl").removeClass("doing");
                 $(".twoDl").addClass("done");
@@ -315,7 +316,7 @@ $(".prePage").click(function () {
     $(".threeDl").addClass("last");
     $(".threeDl").removeClass("doing");
 
-    $(window.parent).scrollTop(270);
+    parentScrollTops(270);
     loadWindow();
 });
 /**
@@ -386,84 +387,87 @@ function saveUpd(type) {
         params.product = JSON.stringify(productObj);
     }
 
-    /*console.log(JSON.stringify(params))*/
-    // loading层
-    var layerLoad = layer.load(1, {
-        shade: [0.3, '#fff'],
-        offset: "10%"
-    });
-    var proId = $(".proId").val();
-    var url = "mPro/add_pro.do";
-    if (proId != null && $.trim(proId) != "") {
-        url = "mPro/upd_pro.do";
-    }
-    $.ajax({
-        type: "post",
-        url: url,
-        data: params,
-        dataType: "json",
-        timeout: 60000 * 60,//一小时的超时时间
-        success: function (data) {
-            layer.closeAll();
-            SonScrollTop(0);
-            setTimeout(function () {
-                if (data.code == 0) {// 重新登录
-
-                    layer.alert("操作失败，长时间没操作，跳转到登录页面", {
-                        offset: scrollHeight + "px",
-                        shade: [0.1, "#fff"],
-                        closeBtn: 0
-                    }, function (index) {
-                        location.href = "/user/tologin.do";
-                    });
-
-                } else if (data.code == 1) {
-
-                    var tip = layer.alert("编辑成功", {
-                        offset: scrollHeight + "px",
-                        shade: [0.1, "#fff"],
-                        closeBtn: 0
-                    }, function (index) {
-                        layer.close(tip);
-                        if (type == 0) {
-                            var pId = data.id;
-                            window.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
-                        } else {
-                            var urls = $("input.urls").val();
-                            if (urls == null || urls == "") {
-                                location.href = "/mPro/index.do";
-                            } else {
-                                location.href = urls;
-                            }
-                        }
-
-                    });
-                } else {// 编辑失败
-                    var msg = "编辑失败";
-                    if (data.msg != "") {
-                        msg = data.msg;
-                    }
-                    SonScrollTop(0);
-                    setTimeout(function () {
-                        layer.alert(msg, {
-                            shade: [0.1, "#fff"],
-                            offset: scrollHeight + "px"
-                        });
-                    }, timeout);
-                }
-            }, timeout);
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            SonScrollTop(0);
-            setTimeout(function () {
-                layer.alert("编辑失败", {
-                    shade: [0.1, "#fff"],
-                    offset: scrollHeight + "px"
-                });
-                return;
-            }, timeout);
+    SonScrollTop(0);
+    setTimeout(function () {
+        /*console.log(JSON.stringify(params))*/
+        // loading层
+        var layerLoad = layer.load(1, {
+            shade: [0.3, '#fff'],
+            offset: scrollHeight + "px"
+        });
+        var proId = $(".proId").val();
+        var url = "mPro/add_pro.do";
+        if (proId != null && $.trim(proId) != "") {
+            url = "mPro/upd_pro.do";
         }
-    });
+        $.ajax({
+            type: "post",
+            url: url,
+            data: params,
+            dataType: "json",
+            timeout: 60000 * 60,//一小时的超时时间
+            success: function (data) {
+                layer.closeAll();
+                SonScrollTop(0);
+                setTimeout(function () {
+                    if (data.code == 0) {// 重新登录
+
+                        layer.alert("操作失败，长时间没操作，跳转到登录页面", {
+                            offset: scrollHeight + "px",
+                            shade: [0.1, "#fff"],
+                            closeBtn: 0
+                        }, function (index) {
+                            location.href = "/user/tologin.do";
+                        });
+
+                    } else if (data.code == 1) {
+
+                        var tip = layer.alert("编辑成功", {
+                            offset: scrollHeight + "px",
+                            shade: [0.1, "#fff"],
+                            closeBtn: 0
+                        }, function (index) {
+                            layer.close(tip);
+                            if (type == 0) {
+                                var pId = data.id;
+                                window.location.href = "mallPage/" + pId + "/" + shopId + "/79B4DE7C/phoneProduct.do";
+                            } else {
+                                var urls = $("input.urls").val();
+                                if (urls == null || urls == "") {
+                                    location.href = "/mPro/index.do";
+                                } else {
+                                    location.href = urls;
+                                }
+                            }
+
+                        });
+                    } else {// 编辑失败
+                        var msg = "编辑失败";
+                        if (data.msg != "") {
+                            msg = data.msg;
+                        }
+                        SonScrollTop(0);
+                        setTimeout(function () {
+                            layer.alert(msg, {
+                                shade: [0.1, "#fff"],
+                                offset: scrollHeight + "px"
+                            });
+                        }, timeout);
+                    }
+                }, timeout);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                SonScrollTop(0);
+                setTimeout(function () {
+                    layer.alert("编辑失败", {
+                        shade: [0.1, "#fff"],
+                        offset: scrollHeight + "px"
+                    });
+                    return;
+                }, timeout);
+            }
+        });
+    }, timeout);
 //	parent.layer.closeAll();
 }
 

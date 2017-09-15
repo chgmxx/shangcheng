@@ -307,7 +307,7 @@ function getSpecifica(obj, defaultVal, type) {
     if (shopId == null || shopId == "") {
         layer.alert("请选择所属商铺", {
             offset: "10%",
-            shade:[0.1,"#fff"],
+            shade: [0.1, "#fff"],
             closeBtn: 0
         });
     }
@@ -357,7 +357,7 @@ function getSpecificaValue(id, selectObj, defaultStr, type) {
     if (shopId == null || shopId == "") {
         layer.alert("请选择所属商铺", {
             offset: "10%",
-            shade:[0.1,"#fff"],
+            shade: [0.1, "#fff"],
             closeBtn: 0
         });
     }
@@ -607,7 +607,7 @@ function addPop(obj) {
                     var speVal = $(this).find("span:eq(0)").text();
                     if ($.trim(speVal) == val) {
                         layer.msg("已经添加了相同的规格值", {
-                            shade:[0.1,"#fff"],
+                            shade: [0.1, "#fff"],
                             offset: "10%"
                         });
                         flag = false;
@@ -677,7 +677,7 @@ function loadSpecImg() {
         });
 
     $(".upload-img-wrap .add-image").click(function () {
-        materiallayer(1,this);
+        materiallayer(1, this);
     });
 
 }
@@ -943,7 +943,7 @@ function materiallayer(type, obj) {
     imgObj = $(obj);
     if (type == 0) {
         fhmater(1);
-    }else{
+    } else {
         fhmater(0);
     }
 
@@ -1074,7 +1074,7 @@ $(".cardType").click(function () {
         var message = cardMessage[id];
         if ($(".cardTab").length > 0) {
             var html = "";
-            if (message.length > 0) {
+            if (message.length > 0 && message !== null && message !== "") {
                 for (var i = 0; i < message.length; i++) {
                     html += "<tr><td>" + message[i].cardName + "</td><td>" + message[i].num + "</td></tr>";
                 }

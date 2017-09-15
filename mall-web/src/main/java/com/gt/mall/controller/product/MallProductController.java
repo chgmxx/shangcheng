@@ -165,7 +165,6 @@ public class MallProductController extends BaseController {
 		}
 		request.setAttribute( "map", map );
 	    }
-
 	    //查询卡券包
 	    List< Map > cardReceiveList = cardService.findReceiveByBusUserId( user.getId() );
 	    if ( cardReceiveList != null && cardReceiveList.size() > 0 ) {
