@@ -353,7 +353,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    Date startTime = DateTimeKit.parse( seckill.getSStartTime(), "yyyy-MM-dd HH:mm:ss" );
 	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
 	    seckill.setTimes( ( endTime.getTime() - nowTime.getTime() ) / 1000 );
-	    if ( seckill.getStatus() == 0 ) {
+	    if (seckill.getStatus()== null || seckill.getStatus() == 0 ) {
 		seckill.setStartTimes( ( startTime.getTime() - nowTime.getTime() ) / 1000 );
 	    }
 

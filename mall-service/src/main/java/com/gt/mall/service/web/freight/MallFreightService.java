@@ -66,7 +66,7 @@ public interface MallFreightService extends BaseService<MallFreight> {
      * @param map ...
      * @return map
      */
-    Map<Integer, Object> getFreightMoney(Map<String, Object> map);
+    Map<String, Object> getFreightMoney(Map<String, Object> map);
 
     /**
      * 通过省份名称获取省份id

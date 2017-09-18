@@ -954,11 +954,11 @@ public class MallPageController extends AuthorizeOrLoginController {
 		    map.put( "orderArr", arr );
 		    map.put( "toshop", toshop );
 		    map.put( "proTypeId", mapmessage.get( "pro_type_id" ) );
-		    Map< Integer,Object > priceMap = mallFreightService.getFreightMoney( map );
+		    Map< String,Object > priceMap = mallFreightService.getFreightMoney( map );
 		    if ( CommonUtil.toInteger( mapmessage.get( "pro_type_id" ) ) > 0 || toshop == 1 ) {//虚拟商品都不需要运费，到店购买不需要运费
 			request.setAttribute( "priceMap", "0" );
 		    } else {
-			request.setAttribute( "priceMap", priceMap.get( shopid ) );
+			request.setAttribute( "priceMap", priceMap.get( CommonUtil.toString( shopid ) ) );
 		    }
 		}
 		mallPageService.isAddShopCart( request, member, memberList );

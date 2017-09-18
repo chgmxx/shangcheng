@@ -114,9 +114,9 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     }
 
     @Override
-    public Map< Integer,Object > getFreightMoney( Map< String,Object > map ) {
+    public Map< String,Object > getFreightMoney( Map< String,Object > map ) {
 	log.debug( "获取运费参数：" + map.toString() );
-	Map< Integer,Object > priceMap = new HashMap< Integer,Object >();
+	Map< String,Object > priceMap = new HashMap< String,Object >();
 	if ( map != null ) {
 	    Integer provinceId = 0;//省份id
 	    if ( CommonUtil.isNotEmpty( map.get( "province_id" ) ) ) {
@@ -138,7 +138,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		proTypeId = CommonUtil.toInteger( map.get( "proTypeId" ) );
 	    }
 
-	    JSONArray orderJSON = JSONArray.parseArray( JSONArray.toJSONString( map.get( "orderArr" ) ) );
+	    JSONArray orderJSON = JSONArray.parseArray(  map.get( "orderArr" ).toString() );
 
 	    if ( !CommonUtil.isEmpty( orderJSON ) && orderJSON.size() > 0 ) {
 		for ( Object object : orderJSON ) {
@@ -239,9 +239,9 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    }
 		    if ( freightPrice > 0 ) {
 			DecimalFormat df = new DecimalFormat( "######0.00" );
-			priceMap.put( shopId, df.format( freightPrice ) );
+			priceMap.put( shopId.toString(), df.format( freightPrice ) );
 		    } else {
-			priceMap.put( shopId, freightPrice );
+			priceMap.put( shopId.toString(), freightPrice );
 		    }
 		}
 	    }
@@ -364,8 +364,8 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	    }
 	    arr.add( obj );
 	    map.put( "orderArr", arr );
-	    Map< Integer,Object > priceMap = getFreightMoney( map );
-	    Object freightObj = priceMap.get( shopId );
+	    Map< String,Object > priceMap = getFreightMoney( map );
+	    Object freightObj = priceMap.get( CommonUtil.toString( shopId )  );
 	    if ( CommonUtil.isNotEmpty( freightObj ) ) {
 		freightPrice = CommonUtil.toDouble( freightObj );
 	    }

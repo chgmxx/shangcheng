@@ -224,7 +224,7 @@ public class MallFreightController extends BaseController {
     @RequestMapping( "79B4DE7C/getFreightByProvinceId" )
     public void getFreightByProvinceId( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入通过省份id来获取运费的controller" );
-	Map< Integer,Object > map = new HashMap< Integer,Object >();
+	Map< String,Object > map = new HashMap< String,Object >();
 	PrintWriter p = null;
 	try {
 	    p = response.getWriter();

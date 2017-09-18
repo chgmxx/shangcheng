@@ -498,7 +498,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 	map.put( "toshop", toshop );
 	map.put( "proTypeId", proTypeId );
-	Map< Integer,Object > priceMap = mallFreightService.getFreightMoney( map );//计算运费
+	Map< String,Object > priceMap = mallFreightService.getFreightMoney( map );//计算运费
 	request.setAttribute( "priceMap", com.alibaba.fastjson.JSONObject.toJSON( priceMap ) );
 
 	if ( CommonUtil.isNotEmpty( shopIds ) ) {

@@ -563,8 +563,8 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		    obj.put( "proNum", 1 );
 		    arr.add( obj );
 		    map.put( "orderArr", arr );
-		    Map< Integer,Object > priceMap = freightService.getFreightMoney( map );
-		    request.setAttribute( "priceMap", priceMap.get( shopid ) );
+		    Map< String,Object > priceMap = freightService.getFreightMoney( map );
+		    request.setAttribute( "priceMap", priceMap.get( CommonUtil.toString( shopid ) ) );
 		}
 
 		if ( CommonUtil.isNotEmpty( member ) ) {
