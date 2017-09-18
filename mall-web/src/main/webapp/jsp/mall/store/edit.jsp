@@ -167,7 +167,7 @@
             <div class="telDiv">
                 <c:if test="${empty sto.stoSmsTelephone }">
                     <div class="inpDiv">
-                        <input type="text" class="text1 abc2 stoSmsTelephone" placeholder="请输入推送手机" value="${sto.stoSmsTelephone }"/>
+                        <input type="text" class="text1 abc2 stoSmsTelephone" id="stoSmsTelephone" placeholder="请输入推送手机" value="${sto.stoSmsTelephone }"/>
                         <i class="addTel btn">新增</i>
                     </div>
                 </c:if>
