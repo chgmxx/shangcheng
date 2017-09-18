@@ -412,7 +412,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	if ( order.getOrderPayWay() == 9 ) {
 	    payWay = 2;
 	}
-	if ( order.getIsWallet() == 1 ) {
+	if ( CommonUtil.isNotEmpty( order.getIsWallet() ) && order.getIsWallet() == 1 ) {
 	    payWay = 3;
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
