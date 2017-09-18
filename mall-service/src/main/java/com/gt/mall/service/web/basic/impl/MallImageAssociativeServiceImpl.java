@@ -40,14 +40,17 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
     public void insertUpdBatchImage( Map< String,Object > map, Integer proId ) {
 	// 逻辑删除商品图片
 	if ( !CommonUtil.isEmpty( map.get( "delimageList" ) ) ) {
-	    List< MallImageAssociative > imageList = JSONArray.parseArray( map.get( "delimageList" ).toString(),MallImageAssociative.class );
+	    List< MallImageAssociative > imageList = JSONArray.parseArray( map.get( "delimageList" ).toString(), MallImageAssociative.class );
 	    if ( imageList != null && imageList.size() > 0 ) {
-		imageAssociativeDAO.updateBatch( imageList );
+		for ( MallImageAssociative mallImageAssociative : imageList ) {
+		    imageAssociativeDAO.updateById( mallImageAssociative );
+		}
+		/*imageAssociativeDAO.updateBatchImage( imageList );*/
 	    }
 	}
 	// 添加商品图片
 	if ( !CommonUtil.isEmpty( map.get( "imageList" ) ) ) {
-	    List< MallImageAssociative > addImgList = JSONArray.parseArray( map.get( "imageList" ).toString(),MallImageAssociative.class );
+	    List< MallImageAssociative > addImgList = JSONArray.parseArray( map.get( "imageList" ).toString(), MallImageAssociative.class );
 	    if ( addImgList != null && addImgList.size() > 0 ) {
 		for ( MallImageAssociative images : addImgList ) {
 		    images.setAssId( proId );

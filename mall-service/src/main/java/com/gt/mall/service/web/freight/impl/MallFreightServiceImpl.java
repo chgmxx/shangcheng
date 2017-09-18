@@ -137,8 +137,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	    if ( CommonUtil.isNotEmpty( map.get( "proTypeId" ) ) ) {
 		proTypeId = CommonUtil.toInteger( map.get( "proTypeId" ) );
 	    }
-
-	    JSONArray orderJSON = JSONArray.parseArray(  map.get( "orderArr" ).toString() );
+	    JSONArray orderJSON = JSONArray.parseArray( JSONArray.toJSONString( map.get( "orderArr" ) ) );
 
 	    if ( !CommonUtil.isEmpty( orderJSON ) && orderJSON.size() > 0 ) {
 		for ( Object object : orderJSON ) {
@@ -365,7 +364,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	    arr.add( obj );
 	    map.put( "orderArr", arr );
 	    Map< String,Object > priceMap = getFreightMoney( map );
-	    Object freightObj = priceMap.get( CommonUtil.toString( shopId )  );
+	    Object freightObj = priceMap.get( CommonUtil.toString( shopId ) );
 	    if ( CommonUtil.isNotEmpty( freightObj ) ) {
 		freightPrice = CommonUtil.toDouble( freightObj );
 	    }

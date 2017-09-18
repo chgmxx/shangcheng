@@ -100,7 +100,7 @@
         </foreach>
     </insert>
     <!-- 批量修改 -->
-    <update id="updateBatch" parameterType="java.util.List" >
+    <update id="updateBatchImage" parameterType="java.util.List" >
         <foreach collection="list" index="index" item="item" open="" separator=";" close="">
             update t_mall_image_associative
             <set>

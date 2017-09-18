@@ -40,7 +40,7 @@ public interface MallImageAssociativeDAO extends BaseMapper< MallImageAssociativ
      * 批量修改商品图片
      * @param imageList 图片信息列表
      */
-    int updateBatch(List<MallImageAssociative> imageList);
+    int updateBatchImage(List<MallImageAssociative> imageList);
 
     /**
      * 根据关联表id来查询图片

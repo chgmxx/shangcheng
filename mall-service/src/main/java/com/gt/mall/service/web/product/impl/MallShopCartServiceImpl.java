@@ -302,13 +302,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    }
 		    double price = CommonUtil.toDouble( maps.get( "detProPrice" ) );
 		    int num = CommonUtil.toInteger( maps.get( "detProNum" ) );
-		    DecimalFormat df = new DecimalFormat( "######0.00" );
-		    double totalPrice = CommonUtil.toDouble( df.format( price * num ) );
-		    proNum += num;
-		    price_total += totalPrice;
+		    double totalPrice = 0;
 		    double primaryPrice = Double.parseDouble( maps.get( "detPrivivilege" ).toString() );
-		    primary_price += primaryPrice * num;
-		    yuanjia_total += primaryPrice;
 
 		    Map< String,Object > specMap = null;
 		    boolean flag = true;
@@ -347,10 +342,10 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			}
 		    }
 		    if ( flag ) {
-			//			price_total = price_total + ( price * num );
-			//			totalPrice = totalPrice + ( price * num );
-			yuanjia_total += num * Double.parseDouble( maps.get( "detPrivivilege" ).toString() );
-			primary_price += Double.parseDouble( maps.get( "detPrivivilege" ).toString() ) * num;
+			price_total = price_total + ( price * num );
+			totalPrice = totalPrice + ( price * num );
+			yuanjia_total += num * primaryPrice;
+			primary_price += primaryPrice * num;
 			proNum += num;
 		    }
 
