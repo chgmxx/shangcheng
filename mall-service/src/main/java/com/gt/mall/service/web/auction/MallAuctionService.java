@@ -26,7 +26,7 @@ public interface MallAuctionService extends BaseService< MallAuction > {
      *
      * @return page
      */
-    PageUtil selectAuctionByShopId( Map< String,Object > param, int userId );
+    PageUtil selectAuctionByShopId( Map< String,Object > param, List< Map< String,Object > > shoplist );
 
     /**
      * 通过拍卖id查询拍卖信息

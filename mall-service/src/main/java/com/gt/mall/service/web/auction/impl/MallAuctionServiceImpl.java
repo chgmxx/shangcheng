@@ -16,7 +16,6 @@ import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +54,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     private WxShopService            wxShopService;
 
     @Override
-    public PageUtil selectAuctionByShopId( Map< String,Object > params, int userId) {
+    public PageUtil selectAuctionByShopId( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -68,23 +67,19 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	if ( count > 0 ) {// 判断拍卖是否有数据
-	    List< MallAuction > AuctionList = auctionDAO.selectByPage( params );
-	    if ( AuctionList != null ) {
-		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId);
-		for ( MallAuction auction : AuctionList ) {
-		    int status = isJoinAuction( auction );
-		    auction.setJoinId( status );
-		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == auction.getWx_shop_id() ) {
-			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
-				auction.setShopName( wxShops.getBusinessName() );
-			    }
+	    List< MallAuction > auctionList = auctionDAO.selectByPage( params );
+	    if ( auctionList != null && auctionList.size() > 0 && shoplist != null && shoplist.size() > 0 ) {
+		for ( MallAuction auction : auctionList ) {
+		    for ( Map< String,Object > shopMaps : shoplist ) {
+			int shop_id = CommonUtil.toInteger( shopMaps.get( "id" ) );
+			if ( auction.getShopId() == shop_id ) {
+			    auction.setShopName( shopMaps.get( "sto_name" ).toString() );
 			    break;
 			}
 		    }
 		}
 	    }
-	    page.setSubList( AuctionList );
+	    page.setSubList( auctionList );
 	}
 
 	return page;
