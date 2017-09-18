@@ -857,6 +857,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    if ( CommonUtil.isNotEmpty( order ) ) {//找人代付不更改状态
 		if ( order.getOrderStatus() == 1 ) {
+		    if ( CommonUtil.isEmpty( params.get( "status" ) ) ) {
+			params.put( "status", 2 );
+		    }
 		    count = mallOrderDAO.upOrderByorderNo( params );
 		    //判断订单是否有父类订单
 		    if ( CommonUtil.isNotEmpty( order.getOrderPid() ) && params.get( "status" ).toString().equals( "2" ) ) {
