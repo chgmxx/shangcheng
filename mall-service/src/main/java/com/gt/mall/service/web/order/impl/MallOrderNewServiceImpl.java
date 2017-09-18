@@ -259,7 +259,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	int shopId = 0;
 	double orderAllMoney = 0;
 	//如果有多个订单，则生成一个主订单
-	if ( orderList.size() > 1 ) {
+	if ( orderList.size() > 0 ) {
 	    if ( CommonUtil.isNotEmpty( allEntity ) ) {
 		orderAllMoney = allEntity.getBalanceMoney();
 		parentOrder.setUseFenbi( allEntity.getFenbiNum() );
