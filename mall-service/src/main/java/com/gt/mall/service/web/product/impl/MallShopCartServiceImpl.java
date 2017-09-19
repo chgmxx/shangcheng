@@ -1,5 +1,7 @@
 package com.gt.mall.service.web.product.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
@@ -479,14 +481,21 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		shopIds += shopMap.get( "shop_id" ).toString();
 		wxShopIds += shopMap.get( "wxShopId" ).toString() + ",";
 
-		if ( CommonUtil.isNotEmpty( shopMap.get( "flowId" ) ) ) {
-		    if ( CommonUtil.toInteger( shopMap.get( "flowId" ) ) > 0 ) {
-			request.setAttribute( "isFlow", 1 );
-			BusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( shopMap.get( "flowId" ) ) );
-			if ( CommonUtil.isNotEmpty( flow ) ) {
-			    request.setAttribute( "flowType", flow.getType() );
+		if(CommonUtil.isNotEmpty( shopMap.get( "message" ) )){
+		    JSONArray arr = JSONArray.parseArray( JSON.toJSONString( shopMap.get( "message" ) ) );
+		    for ( Object o : arr ) {
+			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject( o.toString() );
+			if ( CommonUtil.isNotEmpty( obj.get( "flowId" ) ) ) {
+			    if ( CommonUtil.toInteger( obj.get( "flowId" ) ) > 0 ) {
+				request.setAttribute( "isFlow", 1 );
+				BusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( obj.get( "flowId" ) ) );
+				if ( CommonUtil.isNotEmpty( flow ) ) {
+				    request.setAttribute( "flowType", flow.getType() );
+				}
+			    }
 			}
 		    }
+
 		}
 	    }
 	}
