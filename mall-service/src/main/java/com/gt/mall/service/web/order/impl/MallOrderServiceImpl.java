@@ -1995,7 +1995,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		returnParams.setOrderNo( order.getOrderNo() );
 		returnParams.setMoney( returnMoney );
 		returnParams.setFenbi( returnFenbi );
-		returnParams.setJifen( returnJifen );
+		returnParams.setJifen( CommonUtil.toIntegerByDouble( returnJifen ) );
 
 		Map< String,Object > resultMap = memberService.refundMoneyAndJifenAndFenbi( returnParams );
 		if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == -1 ) {

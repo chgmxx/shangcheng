@@ -40,5 +40,5 @@ public class ReturnParams implements Serializable {
     /**
      * 退款积分
      */
-    private double jifen = 0;
+    private int jifen = 0;
 }
