@@ -1,9 +1,9 @@
 package com.gt.mall.controller.api.store;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;

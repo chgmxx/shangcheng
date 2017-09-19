@@ -1,9 +1,8 @@
 package com.gt.mall.service.web.purchase.impl;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPayOrder;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.dao.purchase.PurchaseOrderDAO;
 import com.gt.mall.dao.purchase.PurchaseReceivablesDAO;
 import com.gt.mall.dao.purchase.PurchaseTermDAO;
@@ -16,6 +15,7 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.purchase.PurchaseReceivablesService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
+import com.gt.util.entity.result.pay.WxPayOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -2,9 +2,9 @@ package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.constant.Constants;
 import org.apache.log4j.Logger;
 

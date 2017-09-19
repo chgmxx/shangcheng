@@ -1,6 +1,6 @@
 package com.gt.mall.service.inter.wxshop;
 
-import com.gt.mall.bean.WxPublicUsers;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.param.wx.QrcodeCreateFinal;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;

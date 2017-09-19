@@ -1,8 +1,8 @@
 package com.gt.mall.controller.pifa.phone;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.basic.MallPaySet;

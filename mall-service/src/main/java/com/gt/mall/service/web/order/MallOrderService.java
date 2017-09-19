@@ -1,10 +1,10 @@
 package com.gt.mall.service.web.order;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;

@@ -1,11 +1,10 @@
 package com.gt.mall.service.web.auction.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPayOrder;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -24,6 +23,7 @@ import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.result.pay.WxPayOrder;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

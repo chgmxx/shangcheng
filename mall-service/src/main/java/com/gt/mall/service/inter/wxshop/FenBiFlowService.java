@@ -1,6 +1,5 @@
 package com.gt.mall.service.inter.wxshop;
 
-import com.gt.mall.bean.BusFlow;
 import com.gt.util.entity.param.fenbiFlow.*;
 import com.gt.util.entity.result.fenbi.FenBiCount;
 

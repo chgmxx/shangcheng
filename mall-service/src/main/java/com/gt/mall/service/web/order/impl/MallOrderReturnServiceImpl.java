@@ -1,8 +1,7 @@
 package com.gt.mall.service.web.order.impl;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.WxPayOrder;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
@@ -23,6 +22,7 @@ import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
+import com.gt.util.entity.result.pay.WxPayOrder;
 import com.gt.util.entity.result.wx.ApiWxApplet;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;

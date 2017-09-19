@@ -2,9 +2,9 @@ package com.gt.mall.service.web.seller.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.seller.*;
 import com.gt.mall.entity.basic.MallPaySet;

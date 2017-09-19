@@ -293,7 +293,7 @@
             </div>
         </c:if>
         <c:if test="${!empty pifa }">
-            <div class="select pad " onclick="showWrap(${status})">
+            <div class="select pad " onclick="showWrap(${status},'${pifa.status  }')">
                 <input type="hidden" class="pfType" value="${pifa.pfType }"/>
                 <c:set var="hpMoney" value="0"></c:set>
                 <c:set var="hpNum" value="0"></c:set>
@@ -894,7 +894,7 @@
 <script type="text/javascript" src="/js/mall/phone/phone_public.js"></script>
 <script type="text/javascript" src="/js/mall/product/phoneProductDetail.js?<%=System.currentTimeMillis()%>"></script>
 <script type="text/javascript" src="/js/mall/product/productDetail.js?<%=System.currentTimeMillis()%>"></script>
-<script type="text/javascript" src="/js/mall/product/piFaProductDetail.js"></script>
+<script type="text/javascript" src="/js/mall/product/piFaProductDetail.js?<%=System.currentTimeMillis()%>"></script>
 <c:if test="${!empty pifa }">
     <c:if test="${pifa.pfType == 1 }">
         <script type="text/javascript" src="/js/mall/product/phone/hand_detail_new_inven.js"></script>

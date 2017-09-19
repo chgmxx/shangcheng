@@ -1,8 +1,8 @@
 package com.gt.mall.service.web.product;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.product.MallShopCart;
 
 import javax.servlet.http.HttpServletRequest;

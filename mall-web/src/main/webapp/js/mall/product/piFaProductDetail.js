@@ -1,9 +1,17 @@
 ﻿var userid = $("input.userid").val();
 /*下单 遮罩层*/
-function showWrap(status) {
+function showWrap(status,pfStatus) {
     var memberId = $("input.memberId").val();
     if (memberId == null || memberId == "") {
         toLogin();
+        return;
+    }
+    if(pfStatus === "0"){
+        alert("该商品批发还未开始，请耐心等待");
+        return;
+    }
+    if(pfStatus === "-1"){
+        alert("该商品批发已结束，暂不能批发");
         return;
     }
     var memberId = $("input#memberIds").val();

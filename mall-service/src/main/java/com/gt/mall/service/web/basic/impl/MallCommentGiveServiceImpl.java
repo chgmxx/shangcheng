@@ -2,10 +2,10 @@ package com.gt.mall.service.web.basic.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallCommentGiveDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;

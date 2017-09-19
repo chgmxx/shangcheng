@@ -2,8 +2,8 @@ package com.gt.mall.service.inter.wxshop.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.RequestUtils;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.utils.CommonUtil;

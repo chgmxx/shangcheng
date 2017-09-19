@@ -3,7 +3,6 @@ package com.gt.mall.service.inter.wxshop.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.util.RequestUtils;
-import com.gt.mall.bean.BusFlow;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;

@@ -1,9 +1,9 @@
 package com.gt.mall.controller.member;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.entity.basic.MallComment;

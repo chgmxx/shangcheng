@@ -2,7 +2,6 @@ package com.gt.mall.controller.product;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusFlow;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.service.inter.member.CardService;
@@ -13,6 +12,7 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
+import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -52,7 +52,7 @@
              * @param id
              */
             $(".qrcode").click(function () {
-                parentOpenIframe( "批发预览",'200px', '240px',"<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>");
+                parentOpenIframe("批发预览", '200px', '240px', "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>");
 //                parent.layer.open({
 //                    type: 1,
 //                    title: "批发预览",
@@ -121,18 +121,20 @@
 							${pifa.pfStartTime } 至 ${pifa.pfEndTime }
 						</span>
                                     <span class="f2 fl">
-							<c:if test="${!empty pifa.status}"><div>
-								<c:if test="${pifa.status == 0}">未开始</c:if>
-								<c:if test="${pifa.status == 1}">进行中</c:if>
-								<c:if test="${pifa.status == -1}">已结束</c:if>
-								<c:if test="${pifa.status == -2}">已失效</c:if>
-							</div>
+                            <c:if test="${!empty pifa.status}">
+                                <div>
+                                <c:if test="${pifa.status == 0}">未开始</c:if>
+                                <c:if test="${pifa.status == 1}">进行中</c:if>
+                                <c:if test="${pifa.status == -1}">已结束</c:if>
+                                <c:if test="${pifa.status == -2}">已失效</c:if>
+                            </div>
                             </c:if>
-						</span>
-                                    <span class="f2 fl" style="line-height:20px;padding-top:10px;"><fmt:formatDate pattern="yyyy-MM-dd hh:mm:ss"
-                                                                                                                   value="${pifa.createTime }"/></span>
+                        </span>
+                                    <span class="f2 fl" style="line-height:20px;padding-top:10px;">
+                            <fmt:formatDate pattern="yyyy-MM-dd hh:mm:ss" value="${pifa.createTime }"/>
+                        </span>
                                     <span class="f2 fl span_a" style="width: 130px;position:relative;display:inline-block;">
-							<c:if test="${pifa.status == 0 || (pifa.joinId == 0 && pifa.status == 1)}">
+							<c:if test="${pifa.status == 0 || (pifa.status == 1)}">
                                 <a href="/mallWholesalers/to_edit.do?id=${pifa.id }" class="editGroup" title="编辑"></a>
                             </c:if>
 							<c:if test="${pifa.status == 0 || pifa.status == -1 || pifa.status == -2}">

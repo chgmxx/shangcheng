@@ -302,7 +302,7 @@
         <dependency>
             <groupId>com.gt.wxmp</groupId>
             <artifactId>lfx_wxmp_entity</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.6</version>
         </dependency>
 
         <!-- 联盟实体类 -->

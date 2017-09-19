@@ -49,7 +49,7 @@
         when p.pf_start_time > now() and   p.pf_end_time > now() then 0<!--未开始  -->
         when p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time  then 1<!-- 进行中 -->
         when p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/,o.id as joinId,
+        end status,/*if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,o.id as joinId,*/
         mp.two_code_path,mp.pro_name
     </sql>
 
@@ -90,7 +90,6 @@
         select  <include refid="page_product_Column_List" />
         from t_mall_pifa p
         left join t_mall_store s on p.shop_id = s.id
-        left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
         left join t_mall_product mp on mp.id= p.product_id
         where p.is_delete = 0
         <if test="type == -1"><!-- 未开始批发 -->
