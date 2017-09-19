@@ -581,14 +581,18 @@
                 <label>优惠券</label>
                 <div class="red-txt">- ￥<span id="yhj">0.00</span></div>
             </div>
-            <div class="fare-box">
-                <label>粉币</label>
-                <div class="red-txt">- ￥<span id="fb">0.00</span></div>
-            </div>
-            <div class="fare-box">
-                <label>积分</label>
-                <div class="red-txt">- ￥<span id="jf">0.00</span></div>
-            </div>
+            <c:if test="${fenbiNum > 0 && fenbiMoney > 0}">
+                <div class="fare-box">
+                    <label>粉币</label>
+                    <div class="red-txt">- ￥<span id="fb">0.00</span></div>
+                </div>
+            </c:if>
+            <c:if test="${jifenNum > 0 && jifenMoeny > 0}">
+                <div class="fare-box">
+                    <label>积分</label>
+                    <div class="red-txt">- ￥<span id="jf">0.00</span></div>
+                </div>
+            </c:if>
             <c:if test="${!empty unionMap && unionMap.code == 1}">
                 <div class="fare-box">
                     <label>联盟优惠</label>

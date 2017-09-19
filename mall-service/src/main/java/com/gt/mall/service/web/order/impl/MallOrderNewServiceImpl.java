@@ -268,11 +268,12 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    } else {
 		orderAllMoney = CommonUtil.toDouble( df.format( orderMoneyAll ) );
 	    }
-
-	    parentOrder.setOrderMoney( CommonUtil.toBigDecimal( orderAllMoney ) );
-	    parentOrder.setOrderFreightMoney( CommonUtil.toBigDecimal( freightMoney ) );
-	    parentOrder.setMallOrderDetail( null );
-	    orderList.add( 0, parentOrder );
+	    if ( orderList.size() > 1 ) {
+		parentOrder.setOrderMoney( CommonUtil.toBigDecimal( orderAllMoney ) );
+		parentOrder.setOrderFreightMoney( CommonUtil.toBigDecimal( freightMoney ) );
+		parentOrder.setMallOrderDetail( null );
+		orderList.add( 0, parentOrder );
+	    }
 	}
 	logger.info( "orderParams" + JSONArray.toJSON( orderList ) );
 

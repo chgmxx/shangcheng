@@ -44,7 +44,7 @@ function submitOrders() {
             }
             setTimeout(function(){
                 layer.closeAll();
-            },500)
+            },2000);
         }, error: function () {
             gtcommonDialog("提交订单失败", null, "提交订单");
             layer.closeAll();

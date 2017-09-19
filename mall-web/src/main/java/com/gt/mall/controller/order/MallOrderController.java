@@ -212,7 +212,7 @@ public class MallOrderController extends BaseController {
 	Map< String,Object > map = new HashMap<>();
 	WxPublicUsers pUser = SessionUtils.getLoginPbUser( request );
 	try {
-	    MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toBean( JSONObject.fromObject( params.get( "return" ) ), MallOrderReturn.class );
+	    MallOrderReturn orderReturn = com.alibaba.fastjson.JSONObject.parseObject( params.get( "return" ).toString(),MallOrderReturn.class );
 	    map = mallOrderService.updateOrderReturn( orderReturn, params.get( "order" ), pUser );
 	} catch ( Exception e ) {
 	    logger.error( "同意/拒绝退款方法异常" + e.getMessage() );

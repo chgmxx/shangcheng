@@ -125,7 +125,7 @@ body { font-size: 12px; }
   		-webkit-appearance:none;
   	}
   	.refund-info2 select{
-  		background: url(img/grey-arrow.png) no-repeat right center;
+  		background: url(/images/mall/grey-arrow.png) no-repeat right center;
   	}
   	.refund-info2 select,.refund-info2 input{
   		font-size: 0.52rem;

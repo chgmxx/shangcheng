@@ -1508,7 +1508,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 			boolean flags = true;
 
-			if ( CommonUtil.isNotEmpty( oReturn.getReturnFenbi() ) ) {
+			if ( CommonUtil.isNotEmpty( oReturn.getReturnFenbi() )  && oReturn.getReturnFenbi() > 0) {
 			    BusUser busUser = busUserService.selectById( order.getBusUserId() );//根据商家id查询商家信息
 			    if ( busUser.getFansCurrency() - oReturn.getReturnFenbi() < 0 ) {
 				flags = false;

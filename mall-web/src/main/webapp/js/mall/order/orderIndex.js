@@ -1,4 +1,4 @@
-﻿﻿$("#submit").click(function () {
+﻿$("#submit").click(function () {
     var type = $(".type").val();
     var noReturnReason = $(".noReturnReason").val();
     var returnAddress = $(".returnAddress").val();

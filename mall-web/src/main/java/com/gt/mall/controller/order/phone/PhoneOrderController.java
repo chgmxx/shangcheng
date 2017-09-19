@@ -718,11 +718,10 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		    HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入用户申请退款" );
 	Integer memberId = SessionUtils.getLoginMember( request ).getId();
-		/*Integer memberId = 200;*/
-	Map< String,Object > map = new HashMap< String,Object >();
+	Map< String,Object > map = new HashMap<>();
 
 	try {
-	    MallOrderReturn orderReturn = (MallOrderReturn) JSONObject.toBean( JSONObject.fromObject( params ), MallOrderReturn.class );
+	    MallOrderReturn orderReturn = com.alibaba.fastjson.JSONObject.parseObject(JSON.toJSONString( params ),MallOrderReturn.class  );
 	    orderReturn.setUserId( memberId );
 	    // 申请退款
 	    boolean flag = mallOrderService.addOrderReturn( orderReturn );
