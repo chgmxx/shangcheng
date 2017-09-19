@@ -14,7 +14,8 @@ public enum ResponseEnums {
     JWT_TOKEN_EXPIRED( 11, "TOKEN失效" ),
     SYSTEM_ERROR( 9999, "系統異常" ),
     INTER_ERROR( 1002, "请求接口异常" ),
-    NULL_ERROR( 0, "请求数据为空" )
+    NULL_ERROR( 0, "请求数据为空" ),
+    REFRESH_PAGE( 1002, "需要刷新页面" )
     ;
 
     private final int    code;

@@ -369,20 +369,17 @@ function save() {
             type: "post",
             success: function (data) {
                 layer.close(index);
-                if (data.message != null && data.message != "") {
-                    layer.alert(data.message, {
+                if (data.code === 1) {
+                    layer.alert("保存店铺成功", {
                         offset: "10%",
-                        shade:[0.1,"#fff"],
+                        shade: [0.1, "#fff"],
                         closeBtn: 0
                     }, function (index) {
-                        if (data.result) {
-                            location.href = "/store/index.do";
-                        }else{
-                            layer.closeAll();
-                        }
+                        location.href = "/store/index.do";
+                        layer.closeAll();
                     });
                 } else {
-                    alertMsg("保存店铺失败，请稍后重试");
+                    alert("保存店铺失败，请稍后重试");
                 }
 
             }

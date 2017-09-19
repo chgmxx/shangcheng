@@ -3,9 +3,9 @@ function submitOrders() {
     console.log(data);
 
     var flag = validateSubmit();
-     if (!flag) {
-     return false;
-     }
+    if (!flag) {
+        return false;
+    }
     var index = layer.open({
         title: "",
         content: "",
@@ -24,20 +24,12 @@ function submitOrders() {
                 if (data.url !== null && data.url !== "") {
                     location.href = data.url;
                 }
-                layer.closeAll();
-                return true;
+
             } else {
 
                 if (data.isLogin != null && data.isLogin == 1) {
-                    //location.reload(true);
-                    /* var loginData = {
-                     data : orderDetail,
-                     payWayName : $(".paywaynames").text(),
-                     orderPayWays: $("#orderPayWay").val()
-                     }; */
                     toLogin(null);
                 } else {
-                    layer.closeAll();
                     var txt = "";
                     if (null != data.cardResult && data.cardResult != "") {
                         txt = data.cardResult.msg;
@@ -49,13 +41,13 @@ function submitOrders() {
                     }
                     gtcommonDialog(txt, null, "提交订单");
                 }
-                layer.closeAll();
-                return false;
             }
+            setTimeout(function(){
+                layer.closeAll();
+            },500)
         }, error: function () {
             gtcommonDialog("提交订单失败", null, "提交订单");
             layer.closeAll();
-            return false;
         }
     });
 
@@ -101,7 +93,7 @@ function getSubmitParams() {
             delete orderObj.appointmentTime;
             delete orderObj.appointmentStartTime;
             delete orderObj.appointmentEndTime;
-        }else{
+        } else {
             orderObj.appointmentName = $("#appointName").val();
             orderObj.appointmentTelephone = $("#appointTelphone").val();
             orderObj.appointmentTime = $("#appointTime").val();

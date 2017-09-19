@@ -56,7 +56,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1116,13 +1115,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/goPay" )
     @Transactional( rollbackFor = Exception.class )
-    public void goPay( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) {
+    public void goPay( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) throws IOException {
 	logger.info( "进入去支付controller" );
-	PrintWriter out = null;
-	Map< String,Object > result = new HashMap< String,Object >();
-	int code = 1;
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
 	try {
-	    out = response.getWriter();
 	    if ( CommonUtil.isNotEmpty( param.get( "id" ) ) ) {
 
 		int orderId = CommonUtil.toInteger( param.get( "id" ) );
@@ -1146,29 +1143,29 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			    if ( CommonUtil.isNotEmpty( seckill ) ) {
 				if ( seckill.getIsDelete().toString().equals( "1" ) ) {
 				    code = -1;
-				    result.put( "result", false );
+				    result.put( "code", ResponseEnums.ERROR.getCode() );
 				    result.put( "msg", "您购买的秒杀商品已经被删除，请重新下单" );
 				} else if ( seckill.getIsUse().toString().equals( "-1" ) ) {
 				    code = -1;
-				    result.put( "result", false );
+				    result.put( "code", ResponseEnums.ERROR.getCode() );
 				    result.put( "msg", "您购买的秒杀商品已经被失效，请重新下单" );
 				} else if ( seckill.getStatus() == 0 ) {
 				    code = -1;
-				    result.put( "result", false );
+				    result.put( "code", ResponseEnums.ERROR.getCode() );
 				    result.put( "msg", "您购买的秒杀商品还没开始，请耐心等待" );
 				} else if ( seckill.getStatus() == -1 ) {
 				    code = -1;
-				    result.put( "result", false );
+				    result.put( "code", ResponseEnums.ERROR.getCode() );
 				    result.put( "msg", "您购买的秒杀商品已经结束，请重新下单" );
 				}
 			    } else {
 				code = -1;
-				result.put( "result", false );
+				result.put( "code", ResponseEnums.ERROR.getCode() );
 				result.put( "msg", "您购买的秒杀商品已经被删除，请重新下单" );
 			    }
 			} else {
 			    code = -1;
-			    result.put( "result", false );
+			    result.put( "code", ResponseEnums.ERROR.getCode() );
 			    result.put( "msg", "您的订单已关闭，请重新下单" );
 			}
 
@@ -1182,16 +1179,17 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 					String proSpecificas = key.toString();
 					JSONObject p = JSONObject.fromObject( map.get( key ) );
 					int proNum = CommonUtil.toInteger( p.get( "num" ) );
-					result = mallProductService.calculateInventory( detail.getProductId(), proSpecificas, proNum, order.getBuyerUserId() );
-					if ( !( result.get( "result" ) ).equals( "true" ) ) {
+					Map< String,Object > resultMap = mallProductService
+							.calculateInventory( detail.getProductId(), proSpecificas, proNum, order.getBuyerUserId() );
+					if ( !( resultMap.get( "result" ) ).equals( "true" ) ) {
 					    code = -1;
 					    break;
 					}
 				    }
 				} else {
-				    result = mallProductService
+				    Map< String,Object > resultMap = mallProductService
 						    .calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
-				    if ( !( result.get( "result" ) ).equals( "ture" ) ) {
+				    if ( !( resultMap.get( "result" ) ).equals( "ture" ) ) {
 					code = -1;
 					break;
 				    }
@@ -1201,32 +1199,25 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			}
 		    }
 		    if ( order.getOrderStatus() == 2 || order.getOrderStatus() == 3 || order.getOrderStatus() == 4 ) {
-			result.put( "result", false );
-			code = 0;
+			result.put( "code", ResponseEnums.REFRESH_PAGE.getCode() );
 			result.put( "msg", "您已经支付成功，无需再次支付" );
 		    }
-		    result.put( "proTypeId", order.getMallOrderDetail().get( 0 ).getProTypeId() );
-		    result.put( "out_trade_no", order.getOrderNo() );
-		    result.put( "orderMoney", order.getOrderMoney() );
-		    result.put( "busId", order.getBusUserId() );
+
+		    String url = mallOrderNewService.wxPayWay( CommonUtil.toDouble( order.getOrderMoney() ), order.getOrderNo(), order );
+		    result.put( "url", url );
 		}
 	    }
 
 	} catch ( Exception e ) {
-	    code = -1;
-	    result.put( "result", false );
+	    result.put( "code", ResponseEnums.ERROR.getCode() );
 	    result.put( "msg", "去支付失败，稍后请重新支付" );
 	    logger.error( "去支付异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    if ( CommonUtil.isEmpty( result.get( "result" ) ) ) {
-		code = 1;
-		result.put( "result", true );
+	    if ( CommonUtil.isEmpty( result.get( "code" ) ) ) {
+		result.put( "code", code );
 	    }
-	    result.put( "code", code );
-	    out.write( JSONObject.fromObject( result ).toString() );
-	    out.flush();
-	    out.close();
+	    CommonUtil.write( response, result );
 	}
     }
 

@@ -388,19 +388,10 @@ function goPay(orderId,payWay,orderMoney){
 		  dataType:"json",
 		  success:function(data){
 				if(data.result){
-					if(payWay == "3" || payWay == "4" || payWay == "8"){
-						location.href = "/phoneOrder/79B4DE7C/payWay.do?orderId="+orderId+"&orderMoney="+orderMoney+"&payWay="+payWay+"&uId="+userid;
-					}else if(payWay == "9"){
-						var model = 3;
-						if(data.proTypeId == 2){
-							model = 13;
-						}
-						var alipaySubject = $("input.alipaySubject").val();
-						var return_url = "${http}/phoneOrder/"+orderId+"/"+data.busId+"/1/79B4DE7C/orderPaySuccess.do";
-						location.href="/alipay/79B4DE7C/alipayApi.do?out_trade_no="+data.out_trade_no+"&subject="+alipaySubject+"&total_fee="+data.orderMoney+"&busId="+data.busId+"&model="+model+"&businessUtilName=mallOrderAlipayNotifyUrlBuinessService&return_url="+return_url;
-					}else{
-						location.href = "/wxPay/79B4DE7C/wxMallAnOrder.do?orderId="+orderId;
-					}
+                    //微信支付
+                    if (data.url !== null && data.url !== "") {
+                        location.href = data.url;
+                    }
 				}else{
                     if(data.code == 0){
                         alert(data.msg);
@@ -413,6 +404,9 @@ function goPay(orderId,payWay,orderMoney){
                         }
                     }
 				}
+              setTimeout(function(){
+
+			  },5000)
 				layer.closeAll();
 		  },error:function(){
 				layer.closeAll();

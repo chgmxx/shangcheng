@@ -7,6 +7,7 @@ import com.gt.mall.bean.WxPublicUsers;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -174,17 +175,17 @@ public class MallStoreController extends BaseController {
 	    sto.setStoCreateTime( new Date() );
 	    boolean flag = mallStoreService.saveOrUpdate( sto, user );
 	    if ( flag ) {
-		msg.put( "result", true );
+		msg.put( "code", ResponseEnums.SUCCESS.getCode() );
 		SessionUtils.setShopListBySession( user.getId(), null, request );
 		mallStoreService.findAllStoByUser( user, request );
 	    }
 	} catch ( BusinessException e ) {
-	    msg.put( "result", false );
+	    msg.put( "code", e.getCode() );
 	    msg.put( "message", e.getMessage() );
 	    e.printStackTrace();
 	    logger.error( "保存店铺信息异常：" + e.getMessage() );
 	} catch ( Exception e ) {
-	    msg.put( "result", false );
+	    msg.put( "code", ResponseEnums.ERROR.getCode() );
 	    msg.put( "message", e.getMessage() );
 	    e.printStackTrace();
 	    logger.error( "保存店铺信息异常：" + e.getMessage() );
