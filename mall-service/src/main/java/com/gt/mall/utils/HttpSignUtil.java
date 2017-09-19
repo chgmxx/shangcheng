@@ -110,8 +110,8 @@ public class HttpSignUtil {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
 	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
 	}
-	if ( resultMap.containsKey( "data" ) ) {
-	    resultMap.put( "data", resultMap.get( "data" ) );
+	if ( resultObj.containsKey( "data" ) ) {
+	    resultMap.put( "data", resultObj.get( "data" ) );
 	}
 	return resultMap;
     }

@@ -1297,13 +1297,13 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 	} catch ( BusinessException be ) {
 	    result.put( "code", be.getCode() );
-	    result.put( "msg", be.getMessage() );
+	    result.put( "errorMsg", be.getMessage() );
 	    logger.error( "生成订单异常：" + be.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "生成订单异常：" + e );
 	    e.printStackTrace();
 	    result.put( "code", ResponseEnums.ERROR.getCode() );
-	    result.put( "msg", "提交订单失败" );
+	    result.put( "errorMsg", "提交订单失败" );
 	} finally {
 	    CommonUtil.write( response, result );
 	}

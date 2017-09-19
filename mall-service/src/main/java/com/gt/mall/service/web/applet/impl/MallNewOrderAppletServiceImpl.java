@@ -2067,18 +2067,23 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    ReqGetMobileInfo reqGetMobileInfo = new ReqGetMobileInfo();
 	    reqGetMobileInfo.setPhone( order.getFlowPhone() );
 	    Map map = fenBiFlowService.getMobileInfo( reqGetMobileInfo );
-	    if ( map.get( "code" ).toString().equals( "1" ) ) {
+	    if ( map.get( "code" ).toString().equals( "-1" ) ) {
 		resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 		resultMap.put( "errorMsg", map.get( "errorMsg" ) );
 		return resultMap;
-	    } else if ( map.get( "code" ).equals( "1" ) ) {
+	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
 		GetMobileInfo mobileInfo = JSONObject.toJavaObject( JSONObject.parseObject( map.get( "data" ).toString() ), GetMobileInfo.class );
 
 		BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 
-		if ( mobileInfo.getSupplier().equals( "中国联通" ) && flow.getCount() == 10 ) {
+		if ( mobileInfo.getSupplier().equals( "中国联通" ) && flow.getType() == 10 ) {
 		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 		    resultMap.put( "errorMsg", "充值失败,联通号码至少30MB" );
+		    return resultMap;
+		}
+		if(flow.getCount() == 0){
+		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
+		    resultMap.put( "errorMsg", "流量数量不足，不能充值" );
 		    return resultMap;
 		}
 	    }

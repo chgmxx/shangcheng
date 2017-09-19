@@ -1,11 +1,13 @@
 function submitOrders() {
-    var data = getSubmitParams();
-    console.log(data);
-
     var flag = validateSubmit();
     if (!flag) {
         return false;
     }
+
+    var data = getSubmitParams();
+    console.log(data);
+
+
     var index = layer.open({
         title: "",
         content: "",
@@ -24,9 +26,7 @@ function submitOrders() {
                 if (data.url !== null && data.url !== "") {
                     location.href = data.url;
                 }
-
             } else {
-
                 if (data.isLogin != null && data.isLogin == 1) {
                     toLogin(null);
                 } else {
@@ -37,7 +37,7 @@ function submitOrders() {
                             location.href = data.cardResult.url;
                         }
                     } else {
-                        txt = data.msg;
+                        txt = data.errorMsg;
                     }
                     gtcommonDialog(txt, null, "提交订单");
                 }
@@ -59,7 +59,11 @@ function getSubmitParams() {
     var orderArr = [];
     $(".couponDivs").each(function () {
         var shopId = $(this).attr("stoId");
+        var flowCzPhone = $(".flowCzPhone").val();
         var obj = $(".orderDivForm").serializeObject();
+        if(flowCzPhone !== null && flowCzPhone !== ""){
+            obj.flowPhone = flowCzPhone;
+        }
         var detailArr = [];
         var isCoupons = 0;
         var orderMoney = $(this).find(".orderCountMoney").val() * 1;
