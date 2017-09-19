@@ -763,10 +763,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	successBo.setDelay( 0 ); //会员赠送物品 0延迟送 1立即送  -1 不赠送物品
 	successBo.setDataSource( order.getBuyerUserType() );
 	successBo.setUcTable( "t_mall_order" );
-	Map< String,Object > payMap = memberPayService.paySuccess( successBo );
-	if ( CommonUtil.isNotEmpty( payMap ) ) {
-	    if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {
-		throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), CommonUtil.toString( payMap.get( "errorMsg" ) ) );
+	if(memberService.isMember( order.getBuyerUserId() )){
+	    Map< String,Object > payMap = memberPayService.paySuccess( successBo );
+	    if ( CommonUtil.isNotEmpty( payMap ) ) {
+		if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {
+		    throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), CommonUtil.toString( payMap.get( "errorMsg" ) ) );
+		}
 	    }
 	}
     }
@@ -1987,18 +1989,20 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 
-	    ReturnParams returnParams = new ReturnParams();
-	    returnParams.setBusId( order.getBusUserId() );
-	    returnParams.setOrderNo( order.getOrderNo() );
-	    returnParams.setMoney( returnMoney );
-	    returnParams.setFenbi( returnFenbi );
-	    returnParams.setJifen( returnJifen );
+	    if(memberService.isMember( order.getBuyerUserId() )){
+		ReturnParams returnParams = new ReturnParams();
+		returnParams.setBusId( order.getBusUserId() );
+		returnParams.setOrderNo( order.getOrderNo() );
+		returnParams.setMoney( returnMoney );
+		returnParams.setFenbi( returnFenbi );
+		returnParams.setJifen( returnJifen );
 
-	    Map< String,Object > resultMap = memberService.refundMoneyAndJifenAndFenbi( returnParams );
-	    if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == -1 ) {
-		//同步失败，存入redis todo  定时器还未做
-		JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( returnParams ) );
-		//		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
+		Map< String,Object > resultMap = memberService.refundMoneyAndJifenAndFenbi( returnParams );
+		if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == -1 ) {
+		    //同步失败，存入redis todo  定时器还未做
+		    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( returnParams ) );
+		    //		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
+		}
 	    }
 	}
 

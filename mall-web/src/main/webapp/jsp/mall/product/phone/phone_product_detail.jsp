@@ -1378,12 +1378,16 @@
                         }
                     }
                     if (presaleLen > 0) {
+                        var presalePrices = iPrice;
+                        if (discount > 0 && discount < 1) {
+                            presalePrices = yuanjiaprice;
+                        }
                         //判断预售是否有价格调整
                         if ($("input.presaleDiscount").length > 0 && $("input.presaleSaleType").length > 0) {
-                            var proPrices = getPresalePrice(iPrice);
+                            var proPrices = getPresalePrice(presalePrices);
                             $("#attr_lay_price").text(proPrices);
-                            $(".attr-lay .before-price span").html((iPrice * 1).toFixed(2));
-                            if (iPrice * 1 > proPrices * 1) {
+                            $(".attr-lay .before-price span").html((presalePrices * 1).toFixed(2));
+                            if (presalePrices * 1 > proPrices * 1) {
                                 $(".attr-lay .before-price").show();
                             } else {
                                 $(".attr-lay .before-price").hide();
@@ -1535,12 +1539,16 @@
                         if ($(".prePrice_arr").length > 0) {
                             intNum = $(".prePrice_arr[spec='" + specIds + "']").attr("invNum");
                         }
+                        var presalePrices = iPrice;
+                        if (discount > 0 && discount < 1) {
+                            presalePrices = yuanjiaprice;
+                        }
                         //判断预售是否有价格调整
                         if ($("input.presaleDiscount").length > 0 && $("input.presaleSaleType").length > 0) {
-                            var proPrices = getPresalePrice(iPrice);
+                            var proPrices = getPresalePrice(presalePrices);
                             $("#attr_lay_price").text(proPrices);
-                            $(".attr-lay .before-price span").html((iPrice * 1).toFixed(2));
-                            if (iPrice * 1 > proPrices * 1) {
+                            $(".attr-lay .before-price span").html((presalePrices * 1).toFixed(2));
+                            if (presalePrices * 1 > proPrices * 1) {
                                 $(".attr-lay .before-price").show();
                             } else {
                                 $(".attr-lay .before-price").hide();

@@ -516,7 +516,7 @@
                     type: 2,
                     title: "确认收货并退款",
                     skin: 'layui-layer-rim', //加上边框
-                    area: ['500px', '400px'], //宽高
+                    area: ['520px', '400px'], //宽高
                     offset: scrollHeight + "px",
                     shade: [0.1, "#fff"],
                     content: "/mallOrder/returnPopUp.do?rId=" + rId + "&type=3" + "&oNo=" + oNo + "&orderPayNo=" + orderPayNo
