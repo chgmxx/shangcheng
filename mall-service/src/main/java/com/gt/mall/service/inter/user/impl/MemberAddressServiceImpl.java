@@ -25,7 +25,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 
     @Override
     public Map addressDefault( String memberIds ) {
-	if ( CommonUtil.isNotEmpty( memberIds ) ) {
+	if ( CommonUtil.isEmpty( memberIds ) ) {
 	    return null;
 	}
 	Map< String,Object > params = new HashMap<>();
@@ -53,7 +53,7 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 
     @Override
     public List< MemberAddress > addressList( String memberIds ) {
-	if ( CommonUtil.isNotEmpty( memberIds ) ) {
+	if ( CommonUtil.isEmpty( memberIds ) ) {
 	    return null;
 	}
 	Map< String,Object > params = new HashMap<>();
