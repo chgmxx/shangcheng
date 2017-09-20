@@ -1,5 +1,8 @@
 package com.gt.mall.config.interceptor;
 
+import com.gt.api.bean.sign.SignEnum;
+import com.gt.api.util.sign.BodyRequestWrapper;
+import com.gt.api.util.sign.SignFilterUtils;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.utils.CommonUtil;
@@ -68,8 +71,24 @@ public class MyInterceptor implements HandlerInterceptor {
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler )
 		    throws Exception {
 
-	logger.error( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.error( "basePath = " + CommonUtil.getpath( request ) );
+	HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+	HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+
+	// js跨域支持
+	httpServletResponse.setHeader( "Access-Control-Allow-Origin", "*" );
+	httpServletResponse.setHeader( "Access-Control-Allow-Methods", "POST, GET, PUT, DELETE" );
+	httpServletResponse.setHeader( "Access-Control-Max-Age", "3600" );
+	httpServletResponse.setHeader( "Access-Control-Allow-Headers", "Accept, Origin, XRequestedWith, Content-Type, LastModified" );
+
+	// 设置返回编码和类型
+	response.setCharacterEncoding( "UTF-8" );
+	response.setContentType( "application/json; charset=utf-8" );
+
+	// 在wrapper中获取新的servletRequest
+	request = new BodyRequestWrapper( httpServletRequest );
+
+	logger.info( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+	logger.info( "basePath = " + CommonUtil.getpath( request ) );
 
 	long startTime = System.currentTimeMillis();
 	request.setAttribute( "runStartTime", startTime );
@@ -85,6 +104,27 @@ public class MyInterceptor implements HandlerInterceptor {
 	    String tmp = url.substring( 0, url.lastIndexOf( "/" ) );
 	    urlwx = tmp.substring( tmp.lastIndexOf( "/" ) + 1, tmp.length() );
 	}
+	//请求商城接口拦截
+	if ( url.equals( "mallAPI" ) || url.contains( "mallAPI" ) ) {
+	    String signKey = "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM"; // 定义到配置文件中
+	    // 获取签名信息
+	    String code = SignFilterUtils.postByHttp( request, signKey );
+	    logger.info( "获取签名信息" + code );
+	    if ( SignEnum.TIME_OUT.getCode().equals( code ) ) {
+		// 超过指定时间
+		response.getWriter().append( "{'error':'请求超过指定时间'}" );
+		return false;
+	    } else if ( SignEnum.SIGN_ERROR.getCode().equals( code ) ) {
+		// 签名验证错误
+		response.getWriter().append( "{'error':'签名验证错误，请检查签名信息'}" );
+		return false;
+	    } else if ( SignEnum.SERVER_ERROR.getCode().equals( code ) ) {
+		// 签名系统错误
+		response.getWriter().append( "{'error':'系统错误，请检查传入参数'}" );
+		return false;
+	    }
+	}
+	//商城登陆拦截
 	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.contains( "79B4DE7C" ) ) {//移动端
 	    Member member = SessionUtils.getLoginMember( request );
 	    request.setAttribute( "member", member );

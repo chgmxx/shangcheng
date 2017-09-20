@@ -26,7 +26,6 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
     public void postHandle( HttpServletRequest request,
 		    HttpServletResponse response, Object handler,
 		    ModelAndView modelAndView ) throws Exception {
-	System.out.println( "功能日志拦截 = " );
 	if ( !handler.getClass().getName().endsWith( "DwrController" ) ) {
 	    HandlerMethod handlerMethod = (HandlerMethod) handler;
 	    SysLogAnnotation annotation = handlerMethod.getMethodAnnotation( SysLogAnnotation.class );
