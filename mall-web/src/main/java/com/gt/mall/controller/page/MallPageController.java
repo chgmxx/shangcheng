@@ -472,17 +472,17 @@ public class MallPageController extends AuthorizeOrLoginController {
 		name = storeMap.get( "business_name" ).toString();
 	    }
 
-	   /* if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "url" ) ) ) {
+	    if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "isShare" ) ) ) {
 		Map< String,Object > shareParam = new HashMap<>();
 		shareParam.put( "share", "onMenuShareTimeline,onMenuShareAppMessage,showAllNonBaseMenuItem" );
 		shareParam.put( "imagesUrl", headImg );
 		shareParam.put( "title", name + "-" + obj.getPagName() );
-		shareParam.put( "url", CommonUtil.getpath( request ) );
+		shareParam.put( "url", CommonUtil.getpath( request ) + "&isShare=1" );
 		shareParam.put( "userid", userid );
 		String url = mallPageService.wxShare( userid, request, shareParam );
 		response.sendRedirect( url );
 		return null;
-	    }*/
+	    }
 
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );

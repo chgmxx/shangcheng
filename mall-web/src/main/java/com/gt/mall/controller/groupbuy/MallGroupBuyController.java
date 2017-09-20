@@ -515,9 +515,13 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		}
 		Map< String,Object > shareParam = new HashMap<>();
 		shareParam.put( "share", "showAllNonBaseMenuItem,onMenuShareTimeline,onMenuShareAppMessage" );
-		shareParam.put( "imagesUrl", PropertiesUtil.getResourceUrl() + productMap.get( "image_url" ) );
+		String imagesUrl = productMap.get( "image_url" ).toString();
+		if ( imagesUrl.substring( 0, 1 ).equals( "/" ) ) {
+		    imagesUrl = imagesUrl.substring( 1, imagesUrl.length() );
+		}
+		shareParam.put( "imagesUrl", PropertiesUtil.getResourceUrl() + imagesUrl );
 		shareParam.put( "title", title );
-		shareParam.put( "url", CommonUtil.getpath( request )+"&isShare=1" );
+		shareParam.put( "url", CommonUtil.getpath( request ) + "&isShare=1" );
 		shareParam.put( "userid", userid );
 		String url = mallPageService.wxShare( userid, request, shareParam );
 		response.sendRedirect( url );

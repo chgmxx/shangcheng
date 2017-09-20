@@ -76,7 +76,7 @@
                     <tr>
                         <th class="cell-3"><input type="checkbox" name="check"
                                                   id="checkAll" class="allCheck" value="" onclick="showMore(this)"/></th>
-                        <th class="cell-10">商品</th>
+                        <th class="cell-7">商品</th>
                         <th class="cell-8"></th>
                         <th class="cell-8">所属店铺</th>
                         <th class="cell-8">单价(元)</th>

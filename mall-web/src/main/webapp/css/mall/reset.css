@@ -8,7 +8,6 @@ body {
     background: #fff;
     color: #000;
     font-family: "Microsoft YaHei", "黑体", "宋体", Arial, Helvetica, sans-serif;
-    /*padding: 0 20px;*/
 }
 
 td, th, caption {
@@ -76,6 +75,7 @@ p {
 body {
     max-width: 1920px;
     margin: 0 auto;
+    padding: 10px;
 }
 
 body, html {
