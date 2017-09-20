@@ -499,7 +499,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    List< Map< String,Object > > joinList = groupJoinService.selectJoinByjoinId( maps );//查询参团人
 
 	    //公众号分享
-	    if ( CommonUtil.isNotEmpty( publicMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "url" ) ) ) {
+	    if ( CommonUtil.isNotEmpty( publicMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "isShare" ) ) ) {
 		int chaPeopleNum = 0;
 		if ( CommonUtil.isNotEmpty( productMap ) && CommonUtil.isNotEmpty( productMap.get( "peopleNum" ) ) ) {
 		    chaPeopleNum = CommonUtil.toInteger( productMap.get( "peopleNum" ) ) - joinList.size();
@@ -517,7 +517,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		shareParam.put( "share", "showAllNonBaseMenuItem,onMenuShareTimeline,onMenuShareAppMessage" );
 		shareParam.put( "imagesUrl", PropertiesUtil.getResourceUrl() + productMap.get( "image_url" ) );
 		shareParam.put( "title", title );
-		shareParam.put( "url", CommonUtil.getpath( request ) );
+		shareParam.put( "url", CommonUtil.getpath( request )+"&isShare=1" );
 		shareParam.put( "userid", userid );
 		String url = mallPageService.wxShare( userid, request, shareParam );
 		response.sendRedirect( url );
