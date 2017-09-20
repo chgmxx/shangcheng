@@ -511,7 +511,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		    old_price = CommonUtil.toDouble( productMap.get( "old_price" ) ) - price;
 		}
 		if ( old_price > 0 ) {
-		    title = "、立省" + old_price + "元";
+		    title += "、立省" + old_price + "元";
 		}
 		Map< String,Object > shareParam = new HashMap<>();
 		shareParam.put( "share", "showAllNonBaseMenuItem,onMenuShareTimeline,onMenuShareAppMessage" );
