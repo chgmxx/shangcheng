@@ -12,8 +12,6 @@ import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.utils.*;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
@@ -22,6 +20,7 @@ import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -67,9 +66,9 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
     @Autowired
     private MemberService               memberService;
     @Autowired
-    private WxPublicUserService         wxPublicUserService;
-    @Autowired
     private BusUserService              busUserService;
+    @Autowired
+    private MallPageService             mallPageService;
 
     /**
      * 团购管理列表页面
@@ -475,18 +474,55 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		    @RequestParam Map< String,Object > params ) throws Exception {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
+	    MallGroupBuy groupBuy = groupBuyService.selectById( id );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
-		request.setAttribute( "userid", userid );
+	    } else {
+		userid = groupBuy.getUserId();
 	    }
+	    request.setAttribute( "userid", userid );
 	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-	    /*if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
-		    boolean isLogin = pageService.isLogin(member, userid, request);
-		    if(!isLogin){
-			    return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
-		    }
-	    }*/
+
+	    String buyerUserId = "";
+	    if ( CommonUtil.isNotEmpty( params.get( "buyerUserId" ) ) ) {
+		buyerUserId = CommonUtil.toString( params.get( "buyerUserId" ) );
+	    } else if ( CommonUtil.isNotEmpty( member ) ) {
+		buyerUserId = member.getId().toString();
+	    }
+
+	    Map< String,Object > productMap = groupBuyService.getGroupBuyById( buyerUserId, id );// 通过团购id查询团购信息
+
+	    Map< String,Object > maps = new HashMap<>();
+	    maps.put( "groupBuyId", id );
+	    maps.put( "joinId", joinId );
+	    List< Map< String,Object > > joinList = groupJoinService.selectJoinByjoinId( maps );//查询参团人
+
+	    //公众号分享
+	    if ( CommonUtil.isNotEmpty( publicMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "url" ) ) ) {
+		int chaPeopleNum = 0;
+		if ( CommonUtil.isNotEmpty( productMap ) && CommonUtil.isNotEmpty( productMap.get( "peopleNum" ) ) ) {
+		    chaPeopleNum = CommonUtil.toInteger( productMap.get( "peopleNum" ) ) - joinList.size();
+		}
+		String title = "还差" + chaPeopleNum + "人、我" + productMap.get( "price" ) + "元团了" + productMap.get( "pro_name" ) + "商品";
+		double old_price = 0;
+		double price = CommonUtil.toDouble( productMap.get( "price" ) );
+		if ( CommonUtil.isNotEmpty( productMap.get( "old_price" ) ) ) {
+		    old_price = CommonUtil.toDouble( productMap.get( "old_price" ) ) - price;
+		}
+		if ( old_price > 0 ) {
+		    title = "、立省" + old_price + "元";
+		}
+		Map< String,Object > shareParam = new HashMap<>();
+		shareParam.put( "share", "showAllNonBaseMenuItem,onMenuShareTimeline,onMenuShareAppMessage" );
+		shareParam.put( "imagesUrl", PropertiesUtil.getResourceUrl() + productMap.get( "image_url" ) );
+		shareParam.put( "title", title );
+		shareParam.put( "url", CommonUtil.getpath( request ) );
+		shareParam.put( "userid", userid );
+		String url = mallPageService.wxShare( userid, request, shareParam );
+		response.sendRedirect( url );
+		return null;
+	    }
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -498,18 +534,9 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		isWx = 1;//可以微信支付
 	    }
 	    request.setAttribute( "isWxPay", isWx );
-	    MallGroupBuy groupBuy = groupBuyService.selectById( id );
-
-	    String buyerUserId = "";
-	    if ( CommonUtil.isNotEmpty( params.get( "buyerUserId" ) ) ) {
-		buyerUserId = CommonUtil.toString( params.get( "buyerUserId" ) );
-	    } else if ( CommonUtil.isNotEmpty( member ) ) {
-		buyerUserId = member.getId().toString();
-	    }
 
 	    String http = PropertiesUtil.getResourceUrl();// 图片url链接前缀
 
-	    Map< String,Object > productMap = groupBuyService.getGroupBuyById( buyerUserId, id );// 通过团购id查询团购信息
 	    int groupBuyId = 0;
 	    if ( CommonUtil.isNotEmpty( productMap.get( "gBuyId" ) ) ) {
 		groupBuyId = CommonUtil.toInteger( productMap.get( "gBuyId" ) );
@@ -538,10 +565,6 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		discount = memberService.getMemberDiscount( member.getId() );//商品折扣
 	    }
 	    request.setAttribute( "discount", discount );//折扣价
-	    Map< String,Object > maps = new HashMap< String,Object >();
-	    maps.put( "groupBuyId", id );
-	    maps.put( "joinId", joinId );
-	    List< Map< String,Object > > joinList = groupJoinService.selectJoinByjoinId( maps );//查询参团人
 	    int isMember = 0;
 	    int orderId = 0;
 	    int orderDetailId = 0;
