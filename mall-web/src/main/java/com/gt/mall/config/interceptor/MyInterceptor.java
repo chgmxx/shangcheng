@@ -1,7 +1,6 @@
 package com.gt.mall.config.interceptor;
 
 import com.gt.api.bean.sign.SignEnum;
-import com.gt.api.util.sign.BodyRequestWrapper;
 import com.gt.api.util.sign.SignFilterUtils;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
@@ -71,21 +70,21 @@ public class MyInterceptor implements HandlerInterceptor {
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler )
 		    throws Exception {
 
-	HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+	/*HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 	HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
 	// js跨域支持
 	httpServletResponse.setHeader( "Access-Control-Allow-Origin", "*" );
 	httpServletResponse.setHeader( "Access-Control-Allow-Methods", "POST, GET, PUT, DELETE" );
 	httpServletResponse.setHeader( "Access-Control-Max-Age", "3600" );
-	httpServletResponse.setHeader( "Access-Control-Allow-Headers", "Accept, Origin, XRequestedWith, Content-Type, LastModified" );
+	httpServletResponse.setHeader( "Access-Control-Allow-Headers", "Accept, Origin, XRequestedWith, Content-Type, LastModified" );*/
 
 	// 设置返回编码和类型
 	response.setCharacterEncoding( "UTF-8" );
 	response.setContentType( "application/json; charset=utf-8" );
 
 	// 在wrapper中获取新的servletRequest
-	request = new BodyRequestWrapper( httpServletRequest );
+	/*request = new BodyRequestWrapper( httpServletRequest );*/
 
 	logger.info( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
 	logger.info( "basePath = " + CommonUtil.getpath( request ) );
@@ -127,7 +126,9 @@ public class MyInterceptor implements HandlerInterceptor {
 	//商城登陆拦截
 	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.contains( "79B4DE7C" ) ) {//移动端
 	    Member member = SessionUtils.getLoginMember( request );
-	    request.setAttribute( "member", member );
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		request.setAttribute( "member", member );
+	    }
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) || passIntercepto( url ) ) {
 	    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
