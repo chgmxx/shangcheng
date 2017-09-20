@@ -69,7 +69,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 手机端订单列表
      */
-    public List< Map< String,Object > > mobileOrderList( Map< String,Object > params, int busUserId ) throws Exception;
+    public PageUtil mobileOrderList( Map< String,Object > params, int busUserId ) throws Exception;
 
     /**
      * 申请退款

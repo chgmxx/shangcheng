@@ -119,12 +119,13 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 		}
 	    }
 	}
+	group = mallGroupDAO.selectById( group.getId() );
 	// 修改父类分组
 	if ( group.getGroupPId() != null && group.getGroupPId() > 0 ) {
 	    MallGroup parent = new MallGroup();
 	    parent.setId( group.getGroupPId() );
 	    parent.setIsChild( 1 );
-	    mallGroupDAO.updateById( group );
+	    mallGroupDAO.updateById( parent );
 	}
 	if ( groupId > 0 ) {
 	    return true;
@@ -271,13 +272,38 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
 	String sql = "";
 	if ( CommonUtil.isNotEmpty( params.get( "groupPId" ) ) ) {
-	    sql += " and g.group_p_id = " + params.get( "groupPId" );
+	    sql += " and group_p_id = " + params.get( "groupPId" );
 	}
 	if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 	    sql += " and shop_id = " + params.get( "shopId" );
 	}
-	groupWrapper.where( "g.is_delete=0 AND a.is_delete=0 " + sql );
-	return mallGroupDAO.selectList( groupWrapper );
+	groupWrapper.where( "is_delete=0  " + sql );
+	List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
+	List< Integer > groupIds = new ArrayList<>();
+	if ( groupList != null && groupList.size() > 0 ) {
+	    for ( MallGroup mallGroup : groupList ) {
+		if ( !groupIds.contains( mallGroup.getId() ) ) {
+		    groupIds.add( mallGroup.getId() );
+		}
+	    }
+	    Map< String,Object > imageParams = new HashMap<>();
+	    imageParams.put( "isMainImages", 1 );
+	    imageParams.put( "assType", 2 );
+	    imageParams.put( "assIds", groupIds );
+	    List< Map< String,Object > > imageList = mallImageAssociativeDAO.selectByAssIds( imageParams );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		for ( MallGroup mallGroup : groupList ) {
+		    for ( Map< String,Object > imageMap : imageList ) {
+			if ( mallGroup.getId().toString().equals( imageMap.get( "ass_id" ).toString() ) ) {
+			    mallGroup.setImageUrl( imageMap.get( "image_url" ).toString() );
+			    break;
+			}
+		    }
+		}
+	    }
+
+	}
+	return groupList;
     }
 
     @Override

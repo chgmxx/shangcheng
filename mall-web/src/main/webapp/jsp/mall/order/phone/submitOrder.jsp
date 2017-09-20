@@ -209,7 +209,7 @@
                             <c:if test="${orderDetail.isCoupons == 1 && orderDetail.is_member_discount == 0}"><!-- 参加会员折扣，不参加优惠券 -->
                             <c:set var="yhqNum" value="${yhqNum+1 }"></c:set>
                             </c:if>
-                            <c:if test="${empty orderDetail.groupType }">
+                            <c:if test="${empty orderDetail.groupType || orderDetail.groupType != 7 }">
                                 <c:set var="totalMoneys" value="${totalMoneys+price*orderDetail.product_num }"></c:set>
                             </c:if>
                             <c:if test="${orderDetail.groupType == 7}">
@@ -352,7 +352,7 @@
                     </div>
                     <div class="sum-info">
 			<span class="num-box">
-				共<i id="num">${order.product_nums }</i>件商品
+				共<i id="num">${order.proNum }</i>件商品
 			</span>
                         <span class="num-box shopTotal" style="width: 300px;padding-right: 20px;">
 				合计：<span class="sum" style="color:#f20000;">￥

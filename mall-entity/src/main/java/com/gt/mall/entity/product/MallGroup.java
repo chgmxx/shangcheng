@@ -102,6 +102,12 @@ public class MallGroup extends Model< MallGroup > {
     @TableField( "is_delete" )
     private Integer isDelete;
 
+    /**
+     * 分类图片
+     */
+    @TableField(exist = false)
+    private String imageUrl;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;

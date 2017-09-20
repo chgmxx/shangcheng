@@ -145,7 +145,8 @@ mq:
 http:
  #总项目请求地址
  wxmp:
-  domain: http://wxmp.yifriend.net:12882/
+  domain: http://yifriend.net/
+#  domain: http://wxmp.yifriend.net:8080/
 #  domain: http://yifriend.net/
   key: WXMP2017
  #会员key 和 请求地址

@@ -13,7 +13,6 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.SessionUtils;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -161,10 +160,11 @@ public class MallGroupController extends BaseController {
 	    Integer userId = SessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 
-		MallGroup group = com.alibaba.fastjson.JSONObject.toJavaObject( ( com.alibaba.fastjson.JSONObject.parseObject(  params.get( "group" ) .toString() ) ), MallGroup.class );
+		MallGroup group = com.alibaba.fastjson.JSONObject
+				.toJavaObject( ( com.alibaba.fastjson.JSONObject.parseObject( params.get( "group" ).toString() ) ), MallGroup.class );
 
 		if ( !CommonUtil.isEmpty( params.get( "imageArr" ) ) ) {
-		    imageList = (List< MallImageAssociative >) JSONArray.toList( JSONArray.fromObject( params.get( "imageArr" ) ), MallImageAssociative.class );
+		    imageList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "imageArr" ).toString(), MallImageAssociative.class );
 		}
 
 		boolean flag = mallGroupService.saveOrUpdateGroup( group, imageList, userId );
@@ -186,7 +186,6 @@ public class MallGroupController extends BaseController {
 	}
 
     }
-
 
     /**
      * 删除商品分组
@@ -400,7 +399,7 @@ public class MallGroupController extends BaseController {
 	    Integer userId = SessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 
-		List< MallSearchLabel > labelList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "param" ).toString() ,MallSearchLabel.class);
+		List< MallSearchLabel > labelList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "param" ).toString(), MallSearchLabel.class );
 		boolean flag = mallGroupService.saveOrUpdateGroupLabel( labelList, userId );
 		if ( !flag ) {
 		    code = -1;// 编辑失败

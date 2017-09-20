@@ -763,7 +763,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	successBo.setDelay( 0 ); //会员赠送物品 0延迟送 1立即送  -1 不赠送物品
 	successBo.setDataSource( order.getBuyerUserType() );
 	successBo.setUcTable( "t_mall_order" );
-	if(memberService.isMember( order.getBuyerUserId() )){
+	if ( memberService.isMember( order.getBuyerUserId() ) ) {
 	    Map< String,Object > payMap = memberPayService.paySuccess( successBo );
 	    if ( CommonUtil.isNotEmpty( payMap ) ) {
 		if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {
@@ -1136,19 +1136,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		adcServicesInfo.setId( orders.getId() );//订单id
 		boolean isFlow = fenBiFlowService.adcServices( adcServicesInfo );//流量充值
 		if ( isFlow ) {//充值成功
-		    Map< String,Object > recordParams = new HashMap<>();
-		    recordParams.put( "orderNo", orders.getOrderNo() );
-		    recordParams.put( "payType", CommonUtil.getMemberPayType( orders.getOrderPayWay(), orders.getIsWallet() ) );
-		    recordParams.put( "payStatus", "1" );
-		    boolean flag = memberService.updateUserConsume( recordParams );
-		    if ( flag ) {
-			MallOrder order = new MallOrder();
-			order.setId( orders.getId() );
-			order.setFlowRechargeStatus( 1 );
-			mallOrderDAO.upOrderNoById( order );
-		    } else {
-			throw new BusinessException( "流量充值异常" );
-		    }
+		    MallOrder order = new MallOrder();
+		    order.setId( orders.getId() );
+		    order.setFlowRechargeStatus( 1 );
+		    mallOrderDAO.upOrderNoById( order );
+		} else {
+		    //充值失败的加入缓存中
+		    //throw new BusinessException( "流量充值异常" );
 		}
 	    } catch ( Exception e ) {
 		logger.error( "流量充值异常" + e.getMessage() );
@@ -1184,19 +1178,19 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @SuppressWarnings( { "rawtypes", "unchecked" } )
     @Override
-    public List< Map< String,Object > > mobileOrderList( Map< String,Object > params, int busUserId ) throws Exception {
+    public PageUtil mobileOrderList( Map< String,Object > params, int busUserId ) throws Exception {
 	List< Map< String,Object > > orderList = new ArrayList<>();
-	/*int pageSize = 10;
-	int countOrder = mallOrderDao.countMobileOrderList(params);
-	int curPage = CommonUtil.isEmpty(params.get("curPage")) ? 1 : CommonUtil
-			.toInteger(params.get("curPage"));
-	params.put("curPage", curPage);
+	int pageSize = 10;
+	int countOrder = mallOrderDAO.countMobileOrderList( params );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil
+			.toInteger( params.get( "curPage" ) );
+	params.put( "curPage", curPage );
 
-	Page page = new Page(curPage, pageSize, countOrder, "phoneOrder/79B4DE7C/orderList.do");
+	PageUtil page = new PageUtil( curPage, pageSize, countOrder, "phoneOrder/79B4DE7C/orderList.do" );
 	int firstNum = pageSize
-			* ((page.getCurPage() <= 0 ? 1 : page.getCurPage()) - 1);
-	params.put("firstNum", firstNum);// 起始页
-	params.put("maxNum", pageSize);// 每页显示商品的数量 */
+			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	params.put( "firstNum", firstNum );// 起始页
+	params.put( "maxNum", pageSize );// 每页显示商品的数量
 	params.put( "busUserId", busUserId );
 	List list = null;
 	if ( params.containsKey( "appraiseStatus" ) ) {
@@ -1238,6 +1232,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    for ( MallStore store : shopList ) {
 			if ( store.getId().toString().equals( orderMap.get( "shopId" ).toString() ) ) {
 			    orderMap.put( "shopName", store.getStoName() );
+			    break;
 			}
 		    }
 		}
@@ -1405,7 +1400,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	}
-	return orderList;
+	page.setSubList( orderList );
+	return page;
     }
 
     /**
@@ -1514,7 +1510,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 			boolean flags = true;
 
-			if ( CommonUtil.isNotEmpty( oReturn.getReturnFenbi() )  && oReturn.getReturnFenbi() > 0) {
+			if ( CommonUtil.isNotEmpty( oReturn.getReturnFenbi() ) && oReturn.getReturnFenbi() > 0 ) {
 			    BusUser busUser = busUserService.selectById( order.getBusUserId() );//根据商家id查询商家信息
 			    if ( busUser.getFansCurrency() - oReturn.getReturnFenbi() < 0 ) {
 				flags = false;
@@ -1989,7 +1985,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 
-	    if(memberService.isMember( order.getBuyerUserId() )){
+	    if ( memberService.isMember( order.getBuyerUserId() ) ) {
 		ReturnParams returnParams = new ReturnParams();
 		returnParams.setBusId( order.getBusUserId() );
 		returnParams.setOrderNo( order.getOrderNo() );

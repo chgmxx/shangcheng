@@ -1126,8 +1126,8 @@
 
             if (groupLen > 0 || $("input.groupPrice").length > 0) {//此商品是团购商品
                 $(".groupLiPrice em").html(price);
-                var groupPrices = $("#prodect_price").val();
-                $(".groupDanPrice em").html(groupPrices);
+                /*var groupPrices = $("#prodect_price").val();*/
+                $(".groupDanPrice em").html(proPrice);
             }
         }
         if (yjMoney > 0) {
@@ -1422,8 +1422,8 @@
                         if (groupLen > 0 || $("input.groupPrice").length > 0) {//此商品是团购商品
                             //团购
                             $(".group_lay-bottom .groupLiPrice em").html(price);
-                            var groupPrices = $("#prodect_price").val();
-                            $(".group_lay-bottom .groupDanPrice em").html(yuanjiaprice);
+                            /*var groupPrices = $("#prodect_price").val();*/
+                            $(".group_lay-bottom .groupDanPrice em").html(iPrice);
                         }
                     }
                     if (rType * 1 > 0) {

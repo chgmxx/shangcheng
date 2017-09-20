@@ -4,65 +4,68 @@
 function deleteGroup(obj, type) {
     var id = $(obj).attr("id");
     if (id != null && id != "") {
-        var msg = "删除团购？";
-        if (type * 1 == -2) {
-            msg = "失效此团购？失效后不能再进行团购";
-        }
-        // 询问框
-        layer.confirm('您确定要' + msg + '', {
-            offset: "10%",
-            shade:[0.1,'#fff'],
-            btn: ['确定', '取消']
-            // 按钮
-        }, function () {
-            // loading层
-            var layerLoad = layer.load(1, {
-                offset: "10%",
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
-            $.ajax({
-                type: "post",
-                url: "mGroupBuy/group_remove.do",
-                data: {
-                    id: id,
-                    type: type
-                },
-                dataType: "json",
-                success: function (data) {
-                    layer.close(layerLoad);
-                    if (type * 1 == -2) {
-                        msg = "失效团购";
-                    } else {
-                        msg = "删除团购";
-                    }
-                    if (data.code == 1) {
-                        var tip = layer.alert(msg + "成功", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        }, function (index) {
-                            layer.close(tip);
-                            location.href = window.location.href;
+        SonScrollTop(0);
+        setTimeout(function () {
+            var msg = "删除团购？";
+            if (type * 1 == -2) {
+                msg = "失效此团购？失效后不能再进行团购";
+            }
+            // 询问框
+            layer.confirm('您确定要' + msg + '', {
+                offset: scrollHeight + "px",
+                shade: [0.1, '#fff'],
+                btn: ['确定', '取消']
+                // 按钮
+            }, function () {
+                // loading层
+                var layerLoad = layer.load(1, {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, '#fff']
+                    // 0.1透明度的白色背景
+                });
+                $.ajax({
+                    type: "post",
+                    url: "mGroupBuy/group_remove.do",
+                    data: {
+                        id: id,
+                        type: type
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(layerLoad);
+                        if (type * 1 == -2) {
+                            msg = "失效团购";
+                        } else {
+                            msg = "删除团购";
+                        }
+                        if (data.code == 1) {
+                            var tip = layer.alert(msg + "成功", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            }, function (index) {
+                                layer.close(tip);
+                                location.href = window.location.href;
+                            });
+                        } else {// 编辑失败
+                            var tip = layer.alert(msg + "失败", {
+                                shade: [0.1, "#fff"],
+                                offset: scrollHeight + "px"
+                            });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.close(layerLoad);
+                        layer.alert(msg + "失败", {
+                            shade: [0.1, "#fff"],
+                            offset: scrollHeight + "px"
                         });
-                    } else {// 编辑失败
-                        var tip = layer.alert(msg + "失败", {
-                            shade:[0.1,"#fff"],
-                            offset: "10%"
-                        });
+                        return;
                     }
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    layer.close(layerLoad);
-                    layer.alert(msg + "失败", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%"
-                    });
-                    return;
-                }
+                });
+                layer.closeAll();
             });
-            layer.closeAll();
-        });
+        }, timeout);
     }
 
 }
@@ -146,166 +149,169 @@ function editGroup() {
     var isSpec = $("#isSpec").val();//商品是否存在规格
     var productId = $("#productId").val();
     var ids = $("#ids").val();
-    if (productId == null || productId == "") {
-        layer.msg('请选择商品', {
-            offset: "10%",
-            icon: 1
-        });
-    } else if (name == null || $.trim(name) == "") {
-        $("gName").focus();
-        layer.msg('请填写活动名称', {
-            offset: "10%",
-            icon: 1
-        });
-    } else if (!valName($("#gName"))) {
-        $("#gName").focus();
-        layer.msg('活动名称最多输入50位汉字或100位字符', {
-            offset: "10%",
-            icon: 1
-        });
-    } else if (gStartTime == null || $.trim(gStartTime) == "") {
-        layer.msg('请选择活动开始时间', {
-            offset: "10%",
-            icon: 1
-        });
-    } else if (gEndTime == null || $.trim(gEndTime) == "") {
-        layer.msg('请选择活动结束时间', {
-            offset: "10%",
-            icon: 1
-        });
-    } else if (gStartTime >= gEndTime) {
-        layer.msg('活动开始时间要小于活动结束时间', {
-            offset: "10%",
-            icon: 1
-        });
-    } else if (gPeopleNum == null || $.trim(gPeopleNum) == "") {
-        layer.msg('请填写参团人数', {
-            offset: "10%",
-            icon: 1
-        });
-    } else {
-        var flag = true;
-        $("input[datatype!=null]").each(function () {
-            var bol = true;
-            if ($(this).attr("name") == "gPrice" && isSpec == 1) {
-                bol = false;
-            }
-            if (bol && flag) {
-                flag = valiReg($(this));
-                if (!flag) {
-                    return;
-                }
-            }
-        });
-        var groupBuy = $("#groupForm").serializeObject();
-        var specArr = new Array();
-        if (flag) {
-            if (isSpec == 1) {//存在规格
-                //判断参团规格的价格
-                var i = 0;
-                $("#createTable tbody tr").each(function () {
-                    var check = $(this).find(".js-default").is(":checked");
-                    var invenId = $(this).find(".js-default").attr("invenid");
-                    var specId = "";
-                    var id = $(this).find(".js-default").attr("id");
-                    var groupPrice = $(this).find(".js-price").val();
-                    $(this).find("td.specCla").each(function () {
-                        if (specId != "") {
-                            specId += ",";
-                        }
-                        specId += $(this).attr("id");
-                    });
-                    var obj = {
-                        groupPrice: groupPrice,
-                        invenId: invenId,
-                        specificaIds: specId,
-                        isJoinGroup: 1
-                    };
-                    if (id != null && id != "") {
-                        if (id * 1 > 0) {
-                            obj.id = id;
-                        }
-                    }
-                    if (check) {
-                        flag = valiTable($(this).find(".js-price"));
-                        if (i == 0) {
-                            groupBuy.gPrice = groupPrice;
-                        }
-                        if (!flag) {
-                            return;
-                        }
-                        obj["isJoinGroup"] = 1;
-                        i++;
-                    } else {
-                        obj["isJoinGroup"] = 0;
-                    }
-                    specArr[specArr.length] = obj;
-                });
-            }
-        }
-
-        if (!flag) {
-            layer.msg('请填写已经勾选的团购价', {
-                offset: "10%",
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (productId == null || productId == "") {
+            layer.msg('请选择商品', {
+                offset: scrollHeight + "px",
+                icon: 1
+            });
+        } else if (name == null || $.trim(name) == "") {
+            $("gName").focus();
+            layer.msg('请填写活动名称', {
+                offset: scrollHeight + "px",
+                icon: 1
+            });
+        } else if (!valName($("#gName"))) {
+            $("#gName").focus();
+            layer.msg('活动名称最多输入50位汉字或100位字符', {
+                offset: scrollHeight + "px",
+                icon: 1
+            });
+        } else if (gStartTime == null || $.trim(gStartTime) == "") {
+            layer.msg('请选择活动开始时间', {
+                offset: scrollHeight + "px",
+                icon: 1
+            });
+        } else if (gEndTime == null || $.trim(gEndTime) == "") {
+            layer.msg('请选择活动结束时间', {
+                offset: scrollHeight + "px",
+                icon: 1
+            });
+        } else if (gStartTime >= gEndTime) {
+            layer.msg('活动开始时间要小于活动结束时间', {
+                offset: scrollHeight + "px",
+                icon: 1
+            });
+        } else if (gPeopleNum == null || $.trim(gPeopleNum) == "") {
+            layer.msg('请填写参团人数', {
+                offset: scrollHeight + "px",
                 icon: 1
             });
         } else {
-            // loading层
-            var layerLoad = layer.load(1, {
-                offset: "10%",
-                shade: [0.1, '#fff']
-                // 0.1透明度的白色背景
-            });
-            $.ajax({
-                type: "post",
-                url: "mGroupBuy/edit_group_buy.do",
-                data: {
-                    groupBuy: JSON.stringify(groupBuy),
-                    specArr: JSON.stringify(specArr)
-                },
-                dataType: "json",
-                success: function (data) {
-                    layer.close(layerLoad);
-                    if (data.code == 1) {
-                        var tip = layer.alert("编辑成功", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        }, function (index) {
-                            layer.close(tip);
-                            location.href = "/mGroupBuy/index.do";
-                        });
-                    } else if (data.code == -2) {
-                        var tip = layer.alert("正在进行团购的商品不能修改", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        });
-                    } else if (data.code == 0) {
-                        var tip = layer.alert("同一个商品只能参与一个团购活动", {
-                            offset: "10%",
-                            shade:[0.1,"#fff"],
-                            closeBtn: 0
-                        });
-                    } else {// 编辑失败
-                        layer.alert("编辑失败", {
-                            shade:[0.1,"#fff"],
-                            offset: "10%"
-                        });
+            var flag = true;
+            $("input[datatype!=null]").each(function () {
+                var bol = true;
+                if ($(this).attr("name") == "gPrice" && isSpec == 1) {
+                    bol = false;
+                }
+                if (bol && flag) {
+                    flag = valiReg($(this));
+                    if (!flag) {
+                        return;
                     }
-
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    layer.close(layerLoad);
-                    layer.alert("编辑失败", {
-                        shade:[0.1,"#fff"],
-                        offset: "10%"
-                    });
-                    return;
                 }
             });
+            var groupBuy = $("#groupForm").serializeObject();
+            var specArr = new Array();
+            if (flag) {
+                if (isSpec == 1) {//存在规格
+                    //判断参团规格的价格
+                    var i = 0;
+                    $("#createTable tbody tr").each(function () {
+                        var check = $(this).find(".js-default").is(":checked");
+                        var invenId = $(this).find(".js-default").attr("invenid");
+                        var specId = "";
+                        var id = $(this).find(".js-default").attr("id");
+                        var groupPrice = $(this).find(".js-price").val();
+                        $(this).find("td.specCla").each(function () {
+                            if (specId != "") {
+                                specId += ",";
+                            }
+                            specId += $(this).attr("id");
+                        });
+                        var obj = {
+                            groupPrice: groupPrice,
+                            invenId: invenId,
+                            specificaIds: specId,
+                            isJoinGroup: 1
+                        };
+                        if (id != null && id != "") {
+                            if (id * 1 > 0) {
+                                obj.id = id;
+                            }
+                        }
+                        if (check) {
+                            flag = valiTable($(this).find(".js-price"));
+                            if (i == 0) {
+                                groupBuy.gPrice = groupPrice;
+                            }
+                            if (!flag) {
+                                return;
+                            }
+                            obj["isJoinGroup"] = 1;
+                            i++;
+                        } else {
+                            obj["isJoinGroup"] = 0;
+                        }
+                        specArr[specArr.length] = obj;
+                    });
+                }
+            }
+
+            if (!flag) {
+                layer.msg('请填写已经勾选的团购价', {
+                    offset: scrollHeight + "px",
+                    icon: 1
+                });
+            } else {
+                // loading层
+                var layerLoad = layer.load(1, {
+                    offset: scrollHeight + "px",
+                    shade: [0.1, '#fff']
+                    // 0.1透明度的白色背景
+                });
+                $.ajax({
+                    type: "post",
+                    url: "mGroupBuy/edit_group_buy.do",
+                    data: {
+                        groupBuy: JSON.stringify(groupBuy),
+                        specArr: JSON.stringify(specArr)
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        layer.close(layerLoad);
+                        if (data.code == 1) {
+                            var tip = layer.alert("编辑成功", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            }, function (index) {
+                                layer.close(tip);
+                                location.href = "/mGroupBuy/index.do";
+                            });
+                        } else if (data.code == -2) {
+                            var tip = layer.alert("正在进行团购的商品不能修改", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            });
+                        } else if (data.code == 0) {
+                            var tip = layer.alert("同一个商品只能参与一个团购活动", {
+                                offset: scrollHeight + "px",
+                                shade: [0.1, "#fff"],
+                                closeBtn: 0
+                            });
+                        } else {// 编辑失败
+                            layer.alert("编辑失败", {
+                                shade: [0.1, "#fff"],
+                                offset: scrollHeight + "px"
+                            });
+                        }
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.close(layerLoad);
+                        layer.alert("编辑失败", {
+                            shade: [0.1, "#fff"],
+                            offset: scrollHeight + "px"
+                        });
+                        return;
+                    }
+                });
+            }
         }
-    }
+    }, timeout);
 }
 $("#gName").focus(function () {
     valName($(this));
@@ -428,11 +434,12 @@ function choosePro() {
         defaultProId = "";
     }
     loadWindow();
-    if (shopId != null && shopId != "") {
-        // parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
-        // parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
-        SonScrollTop(0);
-        setTimeout(function () {
+    SonScrollTop(0);
+    setTimeout(function () {
+        if (shopId != null && shopId != "") {
+            // parentOpenIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+            // parent.openIframe("选择商品", "600px", "480px", "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId);//check==0代表多选，check==1代表单选
+
             layer.open({
                 type: 2,
                 title: "选择商品",
@@ -442,13 +449,14 @@ function choosePro() {
                 shade: [0.1, "#fff"],
                 content: "/mGroupBuy/getProductByGroup.do?shopId=" + shopId + "&defaultProId=" + defaultProId
             });
-        }, timeout);
-    } else {
-        layer.alert("请选择商品", {
-            shade:[0.1,"#fff"],
-            offset: "10%"
-        });
-    }
+
+        } else {
+            layer.alert("请选择商品", {
+                shade: [0.1, "#fff"],
+                offset: scrollHeight + "px"
+            });
+        }
+    }, timeout);
 };
 /**
  * 选择商品回调函数

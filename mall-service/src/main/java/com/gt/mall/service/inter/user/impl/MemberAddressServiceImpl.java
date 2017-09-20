@@ -25,6 +25,9 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 
     @Override
     public Map addressDefault( String memberIds ) {
+	if ( CommonUtil.isNotEmpty( memberIds ) ) {
+	    return null;
+	}
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberids", memberIds );
 	String result = HttpSignUtil.signHttpSelect( params, url + "addressDefault.do", 1 );
@@ -36,6 +39,9 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 
     @Override
     public MemberAddress addreSelectId( int addresssId ) {
+	if ( addresssId == 0 ) {
+	    return null;
+	}
 	Map< String,Object > params = new HashMap<>();
 	params.put( "addid", addresssId );
 	String result = HttpSignUtil.signHttpSelect( params, url + "addreSelectId.do", 1 );
@@ -46,9 +52,12 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     }
 
     @Override
-    public List< MemberAddress > addressList( String memberids ) {
+    public List< MemberAddress > addressList( String memberIds ) {
+	if ( CommonUtil.isNotEmpty( memberIds ) ) {
+	    return null;
+	}
 	Map< String,Object > params = new HashMap<>();
-	params.put( "memberids", memberids );
+	params.put( "memberids", memberIds );
 	String result = HttpSignUtil.signHttpSelect( params, url + "addressList.do", 1 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONArray.parseArray( result, MemberAddress.class );
@@ -64,6 +73,9 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 
     @Override
     public boolean updateDefault( int addressId ) {
+	if ( addressId == 0 ) {
+	    return false;
+	}
 	Map< String,Object > params = new HashMap<>();
 	params.put( "addid", addressId );
 	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, url + "updateDefault.do", 1 );

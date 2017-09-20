@@ -5,15 +5,14 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
-import net.sf.json.JSONArray;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.SessionUtils;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +63,7 @@ public class MallCommentController extends BaseController {
 	boolean flag = false;// 编辑成功
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< MallCommentGive > giveList = (List< MallCommentGive >) JSONArray.toList( JSONArray.fromObject( params.get( "datas" ) ), MallCommentGive.class );
+	    List< MallCommentGive > giveList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "datas" ).toString(), MallCommentGive.class );
 	    flag = commentGiveService.editCommentGive( giveList, user );
 	} catch ( Exception e ) {
 	    flag = false;
@@ -78,13 +77,12 @@ public class MallCommentController extends BaseController {
 
     /**
      * 进入评价管理列表
-     *
      */
     @RequestMapping( "/to_index" )
     public String to_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user ,request);// 查询登陆人拥有的店铺
+	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    // 查询会员下面的评论
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		request.setAttribute( "shoplist", shoplist );

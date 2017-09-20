@@ -699,13 +699,13 @@
         select
         t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
         t.express_time,t.updateDay, t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method,t.order_pid,
-        t.is_wallet,t.bus_user_id ,t.`member_name` AS nickname,
+        t.is_wallet,t.bus_user_id ,t.`member_name` AS nickname,t.shop_id,
 
         d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,
         d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname, d.return_day AS returnDay,
         d.pro_type_id,d.det_privivilege, d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,
 
-        re.ret_reason,re.id AS rId,re.no_return_reason,re.return_no,  re.ret_reason,re.ret_handling_way,re.ret_money
+        re.ret_reason,re.id AS rId,re.no_return_reason,re.return_no, re.ret_reason,re.ret_handling_way,re.ret_money
 
         FROM (
 
@@ -746,18 +746,22 @@
             limit #{firstNum},#{maxNum}
         </if>
         ) t
-        left join  t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
+        left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
         left join t_mall_order_return re on re.order_detail_id=d.id
     </select>
 
     <select id="mobileOrderList" resultMap="MoreResultMap" parameterType="map">
         select
-        <include refid="Buyer_Order_Column_List"/>
+        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
+        t.express_time,d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,
+        d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname,re.ret_reason,re.id AS rId,re.no_return_reason,re.return_no,
+        re.ret_reason,re.ret_handling_way,re.ret_money,TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS updateDay,
+        IF(t.order_pid = 0 || t.order_pid IS NULL,t.order_no,(SELECT order_no FROM t_mall_order WHERE t.order_pid=id)) AS orderPNo,d.return_day AS returnDay,
+        t.order_type,t.group_buy_id,t.order_pay_way,d.pro_type_id,t.delivery_method,t.order_pid,d.det_privivilege,
+        d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,t.is_wallet,t.bus_user_id,t.shop_id
         from t_mall_order t
         left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
         left join t_mall_order_return re on re.order_detail_id=d.id
-        left join t_mall_product p on p.id=d.product_id
-        left join t_mall_store s on s.id = t.shop_id
         where t.shop_id > 0
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id = #{busUserId}

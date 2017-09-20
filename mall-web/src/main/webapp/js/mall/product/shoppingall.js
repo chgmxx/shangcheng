@@ -108,10 +108,10 @@ function getChildGroup(groupId) {
                         html += '<li>';
                         html += '<a href="' + urls + '?type=' + type + '&groupId=' + child.id + '&rType=' + rType + '">';
                         html += '<div class="itemBg">';
-                        if (child.image_url == null || child.image_url == "") {
+                        if (child.imageUrl == null || child.imageUrl == "") {
                             html += '<i class="bg-icon item-icon" >无图片</i>';
                         } else {
-                            var img = imgHttp + child.image_url;
+                            var img = imgHttp + child.imageUrl;
                             html += '<i class="bg-icon item-icon" style="background: url(' + img + ') no-repeat center center; background-size: contain;"></i>';
                         }
                         html += '</div>';

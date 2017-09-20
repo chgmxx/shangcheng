@@ -253,10 +253,11 @@ function closewindow() {
  * @param id
  * @param url
  */
-function fhmateriallayer(imageArray, url) {
-    console.log(JSON.stringify(imageArray) + "===" + url)
+function image(imageArray, url) {
+    console.log(imageArray + "===" + url)
     var html = "";
     var preHtml = "";
+    imageArray = JSON.parse(imageArray);
     if (imageArray != null && imageArray.length > 0) {
         for (var i = 0; i < imageArray.length; i++) {
             var imageUrl = imageArray[i].url;
@@ -297,10 +298,10 @@ function materiallayer(obj) {
     // });
 }
 // 素材库里面返回信息
-function image(imageArray, url) {
+/*function image(imageArray, url) {
     layer.closeAll();
     $("#main")[0].contentWindow.fhmateriallayer(id, url); // 父类调用子类的方法
-}
+}*/
 
 /**
  * 删除图片

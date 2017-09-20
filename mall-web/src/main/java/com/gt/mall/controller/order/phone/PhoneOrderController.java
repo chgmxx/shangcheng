@@ -613,11 +613,14 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    params.put( "orderType", orderType );
 	    params.put( "type", type );
 	    params = mallOrderService.getMemberParams( member, params );
-	    List< Map< String,Object > > orderList = mallOrderService.mobileOrderList( params, userid );
+	    PageUtil page = mallOrderService.mobileOrderList( params, userid );
+	    if ( page.getSubList() != null && page.getSubList().size() > 0 ) {
+		request.setAttribute( "orderList", page.getSubList() );
+	    }
+	    request.setAttribute( "page", page );
 
 	    //关闭超过30分钟未付款订单
 	    mallOrderService.updateByNoMoney( params );
-	    request.setAttribute( "orderList", orderList );
 	    request.setAttribute( "memberId", member.getId() );
 	    request.setAttribute( "pageid", result );
 	    request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
@@ -647,6 +650,33 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    e.printStackTrace();
 	}
 	return "mall/order/phone/myOrder";
+    }
+
+    /**
+     * 分页查询订单
+     *
+     * @param request
+     * @param params
+     *
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping( value = "/79B4DE7C/mobileOrderListPage" )
+    public void mobileOrderListPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+	logger.info( "进入分页查询订单" );
+	Map< String,Object > map = new HashMap< String,Object >();
+
+	try {
+	    int userid = CommonUtil.toInteger( params.get( "busUserId" ) );
+	    PageUtil page = mallOrderService.mobileOrderList( params, userid );
+	    map.put( "page", page );
+	    map.put( "path", PropertiesUtil.getResourceUrl() );
+	} catch ( Exception e ) {
+	    logger.error( "用户申请退款异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, map );
+	}
     }
 
     /**
@@ -721,7 +751,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	Map< String,Object > map = new HashMap<>();
 
 	try {
-	    MallOrderReturn orderReturn = com.alibaba.fastjson.JSONObject.parseObject(JSON.toJSONString( params ),MallOrderReturn.class  );
+	    MallOrderReturn orderReturn = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallOrderReturn.class );
 	    orderReturn.setUserId( memberId );
 	    // 申请退款
 	    boolean flag = mallOrderService.addOrderReturn( orderReturn );
@@ -800,8 +830,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    String memberId = member.getId().toString();
 	    params.put( "memberId", memberId );
 	    params.put( "id", orderId );
-	    List orderList = mallOrderService.mobileOrderList( params, userid );
-	    JSONObject orderObj = JSONObject.fromObject( orderList.get( 0 ) );
+	    PageUtil page = mallOrderService.mobileOrderList( params, userid );
+	    JSONObject orderObj = JSONObject.fromObject( page.getSubList().get( 0 ) );
 
 	    if ( CommonUtil.isNotEmpty( orders.getExpressId() ) ) {
 		String expressName = dictService.getDictRuturnValue( "1092", orders.getExpressId() );
