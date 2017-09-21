@@ -1,6 +1,5 @@
-package com.gt.mall.config;
+package com.gt.mall.config.interceptor;
 
-import com.gt.mall.config.interceptor.MyInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;

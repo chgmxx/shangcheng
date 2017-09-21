@@ -3,9 +3,9 @@ package com.gt.mall.utils;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.mall.bean.member.MallAllEntity;
-import com.gt.mall.bean.member.MallEntity;
-import com.gt.mall.bean.member.MallShopEntity;
+import com.gt.entityBo.MallAllEntity;
+import com.gt.entityBo.MallEntity;
+import com.gt.entityBo.MallShopEntity;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -99,7 +99,7 @@ public class MemberTest {
 
 
 
-	Map<Integer, MallEntity> ms=new HashMap<>();
+	Map<Integer,MallEntity > ms=new HashMap<>();
 	//		MallEntity m=new MallEntity();
 	//		m.setMallId(1);;  //订单详情id or 生成序列号
 	//		m.setNumber(1);;  // 商品数量

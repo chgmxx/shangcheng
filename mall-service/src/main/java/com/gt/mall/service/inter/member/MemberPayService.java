@@ -1,7 +1,7 @@
 package com.gt.mall.service.inter.member;
 
-import com.gt.mall.bean.member.MallAllEntity;
-import com.gt.mall.bean.member.PaySuccessBo;
+import com.gt.entityBo.MallAllEntity;
+import com.gt.entityBo.PaySuccessBo;
 
 import java.util.Map;
 

@@ -123,6 +123,7 @@ public class BusUserServiceImpl implements BusUserService {
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
 		return CommonUtil.toString( obj );
 	    }
+	    return null;
 	}
 	Map< String,Object > params = new HashMap<>();
 	params.put( "courceModel", courceModel );

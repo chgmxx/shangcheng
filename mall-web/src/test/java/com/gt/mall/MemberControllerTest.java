@@ -1,6 +1,6 @@
 package com.gt.mall;
 
-import com.gt.mall.bean.member.PaySuccessBo;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.utils.CommonUtil;
@@ -43,7 +43,6 @@ public class MemberControllerTest extends BasicTest {
 	successBo.setJifenNum( 460 );
 	successBo.setDelay( 0 ); //会员赠送物品 0延迟送 1立即送  -1 不赠送物品
 	successBo.setDataSource( 0 );
-	successBo.setUcTable( "t_mall_order" );
 
 	memberPayService.paySuccess( successBo );
 

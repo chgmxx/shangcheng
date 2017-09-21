@@ -1,6 +1,7 @@
 package com.gt.mall.config;
 
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
@@ -11,10 +12,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
 
+    /**
+     * 静态资源访问地址修改
+     */
     @Override
     public void addResourceHandlers( ResourceHandlerRegistry registry ) {
 	registry.addResourceHandler( "/css/**" ).addResourceLocations( "classpath:/resources/" );
 	registry.addResourceHandler( "/js/**" ).addResourceLocations( "classpath:/resources/" );
 	registry.addResourceHandler( "/images/**" ).addResourceLocations( "classpath:/resources/" );
+    }
+
+    //快速解决页面转向问题
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+	registry.addViewController("/").setViewName("/index.html");
+	registry.addViewController("/error").setViewName("/error/defaultError.html");
     }
 }

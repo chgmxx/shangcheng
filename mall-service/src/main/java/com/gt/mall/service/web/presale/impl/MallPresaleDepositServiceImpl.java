@@ -2,9 +2,9 @@ package com.gt.mall.service.web.presale.impl;
 
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.*;
@@ -216,7 +216,6 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	sucess.setPayType( payType );//支付方式
 	sucess.setUcType( 101 );//消费方式 对应字典表 1197
 	sucess.setDelay( -1 );//不赠送物品
-	sucess.setUcTable( "t_mall_presale_deposit" );
 	sucess.setDataSource( deposit.getBuyerUserType() );
 	//支付
 	Map< String,Object > resultMap = memberPayService.paySuccess( sucess );

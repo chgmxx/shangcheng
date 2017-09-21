@@ -47,7 +47,7 @@
         when g.s_start_time &gt; now() and g.s_end_time &gt; now() then 0<!--未开始  -->
         when g.s_start_time &lt;= now() and now() &lt; g.s_end_time then 1<!-- 进行中 -->
         when g.s_start_time &lt; now() and g.s_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/
+        end status
     </sql>
     <sql id="page_Column_List">
         g.id, g.product_id, s_name, s_price, s_start_time, s_end_time, s_max_buy_num,
@@ -57,7 +57,7 @@
         when g.s_start_time &gt; now() and g.s_end_time &gt; now() then 0<!--未开始  -->
         when g.s_start_time &lt;= now() and now() &lt; g.s_end_time then 1<!-- 进行中 -->
         when g.s_start_time &lt; now() and g.s_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status/* ,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName */,j.id as joinId
+        end status ,j.id as joinId
     </sql>
     <!--<sql id="page_product_Column_List">
         g.id, g.product_id, s_name, s_price, s_start_time, s_end_time, s_max_buy_num,
@@ -265,7 +265,7 @@
     <!-- 根据商品id查询秒杀信息 -->
     <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.seckill.MallSeckill" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"></include>
+        <include refid="group_Column_List"></include>
         from t_mall_seckill g
         where g.is_delete = 0 and g.is_use = 1
         and ((g.s_start_time &lt;= now() and now() &lt; g.s_end_time ) or (g.s_start_time > now() and g.s_end_time > now()))

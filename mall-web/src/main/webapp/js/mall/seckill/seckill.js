@@ -105,7 +105,7 @@ function loadLayDate() {
         datebox_2.start = startTime;
     }
     var proId = $("#productId").val();
-    if(proId != null && proId != ""){
+    if (proId != null && proId != "") {
         getProductId($("#productId").val());
     }
 
@@ -142,16 +142,16 @@ function getProductId(proId) {
  * 编辑秒杀
  */
 function editGroup() {
-    var name = $("#sName").val();//活动名称
-    var shopId = $(".shopId").find("option:selected").val();//店铺id
-    var gStartTime = $("#sStartTime").val();//活动生效开始时间
-    var gEndTime = $("#sEndTime").val();//活动生效结束时间
-    var maxNum = $("#maxNum").val();//商品限购
-    var isSpec = $("#isSpec").val();//商品是否存在规格
-    var productId = $("#productId").val();
-    var ids = $("#ids").val();
     SonScrollTop(0);
     setTimeout(function () {
+        var name = $("#sName").val();//活动名称
+        var shopId = $(".shopId").find("option:selected").val();//店铺id
+        var gStartTime = $("#sStartTime").val();//活动生效开始时间
+        var gEndTime = $("#sEndTime").val();//活动生效结束时间
+        var maxNum = $("#maxNum").val();//商品限购
+        var isSpec = $("#isSpec").val();//商品是否存在规格
+        var productId = $("#productId").val();
+        var ids = $("#ids").val();
         if (productId == null || productId == "") {
             layer.msg('请选择商品', {
                 offset: scrollHeight + "px",
@@ -194,7 +194,7 @@ function editGroup() {
             var flag = true;
             $("input[datatype!=null]").each(function () {
                 var bol = true;
-                if ($(this).attr("name") == "sPrice" && isSpec == 1) {
+                if ($(this).attr("name") === "sPrice" && isSpec === "1") {
                     bol = false;
                 }
                 if (bol && flag) {

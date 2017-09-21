@@ -313,6 +313,13 @@
             <version>1.0.4</version>
         </dependency>
 
+        <!-- 彭江丽实体类 -->
+        <dependency>
+            <groupId>com.gt.member</groupId>
+            <artifactId>Member_bo</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
 
     </dependencies>
 

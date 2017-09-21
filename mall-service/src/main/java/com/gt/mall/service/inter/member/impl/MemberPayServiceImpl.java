@@ -1,8 +1,8 @@
 package com.gt.mall.service.inter.member.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.member.MallAllEntity;
-import com.gt.mall.bean.member.PaySuccessBo;
+import com.gt.entityBo.MallAllEntity;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;

@@ -1,8 +1,8 @@
 package com.gt.mall.service.web.order;
 
+import com.gt.entityBo.MallAllEntity;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
-import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.entity.order.MallOrder;
 
 import java.util.List;

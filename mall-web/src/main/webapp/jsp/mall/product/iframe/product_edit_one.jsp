@@ -25,7 +25,7 @@
     <link rel="stylesheet" type="text/css" href="/css/mall/editNextOne.css"/>
 
 </head>
-<body>
+<body style="padding: 0px;">
 <div class="Warp">
     <div class="main">
         <section class="pic-carousel">

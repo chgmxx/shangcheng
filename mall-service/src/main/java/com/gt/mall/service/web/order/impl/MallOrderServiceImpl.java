@@ -3,11 +3,11 @@ package com.gt.mall.service.web.order.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.entityBo.PaySuccessBo;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
-import com.gt.mall.bean.member.PaySuccessBo;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 import com.gt.mall.constant.Constants;
@@ -762,7 +762,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 	successBo.setDelay( 0 ); //会员赠送物品 0延迟送 1立即送  -1 不赠送物品
 	successBo.setDataSource( order.getBuyerUserType() );
-	successBo.setUcTable( "t_mall_order" );
 	if ( memberService.isMember( order.getBuyerUserId() ) ) {
 	    Map< String,Object > payMap = memberPayService.paySuccess( successBo );
 	    if ( CommonUtil.isNotEmpty( payMap ) ) {

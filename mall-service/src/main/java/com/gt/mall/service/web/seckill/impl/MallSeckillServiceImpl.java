@@ -492,8 +492,6 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		mallSeckillJoinDAO.insert( join );
 
 		try {
-		    logger.info( "exchange：" + PropertiesUtil.getExchange() );
-		    logger.info( "queueName：" + PropertiesUtil.getQueueName() );
 		    logger.info( "mq参数：" + obj );
 		    socketService.mqSendMessage( obj.toString() );
 		} catch ( Exception e ) {

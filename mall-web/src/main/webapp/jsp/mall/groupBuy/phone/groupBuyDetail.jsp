@@ -55,11 +55,11 @@
             <div class="wait_logo"></div>
             <div class="top_inner_info">
                 <div class="">
-                    <a href="/mallPage/${productMap.id }/${productMap.shopId }/79B4DE7C/phoneProduct.do?uId=${userid}" class="top_inner_pic">
+                    <a href="javascript:void(0);" onclick="returnUrl('${webUrl}/mallPage/${productMap.id }/${productMap.shopId }/79B4DE7C/phoneProduct.do?uId=${userid}');" class="top_inner_pic">
                         <img src="${imgHttp }${productMap.image_url }" alt="团购图片"/>
                     </a>
                 </div>
-                <div class="top_inner_title font28"><a href="/mallPage/${productMap.id }/${productMap.shopId }/79B4DE7C/phoneProduct.do?uId=${userid}">${productMap.pro_name }</a>
+                <div class="top_inner_title font28"><a href="javascript:void(0);" onclick="returnUrl('${webUrl}/mallPage/${productMap.id }/${productMap.shopId }/79B4DE7C/phoneProduct.do?uId=${userid}');">${productMap.pro_name }</a>
                 </div>
                 <c:if test="${!empty productMap.specifica_values }">
                     <div class="top_inner_attr">${productMap.specifica_values }</div>
@@ -107,7 +107,7 @@
         <ul class="other_list">
             <c:if test="${!empty productList }">
                 <c:forEach var="product" items="${productList }">
-                    <li class="list_item" onclick="javascript:location.href='/mallPage/${product.id}/${product.shopId}/79B4DE7C/phoneProduct.do'">
+                    <li class="list_item" onclick="returnUrl('${webUrl}/mallPage/${product.id}/${product.shopId}/79B4DE7C/phoneProduct.do');">
                         <div class="list_item_pic box"><img src="${imgHttp}${product.image_url}" alt="团购图片" class=""/></div>
                         <div class="list_item_txt">
                             <c:if test="${!empty product.pro_label && product.pro_label != ''}">
@@ -138,7 +138,7 @@
     </div>
     <div class="footer flex">
         <c:if test="${isMember == 0}"><!-- 用户还没参团或开团 -->
-        <div class="flex-1"><a href="/mGroupBuy/${shopId }/79B4DE7C/groupbuyall.do" class="footer_left">更多拼团</a></div>
+        <div class="flex-1"><a href="javascript:void(0);"  onclick="returnUrl('${webUrl}/mGroupBuy/${shopId }/79B4DE7C/groupbuyall.do');" class="footer_left">更多拼团</a></div>
         <div class="flex-1" onclick="productBuy();"><a href="javascript:;" class="footer_right">我也要参团</a></div>
         </c:if>
         <c:if test="${isMember == 1}"><!-- 用户已经参团或开团 -->
@@ -150,7 +150,7 @@
     </div>
 
 </div>
-<form id="queryForm" method="post" action="/phoneOrder/79B4DE7C/toOrder.do?uId=${userid }">
+<form id="queryForm" method="post" action="${webUrl}/phoneOrder/79B4DE7C/toOrder.do?uId=${userid }">
     <input type="hidden" id="json" name="data">
     <input type="hidden" id="type" name="type" value="0">
 </form>
@@ -366,6 +366,8 @@
             });
             $("#json").val(JSON.stringify(hs));
             $("#queryForm").submit();
+
+
         }
     }
     function togger() {
@@ -387,7 +389,15 @@
             toLogin();
             return false;
         }
-        location.href = "/phoneOrder/79B4DE7C/orderDetail.do?orderId=${orderId }&uId=${userid}";
+        //location.href = "${webUrl}/phoneOrder/79B4DE7C/orderDetail.do?orderId=${orderId }&uId=${userid}";
+
+        returnUrl("${webUrl}/phoneOrder/79B4DE7C/orderDetail.do?orderId=${orderId }&uId=${userid}");
+    }
+
+    function returnUrl(url) {
+        location.href = url;
+       /* console.log(url)
+        window.parent.postMessage('{"type":2,"url":\''+url+'\'}', '*');*/
     }
 </script>
 </body>

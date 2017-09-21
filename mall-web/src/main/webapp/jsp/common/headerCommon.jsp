@@ -74,7 +74,7 @@
      */
     var crossDomainUrl = "https://suc.deeptel.com.cn";
 
-     /**
+    /**
      * 关闭所有弹出框  layer.closeAll();
      */
     function parentCloseAll() {
@@ -82,7 +82,7 @@
     }
 
     function loadWindow() {
-        messageSocket("pidHeight()");
+        //messageSocket("pidHeight()");
     }
 
     var scrollHeight = 0;
@@ -92,6 +92,7 @@
             console.log(height)
             scrollHeight = height;
         } else {
+
             messageSocket("scrollTop()");
         }
     }

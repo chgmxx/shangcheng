@@ -471,8 +471,9 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    } else {
 		name = storeMap.get( "business_name" ).toString();
 	    }
-	    if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "isShare" ) ) ) {
-	        String shareUrl = CommonUtil.getpath( request);
+
+	    /*if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "isShare" ) ) ) {
+		String shareUrl = CommonUtil.getpath( request);
 		if(!shareUrl.contains( "?" )){
 		    shareUrl += "?isShare=1";
 		}else{
@@ -487,7 +488,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		String url = mallPageService.wxShare( userid, request, shareParam );
 		response.sendRedirect( url );
 		return null;
-	    }
+	    }*/
 
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );

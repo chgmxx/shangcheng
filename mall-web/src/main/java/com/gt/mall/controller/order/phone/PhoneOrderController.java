@@ -2,11 +2,11 @@ package com.gt.mall.controller.order.phone;
 
 import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.entityBo.MallAllEntity;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.MemberAddress;
-import com.gt.mall.bean.member.MallAllEntity;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;

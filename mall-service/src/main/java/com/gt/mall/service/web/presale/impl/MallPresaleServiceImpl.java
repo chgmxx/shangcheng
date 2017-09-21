@@ -438,7 +438,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	FenbiFlowRecord fenbi = new FenbiFlowRecord();
 	fenbi.setBusUserId( userId );
 	fenbi.setRecType( 1 );
-	fenbi.setRecCreatetime( DateTimeKit.getDateTime() );
+	/*fenbi.setRecCreatetime( DateTimeKit.getDateTime() );*/
 	fenbi.setRecDesc( "商城预售送粉币" );
 	fenbi.setRecFreezeType( 34 );
 	fenbi.setRecFkId( 0 );

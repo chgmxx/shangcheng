@@ -6,9 +6,11 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
+import com.gt.mall.utils.JedisUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -179,7 +181,7 @@ public class MemberServiceImpl implements MemberService {
 	String result = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isMember" );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return false;
-	}else{
+	} else {
 	    return true;
 	}
     }
@@ -205,10 +207,21 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public List< Integer > findMemberListByIds( int memberId ) {
+	if ( memberId == 0 ) {
+	    return null;
+	}
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
+	String key = Constants.REDIS_KEY + "member_list_" + memberId;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONArray.parseArray( obj.toString(), Integer.class );
+	    }
+	}
 	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberIdsByid" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
+	    JedisUtil.set( key, data, Constants.REDIS_SECONDS );
 	    return JSONArray.parseArray( data, Integer.class );
 	}
 	return null;

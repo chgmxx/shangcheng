@@ -49,7 +49,7 @@ public class CardServiceImpl implements CardService {
     public List< Map > findReceiveByBusUserId( int busUserId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "busId", busUserId );
-	String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveByBusUserId" );
+	String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveToMallByBusUserId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    return JSONArray.parseArray( data, Map.class );
 	}

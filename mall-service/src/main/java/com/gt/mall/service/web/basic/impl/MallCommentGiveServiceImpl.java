@@ -19,7 +19,6 @@ import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.SessionUtils;
 import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
@@ -181,7 +180,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 			FenbiFlowRecord fenbiFlowRecord = new FenbiFlowRecord();
 			fenbiFlowRecord.setBusUserId( user.getId() );
 			fenbiFlowRecord.setRecType( 1 );
-			fenbiFlowRecord.setRecCreatetime( DateTimeKit.getDateTime() );
+			/*fenbiFlowRecord.setRecCreatetime( DateTimeKit.getDateTime() );*/
 			fenbiFlowRecord.setRecDesc( "评论赠送粉币" );
 			fenbiFlowRecord.setRecFreezeType( 30 );
 			fenbiFlowRecord.setRecFkId( 0 );
