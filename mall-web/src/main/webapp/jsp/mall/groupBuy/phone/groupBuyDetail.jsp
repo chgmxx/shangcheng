@@ -221,6 +221,8 @@
             b = $(window).height(),
             d = 870,
             meta = $("#meta");
+        //向父类页面发送请求
+        window.parent.postMessage("width=870,initial-scale=" + a / d + ", minimum-scale=" + a / d + ", maximum-scale=" + a / d + ", user-scalable=no", '*');
         setTimeout(function () {
             meta.attr("content", "width=870,initial-scale=" + a / d + ", minimum-scale=" + a / d + ", maximum-scale=" + a / d + ", user-scalable=no");
             $(".loading").hide();
