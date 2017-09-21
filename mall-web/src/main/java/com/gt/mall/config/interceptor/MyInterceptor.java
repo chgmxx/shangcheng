@@ -96,6 +96,10 @@ public class MyInterceptor implements HandlerInterceptor {
 
 	BusUser user = SessionUtils.getLoginUser( request );
 	String url = request.getRequestURI();
+	if ( CommonUtil.isNotEmpty( user ) ) {
+	    request.setAttribute( "wxmpDomain", PropertiesUtil.getWxmpDomain() );//wxmp链接，前端调用js用的
+	}
+	request.setAttribute( "webUrl", PropertiesUtil.getHomeUrl() );//本项目的地址
 
 	String urlwx = "";
 	if ( url.length() > 0 ) {
@@ -135,21 +139,17 @@ public class MyInterceptor implements HandlerInterceptor {
 	} else if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
 	    response.setCharacterEncoding( "UTF-8" );
 	    String script = "<script type='text/javascript'>"
-			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "/user/tologin.do';"
+			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "user/tologin.do';"
 			    + "</script>";
 	    if ( isAjax( request ) ) {
 		Map< String,Object > map = new HashMap<>();
 		map.put( "timeout", "连接超时，请重新登录！" );
 		response.getWriter().write( JSONObject.fromObject( map ).toString() );
 	    } else {
-		response.getWriter().write( script );
+		response.sendRedirect( "/jsp/common/userlogin.jsp" );
 	    }
 	    return false;
 	}
-	if ( CommonUtil.isNotEmpty( user ) ) {
-	    request.setAttribute( "wxmpDomain", PropertiesUtil.getWxmpDomain() );//wxmp链接，前端调用js用的
-	}
-	request.setAttribute( "webUrl", PropertiesUtil.getHomeUrl() );//本项目的地址
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
 
