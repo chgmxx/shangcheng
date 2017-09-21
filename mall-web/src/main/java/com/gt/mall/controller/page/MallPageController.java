@@ -471,13 +471,18 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    } else {
 		name = storeMap.get( "business_name" ).toString();
 	    }
-
 	    if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "isShare" ) ) ) {
+	        String shareUrl = CommonUtil.getpath( request);
+		if(!shareUrl.contains( "?" )){
+		    shareUrl += "?isShare=1";
+		}else{
+		    shareUrl += "&isShare=1";
+		}
 		Map< String,Object > shareParam = new HashMap<>();
 		shareParam.put( "share", "onMenuShareTimeline,onMenuShareAppMessage,showAllNonBaseMenuItem" );
 		shareParam.put( "imagesUrl", headImg );
 		shareParam.put( "title", name + "-" + obj.getPagName() );
-		shareParam.put( "url", CommonUtil.getpath( request ) + "&isShare=1" );
+		shareParam.put( "url", shareUrl );
 		shareParam.put( "userid", userid );
 		String url = mallPageService.wxShare( userid, request, shareParam );
 		response.sendRedirect( url );
