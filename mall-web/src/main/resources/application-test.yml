@@ -95,13 +95,13 @@ static:
  source:
   ftp:
    #FTP Ip
-   ip: 120.25.154.127
+   ip: 14.29.5.118
    #FTP 端口号
    port: 21
    #FTP 用户名
-   user: gt123456
+   user: wz118logr
    #FTP 密码
-   password: gt12345612
+   password: Wtvvq$dn9KyOe,3!C5-C)w46
 #访问文章资源URL
 article:
  url:
@@ -114,7 +114,7 @@ resource:
 #图片存放路径
 res:
  image:
-  path: D:/tomcat/webapps/upload
+  path: D:/Program Files/apache-tomcat7_new_idea/webapps/upload/image
 
 #电信流量订单前缀
 dianxin:
