@@ -1,0 +1,153 @@
+######################## Spring Profile 切换环境 ########################
+## 切换日志环境、数据源等配置
+#  默认的profile为dev，其他环境通过指定启动参数使用不同的profile，比如：
+#   调试环境：java -jar my-spring-boot.jar --spring.profiles.active=test
+#   调试环境：java -jar my-spring-boot.jar --spring.profiles.active=debug
+#   生产环境：java -jar my -spring-boot.jar --spring.profiles.active=prod
+#  注意 "---" 表示：一组配置
+# 调试环境配置
+spring:
+# profiles: dev
+ #redis配置
+ redis:
+  host: 113.106.202.51
+  port: 6379
+  password: gt@123456
+  database: 3
+#redis session共享
+ session:
+   store-type: redis
+#自动重启默认开发时开启
+ devtools:
+  restart:
+   enabled: true
+ thymeleaf:
+   cache: false
+
+
+
+datasource:
+ druid:
+   url: jdbc:mysql://113.106.202.51:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+   username: root
+   password: gt123456
+   driver-class-name: com.mysql.jdbc.Driver
+   platform: mysql
+   type: com.alibaba.druid.pool.DruidDataSource
+   # 下面为连接池的补充设置，应用到上面所有数据源中
+   # 初始化大小，最小，最大
+   initialSize: 5
+   maxActive: 20
+   # 配置获取连接等待超时的时间
+   maxWait: 60000
+   # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 五分钟
+   timeBetweenEvictionRunsMillis: 300000
+   # 配置一个连接在池中最小生存的时间，单位是毫秒
+   minEvictableIdleTimeMillis: 30000
+   validationQuery: select 1
+   testWhileIdle: true
+   testOnBorrow: true
+   testOnReturn: true
+   # 打开PSCache，并且指定每个连接上PSCache的大小
+   # poolPreparedStatements: true
+   # maxPoolPreparedStatementPerConnectionSize: 20
+   # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+   filters: stat,wall,slf4j
+   # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+   connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+   # 合并多个DruidDataSource的监控数据
+   #useGlobalDataSourceStat: true
+   #useGlobalDataSourceStat: true
+#   stat-view-servlet:
+#    #IP白(allow)/黑(deny)名单 (存在共同时，deny优先于allow) : 如果满足deny的话提示:Sorry, you are not permitted to view this page.
+#    allow: 127.0.0.1,192.168.3.47
+#    login-username: admin
+#    login-password: admin
+#    reset-enable: false
+#    url-pattern: /druid/*
+#    # Spring监控配置，说明请参考Druid Github Wiki，配置_Druid和Spring关联监控配置
+#    # 如果spring.datasource.druid.aop-patterns要代理的类没有定义interface请设置spring.aop.proxy-target-class=true
+#    # Spring监控AOP切入点，如x.y.z.service.*,配置多个英文逗号分隔
+#   aop-patterns: com.gt.*.dao.*,com.gt.mall.*.service.*
+
+
+######################## 调试环境配置 ########################
+#JedisUtil 用到的配置
+redis:
+ host: 113.106.202.51
+ port: 6379
+ password: gt@123456
+ database: 3
+
+### 设置 Redis session 共享
+redisSession:
+ domainName: .yifriend.net
+ cookiePath: /
+ cookieName: WXMPJSESSIONID
+
+web:
+ #域名
+ domain: mall.yifriend.net
+ #网页访问路径
+ homeUrl: http://mall.yifriend.net/
+
+####图片资源ftp 配置
+static:
+ source:
+  ftp:
+   #FTP Ip
+   ip: 120.25.154.127
+   #FTP 端口号
+   port: 21
+   #FTP 用户名
+   user: gt123456
+   #FTP 密码
+   password: gt12345612
+#访问文章资源URL
+article:
+ url:
+  prefix: http://mall.yifriend.net/
+#访问资源URL
+resource:
+ url:
+  prefix: http://maint.yifriend.net/upload/
+
+#图片存放路径
+res:
+ image:
+  path: D:/tomcat/webapps/upload
+
+#电信流量订单前缀
+dianxin:
+ order: df
+
+#消息队列
+mq:
+ #队列转换器
+ exchange: gt.exchange.message
+ #队列名称
+ queueName: gt.queueName.message
+
+
+
+http:
+ #总项目请求地址
+ wxmp:
+#  domain: http://wxmp.yifriend.net:12882/
+  domain: http://yifriend.net/
+  key: WXMP2017
+ #会员key 和 请求地址
+ member:
+  domain: http://member.deeptel.com.cn/
+  key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
+ union:
+  domain: http://union.duofee.com/
+  key: SR36E9KIYDLIU1VB6WX20HCW494QL97T
+ #进销存的请求地址、token 用户名  和token密码
+ jxc:
+  #进销存 地址
+  domain: http://jxc.duofee.com/jxc/
+  #进销存token用户名
+  account: e_shop
+  #进销存token密码
+  pwx: shop12345
