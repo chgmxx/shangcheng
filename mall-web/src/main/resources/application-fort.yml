@@ -102,7 +102,7 @@ static:
 #访问文章资源URL
 article:
  url:
-  prefix: http://mall.yifriend.net:8080/
+  prefix: http://nb.mall.deeptel.com.cn/
 #访问资源URL
 resource:
  url:
@@ -127,12 +127,11 @@ mq:
 http:
  #总项目请求地址
  wxmp:
-  domain: http://wxmp.yifriend.net:12882/
-#  domain: http://yifriend.net/
+  domain: http://nb.deeptel.com.cn/
   key: WXMP2017
  #会员key 和 请求地址
  member:
-  domain: http://member.deeptel.com.cn/
+  domain: https://nb.member.deeptel.com.cn/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
  union:
   domain: http://union.duofee.com/
