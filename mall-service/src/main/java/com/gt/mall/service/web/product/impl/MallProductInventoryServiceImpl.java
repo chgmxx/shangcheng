@@ -306,7 +306,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	if ( CommonUtil.isNotEmpty( inv_id ) ) {
 	    inventoryWrapper.andNew( "id={0} and inv_num > 0", inv_id );
 	}
-	inventoryWrapper.orderBy( "is_default,inv_num", false );
+	inventoryWrapper.orderBy( "is_default", false ).orderBy( "inv_num", false );
 	List< Map< String,Object > > inventoryList = mallProductInventoryDAO.selectMaps( inventoryWrapper );
 	if ( inventoryList == null || inventoryList.size() == 0 ) {
 	    inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
@@ -349,7 +349,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	    }
 
 	    map.put( "specifica_name", specifica_names.toString() );
-	    map.put( "xids", xids.toString().substring( 0, xids.length()-1 ) );
+	    map.put( "xids", xids.toString().substring( 0, xids.length() - 1 ) );
 	}
 	return map;
     }
@@ -385,14 +385,14 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 		if ( specificaList != null && specificaList.size() > 0 ) {
 		    for ( int i = 0; i < specificaList.size(); i++ ) {
 			MallProductSpecifica specifica = specificaList.get( i );
-			if(slist.contains( specifica.getId().toString() )){
+			if ( slist.contains( specifica.getId().toString() ) ) {
 			    xids.append( specifica.getSpecificaValueId() ).append( "," );
 			    values.append( specifica.getSpecificaValue() ).append( "," );
 			}
 		    }
 		}
-		map.put( "values", values.toString().substring( 0, values.length()-1 ) );
-		map.put( "xsid", xids.toString().substring( 0, xids.length()-1 ) );
+		map.put( "values", values.toString().substring( 0, values.length() - 1 ) );
+		map.put( "xsid", xids.toString().substring( 0, xids.length() - 1 ) );
 		xlist.add( map );
 	    }
 	}

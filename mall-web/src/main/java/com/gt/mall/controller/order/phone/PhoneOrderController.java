@@ -1000,12 +1000,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		userid = order.getBusUserId();
 	    }
 	    Map< String,Object > publicMap = pageService.publicMapByUserId( userid );
-			/*if((CommonUtil.judgeBrowser(request) != 1 || CommonUtil.isEmpty(publicMap))){
-				boolean isLogin = pageService.isLogin(member, userid, request);
-				if(!isLogin){
-					return "redirect:/phoneLoginController/"+userid+"/79B4DE7C/phonelogin.do?returnKey="+Constants.UCLOGINKEY;
-				}
-			}*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -1015,6 +1009,8 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    int isAliPay = 0;//不能支付宝支付
 	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) ) {
 		isWxPay = 1;//可以微信支付
+	    } else {
+		isAliPay = 1;
 	    }
 	    //todo alipayUserService.findAlipayUserByBusId
 	   /* AlipayUser alipayUser = alipayUserService.findAlipayUserByBusId( member.getBusid() );
@@ -1074,7 +1070,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    if ( CommonUtil.isNotEmpty( params ) ) {
-		MallDaifu daifu = (MallDaifu) JSONObject.toBean( JSONObject.fromObject( params.get( "daifu" ) ), MallDaifu.class );
+		MallDaifu daifu = com.alibaba.fastjson.JSONObject.parseObject( params.get( "daifu" ).toString(), MallDaifu.class );
 		daifu.setDfUserId( memberId );
 		resultMap = mallOrderService.addMallDaifu( daifu );
 	    }

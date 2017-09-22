@@ -624,7 +624,6 @@
             dataType: "json",
             success: function (data) {
                 if (data.result) {
-                    //微信支付
                     if (data.url !== null && data.url !== "") {
                         location.href = data.url;
                     }

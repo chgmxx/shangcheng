@@ -98,8 +98,15 @@
     }
 
     function parentScrollTops(height) {
-        //messageSocket("scrollZiTop(" + height + ")");
         $(window).scrollTop(height);
+    }
+
+    function openShade() {
+        messageSocket("openMask()");
+    }
+
+    function closeShade() {
+        messageSocket("closeMask()");
     }
 
 
