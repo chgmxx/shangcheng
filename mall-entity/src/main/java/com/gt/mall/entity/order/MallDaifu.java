@@ -22,7 +22,7 @@ import java.util.Date;
  */
 @Data
 @Accessors( chain = true )
-@TableName( "t_mall_auction" )
+@TableName( "t_mall_daifu" )
 public class MallDaifu extends Model< MallDaifu > {
 
     private static final long serialVersionUID = 1L;

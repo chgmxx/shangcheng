@@ -109,7 +109,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 找人代付
      */
-    public Map< String,Object > addMallDaifu( MallDaifu daifu );
+    public Map< String,Object > addMallDaifu( MallDaifu daifu ) throws Exception;
 
     /**
      * 查询代付信息

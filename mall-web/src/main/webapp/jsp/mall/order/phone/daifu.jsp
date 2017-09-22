@@ -238,21 +238,9 @@ $(".wxPay,.aliPay").click(function(){
   			
   			if(data != null){
   				if(data.result == true){
-  					//location.href="phoneOrder/79B4DE7C/success.do?id="+data.orderId+"&no="+data.no;
-  					//if(data.payWay == 1){//储值卡支付，进入支付回调
-  					//	location.href="/wxPay/79B4DE7C/wxMallDaifu.do?id="+data.id;
-  					//}
-  					if(payWay == 1){//微信
-  						location.href="/wxPay/79B4DE7C/wxMallDaifu.do?id="+data.id;
-  					}else if(payWay == 2){
-  						var model = 3;
-						if(data.proTypeId == 2){
-							model = 13;
-						}
-						var alipaySubject = $("input.alipaySubject").val();
-						var return_url = "${path}/phoneOrder/"+data.orderId+"/"+data.busId+"/2/79B4DE7C/orderPaySuccess.do";
-  						location.href="/alipay/79B4DE7C/alipayApi.do?out_trade_no="+data.no+"&subject="+alipaySubject+"&total_fee="+data.orderMoney+"&busId="+data.busId+"&model="+model+"&businessUtilName=mallDaiFuAlipayNotifyUrlBuinessService&return_url="+return_url;
-  					}
+                    if (data.url !== null && data.url !== "") {
+                        location.href = data.url;
+                    }
   				}else{
   					layer.closeAll();
   					if(data.msg != null && data.msg != ""){

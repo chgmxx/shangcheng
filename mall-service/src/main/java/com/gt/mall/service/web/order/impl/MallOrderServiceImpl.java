@@ -46,6 +46,7 @@ import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
+import com.gt.mall.service.web.order.MallOrderNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
@@ -192,6 +193,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private MallStoreService mallStoreService;
+
+    @Autowired
+    private MallOrderNewService mallOrderNewService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -2169,7 +2173,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     }
 
     @Override
-    public Map< String,Object > addMallDaifu( MallDaifu daifu ) {
+    public Map< String,Object > addMallDaifu( MallDaifu daifu ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
 
 	List idList = mallOrderDAO.selectOrderPid( daifu.getOrderId() );
@@ -2240,6 +2244,16 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    if ( code > 0 && CommonUtil.isNotEmpty( daifu.getId() ) ) {
 		id = daifu.getId();
+	    }
+	    if ( daifu.getDfPayWay() == 1 || daifu.getDfPayWay() == 2 || daifu.getDfPayWay() == 3 ) {
+		MallOrder order = mallOrderDAO.selectById( daifu.getOrderId() );
+		int payWay = 1;
+		if ( daifu.getDfPayWay() == 2 ) {
+		    payWay = 9;
+		}
+		order.setOrderPayWay( payWay );
+		String url = mallOrderNewService.wxPayWay( CommonUtil.toDouble( daifu.getDfPayMoney() ), daifu.getDfOrderNo(), order );
+		resultMap.put( "url", url );
 	    }
 	    resultMap.put( "result", flag );
 	    resultMap.put( "msg", msg );
