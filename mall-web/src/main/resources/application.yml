@@ -8,12 +8,10 @@ server:
 ######################## Spring 全局设置 ########################
 spring:
  application:
-  name: zhangmz-SpringBoot
+  name: mall-SpringBoot
  profiles:
-#  active: dev
   active: test
-#  active: prod
-  # SpringMvc 配置
+ # SpringMvc 配置
  mvc:
   view:
    prefix: /jsp/
