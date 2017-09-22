@@ -2279,11 +2279,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public Map< String,Object > saveRedisByUrl( Member member, int userid, HttpServletRequest request ) {
 	Map< String,Object > loginMap = new HashMap<>();
-	String redisKey = CommonUtil.getCode();
 	String url = CommonUtil.getpath( request );
 	url = url.substring( url.indexOf( request.getServletPath() ), url.length() );
-	JedisUtil.set( redisKey, url, 5 * 60 );
-	loginMap.put( "redisKey", redisKey );
 	loginMap.put( "busId", userid );
 	loginMap.put( "requestUrl", url );
 	request.setAttribute( "userid", userid );

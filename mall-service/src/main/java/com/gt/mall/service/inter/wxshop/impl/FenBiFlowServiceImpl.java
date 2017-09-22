@@ -97,4 +97,12 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 	requestUtils.setReqdata( reqGetMobileInfo );
 	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "getMobileInfo.do", 2 );
     }
+
+    @Override
+    public boolean updaterecUseCountVer2( UpdateFenbiReduce updateFenbiReduce ) {
+	RequestUtils< UpdateFenbiReduce > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( updateFenbiReduce );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "updaterecUseCountVer2.do", 2 );
+	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+    }
 }

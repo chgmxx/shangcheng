@@ -77,4 +77,11 @@ public interface FenBiFlowService {
      * 查询手机归属地
      */
     Map getMobileInfo( ReqGetMobileInfo reqGetMobileInfo );
+
+    /**
+     * 修改冻结粉币的数量
+     *
+     * @return true 成功
+     */
+    boolean updaterecUseCountVer2( UpdateFenbiReduce updateFenbiReduce );
 }
