@@ -24,6 +24,13 @@ public interface FenBiFlowService {
     FenBiCount getFenbiSurplus( FenbiSurplus fenbiSurplus );
 
     /**
+     * 查询冻结记录
+     * @param fenbiSurplus 参数
+     * @return 冻结记录
+     */
+    FenbiFlowRecord getFenbiFlowRecord(FenbiSurplus fenbiSurplus);
+
+    /**
      * 根据ID查询流量套餐
      *
      * @param flowId 流量id

@@ -45,6 +45,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	urls.put( "/dxuser/login.do", "/dxuser/login.do" );
 	urls.put( "/dxuser/login_success.do", "/dxuser/login_success.do" );
 	urls.put( "/swagger-resources/configuration/ui", "/swagger-resources/configuration/ui" );
+	urls.put( "/common/toLogin", "/common/toLogin" );
 
 	suffixs.add( "js" );
 	suffixs.add( "css" );
@@ -146,7 +147,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		map.put( "timeout", "连接超时，请重新登录！" );
 		response.getWriter().write( JSONObject.fromObject( map ).toString() );
 	    } else {
-		response.sendRedirect( "/jsp/common/userlogin.jsp" );
+		response.sendRedirect( "/common/toLogin" );
 	    }
 	    return false;
 	}

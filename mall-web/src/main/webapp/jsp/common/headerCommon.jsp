@@ -98,7 +98,8 @@
     }
 
     function parentScrollTops(height) {
-        messageSocket("scrollZiTop(" + height + ")");
+        //messageSocket("scrollZiTop(" + height + ")");
+        $(window).scrollTop(height);
     }
 
 

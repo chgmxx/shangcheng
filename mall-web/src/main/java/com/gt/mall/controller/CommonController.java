@@ -7,6 +7,7 @@ package com.gt.mall.controller;
  * Time : 10:57
  */
 
+import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.QRcodeKit;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +30,14 @@ public class CommonController {
 	response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );
 	response.setContentType( "application/octet-stream" );
 	QRcodeKit.buildQRcode( url, 450, 450, response );
+    }
+
+    /**
+     * 跳转登陆
+     */
+    @RequestMapping( "/toLogin" )
+    public String toLogin( HttpServletRequest request, HttpServletResponse response ) {
+	request.setAttribute( "returnUrls", PropertiesUtil.getWxmpDomain() + "user/tologin.do" );
+	return "common/userlogin";
     }
 }

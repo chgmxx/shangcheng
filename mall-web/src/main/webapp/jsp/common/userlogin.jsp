@@ -5,7 +5,7 @@
 </head>
 <body>
 <script type='text/javascript'>
-    top.location.href = 'http://yifriend.net/user/tologin.do';
+    top.location.href = "${returnUrls}";
 </script>
 
 </body>

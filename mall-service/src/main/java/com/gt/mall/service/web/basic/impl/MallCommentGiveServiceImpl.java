@@ -22,7 +22,6 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
 import com.gt.util.entity.param.fenbiFlow.UpdateFenbiReduce;
-import com.gt.util.entity.result.fenbi.FenBiCount;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,8 +109,8 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 			    fenbiSurplus.setFkId( userId );//外键ID
 			    fenbiSurplus.setFre_type( Constants.COMMNET_GIVE_TYPE );//冻结类型    30 评论送礼（赠送粉币）
 			    fenbiSurplus.setRec_type( 1 );//1：粉币 2：流量
-			    FenBiCount fenBiCount = fenBiFlowService.getFenbiSurplus( fenbiSurplus );
-			    if ( CommonUtil.isNotEmpty( fenBiCount ) ) {
+			    FenbiFlowRecord flowRecord = fenBiFlowService.getFenbiFlowRecord( fenbiSurplus );
+			    if ( CommonUtil.isNotEmpty( flowRecord ) ) {
 				UpdateFenbiReduce fenbiReduce = new UpdateFenbiReduce();
 				fenbiReduce.setBusId( userId );
 				fenbiReduce.setCount( CommonUtil.toDouble( give.getNum() ) );
@@ -122,7 +121,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 				    throw new BusinessException( ResponseEnums.ERROR.getCode(), "流量冻结失败" );
 				}
 			    } else {
-				saveFenbiFlow( userId );
+				saveFenbiFlow( userId, CommonUtil.toDouble( give.getNum() ) );
 			    }
 			}
 		    } else {
@@ -167,9 +166,9 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 			fenbiSurplus.setFkId( user.getId() );//外键ID
 			fenbiSurplus.setFre_type( Constants.COMMNET_GIVE_TYPE );//冻结类型    30 评论送礼（赠送粉币）
 			fenbiSurplus.setRec_type( Constants.FENBI_GIEVE_TYPE );//1：粉币 2：流量
-			FenBiCount fenBiCount = fenBiFlowService.getFenbiSurplus( fenbiSurplus );
-			if ( CommonUtil.isEmpty( fenBiCount ) ) {
-			    saveFenbiFlow( user.getId() );
+			FenbiFlowRecord flowRecord = fenBiFlowService.getFenbiFlowRecord( fenbiSurplus );
+			if ( CommonUtil.isEmpty( flowRecord ) ) {
+			    saveFenbiFlow( user.getId(), null );
 			}
 		    }
 		    flag = true;
@@ -183,19 +182,15 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 
     /**
      * 粉币冻结
-     *
-     * @param userId
-     *
-     * @return
      */
-    private void saveFenbiFlow( int userId ) {
+    private void saveFenbiFlow( int userId, Double count ) {
 	FenbiFlowRecord fenbiFlowRecord = new FenbiFlowRecord();
 	fenbiFlowRecord.setBusUserId( userId );
 	fenbiFlowRecord.setRecType( Constants.FENBI_GIEVE_TYPE );
 	fenbiFlowRecord.setRecDesc( "评论赠送粉币" );
 	fenbiFlowRecord.setRecFreezeType( Constants.COMMNET_GIVE_TYPE );
 	fenbiFlowRecord.setRecFkId( userId );
-	fenbiFlowRecord.setRecCount( null );
+	fenbiFlowRecord.setRecCount( count );
 	Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( fenbiFlowRecord );
 	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "冻结流量失败" );
