@@ -136,8 +136,8 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     @Override
     public List< MallProductInventory > selectByIdListDefault( List< Integer > productList ) {
 
-	Wrapper<MallProductInventory> wrapper = new EntityWrapper<>(  );
-	wrapper.where( "is_delete = 0 and is_default = 1" ).in( "product_id",productList);
+	Wrapper< MallProductInventory > wrapper = new EntityWrapper<>();
+	wrapper.where( "is_delete = 0 and is_default = 1" ).in( "product_id", productList );
 
 	return mallProductInventoryDAO.selectList( wrapper );
     }
@@ -336,17 +336,20 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	    String specifica_id[] = specifica_ids.split( "," );
 	    StringBuilder specifica_names = new StringBuilder();
 	    StringBuilder xids = new StringBuilder();
-	    for ( int i = 0; i < specifica_id.length; i++ ) {
-		Map< String,Object > map1 = mallProductSpecificaDAO.selectValueBySpecId( CommonUtil.toInteger( specifica_id[i] ) );
-		specifica_names.append( map1.get( "spec_value" ).toString() ).append( "&nbsp;&nbsp;" );
-		if ( i == specifica_id.length - 1 ) {
-		    xids.append( map1.get( "id" ).toString() );
-		} else {
-		    xids.append( map1.get( "id" ).toString() ).append( "," );
+
+	    Wrapper< MallProductSpecifica > wrapper = new EntityWrapper<>();
+	    wrapper.in( "id", specifica_id );
+	    List< MallProductSpecifica > specificaList = mallProductSpecificaDAO.selectList( wrapper );
+	    if ( specificaList != null && specificaList.size() > 0 ) {
+		for ( int i = 0; i < specificaList.size(); i++ ) {
+		    MallProductSpecifica specifica = specificaList.get( i );
+		    specifica_names.append( specifica.getSpecificaValue() ).append( "&nbsp;&nbsp;" );
+		    xids.append( specifica.getSpecificaValueId() ).append( "," );
 		}
 	    }
+
 	    map.put( "specifica_name", specifica_names.toString() );
-	    map.put( "xids", xids.toString() );
+	    map.put( "xids", xids.toString().substring( 0, xids.length()-1 ) );
 	}
 	return map;
     }
@@ -355,24 +358,43 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     public List< Map< String,Object > > guigePrice( Integer productId ) {
 	List< Map< String,Object > > xlist = new ArrayList<>();
 	List< Map< String,Object > > list = mallProductInventoryDAO.selectInvenByProId( productId );
-	for ( Map< String,Object > map : list ) {
-	    String specifica_ids = map.get( "specifica_ids" ).toString();
-	    String specifica_id[] = specifica_ids.split( "," );
-	    StringBuilder xids = new StringBuilder();
-	    StringBuilder values = new StringBuilder();
-	    for ( int j = 0; j < specifica_id.length; j++ ) {
-		Map< String,Object > map1 = mallProductSpecificaDAO.selectValueBySpecId( CommonUtil.toInteger( specifica_id[j] ) );
-		if ( j == specifica_id.length - 1 ) {
-		    xids.append( map1.get( "id" ).toString() );
-		    values.append( map1.get( "spec_value" ).toString() );
-		} else {
-		    xids.append( map1.get( "id" ).toString() ).append( "," );
-		    values.append( map1.get( "spec_value" ).toString() ).append( "," );
+	if ( list != null && list.size() > 0 ) {
+	    List< Integer > speIdList = new ArrayList<>();
+	    for ( Map< String,Object > map : list ) {
+		String specifica_ids = map.get( "specifica_ids" ).toString();
+		String specifica_id[] = specifica_ids.split( "," );
+		for ( String s : specifica_id ) {
+		    if ( !speIdList.contains( CommonUtil.toInteger( s ) ) ) {
+			speIdList.add( CommonUtil.toInteger( s ) );
+		    }
 		}
 	    }
-	    map.put( "values", values.toString() );
-	    map.put( "xsid", xids.toString() );
-	    xlist.add( map );
+	    List< MallProductSpecifica > specificaList = new ArrayList<>();
+	    if ( speIdList != null && speIdList.size() > 0 ) {
+		Wrapper< MallProductSpecifica > wrapper = new EntityWrapper<>();
+		wrapper.in( "id", speIdList );
+		specificaList = mallProductSpecificaDAO.selectList( wrapper );
+	    }
+
+	    for ( Map< String,Object > map : list ) {
+		String specifica_ids = map.get( "specifica_ids" ).toString();
+		String specifica_id[] = specifica_ids.split( "," );
+		List slist = Arrays.asList( specifica_id );
+		StringBuilder xids = new StringBuilder();
+		StringBuilder values = new StringBuilder();
+		if ( specificaList != null && specificaList.size() > 0 ) {
+		    for ( int i = 0; i < specificaList.size(); i++ ) {
+			MallProductSpecifica specifica = specificaList.get( i );
+			if(slist.contains( specifica.getId().toString() )){
+			    xids.append( specifica.getSpecificaValueId() ).append( "," );
+			    values.append( specifica.getSpecificaValue() ).append( "," );
+			}
+		    }
+		}
+		map.put( "values", values.toString().substring( 0, values.length()-1 ) );
+		map.put( "xsid", xids.toString().substring( 0, xids.length()-1 ) );
+		xlist.add( map );
+	    }
 	}
 	return xlist;
     }

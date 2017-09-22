@@ -35,8 +35,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, group_buy_id , specifica_ids , join_price , join_user_id , join_type , order_id ,
-        order_detail_id , join_time , join_status , product_id , p_join_id
+        j.id, j.group_buy_id , j.specifica_ids , j.join_price , j.join_user_id , j.join_type , j.order_id ,
+        j.order_detail_id , j.join_time , j.join_status , j.product_id , j.p_join_id
     </sql>
 
     <!-- 查询团购的发起人 -->

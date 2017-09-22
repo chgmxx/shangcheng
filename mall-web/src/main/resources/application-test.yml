@@ -27,7 +27,7 @@ spring:
 
 datasource:
  druid:
-   url: jdbc:mysql://113.106.202.51:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+   url: jdbc:mysql://113.106.202.51:3306/gt_mall_ceshi?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
    username: root
    password: gt123456
    driver-class-name: com.mysql.jdbc.Driver
@@ -80,15 +80,15 @@ redis:
 
 ### 设置 Redis session 共享
 redisSession:
- domainName: .yifriend.net
+ domainName: .deeptel.com.cn
  cookiePath: /
  cookieName: WXMPJSESSIONID
 
 web:
  #域名
- domain: mall.yifriend.net
+ domain: mall.deeptel.com.cn
  #网页访问路径
- homeUrl: http://mall.yifriend.net/
+ homeUrl: https://mall.deeptel.com.cn/
 
 ####图片资源ftp 配置
 static:
@@ -99,22 +99,18 @@ static:
    #FTP 端口号
    port: 21
    #FTP 用户名
-   user: wz118logr
+   user: picuser
    #FTP 密码
-   password: Wtvvq$dn9KyOe,3!C5-C)w46
-#访问文章资源URL
-article:
- url:
-  prefix: http://mall.yifriend.net/
-#访问资源URL
+   password: 123456
+#访问图片资源URL
 resource:
  url:
-  prefix: http://maint.yifriend.net/upload/
+  prefix: http://maint.deeptel.com.cn/upload/
 
 #图片存放路径
 res:
  image:
-  path: D:/Program Files/apache-tomcat7_new_idea/webapps/upload/image
+  path: /home/server/project/staticSource/upload
 
 #电信流量订单前缀
 dianxin:
@@ -132,12 +128,11 @@ mq:
 http:
  #总项目请求地址
  wxmp:
-#  domain: http://wxmp.yifriend.net:12882/
-  domain: http://yifriend.net/
+  domain: https://deeptel.com.cn/
   key: WXMP2017
  #会员key 和 请求地址
  member:
-  domain: http://member.deeptel.com.cn/
+  domain: https://member.deeptel.com.cn/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
  union:
   domain: http://union.duofee.com/

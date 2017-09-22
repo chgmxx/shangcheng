@@ -1761,7 +1761,7 @@
         arr[arr.length] = obj;
         var obj = {
             province: province,
-            orderArr: JSON.stringify(arr)
+            orderArr: arr
         };
         $.ajax({
             url: "mFreight/79B4DE7C/getFreightByProvinceId.do",

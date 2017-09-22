@@ -34,12 +34,12 @@ public class HttpSignUtil {
 	    int type = CommonUtil.isNotEmpty( types ) && types.length > 0 ? types[0] : 0;
 	    String signKey = CommonUtil.getHttpSignKey( type );
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
-	    if ( type == 0 ) {
+	    /*if ( type == 0 ) {
 		newUrl = "http://113.106.202.53:13885/" + url;
-	    }
-	    if(type == 2){
+	    }*/
+	    /*if(type == 2){
 		newUrl = "http://192.168.2.7:8888/" + url;
-	    }
+	    }*/
 	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 	    if ( type == 1 || type == 0 ) {//商家
 		result = SignHttpUtils.WxmppostByHttp( newUrl, obj, signKey );

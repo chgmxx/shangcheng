@@ -22,8 +22,6 @@ public class PropertiesUtil {
 
     private static String jxcPwd;//进销存token密码
 
-    private static String articleUrl;//访问文章资源URL
-
     private static String staticSourceFtpIp;//图片资源Ftp IP
 
     private static String staticSourceFtpPort;//图片资源Ftp 端口
@@ -87,11 +85,6 @@ public class PropertiesUtil {
 	PropertiesUtil.jxcPwd = jxcPwd;
     }
 
-    @Value( "${article.url.prefix}" )
-    public void setArticleUrl( String articleUrl ) {
-	PropertiesUtil.articleUrl = articleUrl;
-    }
-
     @Value( "${static.source.ftp.ip}" )
     public void setStaticSourceFtpIp( String staticSourceFtpIp ) {
 	PropertiesUtil.staticSourceFtpIp = staticSourceFtpIp;
@@ -152,7 +145,7 @@ public class PropertiesUtil {
 	PropertiesUtil.exchange = exchange;
     }
 
-    @Value( "${mq.exchange}" )
+    @Value( "${mq.queueName}" )
     public void setQueueName( String queueName ) {
 	PropertiesUtil.queueName = queueName;
     }
@@ -270,10 +263,6 @@ public class PropertiesUtil {
 
     public static String getJxcPwd() {
 	return jxcPwd;
-    }
-
-    public static String getArticleUrl() {
-	return articleUrl;
     }
 
     public static String getStaticSourceFtpIp() {

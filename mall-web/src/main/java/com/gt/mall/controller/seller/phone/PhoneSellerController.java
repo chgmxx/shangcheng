@@ -171,6 +171,12 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 			    seller.setApplyTime( new Date() );
 			    seller.setAddTime( new Date() );
 			    seller.setCheckStatus( 1 );
+			    if ( CommonUtil.isEmpty( member.getNickname() ) ) {
+				seller.setUserName( member.getNickname() );
+			    }
+			    if ( CommonUtil.isEmpty( member.getPhone() ) ) {
+				seller.setTelephone( member.getPhone() );
+			    }
 			    int count = mallSellerService.insertSelective( seller, member );//添加超级销售员
 			    if ( count > 0 ) {
 				isIndex = true;
@@ -1454,7 +1460,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
     }
 
     /**
-     * 添加批发商
+     * 添加销售员
      */
     @RequestMapping( value = "/79B4DE7C/addSellers" )
     public void addSellers( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > map ) {
@@ -1475,6 +1481,12 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 	    //查询是否已申请超级销售员
 	    MallSeller isMallSeller = mallSellerService.selectMallSeller( seller );
 	    if ( CommonUtil.isEmpty( isMallSeller ) ) {
+		if ( CommonUtil.isEmpty( member.getNickname() ) ) {
+		    seller.setUserName( member.getNickname() );
+		}
+		if ( CommonUtil.isEmpty( member.getPhone() ) ) {
+		    seller.setTelephone( member.getPhone() );
+		}
 		count = mallSellerService.insertSelective( seller, member );//添加超级销售员
 	    } else {
 		if ( !isMallSeller.getCheckStatus().toString().equals( "0" ) ) {

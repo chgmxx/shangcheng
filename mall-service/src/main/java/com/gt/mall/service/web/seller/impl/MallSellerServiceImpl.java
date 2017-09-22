@@ -673,6 +673,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    resultMap.put( "errorMsg", "缺少参数" );
 	    return resultMap;
 	}
+	Member member = memberService.findMemberById( memberId, null );
 	//查询关注人信息
 	MallSeller seller = mallSellerDAO.selectSellerBySecenId( scene_id );
 	if ( CommonUtil.isNotEmpty( seller ) ) {
@@ -689,6 +690,12 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		    saleSelelr.setMemberId( memberId );
 		    saleSelelr.setCheckStatus( -2 );
 		    saleSelelr.setAddTime( new Date() );
+		    if ( CommonUtil.isEmpty( member.getNickname() ) ) {
+			seller.setUserName( member.getNickname() );
+		    }
+		    if ( CommonUtil.isEmpty( member.getPhone() ) ) {
+			seller.setTelephone( member.getPhone() );
+		    }
 		    mallSellerDAO.insert( saleSelelr );
 		} else {
 		    saleSelelr.setId( mallseller.getId() );
@@ -826,6 +833,12 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		saleSelelr.setMemberId( member.getId() );
 		saleSelelr.setCheckStatus( -2 );
 		saleSelelr.setAddTime( new Date() );
+		if ( CommonUtil.isEmpty( member.getNickname() ) ) {
+		    seller.setUserName( member.getNickname() );
+		}
+		if ( CommonUtil.isEmpty( member.getPhone() ) ) {
+		    seller.setTelephone( member.getPhone() );
+		}
 		mallSellerDAO.insert( saleSelelr );
 	    }
 	}

@@ -98,7 +98,7 @@ public class MallOrderController extends BaseController {
 		request.setAttribute( "endTime", params.get( "endTime" ) );
 		request.setAttribute( "orderNo", params.get( "orderNo" ) );
 		request.setAttribute( "path", PropertiesUtil.getResourceUrl() );
-		request.setAttribute( "urlPath", PropertiesUtil.getArticleUrl() );
+		request.setAttribute( "urlPath", PropertiesUtil.getDomain() );
 		request.setAttribute( "user", user );
 	    } else {
 		request.setAttribute( "isNoAdminFlag", 1 );
@@ -246,7 +246,7 @@ public class MallOrderController extends BaseController {
 	request.setAttribute( "orderPayNo", params.get( "orderPayNo" ) );
 	BusUser user = SessionUtils.getLoginUser( request );
 	request.setAttribute( "busUserId", user.getId() );
-	request.setAttribute( "http", PropertiesUtil.getArticleUrl() );
+	request.setAttribute( "http", PropertiesUtil.getDomain() );
 
 	return "mall/order/returnPopUp";
     }
@@ -372,7 +372,7 @@ public class MallOrderController extends BaseController {
 		request.setAttribute( "result", JSONObject.fromObject( result ) );
 
 		request.setAttribute( "orderId", params.get( "orderId" ) );
-		request.setAttribute( "urlPath", PropertiesUtil.getArticleUrl() );
+		request.setAttribute( "urlPath", PropertiesUtil.getDomain() );
 		request.setAttribute( "user", user );
 	    }
 	} catch ( Exception e ) {

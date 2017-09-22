@@ -70,7 +70,7 @@ public class MallHtmlController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
 	    Map< String,Object > map = htmlService.htmlList( request );
 	    request.setAttribute( "image", PropertiesUtil.getResourceUrl() );
-	    request.setAttribute( "http", PropertiesUtil.getArticleUrl() );
+	    request.setAttribute( "http", PropertiesUtil.getDomain() );
 	    request.setAttribute( "map", map );
 	    Integer iscreat = 0;//是否还可以创建h5商城0 可以，1不可以
 	    Integer ispid = 0;//是否是主账号，0是主账号，1是子账号管理，2是子账号用户

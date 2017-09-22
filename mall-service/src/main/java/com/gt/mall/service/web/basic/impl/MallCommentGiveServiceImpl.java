@@ -184,7 +184,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 			fenbiFlowRecord.setRecDesc( "评论赠送粉币" );
 			fenbiFlowRecord.setRecFreezeType( 30 );
 			fenbiFlowRecord.setRecFkId( 0 );
-			fenbiFlowRecord.setRecCount( Double.valueOf( "0" ) );
+			fenbiFlowRecord.setRecCount( null );
 			Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( fenbiFlowRecord );
 			if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "冻结流量失败" );
