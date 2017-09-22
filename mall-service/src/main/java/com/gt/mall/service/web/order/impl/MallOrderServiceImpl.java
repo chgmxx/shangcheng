@@ -2252,6 +2252,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    payWay = 9;
 		}
 		order.setOrderPayWay( payWay );
+		order.setBuyerUserId( daifu.getDfUserId() );
 		String url = mallOrderNewService.wxPayWay( CommonUtil.toDouble( daifu.getDfPayMoney() ), daifu.getDfOrderNo(), order );
 		resultMap.put( "url", url );
 	    }

@@ -639,9 +639,9 @@
                         }
                     }
                 }
-                setTimeout(function () {
-
-                }, 5000)
+                setTimeout(function(){
+                    layer.closeAll();
+                },2000);
                 layer.closeAll();
             }, error: function () {
                 layer.closeAll();

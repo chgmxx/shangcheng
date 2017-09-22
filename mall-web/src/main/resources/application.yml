@@ -8,7 +8,7 @@ server:
 ######################## Spring 全局设置 ########################
 spring:
  application:
-  name: mall-SpringBoot
+  name: mall
  profiles:
   active: dev
   # SpringMvc 配置
@@ -38,6 +38,9 @@ spring:
  devtools:
   restart:
    enabled: true
+ jackson:
+ # 定义Json 输出不为null 的字段
+   default-property-inclusion: non_null
 
 
 ######################## 日志 ########################
@@ -87,10 +90,5 @@ mybatis-plus:
 ######################## Logback ########################
 
 # debug: true
-
-######################## 全局配置 ########################
-web:
-#  homeUrl: http://192.168.2.100:8081/
-
 
 
