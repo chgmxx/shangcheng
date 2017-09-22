@@ -39,16 +39,6 @@ public class Constants {
     public static final String IMAGE_FOLDER_TYPE_20 = "20";
 
     /**
-     * 微商城
-     */
-    public static final String IMAGE_FOLDER_TYPE_28 = "28";
-
-    /**
-     * 微商城
-     */
-    public static final String IMAGE_FOLDER_TYPE_29 = "29";
-
-    /**
      * 网址名称
      */
     public final static String doMainName = "多粉";
@@ -104,5 +94,15 @@ public class Constants {
      * redis 缓存时间
      */
     public static final int REDIS_SECONDS = 60 * 30;
+
+    /**
+     * 评论送粉币类型
+     */
+    public static final int COMMNET_GIVE_TYPE = 30;
+
+    /**
+     * 粉币赠送类型
+     */
+    public static final int FENBI_GIEVE_TYPE = 1;
 
 }
