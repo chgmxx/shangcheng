@@ -36,6 +36,17 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
     }
 
     @Override
+    public FenbiFlowRecord getFenbiFlowRecord( FenbiSurplus fenbiSurplus ) {
+	RequestUtils< FenbiSurplus > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( fenbiSurplus );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiFlowRecord.do", 2 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenbiFlowRecord.class );
+	}
+	return null;
+    }
+
+    @Override
     public BusFlowInfo getFlowInfoById( int flowId ) {
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( flowId );

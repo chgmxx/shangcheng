@@ -596,18 +596,16 @@ function getProduct(type, proName) {
  * @param id
  */
 $(".qrcode").click(function () {
-    SonScrollTop(0);
-    setTimeout(function () {
-        layer.open({
-            type: 1,
-            title: "商品预览",
-            skin: 'layui-layer-rim', //加上边框
-            area: ['200px', '240px'], //宽高
-            offset: scrollHeight + "px",
-            shade: [0.1, "#fff"],
-            content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
-        });
-    }, timeout);
+    var url = $(this).attr("url");
+    layer.open({
+        type: 1,
+        title: "商品预览",
+        skin: 'layui-layer-rim', //加上边框
+        area: ['200px', '240px'], //宽高
+        offset: "20%",
+        shade: [0.1, "#fff"],
+        content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + url + "'/>"
+    });
 });
 
 $(".toShops").click(function () {
@@ -628,8 +626,8 @@ $(".toShops").click(function () {
     }, timeout);
 });
 /*function viewQR(id) {
-    parentOpenIframe("店铺二维码", "400px", "300px", "store/viewQR.do?id=" + id);
-}*/
+ parentOpenIframe("店铺二维码", "400px", "300px", "store/viewQR.do?id=" + id);
+ }*/
 /**
  * 同步
  */
@@ -644,7 +642,7 @@ $(".sync").click(function () {
             skin: 'layui-layer-rim', //加上边框
             area: ['500px', '530px'], //宽高
             offset: scrollHeight + "px",
-                shade: [0.1, "#fff"],
+            shade: [0.1, "#fff"],
             content: "/mPro/group/getGroups.do?proId=" + proId + "&type=1"
         });
     }, timeout);

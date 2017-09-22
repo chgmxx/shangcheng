@@ -50,23 +50,23 @@
              * @param id
              */
             $(".qrcode").click(function () {
-                parentOpenIframe("店铺二维码", "200px", "240px", "/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "" );
-
-               /* parent.layer.open({
+                var url = $(this).attr("url");
+                layer.open({
                     type: 1,
-                    title: "页面预览",
+                    title: "商品预览",
                     skin: 'layui-layer-rim', //加上边框
                     area: ['200px', '240px'], //宽高
-                    offset: "30%",
-                    content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
-                });*/
+                    offset: "20%",
+                    shade: [0.1, "#fff"],
+                    content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + url + "'/>"
+                });
             });
         });
     </script>
 </head>
 
 <body>
-<jsp:include page="/jsp/common/headerCommon.jsp" />
+<jsp:include page="/jsp/common/headerCommon.jsp"/>
 
 <div class="body_div">
     <c:if test="${empty isNoAdminFlag }">
@@ -167,7 +167,7 @@
     function add(obj) {
         if (obj > 0) {
             layer.msg("店铺已添加完毕，需要添加新店铺，请前往门店里面添加新的门店", {
-                shade:[0.1,"#fff"],
+                shade: [0.1, "#fff"],
                 offset: "10%"
             });
         } else {

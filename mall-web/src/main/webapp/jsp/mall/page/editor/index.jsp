@@ -224,13 +224,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     function materiallayer(param) {
         pic_type = param;
 
-        openIframe('素材库','820px','500px',crossDomainUrl+'/common/material.do?retUrl=' + window.location.href);
+        openIframe('素材库', '820px', '500px', crossDomainUrl + '/common/material.do?retUrl=' + window.location.href);
 
 
     }
 
     /**素材库里面返回信息**/
-    function image(id,url){
+    function image(id, url) {
         //alert(url);
         imgList = url;
         if (pic_type == 0) {
@@ -384,14 +384,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 var error = data.error;
                 if (error == 0) {
                     layer.open({
-                        type: 2,
-                        title: '微商城预览',
+                        type: 1,
+                        title: "微商城预览",
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['200px', '240px'], //宽高
                         shadeClose: true,
-                        shade: 0.2,
-                        area: ['400px', '400px'],
-                        offset: "10px",
-                        content: '/mallPage/ylpage.do?id=' + id,
-                    })
+                        offset: "20%",
+                        shade: [0.2, "#000"],
+                        content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=/mallPage/"+id+"/79B4DE7C/viewHomepage.do'/>"
+                    });
                 } else {
                     alert(data.message);
                 }
