@@ -31,6 +31,8 @@ public class AuthorizeOrLoginController {
 
     public static final Logger logger = Logger.getLogger( AuthorizeOrLoginController.class );
 
+    private static final String GETWXPULICMSG = "/8A5DA52E/busUserApi/getWxPulbicMsg.do";
+
     @Autowired
     private BusUserService busUserService;
 
@@ -52,11 +54,9 @@ public class AuthorizeOrLoginController {
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
 	//判断商家信息 1是否过期 2公众号是否变更过
-	System.out.println("wxmpDomain = " + PropertiesUtil.getWxmpDomain());
-	String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/busUserApi/getWxPulbicMsg.do", getWxPublicMap, wxmpSign );
+	System.out.println( "wxmpDomain = " + PropertiesUtil.getWxmpDomain() );
+	String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + GETWXPULICMSG, getWxPublicMap, wxmpSign );
 	JSONObject json = JSONObject.parseObject( wxpublic );
-
-	//	JSONObject json = busUserService.isUserGuoQi( busId );
 	if ( CommonUtil.isEmpty( json ) || json.size() == 0 ) {
 	    return null;
 	}
@@ -69,13 +69,20 @@ public class AuthorizeOrLoginController {
 		return "redirect:" + guoqiUrl;
 	    }
 	    Object remoteUcLogin = json.get( "remoteUcLogin" );
-	    if (browser==99 && (CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin )) ) {
+	    if ( browser == 99 && ( CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
 		return null;
 	    }
 
 	}
 
- 	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
+	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
+
+	Map< String,Object > redisMap = new HashMap<>();
+	redisMap.put( "redisKey", CommonUtil.getCode() );
+	redisMap.put( "redisValue", requestUrl );
+	redisMap.put( "setime", 5 * 60 );
+	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpSignKey() );
+
 	String otherRedisKey = CommonUtil.getCode();
 	JedisUtil.set( otherRedisKey, requestUrl, 5 * 60 );
 	Map< String,Object > queryMap = new HashMap<>();
