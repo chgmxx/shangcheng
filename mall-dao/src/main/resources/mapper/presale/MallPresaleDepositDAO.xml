@@ -98,7 +98,7 @@
         d.id, presale_id, d.product_id, pro_specifica_ids, pro_name, pro_img_url, deposit_no,
         deposit_money, order_money, deposit_status, pay_way, pay_time, pay_no, return_no,
         return_time, d.user_id, d.create_time,p.shop_id as shopId,is_submit,
-        d.pro_num , buyer_user_type
+        d.pro_num , buyer_user_type,p.shop_id
     </sql>
 
     <!-- 统计定金 -->

@@ -325,7 +325,7 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
 	    logger.error( "预售缴纳定金回调异常：" + e.getMessage() );
 	    e.printStackTrace();
 	}
-	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( params.get( "no" ).toString() );
+	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( params.get( "out_trade_no" ).toString() );
 
 	return "redirect:/mallPage/" + deposit.getProductId() + "/" + deposit.getShopId() + "/79B4DE7C/phoneProduct.do";
     }
