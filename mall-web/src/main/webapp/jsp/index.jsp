@@ -4,15 +4,23 @@
 <head>
     <title>Title</title>
 </head>
-<link href="/css/common.css" rel="stylesheet" type="text/css"/>
 
-<script type="text/javascript" src="/js/common.js"></script>
-
+<script type="text/javascript" src="/js/plugin/jquery-1.8.3.min.js"></script>
 <body>
 
-aabbs
-<a href="#">哈哈</a>
-${homeUrl}
+<script type="text/javascript">
+    $.ajax({
+        url: "http://mall.yifriend.net:8080/mall/count",
+        type: "POST",
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+        }, error: function () {
+        }
+    });
+
+</script>
+
 <br/>
 
 <br/>

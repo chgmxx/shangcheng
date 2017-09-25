@@ -15,10 +15,7 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.JedisUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.sms.OldApiSms;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
@@ -306,9 +304,9 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 	    //				}
 	    //			}
 	    //			if(isPifa){
-	    List< Map< String,Object > > productList = mallPifaService
-			    .getPifaAll( member, params );// 查询店铺下所有加入批发的商品
-	    request.setAttribute( "productList", productList );
+	    PageUtil page = mallPifaService.getPifaAll( member, params );// 查询店铺下所有加入批发的商品
+	    request.setAttribute( "productList", page.getSubList() );
+	    request.setAttribute( "page", page );
 	    //			}
 
 	    if ( CommonUtil.isEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
@@ -340,5 +338,31 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 	    e.printStackTrace();
 	}
 	return "mall/wholesalers/phone/wholesalersall";
+    }
+
+    /**
+     * 分页查询商品
+     *
+     * @param request
+     *
+     * @return
+     */
+    @RequestMapping( value = "79B4DE7C/shoppingAllPage" )
+    public void shoppingAllPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+	logger.info( "进入分页查询商品Controller" );
+	Map< String,Object > resultMap = new HashMap<>();
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+
+	    PageUtil page = mallPifaService.getPifaAll( member, params );// 查询店铺下所有加入批发的商品
+
+	    resultMap.put( "page", page );
+
+	} catch ( Exception e ) {
+	    logger.error( "分页查询批发商品失败：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, resultMap );
+	}
     }
 }

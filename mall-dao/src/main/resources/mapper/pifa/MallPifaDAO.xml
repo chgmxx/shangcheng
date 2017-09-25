@@ -171,16 +171,20 @@
 
     <!-- 获取店铺下所有正在参加批发的商品 -->
     <select id="selectgbProductByShopId" parameterType="Map" resultType="Map">
-        SELECT a.id,a.is_member_discount,a.pro_price,a.pro_cost_price,a.pro_name,a.is_specifica,a.is_specifica,c.image_url,d.specifica_img_id,e.specifica_img_url,d.inv_num,d.inv_price,
-        gb.id as pifaId,gb.pf_price as pfPrice ,gb.pf_start_time as startTime ,gb.pf_end_time as endTime,a.shop_id as shopId,d.id as inv_id,
-        a.return_day,a.pro_stock_total as stockTotal,gb.pf_type
+        SELECT gb.id,gb.is_member_discount,gb.pro_price,gb.pro_cost_price,gb.pro_name,gb.is_specifica,
+        gb.pifaId,gb.pf_price AS pfPrice ,gb.pf_start_time AS startTime ,gb.pf_end_time AS endTime,gb.shop_id AS shopId,
+        gb.return_day,gb.pro_stock_total AS stockTotal,gb.pf_type,d.specifica_img_id,d.inv_num,d.inv_price,d.id AS inv_id
+        FROM (
+        SELECT
+        a.id,a.is_member_discount,a.pro_price,a.pro_cost_price,a.pro_name,a.is_specifica,
+        gb.id AS pifaId,gb.pf_price  ,gb.pf_start_time   ,gb.pf_end_time ,a.shop_id ,
+        a.return_day,a.pro_stock_total ,gb.pf_type
         from t_mall_pifa gb
         left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN  t_mall_product_specifica e ON d.specifica_img_id=e.id
-        left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
-        left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+
         WHERE  gb.is_delete=0 and gb.is_use=1
         <if test="isPublic != 1">
             and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
@@ -195,7 +199,7 @@
             and gb.shop_id=#{shopId,jdbcType=INTEGER}
         </if>
         <if test="proName != null and proName != ''">
-            and (a.pro_name like CONCAT("%","${proName}","%")  or g.group_name like CONCAT("%","${proName}","%")   )
+            and a.pro_name like CONCAT("%","${proName}","%")
         </if>
         <if test="productId != null and productId != ''">
             and gb.product_id=#{productId,jdbcType=INTEGER}
@@ -217,6 +221,43 @@
         </if>
         <if test="desc != null and desc != ''">
             desc
+        </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+        ) gb
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON gb.id=d.product_id
+    </select>
+
+    <!-- 获取店铺下所有正在参加批发的商品 -->
+    <select id="selectCountgbProductByShopId" parameterType="Map" resultType="java.lang.Integer">
+        SELECT count(gb.id)
+        from t_mall_pifa gb
+        left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+        WHERE  gb.is_delete=0 and gb.is_use=1
+        <if test="isPublic != 1">
+            and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        </if>
+        <if test="status != null and status != ''">
+            and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time )  or (gb.pf_start_time > now() and   gb.pf_end_time > now()))
+        </if>
+        <if test="id != null and id != ''">
+            and gb.id=#{id,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="proName != null and proName != ''">
+            and a.pro_name like CONCAT("%","${proName}","%")
+        </if>
+        <if test="productId != null and productId != ''">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
         </if>
     </select>
 

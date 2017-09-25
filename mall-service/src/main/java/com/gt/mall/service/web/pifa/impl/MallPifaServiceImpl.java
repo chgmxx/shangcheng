@@ -10,6 +10,7 @@ import com.gt.mall.dao.product.MallSearchKeywordDAO;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.pifa.MallPifaPrice;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaPriceService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -61,6 +62,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 
     @Autowired
     private MallProductService mallProductService;
+
+    @Autowired
+    private MallPageService mallPageService;
 
     @Override
     @Transactional( rollbackFor = Exception.class )
@@ -269,7 +273,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
      * 获取店铺下所有的批发
      */
     @Override
-    public List< Map< String,Object > > getPifaAll( Member member, Map< String,Object > maps ) {
+    public PageUtil getPifaAll( Member member, Map< String,Object > maps ) {
 
 	int shopid = 0;
 	if ( CommonUtil.isNotEmpty( maps.get( "shopId" ) ) ) {
@@ -278,19 +282,52 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	//新增搜索关键词
 	mallSearchKeywordService.insertSeachKeyWord( member.getId(), shopid, maps.get( "proName" ) );
 
-	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();// 存放店铺下的商品
-
-	double discount = 1;// 商品折扣
-	if ( CommonUtil.isNotEmpty( member ) ) {
-	    discount = mallProductService.getMemberDiscount( "1", member );
-	}
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( maps.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( maps.get( "curPage" ) );
+	int rowCount = mallPifaDAO.selectCountgbProductByShopId( maps );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	maps.put( "firstNum", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	maps.put( "maxNum", pageSize );
 	maps.put( "status", 1 );
-	List< Map< String,Object > > productList = mallPifaDAO
-			.selectgbProductByShopId( maps );
+
+	maps.put( "status", 1 );
+	List< Map< String,Object > > productList = mallPifaDAO.selectgbProductByShopId( maps );
+
+	if ( productList != null && productList.size() > 0 ) {
+	    String specImgIds = "";
+	    List< Integer > proIds = new ArrayList<>();
+	    for ( int i = 0; i < productList.size(); i++ ) {
+		Map< String,Object > map1 = productList.get( i );
+
+		if ( CommonUtil.isNotEmpty( map1.get( "specifica_img_id" ) ) ) {
+		    if ( !map1.get( "specifica_img_id" ).toString().equals( "0" ) ) {
+			if ( CommonUtil.isNotEmpty( specImgIds ) ) {
+			    specImgIds += ",";
+			}
+			specImgIds += map1.get( "specifica_img_id" ).toString();
+		    }
+		}
+		if ( CommonUtil.isNotEmpty( map1.get( "id" ) ) ) {
+		    proIds.add( CommonUtil.toInteger( map1.get( "id" ) ) );
+		}
+	    }
+	    String[] split = null;
+	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
+		split = specImgIds.split( "," );
+	    }
+	    productList = mallPageService.getProductImages( productList, proIds, split );
+	}
+	List< Map< String,Object > > list = getHomeParams( productList );
+	page.setSubList( list );
+	return page;
+    }
+
+    public List< Map< String,Object > > getHomeParams( List< Map< String,Object > > productList ) {
+	List< Map< String,Object > > list = new ArrayList<>();// 存放店铺下的商品
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( Map< String,Object > map2 : productList ) {
 		String is_specifica = map2.get( "is_specifica" ).toString();// 是否有规格，1有规格，有规格取规格里面的值
-		if ( is_specifica == "1" || is_specifica.equals( "1" ) ) {
+		if ( is_specifica.equals( "1" ) ) {
 		    //					map2.put("old_price", map2.get("inv_price"));
 		    map2.put( "price", map2.get( "inv_price" ) );
 		    String specifica_img_id = map2.get( "specifica_img_id" ).toString();
@@ -361,7 +398,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(),
 			    "yyyy-MM-dd HH:mm:ss" );
 	    pifa.setTimes( ( endTime.getTime() - nowTime.getTime() ) / 1000 );
-	    if ( pifa.getStatus()==null || pifa.getStatus() == 0 ) {
+	    if ( pifa.getStatus() == null || pifa.getStatus() == 0 ) {
 		pifa.setStartTimes( ( startTime.getTime() - nowTime.getTime() ) / 1000 );
 	    }
 

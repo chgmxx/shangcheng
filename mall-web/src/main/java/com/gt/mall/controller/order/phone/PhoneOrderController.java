@@ -47,10 +47,7 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -574,7 +571,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( result.equals( "0" ) ) {
-		List< Map< String,Object > > shopList = mallStoreService.findByUserId( member.getId() );
+		List< Map< String,Object > > shopList = mallStoreService.findByUserId( member.getBusid() );
 		List< Map< String,Object > > pageId = mallPageService.selectPageIdByUserId( member.getBusid(), shopList );
 		if ( pageId.size() > 0 ) {
 		    result = pageId.get( 0 ).get( "id" ).toString();
@@ -1085,54 +1082,30 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     }
 
     /**
-     * 储值卡支付成功的回调
+     * 代付支付成功的回调
      */
-    @RequestMapping( value = "/79B4DE7C/success" )
+    @RequestMapping( value = "/79B4DE7C/daifuSuccess" )
     @Transactional( rollbackFor = Exception.class )
-    public String success( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
-	String id = params.get( "id" ).toString();
-	Member member = SessionUtils.getLoginMember( request );
+    public void daifuSuccess( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
+	Map< String,Object > result = new HashMap<>();
+	int code = ResponseEnums.SUCCESS.getCode();
 	try {
-	    params.put( "out_trade_no", params.get( "no" ) );
-	    mallOrderService.paySuccessDaifu( params );
-
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return "redirect:/phoneOrder/" + id + "/79B4DE7C/getDaiFu.do?uId=" + member.getBusid();
-    }
-
-    /**
-     * 订单判断库存
-     */
-    private Map judgeStock( JSONObject detail, Map< String,Object > result, String type, int memberId ) {
-	int proId = CommonUtil.toInteger( detail.get( "product_id" ) );
-	int proNum = 1;//商品数量
-	Object proSpecificas = null;//规格Id
-	Object groupType = detail.get( "groupType" );
-	Object proSpecStr = detail.get( "pro_spec_str" );
-	if ( null != groupType && groupType.equals( "7" ) && CommonUtil.isNotEmpty( proSpecStr ) ) {//批发商品判断库存
-	    Map< String,Object > map = JSONObject.fromObject( proSpecStr );
-	    for ( Map.Entry< String,Object > e : map.entrySet() ) {
-		proSpecificas = e.getKey();
-		Map p = com.alibaba.fastjson.JSONObject.parseObject( e.getValue().toString(), Map.class );
-		proNum = CommonUtil.toInteger( p.get( "num" ) );
-		result = mallProductService.calculateInventory( proId, proSpecificas, proNum, memberId );
-		if ( !( result.get( "result" ) ).equals( "true" ) ) {
-		    break;
-		}
+	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
+		params.put( "out_trade_no", params.get( "no" ) );
 	    }
-	} else {
-	    proNum = CommonUtil.toInteger( detail.get( "product_num" ) );
-			/*if(CommonUtil.isNotEmpty(detail.get("totalnum"))){//点立即购买时，购买商品的数量
-				proNum = CommonUtil.toInteger( detail.get("totalnum"));
-			}else if(type.equals("1")){//点购物车时，购买商品的数量
-				proNum = CommonUtil.toInteger(detail.get("product_num"));
-			}*/
-	    proSpecificas = detail.get( "product_specificas" );
-	    result = mallProductService.calculateInventory( proId, proSpecificas, proNum, memberId );
+	    mallOrderService.paySuccessDaifu( params );
+	} catch ( BusinessException be ) {
+	    code = be.getCode();
+	    result.put( "errorMsg", be.getMessage() );
+	    logger.error( "支付成功回调异常：" + be.getMessage() );
+	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
+	    logger.error( "支付成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	} finally {
+	    result.put( "code", code );
+	    CommonUtil.write( response, result );
 	}
-	return result;
     }
 
     /**
@@ -1228,7 +1201,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 			result.put( "msg", "您已经支付成功，无需再次支付" );
 		    }
 
-		    String url = mallOrderNewService.wxPayWay( CommonUtil.toDouble( order.getOrderMoney() ), order.getOrderNo(), order );
+		    String url = mallOrderNewService.wxPayWay( CommonUtil.toDouble( order.getOrderMoney() ), order.getOrderNo(), order, 0 );
 		    result.put( "url", url );
 		}
 	    }
@@ -1431,7 +1404,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
 	    MallOrder mallOrder = mallOrderService.selectById( params.get( "id" ).toString() );
-	    String returnUrl = mallOrderNewService.wxPayWay( 0, "", mallOrder );
+	    String returnUrl = mallOrderNewService.wxPayWay( 0, "", mallOrder, 0 );
 	    if ( CommonUtil.isEmpty( returnUrl ) ) {
 		code = ResponseEnums.ERROR.getCode();
 	    } else {

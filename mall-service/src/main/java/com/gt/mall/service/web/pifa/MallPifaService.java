@@ -76,7 +76,7 @@ public interface MallPifaService extends BaseService< MallPifa > {
     /**
      * 获取店铺下所有的批发
      */
-    public List< Map< String,Object > > getPifaAll( Member member, Map< String,Object > maps );
+    public PageUtil getPifaAll( Member member, Map< String,Object > maps );
 
     /**
      * 根据商品id查询秒杀信息和秒杀价格
