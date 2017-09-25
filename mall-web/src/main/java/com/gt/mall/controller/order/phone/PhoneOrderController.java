@@ -990,8 +990,11 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
-		request.setAttribute( "userid", userid );
 	    }
+	    if ( CommonUtil.isNotEmpty( params.get( "busId" ) ) ) {
+		userid = CommonUtil.toInteger( params.get( "busId" ) );
+	    }
+	    request.setAttribute( "userid", userid );
 	    MallOrder order = mallOrderService.selectById( orderId );
 	    if ( userid == 0 ) {
 		userid = order.getBusUserId();
