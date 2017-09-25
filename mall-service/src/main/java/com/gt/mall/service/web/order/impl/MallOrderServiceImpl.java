@@ -842,7 +842,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	int totalNum = 0;
 	int count = 0;
 	//扫码支付和找人代付不修改库存
-	if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) && order.getOrderPayWay() != 5 && order.getOrderPayWay() != 7 ) {
+	if ( ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) && order.getOrderPayWay() != 5 && order.getOrderPayWay() != 7 ) || params.containsKey( "isPay" ) ) {
 	    List< MallOrderDetail > orderDetail = order.getMallOrderDetail();
 	    if ( order.getOrderType() == 1 ) {//拼团
 		addGroupBuyJoin( order, orderDetail.get( 0 ) );//添加数据到参团表
@@ -2068,6 +2068,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	df.setId( daifu.getId() );
 	df.setDfPayStatus( 1 );
 	df.setDfPayTime( new Date() );
+	params.put( "isPay", 1 );//已经支付成功
 	int code = mallDaifuDAO.updateById( df );//修改代付的状态
 	if ( code > 0 ) {
 	    List idList = mallOrderDAO.selectOrderPid( daifu.getOrderId() );
