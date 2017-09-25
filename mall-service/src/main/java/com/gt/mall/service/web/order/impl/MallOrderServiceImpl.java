@@ -2103,6 +2103,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    WxPublicUsers pbUser = wxPublicUserService.selectByMemberId( order.getBuyerUserId() );
 	    updateStatusStock( order, params, null, pbUser );
 
+	    List< MallOrder > mallOrderList = new ArrayList<>();
+	    mallOrderList.add( order );
+	    paySuccess( mallOrderList );//支付成功回调储值卡支付，积分支付，粉币支付
+
 	    fenCard( order );
 
 	}
