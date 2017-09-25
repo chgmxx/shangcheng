@@ -34,6 +34,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -115,7 +116,7 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = auctionService.selectAuctionByShopId( params,shoplist );
+		    PageUtil page = auctionService.selectAuctionByShopId( params, shoplist );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}
@@ -834,7 +835,9 @@ public class MallAuctionController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/payWay" )
     @SysLogAnnotation( op_function = "2", description = "拍卖缴纳定金回调" )
-    public String payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    @Transactional( rollbackFor = Exception.class )
+    public void payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
+	int code = ResponseEnums.SUCCESS.getCode();
 	try {
 
 	    logger.error( "拍卖缴纳定金回调参数：" + JSONObject.fromObject( params ) );
@@ -842,10 +845,12 @@ public class MallAuctionController extends AuthorizeOrLoginController {
 	    auctionMarginService.paySuccessAuction( params );
 
 	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
 	    logger.error( "拍卖缴纳定金回调异常：" + e.getMessage() );
 	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, code );
 	}
-	return "redirect:/mAuction/79B4DE7C/myMargin.do";
     }
 
     /**

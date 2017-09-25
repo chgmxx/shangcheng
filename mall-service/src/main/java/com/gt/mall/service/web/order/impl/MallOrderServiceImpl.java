@@ -589,7 +589,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    logger.info( "同步库存：" + flag );
 	}
-	if ( mallOrderList != null && mallOrderList.size() > 0 ) {
+	if ( mallOrderList != null && mallOrderList.size() > 0 && order.getOrderPayWay() != 7) {
 	    paySuccess( mallOrderList );//支付成功回调储值卡支付，积分支付，粉币支付
 	}
 

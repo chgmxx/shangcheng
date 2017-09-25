@@ -107,7 +107,7 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
     private List< MallGroupBuyPrice > priceList;
 
     @TableField( exist = false )
-    private int wx_shop_id; //门店ID 关联wx_shop表的id
+    private int wxShopId; //门店ID 关联wx_shop表的id
 
     @TableField( exist = false )
     private String shopName;

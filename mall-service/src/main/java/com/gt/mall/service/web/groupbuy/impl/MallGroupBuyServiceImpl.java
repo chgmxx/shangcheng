@@ -30,7 +30,6 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.PageUtil;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +96,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
 		for ( MallGroupBuy buy : groupBuyList ) {
 		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == buy.getWx_shop_id() ) {
+			if ( wxShops.getId() == buy.getWxShopId() ) {
 			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
 				buy.setShopName( wxShops.getBusinessName() );
 			    }
@@ -141,11 +140,6 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 		if ( CommonUtil.isNotEmpty( groupBuy.getId() ) ) {
 		    //判断本商品是否正在团购中
 		    MallGroupBuy buy = groupBuyDAO.selectGroupByIds( groupBuy.getId() );
-
-		    WsWxShopInfo wsWxShopInfo = wxShopService.getShopById( buy.getWx_shop_id() );
-		    if ( CommonUtil.isNotEmpty( wsWxShopInfo.getBusinessName() ) ) {
-			buy.setShopName( wsWxShopInfo.getBusinessName() );
-		    }
 
 		    if ( buy.getStatus() == 1 && CommonUtil.isNotEmpty( buy.getJoinId() ) ) {//正在进行团购的商品不能修改
 			code = -2;

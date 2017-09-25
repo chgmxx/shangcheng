@@ -11,6 +11,11 @@ function presale(type) {
     var obj = $(".guigePrice_value[option='" + specIds + "']");
     var invId = obj.attr("optionInvId");
     var invNum = $("input#attr_lay_num").val();
+    var isSpec = $("#isSpec").val();
+    if (isSpec === "1" && type === 1) {
+        showDiv();
+        return;
+    }
     if (specIds == null || specIds == "") {
         invId = 0;
     } else {
