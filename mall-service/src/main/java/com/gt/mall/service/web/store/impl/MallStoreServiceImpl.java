@@ -381,7 +381,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	//判断session里面有没有门店集合
 	List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
 	if ( shopList != null && shopList.size() > 0 ) {
-	    SessionUtils.setWxShopNumBySession( user.getId(), shopList.size(), request );
 	    for ( Map shopMap : shopList ) {
 		storeList.add( shopMap );
 	    }
@@ -389,6 +388,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	}
 	List< WsWxShopInfoExtend > shopInfoList = busUserService.getShopIdListByUserId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
+	    SessionUtils.setWxShopNumBySession( user.getId(), shopInfoList.size(), request );
 
 	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
 		wxShopIds.add( wsWxShopInfoExtend.getId() );

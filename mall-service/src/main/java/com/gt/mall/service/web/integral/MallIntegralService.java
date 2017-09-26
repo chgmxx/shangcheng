@@ -6,6 +6,7 @@ import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -65,7 +66,7 @@ public interface MallIntegralService extends BaseService< MallIntegral > {
      *
      * @return 积分商品列表
      */
-    PageUtil selectIntegralByPage( Map< String,Object > params, int userId );
+    PageUtil selectIntegralByPage( Map< String,Object > params, int userId ,List< Map< String,Object > > shoplist);
 
     /**
      * 查询单个的积分商品信息

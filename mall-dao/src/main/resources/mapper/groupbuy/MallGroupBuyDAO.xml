@@ -76,14 +76,14 @@
     </sql>
     <sql id="group_product_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
-        g.shop_id, g.create_time, is_use,s.wx_shop_id,
+        g.shop_id, g.create_time, is_use,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
         when g.g_start_time &lt;= now() and now() &lt; g.g_end_time then 1<!-- 进行中 -->
         when g.g_start_time &lt; now() and g.g_end_time &lt;= now() then -1<!-- 已结束 -->
         end status,
-        s.sto_name as shopName , j.id as joinId,p.two_code_path
+        j.id as joinId,p.two_code_path
     </sql>
 
     <!-- 统计团购 -->
@@ -99,20 +99,21 @@
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
         </if>
-        <if test="shoplist != null ">
-            and
-            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                g.shop_id = #{item.id,jdbcType=INTEGER}
+        <if test="null != shoplist and shoplist.size > 1">
+            and g.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                #{item.id,jdbcType=INTEGER}
             </foreach>
+        </if>
+        <if test="null != shoplist and shoplist.size == 1">
+            and g.shop_id = #{shoplist[0]}
         </if>
     </select>
     <!-- 根据团购分页 -->
     <select id="selectByPage" resultMap="groupResultMap" parameterType="Map">
         select
         <include refid="group_product_Column_List"/>
-
         from t_mall_group_buy g
-        left join t_mall_store s on g.shop_id = s.id
         left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1
         left join t_mall_product p on p.id= g.product_id
         where g.is_delete = 0
@@ -125,11 +126,14 @@
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
         </if>
-        <if test="shoplist != null ">
-            and
-            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                g.shop_id = #{item.id,jdbcType=INTEGER}
+        <if test="null != shoplist and shoplist.size > 1">
+            and g.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                #{item.id,jdbcType=INTEGER}
             </foreach>
+        </if>
+        <if test="null != shoplist and shoplist.size == 1">
+            and g.shop_id = #{shoplist[0]}
         </if>
         group by g.id
         order by g.create_time desc

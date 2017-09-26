@@ -6,6 +6,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.entity.order.MallOrderDetail;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.quartz.MallQuartzService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
@@ -51,6 +52,9 @@ public class MallQuartzServiceImpl implements MallQuartzService {
 
     @Autowired
     private MallAuctionMarginService mallAuctionMarginService;
+
+    @Autowired
+    private FenBiFlowService fenBiFlowService;
 
     /**
      * 对已结束未成团的订单进行退款

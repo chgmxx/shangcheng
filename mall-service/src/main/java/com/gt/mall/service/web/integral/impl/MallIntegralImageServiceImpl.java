@@ -11,7 +11,6 @@ import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.integral.MallIntegralImageService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,7 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
     private WxShopService        wxShopService;
 
     @Override
-    public PageUtil selectImageByShopId( Map< String,Object > params, int userId ) {
+    public PageUtil selectImageByShopId( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -54,13 +53,12 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
 	if ( count > 0 ) {// 判断拍卖是否有数据
 	    List< Map< String,Object > > imageList = integralImageDAO.selectByPage( params );
 	    if ( imageList != null && imageList.size() > 0 ) {
-		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
 		for ( Map< String,Object > image : imageList ) {
-		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == CommonUtil.toInteger( image.get( "wx_shop_id" ) ) ) {
-			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
-				image.put( "shopName", wxShops.getBusinessName() );
-			    }
+		    int shopId = CommonUtil.toInteger( image.get( "shopId" ) );
+		    for ( Map< String,Object > shopMap : shoplist ) {
+			int shop_id = CommonUtil.toInteger( shopMap.get( "id" ) );
+			if ( shop_id == shopId ) {
+			    image.put( "shopName", shopMap.get( "sto_name" ) );
 			    break;
 			}
 		    }

@@ -22,7 +22,6 @@ public interface MallAuctionService extends BaseService< MallAuction > {
      * 通过店铺id来查询拍卖
      *
      * @param param  type:状态，shoplist：店铺id集合，curPage：当前页
-     * @param userId 用户Id
      *
      * @return page
      */

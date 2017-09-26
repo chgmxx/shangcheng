@@ -27,7 +27,6 @@ import com.gt.mall.service.web.seckill.MallSeckillPriceService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,7 +83,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * 通过店铺id来查询秒杀
      */
     @Override
-    public PageUtil selectSeckillByShopId( Map< String,Object > params, int userId ) {
+    public PageUtil selectSeckillByShopId( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -98,14 +97,12 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
 	if ( count > 0 ) {// 判断秒杀是否有数据
 	    List< MallSeckill > seckillList = mallSeckillDAO.selectByPage( params );
-	    if ( seckillList != null ) {
-		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
+	    if ( seckillList != null && seckillList.size() > 0 ) {
 		for ( MallSeckill seckill : seckillList ) {
-		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == seckill.getWx_shop_id() ) {
-			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
-				seckill.setShopName( wxShops.getBusinessName() );
-			    }
+		    for ( Map< String,Object > shopMaps : shoplist ) {
+			int shop_id = CommonUtil.toInteger( shopMaps.get( "id" ) );
+			if ( seckill.getShopId() == shop_id ) {
+			    seckill.setShopName( shopMaps.get( "sto_name" ).toString() );
 			    break;
 			}
 		    }
@@ -353,7 +350,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    Date startTime = DateTimeKit.parse( seckill.getSStartTime(), "yyyy-MM-dd HH:mm:ss" );
 	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
 	    seckill.setTimes( ( endTime.getTime() - nowTime.getTime() ) / 1000 );
-	    if (seckill.getStatus()== null || seckill.getStatus() == 0 ) {
+	    if ( seckill.getStatus() == null || seckill.getStatus() == 0 ) {
 		seckill.setStartTimes( ( startTime.getTime() - nowTime.getTime() ) / 1000 );
 	    }
 

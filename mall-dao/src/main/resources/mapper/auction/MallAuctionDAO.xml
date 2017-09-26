@@ -68,6 +68,19 @@
         end status,
         s.sto_name as shopName,p.pro_name as proName
     </sql>
+
+    <sql id="page_auction_Column_List">
+        g.id, g.product_id, g.shop_id, auc_type, auc_start_price, auc_lowest_price, auc_start_time,
+        auc_lower_price_time, auc_lower_price, auc_end_time, auc_num, auc_restriction_num,
+        g.user_id, g.create_time, is_use, is_margin, auc_margin, auc_add_price,
+        case
+        when g.is_use = -1 then -2<!--已失效  -->
+        when g.auc_start_time > now() and g.auc_end_time > now() then 0<!--未开始  -->
+        when g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time then 1<!-- 进行中 -->
+        when g.auc_start_time &lt; now() and g.auc_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status,
+        p.pro_name as proName
+    </sql>
     <select id="selectByCount" resultType="java.lang.Integer">
         select count(g.id)
         from t_mall_auction g where g.is_delete = 0
@@ -80,18 +93,20 @@
         <if test="type == 2"><!-- 已结束的拍卖 -->
             and g.auc_start_time &lt; now() and g.auc_end_time &lt;= now()
         </if>
-        <if test="shoplist != null">
-            and
-            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                g.shop_id = #{item.id,jdbcType=INTEGER}
+        <if test="null != shoplist and shoplist.size > 1">
+            and g.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                #{item.id,jdbcType=INTEGER}
             </foreach>
+        </if>
+        <if test="null != shoplist and shoplist.size == 1">
+            and g.shop_id = #{shoplist[0]}
         </if>
     </select>
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
         select
-        <include refid="page_Column_List"/>
+        <include refid="page_auction_Column_List"/>
         from t_mall_auction g
-        left join t_mall_store s on g.shop_id = s.id
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         where g.is_delete = 0
         <if test="type == -1"><!-- 未开始拍卖 -->
@@ -103,11 +118,14 @@
         <if test="type == 2"><!-- 已结束的拍卖 -->
             and g.auc_start_time &lt; now() and g.auc_end_time &lt;= now()
         </if>
-        <if test="shoplist != null">
-            and
-            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                g.shop_id = #{item.id,jdbcType=INTEGER}
+        <if test="null != shoplist and shoplist.size > 1">
+            and g.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                #{item.id,jdbcType=INTEGER}
             </foreach>
+        </if>
+        <if test="null != shoplist and shoplist.size == 1">
+            and g.shop_id = #{shoplist[0]}
         </if>
         group by g.id
         order by g.create_time desc

@@ -46,7 +46,6 @@
         SELECT  p.pro_name,jp.id,jp.commission_type,jp.commission_rate,jp.product_id,jp.shop_id,
         jp.is_use,jp.create_time,p.two_code_path
         FROM t_mall_seller_join_product jp
-        LEFT JOIN t_mall_store s ON jp.shop_id = s.id
         LEFT JOIN t_mall_product p ON p.id= jp.product_id
         WHERE p.is_publish=1 AND p.check_status=1 AND p.is_delete=0  AND jp.is_delete=0
         <if test="shoplist != null ">
