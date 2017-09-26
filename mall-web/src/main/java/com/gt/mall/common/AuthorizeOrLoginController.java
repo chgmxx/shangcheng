@@ -75,16 +75,16 @@ public class AuthorizeOrLoginController {
 
 	}
 
+	String otherRedisKey = CommonUtil.getCode();
 	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
-
 	Map< String,Object > redisMap = new HashMap<>();
-	redisMap.put( "redisKey", CommonUtil.getCode() );
+	redisMap.put( "redisKey", otherRedisKey );
 	redisMap.put( "redisValue", requestUrl );
 	redisMap.put( "setime", 5 * 60 );
 	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpSignKey() );
 
-	String otherRedisKey = CommonUtil.getCode();
-	JedisUtil.set( otherRedisKey, requestUrl, 5 * 60 );
+
+	/*JedisUtil.set( otherRedisKey, requestUrl, 5 * 60 );*/
 	Map< String,Object > queryMap = new HashMap<>();
 	queryMap.put( "otherRedisKey", otherRedisKey );
 	queryMap.put( "browser", browser );
