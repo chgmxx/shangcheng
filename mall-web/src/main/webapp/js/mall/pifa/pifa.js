@@ -138,17 +138,18 @@ function getProductId(proId) {
  * 编辑批发
  */
 function editPifa() {
-    //var name = $("#sName").val();//活动名称
-    var shopId = $(".shopId").find("option:selected").val();//店铺id
-    var gStartTime = $("input#pfStartTime").val();//活动生效开始时间
-    var gEndTime = $("input#pfEndTime").val();//活动生效结束时间
-    //var maxNum = $("#maxNum").val();//商品限购
-    var isSpec = $("#isSpec").val();//商品是否存在规格
-    var productId = $("#productId").val();
-    var pfType = $(".pfType:checked").val();
-    var ids = $("#ids").val();
     SonScrollTop(0);
     setTimeout(function () {
+        //var name = $("#sName").val();//活动名称
+        var shopId = $(".shopId").find("option:selected").val();//店铺id
+        var gStartTime = $("input#pfStartTime").val();//活动生效开始时间
+        var gEndTime = $("input#pfEndTime").val();//活动生效结束时间
+        //var maxNum = $("#maxNum").val();//商品限购
+        var isSpec = $("#isSpec").val();//商品是否存在规格
+        var productId = $("#productId").val();
+        var pfType = $(".pfType:checked").val();
+        var ids = $("#ids").val();
+
         if (productId == null || productId == "") {
             layer.msg('请选择商品', {
                 icon: 1,

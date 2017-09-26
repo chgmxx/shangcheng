@@ -180,8 +180,8 @@ var step = {
                             var _obj = $(".pifaSpecInp[specIds='" + specValueIds + "']");
                             price = _obj.val();
                         }
-                        price = (price * discount).toFixed(2);
-                        //price = (price*1).toFixed(2);
+                        //price = (price * discount).toFixed(2);
+                        price = (price*1).toFixed(2);
 
 
                         var td1 = $("<td  class='item-stock item-td-4'>" + num + "</td>");

@@ -429,7 +429,7 @@ function loadPifa() {
     var costPrice = 0;
 
     var isSpec = $("input#isSpec").val();
-    var discount = $("#discount").val() * 1;//会员折扣
+    var discount = 1;//$("#discount").val() * 1;//会员折扣
 
     if (isSpec == '1') {//该商品存在规格
         var costPrice = $("input#invPrice").val();
@@ -669,7 +669,11 @@ function pfAddShopCart(obj) {
                 $(".shopping-icon").show();
 
                 $(".shopping-icon").text(parseInt(shopnum) + parseInt(product_num));
-                alert("商品添加到购物车成功");
+                //alert("商品添加到购物车成功");
+                $(".addShopCartDiv").show();
+                setTimeout(function () {
+                    $(".addShopCartDiv").hide();
+                }, 2000);
                 location.href = window.location.href;
             } else {
                 alert("商品添加到购物车失败");

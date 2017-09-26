@@ -52,15 +52,16 @@
              * @param id
              */
             $(".qrcode").click(function () {
-                parentOpenIframe("批发预览", '200px', '240px', "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>");
-//                parent.layer.open({
-//                    type: 1,
-//                    title: "批发预览",
-//                    skin: 'layui-layer-rim', //加上边框
-//                    area: ['200px', '240px'], //宽高
-//                    offset: "30%",
-//                    content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
-//                });
+//                parentOpenIframe("批发预览", '200px', '240px', "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>");
+                layer.open({
+                    type: 1,
+                    shade: [0.1, "#fff"],
+                    title: "批发预览",
+                    skin: 'layui-layer-rim', //加上边框
+                    area: ['200px', '240px'], //宽高
+                    offset: "30%",
+                    content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
+                });
             });
         });
     </script>

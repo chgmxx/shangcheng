@@ -88,13 +88,16 @@
     var scrollHeight = 0;
     var timeout = 100;
     function SonScrollTop(height) {
-        if (height != null && height != "") {
+
+        scrollHeight = "20%";
+
+        /*if (height != null && height != "") {
             console.log(height)
             scrollHeight = height;
         } else {
 
             messageSocket("scrollTop()");
-        }
+        }*/
     }
 
     function parentScrollTops(height) {
