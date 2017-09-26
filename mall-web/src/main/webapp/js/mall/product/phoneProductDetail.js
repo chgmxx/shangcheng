@@ -353,10 +353,16 @@ function productBuy(types) {
     } else if (types == 6) {
         groupBuyId = $("input.presaleId").val();
         var pObj = $("input.presaleOrderPrice");
+        if ($(".presaleProNums").length > 0) {
+            product_num = $(".presaleProNums").val() * 1;
+        }
         if (pObj.length > 0) {
             if (pObj.val() != null && pObj.val() != "" && typeof(pObj.val()) != "undefined") {
                 price = $("input.presaleOrderPrice").val();
-                totalprice = price * product_num;
+                /*totalprice = price * product_num;*/
+                totalprice = price;
+                price = price*1/product_num;
+                price = price.toFixed(2);
             }
         }
     } else {
@@ -896,10 +902,10 @@ function product_Buy(types) {
 
         if (discount != null && discount != "") {
             /*if (discount * 1 > 0 && discount * 1 < 1) {
-                //price = $(".attr-lay .huiyuan").text();
-                price = price * discount;
-                totalprice = parseInt(product_num) * price;
-            }*/
+             //price = $(".attr-lay .huiyuan").text();
+             price = price * discount;
+             totalprice = parseInt(product_num) * price;
+             }*/
         }
     }
     var maxBuy = $("#maxBuy").val();

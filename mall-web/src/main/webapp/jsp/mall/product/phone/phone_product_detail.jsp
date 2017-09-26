@@ -761,6 +761,11 @@
         <input type="hidden" class="presaleOrderPrice" value=""/>
         <c:if test="${!empty deposit }">
             <input type="hidden" class="depositId" value="${deposit.id }"/>
+            <c:if test="${!empty deposit.proNum }">
+                <c:if test="${deposit.proNum > 0 }">
+                    <input type="hidden" class="presaleProNums" value="${deposit.proNum }" />
+                </c:if>
+            </c:if>
         </c:if>
 
         <input type="hidden" class="preInvNum" value="${presale.invNum }"/>

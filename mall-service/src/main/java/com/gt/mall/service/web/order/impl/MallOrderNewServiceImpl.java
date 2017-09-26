@@ -185,7 +185,8 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	MallOrder order = orderList.get( 0 );
 	//计算订单
 	MallAllEntity allEntity = null;
-	if ( params.containsKey( "useFenbi" ) || params.containsKey( "useJifen" ) || params.containsKey( "couponArr" ) ) {
+	if ( ( params.containsKey( "useFenbi" ) || params.containsKey( "useJifen" ) || params.containsKey( "couponArr" ) ) && ( CommonUtil.isEmpty( order.getOrderType() )
+			|| order.getOrderType() == 0 ) ) {
 	    allEntity = calculateOrder( params, member, orderList );
 	}
 	MemberAddress memberAddress = null;

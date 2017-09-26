@@ -10,7 +10,6 @@ import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.product.MallProduct;
-import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
@@ -277,23 +276,17 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			/*String specSql = "SELECT id,specifica_value,specifica_img_url FROM t_mall_product_specifica WHERE is_delete=0 AND specifica_value_id IN(" + maps
 					.get( "productSpecificas" ) + ")  AND product_id=" + productId + " ORDER BY sort";
 			List< Map< String,Object > > specMapList = daoUtil.queryForList( specSql );*/
-			List< MallProductSpecifica > specificaList = mallProductSpecificaService
-					.selectByValueIds( productId, maps.get( "productSpecificas" ).toString().split( "," ) );
-			if ( specificaList != null && specificaList.size() > 0 ) {
-			    for ( MallProductSpecifica spec : specificaList ) {
-				if ( CommonUtil.isNotEmpty( specificaValue ) ) {
-				    specificaValue += " ";
-				}
-				specificaValue += spec.getSpecificaValue();
-				if ( CommonUtil.isNotEmpty( spec.getSpecificaImgUrl() ) ) {
-				    imageUrl = spec.getSpecificaImgUrl();
-				}
+			Map< String,Object > specificaMap = mallProductService.getProInvIdBySpecId( maps.get( "productSpecificas" ).toString(), productId );
+			if ( CommonUtil.isNotEmpty( specificaMap ) && specificaMap.size() > 0 ) {
+			    specificaValue = specificaMap.get( "specifica_values" ).toString();
+			    if ( CommonUtil.isNotEmpty( specificaMap.get( "specifica_img_url" ) ) ) {
+				imageUrl = CommonUtil.toString( specificaMap.get( "specifica_img_url" ) );
 			    }
 			}
 		    }
 		    if ( CommonUtil.isEmpty( imageUrl ) ) {
 			//查询商品图片
-			Map< String,Object > params = new HashMap< String,Object >();
+			Map< String,Object > params = new HashMap<>();
 			params.put( "assType", 1 );
 			params.put( "isMainImages", 1 );
 			params.put( "assId", productId );
@@ -481,7 +474,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		shopIds += shopMap.get( "shop_id" ).toString();
 		wxShopIds += shopMap.get( "wxShopId" ).toString() + ",";
 
-		if(CommonUtil.isNotEmpty( shopMap.get( "message" ) )){
+		if ( CommonUtil.isNotEmpty( shopMap.get( "message" ) ) ) {
 		    JSONArray arr = JSONArray.parseArray( JSON.toJSONString( shopMap.get( "message" ) ) );
 		    for ( Object o : arr ) {
 			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject( o.toString() );

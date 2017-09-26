@@ -448,7 +448,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     @Override
     public List< MemberAddress > selectShipAddress( Map< String,Object > params ) {
 	List< MemberAddress > addressList = new ArrayList<>();
-	//todo 调用陈丹接口，地址相关
 	List< MemberAddress > list = memberAddressService.addressList( params.get( "memberId" ).toString() );
 	int is_default = 2;
 	if ( list != null && list.size() > 0 ) {

@@ -3,6 +3,12 @@
  * @param type 1 优惠券 2 粉币 3 积分  4 联盟 0 计算会员卡
  */
 function jisuan(type, couponObj, flag) {
+    var groupType = $(".groupType").val();
+    if(groupType !== null && groupType !== ""){
+        if(groupType*1 > 0){
+            return;
+        }
+    }
     if (type === 2 || type === 3) {
         clickJifenFenbiHideYouhui(type);
     } else if (type === 1) { // 使用优惠券
