@@ -850,16 +850,16 @@
         update t_mall_order
         <set>
             update_time = now(),
-            <if test="status != null and status != ''">
+            <if test="status != null">
                 order_status = #{status},
             </if>
-            <if test="transaction_id != null and transaction_id != ''">
+            <if test="transaction_id != null ">
                 order_pay_no = #{transaction_id},
             </if>
-            <if test="payTime != null and payTime != ''">
+            <if test="payTime != null ">
                 pay_time = #{payTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="isWallet != null and isWallet != ''">
+            <if test="isWallet != null ">
                 is_wallet = #{isWallet},
             </if>
             <if test="flowRechargeStatus != null">

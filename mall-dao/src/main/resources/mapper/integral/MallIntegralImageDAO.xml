@@ -14,51 +14,69 @@
         <result column="is_delete" property="isDelete"/>
         <result column="is_show" property="isShow"/>
     </resultMap>
-    <resultMap id="PageResultMap" type="Map" >
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
-        <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
-        <result column="type" property="type" jdbcType="INTEGER" />
-        <result column="return_url" property="returnUrl" jdbcType="VARCHAR" />
-        <result column="bus_user_id" property="busUserId" jdbcType="INTEGER" />
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
-        <result column="is_show" property="isShow" jdbcType="INTEGER" />
-        <result column="shopName" property="shopName" jdbcType="VARCHAR" />
+    <resultMap id="PageResultMap" type="Map">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="return_url" property="returnUrl" jdbcType="VARCHAR"/>
+        <result column="bus_user_id" property="busUserId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="is_delete" property="isDelete" jdbcType="INTEGER"/>
+        <result column="is_show" property="isShow" jdbcType="INTEGER"/>
+        <result column="shopName" property="shopName" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, shop_id , image_url , type, return_url , bus_user_id , create_time , is_delete , is_show
     </sql>
-    <sql id="page_Column_List" >
-        i.id, i.shop_id, i.image_url, i.type, return_url,i. bus_user_id, i.create_time, i.is_delete, i.is_show,s.sto_name AS shopName,s.wx_shop_id
+    <sql id="page_Column_List">
+        i.id, i.shop_id, i.image_url, i.type, return_url,i. bus_user_id, i.create_time, i.is_delete, i.is_show
     </sql>
 
     <!-- 统计积分图片-->
-    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map" >
-        select  count(i.id)
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
+        select count(i.id)
         from t_mall_integral_image i where i.is_delete = 0
         <if test="userId != null and userId != ''">
             and i.bus_user_id=#{userId}
         </if>
+        <if test="null != shoplist and shoplist.size > 1">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                i.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="null != shoplist and shoplist.size == 1">
+            and i.shop_id=#{shopId }
+        </if>
     </select>
     <!-- 根据拍卖分页 -->
-    <select id="selectByPage" resultMap="PageResultMap" parameterType="Map" >
-        select  <include refid="page_Column_List" />
+    <select id="selectByPage" resultMap="PageResultMap" parameterType="Map">
+        select
+        <include refid="page_Column_List"/>
         from t_mall_integral_image i
-        LEFT JOIN t_mall_store s ON i.shop_id = s.id
-        where i.is_delete = 0 and s.is_delete=0
+        where i.is_delete = 0
         <if test="userId != null and userId != ''">
             and i.bus_user_id=#{userId}
         </if>
-        group by i.id
+        <if test="null != shoplist and shoplist.size > 1">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                i.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="null != shoplist and shoplist.size == 1">
+            and i.shop_id=#{shopId }
+        </if>
         order by i.create_time desc
         limit #{firstNum},#{maxNum}
     </select>
 
-    <select id="selectByImage" resultMap="BaseResultMap" parameterType="Map" >
-        select  <include refid="Base_Column_List" />
+    <select id="selectByImage" resultMap="BaseResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_integral_image i
         where i.is_delete = 0 and i.is_show = 1
         <if test="userId != null and userId != ''">

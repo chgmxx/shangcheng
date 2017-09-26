@@ -81,7 +81,7 @@
                 </div>
             </c:if>
             <c:if test="${empty shopList }">
-                <a href="/wxShop/indexstart.do" target="_blank" class="tColor" style="font-size:18px;"><h1 class="tColor">请前往门店管理继续添加新的门店</h1></a>
+                <a href="${wxmpDomain}/wxShop/indexstart.do" target="_blank" class="tColor" style="font-size:18px;"><h1 class="tColor">请前往门店管理继续添加新的门店</h1></a>
             </c:if>
             <span id="picCodePrompt" class="tColor"><c:if test="${sto.wxShopId == 0 || isWxShopId == 0}">请重新选择门店</c:if></span>
             <%-- <input type="hidden" id="wxShopId" name="wxShopId" value="${sto.wxShopId }"/> --%>

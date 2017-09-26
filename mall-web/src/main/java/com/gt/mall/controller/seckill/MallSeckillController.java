@@ -60,7 +60,7 @@ public class MallSeckillController extends AuthorizeOrLoginController {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = mallSeckillService.selectSeckillByShopId( params, user.getId() );
+		    PageUtil page = mallSeckillService.selectSeckillByShopId( params, user.getId(), shoplist );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}

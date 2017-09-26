@@ -57,10 +57,10 @@
             </c:forEach> --%>
     </header>
 
-    <input type="hidden" class="rType" value="${rType }"/>
-    <input type="hidden" class="type" value="${type }"/>
-    <input type="hidden" class="shopid" value="${shopid }"/>
-    <input type="hidden" class="groupId" value="${groupId }"/>
+    <input type="hidden" class="rType forms_cla" name="rType" value="${rType }"/>
+    <input type="hidden" class="type forms_cla" name="type" value="${type }"/>
+    <input type="hidden" class="shopid forms_cla" name="shopId" value="${shopid }"/>
+    <input type="hidden" class="groupId forms_cla" name="groupId" value="${groupId }"/>
     <c:set var="urls" value="/phoneWholesaler/${shopid }/79B4DE7C/wholesalerall.do"></c:set>
     <input type="hidden" class="urls" value="${urls }"/>
     <!-- 搜索框开始 -->
@@ -150,9 +150,15 @@
         </div>
     </div>
 </div>
+<c:if test="${page.curPage+1 <= page.pageCount}">
+    <input type="hidden" class="curPage" value="${page.curPage }"/>
+    <input type="hidden" class="pageCount" value="${page.pageCount }"/>
+    <input type="hidden" class="isLoading" value="1"/>
+</c:if>
+
 <!-- 页脚开始 -->
 <input type="hidden" class="memberId" value="${memberId }"/>
-<input type="hidden" class="userid" value="${userid }"/>
+<input type="hidden" class="userid forms_cla" value="${userid }"/>
 <input type="hidden" class="shopid" value="${shopid }"/>
 <jsp:include page="/jsp/mall/phoneFooterMenu.jsp"></jsp:include>
 
@@ -266,6 +272,127 @@
             url += "&proName=" + proName;
         }
         window.location.href = url;
+    }
+
+
+    var $container = $('.productList');
+    if ($("input.curPage").length > 0 && $("input.isLoading").length > 0) {
+        $container.scroll(function () {
+            var curPage = $("input.curPage").val();//当前页
+            var pageCount = $("input.pageCount").val();//总共的页数
+            var isLoading = $("input.isLoading").val();//是否继续加载
+            if (isLoading == 0 || curPage * 1 + 1 > pageCount * 1) {
+                $container.unbind('scroll');
+                return false;
+            }
+            var totalHeight = $container.prop('scrollHeight');
+            var scrollTop = $container.scrollTop();
+            var height = $container.height();
+            var TRIGGER_SCROLL_SIZE = $container.find("li:eq(0)").height();
+            if (totalHeight - (height + scrollTop) <= 500 && isLoading == 1) {
+                loadMore();
+            }
+        });
+    }
+
+    function loadMore() {
+        var curPage = $("input.curPage").val();
+        if (curPage == null || curPage == '') {
+            return false;
+        }
+        var datas = {
+            curPage: curPage * 1 + 1,
+            shopid: $(".shopid").val()
+        };
+        if ($(".forms_cla").length > 0) {
+            $(".forms_cla").each(function () {
+                var val = $(this).val();
+                if (val != null && val != "") {
+                    datas[$(this).attr("name")] = val;
+                }
+            });
+        }
+
+        $("input.isLoading").val(-1);
+        $.ajax({
+            type: "post",
+            url: "/phoneWholesaler/79B4DE7C/shoppingAllPage.do",
+            data: datas,
+            dataType: "json",
+            success: function (data) {
+                var saleMemberId = $("input.saleMemberId").val();
+                var rType = $("input.rType").val();
+                var html = "";
+                if (data != null) {
+                    var page = data.page;
+                    if (page == null) {
+                        return false;
+                    }
+                    if (page.subList != null && page.subList.length > 0) {
+                        for (var i = 0; i < page.subList.length; i++) {
+                            var product = page.subList[i];
+                            html += '<li class="">';
+                            html += '<a href="/mallPage/' + page.id + '/' + page.shopId + '/79B4DE7C/phoneProduct.do">';
+                            html += '<div class="product-pic" ><span class="img-container" style="display: block; background-image: url(' + product.image_url + ');" ></span> </div>';
+                            html += '<div class="product-info">';
+                            html += '<div class="info-title">';
+                            if (product.pro_label != null && product.pro_label != '') {
+                                html += '<i class="label_i">' + product.pro_label + '</i>';
+                            }
+                            html += product.pro_name + '</div>';
+                            html += '<div class="info-price flex">';
+                            html += '<div class="now-price">￥<span class="new-price">' + product.price + '</span></div>';
+                            html += '<div class="member-price">批发：￥' + product.pfPrice + '</div> ';
+                            html += '</div>';
+                            html += '<div class="info-price flex">';
+                            if (product.pro_cost_price != null && product.pro_cost_price != "") {
+                                if (product.pro_cost_price > 0 && product.pro_cost_price > product.price) {
+                                    html += '<div class="old-price">￥<span>' + product.pro_cost_price + '</span></div>';
+                                }
+                            }
+                            html += '</div>';
+                            var cla = "";
+                            var msg = "";
+                            if (product.status == 0) {
+                                cla = "endFlex";
+                                msg = "距离开始";
+                            } else if (product.status == 1) {
+                                msg = "距离结束";
+                            }
+                            html += '<div class="time-left flex ' + cla + '" >';
+                            html += '<div class="txt" style="padding: 0px 0.1rem;">' + msg + '</div>';
+                            html += '<div class="count-down time-item" status="' + product.status + '" style="padding-left:.1rem;">' +
+                                '<span id="day_show"></span>天<span id="hour_show"></span>时<span id="minute_show"></span>分<span id="second_show"></span>秒' +
+                                '<input type="hidden" class="intDiff" value="' + product.times + '">' +
+                                '<input type="hidden" class="startDiff" value="' + product.startTimes + '">' +
+                                '</div>';
+                            html += '</div>';
+                            html += '</div>';
+                            html += '</a>';
+                            html += "</li>";
+
+                        }
+                    }
+                    if (page.curPage * 1 > page.pageCount * 1) {
+                        $("input.isLoading").val(0);
+                        $container.unbind('scroll');
+                        return false;
+                    }
+                    $("input.curPage").val(page.curPage);
+                }
+                if (html == "") {
+                    $("input.isLoading").val(0);
+                    $container.unbind('scroll');
+                    return false;
+                } else {
+                    $container.append(html);
+                    $("input.isLoading").val(1);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $("input.isLoading").val(1);
+            }
+        });
     }
 </script>
 

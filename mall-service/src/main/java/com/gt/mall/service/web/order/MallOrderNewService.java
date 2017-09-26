@@ -42,5 +42,5 @@ public interface MallOrderNewService extends BaseService< MallOrder > {
      *
      * @return 支付地址
      */
-    String wxPayWay( double orderAllMoney, String orderNo, MallOrder order ) throws Exception;
+    String wxPayWay( double orderAllMoney, String orderNo, MallOrder order ,int orderPayWay) throws Exception;
 }

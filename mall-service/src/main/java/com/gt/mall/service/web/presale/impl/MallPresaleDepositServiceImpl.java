@@ -321,17 +321,16 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		result.put( "id", deposit.getId() );
 		result.put( "no", deposit.getDepositNo() );
 		result.put( "payWay", deposit.getPayWay() );
-
+		MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
 		if ( deposit.getPayWay() == 1 || deposit.getPayWay() == 3 ) {
+		    deposit.setShopId( presale.getShopId() );
 		    String url = getWxAlipay( deposit, member );
 		    result.put( "payUrl", url );
 		} else if ( deposit.getPayWay() == 2 ) {
-		    MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
 		    params.put( "out_trade_no", deposit.getDepositNo() );
 		    paySuccessPresale( params );
 		    result.put( "payUrl", "/mallPage/" + deposit.getProductId() + "/" + presale.getShopId() + "/79B4DE7C/phoneProduct.do" );
 		}
-
 	    } else {
 		result.put( "code", ResponseEnums.ERROR.getCode() );
 		result.put( "errorMsg", "交纳定金失败" );

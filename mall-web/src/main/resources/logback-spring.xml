@@ -69,6 +69,25 @@
         </root>
 
     </springProfile>
+
+    <!-- 调试模式 console/file -->
+    <springProfile name="debug">
+        <!-- 日志输出级别 -->
+        <root level="INFO"> <!-- 此时debug级别的信息会被过滤 -->
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+
+    <!-- 堡垒模式 console/file -->
+    <springProfile name="fort">
+        <!-- 日志输出级别 -->
+        <root level="INFO"> <!-- 此时debug级别的信息会被过滤 -->
+            <appender-ref ref="console"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+
     <!--日志异步到数据库 -->
     <!-- <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
         日志异步到数据库

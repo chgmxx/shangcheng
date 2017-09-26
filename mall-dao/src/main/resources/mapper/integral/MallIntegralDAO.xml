@@ -26,32 +26,32 @@
         i.is_delete as isDelete, i.is_use as isUse,
         case
         when i.is_use = -1 then -2<!--已失效  -->
-        when i.start_time > now() and   i.end_time > now() then 0<!--未开始  -->
-        when i.start_time &lt;= now() and now() &lt; i.end_time  then 1<!-- 进行中 -->
-        when i.start_time &lt; now()  and i.end_time &lt;= now() then -1<!-- 已结束 -->
-        end status, s.sto_name as shopName,s.wx_shop_id,
+        when i.start_time > now() and i.end_time > now() then 0<!--未开始  -->
+        when i.start_time &lt;= now() and now() &lt; i.end_time then 1<!-- 进行中 -->
+        when i.start_time &lt; now() and i.end_time &lt;= now() then -1<!-- 已结束 -->
+        end status,
         p.pro_name as proName
     </sql>
-    <sql id="Base2_Column_List" >
+    <sql id="Base2_Column_List">
         id, product_id, money,start_time, end_time as end_time, type, user_id, shop_id, create_time,
         is_delete, is_use
     </sql>
 
     <!-- 统计积分商品-->
-    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map" >
-        select  count(i.id)
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
+        select count(i.id)
         from t_mall_integral i
         left join t_mall_product p on p.id= i.product_id and p.is_delete=0
         where i.is_delete = 0
         and p.is_delete=0 and p.is_publish=1 and p.check_status=1
         <if test="type == -1"><!-- 未开始积分商品-->
-            and i.start_time > now() and   i.end_time > now() and i.is_use=1
+            and i.start_time > now() and i.end_time > now() and i.is_use=1
         </if>
         <if test="type == 1"><!-- 进行中的积分商品-->
-            and i.start_time &lt;= now() and now() &lt; i.end_time  and i.is_use=1
+            and i.start_time &lt;= now() and now() &lt; i.end_time and i.is_use=1
         </if>
         <if test="type == 2"><!-- 已结束的积分商品-->
-            and i.start_time &lt; now()  and i.end_time &lt;= now() and i.is_use=1
+            and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
         <if test="type == 3"><!-- 已失效的积分商品 -->
             i.is_use= -1
@@ -67,21 +67,21 @@
         </if>
     </select>
     <!-- 根据拍卖分页 -->
-    <select id="selectByPage" resultType="Map" parameterType="Map" >
-        select  <include refid="page_Column_List" />
+    <select id="selectByPage" resultType="Map" parameterType="Map">
+        select
+        <include refid="page_Column_List"/>
         from t_mall_integral i
-        left join t_mall_store s on i.shop_id = s.id
         left join t_mall_product p on p.id= i.product_id and p.is_delete=0
-        where i.is_delete = 0 and s.is_delete=0
+        where i.is_delete = 0
         and p.is_delete=0 and p.is_publish=1 and p.check_status=1
         <if test="type == -1"><!-- 未开始积分商品-->
-            and i.start_time > now() and   i.end_time > now() and i.is_use=1
+            and i.start_time > now() and i.end_time > now() and i.is_use=1
         </if>
         <if test="type == 1"><!-- 进行中的积分商品-->
-            and i.start_time &lt;= now() and now() &lt; i.end_time  and i.is_use=1
+            and i.start_time &lt;= now() and now() &lt; i.end_time and i.is_use=1
         </if>
         <if test="type == 2"><!-- 已结束的积分商品-->
-            and i.start_time &lt; now()  and i.end_time &lt;= now() and i.is_use=1
+            and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
         <if test="type == 3"><!-- 已失效的积分商品 -->
             i.is_use= -1
@@ -113,9 +113,9 @@
         WHERE i.id = #{id}
     </select>
 
-    <select id="selectByIntegral" resultMap="BaseResultMap" parameterType="Map" >
+    <select id="selectByIntegral" resultMap="BaseResultMap" parameterType="Map">
         select
-        <include refid="Base2_Column_List" />
+        <include refid="Base2_Column_List"/>
         from t_mall_integral
         <where>
             and is_delete = 0
@@ -143,7 +143,7 @@
         LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
         LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0   AND i.`is_delete`=0 and i.is_use =1
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
         <if test="shoplist != null ">
             and
@@ -168,7 +168,7 @@
         LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
         LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        WHERE  a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0  AND i.`is_delete`=0 and i.is_use =1
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
         <if test="shoplist != null ">
             and
@@ -180,7 +180,7 @@
             and a.shop_id=#{shopId}
         </if>
     </select>
-    
+
     <select id="selectIntegralNumByWxShopId" parameterType="java.lang.Integer" resultType="Map">
         SELECT p.id
         FROM t_mall_integral p

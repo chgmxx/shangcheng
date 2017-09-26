@@ -68,6 +68,13 @@ public interface MallPifaDAO extends BaseMapper< MallPifa > {
     List<Map<String, Object> > selectgbProductByShopId(Map<String, Object> maps);
 
     /**
+     * 统计批发商品数量
+     * @param maps
+     * @return
+     */
+    int selectCountgbProductByShopId(Map<String, Object> maps);
+
+    /**
      * 根据商品id查询批发信息
      * @param pifa
      * @return

@@ -195,16 +195,7 @@
             and s.check_status = #{status}
         </if>
         <if test="keyWord != null and keyWord != ''">
-            and (
-            s.telephone = '${keyWord}'
-
-            <if test="memberList != null">
-                or s.member_id in
-                <foreach close=")" collection="memberList" index="index" item="item" open="(" separator=",">
-                    #{item,jdbcType=INTEGER}
-                </foreach>
-            </if>
-            )
+            and ( s.telephone = '${keyWord}' or s.user_name = '${keyWord}' )
         </if>
         order by s.id desc
         <if test="firstNum != null and maxNum != null">
@@ -229,15 +220,7 @@
             </if>
         </if>
         <if test="keyWord != null and keyWord != ''">
-            and (
-            s.telephone = '${keyWord}'
-            <if test="memberList != null">
-                or s.member_id in
-                <foreach close=")" collection="memberList" index="index" item="item" open="(" separator=",">
-                    #{item.id }
-                </foreach>
-            </if>
-            )
+            and ( s.telephone = '${keyWord}' or s.user_name = '${keyWord}' )
         </if>
         order by s.id desc
         <if test="firstNum != null and maxNum != null">

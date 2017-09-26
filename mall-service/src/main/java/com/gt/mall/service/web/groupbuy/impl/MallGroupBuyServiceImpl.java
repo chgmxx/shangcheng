@@ -30,8 +30,6 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.PageUtil;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,7 +77,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     private WxPublicUserService      wxPublicUserService;
 
     @Override
-    public PageUtil selectGroupBuyByShopId( Map< String,Object > params, int userId ) {
+    public PageUtil selectGroupBuyByShopId( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -94,13 +92,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	if ( count > 0 ) {// 判断团购是否有数据
 	    List< MallGroupBuy > groupBuyList = groupBuyDAO.selectByPage( params );
 	    if ( groupBuyList != null && groupBuyList.size() > 0 ) {
-		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
 		for ( MallGroupBuy buy : groupBuyList ) {
-		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == buy.getWx_shop_id() ) {
-			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
-				buy.setShopName( wxShops.getBusinessName() );
-			    }
+		    for ( Map< String,Object > shopMaps : shoplist ) {
+			int shop_id = CommonUtil.toInteger( shopMaps.get( "id" ) );
+			if ( shop_id == buy.getShopId() ) {
+			    buy.setShopName( shopMaps.get( "sto_name" ).toString() );
 			    break;
 			}
 		    }
@@ -141,11 +137,6 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 		if ( CommonUtil.isNotEmpty( groupBuy.getId() ) ) {
 		    //判断本商品是否正在团购中
 		    MallGroupBuy buy = groupBuyDAO.selectGroupByIds( groupBuy.getId() );
-
-		    WsWxShopInfo wsWxShopInfo = wxShopService.getShopById( buy.getWx_shop_id() );
-		    if ( CommonUtil.isNotEmpty( wsWxShopInfo.getBusinessName() ) ) {
-			buy.setShopName( wsWxShopInfo.getBusinessName() );
-		    }
 
 		    if ( buy.getStatus() == 1 && CommonUtil.isNotEmpty( buy.getJoinId() ) ) {//正在进行团购的商品不能修改
 			code = -2;

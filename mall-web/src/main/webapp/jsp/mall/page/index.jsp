@@ -65,6 +65,7 @@
              * @param id
              */
             $(".qrcode").click(function () {
+                var url = $(this).attr("url");
                 SonScrollTop(0);
                 setTimeout(function () {
                     layer.open({
@@ -74,7 +75,7 @@
                         skin: 'layui-layer-rim', //加上边框
                         area: ['200px', '240px'], //宽高
                         offset: scrollHeight + "px",
-                        content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + $(this).attr("url") + "'/>"
+                        content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=" + url + "'/>"
                     });
                 }, timeout);
             });

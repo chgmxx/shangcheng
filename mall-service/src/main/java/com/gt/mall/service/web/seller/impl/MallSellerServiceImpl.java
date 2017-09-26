@@ -338,16 +338,9 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
-	List< Map > memberList = null;
-	if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
-	    memberList = memberService.findMemberByPhone( params.get( "keyWord" ).toString(), busUserId );
-	    if ( memberList != null && memberList.size() > 0 ) {
-		params.put( "memberList", memberList );
-	    }
-	}
 	List< Map< String,Object > > sellerList = mallSellerDAO.selectPageCheckByBusUserId( params );
 
-	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
+//	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
 
 	page.setSubList( sellerList );
 	return page;
@@ -453,17 +446,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
-	List< Map > memberList = null;
-	if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
-	    memberList = memberService.findMemberByPhone( params.get( "keyWord" ).toString(), busUserId );
-	    if ( memberList != null && memberList.size() > 0 ) {
-		params.put( "memberList", memberList );
-	    }
-	}
-
 	List< Map< String,Object > > sellerList = mallSellerDAO.selectPageSellerByBusUserId( params );
-
-	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
 
 	page.setSubList( sellerList );
 	return page;

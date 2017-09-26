@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -315,19 +316,20 @@ public class PhonePresaleController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/79B4DE7C/payWay" )
     @SysLogAnnotation( op_function = "2", description = "预售缴纳定金回调" )
     @Transactional( rollbackFor = Exception.class )
-    public String payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+    public void payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
+	int code = ResponseEnums.SUCCESS.getCode();
 	try {
 	    logger.error( "预售缴纳定金回调参数：" + JSONObject.fromObject( params ) );
 
 	    mallPresaleDepositService.paySuccessPresale( params );
 
 	} catch ( Exception e ) {
+	    code = ResponseEnums.ERROR.getCode();
 	    logger.error( "预售缴纳定金回调异常：" + e.getMessage() );
 	    e.printStackTrace();
+	} finally {
+	    CommonUtil.write( response, code );
 	}
-	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( params.get( "no" ).toString() );
-
-	return "redirect:/mallPage/" + deposit.getProductId() + "/" + deposit.getShopId() + "/79B4DE7C/phoneProduct.do";
     }
 
     /**
