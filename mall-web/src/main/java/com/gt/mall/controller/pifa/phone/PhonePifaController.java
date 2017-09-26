@@ -124,12 +124,8 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 	    boolean result = false;
 	    pw = response.getWriter();
 	    int count = 0;
-	    MallPifaApply pifaApply = (MallPifaApply) JSONObject.toBean( JSONObject.fromObject( map.get( "obj" ) ), MallPifaApply.class );
+	    MallPifaApply pifaApply = com.alibaba.fastjson.JSONObject.parseObject( map.get( "obj" ).toString(), MallPifaApply.class );
 	    Member member = SessionUtils.getLoginMember( request );
-			/*if(CommonUtil.isEmpty(member)){
-				member = new Member();
-			}
-			member.setId(200);*/
 	    pifaApply.setMemberId( member.getId() );
 	    pifaApply.setBusUserId( member.getBusid() );
 	    pifaApply.setCreateTime( new Date() );

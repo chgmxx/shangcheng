@@ -1471,7 +1471,7 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 	    boolean result = false;
 	    pw = response.getWriter();
 	    int count = 0;
-	    MallSeller seller = (MallSeller) JSONObject.toBean( JSONObject.fromObject( map.get( "obj" ) ), MallSeller.class );
+	    MallSeller seller = com.alibaba.fastjson.JSONObject.parseObject( map.get( "obj" ).toString(), MallSeller.class );
 	    Member member = SessionUtils.getLoginMember( request );
 	    seller.setMemberId( member.getId() );
 	    seller.setBusUserId( member.getBusid() );
