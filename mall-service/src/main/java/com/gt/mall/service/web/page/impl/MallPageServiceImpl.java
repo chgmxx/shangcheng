@@ -1389,6 +1389,11 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public String getProvince( String ip ) {
+	String key = Constants.REDIS_KEY + "member_ip";
+	if ( JedisUtil.exists( key ) ) {
+	    Object value = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( value ) ) return value.toString();
+	}
 	String logCity;
 	try {
 	    String address = AddressUtil.provinceadd( ip );//获取注册地址
@@ -1405,6 +1410,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    logCity = "2136";
 	    logger.error( "获取地址异常：" + e.getMessage() );
 	}
+	JedisUtil.set( key, logCity, Constants.REDIS_SECONDS );
 	return logCity;
     }
 

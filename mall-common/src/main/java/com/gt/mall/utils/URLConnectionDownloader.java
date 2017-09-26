@@ -2,6 +2,8 @@ package com.gt.mall.utils;
 
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,6 +24,8 @@ public class URLConnectionDownloader {
 
     private static int imageWidth  = 0;
     private static int imageHeight = 0;
+
+    private static Logger logger = LoggerFactory.getLogger( URLConnectionDownloader.class );
 
     /**
      * 下载文件到本地
@@ -115,6 +119,7 @@ public class URLConnectionDownloader {
      * @throws Exception
      */
     public static String downloadRqcode( String urlString, String serverurl, int w, int h ) throws Exception {
+	logger.info( "下载图片参数：" + urlString, serverurl );
 	String format = urlString.substring( urlString.lastIndexOf( "." ) + 1, urlString.length() );
 	System.out.println( "format:" + format );
 	String resultPath = serverurl + "/" + System.currentTimeMillis() + ".jpg";
@@ -138,7 +143,7 @@ public class URLConnectionDownloader {
     public static void init( File fileName, String path ) throws IOException {
 	File _file = fileName;
 	boolean flag = _file.setReadOnly();
-	if(flag){
+	if ( flag ) {
 	    File srcFile = _file;
 	    String fileSuffix = _file.getName().substring(
 			    ( _file.getName().indexOf( "." ) + 1 ),

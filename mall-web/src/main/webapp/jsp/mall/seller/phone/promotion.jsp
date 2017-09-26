@@ -57,7 +57,7 @@
         <!--<img src="../images/bg-poster.png" width="100%" alt="">-->
         <div class="p-scan">
             <img src="${sellerMap.qr_code_path }" class="p-code">
-            <img src="${sellerMap.headimgurl }" class="p-headicon">
+            <img src="${sellerMap.head_image_path }" class="p-headicon">
         </div>
         <div class="p-bottom"></div>
         <div class="p-footer">

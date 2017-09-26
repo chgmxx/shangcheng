@@ -42,7 +42,7 @@
                 layer.open({
                     type: 1,
                     title: "秒杀预览",
-                    shade:[0.1,"#fff"],
+                    shade: [0.1, "#fff"],
                     skin: 'layui-layer-rim', //加上边框
                     area: ['200px', '240px'], //宽高
                     offset: "10%",
@@ -119,10 +119,8 @@
                                 <a href="javascript:void(0);" id="${seckill.id}" class="shiGroup" onclick="deleteGroup(this,-2);" title="使失效"></a>
                             </c:if>
 							<c:if test="${seckill.status == 1}">
-                                <c:if test="${seckill.twoCodePath != null && seckill.twoCodePath != '' }">
-                                    <a href="javascript:;" class="bj-a qrcode" title="预览" url="/mallPage/${seckill.productId}/${seckill.shopId }/79B4DE7C/phoneProduct.do"></a>
-                                </c:if>
-                                <a href="javascript:;" class="bj-a copy copy_public" title="复制链接"
+                                <a href="javascript:void(0);" class="bj-a qrcode" title="预览" url="/mallPage/${seckill.productId}/${seckill.shopId }/79B4DE7C/phoneProduct.do"></a>
+                                <a href="javascript:void(0);" class="bj-a copy copy_public" title="复制链接"
                                    data-clipboard-text="${path }/mallPage/${seckill.productId}/${seckill.shopId }/79B4DE7C/phoneProduct.do" aria-label="复制成功！"></a>
                             </c:if>
 						</span>
