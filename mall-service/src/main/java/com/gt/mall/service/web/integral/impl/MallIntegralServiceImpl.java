@@ -16,6 +16,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -251,7 +252,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	if ( orderPayWay == 4 ) {//积分支付
 	    Integer mIntergral = member.getIntegral();
 	    if ( mIntergral < totalPrice || mIntergral < 0 ) {
-		resultMap.put( "code", -1 );
+		resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 		resultMap.put( "msg", "您的积分不够，不能用积分来兑换这件商品" );
 		return resultMap;
 	    }
@@ -266,7 +267,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 		}*/
 	Map< String,Object > result = orderService.calculateInventory( productId + "", proSpecificas, num + "" );
 	if ( result.get( "result" ).toString().equals( "false" ) ) {
-	    resultMap.put( "code", -1 );
+	    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 	    resultMap.put( "msg", result.get( "msg" ) );
 	    return resultMap;
 	}
@@ -278,13 +279,13 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	if ( CommonUtil.isNotEmpty( flowPhone ) ) {//流量充值，判断手机号码
 	    Map< String,String > map = MobileLocationUtil.getMobileLocation( flowPhone );
 	    if ( map.get( "code" ).toString().equals( "-1" ) ) {
-		resultMap.put( "code", -1 );
+		resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 		resultMap.put( "msg", map.get( "msg" ) );
 		return resultMap;
 	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
 		BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
-		    resultMap.put( "code", -1 );
+		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );
 		    return resultMap;
 		}

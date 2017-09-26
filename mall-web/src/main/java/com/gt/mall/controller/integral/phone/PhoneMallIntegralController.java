@@ -322,13 +322,6 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 		    request.setAttribute( str, resultMap.get( str ) );
 		}
 	    }
-	    /*request.setAttribute("product", resultMap.get("product"));
-	    request.setAttribute("detail", resultMap.get("detail"));
-	    request.setAttribute("imageList", resultMap.get("imageList"));
-	    request.setAttribute("recordNum", resultMap.get("recordNum"));
-	    if(CommonUtil.isNotEmpty(resultMap.get("integral"))){
-		    request.setAttribute("integral", resultMap.get("integral"));
-	    }*/
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		member = memberService.findMemberById( member.getId(), member );
 		boolean isMember = memberService.isMember( member.getId() );
