@@ -395,7 +395,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    List< Map< String,Object > > integralList = integralDAO.selectByPage( params );
 	    if ( integralList != null && integralList.size() > 0 ) {
 		for ( Map< String,Object > integral : integralList ) {
-		    int shopId = CommonUtil.toInteger( integral.get( "integral" ) );
+		    int shopId = CommonUtil.toInteger( integral.get( "shop_id" ) );
 		    for ( Map< String,Object > shopMap : shoplist ) {
 			int shop_id = CommonUtil.toInteger( shopMap.get( "id" ) );
 			if ( shop_id == shopId ) {

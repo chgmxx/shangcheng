@@ -38,6 +38,8 @@ spring:
  devtools:
   restart:
    enabled: true
+ thymeleaf:
+   cache: false
  jackson:
  # 定义Json 输出不为null 的字段
    default-property-inclusion: non_null
@@ -65,7 +67,7 @@ mybatis-plus:
   #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
   field-strategy: 2
   #驼峰下划线转换
-  db-column-underline: false
+  db-column-underline: true
   #刷新mapper 调试神器  发布正式环境时，请关闭
   refresh-mapper: true
   #数据库大写下划线转换
@@ -80,7 +82,7 @@ mybatis-plus:
   #自定义SQL注入器
   #sql-injector: com.baomidou.springboot.xxx
  configuration:
-  map-underscore-to-camel-case: false
+  map-underscore-to-camel-case: true
   cache-enabled: false
 
 

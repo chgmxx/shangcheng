@@ -110,7 +110,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		PageUtil page = mallPageService.findByPage( params, user, request );
 		request.setAttribute( "page", page );
 		request.setAttribute( "pagName", params.get( "pagName" ) );
-		request.setAttribute( "path", PropertiesUtil.getDomain() );
+		request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 		request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
 	    } else {
 		request.setAttribute( "isNoAdminFlag", 1 );
@@ -361,7 +361,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    //获取店铺下的商品
 			/*	params.remove("stoId");*/
 	    PageUtil page = mallPageService.product( params );
-	    String url = PropertiesUtil.getDomain();
+	    String url = PropertiesUtil.getHomeUrl();
 
 	    request.setAttribute( "page", page );
 	    request.setAttribute( "groLs", groLs );
@@ -644,7 +644,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Integer stoId = Integer.valueOf( request.getParameter( "stoId" ).toString() );
 	    PageUtil page = mallPageService.selectListBranch( stoId, params );
 	    request.setAttribute( "page", page );
-	    String ym = PropertiesUtil.getDomain();//域名
+	    String ym = PropertiesUtil.getHomeUrl();//域名
 	    request.setAttribute( "ym", ym );
 	    int pageindex = 0;
 	    if ( CommonUtil.isNotEmpty( page ) ) {
@@ -670,7 +670,7 @@ public class MallPageController extends AuthorizeOrLoginController {
     public String choosePresalePro( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    Integer stoId = Integer.valueOf( request.getParameter( "stoId" ).toString() );
-	    String url = PropertiesUtil.getDomain();//域名
+	    String url = PropertiesUtil.getHomeUrl();//域名
 	    request.setAttribute( "url", url );
 	    List< Map< String,Object > > presaleList = mallPageService.productPresale( stoId, params );
 	    request.setAttribute( "presaleList", presaleList );

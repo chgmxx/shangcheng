@@ -68,7 +68,7 @@ public class MallIntegralController extends BaseController {
 	    }
 	    request.setAttribute( "type", params.get( "type" ) );
 	    request.setAttribute( "imgUrl", PropertiesUtil.getResourceUrl() );
-	    request.setAttribute( "path", PropertiesUtil.getDomain() );
+	    request.setAttribute( "path", PropertiesUtil.getHomeUrl() );
 	    request.setAttribute( "userId", user.getId() );
 
 			/*request.setAttribute("videourl", course.urlquery("86"));*/
@@ -170,7 +170,7 @@ public class MallIntegralController extends BaseController {
     @RequestMapping( value = "getTwoCode" )
     public void getTwoCode( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    String content = PropertiesUtil.getDomain() + "/phoneIntegral/79B4DE7C/integralProduct.do?id=" + params.get( "id" ) + "&uId=" + params.get( "uId" ) + "&shopId="
+	    String content = PropertiesUtil.getHomeUrl() + "/phoneIntegral/79B4DE7C/integralProduct.do?id=" + params.get( "id" ) + "&uId=" + params.get( "uId" ) + "&shopId="
 			    + params.get( "shopId" );
 	    QRcodeKit.buildQRcode( content, 200, 200, response );
 	} catch ( Exception e ) {
