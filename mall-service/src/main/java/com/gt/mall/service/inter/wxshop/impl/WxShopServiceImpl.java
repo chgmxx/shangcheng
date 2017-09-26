@@ -83,10 +83,18 @@ public class WxShopServiceImpl implements WxShopService {
 	if ( busUserId == 0 ) {
 	    return null;
 	}
+	String key = Constants.REDIS_KEY + "wx_shop_user_id_" + busUserId;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONArray.parseArray( obj.toString(), WsWxShopInfoExtend.class );
+	    }
+	}
 	RequestUtils< Integer > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( busUserId );
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "queryWxShopByBusId.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
 	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
 	}
 	return null;

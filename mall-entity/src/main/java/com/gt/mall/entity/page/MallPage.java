@@ -84,6 +84,7 @@ public class MallPage extends Model< MallPage > {
     /**
      * 二维码
      */
+    @TableField( "codeUrl" )
     private String  codeUrl;
 
     @Override
