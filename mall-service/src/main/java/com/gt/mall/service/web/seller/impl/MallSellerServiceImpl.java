@@ -340,7 +340,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
 	List< Map< String,Object > > sellerList = mallSellerDAO.selectPageCheckByBusUserId( params );
 
-//	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
+	//	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
 
 	page.setSubList( sellerList );
 	return page;
@@ -869,7 +869,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    boolean isUpHead = true;//修改用户头像
 	    //判断销售员表保存的头像跟用户表保存的头像地址是否一致
 	    if ( CommonUtil.isNotEmpty( member.getHeadimgurl() ) ) {
-		String path = URLConnectionDownloader.isConnect( PropertiesUtil.getResourceUrl() + member.getHeadimgurl() );//判断
+		String path = URLConnectionDownloader.isConnect( member.getHeadimgurl() );//判断
 		if ( CommonUtil.isEmpty( path ) ) {
 		    path = PropertiesUtil.getHomeUrl() + "/images/mall/img/pt-detail2.jpg";
 		    String isConnet = URLConnectionDownloader.isConnect( path );//判断
