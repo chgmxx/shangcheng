@@ -302,7 +302,7 @@
         and ((gb.s_start_time &lt;= now() and now() &lt; gb.s_end_time ) or (gb.s_start_time > now() and gb.s_end_time > now()))
         <if test="productList != null ">
             and gb.product_id in
-            <foreach collection="productList" index="index" item="item" open="(" separator="or" close=")">
+            <foreach collection="productList" index="index" item="item" open="(" separator="," close=")">
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>

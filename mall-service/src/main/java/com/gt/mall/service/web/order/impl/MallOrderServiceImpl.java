@@ -291,6 +291,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				detailList.add( detail );
 				detailIds.add( i );
 				isDetail = true;
+				orderdetailList.remove( i );
+				break;
 			    }
 			}
 			if ( detailIds != null && detailIds.size() > 0 ) {

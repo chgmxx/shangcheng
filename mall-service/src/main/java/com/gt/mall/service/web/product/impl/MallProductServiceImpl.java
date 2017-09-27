@@ -197,7 +197,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		}
 	    }
 	    //查看商品是否加入到团购
-	    List< Map< String,Object > > groupBuyList = mallGroupBuyDAO.selectCountByProList( proIdsList );
+ 	    List< Map< String,Object > > groupBuyList = mallGroupBuyDAO.selectCountByProList( proIdsList );
 	    List< Map< String,Object > > seckillList = mallSeckillDao.selectCountByProList( proIdsList );
 	    List< MallProductInventory > invenList = mallProductInventoryService.selectByIdListDefault( proIdsInvList );
 	    logger.info( "团购商品数据 = " + JSONObject.toJSONString( groupBuyList ) );
