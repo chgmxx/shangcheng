@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="/css/mall/comment/evalServer.css">
 
     <script src="/js/plugin/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="/js/public.js?<%= System.currentTimeMillis()%>"></script>
+    <script type="text/javascript" src="/js/public.js"></script>
     <script src="/js/plugin/layer/layer.js"></script>
 
     <script type="text/javascript" src="/js/util.js"></script>

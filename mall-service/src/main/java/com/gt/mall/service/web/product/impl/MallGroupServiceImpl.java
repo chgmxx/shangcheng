@@ -72,13 +72,32 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 		param.put( "type", 0 );
 	    }
 	    List< Map< String,Object > > groupList = mallGroupDAO.selectGroupByPage( param );
-	    if ( groupList != null && groupList.size() > 0 ) {
-		for ( int i = 0; i < groupList.size(); i++ ) {
-		    Map< String,Object > map = groupList.get( i );
-		    int productNum = mallProductDAO.countProductByGroup( CommonUtil.toInteger( map.get( "shopId" ) ), CommonUtil.toInteger( map.get( "id" ) ),
-				    userId );
-		    map.put( "COUNT", productNum );
+	    List< Integer > groupIds = new ArrayList<>();
+	    if ( groupList != null && groupList.size() > 0 && param.containsKey( "isProNum" )) {
+		for ( Map< String,Object > map : groupList ) {
+		    groupIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
 		}
+		Map< String,Object > params = new HashMap<>();
+		params.put( "groupIds", groupIds );
+		params.put( "userId", userId );
+		List< Map< String,Object > > productList = mallProductDAO.countProductByGroup( params );
+		if ( productList != null && productList.size() > 0 ) {
+		    for ( Map< String,Object > map : groupList ) {
+			int id = CommonUtil.toInteger( map.get( "id" ) );
+			if ( productList == null || productList.size() == 0 ) {
+			    break;
+			}
+			for ( Map< String,Object > productMap : productList ) {
+			    int groupId = CommonUtil.toInteger( productMap.get( "groupId" ) );
+			    if ( groupId == id ) {
+				map.put( "COUNT", productMap.get( "counts" ) );
+				productList.remove( productMap );
+				break;
+			    }
+			}
+		    }
+		}
+
 	    }
 	    page.setSubList( groupList );
 	}
