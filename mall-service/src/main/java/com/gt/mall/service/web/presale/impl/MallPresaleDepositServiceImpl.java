@@ -129,6 +129,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
      * 定金支付成功的回调函数
      */
     @Override
+    @Transactional( rollbackFor = Exception.class )
     public int paySuccessPresale( Map< String,Object > params ) {
 	int num = 0;
 	String aucNo = params.get( "out_trade_no" ).toString();

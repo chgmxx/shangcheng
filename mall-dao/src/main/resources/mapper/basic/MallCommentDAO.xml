@@ -53,10 +53,10 @@
         FROM t_mall_comment t
         LEFT JOIN t_mall_order_detail d ON d.`id`=t.`order_detail_id`
         WHERE 1=1
-        <if test="memberId != null and memberId != ''">
+        <if test="memberId != null ">
             and t.`user_id` = #{memberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null ">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 t.`user_id` = #{item,jdbcType=INTEGER}
@@ -68,10 +68,10 @@
     </select>
     <select id="countAppraise" parameterType="map" resultType="java.lang.Integer">
         SELECT COUNT(id) FROM t_mall_comment WHERE is_delete = 0
-        <if test="memberId != null and memberId != ''">
+        <if test="memberId != null">
             and user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null and oldMemberIds != ''">
+        <if test="oldMemberIds != null">
             and
             <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
                 user_id = #{item,jdbcType=INTEGER}

@@ -835,6 +835,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	return mallProductDAO.selectById( proId );
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > copyProductByShopId( Map< String,Object > params, BusUser user ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
@@ -849,6 +850,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	return resultMap;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > copyProduct( Map< String,Object > params, BusUser user ) throws Exception {
 	if ( CommonUtil.isEmpty( params.get( "shopId" ) ) ) {

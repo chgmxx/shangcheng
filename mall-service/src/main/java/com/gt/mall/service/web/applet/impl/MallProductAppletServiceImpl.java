@@ -21,6 +21,7 @@ import com.gt.mall.utils.PropertiesUtil;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -373,6 +374,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 	return shopMap;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public void shoppingdelete( List< Integer > ids ) {
 	if ( CommonUtil.isNotEmpty( ids ) && ids.size() > 0 ) {
@@ -382,6 +384,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 	}
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public void shoppingorder( Map< String,Object > params ) {
 	if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {

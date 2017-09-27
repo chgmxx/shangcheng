@@ -46,8 +46,10 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1088,7 +1090,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 代付支付成功的回调
      */
     @RequestMapping( value = "/79B4DE7C/daifuSuccess" )
-    @Transactional( rollbackFor = Exception.class )
     public void daifuSuccess( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	Map< String,Object > result = new HashMap<>();
 	int code = ResponseEnums.SUCCESS.getCode();
@@ -1115,7 +1116,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 去支付
      */
     @RequestMapping( value = "/79B4DE7C/goPay" )
-    @Transactional( rollbackFor = Exception.class )
     public void goPay( HttpServletRequest request, @RequestParam Map< String,Object > param, HttpServletResponse response ) throws IOException {
 	logger.info( "进入去支付controller" );
 	Map< String,Object > result = new HashMap<>();
@@ -1226,7 +1226,6 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
      * 计算订单价格
      */
     @RequestMapping( value = "/79B4DE7C/calculateOrder" )
-    @Transactional( rollbackFor = Exception.class )
     public void calculateOrder( HttpServletRequest request, @RequestParam Map< String,Object > params, HttpServletResponse response ) throws IOException {
 	logger.info( "进入计算controller" );
 	Map< String,Object > result = new HashMap<>();

@@ -17,7 +17,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -289,7 +288,6 @@ public class MallProductController extends BaseController {
      * 同步商品
      */
     @SysLogAnnotation( description = "商品管理-同步商品", op_function = "2" )
-    @Transactional( rollbackFor = Exception.class )
     @RequestMapping( "copy_pro" )
     public void copyProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws Exception {
 	logger.info( "进入同步商品的controller" );
