@@ -34,7 +34,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -835,7 +834,6 @@ public class MallAuctionController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/payWay" )
     @SysLogAnnotation( op_function = "2", description = "拍卖缴纳定金回调" )
-    @Transactional( rollbackFor = Exception.class )
     public void payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {

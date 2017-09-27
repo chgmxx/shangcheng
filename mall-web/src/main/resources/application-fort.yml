@@ -60,7 +60,12 @@ spring:
       # Spring监控配置，说明请参考Druid Github Wiki，配置_Druid和Spring关联监控配置
       # 如果spring.datasource.druid.aop-patterns要代理的类没有定义interface请设置spring.aop.proxy-target-class=true
       # Spring监控AOP切入点，如x.y.z.service.*,配置多个英文逗号分隔
-     aop-patterns: com.gt.mall.*.service.*,com.gt.*.dao.*
+     aop-patterns: com.gt.mall.*.service.*,com.gt.mall.*.dao.*
+     #批量新增修改
+     filter:
+      wall:
+       config:
+        multi-statement-allow: true
 
 
 ######################## 堡垒环境配置 ########################

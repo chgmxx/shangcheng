@@ -2059,6 +2059,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
      * 好友代付成功回调函数
      */
     @Override
+    @Transactional( rollbackFor = Exception.class )
     public int paySuccessDaifu( Map< String,Object > params ) {
 	String orderNo = params.get( "out_trade_no" ).toString();
 

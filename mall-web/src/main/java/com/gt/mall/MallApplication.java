@@ -5,6 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.sql.DataSource;
 
 /**
  * 商城行业版 程序入口
@@ -20,5 +25,10 @@ public class MallApplication extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure( SpringApplicationBuilder application ) {
 	return application.sources( MallApplication.class );
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+	return new DataSourceTransactionManager(dataSource);
     }
 }

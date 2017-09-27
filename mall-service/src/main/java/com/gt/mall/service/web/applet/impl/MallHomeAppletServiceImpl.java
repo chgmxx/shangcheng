@@ -42,6 +42,7 @@ import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -530,6 +531,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	return productMap;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > addshopping( Map< String,Object > params ) {
 	MallShopCart cart = new MallShopCart();

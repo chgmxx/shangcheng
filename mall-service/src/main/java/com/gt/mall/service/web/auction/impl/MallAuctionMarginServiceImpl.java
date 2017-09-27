@@ -28,6 +28,7 @@ import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -138,6 +139,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	return page;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public int paySuccessAuction( Map< String,Object > params ) {
 	int num = 0;

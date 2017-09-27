@@ -48,6 +48,7 @@ import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -582,6 +583,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	return resultMap;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< Object,Object > orderGoPay( Map< String,Object > params, String url ) throws Exception {
 	Map< Object,Object > resultMap = new HashMap< Object,Object >();
@@ -693,6 +695,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	return resultMap;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > confirmReceipt( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
@@ -831,6 +834,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	return resultMap;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > submitReturnOrder( Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
@@ -852,6 +856,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	return resultMap;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > closeReturnOrder( Map< String,Object > params ) {
 	int count = 0;

@@ -22,7 +22,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -305,7 +304,6 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @Transactional( rollbackFor = Exception.class )
     @SysLogAnnotation( description = "商城小程序-商品购物车保存", op_function = "2" )
     @RequestMapping( "/79B4DE7C/addshopping" )
     public void addshopping( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -358,7 +356,6 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SuppressWarnings( { "deprecation", "unchecked" } )
-    @Transactional( rollbackFor = Exception.class )
     @SysLogAnnotation( description = "小程序购物车页面-删除购物车内的商品", op_function = "3" )
     @RequestMapping( "79B4DE7C/shoppingdelete" )
     public void shoppingdelect( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -389,7 +386,6 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @Transactional( rollbackFor = Exception.class )
     @SysLogAnnotation( description = "小程序购物车页面-结算购物车内的商品", op_function = "3" )
     @RequestMapping( "79B4DE7C/shoppingorder" )
     public void shoppingOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -605,7 +601,6 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @Transactional( rollbackFor = Exception.class )
     @SysLogAnnotation( description = "小程序我的订单页面-去支付", op_function = "3" )
     @RequestMapping( "79B4DE7C/orderGoPay" )
     public void orderGoPay( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -631,7 +626,6 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @Transactional( rollbackFor = Exception.class )
     @SysLogAnnotation( description = "小程序我的订单页面-确认收货", op_function = "3" )
     @RequestMapping( "79B4DE7C/confirmReceipt" )
     public void confirmReceipt( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -682,7 +676,6 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @Transactional( rollbackFor = Exception.class )
     @SysLogAnnotation( description = "小程序我的订单页面-提交退款信息", op_function = "3" )
     @RequestMapping( "79B4DE7C/submitReturnOrder" )
     public void submitReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -709,7 +702,6 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @Transactional( rollbackFor = Exception.class )
     @SysLogAnnotation( description = "小程序我的订单页面-撤销退款", op_function = "3" )
     @RequestMapping( "79B4DE7C/closeReturnOrder" )
     public void closeReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -760,7 +752,6 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @RequestMapping( "79B4DE7C/addressDefault" )
-    @Transactional( rollbackFor = Exception.class )
     public void addressDefault( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -794,7 +785,6 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @RequestMapping( "79B4DE7C/addressDelete" )
-    @Transactional( rollbackFor = Exception.class )
     public void addressDelete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -860,7 +850,6 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @RequestMapping( "79B4DE7C/addressSubmit" )
-    @Transactional( rollbackFor = Exception.class )
     public void addressSubmit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
