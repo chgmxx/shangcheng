@@ -26,6 +26,7 @@ import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.pifa.MallPifa;
+import com.gt.mall.entity.pifa.MallPifaPrice;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.entity.presale.MallPresaleMessageRemind;
@@ -47,6 +48,7 @@ import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
+import com.gt.mall.service.web.pifa.MallPifaPriceService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
@@ -150,8 +152,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Autowired
     private MallProductInventoryService mallProductInventoryService;
     @Autowired
-    private MallProductSpecificaDAO     mallProductSpecificaDAO;
-    @Autowired
     private MallIntegralDAO             mallIntegralDAO;
     @Autowired
     private MallProductSpecificaService mallProductSpecificaService;
@@ -171,6 +171,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     private BusUserService              busUserService;
     @Autowired
     private DictService                 dictService;
+    @Autowired
+    private MallPifaPriceService        mallPifaPriceService;
 
     /**
      * 分页查询
@@ -832,6 +834,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			    msg = "商品已售罄";
 			}
 		    }
+		    int pifaId = 0;
 		    if ( pro_type == 1 || pro_type == 2 ) {//批发商品
 			map.put( "pfType", 1 );
 			List< MallPifa > pfList = mallPifaDAO.selectStartPiFaByProductId( map );
@@ -840,6 +843,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 			    msg = "批发商品已结束或已删除";
 			} else {
 			    MallPifa pifa = pfList.get( 0 );
+			    pifaId = pifa.getId();
 			    if ( !pifa.getPfType().toString().equals( map.get( "pro_type" ).toString() ) ) {
 				code = 0;
 				msg = "商家已更改批发类型";
@@ -856,8 +860,12 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 				    Map< String,Object > invPrice = mallProductService.getProInvIdBySpecId( str, CommonUtil.toInteger( proId ) );
 				    if ( CommonUtil.isNotEmpty( invPrice ) ) {
 					valMap.put( "invNum", invPrice.get( "inv_num" ) );
-					specStr.put( str, valMap );
 				    }
+				    MallPifaPrice pifaPrice = mallPifaPriceService.selectPifaBySpecifica( str, pifaId );
+				    if ( pifaPrice != null ) {
+					valMap.put( "price", pifaPrice.getSeckillPrice() );
+				    }
+				    specStr.put( str, valMap );
 				}
 			    }
 			}
@@ -1047,7 +1055,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    shopcart.setId( id );
 	    mallShopCartDAO.updateById( shopcart );
 	}
-	map.put( "shopcards", shop_ids.substring( 0, shop_ids.length() - 1 ) );
+	map.put( "cartIds", shop_ids.substring( 0, shop_ids.length() - 1 ) );
 	return map;
     }
 

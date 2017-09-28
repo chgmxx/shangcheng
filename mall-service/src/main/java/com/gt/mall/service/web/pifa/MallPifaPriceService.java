@@ -29,4 +29,12 @@ public interface MallPifaPriceService extends BaseService< MallPifaPrice > {
      * @return
      */
     List<MallPifaPrice> selectPriceByGroupId(int groupId);
+
+    /**
+     * 根据规格值查询批发价
+     * @param specificaIds 规格值id
+     * @param pifaId 批发id
+     * @return 批发价信息
+     */
+    MallPifaPrice selectPifaBySpecifica(String specificaIds,int pifaId );
 }

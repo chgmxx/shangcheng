@@ -254,7 +254,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	    if ( type.equals( "1" ) ) {//从购物车进入订单
 		String id = CommonUtil.isNotEmpty( data.get( "cartIds" ) ) ? data.get( "cartIds" ).toString() : obj.getString( "cartIds" );
 		String shopcards = id.substring( 0, id.length() );
-		request.setAttribute( "shopcards", shopcards );
+		request.setAttribute( "cartIds", shopcards );
 		list = mallShopCartService.getProductByShopCart( shopcards, pbUser, member, userid, shopList );
 	    } else {
 		if ( CommonUtil.isNotEmpty( data.get( "order" ) ) ) {

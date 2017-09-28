@@ -130,8 +130,8 @@ function getSubmitParams() {
         "uId": $(".userid").val(),
         "type": $(".buyType").val()
     };
-    if ($(".shopcards").val() !== null && $(".shopcards").val() !== "" && $(".buyType").val() === "1") {
-        data["cartIds"] = $(".shopcards").val();
+    if ($(".cartIds").val() !== null && $(".cartIds").val() !== "" && $(".buyType").val() === "1") {
+        data["cartIds"] = $(".cartIds").val();
     }
     return data;
 }
