@@ -1062,7 +1062,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    loginMap.put( "uclogin", 1 );
+	    /*loginMap.put( "uclogin", 1 );*/
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;

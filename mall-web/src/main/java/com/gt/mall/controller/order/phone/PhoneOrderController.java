@@ -252,11 +252,7 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 
 	    List< Map< String,Object > > list = new ArrayList<>();
 	    if ( type.equals( "1" ) ) {//从购物车进入订单
-		if ( CommonUtil.isEmpty( data.get( "data" ) ) ) {
-		    String msg = SessionUtils.getSession( request, "cartToOrderData" ).toString();
-		    obj = JSONObject.fromObject( msg );
-		}
-		String id = CommonUtil.isNotEmpty( data.get( "shopcards" ) ) ? data.get( "shopcards" ).toString() : obj.getString( "shopcards" );
+		String id = CommonUtil.isNotEmpty( data.get( "cartIds" ) ) ? data.get( "cartIds" ).toString() : obj.getString( "cartIds" );
 		String shopcards = id.substring( 0, id.length() );
 		request.setAttribute( "shopcards", shopcards );
 		list = mallShopCartService.getProductByShopCart( shopcards, pbUser, member, userid, shopList );

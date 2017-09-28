@@ -195,8 +195,8 @@
                     <c:forEach var="orderDetail" items="${order.message }">
                         <c:set var="totalOrderMoneys" value="0"></c:set>
                         <input type="hidden" name="return_day" value="${orderDetail.return_day }"/>
-                        <div class="mall-item" groupType="${orderDetail.groupType }">
-                            <c:if test="${orderDetail.groupType == 4 }">
+                        <div class="mall-item" groupType="${order.groupType }">
+                            <c:if test="${order.groupType == 4 }">
                                 <c:set var="url" value="/mAuction/${orderDetail.product_id }/${orderDetail.shop_id }/${orderDetail.groupBuyId }/79B4DE7C/auctiondetail.do"></c:set>
                             </c:if>
                             <c:set var="price" value="${orderDetail.primary_price }"></c:set>
@@ -209,10 +209,10 @@
                             <c:if test="${orderDetail.isCoupons == 1 && orderDetail.is_member_discount == 0}"><!-- 参加会员折扣，不参加优惠券 -->
                             <c:set var="yhqNum" value="${yhqNum+1 }"></c:set>
                             </c:if>
-                            <c:if test="${empty orderDetail.groupType || orderDetail.groupType != 7 }">
+                            <c:if test="${empty order.groupType || order.groupType != 7 }">
                                 <c:set var="totalMoneys" value="${totalMoneys+price*orderDetail.product_num }"></c:set>
                             </c:if>
-                            <c:if test="${orderDetail.groupType == 7}">
+                            <c:if test="${order.groupType == 7}">
                                 <c:if test="${!empty orderDetail.specMap }">
                                     <c:forEach var="spec" items="${orderDetail.specMap }">
                                         <c:set var="specVal" value="${spec.value }"></c:set>
@@ -233,13 +233,13 @@
                             </c:if>
                             <c:if test="${orderDetail.is_integral_deduction == 1 }">
                                 <c:set var="jifenNum" value="${jifenNum+1 }"></c:set>
-                                <c:if test="${orderDetail.groupType != 7 }">
+                                <c:if test="${order.groupType != 7 }">
                                     <c:set var="jifenProMoney" value="${jifenProMoney+(price*orderDetail.product_num) }"></c:set>
                                 </c:if>
                             </c:if>
                             <c:if test="${orderDetail.is_fenbi_deduction == 1 }">
                                 <c:set var="fenbiNum" value="${fenbiNum+1 }"></c:set>
-                                <c:if test="${orderDetail.groupType != 7 }">
+                                <c:if test="${order.groupType != 7 }">
                                     <c:set var="fenbiProMoney" value="${fenbiProMoney+(price*orderDetail.product_num) }"></c:set>
                                 </c:if>
                             </c:if>
@@ -257,15 +257,15 @@
                                     <a href="${urls }">
                                             ${orderDetail.pro_name }</a>
                                 </p>
-                                <c:if test="${orderDetail.groupType != 7}">
+                                <c:if test="${order.groupType != 7}">
                                     ${orderDetail.product_speciname }
                                 </c:if>
                                 <p class="red-txt"><em>￥</em><span id="singlePrice">${orderDetail.primary_price }</span></p>
-                                <c:if test="${!empty isDiscount && orderDetail.groupType != 7}">
+                                <c:if test="${!empty isDiscount && order.groupType != 7}">
                                     <p class="red-txt">会员价：<em>${price}</em></p>
                                 </c:if>
 
-                                <c:if test="${orderDetail.groupType == 7 && empty orderDetail.specMap}"><!-- 批发 无规格-->
+                                <c:if test="${order.groupType == 7 && empty orderDetail.specMap}"><!-- 批发 无规格-->
                                 <p class="red-txt">批发价：<span>${orderDetail.price }</span></p>
                                 <c:set var="orderTotalPrice" value="${orderTotalPrice+orderDetail.price*orderDetail.product_num }"></c:set>
                                 </c:if>
@@ -276,7 +276,33 @@
                             </div>
                             <input type="hidden" class="totalOrderMoneys" value="${totalOrderMoneys }"/>
                         </div>
-                        <c:if test="${orderDetail.groupType == 7}">
+                        <div class="productDivForm">
+                            <input type="hidden" name="index" value="${orderDetail.index}"/>
+                            <input type="hidden" name="productId" value="${orderDetail.product_id}"/>
+                            <input type="hidden" name="shopId" value="${order.shop_id}"/>
+                            <input type="hidden" name="productSpecificas" value="${orderDetail.product_specificas}"/>
+                            <input type="hidden" name="productImageUrl" value="${orderDetail.image_url}"/>
+                            <input type="hidden" name="detProNum" value="${orderDetail.product_num}"/>
+                            <input type="hidden" name="detProPrice" id="proPrice" value="${price}"/>
+                            <input type="hidden" name="detProName" value="${orderDetail.pro_name}"/>
+                            <input type="hidden" name="detPrivivilege" id="primary_price" value="${orderDetail.primary_price  }"/>
+                            <input type="hidden" name="productSpeciname" value="${orderDetail.product_speciname }"/>
+                            <input type="hidden" name="totalPrice" value="${orderDetail.pro_price_total}"/>
+
+                            <input type="hidden" name="useCoupon" id="isCoupons" value="${orderDetail.isCoupons }"/>
+                            <input type="hidden" name="userCard" id="is_member_discount" value="${orderDetail.is_member_discount }"/>
+                            <input type="hidden" name="userJifen" id="integralDeduction" value="${orderDetail.is_integral_deduction }"/>
+                            <input type="hidden" name="userFenbi" id="fenbiDeduction" value="${orderDetail.is_fenbi_deduction }"/>
+                            <c:if test="${!empty orderDetail.pro_spec_str}">
+                                <input type="hidden" name="proSpecStr" value='${orderDetail.pro_spec_str}'/>
+                            </c:if>
+
+                            <input type="hidden" name="wxShopId" value="${order.wxShopId}"/>
+                            <c:if test="${!empty cardMap && !empty cardMap.discount}">
+                                <input type="hidden" name="discount" value="${cardMap.discount*10}"/>
+                            </c:if>
+                        </div>
+                        <c:if test="${order.groupType == 7}">
                             <c:if test="${!empty orderDetail.specMap }">
                                 <c:forEach var="spec" items="${orderDetail.specMap }">
                                     <c:set var="specVal" value="${spec.value }"></c:set>
@@ -300,30 +326,6 @@
                             </c:if>
                         </c:if>
 
-
-                        <div class="productDivForm">
-                            <input type="hidden" name="index" value="${orderDetail.index}"/>
-                            <input type="hidden" name="productId" value="${orderDetail.product_id}"/>
-                            <input type="hidden" name="shopId" value="${order.shop_id}"/>
-                            <input type="hidden" name="productSpecificas" value="${orderDetail.product_specificas}"/>
-                            <input type="hidden" name="productImageUrl" value="${orderDetail.image_url}"/>
-                            <input type="hidden" name="detProNum" value="${orderDetail.product_num}"/>
-                            <input type="hidden" name="detProPrice" id="proPrice" value="${price}"/>
-                            <input type="hidden" name="detProName" value="${orderDetail.pro_name}"/>
-                            <input type="hidden" name="detPrivivilege" id="primary_price" value="${orderDetail.primary_price  }"/>
-                            <input type="hidden" name="productSpeciname" value="${orderDetail.product_speciname }"/>
-                            <input type="hidden" name="totalPrice" value="${orderDetail.pro_price_total}"/>
-
-                            <input type="hidden" name="useCoupon" id="isCoupons" value="${orderDetail.isCoupons }"/>
-                            <input type="hidden" name="userCard" id="is_member_discount" value="${orderDetail.is_member_discount }"/>
-                            <input type="hidden" name="userJifen" id="integralDeduction" value="${orderDetail.is_integral_deduction }"/>
-                            <input type="hidden" name="userFenbi" id="fenbiDeduction" value="${orderDetail.is_fenbi_deduction }"/>
-
-                            <input type="hidden" name="wxShopId" value="${order.wxShopId}"/>
-                            <c:if test="${!empty cardMap && !empty cardMap.discount}">
-                                <input type="hidden" name="discount" value="${cardMap.discount*10}"/>
-                            </c:if>
-                        </div>
 
                         <input type="hidden" id="detailProPrice" value="${price }"/><!-- 价格不能改 -->
 

@@ -86,7 +86,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		shopIds += shopMap.get( "shop_id" ).toString();
 	    }*/
 	    Map< String,Object > shopcartParams = new HashMap<>();
-	    //	    shopcartParams.put( "shopIds", shopIds.split( "," ) );
+	    /*shopcartParams.put( "shopIds", shopIds.split( "," ) );*/
 	    shopcartParams.put( "checkIds", shopcards.split( "," ) );
 	    shopcartParams.put( "userId", userId );
 
@@ -104,11 +104,16 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    if ( !map3.get( "shop_id" ).toString().equals( shopMaps.get( "shop_id" ).toString() ) ) {
 			continue;
 		    }
-		    String price = map3.get( "price" ).toString();
+		    double price = 0;
+		    if ( CommonUtil.isNotEmpty( map3.get( "price" ) ) ) {
+			price = CommonUtil.toDouble( map3.get( "price" ) );
+		    }
 		    double proPriceTotal = 0;
 		    int num = Integer.parseInt( map3.get( "product_num" ).toString() );
 
-		    Object product_specificas = map3.get( "product_specificas" );
+		    String product_specificas = "";
+		    if ( CommonUtil.isNotEmpty( map3.get( "product_specificas" ) ) )
+			product_specificas = map3.get( "product_specificas" ).toString();
 		    if ( CommonUtil.isNotEmpty( map3.get( "pro_weight" ) ) ) {
 			pro_weight += CommonUtil.toDouble( map3.get( "pro_weight" ) );
 		    }
@@ -128,6 +133,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    boolean flag = true;
 		    Map< String,Object > specMap = null;
 		    if ( CommonUtil.isNotEmpty( map3.get( "pro_spec_str" ) ) ) {
+			double proPrice = 0;
+			specNames = new StringBuilder();
+			/*product_specificas = "";*/
 			JSONObject obj = JSONObject.fromObject( map3.get( "pro_spec_str" ) );
 			specMap = new HashMap< String,Object >();
 			if ( obj != null && obj.size() > 0 ) {
@@ -144,9 +152,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 					specNames.append( valObj.get( "value" ) ).append( " X " ).append( valObj.get( "num" ) ).append( " ¥" ).append( valObj.get( "price" ) );
 
 					num = CommonUtil.toInteger( valObj.get( "num" ) );
-					price = valObj.get( "price" ).toString();
 
-					double p = Double.parseDouble( price );
+					double p = CommonUtil.toDouble( valObj.get( "price" ) );
 					price_total = price_total + ( p * num );
 					proPriceTotal = proPriceTotal + ( p * num );
 					yuanjia_total += num * Double.parseDouble( map3.get( "primary_price" ).toString() );
@@ -154,14 +161,18 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 					proNum += num;
 					flag = false;
 
+					/*product_specificas += key + ",";*/
 					specMap.put( key.toString(), valObj );
+					proPrice += p;
 				    }
 				}
 			    }
 			}
+			price = proPrice / proNum;
+			/*product_specificas = product_specificas.substring( 0, product_specificas.length() - 1 );*/
 		    }
 		    if ( flag ) {
-			double p = Double.parseDouble( price );
+			double p = price;
 			price_total = price_total + ( p * num );
 			proPriceTotal = proPriceTotal + ( p * num );
 			yuanjia_total += num * Double.parseDouble( map3.get( "primary_price" ).toString() );
@@ -196,14 +207,14 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			productMap.put( "product_speciname", specNames.toString() );
 		    }
 		    if ( specObj != null && specObj.size() > 0 ) {
-			productMap.put( "pro_spec_str", specObj.toString() );
+			productMap.put( "pro_spec_str", com.alibaba.fastjson.JSONObject.toJSONString( specObj ) );
 		    }
 		    if ( specMap != null && specMap.size() > 0 ) {
 			productMap.put( "specMap", specMap );
 		    }
 		    String proType = map3.get( "pro_type" ).toString();
 		    if ( proType.equals( "1" ) || proType.equals( "2" ) ) {
-			productMap.put( "groupType", "7" );
+			shopMap.put( "groupType", 7 );
 		    }
 		    productMap.put( "pro_price_total", proPriceTotal );
 		    if ( CommonUtil.isNotEmpty( map3.get( "return_day" ) ) ) {

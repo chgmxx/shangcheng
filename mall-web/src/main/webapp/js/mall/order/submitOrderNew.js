@@ -42,9 +42,9 @@ function submitOrders() {
                     gtcommonDialog(txt, null, "提交订单");
                 }
             }
-            setTimeout(function(){
+            setTimeout(function () {
                 layer.closeAll();
-            },2000);
+            }, 2000);
         }, error: function () {
             gtcommonDialog("提交订单失败", null, "提交订单");
             layer.closeAll();
@@ -61,7 +61,7 @@ function getSubmitParams() {
         var shopId = $(this).attr("stoId");
         var flowCzPhone = $(".flowCzPhone").val();
         var obj = $(".orderDivForm").serializeObject();
-        if(flowCzPhone !== null && flowCzPhone !== ""){
+        if (flowCzPhone !== null && flowCzPhone !== "") {
             obj.flowPhone = flowCzPhone;
         }
         var detailArr = [];
@@ -131,7 +131,7 @@ function getSubmitParams() {
         "type": $(".buyType").val()
     };
     if ($(".shopcards").val() !== null && $(".shopcards").val() !== "" && $(".buyType").val() === "1") {
-        data["shopcards"] = $(".shopcards").val();
+        data["cartIds"] = $(".shopcards").val();
     }
     return data;
 }
