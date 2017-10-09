@@ -49,6 +49,7 @@ public class MallComment extends Model< MallComment > {
     /**
      * 评论内容
      */
+    @TableField("content")
     private String  content;
     /**
      * 评论人是否上传图片(0 未上传  1已上传)
@@ -102,6 +103,7 @@ public class MallComment extends Model< MallComment > {
     /**
      * 创建时间
      */
+    @TableField( "createTime" )
     private Date createTime;
     /**
      * 是否已经被删除（0未删除   1已删除）

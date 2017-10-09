@@ -117,7 +117,8 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     @Override
     public boolean checkComment( Map< String,Object > params ) {
 	if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
-	    String[] ids = (String[]) JSONArray.toJSON( JSONArray.parseObject( params.get( "ids" ).toString() ) );
+
+	    String[] ids = JSONArray.parseArray( params.get( "ids" ).toString() ).toArray( new String[0] );
 	    params.put( "ids", ids );
 	}
 	int count = commentDAO.batchUpdateComment( params );

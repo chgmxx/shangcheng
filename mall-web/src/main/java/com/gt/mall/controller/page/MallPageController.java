@@ -100,10 +100,6 @@ public class MallPageController extends AuthorizeOrLoginController {
     @RequestMapping( "/index" )
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	BusUser user = SessionUtils.getLoginUser( request );
-	/*	Integer[] stoIds = mallStoreService.findAllStoIdByUser(userId);
-		if(CommonUtil.isNotEmpty(stoIds)){
-			params.put("stoIds", stoIds);
-		}*/
 	try {
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是管理员
 	    if ( isAdminFlag ) {
@@ -1062,7 +1058,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		request.setAttribute( "userid", userid );
 	    }
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    loginMap.put( "uclogin", 1 );
+	    /*loginMap.put( "uclogin", 1 );*/
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
 		return returnUrl;

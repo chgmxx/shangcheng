@@ -19,13 +19,8 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
 
     /**
      * 查询分组下的商品个数
-     *
-     * @param shopId
-     * @param groupId
-     *
-     * @return
      */
-    int countProductByGroup( @Param( "shopId" ) int shopId, @Param( "groupId" ) int groupId, @Param( "userId" ) int userId );
+    List<Map<String,Object>> countProductByGroup( Map< String,Object > params );
 
     /**
      * 统计用户下面的商品数量

@@ -99,7 +99,7 @@ public class MallHtmlController extends BaseController {
 	    jsp = "mall/htmlmall/htmllist";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/error";
+	    jsp = "error/404Two";
 	    e.printStackTrace();
 	}
 	return jsp;
@@ -125,7 +125,7 @@ public class MallHtmlController extends BaseController {
 	    jsp = "mall/htmlmall/modelList";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/error";
+	    jsp = "error/404Two";
 	}
 	return jsp;
 
@@ -223,7 +223,7 @@ public class MallHtmlController extends BaseController {
 	    jsp = "mall/htmlmall/mall_h5/HtmlMall";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/error";
+	    jsp = "error/404Two";
 	}
 	return jsp;
     }
@@ -393,7 +393,7 @@ public class MallHtmlController extends BaseController {
 	    jsp = "mall/htmlmall/htmlfromlist";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/error";
+	    jsp = "error/404Two";
 	}
 	return jsp;
 
@@ -416,7 +416,7 @@ public class MallHtmlController extends BaseController {
 	    jsp = "mall/htmlmall/htmlfromview";
 	} catch ( Exception e ) {
 	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/error";
+	    jsp = "error/404Two";
 	}
 	return jsp;
     }
@@ -456,6 +456,7 @@ public class MallHtmlController extends BaseController {
     public String ylmodel( HttpServletRequest request, HttpServletResponse response ) {
 	Integer id = Integer.valueOf( request.getParameter( "id" ).toString() );//获取模板id
 	Wrapper groupWrapper = new EntityWrapper();
+	groupWrapper.setSqlSelect( "id,htmlname,state,introduce,codeUrl" );
 	groupWrapper.where( "id = {0}", id );
 	Map< String,Object > map = htmlService.selectMap( groupWrapper );
 	request.setAttribute( "map", map );

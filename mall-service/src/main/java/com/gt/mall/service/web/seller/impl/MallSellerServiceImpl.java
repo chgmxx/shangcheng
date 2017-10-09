@@ -868,26 +868,27 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    }
 	    boolean isUpHead = true;//修改用户头像
 	    //判断销售员表保存的头像跟用户表保存的头像地址是否一致
+	    String headPaths = "";
 	    if ( CommonUtil.isNotEmpty( member.getHeadimgurl() ) ) {
-		String path = URLConnectionDownloader.isConnect( member.getHeadimgurl() );//判断
-		if ( CommonUtil.isEmpty( path ) ) {
-		    path = PropertiesUtil.getHomeUrl() + "/images/mall/img/pt-detail2.jpg";
-		    String isConnet = URLConnectionDownloader.isConnect( path );//判断
-		    if ( CommonUtil.isNotEmpty( isConnet ) ) {
-			member.setHeadimgurl( isConnet );
-		    }
+		headPaths = URLConnectionDownloader.isConnect( member.getHeadimgurl() );//判断
+	    }
+	    if ( CommonUtil.isEmpty( headPaths ) ) {
+		headPaths = PropertiesUtil.getHomeUrl() + "/images/mall/img/pt-detail2.jpg";
+		String isConnet = URLConnectionDownloader.isConnect( headPaths );//判断
+		if ( CommonUtil.isNotEmpty( isConnet ) ) {
+		    member.setHeadimgurl( isConnet );
 		}
-		if ( CommonUtil.isNotEmpty( seller.getHeadImagePath() ) ) {
-		    if ( seller.getHeadImagePath().equals( member.getHeadimgurl() ) ) {
-			isUpHead = false;
-		    }
+	    }
+	    if ( CommonUtil.isNotEmpty( seller.getHeadImagePath() ) ) {
+		if ( seller.getHeadImagePath().equals( member.getHeadimgurl() ) ) {
+		    isUpHead = false;
 		}
 	    }
 	    MallSeller mallSeller = getSellerTwoCode( seller, member, browerType );
 	    boolean isUpProPath = true;//修改二维码
-	    if ( CommonUtil.isNotEmpty( mallSeller.getHeadImagePath() ) ) {
-		if ( CommonUtil.isNotEmpty( seller.getHeadImagePath() ) ) {
-		    if ( mallSeller.getHeadImagePath().equals( seller.getHeadImagePath() ) ) {
+	    if ( CommonUtil.isNotEmpty( mallSeller.getQrCodePath() ) ) {
+		if ( CommonUtil.isNotEmpty( seller.getQrCodePath() ) ) {
+		    if ( mallSeller.getQrCodePath().equals( seller.getQrCodePath() ) ) {
 			isUpProPath = false;
 		    }
 		}

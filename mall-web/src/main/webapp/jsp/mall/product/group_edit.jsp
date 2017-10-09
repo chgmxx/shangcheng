@@ -115,7 +115,7 @@
     </div>
     <div class="groupDiv" style="display:none;">
         <span class="font14">分组图片：</span>
-        <img onclick="choosePicture()" class="abc" src="../../../../../images/add_Image.png" width="50" style="cursor: pointer;"/>
+        <img onclick="choosePicture()" class="abc" src="/../images/add_Image.png" width="50" style="cursor: pointer;"/>
         <img id="img1" src="${res.resPicture}" width="50"/>
         <input type="hidden" value="${res.resPicture }" name="resPicture" id="resPicture"/>
     </div>

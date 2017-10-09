@@ -21,6 +21,8 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
+import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.product.*;
@@ -1131,8 +1133,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
 	if ( CommonUtil.isNotEmpty( specId ) ) {
 	    StringBuilder specifica_value = new StringBuilder();
-	    //	    String sql = "select id,specifica_value,specifica_img_url from t_mall_product_specifica where product_id = "+proId+" and specifica_value_id in ("+specId+") and is_delete = 0 order by sort";
-	    //	    List<Map<String, Object>> list = daoUtil.queryForList(sql);
 	    List< MallProductSpecifica > specificaList = mallProductSpecificaService.selectByValueIds( proId, specId.split( "," ) );
 	    String specificaImageUrl = "";
 	    if ( specificaList != null && specificaList.size() > 0 ) {
@@ -2183,8 +2183,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    pro.setId( product.getId() );
 	    pro.setFlowRecordId( CommonUtil.toInteger( resultMap.get( "id" ) ) );
 	    mallProductDAO.updateById( pro );
-	}else{
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), resultMap.get( "errorMsg" ).toString());
+	} else {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), resultMap.get( "errorMsg" ).toString() );
 	}
 	return resultMap;
     }
@@ -2314,6 +2314,81 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
     }
 
+    @Override
+    public boolean diffProductStock( MallProduct pro, MallOrderDetail detail, MallOrder order ) {
+	Map< String,Object > proMap = new HashMap<>();
+	Integer total = ( pro.getProStockTotal() - detail.getDetProNum() );
+	Integer saleNum = ( pro.getProSaleTotal() + detail.getDetProNum() );
+	proMap.put( "total", total );
+	proMap.put( "saleNum", saleNum );
+	proMap.put( "proId", detail.getProductId() );
+	MallProduct mallProduct = new MallProduct();
+	mallProduct.setId( detail.getProductId() );
+	mallProduct.setProStockTotal( total );
+	mallProduct.setProSaleTotal( saleNum );
+	mallProductDAO.updateById( mallProduct );//修改商品库存
+	if ( null != pro.getIsSpecifica() && CommonUtil.isNotEmpty( pro.getIsSpecifica() ) ) {
+	    if ( pro.getIsSpecifica() == 1 ) {//该商品存在规格
+		if ( order.getOrderType() != 7 ) {
+		    String[] specifica = ( detail.getProductSpecificas() ).split( "," );
+		    StringBuilder ids = new StringBuilder();
+		    for ( String aSpecifica : specifica ) {
+			if ( CommonUtil.isNotEmpty( aSpecifica ) ) {
+			    proMap.put( "valueId", aSpecifica );
+			    MallProductSpecifica proSpec = mallProductSpecificaService.selectByNameValueId( proMap );
+			    ids.append( proSpec.getId() ).append( "," );
+			}
+		    }
+		    proMap.put( "specificaIds", ids.substring( 0, ids.length() - 1 ) );
+		    diffProductInvStockNum( proMap, detail.getDetProNum() );
+		} else if ( CommonUtil.isNotEmpty( detail.getProSpecStr() ) ) {//批发商品
+		    JSONObject specObj = JSONObject.parseObject( detail.getProSpecStr() );
+		    for ( String key : specObj.keySet() ) {
+			JSONObject valueObj = specObj.getJSONObject( key );
+
+			List< MallProductSpecifica > specificaList = mallProductSpecificaService.selectByValueIds( detail.getProductId(), key.split( "," ) );
+			StringBuilder specIds = new StringBuilder();
+			if ( specificaList != null && specificaList.size() > 0 ) {
+			    for ( MallProductSpecifica specifica : specificaList ) {
+				specIds.append( specifica.getId() ).append( "," );
+			    }
+			    proMap.put( "specificaIds", specIds.substring( 0, specIds.length() - 1 ) );
+			    diffProductInvStockNum( proMap, valueObj.getInteger( "num" ) );
+			}
+
+		    }
+		}
+
+	    }
+	}
+	return true;
+    }
+
+    private void diffProductInvStockNum( Map< String,Object > proMap, int proNum ) {
+	MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );//根据商品规格id查询商品库存
+	double total = 0;
+	if ( CommonUtil.isNotEmpty( proInv.getInvNum() ) ) {
+	    total = proInv.getInvNum();
+	}
+	int invSaleNum = 0;
+	if ( CommonUtil.isNotEmpty( proInv.getInvSaleNum() ) ) {
+	    invSaleNum = proInv.getInvSaleNum();
+	}
+	proMap.put( "total", total - proNum > 0 ? total - proNum : 0 );
+	proMap.put( "saleNum", invSaleNum + proNum );
+	mallProductInventoryService.updateProductInventory( proMap );//修改规格的库存
+    }
+
+    /**
+     * 同步商品库存  todo  还没测
+     *
+     * @param params
+     * @param productIds
+     * @param is_specifica
+     * @param shopId
+     *
+     * @return
+     */
     private int updateInvAndPro( Map< String,Object > params, String productIds, String is_specifica, Integer shopId ) {
 
 	Map< String,Object > proParams = new HashMap<>();

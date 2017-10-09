@@ -108,7 +108,7 @@ resource:
 #图片存放路径
 res:
  image:
-  path: /home/server/project/staticSource/upload
+  path: /home/server/project/staticSource/upload/image
 
 #电信流量订单前缀
 dianxin:

@@ -417,6 +417,8 @@ public class CommonUtil {
 
 	String path = PropertiesUtil.getResImagePath() + "/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit
 			.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD ) + "/jietu/";
+	Long time = System.currentTimeMillis();
+	path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
 
 	File file = new File( path );
 	if ( !file.exists() && !file.isDirectory() ) {
@@ -425,17 +427,18 @@ public class CommonUtil {
 		System.out.println( "创建文件失败 " );
 	    }
 	}
-	Long time = System.currentTimeMillis();
-	path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
 	byte[] bytes;
 	try {
+	    multipartFile.transferTo(file);
 	    bytes = multipartFile.getBytes();
 	    InputStream is = new ByteArrayInputStream( bytes );
 	    BufferedImage bufimg = ImageIO.read( is );
 	    ImageIO.write( bufimg, phonejsp, new File( path ) );
 	    ContinueFTP myFtp = new ContinueFTP();
 	    try {
-		myFtp.upload( path );
+		log.info( "ftp上传图片路径:" + path );
+		Map< String,Object > ftpResult = myFtp.upload( path );
+		log.info( "ftp上传结果：" + com.alibaba.fastjson.JSONObject.toJSONString( ftpResult ) );
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 	    }

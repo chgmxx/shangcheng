@@ -172,6 +172,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	Map< String,Object > result = new HashMap<>();
 	List< MallOrder > orderList = JSONArray.parseArray( params.get( "order" ).toString(), MallOrder.class );
+	logger.info( "提交订单参数（计算前）：" + JSONArray.toJSON( orderList ) );
 	List< Map > couponList = null;
 	if ( CommonUtil.isNotEmpty( params.get( "couponArr" ) ) ) {
 	    couponList = JSONArray.parseArray( params.get( "couponArr" ).toString(), Map.class );
@@ -225,6 +226,13 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    double useFenbi = 0;
 	    double useJifen = 0;
 	    for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
+		orderDetail = getOrderDetailParams( mallOrder, orderDetail, shopEntity, couponList );
+		if ( CommonUtil.isNotEmpty( orderDetail.getUseFenbi() ) ) {
+		    useFenbi += orderDetail.getUseFenbi();
+		}
+		if ( CommonUtil.isNotEmpty( orderDetail.getUseJifen() ) ) {
+		    useJifen += orderDetail.getUseJifen();
+		}
 		//判断商品的库存是不是足够
 		result = mallNewOrderAppletService.validateOrderDetail( mallOrder, orderDetail );//验证订单详情
 		code = CommonUtil.toInteger( result.get( "code" ) );
@@ -233,13 +241,6 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 			errorMsg = result.get( "errorMsg" ).toString();
 		    }
 		    break;
-		}
-		orderDetail = getOrderDetailParams( mallOrder, orderDetail, shopEntity, couponList );
-		if ( CommonUtil.isNotEmpty( orderDetail.getUseFenbi() ) ) {
-		    useFenbi += orderDetail.getUseFenbi();
-		}
-		if ( CommonUtil.isNotEmpty( orderDetail.getUseJifen() ) ) {
-		    useJifen += orderDetail.getUseJifen();
 		}
 	    }
 	    if ( useJifen > 0 ) {
@@ -276,7 +277,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		orderList.add( 0, parentOrder );
 	    }
 	}
-	logger.info( "orderParams" + JSONArray.toJSON( orderList ) );
+	logger.info( "保存订单参数（计算后）：" + JSONArray.toJSON( orderList ) );
 
 	/*if ( orderList.size() > 0 ) {
 	    throw new BusinessException( "ss" );

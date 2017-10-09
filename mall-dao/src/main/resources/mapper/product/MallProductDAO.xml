@@ -78,12 +78,22 @@
     	is_merge_pro_erp,template_id
     </sql>
 
-    <select id="countProductByGroup" resultType="java.lang.Integer">
-        SELECT COUNT(DISTINCT a.id)
+    <select id="countProductByGroup" resultType="Map">
+        SELECT COUNT(DISTINCT a.id) as counts,pg.group_id as groupId
         FROM t_mall_product a
         LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id  AND pg.is_delete=0
-        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND a.shop_id=#{shopId}
-        AND pg.group_id = #{groupId} and a.user_id=#{userId}
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+         and a.user_id=#{userId}
+        <if test="groupIds != null and groupIds.size == 1">
+            AND pg.group_id = #{groupIds}
+        </if>
+        <if test="groupIds != null and groupIds.size > 1">
+            AND pg.group_id in
+            <foreach collection="groupIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY pg.group_id
     </select>
     <!-- 统计商家下 的商品数量 -->
     <select id="selectCountByUserId" resultType="java.lang.Integer">

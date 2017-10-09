@@ -153,7 +153,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		SessionUtils.setMallShopId( shopId, request );
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
-		Map< String,Object > gradeType = memberService.findGradeType( member.getId() );//会员卡名称
+		Map gradeType = memberService.findGradeType( member.getId() );//会员卡名称
 		MemberCard card = memberService.findMemberCardByMcId( member.getMcId() );//会员卡号
 		request.setAttribute( "card", card );
 		request.setAttribute( "gradeType", gradeType );
@@ -430,7 +430,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    map.put( "result", false );
 	}
 	System.out.println( "imagePath = " + com.alibaba.fastjson.JSONObject.toJSONString( map ) );
-	CommonUtil.write( response,  map );
+	CommonUtil.write( response, map );
     }
 
     /**

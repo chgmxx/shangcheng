@@ -104,10 +104,16 @@
         $(window).scrollTop(height);
     }
 
+    /**
+     * 开启遮罩
+     */
     function openShade() {
         messageSocket("openMask()");
     }
 
+    /**
+     * 关闭遮罩
+     */
     function closeShade() {
         messageSocket("closeMask()");
     }

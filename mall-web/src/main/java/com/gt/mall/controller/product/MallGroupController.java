@@ -69,6 +69,7 @@ public class MallGroupController extends BaseController {
 		    }
 		    params.put( "groupPId", groupPId );
 		    params.put( "isLabel", 0 );
+		    params.put( "isProNum", true );
 		    PageUtil page = mallGroupService.findGroupByPage( params, shoplist, userId );// 获取分组集合
 		    request.setAttribute( "page", page );
 		    if ( CommonUtil.isNotEmpty( page ) ) {

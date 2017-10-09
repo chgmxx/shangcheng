@@ -37,7 +37,7 @@
                     allowImageUpload: true,
                     allowFileManager: true,
                     allowFileUpload: true,
-                    uploadJson: '/upload/upload.do',
+                    uploadJson: '/common/upload.do',
                     fileManagerJson: '../linkurl/fileManagerJson',
                     formatUploadUrl: false,
                     wellFormatMode: true,
