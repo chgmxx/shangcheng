@@ -8,10 +8,12 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallJxcHttpClientUtil;
@@ -54,7 +56,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     private WxShopService wxShopService;
 
     @Autowired
-    private BusUserService busUserService;
+    private BusUserService                busUserService;
+    @Autowired
+    private MallStoreCertificationService mallStoreCertService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shopList ) {
@@ -71,7 +75,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > shopMap : list ) {
 		int id = CommonUtil.toInteger( shopMap.get( "id" ) );
-
+		MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
+		shopMap.put( "storeCert", storeCertification );
 		for ( Map< String,Object > maps : shopList ) {
 		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
 		    if ( id == shopIds ) {

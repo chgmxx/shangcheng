@@ -9,6 +9,8 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaValueDAO;
+import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
@@ -113,6 +115,58 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
+    public Map< String,Object > newSaveOrUpdateBatch( Object obj, int proId, boolean isUpdate ) {
+	Map< String,Object > specMap = new HashMap< String,Object >();
+
+	Wrapper< MallProductSpecifica > specificaWrapper = new EntityWrapper<>();
+	specificaWrapper.where( " is_delete=0 and product_id = {0}  ", proId );
+	List< MallProductSpecifica > defaultList = mallProductSpecificaDAO.selectList( specificaWrapper );
+
+	List< MallProductSpecifica > speList = JSONArray.parseArray( obj.toString(), MallProductSpecifica.class );
+	if ( speList != null && speList.size() > 0 ) {
+	    for ( MallProductSpecifica spe : speList ) {
+		if ( spe != null ) {
+		    spe.setProductId( proId );
+		    String str = spe.getSpecificaNameId() + "_" + spe.getSpecificaValueId();
+
+		    if ( defaultList != null ) {//从数据库中查询 有没有相同规格
+			for ( MallProductSpecifica specifica : defaultList ) {
+			    String str1 = specifica.getSpecificaNameId() + "_" + specifica.getSpecificaValueId();
+			    if ( str.equals( str1 ) ) {
+				spe.setId( specifica.getId() );
+				defaultList.remove( specifica );
+			    }
+			}
+		    }
+		    if ( isUpdate ) {//没有参加团购的商品才可以修改商品规格
+			if ( CommonUtil.isEmpty( spe.getId() ) ) {
+			    mallProductSpecificaDAO.insert( spe );//添加商品规格
+			} else {
+			    mallProductSpecificaDAO.updateById( spe );//修改商品规格
+			}
+		    }
+		    if ( spe.getId() > 0 ) {
+			JSONObject jObj = new JSONObject();
+			if ( !CommonUtil.isEmpty( spe.getSpecificaImgUrl() ) ) {
+			    jObj.put( "specId", spe.getId() );
+			}
+			jObj.put( "id", spe.getId() );
+			specMap.put( str, jObj );
+		    }
+		}
+	    }
+	}
+
+	if ( defaultList != null && isUpdate ) {//没有参加团购的商品才可以修改商品规格
+	    for ( MallProductSpecifica specifica : defaultList ) {
+		specifica.setIsDelete( 1 );
+		mallProductSpecificaDAO.updateById( specifica );
+	    }
+	}
+	return specMap;
+    }
+
+    @Override
     public Integer insertSpecifica( MallSpecifica spec ) {
 	spec.setCreateTime( new Date() );
 	return mallSpecificaDAO.insert( spec );
@@ -125,7 +179,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public SortedMap< String,Object > getSpecificaByUser( Map< String,Object > maps ) {
-	Wrapper< MallSpecifica > specificaWrapper = new EntityWrapper< >();
+	Wrapper< MallSpecifica > specificaWrapper = new EntityWrapper<>();
 	int type = 1;
 	if ( CommonUtil.isNotEmpty( maps.get( "type" ) ) ) {
 	    type = CommonUtil.toInteger( maps.get( "type" ) );
@@ -185,8 +239,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 			// 有相同的规格值id
 			if ( nameId == specId ) {
 			    System.out.println( "values = " + specMap.get( "specValues" ).toString() );
-			    List< Map< String,Object > > mapList = (List< Map< String,Object > >) specMap
-					    .get( "specValues" );
+			    List< Map< String,Object > > mapList = (List< Map< String,Object > >) specMap.get( "specValues" );
 			    mapList.add( specValueMap );
 			    flag = false;
 			}

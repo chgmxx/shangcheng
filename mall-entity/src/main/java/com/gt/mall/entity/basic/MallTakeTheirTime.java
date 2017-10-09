@@ -22,7 +22,7 @@ import java.util.Date;
 @Data
 @Accessors( chain = true )
 @TableName( "t_mall_take_their_time" )
-public class MallTakeTheirTime extends Model< MallTakeTheirTime > {
+public class  MallTakeTheirTime extends Model< MallTakeTheirTime > {
 
     private static final long serialVersionUID = 1L;
 

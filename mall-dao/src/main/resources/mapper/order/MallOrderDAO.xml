@@ -390,6 +390,24 @@
                 t.shop_id = #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
+        <if test="queryName != null and queryName != ''">
+            and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+        </if>
+        <if test="type != null and type != ''">
+            and t.order_type = #{orderType}
+        </if>
+        <if test="orderSource != null and orderSource != ''">
+            and t.order_source = #{orderSource}
+        </if>
+        <if test="orderPayWay != null and orderPayWay != ''">
+            and t.order_pay_way = #{orderPayWay}
+        </if>
+        <if test="deliveryMethod != null and deliveryMethod != ''">
+            and t.delivery_method = #{deliveryMethod}
+        </if>
+        <if test="shopId!= null and shopId != ''">
+            and t.shop_id = #{shopId}
+        </if>
     </select>
     <select id="findByPage" resultMap="PhoneResultMap" parameterType="map">
         SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
@@ -428,6 +446,24 @@
                 <if test="orderFilter == 3">and t.receive_name = #{orderNo}<!-- and t.receive_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
                 <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
                 <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
+            </if>
+            <if test="queryName != null and queryName != ''">
+                 and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+            </if>
+            <if test="type != null and type != ''">
+                and t.order_type = #{orderType}
+            </if>
+            <if test="orderSource != null and orderSource != ''">
+                and t.order_source = #{orderSource}
+            </if>
+            <if test="orderPayWay != null and orderPayWay != ''">
+                and t.order_pay_way = #{orderPayWay}
+            </if>
+            <if test="deliveryMethod != null and deliveryMethod != ''">
+                and t.delivery_method = #{deliveryMethod}
+            </if>
+            <if test="shopId!= null and shopId != ''">
+                and t.shop_id = #{shopId}
             </if>
             and ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
         </where>
@@ -479,6 +515,24 @@
                 <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
                 <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
             </if>
+            <if test="queryName != null and queryName != ''">
+                and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+            </if>
+            <if test="type != null and type != ''">
+                and t.order_type = #{orderType}
+            </if>
+            <if test="orderSource != null and orderSource != ''">
+                and t.order_source = #{orderSource}
+            </if>
+            <if test="orderPayWay != null and orderPayWay != ''">
+                and t.order_pay_way = #{orderPayWay}
+            </if>
+            <if test="deliveryMethod != null and deliveryMethod != ''">
+                and t.delivery_method = #{deliveryMethod}
+            </if>
+            <if test="shopId!= null and shopId != ''">
+                and t.shop_id = #{shopId}
+            </if>
         </where>
         )
         AS t
@@ -489,6 +543,9 @@
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 d.shop_id = #{item.id,jdbcType=INTEGER}
             </foreach>
+        </if>
+        <if test="shopId!= null and shopId != ''">
+            and t.shop_id = #{shopId}
         </if>
         <if test="status != null and status != ''">
             <if test="status == 6 || status == 8">
@@ -550,6 +607,24 @@
                 <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
                 <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
             </if>
+            <if test="queryName != null and queryName != ''">
+                and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+            </if>
+            <if test="type != null and type != ''">
+                and t.order_type = #{orderType}
+            </if>
+            <if test="orderSource != null and orderSource != ''">
+                and t.order_source = #{orderSource}
+            </if>
+            <if test="orderPayWay != null and orderPayWay != ''">
+                and t.order_pay_way = #{orderPayWay}
+            </if>
+            <if test="deliveryMethod != null and deliveryMethod != ''">
+                and t.delivery_method = #{deliveryMethod}
+            </if>
+            <if test="shopId!= null and shopId != ''">
+                and t.shop_id = #{shopId}
+            </if>
         </where>
         )
         AS t
@@ -560,6 +635,9 @@
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 d.shop_id = #{item.id,jdbcType=INTEGER}
             </foreach>
+        </if>
+        <if test="shopId!= null and shopId != ''">
+            and t.shop_id = #{shopId}
         </if>
         <if test="status != null and status != ''">
             <if test="status == 6 || status == 8">

@@ -207,6 +207,45 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     }
 
     /**
+     * 编辑预售
+     */
+    @Override
+    @Transactional( rollbackFor = Exception.class )
+    public int newEditPresale( Map< String,Object > presaleMap, int userId ) {
+	int code = -1;
+	if ( CommonUtil.isNotEmpty( presaleMap.get( "presale" ) ) ) {
+	    MallPresale presale = (MallPresale) JSONObject.toJavaObject( JSONObject.parseObject( presaleMap.get( "presale" ).toString() ), MallPresale.class );
+	    // 判断选择的商品是否已经存在未开始和进行中的预售中
+	    if ( CommonUtil.isNotEmpty( presale.getId() ) ) {
+		// 判断本商品是否正在预售中
+		MallPresale pre = mallPresaleDAO.selectDepositByIds( presale.getId() );
+
+		int status = isJoinPresale( pre );
+		if ( pre.getStatus() == 1 && status > 0 ) {// 正在进行预售的信息不能修改
+		    code = -2;
+		} else if ( pre.getIsUse().toString().equals( "-1" ) ) {
+		    code = -3;
+		} else {
+		    code = mallPresaleDAO.updateById( presale );
+		}
+	    } else {
+		presale.setUserId( userId );
+		presale.setCreateTime( new Date() );
+		code = mallPresaleDAO.insert( presale );
+	    }
+	    if ( CommonUtil.isNotEmpty( presale.getId() ) && code > 0 ) {
+		code = 1;
+		if ( CommonUtil.isNotEmpty( presaleMap.get( "presaleTimes" ) ) ) {
+		    mallPresaleTimeService.newInsertUpdBatchTime( presaleMap, presale.getId() );
+		}
+
+		loadPresaleByJedis( presale );
+	    }
+	}
+	return code;
+    }
+
+    /**
      * 删除预售
      */
     @Override
@@ -420,6 +459,56 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    if ( give.getGiveType() == 2 ) {
 			fenbiFlag = true;
 		    }
+		}
+	    }
+	    if ( num > 0 ) {
+		code = 1;
+		if ( fenbiFlag ) {
+		    saveRenbiFlowRecord( userId );
+		}
+
+	    }
+	}
+	return code;
+    }
+    @SuppressWarnings( { "unchecked", "deprecation" } )
+    @Override
+    @Transactional( rollbackFor = Exception.class )
+    public int newEditPresaleSet( Map< String,Object > params, int userId ) {
+	int num = 0;
+	int code = -1;
+	boolean fenbiFlag = false;
+
+	Wrapper< MallPresaleGive > prowrapper = new EntityWrapper<>();
+	prowrapper.where( "user_id={0} and is_delete = 0 ", userId );
+	List< MallPresaleGive > presaleGives = mallPresaleGiveDAO.selectList( prowrapper );
+
+	if ( CommonUtil.isNotEmpty( params.get( "presaleSet" ) ) ) {
+	    List< MallPresaleGive > setList = JSONArray.parseArray( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
+	    if ( setList != null && setList.size() > 0 ) {
+		for ( MallPresaleGive give : setList ) {
+		    if ( CommonUtil.isNotEmpty( give.getId() ) ) {
+			for ( MallPresaleGive presaleGive : presaleGives ) {
+			    if ( presaleGive.getId() == give.getId() ) {
+				presaleGives.remove( presaleGive );// 移除已经存在预售送礼
+				break;
+			    }
+			}
+			num = mallPresaleGiveDAO.updateById( give );
+		    } else {
+			give.setUserId( userId );
+			num = mallPresaleGiveDAO.insert( give );
+		    }
+		    if ( give.getGiveType() == 2 ) {
+			fenbiFlag = true;
+		    }
+		}
+	    }
+	    //删除预售送礼
+	    if ( presaleGives != null && presaleGives.size() > 0 ) {
+		for ( MallPresaleGive presaleGive : presaleGives ) {
+		    presaleGive.setIsDelete( 1 );
+		    mallPresaleGiveDAO.updateById( presaleGive );
 		}
 	    }
 	    if ( num > 0 ) {

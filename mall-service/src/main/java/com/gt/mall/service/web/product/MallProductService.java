@@ -48,6 +48,11 @@ public interface MallProductService extends BaseService< MallProduct > {
     Map< String,Object > updateProduct( Map< String,Object > params, BusUser user, HttpServletRequest request ) throws Exception;
 
     /**
+     * new 修改商品信息，详情，图片，规格，库存
+     */
+    boolean newUpdateProduct( Map< String,Object > params, BusUser user, HttpServletRequest request ) throws Exception;
+
+    /**
      * 根据商品Id查询商品的基本信息
      */
     MallProduct selectByPrimaryKey( Integer proId );

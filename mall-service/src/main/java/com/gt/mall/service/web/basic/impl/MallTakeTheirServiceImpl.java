@@ -15,6 +15,8 @@ import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.basic.MallTakeTheirTime;
+import com.gt.mall.entity.freight.MallFreightDetail;
+import com.gt.mall.entity.freight.MallFreightProvinces;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.utils.CommonUtil;
@@ -112,6 +114,72 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	    return true;
 	} else {
 	    return false;
+	}
+    }
+
+    @Override
+    public boolean newEditTake( Map< String,Object > params, BusUser user ) {
+	Integer code = -1;
+	if ( CommonUtil.isNotEmpty( params ) ) {
+	    MallTakeTheir take = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "take" ).toString() ), MallTakeTheir.class );
+	    if ( CommonUtil.isNotEmpty( take ) ) {
+		if ( CommonUtil.isNotEmpty( take.getId() ) ) {
+		    code = mallTakeTheirDAO.updateById( take );
+		} else {
+		    take.setUserId( user.getId() );
+		    take.setCreateTime( new Date() );
+		    code = mallTakeTheirDAO.insert( take );
+		}
+		if ( take.getId() > 0 ) {
+		    // 添加或修改图片
+		    imageAssociativeService.newInsertUpdBatchImage( params, take.getId(), 3 );
+		    newEditTakeTheirTime( params, take.getId() );
+		}
+	    }
+	}
+	if ( code > 0 ) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    private void newEditTakeTheirTime( Map< String,Object > params, int takeId ) {
+	Wrapper< MallTakeTheirTime > prowrapper = new EntityWrapper<>();
+	prowrapper.where( "take_id={0} and is_delete = 0 ", takeId );
+	List< MallTakeTheirTime > takeTheirTimes = takeTheirTimeDAO.selectList( prowrapper );
+
+	// 添加自提点接待时间
+	if ( !CommonUtil.isEmpty( params.get( "timeList" ) ) ) {
+	    List< MallTakeTheirTime > timeList = JSONArray.parseArray( params.get( "timeList" ).toString(), MallTakeTheirTime.class );
+	    if ( timeList != null && timeList.size() > 0 ) {
+		for ( MallTakeTheirTime time : timeList ) {
+		    if ( CommonUtil.isEmpty( time.getId() ) ) {
+			time.setTakeId( takeId );
+			time.setCreateTime( new Date() );
+			takeTheirTimeDAO.insert( time );
+		    } else {
+			if ( takeTheirTimes != null ) {
+			    int timeId = time.getId();
+			    for ( MallTakeTheirTime theirTime : takeTheirTimes ) {
+				if ( theirTime.getId() == timeId ) {
+				    takeTheirTimes.remove( theirTime );// 移除已经存在自提点接待时间
+				    break;
+				}
+			    }
+			}
+			takeTheirTimeDAO.updateById( time );
+		    }
+		}
+
+	    }
+	}
+	//删除自提点接待时间
+	if ( takeTheirTimes != null && takeTheirTimes.size() > 0 ) {
+	    for ( MallTakeTheirTime theirTime : takeTheirTimes ) {
+		theirTime.setIsDelete( 1 );
+		takeTheirTimeDAO.updateById( theirTime );
+	    }
 	}
     }
 

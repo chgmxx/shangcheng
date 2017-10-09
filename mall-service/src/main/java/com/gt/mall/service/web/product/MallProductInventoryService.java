@@ -22,6 +22,11 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
     void saveOrUpdateBatch( Map< String,Object > specMap, Object obj, int proId, Map< String,Object > invenMap );
 
     /**
+     * 批量保存或修改商品库存
+     */
+    void newSaveOrUpdateBatch( Map< String,Object > specMap, Object obj, int proId );
+
+    /**
      * 通过商品id查询商品库存
      */
     List< MallProductInventory > getInventByProductId( int proId );

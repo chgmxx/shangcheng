@@ -142,6 +142,22 @@ public class MallPaySet extends Model< MallPaySet > {
     @TableField( "footer_json" )
     private String  footerJson;
 
+    /**
+     * 配色风格key 关联字典表k001的key
+     */
+    @TableField( "style_key" )
+    private String  styleKey;
+    /**
+     * 待付款订单取消时间设置
+     */
+    @TableField( "order_cancel" )
+    private Integer  orderCancel ;
+    /**
+     * 商家消息模板内容 {模板标题:模板id}
+     */
+    @TableField( "bus_message_json" )
+    private String  busMessageJson ;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;
@@ -173,6 +189,9 @@ public class MallPaySet extends Model< MallPaySet > {
 			", isSeller=" + isSeller +
 			", isCheckSeller=" + isCheckSeller +
 			", footerJson=" + footerJson +
+			", styleKey=" + styleKey +
+			", orderCancel=" + orderCancel +
+			", busMessageJson=" + busMessageJson +
 			"}";
     }
 }

@@ -73,7 +73,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 
     @Override
     public MallFreight selectFreightById( Integer id ) {
-	return freightDAO.selectById( id );
+	return freightDAO.selectFreightById( id );
     }
 
     @Override
@@ -98,6 +98,27 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     }
 
     @Override
+    public boolean newEditFreight( Map< String,Object > params, int userId ) {
+	if ( !CommonUtil.isEmpty( params.get( "freight" ) ) ) {
+	    MallFreight freight = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "freight" ).toString() ), MallFreight.class );
+	    if ( CommonUtil.isEmpty( freight.getId() ) ) {// 新增物流
+		freight.setCreateTime( new Date() );
+		freight.setUserId( userId );
+		freightDAO.insert( freight );
+
+	    } else {// 修改物流
+		freight.setEditTime( new Date() );
+		freightDAO.updateById( freight );
+	    }
+	    if ( freight.getId() != null ) {
+		freightDetailService.newEditFreightDetail( params, freight.getId() );
+	    }
+	    return true;
+	}
+	return false;
+    }
+
+    @Override
     public boolean deleteFreight( Map< String,Object > ids ) {
 	int num = freightDAO.deleteFreightById( ids );
 	if ( num > 0 ) {
@@ -111,6 +132,11 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	Map< String,Object > param = new HashMap< String,Object >();
 	param.put( "shopList", shopList );
 	return freightDAO.selectByShopId( param );
+    }
+
+    @Override
+    public  MallFreight  selectFreightByShopId(Integer shopId ) {
+	return freightDAO.selectFreightByShopId( shopId );
     }
 
     @Override

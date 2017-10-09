@@ -109,6 +109,74 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
+    public void newSaveOrUpdateBatch( Map< String,Object > specMap, Object obj, int proId ) {
+
+	Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
+	inventoryWrapper.where( "product_id =  {0} and is_delete = 0 ", proId );
+	List< MallProductInventory > defaultList = mallProductInventoryDAO.selectList( inventoryWrapper );
+
+	// 解析页面传值
+	List< Map > invenList = JSONArray.parseArray( (String) obj, Map.class );
+	if ( invenList != null && invenList.size() > 0 ) {
+	    for ( Map map : invenList ) {
+		MallProductInventory inventory = new MallProductInventory();
+		if ( map != null ) {
+		    // 解析规格
+		    List< MallProductSpecifica > list = JSONArray.parseArray( map.get( "specificas" ).toString(), MallProductSpecifica.class );
+		    int imgSpecId = 0;
+		    if ( list != null && list.size() > 0 ) {
+			StringBuilder specId = new StringBuilder();
+			for ( MallProductSpecifica speci : list ) {
+			    String str = speci.getSpecificaNameId() + "_" + speci.getSpecificaValueId();
+			    if ( !specId.toString().equals( "" ) ) {
+				specId.append( "," );
+			    }
+			    JSONObject jObj = JSONObject.parseObject( specMap.get( str ).toString() );
+			    if ( !CommonUtil.isEmpty( jObj.get( "specId" ) ) ) {
+				imgSpecId = jObj.getInteger( "specId" );
+			    }
+			    specId.append( jObj.get( "id" ) );
+			}
+			if ( defaultList != null ) {
+			    for ( MallProductInventory inventory1 : defaultList ) {
+				if ( specId.toString().equals( inventory1.getSpecificaIds() ) ) {
+				    inventory.setId( inventory1.getId() );
+				    defaultList.remove( inventory1 );
+				}
+			    }
+			}
+			inventory.setSpecificaIds( specId.toString() );// 规格值
+		    }
+
+		    inventory.setInvCode( map.get( "invCode" ).toString() );
+		    inventory.setInvNum( CommonUtil.toInteger( map.get( "invNum" ) ) );
+		    inventory.setInvPrice( BigDecimal.valueOf( Double.valueOf( map.get( "invPrice" ).toString() ) ) );
+		    inventory.setIsDefault( CommonUtil.toInteger( map.get( "isDefault" ) ) );
+		    if ( imgSpecId > 0 ) {
+			inventory.setSpecificaImgId( imgSpecId );
+		    } else {
+			inventory.setSpecificaImgId( 0 );
+		    }
+		    inventory.setProductId( proId );
+
+		    if ( CommonUtil.isEmpty( inventory.getId() ) ) {
+			mallProductInventoryDAO.insert( inventory );
+		    } else {
+			mallProductInventoryDAO.updateById( inventory );
+		    }
+		}
+	    }
+	}
+	if ( defaultList != null ) {
+	    for ( MallProductInventory inventory : defaultList ) {
+		inventory.setIsDelete( 1 );
+		inventory.setIsDefault( 0 );
+		mallProductInventoryDAO.updateById( inventory );
+	    }
+	}
+    }
+
+    @Override
     public List< MallProductInventory > getInventByProductId( int productId ) {
 	Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
 	inventoryWrapper.where( "product_id =  {0} and is_delete = 0 ", productId );

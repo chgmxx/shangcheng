@@ -1139,11 +1139,7 @@
 <select class="specifaceSelects" id="s2id_autogen1"
         data-placeholder="选规格名" style="width: 100px; display: none;">
     <option value=""></option>
-    <c:if test="${!empty specDictMap}">
-        <c:forEach items="${specDictMap}" var="dict">
-            <option value="${dict.key}">${dict.value}</option>
-        </c:forEach>
-    </c:if>
+
 </select>
 <div class="paramsDivs" style="display: none;">
     <div class="sku-param-title" style="margin-top:10px;">

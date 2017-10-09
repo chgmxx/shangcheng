@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.store.MallStoreCertificationDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.store.MallStoreCertification">
+        <id column="id" property="id"/>
+        <result column="sto_id" property="stoId"/>
+        <result column="sto_type" property="stoType"/>
+        <result column="name" property="name"/>
+        <result column="company_name" property="companyName"/>
+        <result column="id_number" property="idNumber"/>
+        <result column="id_card_front" property="idCardFront"/>
+        <result column="id_card_back" property="idCardBack"/>
+        <result column="bus_license_img" property="busLicenseImg"/>
+        <result column="bus_license_no" property="busLicenseNo"/>
+        <result column="sto_category" property="stoCategory"/>
+        <result column="cert_type" property="certType"/>
+        <result column="cert_img_url" property="certImgUrl"/>
+        <result column="is_cert_doc" property="isCertDoc"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sto_id, sto_type, name, company_name, id_number,id_card_front ,id_card_back , bus_license_img , bus_license_no , sto_category ,
+        cert_type , cert_img_url, is_cert_doc , is_delete,create_time
+    </sql>
+    <select id="selectByStoreId" parameterType="com.gt.mall.entity.store.MallStoreCertification" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"></include>
+        from t_mall_store_certification
+        where is_delete =0
+        and sto_id=#{storeId}
+    </select>
+
+</mapper>

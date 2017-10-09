@@ -87,6 +87,11 @@ public class MallProductInventory extends Model< MallProductInventory > {
      */
     @TableField( "erp_specvalue_id" )
     private String     erpSpecvalueId;
+    /**
+     * 物流重量
+     */
+    @TableField( "logistics_weight" )
+    private BigDecimal logisticsWeight;
 
     /**
      * 规格集合
@@ -114,6 +119,7 @@ public class MallProductInventory extends Model< MallProductInventory > {
 			", specificaImgId=" + specificaImgId +
 			", erpInvId=" + erpInvId +
 			", erpSpecvalueId=" + erpSpecvalueId +
+                        ", logisticsWeight=" + logisticsWeight +
 			"}";
     }
 }

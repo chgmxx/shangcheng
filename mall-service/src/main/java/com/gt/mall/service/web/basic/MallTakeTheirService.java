@@ -46,6 +46,16 @@ public interface MallTakeTheirService extends BaseService<MallTakeTheir> {
     boolean editTake(Map<String, Object> params, BusUser user);
 
     /**
+     * 编辑上门自提
+     *
+     * @param params obj：自提信息，delimageList：删除列表，imageList：图片列表
+     *               deltimeList:删除接待时间列表，timeList：添加接待时间列表
+     * @param user   用户
+     * @return boolean
+     */
+    boolean newEditTake(Map<String, Object> params, BusUser user);
+
+    /**
      * 查询上门自提集合
      *
      * @param param userId：用户Id，firstNum：页数，maxNum 数量

@@ -3,11 +3,14 @@ package com.gt.mall.service.web.freight.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.freight.MallFreightDetailDAO;
 import com.gt.mall.dao.freight.MallFreightProvincesDAO;
 import com.gt.mall.entity.freight.MallFreightDetail;
 import com.gt.mall.entity.freight.MallFreightProvinces;
+import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.utils.CommonUtil;
 import org.apache.log4j.Logger;
@@ -131,4 +134,85 @@ public class MallFreightDetailServiceImpl extends BaseServiceImpl< MallFreightDe
 	}
     }
 
+    @Override
+    public void newEditFreightDetail( Map< String,Object > params, int freightId ) {
+
+	Wrapper< MallFreightDetail > wrapper = new EntityWrapper<>();
+	wrapper.where( "freight_id={0} and is_delete = 0 ", freightId );
+	List< MallFreightDetail > details = freightDetailDAO.selectList( wrapper );
+
+	Wrapper< MallFreightProvinces > prowrapper = new EntityWrapper<>();
+	prowrapper.where( "freight_id={0} and is_delete = 0 ", freightId );
+	List< MallFreightProvinces > provinces = freightProvincesDAO.selectList( prowrapper );
+
+	if ( !CommonUtil.isEmpty( params.get( "detail" ) ) ) {
+	    // 物流详情
+	    List< MallFreightDetail > detailList = JSONArray.parseArray( params.get( "detail" ).toString(), MallFreightDetail.class );
+	    if ( detailList != null && detailList.size() > 0 ) {
+		// 根据物流id查询物流详情
+		for ( MallFreightDetail detail : detailList ) {
+		    if ( CommonUtil.isEmpty( detail.getId() ) ) {// 新增物流详情
+			detail.setFreightId( freightId );
+			freightDetailDAO.insert( detail );
+		    } else {
+			if ( details != null ) {
+			    int detailId = detail.getId();
+			    for ( MallFreightDetail detail1 : details ) {
+				if ( detail1.getId() == detailId ) {
+				    details.remove( detail1 );// 移除已经存在物流详情
+				    break;
+				}
+			    }
+			}
+			freightDetailDAO.updateById( detail );
+		    }
+		    updateFreightProvince2( detail, freightId, provinces );
+		}
+	    }
+	}
+
+	//删除物流详情
+	if ( details != null && details.size() > 0 ) {
+	    for ( MallFreightDetail detail : details ) {
+		detail.setIsDelete( 1 );
+		freightDetailDAO.updateById( detail );
+	    }
+	}
+	//删除物流配送区域
+	if ( provinces != null && provinces.size() > 0 ) {
+	    for ( MallFreightProvinces province : provinces ) {
+		province.setIsDelete( 1 );
+		freightProvincesDAO.updateById( province );
+	    }
+	}
+    }
+
+    /**
+     * 修改物流配送区域
+     *
+     * @Title: updateFreightProvince
+     */
+    private void updateFreightProvince2( MallFreightDetail detail, int freightId, List< MallFreightProvinces > provinces ) {
+	if ( detail.getProvinceList() != null && detail.getId() != null ) {
+	    List< MallFreightProvinces > proList = JSONArray.parseArray( JSON.toJSONString( detail.getProvinceList() ), MallFreightProvinces.class );
+	    for ( MallFreightProvinces fProvince : proList ) {
+		if ( CommonUtil.isEmpty( fProvince.getId() ) ) {// 新增物流配送区域
+		    fProvince.setFreightId( freightId );
+		    fProvince.setFreightDetailId( detail.getId() );
+		    freightProvincesDAO.insert( fProvince );
+		} else {
+		    int proId = fProvince.getId();
+		    if ( provinces != null ) {
+			for ( MallFreightProvinces provinces1 : provinces ) {
+			    if ( provinces1.getId() == proId ) {
+				provinces.remove( provinces1 );// 移除已经存在物流配送区域
+				break;
+			    }
+			}
+		    }
+		    freightProvincesDAO.updateById( fProvince );
+		}
+	    }
+	}
+    }
 }

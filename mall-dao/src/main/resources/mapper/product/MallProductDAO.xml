@@ -62,6 +62,7 @@
         <result column="erp_inv_id" property="erpInvId"/>
         <result column="is_sync_erp" property="isSyncErp"/>
         <result column="is_merge_pro_erp" property="isMergeProErp"/>
+        <result column="template_id" property="templateId"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -74,7 +75,7 @@
 		is_delete,two_code_path,is_specifica,return_day,is_integral_change_pro,change_integral,views_num,is_show_views,
 		is_return,member_type,is_integral_deduction,is_fenbi_deduction,is_fenbi_change_pro,change_fenbi,
 		pro_label,pro_weight,sales_base,card_type,is_mall_show,flow_id, flow_record_id, erp_pro_id, erp_inv_id, is_sync_erp,
-    	is_merge_pro_erp
+    	is_merge_pro_erp,template_id
     </sql>
 
     <select id="countProductByGroup" resultType="java.lang.Integer">
@@ -140,6 +141,9 @@
         </if>
         <if test="checkStatus != null">
             and p.check_status = #{checkStatus}
+        </if>
+        <if test="shopId != null">
+            and p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null">
             and
@@ -212,7 +216,7 @@
         </if>
     </select>
     <select id="selectByProId" resultType="java.util.Map">
-        select p.id as id, i.image_url,p.pro_name, p.pro_price ,p.pro_cost_price,p.pro_stock_total ,p.shop_id,
+        select p.id as id, i.image_url,p.pro_name, p.pro_price ,p.pro_cost_price,p.pro_stock_total ,p.shop_id,p.template_id
         p.is_specifica,p.is_integral_deduction,p.is_fenbi_deduction,p.is_coupons,p.is_member_discount,p.pro_restriction_num
         from t_mall_product p
         left join t_mall_image_associative i on p.id=i.ass_id

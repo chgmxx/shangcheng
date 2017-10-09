@@ -48,6 +48,14 @@ public interface MallImageAssociativeService extends BaseService< MallImageAssoc
     void insertUpdBatchImage( Map< String,Object > map, Integer proId );
 
     /**
+     * 批量添加或修改图片
+     *
+     * @param map   delimageList：删除列表，imageList：图片列表
+     * @param proId 关联id
+     */
+    void newInsertUpdBatchImage( Map< String,Object > map, Integer proId ,Integer assType );
+
+    /**
      * 根据关联id来查询图片
      *
      * @param params isMainImages：是否是主图，assType：关联表类型，assId：关联id

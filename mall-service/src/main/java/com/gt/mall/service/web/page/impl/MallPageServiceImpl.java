@@ -178,7 +178,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public PageUtil findByPage( Map< String,Object > params, BusUser user, HttpServletRequest request ) {
 	List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( user, request );// 根据商家id查询门店id
-	params.put( "storeList", storeList );
+	if(CommonUtil.isEmpty( params.get( "shopId" ) )){
+	    params.put( "storeList", storeList );
+	}
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
 	int rowCount = mallPageDAO.count( params );
@@ -2046,7 +2048,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		map.put( "status", status );
 		map.put( "proPrice", proPrice );
 		map.put( "times", times );
-		map.put( "preId", map.get( "presaleId" ) );
+//		map.put( "preId", map.get( "presaleId" ) );
 		proList.add( map );
 	    }
 	}

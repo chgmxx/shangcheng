@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.utils.CommonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +59,42 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
 		    imageAssociativeDAO.insert( images );
 		}
 
+	    }
+	}
+    }
+
+    @Override
+    public void newInsertUpdBatchImage( Map< String,Object > map, Integer proId,Integer assType ) {
+	if ( !CommonUtil.isEmpty( map.get( "imageList" ) ) ) {
+	    Map< String,Object > imageMap = new HashMap< String,Object >();
+	    imageMap.put( "assId", proId );
+	    imageMap.put( "assType", assType );
+	    List< MallImageAssociative > imageList = imageAssociativeDAO.selectImageByAssId( imageMap );
+
+	    List< MallImageAssociative > addImgList = JSONArray.parseArray( map.get( "imageList" ).toString(), MallImageAssociative.class );
+
+	    if ( addImgList != null && addImgList.size() > 0 ) {
+		for ( MallImageAssociative images : addImgList ) {
+		    if ( CommonUtil.isEmpty( images.getId() ) ) {
+			images.setAssId( proId );
+			imageAssociativeDAO.insert( images );
+		    } else {
+			imageAssociativeDAO.updateById( images );
+			//1.remove 存在的数据
+			for ( MallImageAssociative image : imageList ) {
+			    if ( image.getId() == images.getId() ) {
+				imageList.remove( image );
+			    }
+			}
+		    }
+		}
+	    }
+	    //2.还存在的数据，进行删除
+	    if ( imageList != null && imageList.size() > 0 ) {
+		for ( MallImageAssociative image : imageList ) {
+		    image.setIsDelete( 1 );
+		    imageAssociativeDAO.updateById( image );
+		}
 	    }
 	}
     }

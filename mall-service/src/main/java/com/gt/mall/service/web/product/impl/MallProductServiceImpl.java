@@ -33,6 +33,7 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
@@ -99,6 +100,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     private MallProductParamService mallProductParamService;//商品参数业务处理类
 
     @Autowired
+    private MallProductGroupService mallProductGroupService;
+
+    @Autowired
     private MallGroupService mallGroupService;//分组业务处理类
 
     @Autowired
@@ -147,7 +151,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     private BusUserService busUserService;
 
     @Autowired
-    private FenBiFlowService fenBiFlowService;
+    private FenBiFlowService   fenBiFlowService;
+    @Autowired
+    private MallFreightService mallFreightService;
 
     @Override
     public PageUtil selectByUserId( Map< String,Object > param, List< Map< String,Object > > shoplist ) {
@@ -442,8 +448,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    if ( CommonUtil.isInteger( product.getShopId().toString() ) ) {
 		/*Map< String,Object > param = new HashMap<>();
 		param.put( "shopId", product.getShopId() );*/
-		List< MallGroup > defaultGroupList = mallGroupService.selectGroupByShopId( product.getShopId(), 0 );
-		map.put( "groupList", defaultGroupList );
+		/*List< MallGroup > defaultGroupList = mallGroupService.selectGroupByShopId( product.getShopId(), 0 );
+		map.put( "groupList", defaultGroupList );*/
 	    }
 	    MallGroupBuy groupBuy = new MallGroupBuy();
 	    groupBuy.setProductId( product.getId() );
@@ -2410,4 +2416,108 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	return reulst;
     }
 
+    @Transactional( rollbackFor = Exception.class )
+    @Override
+    public boolean newUpdateProduct( Map< String,Object > params, BusUser user, HttpServletRequest request ) throws Exception {
+	MallProduct product = null;
+	// 修改商品信息
+	if ( !CommonUtil.isEmpty( params.get( "product" ) ) ) {
+	    product = JSONObject.parseObject( params.get( "product" ).toString(), MallProduct.class );
+	    product.setEditTime( new Date() );
+	    product.setIsPublish( 0 );
+	    String key = Constants.REDIS_KEY + "proViewNum";
+	    if ( CommonUtil.isNotEmpty( product.getViewsNum() ) ) {
+		JedisUtil.map( key, product.getId().toString(), product.getViewsNum().toString() );
+	    }
+
+	    if ( product.getProTypeId() == 1 ) {// 虚拟商品，清空预售设置
+		product.setIsPresell( 0 );
+		product.setProPresellEnd( "" );
+		product.setProDeliveryStart( "" );
+		product.setProDeliveryEnd( "" );
+	    }
+	    if ( CommonUtil.isEmpty( product.getChangeIntegral() ) ) {
+		product.setChangeIntegral( 0 );
+	    }
+	    if ( CommonUtil.isEmpty( product.getReturnDay() ) ) {
+		product.setReturnDay( 0 );
+	    }
+	    if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
+		if ( product.getFlowId() > 0 ) {
+		    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		    if ( CommonUtil.isNotEmpty( flow ) ) {
+			Map< String,Object > map = getFlowRecord( product, flow );
+			if ( CommonUtil.isNotEmpty( map ) ) {
+			    if ( map.get( "code" ).toString().equals( "-1" ) ) {
+				return false;
+			    }
+			}
+		    }
+		}
+	    }
+	    product.setIsSyncErp( 0 );
+	    // 修改商品信息
+	    mallProductDAO.updateById( product );
+	}
+
+	// 修改商品详细
+	if ( !CommonUtil.isEmpty( params.get( "detail" ) ) ) {
+	    MallProductDetail detail = JSONObject.parseObject( params.get( "detail" ).toString(), MallProductDetail.class );
+	    if ( detail != null ) {
+		if ( CommonUtil.isNotEmpty( detail.getProductDetail() ) && CommonUtil.isNotEmpty( detail.getProductIntrodu() ) && CommonUtil
+				.isNotEmpty( detail.getProductMessage() ) ) {
+		    if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
+			mallProductDetailService.updateById( detail );
+		    } else {
+			detail.setProductId( product.getId() );
+			mallProductDetailService.insert( detail );
+		    }
+		}
+	    }
+	}
+
+	// 添加或修改图片
+	mallImageAssociativeService.newInsertUpdBatchImage( params, product.getId(),1 );
+
+	//查询商品是否存在于团购中
+	MallGroupBuy groupBuy = new MallGroupBuy();
+	groupBuy.setProductId( product.getId() );
+	List< MallGroupBuy > buyList = mallGroupBuyDAO.selectGroupByProId( groupBuy );
+	boolean flag = true;//允许修改商品规格
+	if ( buyList != null && buyList.size() > 0 ) {//商品存在于团购中不允许修改商品规格
+	    flag = false;
+	}
+
+	Map< String,Object > specMap = new HashMap<>();
+	// 批量添加或修改商品规格
+	if ( CommonUtil.isNotEmpty( params.get( "speList" ) ) ) {
+	    specMap = mallProductSpecificaService.newSaveOrUpdateBatch( params.get( "speList" ), product.getId(), flag );
+	}
+
+	// 批量添加商品库存
+	if ( !CommonUtil.isEmpty( params.get( "invenList" ) ) ) {
+	    mallProductInventoryService.newSaveOrUpdateBatch( specMap, params.get( "invenList" ), product.getId() );
+	}
+
+	// 批量添加商品参数
+	if ( !CommonUtil.isEmpty( params.get( "paramsList" ) ) ) {
+	    mallProductParamService.newSaveOrUpdateBatch( params.get( "paramsList" ), product.getId(), true );
+	}
+
+	// 批量添加商品分组
+	if ( !CommonUtil.isEmpty( params.get( "groupList" ) ) ) {
+	    mallProductGroupService.saveOrUpdate( params.get( "groupList" ), product.getId() );
+	}
+	
+	int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有
+	if ( isJxc == 1 ) {
+	    boolean flags = saveProductByErp( product, user, userPId );
+	    if ( !flags ) {
+		JedisUtil.rPush( Constants.REDIS_KEY + "is_no_up_erp", product.getId().toString() );
+	    }
+	}
+
+	return true;
+    }
 }

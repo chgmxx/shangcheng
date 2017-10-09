@@ -45,6 +45,29 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     private MallOrderDetailDAO      orderDetailDAO;
 
     @Override
+    public Map< String,Object > selectCommentCount( Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
+	//全部
+	params.put( "feel", "" );
+	int count = commentDAO.selectCommentCount( params );
+	result.put( "total",count );
+	//好评
+	params.put( "feel", 1 );
+	int count1 = commentDAO.selectCommentCount( params );
+	result.put( "good",count1 );
+	//中评
+	params.put( "feel", 0 );
+	int count2 = commentDAO.selectCommentCount( params );
+	result.put( "medium",count2 );
+	//差评
+	params.put( "feel", -1 );
+	int count3 = commentDAO.selectCommentCount( params );
+	result.put( "bad",count3 );
+
+	return result;
+    }
+
+    @Override
     public PageUtil selectCommentPage( Map< String,Object > params ) {
 	List< Map< String,Object > > productList = null;
 	int pageSize = 10;

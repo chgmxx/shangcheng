@@ -42,6 +42,9 @@
                 #{item.id}
             </foreach>
         </if>
+        <if test="shopId != null">
+            and pag_sto_id = #{shopId}
+        </if>
         <if test="pagName != null">
             and a.pag_name like '%${pagName}%'
         </if>
@@ -60,6 +63,9 @@
             </if>
             <if test="pagName != null">
                 and pag_name like '%${pagName}%'
+            </if>
+            <if test="shopId != null">
+                and pag_sto_id = #{shopId}
             </if>
         </where>
     </select>

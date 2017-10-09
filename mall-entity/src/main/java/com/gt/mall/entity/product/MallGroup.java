@@ -108,6 +108,13 @@ public class MallGroup extends Model< MallGroup > {
     @TableField(exist = false)
     private String imageUrl;
 
+    /**
+     * 排序方式 1按热度 2按序号大小
+     */
+    @TableField( "sort_order" )
+    private Integer sortOrder;
+
+
     @Override
     protected Serializable pkVal() {
 	return this.id;
@@ -131,6 +138,7 @@ public class MallGroup extends Model< MallGroup > {
 			", editUserId=" + editUserId +
 			", editTime=" + editTime +
 			", isDelete=" + isDelete +
+			", sortOrder=" + sortOrder +
 			"}";
     }
 }

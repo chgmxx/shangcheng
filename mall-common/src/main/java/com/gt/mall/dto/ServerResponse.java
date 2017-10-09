@@ -3,6 +3,7 @@ package com.gt.mall.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.utils.PropertiesUtil;
 
 import java.io.Serializable;
 
@@ -26,6 +27,15 @@ public class ServerResponse< T > implements Serializable {
 
     /*返回消息*/
     private String msg;
+
+    /*图片域名*/
+    private String imgUrl = PropertiesUtil.getResourceUrl();
+
+    /*本地域名*/
+    private String path = PropertiesUtil.getHomeUrl();
+
+    /*前端web域名*/
+    private String webPath = PropertiesUtil.getHomeUrl();
 
     /*泛型数据*/
     private T data;
@@ -180,4 +190,15 @@ public class ServerResponse< T > implements Serializable {
 	return msg;
     }
 
+    public String getImgUrl() {
+	return imgUrl;
+    }
+
+    public String getPath() {
+	return path;
+    }
+
+    public String getWebPath() {
+	return webPath;
+    }
 }

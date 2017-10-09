@@ -18,6 +18,15 @@ import java.util.Map;
 public interface MallCommentService extends BaseService< MallComment > {
 
     /**
+     * 统计各评价状态的数量
+     *
+     * @param params shoplist：店铺id集合
+     *
+     * @return 评论列表
+     */
+    Map< String,Object > selectCommentCount( Map< String,Object > params );
+
+    /**
      * 查询评论列表
      *
      * @param params curPage:当前页，checkStatus：审核状态，feel：总体评价，shoplist：店铺id集合

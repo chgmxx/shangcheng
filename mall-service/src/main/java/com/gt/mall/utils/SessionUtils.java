@@ -42,14 +42,14 @@ public class SessionUtils {
     /*
       存入 用户bus_user  的值
      */
-   /* public static void setLoginUser( HttpServletRequest request, BusUser busUser ) {
+   public static void setLoginUser( HttpServletRequest request, BusUser busUser ) {
 	try {
 	    request.getSession().setAttribute( Constants.SESSION_BUSINESS_KEY, JSONObject.toJSON( busUser ) );
 	} catch ( Exception e ) {
 	    log.info( e.getLocalizedMessage() );
 	    e.printStackTrace();
 	}
-    }*/
+    }
 
     /**
      * 获取session中的t_wx_public_user登录用户

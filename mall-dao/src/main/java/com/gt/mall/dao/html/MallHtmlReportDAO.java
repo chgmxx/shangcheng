@@ -5,7 +5,7 @@ import com.gt.mall.entity.html.MallHtmlReport;
 
 /**
  * <p>
- * h5 商城举报信息 Mapper 接口
+ * html 商城举报信息 Mapper 接口
  * </p>
  *
  * @author yangqian

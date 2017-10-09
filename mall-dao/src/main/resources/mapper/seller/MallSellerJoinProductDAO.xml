@@ -34,6 +34,12 @@
         from t_mall_seller_join_product jp
         left join t_mall_product p on p.id=jp.product_id
         where p.is_publish=1 AND p.check_status=1 AND p.is_delete=0  and jp.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
+        </if>
+        <if test="isUse != null and isUse != ''">
+            and jp.is_use = #{isUse}
+        </if>
         <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
@@ -48,6 +54,12 @@
         FROM t_mall_seller_join_product jp
         LEFT JOIN t_mall_product p ON p.id= jp.product_id
         WHERE p.is_publish=1 AND p.check_status=1 AND p.is_delete=0  AND jp.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
+        </if>
+        <if test="isUse != null and isUse != ''">
+            and jp.is_use = #{isUse}
+        </if>
         <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">

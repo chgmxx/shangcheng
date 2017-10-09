@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * <p>
- * h5 商城举报信息 服务实现类
+ * html 商城举报信息 服务实现类
  * </p>
  *
  * @author yangqian

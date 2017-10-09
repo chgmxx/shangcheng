@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * h5 商城举报信息
+ * html 商城举报信息
  * </p>
  *
  * @author yangqian

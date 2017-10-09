@@ -38,6 +38,11 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     int editPresale( Map< String,Object > params, int userId );
 
     /**
+     * 编辑预售
+     */
+    int newEditPresale( Map< String,Object > params, int userId );
+
+    /**
      * 删除预售
      */
     boolean deletePresale( MallPresale presale );
@@ -76,6 +81,11 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 编辑预售设置
      */
     int editPresaleSet( Map< String,Object > params, int userId );
+
+    /**
+     * 编辑预售设置
+     */
+    int newEditPresaleSet( Map< String,Object > params, int userId );
 
     /**
      * 发货实体物品

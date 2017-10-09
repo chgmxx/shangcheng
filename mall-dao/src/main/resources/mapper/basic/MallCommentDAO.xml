@@ -84,20 +84,20 @@
     </select>
 
     <!--<resultMap id="commnet_maps" type="java.util.Map">-->
-        <!--<id column="id" jdbcType="INTEGER" property="id" />-->
-        <!--<result column="content" jdbcType="VARCHAR" property="content" />-->
-        <!--<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />-->
-        <!--<result column="is_upload_image" jdbcType="TINYINT" property="is_upload_image" />-->
-        <!--<result column="nickname" property="nickname" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler" />-->
-        <!--<result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />-->
-        <!--<result column="product_specificas" jdbcType="VARCHAR" property="product_specificas" />-->
-        <!--<result column="is_rep" jdbcType="INTEGER" property="is_rep" />-->
+    <!--<id column="id" jdbcType="INTEGER" property="id" />-->
+    <!--<result column="content" jdbcType="VARCHAR" property="content" />-->
+    <!--<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />-->
+    <!--<result column="is_upload_image" jdbcType="TINYINT" property="is_upload_image" />-->
+    <!--<result column="nickname" property="nickname" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler" />-->
+    <!--<result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />-->
+    <!--<result column="product_specificas" jdbcType="VARCHAR" property="product_specificas" />-->
+    <!--<result column="is_rep" jdbcType="INTEGER" property="is_rep" />-->
     <!--</resultMap>-->
-    <select id="selectCommentByProId"  parameterType="map" resultType="Map">
+    <select id="selectCommentByProId" parameterType="map" resultType="Map">
         select c.id,c.content, date_format(c.createTime,'%Y-%m-%d %H:%i:%s') as createTime,c.is_upload_image,d.product_specificas ,c.is_rep,c.user_id,c.`feel`
         from t_mall_comment c
         left join t_mall_order_detail d on d.id = c.order_detail_id
-        where c.product_id= #{productId} and c.is_delete=0  and c.user_type=1
+        where c.product_id= #{productId} and c.is_delete=0 and c.user_type=1
 
         <choose>
             <when test="repPId == null">
@@ -128,7 +128,7 @@
     </select>
     <select id="selectCommentCount" parameterType="Map" resultType="java.lang.Integer">
         select count(c.id)
-        from t_mall_comment  c
+        from t_mall_comment c
         left join t_mall_order o on o.id=c.order_id
         left join t_mall_order_detail d on d.id=c.order_detail_id
         left join t_mall_store s on s.id=c.shop_id
@@ -138,6 +138,18 @@
         </if>
         <if test="feel != null and feel != ''">
             and c.feel = #{feel}
+        </if>
+        <if test="queryName != null and queryName != ''">
+            AND (d.det_pro_name like CONCAT(CONCAT('%', #{queryName}),'%') OR o.order_no like CONCAT(CONCAT('%', #{queryName}),'%') )
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and c.createTime >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and c.createTime <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and c.shop_id= #{shopId}
         </if>
         <if test="shoplist != null">
             and
@@ -149,7 +161,7 @@
     </select>
     <select id="selectCommentList" parameterType="Map" resultType="Map">
         select c.*,o.order_no,d.det_pro_name,s.sto_name
-        from t_mall_comment  c
+        from t_mall_comment c
         left join t_mall_order o on o.id=c.order_id
         left join t_mall_order_detail d on d.id=c.order_detail_id
         left join t_mall_store s on s.id=c.shop_id
@@ -160,6 +172,18 @@
         <if test="feel != null and feel != ''">
             and c.feel = #{feel}
         </if>
+        <if test="queryName != null and queryName != ''">
+            AND (d.det_pro_name like CONCAT(CONCAT('%', #{queryName}),'%') OR o.order_no like CONCAT(CONCAT('%', #{queryName}),'%') )
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and c.createTime >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and c.createTime <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and c.shop_id= #{shopId}
+        </if>
         <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
@@ -168,12 +192,12 @@
         </if>
         order by c.createTime desc
         <if test="firstNum != null and maxNum != null">
-          limit #{firstNum},#{maxNum}
+            limit #{firstNum},#{maxNum}
         </if>
     </select>
     <select id="selectByComment" parameterType="com.gt.mall.entity.basic.MallComment" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_comment
         where order_detail_id = #{orderDetailId} and order_id= #{orderId} and user_id = #{userId}
     </select>

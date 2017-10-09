@@ -13,7 +13,7 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallFreightDetailService extends BaseService<MallFreightDetail> {
+public interface MallFreightDetailService extends BaseService< MallFreightDetail > {
     /**
      * 编辑物流详情
      *
@@ -21,5 +21,13 @@ public interface MallFreightDetailService extends BaseService<MallFreightDetail>
      *                  detail：物流详情
      * @param freightId 物流Id
      */
-    void editFreightDetail(Map<String, Object> params, int freightId);
+    void editFreightDetail( Map< String,Object > params, int freightId );
+
+    /**
+     * 编辑物流详情
+     *
+     * @param params   detail：物流详情
+     * @param freightId 物流Id
+     */
+    void newEditFreightDetail( Map< String,Object > params, int freightId );
 }
