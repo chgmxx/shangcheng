@@ -72,7 +72,7 @@ public class CommonController {
 	    Map< String,Object > returnMap = CommonUtil.fileUploadByBusUser( multipartFile, user.getId() );
 	    if ( "1".equals( returnMap.get( "reTurn" ) ) ) {
 		msgMap.put( "error", 0 );
-		msgMap.put( "url", returnMap.get( "message" ) );
+		msgMap.put( "url", PropertiesUtil.getResourceUrl() + returnMap.get( "message" ) );
 
 	    } else {
 		logger.error( "该图片存在" );
