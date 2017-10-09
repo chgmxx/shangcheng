@@ -100,11 +100,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     @Autowired
     private MallPifaApplyService        pifaApplyService;
     @Autowired
-    private MallImageAssociativeService imageAssociativeService;
-    @Autowired
     private MallPageService             pageService;
-    @Autowired
-    private MallOrderService            orderService;
     @Autowired
     private MemberService               memberService;
     @Autowired
@@ -123,14 +119,24 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< Map< String,Object > > productGroupList = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > groupList = productGroupDAO.selectGroupsByShopId( params );
 	if ( groupList != null && groupList.size() > 0 ) {
+	    List< Integer > idList = new ArrayList<>();
+	    for ( Map< String,Object > map : groupList ) {
+		if ( !idList.contains( CommonUtil.toInteger( map.get( "group_id" ) ) ) ) {
+		    idList.add( CommonUtil.toInteger( map.get( "group_id" ) ) );
+		}
+	    }
+	    params.put( "assIds", idList );
+	    params.put( "assType", 2 );
+	    List< Map< String,Object > > imageList = imageAssociativeDAO.selectByAssIds( params );
 	    for ( Map< String,Object > map : groupList ) {
 		int isChild = 0;
+		String groupId = CommonUtil.toString( map.get( "group_id" ) );
 		if ( CommonUtil.isNotEmpty( map.get( "is_child" ) ) ) {
 		    isChild = CommonUtil.toInteger( map.get( "is_child" ) );
 		    if ( isChild == 1 ) {
 			//查询分类是否有子类
 			Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
-			groupWrapper.where( "group_p_id = {0}", map.get( "group_id" ) );
+			groupWrapper.where( "group_p_id = {0}", groupId );
 			List< MallGroup > list = groupDAO.selectList( groupWrapper );
 			if ( list != null && list.size() > 0 ) {
 			    isChild = 1;
@@ -139,14 +145,16 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 			}
 		    }
 		}
+		if ( imageList != null && imageList.size() > 0 ) {
+		    for ( Map< String,Object > imageMap : imageList ) {
+			if ( imageMap.get( "ass_id" ).toString().equals( groupId ) ) {
+			    map.put( "image_url", imageMap.get( "image_url" ) );
+			    imageList.remove( imageMap );
+			    break;
+			}
+		    }
+		}
 		map.put( "is_child", isChild );
-		/*String jump_url = PropertiesUtil.getWebHomeUrl()+"/mallApplet/79B4DE7C/";
-		if(isChild == 1){//有子类 跳转到分类页面
-					jump_url += "clssAll.do?shopId="+map.get("shop_id")+"&memberId="+params.get("memberId")+"&classId="+map.get("group_id");
-				}else{//没有子类  直接跳转到全部商品页面
-					jump_url += "productAll.do?shopId="+map.get("shop_id")+"&memberId="+params.get("memberId")+"&classId="+map.get("group_id");
-				}
-				map.put("jump_url", jump_url);*/
 		productGroupList.add( map );
 	    }
 	}
