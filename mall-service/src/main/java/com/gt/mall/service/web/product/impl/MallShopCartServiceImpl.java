@@ -86,7 +86,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		shopIds += shopMap.get( "shop_id" ).toString();
 	    }*/
 	    Map< String,Object > shopcartParams = new HashMap<>();
-	    //	    shopcartParams.put( "shopIds", shopIds.split( "," ) );
+	    /*shopcartParams.put( "shopIds", shopIds.split( "," ) );*/
 	    shopcartParams.put( "checkIds", shopcards.split( "," ) );
 	    shopcartParams.put( "userId", userId );
 
@@ -104,11 +104,16 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    if ( !map3.get( "shop_id" ).toString().equals( shopMaps.get( "shop_id" ).toString() ) ) {
 			continue;
 		    }
-		    String price = map3.get( "price" ).toString();
+		    double price = 0;
+		    if ( CommonUtil.isNotEmpty( map3.get( "price" ) ) ) {
+			price = CommonUtil.toDouble( map3.get( "price" ) );
+		    }
 		    double proPriceTotal = 0;
 		    int num = Integer.parseInt( map3.get( "product_num" ).toString() );
 
-		    Object product_specificas = map3.get( "product_specificas" );
+		    String product_specificas = "";
+		    if ( CommonUtil.isNotEmpty( map3.get( "product_specificas" ) ) )
+			product_specificas = map3.get( "product_specificas" ).toString();
 		    if ( CommonUtil.isNotEmpty( map3.get( "pro_weight" ) ) ) {
 			pro_weight += CommonUtil.toDouble( map3.get( "pro_weight" ) );
 		    }
@@ -128,8 +133,12 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    boolean flag = true;
 		    Map< String,Object > specMap = null;
 		    if ( CommonUtil.isNotEmpty( map3.get( "pro_spec_str" ) ) ) {
+			double proPrice = 0;
+			int proNums = 0;
+			specNames = new StringBuilder();
+			/*product_specificas = "";*/
 			JSONObject obj = JSONObject.fromObject( map3.get( "pro_spec_str" ) );
-			specMap = new HashMap< String,Object >();
+			specMap = new HashMap<>();
 			if ( obj != null && obj.size() > 0 ) {
 			    for ( Object key : obj.keySet() ) {
 				JSONObject valObj = JSONObject.fromObject( obj.get( key ) );
@@ -144,9 +153,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 					specNames.append( valObj.get( "value" ) ).append( " X " ).append( valObj.get( "num" ) ).append( " ¥" ).append( valObj.get( "price" ) );
 
 					num = CommonUtil.toInteger( valObj.get( "num" ) );
-					price = valObj.get( "price" ).toString();
 
-					double p = Double.parseDouble( price );
+					double p = CommonUtil.toDouble( valObj.get( "price" ) );
 					price_total = price_total + ( p * num );
 					proPriceTotal = proPriceTotal + ( p * num );
 					yuanjia_total += num * Double.parseDouble( map3.get( "primary_price" ).toString() );
@@ -154,16 +162,21 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 					proNum += num;
 					flag = false;
 
+					/*product_specificas += key + ",";*/
 					specMap.put( key.toString(), valObj );
+					proPrice += p;
+					proNums += num;
 				    }
 				}
 			    }
 			}
+			price = proPrice / proNums;
+			num = proNums;
+			/*product_specificas = product_specificas.substring( 0, product_specificas.length() - 1 );*/
 		    }
 		    if ( flag ) {
-			double p = Double.parseDouble( price );
-			price_total = price_total + ( p * num );
-			proPriceTotal = proPriceTotal + ( p * num );
+			price_total = price_total + ( price * num );
+			proPriceTotal = proPriceTotal + ( price * num );
 			yuanjia_total += num * Double.parseDouble( map3.get( "primary_price" ).toString() );
 			primary_price += Double.parseDouble( map3.get( "primary_price" ).toString() ) * num;
 			proNum += num;
@@ -196,14 +209,14 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			productMap.put( "product_speciname", specNames.toString() );
 		    }
 		    if ( specObj != null && specObj.size() > 0 ) {
-			productMap.put( "pro_spec_str", specObj.toString() );
+			productMap.put( "pro_spec_str", com.alibaba.fastjson.JSONObject.toJSONString( specObj ) );
 		    }
 		    if ( specMap != null && specMap.size() > 0 ) {
 			productMap.put( "specMap", specMap );
 		    }
 		    String proType = map3.get( "pro_type" ).toString();
 		    if ( proType.equals( "1" ) || proType.equals( "2" ) ) {
-			productMap.put( "groupType", "7" );
+			shopMap.put( "groupType", 7 );
 		    }
 		    productMap.put( "pro_price_total", proPriceTotal );
 		    if ( CommonUtil.isNotEmpty( map3.get( "return_day" ) ) ) {
@@ -249,14 +262,14 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	List< Map< String,Object > > list = new ArrayList<>();
 	Map< String,Object > shopMap = new HashMap<>();
 
-	List< Map< String,Object > > productList = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > productList = new ArrayList<>();
 	double price_total = 0;//保存商品总价
 	double yuanjia_total = 0;
 	double primary_price = 0;//保存商品原价
 	int proNum = 0;//保存商品数量
 	int shopId = 0;
 	double pro_weight = 0;
-	int proTypeId = 0;
+	int proTypeId;
 
 	if ( CommonUtil.isNotEmpty( maps ) ) {
 	    if ( CommonUtil.isNotEmpty( maps.get( "productId" ) ) ) {
@@ -270,7 +283,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    shopId = product.getShopId();
 		    proTypeId = CommonUtil.toInteger( product.getProTypeId() );
 
-		    String specificaValue = "";
+		    StringBuilder specificaValue = new StringBuilder();
 		    //查询规格信息
 		    if ( CommonUtil.isNotEmpty( maps.get( "productSpecificas" ) ) ) {
 			/*String specSql = "SELECT id,specifica_value,specifica_img_url FROM t_mall_product_specifica WHERE is_delete=0 AND specifica_value_id IN(" + maps
@@ -278,7 +291,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			List< Map< String,Object > > specMapList = daoUtil.queryForList( specSql );*/
 			Map< String,Object > specificaMap = mallProductService.getProInvIdBySpecId( maps.get( "productSpecificas" ).toString(), productId );
 			if ( CommonUtil.isNotEmpty( specificaMap ) && specificaMap.size() > 0 ) {
-			    specificaValue = specificaMap.get( "specifica_values" ).toString();
+			    specificaValue = new StringBuilder( specificaMap.get( "specifica_values" ).toString() );
 			    if ( CommonUtil.isNotEmpty( specificaMap.get( "specifica_img_url" ) ) ) {
 				imageUrl = CommonUtil.toString( specificaMap.get( "specifica_img_url" ) );
 			    }
@@ -304,21 +317,22 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    boolean flag = true;
 		    JSONObject specObj = new JSONObject();
 		    if ( CommonUtil.isNotEmpty( maps.get( "proSpecStr" ) ) ) {
-			num = 0;
+			double proPrice = 0;
+			int proTotalNum = 0;
 			JSONObject obj = JSONObject.fromObject( maps.get( "proSpecStr" ) );
-			specMap = new HashMap< String,Object >();
+			specMap = new HashMap<>();
 			if ( obj != null && obj.size() > 0 ) {
 			    for ( Object key : obj.keySet() ) {
 				JSONObject valObj = JSONObject.fromObject( obj.get( key ) );
 				if ( CommonUtil.isNotEmpty( valObj.get( "isCheck" ) ) ) {
 				    if ( valObj.get( "isCheck" ).toString().equals( "1" ) ) {
 					specObj.put( key, valObj );
-					if ( !specificaValue.equals( "" ) ) {
-					    specificaValue += "、";
+					if ( !specificaValue.toString().equals( "" ) ) {
+					    specificaValue.append( "、" );
 					} else {
-					    specificaValue = valObj.getString( "specName" ) + "：";
+					    specificaValue = new StringBuilder( valObj.getString( "specName" ) + "：" );
 					}
-					specificaValue += valObj.get( "value" ) + " X " + valObj.get( "num" ) + " ¥" + valObj.get( "price" );
+					specificaValue.append( valObj.get( "value" ) ).append( " X " ).append( valObj.get( "num" ) ).append( " ¥" ).append( valObj.get( "price" ) );
 
 					num = CommonUtil.toInteger( valObj.get( "num" ) );
 					price = CommonUtil.toDouble( valObj.get( "price" ) );
@@ -331,10 +345,15 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 					flag = false;
 
 					specMap.put( key.toString(), valObj );
+
+					proPrice += price * num;
+					proTotalNum += num;
 				    }
 				}
 			    }
 			}
+			price = proPrice / proTotalNum;
+			num = proTotalNum;
 		    }
 		    if ( flag ) {
 			price_total = price_total + ( price * num );
@@ -366,8 +385,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    if ( CommonUtil.isNotEmpty( maps.get( "productSpecificas" ) ) ) {
 			productMap.put( "product_specificas", maps.get( "productSpecificas" ) );
 		    }
-		    if ( CommonUtil.isNotEmpty( specificaValue ) ) {
-			productMap.put( "product_speciname", specificaValue );
+		    if ( CommonUtil.isNotEmpty( specificaValue.toString() ) ) {
+			productMap.put( "product_speciname", specificaValue.toString() );
 		    }
 		    if ( specMap != null && specMap.size() > 0 ) {
 			productMap.put( "specMap", specMap );
@@ -430,10 +449,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	map.put( "orderArr", list );
 
 	String shopIds = "";
-	String wxShopIds = ",";
+	StringBuilder wxShopIds = new StringBuilder( "," );
 	int proTypeId = 0;
 	int groupType = 0;
-	int index = 1;
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > shopMap : list ) {
 		if ( CommonUtil.isNotEmpty( shopMap.get( "pro_type_id" ) ) ) {
@@ -472,7 +490,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    shopIds += ",";
 		}
 		shopIds += shopMap.get( "shop_id" ).toString();
-		wxShopIds += shopMap.get( "wxShopId" ).toString() + ",";
+		wxShopIds.append( shopMap.get( "wxShopId" ).toString() ).append( "," );
 
 		if ( CommonUtil.isNotEmpty( shopMap.get( "message" ) ) ) {
 		    JSONArray arr = JSONArray.parseArray( JSON.toJSONString( shopMap.get( "message" ) ) );
@@ -507,8 +525,8 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	}
 	if ( CommonUtil.isNotEmpty( member ) && groupType == 0 ) {
 	    if ( wxShopIds.length() >= 2 ) {
-		wxShopIds = wxShopIds.substring( 1, wxShopIds.length() - 1 );
-		Map cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds );
+		wxShopIds = new StringBuilder( wxShopIds.substring( 1, wxShopIds.length() - 1 ) );
+		Map cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds.toString() );
 
 		for ( Map< String,Object > shopMap : list ) {
 		    int wxShopId = CommonUtil.toInteger( shopMap.get( "wxShopId" ) );

@@ -1,6 +1,8 @@
 package com.gt.mall.service.web.pifa.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.pifa.MallPifaPriceDAO;
 import com.gt.mall.entity.pifa.MallPifaPrice;
@@ -57,5 +59,17 @@ public class MallPifaPriceServiceImpl extends BaseServiceImpl< MallPifaPriceDAO,
     @Override
     public List< MallPifaPrice > selectPriceByGroupId( int groupId ) {
 	return mallPifaPriceDAO.selectPriceByGroupId( groupId );
+    }
+
+    @Override
+    public MallPifaPrice selectPifaBySpecifica( String specificaIds, int pifaId ) {
+	Wrapper< MallPifaPrice > priceWrapper = new EntityWrapper<>();
+	priceWrapper.where( "specifica_ids = {0} and pifa_id = {1} and is_delete = 0 ", specificaIds, pifaId );
+
+	List< MallPifaPrice > pifaPricesList = mallPifaPriceDAO.selectList( priceWrapper );
+	if ( CommonUtil.isNotEmpty( pifaPricesList ) && pifaPricesList.size() > 0 ) {
+	    return pifaPricesList.get( 0 );
+	}
+	return null;
     }
 }

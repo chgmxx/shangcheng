@@ -272,38 +272,33 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    }
 		}
 	    }
-	    List< MallOrderReturn > orderReturnList = new ArrayList< MallOrderReturn >();
+	    List< MallOrderReturn > orderReturnList = new ArrayList<>();
 	    //查询订单退款信息
 	    if ( detailIdList != null && detailIdList.size() > 0 ) {
-		Map< String,Object > detailParams = new HashMap< String,Object >();
+		Map< String,Object > detailParams = new HashMap<>();
 		detailParams.put( "detailIdList", detailIdList );
 		orderReturnList = mallOrderReturnDAO.selectByDetailIds( detailParams );
 	    }
 	    for ( MallOrder order : list ) {
-		List< MallOrderDetail > detailList = new ArrayList< MallOrderDetail >();
-		List< Integer > detailIds = new ArrayList< Integer >();
+		List< MallOrderDetail > detailList = new ArrayList<>();
+		List< MallOrderDetail > detailIds = new ArrayList<>();
 		boolean isDetail = false;
 		if ( !isHaveDetail ) {
 		    if ( orderdetailList != null && orderdetailList.size() > 0 ) {
-			for ( int i = 0; i < orderdetailList.size(); i++ ) {
-			    MallOrderDetail detail = orderdetailList.get( i );
+			for ( MallOrderDetail detail : orderdetailList ) {
 			    if ( detail.getOrderId().toString().equals( order.getId().toString() ) ) {
 				detailList.add( detail );
-				detailIds.add( i );
+				detailIds.add( detail );
 				isDetail = true;
-				orderdetailList.remove( i );
-				break;
 			    }
 			}
 			if ( detailIds != null && detailIds.size() > 0 ) {
 			    order.setMallOrderDetail( detailList );
-			    for ( Integer ids : detailIds ) {
-				orderdetailList.remove( ids );
-			    }
+			    orderdetailList.removeAll( detailIds );
 			}
 		    }
 		}
-		if ( ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) || isDetail ) {
+		if ( ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 && orderReturnList != null && orderReturnList.size() > 0 ) || isDetail ) {
 		    isDetail = true;
 		    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
 			if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
@@ -590,7 +585,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    logger.info( "同步库存：" + flag );
 	}
-	if ( mallOrderList != null && mallOrderList.size() > 0 && order.getOrderPayWay() != 7) {
+	if ( mallOrderList != null && mallOrderList.size() > 0 && order.getOrderPayWay() != 7 ) {
 	    paySuccess( mallOrderList );//支付成功回调储值卡支付，积分支付，粉币支付
 	}
 
@@ -822,7 +817,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     /**
      * 修改库存
      */
-    private Map updateStatusStock( MallOrder order, Map< String,Object > params, Member member, WxPublicUsers wxPublicUser ) {
+    private Map< String,Object > updateStatusStock( MallOrder order, Map< String,Object > params, Member member, WxPublicUsers wxPublicUser ) {
 
 	if ( order != null && order.getMallOrderDetail() == null ) {
 	    order = mallOrderDAO.getOrderById( order.getId() );
@@ -895,7 +890,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    mallAuctionBiddingService.upStateBidding( order, 1, orderDetail );
 		}
 		for ( MallOrderDetail detail : orderDetail ) {
-		    Map< String,Object > proMap = new HashMap<>();
+
 		    totalNum += detail.getDetProNum();
 		    if ( CommonUtil.isNotEmpty( detail.getDiscount() ) ) {
 			if ( detail.getDiscount() < 100 && detail.getDiscount() > 0 ) {
@@ -912,43 +907,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    //修改库存
 			    mallSeckillService.invNum( order, detail, member.getId().toString(), order.getId().toString() );
 			} else {//其他商品，则修改数据库的库存
-			    Integer total = ( pro.getProStockTotal() - detail.getDetProNum() );
-			    Integer saleNum = ( pro.getProSaleTotal() + detail.getDetProNum() );
-			    proMap.put( "total", total );
-			    proMap.put( "saleNum", saleNum );
-			    proMap.put( "proId", detail.getProductId() );
-			    MallProduct mallProduct = new MallProduct();
-			    mallProduct.setId( detail.getProductId() );
-			    mallProduct.setProStockTotal( total );
-			    mallProduct.setProSaleTotal( saleNum );
-			    count = mallProductDAO.updateById( mallProduct );//修改商品库存
-			    if ( null != pro.getIsSpecifica() && CommonUtil.isNotEmpty( pro.getIsSpecifica() ) ) {
-				if ( pro.getIsSpecifica() == 1 ) {//该商品存在规格
-				    String[] specifica = ( detail.getProductSpecificas() ).split( "," );
-				    StringBuilder ids = new StringBuilder( "0" );
-				    for ( String aSpecifica : specifica ) {
-					if ( CommonUtil.isNotEmpty( aSpecifica ) ) {
-					    proMap.put( "valueId", aSpecifica );
-					    MallProductSpecifica proSpec = mallProductSpecificaService.selectByNameValueId( proMap );
-					    ids.append( "," ).append( proSpec.getId() );
-					}
-				    }
-				    proMap.put( "specificaIds", ids.substring( 2, ids.length() ) );
-				    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );//根据商品规格id查询商品库存
-				    total = ( proInv.getInvNum() - detail.getDetProNum() );
-				    String invSaleNum = "";
-				    if ( !CommonUtil.isEmpty( proInv.getInvSaleNum() ) ) {
-					invSaleNum = ( proInv.getInvSaleNum() ).toString();
-				    }
-				    if ( null == invSaleNum || invSaleNum.equals( "" ) ) {
-					invSaleNum = "0";
-				    }
-				    saleNum = ( Integer.parseInt( invSaleNum ) + detail.getDetProNum() );
-				    proMap.put( "total", total );
-				    proMap.put( "saleNum", saleNum );
-				    mallProductInventoryService.updateProductInventory( proMap );//修改规格的库存
-				}
-			    }
+			    mallProductService.diffProductStock( pro, detail, order );
 			}
 
 		    }
@@ -1036,12 +995,34 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			}
 			int erpInvId = 0;
 			if ( CommonUtil.isNotEmpty( detail.getProductSpecificas() ) ) {
-			    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( detail.getProductSpecificas(), detail.getProductId() );
-			    if ( CommonUtil.isNotEmpty( invMap ) ) {
-				if ( CommonUtil.isNotEmpty( invMap.get( "erp_inv_id" ) ) ) {
-				    erpInvId = CommonUtil.toInteger( invMap.get( "erp_inv_id" ) );
+			    if ( order.getOrderType() != 7 ) {
+				Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( detail.getProductSpecificas(), detail.getProductId() );
+				if ( CommonUtil.isNotEmpty( invMap ) ) {
+				    if ( CommonUtil.isNotEmpty( invMap.get( "erp_inv_id" ) ) ) {
+					erpInvId = CommonUtil.toInteger( invMap.get( "erp_inv_id" ) );
+				    }
+				}
+			    } else if ( CommonUtil.isNotEmpty( detail.getProSpecStr() ) ) {
+				com.alibaba.fastjson.JSONObject specObj = com.alibaba.fastjson.JSONObject.parseObject( detail.getProSpecStr() );
+				for ( String key : specObj.keySet() ) {
+				    com.alibaba.fastjson.JSONObject valueObj = specObj.getJSONObject( key );
+
+				    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( key, detail.getProductId() );
+				    if ( CommonUtil.isNotEmpty( invMap ) ) {
+					if ( CommonUtil.isNotEmpty( invMap.get( "erp_inv_id" ) ) ) {
+					    erpInvId = CommonUtil.toInteger( invMap.get( "erp_inv_id" ) );
+
+					    Map< String,Object > productMap = new HashMap<>();
+					    productMap.put( "id", erpInvId );
+					    productMap.put( "amount", valueObj.getInteger( "num" ) );//数量
+					    productMap.put( "price", valueObj.getDouble( "price" ) );
+					    productList.add( productMap );
+					}
+				    }
+
 				}
 			    }
+
 			} else {
 			    MallProduct product = mallProductDAO.selectById( detail.getProductId() );
 			    if ( CommonUtil.isNotEmpty( product.getErpInvId() ) ) {

@@ -3,6 +3,8 @@ package com.gt.mall.service.web.product;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
@@ -200,4 +202,9 @@ public interface MallProductService extends BaseService< MallProduct > {
      * @param user 用户信息
      */
     void syncAllProduct( BusUser user, HttpServletRequest request );
+
+    /**
+     * 扣除商品库存
+     */
+    boolean diffProductStock( MallProduct pro, MallOrderDetail detail ,MallOrder order);
 }

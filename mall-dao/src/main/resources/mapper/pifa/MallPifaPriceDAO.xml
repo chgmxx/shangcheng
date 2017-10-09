@@ -48,7 +48,7 @@
     </update>
 
     <select id="selectPriceByInvId" parameterType="Map" resultType="Map" >
-        select pr.*
+        select pr.id, pr.pifa_id , pr.inven_id , pr.specifica_ids , pr.seckill_price , pr.is_join_group , pr.is_delete
         from t_mall_pifa_price pr
         left join t_mall_pifa p on p.id=pr.pifa_id
         where p.product_id = #{productId}

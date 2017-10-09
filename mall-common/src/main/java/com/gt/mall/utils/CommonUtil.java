@@ -435,6 +435,7 @@ public class CommonUtil {
 	    ImageIO.write( bufimg, phonejsp, new File( path ) );
 	    ContinueFTP myFtp = new ContinueFTP();
 	    try {
+	        log.info( "ftp上传图片路径:"+path );
 		Map< String,Object > ftpResult = myFtp.upload( path );
 		log.info( "ftp上传结果：" + com.alibaba.fastjson.JSONObject.toJSONString( ftpResult ) );
 	    } catch ( Exception e ) {
