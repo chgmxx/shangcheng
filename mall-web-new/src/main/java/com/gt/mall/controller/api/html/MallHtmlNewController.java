@@ -1,11 +1,14 @@
 package com.gt.mall.controller.api.html;
 
+import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.html.MallHtml;
+import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -19,10 +22,7 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.SessionUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,19 +54,14 @@ import java.util.Map;
 public class MallHtmlNewController extends BaseController {
 
     @Autowired
-    private MallPaySetService     mallPaySetService;
+    private MallHtmlService     htmlService;
     @Autowired
-    private WxPublicUserService   wxPublicUserService;
+    private MallHtmlFromService htmlFromService;
     @Autowired
-    private MallHtmlService       htmlService;
+    private DictService         dictService;
     @Autowired
-    private MallHtmlFromService   htmlFromService;
-    @Autowired
-    private MallHtmlReportService htmlReportService;
-    @Autowired
-    private DictService           dictService;
-    @Autowired
-    private BusUserService        busUserService;
+    private BusUserService      busUserService;
+
 
     @ApiOperation( value = "h5商城列表(分页)", notes = "h5商城列表(分页)" )
     @ResponseBody
@@ -135,27 +130,42 @@ public class MallHtmlNewController extends BaseController {
     @ApiOperation( value = "添加H5商城选中模板", notes = "添加H5商城选中模板" )
     @ResponseBody
     @RequestMapping( value = "/setMallHtml", method = RequestMethod.POST )
-    public ServerResponse setMallHtml( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public ServerResponse setMallHtml( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "模板id", required = true ) @RequestParam Integer id ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
-
-	    params.put( "userId", user.getId() );
-	    int num = mallPaySetService.editPaySet( params );
-	    if ( num <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存修改信息异常" );
+	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
+	    Integer maxcj = Integer.valueOf( dictService.getDiBserNum( user.getId(), 16, "1140" ) );
+	    Integer ycj = htmlService.htmltotal( user.getId() );//主账户之下已创建的数量
+	    if ( ycj >= maxcj ) {
+		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "等级不够，不能创建h5商城" );
+	    } else {
+		Integer xid = htmlService.SetmallHtml( id, user );
 	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
+	    logger.error( "添加H5商城选中模板异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
+    /**
+     * 获取模板信息
+     */
+    @ApiOperation( value = "获取模板信息", notes = "获取模板信息" )
+    @ResponseBody
+    @RequestMapping( value = "/htmlInfo", method = RequestMethod.POST )
+    public ServerResponse htmlInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板ID", required = true ) @RequestParam Integer id ) {
+	MallHtml obj = null;
+	try {
+	    obj = htmlService.selectById( id );
+	} catch ( Exception e ) {
+	    logger.error( "获取模板信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取模板信息异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), obj );
+    }
 
     /**
      * 保存修改信息
@@ -167,85 +177,143 @@ public class MallHtmlNewController extends BaseController {
     public ServerResponse update( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-
-	    params.put( "userId", user.getId() );
-	    int num = mallPaySetService.editPaySet( params );
-	    if ( num <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存修改信息异常" );
-	    }
+	    MallHtml obj = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallHtml.class );
+	    htmlService.addorUpdateSave( obj, user );
 	} catch ( BusinessException e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
+	    logger.error( "保存修改信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
+	    logger.error( "保存修改信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-
-
-
     /**
-     * 通用设置保存
+     * 保存背景图
      */
-    @ApiOperation( value = "保存商城设置信息", notes = "保存商城设置信息" )
+    @ApiOperation( value = "保存背景图", notes = "保存背景图" )
     @ResponseBody
-    @SysLogAnnotation( description = "保存商城设置信息", op_function = "2" )
-    @RequestMapping( value = "/setSave", method = RequestMethod.POST )
-    public ServerResponse setSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @SysLogAnnotation( description = "保存背景图", op_function = "2" )
+    @RequestMapping( value = "/updateImage", method = RequestMethod.POST )
+    public ServerResponse updateImage( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板id", required = true ) @RequestParam Integer id,
+		    @ApiParam( name = "imgUrl", value = "背景图URL", required = true ) @RequestParam String imgUrl ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
-	    //	    set.setUserId( user.getId() );
-	    //	    com.alibaba.fastjson.JSONObject set2 = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( set ) );
-	    params.put( "userId", user.getId() );
-	    int num = mallPaySetService.editPaySet( params );
-	    if ( num <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存商城设置信息异常" );
-	    }
+	    htmlService.updateimage( id, imgUrl );
 	} catch ( BusinessException e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
+	    logger.error( "保存背景图异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
+	    logger.error( "保存背景图异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-
     /**
-     * 获取消息模板
+     * 删除h5模板
      */
-    @ApiOperation( value = "获取消息模板", notes = "获取消息模板" )
+    @ApiOperation( value = "删除h5模板", notes = "删除h5模板" )
     @ResponseBody
-    @RequestMapping( value = "/getTemplate", method = RequestMethod.POST )
-    public ServerResponse getTemplate( HttpServletRequest request, HttpServletResponse response ) {
-	Map< String,Object > result = new HashMap<>();
+    @RequestMapping( value = "/delete", method = RequestMethod.POST )
+    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板id", required = true ) @RequestParam Integer id ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
-		    JSONArray msgArr = JSONArray.fromObject( set.getMessageJson() );
-		    result.put( "msgArr", msgArr ); //选中消息模板
-		}
-	    }
 
-	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
-	    result.put( "messageList", messageList );
-	} catch ( Exception e ) {
-	    logger.error( "获取消息模板异常：" + e.getMessage() );
+	    htmlService.deleteById( id );
+	} catch ( BusinessException e ) {
+	    logger.error( "删除h5模板异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取消息模板异常" );
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "删除h5模板异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
+    /**
+     * 获取模板表单列表
+     */
+    @ApiOperation( value = "获取模板表单列表", notes = "获取模板表单列表" )
+    @ResponseBody
+    @ApiImplicitParams( { @ApiImplicitParam( name = "pageNum", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "id", value = "模板Id", paramType = "query", required = false, dataType = "int" ) } )
+    @RequestMapping( value = "/htmlFromList", method = RequestMethod.POST )
+    public ServerResponse htmlFromList( HttpServletRequest request, HttpServletResponse response, Integer pageNum, Integer id ) {
+	Map< String,Object > map = new HashMap<>();
+	try {
+	    map = htmlFromService.htmlListfrom( request );
+	} catch ( Exception e ) {
+	    logger.error( "获取模板表单列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取模板表单列表异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), map );
+    }
+
+    /**
+     * 查看模板表单详情
+     */
+    @ApiOperation( value = "查看模板表单详情", notes = "查看模板表单详情" )
+    @ResponseBody
+    @RequestMapping( value = "/htmlFromView", method = RequestMethod.POST )
+    public ServerResponse htmlFromView( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "模板表单id", required = true ) @RequestParam Integer id ) {
+	Map< String,Object > map = new HashMap<>();
+	try {
+	    map = htmlFromService.htmlfromview( request );
+	} catch ( Exception e ) {
+	    logger.error( "查看模板表单详情异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查看模板表单详情异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), map );
+    }
+
+    /**
+     * 获取播放器样式列表
+     */
+    @ApiOperation( value = "获取播放器样式列表", notes = "获取播放器样式列表" )
+    @ResponseBody
+    @RequestMapping( value = "/playList", method = RequestMethod.POST )
+    public ServerResponse playList( HttpServletRequest request, HttpServletResponse response ) {
+	List< Map > playList = null;
+	try {
+	    playList = dictService.getDict( "1048" );//获取播放器样式
+	} catch ( Exception e ) {
+	    logger.error( "获取播放器样式列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取播放器样式列表异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), playList );
+    }
+
+    /**
+     * 页面设计保存
+     */
+    @ApiOperation( value = "页面设计保存", notes = "页面设计保存" )
+    @ResponseBody
+    @SysLogAnnotation( description = "页面设计保存", op_function = "2" )
+    @RequestMapping( value = "/htmlSave", method = RequestMethod.POST )
+    public ServerResponse htmlSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	try {
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    MallHtml obj = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallHtml.class );
+	    htmlService.htmlSave( obj, user );
+	} catch ( BusinessException e ) {
+	    logger.error( "页面设计保存异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "页面设计保存异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
 }
