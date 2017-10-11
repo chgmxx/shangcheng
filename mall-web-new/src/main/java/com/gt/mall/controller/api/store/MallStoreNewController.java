@@ -182,7 +182,7 @@ public class MallStoreNewController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 
 	    MallStore sto = com.alibaba.fastjson.JSONObject.parseObject( params.get( "obj" ).toString(), MallStore.class );
-	    if ( CommonUtil.isNotEmpty( sto.getWxShopId()) && CommonUtil.isEmpty( sto.getId() ) ) {
+	    if ( CommonUtil.isEmpty( sto.getId() ) ) {
 		WsWxShopInfo info = wxShopService.getShopById( sto.getWxShopId() );
 		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( sto.getWxShopId() );
 		sto.setStoName( info.getBusinessName() );
@@ -197,10 +197,10 @@ public class MallStoreNewController extends BaseController {
 		if ( photoList != null && photoList.size() > 0 ) {
 		    sto.setStoPicture( photoList.get( 0 ).getLocalAddress() );
 		}
+		sto.setStoUserId( SessionUtils.getLoginUser( request ).getId() );
+		sto.setStoCreatePerson( SessionUtils.getLoginUser( request ).getId() );
+		sto.setStoCreateTime( new Date() );
 	    }
-	    sto.setStoUserId( SessionUtils.getLoginUser( request ).getId() );
-	    sto.setStoCreatePerson( SessionUtils.getLoginUser( request ).getId() );
-	    sto.setStoCreateTime( new Date() );
 	    boolean flag = mallStoreService.saveOrUpdate( sto, user );
 	    if ( flag ) {
 		SessionUtils.setShopListBySession( user.getId(), null, request );

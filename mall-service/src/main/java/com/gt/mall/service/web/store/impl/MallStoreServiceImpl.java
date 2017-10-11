@@ -313,9 +313,14 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    }
 			}
 		    } else {
-			Wrapper< MallStore > keywordWrapper = new EntityWrapper<>();
-			keywordWrapper.where( "id = {0}",sto.getId() );
-			count = mallStoreDao.update( sto, keywordWrapper);
+			MallStore store = mallStoreDao.selectById( sto.getId() );
+			store.setStoHeadImg( sto.getStoHeadImg() );
+			store.setStoLinkman( sto.getStoLinkman() );
+			store.setStoPhone( sto.getStoPhone() );
+			store.setStoIsSms( sto.getStoIsSms() );
+			store.setStoSmsTelephone( sto.getStoSmsTelephone() );
+			store.setStoQqCustomer( sto.getStoQqCustomer() );
+			count = mallStoreDao.updateAllColumnById( store);
 			if ( count <= 0 ) {
 			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 			}

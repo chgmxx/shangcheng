@@ -78,12 +78,12 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
     @TableField( "bus_license_no" )
     private String  busLicenseNo;
     /**
-     * 店铺类型
+     * 店铺类型  1 普通店铺  2旗舰店  3专卖店  4直营店
      */
     @TableField( "sto_category" )
     private Integer stoCategory;
     /**
-     * 认证类型
+     * 认证类型   6 商标注册通知书 7商标注册证  8商标使用许可证明  9微信渠道授权书 10多粉渠道授权书  11公司总部证明函 12关系证明函
      */
     @TableField( "cert_type" )
     private Integer certType;
