@@ -50,14 +50,13 @@ public class MallCommentNewController extends BaseController {
     @Autowired
     private MallStoreService   storeService;
 
-
     @ApiOperation( value = "评价列表(分页)", notes = "评价列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "queryName", value = "订单号或商品名称", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "feel", value = "评价状态 -1 差评 0 中评 1好评", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "startTime", value = "评价起始时间 例：2017-09-27", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "startTime", value = "评价起始时间", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "endTime", value = "评价结束时间", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String queryName, Integer shopId, Integer feel, String startTime,
@@ -65,29 +64,6 @@ public class MallCommentNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "queryName", queryName );
-	    params.put( "shopId", shopId );
-	    params.put( "feel", feel );
-	    params.put( "startTime", startTime );
-	    params.put( "endTime", endTime );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
-		params.put( "shoplist", shoplist );
-	    }
-
-	    // 查询会员下面的评论
-	    PageUtil page = commentService.selectCommentPage( params );
-	    result.put( "page", page );
-
-	    //统计各状态的数量
-	    Map< String,Object > countParam = new HashMap<>();
-	    countParam.put( "countParam", shoplist );
-	    Map< String,Object > count = commentService.selectCommentCount( countParam );
-	    result.put( "count", count );
-
 	    boolean isComment = false;
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
@@ -100,6 +76,30 @@ public class MallCommentNewController extends BaseController {
 		}
 	    }
 	    result.put( "isComment", isComment );
+
+	    if ( isComment ) {
+		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+
+		Map< String,Object > params = new HashMap<>();
+		params.put( "curPage", curPage );
+		params.put( "queryName", queryName );
+		params.put( "shopId", shopId );
+		params.put( "feel", feel );
+		params.put( "startTime", startTime );
+		params.put( "endTime", endTime );
+		if ( CommonUtil.isEmpty( shopId ) ) {
+		    params.put( "shoplist", shoplist );
+		}
+
+		// 查询会员下面的评论
+		PageUtil page = commentService.selectCommentPage( params );
+		result.put( "page", page );
+
+		//统计各状态的数量
+		Map< String,Object > count = commentService.selectCommentCount( params );
+		result.put( "count", count );
+	    }
+
 	} catch ( Exception e ) {
 	    logger.error( "评价列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -115,11 +115,17 @@ public class MallCommentNewController extends BaseController {
     @ResponseBody
     @SysLogAnnotation( description = "回复评论", op_function = "2" )
     @RequestMapping( value = "/reply", method = RequestMethod.POST )
-    public ServerResponse reply( HttpServletRequest request, HttpServletResponse response, @RequestParam MallComment comment ) {
+    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "评论ID", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "content", value = "回复内容", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = true, dataType = "int" ) } )
+    public ServerResponse reply( HttpServletRequest request, HttpServletResponse response, String content, Integer id, Integer shopId ) {
 	try {
 	    //params:{"content":"32232","repPId":"25","shopId":"177"}
 	    BusUser user = SessionUtils.getLoginUser( request );
-
+	    MallComment comment = new MallComment();
+	    comment.setContent( content );
+	    comment.setRepPId( id );
+	    comment.setShopId( shopId );
 	    comment.setCreateTime( new Date() );
 	    comment.setUserId( user.getId() );
 	    comment.setUserType( 2 );

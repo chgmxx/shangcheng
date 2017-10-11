@@ -30,6 +30,7 @@
         <result column="style_key" property="styleKey"/>
         <result column="order_cancel" property="orderCancel"/>
         <result column="bus_message_json" property="busMessageJson"/>
+        <result column="is_securitytrade" property="isSecuritytrade"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -37,7 +38,7 @@
         id, is_delivery_pay , is_take_their , user_id , create_time , is_daifu , is_comment , is_comment_check,
         is_comment_give , is_message , is_presale , is_presale_give , message_json , is_sms_member, sms_message ,
         is_pf , is_pf_check , pf_set , pf_remark , pf_apply_remark, is_seller , is_check_seller , footer_json,style_key
-        ,bus_message_json,order_cancel
+        ,bus_message_json,order_cancel,is_securitytrade
     </sql>
     <!--<select id="selectByUserId" parameterType="com.gt.mall.entity.basic.MallPaySet" resultMap="BaseResultMap">-->
     <!--select-->

@@ -7,6 +7,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
@@ -312,7 +313,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    }
 			}
 		    } else {
-			count = mallStoreDao.updateById( sto );
+			Wrapper< MallStore > keywordWrapper = new EntityWrapper<>();
+			keywordWrapper.where( "id = {0}",sto.getId() );
+			count = mallStoreDao.update( sto, keywordWrapper);
 			if ( count <= 0 ) {
 			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 			}

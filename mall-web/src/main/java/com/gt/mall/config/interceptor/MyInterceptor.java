@@ -142,6 +142,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	    user = new BusUser();
 	    user.setId( 42 );
 	    user.setName( "gt123456" );
+	    user.setPid( 0 );
 	    SessionUtils.setLoginUser( request, user );
 
 	    /*response.setCharacterEncoding( "UTF-8" );

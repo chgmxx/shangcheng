@@ -70,6 +70,8 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    List< MallAuction > auctionList = auctionDAO.selectByPage( params );
 	    if ( auctionList != null && auctionList.size() > 0 && shoplist != null && shoplist.size() > 0 ) {
 		for ( MallAuction auction : auctionList ) {
+		    int status = isJoinAuction( auction );
+		    auction.setJoinId( status );
 		    for ( Map< String,Object > shopMaps : shoplist ) {
 			int shop_id = CommonUtil.toInteger( shopMaps.get( "id" ) );
 			if ( auction.getShopId() == shop_id ) {

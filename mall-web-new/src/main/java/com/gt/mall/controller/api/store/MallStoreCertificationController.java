@@ -1,6 +1,7 @@
 package com.gt.mall.controller.api.store;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.annotation.SysLogAnnotation;
@@ -9,12 +10,16 @@ import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.basic.MallSecuritytradeQuit;
 import com.gt.mall.entity.page.MallPage;
+import com.gt.mall.entity.presale.MallPresaleTime;
 import com.gt.mall.entity.purchase.PurchaseCarousel;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
@@ -29,6 +34,7 @@ import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -57,6 +63,10 @@ public class MallStoreCertificationController extends BaseController {
     private MallStoreCertificationService mallStoreCertService;
     @Autowired
     private MallImageAssociativeService   mallImageAssociativeService;
+    @Autowired
+    private DictService                   dictService;
+    @Autowired
+    private MallImageAssociativeService   imageAssociativeService;
 
     /**
      * 保存店铺认证信息
@@ -67,35 +77,68 @@ public class MallStoreCertificationController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse save( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    String[] docImg = params.get( "docImg" ).toString().split( "," );
+
 	    String code = params.get( "code" ).toString();
 	    if ( CommonUtil.isEmpty( JedisUtil.get( Constants.REDIS_KEY + code ) ) ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "验证码不正确" );
 	    }
-	    MallStoreCertification storeCert = com.alibaba.fastjson.JSONObject.parseObject( params.get( "storeCert" ).toString(), MallStoreCertification.class );
-	    storeCert.setIsDelete( 0 );
-	    storeCert.setCreateTime( new Date() );
-	    if ( docImg != null && docImg.length > 0 ) {
-		storeCert.setIsCertDoc( 1 );
-	    }
-	    mallStoreCertService.insert( storeCert );
 
-	    for ( int i = 0; i < docImg.length; i++ ) {
-		MallImageAssociative associative = new MallImageAssociative();
-		associative.setAssId( storeCert.getId() );
-		associative.setAssType( 6 );
-		associative.setIsMainImages( 0 );
-		associative.setIsDelete( 0 );
-		associative.setAssSort( i );
-		associative.setImageUrl( docImg[i] );
-		mallImageAssociativeService.insert( associative );
+	    MallStoreCertification storeCert = com.alibaba.fastjson.JSONObject.parseObject( params.get( "storeCert" ).toString(), MallStoreCertification.class );
+	    if ( CommonUtil.isEmpty( storeCert.getId() ) ) {
+		String[] docImg = params.get( "docImg" ).toString().split( "," );
+
+		if ( docImg != null && docImg.length > 0 ) {
+		    storeCert.setIsCertDoc( 1 );
+		}
+		storeCert.setCreateTime( new Date() );
+		mallStoreCertService.insert( storeCert );
+
+		for ( int i = 0; i < docImg.length; i++ ) {
+		    MallImageAssociative associative = new MallImageAssociative();
+		    associative.setAssId( storeCert.getId() );
+		    associative.setAssType( 6 );
+		    associative.setAssSort( i );
+		    associative.setImageUrl( docImg[i] );
+		    mallImageAssociativeService.insert( associative );
+		}
+	    } else {
+		mallStoreCertService.updateById( storeCert );
+		/*List< MallImageAssociative > imageList = JSONArray.parseArray( params.get( "imageList" ).toString(), MallImageAssociative.class );*/
+		imageAssociativeService.newInsertUpdBatchImage( params, storeCert.getId(), 6 );
+
 	    }
+
 	} catch ( Exception e ) {
 	    logger.error( "保存店铺认证信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
+
+    /**
+     * 获取认证的店铺类型
+     */
+    @ApiOperation( value = "获取认证的店铺类型", notes = "获取认证的店铺类型" )
+    @ResponseBody
+    @RequestMapping( value = "/categoryMap", method = RequestMethod.POST )
+    public ServerResponse categoryMap( HttpServletRequest request, HttpServletResponse response ) {
+	List< Map > categoryMap = null;
+	try {
+	    //获取认证的店铺类型
+	    categoryMap = dictService.getDict( "K002" );
+	    for ( Map map : categoryMap ) {
+		String value = (String) map.get( "item_value" );
+		JSONObject foorerObj = JSONObject.fromObject( value );
+		map.put( "value", foorerObj.get( "title" ) );//名称
+		map.put( "childList", foorerObj.get( "array" ) );//子级
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "获取认证的店铺类型异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取认证的店铺类型异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), categoryMap );
     }
 
     /**
@@ -141,6 +184,31 @@ public class MallStoreCertificationController extends BaseController {
 	    logger.error( "认证信息设置失效异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证信息设置失效异常" );
+	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
+
+    /**
+     * 修改审核状态
+     */
+    @ApiOperation( value = "修改审核状态", notes = "修改审核状态" )
+    @ResponseBody
+    @RequestMapping( value = "/updateStatus", method = RequestMethod.POST )
+    public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id,
+		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status ) {
+	try {
+	    MallStoreCertification certification = mallStoreCertService.selectById( id );
+	    certification.setCheckStatus( status );
+	    boolean flag = mallStoreCertService.updateById( certification );
+
+	    if ( !flag ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "修改审核状态异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }

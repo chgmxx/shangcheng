@@ -14,6 +14,7 @@ import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
+import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.*;
@@ -140,6 +141,8 @@ public class MallStoreNewController extends BaseController {
 	Map< String,Object > sto = new HashMap<>();
 	try {
 	    sto = mallStoreService.findShopByStoreId( id );
+	    String[] stoSmsTelephone = sto.get( "stoSmsTelephone" ).toString().split( ";" );
+	    sto.put( "stoSmsTelephone", stoSmsTelephone );
 	} catch ( Exception e ) {
 	    logger.error( "获取商家店铺信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -179,11 +182,21 @@ public class MallStoreNewController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 
 	    MallStore sto = com.alibaba.fastjson.JSONObject.parseObject( params.get( "obj" ).toString(), MallStore.class );
-	    if(CommonUtil.isNotEmpty( sto.getWxShopId() )){
-		WsWxShopInfo info=wxShopService.getShopById( sto.getWxShopId() );
-		sto.setStoLongitude(info.getLongitude()  );
+	    if ( CommonUtil.isNotEmpty( sto.getWxShopId()) && CommonUtil.isEmpty( sto.getId() ) ) {
+		WsWxShopInfo info = wxShopService.getShopById( sto.getWxShopId() );
+		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( sto.getWxShopId() );
+		sto.setStoName( info.getBusinessName() );
+		sto.setStoHouseMember( info.getDetail() );
+		sto.setStoAddress( info.getAddress() );
+		sto.setStoProvince( CommonUtil.toInteger( info.getProvince() ) );
+		sto.setStoCity( CommonUtil.toInteger( info.getCity() ) );
+		sto.setStoArea( CommonUtil.toInteger( info.getDistrict() ) );
+		sto.setStoLongitude( info.getLongitude() );
 		sto.setStoLatitude( info.getLatitude() );
-		sto.setStoHouseMember(  info.getDetail());
+
+		if ( photoList != null && photoList.size() > 0 ) {
+		    sto.setStoPicture( photoList.get( 0 ).getLocalAddress() );
+		}
 	    }
 	    sto.setStoUserId( SessionUtils.getLoginUser( request ).getId() );
 	    sto.setStoCreatePerson( SessionUtils.getLoginUser( request ).getId() );
