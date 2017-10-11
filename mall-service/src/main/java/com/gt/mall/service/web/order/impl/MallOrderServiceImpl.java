@@ -420,25 +420,26 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     public Map< String,Object > selectOrderList( Map< String,Object > params ) {
 	Map< String,Object > orderMap = new HashMap<>();
 	Map< String,Object > orders = mallOrderDAO.selectMapById( CommonUtil.toInteger( params.get( "orderId" ) ) );
-	orders.put( "nickname", CommonUtil.blob2String( orders.get( "nickname" ) ) );//修改值
-	List< Map< String,Object > > orderDetail = mallOrderDAO.selectOrderDetail( params );
-	orderMap.put( "orderInfo", orders );
-	orderMap.put( "orderDetail", orderDetail );
+	if ( CommonUtil.isNotEmpty( orders ) && orders.size() > 0 ) {
+	    orders.put( "nickname", CommonUtil.blob2String( orders.get( "nickname" ) ) );//修改值
+	    List< Map< String,Object > > orderDetail = mallOrderDAO.selectOrderDetail( params );
+	    orderMap.put( "orderInfo", orders );
+	    orderMap.put( "orderDetail", orderDetail );
 
-	if ( CommonUtil.isNotEmpty( orders ) ) {
-	    if ( orders.get( "delivery_method" ).toString().equals( "2" ) && CommonUtil.isNotEmpty( orders.get( "take_their_id" ) ) ) {//配送方式是到店自提
-		int takeId = CommonUtil.toInteger( orders.get( "take_their_id" ) );
-		MallTakeTheir take = mallTakeTheirService.selectById( takeId );
-		orderMap.put( "take", take );
-	    }
-	    if ( CommonUtil.isNotEmpty( orders.get( "express_id" ) ) ) {
-		String expressName = dictService.getDictRuturnValue( "1092", CommonUtil.toInteger( orders.get( "express_id" ) ) );
-		if ( CommonUtil.isNotEmpty( expressName ) ) {
-		    orderMap.put( "expressName", expressName );
+	    if ( CommonUtil.isNotEmpty( orders ) ) {
+		if ( orders.get( "delivery_method" ).toString().equals( "2" ) && CommonUtil.isNotEmpty( orders.get( "take_their_id" ) ) ) {//配送方式是到店自提
+		    int takeId = CommonUtil.toInteger( orders.get( "take_their_id" ) );
+		    MallTakeTheir take = mallTakeTheirService.selectById( takeId );
+		    orderMap.put( "take", take );
+		}
+		if ( CommonUtil.isNotEmpty( orders.get( "express_id" ) ) ) {
+		    String expressName = dictService.getDictRuturnValue( "1092", CommonUtil.toInteger( orders.get( "express_id" ) ) );
+		    if ( CommonUtil.isNotEmpty( expressName ) ) {
+			orderMap.put( "expressName", expressName );
+		    }
 		}
 	    }
 	}
-
 	return orderMap;
     }
 
@@ -1019,7 +1020,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					    productList.add( productMap );
 					}
 				    }
-
 				}
 			    }
 
@@ -1167,13 +1167,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	List< Map< String,Object > > orderList = new ArrayList<>();
 	int pageSize = 10;
 	int countOrder = mallOrderDAO.countMobileOrderList( params );
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil
-			.toInteger( params.get( "curPage" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 
 	PageUtil page = new PageUtil( curPage, pageSize, countOrder, "phoneOrder/79B4DE7C/orderList.do" );
-	int firstNum = pageSize
-			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 	params.put( "busUserId", busUserId );

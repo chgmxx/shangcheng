@@ -52,15 +52,15 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	int count = commentDAO.selectCommentCount( params );
 	result.put( "total",count );
 	//好评
-	params.put( "feel", 1 );
+	params.put( "feel", "1" );
 	int count1 = commentDAO.selectCommentCount( params );
 	result.put( "good",count1 );
 	//中评
-	params.put( "feel", 0 );
+	params.put( "feel", "0" );
 	int count2 = commentDAO.selectCommentCount( params );
 	result.put( "medium",count2 );
 	//差评
-	params.put( "feel", -1 );
+	params.put( "feel", "-1" );
 	int count3 = commentDAO.selectCommentCount( params );
 	result.put( "bad",count3 );
 

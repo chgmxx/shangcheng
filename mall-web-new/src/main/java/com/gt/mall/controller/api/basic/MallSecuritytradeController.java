@@ -120,7 +120,6 @@ public class MallSecuritytradeController extends BaseController {
 		    @ApiParam( name = "remark", value = "补充意见", required = false ) @RequestParam String remark ) {
 	try {
 	    MallSecuritytradeQuit quit = new MallSecuritytradeQuit();
-	    quit.setCheckStatus( 0 );
 	    quit.setQuitReasonId( quitReasonId );
 	    quit.setRemark( remark );
 	    quit.setUserId( SessionUtils.getLoginUser( request ).getId() );
@@ -145,6 +144,7 @@ public class MallSecuritytradeController extends BaseController {
 		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status,
 		    @ApiParam( name = "reason", value = "不通过理由", required = false ) @RequestParam String reason ) {
 	try {
+	    BusUser user = SessionUtils.getLoginUser( request );
 	    MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( id );
 	    quit.setCheckStatus( status );
 	    if ( status == 1 ) {
@@ -153,6 +153,13 @@ public class MallSecuritytradeController extends BaseController {
 		quit.setRefuseReason( reason );
 	    }
 	    boolean flag = mallSecuritytradeQuitService.updateById( quit );
+	    if ( status == 1 ) {
+		MallPaySet set = new MallPaySet();
+		set.setUserId( user.getId() );
+		set = mallPaySetService.selectByUserId( set );
+		set.setIsSecuritytrade( 0 );
+		mallPaySetService.updateById( set );
+	    }
 	    if ( !flag ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
 	    }

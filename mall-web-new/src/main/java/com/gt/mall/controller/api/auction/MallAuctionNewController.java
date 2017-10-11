@@ -234,9 +234,9 @@ public class MallAuctionNewController extends BaseController {
     }
 
     /**
-     * 退保证金异常
+     * 退保证金
      */
-    @ApiOperation( value = "退保证金异常", notes = "退保证金异常" )
+    @ApiOperation( value = "退保证金", notes = "退保证金" )
     @ResponseBody
     @RequestMapping( value = "/margin/agreedReturnMargin", method = RequestMethod.POST )
     public ServerResponse agreedReturnMargin( HttpServletRequest request, HttpServletResponse response,

@@ -103,6 +103,11 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
     @TableField( "is_delete" )
     private Integer isDelete;
     /**
+     * 审核状态 0未审核 1审核通过 -1审核不通过
+     */
+    @TableField( "check_status" )
+    private Integer checkStatus;
+    /**
      * 创建时间
      */
     @TableField( "create_time" )

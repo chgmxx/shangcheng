@@ -72,4 +72,18 @@ public class MallSecuritytradeQuit extends Model< MallSecuritytradeQuit > {
 	return this.id;
     }
 
+    @Override
+    public String toString() {
+        return "MallSecuritytradeQuit{" +
+                        "id=" + id +
+                        ", quitReasonId=" + quitReasonId +
+                        ", remark=" + remark +
+                        ", refuseReason=" + refuseReason +
+                        ", userId=" + userId +
+                        ", createTime=" + createTime +
+                        ", checkStatus=" + checkStatus +
+                        ", effectTime=" + effectTime +
+                        "}";
+    }
+
 }

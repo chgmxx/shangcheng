@@ -141,19 +141,19 @@ public class MallFreightNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/expressList", method = RequestMethod.POST )
     public ServerResponse expressList( HttpServletRequest request, HttpServletResponse response ) {
-	SortedMap< String,Object > map = new TreeMap<>();
+	List< Map > list= null;
 	try {
 	    //查询物流公司
-	    List< Map > list = dictService.getDict( "1092" );
-	    for ( Map map2 : list ) {
+	    list = dictService.getDict( "1092" );
+	    /*for ( Map map2 : list ) {
 		map.put( map2.get( "item_key" ).toString(), map2.get( "item_value" ) );
-	    }
+	    }*/
 	} catch ( Exception e ) {
 	    logger.error( "获取物流快递公司息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取物流快递公司异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), map );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list );
     }
 
     /**
