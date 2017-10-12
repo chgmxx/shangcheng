@@ -10,21 +10,15 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductInventory;
-import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
-import com.gt.mall.service.web.basic.MallImageAssociativeService;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
+import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
-import com.gt.mall.service.web.product.MallProductDetailService;
-import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.service.web.product.MallProductNewService;
-import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
@@ -98,9 +92,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	//查询店铺信息
 	Map< String,Object > storeMap = mallStoreService.findShopByStoreId( params.getShopId() );
 
-	//查询店铺的认证信息
-	MallStoreCertification certification = mallStoreCertificationService.selectByStoreId( params.getShopId() );
-
 	//查询商品是否已收藏
 	boolean isCollect = mallCollectService.getProductCollect( params.getProductId(), params.getBusId() );
 
@@ -119,11 +110,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		product.setIsSpecifica( 0 );
 	    }
 	}
-	//查询店铺信息
-	Map< String,Object > storeMap = mallStoreService.findShopByStoreId( params.getShopId() );
-
-	//查询店铺的认证信息
-	MallStoreCertification certification = mallStoreCertificationService.selectByStoreId( params.getShopId() );
 	if ( discount > 0 && discount < 1 ) {
 	    double hyPrice = CommonUtil.toDouble( df.format( productPrice * discount ) );
 	    resultMap.put( "hyPrice", hyPrice );//会员价
@@ -161,14 +147,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		provinces = storeMap.get( "" ).toString();
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( certification ) ) {
-	    resultMap.put( "isOfflineStores", 1 );//是否开通了线下门店
-
-	}
-	//查询是否开通了担保交易
-	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
-
-	}
 	if ( isCollect ) {
 	    resultMap.put( "isCollect", 1 );//是否已收藏
 	}
@@ -184,7 +162,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( CommonUtil.isNotEmpty( freightMap ) ) {
 	    resultMap.put( "freightMoney", freightMap.get( params.getShopId().toString() ) );
 	}
-
 
 	return resultMap;
     }

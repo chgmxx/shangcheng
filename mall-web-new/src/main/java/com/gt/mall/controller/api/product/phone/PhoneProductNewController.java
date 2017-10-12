@@ -18,12 +18,10 @@ import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleService;
-import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.service.web.seckill.MallSeckillService;
-import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
+import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
@@ -60,29 +58,31 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private static Logger logger = LoggerFactory.getLogger( PhoneProductNewController.class );
 
     @Autowired
-    private MallPageService       mallPageService;
+    private MallPageService               mallPageService;
     @Autowired
-    private MallHomeAppletService mallHomeAppletService;
+    private MallHomeAppletService         mallHomeAppletService;
     @Autowired
-    private MallStoreService      mallStoreService;
+    private MallStoreService              mallStoreService;
     @Autowired
-    private MallProductService    mallProductService;
+    private MallProductService            mallProductService;
     @Autowired
-    private MallGroupBuyService   mallGroupBuyService;
+    private MallGroupBuyService           mallGroupBuyService;
     @Autowired
-    private MallSeckillService    mallSeckillService;
+    private MallSeckillService            mallSeckillService;
     @Autowired
-    private MallAuctionService    mallAuctionService;
+    private MallAuctionService            mallAuctionService;
     @Autowired
-    private MallPresaleService    mallPresaleService;
+    private MallPresaleService            mallPresaleService;
     @Autowired
-    private MallPifaService       mallPifaService;
+    private MallPifaService               mallPifaService;
     @Autowired
-    private MallPaySetService     mallPaySetService;
+    private MallPaySetService             mallPaySetService;
     @Autowired
-    private MallProductNewService mallProductNewService;
+    private MallProductNewService         mallProductNewService;
     @Autowired
-    private BusUserService        busUserService;
+    private BusUserService                busUserService;
+    @Autowired
+    private MallStoreCertificationService mallStoreCertificationService;
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口" )
     @ResponseBody
@@ -200,6 +200,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    result.put( "isAdvert", 1 );//是否显示技术支持  1显示
 		}
 	    }
+	    //获取商家的认证信息
+	    result.putAll( mallStoreCertificationService.getStoreServiceByShopId( params.getShopId(), params.getBusId() ) );
 
 	} catch ( BusinessException e ) {
 	    logger.error( "商品搜索接口异常：" + e.getMessage() );
