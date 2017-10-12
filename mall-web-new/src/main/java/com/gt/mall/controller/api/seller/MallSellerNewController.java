@@ -201,7 +201,7 @@ public class MallSellerNewController extends BaseController {
     @SysLogAnnotation( description = "商品佣金的删除或失效", op_function = "4" )
     @RequestMapping( value = "/setJoinProductStatus", method = RequestMethod.POST )
     public ServerResponse setJoinProductStatus( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "秒杀Id", required = true ) @RequestParam Integer id,
+		    @ApiParam( name = "id", value = "商品佣金Id", required = true ) @RequestParam Integer id,
 		    @ApiParam( name = "type", value = "类型 -1禁用 -2启用 -3删除", required = true ) @RequestParam Integer type ) {
 	try {
 
@@ -257,10 +257,12 @@ public class MallSellerNewController extends BaseController {
 		    check = CommonUtil.toInteger( set.getIsCheckSeller() );
 		}
 	    }
+	    result.put( "isCheckSeller", check );
 	    if ( check == 1 ) {
 		PageUtil page = mallSellerService.selectCheckSeller( user.getId(), params );
 		result.put( "page", page );
 	    }
+
 	} catch ( Exception e ) {
 	    logger.error( "销售员审核列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -274,11 +276,11 @@ public class MallSellerNewController extends BaseController {
      */
     @ApiOperation( value = "审核销售员信息", notes = "审核销售员信息" )
     @ResponseBody
-    @SysLogAnnotation( description = "商品佣金的删除或失效", op_function = "4" )
+    @SysLogAnnotation( description = "审核销售员信息", op_function = "4" )
     @RequestMapping( value = "/checkSeller", method = RequestMethod.POST )
     public ServerResponse checkSeller( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "销售员ID", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "type", value = "审核状态 1通过 -1不通过 ", required = true ) @RequestParam Integer checkStatus ) {
+		    @ApiParam( name = "checkStatus", value = "审核状态 1通过 -1不通过 ", required = true ) @RequestParam Integer checkStatus ) {
 	try {
 	    //	    seller:{"id":22,"checkStatus":1}
 	    Map< String,Object > params = new HashMap<>();

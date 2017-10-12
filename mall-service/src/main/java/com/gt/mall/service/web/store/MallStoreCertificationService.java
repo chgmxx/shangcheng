@@ -25,13 +25,13 @@ public interface MallStoreCertificationService extends BaseService< MallStoreCer
     MallStoreCertification selectByStoreId( Integer storeId );
 
     /**
-     * 获取手机验证码
+     * 获取店铺开启的服务
      *
-     * @param mobile
-     * @param busId
+     * @param shopId
+     * @param userId
      *
      * @return
      */
-    boolean getValCode( String mobile, Integer busId );
+    Map< String,Object > getStoreServiceByShopId( Integer shopId, Integer userId );
 
 }

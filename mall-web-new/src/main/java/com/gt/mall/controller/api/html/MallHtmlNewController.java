@@ -62,7 +62,6 @@ public class MallHtmlNewController extends BaseController {
     @Autowired
     private BusUserService      busUserService;
 
-
     @ApiOperation( value = "h5商城列表(分页)", notes = "h5商城列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "pageNum", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
@@ -150,19 +149,19 @@ public class MallHtmlNewController extends BaseController {
     }
 
     /**
-     * 获取模板信息
+     * 获取h5商城信息
      */
-    @ApiOperation( value = "获取模板信息", notes = "获取模板信息" )
+    @ApiOperation( value = "获取h5商城信息", notes = "获取h5商城信息" )
     @ResponseBody
     @RequestMapping( value = "/htmlInfo", method = RequestMethod.POST )
-    public ServerResponse htmlInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板ID", required = true ) @RequestParam Integer id ) {
+    public ServerResponse htmlInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "h5ID", required = true ) @RequestParam Integer id ) {
 	MallHtml obj = null;
 	try {
 	    obj = htmlService.selectById( id );
 	} catch ( Exception e ) {
-	    logger.error( "获取模板信息异常：" + e.getMessage() );
+	    logger.error( "获取h5商城信息异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取模板信息异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取h5商城信息异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), obj );
     }
@@ -215,21 +214,21 @@ public class MallHtmlNewController extends BaseController {
     }
 
     /**
-     * 删除h5模板
+     * 删除h5商城
      */
-    @ApiOperation( value = "删除h5模板", notes = "删除h5模板" )
+    @ApiOperation( value = "删除h5商城", notes = "删除h5商城" )
     @ResponseBody
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
-    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板id", required = true ) @RequestParam Integer id ) {
+    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "h5ID", required = true ) @RequestParam Integer id ) {
 	try {
 
 	    htmlService.deleteById( id );
 	} catch ( BusinessException e ) {
-	    logger.error( "删除h5模板异常：" + e.getMessage() );
+	    logger.error( "删除h5商城异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "删除h5模板异常：" + e.getMessage() );
+	    logger.error( "删除h5商城异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
@@ -237,9 +236,9 @@ public class MallHtmlNewController extends BaseController {
     }
 
     /**
-     * 获取模板表单列表
+     * 获取h5表单列表
      */
-    @ApiOperation( value = "获取模板表单列表", notes = "获取模板表单列表" )
+    @ApiOperation( value = "获取h5表单列表", notes = "获取h5表单列表" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "pageNum", value = "页数", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "id", value = "模板Id", paramType = "query", required = false, dataType = "int" ) } )
@@ -249,28 +248,28 @@ public class MallHtmlNewController extends BaseController {
 	try {
 	    map = htmlFromService.htmlListfrom( request );
 	} catch ( Exception e ) {
-	    logger.error( "获取模板表单列表异常：" + e.getMessage() );
+	    logger.error( "获取h5表单列表异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取模板表单列表异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取h5表单列表异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), map );
     }
 
     /**
-     * 查看模板表单详情
+     * 查看h5表单详情
      */
-    @ApiOperation( value = "查看模板表单详情", notes = "查看模板表单详情" )
+    @ApiOperation( value = "查看h5表单详情", notes = "查看h5表单详情" )
     @ResponseBody
     @RequestMapping( value = "/htmlFromView", method = RequestMethod.POST )
     public ServerResponse htmlFromView( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "模板表单id", required = true ) @RequestParam Integer id ) {
+		    @ApiParam( name = "id", value = "h5表单id", required = true ) @RequestParam Integer id ) {
 	Map< String,Object > map = new HashMap<>();
 	try {
 	    map = htmlFromService.htmlfromview( request );
 	} catch ( Exception e ) {
-	    logger.error( "查看模板表单详情异常：" + e.getMessage() );
+	    logger.error( "查看h5表单详情异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查看模板表单详情异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查看h5表单详情异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), map );
     }
@@ -294,11 +293,11 @@ public class MallHtmlNewController extends BaseController {
     }
 
     /**
-     * 页面设计保存
+     * 表单页面设计保存
      */
-    @ApiOperation( value = "页面设计保存", notes = "页面设计保存" )
+    @ApiOperation( value = "表单页面设计保存", notes = "表单页面设计保存" )
     @ResponseBody
-    @SysLogAnnotation( description = "页面设计保存", op_function = "2" )
+    @SysLogAnnotation( description = "表单页面设计保存", op_function = "2" )
     @RequestMapping( value = "/htmlSave", method = RequestMethod.POST )
     public ServerResponse htmlSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
@@ -306,11 +305,11 @@ public class MallHtmlNewController extends BaseController {
 	    MallHtml obj = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallHtml.class );
 	    htmlService.htmlSave( obj, user );
 	} catch ( BusinessException e ) {
-	    logger.error( "页面设计保存异常：" + e.getMessage() );
+	    logger.error( "表单页面设计保存异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "页面设计保存异常：" + e.getMessage() );
+	    logger.error( "表单页面设计保存异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}

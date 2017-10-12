@@ -46,6 +46,7 @@ import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
+import com.gt.mall.service.web.order.MallDaifuService;
 import com.gt.mall.service.web.order.MallOrderNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.presale.MallPresaleService;
@@ -196,6 +197,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Autowired
     private MallOrderNewService mallOrderNewService;
+    @Autowired
+    private MallDaifuService    mallDaifuService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params ) {
@@ -423,6 +426,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( CommonUtil.isNotEmpty( orders ) && orders.size() > 0 ) {
 	    orders.put( "nickname", CommonUtil.blob2String( orders.get( "nickname" ) ) );//修改值
 	    List< Map< String,Object > > orderDetail = mallOrderDAO.selectOrderDetail( params );
+	    if ( CommonUtil.toInteger( orders.get( "order_pay_way" ) ) == 7 ) {
+		MallDaifu daifu = mallDaifuService.selectByDfOrderNo( orders.get( "order_no" ).toString() );
+		orderMap.put( "daifu", daifu );
+	    }
 	    orderMap.put( "orderInfo", orders );
 	    orderMap.put( "orderDetail", orderDetail );
 

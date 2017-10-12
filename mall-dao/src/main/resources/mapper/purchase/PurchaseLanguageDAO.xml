@@ -49,17 +49,14 @@
     <select id="findLanguangeDetails" resultType="Map" parameterType="com.gt.mall.entity.purchase.PurchaseLanguage">
         select
         l.id,
-        m.headimgurl,
-        m.nickname,
+        l.member_id,
         l.language_time,
         l.order_id,
         l.admin_content,
         l.language_content
         from purchase_language l
-        left join
-        t_wx_bus_member m on m.id = l.member_id
-        where order_id =#{orderId} and
-        l.member_id=#{memberId}
+        where order_id =#{orderId}
+        and l.member_id=#{memberId}
         order by language_time desc
     </select>
     <select id="findLanguangeNotRead" resultMap="BaseResultMap">

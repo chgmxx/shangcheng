@@ -135,16 +135,12 @@ public class MallOrderNewController extends BaseController {
     @RequestMapping( value = "/orderInfo", method = RequestMethod.POST )
     public ServerResponse orderInfo( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "订单ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > result = new HashMap<>(  );
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "orderId", id );
 	    Map< String,Object > orderList = mallOrderService.selectOrderList( params );
 	    result.putAll( orderList );
-	   /* if ( order.getOrderPayWay() == 7 ) {
-		MallDaifu daifu = mallDaifuService.selectByDfOrderNo( order.getOrderNo() );
-		request.setAttribute( "daifu", daifu );
-	    }*/
 
 	    Wrapper< MallOrderReturn > returnWrapper = new EntityWrapper<>();
 	    returnWrapper.where( "order_id ={0}", id );
@@ -163,7 +159,7 @@ public class MallOrderNewController extends BaseController {
      * 添加卖家备注、修改订单金额
      * 取消订单理由、订单发货
      */
-    @ApiOperation( value = "修改审核状态", notes = "修改审核状态" )
+    @ApiOperation( value = "修改状态", notes = "修改状态" )
     @ResponseBody
     @SysLogAnnotation( op_function = "3", description = "添加添加卖家备注、修改订单金额、取消订单理由、订单发货" )
     @RequestMapping( value = "/updateStatus", method = RequestMethod.POST )
@@ -215,13 +211,13 @@ public class MallOrderNewController extends BaseController {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
 	    }
 	} catch ( BusinessException e ) {
-	    logger.error( "修改审核状态异常：" + e.getMessage() );
+	    logger.error( "修改状态异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "修改审核状态异常：" + e.getMessage() );
+	    logger.error( "修改状态异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改状态异常" );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
@@ -271,37 +267,6 @@ public class MallOrderNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "判断团购商品是否可以发货异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag );
-    }
-
-    /**
-     * 查询退款信息
-     */
-    @ApiOperation( value = "查询退款信息", notes = "查询退款信息" )
-    @ResponseBody
-    @RequestMapping( value = "/returnPopUp", method = RequestMethod.POST )
-    public ServerResponse returnPopUp( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	Map< String,Object > result = null;
-	try {
-	    //rId=" + rId + "&type=-1" + "&oNo=" + oNo + "&orderPayNo=" + orderPayNo
-	    if ( !CommonUtil.isEmpty( params.get( "rId" ) ) ) {
-		Integer returnId = CommonUtil.toInteger( params.get( "rId" ).toString() );
-		MallOrderReturn oReturn = mallOrderService.selectByDId( returnId );
-		if ( oReturn != null ) {
-		    MallOrder order = mallOrderService.selectById( oReturn.getOrderId() );
-		    if ( order.getOrderPayWay() == 7 ) {
-			MallDaifu daifu = mallDaifuService.selectByDfOrderNo( order.getOrderNo() );
-			result.put( "daifu", daifu );
-		    }
-		    result.put( "order", order );
-		}
-		result.put( "oReturn", oReturn );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "查询退款信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询退款信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**

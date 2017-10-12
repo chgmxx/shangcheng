@@ -7,6 +7,7 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Card;
 import com.gt.mall.bean.Member;
+import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
@@ -200,11 +201,11 @@ public class PurchaseOrderNewController extends BaseController {
     }
 
     /**
-     * 修改订单状态
+     * 修改报价单状态
      */
-    @ApiOperation( value = "修改订单状态", notes = "修改订单状态" )
+    @ApiOperation( value = "修改报价单状态", notes = "修改报价单状态" )
     @ResponseBody
-    @SysLogAnnotation( description = "修改订单状态", op_function = "4" )
+    @SysLogAnnotation( description = "修改报价单状态", op_function = "4" )
     @RequestMapping( value = "/updateStatus", method = RequestMethod.POST )
     public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "orderId", value = "报价单Id", required = true ) @RequestParam Integer orderId,
@@ -230,9 +231,9 @@ public class PurchaseOrderNewController extends BaseController {
 		//		userConsumeMapper.insertSelective(uc);
 	    }
 	} catch ( Exception e ) {
-	    logger.error( "修改订单状态异常：" + e.getMessage() );
+	    logger.error( "修改报价单状态异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改订单状态异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改报价单状态异常" );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
@@ -250,9 +251,7 @@ public class PurchaseOrderNewController extends BaseController {
 	try {
 	    Member member = memberService.findMemberById( memberId, null );//查询用户信息
 	    if ( member != null && member.getMcId() != null ) { //如果用户存在会员卡
-		//TODO 会员卡信息 Card
-		Card card = null;
-		//		cardMapper.selectByPrimaryKey(member.getMcId()); // 查询会员卡信息
+		MemberCard card =memberService.findMemberCardByMcId(member.getMcId());// 查询会员卡信息
 		result.put( "card", card );
 	    }
 	    result.put( "member", member );
@@ -319,10 +318,12 @@ public class PurchaseOrderNewController extends BaseController {
 	    //查询留言
 	    languageDetailList = languageDAO.findLanguangeDetails( language );
 	    for ( int i = 0; i < languageDetailList.size(); i++ ) {
-		if ( languageDetailList.get( i ).containsKey( "nickname" ) ) {
+		Member member = memberService.findMemberById( CommonUtil.toInteger( languageDetailList.get( i ).get( "member_id" ) ), null );
+		languageDetailList.get( i ).put( "headimgurl", member.getHeadimgurl() );
+		if ( CommonUtil.isNotEmpty( member.getNickname() ) ) {
 		    try {
-			byte[] bytes = (byte[]) languageDetailList.get( i ).get( "nickname" );
-			languageDetailList.get( i ).put( "nickname", new String( bytes, "UTF-8" ) );
+			String bytes = member.getNickname();
+			languageDetailList.get( i ).put( "nickname", new String( bytes.getBytes(), "UTF-8" ) );
 		    } catch ( Exception e ) {
 			languageDetailList.get( i ).put( "nickname", null );
 		    }
@@ -364,8 +365,8 @@ public class PurchaseOrderNewController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "nickname", value = "姓名", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "orderId", value = "报价单ID", paramType = "query", required = true, dataType = "int" ) } )
-    @RequestMapping( value = "/statistics/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String nickname, Integer orderId ) {
+    @RequestMapping( value = "/statisticsList", method = RequestMethod.POST )
+    public ServerResponse statisticsList( HttpServletRequest request, HttpServletResponse response, Integer curPage, String nickname, Integer orderId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser busUser = SessionUtils.getLoginUser( request );
