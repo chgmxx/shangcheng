@@ -1,36 +1,22 @@
 package com.gt.mall.controller.api.store;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.entity.basic.MallSecuritytradeQuit;
-import com.gt.mall.entity.page.MallPage;
-import com.gt.mall.entity.presale.MallPresaleTime;
-import com.gt.mall.entity.purchase.PurchaseCarousel;
-import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
-import com.gt.mall.service.web.order.MallOrderReturnService;
-import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
-import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.SessionUtils;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -38,13 +24,18 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -67,6 +58,10 @@ public class MallStoreCertificationController extends BaseController {
     private DictService                   dictService;
     @Autowired
     private MallImageAssociativeService   imageAssociativeService;
+    @Autowired
+    private MallCommonService             mallCommonService;
+    @Autowired
+    private WxPublicUserService           wxPublicUserService;
 
     /**
      * 保存店铺认证信息
@@ -223,10 +218,14 @@ public class MallStoreCertificationController extends BaseController {
 		    @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    boolean result = mallStoreCertService.getValCode( mobile, user.getId() );
-	    if ( result ) {
-		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
-	    } else {
+	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
+	    String no = CommonUtil.getPhoneCode();
+	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
+	    System.out.println( "店铺认证短信验证码：" + no );
+	    String content = pbUser.getAuthorizerInfo() + "  提醒您，您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。";
+
+	    boolean result = mallCommonService.getValCode( mobile, user.getId(), content, pbUser.getAuthorizerInfo() );
+	    if ( !result ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
 	    }
 	} catch ( Exception e ) {
@@ -234,6 +233,7 @@ public class MallStoreCertificationController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取短信验证码异常" );
 	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
  /*   *//**

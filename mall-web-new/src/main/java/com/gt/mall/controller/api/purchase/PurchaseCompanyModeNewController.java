@@ -78,8 +78,8 @@ public class PurchaseCompanyModeNewController extends BaseController {
      */
     @ApiOperation( value = "获取公司模板信息", notes = "获取公司模板信息" )
     @ResponseBody
-    @RequestMapping( value = "/contractInfo", method = RequestMethod.POST )
-    public ServerResponse contractInfo( HttpServletRequest request, HttpServletResponse response,
+    @RequestMapping( value = "/companyInfo", method = RequestMethod.POST )
+    public ServerResponse companyInfo( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "公司模板ID", required = true ) @RequestParam Integer id ) {
 	PurchaseCompanyMode company = null;
 	try {

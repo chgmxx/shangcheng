@@ -108,19 +108,19 @@ public class MallPifaNewController extends BaseController {
     /**
      * 获取批发信息
      */
-    @ApiOperation( value = "获取批发商品信息", notes = "获取批发商品信息" )
+    @ApiOperation( value = "获取批发信息", notes = "获取批发信息" )
     @ResponseBody
-    @RequestMapping( value = "/groupBuyInfo", method = RequestMethod.POST )
-    public ServerResponse groupBuyInfo( HttpServletRequest request, HttpServletResponse response,
+    @RequestMapping( value = "/pifaInfo", method = RequestMethod.POST )
+    public ServerResponse pifaInfo( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "批发ID", required = true ) @RequestParam Integer id ) {
 	Map< String,Object > groupMap = null;
 	try {
 	    // 根据批发id查询批发信息
 	    groupMap = mallPifaService.selectPifaById( id );
 	} catch ( Exception e ) {
-	    logger.error( "获取批发商品信息异常：" + e.getMessage() );
+	    logger.error( "获取批发信息异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取批发商品信息异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取批发信息异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), groupMap );
     }
@@ -196,20 +196,20 @@ public class MallPifaNewController extends BaseController {
     @ApiOperation( value = "批发商列表(分页)", notes = "批发商列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "type", value = "活动状态", paramType = "query", required = false, dataType = "int" ) } )
+		    @ApiImplicitParam( name = "keyword", value = "关键词", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/wholesalers/list", method = RequestMethod.POST )
-    public ServerResponse wholesalersList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type ) {
+    public ServerResponse wholesalersList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer keyword ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
-	    params.put( "type", type );
+	    params.put( "keyword", keyword );
 	    params.put( "userId", user.getId() );
 	    PageUtil page = mallPifaService.wholesalerList( params );
-	    request.setAttribute( "page", page );
-	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "84" ) );
+	    result.put( "page", page );
+	    result.put( "videourl", busUserService.getVoiceUrl( "84" ) );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取批发商列表异常：" + e.getMessage() );
@@ -228,8 +228,8 @@ public class MallPifaNewController extends BaseController {
     @RequestMapping( value = "/wholesalers/updateStatus", method = RequestMethod.POST)
     public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "批发Id", required = true ) @RequestParam String ids,
-		    @ApiParam( name = "status", value = "审核  1通过 -1不通过", required = true ) @RequestParam Integer status,
-		    @ApiParam( name = "isUse", value = "是否启用 1启用 -1禁用", required = true ) @RequestParam Integer isUse ) {
+		    @ApiParam( name = "status", value = "审核  1通过 -1不通过", required = false ) @RequestParam Integer status,
+		    @ApiParam( name = "isUse", value = "是否启用 1启用 -1禁用", required = false ) @RequestParam Integer isUse ) {
 	try {
 	    if ( !CommonUtil.isEmpty( ids ) ) {
 		String[] str = ( ids.toString() ).split( "," );

@@ -21,6 +21,7 @@
         pos.id,
         pos.look_date,
         pos.look_ip
+        pos.member_id
 --         twb.nickname,
 --         twb.headimgurl
         from purchase_order_statistics pos

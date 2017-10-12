@@ -81,9 +81,9 @@ public class MallStoreNewController extends BaseController {
 		int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
 		if ( store >= branchCount ) {
 		    countnum = 1;
-		    result.put( "isShopAdd", countnum );//是否新增店铺
 		}
 		result.put( "page", page );
+		result.put( "isShopAdd", countnum );//是否新增店铺
 	    }
 
 	    result.put( "videourl", busUserService.getVoiceUrl( "8" ) );
@@ -321,7 +321,7 @@ public class MallStoreNewController extends BaseController {
     @ResponseBody
     @SysLogAnnotation( description = "保存配色风格", op_function = "2" )
     @RequestMapping( value = "/saveStyle", method = RequestMethod.POST )
-    public ServerResponse saveStyle( HttpServletRequest request, HttpServletResponse response, @ApiParam( value = "配色key", required = true ) @RequestParam String styleKey )
+    public ServerResponse saveStyle( HttpServletRequest request, HttpServletResponse response, @ApiParam( value = "配色key", required = true ) @RequestParam Integer styleKey )
 		    throws IOException {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
