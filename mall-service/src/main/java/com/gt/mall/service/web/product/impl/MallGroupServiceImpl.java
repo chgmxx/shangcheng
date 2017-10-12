@@ -9,6 +9,8 @@ import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.product.*;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.*;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.service.web.product.MallGroupService;
@@ -73,7 +75,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	    }
 	    List< Map< String,Object > > groupList = mallGroupDAO.selectGroupByPage( param );
 	    List< Integer > groupIds = new ArrayList<>();
-	    if ( groupList != null && groupList.size() > 0 && param.containsKey( "isProNum" )) {
+	    if ( groupList != null && groupList.size() > 0 && param.containsKey( "isProNum" ) ) {
 		for ( Map< String,Object > map : groupList ) {
 		    groupIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
 		}
@@ -341,7 +343,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	if ( count > 0 ) {
 	    return true;
 	}
-	return false;
+	throw new BusinessException( ResponseEnums.ERROR.getCode(), "清空历史搜索接口失败" );
     }
 
     @Override
@@ -382,10 +384,10 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
     @Override
     public Map< String,Object > selectGroupBySearchName( String searchName ) {
 	//select id,group_p_id,id from t_mall_group where group_name like '%" + params.get( "proName" ) + "%'
-	Wrapper wrapper = new EntityWrapper();
+	Wrapper< MallGroup > wrapper = new EntityWrapper<>();
 	wrapper.setSqlSelect( "id,group_p_id" );
 	wrapper.like( "group_name", searchName );
-	List< Map< String,Object > > groupList = mallGroupDAO.selectList( wrapper );
+	List< Map< String,Object > > groupList = mallGroupDAO.selectMaps( wrapper );
 	if ( groupList != null && groupList.size() > 0 ) {
 	    return groupList.get( 0 );
 	}

@@ -4,6 +4,7 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -134,4 +135,7 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
      * @return 是否可以退款
      */
     int groupIsReturn( int groupBuyId, String orderType, Object orderId, Object detailId, MallGroupBuy buy );
+
+
+    PageUtil searchGroupBuyProduct( PhoneSearchProductDTO searchProductDTO, Member member);
 }

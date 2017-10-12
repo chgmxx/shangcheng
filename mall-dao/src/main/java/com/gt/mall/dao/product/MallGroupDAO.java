@@ -23,28 +23,22 @@ public interface MallGroupDAO extends BaseMapper< MallGroup > {
 
     /**
      * 分页查找商品分组
-     *
-     * @param param
-     *
-     * @return
      */
     List< Map< String,Object > > selectGroupByPage( Map< String,Object > param );
 
     /**
      * 通过父类分组查询子类列表
-     *
-     * @param param
-     *
-     * @return
      */
     List< Map< String,Object > > selectGroupByParent( Map< String,Object > param );
 
     /**
      * 批量修改
-     *
-     * @Title: updateByGroupId
      */
     void updateByGroupId( List< MallGroup > groupList );
 
+    /**
+     * 根据店铺id查询分组信息
+     */
+    List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > param );
 
 }

@@ -7,7 +7,6 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
-import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
@@ -421,6 +420,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    storeMap.put( "wxShopId", wxShops.getId() );
 			    storeMap.put( "stoLongitude", wxShops.getLongitude() );
 			    storeMap.put( "stoLatitude", wxShops.getLatitude() );
+			    storeMap.put( "stoPhone", wxShops.getTelephone() );
 			    break;
 			}
 		    }

@@ -99,7 +99,8 @@
     <!-- 根据秒杀分页 -->
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map">
         select
-        <include refid="page_Column_List"/> ,s.wx_shop_id
+        <include refid="page_Column_List"/>
+        ,s.wx_shop_id
         from t_mall_seckill g
         left join t_mall_store s on g.shop_id = s.id
         left join t_mall_seckill_join j on g.id=j.seckill_id
@@ -307,6 +308,83 @@
             </foreach>
         </if>
         GROUP BY gb.`product_id`
+    </select>
+
+
+    <!-- 获取店铺下所有正在参加秒杀的商品 -->
+    <select id="selectGoingSeckillProduct" resultType="Map">
+        SELECT
+        a.id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica, a.shop_id , a.return_day,a.pro_sale_total,a.sales_base,
+        gb.id as activityId,gb.s_price as price ,gb.s_start_time as startTime ,gb.s_end_time as endTime
+        from t_mall_seckill gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+        /*left join t_mall_group g on g.id=pg.group_id and g.is_delete=0*/
+        WHERE gb.is_delete=0 and gb.is_use=1
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        and ((gb.s_start_time &lt;= now() and now() &lt; gb.s_end_time ) or (gb.s_start_time > now() and gb.s_end_time > now()))
+
+        <if test="searchContent != null and searchContent != ''">
+            /*and (a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        GROUP BY a.id
+        <if test="isNews == 1"><!-- 最新排序 -->
+            order by gb.id
+        </if>
+        <if test="isSale == 2"><!-- 销量排序 -->
+            order by a.pro_sale_total+a.sales_base
+        </if>
+        <if test="isPrice == 3"><!-- 价格排序 -->
+            order by gb.s_price
+        </if>
+        <if test="isDesc == 1 or isNews == 1 or isSale == 1">
+            desc
+        </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+
+    <!-- 统计正在参加秒杀的商品 -->
+    <select id="selectCountGoingSeckillProduct" resultType="java.lang.Integer">
+        SELECT
+        count(a.id)
+        from t_mall_seckill gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+        /*left join t_mall_group g on g.id=pg.group_id and g.is_delete=0*/
+        WHERE gb.is_delete=0 and gb.is_use=1
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        /*and ((gb.s_start_time &lt;= now() and now() &lt; gb.s_end_time ) or (gb.s_start_time > now() and gb.s_end_time > now()))*/
+        and gb.s_start_time &lt;= now() and now() &lt; gb.s_end_time
+
+        <if test="searchContent != null and searchContent != ''">
+            /*and (a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
     </select>
 
 </mapper>

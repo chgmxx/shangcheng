@@ -90,12 +90,29 @@ public class MallCollectServiceImpl extends BaseServiceImpl< MallCollectDAO,Mall
 	if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
 
 	    //            Integer[] ids = (Integer[]) JSONArray.toArray(JSONArray.fromObject(params.get("ids")), Integer.class);
-	    Integer[] ids = (Integer[]) JSONArray.toJSON( JSONArray.parseObject( params.get( "ids" ).toString())) ;
+	    Integer[] ids = (Integer[]) JSONArray.toJSON( JSONArray.parseObject( params.get( "ids" ).toString() ) );
 	    params.put( "ids", ids );
 
 	    int count = collectDAO.batchUpdateCollect( params );
 	    if ( count > 0 ) {
 		return true;
+	    }
+	}
+	return false;
+    }
+
+    @Override
+    public boolean getProductCollect( int proId, int userId ) {
+	int id = 0;
+	MallCollect mallCollect = new MallCollect();
+	mallCollect.setUserId( userId );
+	mallCollect.setProductId( proId );
+	MallCollect collect = collectDAO.selectOne( mallCollect );
+	if ( CommonUtil.isNotEmpty( collect ) ) {
+	    if ( CommonUtil.isNotEmpty( collect.getId() ) ) {
+		if ( collect.getIsDelete().toString().equals( "1" ) ) {
+		    return true;
+		}
 	    }
 	}
 	return false;

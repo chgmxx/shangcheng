@@ -179,9 +179,9 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-         and ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time) or (gb.g_start_time > now() and gb.g_end_time > now())) limit 1
+        and ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time) or (gb.g_start_time > now() and gb.g_end_time > now())) limit 1
     </select>
-    <select id="selectSeckillByProId"  parameterType="java.util.List" resultType="Map">
+    <select id="selectSeckillByProId" parameterType="java.util.List" resultType="Map">
         select ms.s_start_time,ms.s_end_time,ms.product_id from t_mall_seckill ms
         where ms.is_delete = 0 and ms.is_use = 1
         <if test="products != null ">
@@ -190,11 +190,11 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        and  ((ms.s_start_time &lt;= now() and now() &lt; ms.s_end_time) or (ms.s_start_time > now() and ms.s_end_time > now())) limit 1
+        and ((ms.s_start_time &lt;= now() and now() &lt; ms.s_end_time) or (ms.s_start_time > now() and ms.s_end_time > now())) limit 1
     </select>
-    <select id="selectAuctionByProId"  parameterType="java.util.List" resultType="Map">
-        select ma.auc_start_time,ma.auc_end_time,ma.product_id  from t_mall_auction ma
-        where  ma.is_delete = 0 and ma.is_use = 1
+    <select id="selectAuctionByProId" parameterType="java.util.List" resultType="Map">
+        select ma.auc_start_time,ma.auc_end_time,ma.product_id from t_mall_auction ma
+        where ma.is_delete = 0 and ma.is_use = 1
         <if test="products != null ">
             and ma.product_id in
             <foreach collection="products" index="index" item="item" open="(" separator="," close=")">
@@ -203,8 +203,8 @@
         </if>
         and ((ma.auc_start_time &lt;= now() and now() &lt; ma.auc_end_time) or (ma.auc_start_time > now() and ma.auc_end_time > now())) limit 1
     </select>
-    <select id="selectPresaleByProId"  parameterType="java.util.List" resultType="Map">
-        select ma.sale_start_time,ma.sale_end_time,ma.product_id  from t_mall_presale ma
+    <select id="selectPresaleByProId" parameterType="java.util.List" resultType="Map">
+        select ma.sale_start_time,ma.sale_end_time,ma.product_id from t_mall_presale ma
         where ma.is_delete = 0 and ma.is_use = 1
         <if test="products != null ">
             and ma.product_id in
@@ -212,10 +212,10 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        and  ((ma.sale_start_time &lt;= now() and now() &lt; ma.sale_end_time) or (ma.sale_start_time > now() and ma.sale_end_time > now())) limit 1
+        and ((ma.sale_start_time &lt;= now() and now() &lt; ma.sale_end_time) or (ma.sale_start_time > now() and ma.sale_end_time > now())) limit 1
     </select>
-    <select id="selectpifaByProId"  parameterType="java.util.List" resultType="Map">
-        select ma.pf_start_time,ma.pf_end_time,ma.product_id  from t_mall_pifa ma
+    <select id="selectpifaByProId" parameterType="java.util.List" resultType="Map">
+        select ma.pf_start_time,ma.pf_end_time,ma.product_id from t_mall_pifa ma
         where ma.is_delete = 0 and ma.is_use = 1
         <if test="products != null ">
             and ma.product_id in
@@ -404,5 +404,77 @@
             </foreach>
         </if>
         GROUP BY gb.`product_id`
+    </select>
+
+
+    <!-- 正在进行的团购的商品 -->
+    <select id="selectGoingGroupProduct" resultType="Map">
+        SELECT
+        a.id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica, a.shop_id , a.return_day,a.pro_sale_total,a.sales_base,
+        gb.id AS activityId,gb.g_price AS price ,gb.g_start_time AS startTime ,gb.g_end_time AS endTime,gb.g_people_num AS peopleNum
+        FROM t_mall_group_buy gb
+        LEFT JOIN t_mall_product a ON a.id = gb.product_id AND gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+        </if>
+        /*LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0*/
+        WHERE gb.is_delete=0 AND gb.is_use=1
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
+        <if test="searchContent != null and searchContent != ''">
+            /*and ( a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        GROUP BY a.id
+        <if test="isNews == 1"><!-- 最新排序 -->
+            order by gb.id
+        </if>
+        <if test="isSale == 1"><!-- 销量排序 -->
+            order by a.pro_sale_total+a.sales_base
+        </if>
+        <if test="isPrice == 1"><!-- 价格排序 -->
+            order by gb.g_price
+        </if>
+        <if test="isDesc == 1 or isNews == 1 or isSale == 1">
+            desc
+        </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+
+    <select id="selectCountGoingGroupProduct" resultType="java.lang.Integer">
+        SELECT count(a.id)
+        FROM t_mall_group_buy gb
+        LEFT JOIN t_mall_product a ON a.id = gb.product_id AND gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+        </if>
+        /*LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0*/
+        WHERE gb.is_delete=0 AND gb.is_use=1
+        and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="searchContent != null and searchContent != ''">
+            /*and ( a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
     </select>
 </mapper>

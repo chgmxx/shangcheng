@@ -158,4 +158,11 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 	}
 	return footerMap;
     }
+
+    @Override
+    public MallPaySet selectByUserId( int busId ) {
+	MallPaySet set = new MallPaySet();
+	set.setUserId( busId );
+	return paySetDAO.selectOne( set );
+    }
 }

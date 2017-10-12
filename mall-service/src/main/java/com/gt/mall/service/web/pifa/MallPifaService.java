@@ -4,6 +4,7 @@ import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -97,4 +98,9 @@ public interface MallPifaService extends BaseService< MallPifa > {
      * @return 批发价
      */
     public double getPifaPriceByProIds( boolean isPifa, int productId );
+
+    /**
+     * 搜索店铺下所有的批发商品
+     */
+    PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member  );
 }

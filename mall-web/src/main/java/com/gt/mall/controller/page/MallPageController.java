@@ -850,8 +850,8 @@ public class MallPageController extends AuthorizeOrLoginController {
 			    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
 				request.setAttribute( "recevieMap", cardMap.get( "recevieMap" ) );
 				JSONObject cardObj = JSONObject.fromObject( cardMap.get( "recevieMap" ) );
-				if ( CommonUtil.isNotEmpty( cardObj.get( "cardmessage" ) ) ) {
-				    request.setAttribute( "cardmessage", JSONArray.fromObject( cardObj.get( "cardmessage" ) ) );
+				if ( CommonUtil.isNotEmpty( cardObj.get( "cardMessage" ) ) ) {
+				    request.setAttribute( "cardmessage", JSONArray.fromObject( cardObj.get( "cardMessage" ) ) );
 				}
 			    }
 			    if ( CommonUtil.isNotEmpty( cardMap.get( "returnDuofencardList" ) ) ) {
@@ -1219,10 +1219,10 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    if ( rType > 0 ) {
 		mallProductService.setJifenByRedis( member, request, rType, userid );
 	    } else {
-		/*int isJifen = mallProductService.getJifenByRedis(member, request, rType,userid);
-		if(isJifen > 0){
-			rType = isJifen;
-		}*/
+		int isJifen = mallProductService.getJifenByRedis( member, request, rType, userid );
+		if ( isJifen > 0 ) {
+		    rType = isJifen;
+		}
 	    }
 	    params.put( "type", type );
 	    params.put( "desc", desc );
@@ -1239,7 +1239,8 @@ public class MallPageController extends AuthorizeOrLoginController {
 
 	    boolean isPifa = mallPifaApplyService.isPifa( member );
 
-	    PageUtil page = mallPageService.productAllList( shopid, type, rType, member, discount, params, isPifa );
+	    params.put( "type", type );
+	    PageUtil page = mallPageService.productAllList( shopid, CommonUtil.toInteger( type ), rType, member, discount, params, isPifa );
 
 	    mallPageService.getSearchLabel( request, shopid, member, params );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -1317,7 +1318,7 @@ public class MallPageController extends AuthorizeOrLoginController {
 		MallSellerMallset mallSet = mallSellerMallsetService.selectByMemberId( member.getId() );
 		page = mallSellerMallsetService.selectProductBySaleMember( mallSet, params, type, rType, discount, isPifa );
 	    } else {
-		page = mallPageService.productAllList( shopid, type, rType, member, discount, params, isPifa );
+		page = mallPageService.productAllList( shopid, CommonUtil.toInteger( type ), rType, member, discount, params, isPifa );
 	    }
 	    resultMap.put( "page", page );
 

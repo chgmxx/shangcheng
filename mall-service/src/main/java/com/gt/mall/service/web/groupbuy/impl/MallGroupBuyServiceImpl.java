@@ -21,10 +21,11 @@ import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyPriceService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.CommonUtil;
@@ -70,11 +71,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     @Autowired
     private MallProductService       productService;
     @Autowired
-    private WxShopService            wxShopService;
-    @Autowired
     private MallStoreDAO             storeDAO;
     @Autowired
     private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private MallPageService          mallPageService;
 
     @Override
     public PageUtil selectGroupBuyByShopId( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist ) {
@@ -571,5 +572,24 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	    }
 	}
 	return groupIsReturn;
+    }
+
+    @Override
+    public PageUtil searchGroupBuyProduct( PhoneSearchProductDTO searchProductDTO, Member member ) {
+	if ( CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) && CommonUtil.isNotEmpty( member ) ) {
+	    searchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
+	}
+
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	int rowCount = groupBuyDAO.selectCountGoingGroupProduct( searchProductDTO );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	searchProductDTO.setMaxNum( pageSize );
+
+	List< Map< String,Object > > productList = groupBuyDAO.selectGoingGroupProduct( searchProductDTO );
+
+	page.setSubList( mallPageService.getSearchProductParam( productList, 1, searchProductDTO ) );
+	return page;
     }
 }

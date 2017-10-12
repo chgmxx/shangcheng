@@ -18,7 +18,10 @@ import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.presale.MallPresaleDAO;
 import com.gt.mall.dao.presale.MallPresaleDepositDAO;
 import com.gt.mall.dao.presale.MallPresaleMessageRemindDAO;
-import com.gt.mall.dao.product.*;
+import com.gt.mall.dao.product.MallProductDAO;
+import com.gt.mall.dao.product.MallProductGroupDAO;
+import com.gt.mall.dao.product.MallSearchLabelDAO;
+import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -35,6 +38,7 @@ import com.gt.mall.entity.product.*;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -180,7 +184,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public PageUtil findByPage( Map< String,Object > params, BusUser user, HttpServletRequest request ) {
 	List< Map< String,Object > > storeList = mallStoreService.findAllStoByUser( user, request );// 根据商家id查询门店id
-	if(CommonUtil.isEmpty( params.get( "shopId" ) )){
+	if ( CommonUtil.isEmpty( params.get( "shopId" ) ) ) {
 	    params.put( "storeList", storeList );
 	}
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
@@ -1122,7 +1126,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public PageUtil productAllList( Integer shopid, String type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa ) {
+    public PageUtil productAllList( Integer shopid, Integer type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
 	    int memberId = 0;
 	    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -1149,38 +1153,169 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	List< Map< String,Object > > list = mallProductDAO.selectProductAllByShopids( params );
 
 	List< Integer > proIds = new ArrayList< Integer >();
-	String specImgIds = "";
 
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map1 : list ) {
 		map1.put( "rType", rType );
 		map1 = productGetPrice( map1, discount, isPifa );
 		xlist.add( map1 );
-
-		if ( CommonUtil.isNotEmpty( map1.get( "specifica_img_id" ) ) ) {
-		    if ( !map1.get( "specifica_img_id" ).toString().equals( "0" ) ) {
-			if ( CommonUtil.isNotEmpty( specImgIds ) ) {
-			    specImgIds += ",";
-			}
-			specImgIds += map1.get( "specifica_img_id" ).toString();
-		    }
-		}
 		if ( CommonUtil.isNotEmpty( map1.get( "id" ) ) ) {
 		    proIds.add( CommonUtil.toInteger( map1.get( "id" ) ) );
 		}
 	    }
-	    String[] split = null;
-	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
-		split = specImgIds.split( "," );
-	    }
-	    xlist = getProductImages( xlist, proIds, split );
+	    xlist = getProductImages( xlist, proIds );
 	}
 	page.setSubList( xlist );
 	return page;
     }
 
     @Override
-    public List< Map< String,Object > > getProductImages( List< Map< String,Object > > xlist, List< Integer > proIds, String[] specImgIds ) {
+    public PageUtil productAllListNew( PhoneSearchProductDTO searchProductDTO, double discount, Member member ) {
+	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) ) {
+	    //新增搜索关键词
+	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
+	}
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	int rowCount = mallProductDAO.selectCountAllByShopidsNew( searchProductDTO );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	searchProductDTO.setMaxNum( pageSize );
+
+	List< Map< String,Object > > list = mallProductDAO.selectProductAllByShopidsNew( searchProductDTO );
+
+	list = getSearchProductParam( list, discount, searchProductDTO );
+	page.setSubList( list );
+	return page;
+    }
+
+    @Override
+    public List< Map< String,Object > > getSearchProductParam( List< Map< String,Object > > list, double discount, PhoneSearchProductDTO searchProductDTO ) {
+	List< Map< String,Object > > xlist = new ArrayList<>();
+	List< Integer > proIds = new ArrayList< Integer >();
+	if ( list != null && list.size() > 0 ) {
+	    for ( Map< String,Object > map1 : list ) {
+		map1 = productGetPriceNew( map1, discount, searchProductDTO );
+		xlist.add( map1 );
+
+		if ( CommonUtil.isNotEmpty( map1.get( "id" ) ) ) {
+		    proIds.add( CommonUtil.toInteger( map1.get( "id" ) ) );
+		}
+	    }
+	    xlist = getProductImages( xlist, proIds );
+	}
+	return xlist;
+    }
+
+    private Map< String,Object > productGetPriceNew( Map< String,Object > map1, double discount, PhoneSearchProductDTO searchProductDTO ) {
+	Map< String,Object > proMap = new HashMap<>();
+	String is_specifica = map1.get( "is_specifica" ).toString();//是否有规格，1有规格，有规格取规格里面的值
+	double price = 0;//商品价格
+	//	double hyPrice = 0;//会员价
+	String image_url = "";//图片
+	double costPrice = 0;//原价
+	if ( CommonUtil.isNotEmpty( map1.get( "pro_cost_price" ) ) ) {
+	    costPrice = CommonUtil.toDouble( map1.get( "pro_cost_price" ) );
+	}
+	if ( is_specifica.equals( "1" ) ) {
+	    if ( CommonUtil.isNotEmpty( map1.get( "inv_price" ) ) ) {
+		price = CommonUtil.toDouble( map1.get( "inv_price" ) );
+		costPrice = CommonUtil.toDouble( map1.get( "pro_price" ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( map1.get( "specifica_img_url" ) ) ) {
+		image_url = CommonUtil.toString( map1.get( "specifica_img_url" ) );
+	    }
+	}
+	if ( CommonUtil.isEmpty( image_url ) && CommonUtil.isNotEmpty( map1.get( "image_url" ) ) ) {
+	    image_url = CommonUtil.toString( map1.get( "image_url" ) );
+	}
+	if ( price <= 0 ) {
+	    price = CommonUtil.toDouble( map1.get( "pro_price" ) );
+	}
+	DecimalFormat df = new DecimalFormat( "######0.00" );
+	/*String is_member_discount = map1.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
+	if ( is_member_discount.equals( "1" ) ) {
+	    if ( price > 0 && discount != 1 ) {
+		hyPrice = CommonUtil.toDouble( df.format( price * discount ) );
+		proMap.put( "hyPrice", df.format( hyPrice ) );
+		costPrice = price;
+	    }
+	}*/
+	if ( searchProductDTO.getType() == 5 ) {
+	    price = CommonUtil.toDouble( map1.get( "change_fenbi" ) );
+	    proMap.put( "unit", "粉币" );
+	} else if ( searchProductDTO.getType() > 0 && CommonUtil.isNotEmpty( map1.get( "price" ) ) ) {
+	    price = CommonUtil.toDouble( map1.get( "price" ) );
+	}
+	if ( price > 0 ) {
+	    proMap.put( "price", df.format( price ) );
+	}
+	if ( costPrice == 0 || costPrice <= price ) {
+	    costPrice = 0;
+	}
+	proMap.put( "image_url", PropertiesUtil.getResourceUrl() + image_url );
+	if ( CommonUtil.isNotEmpty( map1.get( "pro_type_id" ) ) && CommonUtil.isNotEmpty( map1.get( "member_type" ) ) ) {
+	    int proTypeId = CommonUtil.toInteger( map1.get( "pro_type_id" ) );
+	    int memberType = CommonUtil.toInteger( map1.get( "member_type" ) );
+	    if ( proTypeId == 2 && memberType > 0 ) {
+		String return_url = "/phoneMemberController/" + map1.get( "user_id" ) + "/79B4DE7C/findMember_1.do";
+		proMap.put( "return_url", return_url );
+	    }
+	}
+
+	int saleTotal = 0;//销量
+	if ( CommonUtil.isNotEmpty( map1.get( "pro_sale_total" ) ) ) {
+	    saleTotal += CommonUtil.toInteger( map1.get( "pro_sale_total" ) );
+	}
+	if ( CommonUtil.isNotEmpty( map1.get( "sales_base" ) ) ) {
+	    saleTotal += CommonUtil.toInteger( map1.get( "sales_base" ) );
+	}
+	proMap.put( "pro_cost_price", costPrice );
+
+	proMap.put( "pro_name", map1.get( "pro_name" ) );
+	if ( CommonUtil.isNotEmpty( map1.get( "pro_label" ) ) ) {
+	    proMap.put( "pro_label", map1.get( "pro_label" ) );
+	}
+
+	proMap.put( "sale_total", saleTotal );
+	proMap.put( "shop_id", map1.get( "shop_id" ) );
+	proMap.put( "id", map1.get( "id" ) );
+
+	if ( searchProductDTO.getType() > 0 ) {
+	    if ( CommonUtil.isNotEmpty( map1.get( "endTime" ) ) && CommonUtil.isEmpty( map1.get( "activityStatus" ) ) ) {
+		Date endTimes = DateTimeKit.parse( map1.get( "endTime" ).toString(), "yyyy-MM-dd HH:mm:ss" );
+		Date startTimes = DateTimeKit.parse( map1.get( "startTime" ).toString(), "yyyy-MM-dd HH:mm:ss" );
+		Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
+		Date date = new Date();
+		proMap.put( "times", ( endTimes.getTime() - nowTime.getTime() ) / 1000 );
+		int status = -1;
+
+		if ( startTimes.getTime() > date.getTime() && endTimes.getTime() > date.getTime() ) {//未开始
+		    status = 0;
+		    proMap.put( "times", ( startTimes.getTime() - nowTime.getTime() ) / 1000 );
+		} else if ( startTimes.getTime() <= date.getTime() && date.getTime() < endTimes.getTime() ) {//正在进行
+		    status = 1;
+		}
+		proMap.put( "activityStatus", status );//活动状态 0未开始 1正在进行
+	    }
+	}
+	if ( CommonUtil.isNotEmpty( map1.get( "activityId" ) ) ) {
+	    proMap.put( "activityId", map1.get( "activityId" ) );
+	}
+	if ( CommonUtil.isNotEmpty( map1.get( "peopleNum" ) ) ) {
+	    proMap.put( "peopleNum", map1.get( "peopleNum" ) );//拼团人数
+	}
+	if ( searchProductDTO.getType() == 4 ) {
+	    proMap.put( "lowerPrice", map1.get( "lowerPrice" ) );//降价金额（每多少分钟降价多少元）
+	    proMap.put( "lowerPriceTime", map1.get( "lowerPriceTime" ) );//降价时间（每多少分钟）
+	    proMap.put( "lowestPrice", map1.get( "lowestPrice" ) );//最低价格
+	    proMap.put( "aucType", map1.get( "aucType" ) );//拍卖类型 1 降价拍 2升价拍
+	}
+	return proMap;
+    }
+
+    @Override
+    public List< Map< String,Object > > getProductImages( List< Map< String,Object > > xlist, List< Integer > proIds ) {
 	List< Map< String,Object > > newList = new ArrayList< Map< String,Object > >();
 	if ( proIds != null && proIds.size() > 0 ) {
 	    //查询商品图片
@@ -1205,7 +1340,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		}
 	    }
 	    if ( newList != null && newList.size() > 0 ) {
-		xlist = new ArrayList< Map< String,Object > >();
+		xlist = new ArrayList<>();
 		xlist.addAll( newList );
 	    }
 	}
@@ -1307,7 +1442,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( pfPrice >= 0 ) {
 	    map1.put( "pfPrice", df.format( pfPrice ) );
 	}
-
 	return map1;
     }
 
@@ -1807,14 +1941,16 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
      */
     public boolean wxShopIsDelete( int shopId, WsWxShopInfo wsWxShopInfo ) throws Exception {
 	MallStore store = mallStoreService.selectById( shopId );
-	if ( store.getIsDelete() == 0 ) {
-	    if ( CommonUtil.isNotEmpty( store.getWxShopId() ) && store.getWxShopId() > 0 ) {
-		if ( CommonUtil.isEmpty( wsWxShopInfo ) ) {
-		    wsWxShopInfo = wxShopService.getShopById( store.getWxShopId() );
-		}
-		if ( CommonUtil.isNotEmpty( wsWxShopInfo ) ) {
-		    if ( !CommonUtil.toString( wsWxShopInfo.getStatus() ).equals( "-1" ) ) {
-			return true;
+	if ( CommonUtil.isNotEmpty( store ) ) {
+	    if ( store.getIsDelete() == 0 ) {
+		if ( CommonUtil.isNotEmpty( store.getWxShopId() ) && store.getWxShopId() > 0 ) {
+		    if ( CommonUtil.isEmpty( wsWxShopInfo ) ) {
+			wsWxShopInfo = wxShopService.getShopById( store.getWxShopId() );
+		    }
+		    if ( CommonUtil.isNotEmpty( wsWxShopInfo ) ) {
+			if ( !CommonUtil.toString( wsWxShopInfo.getStatus() ).equals( "-1" ) ) {
+			    return true;
+			}
 		    }
 		}
 	    }
@@ -2056,7 +2192,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		map.put( "status", status );
 		map.put( "proPrice", proPrice );
 		map.put( "times", times );
-//		map.put( "preId", map.get( "presaleId" ) );
+		//		map.put( "preId", map.get( "presaleId" ) );
 		proList.add( map );
 	    }
 	}
@@ -2523,6 +2659,34 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/wxphone/6F6D9AD2/79B4DE7C/wxjssdk.do?key=" + key;
 	}
 	return null;
+    }
+
+    @Override
+    public int getPageIdByShopId( int shopId ) {
+	String key = Constants.REDIS_KEY + "shop_page_" + shopId;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return CommonUtil.toInteger( obj );
+	    }
+	}
+	MallStore store = mallStoreDAO.selectById( shopId );
+	if ( CommonUtil.isEmpty( store ) ) {
+	    return 0;
+	}
+	if ( CommonUtil.isEmpty( store.getWxShopId() ) ) {return 0;}
+	WsWxShopInfo shopInfo = wxShopService.getShopById( store.getWxShopId() );
+	if ( shopInfo == null ) {return 0;}
+	if ( shopInfo.getStatus() == -1 ) {return 0;}
+	Map< String,Object > params = new HashMap<>();
+	params.put( "wxShopId", store.getWxShopId() );
+	List< Map< String,Object > > pageList = mallPageDAO.selectPageByWxShopId( params );
+	if ( pageList != null && pageList.size() > 0 ) {
+	    String pageId = pageList.get( 0 ).get( "id" ).toString();
+	    JedisUtil.set( key, pageId, Constants.REDIS_SECONDS );
+	    return CommonUtil.toInteger( pageId );
+	}
+	return 0;
     }
 
     private List< Map< String,Object > > getProductParams( List< Map< String,Object > > productList, List< Map< String,Object > > imageList ) {

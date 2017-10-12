@@ -18,9 +18,11 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.seckill.MallSeckillJoin;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.seckill.MallSeckillPriceService;
@@ -75,9 +77,11 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     private MallStoreService mallStoreService;
 
     @Autowired
-    private SocketService socketService;
+    private SocketService   socketService;
     @Autowired
-    private WxShopService wxShopService;
+    private WxShopService   wxShopService;
+    @Autowired
+    private MallPageService mallPageService;
 
     /**
      * 通过店铺id来查询秒杀
@@ -563,6 +567,30 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Override
     public MallSeckill selectSeckillBySeckillId( int id ) {
 	return mallSeckillDAO.selectById( id );
+    }
+
+    /**
+     * 获取店铺下所有的秒杀
+     */
+    @Override
+    public PageUtil searchSeckillAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
+
+	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) ) {
+	    //新增搜索关键词
+	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
+	}
+
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	int rowCount = mallSeckillDAO.selectCountGoingSeckillProduct( searchProductDTO );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	searchProductDTO.setMaxNum( pageSize );
+
+	List< Map< String,Object > > productList = mallSeckillDAO.selectGoingSeckillProduct( searchProductDTO );
+
+	page.setSubList( mallPageService.getSearchProductParam( productList, 1, searchProductDTO ) );
+	return page;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.freight;
 
+import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.utils.PageUtil;
@@ -51,7 +52,6 @@ public interface MallFreightService extends BaseService< MallFreight > {
      * 编辑物流
      *
      * @param params freight:物流信息， detail：物流详情
-     *
      * @param userId 用户Id
      *
      * @return 是否成功
@@ -84,6 +84,18 @@ public interface MallFreightService extends BaseService< MallFreight > {
      * @return 物流列表
      */
     MallFreight selectFreightByShopId( Integer shopId );
+
+    /**
+     * 手机端获取运费
+     *
+     * @param ip         粉丝所在的ip
+     * @param provinceId 省份id
+     * @param toshop     是否是到店 1 到店 0不是到店
+     * @param productArr 商品对象 [{shop_id:店铺id,price_total:商品价格,proNum:商品数量,proTypeId:用户类型,juli:收货地址跟门店的距离}]
+     *
+     * @return 价格 [{店铺id：运费}]
+     */
+    Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr );
 
     /**
      * 获取运费

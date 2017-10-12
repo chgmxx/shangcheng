@@ -26,9 +26,7 @@ import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
-import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.freight.MallFreightService;
-import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
@@ -113,21 +111,26 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     private WxShopService               wxShopService;
     @Autowired
     private MemberAddressService        memberAddressService;
+    @Autowired
+    private MallGroupDAO                mallGroupDAO;
 
     @Override
     public List< Map< String,Object > > selectGroupsByShopId( Map< String,Object > params ) {
-	List< Map< String,Object > > productGroupList = new ArrayList< Map< String,Object > >();
-	List< Map< String,Object > > groupList = productGroupDAO.selectGroupsByShopId( params );
+	List< Map< String,Object > > productGroupList = new ArrayList<>();
+	List< Map< String,Object > > groupList = mallGroupDAO.selectGroupsByShopId( params );
 	if ( groupList != null && groupList.size() > 0 ) {
-	    List< Integer > idList = new ArrayList<>();
-	    for ( Map< String,Object > map : groupList ) {
-		if ( !idList.contains( CommonUtil.toInteger( map.get( "group_id" ) ) ) ) {
-		    idList.add( CommonUtil.toInteger( map.get( "group_id" ) ) );
+	    List< Map< String,Object > > imageList = null;
+	    if ( CommonUtil.isEmpty( params.get( "isFrist" ) ) ) {
+		List< Integer > idList = new ArrayList<>();
+		for ( Map< String,Object > map : groupList ) {
+		    if ( !idList.contains( CommonUtil.toInteger( map.get( "group_id" ) ) ) ) {
+			idList.add( CommonUtil.toInteger( map.get( "group_id" ) ) );
+		    }
 		}
+		params.put( "assIds", idList );
+		params.put( "assType", 2 );
+		imageList = imageAssociativeDAO.selectByAssIds( params );
 	    }
-	    params.put( "assIds", idList );
-	    params.put( "assType", 2 );
-	    List< Map< String,Object > > imageList = imageAssociativeDAO.selectByAssIds( params );
 	    for ( Map< String,Object > map : groupList ) {
 		int isChild = 0;
 		String groupId = CommonUtil.toString( map.get( "group_id" ) );
@@ -225,7 +228,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
 		split = specImgIds.split( "," );
 	    }
-	    xlist = pageService.getProductImages( xlist, proIds, split );
+	    xlist = pageService.getProductImages( xlist, proIds );
 	}
 	page.setSubList( xlist );
 	return page;

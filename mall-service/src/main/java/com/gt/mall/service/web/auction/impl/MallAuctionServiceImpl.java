@@ -11,11 +11,12 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,8 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     private MallSearchKeywordService searchKeywordService;
     @Autowired
     private WxShopService            wxShopService;
+    @Autowired
+    private MallPageService          mallPageService;
 
     @Override
     public PageUtil selectAuctionByShopId( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
@@ -146,10 +149,10 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		    // 判断本商品是否正在拍卖中
 		    MallAuction auc = auctionDAO.selectAuctionByIds( auction.getId() );
 
-		    WsWxShopInfo wxShopInfo = wxShopService.getShopById( auc.getWx_shop_id() );
+		    /*WsWxShopInfo wxShopInfo = wxShopService.getShopById( auc.getWx_shop_id() );
 		    if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
 			auc.setShopName( wxShopInfo.getBusinessName() );
-		    }
+		    }*/
 
 		    int status = isJoinAuction( auc );
 		    if ( auc.getStatus() == 1 && status > 0 ) {// 正在进行拍卖的商品不能修改
@@ -413,5 +416,93 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    result.put( "msg", "" );
 	}
 	return result;
+    }
+
+    @Override
+    public PageUtil searchAuctionAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
+
+	if ( CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) && CommonUtil.isNotEmpty( member ) ) {
+	    //保存到搜索关键字表
+	    searchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
+	}
+
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	int rowCount = auctionDAO.selectCountGoingAuctionProduct( searchProductDTO );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	searchProductDTO.setMaxNum( pageSize );
+
+	List< Map< String,Object > > list = new ArrayList<>();
+
+	List< Map< String,Object > > productList = auctionDAO.selectGoingAuctionProduct( searchProductDTO );
+	if ( productList != null && productList.size() > 0 ) {
+	    for ( Map< String,Object > map2 : productList ) {
+
+		String start = map2.get( "startTime" ).toString();
+		/*int id = Integer.valueOf( map2.get( "activityId" ).toString() );*/
+
+		Date endTimes = DateTimeKit.parse( map2.get( "endTime" ).toString(), "yyyy-MM-dd HH:mm:ss" );
+		Date startTimes = DateTimeKit.parse( map2.get( "startTime" ).toString(), "yyyy-MM-dd HH:mm:ss" );
+		Date date = new Date();
+		int status = -1;
+
+		if ( startTimes.getTime() > date.getTime() && endTimes.getTime() > date.getTime() ) {//未开始
+		    status = 0;
+		} else if ( startTimes.getTime() <= date.getTime() && date.getTime() < endTimes.getTime() ) {//正在进行
+		    status = 1;
+		}
+		map2.put( "activityStatus", status );//活动状态 0未开始 1正在进行
+
+		//计算拍卖中的商品的拍卖的当前价格
+		String endtimes = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
+		String startPrice = map2.get( "startPrice" ).toString();
+		double nowPrice;
+		//降价拍
+		if ( map2.get( "aucType" ).toString().equals( "1" ) ) {
+		    String lower = map2.get( "lowerPriceTime" ).toString();
+		    double minu = Double.valueOf( lower );
+		    int minTimes = 60000 * Integer.parseInt( lower );
+		    double second = (double) DateTimeKit.minsBetween( start, endtimes, minTimes, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+		    double minuPrice = Double.valueOf( map2.get( "lowerPrice" ).toString() );
+		    nowPrice = second * ( minu * minuPrice );
+		    nowPrice = Double.parseDouble( startPrice ) - nowPrice;
+		    if ( status == 0 ) {//正在进行的拍卖
+			nowPrice = Double.parseDouble( startPrice );
+		    }
+		   /* MallAuctionBidding bid = new MallAuctionBidding();
+		    bid.setAucId( id );
+
+		    //查询用户竞拍的次数
+		    List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );
+		    map2.put( "bidSize", bidList.size() );*/
+		} else {//升价拍
+		    //获取最新拍价
+		    nowPrice = Double.parseDouble( startPrice );
+		    //查询当前出价最高的金额
+		    MallAuctionOffer offer = auctionOfferDAO.selectByOffer( map2.get( "activityId" ).toString() );
+		    if ( offer != null ) {
+			nowPrice = Double.parseDouble( offer.getOfferMoney().toString() );
+		    }
+		    /*MallAuctionOffer aucOffer = new MallAuctionOffer();
+		    aucOffer.setAucId( id );
+		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( aucOffer );//查询拍卖的出价信息
+		    map2.put( "offerSize", offerList.size() );*/
+		}
+		DecimalFormat df = new DecimalFormat( "######0.00" );
+		map2.put( "price", df.format( nowPrice ) );
+		list.add( map2 );
+	    }
+	    productList = mallPageService.getSearchProductParam( list, 1, searchProductDTO );
+	}
+	if ( CommonUtil.isNotEmpty( searchProductDTO.getIsPrice() ) && searchProductDTO.getIsPrice() == 1 ) {
+	    if ( CommonUtil.isNotEmpty( searchProductDTO.getIsDesc() ) ) {
+		if ( searchProductDTO.getIsDesc() == 1 ) {
+		    Collections.sort( productList, new MallComparatorUtil( "price" ) );
+		}
+	    }
+	}
+	page.setSubList( productList );
+	return page;
     }
 }

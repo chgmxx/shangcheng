@@ -19,8 +19,8 @@ public class ErrorInfo< T > extends ServerResponse< T > implements Serializable 
 
     private String url;
 
-    private ErrorInfo( int status, String msg, T data, String url ) {
-	super( status, msg, data );
+    private ErrorInfo( int status, String msg, T data, String url, Boolean... isShowPath ) {
+	super( status, msg, data, isShowPath );
 	this.url = url;
     }
 
@@ -37,7 +37,7 @@ public class ErrorInfo< T > extends ServerResponse< T > implements Serializable 
     }
 
     public static < T > ErrorInfo< T > createByErrorCodeMessage( int errorCode, String errorMessage, T data, String url ) {
-	return new ErrorInfo<>( errorCode, errorMessage, data, url );
+	return new ErrorInfo<>( errorCode, errorMessage, data, url, false );
     }
 
     public String getUrl() {

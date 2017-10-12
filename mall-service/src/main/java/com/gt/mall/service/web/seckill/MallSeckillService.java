@@ -6,6 +6,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,4 +93,9 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
      * 通过秒杀id查询秒杀信息
      */
     MallSeckill selectSeckillBySeckillId( int id );
+
+    /**
+     * 查询正在秒杀的商品
+     */
+    PageUtil searchSeckillAll( PhoneSearchProductDTO searchProductDTO, Member member );
 }

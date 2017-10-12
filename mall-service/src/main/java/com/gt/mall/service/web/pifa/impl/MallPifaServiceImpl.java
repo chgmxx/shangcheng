@@ -10,6 +10,7 @@ import com.gt.mall.dao.product.MallSearchKeywordDAO;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.pifa.MallPifaPrice;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaPriceService;
 import com.gt.mall.service.web.pifa.MallPifaService;
@@ -315,7 +316,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
 		split = specImgIds.split( "," );
 	    }
-	    productList = mallPageService.getProductImages( productList, proIds, split );
+	    productList = mallPageService.getProductImages( productList, proIds );
 	}
 	List< Map< String,Object > > list = getHomeParams( productList );
 	page.setSubList( list );
@@ -430,5 +431,29 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    }
 	}
 	return -1;
+    }
+
+    /**
+     * 搜索店铺下所有的批发商品
+     */
+    @Override
+    public PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
+
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    //新增搜索关键词
+	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
+	}
+
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	int rowCount = mallPifaDAO.selectCountGoingPifaProduct( searchProductDTO );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	searchProductDTO.setMaxNum( pageSize );
+
+	List< Map< String,Object > > productList = mallPifaDAO.selectGoingPifaProduct( searchProductDTO );
+
+	page.setSubList( mallPageService.getSearchProductParam( productList, 1, searchProductDTO ) );
+	return page;
     }
 }

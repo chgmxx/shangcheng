@@ -28,7 +28,7 @@
     <!-- 根据关联id来查询图片 -->
     <select id="selectImageByAssId" parameterType="map" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        image_url,ass_id,is_main_images
         from t_mall_image_associative
         where is_delete = 0
         <if test="assId != null">
@@ -137,7 +137,7 @@
         <if test="assType != null">
             and ass_type=#{assType}
         </if>
-        order by ass_sort
+        order by is_main_images desc,ass_sort asc
     </select>
 
 

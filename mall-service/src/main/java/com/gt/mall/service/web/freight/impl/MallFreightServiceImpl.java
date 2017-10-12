@@ -10,6 +10,7 @@ import com.gt.mall.entity.freight.MallFreightDetail;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.service.web.freight.MallFreightService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.AddressUtil;
 import com.gt.mall.utils.CommonUtil;
@@ -47,6 +48,8 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     private MallStoreService         storeService;
     @Autowired
     private WxShopService            wxShopService;
+    @Autowired
+    private MallPageService          mallPageService;
 
     @Override
     public PageUtil selectFreightByShopId( List< Map< String,Object > > shopList, Map< String,Object > param ) {
@@ -135,14 +138,35 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     }
 
     @Override
-    public  MallFreight  selectFreightByShopId(Integer shopId ) {
+    public MallFreight selectFreightByShopId( Integer shopId ) {
 	return freightDAO.selectFreightByShopId( shopId );
+    }
+
+    @Override
+    public Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr ) {
+	if ( CommonUtil.isEmpty( provinceId ) ) {
+	    provinceId = mallPageService.getProvince( ip );
+	}
+
+	Map< String,Object > map = new HashMap<>();
+	map.put( "province_id", provinceId );
+
+	/*JSONArray arr = new JSONArray();
+	JSONObject obj = new JSONObject();
+	obj.put( "shop_id", shopid );
+	obj.put( "price_total", price );
+	obj.put( "proNum", 1 );
+	arr.add( obj );*/
+	map.put( "orderArr", productArr );
+	map.put( "toshop", toshop );
+	/*map.put( "proTypeId", proTypeId );*/
+	return getFreightMoney( map );
     }
 
     @Override
     public Map< String,Object > getFreightMoney( Map< String,Object > map ) {
 	log.debug( "获取运费参数：" + map.toString() );
-	Map< String,Object > priceMap = new HashMap< String,Object >();
+	Map< String,Object > priceMap = new HashMap<>();
 	if ( map != null ) {
 	    Integer provinceId = 0;//省份id
 	    if ( CommonUtil.isNotEmpty( map.get( "province_id" ) ) ) {
@@ -151,9 +175,9 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		String province = map.get( "province" ).toString();
 		provinceId = getProvinceId( province );
 	    }
-	    float juli = 0;
+	    double juli = 0;
 	    if ( CommonUtil.isNotEmpty( map.get( "juli" ) ) ) {
-		juli = Float.valueOf( map.get( "juli" ).toString() );
+		juli = CommonUtil.toDouble( map.get( "juli" ) );
 	    }
 	    int toshop = 0;
 	    if ( CommonUtil.isNotEmpty( map.get( "toshop" ) ) ) {
@@ -168,19 +192,22 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	    if ( !CommonUtil.isEmpty( orderJSON ) && orderJSON.size() > 0 ) {
 		for ( Object object : orderJSON ) {
 		    JSONObject orderObj = JSONObject.parseObject( object.toString() );
+		    if ( CommonUtil.isNotEmpty( orderObj.get( "proTypeId" ) ) ) {
+			proTypeId = CommonUtil.toInteger( orderObj.get( "proTypeId" ) );
+		    }
 		    Integer shopId = CommonUtil.toInteger( orderObj.get( "shop_id" ) );//店铺id
 
-		    float orderPrice = 0;//订单价格
+		    double orderPrice = 0;//订单价格
 		    if ( !CommonUtil.isEmpty( orderObj.get( "yuanjia_total" ) ) ) {//立即购买传值
-			orderPrice = Float.valueOf( orderObj.get( "yuanjia_total" ).toString() );
+			orderPrice = CommonUtil.toDouble( orderObj.get( "yuanjia_total" ) );
 		    } else if ( !CommonUtil.isEmpty( orderObj.get( "primary_price" ) ) ) {//购物车跳到订单页面传值
 			int totalnum = Integer.parseInt( orderObj.get( "totalnum" ).toString() );
-			float totalPrice = Float.valueOf( orderObj.get( "primary_price" ).toString() );
-			orderPrice = ( ( totalPrice * 100 ) * totalnum ) / 100;
+			double totalPrice = CommonUtil.toDouble( orderObj.get( "primary_price" ) );
+			orderPrice = totalPrice * totalnum;
 		    } else if ( !CommonUtil.isEmpty( orderObj.get( "price_total" ) ) ) {//商品详细页面传值
-			orderPrice = Float.valueOf( orderObj.get( "price_total" ).toString() );
+			orderPrice = CommonUtil.toDouble( orderObj.get( "price_total" ) );
 		    } else {
-			orderPrice = Float.valueOf( orderObj.get( "totalPrice" ).toString() );
+			orderPrice = CommonUtil.toDouble( orderObj.get( "totalPrice" ) );
 		    }
 
 		    Integer proNum = 0;//购买商品的数量
@@ -189,10 +216,10 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    } else {
 			proNum = CommonUtil.toInteger( orderObj.get( "totalnum" ) );
 		    }
-		    float freightPrice = 0;
-		    float weight = 0;
+		    double freightPrice = 0;
+		    double weight = 0;
 		    if ( CommonUtil.isNotEmpty( orderObj.get( "pro_weight" ) ) ) {
-			weight = Float.valueOf( orderObj.get( "pro_weight" ).toString() );
+			weight = CommonUtil.toDouble( orderObj.get( "pro_weight" ) );
 		    }
 		    //根据店铺来查询物流
 		    MallFreight freight = new MallFreight();
@@ -201,20 +228,20 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    freight = freightDAO.selectOne( freight );
 		    if ( freight != null && toshop == 0 ) {
 			freightPrice = 0;//物流数量
-			float noMoney = 0;//免邮价格
+			double noMoney = 0;//免邮价格
 			int priceType = freight.getPriceType();
 
-			if ( freight.getNoMoney() != null && !freight.getNoMoney().equals( "" ) ) {
-			    noMoney = Float.valueOf( freight.getNoMoney().toString() );
+			if ( freight.getNoMoney() != null && !CommonUtil.isNotEmpty( freight.getNoMoney() ) ) {
+			    noMoney = CommonUtil.toDouble( freight.getNoMoney() );
 			}
-			if ( freight.getMoney() != null && !freight.getMoney().equals( "" ) ) {
-			    freightPrice = Float.valueOf( freight.getMoney().toString() );
+			if ( freight.getMoney() != null && CommonUtil.isNotEmpty( freight.getMoney() ) ) {
+			    freightPrice = CommonUtil.toDouble( freight.getMoney() );
 			}
 			if ( freight.getIsNoMoney().toString().equals( "1" ) ) {
 			    if ( priceType > 0 ) {
-				float firstNum = Float.valueOf( freight.getFirstNums().toString() );//首件重量
-				float addNum = Float.valueOf( freight.getAddNums().toString() );//续件重量
-				float addPrice = Float.valueOf( freight.getAddMoney().toString() );//续件价格
+				double firstNum = CommonUtil.toDouble( freight.getFirstNums() );//首件重量
+				double addNum = CommonUtil.toDouble( freight.getAddNums() );//续件重量
+				double addPrice = CommonUtil.toDouble( freight.getAddMoney() );//续件价格
 				freightPrice = getFreightMoney( freightPrice, priceType, proNum, weight, firstNum, addNum, addPrice, juli );
 			    }
 
@@ -231,21 +258,21 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 				params.put( "freightId", freight.getId() );
 				MallFreightDetail detail = freightDetailDAO.selectFreightByPId( params );
 				if ( detail != null ) {
-				    freightPrice = Float.valueOf( detail.getMoney().toString() );//指定城市的运费
+				    freightPrice = CommonUtil.toDouble( detail.getMoney() );//指定城市的运费
 				    if ( priceType > 0 ) {
-					float firstNum = Float.valueOf( detail.getFirstNums().toString() );//首件重量
-					float addNum = Float.valueOf( detail.getAddNums().toString() );//续件重量
-					float addPrice = Float.valueOf( detail.getAddMoney().toString() );//续件价格
+					double firstNum = CommonUtil.toDouble( detail.getFirstNums() );//首件重量
+					double addNum = CommonUtil.toDouble( detail.getAddNums() );//续件重量
+					double addPrice = CommonUtil.toDouble( detail.getAddMoney() );//续件价格
 					freightPrice = getFreightMoney( freightPrice, priceType, proNum, weight, firstNum, addNum, addPrice, juli );
 				    }
 
 				    Integer dNoMoneyNum = 0;//指定城市的免邮数量
-				    float dNoMoney = 0;//指定城市的免邮价格
+				    double dNoMoney = 0;//指定城市的免邮价格
 				    if ( !CommonUtil.isEmpty( detail.getNoMoneyNum() ) ) {
 					dNoMoneyNum = detail.getNoMoneyNum();
 				    }
 				    if ( !CommonUtil.isEmpty( detail.getNoMoney() ) ) {
-					dNoMoney = Float.valueOf( detail.getNoMoney().toString() );
+					dNoMoney = CommonUtil.toDouble( detail.getNoMoney() );
 				    }
 				    if ( proNum >= dNoMoneyNum && dNoMoneyNum > 0 ) {//指定城市已达到免邮数量
 					freightPrice = 0;
@@ -288,14 +315,14 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
      *
      * @return
      */
-    public float getFreightMoney( float firstPrice, int priceType, int proNum, float weight, float firstNum, float addNum, float addPrice, float juli ) {
+    private double getFreightMoney( double firstPrice, int priceType, int proNum, double weight, double firstNum, double addNum, double addPrice, double juli ) {
 	//		float addPrice = Float.valueOf(freight.getAddMoney().toString());//续件价格
 	if ( priceType == 1 ) {//按照件数来算
 	    //			int firstNum = CommonUtil.toInteger(freight.getFirstNums());//首件数量
 	    //			int addNum = CommonUtil.toInteger(freight.getAddNums());//续件数量
 	    if ( proNum > firstNum ) {//购买数量大于首件商品的数量
 		if ( ( proNum - firstNum ) % addNum == 0 ) {//购买的数量-首件 是否能被续件数量整除
-		    float addMoney = ( ( proNum - firstNum ) / addNum ) * addPrice;//计算续件商品的运费
+		    double addMoney = ( ( proNum - firstNum ) / addNum ) * addPrice;//计算续件商品的运费
 		    firstPrice = addMoney + firstPrice;//查询首件和续件的运费总和
 		} else {
 		    firstPrice = ( ( proNum - firstNum - ( proNum - firstNum ) % addNum ) / addNum + 1 ) * addPrice + firstPrice;
@@ -307,7 +334,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	    //			float addNum = Float.valueOf(freight.getAddNums().toString());//续件重量
 	    if ( weight > firstNum ) {//购买数量大于首件商品的重量
 		if ( ( weight - firstNum ) % addNum == 0 ) {//购买的商品重量-首件 是否能被续件重量整除
-		    float addMoney = ( ( weight - firstNum ) / addNum ) * addPrice;//计算续件商品的运费
+		    double addMoney = ( ( weight - firstNum ) / addNum ) * addPrice;//计算续件商品的运费
 		    firstPrice = addMoney + firstPrice;//查询首件和续件的运费总和
 		} else {
 		    firstPrice = ( ( weight - firstNum - ( weight - firstNum ) % addNum ) / addNum + 1 ) * addPrice + firstPrice;
@@ -316,7 +343,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	} else if ( priceType == 3 ) {//按照距离来计算
 	    if ( juli > firstNum ) {//距离大于首件距离
 		if ( ( juli - firstNum ) % addNum == 0 ) {//购买的商品距离-首件 是否能被续件距离整除
-		    float addMoney = ( ( juli - firstNum ) / addNum ) * addPrice;//计算续件商品的运费
+		    double addMoney = ( ( juli - firstNum ) / addNum ) * addPrice;//计算续件商品的运费
 		    firstPrice = addMoney + firstPrice;//查询首件和续件的运费总和
 		} else {
 		    firstPrice = ( ( juli - firstNum - ( juli - firstNum ) % addNum ) / addNum + 1 ) * addPrice + firstPrice;

@@ -37,7 +37,7 @@ public class PageUtil {
     private boolean isNextPage = true;
 
     // 每页显示记录数数组
-    private int[] pageSizes = new int[] { 10, 20, 30, 50, 100 };
+    /*private int[] pageSizes = new int[] { 10, 20, 30, 50, 100 };*/
 
     // 默认每页显示记录数
     public static final int defaultPageSize = 10;
@@ -75,7 +75,9 @@ public class PageUtil {
 	}
 	if ( this.curPage <= 1 ) isPrePage = false;
 	if ( this.curPage >= pageCount ) isNextPage = false;
-	this.url = url + "?curPage=";
+	if ( CommonUtil.isNotEmpty( url ) ) {
+	    this.url = url + "?curPage=";
+	}
     }
 
     /**
@@ -260,17 +262,17 @@ public class PageUtil {
 	return ( curPage - 1 ) * pageSize;
     }
 
-    public int[] getPageSizes() {
+    /*public int[] getPageSizes() {
 	return ( null == pageSizes ? null : pageSizes.clone() );
     }
 
     public void setPageSizes( int[] pageSizes ) {
-        if(pageSizes == null || pageSizes.length == 0){
-            this.pageSizes = null;
-	}else{
-            this.pageSizes = (int[])pageSizes.clone();
+	if ( pageSizes == null || pageSizes.length == 0 ) {
+	    this.pageSizes = null;
+	} else {
+	    this.pageSizes = (int[]) pageSizes.clone();
 	}
-    }
+    }*/
 
     public void setPageCount( int pageCount ) {
 	this.pageCount = pageCount;
@@ -298,9 +300,6 @@ public class PageUtil {
 
     /**
      * 获取每页开始条数
-     *
-     * @param curPage  当前页
-     * @param pageSize 每页的条数
      *
      * @return
      */

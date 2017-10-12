@@ -2,6 +2,7 @@ package com.gt.mall.dao.presale;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.presale.MallPresale;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -88,4 +89,16 @@ public interface MallPresaleDAO extends BaseMapper< MallPresale > {
      * 查询预售商品信息
      */
     List<Map<String,Object>> selectBySearchNames(Map<String,Object> params);
+
+    /**
+     * 查询正在进行的预售商品
+     *
+     * @return 商品列表
+     */
+    List< Map< String,Object > > selectGoingPresaleProduct( PhoneSearchProductDTO searchProductDTO );
+
+    /**
+     * 统计正在进行的预售商品
+     */
+    int selectCountGoingPresaleProduct( PhoneSearchProductDTO searchProductDTO );
 }

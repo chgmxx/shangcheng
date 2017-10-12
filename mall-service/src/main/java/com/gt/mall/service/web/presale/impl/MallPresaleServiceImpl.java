@@ -22,6 +22,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -30,6 +31,7 @@ import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
+import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
@@ -82,6 +84,8 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     private FenBiFlowService            fenBiFlowService;
     @Autowired
     private WxShopService               wxShopService;
+    @Autowired
+    private MallSearchKeywordService    mallSearchKeywordService;
 
     /**
      * 通过店铺id来查询预售
@@ -471,6 +475,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	}
 	return code;
     }
+
     @SuppressWarnings( { "unchecked", "deprecation" } )
     @Override
     @Transactional( rollbackFor = Exception.class )
@@ -909,6 +914,89 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    }
 	}
 
+    }
+
+    /**
+     * 搜索预售商品信息
+     */
+    @Override
+    public PageUtil searchPresaleAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
+	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) ) {
+	    //新增搜索关键词
+	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
+	}
+	PageUtil page = new PageUtil();
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	if ( searchProductDTO.getIsPrice() == 0 ) {
+	    int rowCount = mallPresaleDAO.selectCountGoingPresaleProduct( searchProductDTO );
+	    page = new PageUtil( curPage, pageSize, rowCount, "" );
+	    searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	    searchProductDTO.setMaxNum( pageSize );
+	}
+
+	List< Map< String,Object > > list = new ArrayList<>();// 存放店铺下的商品
+
+	List< Map< String,Object > > productList = mallPresaleDAO.selectGoingPresaleProduct( searchProductDTO );
+
+	if ( productList != null && productList.size() > 0 ) {
+	    for ( Map< String,Object > map : productList ) {
+		double presaleDiscount = 100;
+
+		double proPrice;
+		if ( map.get( "is_specifica" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( map.get( "inv_price" ) ) && CommonUtil.toDouble( map.get( "inv_price" ) ) > 0 ) {
+		    proPrice = CommonUtil.toDouble( map.get( "inv_price" ) );
+		} else {
+		    proPrice = CommonUtil.toDouble( map.get( "pro_price" ) );
+		}
+		List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( CommonUtil.toInteger( map.get( "activityId" ) ) );
+		if ( timeList != null && timeList.size() > 0 ) {
+		    for ( MallPresaleTime mallPresaleTime : timeList ) {
+			Date startTime = DateTimeKit.parse( mallPresaleTime.getStartTime(), "yyyy-MM-dd HH:mm:ss" );
+			Date endTime = DateTimeKit.parse( mallPresaleTime.getEndTime(), "yyyy-MM-dd HH:mm:ss" );
+			Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
+			if ( startTime.getTime() <= nowTime.getTime() && nowTime.getTime() < endTime.getTime() ) {
+			    if ( mallPresaleTime.getPriceType() == 2 ) {
+				presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() );
+			    } else {
+				presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() ) / 100;
+			    }
+			    double d = CommonUtil.multiply( proPrice, presaleDiscount );
+			    if ( mallPresaleTime.getSaleType() == 1 ) {//上涨价格
+				if ( mallPresaleTime.getPriceType() == 2 ) {//按价格
+				    proPrice = CommonUtil.add( proPrice, presaleDiscount );//proPrice = proPrice + presaleDiscount;
+				} else {//按百分比
+				    proPrice = CommonUtil.add( proPrice, d );
+				    //proPrice = proPrice + ( proPrice * ( presaleDiscount ) );
+				}
+			    } else if ( mallPresaleTime.getSaleType() == 2 ) {//下调金额
+				if ( mallPresaleTime.getPriceType() == 2 ) {//按价格
+				    proPrice = CommonUtil.subtract( proPrice, presaleDiscount );// proPrice = proPrice - presaleDiscount;
+				} else {//按百分比
+				    proPrice = CommonUtil.subtract( proPrice, d );
+				    //proPrice = proPrice - ( proPrice * ( presaleDiscount ) );
+				}
+			    }
+			    map.put( "price", proPrice );
+			    break;
+			}
+
+		    }
+		}
+		list.add( map );
+	    }
+	    list = mallPageService.getSearchProductParam( list, 1, searchProductDTO );
+	}
+	if ( CommonUtil.isNotEmpty( searchProductDTO.getIsPrice() ) && searchProductDTO.getIsPrice() == 1 ) {
+	    if ( CommonUtil.isNotEmpty( searchProductDTO.getIsDesc() ) ) {
+		if ( searchProductDTO.getIsDesc() == 1 ) {
+		    Collections.sort( productList, new MallComparatorUtil( "price" ) );
+		}
+	    }
+	}
+
+	page.setSubList( list );
+	return page;
     }
 
 }

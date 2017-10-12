@@ -7,6 +7,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -116,4 +117,9 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 预售支付成功后的回调
      */
     void paySucessPresale( MallOrder order );
+
+    /**
+     * 搜索预售商品信息
+     */
+    PageUtil searchPresaleAll( PhoneSearchProductDTO searchProductDTO, Member member );
 }

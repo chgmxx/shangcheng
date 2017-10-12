@@ -3,6 +3,7 @@ package com.gt.mall.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
 
 import java.io.Serializable;
@@ -40,24 +41,42 @@ public class ServerResponse< T > implements Serializable {
     /*泛型数据*/
     private T data;
 
-    protected ServerResponse( int code ) {
+    protected ServerResponse( int code, Boolean... isShowPath ) {
 	this.code = code;
+	isSowPath( isShowPath );
     }
 
-    protected ServerResponse( int code, T data ) {
+    protected ServerResponse( int code, T data, Boolean... isShowPath ) {
 	this.code = code;
 	this.data = data;
+	isSowPath( isShowPath );
     }
 
-    protected ServerResponse( int code, String msg ) {
+    protected ServerResponse( int code, String msg, Boolean... isShowPath ) {
 	this.code = code;
 	this.msg = msg;
+	isSowPath( isShowPath );
     }
 
-    protected ServerResponse( int code, String msg, T data ) {
+    protected ServerResponse( int code, String msg, T data, Boolean... isShowPath ) {
 	this.code = code;
 	this.msg = msg;
 	this.data = data;
+	isSowPath( isShowPath );
+    }
+
+    private void isSowPath( Boolean... isShowPath ) {
+	boolean isShow = CommonUtil.isEmpty( isShowPath ) || isShowPath.length == 0 ? true : isShowPath[0];
+	if ( isShow ) {
+	    this.imgUrl = PropertiesUtil.getResourceUrl();
+	    this.path = PropertiesUtil.getHomeUrl();
+	    this.webPath = PropertiesUtil.getHomeUrl();
+	} else {
+	    this.imgUrl = null;
+	    this.path = null;
+	    this.webPath = null;
+	}
+
     }
 
     /**
@@ -112,8 +131,8 @@ public class ServerResponse< T > implements Serializable {
      *
      * @return ServerResponse
      */
-    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, T data ) {
-	return new ServerResponse<>( code, msg, data );
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, T data, Boolean... isShowPath ) {
+	return new ServerResponse<>( code, msg, data, isShowPath );
     }
 
     /**
@@ -124,8 +143,8 @@ public class ServerResponse< T > implements Serializable {
      *
      * @return ServerResponse
      */
-    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg ) {
-	return new ServerResponse<>( code, msg );
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, Boolean... isShowPath ) {
+	return new ServerResponse<>( code, msg, isShowPath );
     }
 
     /**
@@ -136,8 +155,8 @@ public class ServerResponse< T > implements Serializable {
      *
      * @return ServerResponse
      */
-    public static < T > ServerResponse< T > createBySuccessCodeData( int code, T data ) {
-	return new ServerResponse< T >( code, data );
+    public static < T > ServerResponse< T > createBySuccessCodeData( int code, T data, Boolean... isShowPath ) {
+	return new ServerResponse< T >( code, data, isShowPath );
     }
 
     /**
@@ -169,7 +188,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createByErrorCodeMessage( int errorCode, String errorMessage ) {
-	return new ServerResponse<>( errorCode, errorMessage );
+	return new ServerResponse<>( errorCode, errorMessage, false );
     }
 
     //使之不在json序列化结果当中，作用用于判断

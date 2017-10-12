@@ -8,6 +8,7 @@ import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.product.MallShopCart;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import net.sf.json.JSONObject;
@@ -225,12 +226,19 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return 商品信息
      */
-    public PageUtil productAllList( Integer shopid, String type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa );
+    public PageUtil productAllList( Integer shopid, Integer type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa );
+
+    /**
+     * 根据商铺获取所有商品，在根据商品信息，进行排序
+     */
+    PageUtil productAllListNew( PhoneSearchProductDTO searchProductDTO, double discount, Member member );
+
+    List< Map< String,Object > > getSearchProductParam( List< Map< String,Object > > list, double discount, PhoneSearchProductDTO searchProductDTO );
 
     /**
      * 获取商品图片
      */
-    public List< Map< String,Object > > getProductImages( List< Map< String,Object > > xlist, List< Integer > proIds, String[] specImgIds );
+    public List< Map< String,Object > > getProductImages( List< Map< String,Object > > xlist, List< Integer > proIds );
 
     /**
      * 重新组装对象
@@ -419,4 +427,16 @@ public interface MallPageService extends BaseService< MallPage > {
      * @param userId 商家id
      */
     String wxShare( int userId, HttpServletRequest request, Map< String,Object > params ) throws Exception;
+
+    /**
+     * 根据店铺id查询首页id
+     *
+     * @param shopId 店铺id
+     *
+     * @return 首页id
+     */
+    public int getPageIdByShopId( int shopId );
+
+
 }
+

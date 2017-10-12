@@ -25,24 +25,24 @@
         <result column="auc_add_price" property="aucAddPrice"/>
     </resultMap>
 
-    <resultMap id="pageResultMap" type="com.gt.mall.entity.auction.MallAuction" >
-        <result column="product_id" property="productId" jdbcType="INTEGER" />
-        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
-        <result column="auc_type" property="aucType" jdbcType="TINYINT" />
-        <result column="auc_start_price" property="aucStartPrice" jdbcType="DECIMAL" />
-        <result column="auc_lowest_price" property="aucLowestPrice" jdbcType="DECIMAL" />
-        <result column="auc_start_time" property="aucStartTime" jdbcType="VARCHAR" />
-        <result column="auc_lower_price_time" property="aucLowerPriceTime" jdbcType="INTEGER" />
-        <result column="auc_lower_price" property="aucLowerPrice" jdbcType="DECIMAL" />
-        <result column="auc_end_time" property="aucEndTime" jdbcType="VARCHAR" />
-        <result column="auc_num" property="aucNum" jdbcType="INTEGER" />
-        <result column="auc_restriction_num" property="aucRestrictionNum" jdbcType="INTEGER" />
-        <result column="user_id" property="userId" jdbcType="INTEGER" />
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <resultMap id="pageResultMap" type="com.gt.mall.entity.auction.MallAuction">
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
+        <result column="auc_type" property="aucType" jdbcType="TINYINT"/>
+        <result column="auc_start_price" property="aucStartPrice" jdbcType="DECIMAL"/>
+        <result column="auc_lowest_price" property="aucLowestPrice" jdbcType="DECIMAL"/>
+        <result column="auc_start_time" property="aucStartTime" jdbcType="VARCHAR"/>
+        <result column="auc_lower_price_time" property="aucLowerPriceTime" jdbcType="INTEGER"/>
+        <result column="auc_lower_price" property="aucLowerPrice" jdbcType="DECIMAL"/>
+        <result column="auc_end_time" property="aucEndTime" jdbcType="VARCHAR"/>
+        <result column="auc_num" property="aucNum" jdbcType="INTEGER"/>
+        <result column="auc_restriction_num" property="aucRestrictionNum" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="shopName" property="shopName" jdbcType="VARCHAR"/>
-        <result column="is_margin" jdbcType="TINYINT" property="isMargin" />
+        <result column="is_margin" jdbcType="TINYINT" property="isMargin"/>
         <result column="proName" property="proName" jdbcType="VARCHAR"/>
-        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -103,7 +103,7 @@
             and g.shop_id = #{shoplist[0]}
         </if>
     </select>
-    <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
+    <select id="selectByPage" resultMap="pageResultMap" parameterType="Map">
         select
         <include refid="page_auction_Column_List"/>
         from t_mall_auction g
@@ -286,6 +286,77 @@
         </if>
         <if test="shopId != null and shopId != ''">
             and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+    </select>
+
+
+    <select id="selectGoingAuctionProduct" resultType="java.util.Map">
+        SELECT a.id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica, a.shop_id , a.return_day,a.pro_sale_total,a.sales_base,
+        gb.id as activityId,gb.auc_start_time as startTime ,gb.auc_end_time as endTime,gb.auc_lower_price as lowerPrice,
+        gb.auc_lower_price_time as lowerPriceTime,gb.auc_lowest_price as lowestPrice,gb.auc_start_price as startPrice,
+        gb.auc_add_price as aucAddPrice,gb.auc_type as aucType
+        from t_mall_auction gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+        /*left join t_mall_group g on g.id=pg.group_id and g.is_delete=0*/
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and gb.is_delete=0 and gb.is_use=1
+
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and ((gb.auc_start_time &lt;= now() and now() &lt; gb.auc_end_time ) or (gb.auc_start_time > now() and gb.auc_end_time > now()))
+        <if test="searchContent != null and searchContent != ''">
+            /*and ( a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        GROUP BY a.id
+        <if test="isNews == 1"><!-- 最新排序 -->
+            order by gb.id
+        </if>
+        <if test="isSale == 2"><!-- 销量排序 -->
+            order by a.pro_sale_total+a.sales_base
+        </if>
+        <if test="isPrice == 3"><!-- 价格排序 -->
+            order by gb.auc_start_price
+        </if>
+        <if test="isDesc == 1 or isNews == 1 or isSale == 1">
+            desc
+        </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+
+    <select id="selectCountGoingAuctionProduct" resultType="java.lang.Integer">
+        SELECT count(a.id)
+        from t_mall_auction gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 and gb.is_delete=0 and gb.is_use=1
+
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and ((gb.auc_start_time &lt;= now() and now() &lt; gb.auc_end_time ) or (gb.auc_start_time > now() and gb.auc_end_time > now()))
+        <if test="searchContent != null and searchContent != ''">
+            /* and ( a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
         </if>
     </select>
 

@@ -99,4 +99,20 @@
         </foreach>
     </update>
 
+    <select id="selectGroupsByShopId"  parameterType="Map" resultType="Map">
+        SELECT b.id AS group_id,b.group_name,b.is_child,b.shop_id
+        FROM t_mall_group b
+        WHERE b.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            AND b.shop_id= #{shopId}
+        </if>
+        <if test="isFrist != null and isFrist != ''">
+            AND b.is_first_parents=1
+        </if>
+        <if test="classId != null and classId != ''">
+            and b.group_p_id=#{classId}
+        </if>
+        ORDER BY b.sort,b.id DESC
+    </select>
+
 </mapper>

@@ -2,6 +2,7 @@ package com.gt.mall.dao.seckill;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -87,7 +88,6 @@ public interface MallSeckillDAO extends BaseMapper< MallSeckill > {
      */
     int selectCountByShopId( Map< String,Object > params );
 
-
     /**
      * 查询店铺下所有的秒杀商品
      *
@@ -95,5 +95,17 @@ public interface MallSeckillDAO extends BaseMapper< MallSeckill > {
      *
      * @return 秒杀商品
      */
-    List<Map<String,Object>> selectCountByProList( @Param( "productList" ) List<Integer> productList);
+    List< Map< String,Object > > selectCountByProList( @Param( "productList" ) List< Integer > productList );
+
+    /**
+     * 查询正在进行的秒杀商品
+     *
+     * @return 商品列表
+     */
+    List< Map< String,Object > > selectGoingSeckillProduct( PhoneSearchProductDTO searchProductDTO );
+
+    /**
+     * 统计正在进行的秒杀商品
+     */
+    int selectCountGoingSeckillProduct( PhoneSearchProductDTO searchProductDTO );
 }

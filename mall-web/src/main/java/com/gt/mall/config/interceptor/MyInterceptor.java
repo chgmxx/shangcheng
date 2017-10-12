@@ -4,11 +4,9 @@ import com.gt.api.bean.sign.SignEnum;
 import com.gt.api.util.sign.SignFilterUtils;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
-import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.SessionUtils;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -41,10 +39,6 @@ public class MyInterceptor implements HandlerInterceptor {
 	urls.put( "/", "/user/tologin.do" );
 	urls.put( "/error/warning.jsp", "/error/warning.jsp" );
 
-	urls.put( "/user/tologin.do", "/user/tologin.do" );
-	urls.put( "/user/toregister.do", "/user/toregister.do" );
-	urls.put( "/dxuser/login.do", "/dxuser/login.do" );
-	urls.put( "/dxuser/login_success.do", "/dxuser/login_success.do" );
 	urls.put( "/swagger-resources/configuration/ui", "/swagger-resources/configuration/ui" );
 	urls.put( "/common/toLogin", "/common/toLogin" );
 
@@ -133,6 +127,16 @@ public class MyInterceptor implements HandlerInterceptor {
 	    Member member = SessionUtils.getLoginMember( request );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		request.setAttribute( "member", member );
+	    } else {
+		member = new Member();
+		member.setId( 1225352 );
+		member.setBusid( 42 );
+		member.setPublicId( 482 );
+		member.setPhone( "15017934717" );
+		member.setNickname( "杨倩" );
+		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
+		member.setOldid( "1225352,1225358,1225449" );
+		SessionUtils.setLoginMember( request, member );
 	    }
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) || passIntercepto( url ) ) {

@@ -73,4 +73,12 @@ public interface MallPaySetService extends BaseService<MallPaySet> {
      * @return Map
      */
     Map<String, Object> getFooterMenu(int busUserId);
+
+    /**
+     * 通过用户Id查询商城设置
+     *
+     * @param busId: 商家id
+     * @return 商城设置
+     */
+    MallPaySet selectByUserId(int busId);
 }

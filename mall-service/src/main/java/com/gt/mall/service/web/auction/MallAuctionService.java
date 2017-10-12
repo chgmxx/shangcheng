@@ -3,6 +3,7 @@ package com.gt.mall.service.web.auction;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.auction.MallAuction;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -95,5 +96,10 @@ public interface MallAuctionService extends BaseService< MallAuction > {
      * @return map
      */
     Map< String,Object > isMaxNum( Map< String,Object > map, String memberId );
+
+    /**
+     * 查询正在拍卖的商品
+     */
+    PageUtil searchAuctionAll( PhoneSearchProductDTO searchProductDTO, Member member );
 
 }

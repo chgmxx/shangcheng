@@ -67,7 +67,6 @@
 
 <body>
 <jsp:include page="/jsp/common/headerCommon.jsp"/>
-
 <div class="body_div">
     <c:if test="${empty isNoAdminFlag }">
         <div class="con-head">
