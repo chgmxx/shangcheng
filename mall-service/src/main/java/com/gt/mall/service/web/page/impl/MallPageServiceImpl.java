@@ -2479,50 +2479,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	return mallPageDAO.selectPageIdByUserId( userId, shopList );
     }
 
-    @Override
-    public String wxShare( int userId, HttpServletRequest request, Map< String,Object > params ) throws Exception {
-	Member member = SessionUtils.getLoginMember( request );
-	int publicId = 0;
-	if ( CommonUtil.isEmpty( member ) && userId > 0 ) {
-	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( userId );
-	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-		publicId = wxPublicUsers.getId();
-	    }
-	} else {
-	    if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
-		publicId = member.getPublicId();
-	    }
-	}
-	if ( publicId > 0 ) {
-	    WxJsSdk wxJsSdk = new WxJsSdk();
-	    wxJsSdk.setPublicId( publicId );
-	    if ( CommonUtil.isNotEmpty( params.get( "share" ) ) ) {
-		wxJsSdk.setArry( params.get( "share" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "menus" ) ) ) {
-		wxJsSdk.setMenus( params.get( "menus" ).toString() );
-	    }
-	    WxShare wxShare = new WxShare();
-	    if ( CommonUtil.isNotEmpty( params.get( "imagesUrl" ) ) ) {
-		wxShare.setImgUrls( params.get( "imagesUrl" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "title" ) ) ) {
-		wxShare.setTitle( params.get( "title" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "url" ) ) ) {
-		wxShare.setUrl( params.get( "url" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( wxShare ) ) {
-		wxJsSdk.setWxShare( wxShare );
-	    }
-	    KeysUtil keysUtil = new KeysUtil();
-	    logger.info( "wxJsSdk：" + com.alibaba.fastjson.JSONObject.toJSONString( wxJsSdk ) );
-	    String key = keysUtil.getEncString( com.alibaba.fastjson.JSONObject.toJSONString( wxJsSdk ) );
-	    return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/wxphone/6F6D9AD2/79B4DE7C/wxjssdk.do?key=" + key;
-	}
-	return null;
-    }
-
     private List< Map< String,Object > > getProductParams( List< Map< String,Object > > productList, List< Map< String,Object > > imageList ) {
 	List< Map< String,Object > > newProList = new ArrayList<>();
 
