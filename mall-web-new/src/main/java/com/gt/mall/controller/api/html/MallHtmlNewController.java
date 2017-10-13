@@ -64,14 +64,17 @@ public class MallHtmlNewController extends BaseController {
 
     @ApiOperation( value = "h5商城列表(分页)", notes = "h5商城列表(分页)" )
     @ResponseBody
-    @ApiImplicitParams( { @ApiImplicitParam( name = "pageNum", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer pageNum ) {
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    Map< String,Object > map = htmlService.htmlList( request );
-	    result.put( "map", map );
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "curPage", curPage );
+	    params.put( "user_id", user.getId() );
+	    PageUtil page = htmlService.newHtmlList( request, params );
+	    result.put( "page", page );
 	    Integer iscreat = 0;//是否还可以创建h5商城0 可以，1不可以
 	    Integer ispid = 0;//是否是主账号，0是主账号，1是子账号管理，2是子账号用户
 	    //pid==0 主账户,否则是子账户
@@ -109,12 +112,16 @@ public class MallHtmlNewController extends BaseController {
      */
     @ApiOperation( value = "获取模板列表", notes = "获取模板列表" )
     @ResponseBody
-    @ApiImplicitParams( { @ApiImplicitParam( name = "pageNum", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/modelList", method = RequestMethod.POST )
-    public ServerResponse modelList( HttpServletRequest request, HttpServletResponse response, Integer pageNum ) {
+    public ServerResponse modelList( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > map = new HashMap<>();
 	try {
-	    map = htmlService.modelList( request );
+	    /*map = htmlService.modelList( request );*/
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "curPage", curPage );
+	    PageUtil page = htmlService.newModelList( request, params );
+	    map.put( "page", page );
 	} catch ( Exception e ) {
 	    logger.error( "获取模板列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -197,7 +204,7 @@ public class MallHtmlNewController extends BaseController {
     @ResponseBody
     @SysLogAnnotation( description = "保存背景图", op_function = "2" )
     @RequestMapping( value = "/updateImage", method = RequestMethod.POST )
-    public ServerResponse updateImage( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板id", required = true ) @RequestParam Integer id,
+    public ServerResponse updateImage( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "h5Id", required = true ) @RequestParam Integer id,
 		    @ApiParam( name = "imgUrl", value = "背景图URL", required = true ) @RequestParam String imgUrl ) {
 	try {
 	    htmlService.updateimage( id, imgUrl );
@@ -221,7 +228,6 @@ public class MallHtmlNewController extends BaseController {
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "h5ID", required = true ) @RequestParam Integer id ) {
 	try {
-
 	    htmlService.deleteById( id );
 	} catch ( BusinessException e ) {
 	    logger.error( "删除h5商城异常：" + e.getMessage() );
@@ -240,13 +246,18 @@ public class MallHtmlNewController extends BaseController {
      */
     @ApiOperation( value = "获取h5表单列表", notes = "获取h5表单列表" )
     @ResponseBody
-    @ApiImplicitParams( { @ApiImplicitParam( name = "pageNum", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "id", value = "模板Id", paramType = "query", required = false, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "id", value = "h5Id", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/htmlFromList", method = RequestMethod.POST )
-    public ServerResponse htmlFromList( HttpServletRequest request, HttpServletResponse response, Integer pageNum, Integer id ) {
+    public ServerResponse htmlFromList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer id ) {
 	Map< String,Object > map = new HashMap<>();
 	try {
-	    map = htmlFromService.htmlListfrom( request );
+	  /*  map = htmlFromService.htmlListfrom( request );*/
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "curPage", curPage );
+	    params.put( "htmlId", id );
+	    PageUtil page = htmlFromService.newHtmlListfrom( request, params );
+	    map.put( "page", page );
 	} catch ( Exception e ) {
 	    logger.error( "获取h5表单列表异常：" + e.getMessage() );
 	    e.printStackTrace();

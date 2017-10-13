@@ -33,14 +33,17 @@ public class MallHtml extends Model< MallHtml > {
     /**
      * 模块所有信息
      */
+    @TableField( "dataJson" )
     private String  dataJson;
     /**
      * 模块背景信息
      */
+    @TableField( "dataBg" )
     private String  dataBg;
     /**
      * 每一页的所有信息
      */
+    @TableField( "dataTransverse" )
     private String  dataTransverse;
     /**
      * 背景音乐url

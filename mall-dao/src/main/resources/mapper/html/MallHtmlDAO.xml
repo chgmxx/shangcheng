@@ -54,4 +54,22 @@
        SELECT COUNT(1) FROM t_mall_html a  WHERE a.source_type=1 and a.state=0
     </select>
 
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
+        select count(a.id)
+        from t_mall_html a
+        WHERE  a.source_type=2 and a.bus_user_id=#{user_id}
+        <if test="pid == 0 ">
+            OR a.pid=#{user_id}
+        </if>
+    </select>
+    <select id="selectByPage"   resultType="java.util.Map">
+        SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state,bus_user_id
+        FROM t_mall_html a
+        WHERE  a.source_type=2 and a.bus_user_id=#{user_id}
+        <if test="pid == 0 ">
+            OR a.pid=#{user_id}
+        </if>
+        limit #{firstNum},#{maxNum}
+    </select>
+
 </mapper>

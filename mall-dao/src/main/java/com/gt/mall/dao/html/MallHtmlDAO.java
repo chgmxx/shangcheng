@@ -1,6 +1,7 @@
 package com.gt.mall.dao.html;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.html.MallHtml;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,6 +17,24 @@ import java.util.Map;
  * @since 2017-07-20
  */
 public interface MallHtmlDAO extends BaseMapper<MallHtml> {
+
+    /**
+     * 统计商家中的H5模板信息
+     *
+     * @param params type：状态，shoplist：店铺Id集合
+     *
+     * @return 数量
+     */
+    int selectByCount( Map< String,Object > params );
+
+    /**
+     * 得到该用户 商家中的H5模板列表
+     *
+     * @param params user_id 商家Id，firstNum：页数，maxNum 数量
+     *
+     * @return 团购信息列表
+     */
+    List<Map<String, Object>>  selectByPage( Map< String,Object > params );
 
     /**
      * 得到该用户 商家中的H5模板列表

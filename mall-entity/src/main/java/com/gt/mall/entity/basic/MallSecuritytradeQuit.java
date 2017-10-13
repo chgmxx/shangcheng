@@ -62,10 +62,10 @@ public class MallSecuritytradeQuit extends Model< MallSecuritytradeQuit > {
     @TableField( "refuse_reason" )
     private String  refuseReason;
     /**
-     * 生效时间
+     * 审核时间
      */
-    @TableField( "effect_time" )
-    private Date    effectTime;
+    @TableField( "check_time" )
+    private Date    checkTime;
 
     @Override
     protected Serializable pkVal() {
@@ -82,7 +82,7 @@ public class MallSecuritytradeQuit extends Model< MallSecuritytradeQuit > {
                         ", userId=" + userId +
                         ", createTime=" + createTime +
                         ", checkStatus=" + checkStatus +
-                        ", effectTime=" + effectTime +
+                        ", checkTime=" + checkTime +
                         "}";
     }
 

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,17 +91,32 @@ public class MallPaySetController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
+	    List< Map > msgArr = null;
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
 		if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
-		    JSONArray msgArr = JSONArray.fromObject( set.getMessageJson() );
-		    result.put( "msgArr", msgArr ); //选中消息模板
+		    msgArr = JSONArray.fromObject( set.getMessageJson() );
+		}
+		if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
+		    JSONArray busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
+		    result.put( "busMsgArr", busMsgArr );
 		}
 	    }
 
 	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
+	    if ( messageList != null && messageList.size() > 0 ) {
+		for ( Map map : messageList ) {
+		    for ( Map obj : msgArr ) {
+			map.put( "selected", "0" );
+			if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+			    map.put( "selected", "1" );
+			    break;
+			}
+		    }
+		}
+	    }
 	    result.put( "messageList", messageList );
 	} catch ( Exception e ) {
 	    logger.error( "获取消息模板异常：" + e.getMessage() );
@@ -120,8 +136,8 @@ public class MallPaySetController extends BaseController {
     public ServerResponse setSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-//	    set.setUserId( user.getId() );
-//	    com.alibaba.fastjson.JSONObject set2 = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( set ) );
+	    //	    set.setUserId( user.getId() );
+	    //	    com.alibaba.fastjson.JSONObject set2 = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( set ) );
 	    params.put( "userId", user.getId() );
 	    int num = mallPaySetService.editPaySet( params );
 	    if ( num <= 0 ) {
@@ -146,54 +162,54 @@ public class MallPaySetController extends BaseController {
     @ResponseBody
     @SysLogAnnotation( description = "设置消息模板", op_function = "2" )
     @RequestMapping( value = "/setSmsTemplate", method = RequestMethod.POST )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "template_json", value = "模板json[ {title:积分变动提醒,id:23} ]", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "type", value = "商家0/粉丝1", paramType = "query", required = false, dataType = "int" ) } )
-    public ServerResponse setSmsTemplate( HttpServletRequest request, HttpServletResponse response, String template_json, Integer type ) {
+    @ApiImplicitParams( { @ApiImplicitParam( name = "template_json", value = "{\"title\":\"积分变动提醒\",\"id\":23} ", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "type", value = "商家0/粉丝1", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "operation", value = "操作 1开启 0关闭", paramType = "query", required = true, dataType = "int" ) } )
+    public ServerResponse setSmsTemplate( HttpServletRequest request, HttpServletResponse response, String template_json, Integer type, Integer operation ) {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    List< Map > msgArr = null;
-	    List< Map > busMsgArr = null;
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
-		    msgArr = JSONArray.fromObject( set.getMessageJson() );
-		}
-		if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
-		    busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
-		}
-	    }
-
-	    int cont = 0;
-	    Map temp = JSONObject.fromObject( template_json );
-	    if ( type == 0 ) {//商家
-		for ( Map map : busMsgArr ) {
-		    if ( CommonUtil.toInteger( map.get( "id" ) ) == CommonUtil.toInteger( temp.get( "id" ) ) ) {
-			busMsgArr.remove( map );
-			cont = 1;
-			break;
+		if ( type == 1 ) {
+		    if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
+			msgArr = JSONArray.fromObject( set.getMessageJson() );
+		    } else {
+			msgArr = new ArrayList<>();
+		    }
+		} else {
+		    if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
+			msgArr = JSONArray.fromObject( set.getBusMessageJson() );
+		    } else {
+			msgArr = new ArrayList<>();
 		    }
 		}
-		if ( cont == 0 ) {
-		    busMsgArr.add( temp );
+	    }
+	    Map temp = JSONObject.fromObject( template_json );
+
+	    if ( operation == 1 ) {
+		msgArr.add( temp );
+		if ( type == 0 ) {//商家
+		    set.setBusMessageJson( msgArr.toString() );
+		} else {
+		    set.setMessageJson( msgArr.toString() );
 		}
-		set.setBusMessageJson( busMsgArr.toString() );
-		mallPaySetService.updateById( set );
 	    } else {
 		for ( Map map : msgArr ) {
 		    if ( CommonUtil.toInteger( map.get( "id" ) ) == CommonUtil.toInteger( temp.get( "id" ) ) ) {
 			msgArr.remove( map );
-			cont = 1;
 			break;
 		    }
 		}
-		if ( cont == 0 ) {
-		    msgArr.add( temp );
+		if ( type == 0 ) {//商家
+		    set.setBusMessageJson( msgArr.toString() );
+		} else {
+		    set.setMessageJson( msgArr.toString() );
 		}
-		set.setMessageJson( msgArr.toString() );
-		mallPaySetService.updateById( set );
 	    }
+	    mallPaySetService.updateById( set );
 
 	} catch ( BusinessException e ) {
 	    logger.error( "设置消息模板异常：" + e.getMessage() );

@@ -147,9 +147,8 @@ public class MallSecuritytradeController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( id );
 	    quit.setCheckStatus( status );
-	    if ( status == 1 ) {
-		quit.setEffectTime( new Date() );
-	    } else {
+	    quit.setCheckTime( new Date() );
+	    if ( status == -1 ) {
 		quit.setRefuseReason( reason );
 	    }
 	    boolean flag = mallSecuritytradeQuitService.updateById( quit );

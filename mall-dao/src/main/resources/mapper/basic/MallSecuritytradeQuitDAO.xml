@@ -11,12 +11,12 @@
 		<result column="user_id" property="userId" />
 		<result column="check_status" property="checkStatus" />
 		<result column="refuse_reason" property="refuseReason" />
-		<result column="effect_time" property="effectTime" />
+		<result column="check_time" property="checkTime" />
 	</resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, create_time, quit_reason_id, remark, user_id , check_status, refuse_reason , effect_time
+        id, create_time, quit_reason_id, remark, user_id , check_status, refuse_reason , check_time
     </sql>
 
 </mapper>

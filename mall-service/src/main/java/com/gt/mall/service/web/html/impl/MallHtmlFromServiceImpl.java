@@ -1,9 +1,14 @@
 package com.gt.mall.service.web.html.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.html.MallHtmlFromDAO;
+import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.SessionUtils;
 import com.gt.mall.service.web.html.MallHtmlFromService;
 import org.apache.log4j.Logger;
@@ -59,6 +64,23 @@ public class MallHtmlFromServiceImpl extends BaseServiceImpl< MallHtmlFromDAO,Ma
 	map.put( "pageNum", pageNum );
 	map.put( "pagetotal", pagetotal );
 	return map;
+    }
+
+    @Override
+    public PageUtil newHtmlListfrom( HttpServletRequest request, Map< String,Object > params ) {
+	int pageSize = 10;// 每页显示商品的数量
+	int htmlId = CommonUtil.toInteger( params.get( "htmlId" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+
+	int count = htmlFromDAO.countHtmlFromByHtmlId( htmlId );
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );// 起始页
+	if ( count > 0 ) {
+	    List< Map< String,Object > > list = htmlFromDAO.getHtmlFromByHtmlId( htmlId, firstNum, pageSize );
+	    page.setSubList( list );
+	}
+
+	return page;
     }
 
     @Override

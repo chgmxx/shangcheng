@@ -158,7 +158,7 @@ public class MallPaySet extends Model< MallPaySet > {
     @TableField( "bus_message_json" )
     private String  busMessageJson ;
     /**
-     * 是否开启担保交易  0未开启   1 开启
+     * 是否加入担保交易  0未加入 1已加入
      */
     @TableField( "is_securitytrade" )
     private Integer isSecuritytrade;
