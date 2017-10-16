@@ -65,8 +65,8 @@ public class MallPaySetController extends BaseController {
 	    result.put( "set", set );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
 		if ( CommonUtil.isNotEmpty( set.getSmsMessage() ) ) {
-		    JSONObject smsMsgObj = JSONObject.fromObject( set.getSmsMessage() );
-		    result.put( "smsMsgObj", smsMsgObj );//支付成功提醒内容
+		    Map smsMsgObj = JSONObject.fromObject( set.getSmsMessage() );
+		    result.put( "paySuccessText", smsMsgObj.get( "1" ) );//支付成功提醒内容
 		}
 		if ( CommonUtil.isNotEmpty( set.getFooterJson() ) ) {
 		    JSONObject foorerObj = JSONObject.fromObject( set.getFooterJson() );

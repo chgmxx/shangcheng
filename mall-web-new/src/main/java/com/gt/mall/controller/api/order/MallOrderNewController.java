@@ -117,7 +117,7 @@ public class MallOrderNewController extends BaseController {
 
 	    PageUtil page = mallOrderService.findByPage( params );
 	    result.put( "page", page );
-	    result.put( "urlPath", PropertiesUtil.getDomain() );
+//	    result.put( "urlPath", PropertiesUtil.getDomain() );
 	    result.put( "videourl", busUserService.getVoiceUrl( "79" ) );
 	} catch ( Exception e ) {
 	    logger.error( "订单列表异常：" + e.getMessage() );

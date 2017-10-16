@@ -53,6 +53,28 @@ public class MallSecuritytradeController extends BaseController {
     private DictService                  dictService;
 
     /**
+     * 加入担保交易
+     */
+    @ApiOperation( value = "加入担保交易", notes = "加入担保交易" )
+    @ResponseBody
+    @RequestMapping( value = "/add", method = RequestMethod.POST )
+    public ServerResponse add( HttpServletRequest request, HttpServletResponse response ) {
+	try {
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    MallPaySet set = new MallPaySet();
+	    set.setUserId( user.getId() );
+	    set = mallPaySetService.selectByUserId( set );
+	    set.setIsSecuritytrade( 1 );
+	    mallPaySetService.updateById( set );
+	} catch ( Exception e ) {
+	    logger.error( "保存退出担保交易信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
+
+    /**
      * 是否加入担保交易
      */
     @ApiOperation( value = "是否加入担保交易", notes = "是否加入担保交易" )
@@ -99,7 +121,6 @@ public class MallSecuritytradeController extends BaseController {
     public ServerResponse quitReasonMap( HttpServletRequest request, HttpServletResponse response ) {
 	List< Map > typeMap = null;
 	try {
-	    //获取页面类型
 	    typeMap = dictService.getDict( "1073" );
 	} catch ( Exception e ) {
 	    logger.error( "获取退出理由列表异常：" + e.getMessage() );
@@ -107,6 +128,24 @@ public class MallSecuritytradeController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取退出理由列表异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), typeMap );
+    }
+
+    /**
+     * 判断商家是否有微信支付平台
+     */
+    @ApiOperation( value = "判断商家是否有微信支付平台", notes = "判断商家是否有微信支付平台" )
+    @ResponseBody
+    @RequestMapping( value = "/isWxPayUser", method = RequestMethod.POST )
+    public ServerResponse ae( HttpServletRequest request, HttpServletResponse response ) {
+	Boolean flag = true;
+	try {
+	    //TODO 判断商家是否有微信支付平台
+	} catch ( Exception e ) {
+	    logger.error( "判断商家是否有微信支付平台异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag );
     }
 
     /**
@@ -136,7 +175,7 @@ public class MallSecuritytradeController extends BaseController {
     /**
      * 修改审核状态
      */
-    @ApiOperation( value = "修改审核状态", notes = "修改审核状态" )
+    @ApiOperation( value = "修改退出担保交易的审核状态", notes = "修改退出担保交易的审核状态" )
     @ResponseBody
     @RequestMapping( value = "/updateStatus", method = RequestMethod.POST )
     public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
