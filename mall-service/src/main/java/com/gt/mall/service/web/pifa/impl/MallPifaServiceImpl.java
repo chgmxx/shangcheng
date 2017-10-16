@@ -463,7 +463,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		if ( mallPaySet.getIsPf().toString().equals( "1" ) ) {
 		    isOpenPifa = true;
 		    if ( CommonUtil.isNotEmpty( mallPaySet.getPfSet() ) ) {
-			JSONObject obj = JSONObject.fromObject( mallPaySet.getPfSet() );
+			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject( mallPaySet.getPfSet() );
 			result.setPfSetObj( obj );
 		    }
 		}
