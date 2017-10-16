@@ -143,7 +143,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     }
 
     @Override
-    public Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr ) {
+    public Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli ) {
 	if ( CommonUtil.isEmpty( provinceId ) ) {
 	    provinceId = mallPageService.getProvince( ip );
 	}
@@ -159,6 +159,9 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	arr.add( obj );*/
 	map.put( "orderArr", productArr );
 	map.put( "toshop", toshop );
+	if ( juli > 0 ) {
+	    map.put( "juli", juli );
+	}
 	/*map.put( "proTypeId", proTypeId );*/
 	return getFreightMoney( map );
     }

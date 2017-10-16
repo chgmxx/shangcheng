@@ -135,7 +135,7 @@ http:
   key: WXMP2017
  #会员key 和 请求地址
  member:
-  domain: https://member.deeptel.com.cn/
+  domain: http://member.yifriend.net/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
  union:
   domain: http://union.duofee.com/

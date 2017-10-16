@@ -69,10 +69,10 @@ public class PhonePageController {
     @Autowired
     private WxShopService            wxShopService;
 
-    @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表" )
+    @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @RequestMapping( value = "79B4DE7C/shopList", method = RequestMethod.POST )
+    @RequestMapping( value = "79B4DE7C/shopList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse shopList( HttpServletRequest request, int busId ) {
 	try {
 	    BusUser user = new BusUser();
@@ -100,10 +100,10 @@ public class PhonePageController {
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该商家没有门店列表" );
     }
 
-    @ApiOperation( value = "获取商家的底部菜单", notes = "获取商家的底部菜单" )
+    @ApiOperation( value = "获取商家的底部菜单", notes = "获取商家的底部菜单", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @RequestMapping( value = "79B4DE7C/footerMenu", method = RequestMethod.POST )
+    @RequestMapping( value = "79B4DE7C/footerMenu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse footerMenu( HttpServletRequest request, int busId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -118,11 +118,11 @@ public class PhonePageController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
-    @ApiOperation( value = "获取商城首页id", notes = "获取商城首页id" )
+    @ApiOperation( value = "获取商城首页id", notes = "获取商城首页id", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = false, dataType = "int" ) } )
-    @RequestMapping( value = "79B4DE7C/getHomePageId", method = RequestMethod.POST )
+    @RequestMapping( value = "79B4DE7C/getHomePageId", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getHomePageId( HttpServletRequest request, int busId, int shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -153,10 +153,10 @@ public class PhonePageController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
-    @ApiOperation( value = "获取商家的客服", notes = "获取商家的客服" )
+    @ApiOperation( value = "获取商家的客服", notes = "获取商家的客服", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @RequestMapping( value = "79B4DE7C/getCustomer", method = RequestMethod.POST )
+    @RequestMapping( value = "79B4DE7C/getCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getCustomer( HttpServletRequest request, int shopId ) {
 	try {
 	    MallStore store = mallStoreService.selectById( shopId );
@@ -174,18 +174,18 @@ public class PhonePageController {
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该店铺没有客服" );
     }
 
-    @ApiOperation( value = "获取店铺风格", notes = "获取店铺风格" )
+    @ApiOperation( value = "获取店铺风格", notes = "获取店铺风格", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @ApiImplicitParams( @ApiImplicitParam( name = "userId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @RequestMapping( value = "79B4DE7C/getShopStyle", method = RequestMethod.POST )
-    public ServerResponse getShopStyle( HttpServletRequest request, int userId ) {
+    @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
+    @RequestMapping( value = "79B4DE7C/getShopStyle", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse getShopStyle( HttpServletRequest request, int busId ) {
 	try {
-	    MallPaySet mallPaySet = mallPaySetService.selectByUserId( userId );
+	    MallPaySet mallPaySet = mallPaySetService.selectByUserId( busId );
 	    if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
 		if ( CommonUtil.isNotEmpty( mallPaySet.getStyleKey() ) ) {
-		    String styleValue = dictService.getDictRuturnValue( "k1001", CommonUtil.toInteger( mallPaySet.getStyleKey() ) );
+		    String styleValue = dictService.getDictRuturnValue( "k001", CommonUtil.toInteger( mallPaySet.getStyleKey() ) );
 		    if ( CommonUtil.isNotEmpty( styleValue ) ) {
-			return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), styleValue, false );
+			return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), styleValue.split( "," ), false );
 		    }
 		}
 	    }
@@ -197,10 +197,10 @@ public class PhonePageController {
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该店铺没有设置风格" );
     }
 
-    @ApiOperation( value = "查询历史搜索和推荐搜索接口", notes = "获取用户已搜索关键词" )
+    @ApiOperation( value = "查询历史搜索和推荐搜索接口", notes = "获取用户已搜索关键词", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @RequestMapping( value = "79B4DE7C/searchLabel", method = RequestMethod.POST )
+    @RequestMapping( value = "79B4DE7C/searchLabel", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse searchLabel( HttpServletRequest request, int shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -230,10 +230,10 @@ public class PhonePageController {
     /**
      * 清空搜索查询的标签
      */
-    @ApiOperation( value = "清空历史搜索接口", notes = "清空用户历史搜索" )
+    @ApiOperation( value = "清空历史搜索接口", notes = "清空用户历史搜索", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @RequestMapping( value = "79B4DE7C/clearSearchGroup", method = RequestMethod.POST )
+    @RequestMapping( value = "79B4DE7C/clearSearchGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse clearSearchGroup( HttpServletRequest request, HttpServletResponse response, int shopId ) throws IOException {
 	try {
 	    Map< String,Object > params = new HashMap<>();

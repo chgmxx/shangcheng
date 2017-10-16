@@ -10,6 +10,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneGroupDTO;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.auction.MallAuctionService;
@@ -33,10 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,10 +82,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallStoreCertificationService mallStoreCertificationService;
 
-    @ApiOperation( value = "商品分类接口", notes = "商品分类接口" )
+    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/classAll", method = RequestMethod.POST )
-    public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute PhoneGroupDTO params ) {
+    @RequestMapping( value = "79B4DE7C/classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneGroupDTO params ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "shopId", params.getShopId() );
@@ -112,10 +110,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     }
 
-    @ApiOperation( value = "商品搜索接口", notes = "搜索商品" )
+    @ApiOperation( value = "商品搜索接口", notes = "搜索商品", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/productAll", method = RequestMethod.POST )
-    public ServerResponse productAll( HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute PhoneSearchProductDTO params ) {
+    @RequestMapping( value = "79B4DE7C/productAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse productAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params ) {
 	Map< String,Object > result = new HashMap<>();
 	Member member = SessionUtils.getLoginMember( request );
 	try {
@@ -169,11 +167,11 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
-    @ApiOperation( value = "商品详情接口", notes = "查看商品详情" )
+    @ApiOperation( value = "商品详情接口", notes = "查看商品详情", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/productDetail", method = RequestMethod.POST )
-    public ServerResponse productDetail( HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute PhoneProductDetailDTO params ) {
-	Map< String,Object > result = new HashMap<>();
+    @RequestMapping( value = "79B4DE7C/productDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse productDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params ) {
+	PhoneProductDetailResult result;
 	Member member = SessionUtils.getLoginMember( request );
 	try {
 	    //判断店铺和门店是否已经被删除
@@ -197,19 +195,28 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    BusUser user = busUserService.selectById( params.getBusId() );//根据商家id获取商家信息
 	    if ( CommonUtil.isNotEmpty( user ) ) {
 		if ( CommonUtil.isNotEmpty( user.getAdvert() ) && user.getAdvert().toString().equals( "0" ) ) {
-		    result.put( "isAdvert", 1 );//是否显示技术支持  1显示
+		    result.setIsAdvert( 1 );//是否显示技术支持  1显示
 		}
 	    }
+
 	    //获取商家的认证信息
-	    result.putAll( mallStoreCertificationService.getStoreServiceByShopId( params.getShopId(), params.getBusId() ) );
+	    Map< String,Object > map = mallStoreCertificationService.getStoreServiceByShopId( params.getShopId(), params.getBusId() );
+	    if ( CommonUtil.isNotEmpty( map ) ) {
+		if ( CommonUtil.isNotEmpty( map.get( "stoType" ) ) )
+		    result.setStoType( map.get( "stoType" ).toString() );
+		if ( CommonUtil.isNotEmpty( map.get( "categoryName" ) ) )
+		    result.setCategoryName( map.get( "categoryName" ).toString() );
+		if ( CommonUtil.isNotEmpty( map.get( "isSecuritytrade" ) ) )
+		    result.setSecuritytrade( Boolean.valueOf( map.get( "isSecuritytrade" ).toString() ) );
+	    }
 
 	} catch ( BusinessException e ) {
-	    logger.error( "商品搜索接口异常：" + e.getMessage() );
+	    logger.error( "商品详情接口异常：" + e.getMessage() );
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "商品搜索接口异常：" + e.getMessage() );
+	    logger.error( "商品详情接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品搜索接口失败" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品详情接口失败" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }

@@ -10,7 +10,6 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
 import com.gt.mall.constant.Constants;
-import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.MallPresaleDAO;
 import com.gt.mall.dao.presale.MallPresaleDepositDAO;
@@ -23,14 +22,15 @@ import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
+import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
@@ -73,8 +73,6 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     @Autowired
     private MallProductInventoryService mallProductInventoryService;
     @Autowired
-    private MallPaySetDAO               mallPaySetDAO;
-    @Autowired
     private MallOrderDAO                mallOrderDAO;
     @Autowired
     private MallPaySetService           mallPaySetService;
@@ -83,9 +81,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     @Autowired
     private FenBiFlowService            fenBiFlowService;
     @Autowired
-    private WxShopService               wxShopService;
-    @Autowired
     private MallSearchKeywordService    mallSearchKeywordService;
+    @Autowired
+    private MallProductService          mallProductService;
 
     /**
      * 通过店铺id来查询预售
@@ -381,6 +379,118 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    return presale;
 	}
 	return null;
+    }
+
+    @Override
+    public PhoneProductDetailResult getPresaleProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+	boolean isOpenPresale = false;
+	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
+	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPresale() ) ) {//是否开启预售
+		if ( mallPaySet.getIsPresale().toString().equals( "1" ) ) {
+		    isOpenPresale = true;
+		}
+	    }
+	}
+	if ( !isOpenPresale ) {
+	    return result;
+	}
+	MallPresaleDeposit deposit = null;
+	MallPresale presale = getPresaleByProId( proId, shopId, null );
+	if ( CommonUtil.isEmpty( presale ) ) {
+	    return result;
+	}
+	result.setActivityId( presale.getId() );
+	result.setActivityStatus( presale.getStatus() );
+	if ( presale.getIsDeposit() == 1 ) {
+	    result.setDingMoney( CommonUtil.toDouble( presale.getDepositPercent() ) );
+	}
+
+	Map< String,Object > presaleMap = new HashMap<>();
+	presaleMap.put( "presaleId", presale.getId() );
+	boolean isBuyFlag = false;
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    presaleMap.put( "joinUserId", member.getId() );
+	    deposit = mallPresaleDepositDAO.selectCountByPresaleId( presaleMap );//用户是否已经交纳定金  》0   已经交纳了定金
+	    if ( deposit != null ) {
+		if ( deposit.getDepositStatus().toString().equals( "1" ) ) {
+		    isBuyFlag = true;
+
+		    result.setWeiMoney( CommonUtil.subtract( CommonUtil.toDouble( deposit.getOrderMoney() ), CommonUtil.toDouble( deposit.getDepositMoney() ) ) );
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( deposit ) ) {
+		Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( deposit.getProSpecificaIds(), deposit.getProductId() );
+		if ( CommonUtil.isNotEmpty( invMap ) ) {
+		    if ( CommonUtil.isNotEmpty( invMap.get( "id" ) ) ) {
+			result.setInvId( CommonUtil.toInteger( invMap.get( "id" ) ) );
+		    }
+		}
+
+	    }
+	}
+	result.setIsShowLiJiBuyButton( 0 );//隐藏立即购买
+	if ( isBuyFlag ) {
+	    if ( presale.getStatus() == 1 ) {
+		result.setIsShowPresaleButton( 1 );//显示预定按钮
+	    } else if ( presale.getStatus() == 0 ) {
+		result.setIsShowStartButton( 1 );//显示即将开售按钮
+	    }
+	} else {
+	    if ( presale.getStatus() == 1 ) {
+		result.setIsShowLiJiBuyButton( 1 );//显示立即购买
+	    } else if ( presale.getStatus() == 0 ) {
+		result.setIsShowPresaleButton( 1 );//显示预定按钮
+	    }
+	}
+	if ( CommonUtil.isNotEmpty( deposit ) ) {
+	    if ( isBuyFlag && presale.getStatus() == 0 ) {
+		result.setPayDespositStatus( 1 );//已缴纳定金
+	    }
+	}
+
+	//查询预售商品订购数量
+	int buyCout = mallPresaleDepositDAO.selectBuyCountByPreId( presaleMap );
+	if ( CommonUtil.isNotEmpty( presale.getOrderNum() ) ) {
+	    buyCout = buyCout + presale.getOrderNum();//订购量
+	}
+	result.setBuyCount( buyCout );
+
+	double presaleDiscount;
+
+	List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( presale.getId() );
+	double proPrice = result.getProductPrice();
+	if ( timeList != null && timeList.size() > 0 ) {
+	    for ( MallPresaleTime mallPresaleTime : timeList ) {
+		Date endTime = DateTimeKit.parse( mallPresaleTime.getEndTime(), "yyyy-MM-dd HH:mm:ss" );
+		Date startTime = DateTimeKit.parse( mallPresaleTime.getStartTime(), "yyyy-MM-dd HH:mm:ss" );
+		Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
+		if ( startTime.getTime() <= nowTime.getTime() && nowTime.getTime() < endTime.getTime() ) {
+		    int saleType = mallPresaleTime.getSaleType();
+		    int priceType = mallPresaleTime.getPriceType();
+		    if ( priceType == 2 ) {//加减金额
+			presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() );
+			if ( saleType == 1 ) {//上调价格
+			    proPrice = proPrice + presaleDiscount;
+			} else {//下调价格
+			    proPrice = proPrice - presaleDiscount;
+
+			}
+		    } else {//百分比
+			presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() ) / 100;
+			if ( saleType == 1 ) {//上调价格
+			    proPrice = proPrice + ( proPrice * ( presaleDiscount ) );
+			} else {//下调价格
+			    proPrice = proPrice - ( proPrice * ( presaleDiscount ) );
+			}
+		    }
+		    break;
+		}
+
+	    }
+	}
+	DecimalFormat df = new DecimalFormat( "######0.00" );
+	result.setProductPrice( CommonUtil.toDouble( df.format( proPrice ) ) );
+	return result;
     }
 
     /**

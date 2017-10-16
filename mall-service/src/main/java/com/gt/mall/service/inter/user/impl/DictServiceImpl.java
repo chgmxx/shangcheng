@@ -56,8 +56,8 @@ public class DictServiceImpl implements DictService {
 	    }
 	}
 	Map< String,Object > params = new HashMap<>();
-	params.put( "dictType", dictType );
-	params.put( "key", key );
+	params.put( "style", dictType );
+	params.put( "item_key", key );
 	String data = HttpSignUtil.signHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject dataJson = JSONObject.parseObject( data );
@@ -70,7 +70,7 @@ public class DictServiceImpl implements DictService {
 		}
 	    }
 	}
-	return HttpSignUtil.signHttpSelect( params, DICT_URL + "getDictApi.dood", 1 );
+	return null;
     }
 
     @Override

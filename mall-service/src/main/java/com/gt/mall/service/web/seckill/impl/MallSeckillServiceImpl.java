@@ -19,6 +19,7 @@ import com.gt.mall.entity.seckill.MallSeckillJoin;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -374,6 +375,38 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    return seckill;
 	}
 	return null;
+    }
+
+    @Override
+    public PhoneProductDetailResult getSeckillProductDetail( int proId, int shopId, PhoneProductDetailResult result ) {
+	//通过商品id查询秒杀信息
+	MallSeckill seckill = getSeckillByProId( proId, shopId );
+	if ( seckill == null ) {
+	    return result;
+	}
+	result.setActivityId( seckill.getId() );
+	if ( CommonUtil.isNotEmpty( seckill.getSMaxBuyNum() ) && seckill.getSMaxBuyNum() > 0 ) {
+	    result.setMaxBuyNum( seckill.getSMaxBuyNum() );//限购
+	}
+	result.setProductStockTotal( seckill.getSNum() );//库存
+	double seckillPrice = CommonUtil.toDouble( seckill.getSPrice() );
+	List< Integer > invIdList = new ArrayList<>();
+	if ( CommonUtil.isNotEmpty( seckill.getPriceList() ) ) {
+	    for ( MallSeckillPrice price : seckill.getPriceList() ) {
+		if ( price.getIsJoinGroup() == 1 ) {
+		    if ( result.getInvId() == 0 ) {
+			seckillPrice = CommonUtil.toDouble( price.getSeckillPrice() );
+			result.setInvId( price.getInvenId() );
+		    }
+		    if ( result.getInvId() > 0 ) {
+			invIdList.add( price.getInvenId() );
+		    }
+		}
+	    }
+	}
+	result.setInvIdList( invIdList );
+	result.setProductPrice( seckillPrice );
+	return result;
     }
 
     /**

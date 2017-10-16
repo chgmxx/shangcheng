@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * 商品详情所需参数
@@ -15,7 +16,9 @@ import javax.validation.constraints.NotNull;
  */
 @ApiModel( value = "PhoneProductDetailDTO", description = "商品详情验证" )
 @Data
-public class PhoneProductDetailDTO {
+public class PhoneProductDetailDTO implements Serializable {
+
+    private static final long serialVersionUID = 5115370109194912313L;
 
     @ApiModelProperty( name = "productId", value = "商品ID，必传", required = true )
     @NotNull( message = "商品ID不能为空" )

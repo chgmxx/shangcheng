@@ -9,9 +9,10 @@ import com.gt.mall.dao.product.MallProductInventoryDAO;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
+import com.gt.mall.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -202,6 +203,35 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
+    public MallProductInventory selectDefaultInvenNotNullStock( int productId, int invenId, PhoneProductDetailResult result ) {
+	MallProductInventory inventory;
+	if ( productId > 0 ) {
+	    inventory = mallProductInventoryDAO.selectById( invenId );
+	} else {
+	    MallProductInventory mallProductInventory = new MallProductInventory();
+	    mallProductInventory.setIsDelete( 0 );
+	    mallProductInventory.setIsDefault( 1 );
+	    mallProductInventory.setProductId( productId );
+	    inventory = mallProductInventoryDAO.selectOne( mallProductInventory );
+	}
+	if ( CommonUtil.isNotEmpty( inventory ) && CommonUtil.isNotEmpty( result.getInvIdList() ) && result.getInvIdList().size() > 0 ) {
+	    //库存为空 ，重新获取库存
+	    if ( CommonUtil.isEmpty( inventory.getInvNum() ) || inventory.getInvNum() == 0 ) {
+		for ( Integer invId : result.getInvIdList() ) {
+		    if ( CommonUtil.isEmpty( invenId ) ) {
+			continue;
+		    }
+		    inventory = mallProductInventoryDAO.selectById( invId );
+		    if ( CommonUtil.isNotEmpty( inventory.getInvNum() ) && inventory.getInvNum() > 0 ) {
+			break;
+		    }
+		}
+	    }
+	}
+	return inventory;
+    }
+
+    @Override
     public List< MallProductInventory > selectByIdListDefault( List< Integer > productList ) {
 
 	Wrapper< MallProductInventory > wrapper = new EntityWrapper<>();
@@ -377,6 +407,8 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	inventoryWrapper.orderBy( "is_default", false ).orderBy( "inv_num", false );
 	List< Map< String,Object > > inventoryList = mallProductInventoryDAO.selectMaps( inventoryWrapper );
 	if ( inventoryList == null || inventoryList.size() == 0 ) {
+	    inventoryWrapper = new EntityWrapper<>();
+	    inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
 	    inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 	    inventoryWrapper.orderBy( "inv_num", false );
 	    inventoryList = mallProductInventoryDAO.selectMaps( inventoryWrapper );
@@ -385,6 +417,8 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	if ( inventoryList != null && inventoryList.size() > 0 && CommonUtil.isEmpty( inv_id ) ) {
 	    map = inventoryList.get( 0 );
 	    if ( CommonUtil.isEmpty( map.get( "inv_num" ) ) || map.get( "inv_num" ).toString().equals( "0" ) ) {
+		inventoryWrapper = new EntityWrapper<>();
+		inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
 		inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 		inventoryWrapper.andNew( " inv_num > 0 " );
 		if ( defaultHasInvNum ) {

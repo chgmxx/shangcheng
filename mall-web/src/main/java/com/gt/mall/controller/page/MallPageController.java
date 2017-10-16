@@ -33,7 +33,9 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
+import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -439,12 +441,32 @@ public class MallPageController extends AuthorizeOrLoginController {
 	try {
 	    int userid = 0;
 	    Member member = SessionUtils.getLoginMember( request );
-	    Map wxPubMap = mallPageService.wxpublicid( id );//根据页面id查询商家公众号
+	    Map< String,Object > wxpublicid = mallPageService.wxpublicid( id );
+	    Map wxPubMap = wxpublicid;//根据页面id查询商家公众号
 	    MallPage obj = mallPageService.select( id );//根据页面id查询页面信息
 	    Map storeMap = mallPageService.shopmessage( obj.getPagStoId(), null );//获取店铺信息
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
 		userid = obj.getPagUserId();
 		request.setAttribute( "userid", userid );
+	    }
+
+	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
+	    loginMap.put( "uclogin", 1 );
+	    String returnUrl = userLogin( request, response, loginMap );
+	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
+		return returnUrl;
+	    }
+	    sellerService.clearSaleMemberIdByRedis( member, request, userid );
+
+	    boolean isShop = mallPageService.wxShopIsDelete( obj.getPagStoId(), null );
+	    if ( !isShop ) {
+		return "mall/product/phone/shopdelect";
+	    }
+
+	    String dataJson = "[]";
+	    String picJson = "[]";
+	    if ( CommonUtil.isEmpty( storeMap.get( "stoPicture" ) ) ) {
+		storeMap.put( "stoPicture", storeMap.get( "sto_qr_code" ).toString() );
 	    }
 	    String headImg = "";
 	    String http = PropertiesUtil.getResourceUrl();
@@ -466,43 +488,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 		name = storeMap.get( "sto_name" ).toString();
 	    } else {
 		name = storeMap.get( "business_name" ).toString();
-	    }
-
-	    /*if ( CommonUtil.isNotEmpty( wxPubMap ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "isShare" ) ) ) {
-		String shareUrl = CommonUtil.getpath( request);
-		if(!shareUrl.contains( "?" )){
-		    shareUrl += "?isShare=1";
-		}else{
-		    shareUrl += "&isShare=1";
-		}
-		Map< String,Object > shareParam = new HashMap<>();
-		shareParam.put( "share", "onMenuShareTimeline,onMenuShareAppMessage,showAllNonBaseMenuItem" );
-		shareParam.put( "imagesUrl", headImg );
-		shareParam.put( "title", name + "-" + obj.getPagName() );
-		shareParam.put( "url", shareUrl );
-		shareParam.put( "userid", userid );
-		String url = mallPageService.wxShare( userid, request, shareParam );
-		response.sendRedirect( url );
-		return null;
-	    }*/
-
-	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
-	    loginMap.put( "uclogin", 1 );
-	    String returnUrl = userLogin( request, response, loginMap );
-	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
-		return returnUrl;
-	    }
-	    sellerService.clearSaleMemberIdByRedis( member, request, userid );
-
-	    boolean isShop = mallPageService.wxShopIsDelete( obj.getPagStoId(), null );
-	    if ( !isShop ) {
-		return "mall/product/phone/shopdelect";
-	    }
-
-	    String dataJson = "[]";
-	    String picJson = "[]";
-	    if ( CommonUtil.isEmpty( storeMap.get( "stoPicture" ) ) ) {
-		storeMap.put( "stoPicture", storeMap.get( "sto_qr_code" ).toString() );
 	    }
 	    request.setAttribute( "stoName", name );
 	    request.setAttribute( "stoPicture", PropertiesUtil.getResourceUrl() + storeMap.get( "stoPicture" ) );
@@ -617,6 +602,14 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( userid );//查询商城底部菜单
 	    request.setAttribute( "footerMenuMap", footerMenuMap );
 	    mallPageService.getCustomer( request, userid );
+
+	    if ( CommonUtil.isNotEmpty( wxPubMap )  ) {
+		WxJsSdk wxJsSdk = new WxJsSdk();
+		wxJsSdk.setPublicId( member.getPublicId() );
+		wxJsSdk.setUrl( CommonUtil.getpath( request ) );
+		WxJsSdkResult result = wxPublicUserService.wxjssdk( wxJsSdk );
+		request.setAttribute( "record", result );
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "访问商城首页异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -732,10 +725,10 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    if ( rType > 0 ) {
 		mallProductService.setJifenByRedis( member, request, rType, userid );//设置积分商城、粉币商城的标示
 	    } else {
-		int isJifen = mallProductService.getJifenByRedis( member, request, rType, userid );//判断是否是积分和粉币商城
+		/*int isJifen = mallProductService.getJifenByRedis( member, request, rType, userid );//判断是否是积分和粉币商城
 		if ( isJifen > 0 ) {
 		    rType = isJifen;
-		}
+		}*/
 	    }
 	    if ( rType > 0 ) {
 		boolean isSc = true;

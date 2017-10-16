@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * 分类验证
@@ -15,7 +16,9 @@ import javax.validation.constraints.NotNull;
  */
 @ApiModel( value = "PhoneGroupDTO", description = "分类验证" )
 @Data
-public class PhoneGroupDTO {
+public class PhoneGroupDTO implements Serializable {
+
+    private static final long serialVersionUID = 2424751125242961992L;
 
     @ApiModelProperty( name = "shopId", value = "店铺ID，必传", required = true )
     @NotNull( message = "店铺ID不能为空" )

@@ -3,11 +3,13 @@ package com.gt.mall.service.web.presale;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -57,6 +59,18 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 根据商品id查询预售信息和预售价格
      */
     MallPresale getPresaleByProId( Integer proId, Integer shopId, Integer presaleId );
+
+    /**
+     * 获取商品的预售信息
+     *
+     * @param proId  商品id
+     * @param shopId 店铺id
+     * @param result 返回商品详细页面的结果
+     * @param member 会员
+     *
+     * @return 预售信息
+     */
+    PhoneProductDetailResult getPresaleProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
 
     /**
      * 查询用户参加预售的数量

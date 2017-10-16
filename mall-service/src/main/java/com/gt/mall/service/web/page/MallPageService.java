@@ -422,13 +422,6 @@ public interface MallPageService extends BaseService< MallPage > {
     List< Map< String,Object > > selectPageIdByUserId( Integer userId, List< Map< String,Object > > shopList );
 
     /**
-     * 微信分享
-     *
-     * @param userId 商家id
-     */
-    String wxShare( int userId, HttpServletRequest request, Map< String,Object > params ) throws Exception;
-
-    /**
      * 根据店铺id查询首页id
      *
      * @param shopId 店铺id

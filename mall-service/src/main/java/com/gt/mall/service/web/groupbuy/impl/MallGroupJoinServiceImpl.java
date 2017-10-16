@@ -35,7 +35,7 @@ public class MallGroupJoinServiceImpl extends BaseServiceImpl< MallGroupJoinDAO,
 
     @Override
     public List< Map< String,Object > > getJoinGroup( Map< String,Object > params, Member member ) {
-	List< Map< String,Object > > joinList = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > joinList = new ArrayList<>();
 	try {
 	    //获取开团信息
 	    List< Map< String,Object > > list = groupJoinDAO.selectJoinGroupByProId( params );

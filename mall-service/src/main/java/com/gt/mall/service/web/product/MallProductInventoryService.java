@@ -2,6 +2,7 @@ package com.gt.mall.service.web.product;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.product.MallProductInventory;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,16 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
      * 查询默认显示的库存
      */
     MallProductInventory selectByIsDefault( Integer productId );
+
+    /**
+     * 查询商品大于0的默认库存（商品详细页面展示）
+     *
+     * @param productId 商品id
+     * @param invenId   库存id
+     *
+     * @return 库存
+     */
+    MallProductInventory selectDefaultInvenNotNullStock( int productId, int invenId, PhoneProductDetailResult result );
 
     /**
      * 查询默认显示的库存

@@ -5,8 +5,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
-
-import java.util.Map;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 
 /**
  * <p>
@@ -21,6 +20,6 @@ public interface MallProductNewService extends BaseService< MallProduct > {
     /**
      * 查询商品详情数据
      */
-    Map< String,Object > selectProductDetail( PhoneProductDetailDTO params, Member member ,MallPaySet mallPaySet);
+    PhoneProductDetailResult selectProductDetail( PhoneProductDetailDTO params, Member member ,MallPaySet mallPaySet);
 
 }

@@ -3,7 +3,6 @@ package com.gt.mall.service.web.page.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
@@ -61,8 +60,6 @@ import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.param.wx.WxJsSdk;
-import com.gt.util.entity.param.wx.WxShare;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
@@ -2615,50 +2612,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public List< Map< String,Object > > selectPageIdByUserId( Integer userId, List< Map< String,Object > > shopList ) {
 	return mallPageDAO.selectPageIdByUserId( userId, shopList );
-    }
-
-    @Override
-    public String wxShare( int userId, HttpServletRequest request, Map< String,Object > params ) throws Exception {
-	Member member = SessionUtils.getLoginMember( request );
-	int publicId = 0;
-	if ( CommonUtil.isEmpty( member ) && userId > 0 ) {
-	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( userId );
-	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-		publicId = wxPublicUsers.getId();
-	    }
-	} else {
-	    if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
-		publicId = member.getPublicId();
-	    }
-	}
-	if ( publicId > 0 ) {
-	    WxJsSdk wxJsSdk = new WxJsSdk();
-	    wxJsSdk.setPublicId( publicId );
-	    if ( CommonUtil.isNotEmpty( params.get( "share" ) ) ) {
-		wxJsSdk.setArry( params.get( "share" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "menus" ) ) ) {
-		wxJsSdk.setMenus( params.get( "menus" ).toString() );
-	    }
-	    WxShare wxShare = new WxShare();
-	    if ( CommonUtil.isNotEmpty( params.get( "imagesUrl" ) ) ) {
-		wxShare.setImgUrls( params.get( "imagesUrl" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "title" ) ) ) {
-		wxShare.setTitle( params.get( "title" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "url" ) ) ) {
-		wxShare.setUrl( params.get( "url" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( wxShare ) ) {
-		wxJsSdk.setWxShare( wxShare );
-	    }
-	    KeysUtil keysUtil = new KeysUtil();
-	    logger.info( "wxJsSdk：" + com.alibaba.fastjson.JSONObject.toJSONString( wxJsSdk ) );
-	    String key = keysUtil.getEncString( com.alibaba.fastjson.JSONObject.toJSONString( wxJsSdk ) );
-	    return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/wxphone/6F6D9AD2/79B4DE7C/wxjssdk.do?key=" + key;
-	}
-	return null;
     }
 
     @Override

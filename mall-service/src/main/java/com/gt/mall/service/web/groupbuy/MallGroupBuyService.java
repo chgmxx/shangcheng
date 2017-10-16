@@ -5,6 +5,7 @@ import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -87,6 +88,18 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
     MallGroupBuy getGroupBuyByProId( Integer proId, Integer shopId );
 
     /**
+     * 获取商品的团购信息
+     *
+     * @param proId  商品id
+     * @param shopId 店铺id
+     * @param result 返回商品详细页面的结果
+     * @param member 会员
+     *
+     * @return 团购信息
+     */
+    PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member );
+
+    /**
      * 获取团购信息
      *
      * @param memberId 用户Id
@@ -136,6 +149,5 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
      */
     int groupIsReturn( int groupBuyId, String orderType, Object orderId, Object detailId, MallGroupBuy buy );
 
-
-    PageUtil searchGroupBuyProduct( PhoneSearchProductDTO searchProductDTO, Member member);
+    PageUtil searchGroupBuyProduct( PhoneSearchProductDTO searchProductDTO, Member member );
 }

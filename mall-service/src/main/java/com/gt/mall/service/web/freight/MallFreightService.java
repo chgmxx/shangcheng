@@ -95,7 +95,7 @@ public interface MallFreightService extends BaseService< MallFreight > {
      *
      * @return 价格 [{店铺id：运费}]
      */
-    Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr );
+    Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli );
 
     /**
      * 获取运费

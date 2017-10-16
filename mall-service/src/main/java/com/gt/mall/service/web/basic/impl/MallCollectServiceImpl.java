@@ -110,7 +110,7 @@ public class MallCollectServiceImpl extends BaseServiceImpl< MallCollectDAO,Mall
 	MallCollect collect = collectDAO.selectOne( mallCollect );
 	if ( CommonUtil.isNotEmpty( collect ) ) {
 	    if ( CommonUtil.isNotEmpty( collect.getId() ) ) {
-		if ( collect.getIsDelete().toString().equals( "1" ) ) {
+		if ( collect.getIsCollect().toString().equals( "1" ) ) {
 		    return true;
 		}
 	    }

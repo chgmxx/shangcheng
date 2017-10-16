@@ -22,9 +22,11 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyPriceService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
@@ -76,6 +78,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     private WxPublicUserService      wxPublicUserService;
     @Autowired
     private MallPageService          mallPageService;
+    @Autowired
+    private MallGroupJoinService     mallGroupJoinService;
 
     @Override
     public PageUtil selectGroupBuyByShopId( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist ) {
@@ -196,9 +200,9 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 
 	if ( count > 0 ) {// 判断商品是否有数据
 	    List< Map< String,Object > > productList = groupBuyDAO.selectProByGroup( params );
-	    List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
+	    List< Map< String,Object > > list = new ArrayList<>();
 	    if ( productList != null && productList.size() > 0 ) {
-		List< Integer > products = new ArrayList< Integer >();
+		List< Integer > products = new ArrayList<>();
 		for ( Map< String,Object > map : productList ) {
 		    products.add( CommonUtil.toInteger( map.get( "id" ) ) );
 		}
@@ -476,15 +480,55 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     }
 
     @Override
+    public PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member ) {
+	//查询团购信息
+	MallGroupBuy groupBuy = getGroupBuyByProId( proId, shopId );//通过商品id查询团购信息
+	if ( CommonUtil.isEmpty( groupBuy ) ) {
+	    return result;
+	}
+	result.setActivityId( groupBuy.getId() );//活动id
+	if ( CommonUtil.isNotEmpty( groupBuy.getGMaxBuyNum() ) && groupBuy.getGMaxBuyNum() > 0 ) {
+	    result.setMaxBuyNum( groupBuy.getGMaxBuyNum() );//限购
+	}
+	double groupPrice = CommonUtil.toDouble( groupBuy.getGPrice() );
+	List< Integer > invIdList = new ArrayList<>();
+	if ( CommonUtil.isNotEmpty( groupBuy.getPriceList() ) ) {
+	    for ( MallGroupBuyPrice price : groupBuy.getPriceList() ) {
+		if ( price.getIsJoinGroup() == 1 ) {
+		    if ( result.getInvId() == 0 ) {
+			groupPrice = CommonUtil.toDouble( price.getGroupPrice() );
+			result.setInvId( price.getInvenId() );
+		    }
+		    if ( result.getInvId() > 0 ) {
+			invIdList.add( price.getInvenId() );
+		    }
+		}
+	    }
+	}
+	result.setInvIdList( invIdList );
+	result.setProductPrice( groupPrice );
+
+	Map< String,Object > groupMap = new HashMap<>();
+	groupMap.put( "groupBuyId", groupBuy.getId() );
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    groupMap.put( "joinUserId", member.getId() );
+	}
+	//查询参团信息
+	List< Map< String,Object > > list = mallGroupJoinService.getJoinGroup( groupMap, member );
+	result.setJoinList( list );
+	return result;
+    }
+
+    @Override
     public Map< String,Object > getGroupBuyById( String memberId, int id ) {
-	Map< String,Object > params = new HashMap< String,Object >();
+	Map< String,Object > params = new HashMap<>();
 	params.put( "id", id );
 	//通过团购id获取团购信息
 	List< Map< String,Object > > productList = groupBuyDAO.selectgbProductByShopId( params );
 	if ( productList != null && productList.size() > 0 ) {
 	    Map< String,Object > map2 = productList.get( 0 );
 	    String is_specifica = map2.get( "is_specifica" ).toString();//是否有规格，1有规格，有规格取规格里面的值
-	    if ( is_specifica == "1" || is_specifica.equals( "1" ) ) {
+	    if ( is_specifica.equals( "1" ) ) {
 		map2.put( "old_price", map2.get( "inv_price" ) );
 		if ( CommonUtil.isNotEmpty( map2.get( "specifica_img_url" ) ) ) {
 		    map2.put( "image_url", map2.get( "specifica_img_url" ) );

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -33,6 +34,7 @@ public class MallImageAssociative extends Model< MallImageAssociative > {
     /**
      * 图片地址
      */
+    @ApiModelProperty( name = "imageUrl", value = "商品名称" )
     @TableField( "image_url" )
     private String  imageUrl;
     /**
@@ -43,6 +45,7 @@ public class MallImageAssociative extends Model< MallImageAssociative > {
     /**
      * 是否是主图 0不是主图  1是主图
      */
+    @ApiModelProperty( name = "isMainImages", value = "是否是主图  1 主图 0不是" )
     @TableField( "is_main_images" )
     private Integer isMainImages;
     /**

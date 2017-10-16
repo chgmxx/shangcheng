@@ -6,15 +6,16 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.pifa.MallPifaApplyDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.pifa.MallPifaPriceDAO;
-import com.gt.mall.dao.product.MallSearchKeywordDAO;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.pifa.MallPifaPrice;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaPriceService;
 import com.gt.mall.service.web.pifa.MallPifaService;
-import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
@@ -56,16 +57,13 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
     private MallPifaPriceService mallPifaPriceService;
 
     @Autowired
-    private MallSearchKeywordDAO mallSearchKeywordDAO;
-
-    @Autowired
     private MallSearchKeywordService mallSearchKeywordService;
 
     @Autowired
-    private MallProductService mallProductService;
+    private MallPageService mallPageService;
 
     @Autowired
-    private MallPageService mallPageService;
+    private MallPifaApplyService mallPifaApplyService;
 
     @Override
     @Transactional( rollbackFor = Exception.class )
@@ -455,5 +453,51 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 
 	page.setSubList( mallPageService.getSearchProductParam( productList, 1, searchProductDTO ) );
 	return page;
+    }
+
+    @Override
+    public PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+	boolean isOpenPifa = false;
+	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
+	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPf() ) ) {//是否开启批发
+		if ( mallPaySet.getIsPf().toString().equals( "1" ) ) {
+		    isOpenPifa = true;
+		    if ( CommonUtil.isNotEmpty( mallPaySet.getPfSet() ) ) {
+			JSONObject obj = JSONObject.fromObject( mallPaySet.getPfSet() );
+			result.setPfSetObj( obj );
+		    }
+		}
+	    }
+	}
+	if ( !isOpenPifa ) {
+	    return result;
+	}
+	//通过商品id查询批发信息
+	MallPifa pifa = getPifaByProId( proId, shopId );
+	if ( pifa == null ) {
+	    return result;
+	}
+	int pfStatus = mallPifaApplyService.getPifaApplay( member, mallPaySet );
+	result.setPfStatus( pfStatus );//批发状态
+	result.setActivityId( pifa.getId() );
+	double groupPrice = CommonUtil.toDouble( pifa.getPfPrice() );
+	List< Integer > invIdList = new ArrayList<>();
+	if ( CommonUtil.isNotEmpty( pifa.getPriceList() ) ) {
+	    for ( MallPifaPrice price : pifa.getPriceList() ) {
+		if ( price.getIsJoinGroup() == 1 ) {
+		    if ( result.getInvId() == 0 ) {
+			groupPrice = CommonUtil.toDouble( price.getSeckillPrice() );
+			result.setInvId( price.getInvenId() );
+		    }
+		    if ( result.getInvId() > 0 ) {
+			invIdList.add( price.getInvenId() );
+		    }
+		}
+	    }
+	}
+	result.setInvIdList( invIdList );
+	result.setProductPrice( groupPrice );
+
+	return result;
     }
 }

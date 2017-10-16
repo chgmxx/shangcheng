@@ -7,6 +7,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,6 +58,17 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
      * 根据商品id查询秒杀信息和秒杀价格
      */
     MallSeckill getSeckillByProId( Integer proId, Integer shopId );
+
+    /**
+     * 获取商品的秒杀信息
+     *
+     * @param proId  商品id
+     * @param shopId 店铺id
+     * @param result 返回商品详细页面的结果
+     *
+     * @return 秒杀信息
+     */
+    PhoneProductDetailResult getSeckillProductDetail( int proId, int shopId, PhoneProductDetailResult result );
 
     /**
      * 查询用户参加秒杀的数量

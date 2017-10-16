@@ -2,9 +2,11 @@ package com.gt.mall.service.web.pifa;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -102,5 +104,17 @@ public interface MallPifaService extends BaseService< MallPifa > {
     /**
      * 搜索店铺下所有的批发商品
      */
-    PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member  );
+    PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member );
+
+    /**
+     * 获取商品的批发信息
+     *
+     * @param proId  商品id
+     * @param shopId 店铺id
+     * @param result 返回商品详细页面的结果
+     * @param member 会员
+     *
+     * @return 批发信息
+     */
+    PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
 }
