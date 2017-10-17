@@ -89,9 +89,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallProductInventoryService   mallProductInventoryService;//商品库存业务处理类
 
-    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST" )
+    @PostMapping( value = "79B4DE7C/classAll"  )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/classAll", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute PhoneGroupDTO params ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
