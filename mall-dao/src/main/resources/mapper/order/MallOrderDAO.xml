@@ -451,7 +451,7 @@
                 <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
             </if>
             <if test="queryName != null and queryName != ''">
-                 and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+                and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
             </if>
             <if test="type != null and type != ''">
                 and t.order_type = #{orderType}
@@ -1099,6 +1099,24 @@
                 #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
+        <if test="queryName != null and queryName != ''">
+            and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+        </if>
+        <if test="type != null and type != ''">
+            and t.order_type = #{orderType}
+        </if>
+        <if test="orderSource != null and orderSource != ''">
+            and t.order_source = #{orderSource}
+        </if>
+        <if test="orderPayWay != null and orderPayWay != ''">
+            and t.order_pay_way = #{orderPayWay}
+        </if>
+        <if test="deliveryMethod != null and deliveryMethod != ''">
+            and t.delivery_method = #{deliveryMethod}
+        </if>
+        <if test="shopId!= null and shopId != ''">
+            and t.shop_id = #{shopId}
+        </if>
         ORDER BY t.create_time desc,t.pay_time desc
     </select>
     <!-- 用户购买商品的数量（用于限购） -->
@@ -1171,5 +1189,93 @@
         <include refid="Base_Column_List"/>
         FROM t_mall_order WHERE id = #{id}
     </select>
-
+    <select id="tradeCount" parameterType="map" resultType="java.lang.Integer">
+        select count(*)
+        FROM t_mall_order t
+        LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
+        LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id
+        WHERE 1=1
+        <if test="userId != null and userId != ''">
+            and t.bus_user_id = #{userId}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            and t.order_no = #{orderNo}
+        </if>
+        AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
+        <if test="startTime != null and startTime != ''">
+            and t.create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and t.create_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="status != null and status != ''">
+            <if test="status == 1 "> <!-- 成功 -->
+                and t.order_status = 4
+                and r.status is null
+            </if>
+            <if test="status == 2 "><!-- 进行中-->
+                and t.order_status in (1,2,3)
+                and r.status is null
+            </if>
+            <if test="status == 3 "><!-- 退款-->
+                and (r.status is not null and r.status != 1 and r.status != 5)
+            </if>
+            <if test="status == 4 "><!-- 关闭-->
+                and t.order_status = 5
+            </if>
+        </if>
+        <if test="shoplist != null ">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="findByTradePage" parameterType="Map" resultType="Map">
+        SELECT t.id,t.`shop_id`,t.create_time,d.`det_pro_name`, d.total_price,t.order_no,t.order_money, t.order_freight_money, t.buyer_user_id ,
+        t.member_name,t.order_status,r.`status` AS return_status
+        FROM t_mall_order t
+        LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
+        LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id
+        WHERE 1=1
+        <if test="userId != null and userId != ''">
+            and t.bus_user_id = #{userId}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            and t.order_no = #{orderNo}
+        </if>
+        AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
+        <if test="startTime != null and startTime != ''">
+            and t.create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and t.create_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="status != null and status != ''">
+            <if test="status == 1 "> <!-- 成功 -->
+                and t.order_status = 4
+                and r.status is null
+            </if>
+            <if test="status == 2 "><!-- 进行中-->
+                and t.order_status in (1,2,3)
+                and r.status is null
+            </if>
+            <if test="status == 3 "><!-- 退款-->
+                and (r.status is not null and r.status != 1 and r.status != 5)
+            </if>
+            <if test="status == 4 "><!-- 关闭-->
+                and t.order_status = 5
+            </if>
+        </if>
+        <if test="shoplist != null ">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by t.id desc
+        <if test="firstResult != null and maxResult != null">
+            limit #{firstResult},#{maxResult}
+        </if>
+    </select>
 </mapper>

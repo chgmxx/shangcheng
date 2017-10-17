@@ -106,13 +106,13 @@
         <if test="isPublish != null and isPublish != ''">
             and p.is_publish = #{isPublish}
         </if>
-        <if test="proStockTotal != null">
+        <if test="proStockTotal != null and proStockTotal != ''">
             and p.pro_stock_total = #{proStockTotal}
         </if>
-        <if test="proName != null">
+        <if test="proName != null and proName != ''">
             and p.pro_name like '%${proName}%'
         </if>
-        <if test="checkStatus != null">
+        <if test="checkStatus != null and checkStatus != ''">
             and p.check_status = #{checkStatus}
         </if>
         <if test="shoplist != null ">
@@ -143,16 +143,16 @@
         <if test="isPublish != null and isPublish != ''">
             and p.is_publish = #{isPublish}
         </if>
-        <if test="proStockTotal != null">
+        <if test="proStockTotal != null and shopId != ''">
             and p.pro_stock_total = #{proStockTotal}
         </if>
-        <if test="proName != null">
+        <if test="proName != null and proName != ''">
             and p.pro_name like '%${proName}%'
         </if>
-        <if test="checkStatus != null">
+        <if test="checkStatus != null and checkStatus != ''">
             and p.check_status = #{checkStatus}
         </if>
-        <if test="shopId != null">
+        <if test="shopId != null and shopId != '' ">
             and p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null">

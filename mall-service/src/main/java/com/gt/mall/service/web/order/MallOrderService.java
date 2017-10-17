@@ -33,6 +33,11 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public PageUtil findByPage( Map< String,Object > params );
 
     /**
+     * 交易记录分页管理
+     */
+    public PageUtil findByTradePage( Map< String,Object > params );
+
+    /**
      * 添加卖家备注、修改订单金额
      */
     public int upOrderNoOrRemark( Map< String,Object > params );
@@ -123,6 +128,13 @@ public interface MallOrderService extends BaseService< MallOrder > {
      * @return
      */
     public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist );
+
+    /**
+     * 导出订单
+     *
+     * @return
+     */
+    public HSSFWorkbook exportTradeExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist );
 
     /**
      * 查询订单详情
