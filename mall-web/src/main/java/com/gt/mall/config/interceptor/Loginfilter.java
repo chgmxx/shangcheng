@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class Loginfilter extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors( InterceptorRegistry registry ) {
-	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
+	//	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
 	//        registry.addInterceptor(new SysLogInterceptor()).addPathPatterns("/**");
 
 	super.addInterceptors( registry );
@@ -26,8 +26,8 @@ public class Loginfilter extends WebMvcConfigurerAdapter {
      * @param registry Corsregistry
      */
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-	registry.addMapping("/**").allowedHeaders("*").allowedMethods("*").allowedOrigins("*");
-	super.addCorsMappings(registry);
+    public void addCorsMappings( CorsRegistry registry ) {
+	registry.addMapping( "/**" ).allowedHeaders( "*" ).allowedMethods( "*" ).allowedOrigins( "*" );
+	super.addCorsMappings( registry );
     }
 }
