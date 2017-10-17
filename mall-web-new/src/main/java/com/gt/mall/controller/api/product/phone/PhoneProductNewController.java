@@ -124,7 +124,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	Map< String,Object > result = new HashMap<>();
 	Member member = SessionUtils.getLoginMember( request );
 	try {
-	    if ( params.getCurPage() == 1 ) {
+	    if ( CommonUtil.isEmpty( params.getCurPage() ) || params.getCurPage() == 1 ) {
 		//判断店铺和门店是否已经被删除
 		boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
 		if ( !isShop ) {
