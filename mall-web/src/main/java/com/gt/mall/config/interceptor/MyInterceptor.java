@@ -65,14 +65,11 @@ public class MyInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
 
-	/*HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-	HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-
 	// js跨域支持
-	httpServletResponse.setHeader( "Access-Control-Allow-Origin", "*" );
-	httpServletResponse.setHeader( "Access-Control-Allow-Methods", "POST, GET, PUT, DELETE" );
-	httpServletResponse.setHeader( "Access-Control-Max-Age", "3600" );
-	httpServletResponse.setHeader( "Access-Control-Allow-Headers", "Accept, Origin, XRequestedWith, Content-Type, LastModified" );
+	response.setHeader( "Access-Control-Allow-Origin", "*" );
+	response.setHeader( "Access-Control-Allow-Methods", "POST, GET, PUT, DELETE" );
+	response.setHeader( "Access-Control-Max-Age", "3600" );
+	response.setHeader( "Access-Control-Allow-Headers", "Accept, Origin, XRequestedWith, Content-Type, LastModified" );
 
 	// 设置返回编码和类型
 	response.setCharacterEncoding( "UTF-8" );
@@ -130,6 +127,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	    } else {
 		member = new Member();
 		member.setId( 1225352 );
+//		member.setId( 562 );
 		member.setBusid( 42 );
 		member.setPublicId( 482 );
 		member.setPhone( "15017934717" );
