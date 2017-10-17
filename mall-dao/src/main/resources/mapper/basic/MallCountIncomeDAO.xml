@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.basic.MallCountIncomeDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallCountIncome">
+        <id column="id" property="id"/>
+        <result column="count_date" property="countDate"/>
+        <result column="trade_price" property="tradePrice"/>
+        <result column="refund_price" property="refundPrice"/>
+        <result column="income_price" property="incomePrice"/>
+        <result column="turnover" property="turnover"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="bus_id" property="busId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, count_date ,trade_price, refund_price, income_price, turnover,shop_id , bus_id
+    </sql>
+    <select id="getCountByTimes" resultType="java.lang.Integer">
+        SELECT
+        <if test="type != null and type != ''">
+            <if test="type == 1">SUM(t.income_price)</if>
+            <if test="type == 2">SUM(t.turnover)</if>
+        </if>
+        FROM `t_mall_count_income` t
+        WHERE 1=1
+        <if test="date != null and date != ''">
+            and t.count_date = #{date}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and t.count_date >= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and t.count_date <![CDATA[<=]]> #{endDate}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            AND t.`shop_id` = #{shopId}
+        </if>
+        <if test="shoplist != null">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="getCountListByTimes" resultType="java.util.Map">
+        SELECT t.count_date ,SUM(t.income_price) incomeCount
+        FROM `t_mall_count_income` t
+        WHERE 1=1
+        <if test="startDate != null and startDate != ''">
+            and t.count_date >= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and t.count_date <![CDATA[<=]]> #{endDate}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            AND t.`shop_id` = #{shopId}
+        </if>
+        <if test="shoplist != null">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        GROUP BY t.`count_date`
+    </select>
+
+</mapper>

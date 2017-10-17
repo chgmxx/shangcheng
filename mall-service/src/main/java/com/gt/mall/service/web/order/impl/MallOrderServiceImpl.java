@@ -78,6 +78,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -329,6 +330,42 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	}
 	page.setSubList( orderList );
+	return page;
+    }
+
+    @Override
+    public PageUtil findByTradePage( Map< String,Object > params ) {
+	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
+	int pageSize = 10;
+	int rowCount = mallOrderDAO.tradeCount( params );
+	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "mallOrder/toIndex.do" );
+	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	params.put( "maxResult", pageSize );
+	if ( rowCount > 0 ) {
+	    List< Map< String,Object > > list = mallOrderDAO.findByTradePage( params );
+	    if ( list != null && list.size() > 0 ) {
+		for ( Map< String,Object > order : list ) {
+		    Integer orderStatus = CommonUtil.toInteger( order.get( "order_status" ) );
+		    Integer returnStatus = null;
+		    order.put( "member_name", CommonUtil.blob2String( order.get( "member_name" ) ) );
+
+		    if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {
+			returnStatus = CommonUtil.toInteger( order.get( "return_status" ) );
+		    }
+		    if ( returnStatus == null && ( orderStatus == 1 || orderStatus == 2 || orderStatus == 3 ) ) {
+			order.put( "status", "2" );
+		    } else if ( orderStatus == 4 ) {
+			order.put( "status", "1" );
+		    } else if ( orderStatus == 5 || returnStatus == 1 || returnStatus == 5 ) {
+			order.put( "status", "4" );
+		    } else if ( returnStatus != null && returnStatus != 1 && returnStatus != 5 ) {
+			order.put( "status", "3" );
+		    }
+		}
+	    }
+	    page.setSubList( list );
+	}
+
 	return page;
     }
 
@@ -2409,7 +2446,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }*/
 	    if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-		    int dStatus = detail.getStatus();
+		    Integer dStatus = detail.getStatus();
 		    String sale = "";
 		    if ( orderStatus != 5 ) {
 			if ( dStatus == 0 ) {
@@ -2507,6 +2544,88 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	HSSFCell cell = row.createCell( column );
 	cell.setCellValue( value );
 	cell.setCellStyle( valueStyle );
+    }
+
+    /**
+     * 商城导出订单
+     * type 1 商城订单导出
+     */
+    @Override
+    public HSSFWorkbook exportTradeExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist ) {
+	HSSFWorkbook workbook = new HSSFWorkbook();//创建一个webbook，对应一个Excel文件
+	HSSFSheet sheet = workbook.createSheet( "交易记录" );//在webbook中添加一个sheet,对应Excel文件中的sheet
+	HSSFRow rowTitle = sheet.createRow( 0 );//在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+	HSSFCellStyle styleTitle = workbook.createCellStyle();//创建单元格，并设置值表头 设置表头居中
+	styleTitle.setAlignment( HSSFCellStyle.ALIGN_CENTER );// 设置单元格左右居中
+	HSSFFont fontTitle = workbook.createFont();//创建字体
+	fontTitle.setBoldweight( HSSFFont.BOLDWEIGHT_BOLD );//加粗
+	fontTitle.setFontName( "宋体" );//设置自提
+	fontTitle.setFontHeight( (short) 200 );// 设置字体大小
+	styleTitle.setFont( fontTitle );//给文字加样式
+
+	HSSFCell cellTitle;
+	//循环标题
+	for ( int i = 0; i < titles.length; i++ ) {
+	    cellTitle = rowTitle.createCell( i );//创建标题
+	    cellTitle.setCellValue( titles[i] );
+	    cellTitle.setCellStyle( styleTitle );//给标题加样式
+	}
+	sheet.setColumnWidth( 14, 100 * 256 );
+	HSSFCellStyle centerStyle = workbook.createCellStyle();
+	centerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );// 设置单元格左右居中
+
+	HSSFCellStyle leftStyle = workbook.createCellStyle();
+	leftStyle.setAlignment( HSSFCellStyle.ALIGN_LEFT );// 设置单元格左右居中
+	//循环数据
+	if ( type == 1 ) {
+	    List< Map< String,Object > > data = mallOrderDAO.findByTradePage( params );
+	    int j = 1;
+	    for ( Map< String,Object > order : data ) {
+		j = getTradeOrderList( sheet, centerStyle, leftStyle, order, j, shoplist );
+	    }
+	}
+
+	return workbook;
+    }
+
+    private int getTradeOrderList( HSSFSheet sheet, HSSFCellStyle valueStyle, HSSFCellStyle leftStyle, Map< String,Object > order, int i, List< Map< String,Object > > shopList ) {
+	String state = "";//订单状态
+	Integer orderStatus = CommonUtil.toInteger( order.get( "order_status" ) );
+	Integer returnStatus = null;
+
+	if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {
+	    returnStatus = CommonUtil.toInteger( order.get( "return_status" ) );
+	}
+	if ( returnStatus == null && ( orderStatus == 1 || orderStatus == 2 || orderStatus == 3 ) ) {
+	    state = "进行中";
+	} else if ( orderStatus == 4 ) {
+	    state = "完成";
+	} else if ( orderStatus == 5 || returnStatus == 1 || returnStatus == 5 ) {
+	    state = "关闭";
+	} else if ( returnStatus != null && returnStatus != 1 && returnStatus != 5 ) {
+	    state = "退款";
+	}
+
+	/*int start = i;*/
+	String name = "";
+	String price = "";
+	if ( CommonUtil.isNotEmpty( order.get( "det_pro_name" ) ) ) {
+	    name = order.get( "det_pro_name" ).toString();
+	}
+	if ( CommonUtil.isNotEmpty( order.get( "total_price" ) ) ) {
+	    name = order.get( "total_price" ).toString();
+	}
+	Date date = DateTimeKit.parseDate( order.get( "create_time" ).toString(), "yyyy/MM/dd HH:mm" );
+	String createTime = DateTimeKit.format( date, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	HSSFRow row = sheet.createRow( i );
+	createCell( row, 0, createTime, valueStyle );
+	createCell( row, 1, order.get( "order_no" ).toString(), valueStyle );
+	createCell( row, 2, name, valueStyle );
+	createCell( row, 3, CommonUtil.blob2String( order.get( "member_name" ) ), valueStyle );
+	createCell( row, 4, price, valueStyle );
+	createCell( row, 5, state, valueStyle );
+	i++;
+	return i;
     }
 
     @Override

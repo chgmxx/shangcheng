@@ -200,4 +200,15 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      *
      */
     Map< String,Object > selectMapById( int id );
+
+    /**
+     * 获取条数
+     */
+    int tradeCount( Map< String,Object > params );
+
+
+    /**
+     * 分页查询
+     */
+    List< Map< String,Object > > findByTradePage( Map< String,Object > params );
 }

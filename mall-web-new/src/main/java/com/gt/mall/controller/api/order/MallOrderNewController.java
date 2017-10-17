@@ -22,13 +22,9 @@ import com.gt.mall.service.web.order.MallDaifuService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.gt.mall.utils.*;
+import io.swagger.annotations.*;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.MediaType;
@@ -40,6 +36,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +120,7 @@ public class MallOrderNewController extends BaseController {
 
 	    PageUtil page = mallOrderService.findByPage( params );
 	    result.put( "page", page );
-//	    result.put( "urlPath", PropertiesUtil.getDomain() );
+	    //	    result.put( "urlPath", PropertiesUtil.getDomain() );
 	    result.put( "videourl", busUserService.getVoiceUrl( "79" ) );
 	} catch ( Exception e ) {
 	    logger.error( "订单列表异常：" + e.getMessage() );
@@ -319,4 +322,157 @@ public class MallOrderNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
+    /**
+     * 商城导出订单
+     */
+    @ApiOperation( value = "商城导出订单", notes = "商城导出订单" )
+    @RequestMapping( value = "/exportMallOrder", method = RequestMethod.GET )
+    public void exportMallOrder( HttpServletRequest request, HttpServletResponse response, OrderDTO orderQuery ) {
+	OutputStream out = null;
+	HSSFWorkbook workbook = null;
+	try {
+	    Map< String,Object > params = new HashMap<>();
+	    if ( orderQuery != null ) {
+		BeanMap beanMap = BeanMap.create( orderQuery );
+		for ( Object key : beanMap.keySet() ) {
+		    if ( CommonUtil.isNotEmpty( beanMap.get( key ) ) ) {
+			params.put( key + "", beanMap.get( key ) );
+		    }
+		}
+	    }
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    params.put( "shoplist", shoplist );
+	    String[] titles = new String[] { "订单编号", "商品", "单价", "数量", "实付金额", "优惠", "运费", "买家", "下单时间", "订单状态", "配送方式", "售后", "所属店铺", "付款方式", "收货信息", "买家留言", "卖家备注" };
+	    workbook = mallOrderService.exportExcel( params, titles, 1, shoplist );
+
+	    String filename = "商城订单" + DateTimeKit.getDateIsLink() + ".xls";//设置下载时客户端Excel的名称
+	    filename = URLEncoder.encode( filename, "UTF-8" );
+
+	    response.setHeader( "Content-Disposition", "attachment;filename=\"" + filename + "\"" );
+	    response.setContentType( "application/vnd.ms-excel" );
+
+	    out = new BufferedOutputStream( response.getOutputStream() );
+	    workbook.write( out );
+
+	    out.flush();
+	} catch ( UnsupportedEncodingException e ) {
+	    e.printStackTrace();
+	    logger.error( "商城导出订单：中文转换异常！" + e.getMessage() );
+	} catch ( IOException e ) {
+	    e.printStackTrace();
+	    logger.error( "商城导出订单：IO流输出异常！" + e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    logger.error( "商城导出订单失败" + e.getMessage() );
+	} finally {
+	    try {
+		if ( out != null ) {
+		    out.close();
+		}
+		if ( workbook != null ) {
+		    workbook.close();
+		}
+	    } catch ( IOException e ) {
+		logger.error( "商城导出订单：关闭输出流异常" + e );
+		e.printStackTrace();
+	    }
+	}
+    }
+
+    /****************************交易记录********************************/
+
+    @ApiOperation( value = "交易记录列表(分页)", notes = "交易记录列表(分页)" )
+    @ResponseBody
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "startTime", value = "下单开始时间", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "endTime", value = "下单结束时间", paramType = "query", required = false, dataType = "String" ) } )
+    @RequestMapping( value = "/tradeList", method = RequestMethod.POST )
+    public ServerResponse tradeList( HttpServletRequest request, HttpServletResponse response, Integer curPage, String orderNo, Integer status, String startTime, String endTime ) {
+	Map< String,Object > result = new HashMap<>();
+	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "curPage", curPage );
+	    params.put( "orderNo", orderNo );
+	    params.put( "status", status );
+	    params.put( "startTime", startTime );
+	    params.put( "endTime", endTime );
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    params.put( "userId", user.getId() );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    params.put( "shoplist", shoplist );
+
+	    PageUtil page = mallOrderService.findByTradePage( params );
+	    result.put( "page", page );
+
+	} catch ( Exception e ) {
+	    logger.error( "交易记录列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交易记录列表异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+    }
+
+    /**
+     * 导出交易记录订单
+     */
+    @ApiOperation( value = "导出交易记录订单", notes = "导出交易记录订单" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "startTime", value = "下单开始时间", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "endTime", value = "下单结束时间", paramType = "query", required = false, dataType = "String" ) } )
+    @RequestMapping( value = "/exportTradeOrder", method = RequestMethod.GET )
+    public void exportTradeOrder( HttpServletRequest request, HttpServletResponse response, String orderNo, Integer status, String startTime, String endTime ) {
+	OutputStream out = null;
+	HSSFWorkbook workbook = null;
+	try {
+	    Map< String,Object > params = new HashMap<>();
+
+	    params.put( "orderNo", orderNo );
+	    params.put( "status", status );
+	    params.put( "startTime", startTime );
+	    params.put( "endTime", endTime );
+	    BusUser user = SessionUtils.getLoginUser( request );
+	    params.put( "userId", user.getId() );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    params.put( "shoplist", shoplist );
+	    String[] titles = new String[] { "时间", "订单编号", "商品名称", "买方", "支付金额", "状态" };
+	    workbook = mallOrderService.exportTradeExcel( params, titles, 1, shoplist );
+
+	    String filename = "交易记录" + DateTimeKit.getDateIsLink() + ".xls";//设置下载时客户端Excel的名称
+	    filename = URLEncoder.encode( filename, "UTF-8" );
+
+	    response.setHeader( "Content-Disposition", "attachment;filename=\"" + filename + "\"" );
+	    response.setContentType( "application/vnd.ms-excel" );
+
+	    out = new BufferedOutputStream( response.getOutputStream() );
+	    workbook.write( out );
+
+	    out.flush();
+	} catch ( UnsupportedEncodingException e ) {
+	    e.printStackTrace();
+	    logger.error( "导出交易记录订单：中文转换异常！" + e.getMessage() );
+	} catch ( IOException e ) {
+	    e.printStackTrace();
+	    logger.error( "导出交易记录订单：IO流输出异常！" + e.getMessage() );
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    logger.error( "导出交易记录订单失败" + e.getMessage() );
+	} finally {
+	    try {
+		if ( out != null ) {
+		    out.close();
+		}
+		if ( workbook != null ) {
+		    workbook.close();
+		}
+	    } catch ( IOException e ) {
+		logger.error( "导出交易记录订单：关闭输出流异常" + e );
+		e.printStackTrace();
+	    }
+	}
+    }
 }
