@@ -5,25 +5,39 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.dao.product.MallProductDAO;
+import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
+import com.gt.mall.entity.pifa.MallPifaPrice;
+import com.gt.mall.entity.presale.MallPresaleTime;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductInventory;
+import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
+import com.gt.mall.param.phone.PhoneSpecificaDTO;
 import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.freight.MallFreightService;
+import com.gt.mall.service.web.groupbuy.MallGroupBuyPriceService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.pifa.MallPifaPriceService;
+import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleService;
+import com.gt.mall.service.web.presale.MallPresaleTimeService;
 import com.gt.mall.service.web.product.MallProductDetailService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.seckill.MallSeckillPriceService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
+import com.gt.mall.service.web.seller.MallSellerMallsetService;
+import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import org.slf4j.Logger;
@@ -71,6 +85,22 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
     private MallSeckillService          mallSeckillService;//秒杀业务处理类
     @Autowired
     private MallPresaleService          mallPresaleService;//预售业务处理类
+    @Autowired
+    private MallPifaService             mallPifaService;//批发业务处理类
+    @Autowired
+    private MallAuctionService          mallAuctionService;//拍卖业务处理类
+    @Autowired
+    private MallGroupBuyPriceService    mallGroupBuyPriceService;//团购价业务处理类
+    @Autowired
+    private MallSeckillPriceService     mallSeckillPriceService;//秒杀价业务处理类
+    @Autowired
+    private MallPresaleTimeService      mallPresaleTimeService;//预售价业务处理类
+    @Autowired
+    private MallPifaPriceService        mallPifaPriceService;//批发价业务处理类
+    @Autowired
+    private MallSellerService           mallSellerService;//销售员业务处理类
+    @Autowired
+    private MallSellerMallsetService    mallSellerMallsetService;//销售员设置处理类
 
     @Override
     public PhoneProductDetailResult selectProductDetail( PhoneProductDetailDTO params, Member member, MallPaySet mallPaySet ) {
@@ -114,24 +144,26 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	}
 	int isShowAddShop = 1;//是否显示“加入购物车按钮” 1显示
 	if ( params.getType() == 1 ) {//查询团购商品
-	    result = mallGroupBuyService.getGroupProductDetail( product.getId(), product.getShopId(), result, member );
+	    isShowAddShop = 0;
+	    result = mallGroupBuyService.getGroupProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member );
 	} else if ( params.getType() == 3 ) {//查询秒杀商品
-	    result = mallSeckillService.getSeckillProductDetail( product.getId(), product.getShopId(), result );
+	    isShowAddShop = 0;
+	    result = mallSeckillService.getSeckillProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result );
 	} else if ( params.getType() == 4 ) {//查询拍卖商品
-
+	    isShowAddShop = 0;
+	    result = mallAuctionService.getAuctionProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
 	} else if ( params.getType() == 5 ) {//查询粉币商品
 	    if ( product.getIsFenbiChangePro().toString().equals( "1" ) ) {
 		productPrice = CommonUtil.toDouble( product.getChangeFenbi() );
-
 		isShowAddShop = 0;
 		result.setUnit( "粉币" );
 	    }
 	} else if ( params.getType() == 6 ) {//查询预售商品
 	    isShowAddShop = 0;
 	    result.setProductPrice( productPrice );
-	    result = mallPresaleService.getPresaleProductDetail( product.getId(), product.getShopId(), result, member, mallPaySet );
+	    result = mallPresaleService.getPresaleProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
 	} else if ( params.getType() == 7 ) {//查询批发商品
-	    
+	    result = mallPifaService.getPifaProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
 	}
 	if ( params.getType() > 0 && params.getType() != 5 && result.getActivityId() == 0 ) {
 	    result.setType( 0 );
@@ -160,6 +192,10 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	} else {
 	    result.setProductCostPrice( productPrice );//商品原价
+	}
+	//获取销售员信息和销售商品的佣金
+	if ( params.getBusId() > 0 ) {
+	    result = mallSellerService.getSeller( result, params.getSaleMemberId(), params.getBusId(), params.getProductId(), params.getView(), member );
 	}
 
 	if ( params.getType() != 3 ) {
@@ -214,7 +250,102 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	}
 	result.setIsShowAddShopButton( isShowAddShop );//是否显示加入购物车的按钮 1显示
-
 	return result;
+    }
+
+    @Override
+    public List< Map< String,Object > > getProductSpecificaPrice( PhoneSpecificaDTO params, Member member ) {
+	MallProduct product = mallProductDAO.selectById( params.getProductId() );//查询商品信息
+	List< Map< String,Object > > guigePrice = mallProductInventoryService.guigePrice( params.getProductId() );//查询商品规格价
+	List< MallGroupBuyPrice > groupBuyPricesList = null;//团购价
+	List< MallSeckillPrice > priceList = null;//秒杀价
+	List< MallPresaleTime > timeList = null;//预售价
+	List< MallPifaPrice > pifaPriceList = null;//批发价
+	MallAuction auction = null;
+	if ( params.getActivityId() > 0 ) {
+	    if ( params.getType() == 1 ) {//获取团购价
+		groupBuyPricesList = mallGroupBuyPriceService.selectPriceByGroupId( params.getActivityId() );
+	    } else if ( params.getType() == 3 ) {//秒杀价
+		priceList = mallSeckillPriceService.selectPriceByGroupId( params.getActivityId() );
+	    } else if ( params.getType() == 4 ) {//拍卖价
+		auction = mallAuctionService.getAuctionByProId( params.getProductId(), product.getShopId(), params.getActivityId() );
+	    } else if ( params.getType() == 6 ) {//预售价格
+		timeList = mallPresaleTimeService.getPresaleTimeByPreId( params.getActivityId() );
+	    } else if ( params.getType() == 7 ) {//批发价
+		pifaPriceList = mallPifaPriceService.selectPriceByGroupId( params.getActivityId() );
+	    }
+	}
+
+	DecimalFormat df = new DecimalFormat( "0.00" );
+	if ( guigePrice != null && guigePrice.size() > 0 && params.getType() > 0 ) {
+	    for ( Map< String,Object > priceMap : guigePrice ) {
+		double invPrice = CommonUtil.toDouble( priceMap.get( "inv_price" ) );
+		double oldPrice = CommonUtil.toDouble( product.getProPrice() );
+		int isJoin = 0;
+		double hyPrice = 0;
+		if ( params.getType() > 0 ) {
+		    if ( params.getType() != 5 ) {
+			double discount = mallProductService.getMemberDiscount( product.getIsMemberDiscount().toString(), member );
+			if ( discount > 0 && discount < 1 ) {
+			    hyPrice = invPrice * discount;
+			}
+		    }
+		    if ( params.getType() == 1 && groupBuyPricesList != null && groupBuyPricesList.size() > 0 ) {//团购
+			for ( MallGroupBuyPrice buyPrice : groupBuyPricesList ) {
+			    if ( buyPrice.getInvenId().toString().equals( priceMap.get( "id" ).toString() ) ) {
+				oldPrice = invPrice;
+				invPrice = CommonUtil.toDouble( buyPrice.getGroupPrice() );
+				groupBuyPricesList.remove( buyPrice );
+				isJoin = buyPrice.getIsJoinGroup();
+				break;
+			    }
+			}
+		    } else if ( params.getType() == 3 && priceList != null && priceList.size() > 0 ) {//秒杀
+			for ( MallSeckillPrice seckillPrice : priceList ) {
+			    if ( seckillPrice.getInvenId().toString().equals( priceMap.get( "id" ).toString() ) ) {
+				oldPrice = invPrice;
+				invPrice = CommonUtil.toDouble( seckillPrice.getSeckillPrice() );
+				priceList.remove( seckillPrice );
+				isJoin = seckillPrice.getIsJoinGroup();
+				break;
+			    }
+			}
+		    } else if ( params.getType() == 4 && CommonUtil.isNotEmpty( auction ) ) {//拍卖
+			oldPrice = invPrice;
+			invPrice = auction.getNowPrice();
+		    } else if ( params.getType() == 5 ) {//粉币
+			if ( product.getIsFenbiChangePro().toString().equals( "1" ) ) {
+			    invPrice = CommonUtil.toDouble( product.getChangeFenbi() );
+			}
+		    } else if ( params.getType() == 6 && timeList != null && timeList.size() > 0 ) {//预售
+			oldPrice = invPrice;
+			invPrice = mallPresaleService.getPresalePrice( invPrice, timeList );
+		    } else if ( params.getType() == 7 && pifaPriceList != null && pifaPriceList.size() > 0 ) {//批发
+			for ( MallPifaPrice pifaPrice : pifaPriceList ) {
+			    if ( pifaPrice.getInvenId().toString().equals( priceMap.get( "id" ).toString() ) ) {
+				oldPrice = invPrice;
+				invPrice = CommonUtil.toDouble( pifaPrice.getSeckillPrice() );
+				pifaPriceList.remove( pifaPrice );
+				isJoin = pifaPrice.getIsJoinGroup();
+				break;
+			    }
+			}
+		    }
+		    if ( params.getType() == 1 || params.getType() == 3 || params.getType() == 7 ) {
+			priceMap.put( "isJoin", isJoin );
+		    }
+		}
+		priceMap.put( "inv_price", df.format( invPrice ) );
+		if ( hyPrice > 0 ) {
+		    priceMap.put( "hyPrice", df.format( hyPrice ) );
+		}
+		if ( oldPrice > 0 ) {
+		    priceMap.put( "oldPrice", oldPrice );
+		}
+
+	    }
+	}
+
+	return guigePrice;
     }
 }

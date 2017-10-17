@@ -269,10 +269,14 @@
         <include refid="group_Column_List"></include>
         from t_mall_seckill g
         where g.is_delete = 0 and g.is_use = 1
-        and ((g.s_start_time &lt;= now() and now() &lt; g.s_end_time ) or (g.s_start_time > now() and g.s_end_time > now()))
         and g.product_id=#{productId}
         and g.shop_id=#{shopId}
-        limit 1
+        <if test="id != null and id > 0">
+            and gb.id = #{id}
+        </if>
+        <if test="id == null or id == 0">
+            and ((g.s_start_time &lt;= now() and now() &lt; g.s_end_time ) or (g.s_start_time > now() and g.s_end_time > now()))
+        </if>
     </select>
 
     <!-- 获取店铺下所有正在参加秒杀的商品 -->

@@ -11,9 +11,11 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.*;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerOrderService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.*;
@@ -57,6 +59,8 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     private MemberService            memberService;
     @Autowired
     private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private MallSellerMallsetService mallSellerMallsetService;
 
     /**
      * 查询客户订单的个数
@@ -206,16 +210,27 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
      */
     @Override
     public int getSaleMemberIdByRedis( Member member, int saleMemberId, HttpServletRequest request, int userid ) {
+	String key = "mall_mallSaleMemberId_" + userid;
 	if ( saleMemberId > 0 ) {
 	    boolean isSellers = isSeller( saleMemberId );
 	    if ( !isSellers ) {
 		saleMemberId = 0;
 	    } else {
-		SessionUtils.setSession( saleMemberId, request, "mall_mallSaleMemberId_" + userid );
+		if ( CommonUtil.isNotEmpty( request ) ) {
+		    SessionUtils.setSession( saleMemberId, request, key );
+		} else {
+		    JedisUtil.set( Constants.REDIS_KEY + key, saleMemberId + "", Constants.REDIS_SECONDS );
+		}
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) ) ) {
-	    return CommonUtil.toInteger( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) );
+	if ( CommonUtil.isNotEmpty( request ) ) {
+	    if ( CommonUtil.isNotEmpty( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) ) ) {
+		return CommonUtil.toInteger( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) );
+	    }
+	} else {
+	    if ( JedisUtil.exists( Constants.REDIS_KEY + key ) ) {
+		return CommonUtil.toInteger( JedisUtil.get( Constants.REDIS_KEY + key ) );
+	    }
 	}
 	return saleMemberId;
     }
@@ -223,13 +238,23 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     @Override
     public void setSaleMemberIdByRedis( Member member, int saleMemberId, HttpServletRequest request, int userid ) {
 	if ( saleMemberId > 0 ) {
-	    SessionUtils.setSession( saleMemberId, request, "mall_mallSaleMemberId_" + userid );
+	    String key = "mall_mallSaleMemberId_" + userid;
+	    if ( CommonUtil.isNotEmpty( request ) ) {
+		SessionUtils.setSession( saleMemberId, request, key );
+	    } else {
+		JedisUtil.set( Constants.REDIS_KEY + key, saleMemberId + "", Constants.REDIS_SECONDS );
+	    }
 	}
     }
 
     @Override
     public void clearSaleMemberIdByRedis( Member member, HttpServletRequest request, int userid ) {
-	SessionUtils.removeSession( request, "mall_mallSaleMemberId_" + userid );
+	String key = "mall_mallSaleMemberId_" + userid;
+	if ( CommonUtil.isNotEmpty( request ) ) {
+	    SessionUtils.removeSession( request, key );
+	} else {
+	    JedisUtil.del( Constants.REDIS_KEY + key );
+	}
     }
 
     @Override
@@ -1183,6 +1208,25 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
 	}
 	return seller;
+    }
+
+    public PhoneProductDetailResult getSeller( PhoneProductDetailResult result, int saleMemberId, int busId, int productId, String view, Member member ) {
+	if ( saleMemberId > 0 && busId > 0 ) {
+	    setSaleMemberIdByRedis( member, saleMemberId, null, busId );
+	}
+	saleMemberId = getSaleMemberIdByRedis( member, saleMemberId, null, busId );
+	if ( saleMemberId > 0 ) {
+	    MallSeller mallSeller = selectSellerByMemberId( saleMemberId );//查询销售员的信息
+
+	    if ( saleMemberId > 0 && CommonUtil.isNotEmpty( mallSeller ) ) {//分享的用户 判断是否是销售员
+		shareSellerIsSale( member, saleMemberId, mallSeller );
+	    }
+	}
+	if ( saleMemberId > 0 || view.equals( "show" ) ) {
+	    //查询销售商品信息
+	    result = mallSellerMallsetService.selectSellerProduct( productId, saleMemberId, result, view, member );
+	}
+	return result;
     }
 
 }

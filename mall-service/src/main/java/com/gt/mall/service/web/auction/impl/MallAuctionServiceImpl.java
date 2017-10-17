@@ -11,8 +11,12 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneAuctionProductDetailResult;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
@@ -55,6 +59,8 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     private WxShopService            wxShopService;
     @Autowired
     private MallPageService          mallPageService;
+    @Autowired
+    private MallAuctionMarginService mallAuctionMarginService;
 
     @Override
     public PageUtil selectAuctionByShopId( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
@@ -319,8 +325,8 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	auction.setShopId( shopId );
 	auction = auctionDAO.selectBuyByProductId( auction );
 	if ( auction != null && CommonUtil.isNotEmpty( auction.getId() ) ) {
-	    Date endTime = DateTimeKit.parse( auction.getAucEndTime().toString(), "yyyy-MM-dd HH:mm:ss" );
-	    Date startTime = DateTimeKit.parse( auction.getAucStartTime().toString(), "yyyy-MM-dd HH:mm:ss" );
+	    Date endTime = DateTimeKit.parse( auction.getAucEndTime(), "yyyy-MM-dd HH:mm:ss" );
+	    Date startTime = DateTimeKit.parse( auction.getAucStartTime(), "yyyy-MM-dd HH:mm:ss" );
 	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
 	    auction.setTimes( ( endTime.getTime() - nowTime.getTime() ) / 1000 );
 	    if ( auction.getStatus() == 0 ) {
@@ -365,8 +371,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 
     @Override
     public List< Map< String,Object > > selectgbAuctionByShopId( Map< String,Object > maps ) {
-	List< Map< String,Object > > auctionList = auctionDAO.selectgbProductByShopId( maps );
-	return auctionList;
+	return auctionDAO.selectgbProductByShopId( maps );
     }
 
     @Override
@@ -504,5 +509,88 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	}
 	page.setSubList( productList );
 	return page;
+    }
+
+    @Override
+    public PhoneProductDetailResult getAuctionProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+	if ( activityId == 0 ) {
+	    return result;
+	}
+	MallAuction auction = getAuctionByProId( proId, shopId, activityId );
+	if ( CommonUtil.isEmpty( auction ) ) {
+	    return result;
+	}
+	result.setActivityId( auction.getId() );
+	result.setActivityStatus( auction.getStatus() );
+	result.setProductPrice( auction.getNowPrice() );
+	if ( auction.getAucRestrictionNum() > 0 ) {
+	    result.setMaxBuyNum( auction.getAucRestrictionNum() );//限购
+	}
+	PhoneAuctionProductDetailResult auctionResult = new PhoneAuctionProductDetailResult();
+
+	MallAuctionMargin margin = new MallAuctionMargin();
+	margin.setAucId( auction.getId() );
+	margin.setMarginStatus( 1 );
+	//查询缴纳保证金数量
+	List< MallAuctionMargin > marginList = mallAuctionMarginService.getMyAuction( margin );
+	MallAuctionBidding bid = new MallAuctionBidding();
+	bid.setAucId( auction.getId() );
+	if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
+	    //查询出价次数
+	    MallAuctionOffer offer = new MallAuctionOffer();
+	    offer.setAucId( auction.getId() );
+	    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
+	    if ( offerList != null && offerList.size() > 0 ) {
+		auctionResult.setMarginNumber( offerList.size() );
+	    }
+	    if ( auction.getStatus() == -1 ) {
+		//获取加价拍卖胜出的人
+		MallAuctionOffer aucOffer = auctionOfferDAO.selectByOffer( auction.getId().toString() );
+		if ( aucOffer != null && CommonUtil.isNotEmpty( member ) ) {
+		    if ( aucOffer.getUserId().toString().equals( member.getId().toString() ) ) {
+			auctionResult.setIsWin( 1 );//胜出
+		    } else {
+			auctionResult.setIsWin( 0 );//出局
+		    }
+		    result.setProductPrice( CommonUtil.toDouble( aucOffer.getOfferMoney() ) );
+
+		    bid.setUserId( member.getId() );
+		    bid.setProId( auction.getProductId() );
+		    MallAuctionBidding bidding = auctionBiddingDAO.selectByBidding( bid );
+		    if ( bidding != null ) {
+			if ( bidding.getAucStatus() == 0 ) {
+			    auctionResult.setIsReturnOrder( 1 );
+			}
+		    }
+		}
+	    }
+	} else {//降价拍
+	    List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
+	    if ( bidList != null && bidList.size() > 0 ) {
+		if ( auction.getStatus() == -1 ) {
+		    auction.setNowPrice( CommonUtil.toDouble( bidList.get( 0 ).getAucPrice() ) );
+		}
+	    }
+	    auctionResult.setAuctionNumber( bidList.size() );//抢拍次数
+	}
+	auctionResult.setMarginNumber( marginList.size() );//报名人数
+	if ( auction.getIsMargin().toString().equals( "1" ) ) {
+	    auctionResult.setDepositMoney( CommonUtil.toDouble( auction.getAucMargin() ) );//保证金
+	}
+	auctionResult.setAucType( auction.getAucType() );//拍卖类型
+	auctionResult.setAucStartPrice( CommonUtil.toDouble( auction.getAucStartPrice() ) );//起拍价
+	String aucTypeVal = "升价拍卖";
+	if ( auction.getAucType() == 1 ) {//降价拍
+	    auctionResult.setAucLowestPrice( CommonUtil.toDouble( auction.getAucLowestPrice() ) );//最低价
+	    auctionResult.setAucLowerPriceTime( auction.getAucLowerPriceTime() );//降价时间（每多少分钟）
+	    auctionResult.setAucLowerPrice( CommonUtil.toDouble( auction.getAucLowerPrice() ) );//降价金额（每多少分钟降价多少元）
+	    aucTypeVal = "降价拍卖";
+	} else {
+	    auctionResult.setAucAddPrice( CommonUtil.toDouble( auction.getAucAddPrice() ) );//加价幅度
+	}
+	auctionResult.setAucTypeVal( aucTypeVal );
+
+	result.setAuctionResult( auctionResult );
+	return result;
     }
 }

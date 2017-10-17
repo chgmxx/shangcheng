@@ -22,6 +22,7 @@ import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhonePresaleProductDetailResult;
 import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -382,7 +383,10 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     }
 
     @Override
-    public PhoneProductDetailResult getPresaleProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+    public PhoneProductDetailResult getPresaleProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+	if ( activityId == 0 ) {
+	    return result;
+	}
 	boolean isOpenPresale = false;
 	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
 	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPresale() ) ) {//是否开启预售
@@ -395,14 +399,15 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    return result;
 	}
 	MallPresaleDeposit deposit = null;
-	MallPresale presale = getPresaleByProId( proId, shopId, null );
+	MallPresale presale = getPresaleByProId( proId, shopId, activityId );
 	if ( CommonUtil.isEmpty( presale ) ) {
 	    return result;
 	}
+	PhonePresaleProductDetailResult presaleResult = new PhonePresaleProductDetailResult();
 	result.setActivityId( presale.getId() );
 	result.setActivityStatus( presale.getStatus() );
 	if ( presale.getIsDeposit() == 1 ) {
-	    result.setDingMoney( CommonUtil.toDouble( presale.getDepositPercent() ) );
+	    presaleResult.setDingMoney( CommonUtil.toDouble( presale.getDepositPercent() ) );
 	}
 
 	Map< String,Object > presaleMap = new HashMap<>();
@@ -415,7 +420,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		if ( deposit.getDepositStatus().toString().equals( "1" ) ) {
 		    isBuyFlag = true;
 
-		    result.setWeiMoney( CommonUtil.subtract( CommonUtil.toDouble( deposit.getOrderMoney() ), CommonUtil.toDouble( deposit.getDepositMoney() ) ) );
+		    presaleResult.setWeiMoney( CommonUtil.subtract( CommonUtil.toDouble( deposit.getOrderMoney() ), CommonUtil.toDouble( deposit.getDepositMoney() ) ) );
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( deposit ) ) {
@@ -431,20 +436,20 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	result.setIsShowLiJiBuyButton( 0 );//隐藏立即购买
 	if ( isBuyFlag ) {
 	    if ( presale.getStatus() == 1 ) {
-		result.setIsShowPresaleButton( 1 );//显示预定按钮
+		presaleResult.setIsShowPresaleButton( 1 );//显示预定按钮
 	    } else if ( presale.getStatus() == 0 ) {
-		result.setIsShowStartButton( 1 );//显示即将开售按钮
+		presaleResult.setIsShowStartButton( 1 );//显示即将开售按钮
 	    }
 	} else {
 	    if ( presale.getStatus() == 1 ) {
 		result.setIsShowLiJiBuyButton( 1 );//显示立即购买
 	    } else if ( presale.getStatus() == 0 ) {
-		result.setIsShowPresaleButton( 1 );//显示预定按钮
+		presaleResult.setIsShowPresaleButton( 1 );//显示预定按钮
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( deposit ) ) {
 	    if ( isBuyFlag && presale.getStatus() == 0 ) {
-		result.setPayDespositStatus( 1 );//已缴纳定金
+		presaleResult.setPayDespositStatus( 1 );//已缴纳定金
 	    }
 	}
 
@@ -453,12 +458,20 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( CommonUtil.isNotEmpty( presale.getOrderNum() ) ) {
 	    buyCout = buyCout + presale.getOrderNum();//订购量
 	}
-	result.setBuyCount( buyCout );
-
-	double presaleDiscount;
+	presaleResult.setBuyCount( buyCout );
 
 	List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( presale.getId() );
 	double proPrice = result.getProductPrice();
+	proPrice = getPresalePrice( proPrice, timeList );
+	DecimalFormat df = new DecimalFormat( "######0.00" );
+	result.setProductPrice( CommonUtil.toDouble( df.format( proPrice ) ) );
+	result.setPresaleResult( presaleResult );
+	return result;
+    }
+
+    @Override
+    public double getPresalePrice( double proPrice, List< MallPresaleTime > timeList ) {
+	double presaleDiscount;
 	if ( timeList != null && timeList.size() > 0 ) {
 	    for ( MallPresaleTime mallPresaleTime : timeList ) {
 		Date endTime = DateTimeKit.parse( mallPresaleTime.getEndTime(), "yyyy-MM-dd HH:mm:ss" );
@@ -473,7 +486,6 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 			    proPrice = proPrice + presaleDiscount;
 			} else {//下调价格
 			    proPrice = proPrice - presaleDiscount;
-
 			}
 		    } else {//百分比
 			presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() ) / 100;
@@ -485,12 +497,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    }
 		    break;
 		}
-
 	    }
 	}
-	DecimalFormat df = new DecimalFormat( "######0.00" );
-	result.setProductPrice( CommonUtil.toDouble( df.format( proPrice ) ) );
-	return result;
+	return proPrice;
     }
 
     /**

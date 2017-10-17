@@ -13,20 +13,20 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.pifa.MallPifaApplyService;
-import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -421,10 +421,12 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public void selectSellerProduct( HttpServletRequest request, int proId,
-		    int saleMemberId, Map< String,Object > params, Member member ) {
+    public PhoneProductDetailResult selectSellerProduct( int proId, int saleMemberId, PhoneProductDetailResult result, String view, Member member ) {
 	boolean isSeller = mallSellerService.isSeller( saleMemberId );//查询该销售员是否还是销售员
 	MallSellerJoinProduct joinProduct = mallSellerJoinProductDAO.selectByProId( proId );
+	if ( CommonUtil.isEmpty( joinProduct ) ) {
+	    return result;
+	}
 	boolean isCommission = true;
 	if ( isSeller ) {
 	    MallSellerMallset mallSet = mallSellerMallsetDAO.selectBySaleMemberId( saleMemberId );
@@ -446,49 +448,64 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 		}
 	    }
 	}
-	//		if((saleMemberId == member.getId() && isSeller) || CommonUtil.isNotEmpty(params.get("view"))){
-	if ( isSeller || CommonUtil.isNotEmpty( params.get( "view" ) ) ) {
+	int commissionType = 0;//佣金类型 1按百分比  2按固定金额
+	double commission_rate = 0;
+	if ( isSeller || CommonUtil.isNotEmpty( view ) ) {
 	    if ( CommonUtil.isNotEmpty( joinProduct ) ) {
-		request.setAttribute( "productCommission", joinProduct );
+		commissionType = joinProduct.getCommissionType();
+		commission_rate = CommonUtil.toDouble( joinProduct.getCommissionRate() );
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( member ) ) {
-	    if ( ( saleMemberId == member.getId() && isSeller && isCommission ) ) {
-		request.setAttribute( "isCommission", 1 );
+	int isShowCommission = 0;//是否显示佣金
+	if ( CommonUtil.isNotEmpty( member ) && saleMemberId > 0 ) {
+	    if ( ( saleMemberId == member.getId() && isSeller && isCommission ) ) {//销售员才可以看到佣金
+		isShowCommission = 1;
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( params.get( "view" ) ) ) {
-	    request.setAttribute( "isCommission", 1 );
-	}
-	if ( saleMemberId > 0 ) {
-	    request.setAttribute( "saleMemberId", saleMemberId );
+	if ( CommonUtil.isNotEmpty( view ) ) {
+	    isShowCommission = 1;
 	}
 	//查询会员是否是销售员
-	int state = -1;
+	int status = -4;
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( member.getBusid() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
 
-	    int status = mallSellerService.selectSellerStatusByMemberId( member, set );
+	    status = mallSellerService.selectSellerStatusByMemberId( member, set );
 	    String shareMsg = "您还没申请销售员,是否前往申请";
 	    if ( status == 0 ) {
-		state = -2;
+		status = -2;
 		shareMsg = "销售员正在审核中";
 	    } else if ( status == -1 ) {
-		//state = -2;
 		shareMsg = "您的销售员审核不通过,是否前往修改申请";
 	    } else if ( status == -2 ) {
 		shareMsg = "您还没申请销售员,是否前往修改申请";
 	    } else if ( status == -3 ) {
 		shareMsg = "您的销售员已暂停使用";
-		state = -2;
+		status = -2;
 	    } else if ( status == 1 ) {
-		state = 1;
+		status = 1;
 		//判断用户是否是销售员
+		shareMsg = "";
 	    }
-	    request.setAttribute( "shareState", state );
-	    request.setAttribute( "shareMsg", shareMsg );
+	    result.setShareErrorMsg( shareMsg );
+	    result.setSellerStatus( status );
+	    result.setIsShowCommission( isShowCommission );
+	    double commissionMoney = 0;//佣金
+	    if ( commissionType == 1 ) {//按百分比
+		commissionMoney = result.getProductPrice() * ( commission_rate / 100 );
+		if ( commissionMoney <= 0 ) {
+		    commissionMoney = 0.01;
+		}
+	    } else if ( commissionType == 2 ) {//按固定金额
+		commissionMoney = commission_rate;
+	    }
+	    result.setCommissionMoney( commissionMoney );
 	}
+	if ( saleMemberId > 0 ) {
+	    result.setIsShowShare( 1 );
+	}
+	return result;
     }
 }

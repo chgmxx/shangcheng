@@ -362,11 +362,6 @@ public interface MallPageService extends BaseService< MallPage > {
     public void saveOrUpdateKeyWord( Map< String,Object > params, int shopid, int userId );
 
     /**
-     * 查询商品参加的活动
-     */
-    public String productActivity( HttpServletRequest request, Member member, int id, int shopid, int userid );
-
-    /**
      * 获取所有的预售商品
      */
     public List< Map< String,Object > > productPresale( Integer stoId, Map< String,Object > params );

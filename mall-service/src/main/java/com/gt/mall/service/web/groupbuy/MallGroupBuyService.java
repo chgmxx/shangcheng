@@ -80,12 +80,13 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
     /**
      * 根据商品id查询团购信息和团购价格
      *
-     * @param proId  商品Id
-     * @param shopId 店铺Id
+     * @param proId      商品Id
+     * @param shopId     店铺Id
+     * @param activityId 活动Id
      *
      * @return 团购信息
      */
-    MallGroupBuy getGroupBuyByProId( Integer proId, Integer shopId );
+    MallGroupBuy getGroupBuyByProId( Integer proId, Integer shopId, int activityId );
 
     /**
      * 获取商品的团购信息
@@ -97,7 +98,7 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
      *
      * @return 团购信息
      */
-    PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member );
+    PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member );
 
     /**
      * 获取团购信息

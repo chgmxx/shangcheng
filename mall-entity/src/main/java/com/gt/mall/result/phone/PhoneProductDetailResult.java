@@ -1,6 +1,5 @@
 package com.gt.mall.result.phone;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -17,7 +16,7 @@ import java.util.Map;
  * Date : 2017/10/12 0012
  * Time : 20:11
  */
-@ApiModel( value = "PhoneGroupDTO", description = "分类验证" )
+@ApiModel( value = "PhoneGroupDTO", description = "商品详情" )
 @Getter
 @Setter
 public class PhoneProductDetailResult implements Serializable {
@@ -41,6 +40,9 @@ public class PhoneProductDetailResult implements Serializable {
 
     @ApiModelProperty( name = "freightMoney", value = "运费" )
     private double freightMoney;
+
+    @ApiModelProperty( name = "productCode", value = "商品编号" )
+    private String productCode;
 
     @ApiModelProperty( name = "unit", value = "单位" )
     private String unit;//单位
@@ -119,36 +121,52 @@ public class PhoneProductDetailResult implements Serializable {
 
     /*********************************** 以下参数预售商品需要 ***********************************/
 
-    @ApiModelProperty( name = "buyCount", value = "订购量" )
-    private int buyCount = 0;
-
-    @ApiModelProperty( name = "isShowPresaleButton", value = "是否显示预定按钮 1显示" )
-    private int isShowPresaleButton = 0;
-
-    @ApiModelProperty( name = "isWeiMoneyButton", value = "是否显示支付尾款按钮 1显示" )
-    private int isShowWeiMoneyButton = 0;
-
-    @ApiModelProperty( name = "isShowStartButton", value = "是否显示即将开售按钮 1显示" )
-    private int isShowStartButton = 0;
-
-    @ApiModelProperty( name = "dingMoney", value = "定金" )
-    private double dingMoney = 0;
-
-    @ApiModelProperty( name = "weiMoney", value = "尾款" )
-    private double weiMoney = 0;
-
-    @ApiModelProperty( name = "payDespositStatus", value = "缴纳定金状态 1已缴纳 0未缴纳" )
-    private int payDespositStatus = 0;
+    @ApiModelProperty( name = "presaleResult", value = "预售结果" )
+    private PhonePresaleProductDetailResult presaleResult;
 
     /*********************************** 以下参数批发商品需要 ***********************************/
 
-    @ApiModelProperty( name = "pfSetObj", value = "批发设置" )
-    private JSONObject pfSetObj;
+    @ApiModelProperty( name = "pifaResult", value = "批发结果" )
+    private PhonePifaProductDetailResult pifaResult;
 
-    @ApiModelProperty( name = "pfStatus", value = "批发状态" )
-    private int pfStatus = -2;
+    /**
+     * 拍卖返回结果
+     */
+    private PhoneAuctionProductDetailResult auctionResult;
 
-    @ApiModelProperty( name = "pfType", value = "批发类型" )
-    private int pfType;//批发类型
+    @ApiModelProperty( name = "isReturn", value = "是否允许退款 1允许" )
+    private int isReturn;
+
+    /*********************************** 以下参数销售商品需要 ***********************************/
+
+    /**
+     * 是否显示佣金 1显示
+     */
+    @ApiModelProperty( name = "isShowCommission", value = "是否显示佣金 1显示" )
+    private int isShowCommission = 0;
+
+    /**
+     * 是否显示我要分享
+     */
+    @ApiModelProperty( name = "isShowShare", value = "是否显示我要分享 1显示" )
+    private int isShowShare = -1;
+
+    /**
+     * 销售员状态  1审核通过  -1审核不通过 -2 待申请销售员，审核中 -3 暂停使用  -4不用判断
+     */
+    @ApiModelProperty( name = "sellerStatus", value = "销售员状态  1审核通过  -1审核不通过 -2 待申请销售员，审核中 -3 暂停使用  -4不用判断" )
+    private int sellerStatus = -4;
+
+    /**
+     * 不能分享说明
+     */
+    @ApiModelProperty( name = "shareErrorMsg", value = "不能分享说明" )
+    private String shareErrorMsg;
+
+    /**
+     * 佣金
+     */
+    @ApiModelProperty( name = "commissionMoney", value = "佣金" )
+    private double commissionMoney;
 
 }

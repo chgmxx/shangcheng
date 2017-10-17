@@ -457,10 +457,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     }
 
     @Override
-    public MallGroupBuy getGroupBuyByProId( Integer proId, Integer shopId ) {
+    public MallGroupBuy getGroupBuyByProId( Integer proId, Integer shopId, int activityId ) {
 	MallGroupBuy groupBuy = new MallGroupBuy();
 	groupBuy.setProductId( proId );
 	groupBuy.setShopId( shopId );
+	groupBuy.setId( activityId );
 	groupBuy = groupBuyDAO.selectBuyByProductId( groupBuy );
 	if ( groupBuy != null && CommonUtil.isNotEmpty( groupBuy.getId() ) ) {
 
@@ -468,10 +469,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
 
 	    groupBuy.setTimes( ( endTime.getTime() - nowTime.getTime() ) / 1000 );
-	    //            List<MallGroupBuyPrice> priceList = groupBuyPriceDAO.selectPriceByGroupId(groupBuy.getId());
-	    Wrapper< MallGroupBuyPrice > groupWrapper = new EntityWrapper<>();
-	    groupWrapper.where( "group_buy_id = {0} and is_delete = 0", groupBuy.getId() );
-	    List< MallGroupBuyPrice > priceList = groupBuyPriceDAO.selectList( groupWrapper );
+	    List< MallGroupBuyPrice > priceList = groupBuyPriceService.selectPriceByGroupId( groupBuy.getId() );
 
 	    groupBuy.setPriceList( priceList );
 	    return groupBuy;
@@ -480,9 +478,12 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     }
 
     @Override
-    public PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member ) {
+    public PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member ) {
+	if ( activityId == 0 ) {
+	    return result;
+	}
 	//查询团购信息
-	MallGroupBuy groupBuy = getGroupBuyByProId( proId, shopId );//通过商品id查询团购信息
+	MallGroupBuy groupBuy = getGroupBuyByProId( proId, shopId, activityId );//通过商品id查询团购信息
 	if ( CommonUtil.isEmpty( groupBuy ) ) {
 	    return result;
 	}

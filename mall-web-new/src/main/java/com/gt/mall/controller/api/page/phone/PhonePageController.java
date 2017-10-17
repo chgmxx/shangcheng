@@ -9,6 +9,7 @@ import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -18,7 +19,9 @@ import com.gt.mall.service.web.product.MallSearchLabelService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.SessionUtils;
+import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.shop.WsShopPhoto;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -68,6 +71,8 @@ public class PhonePageController {
     private DictService              dictService;
     @Autowired
     private WxShopService            wxShopService;
+    @Autowired
+    private WxPublicUserService      wxPublicUserService;
 
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -251,6 +256,37 @@ public class PhonePageController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "清空历史搜索接口失败" );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
+
+    }
+
+    /**
+     * 获取微信分享
+     */
+    @ApiOperation( value = "微信分享接口", notes = "获取微信分享", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @ApiImplicitParams( @ApiImplicitParam( name = "url", value = "当前地址", paramType = "query", required = true, dataType = "String" ) )
+    @RequestMapping( value = "79B4DE7C/wxShare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+	    if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) ) {
+		WxJsSdk wxJsSdk = new WxJsSdk();
+		wxJsSdk.setPublicId( member.getPublicId() );
+		wxJsSdk.setUrl( url );
+		WxJsSdkResult result = wxPublicUserService.wxjssdk( wxJsSdk );
+		if ( CommonUtil.isNotEmpty( result ) ) {
+		    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+		}
+	    }
+
+	} catch ( BusinessException e ) {
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "微信分享接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取微信分享接口失败" );
+	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.NO_SHARE_ERROR.getCode(), ResponseEnums.NO_SHARE_ERROR.getDesc(), false );
 
     }
 

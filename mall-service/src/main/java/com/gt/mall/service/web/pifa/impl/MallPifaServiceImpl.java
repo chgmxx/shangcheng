@@ -11,6 +11,7 @@ import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.pifa.MallPifaPrice;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhonePifaProductDetailResult;
 import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
@@ -384,10 +385,13 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
      * @return
      */
     @Override
-    public MallPifa getPifaByProId( Integer proId, Integer shopId ) {
+    public MallPifa getPifaByProId( Integer proId, Integer shopId, int activityId ) {
 	MallPifa pifa = new MallPifa();
 	pifa.setProductId( proId );
 	pifa.setShopId( shopId );
+	if ( activityId > 0 ) {
+	    pifa.setId( activityId );
+	}
 	pifa = mallPifaDAO.selectBuyByProductId( pifa );
 	if ( pifa != null && CommonUtil.isNotEmpty( pifa.getId() ) ) {
 	    Date endTime = DateTimeKit.parse( pifa.getPfEndTime().toString(),
@@ -456,7 +460,11 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
     }
 
     @Override
-    public PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+    public PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+	if ( activityId == 0 ) {
+	    return result;
+	}
+	PhonePifaProductDetailResult pifaResult = new PhonePifaProductDetailResult();
 	boolean isOpenPifa = false;
 	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
 	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPf() ) ) {//是否开启批发
@@ -464,7 +472,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		    isOpenPifa = true;
 		    if ( CommonUtil.isNotEmpty( mallPaySet.getPfSet() ) ) {
 			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject( mallPaySet.getPfSet() );
-			result.setPfSetObj( obj );
+			pifaResult.setPfSetObj( obj );
 		    }
 		}
 	    }
@@ -473,12 +481,13 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    return result;
 	}
 	//通过商品id查询批发信息
-	MallPifa pifa = getPifaByProId( proId, shopId );
+	MallPifa pifa = getPifaByProId( proId, shopId, activityId );
 	if ( pifa == null ) {
 	    return result;
 	}
+	result.setActivityStatus( pifa.getStatus() );
 	int pfStatus = mallPifaApplyService.getPifaApplay( member, mallPaySet );
-	result.setPfStatus( pfStatus );//批发状态
+	pifaResult.setPfStatus( pfStatus );//批发状态
 	result.setActivityId( pifa.getId() );
 	double groupPrice = CommonUtil.toDouble( pifa.getPfPrice() );
 	List< Integer > invIdList = new ArrayList<>();
@@ -495,9 +504,23 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		}
 	    }
 	}
+	String errorMsg = "";
+	if ( pifa.getStatus() == 0 ) {
+	    errorMsg = "该商品批发还未开始，请耐心等待";
+	} else if ( pifa.getStatus() == -1 ) {
+	    errorMsg = "该商品批发已结束，暂不能批发";
+	}
+	if ( pfStatus == -2 ) {
+	    errorMsg = "您还没申请批发商，是否前往我的批发进行申请";
+	} else if ( pfStatus == -1 ) {
+	    errorMsg = "您的批发商申请不通过,是否前往我的批发进行重新申请";
+	} else if ( pfStatus == 0 ) {
+	    errorMsg = "您的批发商申请在审核中请耐心等待1-3个工作日";
+	}
+	pifaResult.setPfErrorMsg( errorMsg );
+	result.setPifaResult( pifaResult );
 	result.setInvIdList( invIdList );
 	result.setProductPrice( groupPrice );
-
 	return result;
     }
 }

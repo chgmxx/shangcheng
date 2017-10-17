@@ -255,8 +255,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 
     @Override
     public List< MallAuctionMargin > getMyAuction( MallAuctionMargin margin ) {
-	List< MallAuctionMargin > marginList = auctionMarginDAO.selectListByMargin( margin );
-	return marginList;
+	return auctionMarginDAO.selectListByMargin( margin );
     }
 
     @Override

@@ -460,7 +460,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	//计算批发价
 	boolean isPifa = pifaApplyService.isPifa( member );
 	if ( isPifa ) {
-	    MallPifa pifa = pifaService.getPifaByProId( product.getId(), product.getShopId() );
+	    MallPifa pifa = pifaService.getPifaByProId( product.getId(), product.getShopId(), 0 );
 	    if ( CommonUtil.isNotEmpty( pifa ) ) {
 		productMap.put( "wholesale_price", pifa.getPfPrice() );
 	    }

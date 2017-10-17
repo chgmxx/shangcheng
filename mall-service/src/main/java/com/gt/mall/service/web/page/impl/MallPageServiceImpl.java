@@ -24,18 +24,12 @@ import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.entity.groupbuy.MallGroupBuy;
-import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaPrice;
 import com.gt.mall.entity.presale.MallPresale;
-import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.entity.presale.MallPresaleMessageRemind;
-import com.gt.mall.entity.presale.MallPresaleTime;
 import com.gt.mall.entity.product.*;
-import com.gt.mall.entity.seckill.MallSeckill;
-import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.service.inter.member.CardService;
@@ -1955,168 +1949,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	return false;
     }
 
-    @Override
-    public String productActivity( HttpServletRequest request, Member member, int id, int shopid, int userid ) {
-	String inv_id = "";
-	Map< String,Object > groupMap = new HashMap<>();
-	if ( CommonUtil.isNotEmpty( member ) ) {
-	    groupMap.put( "joinUserId", member.getId() );
-	}
-
-	MallGroupBuy groupBuy = mallGroupBuyService.getGroupBuyByProId( id, shopid );//通过商品id查询团购信息
-	request.setAttribute( "groupBuy", groupBuy );
-	if ( groupBuy != null ) {
-	    groupMap.put( "groupBuyId", groupBuy.getId() );
-	    //查询参团信息
-	    List< Map< String,Object > > list = mallGroupJoinService.getJoinGroup( groupMap, member );
-	    request.setAttribute( "joinList", list );
-	    //查询用户参加团购的数量
-	    int groupBuyCount = 0;
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		groupBuyCount = mallGroupJoinService.selectCountByBuyId( groupMap );
-	    }
-	    request.setAttribute( "groupBuyCount", groupBuyCount );
-	    if ( CommonUtil.isNotEmpty( groupBuy.getPriceList() ) ) {
-		for ( MallGroupBuyPrice price : groupBuy.getPriceList() ) {
-		    if ( price.getIsJoinGroup() == 1 ) {
-			inv_id = price.getInvenId().toString();
-			break;
-		    }
-		}
-	    }
-	}
-
-	//通过商品id查询秒杀信息
-	MallSeckill seckill = mallSeckillService.getSeckillByProId( id, shopid );
-	request.setAttribute( "seckill", seckill );
-	if ( seckill != null ) {
-	    //			seckillId = seckill.getId();
-	    groupMap.put( "seckillId", seckill.getId() );
-	    int seckillCount = 0;
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		seckillCount = mallSeckillService.selectCountByBuyId( groupMap );
-	    }
-	    request.setAttribute( "seckillCount", seckillCount );
-	    if ( CommonUtil.isNotEmpty( seckill.getPriceList() ) ) {
-		for ( MallSeckillPrice price : seckill.getPriceList() ) {
-		    if ( price.getIsJoinGroup() == 1 ) {
-			inv_id = price.getInvenId().toString();
-			break;
-		    }
-		}
-	    }
-	}
-	MallPaySet set = new MallPaySet();
-	set.setUserId( userid );
-	//通过商品id查询预售信息
-	set = mallPaySetService.selectByUserId( set );
-	boolean isOpenPresale = false;
-	boolean isOpenPifa = false;
-	if ( CommonUtil.isNotEmpty( set ) ) {
-	    if ( CommonUtil.isNotEmpty( set.getIsPresale() ) ) {//是否开启预售
-		if ( set.getIsPresale().toString().equals( "1" ) ) {
-		    isOpenPresale = true;
-		}
-	    }
-	    if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {//是否开启批发
-		if ( set.getIsPf().toString().equals( "1" ) ) {
-		    isOpenPifa = true;
-		    if ( CommonUtil.isNotEmpty( set.getPfSet() ) ) {
-			JSONObject obj = JSONObject.fromObject( set.getPfSet() );
-			request.setAttribute( "pfSet", obj );
-		    }
-		}
-	    }
-	}
-	if ( isOpenPresale ) {
-	    MallPresale presale = mallPresaleService.getPresaleByProId( id, shopid, null );
-	    request.setAttribute( "presale", presale );
-	    boolean isBuyFlag = false;
-	    if ( presale != null ) {
-		groupMap.put( "presaleId", presale.getId() );
-		int presaleCount = 0;//用户购买预售商品的数量
-		if ( CommonUtil.isNotEmpty( member ) ) {
-		    presaleCount = mallPresaleService.selectCountByBuyId( groupMap );
-		}
-		request.setAttribute( "presaleCount", presaleCount );
-		if ( CommonUtil.isNotEmpty( member ) ) {
-		    MallPresaleDeposit deposit = mallPresaleDepositService.selectCountByPresaleId( groupMap );//用户是否已经交纳定金  》0   已经交纳了定金
-		    if ( deposit != null && presaleCount == 0 ) {
-			if ( deposit.getDepositStatus().toString().equals( "1" ) ) {
-			    isBuyFlag = true;
-			}
-		    }
-		    if ( CommonUtil.isNotEmpty( deposit ) ) {
-			Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( deposit.getProSpecificaIds(), deposit.getProductId() );
-			if ( CommonUtil.isNotEmpty( invMap ) ) {
-			    if ( CommonUtil.isNotEmpty( invMap.get( "id" ) ) ) {
-				inv_id = invMap.get( "id" ).toString();
-			    }
-			}
-		    }
-		    request.setAttribute( "deposit", deposit );
-		}
-
-		//查询预售商品订购的数量
-		int buyCout = mallPresaleDepositDAO.selectBuyCountByPreId( groupMap );
-		if ( CommonUtil.isNotEmpty( presale.getOrderNum() ) ) {
-		    buyCout = buyCout + presale.getOrderNum();
-		}
-		request.setAttribute( "buyCout", buyCout );
-
-		double presaleDiscount = 100;
-
-		List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( presale.getId() );
-		request.setAttribute( "presaleTimeList", timeList );
-		if ( timeList != null && timeList.size() > 0 ) {
-		    for ( MallPresaleTime mallPresaleTime : timeList ) {
-			Date endTime = DateTimeKit.parse( mallPresaleTime.getEndTime(), "yyyy-MM-dd HH:mm:ss" );
-			Date startTime = DateTimeKit.parse( mallPresaleTime.getStartTime(), "yyyy-MM-dd HH:mm:ss" );
-			Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
-			if ( startTime.getTime() <= nowTime.getTime() && nowTime.getTime() < endTime.getTime() ) {
-			    if ( mallPresaleTime.getPriceType() == 2 ) {
-				presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() );
-			    } else {
-				presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() ) / 100;
-			    }
-			    request.setAttribute( "presaleTime", mallPresaleTime );
-			    break;
-			}
-
-		    }
-		}
-		/*DecimalFormat df = new DecimalFormat("######0.00");
-		presaleDiscount = CommonUtil.toDouble(df.format(presaleDiscount));*/
-		request.setAttribute( "presaleDiscount", presaleDiscount );
-
-	    }
-	    request.setAttribute( "isBuyFlag", isBuyFlag );
-
-	}
-	if ( isOpenPifa ) {
-	    int status = mallPifaApplyService.getPifaApplay( member, set );
-	    request.setAttribute( "status", status );
-
-	    //通过商品id查询批发信息
-	    MallPifa pifa = mallPifaService.getPifaByProId( id, shopid );
-	    request.setAttribute( "pifa", pifa );
-	    if ( pifa != null ) {
-		groupMap.put( "pifaId", pifa.getId() );
-		int pifaCount = 0;
-		if ( CommonUtil.isNotEmpty( member ) ) {
-		    pifaCount = mallPifaDAO.selectCountJoinNum( groupMap );
-		}
-		request.setAttribute( "pifaCount", pifaCount );
-
-		List< MallProductInventory > invenList = mallProductInventoryService.selectInvenByProductId( pifa.getProductId() );
-		if ( invenList != null && invenList.size() > 0 ) {
-		    request.setAttribute( "invenList", JSONArray.fromObject( invenList ) );
-		}
-	    }
-	}
-	return inv_id;
-    }
-
+    /**
+     * TODo 待优化
+     *
+     * @param stoId
+     * @param params
+     *
+     * @return
+     */
     @Override
     public List< Map< String,Object > > productPresale( Integer stoId, Map< String,Object > params ) {
 

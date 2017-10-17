@@ -8,6 +8,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
+import com.gt.mall.entity.presale.MallPresaleTime;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
@@ -70,7 +71,16 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      *
      * @return 预售信息
      */
-    PhoneProductDetailResult getPresaleProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
+    PhoneProductDetailResult getPresaleProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
+
+    /**
+     * 获取预售价格
+     *
+     * @param proPrice 当前商品价格
+     *
+     * @return 预售价格
+     */
+    double getPresalePrice( double proPrice, List< MallPresaleTime > timeList );
 
     /**
      * 查询用户参加预售的数量

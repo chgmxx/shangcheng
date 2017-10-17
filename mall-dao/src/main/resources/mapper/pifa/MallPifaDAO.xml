@@ -63,6 +63,16 @@
         when p.pf_start_time &lt; now() and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
         end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/,o.id as joinId
     </sql>
+    <sql id="pifa_Column_List">
+        id, product_id , pf_price , pf_start_time , pf_end_time , user_id , shop_id , create_time,
+        is_delete , is_use , pf_type,
+        case
+        when is_use = -1 then -2<!--已失效  -->
+        when pf_start_time > now() and pf_end_time > now() then 0<!--未开始  -->
+        when pf_start_time &lt;= now() and now() &lt; pf_end_time then 1<!-- 进行中 -->
+        when pf_start_time &lt; now() and pf_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status
+    </sql>
 
 
     <!-- 统计批发 -->
@@ -266,12 +276,17 @@
     <!-- 根据商品id查询批发信息 -->
     <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.pifa.MallPifa" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"></include>
+        <include refid="pifa_Column_List"></include>
         from t_mall_pifa p
         where p.is_delete = 0 and p.is_use = 1
-        and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or (p.pf_start_time > now() and p.pf_end_time > now()))
         and p.product_id=#{productId} and p.shop_id=#{shopId}
-        limit 1
+        <if test="id != null and id > 0">
+            and p.id = #{id}
+        </if>
+        <if test="id == null or id == 0">
+            and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or (p.pf_start_time > now() and p.pf_end_time > now()))
+            limit 1
+        </if>
     </select>
 
     <select id="selectCountJoinNum" parameterType="Map" resultType="java.lang.Integer">

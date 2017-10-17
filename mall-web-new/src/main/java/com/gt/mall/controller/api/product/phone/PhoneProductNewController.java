@@ -10,6 +10,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneGroupDTO;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.param.phone.PhoneSpecificaDTO;
 import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
@@ -19,8 +20,10 @@ import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleService;
+import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -56,7 +59,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private static Logger logger = LoggerFactory.getLogger( PhoneProductNewController.class );
 
     @Autowired
-    private MallPageService               mallPageService;
+    private MallPageService               mallPageService;//页面业务处理类
     @Autowired
     private MallHomeAppletService         mallHomeAppletService;
     @Autowired
@@ -81,6 +84,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private BusUserService                busUserService;
     @Autowired
     private MallStoreCertificationService mallStoreCertificationService;
+    @Autowired
+    private MallProductSpecificaService   mallProductSpecificaService;//商品规格业务处理类
+    @Autowired
+    private MallProductInventoryService   mallProductInventoryService;//商品库存业务处理类
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -219,6 +226,34 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品详情接口失败" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+    }
+
+    @ApiOperation( value = "商品规格接口", notes = "在商品详情页面弹出商品规格", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @RequestMapping( value = "79B4DE7C/getSpecifica", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse getSpecifica( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
+	Map< String,Object > resultMap = new HashMap<>();
+	try {
+
+	    Member member = SessionUtils.getLoginMember( request );
+
+	    List< Map< String,Object > > specificaList = mallProductSpecificaService.getSpecificaByProductId( params.getProductId() );//获取商品规格值
+	    resultMap.put( "specificaList", specificaList );
+
+	    List< Map< String,Object > > guigePrice = mallProductNewService.getProductSpecificaPrice( params, member );
+	    resultMap.put( "guigePrice", guigePrice );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap );
+
+	} catch ( BusinessException e ) {
+	    logger.error( "商品规格异常：" + e.getMessage() );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品规格失败" );
+	} catch ( Exception e ) {
+	    logger.error( "商品规格异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品规格失败" );
+	}
+
     }
 
 }

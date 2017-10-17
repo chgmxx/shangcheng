@@ -3,7 +3,9 @@ package com.gt.mall.service.web.auction;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.auction.MallAuction;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public interface MallAuctionService extends BaseService< MallAuction > {
     /**
      * 通过店铺id来查询拍卖
      *
-     * @param param  type:状态，shoplist：店铺id集合，curPage：当前页
+     * @param param type:状态，shoplist：店铺id集合，curPage：当前页
      *
      * @return page
      */
@@ -101,5 +103,17 @@ public interface MallAuctionService extends BaseService< MallAuction > {
      * 查询正在拍卖的商品
      */
     PageUtil searchAuctionAll( PhoneSearchProductDTO searchProductDTO, Member member );
+
+    /**
+     * 获取商品的批发信息
+     *
+     * @param proId  商品id
+     * @param shopId 店铺id
+     * @param result 返回商品详细页面的结果
+     * @param member 会员
+     *
+     * @return 批发信息
+     */
+    PhoneProductDetailResult getAuctionProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
 
 }

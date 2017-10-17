@@ -40,22 +40,22 @@
     <sql id="Base_Column_List">
         g.id, g.product_id, g.shop_id, sale_start_time, sale_end_time, is_deposit, deposit_percent,
         g.user_id, g.create_time, g.is_delete, g.is_use,g.order_num,
-        case
-        when g.sale_start_time > now() and g.sale_end_time > now() then 0<!--未开始  -->
-        when g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time then 1<!-- 进行中 -->
-        when g.sale_start_time &lt; now() and g.sale_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status
+        CASE
+        WHEN g.sale_start_time > now() AND g.sale_end_time > now() THEN 0<!--未开始  -->
+        WHEN g.sale_start_time &lt;= now() AND now() &lt; g.sale_end_time THEN 1<!-- 进行中 -->
+        WHEN g.sale_start_time &lt; now() AND g.sale_end_time &lt;= now() THEN -1<!-- 已结束 -->
+        END STATUS
     </sql>
     <sql id="page_Column_List">
         g.id, g.product_id, g.shop_id, g.sale_start_time, g.sale_end_time, g.is_deposit, g.deposit_percent,
         g.user_id, g.create_time, g.is_delete, g.is_use,g.order_num,
-        case
-        when g.is_use = -1 then -2<!--已失效  -->
-        when g.sale_start_time > now() and g.sale_end_time > now() then 0<!--未开始  -->
-        when g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time then 1<!-- 进行中 -->
-        when g.sale_start_time &lt; now() and g.sale_end_time &lt;= now() then -1<!-- 已结束 -->
-        end status,
-        p.pro_name as proName,p.two_code_path as twoCodePath
+        CASE
+        WHEN g.is_use = -1 THEN -2<!--已失效  -->
+        WHEN g.sale_start_time > now() AND g.sale_end_time > now() THEN 0<!--未开始  -->
+        WHEN g.sale_start_time &lt;= now() AND now() &lt; g.sale_end_time THEN 1<!-- 进行中 -->
+        WHEN g.sale_start_time &lt; now() AND g.sale_end_time &lt;= now() THEN -1<!-- 已结束 -->
+        END STATUS,
+        p.pro_name AS proName,p.two_code_path AS twoCodePath
     </sql>
 
     <!-- 统计预售 -->
@@ -141,17 +141,31 @@
 
 
     <select id="selectByPresaleId" resultType="Map" parameterType="java.lang.Integer">
-        select
-        b.id, b.product_id, b.shop_id, b.sale_start_time, b.sale_end_time, b.is_deposit, b.deposit_percent,
-        b.user_id, b.create_time, b.is_delete, b.is_use,b.order_num,
-        c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName,
-        if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
-        from t_mall_presale b
-        left join t_mall_product p on b.product_id = p.id
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON b.product_id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
-        where b.id =#{id}
+        SELECT
+            b.id,
+            b.product_id,
+            b.shop_id,
+            b.sale_start_time,
+            b.sale_end_time,
+            b.is_deposit,
+            b.deposit_percent,
+            b.user_id,
+            b.create_time,
+            b.is_delete,
+            b.is_use,
+            b.order_num,
+            c.image_url         AS imageUrl,
+            e.specifica_img_url AS specImageUrl,
+            p.is_specifica      AS isSpecifica,
+            p.pro_name          AS proName,
+        IF (p.is_specifica = 0, p.pro_price, d.inv_price)
+            AS proPrice
+            FROM t_mall_presale b
+            LEFT JOIN t_mall_product p ON b.product_id = p.id
+            LEFT JOIN ( SELECT ass_id, image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
+            LEFT JOIN ( SELECT product_id, specifica_img_id, inv_num, inv_price, id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0) D ON b.product_id= D.product_id
+            LEFT JOIN t_mall_product_specifica e ON D.specifica_img_id=e.id
+            WHERE b.id = #{id}
     </select>
 
     <!-- 根据商品id查询预售信息 -->
@@ -162,12 +176,13 @@
         where g.is_delete = 0 and g.is_use = 1
         and g.product_id=#{productId}
         and g.shop_id=#{shopId}
-        and (g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time or
-        g.sale_start_time > now() and g.sale_end_time > now())
-        <if test="id != null and id != ''">
+        <if test="id != null and id > 0">
             and g.id=#{id}
         </if>
-        limit 1
+        <if test="id == null or id == 0">
+            and (g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time or g.sale_start_time > now() and g.sale_end_time > now())
+            limit 1
+        </if>
     </select>
 
 
@@ -223,11 +238,11 @@
 
 
     <select id="selectCountByPresaleId" parameterType="Map" resultType="java.lang.Integer">
-        select  count(o.id) as count
-        from t_mall_presale p
-        left join t_mall_order o on p.id=o.group_buy_id and o.order_type = 5
-        where o.buyer_user_id = #{joinUserId}
-        and p.id=#{presaleId} and o.order_status >1 and o.order_status &lt; 5
+        SELECT count(o.id) AS count
+        FROM t_mall_presale p
+            LEFT JOIN t_mall_order o ON p.id = o.group_buy_id AND o.order_type = 5
+        WHERE o.buyer_user_id = #{joinUserId}
+              AND p.id = #{presaleId} AND o.order_status > 1 AND o.order_status &lt; 5
     </select>
 
 

@@ -2,12 +2,13 @@ package com.gt.mall.service.web.seller;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public interface MallSellerMallsetService extends BaseService< MallSellerMallset
     /**
      * 查询商品的销售信息
      */
-    void selectSellerProduct( HttpServletRequest request, int proId, int saleMemberId, Map< String,Object > params, Member member );
+    PhoneProductDetailResult selectSellerProduct( int proId, int saleMemberId, PhoneProductDetailResult result, String view, Member member );
 
     /**
      * 判断销售员是否拥有该商品

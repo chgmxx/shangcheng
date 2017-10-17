@@ -57,7 +57,7 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 根据商品id查询秒杀信息和秒杀价格
      */
-    MallSeckill getSeckillByProId( Integer proId, Integer shopId );
+    MallSeckill getSeckillByProId( Integer proId, Integer shopId, int activityId );
 
     /**
      * 获取商品的秒杀信息
@@ -68,7 +68,7 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
      *
      * @return 秒杀信息
      */
-    PhoneProductDetailResult getSeckillProductDetail( int proId, int shopId, PhoneProductDetailResult result );
+    PhoneProductDetailResult getSeckillProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result );
 
     /**
      * 查询用户参加秒杀的数量

@@ -84,7 +84,7 @@ public interface MallPifaService extends BaseService< MallPifa > {
     /**
      * 根据商品id查询秒杀信息和秒杀价格
      */
-    public MallPifa getPifaByProId( Integer proId, Integer shopId );
+    public MallPifa getPifaByProId( Integer proId, Integer shopId, int activityId );
 
     /**
      * 修改批发申请
@@ -116,5 +116,5 @@ public interface MallPifaService extends BaseService< MallPifa > {
      *
      * @return 批发信息
      */
-    PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
+    PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
 }

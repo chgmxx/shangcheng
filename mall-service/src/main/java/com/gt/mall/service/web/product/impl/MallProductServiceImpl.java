@@ -2062,7 +2062,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 	//允许查询批发价
 	if ( isPifa ) {
-	    MallPifa pifa = mallPifaService.getPifaByProId( CommonUtil.toInteger( productMap.get( "id" ) ), CommonUtil.toInteger( productMap.get( "shop_id" ) ) );
+	    MallPifa pifa = mallPifaService.getPifaByProId( CommonUtil.toInteger( productMap.get( "id" ) ), CommonUtil.toInteger( productMap.get( "shop_id" ) ), 0 );
 	    if ( CommonUtil.isNotEmpty( pifa ) ) {
 		productMap.put( "wholesale_price", pifa.getPfPrice() );
 	    }
@@ -2552,7 +2552,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 
 	// 添加或修改图片
-	mallImageAssociativeService.newInsertUpdBatchImage( params, product.getId(),1 );
+	mallImageAssociativeService.newInsertUpdBatchImage( params, product.getId(), 1 );
 
 	//查询商品是否存在于团购中
 	MallGroupBuy groupBuy = new MallGroupBuy();
@@ -2583,7 +2583,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	if ( !CommonUtil.isEmpty( params.get( "groupList" ) ) ) {
 	    mallProductGroupService.saveOrUpdate( params.get( "groupList" ), product.getId() );
 	}
-	
+
 	int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 	long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有
 	if ( isJxc == 1 ) {

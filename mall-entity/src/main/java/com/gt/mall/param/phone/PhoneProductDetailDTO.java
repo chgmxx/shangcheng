@@ -41,6 +41,9 @@ public class PhoneProductDetailDTO implements Serializable {
     @ApiModelProperty( name = "type", value = "查看商品类型，1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品" )
     private Integer type = 0;
 
+    @ApiModelProperty( name = "activityId", value = "活动id" )
+    private Integer activityId = 0;
+
     @ApiModelProperty( name = "longitude", value = "经度" )
     private double longitude = 0;
 
@@ -49,5 +52,11 @@ public class PhoneProductDetailDTO implements Serializable {
 
     @ApiModelProperty( name = "ip", value = "粉丝ip" )
     private String ip;
+
+    @ApiModelProperty( name = "saleMemberId", value = "销售员id" )
+    private int saleMemberId = 0;
+
+    @ApiModelProperty( name = "view", value = "展示方式 show：预览" )
+    private String view = "";
 
 }

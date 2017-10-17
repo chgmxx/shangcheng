@@ -8,6 +8,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerSet;
+import com.gt.mall.result.phone.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -274,4 +275,9 @@ public interface MallSellerService extends BaseService< MallSeller > {
      * 合并销售员的数据
      */
     public MallSeller mergeData( MallSeller seller, Member member );
+
+    /**
+     * 获取销售员和商品信息
+     */
+    PhoneProductDetailResult getSeller( PhoneProductDetailResult result, int saleMemberId, int busId, int productId, String view, Member member );
 }

@@ -16,8 +16,8 @@ public enum ResponseEnums {
     NULL_ERROR( 0, "请求数据为空" ),
     REFRESH_PAGE( 1002, "需要刷新页面" ),
     SHOP_ERROR( 1003, "店铺被删除" ),
-    BUS_GUOQI_ERROR( 1004, "商家已过期" )
-    ;
+    BUS_GUOQI_ERROR( 1004, "商家已过期" ),
+    NO_SHARE_ERROR( 1005, "用户没在微信浏览器登陆，不用获取微信接口" );
 
     private final int    code;
     private final String desc;
