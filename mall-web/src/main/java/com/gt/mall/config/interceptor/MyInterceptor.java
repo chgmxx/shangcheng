@@ -127,7 +127,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	    } else {
 		member = new Member();
 		member.setId( 1225352 );
-//		member.setId( 562 );
+		//		member.setId( 562 );
 		member.setBusid( 42 );
 		member.setPublicId( 482 );
 		member.setPhone( "15017934717" );
