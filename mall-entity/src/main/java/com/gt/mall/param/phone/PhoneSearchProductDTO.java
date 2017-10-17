@@ -33,15 +33,8 @@ public class PhoneSearchProductDTO implements Serializable {
     @ApiModelProperty( name = "groupId", value = "分类id" )
     private Integer groupId = 0;
 
-    @ApiModelProperty( name = "isNews", value = "是否按照最新排序 1、 最新排序 " )
-
-    private Integer isNews = 0;
-
-    @ApiModelProperty( name = "isSale", value = "是否按照销量排序 1、销量排序" )
-    private Integer isSale = 0;
-
-    @ApiModelProperty( name = "isPrice", value = "是否按照价格排序 1、价格排序" )
-    private Integer isPrice = 0;
+    @ApiModelProperty( name = "sort", value = "排序 new：按最新 sale：按销量排序 price 按价格排序" )
+    private String sort = "new";
 
     @ApiModelProperty( name = "isDesc", value = "排序  1、升序 -1 降序 " )
     private Integer isDesc = 0;

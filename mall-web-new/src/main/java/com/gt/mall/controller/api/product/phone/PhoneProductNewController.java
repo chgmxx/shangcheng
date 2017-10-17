@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +52,9 @@ import java.util.Map;
  * Time : 14:35
  */
 @Api( value = "phoneProduct", description = "商品页面相关接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-@Controller
-@RequestMapping( "/phoneProduct/" )
+@RestController
+@CrossOrigin
+@RequestMapping(value = "/phoneProduct/")
 public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private static Logger logger = LoggerFactory.getLogger( PhoneProductNewController.class );
 
@@ -89,10 +89,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallProductInventoryService   mallProductInventoryService;//商品库存业务处理类
 
-    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST" )
+    @PostMapping( value = "79B4DE7C/classAll"  )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneGroupDTO params ) {
+    public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute PhoneGroupDTO params ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "shopId", params.getShopId() );
@@ -117,9 +117,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     }
 
-    @ApiOperation( value = "商品搜索接口", notes = "搜索商品", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "商品搜索接口", notes = "搜索商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/productAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "79B4DE7C/productAll", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse productAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params ) {
 	Map< String,Object > result = new HashMap<>();
 	Member member = SessionUtils.getLoginMember( request );
@@ -174,9 +174,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
-    @ApiOperation( value = "商品详情接口", notes = "查看商品详情", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "商品详情接口", notes = "查看商品详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/productDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "79B4DE7C/productDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse productDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params ) {
 	PhoneProductDetailResult result;
 	Member member = SessionUtils.getLoginMember( request );
@@ -228,10 +228,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
-    @ApiOperation( value = "商品规格接口", notes = "在商品详情页面弹出商品规格", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "商品规格接口", notes = "在商品详情页面弹出商品规格", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/getSpecifica", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse getSpecifica( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
+    @PostMapping( value = "79B4DE7C/getSpecifica", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse getSpecifica( HttpServletRequest request, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
 

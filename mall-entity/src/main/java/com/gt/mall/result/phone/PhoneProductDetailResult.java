@@ -134,8 +134,11 @@ public class PhoneProductDetailResult implements Serializable {
      */
     private PhoneAuctionProductDetailResult auctionResult;
 
+    /**
+     * 是否允许退款 1允许
+     */
     @ApiModelProperty( name = "isReturn", value = "是否允许退款 1允许" )
-    private int isReturn;
+    private int isReturn = 1;
 
     /*********************************** 以下参数销售商品需要 ***********************************/
 
@@ -167,6 +170,12 @@ public class PhoneProductDetailResult implements Serializable {
      * 佣金
      */
     @ApiModelProperty( name = "commissionMoney", value = "佣金" )
-    private double commissionMoney;
+    private double commissionMoney = -1;
+
+    /**
+     * 销售员id
+     */
+    @ApiModelProperty( name = "saleMemberId", value = "销售员id" )
+    private int saleMemberId = 0;
 
 }

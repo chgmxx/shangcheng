@@ -500,7 +500,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    }
 	    productList = mallPageService.getSearchProductParam( list, 1, searchProductDTO );
 	}
-	if ( CommonUtil.isNotEmpty( searchProductDTO.getIsPrice() ) && searchProductDTO.getIsPrice() == 1 ) {
+	if ( CommonUtil.isNotEmpty( searchProductDTO.getSort() ) && searchProductDTO.getSort().equals( "price" ) ) {
 	    if ( CommonUtil.isNotEmpty( searchProductDTO.getIsDesc() ) ) {
 		if ( searchProductDTO.getIsDesc() == 1 ) {
 		    Collections.sort( productList, new MallComparatorUtil( "price" ) );

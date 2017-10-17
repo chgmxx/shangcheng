@@ -1045,9 +1045,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
 	}
 	PageUtil page = new PageUtil();
-	int pageSize = 10;
-	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
-	if ( searchProductDTO.getIsPrice() == 0 ) {
+	if ( !searchProductDTO.getSort().equals( "price" ) ) {
+	    int pageSize = 10;
+	    int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
 	    int rowCount = mallPresaleDAO.selectCountGoingPresaleProduct( searchProductDTO );
 	    page = new PageUtil( curPage, pageSize, rowCount, "" );
 	    searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
@@ -1106,7 +1106,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    }
 	    list = mallPageService.getSearchProductParam( list, 1, searchProductDTO );
 	}
-	if ( CommonUtil.isNotEmpty( searchProductDTO.getIsPrice() ) && searchProductDTO.getIsPrice() == 1 ) {
+	if ( CommonUtil.isNotEmpty( searchProductDTO.getSort() ) && searchProductDTO.getSort().equals( "price" ) ) {
 	    if ( CommonUtil.isNotEmpty( searchProductDTO.getIsDesc() ) ) {
 		if ( searchProductDTO.getIsDesc() == 1 ) {
 		    Collections.sort( productList, new MallComparatorUtil( "price" ) );

@@ -408,7 +408,8 @@
         </if>
     </select>
     <select id="selectProductAllByShopidsNew" resultType="java.util.Map">
-        SELECT a.id as  id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,
+        SELECT a.id as
+        id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id,
         a.pro_sale_total,a.sales_base ,d.inv_price
         from (
         select distinct a.id AS id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.change_integral,
@@ -433,9 +434,9 @@
         <if test="type == 5">
             and (a.is_fenbi_change_pro = 1 and a.change_fenbi > 0)
         </if>
-        <if test="isPrice != 1">
+        <if test="sort != 'price'">
             <choose>
-                <when test="isSale == 1">
+                <when test="sort == 'sale'">
                     ORDER BY a.pro_sale_total+a.sales_base desc
                 </when>
                 <when test="type == 5">
@@ -451,7 +452,7 @@
         </if>
         ) a
         LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0) d ON a.id=d.product_id
-        <if test="isPrice == 1">
+        <if test="sort == 'price'">
             ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price )
             <if test="isDesc == 1">
                 desc

@@ -346,16 +346,16 @@
             and pg.group_id = #{groupId,jdbcType=INTEGER}
         </if>
         group by gb.id
-        <if test="isNews == 1"><!-- 最新排序 -->
+        <if test="sort == 'new'"><!-- 最新排序 -->
             order by gb.id
         </if>
-        <if test="isSale == 2"><!-- 销量排序 -->
+        <if test="sort == 'sale'"><!-- 销量排序 -->
             order by a.pro_sale_total
         </if>
-        <if test="isPrice == 3"><!-- 价格排序 -->
+        <if test="sort == 'price'"><!-- 价格排序 -->
             order by gb.pf_price
         </if>
-        <if test="isDesc == 1 or isNews == 1 or isSale == 1">
+        <if test="isDesc == 1 or sort == 'new' or sort == 'sale'">
             desc
         </if>
         <if test="firstNum != null and maxNum != null">
