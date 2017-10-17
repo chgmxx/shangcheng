@@ -89,36 +89,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallProductInventoryService   mallProductInventoryService;//商品库存业务处理类
 
-    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
-    @RequestMapping( value = "79B4DE7C/classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneGroupDTO params ) {
-	try {
-	    Map< String,Object > map = new HashMap<>();
-	    map.put( "shopId", params.getShopId() );
-	    if ( params.getGroupId() == 0 ) {
-		map.put( "isFrist", 1 );
-	    } else {
-		map.put( "classId", params.getGroupId() );
-	    }
-	    map.put( "busId", params.getBusId() );
-	    List< Map< String,Object > > classList = mallHomeAppletService.selectGroupsByShopId( map );
-
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), classList );
-
-	} catch ( BusinessException e ) {
-	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询商品分类接口失败" );
-	} catch ( Exception e ) {
-	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询商品分类接口失败" );
-	}
-
-    }
-
     @ApiOperation( value = "商品搜索接口", notes = "搜索商品", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @RequestMapping( value = "79B4DE7C/productAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse productAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params ) {
 	Map< String,Object > result = new HashMap<>();
@@ -174,7 +145,6 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "商品详情接口", notes = "查看商品详情", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @RequestMapping( value = "79B4DE7C/productDetail", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse productDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params ) {
 	PhoneProductDetailResult result;
@@ -227,8 +197,34 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
+    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @RequestMapping( value = "79B4DE7C/classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneGroupDTO params ) {
+	try {
+	    Map< String,Object > map = new HashMap<>();
+	    map.put( "shopId", params.getShopId() );
+	    if ( params.getGroupId() == 0 ) {
+		map.put( "isFrist", 1 );
+	    } else {
+		map.put( "classId", params.getGroupId() );
+	    }
+	    map.put( "busId", params.getBusId() );
+	    List< Map< String,Object > > classList = mallHomeAppletService.selectGroupsByShopId( map );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), classList );
+
+	} catch ( BusinessException e ) {
+	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询商品分类接口失败" );
+	} catch ( Exception e ) {
+	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询商品分类接口失败" );
+	}
+
+    }
+
     @ApiOperation( value = "商品规格接口", notes = "在商品详情页面弹出商品规格", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @RequestMapping( value = "79B4DE7C/getSpecifica", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getSpecifica( HttpServletRequest request, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
 	Map< String,Object > resultMap = new HashMap<>();

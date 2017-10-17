@@ -33,7 +33,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,7 +74,6 @@ public class PhonePageController {
     private WxPublicUserService      wxPublicUserService;
 
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
     @RequestMapping( value = "79B4DE7C/shopList", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse shopList( HttpServletRequest request, int busId ) {
@@ -106,7 +104,6 @@ public class PhonePageController {
     }
 
     @ApiOperation( value = "获取商家的底部菜单", notes = "获取商家的底部菜单", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
     @RequestMapping( value = "79B4DE7C/footerMenu", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse footerMenu( HttpServletRequest request, int busId ) {
@@ -124,7 +121,6 @@ public class PhonePageController {
     }
 
     @ApiOperation( value = "获取商城首页id", notes = "获取商城首页id", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "79B4DE7C/getHomePageId", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -159,7 +155,6 @@ public class PhonePageController {
     }
 
     @ApiOperation( value = "获取商家的客服", notes = "获取商家的客服", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
     @RequestMapping( value = "79B4DE7C/getCustomer", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getCustomer( HttpServletRequest request, int shopId ) {
@@ -180,7 +175,6 @@ public class PhonePageController {
     }
 
     @ApiOperation( value = "获取店铺风格", notes = "获取店铺风格", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
     @RequestMapping( value = "79B4DE7C/getShopStyle", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getShopStyle( HttpServletRequest request, int busId ) {
@@ -203,7 +197,6 @@ public class PhonePageController {
     }
 
     @ApiOperation( value = "查询历史搜索和推荐搜索接口", notes = "获取用户已搜索关键词", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
     @RequestMapping( value = "79B4DE7C/searchLabel", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse searchLabel( HttpServletRequest request, int shopId ) {
@@ -236,7 +229,6 @@ public class PhonePageController {
      * 清空搜索查询的标签
      */
     @ApiOperation( value = "清空历史搜索接口", notes = "清空用户历史搜索", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
     @RequestMapping( value = "79B4DE7C/clearSearchGroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse clearSearchGroup( HttpServletRequest request, HttpServletResponse response, int shopId ) throws IOException {
@@ -263,7 +255,6 @@ public class PhonePageController {
      * 获取微信分享
      */
     @ApiOperation( value = "微信分享接口", notes = "获取微信分享", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "url", value = "当前地址", paramType = "query", required = true, dataType = "String" ) )
     @RequestMapping( value = "79B4DE7C/wxShare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
