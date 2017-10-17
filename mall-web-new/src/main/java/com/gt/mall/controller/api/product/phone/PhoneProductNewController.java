@@ -149,7 +149,6 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    }
 	    PageUtil page = null;
 	    if ( params.getType() == 0 || params.getType() == 5 ) {//0 查询普通商品 5 查询粉币商品
-		//		double discount = mallProductService.getMemberDiscount( "1", member );
 		page = mallPageService.productAllListNew( params, 1, member );
 	    } else if ( params.getType() == 1 ) {//查询团购商品
 		page = mallGroupBuyService.searchGroupBuyProduct( params, member );
@@ -231,7 +230,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "商品规格接口", notes = "在商品详情页面弹出商品规格", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @RequestMapping( value = "79B4DE7C/getSpecifica", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse getSpecifica( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
+    public ServerResponse getSpecifica( HttpServletRequest request, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
 
