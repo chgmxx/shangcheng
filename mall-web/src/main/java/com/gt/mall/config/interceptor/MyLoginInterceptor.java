@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
@@ -69,18 +68,7 @@ public class MyLoginInterceptor implements Filter {
     public void doFilter( ServletRequest request, ServletResponse response, FilterChain chain ) throws IOException, ServletException {
 
 	HttpServletRequest req = (HttpServletRequest) request;
-	HttpServletResponse res = (HttpServletResponse) response;
-	// js跨域支持
-	res.setHeader( "Access-Control-Allow-Origin", "*" );
-	res.setHeader( "Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, OPTIONS" );
-	res.setHeader( "Access-Control-Max-Age", "3600" );
-	res.setHeader( "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, api_key, Authorization" );
-	// 设置返回编码和类型
-	res.setCharacterEncoding( "UTF-8" );
-	res.setContentType( "application/json; charset=utf-8" );
-
-	// 在wrapper中获取新的servletRequest
-	/*request = new BodyRequestWrapper( httpServletRequest );*/
+	//	HttpServletResponse res = (HttpServletResponse) response;
 
 	logger.info( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
 	logger.info( "basePath = " + CommonUtil.getpath( req ) );

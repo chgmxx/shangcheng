@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,9 +53,8 @@ import java.util.Map;
  * Time : 14:35
  */
 @Api( value = "phoneProduct", description = "商品页面相关接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-@RestController
-@CrossOrigin
-@RequestMapping(value = "/phoneProduct/")
+@Controller
+@RequestMapping( "/phoneProduct/" )
 public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private static Logger logger = LoggerFactory.getLogger( PhoneProductNewController.class );
 
@@ -89,10 +89,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallProductInventoryService   mallProductInventoryService;//商品库存业务处理类
 
-    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST" )
-    @PostMapping( value = "79B4DE7C/classAll"  )
+    @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    public ServerResponse classAll( HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute PhoneGroupDTO params ) {
+    @RequestMapping( value = "79B4DE7C/classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< List< Map< String,Object > > > classAll( HttpServletRequest request, @Valid @ModelAttribute PhoneGroupDTO params ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "shopId", params.getShopId() );
