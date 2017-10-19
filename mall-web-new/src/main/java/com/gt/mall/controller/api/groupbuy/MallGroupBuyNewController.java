@@ -271,7 +271,7 @@ public class MallGroupBuyNewController extends BaseController {
 		    type = CommonUtil.toInteger( params.get( "type" ) );
 		}
 
-		if ( isJxc == 1 && CommonUtil.isNotEmpty( product.getErpProId() ) ) {//拥有进销存直接查寻进销存的库存
+		if ( isJxc == 1 && CommonUtil.isNotEmpty( product.getErpProId() ) ) {//拥有进销存直查寻进销存的库存
 		    boolean isSelect = true;
 		    if ( type == 3 ) {
 			int seckillId = 0;

@@ -262,7 +262,7 @@
         b.id, b.product_id as productId, b.g_name as gName, b.g_price as gPrice,
         b.g_start_time as gStartTime, b.g_end_time as gEndTime, b.g_people_num as gPeopleNum, b.g_max_buy_num as gMaxBuyNum,
         b.shop_id as shopId, c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
-        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice,p.pro_stock_total as proStockTotal
         from t_mall_group_buy b
         left join t_mall_product p on b.product_id = p.id
         LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id

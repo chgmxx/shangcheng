@@ -73,21 +73,24 @@ public class MallSellerNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-
-	    MallSellerSet sellerSet = mallSellerService.selectByBusUserId( user.getId() );
-	    result.put( "sellerSet", sellerSet );
-
+	    boolean isOpenSeller = false;
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    set = mallPaySetService.selectByUserId( set );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
 		if ( CommonUtil.isNotEmpty( set.getIsSeller() ) ) {
 		    if ( set.getIsSeller().toString().equals( "1" ) ) {
-			result.put( "isOpenSeller", true );
+
+			isOpenSeller = true;
 		    }
 		}
 	    }
-	    result.put( "videourl", busUserService.getVoiceUrl( "85" ) );
+	    result.put( "isOpenSeller", isOpenSeller );
+	    if ( isOpenSeller ) {
+		MallSellerSet sellerSet = mallSellerService.selectByBusUserId( user.getId() );
+		result.put( "sellerSet", sellerSet );
+		result.put( "videourl", busUserService.getVoiceUrl( "85" ) );
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取超级销售员设置异常：" + e.getMessage() );
 	    e.printStackTrace();

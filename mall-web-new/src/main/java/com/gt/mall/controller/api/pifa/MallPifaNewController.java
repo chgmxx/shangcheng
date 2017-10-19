@@ -73,30 +73,32 @@ public class MallPifaNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "type", type );
-	    params.put( "shopId", shopId );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist != null && shoplist.size() > 0 ) {
-		if ( CommonUtil.isEmpty( shopId ) ) {
-		    params.put( "shoplist", shoplist );
-		}
-		PageUtil page = mallPifaService.pifaProductList( params, shoplist );
-		result.put( "page", page );
-	    }
-
+	    boolean isOpenPifa = false;
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    set = mallPaySetService.selectByUserId( set );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
 		if ( CommonUtil.isNotEmpty( set.getIsPresale() ) ) {
 		    if ( set.getIsPf() == 1 ) {
-			result.put( "isOpenPifa", true );
+			isOpenPifa = true;
 		    }
 		}
 	    }
-
+	    result.put( "isOpenPifa", true );
+	    if ( isOpenPifa ) {
+		Map< String,Object > params = new HashMap<>();
+		params.put( "curPage", curPage );
+		params.put( "type", type );
+		params.put( "shopId", shopId );
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+		if ( shoplist != null && shoplist.size() > 0 ) {
+		    if ( CommonUtil.isEmpty( shopId ) ) {
+			params.put( "shoplist", shoplist );
+		    }
+		    PageUtil page = mallPifaService.pifaProductList( params, shoplist );
+		    result.put( "page", page );
+		}
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取批发列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -111,8 +113,7 @@ public class MallPifaNewController extends BaseController {
     @ApiOperation( value = "获取批发信息", notes = "获取批发信息" )
     @ResponseBody
     @RequestMapping( value = "/pifaInfo", method = RequestMethod.POST )
-    public ServerResponse pifaInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "批发ID", required = true ) @RequestParam Integer id ) {
+    public ServerResponse pifaInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "批发ID", required = true ) @RequestParam Integer id ) {
 	Map< String,Object > groupMap = null;
 	try {
 	    // 根据批发id查询批发信息
@@ -225,7 +226,7 @@ public class MallPifaNewController extends BaseController {
     @ApiOperation( value = "设置批发商审核通不通过、启不启用", notes = "设置批发商审核通不通过、启不启用" )
     @ResponseBody
     @SysLogAnnotation( description = "设置批发商审核通不通过、启不启用", op_function = "4" )
-    @RequestMapping( value = "/wholesalers/updateStatus", method = RequestMethod.POST)
+    @RequestMapping( value = "/wholesalers/updateStatus", method = RequestMethod.POST )
     public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "批发Id", required = true ) @RequestParam String ids,
 		    @ApiParam( name = "status", value = "审核  1通过 -1不通过", required = false ) @RequestParam Integer status,

@@ -131,7 +131,7 @@ public class MallSeckill extends Model< MallSeckill > {
      * 加入秒杀id 不是表中字段
      */
     @TableField(exist = false)
-    private int joinId;
+    private int joinId = 0;
 
     @TableField(exist = false)
     private String twoCodePath;

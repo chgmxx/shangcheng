@@ -141,7 +141,7 @@ public class MallFreightNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/expressList", method = RequestMethod.POST )
     public ServerResponse expressList( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > list= null;
+	List< Map > list = null;
 	try {
 	    //查询物流公司
 	    list = dictService.getDict( "1092" );
@@ -245,16 +245,17 @@ public class MallFreightNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "userId", user.getId() );
-	    params.put( "curPage", curPage );
-	    PageUtil page = takeTheirService.selectByUserId( params );
-	    result.put( "page", page );
-
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = paySetService.selectByUserId( paySet );
 	    result.put( "isTakeTheir", set.getIsTakeTheir() );
+	    if ( set.getIsTakeTheir() == 1 ) {
+		Map< String,Object > params = new HashMap<>();
+		params.put( "userId", user.getId() );
+		params.put( "curPage", curPage );
+		PageUtil page = takeTheirService.selectByUserId( params );
+		result.put( "page", page );
+	    }
 
 	} catch ( Exception e ) {
 	    logger.error( "物流列表异常：" + e.getMessage() );
