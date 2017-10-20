@@ -21,20 +21,34 @@ public interface MallPifaPriceService extends BaseService< MallPifaPrice > {
      *
      * @Title: editPifaPrice
      */
-    void editPifaPrice(Map<String, Object> map,int pfId,boolean flag);
+    void editPifaPrice( Map< String,Object > map, int pfId, boolean flag );
 
     /**
      * 通过批发id查询批发信息
+     *
      * @param groupId
+     *
      * @return
      */
-    List<MallPifaPrice> selectPriceByGroupId(int groupId);
+    List< MallPifaPrice > selectPriceByGroupId( int groupId );
+
+    /**
+     * 通过批发id查询批发价
+     *
+     * @param pifaId 批发id
+     * @param invId  库存id
+     *
+     * @return 批发价
+     */
+    List< MallPifaPrice > selectPriceByInvId( int pifaId, int invId );
 
     /**
      * 根据规格值查询批发价
+     *
      * @param specificaIds 规格值id
-     * @param pifaId 批发id
+     * @param pifaId       批发id
+     *
      * @return 批发价信息
      */
-    MallPifaPrice selectPifaBySpecifica(String specificaIds,int pifaId );
+    MallPifaPrice selectPifaBySpecifica( String specificaIds, int pifaId );
 }

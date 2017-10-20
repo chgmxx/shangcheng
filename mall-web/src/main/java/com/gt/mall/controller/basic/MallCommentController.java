@@ -88,7 +88,7 @@ public class MallCommentController extends BaseController {
 		request.setAttribute( "shoplist", shoplist );
 
 		params.put( "shoplist", shoplist );
-		PageUtil page = commentService.selectCommentPage( params );
+		PageUtil page = commentService.selectCommentPage( params, shoplist );
 		request.setAttribute( "page", page );
 	    }
 	    MallPaySet set = new MallPaySet();

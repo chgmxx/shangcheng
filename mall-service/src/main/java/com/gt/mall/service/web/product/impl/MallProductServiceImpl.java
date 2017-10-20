@@ -35,8 +35,6 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.freight.MallFreightService;
-import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.*;
@@ -45,7 +43,6 @@ import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,9 +129,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     private MallPifaService mallPifaService;//批发业务处理
 
     @Autowired
-    private MallPageService mallPageService;//页面管理业务处理
-
-    @Autowired
     private MallPifaPriceDAO mallPifaPriceDao;//批发价格业务处理
 
     @Autowired
@@ -153,9 +147,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     private BusUserService busUserService;
 
     @Autowired
-    private FenBiFlowService   fenBiFlowService;
-    @Autowired
-    private MallFreightService mallFreightService;
+    private FenBiFlowService fenBiFlowService;
 
     @Override
     public PageUtil selectByUserId( Map< String,Object > param, List< Map< String,Object > > shoplist ) {
@@ -1135,9 +1127,12 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    StringBuilder specifica_value = new StringBuilder();
 	    List< MallProductSpecifica > specificaList = mallProductSpecificaService.selectByValueIds( proId, specId.split( "," ) );
 	    String specificaImageUrl = "";
+	    String specificaName = "";
 	    if ( specificaList != null && specificaList.size() > 0 ) {
+
 		String proSpecId = "";
 		for ( MallProductSpecifica specifica : specificaList ) {
+		    specificaName = specifica.getSpecificaName();
 		    if ( CommonUtil.isNotEmpty( proSpecId ) ) {
 			proSpecId += ",";
 			specifica_value.append( "," );
@@ -1157,6 +1152,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		maps.put( "erp_specvalue_id", inventory.getErpSpecvalueId() );
 
 		maps.put( "specifica_values", specifica_value.toString() );
+		maps.put( "specificaName", specificaName );
 		if ( CommonUtil.isNotEmpty( specificaImageUrl ) ) {
 		    maps.put( "specifica_img_url", specificaImageUrl );
 		}
@@ -1292,7 +1288,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< WsWxShopInfoExtend > wxShopList ) {
+    public Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< Map< String,Object > > shopList ) {
 	Map< String,Object > productMap = new HashMap<>();
 	Map< String,Object > resultMap = new HashMap<>();
 	String proId = map.get( "product_id" ).toString();
@@ -1368,23 +1364,28 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		resultMap.put( "maxBuy", maxBuyNum - num );
 	    }
 	}
-	if ( CommonUtil.isEmpty( map.get( "wx_shop_id" ) ) ) {
+	boolean isSxShop = false;
+	/*if ( CommonUtil.isEmpty( map.get( "wx_shop_id" ) ) ) {
 	    code = 0;
 	    msg = "店铺已被删除";
-	}
-	boolean isSxShop = false;
-	String wxShopId = CommonUtil.toString( map.get( "wx_shop_id" ) );
-	if ( wxShopList != null && wxShopList.size() > 0 ) {
-	    for ( WsWxShopInfoExtend wxShopInfoExtend : wxShopList ) {
-		if ( wxShopInfoExtend.getId().toString().equals( wxShopId ) ) {
+	}*/
+	String shopId = CommonUtil.toString( map.get( "shop_id" ) );
+	if ( shopList != null && shopList.size() > 0 ) {
+	    for ( Map< String,Object > shopMap : shopList ) {
+		if ( shopMap.get( "id" ).toString().equals( shopId ) ) {
 		    isSxShop = true;
-		    resultMap.put( "sto_name", wxShopInfoExtend.getBusinessName() );
+		    resultMap.put( "sto_name", shopMap.get( "sto_name" ) );
+		    if ( shopMap.get( "is_delete" ).toString().equals( "1" ) ) {
+			code = 0;
+			msg = "店铺或门店已被删除";
+		    }
+		    break;
 		}
 	    }
 	}
 	if ( !isSxShop ) {
 	    code = 0;
-	    msg = "门店已被删除";
+	    msg = "店铺或门店已被删除";
 	}
 	resultMap.put( "code", code );
 	resultMap.put( "msg", msg );

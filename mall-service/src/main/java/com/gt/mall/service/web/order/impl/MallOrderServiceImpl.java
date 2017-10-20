@@ -78,7 +78,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -2950,8 +2949,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    resultMap.put( "lists", detailList );
 	}
 	//页面用到的参数
-	resultMap.put( "nextPage", page.getNextPage() );
-	resultMap.put( "prevPage", page.getPrevPage() );
+
+	resultMap.put( "nextPage", page.getCurPage() + 1 > page.getPageCount() ? page.getPageCount() : page.getCurPage() + 1 );
+	resultMap.put( "prevPage", page.getCurPage() - 1 < 1 ? 1 : page.getCurPage() - 1 );
 	return resultMap;
     }
 

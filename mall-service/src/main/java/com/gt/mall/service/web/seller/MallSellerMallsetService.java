@@ -2,11 +2,10 @@ package com.gt.mall.service.web.seller;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
-import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -144,5 +143,15 @@ public interface MallSellerMallsetService extends BaseService< MallSellerMallset
      * @return 商品价
      */
     Map< String,Object > getSellerProductPrice( Map< String,Object > map );
+
+    /**
+     * 获取商品佣金
+     *
+     * @param productId    商品id
+     * @param productPrice 商品价格
+     *
+     * @return 商品佣金
+     */
+    public double getCommissionMoney( int productId, double productPrice );
 
 }

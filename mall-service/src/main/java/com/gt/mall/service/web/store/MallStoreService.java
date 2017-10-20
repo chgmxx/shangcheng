@@ -127,7 +127,17 @@ public interface MallStoreService extends BaseService< MallStore > {
     /**
      * 获取登录人拥有的店铺集合
      */
-    public List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request );
+    List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request );
+
+    /**
+     * 查询商家的所有店铺（已删除的店铺也查出来了）
+     *
+     * @param userId  商家id
+     * @param request request
+     *
+     * @return 店铺集合
+     */
+    List< Map< String,Object > > findShopByUserId( int userId, HttpServletRequest request );
 
     /**
      * 创建所有erp仓库

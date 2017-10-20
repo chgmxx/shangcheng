@@ -1,0 +1,134 @@
+package com.gt.mall.controller.api.product.phone;
+
+import com.gt.mall.bean.Member;
+import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.PhoneAddShopCartDTO;
+import com.gt.mall.param.phone.shopCart.PhoneRemoveShopCartDTO;
+import com.gt.mall.result.phone.shopcart.PhoneShopCartResult;
+import com.gt.mall.service.web.product.MallShopCartService;
+import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.SessionUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.Map;
+
+/**
+ * 购物车页面相关接口（手机端）
+ * User : yangqian
+ * Date : 2017/10/9 0009
+ * Time : 14:35
+ */
+@Api( value = "phoneShopCart", description = "购物车页面相关接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+@Controller
+@RequestMapping( "/phoneShopCart/" )
+public class PhoneShopCartController extends AuthorizeOrUcLoginController {
+
+    private static Logger logger = LoggerFactory.getLogger( PhoneShopCartController.class );
+
+    @Autowired
+    private MallStoreService    mallStoreService;//店铺业务处理类
+    @Autowired
+    private MallShopCartService mallShopCartService;//商品库存业务处理类
+
+    @ApiOperation( value = "加入购物车接口", notes = "用户加入购物车", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/addShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse addShopCart( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneAddShopCartDTO params ) {
+	try {
+
+	    Member member = SessionUtils.getLoginMember( request );
+
+	    mallShopCartService.addShoppingCart( member, params, request, response );
+
+	} catch ( BusinessException e ) {
+	    logger.error( "加入购物车异常：" + e.getMessage() );
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "加入购物车异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "加入购物车失败" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "查询购物车接口", notes = "查询购物车数据", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
+		    @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = true, dataType = "Integer" ),
+		    @ApiImplicitParam( name = "type", value = "购物车类型 1批发购物车可不传", paramType = "query", dataType = "Integer", defaultValue = "0" )
+    } )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/getShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhoneShopCartResult > getShopCart( HttpServletRequest request, HttpServletResponse response, Integer busId, Integer shopId, Integer type ) {
+	try {
+	    Member member = SessionUtils.getLoginMember( request );
+
+	    PhoneShopCartResult result = mallShopCartService.getShopCart( member, busId, type, request, response );
+
+	    mallStoreService.getShopBySession( request.getSession(), shopId );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	} catch ( BusinessException e ) {
+	    logger.error( "查询购物车异常：" + e.getMessage() );
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "查询购物车异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询购物车失败" );
+	}
+    }
+
+    @ApiOperation( value = "删除购物车接口", notes = "用户删除购物车", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/removeShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse removeShopCart( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneRemoveShopCartDTO params ) {
+	try {
+
+	    mallShopCartService.removeShopCart( params, request, response );
+
+	} catch ( BusinessException e ) {
+	    logger.error( "删除购物车异常：" + e.getMessage() );
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "删除购物车异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "删除购物车失败" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "购物车结算接口", notes = "购物车结算", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/shopCartOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< Map< String,Object > > shopCartOrder( HttpServletRequest request, HttpServletResponse response, String ids ) {
+	try {
+
+	} catch ( BusinessException e ) {
+	    logger.error( "购物车结算异常：" + e.getMessage() );
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "购物车结算异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "购物车结算失败" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+}

@@ -2024,7 +2024,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		}
 	    }
 	} else {
-	    Map< String,Object > result = productService.calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
+	    Map< String,Object > result = productService
+			    .calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
 	    if ( result.get( "result" ).toString().equals( "false" ) ) {
 		msg = result.get( "msg" ).toString();
 		code = -1;
@@ -2081,7 +2082,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    resultMap.put( "errorMsg", "充值失败,联通号码至少30MB" );
 		    return resultMap;
 		}
-		if(flow.getCount() == 0){
+		if ( flow.getCount() == 0 ) {
 		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
 		    resultMap.put( "errorMsg", "流量数量不足，不能充值" );
 		    return resultMap;

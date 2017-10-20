@@ -363,8 +363,12 @@
         <include refid="detail_Column_List"></include>
         from t_mall_group_buy gb
         where gb.is_delete = 0 and gb.is_use = 1
-        and gb.product_id=#{productId,jdbcType=INTEGER}
-        and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        <if test="productId != null and productId > 0">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId > 0">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
         <if test="id != null and id > 0">
             and gb.id = #{id}
         </if>

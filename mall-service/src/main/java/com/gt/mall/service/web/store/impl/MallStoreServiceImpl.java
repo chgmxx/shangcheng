@@ -319,7 +319,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			store.setStoIsSms( sto.getStoIsSms() );
 			store.setStoSmsTelephone( sto.getStoSmsTelephone() );
 			store.setStoQqCustomer( sto.getStoQqCustomer() );
-			count = mallStoreDao.updateAllColumnById( store);
+			count = mallStoreDao.updateAllColumnById( store );
 			if ( count <= 0 ) {
 			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 			}
@@ -407,29 +407,67 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    }
 	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
 	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
-	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude" );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,sto_picture as stoPicture" );
 
 	    storeList = mallStoreDao.selectMaps( wrapper );
-	    if ( storeList != null && storeList.size() > 0 ) {
-		for ( Map< String,Object > storeMap : storeList ) {
-		    int wxShopId = CommonUtil.toInteger( storeMap.get( "wxShopId" ) );
-		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == wxShopId ) {
-			    storeMap.put( "sto_name", wxShops.getBusinessName() );
-			    storeMap.put( "address", wxShops.getAddress() );
-			    storeMap.put( "wxShopId", wxShops.getId() );
-			    storeMap.put( "stoLongitude", wxShops.getLongitude() );
-			    storeMap.put( "stoLatitude", wxShops.getLatitude() );
-			    storeMap.put( "stoPhone", wxShops.getTelephone() );
-			    break;
-			}
-		    }
-		}
-	    }
+	    storeList = getShopParams( storeList, shopInfoList );
 	    SessionUtils.setShopListBySession( user.getId(), storeList, request );
 	    return storeList;
 	}
 	return null;
+    }
+
+    @Override
+    public List< Map< String,Object > > findShopByUserId( int userId, HttpServletRequest request ) {
+	List< Integer > wxShopIds = new ArrayList<>();
+
+	List< Map< String,Object > > storeList = new ArrayList<>();
+	//判断session里面有没有门店集合
+	List< Map > shopList = SessionUtils.getShopListBySession( userId, request );
+	if ( shopList != null && shopList.size() > 0 ) {
+	    for ( Map shopMap : shopList ) {
+		storeList.add( shopMap );
+	    }
+	    return storeList;
+	}
+	List< WsWxShopInfoExtend > shopInfoList = busUserService.getShopIdListByUserId( userId );
+	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
+	    SessionUtils.setWxShopNumBySession( userId, shopInfoList.size(), request );
+
+	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
+		wxShopIds.add( wsWxShopInfoExtend.getId() );
+	    }
+	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
+	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,is_delete,sto_picture as stoPicture" );
+
+	    storeList = mallStoreDao.selectMaps( wrapper );
+	    storeList = getShopParams( storeList, shopInfoList );
+
+	    SessionUtils.setShopListBySession( userId, storeList, request );
+	    return storeList;
+	}
+	return null;
+    }
+
+    private List< Map< String,Object > > getShopParams( List< Map< String,Object > > storeList, List< WsWxShopInfoExtend > shopInfoList ) {
+	if ( storeList != null && storeList.size() > 0 ) {
+	    for ( Map< String,Object > storeMap : storeList ) {
+		int wxShopId = CommonUtil.toInteger( storeMap.get( "wxShopId" ) );
+		for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+		    if ( wxShops.getId() == wxShopId ) {
+			storeMap.put( "sto_name", wxShops.getBusinessName() );
+			storeMap.put( "address", wxShops.getAddress() );
+			storeMap.put( "wxShopId", wxShops.getId() );
+			storeMap.put( "stoLongitude", wxShops.getLongitude() );
+			storeMap.put( "stoLatitude", wxShops.getLatitude() );
+			storeMap.put( "stoPhone", wxShops.getTelephone() );
+			break;
+		    }
+		}
+	    }
+	}
+	return storeList;
     }
 
     @Override

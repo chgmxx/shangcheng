@@ -18,8 +18,10 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.seckill.MallSeckillJoin;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -628,6 +630,37 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
 	page.setSubList( mallPageService.getSearchProductParam( productList, 1, searchProductDTO ) );
 	return page;
+    }
+
+    @Override
+    public boolean seckillProductCanBuy( int seckillId, int invId, int productNum, int memberId, int memberBuyNum ) {
+	if ( seckillId == 0 ) {
+	    return false;
+	}
+	MallSeckill seckill = new MallSeckill();
+	seckill.setId( seckillId );
+	MallSeckill mallSeckill = mallSeckillDAO.selectBuyByProductId( seckill );
+	if ( CommonUtil.isEmpty( mallSeckill ) ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的秒杀商品被删除或已失效" );
+	}
+	if ( mallSeckill.getStatus() == 0 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的秒杀商品活动还未开始" );
+	} else if ( mallSeckill.getStatus() == -1 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的秒杀商品活动已结束" );
+	}
+	if ( invId > 0 ) {
+	    List< MallSeckillPrice > mallSeckillPrices = mallSeckillPriceService.selectPriceByInvId( seckillId, invId );
+	    if ( mallSeckillPrices != null && mallSeckillPrices.size() == 0 ) {
+		MallSeckillPrice buyPrice = mallSeckillPrices.get( 0 );
+		if ( buyPrice.getIsJoinGroup() == 0 ) {
+		    throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), ResponseEnums.INV_NO_JOIN_ERROR.getDesc() );
+		}
+	    } else {
+		throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), ResponseEnums.INV_NO_JOIN_ERROR.getDesc() );
+	    }
+	}
+
+	return true;
     }
 
 }

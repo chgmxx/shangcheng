@@ -10,7 +10,7 @@ import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
 import com.gt.mall.entity.presale.MallPresaleTime;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -146,4 +146,18 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 搜索预售商品信息
      */
     PageUtil searchPresaleAll( PhoneSearchProductDTO searchProductDTO, Member member );
+
+    /**
+     * 判断预售商品是否能购买
+     * 1 判断预售商品是否正在进行
+     * 2 判断购买的规格是否允许参团
+     * 3 判断限购
+     *
+     * @param presaleId   预售id
+     * @param invId        库存id
+     * @param productNum   商品数量
+     * @param memberId     粉丝id
+     * @param memberBuyNum 粉丝已购买商品数量
+     */
+    boolean presaleProductCanBuy( int presaleId, int invId, int productNum, int memberId, int memberBuyNum );
 }

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -194,7 +194,8 @@ public class CommonUtil {
     public static String urlEncode( String str ) {
 
 	try {
-	    return URLEncoder.encode( str, "UTF-8" );
+
+	    return URLDecoder.decode( str, "UTF-8" );
 	} catch ( UnsupportedEncodingException e ) {
 	    e.printStackTrace();
 	    return "";

@@ -11,7 +11,6 @@ import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
-import net.sf.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -160,17 +159,22 @@ public interface MallPageService extends BaseService< MallPage > {
      * @param request request
      * @param member  粉丝对象
      */
-    public void isAddShopCart( HttpServletRequest request, Member member, List< Integer > memberList ) throws Exception;
+    int getMemberShopCartNum( HttpServletRequest request, Member member, List< Integer > memberList ) throws Exception;
 
     /**
-     * 根据会员id获取公众号，根据公众号获取所有店面，根据店面获取所有购物车订单
+     * 判断批发购物车的规格
      */
-    public void shoppingcare( Member member, double discount, int type, HttpServletRequest request, int userid );
+    MallShopCart getProSpecNum( String proSpecStr, MallShopCart cart );
 
     /**
      * 把cookie中的商品，合并到购物车
      */
-    public void mergeShoppCart( Member member, HttpServletRequest request, HttpServletResponse response );
+    void mergeShoppCart( Member member, HttpServletRequest request, HttpServletResponse response );
+
+    /***
+     * 未登陆时，查询cookie商品记录，用于判断新增/修改
+     */
+    List< Map< String,Object > > selectByShopCart( MallShopCart obj, String ids );
 
     /**
      * 删除购物车里面的信息
@@ -216,20 +220,6 @@ public interface MallPageService extends BaseService< MallPage > {
 
     /**
      * 根据商铺获取所有商品，在根据商品信息，进行排序
-     *
-     * @param shopid 商铺id
-     * @param params proName 模糊查询 , groupId 分组 ,desc    0代表正序，1代表倒序
-     * @param type   属性，1代表默认id（也是根据时间），2：代表销量排序，3，代表价格排序
-     * @param rType  1代表积分商城，2 粉币比商城
-     * @param member 搜索用户
-     * @param isPifa 是否显示批发价
-     *
-     * @return 商品信息
-     */
-    public PageUtil productAllList( Integer shopid, Integer type, int rType, Member member, double discount, Map< String,Object > params, boolean isPifa );
-
-    /**
-     * 根据商铺获取所有商品，在根据商品信息，进行排序
      */
     PageUtil productAllListNew( PhoneSearchProductDTO searchProductDTO, double discount, Member member );
 
@@ -271,26 +261,6 @@ public interface MallPageService extends BaseService< MallPage > {
     public int counttime( Integer shopid, String time );
 
     /**
-     * 根据店铺id获取主页面编辑器
-     */
-    public List< Map< String,Object > > pagecountid( Integer shopid );
-
-    /**
-     * 根据用户id 查询所有店铺id，和名称
-     */
-    public List< Map< String,Object > > productShopList( Integer userid );
-
-    /**
-     * 根据用户id查询 主页id
-     *
-     * @param userid   商家id
-     * @param wxShopId 门店id
-     *
-     * @return 主页id
-     */
-    public Map< String,Object > getPage( Integer userid, int wxShopId );
-
-    /**
      * 根据ip获取省份id
      */
     public String getProvince( String ip );
@@ -318,11 +288,6 @@ public interface MallPageService extends BaseService< MallPage > {
     void getCustomer( HttpServletRequest request, int userid );
 
     /**
-     * 根据商品id查询商品信息
-     */
-    JSONObject getProduct( JSONObject obj ) throws Exception;
-
-    /**
      * 查询用户的搜索记录和商家的推荐标签
      */
     void getSearchLabel( HttpServletRequest request, int shopId, Member member, Map< String,Object > params );
@@ -331,11 +296,6 @@ public interface MallPageService extends BaseService< MallPage > {
      * 查询商品的规格参数
      */
     List< MallProductParam > getProductParam( int proId );
-
-    /**
-     * 查询商品的评价
-     */
-    Map< String,Object > getProductComment( Map< String,Object > params, Member member );
 
     /**
      * 根据商铺获取所有商品，在根据商品信息，进行排序
@@ -377,34 +337,14 @@ public interface MallPageService extends BaseService< MallPage > {
     Map< String,Object > getCardReceive( int receiveId );
 
     /**
-     * 用户购买商品的数量
-     */
-    int memberBuyProNum( int memberId, Map< String,Object > params, int type );
-
-    /**
-     * 组商品参数
-     */
-    public String setProductParam( String url, Map< String,Object > params );
-
-    /**
      * 查询商家的公众号
      */
     public Map< String,Object > getPublicByUserMap( Map< String,Object > userMap );
 
     /**
-     * 判断用户是否已经登陆
-     */
-    public boolean isLogin( Member member, int userid, HttpServletRequest request );
-
-    /**
      * 保存跳转地址到redis
      */
     public Map< String,Object > saveRedisByUrl( Member member, int userid, HttpServletRequest request );
-
-    /**
-     * 得到地区名称
-     */
-    public String queryAreaById( String citys );
 
     /**
      * 根据商品id获取商品部分信息
@@ -424,7 +364,6 @@ public interface MallPageService extends BaseService< MallPage > {
      * @return 首页id
      */
     public int getPageIdByShopId( int shopId );
-
 
 }
 

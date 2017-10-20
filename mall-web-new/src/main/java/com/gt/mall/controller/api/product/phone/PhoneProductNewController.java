@@ -5,25 +5,25 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.product.MallProductDetail;
+import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneGroupDTO;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.param.phone.PhoneSpecificaDTO;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.auction.MallAuctionService;
+import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleService;
-import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.service.web.product.MallProductNewService;
-import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
+import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -31,6 +31,8 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.SessionUtils;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +59,7 @@ import java.util.Map;
 @Controller
 @RequestMapping( "/phoneProduct/" )
 public class PhoneProductNewController extends AuthorizeOrUcLoginController {
+
     private static Logger logger = LoggerFactory.getLogger( PhoneProductNewController.class );
 
     @Autowired
@@ -66,6 +70,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private MallStoreService              mallStoreService;
     @Autowired
     private MallProductService            mallProductService;
+    @Autowired
+    private MallProductDetailService      mallProductDetailService;
     @Autowired
     private MallGroupBuyService           mallGroupBuyService;
     @Autowired
@@ -87,7 +93,11 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallProductSpecificaService   mallProductSpecificaService;//商品规格业务处理类
     @Autowired
-    private MallProductInventoryService   mallProductInventoryService;//商品库存业务处理类
+    private MallCommentService            mallCommentService;//商品评价业务处理类
+    @Autowired
+    private MallProductParamService       mallProductParamService;//商品规格参数业务处理类
+    @Autowired
+    private MemberService                 memberService;
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -96,7 +106,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "shopId", params.getShopId() );
-	    if ( params.getGroupId() == 0 ) {
+	    if ( CommonUtil.isEmpty( params.getGroupId() ) || params.getGroupId() == 0 ) {
 		map.put( "isFrist", 1 );
 	    } else {
 		map.put( "classId", params.getGroupId() );
@@ -104,15 +114,14 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    map.put( "busId", params.getBusId() );
 	    List< Map< String,Object > > classList = mallHomeAppletService.selectGroupsByShopId( map );
 
+	    mallStoreService.getShopBySession( request.getSession(), params.getShopId() );
+
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), classList );
 
-	} catch ( BusinessException e ) {
-	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询商品分类接口失败" );
 	} catch ( Exception e ) {
 	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询商品分类接口失败" );
+	    return ServerResponse.createByErrorMessage( "查询商品分类接口失败" );
 	}
 
     }
@@ -124,11 +133,14 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	Map< String,Object > result = new HashMap<>();
 	Member member = SessionUtils.getLoginMember( request );
 	try {
+	    if ( CommonUtil.isNotEmpty( params.getSearchContent() ) ) {
+		params.setSearchContent( CommonUtil.urlEncode( params.getSearchContent() ) );//搜索内容转码
+	    }
 	    if ( CommonUtil.isEmpty( params.getCurPage() ) || params.getCurPage() == 1 ) {
 		//判断店铺和门店是否已经被删除
 		boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
 		if ( !isShop ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_ERROR.getCode(), ResponseEnums.SHOP_ERROR.getDesc() );
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 		}
 		//封装登陆参数
 		Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, params.getBusId(), request );
@@ -163,28 +175,26 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		page = mallPifaService.searchPifaAll( params, member );
 	    }
 	    result.put( "productList", page );
-	} catch ( BusinessException e ) {
-	    logger.error( "商品搜索接口异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品搜索接口失败" );
 	} catch ( Exception e ) {
 	    logger.error( "商品搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品搜索接口失败" );
+	    return ServerResponse.createByErrorMessage( "商品搜索接口失败" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
-    @ApiOperation( value = "商品详情接口", notes = "查看商品详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "商品信息接口", notes = "商品详情页面查询商品信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/productDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse productDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params ) {
+    @PostMapping( value = "79B4DE7C/getProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhoneProductDetailResult > getProduct( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params ) {
 	PhoneProductDetailResult result;
 	Member member = SessionUtils.getLoginMember( request );
 	try {
 	    //判断店铺和门店是否已经被删除
 	    boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
 	    if ( !isShop ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_ERROR.getCode(), ResponseEnums.SHOP_ERROR.getDesc() );
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 	    }
 	    //封装登陆参数
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, params.getBusId(), request );
@@ -198,6 +208,16 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    MallPaySet mallPaySet = mallPaySetService.selectByUserId( set );
 	    //查询商品详情数据
 	    result = mallProductNewService.selectProductDetail( params, member, mallPaySet );
+
+	    List< Integer > memberList = new ArrayList<>();
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		memberList = memberService.findMemberListByIds( member.getId() );
+	    }
+	    //获取购物车的数量
+	    int shopCartNum = mallPageService.getMemberShopCartNum( request, member, memberList );
+	    if ( shopCartNum > 0 ) {
+		result.setShopCartNum( shopCartNum );
+	    }
 
 	    BusUser user = busUserService.selectById( params.getBusId() );//根据商家id获取商家信息
 	    if ( CommonUtil.isNotEmpty( user ) ) {
@@ -217,13 +237,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    result.setSecuritytrade( Boolean.valueOf( map.get( "isSecuritytrade" ).toString() ) );
 	    }
 
-	} catch ( BusinessException e ) {
-	    logger.error( "商品详情接口异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "商品详情接口异常：" + e.getMessage() );
+	    logger.error( "商品信息接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品详情接口失败" );
+	    return ServerResponse.createByErrorMessage( "查询商品信息失败" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
@@ -245,13 +262,72 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap );
 
-	} catch ( BusinessException e ) {
-	    logger.error( "商品规格异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品规格失败" );
 	} catch ( Exception e ) {
 	    logger.error( "商品规格异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品规格失败" );
+
+	    return ServerResponse.createByErrorMessage( "商品规格失败" );
+	}
+
+    }
+
+    @ApiOperation( value = "查询商品详情接口", notes = "商品详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ) )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/getProductDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< String > getProductDetail( HttpServletRequest request, int productId ) {
+	try {
+
+	    MallProductDetail mallProductDetail = mallProductDetailService.selectByProductId( productId );
+	    String productDetail = "";
+	    if ( CommonUtil.isNotEmpty( mallProductDetail ) ) {
+		productDetail = mallProductDetail.getProductDetail();
+	    }
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), productDetail, false );
+
+	} catch ( Exception e ) {
+	    logger.error( "商品详情页面查询商品参数异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询商品参数失败" );
+	}
+
+    }
+
+    @ApiOperation( value = "查询商品评价接口", notes = "商品详情页面查看商品评价", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "feel", value = "评论状态 1好评 0中评 -1差评", paramType = "query", dataType = "String" )
+    } )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/getProductComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse getProductComment( HttpServletRequest request, int busId, int productId, String feel ) {
+	try {
+	    Map< String,Object > resultMap = mallCommentService.getProductComment( busId, productId, feel );
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap );
+
+	} catch ( Exception e ) {
+	    logger.error( "商品详情页面查看商品评价异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查看商品评价失败" );
+	}
+
+    }
+
+    @ApiOperation( value = "查询商品参数接口", notes = "商品详情页面查询商品参数", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ) )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/getProductParams", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< List< MallProductParam > > getProductParams( HttpServletRequest request, int productId ) {
+	try {
+
+	    List< MallProductParam > paramsList = mallProductParamService.getParamByProductId( productId );
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), paramsList, false );
+
+	} catch ( Exception e ) {
+	    logger.error( "商品详情页面查询商品参数异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询商品参数失败" );
 	}
 
     }

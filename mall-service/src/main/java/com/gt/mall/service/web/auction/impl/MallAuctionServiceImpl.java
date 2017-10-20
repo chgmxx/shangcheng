@@ -12,9 +12,11 @@ import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.result.phone.PhoneAuctionProductDetailResult;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneAuctionProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionService;
@@ -592,5 +594,44 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 
 	result.setAuctionResult( auctionResult );
 	return result;
+    }
+
+    @Override
+    public boolean auctionProductCanBuy( int auctionId, int invId, int productNum, int memberId, int memberBuyNum ) {
+	if ( CommonUtil.isEmpty( auctionId ) || auctionId == 0 ) {
+	    return false;
+	}
+	MallAuction auction = new MallAuction();
+	auction.setId( auctionId );
+	auction = auctionDAO.selectBuyByProductId( auction );
+	if ( CommonUtil.isEmpty( auction ) ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的拍卖商品被删除或已失效" );
+	}
+	if ( auction.getStatus() == 0 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的拍卖商品活动还未开始" );
+	} else if ( auction.getStatus() == -1 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的拍卖商品活动已结束" );
+	}
+	int maxBuyNum = auction.getAucRestrictionNum();
+	if ( maxBuyNum > 0 && memberBuyNum > -1 ) {
+	    if ( memberBuyNum + productNum > maxBuyNum ) {
+		throw new BusinessException( ResponseEnums.MAX_BUY_ERROR.getCode(), "每人限购" + maxBuyNum + "件" + ResponseEnums.MAX_BUY_ERROR.getDesc() );
+	    }
+	}
+	if ( auction.getIsMargin() == 1 && memberId > 0 ) {
+	    MallAuctionMargin margin = new MallAuctionMargin();
+	    margin.setUserId( memberId );
+	    margin.setAucId( auctionId );
+	    MallAuctionMargin auctionMargin = auctionMarginDAO.selectOne( margin );
+	    if ( CommonUtil.isEmpty( auctionMargin ) ) {
+		throw new BusinessException( ResponseEnums.ACTIVITY_MONEY_ERROR.getCode(), "您未缴纳保证金，不能购买该拍卖商品" );
+
+	    } else {
+		if ( auctionMargin.getMarginStatus() != 1 ) {
+		    throw new BusinessException( ResponseEnums.ACTIVITY_MONEY_ERROR.getCode(), "您未缴纳保证金，不能购买该拍卖商品" );
+		}
+	    }
+	}
+	return true;
     }
 }

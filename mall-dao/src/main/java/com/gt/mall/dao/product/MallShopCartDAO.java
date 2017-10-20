@@ -82,4 +82,5 @@ public interface MallShopCartDAO extends BaseMapper< MallShopCart > {
      * 根据店铺id查询购物车信息
      */
     List< Map< String,Object > > selectShopCartByCheckIds( Map< String,Object > params );
+
 }

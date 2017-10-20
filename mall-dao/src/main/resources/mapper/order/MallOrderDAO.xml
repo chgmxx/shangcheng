@@ -1123,16 +1123,29 @@
     <select id="selectMemberBuyProNum" parameterType="Map" resultType="Integer">
         SELECT IFNULL(SUM(d.det_pro_num),0) FROM t_mall_order o
         LEFT JOIN t_mall_order_detail d ON d.`order_id`=o.`id`
-        WHERE o.`order_status` > 1 AND o.order_status &lt; 5
-        <if test="buyerUserId != null">
-            AND o.`buyer_user_id` = #{buyerUserId}
-        </if>
-        <if test="productId != null">
-            AND d.`product_id` = #{productId}
-        </if>
-        <if test="shopId != null">
-            AND d.`shop_id` = #{shopId}
-        </if>
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="buyerUserId != null">
+                    AND o.`buyer_user_id` = #{buyerUserId}
+                </if>
+                <if test="BusId != null">
+                    AND o.bus_user_id = #{BusId}
+                </if>
+                <if test="orderType != null">
+                    and o.order_type = #{orderType}
+                </if>
+                <if test="activityId != null">
+                    and o.p_join_id = #{activityId}
+                </if>
+                and  o.`order_status` > 1 AND o.order_status &lt; 5
+                <if test="productId != null">
+                    AND d.`product_id` = #{productId}
+                </if>
+                <if test="shopId != null">
+                    AND d.`shop_id` = #{shopId}
+                </if>
+            </trim>
+        </where>
     </select>
 
     <select id="getOrderByIdOrOne" resultMap="MoreResultMap" parameterType="java.lang.Integer">
@@ -1278,4 +1291,6 @@
             limit #{firstResult},#{maxResult}
         </if>
     </select>
+
+
 </mapper>

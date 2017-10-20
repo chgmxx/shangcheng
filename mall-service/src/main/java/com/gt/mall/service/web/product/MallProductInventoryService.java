@@ -2,7 +2,7 @@ package com.gt.mall.service.web.product;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.product.MallProductInventory;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 
 import java.util.List;
 import java.util.Map;

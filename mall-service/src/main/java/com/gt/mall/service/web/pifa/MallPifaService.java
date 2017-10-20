@@ -6,7 +6,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -117,4 +117,27 @@ public interface MallPifaService extends BaseService< MallPifa > {
      * @return 批发信息
      */
     PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet );
+
+    /**
+     * 判断批发商品是否能购买
+     * 1 判断批发商品是否正在进行
+     * 2 判断购买的规格是否允许参团
+     * 3 判断限购
+     *
+     * @param pifaId       批发id
+     * @param invId        库存id
+     * @param productNum   商品数量
+     * @param memberId     粉丝id
+     * @param memberBuyNum 粉丝已购买商品数量
+     */
+    boolean pifaProductCanBuy( int pifaId, int invId, int productNum, int memberId, int memberBuyNum, MallPaySet mallPaySet );
+
+    /**
+     * 获取批发设置
+     *
+     * @param busId 商家id
+     *
+     * @return 批发设置
+     */
+    Map< String,Object > getPifaSet( int busId );
 }

@@ -27,18 +27,6 @@ public class PageUtil {
     /** 每页要显示的集合 **/
     private List subList;
 
-    /** 数据访问的地址 **/
-    private String url;
-
-    /** 是否存在上一页 **/
-    private boolean isPrePage = true;
-
-    /** 是否存在下一页 **/
-    private boolean isNextPage = true;
-
-    // 每页显示记录数数组
-    /*private int[] pageSizes = new int[] { 10, 20, 30, 50, 100 };*/
-
     // 默认每页显示记录数
     public static final int defaultPageSize = 10;
 
@@ -57,6 +45,9 @@ public class PageUtil {
      * @param url      后台地址
      */
     public PageUtil( int curPage, int pageSize, int rowCount, String url ) {
+	if ( pageSize == 0 ) {
+	    pageSize = defaultPageSize;
+	}
 	this.rowCount = rowCount;
 	this.pageSize = pageSize;
 	this.countMaxPage();
@@ -72,11 +63,6 @@ public class PageUtil {
 
 	if ( this.curPage <= 0 ) {
 	    this.curPage = DEFAULT_CURRENT_PAGE;
-	}
-	if ( this.curPage <= 1 ) isPrePage = false;
-	if ( this.curPage >= pageCount ) isNextPage = false;
-	if ( CommonUtil.isNotEmpty( url ) ) {
-	    this.url = url + "?curPage=";
 	}
     }
 
@@ -160,151 +146,12 @@ public class PageUtil {
 	return rowCount;
     }
 
-    /**
-     * 判断是否存在下一页
-     *
-     * @return boolean
-     */
-    public boolean isNextPageAvailable() {
-	return curPage >= 1 && curPage < pageCount;
-    }
-
-    /**
-     * 判断是否存在上一页
-     *
-     * @return boolean
-     */
-    public boolean isPreviousPageAvailable() {
-	return curPage > 1 && curPage <= pageCount;
-    }
-
-    /**
-     * 获取下一页
-     *
-     * @return
-     */
-    public int getNextPage() {
-	int next = curPage + 1;
-	if ( pageCount < next ) {
-	    next = pageCount;
-	}
-	return next;
-    }
-
-    /**
-     * 获取前一页
-     *
-     * @return
-     */
-    public int getPrevPage() {
-	int prev = curPage - 1;
-	if ( prev <= 1 ) {
-	    prev = 1;
-	}
-	return prev;
-    }
-
-    /**
-     * 获取第一页
-     *
-     * @return
-     */
-    public int getFirstPage() {
-	return 1;
-    }
-
-    /**
-     * 获取最后一页
-     *
-     * @return
-     */
-    public int getLastPage() {
-	return pageCount;
-    }
-
-    /**
-     * 判断是否是首页
-     *
-     * @return
-     */
-    public boolean isFirstPage() {
-	return ( curPage == 1 ) ? true : false;
-    }
-
-    /**
-     * 判断是否是尾页
-     *
-     * @return
-     */
-    public boolean isLastPage() {
-	return ( curPage == pageCount ) ? true : false;
-    }
-
-    /**
-     * 获取当前页面的开始记录
-     *
-     * @return
-     */
-    public int getBeginRecord() {
-	int begingRecord = ( this.curPage - 1 ) * this.pageSize;
-	return ( begingRecord <= 0 ? 0 : begingRecord );
-    }
-
-    /**
-     * 获取分页开始值
-     *
-     * @param curPage  int 当前页
-     * @param pageSize int 每页的记录数
-     *
-     * @return
-     */
-    public int getBeginRecord( int curPage, int pageSize ) {
-	return ( curPage - 1 ) * pageSize;
-    }
-
-    /*public int[] getPageSizes() {
-	return ( null == pageSizes ? null : pageSizes.clone() );
-    }
-
-    public void setPageSizes( int[] pageSizes ) {
-	if ( pageSizes == null || pageSizes.length == 0 ) {
-	    this.pageSizes = null;
-	} else {
-	    this.pageSizes = (int[]) pageSizes.clone();
-	}
-    }*/
-
     public void setPageCount( int pageCount ) {
 	this.pageCount = pageCount;
     }
 
-    public String getUrl() {
-	return url;
-    }
-
-    public void setUrl( String url ) {
-	this.url = url;
-    }
-
-    public boolean getIsPrePage() {
-	return isPrePage;
-    }
-
-    public boolean getIsNextPage() {
-	return isNextPage;
-    }
-
     public void setRowCount( int rowCount ) {
 	this.rowCount = rowCount;
-    }
-
-    /**
-     * 获取每页开始条数
-     *
-     * @return
-     */
-    public int getFirstResults() {
-	return ( this.curPage - 1 ) * this.pageSize;
     }
 
 }

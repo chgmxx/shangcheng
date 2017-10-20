@@ -9,7 +9,7 @@ import com.gt.mall.dao.product.MallProductInventoryDAO;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.CommonUtil;

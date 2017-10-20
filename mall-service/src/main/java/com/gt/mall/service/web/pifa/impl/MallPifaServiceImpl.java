@@ -10,9 +10,12 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.pifa.MallPifaPrice;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.result.phone.PhonePifaProductDetailResult;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhonePifaProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
+import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaPriceService;
@@ -65,6 +68,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 
     @Autowired
     private MallPifaApplyService mallPifaApplyService;
+
+    @Autowired
+    private MallPaySetService mallPaySetService;
 
     @Override
     @Transactional( rollbackFor = Exception.class )
@@ -522,5 +528,83 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	result.setInvIdList( invIdList );
 	result.setProductPrice( groupPrice );
 	return result;
+    }
+
+    @Override
+    public boolean pifaProductCanBuy( int pifaId, int invId, int productNum, int memberId, int memberBuyNum, MallPaySet mallPaySet ) {
+	if ( CommonUtil.isEmpty( pifaId ) || pifaId == 0 ) {
+	    return false;
+	}
+	boolean isOpenPifa = false;
+	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
+	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPf() ) ) {//是否开启批发
+		if ( mallPaySet.getIsPf().toString().equals( "1" ) ) {
+		    isOpenPifa = true;
+		}
+	    }
+	}
+	if ( !isOpenPifa ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "商家还未开启批发活动，不能购买批发" );
+	}
+	//通过商品id查询批发信息
+	MallPifa pifa = new MallPifa();
+	pifa.setId( pifaId );
+	pifa = mallPifaDAO.selectBuyByProductId( pifa );
+	if ( CommonUtil.isEmpty( pifa ) ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的批发商品被删除或已失效" );
+	}
+	if ( pifa.getStatus() == 0 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的批发商品活动还未开始" );
+	} else if ( pifa.getStatus() == -1 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的批发商品活动已结束" );
+	}
+	if ( invId > 0 ) {
+	    List< MallPifaPrice > priceList = mallPifaPriceService.selectPriceByInvId( pifaId, invId );
+	    if ( priceList != null && priceList.size() > 0 ) {
+		MallPifaPrice buyPrice = priceList.get( 0 );
+		if ( buyPrice.getIsJoinGroup() == 0 ) {
+		    throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), "该规格未参加批发活动" );
+		}
+	    } else {
+		throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), "该规格未参加批发活动" );
+	    }
+	}
+	return false;
+    }
+
+    @Override
+    public Map< String,Object > getPifaSet( int busId ) {
+	//通过商品id查询批发信息
+	MallPaySet set = mallPaySetService.selectByUserId( busId );
+	double hpMoney = 0;
+	int hpNum = 1;//混批件数
+	int spHand = 1;
+	if ( CommonUtil.isNotEmpty( set ) ) {
+	    if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {//是否开启批发
+		if ( CommonUtil.isNotEmpty( set.getPfSet() ) ) {
+		    JSONObject obj = JSONObject.fromObject( set.getPfSet() );
+		    if ( CommonUtil.isNotEmpty( obj.get( "isHpMoney" ) ) ) {
+			if ( obj.get( "isHpMoney" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( obj.get( "hpMoney" ) ) ) {
+			    hpMoney = CommonUtil.toDouble( obj.get( "hpMoney" ) );
+			}
+		    }
+		    if ( CommonUtil.isNotEmpty( obj.get( "isHpNum" ) ) ) {
+			if ( obj.get( "isHpNum" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( obj.get( "hpNum" ) ) ) {
+			    hpNum = CommonUtil.toInteger( obj.get( "hpNum" ) );
+			}
+		    }
+		    if ( CommonUtil.isNotEmpty( obj.get( "isSpHand" ) ) ) {
+			if ( obj.get( "isSpHand" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( obj.get( "spHand" ) ) ) {
+			    spHand = CommonUtil.toInteger( obj.get( "spHand" ) );
+			}
+		    }
+		}
+	    }
+	}
+	Map< String,Object > pfMap = new HashMap<>();
+	pfMap.put( "hpMoney", hpMoney );
+	pfMap.put( "hpNum", hpNum );
+	pfMap.put( "spHand", spHand );
+	return pfMap;
     }
 }

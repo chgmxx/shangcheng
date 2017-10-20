@@ -25,9 +25,6 @@ public class PhoneSpecificaDTO implements Serializable {
     @Min( value = 1, message = "商品ID不能小于1" )
     private Integer productId;
 
-    /**
-     * 库存id
-     */
     @ApiModelProperty( name = "invId", value = "库存id，可不传" )
     private int invId = 0;
 
@@ -36,5 +33,8 @@ public class PhoneSpecificaDTO implements Serializable {
 
     @ApiModelProperty( name = "activityId", value = "活动id" )
     private int activityId = 0;
+
+    @ApiModelProperty( name = "isShowCommission", value = "是否显示佣金 1显示" )
+    private int isShowCommission = 0;
 
 }

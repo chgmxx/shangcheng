@@ -105,4 +105,9 @@ public class Constants {
      */
     public static final int FENBI_GIEVE_TYPE = 1;
 
+    /**
+     * 购物车信息存入cookie的时长
+     */
+    public static final int COOKIE_SHOP_CART_TIME = 60 * 60 * 24 * 30;
+
 }

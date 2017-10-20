@@ -16,13 +16,15 @@ import com.gt.mall.service.web.applet.MallProductAppletService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import com.gt.util.entity.result.shop.WsShopPhoto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -56,22 +58,24 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
     private MemberService               memberService;
     @Autowired
     private WxShopService               wxShopService;
+    @Autowired
+    private MallStoreService            mallStoreService;
 
     @Override
-    public Map< String,Object > shoppingcare( Map< String,Object > params ) {
+    public Map< String,Object > shoppingcare( Map< String,Object > params, HttpServletRequest request ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	Member member = memberService.findMemberById( memberId, null );
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	params.put( "memberList", memberList );
 	double discount = productService.getMemberDiscount( "1", member );//获取会员折扣
-	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );
+	//	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );
 	List< Map< String,Object > > list = shopCartDAO.selectAppletByParams( params );
 	/*int type = 0;
 		if(CommonUtil.isNotEmpty(params.get("type"))){
 			type = CommonUtil.toInteger(params.get("type"));
 		}*/
-	List< WsWxShopInfoExtend > wxShopList = wxShopService.queryWxShopByBusId( member.getBusid() );
+	List< Map< String,Object > > storeList = mallStoreService.findShopByUserId( member.getBusid(), request );
 	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > shopCartList = new ArrayList< Map< String,Object > >();
 
@@ -120,7 +124,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		String msg = "";
 		int code = 1;
 		//判断限购和商品是否正在售卖
-		Map< String,Object > xgMap = productService.isshoppingCart( map, productNum, wxShopList );
+		Map< String,Object > xgMap = productService.isshoppingCart( map, productNum, storeList );
 		if ( xgMap.get( "code" ).toString().equals( "1" ) ) {
 		    if ( xgMap.containsKey( "product_num" ) ) {
 			cartMap.put( "product_num", xgMap.get( "product_num" ) );
@@ -138,9 +142,9 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		    code = CommonUtil.toInteger( xgMap.get( "code" ) );
 		    msg = CommonUtil.toString( xgMap.get( "msg" ) );
 		}
-		String proSpec = CommonUtil.toString( map.get( "product_specificas" ));
+		String proSpec = CommonUtil.toString( map.get( "product_specificas" ) );
 		if ( map.get( "isSpec" ).toString().equals( "1" ) && code == 1 && pro_type == 0 ) {//商品存在规格
-		    if ( proSpec== null || proSpec.equals( "" ) ) {
+		    if ( proSpec == null || proSpec.equals( "" ) ) {
 			code = 0;
 			msg = "商品存在规格";
 		    } else {
@@ -289,7 +293,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		}
 		if ( ( !next_shop_id.equals( CommonUtil.toString( shopId ) ) && CommonUtil.isNotEmpty( next_shop_id ) ) || j + 1 == list.size() ) {
 		    if ( null != shopList && shopList.size() > 0 ) {
-			shopMap = getShopMaps( shopMap, map, pro_type, shopInfoList );
+			shopMap = getShopMaps( shopMap, map, pro_type, storeList );
 			shopMap.put( "proList", shopList );
 			shopCartList.add( shopMap );
 
@@ -297,7 +301,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 			shopMap = new HashMap< String,Object >();
 		    }
 		    if ( null != sxCartList && sxCartList.size() > 0 ) {
-			sxShopMap = getShopMaps( sxShopMap, map, pro_type, shopInfoList );
+			sxShopMap = getShopMaps( sxShopMap, map, pro_type, storeList );
 			sxShopMap.put( "proList", sxCartList );
 			sxshopCartList.add( sxShopMap );
 
@@ -351,15 +355,18 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 	return resultMap;
     }
 
-    public Map< String,Object > getShopMaps( Map< String,Object > shopMap, Map< String,Object > map, int pro_type, List< WsWxShopInfoExtend > shopInfoList ) {
-	Integer wxShopId = CommonUtil.toInteger( map.get( "wx_shop_id" ) );
+    private Map< String,Object > getShopMaps( Map< String,Object > shopMap, Map< String,Object > map, int pro_type, List< Map< String,Object > > storeList ) {
+	String wxShopId = CommonUtil.toString( map.get( "wx_shop_id" ) );
 	String shopPicture = "";
-	for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-	    if ( wxShops.getId() == wxShopId ) {
-		if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
-		    shopMap.put( "sto_name", wxShops.getBusinessName() );
+	for ( Map< String,Object > storeMap : storeList ) {
+	    if ( storeMap.get( "wxShopId" ).toString().equals( wxShopId ) ) {
+		if ( CommonUtil.isNotEmpty( storeMap.get( "sto_name" ) ) ) {
+		    shopMap.put( "sto_name", storeMap.get( "sto_name" ) );
 		}
-		shopPicture = wxShops.getImageUrl();
+		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( CommonUtil.toInteger( map.get( "wx_shop_id" ) ) );
+		if ( photoList != null && photoList.size() > 0 ) {
+		    shopPicture = photoList.get( 0 ).getLocalAddress();
+		}
 		break;
 	    }
 	}

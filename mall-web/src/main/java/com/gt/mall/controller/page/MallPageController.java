@@ -2,25 +2,6 @@ package com.gt.mall.controller.page;
 
 import com.gt.mall.annotation.AfterAnno;
 import com.gt.mall.common.AuthorizeOrLoginController;
-import com.gt.mall.dao.product.MallProductDAO;
-import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.user.MemberAddressService;
-import com.gt.mall.service.inter.wxshop.FenBiFlowService;
-import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
-import com.gt.mall.service.web.basic.MallCollectService;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.freight.MallFreightService;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.pifa.MallPifaApplyService;
-import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
-import com.gt.mall.service.web.seller.MallSellerMallsetService;
-import com.gt.mall.service.web.seller.MallSellerService;
-import com.gt.mall.service.web.store.MallStoreService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,43 +24,6 @@ import java.util.Map;
 @RequestMapping( "/mallPage" )
 public class MallPageController extends AuthorizeOrLoginController {
 
-    @Autowired
-    private MallStoreService            mallStoreService;
-    @Autowired
-    private MallPageService             mallPageService;
-    @Autowired
-    private MallProductSpecificaService mallProductSpecificaService;
-    @Autowired
-    private MallFreightService          mallFreightService;
-    @Autowired
-    private MallPifaApplyService        mallPifaApplyService;
-    @Autowired
-    private MallSellerService           sellerService;
-    @Autowired
-    private MallSellerMallsetService    mallSellerMallsetService;
-    @Autowired
-    private MallPaySetService           mallPaySetService;
-    @Autowired
-    private MallProductService          mallProductService;
-    @Autowired
-    private MallProductDAO              mallProductDAO;
-    @Autowired
-    private MallCollectService          mallCollectService;
-    @Autowired
-    private MemberService               memberService;
-    @Autowired
-    private DictService                 dictService;
-    @Autowired
-    private WxShopService               wxShopService;
-    @Autowired
-    private WxPublicUserService         wxPublicUserService;
-    @Autowired
-    private FenBiFlowService            fenBiFlowService;
-    @Autowired
-    private BusUserService              busUserService;
-    @Autowired
-    private MemberAddressService        memberAddressService;
-
     @RequestMapping( "{id}/79B4DE7C/viewHomepage" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String viewHomepage( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws Exception {
@@ -93,6 +37,7 @@ public class MallPageController extends AuthorizeOrLoginController {
     @RequestMapping( "{id}/79B4DE7C/pageIndex" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String pageIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws IOException {
+
 	return "/mall/phonepage/phoneHomepage";
     }
 
@@ -114,7 +59,6 @@ public class MallPageController extends AuthorizeOrLoginController {
 	return jsp;
     }
 
-
     /**
      * 根据店铺id获取商家所有的商品
      */
@@ -129,7 +73,5 @@ public class MallPageController extends AuthorizeOrLoginController {
 	return "mall/product/phone/shoppingall";
 
     }
-
-
 
 }

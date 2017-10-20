@@ -7,7 +7,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -110,4 +110,18 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
      * 查询正在秒杀的商品
      */
     PageUtil searchSeckillAll( PhoneSearchProductDTO searchProductDTO, Member member );
+
+    /**
+     * 判断秒杀商品是否能购买
+     * 1 判断秒杀商品是否正在进行
+     * 2 判断购买的规格是否允许参团
+     * 3 判断限购
+     *
+     * @param seckillId    秒杀id
+     * @param invId        库存id
+     * @param productNum   商品数量
+     * @param memberId     粉丝id
+     * @param memberBuyNum 粉丝已购买商品数量
+     */
+    boolean seckillProductCanBuy( int seckillId, int invId, int productNum, int memberId, int memberBuyNum );
 }

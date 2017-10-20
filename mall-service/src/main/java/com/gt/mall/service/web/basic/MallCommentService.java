@@ -5,6 +5,7 @@ import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ public interface MallCommentService extends BaseService< MallComment > {
      *
      * @return 评论列表
      */
-    PageUtil selectCommentPage( Map< String,Object > params );
+    PageUtil selectCommentPage( Map< String,Object > params, List< Map< String,Object > > shoplist );
 
     /**
      * 删除或审核评论
@@ -87,5 +88,16 @@ public interface MallCommentService extends BaseService< MallComment > {
      * @return
      */
     MallComment selectComment( MallComment comment );
+
+    /**
+     * 查询商品评论
+     *
+     * @param busId     商家id
+     * @param productId 商品id
+     * @param feel      评论状态
+     *
+     * @return 商品评论
+     */
+    Map< String,Object > getProductComment( int busId, int productId, String feel );
 
 }

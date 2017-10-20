@@ -12,6 +12,7 @@ import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.applet.MallOrderAppletService;
 import com.gt.mall.service.web.applet.MallProductAppletService;
+import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -65,6 +66,8 @@ public class PhoneHomeAppletController extends BaseController {
     private WxShopService             wxShopService;
     @Autowired
     private MemberAddressService      memberAddressService;
+    @Autowired
+    private MallCommentService        mallCommentService;
 
     /**
      * 进入店铺列表页面
@@ -281,9 +284,11 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.info( "查询商品评价的参数：" + params );
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( CommonUtil.isNotEmpty( params.get( "proId" ) ) ) ) {
 		Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-		params.put( "isMemberType", 1 );
-		params.put( "isReply", 1 );
-		resultMap = pageService.getProductComment( params, member );
+		String feel = "";
+		if ( CommonUtil.isNotEmpty( params.get( "feel" ) ) ) {
+		    feel = CommonUtil.toString( params.get( "feel" ) );
+		}
+		resultMap = mallCommentService.getProductComment( member.getBusid(), CommonUtil.toInteger( params.get( "proId" ) ), feel );
 		resultMap.put( "imageHttp", PropertiesUtil.getResourceUrl() );
 	    }
 
@@ -333,11 +338,11 @@ public class PhoneHomeAppletController extends BaseController {
      */
     @RequestMapping( "/79B4DE7C/shopCart" )
     public void shopCart( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< String,Object > resultMap = new HashMap< String,Object >();
+	Map< String,Object > resultMap = new HashMap<>();
 	try {
 	    logger.info( "进入购物车页面的参数：" + params );
 
-	    resultMap = mallProductAppletService.shoppingcare( params );
+	    resultMap = mallProductAppletService.shoppingcare( params, request );
 
 	} catch ( Exception e ) {
 	    logger.error( "进入购物车页面异常。。。" + e.getMessage() );

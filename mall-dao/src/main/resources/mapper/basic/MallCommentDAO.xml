@@ -131,7 +131,6 @@
         from t_mall_comment c
         left join t_mall_order o on o.id=c.order_id
         left join t_mall_order_detail d on d.id=c.order_detail_id
-        left join t_mall_store s on s.id=c.shop_id
         where c.is_delete = 0 and c.rep_p_id = 0
         <if test="checkStatus != null and checkStatus != ''">
             and c.check_status = #{checkStatus}
@@ -160,11 +159,10 @@
         order by c.createTime desc
     </select>
     <select id="selectCommentList" parameterType="Map" resultType="Map">
-        select c.*,o.order_no,d.det_pro_name,s.sto_name
+        select c.*,o.order_no,d.det_pro_name
         from t_mall_comment c
         left join t_mall_order o on o.id=c.order_id
         left join t_mall_order_detail d on d.id=c.order_detail_id
-        left join t_mall_store s on s.id=c.shop_id
         where c.is_delete = 0 and c.rep_p_id = 0
         <if test="checkStatus != null and checkStatus != ''">
             and c.check_status = #{checkStatus}

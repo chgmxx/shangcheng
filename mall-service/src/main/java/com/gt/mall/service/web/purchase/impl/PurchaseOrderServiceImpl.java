@@ -54,7 +54,7 @@ public class PurchaseOrderServiceImpl extends BaseServiceImpl<PurchaseOrderDAO, 
             int curPage = CommonUtil.isEmpty(parms.get("curPage")) ? 1 : CommonUtil.toInteger(parms.get("curPage"));
             count = purchaseOrderDAO.findListCount(parms);
             PageUtil page = new PageUtil(curPage, pageSize, count, "");
-            page.setUrl("orderForm");
+//            page.setUrl("orderForm");
             parms.put("pageFirst", (page.getCurPage() - 1) * 10);
             parms.put("pageLast", 10);
             if (count > 0) {

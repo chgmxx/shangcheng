@@ -8,7 +8,6 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -133,7 +132,11 @@ public interface MallProductService extends BaseService< MallProduct > {
     double getMemberDiscount( String isMemberDiscount, Member member );
 
     /**
-     * 计算库存是否足够
+     * 1 判断商品是否被删除或未上架、未审核
+     * 2 判断商品库存是否足够
+     * 3 判断是否已经超过了限购,如果不够会抛异常
+     * 4 如果是活动商品，判断活动是否正在进行 和 是否超过活动限购的数量
+     * 5 如果是卡券包购买，判断是否已过期
      *
      * @param proId         商品id
      * @param proSpecificas 商品规格
@@ -150,7 +153,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 判断购物车的商品限购
      */
-    Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< WsWxShopInfoExtend > wxShopList );
+    Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< Map< String,Object > > shopList );
 
     int setIsShopBySession( int toshop, int shopid, int userid, HttpServletRequest request );
 
@@ -211,5 +214,5 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 扣除商品库存
      */
-    boolean diffProductStock( MallProduct pro, MallOrderDetail detail ,MallOrder order);
+    boolean diffProductStock( MallProduct pro, MallOrderDetail detail, MallOrder order );
 }

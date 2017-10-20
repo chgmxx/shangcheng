@@ -74,7 +74,7 @@ public class PhonePageController {
 
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
+    @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
     @PostMapping( value = "79B4DE7C/shopList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse shopList( HttpServletRequest request, int busId ) {
 	try {
@@ -98,7 +98,7 @@ public class PhonePageController {
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的门店列表异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商家的门店列表失败" );
+	    return ServerResponse.createByErrorMessage( "获取商家的门店列表失败" );
 	}
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该商家没有门店列表" );
     }
@@ -116,7 +116,7 @@ public class PhonePageController {
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的底部菜单异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商家的底部菜单失败" );
+	    return ServerResponse.createByErrorMessage( "获取商家的底部菜单失败" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
@@ -151,7 +151,7 @@ public class PhonePageController {
 	} catch ( Exception e ) {
 	    logger.error( "获取店铺首页id异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取店铺首页id失败" );
+	    return ServerResponse.createByErrorMessage( "获取店铺首页id失败" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
@@ -172,7 +172,7 @@ public class PhonePageController {
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的客服异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商家的客服失败" );
+	    return ServerResponse.createByErrorMessage( "获取商家的客服失败" );
 	}
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该店铺没有客服" );
     }
@@ -195,7 +195,7 @@ public class PhonePageController {
 	} catch ( Exception e ) {
 	    logger.error( "获取店铺风格异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取店铺风格失败" );
+	    return ServerResponse.createByErrorMessage( "获取店铺风格失败" );
 	}
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该店铺没有设置风格" );
     }
@@ -225,7 +225,7 @@ public class PhonePageController {
 	} catch ( Exception e ) {
 	    logger.error( "查询历史搜索和推荐搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询历史搜索和推荐搜索接口失败" );
+	    return ServerResponse.createByErrorMessage( "查询历史搜索和推荐搜索接口失败" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
@@ -251,9 +251,9 @@ public class PhonePageController {
 	} catch ( Exception e ) {
 	    logger.error( "清空历史搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "清空历史搜索接口失败" );
+	    return ServerResponse.createByErrorMessage( "清空历史搜索接口失败" );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
+	return ServerResponse.createBySuccessCode();
 
     }
 
@@ -277,12 +277,10 @@ public class PhonePageController {
 		}
 	    }
 
-	} catch ( BusinessException e ) {
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "微信分享接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取微信分享接口失败" );
+	    return ServerResponse.createByErrorMessage( "获取微信分享接口失败" );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.NO_SHARE_ERROR.getCode(), ResponseEnums.NO_SHARE_ERROR.getDesc(), false );
 

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -20,25 +22,32 @@ import static com.fasterxml.jackson.databind.annotation.JsonSerialize.Typing.DEF
  * @create 2017/6/16
  */
 //保证序列化json的时候,如果是null的对象,key也会消失
+@ApiModel( value = "ServerResponse", description = "统一响应返回数据格式" )
 @JsonSerialize( typing = DEFAULT_TYPING )
 public class ServerResponse< T > implements Serializable {
 
     /*状态码*/
+    @ApiModelProperty( name = "code", value = "状态码：参考响应编码说明" )
     private int code;
 
     /*返回消息*/
+    @ApiModelProperty( name = "msg", value = "返回消息" )
     private String msg;
 
     /*图片域名*/
+    @ApiModelProperty( name = "imgUrl", value = "图片域名" )
     private String imgUrl = PropertiesUtil.getResourceUrl();
 
     /*本地域名*/
+    @ApiModelProperty( name = "path", value = "本地域名" )
     private String path = PropertiesUtil.getHomeUrl();
 
     /*前端web域名*/
+    @ApiModelProperty( name = "webPath", value = "前端web域名" )
     private String webPath = PropertiesUtil.getHomeUrl();
 
     /*泛型数据*/
+    @ApiModelProperty( name = "data", value = "返回数据" )
     private T data;
 
     protected ServerResponse( int code, Boolean... isShowPath ) {
@@ -91,6 +100,15 @@ public class ServerResponse< T > implements Serializable {
     /**
      * 创建响应成功
      *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessCode() {
+	return createBySuccessMessage( ResponseEnums.SUCCESS.getCode() );
+    }
+
+    /**
+     * 创建响应成功
+     *
      * @param data 数据包
      *
      * @return ServerResponse
@@ -108,6 +126,17 @@ public class ServerResponse< T > implements Serializable {
      */
     public static < T > ServerResponse< T > createBySuccessMessage( String msg ) {
 	return createBySuccess( msg, null );
+    }
+
+    /**
+     * 创建响应成功
+     *
+     * @param code 状态码
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessMessage( int code ) {
+	return createBySuccessCodeMessage( code, false );
     }
 
     /**
@@ -133,6 +162,17 @@ public class ServerResponse< T > implements Serializable {
      */
     public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, T data, Boolean... isShowPath ) {
 	return new ServerResponse<>( code, msg, data, isShowPath );
+    }
+
+    /**
+     * 创建响应成功
+     *
+     * @param code 状态码
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, Boolean... isShowPath ) {
+	return new ServerResponse<>( code, isShowPath );
     }
 
     /**

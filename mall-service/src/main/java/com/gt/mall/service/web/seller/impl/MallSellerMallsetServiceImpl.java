@@ -13,7 +13,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
@@ -505,7 +505,29 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	}
 	if ( saleMemberId > 0 ) {
 	    result.setIsShowShare( 1 );
+	    result.setSaleMemberId( saleMemberId );
 	}
 	return result;
     }
+
+    @Override
+    public double getCommissionMoney( int productId, double productPrice ) {
+	MallSellerJoinProduct joinProduct = mallSellerJoinProductDAO.selectByProId( productId );
+	if ( CommonUtil.isNotEmpty( joinProduct ) ) {
+	    int commissionType = joinProduct.getCommissionType();//佣金类型 1按百分比  2按固定金额
+	    double commission_rate = CommonUtil.toDouble( joinProduct.getCommissionRate() );
+	    double commissionMoney = 0;
+	    if ( commissionType == 1 ) {//按百分比
+		commissionMoney = productPrice * ( commission_rate / 100 );
+		if ( commissionMoney <= 0 ) {
+		    commissionMoney = 0.01;
+		}
+	    } else if ( commissionType == 2 ) {//按固定金额
+		commissionMoney = commission_rate;
+	    }
+	    return commissionMoney;
+	}
+	return 0;
+    }
+
 }

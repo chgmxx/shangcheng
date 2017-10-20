@@ -41,7 +41,7 @@ public class PurchaseOrderStatisticsServiceImpl extends BaseServiceImpl< Purchas
 	    ;
 	    count = purchaseOrderStatisticsDAO.findListCount( parms );
 	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
-	    page.setUrl( "statisticsForm" );
+	    //	    page.setUrl( "statisticsForm" );
 	    parms.put( "pageFirst", ( page.getCurPage() - 1 ) * 10 );
 	    parms.put( "pageLast", 10 );
 	    if ( count > 0 ) {

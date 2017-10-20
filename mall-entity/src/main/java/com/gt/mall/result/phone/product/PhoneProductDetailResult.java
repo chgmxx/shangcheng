@@ -1,4 +1,4 @@
-package com.gt.mall.result.phone;
+package com.gt.mall.result.phone.product;
 
 import com.gt.mall.entity.basic.MallImageAssociative;
 import io.swagger.annotations.ApiModel;
@@ -37,6 +37,9 @@ public class PhoneProductDetailResult implements Serializable {
 
     @ApiModelProperty( name = "hyPrice", value = "会员价" )
     private double hyPrice;
+
+    @ApiModelProperty( name = "shopCartNum", value = "购物车的数量" )
+    private int shopCartNum = 0;
 
     @ApiModelProperty( name = "freightMoney", value = "运费" )
     private double freightMoney;
@@ -132,6 +135,7 @@ public class PhoneProductDetailResult implements Serializable {
     /**
      * 拍卖返回结果
      */
+    @ApiModelProperty( name = "auctionResult", value = "拍卖返回结果" )
     private PhoneAuctionProductDetailResult auctionResult;
 
     /**

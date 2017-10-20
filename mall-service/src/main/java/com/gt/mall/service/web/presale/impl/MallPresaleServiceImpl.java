@@ -21,9 +21,11 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.result.phone.PhonePresaleProductDetailResult;
-import com.gt.mall.result.phone.PhoneProductDetailResult;
+import com.gt.mall.result.phone.product.PhonePresaleProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -1116,6 +1118,44 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
 	page.setSubList( list );
 	return page;
+    }
+
+    @Override
+    public boolean presaleProductCanBuy( int presaleId, int invId, int productNum, int memberId, int memberBuyNum ) {
+	if ( CommonUtil.isEmpty( presaleId ) || presaleId == 0 ) {
+	    return false;
+	}
+	MallPresale presale = new MallPresale();
+	presale.setId( presaleId );
+	presale = mallPresaleDAO.selectBuyByProductId( presale );
+	if ( CommonUtil.isEmpty( presale ) ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的预售商品被删除或已失效" );
+	}
+	if ( presale.getStatus() == 0 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的预售商品活动还未开始" );
+	} else if ( presale.getStatus() == -1 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的预售商品活动已结束" );
+	}
+	/*int maxBuyNum = presale.getGMaxBuyNum();
+	if ( maxBuyNum > 0 && memberBuyNum > -1 ) {
+	    if ( memberBuyNum + productNum > maxBuyNum ) {
+		throw new BusinessException( ResponseEnums.MAX_BUY_ERROR.getCode(), "每人限购" + maxBuyNum + "件" + ResponseEnums.MAX_BUY_ERROR.getDesc() );
+	    }
+	}*/
+	if ( presale.getIsDeposit() == 1 && memberId > 0 ) {//需缴纳定金
+	    MallPresaleDeposit deposit = new MallPresaleDeposit();
+	    deposit.setPresaleId( presaleId );
+	    deposit.setUserId( memberId );
+	    MallPresaleDeposit presaleDeposit = mallPresaleDepositDAO.selectOne( deposit );
+	    if ( CommonUtil.isEmpty( presaleDeposit ) ) {
+		throw new BusinessException( ResponseEnums.ACTIVITY_MONEY_ERROR.getCode(), "您未缴纳定金，不能购买该预售商品" );
+	    } else {
+		if ( presaleDeposit.getDepositStatus() != 1 ) {
+		    throw new BusinessException( ResponseEnums.ACTIVITY_MONEY_ERROR.getCode(), "您未缴纳定金，不能购买该预售商品" );
+		}
+	    }
+	}
+	return true;
     }
 
 }

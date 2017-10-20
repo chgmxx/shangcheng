@@ -92,7 +92,7 @@ public class MallCommentNewController extends BaseController {
 		}
 
 		// 查询会员下面的评论
-		PageUtil page = commentService.selectCommentPage( params );
+		PageUtil page = commentService.selectCommentPage( params, shoplist );
 		result.put( "page", page );
 
 		//统计各状态的数量
