@@ -56,7 +56,7 @@ public class OrderDTO {
     /**
      * 订单来源
      */
-    @ApiModelProperty( value = "订单来源（1,微商城 2,UC端 3,小程序 ）" )
+    @ApiModelProperty( value = "订单来源（0:pc端 1:微信 2:uc端 3:小程序 ）" )
     private Integer orderSource;
     /**
      * 订单状态

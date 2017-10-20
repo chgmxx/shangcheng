@@ -22,12 +22,12 @@ import java.util.*;
 public class MpGenerator {
 
     // 项目的绝对路径
-    private static final  String   outPutBaseDir      = "C:/workSpaces/Mall/mall-generator/";
+    private static final  String   outPutBaseDir      = "C:/workSpaces/Mall33/mall-generator/";
     // 生成*.java 的文件路径
     private static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     private static final  String[] generatorTableName = new String[] {
-		    "t_mall_securitytrade"
+		    "t_mall_order_return_log"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
     private static final  String[] tablePrefix        = new String[] { "t" };

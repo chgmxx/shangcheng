@@ -400,7 +400,7 @@
             and t.order_type = #{orderType}
         </if>
         <if test="orderSource != null and orderSource != ''">
-            and t.order_source = #{orderSource}
+            and t.buyer_user_type = #{orderSource}
         </if>
         <if test="orderPayWay != null and orderPayWay != ''">
             and t.order_pay_way = #{orderPayWay}
@@ -457,7 +457,7 @@
                 and t.order_type = #{orderType}
             </if>
             <if test="orderSource != null and orderSource != ''">
-                and t.order_source = #{orderSource}
+                and t.buyer_user_type = #{orderSource}
             </if>
             <if test="orderPayWay != null and orderPayWay != ''">
                 and t.order_pay_way = #{orderPayWay}
@@ -525,7 +525,7 @@
                 and t.order_type = #{orderType}
             </if>
             <if test="orderSource != null and orderSource != ''">
-                and t.order_source = #{orderSource}
+                and t.buyer_user_type = #{orderSource}
             </if>
             <if test="orderPayWay != null and orderPayWay != ''">
                 and t.order_pay_way = #{orderPayWay}
@@ -617,7 +617,7 @@
                 and t.order_type = #{orderType}
             </if>
             <if test="orderSource != null and orderSource != ''">
-                and t.order_source = #{orderSource}
+                and t.buyer_user_type = #{orderSource}
             </if>
             <if test="orderPayWay != null and orderPayWay != ''">
                 and t.order_pay_way = #{orderPayWay}
@@ -1106,7 +1106,7 @@
             and t.order_type = #{orderType}
         </if>
         <if test="orderSource != null and orderSource != ''">
-            and t.order_source = #{orderSource}
+            and t.buyer_user_type = #{orderSource}
         </if>
         <if test="orderPayWay != null and orderPayWay != ''">
             and t.order_pay_way = #{orderPayWay}

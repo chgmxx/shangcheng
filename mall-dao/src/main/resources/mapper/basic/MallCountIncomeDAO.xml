@@ -21,8 +21,8 @@
     <select id="getCountByTimes" resultType="java.lang.Integer">
         SELECT
         <if test="type != null and type != ''">
-            <if test="type == 1">SUM(t.income_price)</if>
-            <if test="type == 2">SUM(t.turnover)</if>
+            <if test="type == 1">IFNULL(SUM(t.income_price),0)</if>
+            <if test="type == 2">IFNULL(SUM(t.turnover),0)</if>
         </if>
         FROM `t_mall_count_income` t
         WHERE 1=1

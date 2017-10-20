@@ -104,7 +104,7 @@
         SELECT
         i.id, i.product_id, i.money, i.start_time, i.end_time, i.type, i.user_id, i.shop_id, i.create_time,
         i.is_delete, i.is_use, c.image_url AS imageUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
-        ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice
+        ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice ,p.pro_stock_total as proStockTotal
         FROM t_mall_integral i
         LEFT JOIN t_mall_product p ON i.product_id = p.id
         LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON i.product_id=c.ass_id

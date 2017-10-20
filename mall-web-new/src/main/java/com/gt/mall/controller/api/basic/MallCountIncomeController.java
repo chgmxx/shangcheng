@@ -81,7 +81,7 @@ public class MallCountIncomeController extends BaseController {
     /**
      * 获取交易记录的营业额统计
      */
-    @ApiOperation( value = "获取交易记录的营业额统计", notes = "获取交易记录的营业额统计", response = GroupDTO.class )
+    @ApiOperation( value = "获取交易记录的营业额统计", notes = "获取交易记录的营业额统计" )
     @ResponseBody
     @RequestMapping( value = "/getTurnoverCount", method = RequestMethod.POST )
     public ServerResponse getTurnoverCount( HttpServletRequest request, HttpServletResponse response ) {
@@ -116,13 +116,13 @@ public class MallCountIncomeController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交易记录的营业额统计异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
      * 获取收入金额列表
      */
-    @ApiOperation( value = "获取收入金额列表", notes = "获取收入金额列表", response = GroupDTO.class )
+    @ApiOperation( value = "获取收入金额列表", notes = "获取收入金额列表" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = false, dataType = "String" ),
@@ -158,7 +158,7 @@ public class MallCountIncomeController extends BaseController {
 	    countParams.put( "type", 1 );
 	    if ( CommonUtil.isEmpty( shopId ) ) {
 		countParams.put( "shoplist", shoplist );
-	    }else{
+	    } else {
 		countParams.put( "shopId", shopId );
 	    }
 	    countParams.put( "date", yesterday );
@@ -176,6 +176,6 @@ public class MallCountIncomeController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取收入金额列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 }

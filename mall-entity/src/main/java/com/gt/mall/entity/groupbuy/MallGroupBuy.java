@@ -95,7 +95,7 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
     private Integer    isUse;
 
     @TableField( exist = false )
-    private Integer joinId;
+    private Integer joinId = 0;
 
     @TableField( exist = false )
     private Integer status;//状态id

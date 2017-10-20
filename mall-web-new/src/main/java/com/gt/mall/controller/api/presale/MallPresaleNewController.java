@@ -66,21 +66,7 @@ public class MallPresaleNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type, Integer shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "type", type );
-	    params.put( "shopId", shopId );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist != null && shoplist.size() > 0 ) {
-		if ( CommonUtil.isEmpty( shopId ) ) {
-		    params.put( "shoplist", shoplist );
-		}
-		PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId(), shoplist );
-		result.put( "page", page );
-	    }
-
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    //通过商品id查询预售信息
@@ -94,8 +80,21 @@ public class MallPresaleNewController extends BaseController {
 		}
 	    }
 	    result.put( "isOpenPresale", isOpenPresale );
-	    result.put( "videourl", busUserService.getVoiceUrl( "83" ) );
-
+	    if ( isOpenPresale ) {
+		Map< String,Object > params = new HashMap<>();
+		params.put( "curPage", curPage );
+		params.put( "type", type );
+		params.put( "shopId", shopId );
+		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+		if ( shoplist != null && shoplist.size() > 0 ) {
+		    if ( CommonUtil.isEmpty( shopId ) ) {
+			params.put( "shoplist", shoplist );
+		    }
+		    PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId(), shoplist );
+		    result.put( "page", page );
+		}
+		result.put( "videourl", busUserService.getVoiceUrl( "83" ) );
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取预售列表异常：" + e.getMessage() );
 	    e.printStackTrace();

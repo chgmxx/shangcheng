@@ -145,10 +145,10 @@ public class MallOrderNewController extends BaseController {
 	    Map< String,Object > orderList = mallOrderService.selectOrderList( params );
 	    result.putAll( orderList );
 
-	    Wrapper< MallOrderReturn > returnWrapper = new EntityWrapper<>();
+	  /*  Wrapper< MallOrderReturn > returnWrapper = new EntityWrapper<>();
 	    returnWrapper.where( "order_id ={0}", id );
 	    MallOrderReturn oReturn = mallOrderReturnService.selectOne( returnWrapper );
-	    result.put( "orderReturn", oReturn );
+	    result.put( "orderReturn", oReturn );*/
 
 	} catch ( Exception e ) {
 	    logger.error( "查看订单详情异常：" + e.getMessage() );
@@ -230,8 +230,8 @@ public class MallOrderNewController extends BaseController {
      */
     @ApiOperation( value = "获取取消订单理由列表", notes = "获取取消订单理由列表" )
     @ResponseBody
-    @RequestMapping( value = "/typeMap", method = RequestMethod.POST )
-    public ServerResponse typeMap( HttpServletRequest request, HttpServletResponse response ) {
+    @RequestMapping( value = "/cancelReasonMap", method = RequestMethod.POST )
+    public ServerResponse cancelReasonMap( HttpServletRequest request, HttpServletResponse response ) {
 	List< Map > cancelReason = null;
 	try {
 	    cancelReason = dictService.getDict( "1079" );
@@ -240,7 +240,7 @@ public class MallOrderNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取取消订单理由列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), cancelReason );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), cancelReason, false );
     }
 
     /**
@@ -269,7 +269,7 @@ public class MallOrderNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "判断团购商品是否可以发货异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag, false );
     }
 
     /**
@@ -298,7 +298,7 @@ public class MallOrderNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改退款状态异常" );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
     }
 
     /**
@@ -306,10 +306,15 @@ public class MallOrderNewController extends BaseController {
      */
     @ApiOperation( value = "打印订单", notes = "打印订单" )
     @ResponseBody
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "orderId", value = "订单ID", paramType = "query", required = true, dataType = "int" ) } )
     @RequestMapping( value = "/toPrintMallOrder", method = RequestMethod.POST )
-    public ServerResponse toPrintMallOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public ServerResponse toPrintMallOrder( HttpServletRequest request, HttpServletResponse response, Integer orderId, Integer curPage ) {
 	Map< String,Object > result = null;
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "orderId", orderId );
+	    params.put( "curPage", curPage );
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params ) ) {
 		result = mallOrderService.printOrder( params, user );
@@ -319,7 +324,7 @@ public class MallOrderNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "打印订单异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
@@ -419,8 +424,7 @@ public class MallOrderNewController extends BaseController {
      * 导出交易记录订单
      */
     @ApiOperation( value = "导出交易记录订单", notes = "导出交易记录订单" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
+    @ApiImplicitParams( { @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "startTime", value = "下单开始时间", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "endTime", value = "下单结束时间", paramType = "query", required = false, dataType = "String" ) } )
