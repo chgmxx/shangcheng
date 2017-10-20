@@ -137,6 +137,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	int status = 0;
 	if ( CommonUtil.isNotEmpty( groupMap.get( "groupBuy" ) ) ) {
 	    MallGroupBuy groupBuy = JSONObject.toJavaObject( JSONObject.parseObject( groupMap.get( "groupBuy" ).toString() ), MallGroupBuy.class );
+	    groupBuy.setGName( CommonUtil.urlEncode( groupBuy.getGName() ) );
 	    //判断选择的商品是否已经存在未开始和进行中的团购中
 	    List< MallGroupBuy > buyList = mallGroupBuyDAO.selectGroupByProId( groupBuy );
 	    if ( buyList == null || buyList.size() == 0 ) {
