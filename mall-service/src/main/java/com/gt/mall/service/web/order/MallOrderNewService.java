@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public interface MallOrderNewService extends BaseService< MallOrder > {
 
+
+
     /**
      * 计算订单
      */

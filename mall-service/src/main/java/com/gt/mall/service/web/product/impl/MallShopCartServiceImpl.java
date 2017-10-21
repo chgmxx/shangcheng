@@ -21,6 +21,8 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneAddShopCartDTO;
 import com.gt.mall.param.phone.shopCart.PhoneRemovePifatSpecificaDTO;
 import com.gt.mall.param.phone.shopCart.PhoneRemoveShopCartDTO;
+import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderDTO;
+import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderPifatSpecificaDTO;
 import com.gt.mall.result.phone.shopcart.*;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
@@ -999,7 +1001,6 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 				upObj.remove( s );
 			    }
 			}
-
 			MallShopCart shopcart = new MallShopCart();
 			shopcart.setProductNum( result.getProductNum() );
 			shopcart.setProSpecStr( com.alibaba.fastjson.JSONObject.toJSONString( upObj ) );
@@ -1012,8 +1013,32 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	}
     }
 
-
-
-
+    @Override
+    public void shopCartOrder( List< PhoneShopCartOrderDTO > params ) {
+	if ( params != null && params.size() > 0 ) {
+	    for ( PhoneShopCartOrderDTO cartDto : params ) {
+		MallShopCart shopCart = new MallShopCart();
+		MallShopCart cart = mallShopCartDAO.selectById( cartDto.getId() );
+		if ( CommonUtil.isNotEmpty( cartDto.getPifatSpecificaDTOList() ) && cartDto.getPifatSpecificaDTOList().size() > 0 && CommonUtil
+				.isNotEmpty( cart.getProSpecStr() ) ) {
+		    JSONObject specObj = JSONObject.fromObject( cart.getProSpecStr() );
+		    for ( PhoneShopCartOrderPifatSpecificaDTO specificaDTO : cartDto.getPifatSpecificaDTOList() ) {
+			if ( specificaDTO.getSpecificaValueIds() != null && specificaDTO.getSpecificaValueIds().length > 0 ) {
+			    JSONObject newObj = new JSONObject();
+			    for ( String valueId : specificaDTO.getSpecificaValueIds() ) {
+				JSONObject obj = specObj.getJSONObject( valueId );
+				obj.put( "num", specificaDTO.getProductNum() );
+				newObj.putAll( obj );
+			    }
+			    shopCart.setProSpecStr( JSON.toJSONString( newObj ) );
+			}
+		    }
+		}
+		shopCart.setId( cartDto.getId() );
+		shopCart.setProductNum( cartDto.getProductNum() );
+		mallShopCartDAO.updateByShopCart( shopCart );
+	    }
+	}
+    }
 
 }

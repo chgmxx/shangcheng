@@ -1,5 +1,7 @@
 package com.gt.mall.exception;
 
+import org.apache.poi.ss.formula.functions.T;
+
 /**
  * 系统统一异常类
  * <pre>
@@ -15,6 +17,8 @@ public class SystemException extends RuntimeException {
 
     private String message;//错误消息
 
+    private T data;//异常内容
+
     public SystemException( String message ) {
 	super( message );
 	this.message = message;
@@ -26,6 +30,13 @@ public class SystemException extends RuntimeException {
 	this.code = code;
     }
 
+    public SystemException( int code, String message, T data ) {
+	super( message );
+	this.message = message;
+	this.code = code;
+	this.data = data;
+    }
+
     public int getCode() {
 	return code;
     }
@@ -33,5 +44,9 @@ public class SystemException extends RuntimeException {
     @Override
     public String getMessage() {
 	return message;
+    }
+
+    public T getData() {
+	return data;
     }
 }

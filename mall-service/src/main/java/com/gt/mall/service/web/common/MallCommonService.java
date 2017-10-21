@@ -1,12 +1,5 @@
 package com.gt.mall.service.web.common;
 
-import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.entity.basic.MallCommentGive;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 /**
  * <p>
  * 公共服务类
@@ -28,4 +21,5 @@ public interface MallCommonService {
      * @return
      */
     boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo );
+
 }

@@ -8,10 +8,7 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.param.phone.PhoneGroupDTO;
-import com.gt.mall.param.phone.PhoneProductDetailDTO;
-import com.gt.mall.param.phone.PhoneSearchProductDTO;
-import com.gt.mall.param.phone.PhoneSpecificaDTO;
+import com.gt.mall.param.phone.*;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -143,21 +140,22 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 		}
 		//封装登陆参数
-		Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, params.getBusId(), request );
-		loginMap.put( "uclogin", 1 );//不需要登陆
-		userLogin( request, response, loginMap );//授权或登陆，以及商家是否已过期的判断
+		PhoneLoginDTO loginDTO = params.getLoginDTO();
+		loginDTO.setUcLogin( 1 );//不需要登陆
+		userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 		mallStoreService.getShopBySession( request.getSession(), params.getShopId() );//从session获取店铺id  或  把店铺id存入session
 
-		if ( params.getType() == 5 ) {
-		    mallProductService.setJifenByRedis( member, request, params.getType(), params.getBusId() );
-		} else {
-		    int isJifen = mallProductService.getJifenByRedis( member, request, params.getType(), params.getBusId() );
-		    if ( isJifen == 5 ) {
-			params.setType( 5 );
+		if ( CommonUtil.isNotEmpty( params.getType() ) ) {
+		    if ( params.getType() == 5 ) {
+			mallProductService.setJifenByRedis( member, request, params.getType(), params.getBusId() );
+		    } else {
+			int isJifen = mallProductService.getJifenByRedis( member, request, params.getType(), params.getBusId() );
+			if ( isJifen == 5 ) {
+			    params.setType( 5 );
+			}
 		    }
 		}
-
 	    }
 	    PageUtil page = null;
 	    if ( params.getType() == 0 || params.getType() == 5 ) {//0 查询普通商品 5 查询粉币商品
@@ -199,7 +197,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    //封装登陆参数
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, params.getBusId(), request );
 	    loginMap.put( "uclogin", 1 );//不需要登陆
-	    userLogin( request, response, loginMap );//授权或登陆，以及商家是否已过期的判断
+
+	    PhoneLoginDTO loginDTO = params.getLoginDTO();
+	    loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    mallStoreService.getShopBySession( request.getSession(), params.getShopId() );//从session获取店铺id  或  把店铺id存入session
 

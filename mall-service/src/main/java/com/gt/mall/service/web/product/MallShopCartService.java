@@ -6,6 +6,7 @@ import com.gt.mall.bean.Member;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.param.phone.PhoneAddShopCartDTO;
 import com.gt.mall.param.phone.shopCart.PhoneRemoveShopCartDTO;
+import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderDTO;
 import com.gt.mall.result.phone.shopcart.PhoneShopCartResult;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,4 +74,11 @@ public interface MallShopCartService extends BaseService< MallShopCart > {
      * @param response response
      */
     void removeShopCart( PhoneRemoveShopCartDTO params, HttpServletRequest request, HttpServletResponse response );
+
+    /**
+     * 购物车去结算 (不能去结算会抛异常)
+     *
+     * @param params 参数
+     */
+    void shopCartOrder( List< PhoneShopCartOrderDTO > params );
 }

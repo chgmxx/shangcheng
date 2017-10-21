@@ -35,6 +35,10 @@ public class PhoneProductDetailDTO implements Serializable {
     @Min( value = 1, message = "商家id不能小于1" )
     private Integer busId;
 
+    @ApiModelProperty( name = "loginDTO", value = "登陆参数 ", required = true )
+    @NotNull( message = "登陆参数不为空" )
+    private PhoneLoginDTO loginDTO;
+
     @ApiModelProperty( name = "toShop", value = "是否是到店购买 1到店" )
     private Integer toShop = 0;
 

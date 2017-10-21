@@ -1,12 +1,9 @@
 package com.gt.mall.exception;
 
+import org.apache.poi.ss.formula.functions.T;
+
 /**
  * 业务异常
- *
- * @author zhangmz
- * @version 1.0.0
- * @date 2017-07-15
- * @since 1.0.0
  */
 public class BusinessException extends SystemException {
 
@@ -14,7 +11,15 @@ public class BusinessException extends SystemException {
 	super( message );
     }
 
+    public BusinessException( int code, String desc, String message ) {
+	super( message );
+    }
+
     public BusinessException( int code, String message ) {
 	super( code, message );
+    }
+
+    public BusinessException( int code, String message, T data ) {
+	super( code, message, data );
     }
 }

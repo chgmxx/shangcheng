@@ -231,6 +231,19 @@ public class ServerResponse< T > implements Serializable {
 	return new ServerResponse<>( errorCode, errorMessage, false );
     }
 
+    /**
+     * 创建响应失败
+     *
+     * @param errorCode    状态码
+     * @param errorMessage 消息
+     * @param data         返回数据
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createByErrorCodeMessage( int errorCode, String errorMessage, T data ) {
+	return new ServerResponse<>( errorCode, errorMessage, data, false );
+    }
+
     //使之不在json序列化结果当中，作用用于判断
     @JsonIgnore
     public boolean isSuccess() {

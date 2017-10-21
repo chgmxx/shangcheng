@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <p>
  * 公共服务实现类
@@ -36,5 +39,4 @@ public class MallCommonServiceImpl implements MallCommonService {
 
 	return smsService.sendSmsOld( apiSms );
     }
-
 }

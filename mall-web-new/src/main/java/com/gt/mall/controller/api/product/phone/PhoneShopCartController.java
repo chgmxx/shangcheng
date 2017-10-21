@@ -1,12 +1,15 @@
 package com.gt.mall.controller.api.product.phone;
 
+import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.bean.Member;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneAddShopCartDTO;
+import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.shopCart.PhoneRemoveShopCartDTO;
+import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderDTO;
 import com.gt.mall.result.phone.shopcart.PhoneShopCartResult;
 import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -25,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 购物车页面相关接口（手机端）
@@ -71,13 +74,18 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
     @ApiImplicitParams( {
 		    @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = true, dataType = "Integer" ),
-		    @ApiImplicitParam( name = "type", value = "购物车类型 1批发购物车可不传", paramType = "query", dataType = "Integer", defaultValue = "0" )
+		    @ApiImplicitParam( name = "type", value = "购物车类型 1批发购物车可不传", paramType = "query", dataType = "Integer", defaultValue = "0" ),
+		    @ApiImplicitParam( name = "loginDTO", value = "登陆参数", required = true, paramType = "query", dataType = "Object" )
     } )
     @ResponseBody
     @PostMapping( value = "79B4DE7C/getShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< PhoneShopCartResult > getShopCart( HttpServletRequest request, HttpServletResponse response, Integer busId, Integer shopId, Integer type ) {
+    public ServerResponse< PhoneShopCartResult > getShopCart( HttpServletRequest request, HttpServletResponse response, Integer busId, Integer shopId, Integer type,
+		    PhoneLoginDTO loginDTO ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
+
+	    loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    PhoneShopCartResult result = mallShopCartService.getShopCart( member, busId, type, request, response );
 
@@ -97,7 +105,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "删除购物车接口", notes = "用户删除购物车", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "79B4DE7C/removeShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse removeShopCart( HttpServletRequest request, HttpServletResponse response,
+    public ServerResponse< PhoneRemoveShopCartDTO > removeShopCart( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneRemoveShopCartDTO params ) {
 	try {
 
@@ -114,19 +122,24 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 	return ServerResponse.createBySuccessCode();
     }
 
-    @ApiOperation( value = "购物车结算接口", notes = "购物车结算", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "购物车去结算接口", notes = "购物车去结算", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams(
+		    @ApiImplicitParam( name = "str", value = "参数", paramType = "query", required = true, dataType = "String" )
+    )
     @ResponseBody
     @PostMapping( value = "79B4DE7C/shopCartOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< Map< String,Object > > shopCartOrder( HttpServletRequest request, HttpServletResponse response, String ids ) {
+    public ServerResponse shopCartOrder( HttpServletRequest request, HttpServletResponse response, String str ) {
 	try {
 
+	    List< PhoneShopCartOrderDTO > params = JSONArray.parseArray( str, PhoneShopCartOrderDTO.class );
+	    mallShopCartService.shopCartOrder( params );
 	} catch ( BusinessException e ) {
-	    logger.error( "购物车结算异常：" + e.getMessage() );
+	    logger.error( "购物车去结算异常：" + e.getMessage() );
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "购物车结算异常：" + e.getMessage() );
+	    logger.error( "购物车去结算异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "购物车结算失败" );
+	    return ServerResponse.createByErrorMessage( "购物车去结算失败" );
 	}
 	return ServerResponse.createBySuccessCode();
     }

@@ -6,12 +6,11 @@ import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.mall.bean.Member;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.SessionUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -33,14 +32,10 @@ public class AuthorizeOrUcLoginController {
 
     private static final String GETWXPULICMSG = "/8A5DA52E/busUserApi/getWxPulbicMsg.do";
 
-    @Autowired
-    private BusUserService busUserService;
-
-    //    @RequestMapping( value = "/79B4DE7C/authorizeMember" )
-    public String userLogin( HttpServletRequest request, HttpServletResponse response, Map< String,Object > map ) throws Exception {
-	Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
-	Integer browser = CommonUtil.judgeBrowser( request );
-	Object uclogin = map.get( "uclogin" );
+    public String userLogin( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO ) throws Exception {
+	Integer busId = loginDTO.getBusId();
+	Integer browser = loginDTO.getBrowerType();
+	Integer uclogin = loginDTO.getUcLogin();
 
 	Member member = SessionUtils.getLoginMember( request );
 	if ( CommonUtil.isNotEmpty( member ) ) {
@@ -54,7 +49,6 @@ public class AuthorizeOrUcLoginController {
 	Map< String,Object > getWxPublicMap = new HashMap<>();
 	getWxPublicMap.put( "busId", busId );
 	//判断商家信息 1是否过期 2公众号是否变更过
-	//	System.out.println( "wxmpDomain = " + PropertiesUtil.getWxmpDomain() );
 	String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + GETWXPULICMSG, getWxPublicMap, wxmpSign );
 	JSONObject json = JSONObject.parseObject( wxpublic );
 	if ( CommonUtil.isEmpty( json ) || json.size() == 0 ) {
@@ -64,7 +58,7 @@ public class AuthorizeOrUcLoginController {
 	if ( code == 0 ) {
 	    Object guoqi = json.get( "guoqi" );
 	    if ( CommonUtil.isNotEmpty( guoqi ) ) {
-		throw new BusinessException( ResponseEnums.BUS_GUOQI_ERROR.getCode(), json.get( "guoqiUrl" ).toString() );
+		throw new BusinessException( ResponseEnums.BUS_GUOQI_ERROR.getCode(), ResponseEnums.BUS_GUOQI_ERROR.getDesc(), json.get( "guoqiUrl" ).toString() );
 	    }
 	    Object remoteUcLogin = json.get( "remoteUcLogin" );
 	    if ( browser == 99 && ( CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
@@ -74,10 +68,9 @@ public class AuthorizeOrUcLoginController {
 	}
 
 	String otherRedisKey = CommonUtil.getCode();
-	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
 	Map< String,Object > redisMap = new HashMap<>();
 	redisMap.put( "redisKey", otherRedisKey );
-	redisMap.put( "redisValue", requestUrl );
+	redisMap.put( "redisValue", loginDTO.getUrl().toString() );
 	redisMap.put( "setime", 5 * 60 );
 	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpSignKey() );
 
@@ -87,10 +80,8 @@ public class AuthorizeOrUcLoginController {
 	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
 	queryMap.put( "busId", busId );
 	queryMap.put( "uclogin", uclogin );
-	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(),
+	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
 			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap ) );
-	//	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap );
-	//	return url;
     }
 
 }
