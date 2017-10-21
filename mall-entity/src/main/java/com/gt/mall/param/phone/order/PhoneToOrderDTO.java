@@ -1,5 +1,6 @@
 package com.gt.mall.param.phone.order;
 
+import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderPifatSpecificaDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -47,5 +48,9 @@ public class PhoneToOrderDTO implements Serializable {
 
     @ApiModelProperty( name = "pufaSpecificaDTOList", value = "批发规格" )
     private List< PhoneShopCartOrderPifatSpecificaDTO > pufaSpecificaDTOList;
+
+    @ApiModelProperty( name = "loginDTO", value = "登陆参数 ", required = true )
+    @NotNull( message = "登陆参数不为空" )
+    private PhoneLoginDTO loginDTO;
 
 }

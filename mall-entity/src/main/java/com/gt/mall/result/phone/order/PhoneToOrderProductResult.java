@@ -43,16 +43,24 @@ public class PhoneToOrderProductResult implements Serializable {
 
     @ApiModelProperty( name = "productHyPrice", value = "商品会员价" )
     private double productHyPrice;
-    
+
     @ApiModelProperty( name = "productNum", value = "商品数量" )
     private int productNum;
 
-    //是否使用积分
+    //是否能使用积分
+    @ApiModelProperty( name = "isCanUseJifen", value = "是否能使用积分1 能使用 0不能使用" )
+    private int isCanUseJifen = 0;
 
-    //是否使用粉币
+    //是否能使用粉币
+    @ApiModelProperty( name = "isCanUseFenbi", value = "是否能使用粉币 1能使用" )
+    private int isCanUseFenbi = 0;
 
-    //是否使用优惠券
+    //是否能使用优惠券
+    @ApiModelProperty( name = "isCanUseYhq", value = "是否能使用优惠券 1能使用" )
+    private int isCanUseYhq = 0;
 
-    //是否使用
+    //是否能使用会员折扣
+    @ApiModelProperty( name = "isCanUseDiscount", value = "是否能使用会员折扣 1能使用" )
+    private int isCanUseDiscount = 0;
 
 }

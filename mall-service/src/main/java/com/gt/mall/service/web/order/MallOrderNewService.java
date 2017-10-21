@@ -4,6 +4,8 @@ import com.gt.entityBo.MallAllEntity;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.param.phone.order.PhoneToOrderDTO;
+import com.gt.mall.result.phone.order.PhoneToOrderResult;
 
 import java.util.List;
 import java.util.Map;
@@ -17,8 +19,6 @@ import java.util.Map;
  * @since 2017-07-20
  */
 public interface MallOrderNewService extends BaseService< MallOrder > {
-
-
 
     /**
      * 计算订单
@@ -44,5 +44,10 @@ public interface MallOrderNewService extends BaseService< MallOrder > {
      *
      * @return 支付地址
      */
-    String wxPayWay( double orderAllMoney, String orderNo, MallOrder order ,int orderPayWay) throws Exception;
+    String wxPayWay( double orderAllMoney, String orderNo, MallOrder order, int orderPayWay ) throws Exception;
+
+    /**
+     * 进入提交订单页面
+     */
+    PhoneToOrderResult toOrder( PhoneToOrderDTO params, Member member );
 }

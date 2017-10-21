@@ -17,10 +17,12 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.param.phone.order.PhoneToOrderDTO;
+import com.gt.mall.result.phone.order.PhoneToOrderMemberAddressResult;
+import com.gt.mall.result.phone.order.PhoneToOrderResult;
 import com.gt.mall.service.inter.member.MemberPayService;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.MemberAddressService;
-import com.gt.mall.service.inter.wxshop.PayService;
-import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.order.MallOrderNewService;
@@ -75,9 +77,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     @Autowired
     private MemberAddressService      memberAddressService;
     @Autowired
-    private WxPublicUserService       wxPublicUserService;
-    @Autowired
-    private PayService                payService;
+    private MemberService             memberService;
 
     @Override
     public MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList ) {
@@ -512,6 +512,57 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    }
 	}
 	return orderDetail;
+    }
+
+    /**
+     * 拼装会员地址返回值
+     *
+     * @param addressMap 查询的地址
+     *
+     * @return 地址
+     */
+    private PhoneToOrderMemberAddressResult getMemberAddressResult( Map addressMap ) {
+	if ( CommonUtil.isEmpty( addressMap ) )
+	    return null;
+	PhoneToOrderMemberAddressResult memberAddress = new PhoneToOrderMemberAddressResult();
+	memberAddress.setId( CommonUtil.toInteger( addressMap.get( "id" ) ) );
+	memberAddress.setMemberName( addressMap.get( "memName" ).toString() );
+	memberAddress.setMemberPhone( addressMap.get( "memPhone" ).toString() );
+	String address = addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
+			.get( "memAddress" ).toString();
+	if ( CommonUtil.isNotEmpty( addressMap.get( "memZipCode" ) ) ) {
+	    address += addressMap.get( "memZipCode" ).toString();
+	}
+	memberAddress.setMemberAddress( address );
+	return memberAddress;
+    }
+
+    @Override
+    public PhoneToOrderResult toOrder( PhoneToOrderDTO params, Member member ) {
+	PhoneToOrderResult result = new PhoneToOrderResult();
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+		//获取会员的默认地址
+		Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
+		PhoneToOrderMemberAddressResult memberAddress = getMemberAddressResult( addressMap );
+		if ( CommonUtil.isNotEmpty( memberAddress ) ) {
+		    result.setMemberAddressResult( memberAddress );
+		}
+	    }
+	}
+	if ( params.getType() == 1 && CommonUtil.isNotEmpty( params.getCartIds() ) ) {//购物车
+	    Map< String,Object > shopcartParams = new HashMap<>();
+	    shopcartParams.put( "checkIds", params.getCartIds().split( "," ) );
+	    List< Map< String,Object > > shopCartList = mallShopCartDAO.selectShopCartByCheckIds( shopcartParams );
+	    if ( shopCartList != null && shopCartList.size() > 0 ) {
+
+	    }
+	} else if ( CommonUtil.isNotEmpty( params.getProductId() ) ) {//立即购买
+
+	}
+
+	return null;
     }
 
 }

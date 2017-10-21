@@ -279,19 +279,16 @@
 
     <select id="selectShopCartByCheckIds" parameterType="Map" resultType="Map">
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,
-        a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`, e.image_url, d.return_day,d.pro_name,d.is_specifica AS isSpec,
-        d.is_coupons AS isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,
-        d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num, d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id AS flowId
+        a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
+        e.image_url,
+        d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons AS isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,
+        d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num, d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id AS flowId,d.user_id
         FROM
         (
-        SELECT distinct
-        a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
+        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
         a.`pro_type`,a.`sale_member_id`,a.`commission`
         FROM t_mall_shop_cart a
         <where>
-            <if test="id != null">
-                and a.id = #{id}
-            </if>
             <if test="checkIds != null">
                 <if test="checkIds.length == 1">
                     and a.id = #{checkIds[0] }
@@ -325,7 +322,6 @@
             </if>
 
         </where>
-        GROUP BY a.id
         ORDER BY a.shop_id
         ) a
         LEFT JOIN t_mall_product d ON a.product_id=d.id

@@ -8,10 +8,12 @@ import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.result.phone.PhoneCommonResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
@@ -71,6 +73,8 @@ public class PhonePageController {
     private WxShopService            wxShopService;
     @Autowired
     private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private MallCommonService        mallCommonService;
 
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -160,21 +164,26 @@ public class PhonePageController {
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
     @PostMapping( value = "79B4DE7C/getCustomer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse getCustomer( HttpServletRequest request, int shopId ) {
+    public ServerResponse< PhoneCommonResult > getCustomer( HttpServletRequest request, int shopId ) {
+	PhoneCommonResult result = new PhoneCommonResult();
 	try {
 	    MallStore store = mallStoreService.selectById( shopId );
 	    if ( CommonUtil.isNotEmpty( store ) ) {
 		if ( CommonUtil.isNotEmpty( store.getStoQqCustomer() ) ) {
-		    request.setAttribute( "qq", store.getStoQqCustomer() );
-		    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), store.getStoQqCustomer(), false );
+		    result.setQq( store.getStoQqCustomer() );
 		}
 	    }
+	    boolean isAdvert = mallCommonService.busIsAdvert( store.getStoUserId() );
+	    if ( isAdvert ) {
+		result.setIsAdvert( 1 );
+	    }
+
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的客服异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "获取商家的客服失败" );
 	}
-	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该店铺没有客服" );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     @ApiOperation( value = "获取店铺风格", notes = "获取店铺风格", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )

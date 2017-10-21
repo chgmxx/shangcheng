@@ -22,4 +22,12 @@ public interface MallCommonService {
      */
     boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo );
 
+    /**
+     * 判断商家是否有技术支持
+     *
+     * @param busId 商家id
+     *
+     * @return true 有
+     */
+    boolean busIsAdvert( int busId );
 }

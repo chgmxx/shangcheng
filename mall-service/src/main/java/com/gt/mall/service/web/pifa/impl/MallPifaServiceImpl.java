@@ -516,12 +516,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	} else if ( pifa.getStatus() == -1 ) {
 	    errorMsg = "该商品批发已结束，暂不能批发";
 	}
-	if ( pfStatus == -2 ) {
-	    errorMsg = "您还没申请批发商，是否前往我的批发进行申请";
-	} else if ( pfStatus == -1 ) {
-	    errorMsg = "您的批发商申请不通过,是否前往我的批发进行重新申请";
-	} else if ( pfStatus == 0 ) {
-	    errorMsg = "您的批发商申请在审核中请耐心等待1-3个工作日";
+	String msg = CommonUtil.getPifaErrorMsg( pfStatus );
+	if ( CommonUtil.isNotEmpty( msg ) ) {
+	    errorMsg = msg;
 	}
 	pifaResult.setPfErrorMsg( errorMsg );
 	result.setPifaResult( pifaResult );

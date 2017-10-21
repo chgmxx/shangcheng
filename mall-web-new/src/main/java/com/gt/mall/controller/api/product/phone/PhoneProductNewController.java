@@ -126,7 +126,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "商品搜索接口", notes = "搜索商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "79B4DE7C/productAll", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse productAll( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params ) {
+    public ServerResponse< Map< String,Object > > productAll( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params ) {
 	Map< String,Object > result = new HashMap<>();
 	Member member = SessionUtils.getLoginMember( request );
 	try {
@@ -173,6 +174,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		page = mallPifaService.searchPifaAll( params, member );
 	    }
 	    result.put( "productList", page );
+
 	} catch ( Exception e ) {
 	    logger.error( "商品搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
