@@ -49,6 +49,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     private MallOrderService     mallOrderService;
 
     @ApiOperation( value = "进入我的页面的接口", notes = "查询我的页面信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
     @PostMapping( value = "79B4DE7C/toUser", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneMemberResult > toUser( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {

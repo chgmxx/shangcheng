@@ -71,7 +71,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "进入提交订单页面的接口", notes = "提交订单页面的接口，查询商品信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "79B4DE7C/toOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< PhoneToOrderResult > toOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneToOrderDTO params ) {
+    public ServerResponse< PhoneToOrderResult > toOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneToOrderDTO params,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    int memberId = 0;
@@ -80,10 +81,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    }
 
 	    //封装登陆参数
-	    PhoneLoginDTO loginDTO = params.getLoginDTO();
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
-
 
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {

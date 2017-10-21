@@ -54,8 +54,4 @@ public class PhoneSearchProductDTO implements Serializable {
     @ApiModelProperty( name = "maxNum", value = "显示数量 ", hidden = true )
     private int maxNum;
 
-    @ApiModelProperty( name = "loginDTO", value = "登陆参数 ", required = true )
-    @NotNull( message = "登陆参数不为空" )
-    private PhoneLoginDTO loginDTO;
-
 }

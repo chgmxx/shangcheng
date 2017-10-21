@@ -127,7 +127,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "79B4DE7C/productAll", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > productAll( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params ) {
+		    @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	Member member = SessionUtils.getLoginMember( request );
 	try {
@@ -141,7 +141,6 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 		}
 		//封装登陆参数
-		PhoneLoginDTO loginDTO = params.getLoginDTO();
 		loginDTO.setUcLogin( 1 );//不需要登陆
 		userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
@@ -187,7 +186,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "79B4DE7C/getProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneProductDetailResult > getProduct( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params ) {
+		    @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	PhoneProductDetailResult result;
 	Member member = SessionUtils.getLoginMember( request );
 	try {
@@ -200,7 +199,6 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, params.getBusId(), request );
 	    loginMap.put( "uclogin", 1 );//不需要登陆
 
-	    PhoneLoginDTO loginDTO = params.getLoginDTO();
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
