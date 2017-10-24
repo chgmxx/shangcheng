@@ -436,7 +436,6 @@
         <if test="groupId != null and groupId != ''">
             LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
         </if>
-        /*LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0*/
         WHERE gb.is_delete=0 AND gb.is_use=1
         <if test="busId != null and busId != ''">
             and gb.user_id = #{busId}
@@ -478,7 +477,6 @@
         <if test="groupId != null and groupId != ''">
             LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
         </if>
-        /*LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0*/
         WHERE gb.is_delete=0 AND gb.is_use=1
         and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
         and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0

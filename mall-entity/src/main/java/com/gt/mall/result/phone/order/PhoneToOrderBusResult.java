@@ -22,10 +22,13 @@ public class PhoneToOrderBusResult implements Serializable {
     private static final long serialVersionUID = 1650253331649286295L;
 
     @ApiModelProperty( name = "busId", value = "商家id" )
-    private int busId;
+    private Integer busId;
 
     @ApiModelProperty( name = "busName", value = "商家名称" )
     private String busName;
+
+    @ApiModelProperty( name = "publicId", value = "公众号id" )
+    private Integer publicId;
 
     @ApiModelProperty( name = "busImageUrl", value = "商家头像" )
     private String busImageUrl;
