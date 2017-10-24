@@ -230,8 +230,9 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	    if ( product != null ) {
 
 		product.setProStockTotal( product.getProStockTotal() + productNum );//商品库存
-		if ( product.getProSaleTotal() - productNum > 0 )
+		if ( product.getProSaleTotal() - productNum > 0 ) {
 		    product.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
+		}
 		mallProductDAO.updateById( product );
 
 		//修改商品规格库存

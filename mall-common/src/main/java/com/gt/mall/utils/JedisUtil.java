@@ -371,8 +371,9 @@ public class JedisUtil {
 	try {
 	    pool = getPool();
 	    jedis = pool.getResource();
-	    if ( count == 10 )
+	    if ( count == 10 ) {
 		jedis.del( key );
+	    }
 	    jedis.lrem( key, count, value );
 	} catch ( Exception e ) {
 	    // 释放redis对象

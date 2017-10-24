@@ -230,12 +230,15 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    //获取商家的认证信息
 	    Map< String,Object > map = mallStoreCertificationService.getStoreServiceByShopId( params.getShopId(), params.getBusId() );
 	    if ( CommonUtil.isNotEmpty( map ) ) {
-		if ( CommonUtil.isNotEmpty( map.get( "stoType" ) ) )
+		if ( CommonUtil.isNotEmpty( map.get( "stoType" ) ) ) {
 		    result.setStoType( map.get( "stoType" ).toString() );
-		if ( CommonUtil.isNotEmpty( map.get( "categoryName" ) ) )
+		}
+		if ( CommonUtil.isNotEmpty( map.get( "categoryName" ) ) ) {
 		    result.setCategoryName( map.get( "categoryName" ).toString() );
-		if ( CommonUtil.isNotEmpty( map.get( "isSecuritytrade" ) ) )
+		}
+		if ( CommonUtil.isNotEmpty( map.get( "isSecuritytrade" ) ) ) {
 		    result.setSecuritytrade( Boolean.valueOf( map.get( "isSecuritytrade" ).toString() ) );
+		}
 	    }
 
 	} catch ( Exception e ) {

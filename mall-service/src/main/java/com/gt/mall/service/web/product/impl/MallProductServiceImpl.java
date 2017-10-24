@@ -634,7 +634,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    if ( !CommonUtil.isEmpty( params.get( "detail" ) ) ) {
 		MallProductDetail detail = JSONObject.parseObject( params.get( "detail" ).toString(), MallProductDetail.class );
 		detail.setProductId( product.getId() );
-		if ( detail != null ) mallProductDetailService.insert( detail );
+		if ( detail != null ) {
+		    mallProductDetailService.insert( detail );
+		}
 		//		    mallProductDetailDao.insert(detail);
 
 	    }
@@ -654,15 +656,21 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    Map< String,Object > specMap = new HashMap<>();
 	    // 批量添加商品规格
 	    if ( !CommonUtil.isEmpty( params.get( "speList" ) ) ) {
-		if ( params.get( "speList" ) != null ) specMap = mallProductSpecificaService.saveOrUpdateBatch( params.get( "speList" ), product.getId(), null, true );
+		if ( params.get( "speList" ) != null ) {
+		    specMap = mallProductSpecificaService.saveOrUpdateBatch( params.get( "speList" ), product.getId(), null, true );
+		}
 	    }
 	    // 批量添加商品库存
 	    if ( !CommonUtil.isEmpty( params.get( "invenList" ) ) ) {
-		if ( params.get( "invenList" ) != null ) mallProductInventoryService.saveOrUpdateBatch( specMap, params.get( "invenList" ), product.getId(), null );
+		if ( params.get( "invenList" ) != null ) {
+		    mallProductInventoryService.saveOrUpdateBatch( specMap, params.get( "invenList" ), product.getId(), null );
+		}
 	    }
 	    // 批量添加商品参数
 	    if ( !CommonUtil.isEmpty( params.get( "paramsList" ) ) ) {
-		if ( params.get( "paramsList" ) != null ) mallProductParamService.saveOrUpdateBatch( params.get( "paramsList" ), product.getId(), null, true );
+		if ( params.get( "paramsList" ) != null ) {
+		    mallProductParamService.saveOrUpdateBatch( params.get( "paramsList" ), product.getId(), null, true );
+		}
 	    }
 	}
 

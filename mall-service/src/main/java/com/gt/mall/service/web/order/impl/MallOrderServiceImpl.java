@@ -1927,7 +1927,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    MallProduct p = new MallProduct();
 		    p.setId( product.getId() );
 		    p.setProStockTotal( product.getProStockTotal() + productNum );//商品库存
-		    if ( product.getProSaleTotal() - productNum > 0 ) p.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
+		    if ( product.getProSaleTotal() - productNum > 0 ) {
+			p.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
+		    }
 		    mallProductDAO.updateById( p );
 		}
 
@@ -2407,8 +2409,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( orderStatus == 1 ) {
 	    state = "待付款";
 	} else if ( orderStatus == 2 ) {
-	    if ( order.getDeliveryMethod() == 1 ) state = "待发货";
-	    else if ( order.getDeliveryMethod() == 2 ) state = "待提货";
+	    if ( order.getDeliveryMethod() == 1 ) {
+		state = "待发货";
+	    } else if ( order.getDeliveryMethod() == 2 ) {
+		state = "待提货";
+	    }
 	    if ( orderPayWay == 5 ) {
 		state = "已付款";
 	    }
@@ -2535,7 +2540,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    createCell( row, 16, order.getOrderSellerRemark(), valueStyle );
 	    i++;
 	}
-	if ( order.getMallOrderDetail().size() < 1 && orderPayWay != 5 ) i++;
+	if ( order.getMallOrderDetail().size() < 1 && orderPayWay != 5 ) {
+	    i++;
+	}
 	return i;
     }
 

@@ -37,4 +37,5 @@ public interface MallCommonService {
      * 获取商家名称或商家头像
      */
     PhoneToOrderBusResult getBusUserNameOrImage( int busId );
+
 }

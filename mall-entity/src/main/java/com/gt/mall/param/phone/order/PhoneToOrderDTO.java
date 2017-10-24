@@ -48,7 +48,7 @@ public class PhoneToOrderDTO implements Serializable {
     private List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList;
 
     @ApiModelProperty( name = "toShop", value = "是否是到店购买 1到店购买 0 线上" )
-    private int toShop = 0;
+    private Integer toShop = 0;
 
     @ApiModelProperty( name = "ip", value = "粉丝的ip" )
     private String ip;

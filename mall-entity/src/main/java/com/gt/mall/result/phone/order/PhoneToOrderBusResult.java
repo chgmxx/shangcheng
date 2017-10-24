@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 商家（进入提交订单页面返回结果）
@@ -54,10 +55,31 @@ public class PhoneToOrderBusResult implements Serializable {
     @ApiModelProperty( name = "toOrderShopResultList", value = "店铺集合" )
     private List< PhoneToOrderShopResult > shopResultList;
 
-    //积分数量
+    @ApiModelProperty( name = "memberDiscount", value = "会员折扣数" )
+    private double memberDiscount = 0;
 
-    //
+    @ApiModelProperty( name = "jifenNum", value = "会员拥有的积分数量" )
+    private double jifenNum = 0;
 
-    //粉币
+    @ApiModelProperty( name = "jifenMoney", value = "积分数量抵扣的积分金额" )
+    private double jifenMoney = 0;
+
+    @ApiModelProperty( name = "fenbiNum", value = "粉币数量" )
+    private double fenbiNum = 0;
+
+    @ApiModelProperty( name = "fenbiMoney", value = "粉币数量抵扣的粉币金额" )
+    private double fenbiMoney = 0;
+
+    @ApiModelProperty( name = "memberPhone", value = "粉丝手机号码" )
+    private String memberPhone;
+
+    @ApiModelProperty( name = "duofenCardList", value = "多粉卡券集合" )
+    private List< Map > duofenCardList;
+
+    @ApiModelProperty( name = "wxCardList", value = "微信卡券集合" )
+    private List< Map > wxCardList;
+
+    @ApiModelProperty( name = "jifenFenbiRule", value = "积分粉币兑换规则" )
+    private Map jifenFenbiRule;
 
 }

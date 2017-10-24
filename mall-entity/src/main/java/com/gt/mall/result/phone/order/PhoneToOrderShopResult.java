@@ -24,6 +24,9 @@ public class PhoneToOrderShopResult implements Serializable {
     @ApiModelProperty( name = "shopId", value = "店铺id" )
     private int shopId;
 
+    @ApiModelProperty( name = "wxShopId", value = "微信门店id" )
+    private int wxShopId;
+
     @ApiModelProperty( name = "shopName", value = "店铺名称" )
     private String shopName;
 

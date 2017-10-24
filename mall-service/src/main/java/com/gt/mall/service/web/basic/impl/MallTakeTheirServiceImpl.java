@@ -251,7 +251,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsTakeTheir() ) ) {
 		if ( mallPaySet.getIsTakeTheir().toString().equals( "1" ) ) {// 允许买家上门自提
 		    if ( !userIdList.contains( mallPaySet.getUserId() ) ) {
-			userIdList.add( mallPaySet.getId() );
+			userIdList.add( mallPaySet.getUserId() );
 		    }
 		}
 	    }
@@ -260,7 +260,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	    return null;
 	}
 	Wrapper< MallTakeTheir > wrapper = new EntityWrapper<>();
-	wrapper.setSqlSelect( "count(t.id) as count,user_id" );
+	wrapper.setSqlSelect( "count(id) as count,user_id" );
 	wrapper.in( "user_id", userIdList ).andNew( "is_delete = 0" );
 	List< Map< String,Object > > mallTakeTheirList = mallTakeTheirDAO.selectMaps( wrapper );
 	if ( mallTakeTheirList == null || mallTakeTheirList.size() == 0 ) {

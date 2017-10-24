@@ -350,7 +350,9 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		String str = JedisUtil.maoget( key, field );
 		if ( CommonUtil.isNotEmpty( str ) ) {
 		    int invNum = CommonUtil.toInteger( str );
-		    if ( invNum > 0 ) seckill.setSNum( invNum );
+		    if ( invNum > 0 ) {
+			seckill.setSNum( invNum );
+		    }
 		}
 	    }
 
@@ -369,7 +371,9 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    field = seckill.getId() + "_" + price.getSpecificaIds();
 		    if ( CommonUtil.isNotEmpty( price.getSpecificaIds() ) && JedisUtil.hExists( key, field ) ) {
 			int invNum = CommonUtil.toInteger( JedisUtil.maoget( key, field ) );
-			if ( invNum > 0 ) price.setSeckillNum( invNum );
+			if ( invNum > 0 ) {
+			    price.setSeckillNum( invNum );
+			}
 		    }
 		    list.add( price );
 		}

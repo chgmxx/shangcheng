@@ -319,7 +319,21 @@ public class MemberServiceImpl implements MemberService {
 	params.put( "shopIds", shopIds );
 	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardAndShopIdsByMembeId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+	    Map cardMap = JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+	    if ( CommonUtil.isEmpty( cardMap ) ) {
+		return null;
+	    }
+	    if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
+		double discount = CommonUtil.toDouble( cardMap.get( "discount" ) ) / 10;
+		if ( CommonUtil.isNotEmpty( cardMap.get( "memberDate" ) ) && "1".equals( cardMap.get( "memberDate" ).toString() ) && CommonUtil
+				.isNotEmpty( cardMap.get( "memberDiscount" ) ) ) {//会员日
+		    discount = CommonUtil.toDouble( cardMap.get( "memberDiscount" ) ) / 10;
+
+		}
+		cardMap.put( "discount", discount );
+	    }
+
+	    return cardMap;
 	}
 	return null;
     }
@@ -352,6 +366,17 @@ public class MemberServiceImpl implements MemberService {
     public boolean updateUserConsume( Map< String,Object > params ) {
 	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateUserConsume" );
 	return result.get( "code" ).toString().equals( "1" );
+    }
+
+    @Override
+    public Map jifenAndFenbiRule( int busId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "busId", busId );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "jifenAndFenbiRule" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    return JSONObject.parseObject( data, Map.class );
+	}
+	return null;
     }
 
 }

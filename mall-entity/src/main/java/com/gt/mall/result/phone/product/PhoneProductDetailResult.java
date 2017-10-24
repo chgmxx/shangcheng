@@ -77,6 +77,9 @@ public class PhoneProductDetailResult implements Serializable {
     @ApiModelProperty( name = "shopAddress", value = "店铺地址" )
     private String shopAddress;
 
+    @ApiModelProperty( name = "memberAddress", value = "会员的默认地址" )
+    private String memberAddress;
+
     @ApiModelProperty( name = "isCollect", value = "是否已收藏  1已收藏" )
     private int isCollect;
 

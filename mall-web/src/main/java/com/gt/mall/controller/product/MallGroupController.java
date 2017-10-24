@@ -106,8 +106,9 @@ public class MallGroupController extends BaseController {
 		    MallGroup group = mallGroupService.findGroupById( CommonUtil
 				    .toInteger( params.get( "id" ) ) );
 		    if ( group != null ) {
-			if ( group.getGroupPId() != null && group.getGroupPId() > 0 )
+			if ( group.getGroupPId() != null && group.getGroupPId() > 0 ) {
 			    groupId = group.getGroupPId();
+			}
 		    }
 		    request.setAttribute( "group", group );
 

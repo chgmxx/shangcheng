@@ -203,4 +203,11 @@ public interface MemberService {
      */
     boolean updateUserConsume( Map< String,Object > params );
 
+    /**
+     * 查询商家的积分和粉币规则
+     * @param busId 商家id
+     * @return 积分和粉币规则
+     */
+    Map jifenAndFenbiRule(int busId);
+
 }

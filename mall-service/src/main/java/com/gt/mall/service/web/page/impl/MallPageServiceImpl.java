@@ -1158,7 +1158,9 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	String key = Constants.REDIS_KEY + "member_ip";
 	if ( JedisUtil.exists( key ) ) {
 	    Object value = JedisUtil.get( key );
-	    if ( CommonUtil.isNotEmpty( value ) ) return value.toString();
+	    if ( CommonUtil.isNotEmpty( value ) ) {
+		return value.toString();
+	    }
 	}
 	String logCity;
 	try {

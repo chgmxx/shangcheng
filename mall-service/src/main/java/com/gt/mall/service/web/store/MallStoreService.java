@@ -130,6 +130,16 @@ public interface MallStoreService extends BaseService< MallStore > {
     List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request );
 
     /**
+     * 根据商家id和店铺id集合查询商品店铺信息
+     *
+     * @param userId     商家id
+     * @param shopIdList 商家店铺id集合
+     *
+     * @return 店铺信息
+     */
+    List< Map< String,Object > > findShopByUserIdAndShops( int userId, List< Integer > shopIdList );
+
+    /**
      * 查询商家的所有店铺（已删除的店铺也查出来了）
      *
      * @param userId  商家id

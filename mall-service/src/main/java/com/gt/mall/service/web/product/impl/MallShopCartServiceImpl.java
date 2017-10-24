@@ -136,8 +136,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    int num = Integer.parseInt( map3.get( "product_num" ).toString() );
 
 		    String product_specificas = "";
-		    if ( CommonUtil.isNotEmpty( map3.get( "product_specificas" ) ) )
+		    if ( CommonUtil.isNotEmpty( map3.get( "product_specificas" ) ) ) {
 			product_specificas = map3.get( "product_specificas" ).toString();
+		    }
 		    if ( CommonUtil.isNotEmpty( map3.get( "pro_weight" ) ) ) {
 			pro_weight += CommonUtil.toDouble( map3.get( "pro_weight" ) );
 		    }

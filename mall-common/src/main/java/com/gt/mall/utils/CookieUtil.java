@@ -28,7 +28,9 @@ public class CookieUtil {
 		Cookie cookie = new Cookie(name,value);
 	    cookie.setPath("/");
 	   /* cookie.setDomain(".yifriend.net");*/
-	    if(maxAge>0)  cookie.setMaxAge(maxAge);
+	    if(maxAge>0) {
+		cookie.setMaxAge( maxAge );
+	    }
 	    response.addCookie(cookie);
 	}
 	

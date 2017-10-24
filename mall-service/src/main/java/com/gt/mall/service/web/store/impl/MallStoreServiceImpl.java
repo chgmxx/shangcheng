@@ -418,6 +418,30 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     }
 
     @Override
+    public List< Map< String,Object > > findShopByUserIdAndShops( int userId, List< Integer > shopIdList ) {
+	List< Map< String,Object > > storeList = findShopByUserId( userId, null );
+	if ( storeList != null && shopIdList.size() > 0 && storeList != null && storeList.size() > 0 ) {
+	    List< Map< String,Object > > removeList = new ArrayList<>();
+	    for ( Map< String,Object > storeMap : storeList ) {
+		boolean errorFlag = false;
+		for ( Integer shopId : shopIdList ) {
+		    if ( CommonUtil.toString( storeMap.get( "id" ) ).equals( shopId.toString() ) ) {
+			errorFlag = true;
+			break;
+		    }
+		}
+		if ( !errorFlag ) {
+		    removeList.add( storeMap );
+		}
+	    }
+	    if ( removeList != null && removeList.size() > 0 ) {
+		storeList.removeAll( removeList );
+	    }
+	}
+	return storeList;
+    }
+
+    @Override
     public List< Map< String,Object > > findShopByUserId( int userId, HttpServletRequest request ) {
 	List< Integer > wxShopIds = new ArrayList<>();
 

@@ -258,6 +258,12 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		//获取会员的默认地址
 		Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
 		if ( CommonUtil.isNotEmpty( addressMap ) ) {
+		    String address = addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
+				    .get( "memAddress" ).toString();
+		    if ( CommonUtil.isNotEmpty( addressMap.get( "memZipCode" ) ) ) {
+			address += addressMap.get( "memZipCode" ).toString();
+		    }
+		    result.setMemberAddress( address );
 		    provinces = addressMap.get( "memProvince" ).toString();
 		    memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
 		    memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );

@@ -155,11 +155,13 @@ public class CommonUtil {
 	return null;
     }
 
+    private static Pattern pattern = Pattern.compile( "^[-\\+]?[\\d]*$" );
+
     /**
      * 是否为正整数
      */
     public static boolean isInteger( String str ) {
-	Pattern pattern = Pattern.compile( "^[-\\+]?[\\d]*$" );
+
 	return pattern.matcher( str ).matches();
     }
 
@@ -582,14 +584,19 @@ public class CommonUtil {
     }
 
     /**
+     * 手机号码验证正则表达式
+     */
+    private static Pattern phonePattern = Pattern.compile( "(^(13[0123456789][0-9]{8}|15[0123456789][0-9]{8}|18[0123456789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$)" );
+
+    /**
      * 手机号验证
      */
     public static boolean isPhone( String phone ) {
 	if ( StringUtils.isEmpty( phone ) ) {
 	    return false;
 	}
-	Pattern pattern = Pattern.compile( "(^(13[0123456789][0-9]{8}|15[0123456789][0-9]{8}|18[0123456789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$)" );
-	Matcher matcher = pattern.matcher( phone );
+
+	Matcher matcher = phonePattern.matcher( phone );
 	return matcher.matches();
     }
 

@@ -76,10 +76,6 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
-	    int memberId = 0;
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		memberId = member.getId();
-	    }
 
 	    //封装登陆参数
 	    loginDTO.setUcLogin( 1 );//不需要登陆

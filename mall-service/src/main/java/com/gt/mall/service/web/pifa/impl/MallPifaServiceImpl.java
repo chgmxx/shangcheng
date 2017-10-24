@@ -138,10 +138,12 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		String str = JedisUtil.maoget( key, member_id );
 		if ( CommonUtil.isNotEmpty( str ) ) {
 		    JSONObject orderObj = JSONObject.fromObject( str );
-		    if ( CommonUtil.isNotEmpty( orderObj.get( "num" ) ) )
+		    if ( CommonUtil.isNotEmpty( orderObj.get( "num" ) ) ) {
 			obj.put( "num", orderObj.get( "num" ) );
-		    if ( CommonUtil.isNotEmpty( orderObj.get( "proPrice" ) ) )
+		    }
+		    if ( CommonUtil.isNotEmpty( orderObj.get( "proPrice" ) ) ) {
 			obj.put( "money", orderObj.get( "proPrice" ) );
+		    }
 		}
 	    }
 

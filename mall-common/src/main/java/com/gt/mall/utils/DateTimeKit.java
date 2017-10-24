@@ -883,7 +883,9 @@ public class DateTimeKit {
      * @return 大于或等于当前时间返回true其他返回false
      */
     public static boolean laterThanNow(String sDate) {
-        if (StringUtils.isEmpty(sDate) || sDate.length() != 14) return false;
+        if (StringUtils.isEmpty(sDate) || sDate.length() != 14) {
+	    return false;
+	}
         Calendar calendar0 = Calendar.getInstance(Locale.CHINESE);
         calendar0.set(Integer.parseInt(sDate.substring(0, 4)), Integer.parseInt(sDate.substring(4, 6)) - 1, Integer.parseInt(sDate.substring(6, 8)), Integer.parseInt(sDate.substring(8, 10)), Integer.parseInt(sDate.substring(10, 12)), Integer.parseInt(sDate.substring(10, 12)));
         Calendar calendar = Calendar.getInstance(Locale.CHINESE);
