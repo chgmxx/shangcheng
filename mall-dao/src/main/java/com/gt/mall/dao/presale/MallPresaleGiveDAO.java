@@ -1,9 +1,11 @@
 package com.gt.mall.dao.presale;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -21,4 +23,18 @@ public interface MallPresaleGiveDAO extends BaseMapper< MallPresaleGive > {
      * @return
      */
     List<MallPresaleGive> selectByUserId(Integer userId);
+
+    /**
+     * 统计预售送礼的数量
+     * @param params
+     * @return
+     */
+    int selectByCount(Map<String, Object> params);
+
+    /**
+     * 分页查询预售送礼
+     * @param params
+     * @return
+     */
+    List<MallPresaleGive > selectByPage(Map<String, Object> params);
 }

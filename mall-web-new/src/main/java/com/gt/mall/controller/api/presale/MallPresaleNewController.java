@@ -14,16 +14,21 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
+import com.gt.mall.service.web.presale.MallPresaleGiveService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.SessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,6 +53,8 @@ public class MallPresaleNewController extends BaseController {
     private MallStoreService          mallStoreService;
     @Autowired
     private MallPresaleService        mallPresaleService;
+    @Autowired
+    private MallPresaleGiveService    mallPresaleGiveService;
     @Autowired
     private MallPresaleDepositService mallPresaleDepositService;
     @Autowired
@@ -214,6 +221,8 @@ public class MallPresaleNewController extends BaseController {
 		PageUtil page = mallPresaleDepositService.selectPresaleByShopId( params, shoplist );
 		result.put( "page", page );
 	    }
+	    result.put( "busId", user.getId() );
+	    result.put( "alipayUrl", PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refund.do" );
 	} catch ( Exception e ) {
 	    logger.error( "获取拍卖定金管理列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -285,26 +294,47 @@ public class MallPresaleNewController extends BaseController {
     /********************************预售送礼设置*******************************************/
 
     /**
-     * 获取预售送礼设置信息
+     * 获取预售送礼设置列表
      */
-    @ApiOperation( value = "获取预售送礼设置信息", notes = "获取预售送礼设置信息" )
+    @ApiOperation( value = "获取预售送礼设置列表", notes = "获取预售送礼设置列表" )
     @ResponseBody
-    @RequestMapping( value = "/give/giveInfo", method = RequestMethod.POST )
-    public ServerResponse giveInfo( HttpServletRequest request, HttpServletResponse response ) {
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
+    @RequestMapping( value = "/give/list", method = RequestMethod.POST )
+    public ServerResponse giveInfo( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
-	    List< MallPresaleGive > giveList = mallPresaleService.selectGiveByUserId( user );
-	    List< Map > list = dictService.getDict( "1143" );
-	    result.put( "dictList", list );
-	    result.put( "giveList", giveList );
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "curPage", curPage );
+	    params.put( "userId", user.getId() );
+	    PageUtil giveList = mallPresaleService.selectPageGiveByUserId( params );
+
+	    result.put( "page", giveList );
 
 	} catch ( Exception e ) {
-	    logger.error( "获取预售送礼设置异常：" + e.getMessage() );
+	    logger.error( "获取预售送礼设置列表异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售送礼设置异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售送礼设置列表异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+    }
+
+    /**
+     * 获取预售送礼礼品类型
+     */
+    @ApiOperation( value = "获取预售送礼礼品类型", notes = "获取预售送礼礼品类型" )
+    @ResponseBody
+    @RequestMapping( value = "/give/dictList", method = RequestMethod.POST )
+    public ServerResponse dictList( HttpServletRequest request, HttpServletResponse response ) {
+	List< Map > list = null;
+	try {
+	    list = dictService.getDict( "1143" );
+	} catch ( Exception e ) {
+	    logger.error( "获取预售送礼礼品类型异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售送礼礼品类型异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list );
     }
 
     /**
@@ -320,7 +350,7 @@ public class MallPresaleNewController extends BaseController {
 	    int code = -1;// 编辑成功
 	    Integer userId = SessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
-		code = mallPresaleService.newEditPresaleSet( params, userId );// 编辑商品
+		code = mallPresaleService.newEditOnePresaleSet( params, userId );// 编辑商品
 	    }
 	    if ( code <= 0 ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售送礼设置失败" );
@@ -329,6 +359,31 @@ public class MallPresaleNewController extends BaseController {
 	    logger.error( "保存预售送礼设置异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "保存预售送礼设置异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
+
+    /**
+     * 删除预售送礼
+     */
+    @ApiOperation( value = "删除预售送礼", notes = "删除预售送礼" )
+    @ResponseBody
+    @RequestMapping( value = "/give/delete", method = RequestMethod.POST )
+    public ServerResponse giveDelete( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "预售送礼ID", required = true ) @RequestParam Integer id ) {
+	try {
+
+	    MallPresaleGive give = new MallPresaleGive();
+	    give.setId( id );
+	    give.setIsDelete( 1 );
+	    boolean code = mallPresaleGiveService.updateById( give );
+	    if ( !code ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售送礼设置失败" );
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "保存预售送礼设置异常：" + e.getMessage() );
 	    e.printStackTrace();
