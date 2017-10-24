@@ -552,6 +552,26 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	return mallPresaleGiveDAO.selectByUserId( user.getId() );
     }
 
+    @Override
+    public PageUtil selectPageGiveByUserId( Map< String,Object > params ) {
+	int pageSize = 10;
+
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	params.put( "curPage", curPage );
+	int count = mallPresaleGiveDAO.selectByCount( params );
+
+	PageUtil page = new PageUtil( curPage, pageSize, count, "mPresale/give/index.do" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	params.put( "firstNum", firstNum );// 起始页
+	params.put( "maxNum", pageSize );// 每页显示商品的数量
+	if ( count > 0 ) {// 判断预售送礼是否有数据
+	    List< MallPresaleGive > presaleList = mallPresaleGiveDAO.selectByPage( params );
+	    page.setSubList( presaleList );
+	}
+
+	return page;
+    }
+
     @SuppressWarnings( { "unchecked", "deprecation" } )
     @Override
     @Transactional( rollbackFor = Exception.class )
@@ -630,13 +650,46 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    }
 		}
 	    }
-	    //删除预售送礼
-	    if ( presaleGives != null && presaleGives.size() > 0 ) {
-		for ( MallPresaleGive presaleGive : presaleGives ) {
-		    presaleGive.setIsDelete( 1 );
-		    mallPresaleGiveDAO.updateById( presaleGive );
+
+	    if ( num > 0 ) {
+		code = 1;
+		if ( fenbiFlag ) {
+		    saveRenbiFlowRecord( userId );
 		}
+
 	    }
+	}
+
+	//删除预售送礼
+	if ( presaleGives != null && presaleGives.size() > 0 ) {
+	    for ( MallPresaleGive presaleGive : presaleGives ) {
+		presaleGive.setIsDelete( 1 );
+		mallPresaleGiveDAO.updateById( presaleGive );
+	    }
+	}
+	return code;
+    }
+
+    @SuppressWarnings( { "unchecked", "deprecation" } )
+    @Override
+    @Transactional( rollbackFor = Exception.class )
+    public int newEditOnePresaleSet( Map< String,Object > params, int userId ) {
+	int num = 0;
+	int code = -1;
+	boolean fenbiFlag = false;
+
+	if ( CommonUtil.isNotEmpty( params.get( "presaleSet" ) ) ) {
+	    MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
+	    if ( CommonUtil.isNotEmpty( give.getId() ) ) {
+		num = mallPresaleGiveDAO.updateById( give );
+	    } else {
+		give.setUserId( userId );
+		num = mallPresaleGiveDAO.insert( give );
+	    }
+	    if ( give.getGiveType() == 2 ) {
+		fenbiFlag = true;
+	    }
+
 	    if ( num > 0 ) {
 		code = 1;
 		if ( fenbiFlag ) {

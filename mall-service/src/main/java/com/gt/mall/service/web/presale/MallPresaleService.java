@@ -103,14 +103,23 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     List< MallPresaleGive > selectGiveByUserId( BusUser user );
 
     /**
+     * 获取送礼设置列表
+     */
+    PageUtil selectPageGiveByUserId( Map< String,Object > params);
+
+    /**
      * 编辑预售设置
      */
     int editPresaleSet( Map< String,Object > params, int userId );
 
     /**
-     * 编辑预售设置
+     * 编辑预售设置(全部)
      */
     int newEditPresaleSet( Map< String,Object > params, int userId );
+    /**
+     * 编辑预售设置(单个)
+     */
+    int newEditOnePresaleSet( Map< String,Object > params, int userId );
 
     /**
      * 发货实体物品
@@ -153,7 +162,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 2 判断购买的规格是否允许参团
      * 3 判断限购
      *
-     * @param presaleId   预售id
+     * @param presaleId    预售id
      * @param invId        库存id
      * @param productNum   商品数量
      * @param memberId     粉丝id
