@@ -4,6 +4,7 @@ import com.gt.entityBo.MallAllEntity;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.bean.Member;
 import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderDTO;
 import com.gt.mall.result.phone.order.PhoneToOrderResult;
 
@@ -49,5 +50,5 @@ public interface MallOrderNewService extends BaseService< MallOrder > {
     /**
      * 进入提交订单页面
      */
-    PhoneToOrderResult toOrder( PhoneToOrderDTO params, Member member );
+    PhoneToOrderResult toOrder( PhoneToOrderDTO params, Member member, PhoneLoginDTO loginDTO);
 }

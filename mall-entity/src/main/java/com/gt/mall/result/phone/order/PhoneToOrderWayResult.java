@@ -26,13 +26,9 @@ public class PhoneToOrderWayResult implements Serializable {
     @ApiModelProperty( name = "wayName", value = "支付方式名称" )
     private String wayName;
 
-    @ApiModelProperty( name = "isDefault", value = "是否是默认" )
-    private int isDefault;
-
-    public PhoneToOrderWayResult( int way, String wayName, int isDefault ) {
+    public PhoneToOrderWayResult( int way, String wayName ) {
 	this.way = way;
 	this.wayName = wayName;
-	this.isDefault = isDefault;
     }
 
     public PhoneToOrderWayResult() {

@@ -15,8 +15,6 @@ import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.basic.MallTakeTheirTime;
-import com.gt.mall.entity.freight.MallFreightDetail;
-import com.gt.mall.entity.freight.MallFreightProvinces;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.utils.CommonUtil;
@@ -25,10 +23,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -244,6 +239,43 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	    }
 	}
 	return false;
+    }
+
+    @Override
+    public List< Map< String,Object > > isTakeTheirByUserIdList( List< MallPaySet > setList ) {
+	if ( setList == null || setList.size() == 0 ) {
+	    return null;
+	}
+	List< Integer > userIdList = new ArrayList<>();
+	for ( MallPaySet mallPaySet : setList ) {
+	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsTakeTheir() ) ) {
+		if ( mallPaySet.getIsTakeTheir().toString().equals( "1" ) ) {// 允许买家上门自提
+		    if ( !userIdList.contains( mallPaySet.getUserId() ) ) {
+			userIdList.add( mallPaySet.getId() );
+		    }
+		}
+	    }
+	}
+	if ( userIdList.size() == 0 ) {
+	    return null;
+	}
+	Wrapper< MallTakeTheir > wrapper = new EntityWrapper<>();
+	wrapper.setSqlSelect( "count(t.id) as count,user_id" );
+	wrapper.in( "user_id", userIdList ).andNew( "is_delete = 0" );
+	List< Map< String,Object > > mallTakeTheirList = mallTakeTheirDAO.selectMaps( wrapper );
+	if ( mallTakeTheirList == null || mallTakeTheirList.size() == 0 ) {
+	    return null;
+	}
+	List< Map< String,Object > > list = new ArrayList<>();
+	for ( Map< String,Object > map : mallTakeTheirList ) {
+	    if ( CommonUtil.isNotEmpty( map.get( "count" ) ) ) {
+		if ( Integer.valueOf( map.get( "count" ).toString() ) > 0 ) {
+		    list.add( map );
+		}
+	    }
+	}
+	return list;
+
     }
 
     @Override

@@ -64,6 +64,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 	PhoneToOrderBusResult busResult = new PhoneToOrderBusResult();
 	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( busId );//查询公众号信息
 	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+	    busResult.setPublicId( wxPublicUsers.getId() );//公众号id
 	    busResult.setBusName( wxPublicUsers.getAuthorizerInfo() );//公众号名称
 	    busResult.setBusImageUrl( wxPublicUsers.getHeadImg() );//公众号头像
 	}

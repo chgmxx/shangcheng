@@ -2,6 +2,8 @@ package com.gt.mall.service.web.basic.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -164,5 +167,13 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 	MallPaySet set = new MallPaySet();
 	set.setUserId( busId );
 	return paySetDAO.selectOne( set );
+    }
+
+    @Override
+    public List< MallPaySet > selectByUserIdList( List< Integer > busIdList ) {
+	Wrapper< MallPaySet > wrapper = new EntityWrapper<>();
+	wrapper.in( "user_id", busIdList );
+
+	return paySetDAO.selectList( wrapper );
     }
 }
