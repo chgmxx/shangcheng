@@ -85,7 +85,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    PhoneToOrderResult result = mallOrderNewService.toOrder( params, member );
+	    PhoneToOrderResult result = mallOrderNewService.toOrder( params, member, loginDTO );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( BusinessException e ) {
