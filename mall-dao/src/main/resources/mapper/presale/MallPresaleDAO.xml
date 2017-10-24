@@ -169,8 +169,8 @@
             FROM t_mall_presale b
             LEFT JOIN t_mall_product p ON b.product_id = p.id
             LEFT JOIN ( SELECT ass_id, image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
-            LEFT JOIN ( SELECT product_id, specifica_img_id, inv_num, inv_price, id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0) D ON b.product_id= D.product_id
-            LEFT JOIN t_mall_product_specifica e ON D.specifica_img_id=e.id
+            LEFT JOIN ( SELECT product_id, specifica_img_id, inv_num, inv_price, id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0) d ON b.product_id= d.product_id
+            LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
             WHERE b.id = #{id}
     </select>
 

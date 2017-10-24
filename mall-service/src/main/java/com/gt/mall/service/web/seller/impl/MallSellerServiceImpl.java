@@ -323,6 +323,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "sellerSet" ) ) ) {
 	    MallSellerSet sellerSet = (MallSellerSet) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "sellerSet" ).toString() ), MallSellerSet.class );
+	    sellerSet.setSellerRemark( CommonUtil.urlEncode( sellerSet.getSellerRemark() ) );
 	    if ( CommonUtil.isEmpty( sellerSet.getId() ) ) {
 		//判断用户是否已经保存了功能设置
 		MallSellerSet set = mallSellerSetDAO.selectByBusUserId( busUserId );
