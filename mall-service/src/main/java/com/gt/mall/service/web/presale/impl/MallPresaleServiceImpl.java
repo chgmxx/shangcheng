@@ -405,6 +405,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( CommonUtil.isEmpty( presale ) ) {
 	    return result;
 	}
+	result.setActivityTimes( presale.getTimes() );
 	PhonePresaleProductDetailResult presaleResult = new PhonePresaleProductDetailResult();
 	result.setActivityId( presale.getId() );
 	result.setActivityStatus( presale.getStatus() );

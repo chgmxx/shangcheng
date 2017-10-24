@@ -510,6 +510,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	if ( pifa == null ) {
 	    return result;
 	}
+	result.setActivityTimes( pifa.getTimes() );
 	result.setActivityStatus( pifa.getStatus() );
 	int pfStatus = mallPifaApplyService.getPifaApplay( member, mallPaySet );
 	pifaResult.setPfStatus( pfStatus );//批发状态

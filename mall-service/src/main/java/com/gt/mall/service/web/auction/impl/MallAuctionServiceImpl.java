@@ -522,6 +522,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	if ( CommonUtil.isEmpty( auction ) ) {
 	    return result;
 	}
+	result.setActivityTimes( auction.getTimes() );
 	result.setActivityId( auction.getId() );
 	result.setActivityStatus( auction.getStatus() );
 	result.setProductPrice( auction.getNowPrice() );

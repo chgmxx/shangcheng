@@ -777,6 +777,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 			    if ( fenbiProductMoney < 10 ) {
 				fenbiProductMoney = 10;
 			    }
+			    double fenbiMoney = fenbiProductMoney/10;
 			    busResult.setFenbiNum( CommonUtil.multiply( fenbiRatio, fenbiProductMoney ) );
 			    busResult.setFenbiMoney( fenbiProductMoney );
 			}

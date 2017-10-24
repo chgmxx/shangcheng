@@ -443,6 +443,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	if ( CommonUtil.isEmpty( groupBuy ) ) {
 	    return result;
 	}
+	result.setActivityTimes( groupBuy.getTimes() );
 	result.setActivityId( groupBuy.getId() );//活动id
 	if ( CommonUtil.isNotEmpty( groupBuy.getGMaxBuyNum() ) && groupBuy.getGMaxBuyNum() > 0 ) {
 	    result.setMaxBuyNum( groupBuy.getGMaxBuyNum() );//限购

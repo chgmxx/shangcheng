@@ -120,6 +120,9 @@ public class PhoneProductDetailResult implements Serializable {
     @ApiModelProperty( name = "activityStatus", value = "活动状态 0未开始 1进行中 -1已结束" )
     private Integer activityStatus;
 
+    @ApiModelProperty( name = "activityTimes", value = "活动倒计时时间" )
+    private Long activityTimes;
+
     /*********************************** 以下参数团购商品需要 ***********************************/
 
     @ApiModelProperty( name = "joinList", value = "参团集合" )

@@ -394,6 +394,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	if ( seckill == null ) {
 	    return result;
 	}
+	result.setActivityTimes( seckill.getTimes() );
 	result.setActivityId( seckill.getId() );
 	if ( CommonUtil.isNotEmpty( seckill.getSMaxBuyNum() ) && seckill.getSMaxBuyNum() > 0 ) {
 	    result.setMaxBuyNum( seckill.getSMaxBuyNum() );//限购

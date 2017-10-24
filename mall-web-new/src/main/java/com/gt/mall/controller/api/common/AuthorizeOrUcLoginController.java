@@ -61,7 +61,7 @@ public class AuthorizeOrUcLoginController {
 		throw new BusinessException( ResponseEnums.BUS_GUOQI_ERROR.getCode(), ResponseEnums.BUS_GUOQI_ERROR.getDesc(), json.get( "guoqiUrl" ).toString() );
 	    }
 	    Object remoteUcLogin = json.get( "remoteUcLogin" );
-	    if ( browser == 99 && ( CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
+	    if ( browser == 99 && ( ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
 		return null;
 	    }
 
@@ -79,7 +79,10 @@ public class AuthorizeOrUcLoginController {
 	queryMap.put( "browser", browser );
 	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
 	queryMap.put( "busId", busId );
-	queryMap.put( "uclogin", uclogin );
+	if ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) {
+	    queryMap.put( "uclogin", uclogin );
+	}
+	logger.info( " ResponseEnums.NEED_LOGIN.getCode()" + ResponseEnums.NEED_LOGIN.getCode() );
 	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
 			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap ) );
     }
