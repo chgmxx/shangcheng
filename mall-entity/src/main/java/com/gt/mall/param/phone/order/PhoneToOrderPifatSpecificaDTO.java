@@ -16,11 +16,8 @@ import lombok.Setter;
 @Setter
 public class PhoneToOrderPifatSpecificaDTO {
 
-    @ApiModelProperty( name = "productId", value = "商品id" )
-    private int productId;
-
     @ApiModelProperty( name = "specificaValueIds", value = "规格值id" )
-    private String[] specificaValueIds;
+    private String specificaValueIds;
 
     @ApiModelProperty( name = "productNum", value = "商品数量" )
     private int productNum;

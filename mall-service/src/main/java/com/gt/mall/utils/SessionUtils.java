@@ -38,11 +38,10 @@ public class SessionUtils {
 
     }
 
-
     /*
       存入 用户bus_user  的值
      */
-   public static void setLoginUser( HttpServletRequest request, BusUser busUser ) {
+    public static void setLoginUser( HttpServletRequest request, BusUser busUser ) {
 	try {
 	    request.getSession().setAttribute( Constants.SESSION_BUSINESS_KEY, JSONObject.toJSON( busUser ) );
 	} catch ( Exception e ) {
@@ -144,6 +143,9 @@ public class SessionUtils {
      * @param num    门店数量
      */
     public static void setWxShopNumBySession( int userId, int num, HttpServletRequest request ) {
+	if ( CommonUtil.isEmpty( request ) ) {
+	    return;
+	}
 	String sessionKey = Constants.SESSION_KEY + "wx_shop_num" + userId;
 	request.getSession().setAttribute( sessionKey, num );
     }
@@ -156,6 +158,9 @@ public class SessionUtils {
      * @return 门店忽略
      */
     public static int getWxShopNumBySession( int userId, HttpServletRequest request ) {
+	if ( CommonUtil.isEmpty( request ) ) {
+	    return 0;
+	}
 	String sessionKey = Constants.SESSION_KEY + "wx_shop_num" + userId;
 	Object object = request.getSession().getAttribute( sessionKey );
 	if ( CommonUtil.isNotEmpty( object ) ) {

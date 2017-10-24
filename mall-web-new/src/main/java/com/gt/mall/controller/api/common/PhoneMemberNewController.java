@@ -14,6 +14,7 @@ import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.SessionUtils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +34,7 @@ import java.util.Map;
  *
  * @author Administrator
  */
+@Api( value = "phoneMember", description = "我的页面接口（手机端）", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
 @Controller
 @RequestMapping( "phoneMember" )
 public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
@@ -53,15 +55,18 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "79B4DE7C/toUser", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneMemberResult > toUser( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
+	    PhoneMemberResult result = new PhoneMemberResult();
 	    Member member = SessionUtils.getLoginMember( request );
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    if(CommonUtil.isNotEmpty( loginDTO.getBusId() ) && loginDTO.getBusId() > 0){
+		result.setBusId( loginDTO.getBusId() );
+	    }
 
 	    int pfStatus = -2;
 	    int sellerStatus = -2;
 	    double minCosumeMoney = -1;
 	    double consumeMoney = -1;
-	    PhoneMemberResult result = new PhoneMemberResult();
 
 	    MallPaySet set = mallPaySetService.selectByMember( member );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
@@ -104,6 +109,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	    int saleMemberId = mallSellerService.getSaleMemberIdByRedis( member, 0, request, loginDTO.getBusId() );
 	    result.setSaleMemberId( saleMemberId );
 
+	    result.setBusId( loginDTO.getBusId() );
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
 	} catch ( BusinessException e ) {
 	    logger.error( "进入我的页面的异常：" + e.getMessage() );

@@ -680,7 +680,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	    }
 	    if ( CommonUtil.isEmpty( userName ) ) {
 		BusUser user = busUserService.selectById( busId );//查询商家信息
-		userName = user.getName();
+		if ( CommonUtil.isNotEmpty( user ) ) {
+		    userName = user.getName();
+		}
 	    }
 	}
 	//获取会员折扣

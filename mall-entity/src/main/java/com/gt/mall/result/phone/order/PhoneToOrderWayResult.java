@@ -29,4 +29,12 @@ public class PhoneToOrderWayResult implements Serializable {
     @ApiModelProperty( name = "isDefault", value = "是否是默认" )
     private int isDefault;
 
+    public PhoneToOrderWayResult( int way, String wayName, int isDefault ) {
+	this.way = way;
+	this.wayName = wayName;
+	this.isDefault = isDefault;
+    }
+
+    public PhoneToOrderWayResult() {
+    }
 }

@@ -266,7 +266,7 @@ public class MemberServiceImpl implements MemberService {
     /**
      * 查询会员积分记录
      *
-     * @param params {mcId：会员卡id，page：页数，pageSize：大小}
+     * @param params {memberId：粉丝id，page：页数，pageSize：大小}
      *
      * @return 会员积分记录
      */

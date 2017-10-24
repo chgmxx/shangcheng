@@ -21,6 +21,9 @@ public class PhoneToOrderBusResult implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 
+    @ApiModelProperty( name = "busId", value = "商家id" )
+    private int busId;
+
     @ApiModelProperty( name = "busName", value = "商家名称" )
     private String busName;
 
@@ -36,7 +39,7 @@ public class PhoneToOrderBusResult implements Serializable {
     @ApiModelProperty( name = "totalNum", value = "商品总数" )
     private int totalNum;
 
-    @ApiModelProperty( name = "totalMoney", value = "商品总价" )
+    @ApiModelProperty( name = "totalMoney", value = "订单总价（包含运费）" )
     private double totalMoney;
 
     @ApiModelProperty( name = "payWay", value = "支付方式集合" )
@@ -46,7 +49,7 @@ public class PhoneToOrderBusResult implements Serializable {
     private List< PhoneToOrderWayResult > deliveryWayList;
 
     @ApiModelProperty( name = "toOrderShopResultList", value = "店铺集合" )
-    private List< PhoneToOrderShopResult > toOrderShopResultList;
+    private List< PhoneToOrderShopResult > shopResultList;
 
     //积分数量
 

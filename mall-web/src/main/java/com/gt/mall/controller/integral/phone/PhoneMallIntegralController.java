@@ -232,7 +232,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    int pageSize = 20;
 	    int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	    int firstNum = pageSize * ( ( curPage <= 0 ? 1 : curPage ) - 1 );
-	    map.put( "mcId", member.getMcId() );
+	    map.put( "memberId", member.getId() );
 	    map.put( "page", firstNum );
 	    map.put( "pageSize", pageSize );
 	    List< Map > list = memberService.findCardrecordList( map );
@@ -278,7 +278,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    int pageSize = 20;
 	    int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	    int firstNum = pageSize * ( ( curPage <= 0 ? 1 : curPage ) - 1 );
-	    map.put( "mcId", member.getMcId() );
+	    map.put( "memberId", member.getId() );
 	    map.put( "page", firstNum );
 	    map.put( "pageSize", pageSize );
 	    List< Map > list = memberService.findCardrecordList( map );

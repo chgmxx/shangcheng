@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 商品（进入提交订单页面返回结果）
@@ -26,6 +27,9 @@ public class PhoneToOrderProductResult implements Serializable {
     @ApiModelProperty( name = "shopId", value = "店铺id" )
     private int shopId;
 
+    @ApiModelProperty( name = "busUserId", value = "商家id" )
+    private int busUserId;
+
     @ApiModelProperty( name = "productName", value = "商品名称" )
     private String productName;
 
@@ -41,8 +45,11 @@ public class PhoneToOrderProductResult implements Serializable {
     @ApiModelProperty( name = "productOldPrice", value = "商品原价" )
     private double productOldPrice;
 
-    @ApiModelProperty( name = "productHyPrice", value = "商品会员价" )
-    private double productHyPrice;
+    @ApiModelProperty( name = "totalPrice", value = "商品总价（商品价格*数量）" )
+    private double totalPrice;
+
+    @ApiModelProperty( name = "productWeight", value = "商品总量" )
+    private double productWeight = 0;
 
     @ApiModelProperty( name = "productNum", value = "商品数量" )
     private int productNum;
@@ -62,5 +69,11 @@ public class PhoneToOrderProductResult implements Serializable {
     //是否能使用会员折扣
     @ApiModelProperty( name = "isCanUseDiscount", value = "是否能使用会员折扣 1能使用" )
     private int isCanUseDiscount = 0;
+
+    @ApiModelProperty( name = "proTypeId", value = "商品类型", hidden = true )
+    private int proTypeId = 0;
+
+    @ApiModelProperty( name = "pfSpecResultList", value = "批发规格集合" )
+    private List< PhoneToOrderPfSpecResult > pfSpecResultList;
 
 }

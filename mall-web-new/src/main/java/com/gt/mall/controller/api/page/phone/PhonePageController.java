@@ -91,13 +91,13 @@ public class PhonePageController {
 		    //获取门店图片
 		    List< WsShopPhoto > imageList = wxShopService.getShopPhotoByShopId( CommonUtil.toInteger( shopMap.get( "wxShopId" ) ) );
 		    if ( imageList != null && imageList.size() > 0 ) {
-			shopMap.put( "shopImage", imageList.get( 0 ).getLocalAddress() );
+			shopMap.put( "stoPicture", imageList.get( 0 ).getLocalAddress() );
 		    }
 		    shopMap.remove( "wxShopId" );
 		    shopMap.remove( "stoLongitude" );
 		    shopMap.remove( "stoLatitude" );
 		}
-		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopList, false );
+		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopList, true );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的门店列表异常：" + e.getMessage() );

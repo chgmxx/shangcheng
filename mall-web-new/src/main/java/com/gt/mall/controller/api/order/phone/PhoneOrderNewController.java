@@ -3,12 +3,13 @@ package com.gt.mall.controller.api.order.phone;
 import com.gt.mall.bean.Member;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneBuyNowDTO;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderDTO;
 import com.gt.mall.result.phone.order.PhoneToOrderResult;
-import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.order.MallOrderNewService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.SessionUtils;
@@ -32,9 +33,9 @@ import java.util.Map;
  * Date : 2017/10/19 0019
  * Time : 17:10
  */
-@Api( value = "phoneOrderNew", description = "订单页面相关接口（手机端）", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+@Api( value = "phoneOrder", description = "订单页面相关接口（手机端）", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
 @Controller
-@RequestMapping( "/phoneOrderNew/" )
+@RequestMapping( "/phoneOrder/" )
 public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 
     private static Logger logger = LoggerFactory.getLogger( PhoneOrderNewController.class );
@@ -42,7 +43,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallProductNewService mallProductNewService;
     @Autowired
-    private MallPageService       mallPageService;
+    private MallOrderNewService   mallOrderNewService;
 
     @ApiOperation( value = "立即购买接口", notes = "用户点击立即购买", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -84,7 +85,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    return ServerResponse.createBySuccessCode();
+	    PhoneToOrderResult result = mallOrderNewService.toOrder( params, member );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( BusinessException e ) {
 	    logger.error( "进入提交订单页面的接口异常：" + e.getMessage() );
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );

@@ -1,9 +1,12 @@
 package com.gt.mall.service.web.common.impl;
 
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
+import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.SmsService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.util.entity.param.sms.OldApiSms;
@@ -25,9 +28,11 @@ public class MallCommonServiceImpl implements MallCommonService {
     private Logger logger = Logger.getLogger( MallCommonServiceImpl.class );
 
     @Autowired
-    private SmsService     smsService;
+    private SmsService          smsService;
     @Autowired
-    private BusUserService busUserService;
+    private BusUserService      busUserService;
+    @Autowired
+    private WxPublicUserService wxPublicUserService;
 
     @Override
     public boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo ) {
@@ -52,5 +57,23 @@ public class MallCommonServiceImpl implements MallCommonService {
 	    }
 	}
 	return false;
+    }
+
+    @Override
+    public PhoneToOrderBusResult getBusUserNameOrImage( int busId ) {
+	PhoneToOrderBusResult busResult = new PhoneToOrderBusResult();
+	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( busId );//查询公众号信息
+	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+	    busResult.setBusName( wxPublicUsers.getAuthorizerInfo() );//公众号名称
+	    busResult.setBusImageUrl( wxPublicUsers.getHeadImg() );//公众号头像
+	}
+	if ( CommonUtil.isEmpty( busResult.getBusName() ) ) {
+	    BusUser user = busUserService.selectById( busId );//查询商家信息
+	    if ( CommonUtil.isNotEmpty( user ) ) {
+		busResult.setBusName( user.getName() );
+	    }
+	}
+	busResult.setBusId( busId );
+	return busResult;
     }
 }

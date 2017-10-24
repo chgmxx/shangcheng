@@ -26,13 +26,15 @@ public class PhoneToOrderShopResult implements Serializable {
 
     @ApiModelProperty( name = "shopName", value = "店铺名称" )
     private String shopName;
-    ;
 
     @ApiModelProperty( name = "totalNum", value = "商品总数" )
     private int totalNum;
 
     @ApiModelProperty( name = "totalMoney", value = "商品总价" )
     private double totalMoney;
+
+    @ApiModelProperty( name = "totalFreightMoney", value = "运费" )
+    private double totalFreightMoney = 0;
 
     @ApiModelProperty( name = "productResultList", value = "商品集合名称" )
     private List< PhoneToOrderProductResult > productResultList;

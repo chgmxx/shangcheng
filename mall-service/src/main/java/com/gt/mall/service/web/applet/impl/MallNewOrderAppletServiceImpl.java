@@ -2130,7 +2130,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		Object object = orderArray.get( i );
 		JSONObject orderObj = JSONObject.parseObject( object.toString() );
 		MallShopEntity mallShopEntity = new MallShopEntity();
-		Map< Integer,MallEntity > productMap = new HashMap<>();
+		Map< Object,MallEntity > productMap = new HashMap<>();
 
 		if ( CommonUtil.isNotEmpty( orderObj.get( "orderDetail" ) ) ) {
 		    JSONArray detailArr = JSONArray.parseArray( orderObj.get( "orderDetail" ).toString() );

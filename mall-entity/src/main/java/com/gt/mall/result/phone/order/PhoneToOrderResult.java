@@ -27,9 +27,6 @@ public class PhoneToOrderResult implements Serializable {
     @ApiModelProperty( name = "totalMoney", value = "商品总额（优惠前的价格）" )
     private double totalMoney;
 
-    @ApiModelProperty( name = "totalDiscountMoney", value = "商品优惠总价" )
-    private double totalDiscountMoney;
-
     @ApiModelProperty( name = "totalPayMoney", value = "合计（商品支付总价）" )
     private double totalPayMoney;
 

@@ -281,8 +281,8 @@
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,
         a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
         e.image_url,
-        d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons AS isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,
-        d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num, d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id AS flowId,d.user_id
+        d.return_day,d.pro_name,d.is_specifica ,d.is_coupons ,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,
+        d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num, d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id AS flowId,d.user_id as bus_user_id
         FROM
         (
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,

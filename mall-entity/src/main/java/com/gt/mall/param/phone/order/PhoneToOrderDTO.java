@@ -1,6 +1,5 @@
 package com.gt.mall.param.phone.order;
 
-import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderPifatSpecificaDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -45,7 +44,19 @@ public class PhoneToOrderDTO implements Serializable {
     @ApiModelProperty( name = "productPrice", value = "商品价" )
     private double productPrice;
 
-    @ApiModelProperty( name = "pufaSpecificaDTOList", value = "批发规格" )
-    private List< PhoneShopCartOrderPifatSpecificaDTO > pufaSpecificaDTOList;
+    @ApiModelProperty( name = "pifaSpecificaDTOList", value = "批发规格" )
+    private List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList;
+
+    @ApiModelProperty( name = "toShop", value = "是否是到店购买 1到店购买 0 线上" )
+    private int toShop = 0;
+
+    @ApiModelProperty( name = "ip", value = "粉丝的ip" )
+    private String ip;
+
+    @ApiModelProperty( name = "longitude", value = "经度" )
+    private double longitude = 0;
+
+    @ApiModelProperty( name = "langitude", value = "纬度" )
+    private double langitude = 0;
 
 }

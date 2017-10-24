@@ -147,7 +147,7 @@ public interface MemberService {
     boolean updateJifen( UserConsumeParams consumeParams );
 
     /**
-     * 退款包括了储值卡退款(包括积分和粉币)
+     * 退款包括了储值卡退款(包括积分和粉币) TODO 改了
      *
      * @param returnParams 参数
      *
@@ -196,9 +196,11 @@ public interface MemberService {
 
     /**
      * 商场修改订单状态(流量充值时用到的)
+     *
      * @param params {orderNo：订单号，payType：支付方式，payStatus：支付状态}
+     *
      * @return true 成功
      */
-    boolean updateUserConsume(Map<String,Object> params);
+    boolean updateUserConsume( Map< String,Object > params );
 
 }

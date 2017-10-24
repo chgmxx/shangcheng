@@ -47,8 +47,8 @@ public class PhoneProductDetailDTO implements Serializable {
     @ApiModelProperty( name = "longitude", value = "经度" )
     private double longitude = 0;
 
-    @ApiModelProperty( name = "latitude", value = "纬度" )
-    private double latitude = 0;
+    @ApiModelProperty( name = "langitude", value = "纬度" )
+    private double langitude = 0;
 
     @ApiModelProperty( name = "ip", value = "粉丝ip" )
     private String ip;

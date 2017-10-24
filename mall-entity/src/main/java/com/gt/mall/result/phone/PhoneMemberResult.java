@@ -51,6 +51,4 @@ public class PhoneMemberResult {
     @ApiModelProperty( name = "saleMemberId", value = "销售员id" )
     private int saleMemberId = 0;
 
-    @ApiModelProperty( name = "isShowAdvert", value = "是否显示技术支持 1显示" )
-    private int isShowAdvert = 0;
 }

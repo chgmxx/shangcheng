@@ -6,6 +6,8 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.param.phone.order.PhoneToOrderPifatSpecificaDTO;
+import com.gt.mall.result.phone.order.PhoneToOrderPfSpecResult;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
@@ -82,9 +84,14 @@ public interface MallPifaService extends BaseService< MallPifa > {
     public PageUtil getPifaAll( Member member, Map< String,Object > maps );
 
     /**
-     * 根据商品id查询秒杀信息和秒杀价格
+     * 根据商品id查询批发信息和批发价格
      */
     public MallPifa getPifaByProId( Integer proId, Integer shopId, int activityId );
+
+    /**
+     * 根据商品id查询批发信息和批发价格
+     */
+    public MallPifa selectBuyByProductId( Integer proId, Integer shopId, int activityId );
 
     /**
      * 修改批发申请
@@ -140,4 +147,15 @@ public interface MallPifaService extends BaseService< MallPifa > {
      * @return 批发设置
      */
     Map< String,Object > getPifaSet( int busId );
+
+    /**
+     * 提交订单页面获取批发价
+     *
+     * @param proId            商品id
+     * @param shopId           店铺id
+     * @param specificaIdsList 规格集合
+     *
+     * @return
+     */
+    public List< PhoneToOrderPfSpecResult > getPifaPrice( int proId, int shopId, int activityId, List< PhoneToOrderPifatSpecificaDTO > specificaIdsList );
 }

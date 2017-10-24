@@ -3,6 +3,8 @@ package com.gt.mall.service.web.freight;
 import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.freight.MallFreight;
+import com.gt.mall.param.phone.freight.PhoneFreightDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -85,6 +87,8 @@ public interface MallFreightService extends BaseService< MallFreight > {
      */
     MallFreight selectFreightByShopId( Integer shopId );
 
+    List< MallFreight > selectFreightByShopIdList( List< Integer > shopIdList );
+
     /**
      * 手机端获取运费
      *
@@ -92,10 +96,33 @@ public interface MallFreightService extends BaseService< MallFreight > {
      * @param provinceId 省份id
      * @param toshop     是否是到店 1 到店 0不是到店
      * @param productArr 商品对象 [{shop_id:店铺id,price_total:商品价格,proNum:商品数量,proTypeId:用户类型,juli:收货地址跟门店的距离}]
+     * @param weight     商品重量
      *
      * @return 价格 [{店铺id：运费}]
      */
-    Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli );
+    Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli, double weight );
+
+    /**
+     * 计算运费（多个店铺）
+     *
+     * @param freightList     运费集合
+     * @param paramsDto       运费传值
+     * @param shopFreightList 运费传值
+     *
+     * @return 运费
+     */
+    public Map< String,Object > getFreightMoneyByShopList( List< MallFreight > freightList, PhoneFreightDTO paramsDto, List< PhoneFreightShopDTO > shopFreightList );
+
+    /**
+     * 计算运费（单个店铺）
+     *
+     * @param freightList 运费集合
+     * @param paramsDto   运费传值
+     * @param shopDto     运费传值
+     *
+     * @return 运费
+     */
+    public double getFreightMoneyByShopList( List< MallFreight > freightList, PhoneFreightDTO paramsDto, PhoneFreightShopDTO shopDto );
 
     /**
      * 获取运费

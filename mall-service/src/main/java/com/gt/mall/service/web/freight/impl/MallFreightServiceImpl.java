@@ -2,11 +2,15 @@ package com.gt.mall.service.web.freight.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.freight.MallFreightDetailDAO;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.freight.MallFreightDetail;
+import com.gt.mall.param.phone.freight.PhoneFreightDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.service.web.freight.MallFreightService;
@@ -143,27 +147,219 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     }
 
     @Override
-    public Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli ) {
+    public List< MallFreight > selectFreightByShopIdList( List< Integer > shopIdList ) {
+	Wrapper< MallFreight > wrapper = new EntityWrapper<>();
+	wrapper.in( "shop_id", shopIdList ).andNew( "is_delete = 0" );
+	return freightDAO.selectList( wrapper );
+    }
+
+    @Override
+    public Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli, double weight ) {
 	if ( CommonUtil.isEmpty( provinceId ) ) {
 	    provinceId = mallPageService.getProvince( ip );
 	}
 
 	Map< String,Object > map = new HashMap<>();
 	map.put( "province_id", provinceId );
-
-	/*JSONArray arr = new JSONArray();
-	JSONObject obj = new JSONObject();
-	obj.put( "shop_id", shopid );
-	obj.put( "price_total", price );
-	obj.put( "proNum", 1 );
-	arr.add( obj );*/
 	map.put( "orderArr", productArr );
 	map.put( "toshop", toshop );
 	if ( juli > 0 ) {
 	    map.put( "juli", juli );
 	}
-	/*map.put( "proTypeId", proTypeId );*/
+	if ( weight > 0 ) {
+	    map.put( "pro_weight", weight );
+	}
 	return getFreightMoney( map );
+    }
+
+    @Override
+    public Map< String,Object > getFreightMoneyByShopList( List< MallFreight > freightList, PhoneFreightDTO paramsDto, List< PhoneFreightShopDTO > shopFreightList ) {
+
+	Map< String,Object > priceMap = new HashMap<>();
+	if ( paramsDto != null ) {
+	    Integer provinceId = 0;//省份id
+	    if ( CommonUtil.isNotEmpty( paramsDto.getProvinceId() ) ) {
+		provinceId = CommonUtil.toInteger( paramsDto.getProvinceId() );
+	    }
+	    double juli = 0;
+	    if ( CommonUtil.isNotEmpty( paramsDto.getJuli() ) ) {
+		juli = paramsDto.getJuli();
+	    }
+	    int toshop = 0;
+	    if ( CommonUtil.isNotEmpty( paramsDto.getToshop() ) ) {
+		toshop = CommonUtil.toInteger( paramsDto.getToshop() );
+	    }
+	    int proTypeId = 0;
+
+	    if ( CommonUtil.isNotEmpty( shopFreightList ) && shopFreightList.size() > 0 ) {
+		for ( PhoneFreightShopDTO shopDto : shopFreightList ) {
+		    if ( CommonUtil.isNotEmpty( shopDto.getProTypeId() ) ) {
+			proTypeId = shopDto.getProTypeId();
+		    }
+		    Integer shopId = shopDto.getShopId();//店铺id
+		    double orderPrice = shopDto.getTotalProductPrice();//订单价格
+		    Integer proNum = shopDto.getTotalProductNum();//购买商品的数量
+
+		    double freightPrice = 0;
+		    double weight = 0;
+		    if ( CommonUtil.isNotEmpty( shopDto.getTotalProductWeight() ) ) {
+			weight = CommonUtil.toDouble( shopDto.getTotalProductWeight() );
+		    }
+		    //根据店铺来查询物流
+		    MallFreight freight = new MallFreight();
+		    if ( freightList != null && freightList.size() > 0 ) {
+			for ( MallFreight mallFreight : freightList ) {
+			    if ( mallFreight.getShopId().toString().equals( CommonUtil.toString( shopId ) ) ) {
+				freight = mallFreight;
+				break;
+			    }
+			}
+		    }
+		    if ( CommonUtil.isEmpty( freight ) ) {
+			freight.setShopId( shopId );
+			freight.setIsDelete( 0 );
+			freight = freightDAO.selectOne( freight );
+		    }
+		    if ( freight != null && toshop == 0 ) {
+			freightPrice = getFreightPrice( freight, orderPrice, proNum, weight, juli, provinceId );
+		    }
+		    if ( toshop == 1 || proTypeId > 0 ) {
+			freightPrice = 0;
+		    }
+		    if ( freightPrice > 0 ) {
+			DecimalFormat df = new DecimalFormat( "######0.00" );
+			priceMap.put( shopId.toString(), df.format( freightPrice ) );
+		    } else {
+			priceMap.put( shopId.toString(), freightPrice );
+		    }
+		}
+	    }
+	}
+
+	return priceMap;
+    }
+
+    @Override
+    public double getFreightMoneyByShopList( List< MallFreight > freightList, PhoneFreightDTO paramsDto, PhoneFreightShopDTO shopDto ) {
+	double freightPrice = 0;
+	if ( paramsDto != null ) {
+	    Integer provinceId = 0;//省份id
+	    if ( CommonUtil.isNotEmpty( paramsDto.getProvinceId() ) ) {
+		provinceId = CommonUtil.toInteger( paramsDto.getProvinceId() );
+	    }
+	    double juli = 0;
+	    if ( CommonUtil.isNotEmpty( paramsDto.getJuli() ) ) {
+		juli = paramsDto.getJuli();
+	    }
+	    int toshop = 0;
+	    if ( CommonUtil.isNotEmpty( paramsDto.getToshop() ) ) {
+		toshop = CommonUtil.toInteger( paramsDto.getToshop() );
+	    }
+	    int proTypeId = 0;
+
+	    if ( CommonUtil.isNotEmpty( shopDto ) ) {
+		if ( CommonUtil.isNotEmpty( shopDto.getProTypeId() ) ) {
+		    proTypeId = shopDto.getProTypeId();
+		}
+		Integer shopId = shopDto.getShopId();//店铺id
+		double orderPrice = shopDto.getTotalProductPrice();//订单价格
+		Integer proNum = shopDto.getTotalProductNum();//购买商品的数量
+
+		double weight = 0;
+		if ( CommonUtil.isNotEmpty( shopDto.getTotalProductWeight() ) ) {
+		    weight = CommonUtil.toDouble( shopDto.getTotalProductWeight() );
+		}
+		//根据店铺来查询物流
+		MallFreight freight = null;
+		if ( freightList != null && freightList.size() > 0 ) {
+		    for ( MallFreight mallFreight : freightList ) {
+			if ( mallFreight.getShopId().toString().equals( CommonUtil.toString( shopId ) ) ) {
+			    freight = mallFreight;
+			    break;
+			}
+		    }
+		}
+		if ( CommonUtil.isEmpty( freight ) ) {
+		    freight = new MallFreight();
+		    freight.setShopId( shopId );
+		    freight.setIsDelete( 0 );
+		    freight = freightDAO.selectOne( freight );
+		}
+		if ( freight != null && toshop == 0 ) {
+		    freightPrice = getFreightPrice( freight, orderPrice, proNum, weight, juli, provinceId );
+		}
+		if ( toshop == 1 || proTypeId > 0 ) {
+		    freightPrice = 0;
+		}
+		if ( freightPrice > 0 ) {
+		    DecimalFormat df = new DecimalFormat( "######0.00" );
+		    freightPrice = CommonUtil.toDouble( df.format( freightPrice ) );
+		}
+	    }
+	}
+	return freightPrice;
+    }
+
+    private double getFreightPrice( MallFreight freight, double orderPrice, Integer proNum, double weight, double juli, int provinceId ) {
+	double freightPrice = 0;//物流数量
+	double noMoney = 0;//免邮价格
+	int priceType = freight.getPriceType();
+
+	if ( freight.getNoMoney() != null && !CommonUtil.isNotEmpty( freight.getNoMoney() ) ) {
+	    noMoney = CommonUtil.toDouble( freight.getNoMoney() );
+	}
+	if ( freight.getMoney() != null && CommonUtil.isNotEmpty( freight.getMoney() ) ) {
+	    freightPrice = CommonUtil.toDouble( freight.getMoney() );
+	}
+	if ( freight.getIsNoMoney().toString().equals( "1" ) ) {
+	    if ( priceType > 0 ) {
+		double firstNum = CommonUtil.toDouble( freight.getFirstNums() );//首件重量
+		double addNum = CommonUtil.toDouble( freight.getAddNums() );//续件重量
+		double addPrice = CommonUtil.toDouble( freight.getAddMoney() );//续件价格
+		freightPrice = getFreightMoney( freightPrice, priceType, proNum, weight, firstNum, addNum, addPrice, juli );
+	    }
+
+	    Integer noNum = freight.getNoMoneyNum();//免邮数量
+	    if ( proNum >= noNum && noNum > 0 ) {//已达到免邮数量
+		freightPrice = 0;
+	    }
+	    if ( orderPrice >= noMoney && noMoney > 0 ) {//已达到免邮价格
+		freightPrice = 0;
+	    }
+	    if ( freight.getIsResultMoney() == 1 && provinceId > 0 ) {//根据指定条件设置邮费
+		Map< String,Object > params = new HashMap< String,Object >();
+		params.put( "provinceId", provinceId );
+		params.put( "freightId", freight.getId() );
+		MallFreightDetail detail = freightDetailDAO.selectFreightByPId( params );
+		if ( detail != null ) {
+		    freightPrice = CommonUtil.toDouble( detail.getMoney() );//指定城市的运费
+		    if ( priceType > 0 ) {
+			double firstNum = CommonUtil.toDouble( detail.getFirstNums() );//首件重量
+			double addNum = CommonUtil.toDouble( detail.getAddNums() );//续件重量
+			double addPrice = CommonUtil.toDouble( detail.getAddMoney() );//续件价格
+			freightPrice = getFreightMoney( freightPrice, priceType, proNum, weight, firstNum, addNum, addPrice, juli );
+		    }
+
+		    Integer dNoMoneyNum = 0;//指定城市的免邮数量
+		    double dNoMoney = 0;//指定城市的免邮价格
+		    if ( !CommonUtil.isEmpty( detail.getNoMoneyNum() ) ) {
+			dNoMoneyNum = detail.getNoMoneyNum();
+		    }
+		    if ( !CommonUtil.isEmpty( detail.getNoMoney() ) ) {
+			dNoMoney = CommonUtil.toDouble( detail.getNoMoney() );
+		    }
+		    if ( proNum >= dNoMoneyNum && dNoMoneyNum > 0 ) {//指定城市已达到免邮数量
+			freightPrice = 0;
+		    }
+		    if ( orderPrice >= dNoMoney && dNoMoney > 0 ) {//指定城市已达到免邮价格
+			freightPrice = 0;
+		    }
+		}
+	    }
+	} else {
+	    freightPrice = 0;
+	}
+	return freightPrice;
     }
 
     @Override
@@ -230,64 +426,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    freight.setIsDelete( 0 );
 		    freight = freightDAO.selectOne( freight );
 		    if ( freight != null && toshop == 0 ) {
-			freightPrice = 0;//物流数量
-			double noMoney = 0;//免邮价格
-			int priceType = freight.getPriceType();
-
-			if ( freight.getNoMoney() != null && !CommonUtil.isNotEmpty( freight.getNoMoney() ) ) {
-			    noMoney = CommonUtil.toDouble( freight.getNoMoney() );
-			}
-			if ( freight.getMoney() != null && CommonUtil.isNotEmpty( freight.getMoney() ) ) {
-			    freightPrice = CommonUtil.toDouble( freight.getMoney() );
-			}
-			if ( freight.getIsNoMoney().toString().equals( "1" ) ) {
-			    if ( priceType > 0 ) {
-				double firstNum = CommonUtil.toDouble( freight.getFirstNums() );//首件重量
-				double addNum = CommonUtil.toDouble( freight.getAddNums() );//续件重量
-				double addPrice = CommonUtil.toDouble( freight.getAddMoney() );//续件价格
-				freightPrice = getFreightMoney( freightPrice, priceType, proNum, weight, firstNum, addNum, addPrice, juli );
-			    }
-
-			    Integer noNum = freight.getNoMoneyNum();//免邮数量
-			    if ( proNum >= noNum && noNum > 0 ) {//已达到免邮数量
-				freightPrice = 0;
-			    }
-			    if ( orderPrice >= noMoney && noMoney > 0 ) {//已达到免邮价格
-				freightPrice = 0;
-			    }
-			    if ( freight.getIsResultMoney() == 1 && provinceId > 0 ) {//根据指定条件设置邮费
-				Map< String,Object > params = new HashMap< String,Object >();
-				params.put( "provinceId", provinceId );
-				params.put( "freightId", freight.getId() );
-				MallFreightDetail detail = freightDetailDAO.selectFreightByPId( params );
-				if ( detail != null ) {
-				    freightPrice = CommonUtil.toDouble( detail.getMoney() );//指定城市的运费
-				    if ( priceType > 0 ) {
-					double firstNum = CommonUtil.toDouble( detail.getFirstNums() );//首件重量
-					double addNum = CommonUtil.toDouble( detail.getAddNums() );//续件重量
-					double addPrice = CommonUtil.toDouble( detail.getAddMoney() );//续件价格
-					freightPrice = getFreightMoney( freightPrice, priceType, proNum, weight, firstNum, addNum, addPrice, juli );
-				    }
-
-				    Integer dNoMoneyNum = 0;//指定城市的免邮数量
-				    double dNoMoney = 0;//指定城市的免邮价格
-				    if ( !CommonUtil.isEmpty( detail.getNoMoneyNum() ) ) {
-					dNoMoneyNum = detail.getNoMoneyNum();
-				    }
-				    if ( !CommonUtil.isEmpty( detail.getNoMoney() ) ) {
-					dNoMoney = CommonUtil.toDouble( detail.getNoMoney() );
-				    }
-				    if ( proNum >= dNoMoneyNum && dNoMoneyNum > 0 ) {//指定城市已达到免邮数量
-					freightPrice = 0;
-				    }
-				    if ( orderPrice >= dNoMoney && dNoMoney > 0 ) {//指定城市已达到免邮价格
-					freightPrice = 0;
-				    }
-				}
-			    }
-			} else {
-			    freightPrice = 0;
-			}
+			freightPrice = getFreightPrice( freight, orderPrice, proNum, weight, juli, provinceId );
 		    }
 		    if ( toshop == 1 || proTypeId > 0 ) {
 			freightPrice = 0;

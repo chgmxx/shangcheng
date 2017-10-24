@@ -1,7 +1,5 @@
 package com.gt.mall.service.web.product.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.Member;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -22,8 +20,12 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
 import com.gt.mall.param.phone.PhoneSpecificaDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
@@ -31,6 +33,7 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyPriceService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaPriceService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleService;
@@ -113,6 +116,12 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
     private MallOrderDAO                mallOrderDAO;//订单DAO
     @Autowired
     private MallPaySetService           mallPaySetService;//商城设置业务处类类
+    @Autowired
+    private MemberService               memberService;
+    @Autowired
+    private MemberAddressService        memberAddressService;
+    @Autowired
+    private MallPageService             mallPageService;
 
     @Override
     public PhoneProductDetailResult selectProductDetail( PhoneProductDetailDTO params, Member member, MallPaySet mallPaySet ) {
@@ -233,40 +242,47 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	result.setImageList( imageList );//商品图片集合
 
 	String provinces = "";//省份id
-	double longitude = params.getLongitude();
-	double langitude = params.getLatitude();
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
 	    result.setShopName( storeMap.get( "stoName" ).toString() );//店铺名称
 	    result.setShopImageUrl( storeMap.get( "stoPicture" ).toString() );//店铺图片
 	    result.setShopAddress( storeMap.get( "adder" ).toString() );//店铺地址
-	    longitude = CommonUtil.toDouble( storeMap.get( "stoLongitude" ) );
-	    langitude = CommonUtil.toDouble( storeMap.get( "stoLatitude" ) );
-	    if ( CommonUtil.isNotEmpty( storeMap.get( "memProvince" ) ) ) {
-		provinces = storeMap.get( "memProvince" ).toString();
-	    }
 	}
 	if ( isCollect ) {
 	    result.setIsCollect( 1 );//是否已收藏
 	}
-	double raill = 0;
-	if ( langitude > 0 && longitude > 0 && params.getLatitude() > 0 && params.getLongitude() > 0 ) {
-	    raill = CommonUtil.getDistance( params.getLongitude(), params.getLatitude(), longitude, langitude );
-	    raill = raill / 1000;
-	}
-
-	//计算运费
-	JSONArray productArr = new JSONArray();
-	JSONObject obj = new JSONObject();
-	obj.put( "shop_id", product.getShopId() );
-	obj.put( "price_total", productPrice );
-	obj.put( "proNum", 1 );
-	productArr.add( obj );
-	Map< String,Object > freightMap = mallFreightService.getFreightByParams( params.getIp(), provinces, params.getToShop(), productArr, raill );
-	if ( CommonUtil.isNotEmpty( freightMap ) ) {
-	    if ( CommonUtil.isNotEmpty( freightMap.get( product.getShopId().toString() ) ) ) {
-		result.setFreightMoney( CommonUtil.toDouble( freightMap.get( product.getShopId().toString() ) ) );
+	Double memberLongitude = params.getLongitude();//会员经度
+	Double memberLangitude = params.getLangitude();//会员纬度
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    if ( CommonUtil.isNotEmpty( member ) ) {
+		List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+		//获取会员的默认地址
+		Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
+		if ( CommonUtil.isNotEmpty( addressMap ) ) {
+		    provinces = addressMap.get( "memProvince" ).toString();
+		    memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
+		    memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+		}
 	    }
 	}
+	if ( CommonUtil.isEmpty( provinces ) && CommonUtil.isNotEmpty( params.getIp() ) ) {
+	    provinces = mallPageService.getProvince( params.getIp() );
+	}
+
+	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
+	paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );
+	paramsDto.setToshop( params.getToShop() );
+	paramsDto.setJuli( CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude ) );
+	PhoneFreightShopDTO freightShopDTO = new PhoneFreightShopDTO();//运费店铺传参
+	freightShopDTO.setProTypeId( product.getProTypeId() );
+	freightShopDTO.setShopId( product.getShopId() );
+	freightShopDTO.setTotalProductNum( 1 );
+	freightShopDTO.setTotalProductPrice( productPrice );
+	freightShopDTO.setTotalProductWeight( CommonUtil.toDouble( product.getProWeight() ) );
+	double freightMoney = mallFreightService.getFreightMoneyByShopList( null, paramsDto, freightShopDTO ); //计算运费
+	if ( freightMoney > 0 ) {
+	    result.setFreightMoney( freightMoney );
+	}
+
 	result.setIsShowAddShopButton( isShowAddShop );//是否显示加入购物车的按钮 1显示
 	return result;
     }

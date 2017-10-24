@@ -625,4 +625,24 @@ public class CommonUtil {
 	return errorMsg;
     }
 
+    /**
+     * 在提交订单页面运费
+     *
+     * @param storeMap        店铺对象
+     * @param memberLangitude 纬度
+     * @param memberLongitude 经度
+     *
+     * @return 运费
+     */
+    public static double getRaill( Map< String,Object > storeMap, double memberLangitude, double memberLongitude ) {
+	double shopLongitude = CommonUtil.toDouble( storeMap.get( "stoLongitude" ) );//店铺经度
+	double shopLangitude = CommonUtil.toDouble( storeMap.get( "stoLatitude" ) );//店铺纬度
+	double raill = 0;//粉丝到店铺的距离
+	if ( shopLangitude > 0 && shopLongitude > 0 && memberLangitude > 0 && memberLongitude > 0 ) {
+	    raill = CommonUtil.getDistance( memberLongitude, memberLangitude, shopLongitude, shopLangitude );
+	    raill = raill / 1000;
+	}
+	return raill;
+    }
+
 }

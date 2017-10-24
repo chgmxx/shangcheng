@@ -13,6 +13,8 @@ import com.gt.mall.entity.pifa.MallPifaPrice;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.param.phone.order.PhoneToOrderPifatSpecificaDTO;
+import com.gt.mall.result.phone.order.PhoneToOrderPfSpecResult;
 import com.gt.mall.result.phone.product.PhonePifaProductDetailResult;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -20,6 +22,7 @@ import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaPriceService;
 import com.gt.mall.service.web.pifa.MallPifaService;
+import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
@@ -71,6 +74,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 
     @Autowired
     private MallPaySetService mallPaySetService;
+
+    @Autowired
+    private MallProductService mallProductService;
 
     @Override
     @Transactional( rollbackFor = Exception.class )
@@ -419,6 +425,17 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
     }
 
     @Override
+    public MallPifa selectBuyByProductId( Integer proId, Integer shopId, int activityId ) {
+	MallPifa pifa = new MallPifa();
+	pifa.setProductId( proId );
+	pifa.setShopId( shopId );
+	if ( activityId > 0 ) {
+	    pifa.setId( activityId );
+	}
+	return mallPifaDAO.selectBuyByProductId( pifa );
+    }
+
+    @Override
     public int updateWholesaleApplay( MallPifaApply applay ) {
 	return mallPifaApplyDAO.updateById( applay );
     }
@@ -603,5 +620,37 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	pfMap.put( "hpNum", hpNum );
 	pfMap.put( "spHand", spHand );
 	return pfMap;
+    }
+
+    public List< PhoneToOrderPfSpecResult > getPifaPrice( int proId, int shopId, int activityId, List< PhoneToOrderPifatSpecificaDTO > specificaIdsList ) {
+	List< MallPifaPrice > priceList = mallPifaPriceService.selectPriceByGroupId( activityId );
+	List< PhoneToOrderPfSpecResult > pfSpecResultList = new ArrayList<>();
+
+	if ( CommonUtil.isNotEmpty( priceList ) && priceList.size() > 0 ) {
+
+	    for ( MallPifaPrice price : priceList ) {
+		if ( price.getIsJoinGroup() == 1 ) {
+		    PhoneToOrderPfSpecResult pfSpecResult = new PhoneToOrderPfSpecResult();
+		    if ( specificaIdsList != null && specificaIdsList.size() > 0 ) {
+			for ( PhoneToOrderPifatSpecificaDTO specificaDTO : specificaIdsList ) {
+			    if ( specificaDTO.getSpecificaValueIds().equals( price.getSpecificaIds() ) ) {
+
+				Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( price.getSpecificaIds(), proId );
+				if ( CommonUtil.isNotEmpty( invMap ) ) {
+				    pfSpecResult.setSpecificaValues( CommonUtil.toString( invMap.get( "specifica_values" ) ) );
+				    pfSpecResult.setSpecificaName( CommonUtil.toString( invMap.get( "specificaName" ) ) );
+				}
+				pfSpecResult.setSpecificaIds( price.getSpecificaIds() );
+				pfSpecResult.setPfPrice( CommonUtil.toDouble( price.getSeckillPrice() ) );
+				pfSpecResult.setTotalNum( specificaDTO.getProductNum() );
+				pfSpecResultList.add( pfSpecResult );
+			    }
+			}
+		    }
+		}
+	    }
+
+	}
+	return pfSpecResultList;
     }
 }

@@ -1,5 +1,7 @@
 package com.gt.mall.service.web.common;
 
+import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
+
 /**
  * <p>
  * 公共服务类
@@ -30,4 +32,9 @@ public interface MallCommonService {
      * @return true 有
      */
     boolean busIsAdvert( int busId );
+
+    /**
+     * 获取商家名称或商家头像
+     */
+    PhoneToOrderBusResult getBusUserNameOrImage( int busId );
 }
