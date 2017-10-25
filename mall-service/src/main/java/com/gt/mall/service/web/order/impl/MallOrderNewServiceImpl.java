@@ -357,6 +357,12 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    String times = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    objs.put( "times", times );
 	    objs.put( "orderId", orderPId );
+	    MallPaySet paySet = new MallPaySet();
+	    paySet.setUserId( order.getBusUserId() );
+	    paySet = mallPaySetService.selectByUserId( paySet );
+	    if ( paySet != null && paySet.getOrderCancel() != null ) {
+		objs.put( "orderCancel", paySet.getOrderCancel() );//订单取消时间
+	    }
 	    JedisUtil.map( key, orderPId + "", objs.toString() );
 	}
 	//拍卖，添加拍卖竞拍
@@ -777,7 +783,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 			    if ( fenbiProductMoney < 10 ) {
 				fenbiProductMoney = 10;
 			    }
-			    double fenbiMoney = fenbiProductMoney/10;
+			    double fenbiMoney = fenbiProductMoney / 10;
 			    busResult.setFenbiNum( CommonUtil.multiply( fenbiRatio, fenbiProductMoney ) );
 			    busResult.setFenbiMoney( fenbiProductMoney );
 			}
@@ -792,8 +798,8 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
      * 重组订单参数
      */
     private PhoneToOrderResult getToOrderParams( List< PhoneToOrderProductResult > productResultList, List< Integer > busUserList, List< MallFreight > freightList,
-		    List< Map< String,Object > > mallShopList,
-		    PhoneToOrderDTO params, PhoneToOrderResult result, String provincesId, Double memberLongitude, Double memberLangitude ) {
+		    List< Map< String,Object > > mallShopList, PhoneToOrderDTO params, PhoneToOrderResult result, String provincesId, Double memberLongitude,
+		    Double memberLangitude ) {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 
 	//查询公众号名称或商家名称以及图片
