@@ -417,7 +417,9 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	MallGroupBuy groupBuy = new MallGroupBuy();
 	groupBuy.setProductId( proId );
 	groupBuy.setShopId( shopId );
-	groupBuy.setId( activityId );
+	if ( activityId > 0 ) {
+	    groupBuy.setId( activityId );
+	}
 	groupBuy = mallGroupBuyDAO.selectBuyByProductId( groupBuy );
 	if ( groupBuy != null && CommonUtil.isNotEmpty( groupBuy.getId() ) ) {
 
@@ -435,9 +437,9 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 
     @Override
     public PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member ) {
-	if ( activityId == 0 ) {
+	/*if ( activityId == 0 ) {
 	    return result;
-	}
+	}*/
 	//查询团购信息
 	MallGroupBuy groupBuy = getGroupBuyByProId( proId, shopId, activityId );//通过商品id查询团购信息
 	if ( CommonUtil.isEmpty( groupBuy ) ) {

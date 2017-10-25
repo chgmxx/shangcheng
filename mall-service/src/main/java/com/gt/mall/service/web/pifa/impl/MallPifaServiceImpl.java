@@ -486,9 +486,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 
     @Override
     public PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
-	if ( activityId == 0 ) {
+	/*if ( activityId == 0 ) {
 	    return result;
-	}
+	}*/
 	PhonePifaProductDetailResult pifaResult = new PhonePifaProductDetailResult();
 	boolean isOpenPifa = false;
 	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {

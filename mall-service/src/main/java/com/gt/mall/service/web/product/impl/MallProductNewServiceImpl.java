@@ -130,11 +130,9 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 
 	//查询商品信息
 	MallProduct product = mallProductDAO.selectById( params.getProductId() );
-	if ( CommonUtil.isEmpty( product ) ) {
-	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "该商品不存在" );
-	}
-	if ( product.getIsDelete() != 0 ) {
-
+	String errorMsg = ProductUtil.isProductError( product );
+	if ( CommonUtil.isNotEmpty( errorMsg ) ) {
+	    throw new BusinessException( ResponseEnums.PRODUCT_NULL_ERROR.getCode(), errorMsg );
 	}
 	//查询商品详情
 	MallProductDetail detail = mallProductDetailService.selectByProductId( params.getProductId() );

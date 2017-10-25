@@ -345,7 +345,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     @Override
     public MallPresale getPresaleByProId( Integer proId, Integer shopId, Integer presaleId ) {
 	MallPresale presale = new MallPresale();
-	if ( CommonUtil.isNotEmpty( presaleId ) ) {
+	if ( CommonUtil.isNotEmpty( presaleId ) && presaleId > 0 ) {
 	    presale.setId( presaleId );
 	}
 	presale.setProductId( proId );
@@ -386,9 +386,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
     @Override
     public PhoneProductDetailResult getPresaleProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
-	if ( activityId == 0 ) {
+	/*if ( activityId == 0 ) {
 	    return result;
-	}
+	}*/
 	boolean isOpenPresale = false;
 	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
 	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPresale() ) ) {//是否开启预售

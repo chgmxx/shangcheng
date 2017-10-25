@@ -340,7 +340,9 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	MallSeckill seckill = new MallSeckill();
 	seckill.setProductId( proId );
 	seckill.setShopId( shopId );
-	seckill.setId( activityId );
+	if ( activityId > 0 ) {
+	    seckill.setId( activityId );
+	}
 	seckill = mallSeckillDAO.selectBuyByProductId( seckill );
 	if ( seckill != null && CommonUtil.isNotEmpty( seckill.getId() ) ) {
 
@@ -386,9 +388,9 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
     @Override
     public PhoneProductDetailResult getSeckillProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result ) {
-	if ( activityId == 0 ) {
+	/*if ( activityId == 0 ) {
 	    return result;
-	}
+	}*/
 	//通过商品id查询秒杀信息
 	MallSeckill seckill = getSeckillByProId( proId, shopId, activityId );
 	if ( seckill == null ) {

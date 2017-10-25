@@ -1,6 +1,7 @@
 package com.gt.mall.controller.api.common;
 
 import com.gt.mall.bean.Member;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSellerSet;
@@ -57,9 +58,9 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	try {
 	    PhoneMemberResult result = new PhoneMemberResult();
 	    Member member = SessionUtils.getLoginMember( request );
-	    loginDTO.setUcLogin( 1 );//不需要登陆
+	    //loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
-	    if(CommonUtil.isNotEmpty( loginDTO.getBusId() ) && loginDTO.getBusId() > 0){
+	    if ( CommonUtil.isNotEmpty( loginDTO.getBusId() ) && loginDTO.getBusId() > 0 ) {
 		result.setBusId( loginDTO.getBusId() );
 	    }
 
@@ -112,7 +113,10 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	    result.setBusId( loginDTO.getBusId() );
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
 	} catch ( BusinessException e ) {
-	    logger.error( "进入我的页面的异常：" + e.getMessage() );
+	    logger.error( "进入我的页面的异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "进入我的页面的接口异常：" + e.getMessage() );

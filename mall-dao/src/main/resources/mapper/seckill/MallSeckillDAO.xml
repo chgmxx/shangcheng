@@ -276,6 +276,7 @@
         </if>
         <if test="id == null or id == 0">
             and ((g.s_start_time &lt;= now() and now() &lt; g.s_end_time ) or (g.s_start_time > now() and g.s_end_time > now()))
+            limit 1
         </if>
     </select>
 

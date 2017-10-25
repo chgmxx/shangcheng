@@ -322,7 +322,9 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     @Override
     public MallAuction getAuctionByProId( Integer proId, Integer shopId, Integer aId ) {
 	MallAuction auction = new MallAuction();
-	auction.setId( aId );
+	if(aId > 0){
+	    auction.setId( aId );
+	}
 	auction.setProductId( proId );
 	auction.setShopId( shopId );
 	auction = auctionDAO.selectBuyByProductId( auction );
@@ -515,9 +517,9 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 
     @Override
     public PhoneProductDetailResult getAuctionProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
-	if ( activityId == 0 ) {
+	/*if ( activityId == 0 ) {
 	    return result;
-	}
+	}*/
 	MallAuction auction = getAuctionByProId( proId, shopId, activityId );
 	if ( CommonUtil.isEmpty( auction ) ) {
 	    return result;

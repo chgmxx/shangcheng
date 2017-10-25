@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class Loginfilter extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors( InterceptorRegistry registry ) {
-	//	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
+	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
 	//        registry.addInterceptor(new SysLogInterceptor()).addPathPatterns("/**");
 
 	super.addInterceptors( registry );
