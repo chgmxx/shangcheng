@@ -5,7 +5,6 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.enums.ResponseEnums;
@@ -13,25 +12,24 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.order.MallOrderService;
-import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.SessionUtils;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -344,6 +342,8 @@ public class MallPifaNewController extends BaseController {
 		}
 	    } else {
 		params.put( "userId", user.getId() );
+		params.put( "pfRemark", CommonUtil.urlEncode( params.get( "pfRemark" ).toString() ) );
+		params.put( "pfApplyRemark", CommonUtil.urlEncode( params.get( "pfApplyRemark" ).toString() ) );
 		count = mallPifaService.updateSetWholesaler( params );//修改批发商城设置
 	    }
 

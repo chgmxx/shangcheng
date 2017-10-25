@@ -206,6 +206,8 @@ public class MallAuctionNewController extends BaseController {
 		PageUtil page = auctionMarginService.selectMarginByShopId( params, user.getId() );
 		result.put( "page", page );
 	    }
+	    result.put( "busId", user.getId() );
+	    result.put( "alipayUrl", PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refund.do" );
 	} catch ( Exception e ) {
 	    logger.error( "保证金列表异常：" + e.getMessage() );
 	    e.printStackTrace();

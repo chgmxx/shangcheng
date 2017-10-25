@@ -681,6 +681,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
 	if ( CommonUtil.isNotEmpty( params.get( "presaleSet" ) ) ) {
 	    MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
+	    give.setGiveName(CommonUtil.urlEncode( give.getGiveName() )  );
 	    if ( CommonUtil.isNotEmpty( give.getId() ) ) {
 		num = mallPresaleGiveDAO.updateById( give );
 	    } else {

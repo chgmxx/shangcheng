@@ -5,7 +5,6 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.purchase.PurchaseContractDAO;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.purchase.PurchaseContract;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -103,8 +102,8 @@ public class PurchaseContractNewController extends BaseController {
 	    BusUser busUser = SessionUtils.getLoginUser( request );
 	    PurchaseContract contract = new PurchaseContract();
 	    contract.setBusId( busUser.getId() );
-	    contract.setContractContent( params.get( "contractContent" ).toString() );
-	    contract.setContractTitle( params.get( "contractTitle" ).toString() );
+	    contract.setContractContent( CommonUtil.urlEncode( params.get( "contractContent" ).toString() ) );
+	    contract.setContractTitle( CommonUtil.urlEncode( params.get( "contractTitle" ).toString() ) );
 	    if ( params.get( "id" ) != null && CommonUtil.isNotEmpty( params.get( "id" ).toString() ) ) {
 		contract.setId( Integer.parseInt( params.get( "id" ).toString() ) );
 		contractService.updateById( contract );

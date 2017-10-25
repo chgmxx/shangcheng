@@ -98,7 +98,7 @@ public class MallGroupNewController extends BaseController {
 
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 		MallGroup mallGroup = JSONObject.parseObject( JSON.toJSONString( group ), MallGroup.class );
-
+		mallGroup.setGroupName( CommonUtil.urlEncode(mallGroup.getGroupName()) );
 		if ( !CommonUtil.isEmpty( group.getImageList() ) ) {
 		    images = JSONArray.parseArray( JSON.toJSONString( group.getImageList() ), MallImageAssociative.class );
 		}

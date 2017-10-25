@@ -184,6 +184,8 @@ public class MallHtmlNewController extends BaseController {
 	try {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    MallHtml obj = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallHtml.class );
+	    obj.setHtmlname( CommonUtil.urlEncode( obj.getHtmlname() ) );
+	    obj.setIntroduce( CommonUtil.urlEncode( obj.getIntroduce() ) );
 	    htmlService.addorUpdateSave( obj, user );
 	} catch ( BusinessException e ) {
 	    logger.error( "保存修改信息异常：" + e.getMessage() );

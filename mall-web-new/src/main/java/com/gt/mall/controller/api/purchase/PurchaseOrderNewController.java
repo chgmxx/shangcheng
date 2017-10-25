@@ -5,13 +5,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Card;
 import com.gt.mall.bean.Member;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.groupbuy.MallGroupBuy;
-import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 import com.gt.mall.entity.purchase.*;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -20,7 +17,9 @@ import com.gt.mall.service.web.purchase.PurchaseCompanyModeService;
 import com.gt.mall.service.web.purchase.PurchaseOrderService;
 import com.gt.mall.service.web.purchase.PurchaseOrderStatisticsService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.SessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,8 +31,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -179,6 +179,9 @@ public class PurchaseOrderNewController extends BaseController {
 	try {
 
 	    PurchaseOrder order = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "order" ).toString() ), PurchaseOrder.class );
+	    order.setOrderTitle( CommonUtil.urlEncode( order.getOrderTitle() ) );
+	    order.setOrderDescribe( CommonUtil.urlEncode( order.getOrderDescribe() ) );
+	    order.setOrderExplain( CommonUtil.urlEncode( order.getOrderExplain() ) );
 	    List< PurchaseOrderDetails > orderDetailsList = JSONArray.parseArray( params.get( "orderDetailsList" ).toString(), PurchaseOrderDetails.class );
 	    List< PurchaseTerm > termList = JSONArray.parseArray( params.get( "termList" ).toString(), PurchaseTerm.class );
 	    List< PurchaseCarousel > carouselList = JSONArray.parseArray( params.get( "carouselList" ).toString(), PurchaseCarousel.class );
@@ -350,7 +353,7 @@ public class PurchaseOrderNewController extends BaseController {
 	    PurchaseLanguage language = new PurchaseLanguage();
 	    language.setId( languageId );
 	    language.setIsRead( "1" );
-	    language.setAdminContent( languageContent );
+	    language.setAdminContent( CommonUtil.urlEncode( languageContent) );
 	    languageDAO.updateById( language );
 	} catch ( Exception e ) {
 	    logger.error( "商家回复买家的留言异常：" + e.getMessage() );

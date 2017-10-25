@@ -20,7 +20,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -123,7 +125,7 @@ public class MallCommentNewController extends BaseController {
 	    //params:{"content":"32232","repPId":"25","shopId":"177"}
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    MallComment comment = new MallComment();
-	    comment.setContent( content );
+	    comment.setContent( CommonUtil.urlEncode( content ) );
 	    comment.setRepPId( id );
 	    comment.setShopId( shopId );
 	    comment.setCreateTime( new Date() );

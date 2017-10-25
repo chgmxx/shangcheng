@@ -1,23 +1,14 @@
 package com.gt.mall.controller.api.product;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallProductTemplate;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.service.web.basic.MallImageAssociativeService;
-import com.gt.mall.service.web.product.MallGroupService;
-import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductTemplateService;
-import com.gt.mall.service.web.store.MallStoreCertificationService;
-import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.SessionUtils;
@@ -25,14 +16,16 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -105,6 +98,9 @@ public class MallProductTemplateController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    MallProductTemplate template = JSONObject.parseObject( params.get( "template" ).toString(), MallProductTemplate.class );
 	    if ( template != null ) {
+		template.setName( CommonUtil.urlEncode( template.getName() ) );
+		template.setTemplateData( CommonUtil.urlEncode( template.getTemplateData() ) );
+		template.setTemplateCss( CommonUtil.urlEncode( template.getTemplateCss() ) );
 		if ( CommonUtil.isNotEmpty( template.getId() ) ) {
 		    mallProductTemplateService.updateById( template );
 		} else {

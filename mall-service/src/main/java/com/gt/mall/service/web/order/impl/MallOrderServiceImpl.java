@@ -372,6 +372,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     @Override
     public int upOrderNoOrRemark( Map< String,Object > params ) {
 	Member member = null;
+	if ( CommonUtil.isNotEmpty( params.get( "noReturnReason" ) ) ) {
+	    params.put( "noReturnReason", CommonUtil.urlEncode( params.get( "noReturnReason" ).toString() ) );
+	}
+	if ( CommonUtil.isNotEmpty( params.get( "returnAddress" ) ) ) {
+	    params.put( "returnAddress", CommonUtil.urlEncode( params.get( "returnAddress" ).toString() ) );
+	}
 	int count = mallOrderDAO.upOrderNoOrRemark( params );
 	Object type = params.get( "type" );
 	Object express = params.get( "express" );

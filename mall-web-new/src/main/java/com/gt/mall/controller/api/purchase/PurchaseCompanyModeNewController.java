@@ -47,7 +47,6 @@ public class PurchaseCompanyModeNewController extends BaseController {
     @Autowired
     private PurchaseCompanyModeDAO companyModeDAO;
 
-
     @ApiOperation( value = "公司模板列表(分页)", notes = "公司模板列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
@@ -104,9 +103,9 @@ public class PurchaseCompanyModeNewController extends BaseController {
 	    BusUser user = SessionUtils.getLoginUser( request );
 	    PurchaseCompanyMode company = new PurchaseCompanyMode();
 	    company.setBusId( user.getId() );
-	    company.setCompanyAddress( params.get( "companyAddress" ).toString() );
+	    company.setCompanyAddress( CommonUtil.urlEncode( params.get( "companyAddress" ).toString() ) );
 	    company.setCompanyInternet( params.get( "companyInternet" ).toString() );
-	    company.setCompanyName( params.get( "companyName" ).toString() );
+	    company.setCompanyName( CommonUtil.urlEncode( params.get( "companyName" ).toString() ) );
 	    company.setLatitude( params.get( "latitude" ) != null ? params.get( "latitude" ).toString() : null );
 	    company.setLongitude( params.get( "longitude" ) != null ? params.get( "longitude" ).toString() : null );
 	    company.setCompanyTel( params.get( "companyTel" ).toString() );

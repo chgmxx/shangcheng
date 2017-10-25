@@ -93,11 +93,13 @@ public class MallSpecificaNewController extends BaseController {
 
 	    if ( !CommonUtil.isEmpty( map.get( "specId" ) ) ) {// 添加规格值
 		MallSpecificaValue value = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecificaValue.class );
+		value.setSpecValue( CommonUtil.urlEncode( value.getSpecValue() ) );
 		value.setUserId( userId );
 		mallProductSpecificaService.insertSpecificaValue( value );
 		id = value.getId();
 	    } else {// 添加规格名称
 		MallSpecifica spe = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecifica.class );
+		spe.setSpecName( CommonUtil.urlEncode( spe.getSpecName() ) );
 		spe.setUserId( userId );
 		spe.setCreateTime( new Date() );
 		mallProductSpecificaService.insertSpecifica( spe );
