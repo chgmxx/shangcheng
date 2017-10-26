@@ -2,7 +2,7 @@ package com.gt.mall.controller.integral.phone;
 
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
@@ -19,7 +19,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -77,12 +77,12 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     @RequestMapping( value = "{shopId}/79B4DE7C/toIndex" )
     public String toIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopId, @RequestParam Map< String,Object > params ) {
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -167,12 +167,12 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/79B4DE7C/recordList" )
     public String recordList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -215,12 +215,12 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/79B4DE7C/integralDetail" )
     public String integralDetail( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -271,7 +271,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     public void integerDetailPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    //查询积分商品
 	    //	    PageUtil page = integralService.selectIntegralDetail( member, params );
 	    Map< String,Object > map = new HashMap<>();
@@ -304,12 +304,12 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/79B4DE7C/integralProduct" )
     public String integralProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );
@@ -359,12 +359,12 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     public String addressList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params, HttpSession session ) {
 	logger.info( "进入收货地址列表页面" );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -413,12 +413,12 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     public String toAddress( HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入跳转至新增/修改收货地址页面" );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -482,11 +482,11 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     public void recordIntegral( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {

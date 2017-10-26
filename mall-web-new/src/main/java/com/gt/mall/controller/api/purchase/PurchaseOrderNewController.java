@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.dto.ServerResponse;
@@ -81,7 +81,7 @@ public class PurchaseOrderNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String search, String startTime, String endTime ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "search", search );
@@ -151,7 +151,7 @@ public class PurchaseOrderNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "proName", proName );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
@@ -372,7 +372,7 @@ public class PurchaseOrderNewController extends BaseController {
     public ServerResponse statisticsList( HttpServletRequest request, HttpServletResponse response, Integer curPage, String nickname, Integer orderId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "nickname", nickname );

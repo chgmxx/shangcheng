@@ -7,7 +7,7 @@ import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,7 +45,7 @@ public class MallSpecificaController extends BaseController {
 	JSONObject obj = new JSONObject();
 	try {
 	    SortedMap< String,Object > map;
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 
 	    /*int userPId = dictService.pidUserId(userId);//通过用户名查询主账号id
 	    long isJxc = erpLoginOrMenusService.isjxcCount("8", userPId);//判断商家是否有进销存 0没有 1有
@@ -80,7 +80,7 @@ public class MallSpecificaController extends BaseController {
 	response.setCharacterEncoding( "utf-8" );
 	Integer id = 0;
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 
 	    if ( !CommonUtil.isEmpty( map.get( "specId" ) ) ) {// 添加规格值
 		MallSpecificaValue value = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ),MallSpecificaValue.class );

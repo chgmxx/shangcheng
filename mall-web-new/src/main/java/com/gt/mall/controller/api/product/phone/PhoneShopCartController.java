@@ -1,7 +1,7 @@
 package com.gt.mall.controller.api.product.phone;
 
 import com.alibaba.fastjson.JSONArray;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
@@ -13,7 +13,7 @@ import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderDTO;
 import com.gt.mall.result.phone.shopcart.PhoneShopCartResult;
 import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -55,7 +55,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneAddShopCartDTO params ) {
 	try {
 
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, params.getBusId() );
 
 	    mallShopCartService.addShoppingCart( member, params, request, response );
 
@@ -82,7 +82,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneShopCartResult > getShopCart( HttpServletRequest request, HttpServletResponse response, Integer busId, Integer shopId, Integer type,
 		    PhoneLoginDTO loginDTO ) {
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断

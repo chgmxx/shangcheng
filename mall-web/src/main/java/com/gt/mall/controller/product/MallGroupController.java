@@ -2,7 +2,7 @@ package com.gt.mall.controller.product;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.entity.product.MallSearchLabel;
@@ -12,7 +12,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,7 +53,7 @@ public class MallGroupController extends BaseController {
     @RequestMapping( "/group_index" )
     public String group_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String urls = request.getHeader( "Referer" );
 	    if ( user != null ) {
 		Integer userId = user.getId();// 获取登陆人id
@@ -94,7 +94,7 @@ public class MallGroupController extends BaseController {
     @RequestMapping( "/to_edit" )
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );// 获取登陆人id
+	    BusUser user = MallSessionUtils.getLoginUser( request );// 获取登陆人id
 	    List< Map< String,Object > > list = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( list != null && list.size() > 0 ) {
 		MallGroup parentGroup = null;
@@ -159,7 +159,7 @@ public class MallGroupController extends BaseController {
 	int code = 1;// 编辑成功
 	PrintWriter p = null;
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 
 		MallGroup group = com.alibaba.fastjson.JSONObject
@@ -201,7 +201,7 @@ public class MallGroupController extends BaseController {
 	int code = 1;// 删除成功
 	PrintWriter p = null;
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 		boolean flag = mallGroupService.deleteGroup( id );
 		if ( !flag ) {
@@ -233,7 +233,7 @@ public class MallGroupController extends BaseController {
 	List< Map< String,Object > > groupList = new ArrayList< Map< String,Object > >();
 	PrintWriter p = null;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    // 查询会员下面的所有分组
 	    if ( shoplist != null && shoplist.size() > 0 ) {
@@ -270,7 +270,7 @@ public class MallGroupController extends BaseController {
 	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 	PrintWriter p = null;
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 		list = mallGroupService.selectGroupByParent( params );
 	    }
@@ -293,7 +293,7 @@ public class MallGroupController extends BaseController {
 		    @RequestParam Map< String,Object > params ) {
 	int type = 0;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( !CommonUtil.isEmpty( user ) ) {
 		params.put( "userId", user.getId() );
 		if ( CommonUtil.isEmpty( params.get( "shopId" ) ) ) {
@@ -328,7 +328,7 @@ public class MallGroupController extends BaseController {
     @RequestMapping( "/syncProduct" )
     public String syncProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( !CommonUtil.isEmpty( user ) ) {
 		params.put( "userId", user.getId() );
 
@@ -352,7 +352,7 @@ public class MallGroupController extends BaseController {
     public String label_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String urls = request.getHeader( "Referer" );
 	    if ( user != null ) {
 		Integer userId = user.getId();// 获取登陆人id
@@ -398,7 +398,7 @@ public class MallGroupController extends BaseController {
 	int code = 1;// 编辑成功
 	PrintWriter p = null;
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 
 		List< MallSearchLabel > labelList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "param" ).toString(), MallSearchLabel.class );
@@ -433,7 +433,7 @@ public class MallGroupController extends BaseController {
 	JSONObject obj = new JSONObject();
 	try {
 	    p = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( !CommonUtil.isEmpty( user ) ) {
 		//查询所有分组
 		List< Map< String,Object > > list = mallGroupService.selectGroupByParent( params );

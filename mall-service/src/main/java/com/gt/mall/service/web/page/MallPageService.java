@@ -1,8 +1,8 @@
 package com.gt.mall.service.web.page;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallProductDetail;

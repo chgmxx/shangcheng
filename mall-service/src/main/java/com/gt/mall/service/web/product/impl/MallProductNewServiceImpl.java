@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.product.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.auction.MallAuction;
@@ -226,6 +226,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( params.getType() != 3 ) {
 	    result.setProductStockTotal( product.getProStockTotal() );//商品库存
 	}
+	result.setAttentionNum( ProductUtil.getGuanzhuNum( product ) );
 	result.setProductSaleTotal( product.getProSaleTotal() );//商品销量
 	result.setIsSpecifica( product.getIsSpecifica() );//是否有规格  1 有规格 0 无规格
 	if ( CommonUtil.isNotEmpty( product.getProRestrictionNum() ) && product.getProRestrictionNum() > 0 && result.getMaxBuyNum() == 0 ) {

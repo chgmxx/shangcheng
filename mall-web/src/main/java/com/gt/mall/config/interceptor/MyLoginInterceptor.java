@@ -4,8 +4,8 @@
 //import com.gt.api.bean.sign.SignBean;
 //import com.gt.api.bean.sign.SignEnum;
 //import com.gt.api.util.sign.SignUtils;
-//import com.gt.mall.bean.BusUser;
-//import com.gt.mall.bean.Member;
+//import com.gt.api.bean.session.BusUser;
+//import com.gt.api.bean.session.Member;
 //import com.gt.mall.exception.ResponseEntityException;
 //import com.gt.mall.utils.CommonUtil;
 //import com.gt.mall.utils.PropertiesUtil;

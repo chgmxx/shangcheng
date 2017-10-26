@@ -2,37 +2,20 @@ package com.gt.mall.controller.api.auction;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
-import com.gt.mall.dao.auction.MallAuctionOfferDAO;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionMargin;
-import com.gt.mall.entity.groupbuy.MallGroupBuy;
-import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.service.inter.user.MemberAddressService;
-import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
-import com.gt.mall.service.web.auction.MallAuctionOfferService;
 import com.gt.mall.service.web.auction.MallAuctionService;
-import com.gt.mall.service.web.basic.MallCollectService;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.freight.MallFreightService;
-import com.gt.mall.service.web.order.MallOrderService;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -43,8 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +61,7 @@ public class MallAuctionNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type, Integer shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "type", type );
@@ -131,7 +112,7 @@ public class MallAuctionNewController extends BaseController {
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    int code = -1;// 编辑成功
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		code = auctionService.editAuction( params, userId );// 编辑商品
 	    }
@@ -197,7 +178,7 @@ public class MallAuctionNewController extends BaseController {
     public ServerResponse marginList( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺

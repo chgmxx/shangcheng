@@ -8,7 +8,7 @@ import com.gt.entityBo.MallAllEntity;
 import com.gt.entityBo.MallEntity;
 import com.gt.entityBo.MallShopEntity;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;

@@ -5,8 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -675,7 +675,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 
 	if ( proId > 0 ) {
-	    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	    int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 	    long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有
 	    if ( isJxc == 1 ) {
 		boolean flag = saveProductByErp( product, user, userPId );
@@ -824,7 +824,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 
 	}
-	int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 	long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有
 	if ( isJxc == 1 ) {
 	    boolean flags = saveProductByErp( product, user, userPId );
@@ -1507,7 +1507,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    resultMap.put( "errorMsg", msg );
 	} else {
 	    if ( CommonUtil.isNotEmpty( proIds ) && userId > 0 ) {
-		int userPId = SessionUtils.getAdminUserId( userId, request );
+		int userPId = MallSessionUtils.getAdminUserId( userId, request );
 		Map< String,Object > syncParams = new HashMap<>();
 		syncParams.put( "productIds", proIds.substring( 0, proIds.length() - 1 ) );
 		syncParams.put( "rootUid", userPId );
@@ -1890,7 +1890,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     @Override
     public void syncErpPro( int userId, HttpServletRequest request ) {
-	int userPId = SessionUtils.getAdminUserId( userId, request );//根据商家id查询主账号id
+	int userPId = MallSessionUtils.getAdminUserId( userId, request );//根据商家id查询主账号id
 	Map< String,Object > params = new HashMap<>();
 	params.put( "rootUid", userPId );
 	params.put( "sync", 0 );
@@ -2246,7 +2246,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     @Override
     public void syncAllProduct( BusUser user, HttpServletRequest request ) {
-	int userPId = SessionUtils.getAdminUserId( user.getId(), request );
+	int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );
 	int uType = 1;//用户类型 1总账号  0子账号
 	if ( user.getId() != userPId ) {
 	    uType = 0;
@@ -2593,7 +2593,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    mallProductGroupService.saveOrUpdate( params.get( "groupList" ), product.getId() );
 	}
 
-	int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 	long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有
 	if ( isJxc == 1 ) {
 	    boolean flags = saveProductByErp( product, user, userPId );

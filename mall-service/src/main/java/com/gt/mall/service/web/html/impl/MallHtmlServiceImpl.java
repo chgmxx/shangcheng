@@ -2,13 +2,11 @@ package com.gt.mall.service.web.html.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.html.MallHtmlDAO;
-import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.html.MallHtml;
-import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.html.MallHtmlService;
 import com.gt.mall.utils.*;
@@ -42,7 +40,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
     @Override
     public Map< String,Object > htmlList( HttpServletRequest request ) {
 	Map< String,Object > map = new HashMap< String,Object >();
-	BusUser obj = SessionUtils.getLoginUser( request );//获取登录信息
+	BusUser obj = MallSessionUtils.getLoginUser( request );//获取登录信息
 	Integer id = obj.getId();//获取登录人id
 	//pid==0 主账户,否则是子账户
 	Integer pageNum = 1;
@@ -185,7 +183,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
     public PageUtil newModelList( HttpServletRequest request, Map< String,Object > params ) {
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
-	 
+
 	Wrapper< MallHtml > pageWrapper = new EntityWrapper<>();
 	pageWrapper.where( "source_type = 1  and state=0" );
 	int count = htmlDAO.selectCount( pageWrapper );

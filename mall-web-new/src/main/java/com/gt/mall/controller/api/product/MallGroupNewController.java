@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallGroup;
@@ -19,7 +19,7 @@ import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -62,7 +62,7 @@ public class MallGroupNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "isProNum", true );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -93,7 +93,7 @@ public class MallGroupNewController extends BaseController {
     @ApiOperation( value = "保存分组信息", notes = "保存分组信息", response = GroupDTO.class )
     public ServerResponse save( HttpServletRequest request, HttpServletResponse response, GroupDTO group ) {
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    List< MallImageAssociative > images = new ArrayList< MallImageAssociative >();
 
 	    if ( !CommonUtil.isEmpty( userId ) ) {
@@ -136,7 +136,7 @@ public class MallGroupNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Map< String,Object > params = new HashMap<>();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( !CommonUtil.isEmpty( user ) ) {
 		params.put( "userId", user.getId() );
 		params.put( "shopId", shopId );
@@ -187,7 +187,8 @@ public class MallGroupNewController extends BaseController {
     @ResponseBody
     @SysLogAnnotation( description = "删除分组信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
-    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "ids", value = "分组ID集合,用逗号隔开", required = true ) @RequestParam String ids ) {
+    public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "ids", value = "分组ID集合,用逗号隔开", required = true ) @RequestParam String ids ) {
 	try {
 	    if ( CommonUtil.isNotEmpty( ids ) ) {
 		String id[] = ids.toString().split( "," );
@@ -222,7 +223,7 @@ public class MallGroupNewController extends BaseController {
     @RequestMapping( value = "/recommend", method = RequestMethod.POST )
     public ServerResponse recommend( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 		List< MallSearchLabel > labelList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "labelList" ).toString(), MallSearchLabel.class );
 		boolean flag = mallGroupService.saveOrUpdateGroupLabel( labelList, userId );

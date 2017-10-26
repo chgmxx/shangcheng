@@ -1,8 +1,8 @@
 package com.gt.mall.controller.api.store;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
@@ -18,7 +18,6 @@ import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.*;
-import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.Session;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,10 +62,10 @@ public class MallStoreNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    result.put( "userName", user.getName() );//商家名称
 	    result.put( "userLogo", "" );//商家头像
-	    int pid = SessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
+	    int pid = MallSessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "userId", user.getId() );
@@ -76,7 +74,7 @@ public class MallStoreNewController extends BaseController {
 	    if ( shopList != null && shopList.size() > 0 ) {
 		PageUtil page = mallStoreService.findByPage( params, shopList );
 
-		int branchCount = SessionUtils.getWxShopNumBySession( user.getId(), request );
+		int branchCount = MallSessionUtils.getWxShopNumBySession( user.getId(), request );
 		int store = mallStoreService.countStroe( user.getId() );
 		int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
 		if ( store >= branchCount ) {
@@ -102,7 +100,7 @@ public class MallStoreNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getShopList", method = RequestMethod.POST )
     public ServerResponse getShopList( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	List< WsWxShopInfoExtend > shopInfoList = null;
 	try {
 	    //获取用户店铺集合
@@ -159,7 +157,7 @@ public class MallStoreNewController extends BaseController {
     @RequestMapping( value = "/storeList", method = RequestMethod.POST )
     public ServerResponse storeList( HttpServletRequest request, HttpServletResponse response ) {
 	List< Map< String,Object > > storeList = null;
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	try {
 	    storeList = mallStoreService.findAllStoByUser( user, request );
 	} catch ( Exception e ) {
@@ -179,7 +177,7 @@ public class MallStoreNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    MallStore sto = com.alibaba.fastjson.JSONObject.parseObject( params.get( "obj" ).toString(), MallStore.class );
 	    if ( CommonUtil.isEmpty( sto.getId() ) ) {
@@ -197,13 +195,13 @@ public class MallStoreNewController extends BaseController {
 		if ( photoList != null && photoList.size() > 0 ) {
 		    sto.setStoPicture( photoList.get( 0 ).getLocalAddress() );
 		}
-		sto.setStoUserId( SessionUtils.getLoginUser( request ).getId() );
-		sto.setStoCreatePerson( SessionUtils.getLoginUser( request ).getId() );
+		sto.setStoUserId( MallSessionUtils.getLoginUser( request ).getId() );
+		sto.setStoCreatePerson( MallSessionUtils.getLoginUser( request ).getId() );
 		sto.setStoCreateTime( new Date() );
 	    }
 	    boolean flag = mallStoreService.saveOrUpdate( sto, user );
 	    if ( flag ) {
-		SessionUtils.setShopListBySession( user.getId(), null, request );
+		MallSessionUtils.setShopListBySession( user.getId(), null, request );
 		mallStoreService.findAllStoByUser( user, request );
 	    }
 	} catch ( BusinessException e ) {
@@ -228,11 +226,11 @@ public class MallStoreNewController extends BaseController {
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "ids", value = "店铺ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String id[] = ids.toString().split( "," );
 	    boolean flag = mallStoreService.deleteShop( id );
 	    if ( flag ) {
-		SessionUtils.setShopListBySession( user.getId(), null, request );
+		MallSessionUtils.setShopListBySession( user.getId(), null, request );
 		mallStoreService.findAllStoByUser( user, request );
 	    }
 	} catch ( BusinessException e ) {
@@ -299,7 +297,7 @@ public class MallStoreNewController extends BaseController {
 		map.put( "style", style );
 	    }
 	    result.put( "styleList", styleList );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    set = mallPaySetService.selectByUserId( set );
@@ -324,7 +322,7 @@ public class MallStoreNewController extends BaseController {
     public ServerResponse saveStyle( HttpServletRequest request, HttpServletResponse response, @ApiParam( value = "配色key", required = true ) @RequestParam Integer styleKey )
 		    throws IOException {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );

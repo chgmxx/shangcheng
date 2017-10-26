@@ -1,30 +1,20 @@
 package com.gt.mall.controller.api.html;
 
 import com.alibaba.fastjson.JSON;
-import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.html.MallHtml;
-import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.html.MallHtmlFromService;
-import com.gt.mall.service.web.html.MallHtmlReportService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -35,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +58,7 @@ public class MallHtmlNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "user_id", user.getId() );
@@ -82,7 +71,7 @@ public class MallHtmlNewController extends BaseController {
 	    } else {
 		boolean isadmin = busUserService.getIsAdmin( user.getId() );
 		if ( isadmin ) {
-		    Integer zhuid = SessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
+		    Integer zhuid = MallSessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
 		    user = busUserService.selectById( zhuid );
 		    ispid = 1;
 		} else {
@@ -139,7 +128,7 @@ public class MallHtmlNewController extends BaseController {
     public ServerResponse setMallHtml( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "模板id", required = true ) @RequestParam Integer id ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
 	    Integer maxcj = Integer.valueOf( dictService.getDiBserNum( user.getId(), 16, "1140" ) );
 	    Integer ycj = htmlService.htmltotal( user.getId() );//主账户之下已创建的数量
 	    if ( ycj >= maxcj ) {
@@ -182,7 +171,7 @@ public class MallHtmlNewController extends BaseController {
     @RequestMapping( value = "/update", method = RequestMethod.POST )
     public ServerResponse update( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallHtml obj = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallHtml.class );
 	    obj.setHtmlname( CommonUtil.urlEncode( obj.getHtmlname() ) );
 	    obj.setIntroduce( CommonUtil.urlEncode( obj.getIntroduce() ) );
@@ -314,7 +303,7 @@ public class MallHtmlNewController extends BaseController {
     @RequestMapping( value = "/htmlSave", method = RequestMethod.POST )
     public ServerResponse htmlSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallHtml obj = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallHtml.class );
 	    htmlService.htmlSave( obj, user );
 	} catch ( BusinessException e ) {

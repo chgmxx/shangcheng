@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
@@ -17,8 +17,8 @@ import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallJxcHttpClientUtil;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
 import com.gt.util.entity.param.shop.ShopSubsop;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
@@ -391,16 +391,16 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	List< Map< String,Object > > storeList = new ArrayList<>();
 	//判断session里面有没有门店集合
-	List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
+	List< Map > shopList = MallSessionUtils.getShopListBySession( user.getId(), request );
 	if ( shopList != null && shopList.size() > 0 ) {
 	    for ( Map shopMap : shopList ) {
 		storeList.add( shopMap );
 	    }
 	    return storeList;
 	}
-	List< WsWxShopInfoExtend > shopInfoList = busUserService.getShopIdListByUserId( user.getId() );
+	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
-	    SessionUtils.setWxShopNumBySession( user.getId(), shopInfoList.size(), request );
+	    MallSessionUtils.setWxShopNumBySession( user.getId(), shopInfoList.size(), request );
 
 	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
 		wxShopIds.add( wsWxShopInfoExtend.getId() );
@@ -411,7 +411,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	    storeList = mallStoreDao.selectMaps( wrapper );
 	    storeList = getShopParams( storeList, shopInfoList );
-	    SessionUtils.setShopListBySession( user.getId(), storeList, request );
+	    MallSessionUtils.setShopListBySession( user.getId(), storeList, request );
 	    return storeList;
 	}
 	return null;
@@ -447,16 +447,16 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	List< Map< String,Object > > storeList = new ArrayList<>();
 	//判断session里面有没有门店集合
-	List< Map > shopList = SessionUtils.getShopListBySession( userId, request );
+	List< Map > shopList = MallSessionUtils.getShopListBySession( userId, request );
 	if ( shopList != null && shopList.size() > 0 ) {
 	    for ( Map shopMap : shopList ) {
 		storeList.add( shopMap );
 	    }
 	    return storeList;
 	}
-	List< WsWxShopInfoExtend > shopInfoList = busUserService.getShopIdListByUserId( userId );
+	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
-	    SessionUtils.setWxShopNumBySession( userId, shopInfoList.size(), request );
+	    MallSessionUtils.setWxShopNumBySession( userId, shopInfoList.size(), request );
 
 	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
 		wxShopIds.add( wsWxShopInfoExtend.getId() );
@@ -468,7 +468,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    storeList = mallStoreDao.selectMaps( wrapper );
 	    storeList = getShopParams( storeList, shopInfoList );
 
-	    SessionUtils.setShopListBySession( userId, storeList, request );
+	    MallSessionUtils.setShopListBySession( userId, storeList, request );
 	    return storeList;
 	}
 	return null;
@@ -550,17 +550,17 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
     @Override
     public int getIsErpCount( int userId, HttpServletRequest request ) {
-	int isJxc = SessionUtils.getIsJxc( userId, request );
+	int isJxc = MallSessionUtils.getIsJxc( userId, request );
 	if ( isJxc == -1 ) {//重新获取商家是否开通进销存
 	    isJxc = busUserService.getIsErpCount( 8, userId );//判断商家是否有进销存 0没有 1有
-	    SessionUtils.setIsJxc( userId, isJxc, request );
+	    MallSessionUtils.setIsJxc( userId, isJxc, request );
 	}
 	return isJxc;
     }
 
     @Override
     public boolean getIsAdminUser( int userId, HttpServletRequest request ) {
-	int isAdmin = SessionUtils.getIsAdminUser( userId, request );
+	int isAdmin = MallSessionUtils.getIsAdminUser( userId, request );
 	if ( isAdmin == -1 ) {
 	    boolean flag = busUserService.getIsAdmin( userId );
 	    if ( flag ) {
@@ -568,7 +568,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    } else {
 		isAdmin = 0;
 	    }
-	    SessionUtils.setIsAdminUser( userId, isAdmin, request );
+	    MallSessionUtils.setIsAdminUser( userId, isAdmin, request );
 	    return flag;
 	} else {
 	    return true;

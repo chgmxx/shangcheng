@@ -2,17 +2,16 @@ package com.gt.mall.controller.api.purchase;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.purchase.PurchaseCompanyModeDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.purchase.PurchaseCompanyMode;
-import com.gt.mall.entity.purchase.PurchaseContract;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.purchase.PurchaseCompanyModeService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +53,7 @@ public class PurchaseCompanyModeNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String keyWord ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "keyword", keyWord );
@@ -100,7 +98,7 @@ public class PurchaseCompanyModeNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    PurchaseCompanyMode company = new PurchaseCompanyMode();
 	    company.setBusId( user.getId() );
 	    company.setCompanyAddress( CommonUtil.urlEncode( params.get( "companyAddress" ).toString() ) );
@@ -158,7 +156,7 @@ public class PurchaseCompanyModeNewController extends BaseController {
     public ServerResponse companyModeList( HttpServletRequest request, HttpServletResponse response ) {
 	List< Map< String,Object > > companyModeList = null;
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    companyModeList = companyModeDAO.findAllList( busUser.getId() );
 	} catch ( Exception e ) {
 	    logger.error( "查询所有的公司模板异常：" + e.getMessage() );

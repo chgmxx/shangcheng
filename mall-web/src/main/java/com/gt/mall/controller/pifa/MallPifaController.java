@@ -2,14 +2,14 @@ package com.gt.mall.controller.pifa;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaService;
@@ -58,7 +58,7 @@ public class MallPifaController extends BaseController {
     @RequestMapping( value = "/wholesaleList" )
     public String wholesaleList( @RequestParam Map< String,Object > params, HttpServletRequest request ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
 	    PageUtil page = mallPifaService.wholesalerList( params );
 	    request.setAttribute( "page", page );
@@ -75,7 +75,7 @@ public class MallPifaController extends BaseController {
      */
     @RequestMapping( value = "/toSetWholesale" )
     public String toSetWholesale( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	MallPaySet set = new MallPaySet();
 	set.setUserId( user.getId() );
 	MallPaySet paySet = mallPaySetService.selectByUserId( set );
@@ -131,7 +131,7 @@ public class MallPifaController extends BaseController {
 	PrintWriter out = null;
 	try {
 	    out = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet mallPaySet = (MallPaySet) JSONObject.toBean( JSONObject.fromObject( params ), MallPaySet.class );
 
 	    MallPaySet set = new MallPaySet();
@@ -218,7 +218,7 @@ public class MallPifaController extends BaseController {
     @RequestMapping( value = "/index" )
     public String pifaIndex( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是否是管理员
 	    if ( isAdminFlag ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -258,7 +258,7 @@ public class MallPifaController extends BaseController {
     public String to_edit( HttpServletRequest request, HttpServletResponse response,
 		    @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
@@ -294,7 +294,7 @@ public class MallPifaController extends BaseController {
 	PrintWriter p = null;
 	try {
 	    p = response.getWriter();
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		code = mallPifaService.editPifa( params, userId );// 编辑商品
 	    }
@@ -320,7 +320,7 @@ public class MallPifaController extends BaseController {
 	int code = 1;// 删除成功
 	PrintWriter p = null;
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) && !CommonUtil.isEmpty( params ) ) {
 		int id = 0;
 		if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {

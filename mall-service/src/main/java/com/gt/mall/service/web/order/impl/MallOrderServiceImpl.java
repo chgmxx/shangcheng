@@ -2,11 +2,11 @@ package com.gt.mall.service.web.order.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.entityBo.PaySuccessBo;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -2981,29 +2981,29 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Override
     public void clearSession( HttpServletRequest request ) {
-	Object orderObj = SessionUtils.getSession( request, "to_order" );
-	Object payWayObj = SessionUtils.getSession( request, "orderpayway" );
-	Object payWayNameObj = SessionUtils.getSession( request, "orderpaywayname" );
-	Object dataObj = SessionUtils.getSession( request, "dataOrder" );
-	Object addTypeObj = SessionUtils.getSession( request, "addressType" );
-	Object deliveryMethodObj = SessionUtils.getSession( request, "deliveryMethod" );
+	Object orderObj = MallSessionUtils.getSession( request, "to_order" );
+	Object payWayObj = MallSessionUtils.getSession( request, "orderpayway" );
+	Object payWayNameObj = MallSessionUtils.getSession( request, "orderpaywayname" );
+	Object dataObj = MallSessionUtils.getSession( request, "dataOrder" );
+	Object addTypeObj = MallSessionUtils.getSession( request, "addressType" );
+	Object deliveryMethodObj = MallSessionUtils.getSession( request, "deliveryMethod" );
 	if ( CommonUtil.isNotEmpty( orderObj ) ) {
-	    SessionUtils.removeSession( request, "to_order" );
+	    MallSessionUtils.removeSession( request, "to_order" );
 	}
 	if ( CommonUtil.isNotEmpty( payWayObj ) ) {
-	    SessionUtils.removeSession( request, "orderpayway" );
+	    MallSessionUtils.removeSession( request, "orderpayway" );
 	}
 	if ( CommonUtil.isNotEmpty( payWayNameObj ) ) {
-	    SessionUtils.removeSession( request, "orderpaywayname" );
+	    MallSessionUtils.removeSession( request, "orderpaywayname" );
 	}
 	if ( CommonUtil.isNotEmpty( dataObj ) ) {
-	    SessionUtils.removeSession( request, "dataOrder" );
+	    MallSessionUtils.removeSession( request, "dataOrder" );
 	}
 	if ( CommonUtil.isNotEmpty( addTypeObj ) ) {
-	    SessionUtils.removeSession( request, "addressType" );
+	    MallSessionUtils.removeSession( request, "addressType" );
 	}
 	if ( CommonUtil.isNotEmpty( deliveryMethodObj ) ) {
-	    SessionUtils.removeSession( request, "deliveryMethod" );
+	    MallSessionUtils.removeSession( request, "deliveryMethod" );
 	}
 
 	String ip = IPKit.getRemoteIP( request );

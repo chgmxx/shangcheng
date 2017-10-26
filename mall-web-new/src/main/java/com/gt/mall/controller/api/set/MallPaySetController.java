@@ -1,10 +1,9 @@
 package com.gt.mall.controller.api.set;
 
-import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.enums.ResponseEnums;
@@ -12,7 +11,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -58,7 +57,7 @@ public class MallPaySetController extends BaseController {
     public ServerResponse paySetInfo( HttpServletRequest request, HttpServletResponse response ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
@@ -90,7 +89,7 @@ public class MallPaySetController extends BaseController {
     public ServerResponse getTemplate( HttpServletRequest request, HttpServletResponse response ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map > msgArr = null;
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
@@ -135,7 +134,7 @@ public class MallPaySetController extends BaseController {
     @RequestMapping( value = "/setSave", method = RequestMethod.POST )
     public ServerResponse setSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    //	    set.setUserId( user.getId() );
 	    //	    com.alibaba.fastjson.JSONObject set2 = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( set ) );
 	    params.put( "userId", user.getId() );
@@ -167,7 +166,7 @@ public class MallPaySetController extends BaseController {
 		    @ApiImplicitParam( name = "operation", value = "操作 1开启 0关闭", paramType = "query", required = true, dataType = "int" ) } )
     public ServerResponse setSmsTemplate( HttpServletRequest request, HttpServletResponse response, String template_json, Integer type, Integer operation ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map > msgArr = null;
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
@@ -233,7 +232,7 @@ public class MallPaySetController extends BaseController {
     public ServerResponse isAuthService( HttpServletRequest request, HttpServletResponse response ) {
 	boolean flag = true;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( user.getId() );
 	    if ( wxPublicUsers == null ) {flag = false;}
 	} catch ( BusinessException e ) {

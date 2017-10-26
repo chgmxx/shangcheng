@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.groupbuy.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.service.inter.member.MemberService;

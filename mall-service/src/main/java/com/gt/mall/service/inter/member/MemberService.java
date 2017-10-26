@@ -1,6 +1,7 @@
 package com.gt.mall.service.inter.member;
 
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
+import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -205,9 +206,11 @@ public interface MemberService {
 
     /**
      * 查询商家的积分和粉币规则
+     *
      * @param busId 商家id
+     *
      * @return 积分和粉币规则
      */
-    Map jifenAndFenbiRule(int busId);
+    JifenAndFenbiRule jifenAndFenbiRule( int busId );
 
 }

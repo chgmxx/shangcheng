@@ -1,11 +1,11 @@
 package com.gt.mall.controller.purchase;
 
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.purchase.PurchaseCompanyMode;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.service.web.purchase.PurchaseCompanyModeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,7 +43,7 @@ public class PurchaseCompanyModeController extends BaseController {
     @RequestMapping( value = "/companyIndex" )
     public String orderIndex( HttpServletRequest request, @RequestParam Map< String,Object > parms ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( parms.get( "searchType" ) ) && parms.get( "searchType" ).toString().equals( "0" ) ) {
 		parms.put( "companyName", parms.get( "search" ) );
 	    } else if ( CommonUtil.isNotEmpty( parms.get( "searchType" ) ) && parms.get( "searchType" ).toString().equals( "1" ) ) {
@@ -89,7 +89,7 @@ public class PurchaseCompanyModeController extends BaseController {
     public Map< String,Object > saveContract( HttpServletRequest request, @RequestParam Map< String,Object > parms ) {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    PurchaseCompanyMode company = new PurchaseCompanyMode();
 	    company.setBusId( user.getId() );
 	    company.setCompanyAddress( parms.get( "companyAddress" ).toString() );

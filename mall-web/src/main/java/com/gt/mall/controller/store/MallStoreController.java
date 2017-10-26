@@ -3,7 +3,7 @@ package com.gt.mall.controller.store;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
@@ -67,10 +67,10 @@ public class MallStoreController extends BaseController {
     public String res_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入店铺管理啦啦啦" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
-	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    WxPublicUsers wxPublicUsers = MallSessionUtils.getLoginPbUser( request );
 	    request.setAttribute( "wxPublicUsers", wxPublicUsers );
-	    int pid = SessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
+	    int pid = MallSessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//true 是管理员
 
 	    if ( isAdminFlag ) {
@@ -82,7 +82,7 @@ public class MallStoreController extends BaseController {
 		    if ( CommonUtil.isNotEmpty( params.get( "stoName" ) ) ) {
 			request.setAttribute( "stoName", params.get( "stoName" ) );
 		    }
-		    int branchCount = SessionUtils.getWxShopNumBySession( user.getId(), request );
+		    int branchCount = MallSessionUtils.getWxShopNumBySession( user.getId(), request );
 		    int store = mallStoreService.countStroe( user.getId() );
 		    int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
 		    if ( store >= branchCount ) {
@@ -112,7 +112,7 @@ public class MallStoreController extends BaseController {
      */
     @RequestMapping( "/to_edit" )
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	int shopId = 0;
 	try {
 	    request.setAttribute( "pageTitle", "添加信息" );
@@ -167,16 +167,16 @@ public class MallStoreController extends BaseController {
     public void saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > msg = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    MallStore sto = com.alibaba.fastjson.JSONObject.parseObject( params.get( "obj" ).toString(), MallStore.class );
-	    sto.setStoUserId( SessionUtils.getLoginUser( request ).getId() );
-	    sto.setStoCreatePerson( SessionUtils.getLoginUser( request ).getId() );
+	    sto.setStoUserId( MallSessionUtils.getLoginUser( request ).getId() );
+	    sto.setStoCreatePerson( MallSessionUtils.getLoginUser( request ).getId() );
 	    sto.setStoCreateTime( new Date() );
 	    boolean flag = mallStoreService.saveOrUpdate( sto, user );
 	    if ( flag ) {
 		msg.put( "code", ResponseEnums.SUCCESS.getCode() );
-		SessionUtils.setShopListBySession( user.getId(), null, request );
+		MallSessionUtils.setShopListBySession( user.getId(), null, request );
 		mallStoreService.findAllStoByUser( user, request );
 	    }
 	} catch ( BusinessException e ) {
@@ -202,12 +202,12 @@ public class MallStoreController extends BaseController {
     public void delete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > msg = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String ids[] = params.get( "ids" ).toString().split( "," );
 	    boolean flag = mallStoreService.deleteShop( ids );
 	    if ( flag ) {
 		msg.put( "result", true );
-		SessionUtils.setShopListBySession( user.getId(), null, request );
+		MallSessionUtils.setShopListBySession( user.getId(), null, request );
 		mallStoreService.findAllStoByUser( user, request );
 	    }
 	} catch ( BusinessException e ) {
@@ -232,7 +232,7 @@ public class MallStoreController extends BaseController {
     public String setindex( HttpServletRequest request,
 		    HttpServletResponse response,
 		    @RequestParam Map< String,Object > params ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	try {
 	    if ( user != null ) {
 		MallPaySet paySet = new MallPaySet();
@@ -280,7 +280,7 @@ public class MallStoreController extends BaseController {
 	PrintWriter p = null;
 	try {
 	    p = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		if ( params != null ) {
 		    params.put( "userId", user.getId() );

@@ -2,7 +2,7 @@ package com.gt.mall.controller.api.basic;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -12,7 +12,7 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -65,7 +65,7 @@ public class MallCommentNewController extends BaseController {
 		    String endTime ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isComment = false;
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
@@ -123,7 +123,7 @@ public class MallCommentNewController extends BaseController {
     public ServerResponse reply( HttpServletRequest request, HttpServletResponse response, String content, Integer id, Integer shopId ) {
 	try {
 	    //params:{"content":"32232","repPId":"25","shopId":"177"}
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallComment comment = new MallComment();
 	    comment.setContent( CommonUtil.urlEncode( content ) );
 	    comment.setRepPId( id );

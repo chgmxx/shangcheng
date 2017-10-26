@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Date : 2017/8/8 0008
  * Time : 10:23
  */
-public class MemberControllerTest extends BasicTest {
+public class MemberBeanControllerTest extends BasicTest {
 
     @Autowired
     private MemberService memberService;

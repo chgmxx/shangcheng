@@ -2,10 +2,10 @@ package com.gt.mall.service.web.product.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
@@ -40,7 +40,7 @@ import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.CookieUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.union.api.entity.param.UnionCardDiscountParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
@@ -466,7 +466,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     @Override
     public void getOrdersParams( HttpServletRequest request, String loginCity, int userid, List< Map< String,Object > > list, double mem_longitude, double mem_latitude,
 		    Member member, List< Map< String,Object > > shopList ) {
-	int shopId = SessionUtils.getMallShopId( request );
+	int shopId = MallSessionUtils.getMallShopId( request );
 	int toshop = mallProductService.getIsShopBySession( shopId, userid, request );
 	//计算运费如下
 	Map< String,Object > map = new HashMap<>();
@@ -544,7 +544,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	if ( CommonUtil.isNotEmpty( shopIds ) ) {
 	    boolean isJuli = mallOrderService.isJuliByFreight( shopIds );
 	    if ( isJuli ) {
-		SessionUtils.setSession( shopIds, request, "isJuliFreight" );
+		MallSessionUtils.setSession( shopIds, request, "isJuliFreight" );
 		request.setAttribute( "isJuliFreight", 1 );
 	    }
 	}

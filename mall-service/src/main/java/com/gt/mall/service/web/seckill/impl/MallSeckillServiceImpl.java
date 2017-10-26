@@ -2,9 +2,9 @@ package com.gt.mall.service.web.seckill.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.seckill.MallSeckillJoinDAO;
@@ -470,6 +470,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * @param memberId        下单用户id
      * @param orderId         订单id
      */
+    @Override
     public void invNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail, String memberId, String orderId ) {
 	String seckillId = mallOrder.getGroupBuyId().toString();
 	String proId = mallOrderDetail.getProductId().toString();

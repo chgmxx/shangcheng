@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaValueDAO;

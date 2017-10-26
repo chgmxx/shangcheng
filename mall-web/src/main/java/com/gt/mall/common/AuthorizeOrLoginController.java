@@ -3,12 +3,12 @@ package com.gt.mall.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,7 +42,7 @@ public class AuthorizeOrLoginController {
 	Integer browser = CommonUtil.judgeBrowser( request );
 	Object uclogin = map.get( "uclogin" );
 
-	Member member = SessionUtils.getLoginMember( request );
+	Member member = MallSessionUtils.getLoginMember( request, busId );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    //用户的所属商家和传进来的商家id相同不必登陆
 	    if ( member.getBusid().toString().equals( CommonUtil.toString( busId ) ) ) {
@@ -112,7 +112,7 @@ public class AuthorizeOrLoginController {
     @RequestMapping( value = "/79B4DE7C/clearMember" )
     public void clearMember( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    SessionUtils.setLoginMember( request, null );
+	    MallSessionUtils.setLoginMember( request, null );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}

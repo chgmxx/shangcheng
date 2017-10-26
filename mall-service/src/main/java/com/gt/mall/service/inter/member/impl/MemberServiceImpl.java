@@ -2,7 +2,8 @@ package com.gt.mall.service.inter.member.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
+import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -328,11 +329,9 @@ public class MemberServiceImpl implements MemberService {
 		if ( CommonUtil.isNotEmpty( cardMap.get( "memberDate" ) ) && "1".equals( cardMap.get( "memberDate" ).toString() ) && CommonUtil
 				.isNotEmpty( cardMap.get( "memberDiscount" ) ) ) {//会员日
 		    discount = CommonUtil.toDouble( cardMap.get( "memberDiscount" ) ) / 10;
-
 		}
 		cardMap.put( "discount", discount );
 	    }
-
 	    return cardMap;
 	}
 	return null;
@@ -369,12 +368,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map jifenAndFenbiRule( int busId ) {
+    public JifenAndFenbiRule jifenAndFenbiRule( int busId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "busId", busId );
 	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "jifenAndFenbiRule" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.parseObject( data, Map.class );
+	    return JSONObject.parseObject( data, JifenAndFenbiRule.class );
 	}
 	return null;
     }

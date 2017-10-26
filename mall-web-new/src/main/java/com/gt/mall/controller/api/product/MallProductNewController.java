@@ -1,31 +1,21 @@
 package com.gt.mall.controller.api.product;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.entity.product.MallProduct;
-import com.gt.mall.entity.product.MallSearchLabel;
 import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
-import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,8 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -74,9 +62,9 @@ public class MallProductNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    //isPublish  checkStatus proName  proType(页面标识)  type(传1 售罄商品)
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
-		int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
 		params.put( "isJxc", isJxc );
@@ -194,7 +182,7 @@ public class MallProductNewController extends BaseController {
 	try {
 	    String id = params.get( "id" ).toString();
 	    String shopId = params.get( "shopId" ).toString();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    //下载二维码地址
 	    String html = PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/" + shopId + "/79B4DE7C/phoneProduct.do?uId=" + user.getId() + "&toshop=1";
 	    resulst.put( "html", html );
@@ -210,7 +198,7 @@ public class MallProductNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/countStatus", method = RequestMethod.POST )
     public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    //全部商品
@@ -252,9 +240,9 @@ public class MallProductNewController extends BaseController {
     public ServerResponse to_edit( HttpServletRequest request, HttpServletResponse response, Integer id ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	    int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 	    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	    if ( isJxc == 1 ) {
 		result.put( "noShowSt", 1 );//不显示实体物品
@@ -312,7 +300,7 @@ public class MallProductNewController extends BaseController {
     public ServerResponse add( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    int code = 1;
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		Map< String,Object > resultMap = mallProductService.addProduct( params, user, request );
 		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
@@ -342,7 +330,7 @@ public class MallProductNewController extends BaseController {
     public ServerResponse updete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		boolean flag = mallProductService.newUpdateProduct( params, user, request );
 		if ( !flag ) {

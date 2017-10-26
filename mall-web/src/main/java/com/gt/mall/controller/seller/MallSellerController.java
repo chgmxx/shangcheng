@@ -3,7 +3,7 @@ package com.gt.mall.controller.seller;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerSet;
@@ -56,7 +56,7 @@ public class MallSellerController extends BaseController {
     public String joinProduct( @RequestParam Map< String,Object > params, HttpServletRequest request,
 		    HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		params.put( "shoplist", shoplist );
@@ -81,7 +81,7 @@ public class MallSellerController extends BaseController {
     public String editJoinProduct( @RequestParam Map< String,Object > params, HttpServletRequest request,
 		    HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
@@ -116,7 +116,7 @@ public class MallSellerController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    resultMap = mallSellerService.saveOrUpdSellerJoinProduct( user.getId(), params );
 
@@ -141,7 +141,7 @@ public class MallSellerController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    resultMap = mallSellerService.saveOrUpdSellerJoinProduct( user.getId(), params );
 
@@ -162,7 +162,7 @@ public class MallSellerController extends BaseController {
     public String sellerSet( @RequestParam Map< String,Object > params, HttpServletRequest request,
 		    HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是管理员
 	    if ( isAdminFlag ) {
 		MallSellerSet sellerSet = mallSellerService.selectByBusUserId( user.getId() );
@@ -202,7 +202,7 @@ public class MallSellerController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    resultMap = mallSellerService.saveOrUpdSellerSet( user.getId(), params );
 
@@ -224,7 +224,7 @@ public class MallSellerController extends BaseController {
     public String sellerCheckList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入超级销售员列表Controller" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
 		String keyWord = CommonUtil.getBytes( params.get( "keyWord" ).toString() );
 		params.put( "keyWord", keyWord );
@@ -262,8 +262,8 @@ public class MallSellerController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    pw = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
-	    WxPublicUsers wxPublicUsers = SessionUtils.getLoginPbUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    WxPublicUsers wxPublicUsers = MallSessionUtils.getLoginPbUser( request );
 
 	    boolean flag = mallSellerService.checkSeller( user.getId(), params, wxPublicUsers );
 	    resultMap.put( "flag", flag );
@@ -285,7 +285,7 @@ public class MallSellerController extends BaseController {
     public String sellerList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入超级销售员列表Controller" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
 		String keyWord = CommonUtil.getBytes( params.get( "keyWord" ).toString() );
 		params.put( "keyWord", keyWord );
@@ -326,7 +326,7 @@ public class MallSellerController extends BaseController {
     public String withDrawList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入提现列表Controller" );
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params.get( "keyWord" ) ) ) {
 		String keyWord = CommonUtil.getBytes( params.get( "keyWord" ).toString() );
 		params.put( "keyWord", keyWord );

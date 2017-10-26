@@ -2,7 +2,7 @@ package com.gt.mall.service.web.auction.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
@@ -322,7 +322,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     @Override
     public MallAuction getAuctionByProId( Integer proId, Integer shopId, Integer aId ) {
 	MallAuction auction = new MallAuction();
-	if(aId > 0){
+	if ( aId > 0 ) {
 	    auction.setId( aId );
 	}
 	auction.setProductId( proId );
@@ -461,6 +461,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		} else if ( startTimes.getTime() <= date.getTime() && date.getTime() < endTimes.getTime() ) {//正在进行
 		    status = 1;
 		}
+		map2.put( "times", ( endTimes.getTime() - date.getTime() ) / 1000 );
 		map2.put( "activityStatus", status );//活动状态 0未开始 1正在进行
 
 		//计算拍卖中的商品的拍卖的当前价格

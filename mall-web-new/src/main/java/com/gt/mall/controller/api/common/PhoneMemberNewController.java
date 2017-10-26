@@ -1,6 +1,6 @@
 package com.gt.mall.controller.api.common;
 
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -14,7 +14,7 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -57,8 +57,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneMemberResult > toUser( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    PhoneMemberResult result = new PhoneMemberResult();
-	    Member member = SessionUtils.getLoginMember( request );
-	    //loginDTO.setUcLogin( 1 );//不需要登陆
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 	    if ( CommonUtil.isNotEmpty( loginDTO.getBusId() ) && loginDTO.getBusId() > 0 ) {
 		result.setBusId( loginDTO.getBusId() );

@@ -1,5 +1,7 @@
 package com.gt.mall.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.gt.mall.bean.member.Coupons;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.param.phone.order.PhoneToOrderDTO;
 import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
@@ -24,14 +26,14 @@ public class ToOrderUtil {
      * @param busResult       商家返回结果
      * @param cardMap         卡券对象
      * @param phoneToOrderDTO 页面传参
-     * @param isShowTake      商家是否有上门自提
+     * @param isStorePay      商家是否开启了到店支付
      * @param mallPaySetList  商城设置
      * @param proTypeId       商品类型 参考t_mall_product表
      *
      * @return 支付方式集合
      */
     public static List< PhoneToOrderWayResult > getPayWay( int browerType, PhoneToOrderBusResult busResult, Map cardMap, PhoneToOrderDTO phoneToOrderDTO,
-		    List< Map< String,Object > > isShowTake, List< MallPaySet > mallPaySetList, int proTypeId ) {
+		    Integer isStorePay, List< MallPaySet > mallPaySetList, int proTypeId ) {
 	List< PhoneToOrderWayResult > payWayList = new ArrayList<>();
 
 	if ( browerType == 1 && CommonUtil.isNotEmpty( busResult.getPublicId() ) && busResult.getPublicId() > 0 ) {
@@ -78,16 +80,7 @@ public class ToOrderUtil {
 	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 8, "粉币支付" );
 	    payWayList.add( result );
 	}
-	int isShowTakeTheir = 0;//是否开启货到付款
-	if ( isShowTake != null && isShowTake.size() > 0 ) {
-	    for ( Map< String,Object > isShowMap : isShowTake ) {
-		if ( busResult.getBusId().toString().equals( isShowMap.get( "user_id" ).toString() ) ) {
-		    isShowTakeTheir = 1;
-		    break;
-		}
-	    }
-	}
-	if ( isShowTakeTheir == 1 ) {
+	if ( CommonUtil.isNotEmpty( isStorePay ) && isStorePay == 1 ) {
 	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 6, "到店支付" );
 	    payWayList.add( result );
 	}
@@ -101,7 +94,7 @@ public class ToOrderUtil {
     /**
      * 获取商家的配送方式
      */
-    public static List< PhoneToOrderWayResult > getDeliveryWay( PhoneToOrderDTO params, int proTypeId, List< Map< String,Object > > isShowTake, int busId ) {
+    public static List< PhoneToOrderWayResult > getDeliveryWay( PhoneToOrderDTO params, int proTypeId, Integer isShowTake, int busId ) {
 	List< PhoneToOrderWayResult > wayResultList = new ArrayList<>();
 	int toshop = 0;
 	if ( CommonUtil.isNotEmpty( params.getToShop() ) ) {
@@ -114,20 +107,95 @@ public class ToOrderUtil {
 	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 1, "快递配送" );
 	    wayResultList.add( result );
 	}
-	int isShowDaoDian = 0;
-	if ( isShowTake != null && isShowTake.size() > 0 ) {
-	    for ( Map< String,Object > isShowMap : isShowTake ) {
-		if ( CommonUtil.toString( busId ).equals( isShowMap.get( "user_id" ).toString() ) ) {
-		    isShowDaoDian = 1;
-		    break;
-		}
-	    }
-	}
-	if ( proTypeId == 0 && isShowDaoDian == 1 ) {
+	if ( proTypeId == 0 && CommonUtil.isNotEmpty( isShowTake ) && isShowTake > 0 ) {
 	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 2, "到店自提" );
 	    wayResultList.add( result );
 	}
 
 	return wayResultList;
+    }
+
+    /**
+     * 重组微信优惠券
+     */
+    public static List< Coupons > getWxCouponsResult( Object couponObj, List< Coupons > couponsList ) {
+	if ( couponsList == null || couponsList.size() == 0 ) {
+	    couponsList = new ArrayList<>();
+	}
+	if ( CommonUtil.isEmpty( couponObj ) ) {
+	    return couponsList;
+	}
+	List< Map > wxList = JSONArray.parseArray( couponObj.toString(), Map.class );
+	if ( wxList == null || wxList.size() == 0 ) {
+	    return couponsList;
+	}
+	for ( Map map : wxList ) {
+	    Coupons coupons = new Coupons();
+	    coupons.setId( CommonUtil.toInteger( map.get( "id" ) ) );//优惠券id
+	    coupons.setCouponsFrom( 1 );//优惠券来源（ 1 微信优惠券  2多粉优惠券 ）.
+	    coupons.setImage( CommonUtil.toString( map.get( "image" ) ) );
+	    String cardType = CommonUtil.toString( map.get( "card_type" ) );// DISCOUNT 折扣券   CASH 满减券
+	    String couponsName = "";//卡券名称
+	    int cardTypes = -1;
+	    if ( "DISCOUNT".equals( cardType ) ) {//折扣券
+		cardTypes = 0;
+		coupons.setDiscount( CommonUtil.toDouble( map.get( "discount" ) ) );
+		couponsName = coupons.getDiscount() + "折";
+	    } else if ( "CASH".equals( cardType ) ) {//满减券
+		cardTypes = 1;
+		coupons.setCashLeastCost( CommonUtil.toDouble( map.get( "cash_least_cost" ) ) );
+		coupons.setReduceCost( CommonUtil.toDouble( map.get( "reduce_cost" ) ) );
+		couponsName = "满" + coupons.getCashLeastCost() + "减" + coupons.getReduceCost();
+	    }
+	    coupons.setCouponsName( couponsName );
+	    coupons.setCardType( cardTypes );//卡券类型 0折扣券 1减免券
+	    couponsList.add( coupons );
+	}
+	return couponsList;
+    }
+
+    /**
+     * 重组多粉优惠券
+     */
+    public static List< Coupons > getDuofenCouponsResult( Object couponObj, List< Coupons > couponsList ) {
+	if ( couponsList == null || couponsList.size() == 0 ) {
+	    couponsList = new ArrayList<>();
+	}
+	if ( CommonUtil.isEmpty( couponObj ) ) {
+	    return couponsList;
+	}
+	List< Map > duofenList = JSONArray.parseArray( couponObj.toString(), Map.class );
+	if ( duofenList == null || duofenList.size() == 0 ) {
+	    return couponsList;
+	}
+	for ( Map map : duofenList ) {
+	    Coupons coupons = new Coupons();
+	    coupons.setId( CommonUtil.toInteger( map.get( "gId" ) ) );//优惠券id
+	    coupons.setCouponsFrom( 1 );//优惠券来源（ 1 微信优惠券  2多粉优惠券 ）.
+	    coupons.setImage( CommonUtil.toString( map.get( "image" ) ) );
+	    String cardType = CommonUtil.toString( map.get( "card_type" ) );// 0 折扣券   1 满减券
+	    String couponsName = "";//卡券名称
+	    int cardTypes = -1;
+	    if ( "0".equals( cardType ) ) {//折扣券
+		cardTypes = 0;
+		coupons.setDiscount( CommonUtil.toDouble( map.get( "discount" ) ) );
+		couponsName = coupons.getDiscount() + "折";
+	    } else if ( "1".equals( cardType ) ) {//满减券
+		cardTypes = 1;
+		coupons.setCashLeastCost( CommonUtil.toDouble( map.get( "cash_least_cost" ) ) );
+		coupons.setReduceCost( CommonUtil.toDouble( map.get( "reduce_cost" ) ) );
+		couponsName = "满" + coupons.getCashLeastCost() + "减" + coupons.getReduceCost();
+
+		if ( "1".equals( map.get( "addUser" ).toString() ) && CommonUtil.isNotEmpty( map.get( "countId" ) ) ) {//1 允许叠加
+		    coupons.setAddUser( 1 );
+		    coupons.setCouponNum( CommonUtil.toInteger( map.get( "countId" ) ) );//卡券数量
+		}
+	    }
+	    coupons.setCouponsName( couponsName );
+	    couponsList.add( coupons );
+	    coupons.setCardType( cardTypes );//卡券类型 0折扣券 1减免券
+	}
+
+	return couponsList;
     }
 }

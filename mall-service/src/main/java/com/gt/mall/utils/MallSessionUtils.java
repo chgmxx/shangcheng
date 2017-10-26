@@ -2,9 +2,10 @@ package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.util.SessionUtils;
 import com.gt.mall.constant.Constants;
 import org.apache.log4j.Logger;
 
@@ -13,28 +14,15 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
-public class SessionUtils {
+public class MallSessionUtils {
 
-    private static final Logger log = Logger.getLogger( SessionUtils.class );
+    private static final Logger log = Logger.getLogger( MallSessionUtils.class );
 
     /**
      * 获取用户bus_user   SESSION的值
      */
     public static BusUser getLoginUser( HttpServletRequest request ) {
-	try {
-	    Object obj = request.getSession().getAttribute( Constants.SESSION_BUSINESS_KEY );
-
-	    if ( obj != null ) {
-
-		return JSONObject.toJavaObject( ( JSONObject.parseObject( obj.toString() ) ), BusUser.class );
-	    } else {
-		return null;
-	    }
-	} catch ( Exception e ) {
-	    log.info( e.getLocalizedMessage() );
-	    e.printStackTrace();
-	}
-	return null;
+	return SessionUtils.getLoginUser( request );
 
     }
 
@@ -70,6 +58,16 @@ public class SessionUtils {
     }
 
     /**
+     * 获取session中的商家会员信息
+     */
+    public static Member getLoginMember( HttpServletRequest request, int busId ) {
+	if ( busId > 0 ) {
+	    MallSessionUtils.setUserId( request, busId );
+	}
+	return SessionUtils.getLoginMember( request, busId );
+    }
+
+    /**
      * 设置session中的商家member会员信息
      */
     public static void setLoginMember( HttpServletRequest request, Member member ) {
@@ -82,25 +80,29 @@ public class SessionUtils {
     }
 
     /**
-     * 获取session中的商家会员信息
+     * 从session中获取商家id
      */
-    public static Member getLoginMember( HttpServletRequest request ) {
+    public static int getUserId( HttpServletRequest request ) {
 	try {
-	    Object obj = request.getSession().getAttribute( Constants.SESSION_MEMBER_KEY );
-	    if ( obj != null ) {
-
-		return JSONObject.parseObject( obj.toString(), Member.class );
-
-	    } else {
-		return null;
+	    Object idObj = request.getSession().getAttribute( Constants.SESSION_KEY + "getbusId" );
+	    if ( CommonUtil.isNotEmpty( idObj ) ) {
+		return CommonUtil.toInteger( idObj );
 	    }
-
 	} catch ( Exception e ) {
 	    log.info( e.getLocalizedMessage() );
 	    e.printStackTrace();
-
 	}
-	return null;
+
+	return 0;
+    }
+
+    /**
+     * 从session中获取商家id
+     */
+    public static void setUserId( HttpServletRequest request, Integer busId ) {
+	if ( CommonUtil.isNotEmpty( busId ) ) {
+	    request.getSession().setAttribute( Constants.SESSION_KEY + "getbusId", busId );
+	}
     }
 
     /**

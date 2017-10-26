@@ -8,7 +8,7 @@ package com.gt.mall.controller;
  */
 
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.utils.*;
 import net.sf.json.JSONObject;
@@ -66,7 +66,7 @@ public class CommonController {
 	Map< String,Object > msgMap = new HashMap<>();
 	String originalFilename = "";
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 	    MultipartFile multipartFile = multipartRequest.getFile( "imgFile" );
 	    String userName = user.getName();

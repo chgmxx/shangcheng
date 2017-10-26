@@ -2,7 +2,7 @@ package com.gt.mall.controller.integral;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.utils.*;
@@ -54,7 +54,7 @@ public class MallIntegralController extends BaseController {
     @RequestMapping( value = "index" )
     public String toIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
@@ -90,7 +90,7 @@ public class MallIntegralController extends BaseController {
     @RequestMapping( value = "to_edit" )
     public String toEdit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
@@ -120,7 +120,7 @@ public class MallIntegralController extends BaseController {
     public void save( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    resultMap = integralService.saveIntegral( user.getId(), params );
 
 	} catch ( Exception e ) {
@@ -187,7 +187,7 @@ public class MallIntegralController extends BaseController {
     @RequestMapping( "image_index" )
     public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isAdminFlag = true;//是管理员
 	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
 		isAdminFlag = storeService.isAdminUser( user.getId() );//查询子账户是否是管理员
@@ -225,7 +225,7 @@ public class MallIntegralController extends BaseController {
     @RequestMapping( "to_image_edit" )
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
@@ -254,7 +254,7 @@ public class MallIntegralController extends BaseController {
 	logger.info( "进入编辑辑积分商城图片controller" );
 	int code = -1;// 编辑成功
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		boolean flag = integralImageService.editImage( params, userId );// 编辑商品
 		if ( flag ) {
@@ -308,7 +308,7 @@ public class MallIntegralController extends BaseController {
     @RequestMapping( value = "/integralMallTwoCode" )
     public void integralMallTwoCode( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String shopId = params.get( "shopId" ).toString();
 	    String content = PropertiesUtil.getHomeUrl() + "/phoneIntegral/" + shopId + "/79B4DE7C/toIndex.do?uId=" + user.getId();
 	    QRcodeKit.buildQRcode( content, 200, 200, response );
@@ -327,7 +327,7 @@ public class MallIntegralController extends BaseController {
     public String integralMallCodeIframs( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    String shopId = params.get( "shopId" ).toString();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String html = PropertiesUtil.getHomeUrl() + "/phoneIntegral/" + shopId + "/79B4DE7C/toIndex.do?uId=" + user.getId();
 	    request.setAttribute( "html", html );
 	    request.setAttribute( "shopId", shopId );

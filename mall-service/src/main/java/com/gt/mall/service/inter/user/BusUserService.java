@@ -1,10 +1,7 @@
 package com.gt.mall.service.inter.user;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.BusUser;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
-
-import java.util.List;
+import com.gt.api.bean.session.BusUser;
 
 /**
  * 商家接口
@@ -75,6 +72,6 @@ public interface BusUserService {
      *
      * @return 店铺列表
      */
-    List< WsWxShopInfoExtend > getShopIdListByUserId( int userId );
+//    List< WsWxShopInfoExtend > getShopIdListByUserId( int userId );
 
 }

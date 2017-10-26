@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.product;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;

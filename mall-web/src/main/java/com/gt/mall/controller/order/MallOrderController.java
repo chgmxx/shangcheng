@@ -3,7 +3,7 @@ package com.gt.mall.controller.order;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
@@ -67,7 +67,7 @@ public class MallOrderController extends BaseController {
 	logger.info( "进入订单首页" );
 	String startTime = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是管理员
 	    if ( isAdminFlag ) {
@@ -210,7 +210,7 @@ public class MallOrderController extends BaseController {
 		    @RequestParam Map< String,Object > params ) throws IOException {
 	logger.info( "进入同意/拒绝退款方法。" );
 	Map< String,Object > map = new HashMap<>();
-	WxPublicUsers pUser = SessionUtils.getLoginPbUser( request );
+	WxPublicUsers pUser = MallSessionUtils.getLoginPbUser( request );
 	try {
 	    MallOrderReturn orderReturn = com.alibaba.fastjson.JSONObject.parseObject( params.get( "return" ).toString(),MallOrderReturn.class );
 	    map = mallOrderService.updateOrderReturn( orderReturn, params.get( "order" ), pUser );
@@ -244,7 +244,7 @@ public class MallOrderController extends BaseController {
 	request.setAttribute( "type", params.get( "type" ) );
 	request.setAttribute( "oNo", params.get( "oNo" ) );
 	request.setAttribute( "orderPayNo", params.get( "orderPayNo" ) );
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	request.setAttribute( "busUserId", user.getId() );
 	request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
 
@@ -258,7 +258,7 @@ public class MallOrderController extends BaseController {
     public void syncOrderPifa( HttpServletRequest request, HttpServletResponse response ) throws IOException {
 	logger.info( "进入同步订单的方法。" );
 	Map< String,Object > map = new HashMap<>();
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -284,7 +284,7 @@ public class MallOrderController extends BaseController {
 	OutputStream out = null;
 	HSSFWorkbook workbook = null;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
 	    String[] titles = new String[] { "订单编号", "商品", "单价", "数量", "实付金额", "优惠", "运费", "买家", "下单时间", "订单状态", "配送方式", "售后", "所属店铺", "付款方式", "收货信息", "买家留言", "卖家备注" };
@@ -366,7 +366,7 @@ public class MallOrderController extends BaseController {
     @RequestMapping( value = "/toPrintMallOrder" )
     public String toPrintMallOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params ) ) {
 		Map< String,Object > result = mallOrderService.printOrder( params, user );
 		request.setAttribute( "result", JSONObject.fromObject( result ) );

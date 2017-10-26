@@ -1,9 +1,9 @@
 package com.gt.mall.controller.purchase;
 
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.service.web.purchase.PurchaseOrderStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,7 +32,7 @@ public class PurchaseOrderStatisticsController extends BaseController {
     @RequestMapping( value = "/statisticsIndex" )
     public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > parms, @RequestParam Integer orderId ) {
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    parms.put( "busId", busUser.getId() );
 	    parms.put( "orderId", orderId );
 	    PageUtil page = orderStatisticsService.findList( parms );

@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.seller;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;

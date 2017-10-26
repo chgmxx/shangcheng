@@ -1,9 +1,8 @@
 package com.gt.mall.controller.api.page;
 
-import com.alibaba.fastjson.JSON;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.page.MallPage;
@@ -12,11 +11,10 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -66,7 +64,7 @@ public class MallPageNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "shopId", shopId );
 	    params.put( "curPage", curPage );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    PageUtil page = mallPageService.findByPage( params, user, request );
 
 	    result.put( "page", page );
@@ -127,9 +125,9 @@ public class MallPageNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPage page = com.alibaba.fastjson.JSONObject.parseObject( params.get( "page" ).toString(), MallPage.class );
-	    page.setPagUserId( SessionUtils.getLoginUser( request ).getId() );
+	    page.setPagUserId( MallSessionUtils.getLoginUser( request ).getId() );
 	    page.setPagCreateTime( new Date() );
 	    mallPageService.saveOrUpdate( page, user );
 	} catch ( BusinessException e ) {
@@ -207,7 +205,7 @@ public class MallPageNewController extends BaseController {
 	    result.put( "lbMap", JSONObject.fromObject( lbMap ).toString() );
 	    String dataJson = "[]";
 	    String picJson = "[]";
-	    BusUser obj = SessionUtils.getLoginUser( request );//获取登录人信息
+	    BusUser obj = MallSessionUtils.getLoginUser( request );//获取登录人信息
 	    Map< String,Object > map = mallPageService.select( id, obj.getId() );
 	    if ( map.get( "pag_css" ) != null ) {
 		dataJson = map.get( "pag_css" ).toString();
@@ -392,7 +390,7 @@ public class MallPageNewController extends BaseController {
     public ServerResponse branchPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Integer stoId = Integer.valueOf( params.get( "stoId" ).toString() );
 	    PageUtil page = mallPageService.selectListBranch( stoId, params );
 	    result.put( "page", page );

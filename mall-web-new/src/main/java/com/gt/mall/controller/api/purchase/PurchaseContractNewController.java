@@ -2,7 +2,7 @@ package com.gt.mall.controller.api.purchase;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.purchase.PurchaseContractDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.purchase.PurchaseContract;
@@ -11,7 +11,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.purchase.PurchaseContractService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -54,7 +54,7 @@ public class PurchaseContractNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String contractTitle ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "contractTitle", contractTitle );
@@ -99,7 +99,7 @@ public class PurchaseContractNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    PurchaseContract contract = new PurchaseContract();
 	    contract.setBusId( busUser.getId() );
 	    contract.setContractContent( CommonUtil.urlEncode( params.get( "contractContent" ).toString() ) );
@@ -154,7 +154,7 @@ public class PurchaseContractNewController extends BaseController {
     public ServerResponse contractList( HttpServletRequest request, HttpServletResponse response ) {
 	List< Map< String,Object > > contractList = null;
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    contractList = contractDAO.findAllList( busUser.getId() );
 	} catch ( Exception e ) {
 	    logger.error( "查询所有的合同异常：" + e.getMessage() );

@@ -1,10 +1,10 @@
 package com.gt.mall.config.interceptor;
 
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -63,20 +63,6 @@ public class MyInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
-
-	/*// js跨域支持
-	response.setHeader( "Access-Control-Allow-Origin", "*" );
-	response.setHeader( "Access-Control-Allow-Methods", "POST, GET, PUT, DELETE" );
-	response.setHeader( "Access-Control-Max-Age", "3600" );
-	response.setHeader( "Access-Control-Allow-Headers", "Accept, Origin, XRequestedWith, Content-Type, LastModified" );
-
-	// 设置返回编码和类型
-	response.setCharacterEncoding( "UTF-8" );
-	response.setContentType( "application/json; charset=utf-8" );*/
-
-	// 在wrapper中获取新的servletRequest
-	/*request = new BodyRequestWrapper( httpServletRequest );*/
-
 	logger.info( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
 	logger.info( "basePath = " + CommonUtil.getpath( request ) );
 
@@ -85,7 +71,7 @@ public class MyInterceptor implements HandlerInterceptor {
 
 	// 获得在下面代码中要用的request,response,session对象
 
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	String url = request.getRequestURI();
 	if ( CommonUtil.isNotEmpty( user ) ) {
 	    request.setAttribute( "wxmpDomain", PropertiesUtil.getWxmpDomain() );//wxmp链接，前端调用js用的
@@ -100,7 +86,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	}
 	//商城登陆拦截
 	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.contains( "79B4DE7C" ) ) {//移动端
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = null;//MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		request.setAttribute( "member", member );
 	    } else {
@@ -113,7 +99,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		member.setNickname( "杨倩" );
 		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
 		member.setOldid( "1225352,1225358,1225449" );
-		SessionUtils.setLoginMember( request, member );
+		MallSessionUtils.setLoginMember( request, member );
 	    }
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) || passIntercepto( url ) ) {
@@ -124,7 +110,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	    user.setId( 42 );
 	    user.setName( "gt123456" );
 	    user.setPid( 0 );
-	    SessionUtils.setLoginUser( request, user );
+	    MallSessionUtils.setLoginUser( request, user );
 
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求

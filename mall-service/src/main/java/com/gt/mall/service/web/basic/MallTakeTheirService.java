@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.basic;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.utils.PageUtil;
@@ -93,7 +93,7 @@ public interface MallTakeTheirService extends BaseService< MallTakeTheir > {
      *
      * @return [isShow:是否显示上门自提,user_id：商家id]
      */
-    public List< Map< String,Object > > isTakeTheirByUserIdList( List< MallPaySet > setList );
+    public List< Map< String,Object > > isTakeTheirByUserIdList( List< MallPaySet > setList, String provincesId );
 
     /**
      * 根据公众号id查询上门自提信息

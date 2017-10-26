@@ -21,7 +21,12 @@ public class PhoneBuyNowDTO implements Serializable {
 
     private static final long serialVersionUID = -1424109806117433065L;
 
-    @ApiModelProperty( name = "busId", value = "商品id，必传", required = true )
+    @ApiModelProperty( name = "busId", value = "商家id，必传", required = true )
+    @NotNull( message = "商家id不能为空" )
+    @Min( value = 1, message = "商家id不能小于1" )
+    private Integer busId;
+
+    @ApiModelProperty( name = "productId", value = "商品id，必传", required = true )
     @NotNull( message = "商品id不能为空" )
     @Min( value = 1, message = "商品id不能小于1" )
     private Integer productId;

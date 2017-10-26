@@ -8,8 +8,10 @@ import com.gt.entityBo.MallAllEntity;
 import com.gt.entityBo.MallEntity;
 import com.gt.entityBo.MallShopEntity;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.MemberAddress;
+import com.gt.mall.bean.member.Coupons;
+import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
@@ -583,8 +585,12 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		if ( CommonUtil.isNotEmpty( memberAddress ) ) {
 		    result.setMemberAddressResult( memberAddress );
 		    provincesId = addressMap.get( "memProvince" ).toString();
-		    memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
-		    memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+		    if ( CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) ) {
+			memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
+		    }
+		    if ( CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) ) {
+			memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+		    }
 		}
 	    }
 	}
@@ -618,7 +624,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 
 		if ( busUserList != null && busUserList.size() > 0 ) {
 		    int busId = busUserList.get( 0 );
-		    mallShopList = mallStoreService.findShopByUserId( busId, null );//查询店铺信息
+		    mallShopList = mallStoreService.findShopByUserIdAndShops( busId, shopList );//查询店铺信息
 		}
 
 		result = getToOrderParams( productResultList, busUserList, freightList, mallShopList, params, result, provincesId, memberLongitude, memberLangitude );
@@ -680,13 +686,13 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    result.setBusResultList( busResultList );
 
 	}
-	result = getToOrderResult( mallShopList, member, busUserList, result, loginDTO.getBrowerType(), params, proTypeId );
+	result = getToOrderResult( mallShopList, member, busUserList, result, loginDTO.getBrowerType(), params, proTypeId, provincesId );
 	logger.info( "result=======" + JSON.toJSONString( result ) );
 	return result;
     }
 
     private PhoneToOrderResult getToOrderResult( List< Map< String,Object > > mallShopList, Member member, List< Integer > busUserList, PhoneToOrderResult result,
-		    Integer browerType, PhoneToOrderDTO params, int proTypeId ) {
+		    Integer browerType, PhoneToOrderDTO params, int proTypeId, String provincesId ) {
 	Map cardMap = null;
 	if ( mallShopList != null && mallShopList.size() > 0 ) {
 	    StringBuilder wxShopIds = new StringBuilder( "," );
@@ -705,57 +711,78 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
 	    discount = CommonUtil.toDouble( cardMap.get( "discount" ) );
 	}
-	Map jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
+	JifenAndFenbiRule jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
 	double fenbiRatio = 0;//粉币数量
 	double fenbiStartMoney = 0;//粉币起兑金额
 	double jifenRatio = 0;//积分数量
 	double jifenStartMoney = 0;//积分起兑金额
 	if ( CommonUtil.isNotEmpty( jifenFenbiRule ) ) {
-	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.get( "fenbiRatio" ) ) ) {
-		fenbiRatio = CommonUtil.toDouble( jifenFenbiRule.get( "fenbiRatio" ) ) * 10;
+	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.getFenbiRatio() ) ) {
+		fenbiRatio = CommonUtil.toDouble( jifenFenbiRule.getFenbiRatio() ) * 10;
 	    }
-	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.get( "fenbiStartMoney" ) ) ) {
-		fenbiStartMoney = CommonUtil.toDouble( jifenFenbiRule.get( "fenbiStartMoney" ) );
+	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.getFenbiStartMoney() ) ) {
+		fenbiStartMoney = CommonUtil.toDouble( jifenFenbiRule.getFenbiStartMoney() );
 	    }
-	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.get( "jifenRatio" ) ) ) {
-		jifenRatio = CommonUtil.toDouble( jifenFenbiRule.get( "jifenRatio" ) );
+	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.getJifenRatio() ) ) {
+		jifenRatio = CommonUtil.toDouble( jifenFenbiRule.getJifenRatio() );
 	    }
-	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.get( "jifenStartMoney" ) ) ) {
-		jifenStartMoney = CommonUtil.toDouble( jifenFenbiRule.get( "jifenStartMoney" ) );
+	    if ( CommonUtil.isNotEmpty( jifenFenbiRule.getJifenStartMoney() ) ) {
+		jifenStartMoney = CommonUtil.toDouble( jifenFenbiRule.getJifenStartMoney() );
 	    }
 	}
 	List< MallPaySet > mallPaySetList = mallPaySetService.selectByUserIdList( busUserList );//通过商家集合查询商城设置
-	List< Map< String,Object > > isShowTake = mallTakeTheirService.isTakeTheirByUserIdList( mallPaySetList );//查询是否开启到店自提
+	List< Map< String,Object > > isShowTake = mallTakeTheirService.isTakeTheirByUserIdList( mallPaySetList, provincesId );//查询是否开启到店自提
 	//循环结果，查询商家的支付方式和配送方式
 	if ( CommonUtil.isNotEmpty( result ) && CommonUtil.isNotEmpty( result.getBusResultList() ) ) {
 	    for ( PhoneToOrderBusResult busResult : result.getBusResultList() ) {
 		busResult.setJifenFenbiRule( jifenFenbiRule );
 
+		int takeId = 0;//上门自提id
+		String takeAddress = "";//上门自提地址
+		int isStorePay = 0;
+		if ( isShowTake != null && isShowTake.size() > 0 ) {
+		    for ( Map< String,Object > isShowMap : isShowTake ) {
+			if ( CommonUtil.toString( busResult.getBusId() ).equals( isShowMap.get( "user_id" ).toString() ) ) {
+			    takeId = CommonUtil.toInteger( isShowMap.get( "takeId" ) );
+			    takeAddress = CommonUtil.toString( isShowMap.get( "visitAddressDetail" ) );
+			    isStorePay = CommonUtil.toInteger( isShowMap.get( "isStorePay" ) );
+			    break;
+			}
+		    }
+		}
+		busResult.setTakeId( takeId );
+		busResult.setTakeAddress( takeAddress );
+
 		//获取商家的支付方式
-		List< PhoneToOrderWayResult > wayResultList = ToOrderUtil.getPayWay( browerType, busResult, cardMap, params, isShowTake, mallPaySetList, proTypeId );
+		List< PhoneToOrderWayResult > wayResultList = ToOrderUtil.getPayWay( browerType, busResult, cardMap, params, isStorePay, mallPaySetList, proTypeId );
 		busResult.setPayWayList( wayResultList );
 		//获取商家的配送方式
-		List< PhoneToOrderWayResult > deliveryResultList = ToOrderUtil.getDeliveryWay( params, proTypeId, isShowTake, busResult.getBusId() );
+		List< PhoneToOrderWayResult > deliveryResultList = ToOrderUtil.getDeliveryWay( params, proTypeId, takeId, busResult.getBusId() );
 		busResult.setDeliveryWayList( deliveryResultList );
 
 		busResult.setMemberDiscount( discount );
 		double fenbiProductMoney = 0;//能够粉币抵扣的商品金额
 		double jifenProductMoney = 0;//能够积分抵扣的商品金额
 		for ( PhoneToOrderShopResult shopResult : busResult.getShopResultList() ) {
-		    if ( cardMap.containsKey( "cardList" + shopResult.getWxShopId() ) ) {
-			Object obj = cardMap.get( "cardList" + shopResult.getWxShopId() );
-			busResult.setWxCardList( JSONArray.parseArray( obj.toString(), Map.class ) );
-		    }
+		    List< Coupons > couponsList = new ArrayList<>();
+		    //多粉优惠券
 		    if ( cardMap.containsKey( "duofenCards" + shopResult.getWxShopId() ) ) {
 			Object obj = cardMap.get( "duofenCards" + shopResult.getWxShopId() );
-			busResult.setDuofenCardList( JSONArray.parseArray( obj.toString(), Map.class ) );
+			couponsList = ToOrderUtil.getDuofenCouponsResult( obj, couponsList );
 		    }
+		    //微信优惠券
+		    if ( cardMap.containsKey( "cardList" + shopResult.getWxShopId() ) ) {
+			Object obj = cardMap.get( "cardList" + shopResult.getWxShopId() );
+			couponsList = ToOrderUtil.getWxCouponsResult( obj, couponsList );
+		    }
+		    shopResult.setCouponList( couponsList );
+
 		    for ( PhoneToOrderProductResult productResult : shopResult.getProductResultList() ) {
-			if ( productResult.getIsCanUseJifen() == 1 ) {
-			    jifenProductMoney += productResult.getTotalPrice();
+			if ( productResult.getIsCanUseJifen() == 1 ) {//是否能使用积分
+			    jifenProductMoney += productResult.getTotalPrice(); //把能使用积分的商品金额保存起来
 			}
 			if ( productResult.getIsCanUseFenbi() == 1 ) {
-			    fenbiProductMoney += productResult.getTotalPrice();
+			    fenbiProductMoney += productResult.getTotalPrice();//把能使用粉币的商品金额保存起来
 			}
 		    }
 		}
@@ -779,13 +806,13 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 			if ( CommonUtil.isNotEmpty( cardMap.get( "fenbiMoeny" ) ) ) {
 			    busResult.setFenbiMoney( CommonUtil.toDouble( cardMap.get( "fenbiMoeny" ) ) );
 			}
-			if ( fenbiProductMoney < busResult.getFenbiMoney() && busResult.getFenbiMoney() > 0 ) {
+			if ( busResult.getFenbiMoney() > 0 ) {
 			    if ( fenbiProductMoney < 10 ) {
 				fenbiProductMoney = 10;
 			    }
-			    double fenbiMoney = fenbiProductMoney / 10;
-			    busResult.setFenbiNum( CommonUtil.multiply( fenbiRatio, fenbiProductMoney ) );
-			    busResult.setFenbiMoney( fenbiProductMoney );
+			    double fenbiMoney = CommonUtil.getDecimal_2( fenbiProductMoney / 10 ).intValue();
+			    busResult.setFenbiNum( CommonUtil.multiply( fenbiRatio, fenbiMoney ) );
+			    busResult.setFenbiMoney( fenbiMoney );
 			}
 		    }
 		}
@@ -798,8 +825,8 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
      * 重组订单参数
      */
     private PhoneToOrderResult getToOrderParams( List< PhoneToOrderProductResult > productResultList, List< Integer > busUserList, List< MallFreight > freightList,
-		    List< Map< String,Object > > mallShopList, PhoneToOrderDTO params, PhoneToOrderResult result, String provincesId, Double memberLongitude,
-		    Double memberLangitude ) {
+		    List< Map< String,Object > > mallShopList,
+		    PhoneToOrderDTO params, PhoneToOrderResult result, String provincesId, Double memberLongitude, Double memberLangitude ) {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 
 	//查询公众号名称或商家名称以及图片

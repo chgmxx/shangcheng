@@ -2,7 +2,7 @@ package com.gt.mall.controller.freight;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
@@ -17,7 +17,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -66,7 +66,7 @@ public class MallFreightController extends BaseController {
      */
     @RequestMapping( "index" )
     public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	try {
 	    if ( user != null ) {
 		boolean isAdminFlag = true;//是管理员
@@ -104,7 +104,7 @@ public class MallFreightController extends BaseController {
     @RequestMapping( "to_edit" )
     public String toEditFreight( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shopList = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    int id = 0;
 	    // 查询物流信息
@@ -159,7 +159,7 @@ public class MallFreightController extends BaseController {
 	PrintWriter p = null;
 	try {
 	    p = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		// 编辑物流信息
 		flag = freightService.editFreight( params, user.getId() );
@@ -254,7 +254,7 @@ public class MallFreightController extends BaseController {
      */
     @RequestMapping( "takeindex" )
     public String takeindex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	try {
 	    if ( user != null ) {
 		params.put( "userId", user.getId() );
@@ -281,7 +281,7 @@ public class MallFreightController extends BaseController {
     @RequestMapping( "take_edit" )
     public String take_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    // 查询物流信息
 	    if ( !CommonUtil.isEmpty( params.get( "id" ) ) ) {
 		params.put( "userId", user.getId() );
@@ -331,7 +331,7 @@ public class MallFreightController extends BaseController {
 	logger.info( "进入编辑上门自提的controller" );
 	boolean flag = false;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		// 编辑上门自提
 		flag = takeTheirService.editTake( params, user );

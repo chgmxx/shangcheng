@@ -294,6 +294,24 @@ public class CommonUtil {
 	return b1.divide( b2, scale, BigDecimal.ROUND_HALF_UP ).doubleValue();
     }
 
+    /**
+     * 保留2位小数（四舍五入）
+     *
+     */
+    public static Double getDecimal_2( Double d ) {
+	if ( d != null ) {
+	    if ( d.toString().split( "\\." )[1].length() > 2 ) {
+		BigDecimal bg = new BigDecimal( d );
+		return bg.setScale( 2, BigDecimal.ROUND_HALF_UP ).doubleValue();
+	    } else {
+		return d;
+	    }
+	} else {
+	    return null;
+	}
+
+    }
+
     private final static double PI = 3.14159265358979323; // 圆周率
     private final static double R  = 6371229; // 地球的半径
 
@@ -641,7 +659,10 @@ public class CommonUtil {
      *
      * @return 运费
      */
-    public static double getRaill( Map< String,Object > storeMap, double memberLangitude, double memberLongitude ) {
+    public static double getRaill( Map< String,Object > storeMap, Double memberLangitude, Double memberLongitude ) {
+	if ( CommonUtil.isEmpty( memberLangitude ) || CommonUtil.isEmpty( memberLongitude ) || CommonUtil.isEmpty( storeMap ) ) {
+	    return 0;
+	}
 	double shopLongitude = CommonUtil.toDouble( storeMap.get( "stoLongitude" ) );//店铺经度
 	double shopLangitude = CommonUtil.toDouble( storeMap.get( "stoLatitude" ) );//店铺纬度
 	double raill = 0;//粉丝到店铺的距离

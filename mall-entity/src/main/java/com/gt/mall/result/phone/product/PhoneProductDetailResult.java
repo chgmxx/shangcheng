@@ -38,6 +38,9 @@ public class PhoneProductDetailResult implements Serializable {
     @ApiModelProperty( name = "hyPrice", value = "会员价" )
     private double hyPrice;
 
+    @ApiModelProperty( name = "pfPrice", value = "批发价" )
+    private double pfPrice = 0;
+
     @ApiModelProperty( name = "shopCartNum", value = "购物车的数量" )
     private int shopCartNum = 0;
 
@@ -106,6 +109,9 @@ public class PhoneProductDetailResult implements Serializable {
 
     @ApiModelProperty( name = "invId", value = "库存id" )
     private int invId;
+
+    @ApiModelProperty( name = "attentionNum", value = "关注量" )
+    private int attentionNum = 0;
 
     /*************************************************** 以下参数活动商品需要 ***************************************************/
     @ApiModelProperty( name = "type", value = "活动类型" )

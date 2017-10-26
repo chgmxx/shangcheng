@@ -37,9 +37,9 @@ public class MallTakeTheirTimeServiceImpl extends BaseServiceImpl< MallTakeTheir
 
     @Override
     public MallTakeTheir selectDefaultTakeByUserId( int userId, int loginCity, int takeId ) {
-	List< MallTakeTheirTime > takeTimeList = new ArrayList< MallTakeTheirTime >();
+	List< MallTakeTheirTime > takeTimeList = new ArrayList<>();
 	MallTakeTheir take = new MallTakeTheir();
-	Map< String,Object > map = new HashMap< String,Object >();
+	Map< String,Object > map = new HashMap<>();
 	map.put( "userId", userId );
 	if ( takeId == 0 ) {
 	    map.put( "provinceId", loginCity );
@@ -63,7 +63,6 @@ public class MallTakeTheirTimeServiceImpl extends BaseServiceImpl< MallTakeTheir
 	    if ( timeList != null && timeList.size() > 0 ) {
 		for ( MallTakeTheirTime mallTakeTheirTime : timeList ) {
 		    if ( CommonUtil.isNotEmpty( mallTakeTheirTime.getVisitDays() ) ) {
-			//						mallTakeTheirTime.setTimeList(getTimes(mallTakeTheirTime));
 			takeTimeList.addAll( getTimes( mallTakeTheirTime ) );
 		    } else {
 			takeTimeList.add( mallTakeTheirTime );
@@ -76,8 +75,26 @@ public class MallTakeTheirTimeServiceImpl extends BaseServiceImpl< MallTakeTheir
 	return take;
     }
 
+    @Override
+    public List< MallTakeTheirTime > selectTakeTheirTime( int takeId ) {
+	List< MallTakeTheirTime > takeTimeList = new ArrayList<>();
+	// 获取上门自提的时间
+	List< MallTakeTheirTime > timeList = takeTheirTimeDAO.selectByTakeId( takeId );
+	if ( timeList != null && timeList.size() > 0 ) {
+	    for ( MallTakeTheirTime mallTakeTheirTime : timeList ) {
+		if ( CommonUtil.isNotEmpty( mallTakeTheirTime.getVisitDays() ) ) {
+		    takeTimeList.addAll( getTimes( mallTakeTheirTime ) );
+		} else {
+		    takeTimeList.add( mallTakeTheirTime );
+		}
+	    }
+	    Collections.sort( takeTimeList, new MallTakeComparatorUtil() );
+	}
+	return takeTimeList;
+    }
+
     private List< MallTakeTheirTime > getTimes( MallTakeTheirTime mallTakeTheirTime ) {
-	List< MallTakeTheirTime > list = new ArrayList< MallTakeTheirTime >();
+	List< MallTakeTheirTime > list = new ArrayList<>();
 	Date nowDate = new Date();
 
 	Date date = DateTimeKit.addMonths( nowDate, 1 );// 一个月后的日期

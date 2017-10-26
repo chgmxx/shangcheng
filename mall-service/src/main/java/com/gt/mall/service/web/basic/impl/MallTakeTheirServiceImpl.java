@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.basic.MallTakeTheirDAO;
@@ -242,7 +242,7 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
     }
 
     @Override
-    public List< Map< String,Object > > isTakeTheirByUserIdList( List< MallPaySet > setList ) {
+    public List< Map< String,Object > > isTakeTheirByUserIdList( List< MallPaySet > setList, String provincesId ) {
 	if ( setList == null || setList.size() == 0 ) {
 	    return null;
 	}
@@ -260,19 +260,21 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	    return null;
 	}
 	Wrapper< MallTakeTheir > wrapper = new EntityWrapper<>();
-	wrapper.setSqlSelect( "count(id) as count,user_id" );
+	wrapper.setSqlSelect( "user_id,id as takeId,is_store_pay as isStorePay, visit_address_detail as visitAddressDetail" );
 	wrapper.in( "user_id", userIdList ).andNew( "is_delete = 0" );
+	if ( CommonUtil.isNotEmpty( provincesId ) && CommonUtil.toInteger( provincesId ) > 0 ) {
+	    wrapper.in( "visit_province_id", provincesId );
+	}
+	if ( userIdList.size() > 1 ) {
+	    wrapper.groupBy( "user_id" );
+	}
 	List< Map< String,Object > > mallTakeTheirList = mallTakeTheirDAO.selectMaps( wrapper );
 	if ( mallTakeTheirList == null || mallTakeTheirList.size() == 0 ) {
 	    return null;
 	}
 	List< Map< String,Object > > list = new ArrayList<>();
 	for ( Map< String,Object > map : mallTakeTheirList ) {
-	    if ( CommonUtil.isNotEmpty( map.get( "count" ) ) ) {
-		if ( Integer.valueOf( map.get( "count" ).toString() ) > 0 ) {
-		    list.add( map );
-		}
-	    }
+	    list.add( map );
 	}
 	return list;
 

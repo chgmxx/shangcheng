@@ -1,9 +1,9 @@
 package com.gt.mall.controller.api.store;
 
 import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
@@ -16,7 +16,7 @@ import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -217,7 +217,7 @@ public class MallStoreCertificationController extends BaseController {
     public ServerResponse getValCode( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );

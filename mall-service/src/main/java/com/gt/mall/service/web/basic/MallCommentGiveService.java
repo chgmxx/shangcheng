@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.basic;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallCommentGive;
 
 import javax.servlet.http.HttpServletRequest;

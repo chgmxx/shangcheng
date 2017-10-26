@@ -3,7 +3,7 @@ package com.gt.mall.controller.api;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.CardService;
@@ -14,9 +14,8 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.QRcodeKit;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +65,7 @@ public class MallIndexController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/count", method = RequestMethod.POST )
     public ServerResponse count( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	Map< String,Object > result = new HashMap<>();
 	//待发货订单数量
 	int unfilled_orders_num = 0;
@@ -126,7 +125,7 @@ public class MallIndexController extends BaseController {
     public ServerResponse isAdminUser( HttpServletRequest request, HttpServletResponse response ) {
 	boolean isAdminFlag = false;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是管理员
 	} catch ( Exception e ) {
 	    logger.error( "判断是否是管理员异常：" + e.getMessage() );
@@ -140,7 +139,7 @@ public class MallIndexController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/shopList", method = RequestMethod.POST )
     public ServerResponse shopList( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	List< WsWxShopInfoExtend > shopList = null;
 	try {
 	    shopList = wxShopService.queryWxShopByBusId( user.getId() );
@@ -159,7 +158,7 @@ public class MallIndexController extends BaseController {
 		    @ApiParam( name = "wxShopId", value = "门店ID", required = true ) @RequestParam Integer wxShopId ) {
 	WsWxShopInfoExtend wxShopInfo = null;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< WsWxShopInfoExtend > shopList = wxShopService.queryWxShopByBusId( user.getId() );
 	    for ( WsWxShopInfoExtend info : shopList ) {
 		if ( info.getId() == wxShopId ) {
@@ -202,7 +201,7 @@ public class MallIndexController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/cardReceiveList", method = RequestMethod.POST )
     public ServerResponse cardReceiveList( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	List< Map > cardReceiveList = null;
 	try {
 	    cardReceiveList = cardService.findReceiveByBusUserId( user.getId() );
@@ -227,7 +226,7 @@ public class MallIndexController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/flowList", method = RequestMethod.POST )
     public ServerResponse flowList( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	List< BusFlow > flowList = null;
 	try {
 	    flowList = mallProductService.selectCountByFlowIds( user.getId() );
@@ -243,7 +242,7 @@ public class MallIndexController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/cardList", method = RequestMethod.POST )
     public ServerResponse cardList( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	List< Map > cardList = null;
 	try {
 	    cardList = mallProductService.selectMemberType( user.getId() );

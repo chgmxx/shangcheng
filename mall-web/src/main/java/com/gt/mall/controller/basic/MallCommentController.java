@@ -2,7 +2,7 @@ package com.gt.mall.controller.basic;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
@@ -12,7 +12,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class MallCommentController extends BaseController {
 	response.setCharacterEncoding( "utf-8" );
 	boolean flag = false;// 编辑成功
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< MallCommentGive > giveList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "datas" ).toString(), MallCommentGive.class );
 	    flag = commentGiveService.editCommentGive( giveList, user );
 	} catch ( Exception e ) {
@@ -81,7 +81,7 @@ public class MallCommentController extends BaseController {
     @RequestMapping( "/to_index" )
     public String to_index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    // 查询会员下面的评论
 	    if ( shoplist != null && shoplist.size() > 0 ) {
@@ -159,7 +159,7 @@ public class MallCommentController extends BaseController {
 	String msg = "";
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params.get( "params" ) ) && CommonUtil.isNotEmpty( user ) ) {
 		result = commentService.replatComment( params, user.getId() );
 	    }

@@ -1,7 +1,7 @@
 package com.gt.mall.controller.api.product.phone;
 
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -25,8 +25,8 @@ import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -129,7 +129,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< Map< String,Object > > productAll( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
-	Member member = SessionUtils.getLoginMember( request );
+	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	try {
 	    if ( CommonUtil.isNotEmpty( params.getSearchContent() ) ) {
 		params.setSearchContent( CommonUtil.urlEncode( params.getSearchContent() ) );//搜索内容转码
@@ -159,8 +159,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    }
 	    PageUtil page = null;
 	    if ( params.getType() == 0 || params.getType() == 5 ) {//0 查询普通商品 5 查询粉币商品
-		//		double discount = mallProductService.getMemberDiscount( "1", member );
-		page = mallPageService.productAllListNew( params, 1, member );
+		double discount = mallProductService.getMemberDiscount( "1", member );
+		page = mallPageService.productAllListNew( params, discount, member );
 	    } else if ( params.getType() == 1 ) {//查询团购商品
 		page = mallGroupBuyService.searchGroupBuyProduct( params, member );
 	    } else if ( params.getType() == 3 ) {//查询秒杀商品
@@ -188,7 +188,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneProductDetailResult > getProduct( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	PhoneProductDetailResult result;
-	Member member = SessionUtils.getLoginMember( request );
+	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	try {
 	    //判断店铺和门店是否已经被删除
 	    boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
@@ -256,7 +256,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
 
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 
 	    List< Map< String,Object > > specificaList = mallProductSpecificaService.getSpecificaByProductId( params.getProductId() );//获取商品规格值
 	    resultMap.put( "specificaList", specificaList );

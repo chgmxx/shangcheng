@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.groupbuy;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.groupbuy.MallGroupJoin;
 
 import java.util.List;

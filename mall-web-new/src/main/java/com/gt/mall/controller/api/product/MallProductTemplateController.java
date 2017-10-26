@@ -3,7 +3,7 @@ package com.gt.mall.controller.api.product;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallProductTemplate;
 import com.gt.mall.enums.ResponseEnums;
@@ -11,7 +11,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.product.MallProductTemplateService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -53,7 +53,7 @@ public class MallProductTemplateController extends BaseController {
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		params.put( "userId", user.getId() );
 		PageUtil page = mallProductTemplateService.findTemplateByPage( params );// 获取商品页模板集合
@@ -95,7 +95,7 @@ public class MallProductTemplateController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallProductTemplate template = JSONObject.parseObject( params.get( "template" ).toString(), MallProductTemplate.class );
 	    if ( template != null ) {
 		template.setName( CommonUtil.urlEncode( template.getName() ) );
@@ -134,7 +134,7 @@ public class MallProductTemplateController extends BaseController {
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "ids", value = "分组ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( ids ) ) {
 		String id[] = ids.toString().split( "," );
 		boolean result = mallProductTemplateService.batchDelTemplate( id, user.getId() );

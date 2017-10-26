@@ -1,5 +1,6 @@
 package com.gt.mall.result.phone.order;
 
+import com.gt.mall.bean.member.Coupons;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -42,6 +43,11 @@ public class PhoneToOrderShopResult implements Serializable {
     @ApiModelProperty( name = "productResultList", value = "商品集合名称" )
     private List< PhoneToOrderProductResult > productResultList;
 
-    //优惠券集合
+    @ApiModelProperty( name = "couponList", value = "卡券集合" )
+    private List< Coupons > couponList;
+
+    /*********************************提交订单接口，传值***************************************/
+    @ApiModelProperty( name = "selectCouponsId", value = "选中优惠券的id" )
+    private int selectCouponsId = 0;
 
 }

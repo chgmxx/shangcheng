@@ -1,7 +1,7 @@
 package com.gt.mall.controller.api.page.phone;
 
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallSearchKeyword;
@@ -20,7 +20,7 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.product.MallSearchLabelService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
@@ -216,7 +216,7 @@ public class PhonePageController {
     public ServerResponse searchLabel( HttpServletRequest request, int shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "shopId", shopId );
 	    List< Map< String,Object > > labelList = mallSearchLabelService.selectByUser( map );
@@ -250,7 +250,7 @@ public class PhonePageController {
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "shopId", shopId );
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		params.put( "userId", member.getId() );
 		mallGroupService.clearSearchKeyWord( params );
@@ -275,7 +275,7 @@ public class PhonePageController {
     @PostMapping( value = "79B4DE7C/wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request ,MallSessionUtils.getUserId( request ));
 	    if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) ) {
 		WxJsSdk wxJsSdk = new WxJsSdk();
 		wxJsSdk.setPublicId( member.getPublicId() );

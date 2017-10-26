@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -17,7 +17,7 @@ import com.gt.mall.service.web.html.MallHtmlService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +67,7 @@ public class MallHtmlController extends BaseController {
     public String htmllist( HttpServletRequest request, HttpServletResponse response ) {
 	String jsp = "";
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
 	    Map< String,Object > map = htmlService.htmlList( request );
 	    request.setAttribute( "image", PropertiesUtil.getResourceUrl() );
 	    request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
@@ -79,7 +79,7 @@ public class MallHtmlController extends BaseController {
 	    } else {
 		boolean isadmin = busUserService.getIsAdmin( user.getId() );
 		if ( isadmin ) {
-		    Integer zhuid = SessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
+		    Integer zhuid = MallSessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
 		    user = busUserService.selectById( zhuid );
 		    ispid = 1;
 		} else {
@@ -118,7 +118,7 @@ public class MallHtmlController extends BaseController {
     public String modelList( HttpServletRequest request, HttpServletResponse response ) {
 	String jsp = "";
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
 	    Map< String,Object > map = htmlService.modelList( request );
 	    request.setAttribute( "image", PropertiesUtil.getResourceUrl() );
 	    request.setAttribute( "map", map );
@@ -170,7 +170,7 @@ public class MallHtmlController extends BaseController {
     public void addorUpdateSave( HttpServletRequest request, HttpServletResponse response, MallHtml obj ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
 	    htmlService.addorUpdateSave( obj, user );
 	    map.put( "error", "0" );
 	} catch ( Exception e ) {
@@ -264,7 +264,7 @@ public class MallHtmlController extends BaseController {
     public void htmlSave( HttpServletRequest request, HttpServletResponse response, MallHtml obj ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
 	    htmlService.htmlSave( obj, user );
 	    map.put( "error", "0" );
 	} catch ( Exception e ) {
@@ -476,13 +476,13 @@ public class MallHtmlController extends BaseController {
     public void setmallHtml( HttpServletRequest request, HttpServletResponse response ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );//获取登录信息
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
 	    Integer iscreat = 0;//是否还可以创建h5商城0 可以，1不可以
 	    Integer ispid = 0;//是否是主账号，0是主账号，1不是
 	    //pid==0 主账户,否则是子账户
 	    if ( user.getPid() == 0 ) {
 	    } else {
-		Integer zhuid = SessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
+		Integer zhuid = MallSessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
 		user = busUserService.selectById( zhuid );
 		ispid = 1;
 	    }
@@ -493,7 +493,7 @@ public class MallHtmlController extends BaseController {
 		map.put( "ispid", ispid );
 		map.put( "message", "等级不够，不能创建h5商城" );
 	    } else {
-		user = SessionUtils.getLoginUser( request );//获取登录信息
+		user = MallSessionUtils.getLoginUser( request );//获取登录信息
 		Integer id = Integer.valueOf( request.getParameter( "id" ).toString() );//获取模板id
 		Integer xid = htmlService.SetmallHtml( id, user );
 		map.put( "error", "0" );

@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.store;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.utils.PageUtil;
 

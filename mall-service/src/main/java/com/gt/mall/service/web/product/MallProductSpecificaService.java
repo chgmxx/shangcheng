@@ -2,7 +2,7 @@ package com.gt.mall.service.web.product;
 
 import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;

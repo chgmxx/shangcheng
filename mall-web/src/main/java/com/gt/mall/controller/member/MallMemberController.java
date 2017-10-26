@@ -2,8 +2,8 @@ package com.gt.mall.controller.member;
 
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.entity.basic.MallComment;
@@ -24,7 +24,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -95,15 +95,17 @@ public class MallMemberController extends AuthorizeOrLoginController {
     public String toUser( HttpServletRequest request, HttpServletResponse response ) {
 	logger.info( "进入个人中心页面页面" );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    WxPublicUsers wx = null;
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( request.getParameter( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( request.getParameter( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    } else if ( CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
+		int memberId = CommonUtil.toInteger( request.getParameter( "member_id" ) );
+		Member member = memberService.findMemberById( memberId, null );
 		request.setAttribute( "userid", member.getBusid() );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    wx = wxPublicUserService.selectByUserId( userid );
 
 	    /*if ( CommonUtil.isNotEmpty( wx ) && CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isEmpty( request.getParameter( "url" ) ) ) {
@@ -130,7 +132,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		    }
 		}
 	    }
-	    int shopId = SessionUtils.getMallShopId( request );
+	    int shopId = MallSessionUtils.getMallShopId( request );
 	    if ( shopId > 0 ) {//获取shopId
 		request.setAttribute( "shopid", shopId );
 
@@ -150,7 +152,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 		}
 	    }
 	    if ( shopId > 0 ) {
-		SessionUtils.setMallShopId( shopId, request );
+		MallSessionUtils.setMallShopId( shopId, request );
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		Map gradeType = memberService.findGradeType( member.getId() );//会员卡名称
@@ -222,7 +224,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
     public String orderAppraise( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	logger.info( "进入去评论页面的controller" );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
@@ -276,7 +278,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	Map< String,Object > result = new HashMap< String,Object >();
 	try {
 	    out = response.getWriter();
-	    int memberId = SessionUtils.getLoginMember( request ).getId();
+	    int memberId = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) ).getId();
 			/*int memberId = 200;*/
 
 	    MallComment mallComment = (MallComment) JSONObject.toBean( JSONObject.fromObject( map.get( "obj" ) ), MallComment.class );
@@ -317,12 +319,12 @@ public class MallMemberController extends AuthorizeOrLoginController {
     public String appraiseList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > param ) {
 	logger.info( "进入我的评论controller" );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( param.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( param.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -355,12 +357,12 @@ public class MallMemberController extends AuthorizeOrLoginController {
     public String collect( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws Exception {
 	logger.info( "进入我的收藏controller" );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    String returnUrl = userLogin( request, response, loginMap );
 	    if ( CommonUtil.isNotEmpty( returnUrl ) ) {
@@ -393,7 +395,7 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	logger.info( "进入评论上传图片controller" );
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    Integer memberId = SessionUtils.getLoginMember( request ).getId();
+	    Integer memberId = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) ).getId();
 
 	    StringBuffer imageUrl = new StringBuffer();
 	    boolean flag = false;
@@ -482,12 +484,12 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    out = response.getWriter();
 	    Map< String,Object > result = new HashMap< String,Object >();
 
-	    Member member = SessionUtils.getLoginMember( request );
 	    int userid = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
 		userid = CommonUtil.toInteger( params.get( "uId" ) );
 		request.setAttribute( "userid", userid );
 	    }
+	    Member member = MallSessionUtils.getLoginMember( request, userid );
 	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "requestUrl", params.get( "urls" ).toString() );
 	    String returnUrl = userLogin( request, response, loginMap );

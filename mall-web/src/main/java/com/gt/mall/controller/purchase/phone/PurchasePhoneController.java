@@ -1,6 +1,6 @@
 package com.gt.mall.controller.purchase.phone;
 
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.purchase.*;
@@ -9,7 +9,7 @@ import com.gt.mall.service.web.purchase.*;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -246,7 +246,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 			actualMoney = order.getAllMoney();
 		    }
 		}
-		Member member = SessionUtils.getLoginMember( request );
+		Member member = MallSessionUtils.getLoginMember( request, CommonUtil.toInteger( busId ) );
 		if ( member.getMcId() != null && member.getMcId() > 0 ) {
 		    //TODO 会员卡信息 Card
 		    //		    Card card = cardMapper.selectByPrimaryKey( member.getMcId() );
@@ -331,13 +331,14 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 			300 );
 	Map< String,Object > mapParam = new HashMap< String,Object >();
 	mapParam.put( "redisKey", redisKey );
-	mapParam.put( "busId", Integer.parseInt( request.getParameter( "busId" ).toString() ) );
+	int busId = CommonUtil.toInteger( request.getParameter( "busId" ) );
+	mapParam.put( "busId", busId );
 	String returnStr = userLogin( request, response, mapParam );
 	if ( CommonUtil.isNotEmpty( returnStr ) ) { return returnStr; }
 	PurchaseOrder order = orderService.selectById( Integer.parseInt( request.getParameter( "orderId" ) ) );
 	request.setAttribute( "orderId", order.getId() );
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    request.setAttribute( "member", member );
 	    request.setAttribute( "orderTitle", order.getOrderTitle() );
 	} catch ( Exception e ) {
@@ -358,7 +359,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
     @RequestMapping( "/79B4DE7C/writeLanguage" )
     public void writeLanguage( HttpServletRequest request, HttpServletResponse response ) throws IOException {
 	try {
-	    Integer memberId = SessionUtils.getLoginMember( request ).getId();
+	    Integer memberId = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) ).getId();
 	    PurchaseLanguage language = new PurchaseLanguage();
 	    language.setIsRead( "0" );
 	    language.setLanguageTime( new Date() );
@@ -429,7 +430,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	    }
 	    //记录统计
 	    PurchaseOrderStatistics orderStatistics = new PurchaseOrderStatistics();
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    if ( member != null ) {
 		orderStatistics.setMemberId( member.getId() );
 	    }

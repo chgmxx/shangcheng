@@ -2,29 +2,23 @@ package com.gt.mall.controller.api.groupbuy;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
-import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
-import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
-import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -32,9 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +68,7 @@ public class MallGroupBuyNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "type", type );
@@ -131,7 +122,7 @@ public class MallGroupBuyNewController extends BaseController {
 	     "groupBuy" -> "{"productId":"265","id":"48","gName":"121","gStartTime":"2017-09-21 00:00:00","gEndTime":"2017-09-29 00:00:00","gPeopleNum":"1","gMaxBuyNum":"1","gPrice":"45","shopId":"29"}"
 	    * */
 	    int code = -1;// 编辑成功
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		code = groupBuyService.editGroupBuy( params, userId );// 编辑商品
 	    }
@@ -218,7 +209,7 @@ public class MallGroupBuyNewController extends BaseController {
     public ServerResponse getProductByGroup( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		if ( CommonUtil.isEmpty( params.get( "shopId" ) ) ) {
 		    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -226,7 +217,7 @@ public class MallGroupBuyNewController extends BaseController {
 			params.put( "shoplist", shoplist );
 		    }
 		}
-		int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 		long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 		params.put( "isJxc", isJxc );
 
@@ -254,10 +245,10 @@ public class MallGroupBuyNewController extends BaseController {
     public ServerResponse getSpecificaByProId( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		Integer proId = CommonUtil.toInteger( params.get( "proId" ) );
-		int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 		long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
 		int isSPec = 1;

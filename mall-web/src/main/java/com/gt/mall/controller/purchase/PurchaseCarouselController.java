@@ -1,11 +1,11 @@
 package com.gt.mall.controller.purchase;
 
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.purchase.PurchaseCarousel;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.service.web.purchase.PurchaseCarouselService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,7 +43,7 @@ public class PurchaseCarouselController extends BaseController {
     @RequestMapping( value = "/carouselIndex" )
     public String orderIndex( HttpServletRequest request, @RequestParam Map< String,Object > parms ) {
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    parms.put( "busId", busUser.getId() );
 	    PageUtil page = carouselService.findList( parms );
 	    request.setAttribute( "page", page );
@@ -76,7 +76,7 @@ public class PurchaseCarouselController extends BaseController {
     public Map< String,Object > saveContract( HttpServletRequest request, @RequestParam Map< String,Object > parms ) {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    PurchaseCarousel carousel = new PurchaseCarousel();
 	    carousel.setBusId( busUser.getId() );
 	    carousel.setCarouselImg( parms.get( "carouselImg" ).toString() );

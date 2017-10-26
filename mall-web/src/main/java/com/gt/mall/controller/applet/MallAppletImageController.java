@@ -2,11 +2,11 @@ package com.gt.mall.controller.applet;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.service.web.applet.MallAppletImageService;
 import com.gt.mall.service.web.store.MallStoreService;
 import net.sf.json.JSONObject;
@@ -48,7 +48,7 @@ public class MallAppletImageController extends BaseController {
     @RequestMapping( "index" )
     public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isAdminFlag = true;//是管理员
 	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
 		isAdminFlag = storeService.isAdminUser( user.getId() );//查询子账户是否是管理员
@@ -86,7 +86,7 @@ public class MallAppletImageController extends BaseController {
     @RequestMapping( "to_edit" )
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
@@ -116,7 +116,7 @@ public class MallAppletImageController extends BaseController {
 	logger.info( "进入编辑辑小程序controller" );
 	int code = -1;// 编辑成功
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		boolean flag = appletImageService.editImage( params, userId );// 编辑商品
 		if ( flag ) { code = 1;}

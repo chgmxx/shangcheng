@@ -1,8 +1,8 @@
 package com.gt.mall.controller.api.integral;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.integral.MallIntegralImage;
@@ -15,7 +15,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -60,7 +60,7 @@ public class MallIntegralNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type, Integer shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "type", type );
@@ -110,7 +110,7 @@ public class MallIntegralNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > resultMap = integralService.saveIntegral( user.getId(), params );
 	    boolean flag = (boolean) resultMap.get( "flag" );
 	    if ( !flag ) {
@@ -196,7 +196,7 @@ public class MallIntegralNewController extends BaseController {
     public ServerResponse imageList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "shopId", shopId );
@@ -246,7 +246,7 @@ public class MallIntegralNewController extends BaseController {
     @RequestMapping( value = "/image/save", method = RequestMethod.POST )
     public ServerResponse imageSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean flag = integralImageService.editImage( params, user.getId() );// 编辑商品
 	    if ( !flag ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存积分商城图片异常" );
@@ -307,7 +307,7 @@ public class MallIntegralNewController extends BaseController {
     public ServerResponse imageLink( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "shopId", value = "店铺ID", required = true ) @RequestParam Integer shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String url = PropertiesUtil.getHomeUrl() + "/phoneIntegral/" + shopId + "/79B4DE7C/toIndex.do?uId=" + user.getId();
 	    result.put( "link", url );//链接
 	} catch ( Exception e ) {

@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.auction;
 
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.utils.PageUtil;
 

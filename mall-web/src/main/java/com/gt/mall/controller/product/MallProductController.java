@@ -2,7 +2,7 @@ package com.gt.mall.controller.product;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -62,7 +62,7 @@ public class MallProductController extends BaseController {
      */
     @RequestMapping( "index" )
     public String productIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	try {
 	    if ( user != null ) {
 		Integer proType = 0;
@@ -71,7 +71,7 @@ public class MallProductController extends BaseController {
 		}
 		boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//查询子账户是否是管理员
 		if ( isAdminFlag ) {
-		    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		    int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 		    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		    long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
 		    params.put( "isJxc", isJxc );
@@ -136,7 +136,7 @@ public class MallProductController extends BaseController {
     @RequestMapping( "to_edit" )
     public String toEditProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 
 	    params.put( "userId", user.getId() );
@@ -146,7 +146,7 @@ public class MallProductController extends BaseController {
 	    if ( specDictMap != null && specDictMap.size() > 0 ) {
 		request.setAttribute( "specDictMap", specDictMap );
 	    }
-	    int userPId = SessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	    int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
 	    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	    if ( isJxc == 1 ) {
 		request.setAttribute( "noShowSt", 1 );//不显示实体物品
@@ -213,7 +213,7 @@ public class MallProductController extends BaseController {
 	Integer id = 0;
 	String msg = "";
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		Map< String,Object > resultMap = mallProductService.addProduct( params, user, request );
 		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
@@ -256,7 +256,7 @@ public class MallProductController extends BaseController {
 	String msg = "";
 	try {
 	    p = response.getWriter();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		Map< String,Object > resultMap = mallProductService.updateProduct( params, user, request );
 		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
@@ -293,7 +293,7 @@ public class MallProductController extends BaseController {
 	logger.info( "进入同步商品的controller" );
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( user != null ) {
 		if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		    map = mallProductService.copyProduct( params, user );
@@ -325,7 +325,7 @@ public class MallProductController extends BaseController {
 	try {
 	    String id = params.get( "id" ).toString();
 	    String shopId = params.get( "shopId" ).toString();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String content = PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/" + shopId + "/79B4DE7C/phoneProduct.do?toshop=1";
 	    QRcodeKit.buildQRcode( content, 200, 200, response );
 	} catch ( Exception e ) {
@@ -342,7 +342,7 @@ public class MallProductController extends BaseController {
 	try {
 	    String id = params.get( "id" ).toString();
 	    String shopId = params.get( "shopId" ).toString();
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String html = PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/" + shopId + "/79B4DE7C/phoneProduct.do?uId=" + user.getId() + "&toshop=1";
 	    request.setAttribute( "html", html );
 	    request.setAttribute( "id", id );

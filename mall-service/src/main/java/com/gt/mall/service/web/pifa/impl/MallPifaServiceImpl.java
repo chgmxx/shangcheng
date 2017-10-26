@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.pifa.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.pifa.MallPifaApplyDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
@@ -510,6 +510,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	if ( pifa == null ) {
 	    return result;
 	}
+	result.setPfPrice( CommonUtil.toDouble( pifa.getPfPrice() ) );
 	result.setActivityTimes( pifa.getTimes() );
 	result.setActivityStatus( pifa.getStatus() );
 	int pfStatus = mallPifaApplyService.getPifaApplay( member, mallPaySet );
@@ -526,6 +527,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		    }
 		    if ( result.getInvId() > 0 ) {
 			invIdList.add( price.getInvenId() );
+			if ( result.getInvId() == price.getInvenId() ) {
+			    result.setPfPrice( CommonUtil.toDouble( price.getSeckillPrice() ) );
+			}
 		    }
 		}
 	    }

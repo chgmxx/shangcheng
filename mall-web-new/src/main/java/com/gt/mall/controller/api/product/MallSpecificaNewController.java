@@ -1,20 +1,17 @@
 package com.gt.mall.controller.api.product;
 
 import com.alibaba.fastjson.JSON;
-import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -22,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -57,7 +52,7 @@ public class MallSpecificaNewController extends BaseController {
 	    //id:334   不为空 则查询值
 	    //type:2  1 规格， 2 参数
 	    //shopId:177 店铺ID
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 
 	    if ( CommonUtil.isEmpty( params.get( "id" ) ) ) {
 		params.put( "userId", userId );
@@ -89,7 +84,7 @@ public class MallSpecificaNewController extends BaseController {
 	    //specId:5057  值
 	    //type:2  1 规格， 2 参数
 	    //shopId:177 店铺ID
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 
 	    if ( !CommonUtil.isEmpty( map.get( "specId" ) ) ) {// 添加规格值
 		MallSpecificaValue value = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecificaValue.class );

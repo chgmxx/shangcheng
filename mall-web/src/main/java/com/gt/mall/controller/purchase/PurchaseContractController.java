@@ -1,11 +1,11 @@
 package com.gt.mall.controller.purchase;
 
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.purchase.PurchaseContract;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.service.web.purchase.PurchaseContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +37,7 @@ public class PurchaseContractController extends BaseController {
     @RequestMapping( value = "/contractIndex" )
     public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > parms ) {
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    parms.put( "busId", busUser.getId() );
 	    PageUtil page = contractService.findList( parms );
 	    request.setAttribute( "page", page );
@@ -67,7 +67,7 @@ public class PurchaseContractController extends BaseController {
     public Map< String,Object > saveCarousel( HttpServletRequest request, @RequestParam Map< String,Object > parms ) {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    PurchaseContract contract = new PurchaseContract();
 	    contract.setBusId( busUser.getId() );
 	    contract.setContractContent( parms.get( "contractContent" ).toString() );

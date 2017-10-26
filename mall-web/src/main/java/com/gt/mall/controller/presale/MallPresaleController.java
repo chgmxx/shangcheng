@@ -2,7 +2,7 @@ package com.gt.mall.controller.presale;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
@@ -58,7 +58,7 @@ public class MallPresaleController extends BaseController {
     @RequestMapping( "index" )
     public String index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isAdminFlag = mallStoreService.getIsAdminUser( user.getId(), request );//是否是管理员
 	    if ( isAdminFlag ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -103,7 +103,7 @@ public class MallPresaleController extends BaseController {
     @RequestMapping( "to_edit" )
     public String to_edit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
 		Integer id = CommonUtil.toInteger( params.get( "id" ) );
@@ -140,7 +140,7 @@ public class MallPresaleController extends BaseController {
 	PrintWriter p = null;
 	try {
 	    p = response.getWriter();
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		code = mallPresaleService.editPresale( params, userId );// 编辑商品
 	    }
@@ -171,7 +171,7 @@ public class MallPresaleController extends BaseController {
 	int code = 1;// 删除成功
 	PrintWriter p = null;
 	try {
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( !CommonUtil.isEmpty( userId ) && !CommonUtil.isEmpty( params ) ) {
 		int id = 0;
 		if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
@@ -210,7 +210,7 @@ public class MallPresaleController extends BaseController {
     @RequestMapping( "deposit" )
     public String deposit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		params.put( "shoplist", shoplist );
@@ -235,7 +235,7 @@ public class MallPresaleController extends BaseController {
     @RequestMapping( "presale_set" )
     public String presale_set( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    List< MallPresaleGive > giveList = mallPresaleService.selectGiveByUserId( user );
 
@@ -265,7 +265,7 @@ public class MallPresaleController extends BaseController {
 	PrintWriter p = null;
 	try {
 	    p = response.getWriter();
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		code = mallPresaleService.editPresaleSet( params, userId );// 编辑商品
 	    }
@@ -326,7 +326,7 @@ public class MallPresaleController extends BaseController {
     public String returnPresalePopUp( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    int depositId = CommonUtil.toInteger( params.get( "depositId" ) );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
 	    request.setAttribute( "deposit", deposit );

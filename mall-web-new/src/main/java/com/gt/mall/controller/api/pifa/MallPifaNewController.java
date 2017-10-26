@@ -2,7 +2,7 @@ package com.gt.mall.controller.api.pifa;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
@@ -17,7 +17,7 @@ import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class MallPifaNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type, Integer shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isOpenPifa = false;
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
@@ -134,7 +134,7 @@ public class MallPifaNewController extends BaseController {
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    int code = -1;// 编辑成功
-	    Integer userId = SessionUtils.getLoginUser( request ).getId();
+	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		code = mallPifaService.editPifa( params, userId );// 编辑商品
 	    }
@@ -201,7 +201,7 @@ public class MallPifaNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "keyword", keyword );
@@ -265,7 +265,7 @@ public class MallPifaNewController extends BaseController {
     @RequestMapping( value = "/wholesalers/syncOrderPifa", method = RequestMethod.POST )
     public ServerResponse syncOrderPifa( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
@@ -297,7 +297,7 @@ public class MallPifaNewController extends BaseController {
     public ServerResponse setWholesale( HttpServletRequest request, HttpServletResponse response ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    MallPaySet paySet = mallPaySetService.selectByUserId( set );
@@ -326,7 +326,7 @@ public class MallPifaNewController extends BaseController {
     public ServerResponse saveSetWholesaler( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet mallPaySet = (MallPaySet) JSONObject.toBean( JSONObject.fromObject( params ), MallPaySet.class );
 
 	    MallPaySet set = new MallPaySet();

@@ -1,9 +1,9 @@
 package com.gt.mall.controller.purchase;
 
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.bean.Card;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.entity.purchase.*;
 import com.gt.mall.service.inter.member.MemberService;
@@ -74,7 +74,7 @@ public class PurchaseOrderController extends BaseController {
     @RequestMapping( value = "/orderIndex" )
     public String orderIndex( HttpServletRequest request, @RequestParam Map< String,Object > parms ) {
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    parms.put( "busId", busUser.getId() );
 	    PageUtil page = purchaseOrderService.findList( parms );
 	    request.setAttribute( "page", page );
@@ -125,7 +125,7 @@ public class PurchaseOrderController extends BaseController {
     @RequestMapping( value = "/orderAdd" )
     public String orderAdd( HttpServletRequest request ) {
 	try {
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    //查询所有的合同
 	    List< Map< String,Object > > contractList = contractDAO.findAllList( busUser.getId() );
 	    //查询所有的公司模板
@@ -171,7 +171,7 @@ public class PurchaseOrderController extends BaseController {
 	response.setCharacterEncoding( "utf-8" );
 	try {
 	    String shopIds = "";
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
@@ -248,7 +248,7 @@ public class PurchaseOrderController extends BaseController {
     public Map< String,Object > saveOrder( HttpServletRequest request, String[] termId, String[] carouselId, String[] termTime, String[] termMoney, String[] allMoney,
 		    String[] discountMoney, String[] count, String[] orderDetailsId, String[] freight, String[] money, String[] productDetails, String[] productId,
 		    String[] laborCost, String[] installationFee, String[] productImg, String[] productName, String[] carouselImg, String[] carouselUrl ) {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	Map< String,Object > map = new HashMap< String,Object >();
 	PurchaseOrder order = new PurchaseOrder();
 	List< PurchaseOrderDetails > orderDetailsList = new ArrayList< PurchaseOrderDetails >();
@@ -327,7 +327,7 @@ public class PurchaseOrderController extends BaseController {
 		if ( carouselId != null && carouselId.length > i && CommonUtil.isNotEmpty( carouselId[i] ) ) {
 		    carousel.setId( Integer.parseInt( carouselId[i] ) );
 		}
-		carousel.setBusId( SessionUtils.getLoginUser( request ).getId() );
+		carousel.setBusId( MallSessionUtils.getLoginUser( request ).getId() );
 		carousel.setCarouselImg( carouselImg[i] );
 		carousel.setCarouselUrl( carouselUrl[i] );
 		if ( CommonUtil.isNotEmpty( request.getParameter( "orderId" ) ) ) {
@@ -392,7 +392,7 @@ public class PurchaseOrderController extends BaseController {
      */
     @RequestMapping( "/downQrcode" )
     public void downQrcode( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer orderId ) throws IOException {
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	String url = PropertiesUtil.getHomeUrl() + "/" + "purchasePhone" + "/79B4DE7C/getMemberPower.do?orderId=" + orderId + "&busId=" + user.getId();
 	String filename = "订单二维码.jpg";
 	response.addHeader( "Content-Disposition", "attachment;filename=" + new String( filename.replaceAll( " ", "" ).getBytes( "utf-8" ), "iso8859-1" ) );

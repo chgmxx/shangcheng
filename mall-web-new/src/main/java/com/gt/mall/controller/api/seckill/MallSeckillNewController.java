@@ -2,25 +2,20 @@ package com.gt.mall.controller.api.seckill;
 
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -63,7 +58,7 @@ public class MallSeckillNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "type", type );
@@ -116,7 +111,7 @@ public class MallSeckillNewController extends BaseController {
 		{"seckillPrice":"4","invenId":"791","specificaIds":"154","isJoinGroup":0,"seckillNum":"199"}]
 	    * */
 	    int code = -1;// 编辑成功
-	    BusUser busUser = SessionUtils.getLoginUser( request );
+	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( busUser ) && CommonUtil.isNotEmpty( params ) ) {
 		code = mallSeckillService.editSeckill( params, busUser, request );// 编辑商品
 	    }

@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.dao.basic.MallCommentDAO;
@@ -489,14 +489,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     public int getMemberShopCartNum( HttpServletRequest request, Member member, List< Integer > memberList ) throws Exception {
 	int shopCartNum = 0;
 	if ( CommonUtil.isNotEmpty( member ) ) {
-	    Object obj = SessionUtils.getShopCart( request );
+	    Object obj = MallSessionUtils.getShopCart( request );
 
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
 		MallShopCart shopCart = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSONObject.toJSONString( obj ), MallShopCart.class );
 
 		int count = addshopping( shopCart, member, request, null );
 		if ( count > 0 ) {
-		    SessionUtils.setShopCart( null, request );
+		    MallSessionUtils.setShopCart( null, request );
 		    request.setAttribute( "isAddShop", 1 );
 		}
 	    }
@@ -664,7 +664,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	}
 	return cart;
     }
-
 
     @Override
     public void shoppingdelect( String delects, String updStr, int type ) {
@@ -889,14 +888,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    price = CommonUtil.toDouble( map1.get( "pro_price" ) );
 	}
 	DecimalFormat df = new DecimalFormat( "######0.00" );
-	/*String is_member_discount = map1.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
+	String is_member_discount = map1.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
 	if ( is_member_discount.equals( "1" ) ) {
 	    if ( price > 0 && discount != 1 ) {
-		hyPrice = CommonUtil.toDouble( df.format( price * discount ) );
+		double hyPrice = CommonUtil.toDouble( df.format( price * discount ) );
 		proMap.put( "hyPrice", df.format( hyPrice ) );
 		costPrice = price;
 	    }
-	}*/
+	}
 	if ( searchProductDTO.getType() == 5 ) {
 	    price = CommonUtil.toDouble( map1.get( "change_fenbi" ) );
 	    proMap.put( "unit", "粉币" );
@@ -914,8 +913,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    int proTypeId = CommonUtil.toInteger( map1.get( "pro_type_id" ) );
 	    int memberType = CommonUtil.toInteger( map1.get( "member_type" ) );
 	    if ( proTypeId == 2 && memberType > 0 ) {
-		String return_url = "/phoneMemberController/" + map1.get( "user_id" ) + "/79B4DE7C/findMember_1.do";
-		proMap.put( "return_url", return_url );
+		proMap.put( "return_url", "/phoneMemberController/" + map1.get( "user_id" ) + "/79B4DE7C/findMember_1.do" );
 	    }
 	}
 
@@ -948,7 +946,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
 		if ( startTimes.getTime() > date.getTime() && endTimes.getTime() > date.getTime() ) {//未开始
 		    status = 0;
-		    proMap.put( "times", ( startTimes.getTime() - nowTime.getTime() ) / 1000 );
+		    proMap.put( "times ", ( startTimes.getTime() - nowTime.getTime() ) / 1000 );
 		} else if ( startTimes.getTime() <= date.getTime() && date.getTime() < endTimes.getTime() ) {//正在进行
 		    status = 1;
 		}
@@ -957,6 +955,12 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	}
 	if ( CommonUtil.isNotEmpty( map1.get( "activityId" ) ) ) {
 	    proMap.put( "activityId", map1.get( "activityId" ) );
+	}
+	if ( CommonUtil.isNotEmpty( map1.get( "times" ) ) ) {
+	    proMap.put( "times", map1.get( "times" ) );
+	}
+	if ( CommonUtil.isNotEmpty( map1.get( "activityStatus" ) ) ) {
+	    proMap.put( "activityStatus", map1.get( "activityStatus" ) );
 	}
 	if ( CommonUtil.isNotEmpty( map1.get( "peopleNum" ) ) ) {
 	    proMap.put( "peopleNum", map1.get( "peopleNum" ) );//拼团人数

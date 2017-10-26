@@ -3,13 +3,13 @@ package com.gt.mall.controller.api.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +37,7 @@ public class AuthorizeOrUcLoginController {
 	Integer browser = loginDTO.getBrowerType();
 	Integer uclogin = loginDTO.getUcLogin();
 
-	Member member = SessionUtils.getLoginMember( request );
+	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    //用户的所属商家和传进来的商家id相同不必登陆
 	    if ( member.getBusid().toString().equals( CommonUtil.toString( busId ) ) ) {
@@ -70,7 +70,7 @@ public class AuthorizeOrUcLoginController {
 	String otherRedisKey = CommonUtil.getCode();
 	Map< String,Object > redisMap = new HashMap<>();
 	redisMap.put( "redisKey", otherRedisKey );
-	redisMap.put( "redisValue", loginDTO.getUrl().toString() );
+	redisMap.put( "redisValue", loginDTO.getUrl() );
 	redisMap.put( "setime", 5 * 60 );
 	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpSignKey() );
 

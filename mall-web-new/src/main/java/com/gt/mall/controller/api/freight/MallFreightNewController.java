@@ -1,15 +1,12 @@
 package com.gt.mall.controller.api.freight;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.freight.MallFreight;
-import com.gt.mall.entity.freight.MallFreightDetail;
-import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -20,14 +17,9 @@ import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -36,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -78,7 +69,7 @@ public class MallFreightNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -185,7 +176,7 @@ public class MallFreightNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    boolean flag = freightService.newEditFreight( params, user.getId() );
 	    if ( !flag ) {
@@ -213,7 +204,7 @@ public class MallFreightNewController extends BaseController {
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "ids", value = "物流ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String id[] = ids.toString().split( "," );
 
 	    Map< String,Object > params = new HashMap<>();
@@ -244,7 +235,7 @@ public class MallFreightNewController extends BaseController {
     public ServerResponse takeList( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = paySetService.selectByUserId( paySet );
@@ -274,7 +265,7 @@ public class MallFreightNewController extends BaseController {
     public ServerResponse takeInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "自提ID", required = true ) @RequestParam Integer id ) {
 	MallTakeTheir takeTheir = null;
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "id", id );
 	    params.put( "userId", user.getId() );
@@ -296,7 +287,7 @@ public class MallFreightNewController extends BaseController {
     @RequestMapping( value = "/take/save", method = RequestMethod.POST )
     public ServerResponse takeSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 
 	    boolean flag = takeTheirService.newEditTake( params, user );
 	    if ( !flag ) {
@@ -324,7 +315,7 @@ public class MallFreightNewController extends BaseController {
     public ServerResponse fltakeSave( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "status", value = "状态 0关闭 1开启", required = true ) @RequestParam Integer status ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet querySet = new MallPaySet();
 	    querySet.setUserId( user.getId() );
 	    MallPaySet set = mallPaySetService.selectByUserId( querySet );

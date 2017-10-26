@@ -1,7 +1,7 @@
 package com.gt.mall.service.web.purchase.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.purchase.PurchaseOrderStatisticsDAO;
 import com.gt.mall.entity.purchase.PurchaseOrderStatistics;
 import com.gt.mall.service.inter.member.MemberService;

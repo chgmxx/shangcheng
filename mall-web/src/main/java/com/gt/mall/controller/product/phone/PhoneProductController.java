@@ -2,7 +2,7 @@ package com.gt.mall.controller.product.phone;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallGroup;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -13,7 +13,7 @@ import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,7 +81,7 @@ public class PhoneProductController extends BaseController {
 	JSONObject obj = new JSONObject();
 	boolean result = false;
 	try {
-	    params.put( "userId", SessionUtils.getLoginMember( request ).getId() );
+	    params.put( "userId", MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) ).getId() );
 
 	    result = mallGroupService.clearSearchKeyWord( params );
 
@@ -104,7 +104,7 @@ public class PhoneProductController extends BaseController {
     public void getProductByIds( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	JSONObject obj = new JSONObject();
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    if ( CommonUtil.isNotEmpty( params.get( "proIds" ) ) ) {
 
 		String proIds = CommonUtil.toString( params.get( "proIds" ) );

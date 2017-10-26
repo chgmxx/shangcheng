@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.seller.*;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -217,15 +217,15 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		saleMemberId = 0;
 	    } else {
 		if ( CommonUtil.isNotEmpty( request ) ) {
-		    SessionUtils.setSession( saleMemberId, request, key );
+		    MallSessionUtils.setSession( saleMemberId, request, key );
 		} else {
 		    JedisUtil.set( Constants.REDIS_KEY + key, saleMemberId + "", Constants.REDIS_SECONDS );
 		}
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( request ) ) {
-	    if ( CommonUtil.isNotEmpty( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) ) ) {
-		return CommonUtil.toInteger( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) );
+	    if ( CommonUtil.isNotEmpty( MallSessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) ) ) {
+		return CommonUtil.toInteger( MallSessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) );
 	    }
 	} else {
 	    if ( JedisUtil.exists( Constants.REDIS_KEY + key ) ) {
@@ -240,7 +240,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	if ( saleMemberId > 0 ) {
 	    String key = "mall_mallSaleMemberId_" + userid;
 	    if ( CommonUtil.isNotEmpty( request ) ) {
-		SessionUtils.setSession( saleMemberId, request, key );
+		MallSessionUtils.setSession( saleMemberId, request, key );
 	    } else {
 		JedisUtil.set( Constants.REDIS_KEY + key, saleMemberId + "", Constants.REDIS_SECONDS );
 	    }
@@ -251,7 +251,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public void clearSaleMemberIdByRedis( Member member, HttpServletRequest request, int userid ) {
 	String key = "mall_mallSaleMemberId_" + userid;
 	if ( CommonUtil.isNotEmpty( request ) ) {
-	    SessionUtils.removeSession( request, key );
+	    MallSessionUtils.removeSession( request, key );
 	} else {
 	    JedisUtil.del( Constants.REDIS_KEY + key );
 	}

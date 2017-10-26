@@ -2,8 +2,8 @@ package com.gt.mall.controller.api.basic;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallSecuritytradeQuit;
@@ -13,7 +13,7 @@ import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallSecuritytradeQuitService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -60,7 +60,7 @@ public class MallSecuritytradeController extends BaseController {
     @RequestMapping( value = "/add", method = RequestMethod.POST )
     public ServerResponse add( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    set = mallPaySetService.selectByUserId( set );
@@ -83,7 +83,7 @@ public class MallSecuritytradeController extends BaseController {
     public ServerResponse isSecuritytrade( HttpServletRequest request, HttpServletResponse response ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    boolean isSecuritytrade = false;
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
@@ -161,7 +161,7 @@ public class MallSecuritytradeController extends BaseController {
 	    MallSecuritytradeQuit quit = new MallSecuritytradeQuit();
 	    quit.setQuitReasonId( quitReasonId );
 	    quit.setRemark( remark );
-	    quit.setUserId( SessionUtils.getLoginUser( request ).getId() );
+	    quit.setUserId( MallSessionUtils.getLoginUser( request ).getId() );
 	    quit.setCreateTime( new Date() );
 	    mallSecuritytradeQuitService.insert( quit );
 	} catch ( Exception e ) {
@@ -183,7 +183,7 @@ public class MallSecuritytradeController extends BaseController {
 		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status,
 		    @ApiParam( name = "reason", value = "不通过理由", required = false ) @RequestParam String reason ) {
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( id );
 	    quit.setCheckStatus( status );
 	    quit.setCheckTime( new Date() );

@@ -20,14 +20,14 @@ public class PhoneToOrderWayResult implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 
-    @ApiModelProperty( name = "way", value = "支付方式id" )
-    private int way;
+    @ApiModelProperty( name = "id", value = "支付方式id" )
+    private int id;
 
     @ApiModelProperty( name = "wayName", value = "支付方式名称" )
     private String wayName;
 
-    public PhoneToOrderWayResult( int way, String wayName ) {
-	this.way = way;
+    public PhoneToOrderWayResult( int id, String wayName ) {
+	this.id = id;
 	this.wayName = wayName;
     }
 

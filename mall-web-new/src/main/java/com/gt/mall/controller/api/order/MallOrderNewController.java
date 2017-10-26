@@ -1,16 +1,11 @@
 package com.gt.mall.controller.api.order;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.basic.MallSecuritytradeQuit;
-import com.gt.mall.entity.order.MallDaifu;
-import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -41,8 +36,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +104,7 @@ public class MallOrderNewController extends BaseController {
 		    }
 		}
 	    }
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
 	    if ( CommonUtil.isEmpty( orderQuery.getShopId() ) ) {
 		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -281,7 +274,7 @@ public class MallOrderNewController extends BaseController {
     @RequestMapping( value = "/updateReturn", method = RequestMethod.POST )
     public ServerResponse updateReturn( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    WxPublicUsers pUser = SessionUtils.getLoginPbUser( request );
+	    WxPublicUsers pUser = MallSessionUtils.getLoginPbUser( request );
 
 	    MallOrderReturn orderReturn = com.alibaba.fastjson.JSONObject.parseObject( params.get( "return" ).toString(), MallOrderReturn.class );
 	    Map< String,Object > map = mallOrderService.updateOrderReturn( orderReturn, params.get( "order" ), pUser );
@@ -315,7 +308,7 @@ public class MallOrderNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "orderId", orderId );
 	    params.put( "curPage", curPage );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( params ) ) {
 		result = mallOrderService.printOrder( params, user );
 	    }
@@ -345,7 +338,7 @@ public class MallOrderNewController extends BaseController {
 		    }
 		}
 	    }
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
 	    String[] titles = new String[] { "订单编号", "商品", "单价", "数量", "实付金额", "优惠", "运费", "买家", "下单时间", "订单状态", "配送方式", "售后", "所属店铺", "付款方式", "收货信息", "买家留言", "卖家备注" };
@@ -404,7 +397,7 @@ public class MallOrderNewController extends BaseController {
 	    params.put( "status", status );
 	    params.put( "startTime", startTime );
 	    params.put( "endTime", endTime );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
@@ -439,7 +432,7 @@ public class MallOrderNewController extends BaseController {
 	    params.put( "status", status );
 	    params.put( "startTime", startTime );
 	    params.put( "endTime", endTime );
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
