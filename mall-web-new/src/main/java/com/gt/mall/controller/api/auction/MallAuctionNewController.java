@@ -1,8 +1,8 @@
 package com.gt.mall.controller.api.auction;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionMargin;
@@ -13,8 +13,9 @@ import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

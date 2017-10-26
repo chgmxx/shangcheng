@@ -1,9 +1,9 @@
 package com.gt.mall.controller.api.html;
 
 import com.alibaba.fastjson.JSON;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.enums.ResponseEnums;
@@ -12,8 +12,9 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.html.MallHtmlFromService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
