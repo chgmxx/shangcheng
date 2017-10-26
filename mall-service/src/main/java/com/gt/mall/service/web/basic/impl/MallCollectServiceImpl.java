@@ -60,7 +60,7 @@ public class MallCollectServiceImpl extends BaseServiceImpl< MallCollectDAO,Mall
 	MallCollect c = collectDAO.selectOne( mallCollect );
 
 	MallCollect collect = new MallCollect();
-
+	collect.setProductId( productId );
 	if ( CommonUtil.isNotEmpty( c ) ) {
 	    if ( CommonUtil.isNotEmpty( c.getId() ) ) {
 		collect.setId( c.getId() );
