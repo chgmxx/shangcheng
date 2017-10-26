@@ -5,10 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.MallPresaleDAO;
@@ -682,6 +682,10 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( CommonUtil.isNotEmpty( params.get( "presaleSet" ) ) ) {
 	    MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
 	    give.setGiveName(CommonUtil.urlEncode( give.getGiveName() )  );
+	    if ( CommonUtil.isEmpty( give.getGiveType() ) || CommonUtil.isEmpty( give.getGiveName() )||
+	         CommonUtil.isEmpty( give.getGiveRanking() )|| CommonUtil.isEmpty( give.getGiveNum() )){
+		return code;
+	    }
 	    if ( CommonUtil.isNotEmpty( give.getId() ) ) {
 		num = mallPresaleGiveDAO.updateById( give );
 	    } else {
