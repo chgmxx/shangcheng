@@ -104,4 +104,10 @@ public class PhoneAuctionProductDetailResult implements Serializable {
     @ApiModelProperty( name = "isReturnOrder", value = "是否显示转订单按钮  1显示 0不显示" )
     private int isReturnOrder = -1;
 
+    /**
+     * 是否显示缴纳保证金的按钮  1显示
+     */
+    @ApiModelProperty( name = "isShowDeposit", value = "是否显示缴纳保证金的按钮  1显示" )
+    private int isShowDeposit = -1;
+
 }

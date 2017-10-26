@@ -532,6 +532,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	if ( auction.getAucRestrictionNum() > 0 ) {
 	    result.setMaxBuyNum( auction.getAucRestrictionNum() );//限购
 	}
+	int isShowMargin = 0;
 	PhoneAuctionProductDetailResult auctionResult = new PhoneAuctionProductDetailResult();
 
 	MallAuctionMargin margin = new MallAuctionMargin();
@@ -595,8 +596,14 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    auctionResult.setAucAddPrice( CommonUtil.toDouble( auction.getAucAddPrice() ) );//加价幅度
 	}
 	auctionResult.setAucTypeVal( aucTypeVal );
+	//判断是否需要缴纳保证金
+	if ( CommonUtil.isNotEmpty( auction.getIsMargin() ) && auction.getIsMargin() == 1 && marginList.size() == 0 ) {
+	    isShowMargin = auction.getIsMargin();
+	}
+	auctionResult.setIsShowDeposit( isShowMargin );
 
 	result.setAuctionResult( auctionResult );
+
 	return result;
     }
 

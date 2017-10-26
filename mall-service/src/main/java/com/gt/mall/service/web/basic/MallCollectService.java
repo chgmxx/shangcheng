@@ -27,12 +27,12 @@ public interface MallCollectService extends BaseService< MallCollect > {
     /**
      * 收藏商品
      *
-     * @param params 收藏信息
-     * @param userId 用户Id
+     * @param productId 商品id
+     * @param userId    用户Id
      *
      * @return boolean
      */
-    boolean collectionProduct( Map< String,Object > params, int userId );
+    boolean collectionProduct( int productId, int userId );
 
     /**
      * 删除收藏 可批量

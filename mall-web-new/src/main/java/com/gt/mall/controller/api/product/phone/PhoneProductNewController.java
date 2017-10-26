@@ -3,17 +3,20 @@ package com.gt.mall.controller.api.product.phone;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.*;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.auction.MallAuctionService;
+import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
@@ -95,6 +98,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private MallProductParamService       mallProductParamService;//商品规格参数业务处理类
     @Autowired
     private MemberService                 memberService;
+    @Autowired
+    private MallCollectService            mallCollectService;
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -333,6 +338,35 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询商品参数失败" );
 	}
+
+    }
+
+    @ApiOperation( value = "收藏商品的接口", notes = "商品详情页面收藏商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ) )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/collectProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse collectProduct( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    Integer productId ) {
+	try {
+	    loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+
+	    mallCollectService.collectionProduct( productId, member.getId() );
+
+	} catch ( BusinessException e ) {
+	    logger.error( "收藏商品异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "收藏商品异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "收藏商品失败" );
+	}
+	return ServerResponse.createBySuccessCode();
 
     }
 

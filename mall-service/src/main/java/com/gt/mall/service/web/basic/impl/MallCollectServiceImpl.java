@@ -1,7 +1,6 @@
 package com.gt.mall.service.web.basic.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.entity.basic.MallCollect;
@@ -53,21 +52,24 @@ public class MallCollectServiceImpl extends BaseServiceImpl< MallCollectDAO,Mall
     }
 
     @Override
-    public boolean collectionProduct( Map< String,Object > params, int userId ) {
-	MallCollect collect = (MallCollect) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "params" ).toString() ), MallCollect.class );
-	//        Map<String, Object> map = new HashMap<String, Object>();
-	//        map.put("productId", collect.getProductId());
-	//        map.put("userId", userId);
-	//        MallCollect c = collectDAO.selectByCollect(map);
+    public boolean collectionProduct( int productId, int userId ) {
 
 	MallCollect mallCollect = new MallCollect();
 	mallCollect.setUserId( userId );
-	mallCollect.setProductId( collect.getProductId() );
+	mallCollect.setProductId( productId );
 	MallCollect c = collectDAO.selectOne( mallCollect );
+
+	MallCollect collect = new MallCollect();
 
 	if ( CommonUtil.isNotEmpty( c ) ) {
 	    if ( CommonUtil.isNotEmpty( c.getId() ) ) {
 		collect.setId( c.getId() );
+	    }
+	    //判断商品是否已收藏，如已收藏，状态修改为未收藏；反之 改为已收藏
+	    if ( c.getIsCollect() == 1 ) {
+		collect.setIsCollect( 0 );
+	    } else {
+		collect.setIsCollect( 1 );
 	    }
 	}
 	int count = 0;
