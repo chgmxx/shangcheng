@@ -57,16 +57,22 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
     /**
      * 访客数,浏览量保存至jedis
      *
-     * @param shopId 店铺ID
+     * @param type   0页面  1商品
+     * @param id     页面ID/商品ID
      * @param status 修改数量+1  0全部 1浏览量 2访客数
      */
-    public void visitorJedis( Integer shopId, Integer status ) {
-	String key = Constants.REDIS_KEY + "page_visitor";
+    public void visitorJedis( Integer type, Integer id, Integer status ) {
+	String key = "";
+	if ( type == 0 ) {
+	     key = Constants.REDIS_KEY + "page_visitor";
+	} else {
+	     key = Constants.REDIS_KEY + "product_visitor";
+	}
 	Integer visitorNum = 1;//访客数
 	Integer viewsNum = 1;//浏览量
 
-	if ( JedisUtil.hExists( key, shopId.toString() ) ) {
-	    List< String > maps = JedisUtil.hmgetByKeys( key, shopId.toString() );
+	if ( JedisUtil.hExists( key, id.toString() ) ) {
+	    List< String > maps = JedisUtil.hmgetByKeys( key, id.toString() );
 	    if ( CommonUtil.isNotEmpty( maps ) ) {
 		JSONObject obj = JSONObject.parseObject( maps.get( 0 ) );
 		visitorNum = obj.getInteger( "visitorNum" );
@@ -85,7 +91,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 	net.sf.json.JSONObject objs = new net.sf.json.JSONObject();
 	objs.put( "visitorNum", visitorNum );
 	objs.put( "viewsNum", viewsNum );
-	JedisUtil.map( key, shopId + "", objs.toString() );
+	JedisUtil.map( key, id + "", objs.toString() );
 
     }
 
@@ -101,7 +107,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		visitor.setAccessTime( new Date() );
 		visitor.setAccessCount( visitor.getAccessCount() + 1 );
 		mallVisitorDAO.updateById( visitor );
-		visitorJedis( visitor.getShopId(), 1 );
+		visitorJedis(0,pageId, 1 );
 		result = true;
 	    } else {
 		MallPage page = mallPageService.selectById( pageId );
@@ -116,7 +122,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		    visitor.setMemberId( memberId );
 		}
 		mallVisitorDAO.insert( visitor );
-		visitorJedis( visitor.getShopId(), 0 );
+		visitorJedis(0,pageId, 0 );
 		result = true;
 	    }
 	} catch ( Exception e ) {
@@ -138,7 +144,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		visitor.setAccessTime( new Date() );
 		visitor.setAccessCount( visitor.getAccessCount() + 1 );
 		mallVisitorDAO.updateById( visitor );
-		visitorJedis( visitor.getShopId(), 1 );
+		visitorJedis( 1,productId, 1 );
 		result = true;
 	    } else {
 		MallProduct product = mallProductService.selectById( productId );
@@ -153,7 +159,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		    visitor.setMemberId( memberId );
 		}
 		mallVisitorDAO.insert( visitor );
-		visitorJedis( visitor.getShopId(), 0 );
+		visitorJedis( 1,productId, 0 );
 		result = true;
 	    }
 	} catch ( Exception e ) {

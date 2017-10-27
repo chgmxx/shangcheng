@@ -2,6 +2,7 @@ package com.gt.mall.controller.api.presale;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.dto.ServerResponse;
@@ -249,6 +250,32 @@ public class MallPresaleNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取定金信息异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), deposit );
+    }
+
+    /**
+     * 获取支付宝退款地址
+     */
+    @ApiOperation( value = "获取支付宝退款地址", notes = "获取支付宝退款地址" )
+    @ResponseBody
+    @RequestMapping( value = "/deposit/refundUrl", method = RequestMethod.POST )
+    public ServerResponse refundUrl( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
+	String url = "";
+	try {
+	    MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    KeysUtil keysUtil = new KeysUtil();
+	    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallPresale/mallAPI/returnSuccessBack.do" );
+
+	    url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refund.do?out_trade_no=" + deposit.getDepositNo() + "&busId=" + user.getId() + "&desc=退保证金&fee=" + deposit
+			    .getDepositMoney() + "&notifyUrl=" + notifyUrl;
+
+	} catch ( Exception e ) {
+	    logger.error( "获取支付宝退款地址异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取支付宝退款地址异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
     }
 
     /**

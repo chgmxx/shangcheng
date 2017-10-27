@@ -1,6 +1,7 @@
 package com.gt.mall.controller.api.auction;
 
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.dto.ServerResponse;
@@ -215,6 +216,32 @@ public class MallAuctionNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取保证金信息异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), margin );
+    }
+
+    /**
+     * 获取支付宝退款地址
+     */
+    @ApiOperation( value = "获取支付宝退款地址", notes = "获取支付宝退款地址" )
+    @ResponseBody
+    @RequestMapping( value = "/margin/refundUrl", method = RequestMethod.POST )
+    public ServerResponse refundUrl( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "保证金ID", required = true ) @RequestParam Integer id ) {
+	String url = "";
+	try {
+	    MallAuctionMargin margin = auctionMarginService.selectById( id );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    KeysUtil keysUtil = new KeysUtil();
+	    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallAuction/mallAPI/returnSuccessBack.do" );
+
+	    url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refund.do?out_trade_no=" + margin.getAucNo() + "&busId=" + user.getId() + "&desc=退保证金&fee=" + margin
+			    .getMarginMoney() + "&notifyUrl=" + notifyUrl;
+
+	} catch ( Exception e ) {
+	    logger.error( "获取支付宝退款地址异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取支付宝退款地址异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url );
     }
 
     /**
