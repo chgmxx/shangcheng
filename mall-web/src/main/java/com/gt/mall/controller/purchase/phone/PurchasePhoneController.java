@@ -6,10 +6,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.entity.purchase.*;
 import com.gt.mall.service.web.purchase.*;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.JedisUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -359,7 +356,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
     @RequestMapping( "/79B4DE7C/writeLanguage" )
     public void writeLanguage( HttpServletRequest request, HttpServletResponse response ) throws IOException {
 	try {
-	    Integer memberId = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) ).getId();
+	    Integer memberId = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() ).getId();
 	    PurchaseLanguage language = new PurchaseLanguage();
 	    language.setIsRead( "0" );
 	    language.setLanguageTime( new Date() );

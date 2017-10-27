@@ -6,13 +6,14 @@ import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.param.phone.PhoneAddShopCartDTO;
 import com.gt.mall.param.phone.PhoneLoginDTO;
+import com.gt.mall.param.phone.shopCart.PhoneAddShopCartDTO;
 import com.gt.mall.param.phone.shopCart.PhoneRemoveShopCartDTO;
 import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderDTO;
 import com.gt.mall.result.phone.shopcart.PhoneShopCartResult;
 import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -89,7 +90,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 
 	    PhoneShopCartResult result = mallShopCartService.getShopCart( member, busId, type, request, response );
 
-	    mallStoreService.getShopBySession( request.getSession(), shopId );
+	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
 	} catch ( BusinessException e ) {

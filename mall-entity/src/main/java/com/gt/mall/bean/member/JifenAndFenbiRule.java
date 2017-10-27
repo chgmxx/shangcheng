@@ -20,4 +20,7 @@ public class JifenAndFenbiRule {
     private Double jifenRatio;//积分兑换比例 10个积分
 
     private Double jifenStartMoney;//积分起兑金额
+
+
+
 }

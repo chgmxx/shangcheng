@@ -1,12 +1,11 @@
 package com.gt.mall.service.web.store;
 
-import com.gt.mall.base.BaseService;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +72,7 @@ public interface MallStoreService extends BaseService< MallStore > {
      *
      * @return 店铺id
      */
-    int getShopBySession( HttpSession session, int shopId );
+//    int getShopBySession( HttpSession session, int shopId );
 
     /**
      * 创建仓库  对接进销存

@@ -12,6 +12,7 @@ import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,7 @@ public class PhoneProductController extends BaseController {
 	JSONObject obj = new JSONObject();
 	boolean result = false;
 	try {
-	    params.put( "userId", MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) ).getId() );
+	    params.put( "userId", MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() ) );
 
 	    result = mallGroupService.clearSearchKeyWord( params );
 
@@ -104,7 +105,7 @@ public class PhoneProductController extends BaseController {
     public void getProductByIds( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	JSONObject obj = new JSONObject();
 	try {
-	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
+	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 	    if ( CommonUtil.isNotEmpty( params.get( "proIds" ) ) ) {
 
 		String proIds = CommonUtil.toString( params.get( "proIds" ) );

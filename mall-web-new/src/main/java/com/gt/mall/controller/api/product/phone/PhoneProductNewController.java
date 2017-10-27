@@ -28,6 +28,7 @@ import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.Api;
@@ -116,7 +117,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    map.put( "busId", params.getBusId() );
 	    List< Map< String,Object > > classList = mallHomeAppletService.selectGroupsByShopId( map );
 
-	    mallStoreService.getShopBySession( request.getSession(), params.getShopId() );
+	    MallRedisUtils.getMallShopId( params.getShopId() );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), classList );
 
@@ -149,7 +150,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		loginDTO.setUcLogin( 1 );//不需要登陆
 		userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-		mallStoreService.getShopBySession( request.getSession(), params.getShopId() );//从session获取店铺id  或  把店铺id存入session
+		MallRedisUtils.getMallShopId( params.getShopId() );//从session获取店铺id  或  把店铺id存入session
 
 		if ( CommonUtil.isNotEmpty( params.getType() ) ) {
 		    if ( params.getType() == 5 ) {
@@ -207,7 +208,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    mallStoreService.getShopBySession( request.getSession(), params.getShopId() );//从session获取店铺id  或  把店铺id存入session
+	    MallRedisUtils.getMallShopId( params.getShopId() );//从session获取店铺id  或  把店铺id存入session
 
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( params.getBusId() );
@@ -261,7 +262,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
 
-	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
+	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 
 	    List< Map< String,Object > > specificaList = mallProductSpecificaService.getSpecificaByProductId( params.getProductId() );//获取商品规格值
 	    resultMap.put( "specificaList", specificaList );

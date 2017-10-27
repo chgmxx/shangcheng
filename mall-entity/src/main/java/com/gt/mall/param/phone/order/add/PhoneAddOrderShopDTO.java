@@ -1,4 +1,4 @@
-package com.gt.mall.result.phone.order;
+package com.gt.mall.param.phone.order.add;
 
 import com.gt.mall.bean.member.Coupons;
 import io.swagger.annotations.ApiModel;
@@ -10,15 +10,15 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 店铺（进入提交订单页面返回结果）
+ * 店铺（提交订单参数）
  * User : yangqian
  * Date : 2017/10/12 0012
  * Time : 20:11
  */
-@ApiModel( value = "PhoneToOrderShopResult", description = "店铺（进入提交订单页面返回结果）" )
+@ApiModel( value = "PhoneAddOrderShopResult", description = "店铺（提交订单参数）" )
 @Getter
 @Setter
-public class PhoneToOrderShopResult implements Serializable {
+public class PhoneAddOrderShopDTO implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 
@@ -41,9 +41,13 @@ public class PhoneToOrderShopResult implements Serializable {
     private double totalFreightMoney = 0;
 
     @ApiModelProperty( name = "productResultList", value = "商品集合名称" )
-    private List< PhoneToOrderProductResult > productResultList;
+    private List< PhoneAddOrderProductDTO > productResultList;
 
     @ApiModelProperty( name = "couponList", value = "卡券集合" )
     private List< Coupons > couponList;
+
+    /*********************************提交订单接口，传值***************************************/
+    @ApiModelProperty( name = "selectCouponsId", value = "选中优惠券的id" )
+    private Integer selectCouponsId = 0;
 
 }

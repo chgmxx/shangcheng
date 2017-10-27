@@ -4,7 +4,7 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.product.MallShopCart;
-import com.gt.mall.param.phone.PhoneAddShopCartDTO;
+import com.gt.mall.param.phone.shopCart.PhoneAddShopCartDTO;
 import com.gt.mall.param.phone.shopCart.PhoneRemoveShopCartDTO;
 import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderDTO;
 import com.gt.mall.result.phone.shopcart.PhoneShopCartResult;
@@ -34,19 +34,6 @@ public interface MallShopCartService extends BaseService< MallShopCart > {
      */
     List< Map< String,Object > > getProductByIds( Map< String,Object > maps, WxPublicUsers pbUser, Member member, int userId, List< Map< String,Object > > shopList )
 		    throws Exception;
-
-    /**
-     * 获取进入提交订单的参数
-     *
-     * @param request       request
-     * @param loginCity     所在省份
-     * @param userid        商家id
-     * @param list          订单信息
-     * @param mem_longitude 经度
-     * @param mem_latitude  纬度
-     */
-    void getOrdersParams( HttpServletRequest request, String loginCity, int userid, List< Map< String,Object > > list, double mem_longitude, double mem_latitude, Member member,
-		    List< Map< String,Object > > shopList );
 
     /**
      * 加入购物车

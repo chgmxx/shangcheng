@@ -3,8 +3,8 @@ package com.gt.mall.service.web.store.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -153,20 +152,20 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return newStoreList;
     }
 
-    @Override
-    public int getShopBySession( HttpSession session, int shopId ) {
-	String sessionKey = Constants.SESSION_KEY + "shopId";
-	if ( CommonUtil.isEmpty( session.getAttribute( sessionKey ) ) ) {
-	    session.setAttribute( sessionKey, shopId );
-	} else {
-	    if ( !session.getAttribute( sessionKey ).toString().equals( String.valueOf( shopId ) ) ) {
-		session.setAttribute( sessionKey, shopId );
-	    } else {
-		shopId = CommonUtil.toInteger( session.getAttribute( sessionKey ) );
-	    }
-	}
-	return shopId;
-    }
+//    @Override
+//    public int getShopBySession( HttpSession session, int shopId ) {
+//	String sessionKey = Constants.SESSION_KEY + "shopId";
+//	if ( CommonUtil.isEmpty( session.getAttribute( sessionKey ) ) ) {
+//	    session.setAttribute( sessionKey, shopId );
+//	} else {
+//	    if ( !session.getAttribute( sessionKey ).toString().equals( String.valueOf( shopId ) ) ) {
+//		session.setAttribute( sessionKey, shopId );
+//	    } else {
+//		shopId = CommonUtil.toInteger( session.getAttribute( sessionKey ) );
+//	    }
+//	}
+//	return shopId;
+//    }
 
     @Override
     public int createCangku( int shopId, BusUser user, int uType ) {

@@ -1,7 +1,7 @@
-package com.gt.mall.result.phone.order;
+package com.gt.mall.param.phone.order.add;
 
-import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import com.gt.mall.param.phone.order.PhoneOrderMemberAddressDTO;
+import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -11,15 +11,15 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 进入提交订单页面返回结果
+ * 提交订单参数
  * User : yangqian
  * Date : 2017/10/12 0012
  * Time : 20:11
  */
-@ApiModel( value = "PhoneToOrderResult", description = "进入提交订单页面返回结果" )
+@ApiModel( value = "PhoneAddOrderResult", description = "提交订单参数" )
 @Getter
 @Setter
-public class PhoneToOrderResult implements Serializable {
+public class PhoneAddOrderDTO implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 
@@ -33,9 +33,15 @@ public class PhoneToOrderResult implements Serializable {
     private double totalPayMoney;
 
     @ApiModelProperty( name = "busResultList", value = "商家集合" )
-    private List< PhoneToOrderBusResult > busResultList;
+    private List< PhoneAddOrderBusDTO > busResultList;
 
     @ApiModelProperty( name = "payWayList", value = "支付方式集合" )
     private List< PhoneOrderWayDTO > payWayList;
+
+    @ApiModelProperty( name = "selectPayWayId", value = "选中的支付方式id" )
+    private Integer selectPayWayId;
+
+    @ApiModelProperty( name = "selectMemberAddressId", value = "会员地址id" )
+    private Integer selectMemberAddressId;
 
 }

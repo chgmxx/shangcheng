@@ -20,6 +20,7 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.product.MallSearchLabelService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.shop.WsShopPhoto;
@@ -135,7 +136,7 @@ public class PhonePageController {
 	try {
 	    if ( shopId == 0 ) {
 		//显示首页的菜单按钮，并查询首页id
-		shopId = mallStoreService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session
+		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	    }
 	    int pageId = 0;
 	    if ( shopId == 0 ) {
@@ -146,7 +147,7 @@ public class PhonePageController {
 		if ( pageList.size() > 0 ) {//获取首页的pageId
 		    shopId = CommonUtil.toInteger( pageList.get( 0 ).get( "pag_sto_id" ) );
 		    request.setAttribute( "pageid", pageList.get( 0 ).get( "id" ) );
-		    mallStoreService.getShopBySession( request.getSession(), shopId );
+		    MallRedisUtils.getMallShopId( shopId );
 		}
 	    } else {
 		pageId = mallPageService.getPageIdByShopId( shopId );
@@ -216,7 +217,7 @@ public class PhonePageController {
     public ServerResponse searchLabel( HttpServletRequest request, int shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
+	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "shopId", shopId );
 	    List< Map< String,Object > > labelList = mallSearchLabelService.selectByUser( map );
@@ -250,7 +251,7 @@ public class PhonePageController {
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "shopId", shopId );
-	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
+	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		params.put( "userId", member.getId() );
 		mallGroupService.clearSearchKeyWord( params );
@@ -275,7 +276,7 @@ public class PhonePageController {
     @PostMapping( value = "79B4DE7C/wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
 	try {
-	    Member member = MallSessionUtils.getLoginMember( request ,MallSessionUtils.getUserId( request ));
+	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 	    if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) ) {
 		WxJsSdk wxJsSdk = new WxJsSdk();
 		wxJsSdk.setPublicId( member.getPublicId() );

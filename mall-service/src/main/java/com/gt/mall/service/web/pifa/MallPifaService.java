@@ -7,7 +7,7 @@ import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderPifatSpecificaDTO;
-import com.gt.mall.result.phone.order.PhoneToOrderPfSpecResult;
+import com.gt.mall.param.phone.order.PhoneOrderPifaSpecDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
@@ -157,5 +157,5 @@ public interface MallPifaService extends BaseService< MallPifa > {
      *
      * @return
      */
-    public List< PhoneToOrderPfSpecResult > getPifaPrice( int proId, int shopId, int activityId, List< PhoneToOrderPifatSpecificaDTO > specificaIdsList );
+    public List< PhoneOrderPifaSpecDTO > getPifaPrice( int proId, int shopId, int activityId, List< PhoneToOrderPifatSpecificaDTO > specificaIdsList );
 }

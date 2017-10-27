@@ -1,4 +1,4 @@
-package com.gt.mall.result.phone.order;
+package com.gt.mall.param.phone.order;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,10 +13,10 @@ import java.io.Serializable;
  * Date : 2017/10/12 0012
  * Time : 20:11
  */
-@ApiModel( value = "PhoneToOrderMemberAddressResult", description = "会员地址" )
+@ApiModel( value = "PhoneOrderMemberAddressResult", description = "会员地址" )
 @Getter
 @Setter
-public class PhoneToOrderMemberAddressResult implements Serializable {
+public class PhoneOrderMemberAddressDTO implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 

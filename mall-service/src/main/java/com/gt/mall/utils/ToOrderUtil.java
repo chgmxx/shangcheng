@@ -2,10 +2,13 @@ package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.bean.member.Coupons;
+import com.gt.mall.bean.member.JifenAndFenbBean;
+import com.gt.mall.bean.member.JifenAndFenbiRule;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.param.phone.order.PhoneOrderUserDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderDTO;
-import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
-import com.gt.mall.result.phone.order.PhoneToOrderWayResult;
+import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,7 @@ public class ToOrderUtil {
      * 获取商家的支付方式
      *
      * @param browerType      浏览器类型
-     * @param busResult       商家返回结果
-     * @param cardMap         卡券对象
+     * @param userDTOList     商家返回结果
      * @param phoneToOrderDTO 页面传参
      * @param isStorePay      商家是否开启了到店支付
      * @param mallPaySetList  商城设置
@@ -32,60 +34,69 @@ public class ToOrderUtil {
      *
      * @return 支付方式集合
      */
-    public static List< PhoneToOrderWayResult > getPayWay( int browerType, PhoneToOrderBusResult busResult, Map cardMap, PhoneToOrderDTO phoneToOrderDTO,
+    public static List< PhoneOrderWayDTO > getPayWay( int browerType, List< PhoneOrderUserDTO > userDTOList, PhoneToOrderDTO phoneToOrderDTO,
 		    Integer isStorePay, List< MallPaySet > mallPaySetList, int proTypeId ) {
-	List< PhoneToOrderWayResult > payWayList = new ArrayList<>();
+	List< PhoneOrderWayDTO > payWayList = new ArrayList<>();
 
-	if ( browerType == 1 && CommonUtil.isNotEmpty( busResult.getPublicId() ) && busResult.getPublicId() > 0 ) {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 1, "微信支付" );
+	int isHavePublic = 0;
+	int memberCtId = 0;
+	for ( PhoneOrderUserDTO orderUserDTO : userDTOList ) {
+	    if ( CommonUtil.isNotEmpty( orderUserDTO.getPublicId() ) && orderUserDTO.getPublicId() > 0 ) {
+		isHavePublic = 1;
+	    } else {
+		isHavePublic = 0;
+	    }
+	    if ( CommonUtil.isNotEmpty( orderUserDTO.getMemberCtId() ) && orderUserDTO.getMemberCtId() > 0 ) {
+		memberCtId = orderUserDTO.getMemberCtId();
+	    } else {
+		memberCtId = 0;
+	    }
+	}
+
+	if ( browerType == 1 && isHavePublic == 1 ) {
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付" );
 	    payWayList.add( result );
 	} else {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 9, "支付宝支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 9, "支付宝支付" );
 	    payWayList.add( result );
 	}
-	if ( CommonUtil.isNotEmpty( cardMap ) ) {
-	    if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) ) {
-		if ( cardMap.get( "ctId" ).toString().equals( "3" ) ) {
-		    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 3, "储值卡支付" );
-		    payWayList.add( result );
-		}
-	    }
+	if ( memberCtId == 3 ) {
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "储值卡支付" );
+	    payWayList.add( result );
 	}
 	int isHuodao = 0;//是否显示货到付款
 	int isDaifu = 0;//是否允许代付
 	if ( mallPaySetList != null && mallPaySetList.size() > 0 ) {
 	    for ( MallPaySet mallPaySet : mallPaySetList ) {
-		if ( mallPaySet.getUserId().toString().equals( busResult.getBusId().toString() ) ) {
-		    if ( CommonUtil.isNotEmpty( mallPaySet.getIsDeliveryPay() ) ) {
-			if ( mallPaySet.getIsDeliveryPay().toString().equals( "1" ) ) {
-			    isHuodao = 1;//允许货到付款
-			}
-		    }
-		    if ( CommonUtil.isNotEmpty( mallPaySet.getIsDaifu() ) ) {
-			if ( mallPaySet.getIsDaifu().toString().equals( "1" ) ) {
-			    isDaifu = 1;//允许代付
-			}
-		    }
+		if ( CommonUtil.isNotEmpty( mallPaySet.getIsDeliveryPay() ) && "1".equals( mallPaySet.getIsDeliveryPay().toString() ) ) {
+		    isHuodao = 1;//允许货到付款
+		} else {
+		    isHuodao = 0;
+		}
+		if ( CommonUtil.isNotEmpty( mallPaySet.getIsDaifu() ) && "1".equals( mallPaySet.getIsDaifu().toString() ) ) {
+		    isDaifu = 1;//允许代付
+		} else {
+		    isDaifu = 0;
 		}
 	    }
 	}
 	if ( isHuodao == 1 && proTypeId == 0 ) {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 2, "货到付款" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "货到付款" );
 	    payWayList.add( result );
 	}
 	if ( phoneToOrderDTO.getType() == 2 ) {//积分支付
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 4, "积分支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 4, "积分支付" );
 	    payWayList.add( result );
 	} else if ( phoneToOrderDTO.getType() == 5 ) {//粉币支付
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 8, "粉币支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 8, "粉币支付" );
 	    payWayList.add( result );
 	}
 	if ( CommonUtil.isNotEmpty( isStorePay ) && isStorePay == 1 ) {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 6, "到店支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 6, "到店支付" );
 	    payWayList.add( result );
 	}
 	if ( isDaifu == 1 ) {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 7, "找人代付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 7, "找人代付" );
 	    payWayList.add( result );
 	}
 	return payWayList;
@@ -94,21 +105,21 @@ public class ToOrderUtil {
     /**
      * 获取商家的配送方式
      */
-    public static List< PhoneToOrderWayResult > getDeliveryWay( PhoneToOrderDTO params, int proTypeId, Integer isShowTake, int busId ) {
-	List< PhoneToOrderWayResult > wayResultList = new ArrayList<>();
+    public static List< PhoneOrderWayDTO > getDeliveryWay( PhoneToOrderDTO params, int proTypeId, Integer isShowTake, int busId ) {
+	List< PhoneOrderWayDTO > wayResultList = new ArrayList<>();
 	int toshop = 0;
 	if ( CommonUtil.isNotEmpty( params.getToShop() ) ) {
 	    toshop = params.getToShop();
 	}
 	if ( toshop == 1 ) {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 3, "到店购买" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "到店购买" );
 	    wayResultList.add( result );
 	} else {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 1, "快递配送" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "快递配送" );
 	    wayResultList.add( result );
 	}
 	if ( proTypeId == 0 && CommonUtil.isNotEmpty( isShowTake ) && isShowTake > 0 ) {
-	    PhoneToOrderWayResult result = new PhoneToOrderWayResult( 2, "到店自提" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "到店自提" );
 	    wayResultList.add( result );
 	}
 
@@ -197,5 +208,53 @@ public class ToOrderUtil {
 	}
 
 	return couponsList;
+    }
+
+    /**
+     * 获取积分粉币最终兑换的金额
+     *
+     * @param jifenFenbiRule    积分粉币规则
+     * @param jifenProductMoney 能使用积分的商品金额
+     * @param fenbiProductMoney 能使用粉币的商品金额
+     * @param cardMap           会员对象
+     *
+     * @return 积分和粉币
+     */
+    public static JifenAndFenbBean getJifenFenbiParams( JifenAndFenbiRule jifenFenbiRule, double jifenProductMoney, double fenbiProductMoney, Map cardMap ) {
+	if ( CommonUtil.isEmpty( jifenFenbiRule ) ) {
+	    return null;
+	}
+	JifenAndFenbBean bean = new JifenAndFenbBean();
+	if ( CommonUtil.isNotEmpty( jifenFenbiRule ) && jifenFenbiRule.getJifenStartMoney() > 0 && jifenFenbiRule.getJifenStartMoney() < jifenProductMoney
+			&& jifenProductMoney > 0 ) {//显示粉币抵扣的按钮
+	    if ( CommonUtil.isNotEmpty( cardMap.get( "integral" ) ) ) {
+		bean.setJifenNum( CommonUtil.toDouble( cardMap.get( "integral" ) ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( cardMap.get( "jifenMoeny" ) ) ) {
+		bean.setJifenMoney( CommonUtil.toDouble( cardMap.get( "jifenMoeny" ) ) );
+	    }
+	    if ( jifenProductMoney < bean.getJifenMoney() && bean.getJifenMoney() > 0 ) {//起兑的商品金额小于
+		bean.setJifenNum( CommonUtil.multiply( jifenFenbiRule.getJifenRatio(), jifenProductMoney ) );
+		bean.setJifenMoney( jifenProductMoney );
+	    }
+	}
+	//粉币起兑金额  小于 能兑换粉币的商品金额  且 能兑换粉币的商品金额  小于 会员传来的粉币
+	if ( jifenFenbiRule.getFenbiStartMoney() > 0 && jifenFenbiRule.getFenbiStartMoney() < fenbiProductMoney && fenbiProductMoney > 0 ) {//显示积分抵扣的按钮
+	    if ( CommonUtil.isNotEmpty( cardMap.get( "fans_currency" ) ) ) {
+		bean.setFenbiNum( CommonUtil.toDouble( cardMap.get( "fans_currency" ) ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( cardMap.get( "fenbiMoeny" ) ) ) {
+		bean.setFenbiMoney( CommonUtil.toDouble( cardMap.get( "fenbiMoeny" ) ) );
+	    }
+	    if ( bean.getFenbiMoney() > 0 ) {
+		if ( fenbiProductMoney < jifenFenbiRule.getFenbiStartMoney() ) {
+		    fenbiProductMoney = jifenFenbiRule.getFenbiStartMoney();
+		}
+		double fenbiMoney = CommonUtil.getDecimal_2( fenbiProductMoney / Constants.FENBI_RUL_MULTIPLE ).intValue();
+		bean.setFenbiNum( CommonUtil.multiply( jifenFenbiRule.getFenbiRatio(), fenbiMoney ) );
+		bean.setFenbiMoney( fenbiMoney * Constants.FENBI_RUL_MULTIPLE );
+	    }
+	}
+	return bean;
     }
 }

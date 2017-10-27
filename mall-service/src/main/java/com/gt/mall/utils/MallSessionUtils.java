@@ -10,7 +10,6 @@ import com.gt.mall.constant.Constants;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +61,7 @@ public class MallSessionUtils {
      */
     public static Member getLoginMember( HttpServletRequest request, int busId ) {
 	if ( busId > 0 ) {
-	    MallSessionUtils.setUserId( request, busId );
+	    MallRedisUtils.setUserId( busId );
 	}
 	return SessionUtils.getLoginMember( request, busId );
     }
@@ -76,32 +75,6 @@ public class MallSessionUtils {
 	} catch ( Exception e ) {
 	    log.info( e.getLocalizedMessage() );
 	    e.printStackTrace();
-	}
-    }
-
-    /**
-     * 从session中获取商家id
-     */
-    public static int getUserId( HttpServletRequest request ) {
-	try {
-	    Object idObj = request.getSession().getAttribute( Constants.SESSION_KEY + "getbusId" );
-	    if ( CommonUtil.isNotEmpty( idObj ) ) {
-		return CommonUtil.toInteger( idObj );
-	    }
-	} catch ( Exception e ) {
-	    log.info( e.getLocalizedMessage() );
-	    e.printStackTrace();
-	}
-
-	return 0;
-    }
-
-    /**
-     * 从session中获取商家id
-     */
-    public static void setUserId( HttpServletRequest request, Integer busId ) {
-	if ( CommonUtil.isNotEmpty( busId ) ) {
-	    request.getSession().setAttribute( Constants.SESSION_KEY + "getbusId", busId );
 	}
     }
 
@@ -234,35 +207,6 @@ public class MallSessionUtils {
      */
     public static void setIsAdminUser( int userId, int isAdmin, HttpServletRequest request ) {
 	request.getSession().setAttribute( Constants.SESSION_KEY + "is_admin_user" + userId, isAdmin );
-    }
-
-    /**
-     * 把商城的店铺id存到session
-     *
-     * @param shopIdObj 店铺id
-     */
-    public static void setMallShopId( Object shopIdObj, HttpServletRequest request ) {
-	HttpSession session = request.getSession();
-	if ( CommonUtil.isNotEmpty( shopIdObj ) ) {
-	    if ( CommonUtil.isEmpty( session.getAttribute( Constants.SESSION_KEY + "shopId" ) ) ) {
-		session.setAttribute( Constants.SESSION_KEY + "shopId", shopIdObj );
-	    } else {
-		if ( !session.getAttribute( Constants.SESSION_KEY + "shopId" ).toString().equals( shopIdObj ) ) {
-		    session.setAttribute( Constants.SESSION_KEY + "shopId", shopIdObj );
-		}
-	    }
-	}
-    }
-
-    /**
-     * 获取店铺id
-     */
-    public static int getMallShopId( HttpServletRequest request ) {
-	Object shopIdObj = request.getSession().getAttribute( Constants.SESSION_KEY + "shopId" );
-	if ( CommonUtil.isNotEmpty( shopIdObj ) ) {
-	    return CommonUtil.toInteger( shopIdObj );
-	}
-	return 0;
     }
 
     /**

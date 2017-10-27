@@ -1,8 +1,8 @@
 package com.gt.mall.controller.integral.phone;
 
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.constant.Constants;
@@ -16,10 +16,7 @@ import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -119,7 +116,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    request.setAttribute( "imageList", imageList );
 	    request.setAttribute( "imageHttp", PropertiesUtil.getResourceUrl() );
 
-	    shopId = storeService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session
+	    shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	    request.setAttribute( "shopId", shopId );
 
 	    pageService.getCustomer( request, userid );
@@ -186,7 +183,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-		shopId = storeService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session
+		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 		request.setAttribute( "shopId", shopId );
 	    }
 	    pageService.getCustomer( request, userid );
@@ -247,7 +244,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-		shopId = storeService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session
+		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 		request.setAttribute( "shopId", shopId );
 	    }
 	    pageService.getCustomer( request, userid );
@@ -271,7 +268,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
     public void integerDetailPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    Member member = MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
+	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 	    //查询积分商品
 	    //	    PageUtil page = integralService.selectIntegralDetail( member, params );
 	    Map< String,Object > map = new HashMap<>();
@@ -334,7 +331,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-		shopId = storeService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session
+		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 		request.setAttribute( "shopId", shopId );
 	    }
 	    pageService.getCustomer( request, userid );
@@ -377,7 +374,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-		shopId = storeService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session
+		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 		request.setAttribute( "shopId", shopId );
 	    }
 	    pageService.getCustomer( request, userid );
@@ -434,7 +431,7 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    }
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-		shopId = storeService.getShopBySession( request.getSession(), shopId );//从session获取店铺id  或  把店铺id存入session
+		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 		request.setAttribute( "shopId", shopId );
 
 		boolean isJuli = orderService.isJuliByFreight( shopId + "" );

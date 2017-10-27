@@ -316,8 +316,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	}
 
 	DecimalFormat df = new DecimalFormat( "0.00" );
-	if ( guigePrice != null && guigePrice.size() > 0 && ( params.getType() > 0 || ( CommonUtil.isNotEmpty( params.getIsShowCommission() )
-			&& params.getIsShowCommission() == 1 ) ) ) {
+	if ( guigePrice != null && guigePrice.size() > 0 ) {
 	    for ( Map< String,Object > priceMap : guigePrice ) {
 		double invPrice = CommonUtil.toDouble( priceMap.get( "inv_price" ) );
 		double oldPrice = CommonUtil.toDouble( product.getProPrice() );

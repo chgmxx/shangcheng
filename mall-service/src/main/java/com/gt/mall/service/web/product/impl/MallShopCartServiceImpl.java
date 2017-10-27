@@ -3,26 +3,21 @@ package com.gt.mall.service.web.product.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.freight.MallFreightDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaPrice;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallShopCart;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.param.phone.PhoneAddShopCartDTO;
-import com.gt.mall.param.phone.shopCart.PhoneRemovePifatSpecificaDTO;
-import com.gt.mall.param.phone.shopCart.PhoneRemoveShopCartDTO;
-import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderDTO;
-import com.gt.mall.param.phone.shopCart.PhoneShopCartOrderPifatSpecificaDTO;
+import com.gt.mall.param.phone.shopCart.*;
 import com.gt.mall.result.phone.shopcart.*;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
@@ -40,10 +35,6 @@ import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.CookieUtil;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.union.api.entity.param.UnionCardDiscountParam;
-import com.gt.union.api.entity.result.UnionDiscountResult;
-import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -461,125 +452,6 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	list.add( shopMap );
 
 	return list;
-    }
-
-    @Override
-    public void getOrdersParams( HttpServletRequest request, String loginCity, int userid, List< Map< String,Object > > list, double mem_longitude, double mem_latitude,
-		    Member member, List< Map< String,Object > > shopList ) {
-	int shopId = MallSessionUtils.getMallShopId( request );
-	int toshop = mallProductService.getIsShopBySession( shopId, userid, request );
-	//计算运费如下
-	Map< String,Object > map = new HashMap<>();
-	map.put( "province_id", loginCity );
-	map.put( "orderArr", list );
-
-	String shopIds = "";
-	StringBuilder wxShopIds = new StringBuilder( "," );
-	int proTypeId = 0;
-	int groupType = 0;
-	if ( list != null && list.size() > 0 ) {
-	    for ( Map< String,Object > shopMap : list ) {
-		if ( CommonUtil.isNotEmpty( shopMap.get( "pro_type_id" ) ) ) {
-		    proTypeId = CommonUtil.toInteger( shopMap.get( "pro_type_id" ) );
-		}
-		if ( CommonUtil.isNotEmpty( shopMap.get( "groupType" ) ) ) {
-		    groupType = CommonUtil.toInteger( shopMap.get( "groupType" ) );
-		}
-		shopId = CommonUtil.toInteger( shopMap.get( "shop_id" ) );//店铺id
-
-		if ( shopId > 0 ) {
-		    MallFreight freight = mallFreightDao.selectFreightByShopId( shopId );
-		    if ( CommonUtil.isNotEmpty( freight ) ) {
-			if ( freight.getPriceType().toString().equals( "3" ) ) {//按距离算
-			    request.setAttribute( "isKm", 1 );
-			}
-		    }
-		}
-		//计算粉丝跟店铺的距离
-		if ( CommonUtil.isNotEmpty( mem_longitude ) && CommonUtil.isNotEmpty( mem_latitude ) ) {
-		    if ( shopList != null && shopList.size() > 0 ) {
-			for ( Map< String,Object > storeMap : shopList ) {
-			    if ( storeMap.get( "id" ).toString().equals( CommonUtil.toString( shopId ) ) ) {
-				if ( CommonUtil.isNotEmpty( storeMap.get( "stoLongitude" ) ) && CommonUtil.isNotEmpty( storeMap.get( "stoLatitude" ) ) ) {
-				    Double raill = CommonUtil.getDistance( mem_longitude, mem_latitude, CommonUtil.toDouble( storeMap.get( "stoLongitude" ) ),
-						    CommonUtil.toDouble( storeMap.get( "stoLatitude" ) ) );
-				    raill = raill / 1000;
-				    map.put( "juli", raill );
-				    break;
-				}
-			    }
-			}
-		    }
-		}
-		if ( CommonUtil.isNotEmpty( shopIds ) ) {
-		    shopIds += ",";
-		}
-		shopIds += shopMap.get( "shop_id" ).toString();
-		wxShopIds.append( shopMap.get( "wxShopId" ).toString() ).append( "," );
-
-		if ( CommonUtil.isNotEmpty( shopMap.get( "message" ) ) ) {
-		    JSONArray arr = JSONArray.parseArray( JSON.toJSONString( shopMap.get( "message" ) ) );
-		    for ( Object o : arr ) {
-			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject( o.toString() );
-			if ( CommonUtil.isNotEmpty( obj.get( "flowId" ) ) ) {
-			    if ( CommonUtil.toInteger( obj.get( "flowId" ) ) > 0 ) {
-				request.setAttribute( "isFlow", 1 );
-				BusFlowInfo flow = fenBiFlowService.getFlowInfoById( CommonUtil.toInteger( obj.get( "flowId" ) ) );
-				if ( CommonUtil.isNotEmpty( flow ) ) {
-				    request.setAttribute( "flowType", flow.getType() );
-				}
-			    }
-			}
-		    }
-
-		}
-	    }
-	}
-
-	map.put( "toshop", toshop );
-	map.put( "proTypeId", proTypeId );
-	Map< String,Object > priceMap = mallFreightService.getFreightMoney( map );//计算运费
-	request.setAttribute( "priceMap", com.alibaba.fastjson.JSONObject.toJSON( priceMap ) );
-
-	if ( CommonUtil.isNotEmpty( shopIds ) ) {
-	    boolean isJuli = mallOrderService.isJuliByFreight( shopIds );
-	    if ( isJuli ) {
-		MallSessionUtils.setSession( shopIds, request, "isJuliFreight" );
-		request.setAttribute( "isJuliFreight", 1 );
-	    }
-	}
-	if ( CommonUtil.isNotEmpty( member ) && groupType == 0 ) {
-	    if ( wxShopIds.length() >= 2 ) {
-		wxShopIds = new StringBuilder( wxShopIds.substring( 1, wxShopIds.length() - 1 ) );
-		Map cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds.toString() );
-
-		for ( Map< String,Object > shopMap : list ) {
-		    int wxShopId = CommonUtil.toInteger( shopMap.get( "wxShopId" ) );
-		    if ( cardMap != null ) {
-			if ( cardMap.containsKey( "cardList" + wxShopId ) ) {
-			    shopMap.put( "coupon", cardMap.get( "cardList" + wxShopId ) );
-			}
-			if ( cardMap.containsKey( "duofenCards" + wxShopId ) ) {
-			    shopMap.put( "duofenCoupon", cardMap.get( "duofenCards" + wxShopId ) );
-			}
-		    }
-		}
-		request.setAttribute( "cardMap", cardMap );
-	    }
-
-	    //查询商家是否已经开启了商家联盟
-	    UnionCardDiscountParam param = new UnionCardDiscountParam();
-	    param.setBusId( member.getBusid() );
-	    param.setMemberId( member.getId() );
-	    param.setPhone( member.getPhone() );
-	    UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( param );
-	    if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
-		if ( unionDiscountResult.getCode() != -1 ) {
-		    request.setAttribute( "unionMap", unionDiscountResult );
-		}
-	    }
-	}
-
     }
 
     @Override

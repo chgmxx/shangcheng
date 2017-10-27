@@ -32,19 +32,19 @@ public class PhoneToOrderDTO implements Serializable {
     @ApiModelProperty( name = "busId", value = "购物车id，多个以逗号隔开（从购物车结算进入，必须传此参数）" )
     private String cartIds;
 
-    @ApiModelProperty( name = "productId", value = "商品id" )
+    @ApiModelProperty( name = "productId", value = "商品id（当立即购买进入，必传此参数）" )
     private Integer productId;
 
-    @ApiModelProperty( name = "productNum", value = "商品数量" )
+    @ApiModelProperty( name = "productNum", value = "商品数量（当立即购买进入，必传此参数）" )
     private Integer productNum;
 
     @ApiModelProperty( name = "productSpecificas", value = "商品规格值id" )
     private String productSpecificas;
 
-    @ApiModelProperty( name = "productPrice", value = "商品价" )
+    @ApiModelProperty( name = "productPrice", value = "商品价（当立即购买进入，必传此参数）" )
     private double productPrice;
 
-    @ApiModelProperty( name = "pifaSpecificaDTOList", value = "批发规格" )
+    @ApiModelProperty( name = "pifaSpecificaDTOList", value = "批发规格（当立即购买进入 且批发商品，必传此参数）" )
     private List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList;
 
     @ApiModelProperty( name = "toShop", value = "是否是到店购买 1到店购买 0 线上" )
@@ -58,5 +58,8 @@ public class PhoneToOrderDTO implements Serializable {
 
     @ApiModelProperty( name = "langitude", value = "纬度" )
     private double langitude = 0;
+
+    @ApiModelProperty( name = "memberAddressId", value = "会员地址id" )
+    private int memberAddressId;
 
 }

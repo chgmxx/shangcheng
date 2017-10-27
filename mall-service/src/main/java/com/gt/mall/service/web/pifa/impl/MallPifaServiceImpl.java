@@ -14,7 +14,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderPifatSpecificaDTO;
-import com.gt.mall.result.phone.order.PhoneToOrderPfSpecResult;
+import com.gt.mall.param.phone.order.PhoneOrderPifaSpecDTO;
 import com.gt.mall.result.phone.product.PhonePifaProductDetailResult;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -629,15 +629,15 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	return pfMap;
     }
 
-    public List< PhoneToOrderPfSpecResult > getPifaPrice( int proId, int shopId, int activityId, List< PhoneToOrderPifatSpecificaDTO > specificaIdsList ) {
+    public List< PhoneOrderPifaSpecDTO > getPifaPrice( int proId, int shopId, int activityId, List< PhoneToOrderPifatSpecificaDTO > specificaIdsList ) {
 	List< MallPifaPrice > priceList = mallPifaPriceService.selectPriceByGroupId( activityId );
-	List< PhoneToOrderPfSpecResult > pfSpecResultList = new ArrayList<>();
+	List< PhoneOrderPifaSpecDTO > pfSpecResultList = new ArrayList<>();
 
 	if ( CommonUtil.isNotEmpty( priceList ) && priceList.size() > 0 ) {
 
 	    for ( MallPifaPrice price : priceList ) {
 		if ( price.getIsJoinGroup() == 1 ) {
-		    PhoneToOrderPfSpecResult pfSpecResult = new PhoneToOrderPfSpecResult();
+		    PhoneOrderPifaSpecDTO pfSpecResult = new PhoneOrderPifaSpecDTO();
 		    if ( specificaIdsList != null && specificaIdsList.size() > 0 ) {
 			for ( PhoneToOrderPifatSpecificaDTO specificaDTO : specificaIdsList ) {
 			    if ( specificaDTO.getSpecificaValueIds().equals( price.getSpecificaIds() ) ) {

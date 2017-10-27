@@ -15,6 +15,7 @@ public enum ResponseEnums {
     INTER_ERROR( 1002, "请求接口异常" ),
     NULL_ERROR( 0, "请求数据为空" ),
     REFRESH_PAGE( 1002, "需要刷新页面" ),
+    PARAMS_NULL_ERROR( 1003, "参数传值不完整" ),
     BUS_GUOQI_ERROR( 1004, "商家已过期" ),
     NO_SHARE_ERROR( 1005, "用户没在微信浏览器登陆，不用获取微信接口" ),
     PRODUCT_NULL_ERROR( 1006, "商品已被删除或未上架" ),

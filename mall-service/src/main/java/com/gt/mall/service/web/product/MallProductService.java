@@ -155,12 +155,6 @@ public interface MallProductService extends BaseService< MallProduct > {
      */
     Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< Map< String,Object > > shopList );
 
-    int setIsShopBySession( int toshop, int shopid, int userid, HttpServletRequest request );
-
-    int getIsShopBySession( int shopid, int userid, HttpServletRequest request );
-
-    void clearIsShopSession( int shopid, int userid, HttpServletRequest request );
-
     /**
      * 修改商品信息 ，规格，库存
      */

@@ -1,4 +1,4 @@
-package com.gt.mall.result.phone.order;
+package com.gt.mall.param.phone.order.add;
 
 import com.gt.mall.param.phone.order.PhoneOrderPifaSpecDTO;
 import io.swagger.annotations.ApiModel;
@@ -10,15 +10,15 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 商品（进入提交订单页面返回结果）
+ * 商品（提交订单参数）
  * User : yangqian
  * Date : 2017/10/12 0012
  * Time : 20:11
  */
-@ApiModel( value = "PhoneToOrderProductResult", description = "商品（进入提交订单页面返回结果）" )
+@ApiModel( value = "PhoneAddOrderProductResult", description = "商品（提交订单参数）" )
 @Getter
 @Setter
-public class PhoneToOrderProductResult implements Serializable {
+public class PhoneAddOrderProductDTO implements Serializable {
 
     private static final long serialVersionUID = 3450211057951003430L;
 

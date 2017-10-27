@@ -1401,31 +1401,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	return resultMap;
     }
 
-    @Override
-    public int setIsShopBySession( int toshop, int shopid, int userid, HttpServletRequest request ) {
-	request.getSession().setAttribute( Constants.SESSION_KEY + "toshop_" + shopid + "_" + userid, toshop );
-	request.setAttribute( Constants.SESSION_KEY + "toshop", toshop );
-	return toshop;
-    }
-
-    @Override
-    public int getIsShopBySession( int shopid, int userid, HttpServletRequest request ) {
-	if ( CommonUtil.isNotEmpty( request.getSession() ) ) {
-	    if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( Constants.SESSION_KEY + "toshop_" + shopid + "_" + userid ) ) ) {
-		int toshop = CommonUtil.toInteger( request.getSession().getAttribute( Constants.SESSION_KEY + "toshop_" + shopid + "_" + userid ) );
-		if ( toshop == 1 ) {
-		    request.setAttribute( Constants.SESSION_KEY + "toshop", toshop );
-		}
-		return toshop;
-	    }
-	}
-	return 0;
-    }
-
-    @Override
-    public void clearIsShopSession( int shopid, int userid, HttpServletRequest request ) {
-	request.getSession().removeAttribute( Constants.SESSION_KEY + "toshop_" + shopid + "_" + userid );
-    }
 
     @Override
     public Map< String,Object > saveOrUpdateProductByErp( Map< String,Object > params, HttpServletRequest request ) throws Exception {

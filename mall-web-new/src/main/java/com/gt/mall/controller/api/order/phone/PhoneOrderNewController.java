@@ -2,6 +2,7 @@ package com.gt.mall.controller.api.order.phone;
 
 import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.basic.MallTakeTheirTime;
@@ -10,6 +11,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneBuyNowDTO;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderDTO;
+import com.gt.mall.param.phone.order.add.PhoneAddOrderDTO;
 import com.gt.mall.result.phone.order.PhoneToOrderResult;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
@@ -140,6 +142,34 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    logger.error( "查询上门自提地址的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询上门自提地址失败" );
+	}
+    }
+
+    @ApiOperation( value = "提交订单的接口", notes = "提交订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "79B4DE7C/submitOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse submitOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneAddOrderDTO params,
+		    PhoneLoginDTO loginDTO ) {
+	try {
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+
+	    //封装登陆参数
+	    loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    mallOrderNewService.submitOrder( params, member, loginDTO.getBrowerType() );
+
+	    return ServerResponse.createBySuccessCode();
+	} catch ( BusinessException e ) {
+	    logger.error( "提交订单的接口异常：" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "提交订单的接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "提交订单失败" );
 	}
     }
 

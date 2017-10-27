@@ -174,4 +174,9 @@ public class Constants {
      */
     public static final int COOKIE_SHOP_CART_TIME = 60 * 60 * 24 * 30;
 
+    /**
+     * 粉币规则的倍数
+     */
+    public static final int FENBI_RUL_MULTIPLE = 10;
+
 }

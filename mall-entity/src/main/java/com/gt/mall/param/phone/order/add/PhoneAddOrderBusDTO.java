@@ -1,4 +1,4 @@
-package com.gt.mall.result.phone.order;
+package com.gt.mall.param.phone.order.add;
 
 import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
@@ -11,15 +11,15 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 商家（进入提交订单页面返回结果）
+ * 商家（提交订单接口的参数）
  * User : yangqian
  * Date : 2017/10/12 0012
  * Time : 20:11
  */
-@ApiModel( value = "PhoneToOrderBusResult", description = "商家（进入提交订单页面返回结果）" )
+@ApiModel( value = "PhoneAddOrderBusResult", description = "商家（提交订单接口的参数）" )
 @Getter
 @Setter
-public class PhoneToOrderBusResult implements Serializable {
+public class PhoneAddOrderBusDTO implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 
@@ -51,7 +51,7 @@ public class PhoneToOrderBusResult implements Serializable {
     private List< PhoneOrderWayDTO > deliveryWayList;
 
     @ApiModelProperty( name = "toOrderShopResultList", value = "店铺集合" )
-    private List< PhoneToOrderShopResult > shopResultList;
+    private List< PhoneAddOrderShopDTO > shopResultList;
 
     @ApiModelProperty( name = "takeId", value = "上门自提id" )
     private Integer takeId;
@@ -79,5 +79,31 @@ public class PhoneToOrderBusResult implements Serializable {
 
     @ApiModelProperty( name = "memberPhone", value = "粉丝手机号码" )
     private String memberPhone;
+
+    /*********************************提交订单接口，传值***************************************/
+
+    @ApiModelProperty( name = "selectDeliveryWayId", value = "选中配送方式的id  1, 快递配送  2,上门自提  3到店购买" )
+    private Integer selectDeliveryWayId = 0;
+
+    @ApiModelProperty( name = "isSelectJifen", value = "是否选中积分  1选中" )
+    private Integer isSelectJifen = 0;
+
+    @ApiModelProperty( name = "isSelectFenbi", value = "是否选中粉币  1选中" )
+    private Integer isSelectFenbi = 0;
+
+    @ApiModelProperty( name = "tihuoUserName", value = "提货人姓名" )
+    private String appointmentUserName;
+
+    @ApiModelProperty( name = "tihuoUserPhone", value = "提货人手机号码" )
+    private String appointmentUserPhone;
+
+    @ApiModelProperty( name = "appointmentId", value = "提货id" )
+    private Integer appointmentId;
+
+    @ApiModelProperty( name = "appointmentStartTime", value = "提货开始时间" )
+    private String appointmentStartTime;
+
+    @ApiModelProperty( name = "appointmentEndTime", value = "提货结束时间" )
+    private String appointmentEndTime;
 
 }
