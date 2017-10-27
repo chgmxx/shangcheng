@@ -1,8 +1,9 @@
 package com.gt.mall.controller.api.presale;
 
+import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
@@ -18,9 +19,9 @@ import com.gt.mall.service.web.presale.MallPresaleGiveService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -350,7 +351,18 @@ public class MallPresaleNewController extends BaseController {
 	    int code = -1;// 编辑成功
 	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
-		code = mallPresaleService.newEditOnePresaleSet( params, userId );// 编辑商品
+		MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
+		give.setGiveName( CommonUtil.urlEncode( give.getGiveName() ) );
+		if ( CommonUtil.isEmpty( give ) ) {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "参数不能为空" );
+		} else if ( CommonUtil.isEmpty( give.getGiveName() ) ) {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "礼品名称不能为空" );
+		} else if ( CommonUtil.isEmpty( give.getGiveRanking() ) ) {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "送礼名次不能为空" );
+		} else if ( CommonUtil.isEmpty( give.getGiveNum() ) ) {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "礼品数量不能为空" );
+		}
+		code = mallPresaleService.newEditOnePresaleSet( give, userId );// 编辑商品
 	    }
 	    if ( code <= 0 ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售送礼设置失败" );

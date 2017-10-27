@@ -674,18 +674,18 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     @SuppressWarnings( { "unchecked", "deprecation" } )
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public int newEditOnePresaleSet( Map< String,Object > params, int userId ) {
+    public int newEditOnePresaleSet( MallPresaleGive give, int userId ) {
 	int num = 0;
 	int code = -1;
 	boolean fenbiFlag = false;
 
-	if ( CommonUtil.isNotEmpty( params.get( "presaleSet" ) ) ) {
-	    MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
+	if ( CommonUtil.isNotEmpty( give ) ) {
+	    /*MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
 	    give.setGiveName(CommonUtil.urlEncode( give.getGiveName() )  );
 	    if ( CommonUtil.isEmpty( give.getGiveType() ) || CommonUtil.isEmpty( give.getGiveName() )||
 	         CommonUtil.isEmpty( give.getGiveRanking() )|| CommonUtil.isEmpty( give.getGiveNum() )){
 		return code;
-	    }
+	    }*/
 	    if ( CommonUtil.isNotEmpty( give.getId() ) ) {
 		num = mallPresaleGiveDAO.updateById( give );
 	    } else {

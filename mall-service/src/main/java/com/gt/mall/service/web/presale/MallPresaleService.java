@@ -119,7 +119,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     /**
      * 编辑预售设置(单个)
      */
-    int newEditOnePresaleSet( Map< String,Object > params, int userId );
+    int newEditOnePresaleSet( MallPresaleGive give, int userId );
 
     /**
      * 发货实体物品
