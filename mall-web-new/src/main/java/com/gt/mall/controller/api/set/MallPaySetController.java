@@ -40,7 +40,7 @@ import java.util.Map;
  */
 @Api( value = "mallPaySet", description = "商城设置(通用设置，消息模板)", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallPaySet" )
+@RequestMapping( "/mallPaySet/E9lM9uM4ct" )
 public class MallPaySetController extends BaseController {
 
     @Autowired

@@ -42,7 +42,7 @@ import java.util.Map;
  */
 @Api( value = "mallSecuritytrade", description = "担保交易", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallSecuritytrade" )
+@RequestMapping( "/mallSecuritytrade/E9lM9uM4ct" )
 public class MallSecuritytradeController extends BaseController {
 
     @Autowired

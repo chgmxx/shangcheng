@@ -42,7 +42,7 @@ import java.util.Map;
  */
 @Api( value = "mallGroup", description = "商品分组" )
 @Controller
-@RequestMapping( "/mallProduct/group" )
+@RequestMapping( "/mallProduct/E9lM9uM4ct/group" )
 public class MallGroupNewController extends BaseController {
 
     @Autowired

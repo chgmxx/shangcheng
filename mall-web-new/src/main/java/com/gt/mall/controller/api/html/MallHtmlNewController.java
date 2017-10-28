@@ -40,7 +40,7 @@ import java.util.Map;
  */
 @Api( value = "mallHtml", description = "h5商城", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallHtml" )
+@RequestMapping( "/mallHtml/E9lM9uM4ct" )
 public class MallHtmlNewController extends BaseController {
 
     @Autowired

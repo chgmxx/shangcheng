@@ -42,7 +42,7 @@ import java.util.Map;
  */
 @Api( value = "mallAuction", description = "拍卖管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallAuction" )
+@RequestMapping( "/mallAuction/E9lM9uM4ct" )
 public class MallAuctionNewController extends BaseController {
 
     @Autowired
@@ -241,7 +241,7 @@ public class MallAuctionNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取支付宝退款地址异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
     }
 
     /**

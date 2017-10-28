@@ -1,19 +1,13 @@
 package com.gt.mall.service.web.store.impl;
 
-import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreCertificationDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.wxshop.SmsService;
-import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.JedisUtil;
-import com.gt.util.entity.param.sms.OldApiSms;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +36,23 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
 
     @Override
     public MallStoreCertification selectByStoreId( Integer storeId ) {
-	return mallStoreCertificationDAO.selectByStoreId( storeId );
+	MallStoreCertification storeCert = mallStoreCertificationDAO.selectByStoreId( storeId );
+	if ( storeCert != null && storeCert.getStoType() == 1 ) {
+	    List< Map > categoryMap = dictService.getDict( "K002" );
+	    if ( categoryMap != null && categoryMap.size() > 0 ) {
+		for ( Map map : categoryMap ) {
+		    if ( CommonUtil.toInteger( map.get( "item_key" ) ) == storeCert.getStoCategory() ) {
+			String value = (String) map.get( "item_value" );
+			net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
+			map.put( "value", foorerObj.get( "title" ) );//名称
+
+			storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
+			break;
+		    }
+		}
+	    }
+	}
+	return storeCert;
     }
 
     @Override

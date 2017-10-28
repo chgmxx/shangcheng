@@ -48,7 +48,7 @@ import java.util.Map;
  */
 @Api( value = "mallPresale", description = "预售管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallPresale" )
+@RequestMapping( "/mallPresale/E9lM9uM4ct" )
 public class MallPresaleNewController extends BaseController {
 
     @Autowired

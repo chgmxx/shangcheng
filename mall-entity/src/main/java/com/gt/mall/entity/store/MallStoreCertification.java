@@ -114,6 +114,12 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
     private Date    createTime;
 
     /**
+     * 认证店铺名称
+     */
+    @TableField( exist = false )
+    private String stoCategoryName;
+
+    /**
      * 补充资料
      */
     @TableField( exist = false )

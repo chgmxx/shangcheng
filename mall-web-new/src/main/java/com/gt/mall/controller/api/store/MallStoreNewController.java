@@ -21,7 +21,10 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +44,7 @@ import java.util.Map;
  */
 @Api( value = "mallStore", description = "店铺管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallStore" )
+@RequestMapping( "/mallStore/E9lM9uM4ct" )
 public class MallStoreNewController extends BaseController {
 
     @Autowired
@@ -65,6 +68,10 @@ public class MallStoreNewController extends BaseController {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    result.put( "userName", user.getName() );//商家名称
 	    result.put( "userLogo", "" );//商家头像
+	    MallPaySet set = new MallPaySet();
+	    set.setUserId( user.getId() );
+	    set = mallPaySetService.selectByUserId( set );
+	    result.put( "isSecuritytrade", set.getIsSecuritytrade() );//担保交易
 	    int pid = MallSessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );

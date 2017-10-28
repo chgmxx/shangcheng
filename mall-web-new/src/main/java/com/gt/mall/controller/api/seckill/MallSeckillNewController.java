@@ -38,7 +38,7 @@ import java.util.Map;
  */
 @Api( value = "mallSeckill", description = "秒杀管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallSeckill" )
+@RequestMapping( "/mallSeckill/E9lM9uM4ct" )
 public class MallSeckillNewController extends BaseController {
 
     @Autowired

@@ -47,7 +47,7 @@ import java.util.Map;
  */
 @Api( value = "mallStoreCert", description = "店铺认证", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallStore/cert" )
+@RequestMapping( "/mallStore/E9lM9uM4ct/cert" )
 public class MallStoreCertificationController extends BaseController {
 
     @Autowired

@@ -2,9 +2,9 @@ package com.gt.mall.service.web.seller.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.seller.*;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -334,7 +334,15 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( sellerSet.getId() ) ) {
-		count = mallSellerSetDAO.updateById( sellerSet );
+		MallSellerSet mallSellerSet = mallSellerSetDAO.selectById( sellerSet.getId() );
+		mallSellerSet.setIntegralReward( sellerSet.getIntegralReward() );
+		mallSellerSet.setConsumeMoney( sellerSet.getConsumeMoney() );
+		mallSellerSet.setWithdrawalType( sellerSet.getWithdrawalType() );
+		mallSellerSet.setWithdrawalLowestMoney( sellerSet.getWithdrawalLowestMoney() );
+		mallSellerSet.setWithdrawalMultiple( sellerSet.getWithdrawalMultiple() );
+		mallSellerSet.setSellerRemark( sellerSet.getSellerRemark() );
+
+		count = mallSellerSetDAO.updateAllColumnById( mallSellerSet );
 	    } else {
 		sellerSet.setBusUserId( busUserId );
 		count = mallSellerSetDAO.insert( sellerSet );

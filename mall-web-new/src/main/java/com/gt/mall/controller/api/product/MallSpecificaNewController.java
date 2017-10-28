@@ -33,7 +33,7 @@ import java.util.SortedMap;
  */
 @Api( value = "mallProductSpec", description = "商品规格", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallProduct/spec" )
+@RequestMapping( "/mallProduct/E9lM9uM4ct/spec" )
 public class MallSpecificaNewController extends BaseController {
 
     @Autowired

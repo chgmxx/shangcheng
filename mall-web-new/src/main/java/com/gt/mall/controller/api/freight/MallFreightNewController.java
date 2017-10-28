@@ -40,7 +40,7 @@ import java.util.*;
  */
 @Api( value = "mallFreight", description = "物流管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallFreight" )
+@RequestMapping( "/mallFreight/E9lM9uM4ct" )
 public class MallFreightNewController extends BaseController {
 
     @Autowired

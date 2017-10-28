@@ -36,7 +36,7 @@ import java.util.*;
  */
 @Api( value = "mallProduct", description = "商品管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallProduct" )
+@RequestMapping( "/mallProduct/E9lM9uM4ct" )
 public class MallProductNewController extends BaseController {
 
     @Autowired

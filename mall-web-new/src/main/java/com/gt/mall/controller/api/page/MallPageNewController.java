@@ -41,7 +41,7 @@ import java.util.Map;
  */
 @Api( value = "mallPage", description = "页面管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallPage/new/" )
+@RequestMapping( "/mallPage/E9lM9uM4ct" )
 public class MallPageNewController extends BaseController {
 
     @Autowired

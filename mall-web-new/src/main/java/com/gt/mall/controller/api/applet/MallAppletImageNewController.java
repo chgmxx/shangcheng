@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @Api( value = "mallApplet", description = "小程序图片设置", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallApplet" )
+@RequestMapping( "/mallApplet/E9lM9uM4ct" )
 public class MallAppletImageNewController extends BaseController {
 
     @Autowired

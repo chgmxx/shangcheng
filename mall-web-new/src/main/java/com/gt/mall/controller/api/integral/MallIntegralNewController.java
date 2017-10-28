@@ -38,7 +38,7 @@ import java.util.Map;
  */
 @Api( value = "mallIntegral", description = "积分商城管理", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallIntegral/new" )
+@RequestMapping( "/mallIntegral/E9lM9uM4ct" )
 public class MallIntegralNewController extends BaseController {
 
     @Autowired

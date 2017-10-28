@@ -33,7 +33,7 @@ import java.util.Map;
  */
 @Api( value = "mallCountIncome", description = "收入统计" )
 @Controller
-@RequestMapping( "/mallCountIncome" )
+@RequestMapping( "/mallCountIncome/E9lM9uM4ct" )
 public class MallCountIncomeController extends BaseController {
 
     @Autowired

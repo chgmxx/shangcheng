@@ -51,7 +51,7 @@ import java.util.Map;
 
 @Api( value = "mallOrder", description = "商城订单", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
-@RequestMapping( "/mallOrder/new" )
+@RequestMapping( "/mallOrder/E9lM9uM4ct" )
 public class MallOrderNewController extends BaseController {
 
     @Autowired
