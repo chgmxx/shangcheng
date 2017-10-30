@@ -64,9 +64,9 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
     public void visitorJedis( Integer type, Integer id, Integer status ) {
 	String key = "";
 	if ( type == 0 ) {
-	     key = Constants.REDIS_KEY + "page_visitor";
+	    key = Constants.REDIS_KEY + Constants.PAGE_VISITOR_KEY;
 	} else {
-	     key = Constants.REDIS_KEY + "product_visitor";
+	    key = Constants.REDIS_KEY + Constants.PRODUCT_VISITOR_KEY;
 	}
 	Integer visitorNum = 1;//访客数
 	Integer viewsNum = 1;//浏览量
@@ -107,7 +107,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		visitor.setAccessTime( new Date() );
 		visitor.setAccessCount( visitor.getAccessCount() + 1 );
 		mallVisitorDAO.updateById( visitor );
-		visitorJedis(0,pageId, 1 );
+		visitorJedis( 0, pageId, 1 );
 		result = true;
 	    } else {
 		MallPage page = mallPageService.selectById( pageId );
@@ -122,7 +122,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		    visitor.setMemberId( memberId );
 		}
 		mallVisitorDAO.insert( visitor );
-		visitorJedis(0,pageId, 0 );
+		visitorJedis( 0, pageId, 0 );
 		result = true;
 	    }
 	} catch ( Exception e ) {
@@ -144,7 +144,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		visitor.setAccessTime( new Date() );
 		visitor.setAccessCount( visitor.getAccessCount() + 1 );
 		mallVisitorDAO.updateById( visitor );
-		visitorJedis( 1,productId, 1 );
+		visitorJedis( 1, productId, 1 );
 		result = true;
 	    } else {
 		MallProduct product = mallProductService.selectById( productId );
@@ -159,7 +159,7 @@ public class MallVisitorServiceImpl extends BaseServiceImpl< MallVisitorDAO,Mall
 		    visitor.setMemberId( memberId );
 		}
 		mallVisitorDAO.insert( visitor );
-		visitorJedis( 1,productId, 0 );
+		visitorJedis( 1, productId, 0 );
 		result = true;
 	    }
 	} catch ( Exception e ) {

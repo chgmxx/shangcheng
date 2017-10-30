@@ -60,6 +60,14 @@ public class Constants {
     /** 获取商家主账号的 session key **/
     public static final String SESSION_ADMIN_KEY = "PidBusId";
 
+    /** 每日收入统计 redis key **/
+    public static final String INCOME_COUNT_KEY = "todayIncomeCount";
+
+    /** 页面访问统计 redis key **/
+    public static final String PAGE_VISITOR_KEY    = "pageVisitor";
+    /** 商品访问统计 redis key **/
+    public static final String PRODUCT_VISITOR_KEY = "productVisitor";
+
     /**
      * 生成二维码所需的场景值
      */

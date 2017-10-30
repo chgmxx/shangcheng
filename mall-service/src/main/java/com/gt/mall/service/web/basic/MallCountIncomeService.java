@@ -17,6 +17,15 @@ import java.util.Map;
 public interface MallCountIncomeService extends BaseService< MallCountIncome > {
 
     /**
+     * 保存到jedis
+     *
+     * @param shopId
+     * @param tradePrice
+     * @param refundPrice
+     */
+    void incomeJedis( Integer shopId, Integer tradePrice, Integer refundPrice );
+
+    /**
      * 获取今天的营业额
      *
      * @return
