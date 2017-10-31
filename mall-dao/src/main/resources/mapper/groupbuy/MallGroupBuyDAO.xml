@@ -100,14 +100,20 @@
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(g.id)
         from t_mall_group_buy g where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的团购 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始团购 -->
             and g.g_start_time &gt; now() and g.g_end_time &gt; now()
+            and g.is_use = 1
         </if>
         <if test="type == 1"><!-- 进行中的团购 -->
             and g.g_start_time &lt;= now() and now() &lt; g.g_end_time
+            and g.is_use = 1
         </if>
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
+            and g.is_use = 1
         </if>
         <if test="null != shoplist and shoplist.size > 1">
             and g.shop_id in
@@ -127,14 +133,20 @@
         left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1
         left join t_mall_product p on p.id= g.product_id
         where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的团购 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始团购 -->
             and g.g_start_time &gt; now() and g.g_end_time &gt; now()
+            and g.is_use = 1
         </if>
         <if test="type == 1"><!-- 进行中的团购 -->
             and g.g_start_time &lt;= now() and now() &lt; g.g_end_time
+            and g.is_use = 1
         </if>
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
+            and g.is_use = 1
         </if>
         <if test="null != shoplist and shoplist.size > 1">
             and g.shop_id in

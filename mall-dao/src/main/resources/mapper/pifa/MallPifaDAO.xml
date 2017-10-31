@@ -79,6 +79,9 @@
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(p.id)
         from t_mall_pifa p where p.is_delete = 0
+        <if test="type == -2"><!-- 已失效的批发 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始批发 -->
             and p.pf_start_time > now() and p.pf_end_time > now()
         </if>
@@ -103,6 +106,9 @@
         left join t_mall_store s on p.shop_id = s.id
         left join t_mall_product mp on mp.id= p.product_id
         where p.is_delete = 0
+        <if test="type == -2"><!-- 已失效的批发 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始批发 -->
             and p.pf_start_time > now() and p.pf_end_time > now()
         </if>
@@ -302,6 +308,9 @@
         from t_mall_pifa p
         where p.is_delete = 0 and p.is_use=1
         and p.product_id=#{product_id}
+        <if test="pfType == -2"><!-- 已失效的批发 -->
+            and g.is_use = -1
+        </if>
         <if test="pfType == -1"><!-- 未开始批发 -->
             and p.pf_start_time > now() and p.pf_end_time > now()
         </if>

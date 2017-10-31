@@ -197,7 +197,7 @@ public class MallPifaNewController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "keyword", value = "关键词", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/wholesalers/list", method = RequestMethod.POST )
-    public ServerResponse wholesalersList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer keyword ) {
+    public ServerResponse wholesalersList( HttpServletRequest request, HttpServletResponse response, Integer curPage, String keyword ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 
@@ -226,7 +226,7 @@ public class MallPifaNewController extends BaseController {
     @SysLogAnnotation( description = "设置批发商审核通不通过、启不启用", op_function = "4" )
     @RequestMapping( value = "/wholesalers/updateStatus", method = RequestMethod.POST )
     public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "批发Id", required = true ) @RequestParam String ids,
+		    @ApiParam( name = "ids", value = "批发Id", required = true ) @RequestParam String ids,
 		    @ApiParam( name = "status", value = "审核  1通过 -1不通过", required = false ) @RequestParam Integer status,
 		    @ApiParam( name = "isUse", value = "是否启用 1启用 -1禁用", required = false ) @RequestParam Integer isUse ) {
 	try {
