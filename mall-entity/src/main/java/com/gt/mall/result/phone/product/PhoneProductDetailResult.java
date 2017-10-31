@@ -1,5 +1,6 @@
 package com.gt.mall.result.phone.product;
 
+import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -112,6 +113,15 @@ public class PhoneProductDetailResult implements Serializable {
 
     @ApiModelProperty( name = "attentionNum", value = "关注量" )
     private int attentionNum = 0;
+
+    @ApiModelProperty( name = "isShowCardRecevie", value = "是否显示卡券包 1显示" )
+    private int isShowCardRecevie = 0;
+
+    @ApiModelProperty( name = "cardRecevieArr", value = "卡券包集合" )
+    private JSONArray cardRecevieArr;
+
+    @ApiModelProperty( name = "cardRecevieId", value = "卡券包id" )
+    private Integer cardRecevieId;
 
     /*************************************************** 以下参数活动商品需要 ***************************************************/
     @ApiModelProperty( name = "type", value = "活动类型" )

@@ -339,8 +339,10 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 		    }
 		}
 		Member member1 = memberService.findMemberById( CommonUtil.toInteger( map.get( "user_id" ) ), null );
-		map.put( "nickname", member1.getNickname() );
-		map.put( "headimgurl", member1.getHeadimgurl() );
+		if ( CommonUtil.isNotEmpty( member1 ) ) {
+		    map.put( "nickname", member1.getNickname() );
+		    map.put( "headimgurl", member1.getHeadimgurl() );
+		}
 
 		productCommentList.add( map );
 	    }

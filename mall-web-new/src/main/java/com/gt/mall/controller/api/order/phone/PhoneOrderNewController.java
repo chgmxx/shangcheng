@@ -1,6 +1,7 @@
 package com.gt.mall.controller.api.order.phone;
 
 import com.gt.api.bean.session.Member;
+import com.gt.api.util.SessionUtils;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
@@ -16,6 +17,7 @@ import com.gt.mall.result.phone.order.PhoneToOrderResult;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
 import com.gt.mall.service.web.order.MallOrderNewService;
+import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
@@ -23,6 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +49,7 @@ import java.util.Map;
  */
 @Api( value = "phoneOrder", description = "订单页面相关接口（手机端）", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
 @Controller
-@RequestMapping( "/phoneOrder/" )
+@RequestMapping( "/phoneOrder/L6tgXlBFeK/" )
 public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 
     private static Logger logger = LoggerFactory.getLogger( PhoneOrderNewController.class );
@@ -58,10 +62,12 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     private MallTakeTheirTimeService mallTakeTheirTimeService;//上门自提时间业务处理类
     @Autowired
     private MallTakeTheirService     mallTakeTheirService;//上门自提业务处理类
+    @Autowired
+    private MallOrderService         mallOrderService;//订单业务处理类
 
     @ApiOperation( value = "立即购买接口", notes = "用户点击立即购买", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/buyNow", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "buyNow", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > buyNow( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneBuyNowDTO params ) {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, params.getBusId() );
@@ -85,7 +91,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "进入提交订单页面的接口", notes = "提交订单页面的接口，查询商品信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/toOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "toOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneToOrderResult > toOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneToOrderDTO params,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
@@ -111,7 +117,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "查询上门自提地址的接口", notes = "根据上门自提id查询上门自提时间", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "takeId", value = "上门自提id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getTakeTheirTime", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getTakeTheirTime", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< List< MallTakeTheirTime > > getTakeTheirTime( HttpServletRequest request, HttpServletResponse response, Integer takeId ) {
 	try {
 	    List< MallTakeTheirTime > timeList = mallTakeTheirTimeService.selectTakeTheirTime( takeId );//查询到店自提的默认地址
@@ -127,7 +133,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "provinceIds", value = "省份id", paramType = "query", dataType = "int" ) } )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getTakeTheir", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getTakeTheir", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< List< MallTakeTheir > > getTakeTheir( HttpServletRequest request, HttpServletResponse response, Integer busId, Integer provinceIds ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
@@ -147,19 +153,17 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "提交订单的接口", notes = "提交订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/submitOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse submitOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneAddOrderDTO params,
-		    PhoneLoginDTO loginDTO ) {
+    @PostMapping( value = "submitOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< Map< String,Object > > submitOrder( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneAddOrderDTO params, PhoneLoginDTO loginDTO ) {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    //封装登陆参数
-	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    mallOrderNewService.submitOrder( params, member, loginDTO.getBrowerType() );
+	    Map< String,Object > resultMap = mallOrderNewService.submitOrder( params, member, loginDTO.getBrowerType() );
 
-	    return ServerResponse.createBySuccessCode();
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	} catch ( BusinessException e ) {
 	    logger.error( "提交订单的接口异常：" + e.getMessage() );
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
@@ -171,6 +175,29 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "提交订单失败" );
 	}
+    }
+
+    /**
+     * 支付成功回调
+     */
+    @RequestMapping( value = "/79B4DE7C/paySuccessModified" )
+    public ServerResponse paySuccessModified( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
+	logger.info( " 支付成功回调参数：" + JSONObject.fromObject( params ) );
+	try {
+	    if ( CommonUtil.isEmpty( params.get( "busId" ) ) ) {
+		return ServerResponse.createByErrorMessage( "支付成功回调失败：参数=" + JSONObject.fromObject( params ) );
+	    }
+	    int busId = CommonUtil.toInteger( params.get( "busId" ) );
+	    mallOrderService.paySuccessModified( params, SessionUtils.getLoginMember( request, busId ) );
+	} catch ( BusinessException be ) {
+	    logger.error( "支付成功回调异常：" + be.getMessage() );
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "支付成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "支付成功回调失败" );
+	}
+	return ServerResponse.createBySuccessCode();
     }
 
 }

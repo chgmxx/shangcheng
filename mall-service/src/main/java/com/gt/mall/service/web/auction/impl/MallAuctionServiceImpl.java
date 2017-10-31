@@ -379,10 +379,10 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     }
 
     @Override
-    public Map< String,Object > isMaxNum( Map< String,Object > map, String memberId ) {
-	Map< String,Object > result = new HashMap< String,Object >();
+    public Map< String,Object > isMaxNum( Integer activityId, String memberId ) {
+	Map< String,Object > result = new HashMap<>();
 	boolean flag = true;
-	int aucId = Integer.parseInt( map.get( "groupBuyId" ).toString() );
+	int aucId = activityId;
 	MallAuctionBidding bid = new MallAuctionBidding();
 	bid.setAucId( aucId );
 	bid.setUserId( Integer.parseInt( memberId ) );
@@ -395,11 +395,12 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		    result.put( "result", false );
 		    result.put( "msg", "每人限购" + auction.getAucRestrictionNum() + "件，您已超过每人购买次数限制" );
 		    flag = false;
+		    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "每人限购" + auction.getAucRestrictionNum() + "件，您已超过每人购买次数限制" );
 		}
 	    }
 
 	    String startTimes = auction.getAucStartTime();
-	    if ( auction.getAucType().toString().equals( "1" ) ) {
+	    if ( "1".equals( auction.getAucType().toString() ) ) {
 		//计算拍卖中的商品的拍卖的当前价格
 		String endtimes = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 		int minTimes = 60000 * auction.getAucLowerPriceTime();
@@ -415,6 +416,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 			    result.put( "result", false );
 			    result.put( "msg", "本场降价您已经购买，请下次降价后再来购买" );
 			    flag = false;
+			    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "本场降价您已经购买，请下次降价后再来购买" );
 			}
 		    }
 		}

@@ -1,0 +1,59 @@
+package com.gt.mall.config.interceptor;
+
+import com.gt.api.bean.session.Member;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallSessionUtils;
+import org.apache.log4j.Logger;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class PhoneInterceptor implements HandlerInterceptor {
+
+    private Logger logger = Logger.getLogger( PhoneInterceptor.class );
+
+    /**
+     * 在请求处理之前进行调用（Controller方法调用之前）
+     */
+    @Override
+    public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
+	logger.info( ">>>PhoneInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+	logger.info( "basePath = " + CommonUtil.getpath( request ) );
+
+	// 获得在下面代码中要用的request,response,session对象
+
+	Member member = null;//MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    request.setAttribute( "member", member );
+	} else {
+	    member = new Member();
+	    member.setId( 1225352 );
+	    //		member.setId( 562 );
+	    member.setBusid( 42 );
+	    member.setPublicId( 482 );
+	    member.setPhone( "15017934717" );
+	    member.setNickname( "杨倩" );
+	    member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
+	    member.setOldid( "1225352,1225358,1225449" );
+	    MallSessionUtils.setLoginMember( request, member );
+	}
+	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
+    }
+
+    /**
+     * 请求处理之后进行调用，但是在视图被渲染之前（Controller方法调用之后
+     */
+    @Override
+    public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
+
+    }
+
+    /**
+     * 在整个请求结束之后被调用，也就是在DispatcherServlet 渲染了对应的视图之后执行（主要是用于进行资源清理工作
+     */
+    @Override
+    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex ) throws Exception {
+    }
+}

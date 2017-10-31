@@ -247,8 +247,8 @@ public class ToOrderUtil {
 		bean.setFenbiMoney( CommonUtil.toDouble( cardMap.get( "fenbiMoeny" ) ) );
 	    }
 	    if ( bean.getFenbiMoney() > 0 ) {
-		if ( fenbiProductMoney < jifenFenbiRule.getFenbiStartMoney() ) {
-		    fenbiProductMoney = jifenFenbiRule.getFenbiStartMoney();
+		if ( fenbiProductMoney < Constants.FENBI_RUL_MULTIPLE ) {
+		    fenbiProductMoney = Constants.FENBI_RUL_MULTIPLE;
 		}
 		double fenbiMoney = CommonUtil.getDecimal_2( fenbiProductMoney / Constants.FENBI_RUL_MULTIPLE ).intValue();
 		bean.setFenbiNum( CommonUtil.multiply( jifenFenbiRule.getFenbiRatio(), fenbiMoney ) );
@@ -257,4 +257,5 @@ public class ToOrderUtil {
 	}
 	return bean;
     }
+
 }

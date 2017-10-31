@@ -92,12 +92,12 @@ public interface MallAuctionService extends BaseService< MallAuction > {
     /**
      * 判断是否超过了限购
      *
-     * @param map      groupBuyId:分组Id
+     * @param activityId     拍卖id
      * @param memberId 用户id
      *
      * @return map
      */
-    Map< String,Object > isMaxNum( Map< String,Object > map, String memberId );
+    Map< String,Object > isMaxNum( Integer activityId, String memberId );
 
     /**
      * 查询正在拍卖的商品

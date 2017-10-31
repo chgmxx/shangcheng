@@ -137,7 +137,7 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
      * 使用积分数量
      */
     @TableField( "use_jifen" )
-    private Double    useJifen;
+    private Double     useJifen;
     /**
      * 实付商品总价（数量乘以单价）
      */

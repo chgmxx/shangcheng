@@ -39,7 +39,7 @@ import java.util.List;
  */
 @Api( value = "phoneShopCart", description = "购物车页面相关接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
 @Controller
-@RequestMapping( "/phoneShopCart/" )
+@RequestMapping( "/phoneShopCart/L6tgXlBFeK/" )
 public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 
     private static Logger logger = LoggerFactory.getLogger( PhoneShopCartController.class );
@@ -51,9 +51,8 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "加入购物车接口", notes = "用户加入购物车", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/addShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse addShopCart( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneAddShopCartDTO params ) {
+    @PostMapping( value = "addShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse addShopCart( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneAddShopCartDTO params ) {
 	try {
 
 	    Member member = MallSessionUtils.getLoginMember( request, params.getBusId() );
@@ -79,7 +78,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 		    @ApiImplicitParam( name = "loginDTO", value = "登陆参数", required = true, paramType = "query", dataType = "Object" )
     } )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneShopCartResult > getShopCart( HttpServletRequest request, HttpServletResponse response, Integer busId, Integer shopId, Integer type,
 		    PhoneLoginDTO loginDTO ) {
 	try {
@@ -105,7 +104,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "删除购物车接口", notes = "用户删除购物车", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/removeShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "removeShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneRemoveShopCartDTO > removeShopCart( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneRemoveShopCartDTO params ) {
 	try {
@@ -128,7 +127,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 		    @ApiImplicitParam( name = "str", value = "参数", paramType = "query", required = true, dataType = "String" )
     )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/shopCartOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "shopCartOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse shopCartOrder( HttpServletRequest request, HttpServletResponse response, String str ) {
 	try {
 

@@ -114,14 +114,14 @@
         insert into t_mall_order_detail (order_id,product_id,shop_id,product_specificas,product_image_url,det_pro_num,
         det_pro_price,det_pro_name,det_pro_code,det_privivilege,det_pro_message,product_speciname,return_day,discount,coupon_code,
         discounted_prices,create_time,pro_type_id,use_fenbi,use_jifen,total_price,card_receive_id,duofen_coupon,use_card_id,
-        commission,sale_member_id, integral_youhui, fenbi_youhui,flow_id,flow_record_id)
+        commission,sale_member_id, integral_youhui, fenbi_youhui,flow_id,flow_record_id,)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.orderId},#{item.productId},#{item.shopId},#{item.productSpecificas},#{item.productImageUrl},#{item.detProNum},
             #{item.detProPrice},#{item.detProName},#{item.detProCode},#{item.detPrivivilege},#{item.detProMessage},
             #{item.productSpeciname},#{item.returnDay},#{item.discount},#{item.couponCode},#{item.discountedPrices},#{item.createTime},
             #{item.proTypeId},#{item.useFenbi},#{item.useJifen},#{item.totalPrice},#{item.cardReceiveId},#{item.duofenCoupon},#{item.useCardId},
-            #{item.commission},#{item.saleMemberId}, #{item.integralYouhui}, #{item.fenbiYouhui}, #{item.flowId}, #{item.flowRecordId})
+            #{item.commission},#{item.saleMemberId}, #{item.integralYouhui}, #{item.fenbiYouhui}, #{item.flowId}, #{item.flowRecordId}, #{item.couponId})
         </foreach>
     </insert>
 

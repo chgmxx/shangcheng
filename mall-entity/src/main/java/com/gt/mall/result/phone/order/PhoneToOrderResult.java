@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 进入提交订单页面返回结果
@@ -37,5 +38,11 @@ public class PhoneToOrderResult implements Serializable {
 
     @ApiModelProperty( name = "payWayList", value = "支付方式集合" )
     private List< PhoneOrderWayDTO > payWayList;
+
+    @ApiModelProperty( name = "mallShopList", value = "店铺集合", hidden = true )
+    private List< Map< String,Object > > mallShopList;
+
+    @ApiModelProperty( name = "proTypeId", value = "商品类型id", hidden = true )
+    private int proTypeId;
 
 }

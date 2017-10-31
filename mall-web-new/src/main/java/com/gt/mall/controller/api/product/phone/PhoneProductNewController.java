@@ -58,7 +58,7 @@ import java.util.Map;
  */
 @Api( value = "phoneProduct", description = "商品页面相关接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
 @Controller
-@RequestMapping( "/phoneProduct/" )
+@RequestMapping( "/phoneProduct/L6tgXlBFeK/" )
 public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     private static Logger logger = LoggerFactory.getLogger( PhoneProductNewController.class );
@@ -104,7 +104,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @RequestMapping( value = "79B4DE7C/classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @RequestMapping( value = "classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< List< Map< String,Object > > > classAll( HttpServletRequest request, @Valid @ModelAttribute PhoneGroupDTO params ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
@@ -131,7 +131,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "商品搜索接口", notes = "搜索商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/productAll", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "productAll", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > productAll( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneSearchProductDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
@@ -190,7 +190,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "商品信息接口", notes = "商品详情页面查询商品信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneProductDetailResult > getProduct( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneProductDetailDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	PhoneProductDetailResult result;
@@ -257,7 +257,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "商品规格接口", notes = "在商品详情页面弹出商品规格", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getSpecifica", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getSpecifica", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getSpecifica( HttpServletRequest request, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
@@ -284,10 +284,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "查询商品详情接口", notes = "商品详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getProductDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getProductDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< String > getProductDetail( HttpServletRequest request, int productId ) {
 	try {
-
 	    MallProductDetail mallProductDetail = mallProductDetailService.selectByProductId( productId );
 	    String productDetail = "";
 	    if ( CommonUtil.isNotEmpty( mallProductDetail ) ) {
@@ -310,7 +309,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    @ApiImplicitParam( name = "feel", value = "评论状态 1好评 0中评 -1差评", paramType = "query", dataType = "String" )
     } )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getProductComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getProductComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getProductComment( HttpServletRequest request, int busId, int productId, String feel ) {
 	try {
 	    Map< String,Object > resultMap = mallCommentService.getProductComment( busId, productId, feel );
@@ -327,7 +326,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "查询商品参数接口", notes = "商品详情页面查询商品参数", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/getProductParams", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getProductParams", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< List< MallProductParam > > getProductParams( HttpServletRequest request, int productId ) {
 	try {
 
@@ -345,7 +344,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "收藏商品的接口", notes = "商品详情页面收藏商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/collectProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "collectProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse collectProduct( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer productId ) {
 	try {

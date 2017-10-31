@@ -23,11 +23,16 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.MallProduct;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.freight.PhoneFreightDTO;
 import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
 import com.gt.mall.param.phone.order.*;
+import com.gt.mall.param.phone.order.add.PhoneAddOrderBusDTO;
 import com.gt.mall.param.phone.order.add.PhoneAddOrderDTO;
+import com.gt.mall.param.phone.order.add.PhoneAddOrderProductDTO;
+import com.gt.mall.param.phone.order.add.PhoneAddOrderShopDTO;
 import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
 import com.gt.mall.result.phone.order.PhoneToOrderProductResult;
 import com.gt.mall.result.phone.order.PhoneToOrderResult;
@@ -35,10 +40,10 @@ import com.gt.mall.result.phone.order.PhoneToOrderShopResult;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.MemberAddressService;
-import com.gt.mall.service.web.applet.MallNewOrderAppletService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
+import com.gt.mall.service.web.common.MallCalculateService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.order.MallOrderNewService;
@@ -47,9 +52,7 @@ import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.ToOrderUtil;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,8 +83,6 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     @Autowired
     private MallProductService        mallProductService;
     @Autowired
-    private MallNewOrderAppletService mallNewOrderAppletService;
-    @Autowired
     private MallOrderDetailDAO        mallOrderDetailDAO;
     @Autowired
     private MallOrderService          mallOrderService;
@@ -109,14 +110,155 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     private MallPaySetService         mallPaySetService;
     @Autowired
     private MallTakeTheirService      mallTakeTheirService;
+    @Autowired
+    private MallCalculateService      mallCalculateService;
 
     @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > submitOrder( PhoneAddOrderDTO params, Member member, Integer browser ) throws Exception {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	Map< String,Object > result = new HashMap<>();
+
 	logger.info( "提交订单参数：" + JSONArray.toJSON( params ) );
 
+	//判断参数传值是否完整
+	params = mallCommonService.isOrderParams( params, member );
+
+	//会员计算
+	params = mallCalculateService.calculateOrder( params, member );
+	if ( CommonUtil.isEmpty( browser ) || browser == 99 ) {
+	    browser = 0;
+	}
+
+	logger.info( "计算后的参数：" + JSONArray.toJSON( params ) );
+
+	List< MallOrder > orderList = new ArrayList<>();
+	MallOrder parentOrder = null;
+	MallOrder firstOrder = new MallOrder();
+	double totalOrderMoney = 0;//订单的实付价格(包含运费)
+	double totalOrderFreightMoney = 0;//订单的总运费
+	double totalOrderOldMoney = 0;//订单应付价格（不包含运费）
+	double totalUseFenbiNum = 0;
+	double totalUseJifenNum = 0;
+	//组装需要保存的参数 并保存订单
+	for ( PhoneAddOrderBusDTO busDTO : params.getBusResultList() ) {//循环商家集合
+	    for ( PhoneAddOrderShopDTO shopDTO : busDTO.getShopResultList() ) {//循环店铺集合
+		MallOrder order = mallCommonService.getOrderParams( shopDTO, busDTO, params, member );
+		List< MallOrderDetail > detailList = new ArrayList<>();
+		for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合
+		    MallOrderDetail detail = mallCommonService.getOrderDetailParams( productDTO, params, busDTO.getMemberDiscount(), shopDTO.getSelectCouponsId() );
+		    if ( CommonUtil.isNotEmpty( productDTO.getProduct() ) ) {
+			order.setMemCardType( productDTO.getProduct().getMemberType() );//会员卡类型
+		    }
+		    order.setOrderType( productDTO.getActivityType() );//活动类型 1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品
+		    order.setGroupBuyId( productDTO.getActivityId() );//活动id
+		    order.setPJoinId( productDTO.getGroupJoinId() );//参团id
+		    order.setBuyerUserType( browser );//数据来源 0:pc端 1:微信 2:uc端 3:小程序
+		    if ( productDTO.isUseUnionDiscount() ) {
+			//使用了联盟折扣
+			order.setUnionCardId( params.getUnionCardId() );
+		    }
+		    totalUseFenbiNum = CommonUtil.add( totalUseFenbiNum, detail.getUseFenbi() );//商家下面使用粉币数量
+		    totalUseJifenNum = CommonUtil.add( totalUseJifenNum, detail.getUseJifen() );//商家下面使用积分数量
+		    detailList.add( detail );
+		}
+		if ( CommonUtil.isEmpty( parentOrder ) && busDTO.getShopResultList().size() > 1 ) {
+		    parentOrder = order.clone();
+		    //		    parentOrder.setShopId( null );
+		}
+		order.setMallOrderDetail( detailList );
+		orderList.add( order );
+	    }
+	    totalOrderMoney = CommonUtil.add( totalOrderMoney, busDTO.getTotalNewMoney() );
+	    totalOrderFreightMoney = CommonUtil.add( totalOrderFreightMoney, busDTO.getProductFreightMoney() );
+	    totalOrderOldMoney = CommonUtil.add( totalOrderOldMoney, busDTO.getTotalMoney() );
+	}
+	if ( CommonUtil.isNotEmpty( parentOrder ) ) {
+	    parentOrder.setOrderMoney( CommonUtil.toBigDecimal( CommonUtil.add( totalOrderMoney, totalOrderFreightMoney ) ) );//订单实付金额（包含运费）
+	    parentOrder.setOrderFreightMoney( CommonUtil.toBigDecimal( totalOrderFreightMoney ) );//订单总运费
+	    parentOrder.setOrderOldMoney( CommonUtil.toBigDecimal( totalOrderOldMoney ) );//订单应付金额
+	    parentOrder.setUseJifen( totalUseJifenNum );//使用积分的数量
+	    parentOrder.setUseFenbi( totalUseFenbiNum );//使用粉币的数量
+	    orderList.add( 0, parentOrder );
+	}
+	String orderPNo = "";
+	int orderPId = 0;
+	//新增订单和订单详情
+	if ( orderList != null && orderList.size() == 0 ) {
+	    for ( int i = 0; i < orderList.size(); i++ ) {
+		MallOrder mallOrder = orderList.get( i );
+		mallOrder.setOrderNo( "SC" + System.currentTimeMillis() );
+		mallOrder.setCreateTime( new Date() );
+		if ( orderPId > 0 ) {
+		    mallOrder.setOrderPid( orderPId );
+		}
+		int count = mallOrderDAO.insert( mallOrder );
+		if ( count < 0 ) {
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "新增订单失败，请稍后重试" );
+		}
+		if ( i == 0 ) {
+		    orderPId = mallOrder.getId();
+		    orderPNo = mallOrder.getOrderNo();
+		    firstOrder = mallOrder;
+		}
+		if ( mallOrder.getMallOrderDetail() != null && mallOrder.getMallOrderDetail().size() > 0 ) {
+		    for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
+			orderDetail.setOrderId( mallOrder.getId() );
+			orderDetail.setCreateTime( new Date() );
+			count = mallOrderDetailDAO.insert( orderDetail );
+			if ( count < 0 ) {
+			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "新增订单详情失败，请稍后重试" );
+			}
+		    }
+		}
+	    }
+	}
+
+	//订单生成成功，把订单加入到未支付的队列中（秒杀商品除外）
+	if ( firstOrder.getOrderType() != 3 ) {
+	    String key = Constants.REDIS_KEY + "hOrder_nopay";
+	    net.sf.json.JSONObject objs = new net.sf.json.JSONObject();
+	    String times = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	    objs.put( "times", times );
+	    objs.put( "orderId", orderPId );
+	    JedisUtil.map( key, orderPId + "", objs.toString() );
+	}
+	//拍卖，添加拍卖竞拍
+	if ( firstOrder.getOrderType() == 4 ) {
+	    //加入拍卖竞拍
+	    mallAuctionBiddingService.addBidding( firstOrder, orderList.get( 0 ).getMallOrderDetail() );
+	}
+	//删除购物车的商品
+	if ( CommonUtil.isNotEmpty( params.getShopCartIds() ) ) {
+	    String[] cartIds = params.getShopCartIds().split( "," );
+	    if ( cartIds != null && cartIds.length > 0 ) {
+		for ( Object str : cartIds ) {
+		    if ( CommonUtil.isNotEmpty( str ) ) {
+			mallShopCartDAO.deleteById( CommonUtil.toInteger( str ) );
+		    }
+		}
+	    }
+	}
+	//货到付款或支付金额为0的订单，直接修改订单状态为已支付，且修改商品库存和销量
+	if ( totalOrderMoney == 0 || ( firstOrder.getOrderPayWay() != 1 && firstOrder.getOrderPayWay() != 9 ) ) {
+	    Map< String,Object > payParams = new HashMap<>();
+	    payParams.put( "status", 2 );
+	    payParams.put( "out_trade_no", orderPNo );
+	    mallOrderService.paySuccessModified( payParams, member );//修改库存和订单状态
+	}
+
+	int returnUrlType = 1;//跳转类型  1 跳转至订单列表 2 跳转至代付页面 3 跳转至积分商城兑换页面  4跳转至 微信或支付包支付的页面（具体会给链接）
+	if ( firstOrder.getOrderPayWay() == 7 ) {
+	    returnUrlType = 2;
+	} else if ( firstOrder.getOrderPayWay() == 4 ) {
+	    returnUrlType = 3;
+	}
+	if ( totalOrderMoney > 0 && ( firstOrder.getOrderPayWay() == 1 || firstOrder.getOrderPayWay() == 9 ) ) {
+	    returnUrlType = 4;
+	    String url = wxPayWay( totalOrderMoney, orderPNo, firstOrder, firstOrder.getOrderPayWay() );
+	    result.put( "url", url );
+	}
+	result.put( "returnUrlType", returnUrlType );
 	return result;
     }
 
@@ -159,7 +301,6 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	}
 
 	subQrPayParams.setPayWay( orderPayWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
-
 	KeysUtil keyUtil = new KeysUtil();
 	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
 	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
@@ -276,6 +417,16 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	String provincesId = "";//省份id
 	Double memberLongitude = params.getLongitude();//会员经度
 	Double memberLangitude = params.getLangitude();//会员纬度
+	MallOrder mallOrder = null;
+	if ( CommonUtil.isNotEmpty( params.getOrderId() ) && params.getOrderId() > 0 ) {
+	    mallOrder = mallOrderDAO.getOrderById( params.getOrderId() );
+	    if ( CommonUtil.isNotEmpty( mallOrder ) ) {
+		params.setFrom( 2 );
+		if ( mallOrder.getDeliveryMethod() == 1 && CommonUtil.isNotEmpty( mallOrder.getReceiveId() ) && mallOrder.getReceiveId() > 0 ) {
+		    params.setMemberAddressId( mallOrder.getReceiveId() );
+		}
+	    }
+	}
 	if ( CommonUtil.isNotEmpty( params.getMemberAddressId() ) && params.getMemberAddressId() > 0 ) {
 	    MemberAddress memberAddress = memberAddressService.addreSelectId( params.getMemberAddressId() );
 	    if ( CommonUtil.isNotEmpty( memberAddress ) ) {
@@ -328,7 +479,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 
 		List< PhoneToOrderProductResult > productResultList = new ArrayList<>();
 		for ( Map< String,Object > cartMap : shopCartList ) {
-		    PhoneToOrderProductResult productResult = getToOrderProductParams( cartMap );//重组商品对象
+		    PhoneToOrderProductResult productResult = getToOrderProductParamsByShopCart( cartMap );//重组商品对象
 		    proTypeId = productResult.getProTypeId();
 		    productResultList.add( productResult );
 		    if ( !shopList.contains( productResult.getShopId() ) ) {
@@ -370,7 +521,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 		mallShopList.add( storeMap );
 	    }
 	    List< PhoneToOrderProductResult > newProductResultList = new ArrayList<>();
-	    PhoneToOrderProductResult productResult = getToOrderProductParams( product, params );//重组商品参数
+	    PhoneToOrderProductResult productResult = getToOrderProductParamsByShopCart( product, params );//重组商品参数
 	    newProductResultList.add( productResult );
 	    double totalPrice = productResult.getTotalPrice();
 
@@ -403,6 +554,15 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    result.setTotalPayMoney( orderMoney );//订单支付总价（包含运费）
 	    result.setTotalMoney( orderMoney );//订单优惠前的总价（包含运费）
 	    result.setBusResultList( busResultList );
+
+	} else if ( params.getFrom() == 2 && CommonUtil.isNotEmpty( mallOrder ) ) {//去支付进来的
+
+	    busUserList.add( mallOrder.getBusUserId() );
+	    shopList.add( mallOrder.getShopId() );
+
+	    result = getToOrderFromOrder( result, mallOrder, provincesId, memberLangitude, memberLongitude );
+	    proTypeId = result.getProTypeId();
+	    mallShopList = result.getMallShopList();
 
 	}
 	result = getToOrderResult( mallShopList, member, busUserList, result, loginDTO.getBrowerType(), params, proTypeId, provincesId );
@@ -495,7 +655,6 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 			busResult.setJifenMoney( bean.getJifenMoney() );
 			busResult.setFenbiNum( bean.getFenbiNum() );
 			busResult.setFenbiMoney( bean.getFenbiMoney() );
-
 		    }
 		    if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) ) {
 			phoneOrderUserDTO.setMemberCtId( CommonUtil.toInteger( cardMap.get( "ctId" ) ) );
@@ -513,7 +672,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     }
 
     /**
-     * 重组订单参数
+     * 重组订单参数(购物车进入提交订单页面)
      */
     private PhoneToOrderResult getToOrderParams( List< PhoneToOrderProductResult > productResultList, List< Integer > busUserList, List< MallFreight > freightList,
 		    List< Map< String,Object > > mallShopList,
@@ -605,7 +764,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     /**
      * 重组订单商品参数
      */
-    private PhoneToOrderProductResult getToOrderProductParams( Map< String,Object > cartMap ) {
+    private PhoneToOrderProductResult getToOrderProductParamsByShopCart( Map< String,Object > cartMap ) {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	int product_id = CommonUtil.toInteger( cartMap.get( "product_id" ) );
 	int shop_id = CommonUtil.toInteger( cartMap.get( "shop_id" ) );
@@ -622,6 +781,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    //获取商品规格和规格价
 	    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( cartMap.get( "product_specificas" ).toString(), product_id );
 	    if ( CommonUtil.isNotEmpty( invMap ) ) {
+		result.setProductSpecificaValueId( cartMap.get( "product_specificas" ).toString() );
 		result.setProductSpecificaValue( CommonUtil.toString( invMap.get( "specifica_values" ) ).replace( ",", "/" ) );
 
 		price = CommonUtil.toDouble( invMap.get( "inv_price" ) );//商品规格价
@@ -681,7 +841,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     /**
      * 重组订单商品参数
      */
-    private PhoneToOrderProductResult getToOrderProductParams( MallProduct product, PhoneToOrderDTO params ) {
+    private PhoneToOrderProductResult getToOrderProductParamsByShopCart( MallProduct product, PhoneToOrderDTO params ) {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	int productNum = params.getProductNum();
 	int product_id = product.getId();
@@ -704,6 +864,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    //获取商品规格和规格价
 	    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( params.getProductSpecificas(), product_id );
 	    if ( CommonUtil.isNotEmpty( invMap ) ) {
+		result.setProductSpecificaValueId( params.getProductSpecificas() );
 		result.setProductSpecificaValue( CommonUtil.toString( invMap.get( "specifica_values" ) ).replace( ",", "/" ) );
 		price = CommonUtil.toDouble( invMap.get( "inv_price" ) );//商品规格价
 	    }
@@ -724,6 +885,167 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 			    productNum += pfSpecResult.getTotalNum();
 			    pfTotalPrice += pfSpecResult.getPfPrice() * pfSpecResult.getTotalNum();
 			}
+			if ( pfTotalPrice > 0 ) {
+			    totalPrice = CommonUtil.toDouble( df.format( pfTotalPrice ) );
+			}
+		    } else {
+			pfTotalPrice = CommonUtil.toDouble( df.format( pfTotalPrice * productNum ) );
+			totalPrice = pfTotalPrice;
+		    }
+		}
+
+	    }
+	}
+	result.setTotalPrice( CommonUtil.toDouble( df.format( totalPrice ) ) );
+	result.setProductPrice( CommonUtil.div( totalPrice, productNum, 2 ) );//商品价
+	result.setProductOldPrice( oldPrice );//商品原价
+	result.setProductNum( productNum );//商品数量
+	result.setIsCanUseDiscount( CommonUtil.toInteger( product.getIsMemberDiscount() ) );//是否能使用会员折扣
+	result.setIsCanUseYhq( CommonUtil.toInteger( product.getIsCoupons() ) );//是否能使用优惠券
+	result.setIsCanUseJifen( CommonUtil.toInteger( product.getIsIntegralDeduction() ) );//是否能使用积分抵扣
+	result.setIsCanUseFenbi( CommonUtil.toInteger( product.getIsFenbiDeduction() ) );//是否能使用粉币抵扣
+	if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
+	    result.setProductWeight( CommonUtil.toDouble( product.getProWeight() ) );//商品重量
+	}
+	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
+	    result.setProTypeId( CommonUtil.toInteger( product.getProTypeId() ) );
+	}
+	return result;
+    }
+
+    /**
+     * 从去支付进来的
+     */
+    private PhoneToOrderResult getToOrderFromOrder( PhoneToOrderResult result, MallOrder mallOrder, String provincesId, double memberLangitude, double memberLongitude ) {
+	//查询公众号名称或商家名称以及图片
+	List< PhoneToOrderBusResult > busResultList = new ArrayList<>();//返回给页面的商家接话
+	PhoneToOrderBusResult busResult = mallCommonService.getBusUserNameOrImage( mallOrder.getBusUserId() );//返回给页面的商家对象
+
+	List< PhoneToOrderShopResult > shopResultList = new ArrayList<>();//返回给页面的店铺对象
+	PhoneToOrderShopResult shopResult = new PhoneToOrderShopResult();
+	Map< String,Object > storeMap = mallStoreService.findShopByStoreId( mallOrder.getShopId() );//查询店铺信息
+	if ( CommonUtil.isNotEmpty( storeMap ) ) {
+	    shopResult.setShopId( CommonUtil.toInteger( storeMap.get( "id" ) ) );
+	    shopResult.setShopName( CommonUtil.toString( storeMap.get( "stoName" ) ) );
+	    shopResult.setWxShopId( CommonUtil.toInteger( storeMap.get( "wxShopId" ) ) );
+	    List< Map< String,Object > > mallShopList = new ArrayList<>();
+	    mallShopList.add( storeMap );
+	    result.setMallShopList( mallShopList );
+	}
+	int proTypeId = 0;
+	int totalNum = 0;
+	double totalPrice = 0;
+	double totalWeight = 0;
+	List< PhoneToOrderProductResult > newProductResultList = new ArrayList<>();
+	for ( MallOrderDetail detail : mallOrder.getMallOrderDetail() ) {
+	    MallProduct product = mallProductService.selectById( detail.getProductId() );
+	    proTypeId = detail.getProTypeId();
+	    PhoneToOrderProductResult productResult = getToOrderProductParamsByOrder( mallOrder, detail, product );//重组商品参数
+	    newProductResultList.add( productResult );
+	    totalPrice = CommonUtil.add( totalPrice, productResult.getTotalPrice() );
+	    totalNum += detail.getDetProNum();
+	    if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
+		totalWeight = CommonUtil.add( totalWeight, CommonUtil.toDouble( product.getProWeight() ) );
+	    }
+	}
+
+	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
+	paramsDto.setProvinceId( CommonUtil.toInteger( provincesId ) );
+	if ( mallOrder.getDeliveryMethod() == 3 ) {
+	    paramsDto.setToshop( 1 );
+	}
+	paramsDto.setJuli( CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude ) );
+	PhoneFreightShopDTO freightShopDTO = new PhoneFreightShopDTO();//运费店铺传参
+	freightShopDTO.setProTypeId( proTypeId );
+	freightShopDTO.setShopId( shopResult.getShopId() );
+	freightShopDTO.setTotalProductNum( totalNum );
+	freightShopDTO.setTotalProductPrice( totalPrice );
+	freightShopDTO.setTotalProductWeight( totalWeight );
+	double freightMoney = mallFreightService.getFreightMoneyByShopList( null, paramsDto, freightShopDTO ); //计算运费
+	if ( freightMoney > 0 ) {
+	    shopResult.setTotalFreightMoney( freightMoney );//店铺下的运费
+	}
+	shopResult.setTotalNum( totalNum );//店铺下的商品总数
+	shopResult.setTotalMoney( totalPrice );//店铺下的商品总金额
+	shopResult.setProductResultList( newProductResultList );
+	shopResultList.add( shopResult );
+	double orderMoney = CommonUtil.toDouble( CommonUtil.formatDoubleNumber( freightMoney + totalPrice ) );
+	busResult.setTotalNum( totalNum );//商家下的商品总数
+	busResult.setProductTotalMoney( totalPrice );//商家下的商品总额
+	busResult.setProductFreightMoney( freightMoney );//总运费
+	busResult.setTotalMoney( orderMoney );//商家下的商品总额
+	busResult.setShopResultList( shopResultList );
+	busResultList.add( busResult );
+
+	result.setTotalPayMoney( orderMoney );//订单支付总价（包含运费）
+	result.setTotalMoney( orderMoney );//订单优惠前的总价（包含运费）
+	result.setBusResultList( busResultList );
+	result.setProTypeId( proTypeId );
+	return result;
+    }
+
+    /**
+     * 重组订单商品参数
+     */
+    private PhoneToOrderProductResult getToOrderProductParamsByOrder( MallOrder order, MallOrderDetail detail, MallProduct product ) {
+	DecimalFormat df = new DecimalFormat( "######0.00" );
+	int productNum = detail.getDetProNum();
+	int productId = detail.getProductId();
+	double price = CommonUtil.toDouble( detail.getDetPrivivilege() );
+	double oldPrice = price;
+	PhoneToOrderProductResult result = new PhoneToOrderProductResult();
+	result.setProductId( productId );//商品id
+	result.setShopId( detail.getShopId() );//店铺id
+	result.setBusUserId( order.getBusUserId() );//商家id
+	result.setProductName( detail.getDetProName() );//商品名称
+	Map< String,Object > imageMap = new HashMap<>();
+	imageMap.put( "assId", productId );
+	imageMap.put( "isMainImages", 1 );
+	imageMap.put( "assType", 1 );
+	List< Map< String,Object > > imageList = mallImageAssociativeDAO.selectByAssId( imageMap );
+	if ( imageList != null && imageList.size() > 0 ) {
+	    result.setProductImageUrl( CommonUtil.toString( imageList.get( 0 ).get( "image_url" ) ) );//商品图片
+	}
+	if ( CommonUtil.isNotEmpty( detail.getProductSpecificas() ) ) {
+	    //获取商品规格和规格价
+	    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( detail.getProductSpecificas(), productId );
+	    if ( CommonUtil.isNotEmpty( invMap ) ) {
+		result.setProductSpecificaValueId( detail.getProductSpecificas() );
+		result.setProductSpecificaValue( CommonUtil.toString( invMap.get( "specifica_values" ) ).replace( ",", "/" ) );
+		price = CommonUtil.toDouble( invMap.get( "inv_price" ) );//商品规格价
+	    }
+	}
+	double totalPrice = price * productNum;
+	if ( CommonUtil.isNotEmpty( order.getOrderType() ) ) {
+	    if ( order.getOrderType() == 7 ) {//查询批发商品
+		double pfTotalPrice = 0;
+		MallPifa pifa = mallPifaService.selectBuyByProductId( productId, order.getShopId(), 0 );
+		if ( CommonUtil.isNotEmpty( pifa ) ) {
+		    pfTotalPrice = CommonUtil.toDouble( pifa.getPfPrice() );
+		    if ( CommonUtil.isNotEmpty( detail.getProSpecStr() ) ) {
+			JSONObject specObj = JSONObject.parseObject( detail.getProSpecStr() );
+
+			List< PhoneOrderPifaSpecDTO > pfSpecResultsList = new ArrayList<>();
+			Set< String > set = specObj.keySet();
+			productNum = 0;
+			for ( String str : set ) {
+			    if ( CommonUtil.isNotEmpty( specObj.get( str ) ) ) {
+				JSONObject obj = specObj.getJSONObject( str );
+				if ( obj.getString( "isCheck" ).equals( "1" ) ) {
+				    PhoneOrderPifaSpecDTO pfSpecResult = new PhoneOrderPifaSpecDTO();
+				    pfSpecResult.setTotalNum( obj.getInteger( "num" ) );
+				    pfSpecResult.setPfPrice( obj.getDouble( "price" ) );
+				    pfSpecResult.setSpecificaName( obj.getString( "name" ) );
+				    pfSpecResult.setSpecificaIds( str );
+				    pfSpecResult.setSpecificaValues( obj.getString( "value" ) );
+				    pfSpecResultsList.add( pfSpecResult );
+
+				    productNum += pfSpecResult.getTotalNum();
+				    pfTotalPrice += pfSpecResult.getPfPrice() * pfSpecResult.getTotalNum();
+				}
+			    }
+			}
+			result.setPfSpecResultList( pfSpecResultsList );
 			if ( pfTotalPrice > 0 ) {
 			    totalPrice = CommonUtil.toDouble( df.format( pfTotalPrice ) );
 			}

@@ -80,4 +80,19 @@ public class PhoneToOrderBusResult implements Serializable {
     @ApiModelProperty( name = "memberPhone", value = "粉丝手机号码" )
     private String memberPhone;
 
+
+    /*********************************联盟卡返回的接口***************************************/
+
+    @ApiModelProperty( name = "unionStatus", value = "联盟状态 -1：没有联盟信息，不显示 0：没有关联联盟卡，需绑定联盟卡 1：返回联盟折扣" )
+    private Integer unionStatus;
+
+    @ApiModelProperty( name = "unionDiscount", value = "联盟折扣" )
+    private Double unionDiscount;
+
+    @ApiModelProperty( name = "unionId", value = "联盟id" )
+    private Integer unionId;
+
+    @ApiModelProperty( name = "unionCardId", value = "联盟卡id" )
+    private Integer unionCardId;
+
 }

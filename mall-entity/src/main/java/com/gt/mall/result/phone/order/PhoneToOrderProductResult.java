@@ -37,6 +37,9 @@ public class PhoneToOrderProductResult implements Serializable {
     @ApiModelProperty( name = "productImageUrl", value = "商品图片" )
     private String productImageUrl;
 
+    @ApiModelProperty( name = "productSpecificaValueId", value = "规格值id" )
+    private String productSpecificaValueId;
+
     @ApiModelProperty( name = "productSpecificaValue", value = "商品规格值" )
     private String productSpecificaValue;
 
@@ -76,5 +79,13 @@ public class PhoneToOrderProductResult implements Serializable {
 
     @ApiModelProperty( name = "pfSpecResultList", value = "批发规格集合" )
     private List< PhoneOrderPifaSpecDTO > pfSpecResultList;
+
+    /******************************** 以下参数 销售员需要用到 ********************************/
+
+    @ApiModelProperty( name = "saleMemberId", value = "销售员id" )
+    private Integer saleMemberId;
+
+    @ApiModelProperty( name = "commission", value = "销售佣金" )
+    private Double commission;
 
 }

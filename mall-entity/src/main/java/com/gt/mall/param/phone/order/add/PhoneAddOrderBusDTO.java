@@ -80,6 +80,20 @@ public class PhoneAddOrderBusDTO implements Serializable {
     @ApiModelProperty( name = "memberPhone", value = "粉丝手机号码" )
     private String memberPhone;
 
+    /*********************************联盟卡返回的接口***************************************/
+
+    @ApiModelProperty( name = "unionStatus", value = "联盟状态 -1：没有联盟信息，不显示 0：没有关联联盟卡，需绑定联盟卡 1：返回联盟折扣" )
+    private Integer unionStatus;
+
+    @ApiModelProperty( name = "unionDiscount", value = "联盟折扣" )
+    private Double unionDiscount;
+
+    @ApiModelProperty( name = "unionId", value = "联盟id" )
+    private Integer unionId;
+
+    @ApiModelProperty( name = "unionCardId", value = "联盟卡id" )
+    private Integer unionCardId;
+
     /*********************************提交订单接口，传值***************************************/
 
     @ApiModelProperty( name = "selectDeliveryWayId", value = "选中配送方式的id  1, 快递配送  2,上门自提  3到店购买" )
@@ -91,6 +105,15 @@ public class PhoneAddOrderBusDTO implements Serializable {
     @ApiModelProperty( name = "isSelectFenbi", value = "是否选中粉币  1选中" )
     private Integer isSelectFenbi = 0;
 
+    @ApiModelProperty( name = "isSelectDiscount", value = "是否选中会员卡折扣 1选中" )
+    private Integer isSelectDiscount = 0;
+
+    @ApiModelProperty( name = "isSelectCoupons", value = "是否选中了优惠券  1选中" )
+    private Integer isSelectCoupons = 0;
+
+    @ApiModelProperty( name = "isSelectUnion", value = "是否选中联盟 1选中" )
+    private Integer isSelectUnion = 0;
+
     @ApiModelProperty( name = "tihuoUserName", value = "提货人姓名" )
     private String appointmentUserName;
 
@@ -100,10 +123,16 @@ public class PhoneAddOrderBusDTO implements Serializable {
     @ApiModelProperty( name = "appointmentId", value = "提货id" )
     private Integer appointmentId;
 
+    @ApiModelProperty( name = "appointmentDate", value = "提货日期" )
+    private String appointmentDate;
+
     @ApiModelProperty( name = "appointmentStartTime", value = "提货开始时间" )
     private String appointmentStartTime;
 
     @ApiModelProperty( name = "appointmentEndTime", value = "提货结束时间" )
     private String appointmentEndTime;
+
+    @ApiModelProperty( name = "totalNewMoney", value = "商品优惠后的总价（没包含运费）", hidden = true )
+    private double totalNewMoney = 0;
 
 }

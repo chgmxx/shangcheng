@@ -327,11 +327,11 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		map2.put( "old_price", df.format( CommonUtil.toDouble( map2.get( "pro_cost_price" ) ) ) );
 		map2.put( "price", df.format( CommonUtil.toDouble( map2.get( "price" ) ) ) );
 
-		String is_member_discount = map2.get( "is_member_discount" ).toString();// 商品是否参加折扣,1参加折扣
-		if ( is_member_discount.equals( "1" ) ) {
-		/*map2.put("price", Math.ceil((Double.parseDouble(map2.get(
-				"price").toString()) * discount) * 100) / 100);*/
-		}
+		/*String is_member_discount = map2.get( "is_member_discount" ).toString();// 商品是否参加折扣,1参加折扣
+		if ( "1".equals( is_member_discount ) ) {
+		map2.put("price", Math.ceil((Double.parseDouble(map2.get(
+				"price").toString()) * discount) * 100) / 100);
+		}*/
 		list.add( map2 );
 	    }
 	}
@@ -523,16 +523,10 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
     /**
      * 判断是否超过了限购
-     *
-     * @param map
-     * @param memberId
-     *
-     * @return
      */
     @Override
-    public Map< String,Object > isMaxNum( Map< String,Object > map, String memberId, MallOrderDetail mallOrderDetail ) {
+    public Map< String,Object > isMaxNum( Integer presaleId, String memberId, String productSpecificas, Integer productNum ) {
 	Map< String,Object > result = new HashMap<>();
-	int presaleId = Integer.parseInt( map.get( "groupBuyId" ).toString() );
 
 	Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "joinUserId", memberId );
@@ -540,8 +534,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	//判断是否已经加入到预售竞拍中
 	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectCountByPresaleId( params );//判断用户是否已经交纳定金
 	if ( deposit == null ) {//没有交纳定金的用户来判断库存
-
-	    result = isInvNum( map, mallOrderDetail );
+	    result = isInvNum( presaleId, productSpecificas, productNum );
 	} else {
 	    result.put( "result", true );
 	}
@@ -814,28 +807,22 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
     /**
      * 判断秒杀的库存是否能够秒杀
      */
-    private Map< String,Object > isInvNum( Map< String,Object > params, MallOrderDetail mallOrderDetail ) {
+    private Map< String,Object > isInvNum( Integer activityId, String productSpecificas, Integer productNum ) {
 	Map< String,Object > result = new HashMap<>();
-	String preId = params.get( "groupBuyId" ).toString();
 	String invKey = "presale_num";//秒杀库存的key
-	String specificas = "";
-	//判断商品是否有规格
-	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
-	    specificas = mallOrderDetail.getProductSpecificas();
-	}
 	//查询秒杀商品的库存
 	Integer invNum = 0;
-	String value = JedisUtil.maoget( invKey, preId + "" );
+	String value = JedisUtil.maoget( invKey, activityId.toString() );
 	if ( CommonUtil.isNotEmpty( value ) ) {
 	    JSONObject specObj = JSONObject.parseObject( value );
-	    if ( !specificas.equals( "" ) ) {
+	    if ( CommonUtil.isNotEmpty( productSpecificas ) ) {
 		//有规格，取规格的库存
 		if ( CommonUtil.isNotEmpty( specObj.get( "specArr" ) ) ) {
 		    JSONArray preSpecArr = JSONArray.parseArray( specObj.get( "specArr" ).toString() );
 		    if ( preSpecArr != null && preSpecArr.size() > 0 ) {
 			for ( Object obj : preSpecArr ) {
 			    JSONObject preObj = JSONObject.parseObject( obj.toString() );
-			    if ( preObj.get( "specId" ).toString().equals( specificas ) ) {
+			    if ( preObj.get( "specId" ).toString().equals( productSpecificas ) ) {
 				invNum = CommonUtil.toInteger( preObj.get( "invNum" ) );
 				break;
 			    }
@@ -843,7 +830,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    }
 		}
 	    }
-	    if ( CommonUtil.isEmpty( specificas ) || invNum == 0 ) {
+	    if ( CommonUtil.isEmpty( productSpecificas ) || invNum == 0 ) {
 		//无规格，则取商品库存
 		if ( CommonUtil.isNotEmpty( specObj.get( "invNum" ) ) ) {
 		    invNum = CommonUtil.toInteger( specObj.get( "invNum" ) );
@@ -851,13 +838,13 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    }
 	}
 
-	int proNum = mallOrderDetail.getDetProNum();//购买商品的用户
 	//判断库存是否够
-	if ( invNum >= proNum && invNum > 0 ) {
+	if ( invNum >= productNum && invNum > 0 ) {
 	    result.put( "result", true );
 	} else {
 	    result.put( "msg", "预售商品的库存不够" );
 	    result.put( "result", false );
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "预售库存不够，请重新挑选商品" );
 	}
 	return result;
     }

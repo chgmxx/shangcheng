@@ -51,7 +51,7 @@ import java.util.Map;
 @Api( value = "phonePage", description = "首页相关接口", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
 @RestController
 @CrossOrigin
-@RequestMapping( value = "/phonePage/" )
+@RequestMapping( value = "/phonePage/L6tgXlBFeK/" )
 public class PhonePageController {
 
     private static Logger logger = LoggerFactory.getLogger( PhonePageController.class );
@@ -80,7 +80,7 @@ public class PhonePageController {
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @PostMapping( value = "79B4DE7C/shopList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "shopList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse shopList( HttpServletRequest request, int busId ) {
 	try {
 	    BusUser user = new BusUser();
@@ -111,7 +111,7 @@ public class PhonePageController {
     @ApiOperation( value = "获取商家的底部菜单", notes = "获取商家的底部菜单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @PostMapping( value = "79B4DE7C/footerMenu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "footerMenu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse footerMenu( HttpServletRequest request, int busId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -130,7 +130,7 @@ public class PhonePageController {
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = false, dataType = "int" ) } )
-    @PostMapping( value = "79B4DE7C/getHomePageId", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getHomePageId", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getHomePageId( HttpServletRequest request, int busId, int shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -164,7 +164,7 @@ public class PhonePageController {
     @ApiOperation( value = "获取商家的客服", notes = "获取商家的客服", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @PostMapping( value = "79B4DE7C/getCustomer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getCustomer", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneCommonResult > getCustomer( HttpServletRequest request, int shopId ) {
 	PhoneCommonResult result = new PhoneCommonResult();
 	try {
@@ -190,7 +190,7 @@ public class PhonePageController {
     @ApiOperation( value = "获取店铺风格", notes = "获取店铺风格", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @PostMapping( value = "79B4DE7C/getShopStyle", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "getShopStyle", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getShopStyle( HttpServletRequest request, int busId ) {
 	try {
 	    MallPaySet mallPaySet = mallPaySetService.selectByUserId( busId );
@@ -213,7 +213,7 @@ public class PhonePageController {
     @ApiOperation( value = "查询历史搜索和推荐搜索接口", notes = "获取用户已搜索关键词", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @PostMapping( value = "79B4DE7C/searchLabel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "searchLabel", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse searchLabel( HttpServletRequest request, int shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -246,7 +246,7 @@ public class PhonePageController {
     @ApiOperation( value = "清空历史搜索接口", notes = "清空用户历史搜索", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @PostMapping( value = "79B4DE7C/clearSearchGroup", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "clearSearchGroup", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse clearSearchGroup( HttpServletRequest request, HttpServletResponse response, int shopId ) throws IOException {
 	try {
 	    Map< String,Object > params = new HashMap<>();
@@ -273,7 +273,7 @@ public class PhonePageController {
     @ApiOperation( value = "微信分享接口", notes = "获取微信分享", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "url", value = "当前地址", paramType = "query", required = true, dataType = "String" ) )
-    @PostMapping( value = "79B4DE7C/wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );

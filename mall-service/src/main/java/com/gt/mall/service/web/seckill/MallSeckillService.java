@@ -79,7 +79,7 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 判断秒杀的库存是否能够秒杀
      */
-    Map< String,Object > isInvNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail );
+    Map< String,Object > isInvNum( Integer seckillId, String productSpecificas, Integer productNum );
 
     /**
      * 减商品的库存（在redis中）

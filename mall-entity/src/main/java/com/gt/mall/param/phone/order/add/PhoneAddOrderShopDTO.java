@@ -34,7 +34,7 @@ public class PhoneAddOrderShopDTO implements Serializable {
     @ApiModelProperty( name = "totalNum", value = "商品总数" )
     private int totalNum;
 
-    @ApiModelProperty( name = "totalMoney", value = "商品总价" )
+    @ApiModelProperty( name = "totalMoney", value = "商品总价（优惠前的价格，没包含运费）" )
     private double totalMoney;
 
     @ApiModelProperty( name = "totalFreightMoney", value = "运费" )
@@ -49,5 +49,17 @@ public class PhoneAddOrderShopDTO implements Serializable {
     /*********************************提交订单接口，传值***************************************/
     @ApiModelProperty( name = "selectCouponsId", value = "选中优惠券的id" )
     private Integer selectCouponsId = 0;
+
+    @ApiModelProperty( name = "useFenbi", value = "订单使用粉币的数量", hidden = true )
+    private double useFenbi = 0;
+
+    @ApiModelProperty( name = "useJifen", value = "订单使用积分的数量", hidden = true )
+    private double useJifen = 0;
+
+    @ApiModelProperty( name = "totalNewMoney", value = "商品优惠后的总价（没包含运费）", hidden = true )
+    private double totalNewMoney = 0;
+
+    @ApiModelProperty( name = "buyerMessage", value = "买家留言" )
+    private String buyerMessage;
 
 }

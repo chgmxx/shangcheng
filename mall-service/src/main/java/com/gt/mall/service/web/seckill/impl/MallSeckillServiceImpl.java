@@ -434,31 +434,25 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * 判断秒杀的库存是否能够秒杀
      */
     @Override
-    public Map< String,Object > isInvNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail ) {
+    public Map< String,Object > isInvNum( Integer seckillId, String productSpecificas, Integer productNum ) {
 	Map< String,Object > result = new HashMap<>();
-	String seckillId = mallOrder.getGroupBuyId().toString();
 	String invKey = "hSeckill";//秒杀库存的key
-	String specificas = "";
-	//判断商品是否有规格
-	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
-	    specificas = mallOrderDetail.getProductSpecificas();
-	}
 	//查询秒杀商品的库存
 	Integer invNum;
-	if ( !specificas.equals( "" ) ) {
+	if ( CommonUtil.isNotEmpty( productSpecificas ) ) {
 	    //有规格，取规格的库存
-	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId + "_" + specificas ) );
+	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId + "_" + productSpecificas ) );
 	} else {
 	    //无规格，则取商品库存
-	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId ) );
+	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId.toString() ) );
 	}
-	int proNum = mallOrderDetail.getDetProNum();//购买商品的用户
 	//判断库存是否够
-	if ( invNum >= proNum && invNum > 0 ) {
+	if ( invNum >= productNum && invNum > 0 ) {
 	    result.put( "result", true );
 	} else {
 	    result.put( "msg", "库存不够" );
 	    result.put( "result", false );
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "秒杀库存不够，请重新挑选商品" );
 	}
 	return result;
     }

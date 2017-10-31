@@ -104,14 +104,6 @@ public class MyInterceptor implements HandlerInterceptor {
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) || passIntercepto( url ) ) {
 	    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
-	} else if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
-
-	    user = new BusUser();
-	    user.setId( 42 );
-	    user.setName( "gt123456" );
-	    user.setPid( 0 );
-	    MallSessionUtils.setLoginUser( request, user );
-
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }

@@ -1206,15 +1206,16 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( ids.toString() ) ) {
-		if ( !ids.toString().equals( "0" ) ) {
+		if ( !"0".equals( ids.toString() ) ) {
 		    invParams.put( "specificaIds", ids.substring( 2, ids.length() ) );
 		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( invParams );
 		    if ( null != proInv && CommonUtil.isNotEmpty( proInv ) ) {
 			//判断商家是否有进销存
-			if ( isJxc == 0 || !pro.getProTypeId().toString().equals( "0" ) ) {//没有进销存才能判断商城的库存
+			if ( isJxc == 0 || !"0".equals( pro.getProTypeId().toString() ) ) {//没有进销存才能判断商城的库存
 			    if ( proInv.getInvNum() < proNum ) {
 				flag = false;
 				result.put( "msg", "商品库存不够" );
+				throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品库存不够，请重新挑选商品" );
 			    }
 			} else {
 			    erpInvId = proInv.getErpInvId();
@@ -1222,6 +1223,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    } else {
 			flag = false;
 			result.put( "msg", "商品库存不够" );
+			throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品库存不够，请重新挑选商品" );
 		    }
 		} else {
 		    isSpe = 0;
@@ -1230,13 +1232,14 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		isSpe = 0;
 	    }
 	}
-	if ( null == isSpe || CommonUtil.toString( isSpe ).equals( "" ) || isSpe == 0 ) {
-	    if ( erpInvId == 0 && isJxc == 1 && pro.getProTypeId().toString().equals( "0" ) ) {
+	if ( null == isSpe || CommonUtil.isEmpty( isSpe ) || isSpe == 0 ) {
+	    if ( erpInvId == 0 && isJxc == 1 && "0".equals( pro.getProTypeId().toString() ) ) {
 		erpInvId = pro.getErpInvId();
 	    }
 	    if ( pro.getProStockTotal() < proNum ) {
 		flag = false;
 		result.put( "msg", "商品库存不够" );
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品库存不够，请重新挑选商品" );
 	    }
 	}
 	if ( isJxc == 1 && erpInvId > 0 && flag ) {
@@ -1249,6 +1252,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		if ( proStock < proNum ) {
 		    flag = false;
 		    result.put( "msg", "商品库存不够" );
+		    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品库存不够，请重新挑选商品" );
 		}
 	    }
 	}
@@ -1264,6 +1268,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		if ( buyNums + proNum > pro.getProRestrictionNum() ) {
 		    flag = false;
 		    result.put( "msg", "您购买的数量已经超过限购的数量" );
+		    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您购买的数量已经超过限购的数量" );
 		}
 	    }
 	}
@@ -1400,7 +1405,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	resultMap.put( "productMap", productMap );
 	return resultMap;
     }
-
 
     @Override
     public Map< String,Object > saveOrUpdateProductByErp( Map< String,Object > params, HttpServletRequest request ) throws Exception {

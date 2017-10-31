@@ -15,7 +15,7 @@ import lombok.Setter;
 public class Coupons {
 
     @ApiModelProperty( name = "id", value = "优惠券id" )
-    private int id;
+    private Integer id;
 
     @ApiModelProperty( name = "couponsFrom", value = "优惠券来源（ 1 微信优惠券  2多粉优惠券 ）" )
     private int couponsFrom = 0;
@@ -31,10 +31,10 @@ public class Coupons {
 
     /************************************* 以下是满减券需要用到的参数 *************************************/
     @ApiModelProperty( name = "cashLeastCost", value = "起用金额（满多少）" )
-    private double cashLeastCost;
+    private double cashLeastCost = 0;
 
     @ApiModelProperty( name = "reduceCost", value = "减免金额（减多少）" )
-    private double reduceCost;
+    private double reduceCost = 0;
 
     @ApiModelProperty( name = "addUser", value = "是否允许叠加 0不允许 1已允许" )
     private int addUser = 0;

@@ -1,7 +1,9 @@
 package com.gt.mall.service.web.product.impl;
 
-import com.gt.mall.base.BaseServiceImpl;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.auction.MallAuction;
@@ -23,6 +25,7 @@ import com.gt.mall.param.phone.PhoneSpecificaDTO;
 import com.gt.mall.param.phone.freight.PhoneFreightDTO;
 import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
+import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.MemberAddressService;
@@ -122,6 +125,8 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
     private MemberAddressService        memberAddressService;
     @Autowired
     private MallPageService             mallPageService;
+    @Autowired
+    private CardService                 cardService;
 
     @Override
     public PhoneProductDetailResult selectProductDetail( PhoneProductDetailDTO params, Member member, MallPaySet mallPaySet ) {
@@ -272,7 +277,29 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( CommonUtil.isEmpty( provinces ) && CommonUtil.isNotEmpty( params.getIp() ) ) {
 	    provinces = mallPageService.getProvince( params.getIp() );
 	}
+	//查询卡券包信息
+	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) && product.getProTypeId() == 3 && CommonUtil.isNotEmpty( product.getCardType() ) && product.getCardType() > 0 ) {
+	    Map< String,Object > cardMap = cardService.findDuofenCardByReceiveId( product.getCardType() );
+	    logger.info( "卡券包：" + JSON.toJSONString( cardMap ) );
+	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
 
+		JSONObject obj = ProductUtil.getCardReceive( cardMap );
+		if ( CommonUtil.isNotEmpty( obj ) ) {
+		    result.setIsShowCardRecevie( 1 );
+		    result.setIsShowLiJiBuyButton( 1 );
+		    result.setIsShowAddShopButton( 0 );
+		    if ( obj.containsKey( "cardRecevieId" ) ) {//卡券包id
+			result.setCardRecevieId( obj.getInteger( "cardRecevieId" ) );
+		    }
+		    if ( obj.containsKey( "cardmessage" ) ) {//卡券集合
+			result.setCardRecevieArr( obj.getJSONArray( "cardmessage" ) );
+		    }
+		    if ( obj.containsKey( "cardMoney" ) ) {//卡券包金额
+			result.setProductPrice( obj.getDouble( "cardMoney" ) );
+		    }
+		}
+	    }
+	}
 	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
 	paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );
 	paramsDto.setToshop( params.getToShop() );

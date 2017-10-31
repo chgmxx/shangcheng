@@ -1,11 +1,10 @@
 package com.gt.mall.service.web.presale;
 
-import com.gt.mall.base.BaseService;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrder;
-import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleGive;
 import com.gt.mall.entity.presale.MallPresaleTime;
@@ -95,7 +94,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     /**
      * 判断是否超过了限购
      */
-    Map< String,Object > isMaxNum( Map< String,Object > map, String memberId, MallOrderDetail mallOrderDetail );
+    Map< String,Object > isMaxNum( Integer activityId, String memberId, String productSpecifica, Integer productNum );
 
     /**
      * 获取送礼设置的信息
@@ -105,7 +104,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
     /**
      * 获取送礼设置列表
      */
-    PageUtil selectPageGiveByUserId( Map< String,Object > params);
+    PageUtil selectPageGiveByUserId( Map< String,Object > params );
 
     /**
      * 编辑预售设置
@@ -116,6 +115,7 @@ public interface MallPresaleService extends BaseService< MallPresale > {
      * 编辑预售设置(全部)
      */
     int newEditPresaleSet( Map< String,Object > params, int userId );
+
     /**
      * 编辑预售设置(单个)
      */

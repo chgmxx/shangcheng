@@ -2048,12 +2048,13 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 	//拍卖商品
 	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && code > 0 ) {
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "groupBuyId", order.getGroupBuyId() );
-	    if ( order.getOrderType().toString().equals( "4" ) ) {
-		resultMap = mallAuctionService.isMaxNum( params, order.getBuyerUserId().toString() );
-	    } else if ( order.getOrderType().toString().equals( "6" ) ) {//商品预售
-		resultMap = mallPresaleService.isMaxNum( params, order.getBuyerUserId().toString(), detail );
+	    if ( "4".equals( order.getOrderType().toString() ) ) {
+		resultMap = mallAuctionService.isMaxNum( order.getGroupBuyId(), order.getBuyerUserId().toString() );
+	    } else if ( "6".equals( order.getOrderType().toString() ) ) {//商品预售
+		resultMap = mallPresaleService.isMaxNum( order.getGroupBuyId(), order.getBuyerUserId().toString(), detail.getProductSpecificas(), detail.getDetProNum() );
+	    } else if ( "3".equals( order.getOrderType().toString() ) ) {
+		//判断库存
+		resultMap = mallSeckillService.isInvNum( order.getGroupBuyId(), detail.getProductSpecificas(), detail.getDetProNum() );
 	    }
 	    if ( CommonUtil.isNotEmpty( resultMap ) && resultMap.size() > 0 ) {
 		if ( !resultMap.get( "result" ).toString().equals( "true" ) ) {
@@ -2092,10 +2093,6 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( ( CommonUtil.isEmpty( detail.getProTypeId() ) || detail.getProTypeId() == 0 ) && CommonUtil.isEmpty( order.getReceiveId() ) && code > 0 ) {
 	    msg = "请选择收货地址";
 	    code = -1;
-	}
-	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && code > 0 && order.getOrderType() == 3 ) {
-	    //判断库存
-	    resultMap = mallSeckillService.isInvNum( order, detail );
 	}
 	resultMap.put( "code", code );
 	resultMap.put( "errorMsg", msg );

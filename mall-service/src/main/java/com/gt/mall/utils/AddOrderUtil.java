@@ -1,11 +1,8 @@
 package com.gt.mall.utils;
 
+import com.gt.api.bean.session.Member;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.param.phone.order.add.PhoneAddOrderBusDTO;
-import com.gt.mall.param.phone.order.add.PhoneAddOrderDTO;
-import com.gt.mall.param.phone.order.add.PhoneAddOrderProductDTO;
-import com.gt.mall.param.phone.order.add.PhoneAddOrderShopDTO;
 import org.apache.log4j.Logger;
 
 public class AddOrderUtil {
@@ -13,68 +10,41 @@ public class AddOrderUtil {
     private static final Logger logger = Logger.getLogger( AddOrderUtil.class );
 
     /**
-     * 判断订单传参是否完整
+     * 判断积分和粉币是否足够
+     *
+     * @param selectPayWayId    4 积分支付  8 粉币支付
+     * @param member            会员对象
+     * @param productTotalMoney 商品总价
      */
-    public PhoneAddOrderDTO isOrderParams( PhoneAddOrderDTO params ) {
-	if ( CommonUtil.isEmpty( params.getBusResultList() ) ) {
-	    logger.error( "商家传参不完整" );
-	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
-	}
-	if ( CommonUtil.isEmpty( params.getSelectPayWayId() ) || params.getSelectPayWayId() == 0 ) {
-	    logger.error( "还没选则支付方式" );
-	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还未选择支付方式" );
-	}
-	int addressId = 0;
-	if ( CommonUtil.isNotEmpty( params.getSelectMemberAddressId() ) ) {
-	    addressId = params.getSelectMemberAddressId();
-	}
-	for ( PhoneAddOrderBusDTO busDTO : params.getBusResultList() ) {//循环商家集合
-	    if ( CommonUtil.isEmpty( busDTO.getShopResultList() ) ) {
-		logger.error( "店铺参数不完整" );
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
-	    }
-	    if ( CommonUtil.isEmpty( busDTO.getSelectDeliveryWayId() ) || busDTO.getSelectDeliveryWayId() == 0 ) {
-		logger.error( "您还没选中配送方式" );
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还没选中配送方式" );
-	    }
-	    if ( busDTO.getSelectDeliveryWayId() == 1 && addressId == 0 ) {//1 快递配送
-		logger.error( "您还没选中配送方式" );
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还没选中配送方式" );
-	    }
-	    for ( PhoneAddOrderShopDTO shopDTO : busDTO.getShopResultList() ) {//循环店铺集合
-		if ( CommonUtil.isEmpty( shopDTO.getSelectCouponsId() ) ) {
-		    logger.error( "商品参数不完整" );
-		    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
+    public static void isJiFenOrFenbi( int selectPayWayId, Member member, Double productTotalMoney ) {
+	if ( selectPayWayId == 8 ) {
+	    boolean isFenbi = true;
+	    if ( CommonUtil.isNotEmpty( member.getFansCurrency() ) ) {
+		double fenbi = member.getFansCurrency();
+		if ( fenbi < productTotalMoney || fenbi < 0 ) {
+		    isFenbi = false;
 		}
-		int selectCouponsId = 0;//选中的优惠券id
-		if ( CommonUtil.isNotEmpty( shopDTO.getSelectCouponsId() ) ) {
-		    selectCouponsId = shopDTO.getSelectCouponsId();
-		}
-		for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合
-
-		}
+	    } else {
+		isFenbi = false;
+	    }
+	    if ( !isFenbi ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
 	    }
 	}
-
-	return params;
+	if ( selectPayWayId == 4 ) {
+	    boolean isJifen = true;
+	    if ( CommonUtil.isNotEmpty( member.getIntegral() ) ) {
+		double fenbi = member.getIntegral();
+		if ( fenbi < productTotalMoney || fenbi < 0 ) {
+		    isJifen = false;
+		}
+	    } else {
+		isJifen = false;
+	    }
+	    if ( !isJifen ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
+	    }
+	}
     }
 
-    /**
-     * 计算订单信息
-     */
-    public PhoneAddOrderDTO calculateOrder( PhoneAddOrderDTO params ) {
-	for ( PhoneAddOrderBusDTO busDTO : params.getBusResultList() ) {//循环商家集合
-	    for ( PhoneAddOrderShopDTO shopDTO : busDTO.getShopResultList() ) {//循环店铺集合
-		int selectCouponsId = 0;//选中的优惠券id
-		if ( CommonUtil.isNotEmpty( shopDTO.getSelectCouponsId() ) ) {
-		    selectCouponsId = shopDTO.getSelectCouponsId();
-		}
-		for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合
-
-		}
-	    }
-	}
-
-	return params;
-    }
 }

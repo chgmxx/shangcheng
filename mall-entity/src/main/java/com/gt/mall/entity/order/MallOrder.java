@@ -273,23 +273,34 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
      */
     @TableField( "flow_recharge_status" )
     private Integer flowRechargeStatus;
-    /**
-     * 买家用户名称
-     */
-    @TableField( "member_name" )
-    private String  memberName;
 
+    @TableField("member_name")
+    private String memberName;
+    /**
+     * 其它快递公司的物流名称
+     */
+    @TableField( "express_name" )
+    private String  expressName;
     /**
      * 订单使用积分的数量
      */
     @TableField( "use_jifen" )
-    private double useJifen;
-
+    private Double  useJifen;
     /**
      * 订单使用粉币的数量
      */
     @TableField( "use_fenbi" )
-    private double useFenbi;
+    private Double  useFenbi;
+    /**
+     * 使用卡券的id
+     */
+    @TableField( "coupon_id" )
+    private Integer couponId;
+    /**
+     * 联盟卡id
+     */
+    @TableField( "union_card_id" )
+    private Integer unionCardId;
 
     @TableField( exist = false )
     private Integer updateDay;//修改订单的天数

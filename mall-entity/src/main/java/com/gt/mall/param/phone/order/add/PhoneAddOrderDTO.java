@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 提交订单参数
@@ -43,5 +45,28 @@ public class PhoneAddOrderDTO implements Serializable {
 
     @ApiModelProperty( name = "selectMemberAddressId", value = "会员地址id" )
     private Integer selectMemberAddressId;
+
+    @ApiModelProperty( name = "orderType", value = "订单类型 1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品" )
+    private Integer orderType;
+
+    @ApiModelProperty( name = "flowPhone", value = "流量充值需要传的手机号码" )
+    private String flowPhone;
+
+    @ApiModelProperty( name = "unionCardId", value = "联盟卡id" )
+    private Integer unionCardId;
+
+    @ApiModelProperty( name = "shopCartIds", value = "购物车id，多个用逗号隔开" )
+    private String shopCartIds;
+
+    /******************************** 以下参数 不需要前端传值，用作后台计算和生成订单 ********************************/
+
+    @ApiModelProperty( name = "productMap", value = "商品集合", hidden = true )
+    private Map< Integer,Object > productMap = new HashMap<>();
+
+    @ApiModelProperty( name = "wxShopIds", value = "门店id ，多个以逗号分割", hidden = true )
+    private String wxShopIds = "";
+
+    @ApiModelProperty( name = "busIds", value = "商家id，多个以逗号分割", hidden = true )
+    private String busIds = "";
 
 }

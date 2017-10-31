@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -294,9 +295,23 @@ public class CommonUtil {
 	return b1.divide( b2, scale, BigDecimal.ROUND_HALF_UP ).doubleValue();
     }
 
+    private static final int DEF_DIV_SCALE = 10;
+
+    /**
+     * 除法返回 整数
+     *
+     * @param d1 d1
+     * @param d2 d2
+     *
+     * @return 整数
+     */
+    public static Integer divInteger( double d1, double d2 ) {
+	return (int) div( d1, d2, DEF_DIV_SCALE );
+
+    }
+
     /**
      * 保留2位小数（四舍五入）
-     *
      */
     public static Double getDecimal_2( Double d ) {
 	if ( d != null ) {
@@ -671,6 +686,31 @@ public class CommonUtil {
 	    raill = raill / 1000;
 	}
 	return raill;
+    }
+
+    /**
+     * 小数处理（格式化）
+     */
+    public static Double formatDoubleNumber( Double number ) {
+	DecimalFormat df = new DecimalFormat( "######0.00" );
+	return CommonUtil.toDouble( df.format( number ) );
+    }
+
+    /**
+     * 获取联盟的支付方式
+     *
+     * @param payWay 订单的支付方式
+     */
+    public static int getUnionType( int payWay ) {
+	int orderType = payWay;
+	if ( payWay == 9 ) {//支付宝
+	    orderType = 2;
+	} else if ( payWay == 2 ) {//货到付款
+	    orderType = 3;
+	} else if ( payWay == 6 ) {//到店支付
+	    orderType = 0;
+	}
+	return orderType;
     }
 
 }

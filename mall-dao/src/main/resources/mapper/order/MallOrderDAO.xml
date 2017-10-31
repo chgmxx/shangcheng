@@ -54,8 +54,11 @@
         <result column="flow_phone" property="flowPhone"/>
         <result column="flow_recharge_status" property="flowRechargeStatus"/>
         <result column="member_name" property="memberName" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
+        <result column="express_name" property="expressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="union_card_id" property="unionCardId"/>
     </resultMap>
 
     <resultMap id="MoreResultMap" type="com.gt.mall.entity.order.MallOrder">
@@ -111,8 +114,11 @@
         <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR"/>
         <result column="flow_phone" property="flowPhone" jdbcType="VARCHAR"/>
         <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
+        <result column="express_name" property="expressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="union_card_id" property="unionCardId"/>
         <collection property="mallOrderDetail" column="id" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -221,8 +227,11 @@
         <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR"/>
         <result column="flow_phone" property="flowPhone" jdbcType="VARCHAR"/>
         <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
+        <result column="express_name" property="expressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="union_card_id" property="unionCardId"/>
         <collection property="mallOrderDetail" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -307,7 +316,8 @@
         order_start, order_pay_way, delivery_method, appointment_name, appointment_telephone, appointment_time,invoice_title,
         take_their_id, is_message_notice, buyer_user_id, seller_user_id, shop_id, order_status, create_time,order_pay_no,
         pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,is_wallet,
-        order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi
+        order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi,
+        , express_name , use_jifen , use_fenbi , coupon_id , union_card_id
     </sql>
 
     <sql id="More_Column_List">
@@ -346,7 +356,8 @@
         d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,t.shop_id,s.sto_name,t.order_old_money,t.coupon_code as couponCode,p.is_return,
         d.pro_type_id,t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time
         ,t.order_pid,d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
-        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str, t.flow_phone,t.buyer_user_type,t.is_wallet
+        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,
+        t.flow_phone,t.buyer_user_type,t.is_wallet,t.use_jifen,t.use_fenbi,t.coupon_id,t.union_card_id
     </sql>
 
     <select id="selectOrderByAuctId" resultType="java.util.Map">
@@ -1137,7 +1148,7 @@
                 <if test="activityId != null">
                     and o.p_join_id = #{activityId}
                 </if>
-                and  o.`order_status` > 1 AND o.order_status &lt; 5
+                and o.`order_status` > 1 AND o.order_status &lt; 5
                 <if test="productId != null">
                     AND d.`product_id` = #{productId}
                 </if>

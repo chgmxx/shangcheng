@@ -28,6 +28,7 @@ public class MemberPayServiceImpl implements MemberPayService {
      *
      * @return 对象
      */
+    @Override
     public MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity ) {
 	String data = HttpSignUtil.signHttpSelect( mallAllEntity, MEMBER_COUNT_URL + "memberCountMoneyByShop" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
@@ -43,6 +44,7 @@ public class MemberPayServiceImpl implements MemberPayService {
      *
      * @return 对象
      */
+    @Override
     public Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
 	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
     }

@@ -1,8 +1,12 @@
 package com.gt.mall.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.product.MallProduct;
 import org.apache.log4j.Logger;
+
+import java.util.Map;
 
 public class ProductUtil {
 
@@ -46,6 +50,46 @@ public class ProductUtil {
 	    JedisUtil.map( key, product.getId().toString(), ( viewNum + 1 ) + "" );
 	}
 	return viewNum;
+    }
+
+    public static JSONObject getCardReceive( Map< String,Object > cardMap ) {
+	JSONObject obj = new JSONObject();
+	JSONArray cardList = new JSONArray();
+	JSONArray cardmessage = new JSONArray();
+	double cardMoney = 0;
+	if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
+	    JSONObject cardObj = JSONObject.parseObject( cardMap.get( "recevieMap" ).toString() );
+	    cardMoney = cardObj.getDouble( "buyMoney" );
+	    if ( CommonUtil.isNotEmpty( cardObj.get( "cardMessage" ) ) ) {
+		cardmessage = JSONArray.parseArray( cardObj.get( "cardMessage" ).toString() );
+	    }
+	    obj.put( "cardRecevieId", cardObj.getInteger( "id" ) );
+	}
+	if ( CommonUtil.isNotEmpty( cardMap.get( "returnDuofencardList" ) ) ) {
+	    cardList = JSONArray.parseArray( cardMap.get( "returnDuofencardList" ).toString() );
+	}
+	if ( cardmessage != null && cardmessage.size() > 0 && cardList != null && cardList.size() > 0 ) {
+	    for ( Object object : cardmessage ) {
+		int isGuoqi = 0;
+		JSONObject card = JSONObject.parseObject( object.toString() );
+		for ( Object object2 : cardList ) {
+		    JSONObject cardObj = JSONObject.parseObject( object2.toString() );
+		    if ( card.getString( "cardId" ).equals( cardObj.getString( "id" ) ) ) {
+			isGuoqi = cardObj.getInteger( "guoqi" );
+		    }
+		    if ( cardObj.getInteger( "cardType" ) == 4 && cardObj.containsKey( "money" ) && CommonUtil.isNotEmpty( cardObj.get( "money" ) ) ) {
+			cardMoney = cardObj.getDouble( "money" );
+		    }
+		}
+		card.put( "isGuoqi", isGuoqi );
+	    }
+	    obj.put( "cardmessage", cardmessage );
+	    //	    return cardmessage;
+	}
+	if ( cardMoney > 0 ) {
+	    obj.put( "cardMoney", cardMoney );
+	}
+	return obj;
     }
 
 }
