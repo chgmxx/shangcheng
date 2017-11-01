@@ -80,6 +80,9 @@
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(g.id)
         from t_mall_seckill g where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的秒杀 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始秒杀 -->
             and g.s_start_time &gt; now() and g.s_end_time &gt; now()
         </if>
@@ -105,6 +108,9 @@
         left join t_mall_store s on g.shop_id = s.id
         left join t_mall_seckill_join j on g.id=j.seckill_id
         where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的秒杀 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始秒杀 -->
             and g.s_start_time &gt; now() and g.s_end_time &gt; now()
         </if>

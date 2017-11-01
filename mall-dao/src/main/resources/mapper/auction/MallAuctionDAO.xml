@@ -84,14 +84,20 @@
     <select id="selectByCount" resultType="java.lang.Integer">
         select count(g.id)
         from t_mall_auction g where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的拍卖 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始拍卖 -->
             and g.auc_start_time > now() and g.auc_end_time > now()
+            and g.is_use = 1
         </if>
         <if test="type == 1"><!-- 进行中的拍卖 -->
             and g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time
+            and g.is_use = 1
         </if>
         <if test="type == 2"><!-- 已结束的拍卖 -->
             and g.auc_start_time &lt; now() and g.auc_end_time &lt;= now()
+            and g.is_use = 1
         </if>
         <if test="null != shoplist and shoplist.size > 1">
             and g.shop_id in
@@ -99,9 +105,10 @@
                 #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="null != shoplist and shoplist.size == 1">
-            and g.shop_id = #{shoplist[0]}
+        <if test="shopId != null and shopId != ''">
+            AND a.shop_id = #{shopId,jdbcType=INTEGER}
         </if>
+
     </select>
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map">
         select
@@ -109,14 +116,20 @@
         from t_mall_auction g
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的拍卖 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始拍卖 -->
             and g.auc_start_time > now() and g.auc_end_time > now()
+            and g.is_use = 1
         </if>
         <if test="type == 1"><!-- 进行中的拍卖 -->
             and g.auc_start_time &lt;= now() and now() &lt; g.auc_end_time
+            and g.is_use = 1
         </if>
         <if test="type == 2"><!-- 已结束的拍卖 -->
             and g.auc_start_time &lt; now() and g.auc_end_time &lt;= now()
+            and g.is_use = 1
         </if>
         <if test="null != shoplist and shoplist.size > 1">
             and g.shop_id in
@@ -124,8 +137,8 @@
                 #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="null != shoplist and shoplist.size == 1">
-            and g.shop_id = #{shoplist[0]}
+        <if test="shopId != null and shopId != ''">
+            AND a.shop_id = #{shopId,jdbcType=INTEGER}
         </if>
         group by g.id
         order by g.create_time desc

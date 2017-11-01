@@ -96,6 +96,7 @@ public class MallStoreCertificationController extends BaseController {
 		    associative.setImageUrl( docImg[i] );
 		    mallImageAssociativeService.insert( associative );
 		}
+		JedisUtil.del( Constants.REDIS_KEY+code );//申请超级销售员成功，删除验证码
 	    } else {
 		mallStoreCertService.updateById( storeCert );
 		/*List< MallImageAssociative > imageList = JSONArray.parseArray( params.get( "imageList" ).toString(), MallImageAssociative.class );*/
