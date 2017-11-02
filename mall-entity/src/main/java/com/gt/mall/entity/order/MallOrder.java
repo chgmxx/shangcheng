@@ -274,8 +274,8 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     @TableField( "flow_recharge_status" )
     private Integer flowRechargeStatus;
 
-    @TableField("member_name")
-    private String memberName;
+    @TableField( "member_name" )
+    private String  memberName;
     /**
      * 其它快递公司的物流名称
      */
@@ -292,15 +292,41 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     @TableField( "use_fenbi" )
     private Double  useFenbi;
     /**
-     * 使用卡券的id
-     */
-    @TableField( "coupon_id" )
-    private Integer couponId;
-    /**
      * 联盟卡id
      */
     @TableField( "union_card_id" )
     private Integer unionCardId;
+    /**
+     * 使用卡券的id
+     */
+    @TableField( "coupon_id" )
+    private Integer couponId;
+
+    /**
+     * 粉币优惠的金额
+     */
+    @TableField( "fenbi_discount_money" )
+    private Double  fenbiDiscountMoney;
+    /**
+     * 积分优惠的金额
+     */
+    @TableField( "jifen_discount_money" )
+    private Double  jifenDiscountMoney;
+    /**
+     * 总共优惠的金额
+     */
+    @TableField( "discount_money" )
+    private Double  discountMoney;
+    /**
+     * 优惠券类型  1 微信优惠券  2多粉优惠券
+     */
+    @TableField( "coupon_type" )
+    private Integer couponType;
+    /**
+     * 优惠券使用数量
+     */
+    @TableField( "coupon_use_num" )
+    private Integer couponUseNum;
 
     @TableField( exist = false )
     private Integer updateDay;//修改订单的天数
@@ -313,12 +339,6 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
 
     @TableField( exist = false )
     private List< MallOrderDetail > mallOrderDetail;        //商品详情
-
-    @TableField( exist = false )
-    double jifenDiscountMoney = 0;//使用积分总共优惠的金额
-
-    @TableField( exist = false )
-    double fenbiDiscountMoney = 0;//使用粉币总共优惠的金额
 
     @TableField( exist = false )
     double yhqDiscountMoney = 0;//使用优惠券总共优惠的金额

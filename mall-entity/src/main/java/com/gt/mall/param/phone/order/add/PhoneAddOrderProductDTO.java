@@ -53,7 +53,7 @@ public class PhoneAddOrderProductDTO implements Serializable {
     @ApiModelProperty( name = "totalPrice", value = "商品总价（商品价格*数量）" )
     private double totalPrice;
 
-    @ApiModelProperty( name = "productWeight", value = "商品总量" )
+    @ApiModelProperty( name = "productWeight", value = "商品重量" )
     private double productWeight = 0;
 
     @ApiModelProperty( name = "productNum", value = "商品数量" )
@@ -81,7 +81,7 @@ public class PhoneAddOrderProductDTO implements Serializable {
     @ApiModelProperty( name = "pfSpecResultList", value = "批发规格集合（批发商品  且 有规格则必传）" )
     private List< PhoneOrderPifaSpecDTO > pfSpecResultList;
 
-    @ApiModelProperty( name = "cardReceiveId", value = "卡券id" )
+    @ApiModelProperty( name = "cardReceiveId", value = "卡券id", hidden = true )
     private Integer cardReceiveId;
 
     @ApiModelProperty( name = "activityId", value = "活动id(如果是活动商品，必传)" )
@@ -133,5 +133,11 @@ public class PhoneAddOrderProductDTO implements Serializable {
 
     @ApiModelProperty( name = "useUnionDiscount", value = "是否已经使用了联盟折扣", hidden = true )
     private boolean useUnionDiscount = false;
+
+    @ApiModelProperty( name = "selectCouponsType", value = "选中优惠券的类型 1 微信优惠券  2多粉优惠券", hidden = true )
+    private Integer selectCouponsType = 0;
+
+    @ApiModelProperty( name = "selectCouponsId", value = "选中优惠券的id" )
+    private Integer selectCouponsId = 0;
 
 }

@@ -72,7 +72,7 @@ public class MallQuartzServiceImpl implements MallQuartzService {
 	    if ( orderList != null && orderList.size() > 0 ) {
 		for ( Map< String,Object > map : orderList ) {
 		    if ( CommonUtil.isNotEmpty( map.get( "id" ) ) ) {
-			List< MallOrderDetail > detailList = mallOrderDetailDAO.selectByOrderId( map );
+			List< MallOrderDetail > detailList = mallOrderDetailDAO.selectByOrderId( CommonUtil.toInteger( map.get( "id" ) ) );
 			if ( detailList != null && detailList.size() > 0 ) {
 			    MallOrderDetail mallOrderDetail = detailList.get( 0 );
 			    boolean flag = mallOrderReturnService.returnEndOrder( mallOrderDetail.getOrderId(), mallOrderDetail.getId() );

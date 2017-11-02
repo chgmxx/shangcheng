@@ -32,7 +32,7 @@ public class PhoneOrderPifaSpecDTO implements Serializable {
     @ApiModelProperty( name = "pfPrice", value = "批发价" )
     private double pfPrice;
 
-    @ApiModelProperty( name = "totalNum", value = "商品总数" )
+    @ApiModelProperty( name = "totalNum", value = "批发商品数" )
     private int totalNum;
 
 }

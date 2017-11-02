@@ -633,4 +633,14 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	}
 	return true;
     }
+
+    @Override
+    public boolean orderIsCanRenturn( Integer orderId, Integer orderDetailId, Integer groupBuyid ) {
+	MallGroupBuy mallGroupBuy = mallGroupBuyDAO.selectById( groupBuyid );
+	if ( CommonUtil.isEmpty( mallGroupBuy ) ) {
+	    return false;
+	}
+	int joinNum = mallGroupJoinService.selectGroupJoinPeopleNum( groupBuyid, orderId, orderDetailId );
+	return joinNum >= mallGroupBuy.getGPeopleNum();
+    }
 }

@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @Api( value = "phoneMember", description = "我的页面接口（手机端）", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
 @Controller
-@RequestMapping( "phoneMember" )
+@RequestMapping( "phoneMember/L6tgXlBFeK/" )
 public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 
     public static final Logger logger = Logger.getLogger( PhoneMemberNewController.class );
@@ -53,7 +53,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "进入我的页面的接口", notes = "查询我的页面信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/toUser", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "toUser", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneMemberResult > toUser( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    PhoneMemberResult result = new PhoneMemberResult();
@@ -131,7 +131,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 		    @ApiImplicitParam( name = "pageUrl", value = "当前页面地址", paramType = "query", required = true, dataType = "string" )
     } )
     @ResponseBody
-    @PostMapping( value = "79B4DE7C/isLogin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @PostMapping( value = "isLogin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse isLogin( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断

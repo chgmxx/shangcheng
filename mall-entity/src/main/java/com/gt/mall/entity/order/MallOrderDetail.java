@@ -199,6 +199,11 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
      */
     @TableField( "flow_record_id" )
     private Integer    flowRecordId;
+    /**
+     * 优惠券类型  1 微信优惠券  2多粉优惠券
+     */
+    @TableField( "coupon_type" )
+    private Integer    couponType;
 
     @TableField( exist = false )
     private MallOrderReturn orderReturn;//退款

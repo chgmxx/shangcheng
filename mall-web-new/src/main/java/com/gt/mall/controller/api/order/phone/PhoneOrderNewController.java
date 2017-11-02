@@ -11,13 +11,18 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneBuyNowDTO;
 import com.gt.mall.param.phone.PhoneLoginDTO;
+import com.gt.mall.param.phone.order.PhoneOrderListDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderDTO;
+import com.gt.mall.param.phone.order.PhoneToOrderPifatSpecificaDTO;
 import com.gt.mall.param.phone.order.add.PhoneAddOrderDTO;
 import com.gt.mall.result.phone.order.PhoneToOrderResult;
+import com.gt.mall.result.phone.order.detail.PhoneOrderResult;
+import com.gt.mall.result.phone.order.list.PhoneOrderListResult;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
-import com.gt.mall.service.web.order.MallOrderNewService;
+import com.gt.mall.service.web.order.MallOrderListService;
 import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.order.MallOrderSubmitService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
@@ -57,13 +62,15 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallProductNewService    mallProductNewService;//新的商品业务处理类
     @Autowired
-    private MallOrderNewService      mallOrderNewService;//新的订单业务处理类
+    private MallOrderSubmitService   mallOrderSubmitService;//提交订单业务处理类
     @Autowired
     private MallTakeTheirTimeService mallTakeTheirTimeService;//上门自提时间业务处理类
     @Autowired
     private MallTakeTheirService     mallTakeTheirService;//上门自提业务处理类
     @Autowired
     private MallOrderService         mallOrderService;//订单业务处理类
+    @Autowired
+    private MallOrderListService     mallOrderListService;//订单列表业务处理类
 
     @ApiOperation( value = "立即购买接口", notes = "用户点击立即购买", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -77,6 +84,12 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    }
 	    mallProductNewService
 			    .calculateInventory( params.getProductId(), params.getProductSpecificas(), params.getProductNum(), params.getType(), params.getActivityId(), memberId );
+	    if ( CommonUtil.isNotEmpty( params.getPifaSpecificaDTOList() ) && params.getPifaSpecificaDTOList().size() > 0 ) {
+		for ( PhoneToOrderPifatSpecificaDTO pifatSpecificaDTO : params.getPifaSpecificaDTOList() ) {
+		    mallProductNewService.calculateInventory( params.getProductId(), pifatSpecificaDTO.getSpecificaValueIds(), pifatSpecificaDTO.getProductNum(), params.getType(),
+				    params.getActivityId(), memberId );
+		}
+	    }
 
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
@@ -101,7 +114,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    PhoneToOrderResult result = mallOrderNewService.toOrder( params, member, loginDTO );
+	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( BusinessException e ) {
@@ -155,13 +168,13 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "submitOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > submitOrder( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneAddOrderDTO params, PhoneLoginDTO loginDTO ) {
+		    @RequestBody PhoneAddOrderDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    Map< String,Object > resultMap = mallOrderNewService.submitOrder( params, member, loginDTO.getBrowerType() );
+	    Map< String,Object > resultMap = mallOrderSubmitService.submitOrder( params, member, loginDTO.getBrowerType() );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	} catch ( BusinessException e ) {
@@ -180,7 +193,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     /**
      * 支付成功回调
      */
-    @RequestMapping( value = "/79B4DE7C/paySuccessModified" )
+    @ApiOperation( value = "支付成功回调的接口", notes = "支付成功回调", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "/79B4DE7C/paySuccessModified" )
     public ServerResponse paySuccessModified( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	logger.info( " 支付成功回调参数：" + JSONObject.fromObject( params ) );
 	try {
@@ -198,6 +213,44 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    return ServerResponse.createByErrorMessage( "支付成功回调失败" );
 	}
 	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "手机端订单列表的接口", notes = "我的订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "orderList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhoneOrderListResult > getTakeTheir( HttpServletRequest request, HttpServletResponse response,
+		    PhoneOrderListDTO params, PhoneLoginDTO loginDTO ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    //查询订单列表
+	    PhoneOrderListResult result = mallOrderListService.orderList( params, loginDTO, MallSessionUtils.getLoginMember( request, loginDTO.getBusId() ) );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	} catch ( Exception e ) {
+	    logger.error( "手机端订单列表的接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询我的订单失败" );
+	}
+    }
+
+    @ApiOperation( value = "手机端订单详情接口", notes = "订单详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "orderDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhoneOrderResult > orderDetail( HttpServletRequest request, HttpServletResponse response,
+		    Integer orderId, PhoneLoginDTO loginDTO ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    //查询订单列表
+	    PhoneOrderResult result = mallOrderListService.getOrderDetail( orderId, loginDTO.getBusId() );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	} catch ( Exception e ) {
+	    logger.error( "手机端订单详情接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询订单详情失败" );
+	}
     }
 
 }

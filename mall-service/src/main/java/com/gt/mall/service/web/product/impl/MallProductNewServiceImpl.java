@@ -159,7 +159,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	double productPrice = CommonUtil.toDouble( product.getProPrice() );//商品价格
 	double productCostPrice = CommonUtil.toDouble( product.getProCostPrice() );//商品原价
 
-	if ( product.getIsSpecifica().toString().equals( "1" ) ) {//商品有规格
+	if ( "1".equals( product.getIsSpecifica().toString() ) ) {//商品有规格
 	    //查询规格价
 	    MallProductInventory inven = mallProductInventoryService.selectByIsDefault( params.getProductId() );
 	    if ( inven != null ) {
@@ -180,7 +180,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    isShowAddShop = 0;
 	    result = mallAuctionService.getAuctionProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
 	} else if ( params.getType() == 5 ) {//查询粉币商品
-	    if ( product.getIsFenbiChangePro().toString().equals( "1" ) ) {
+	    if ( "1".equals( product.getIsFenbiChangePro().toString() ) ) {
 		activityPrice = CommonUtil.toDouble( product.getChangeFenbi() );
 		isShowAddShop = 0;
 		result.setUnit( "粉币" );
@@ -380,7 +380,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 			oldPrice = invPrice;
 			invPrice = auction.getNowPrice();
 		    } else if ( params.getType() == 5 ) {//粉币
-			if ( product.getIsFenbiChangePro().toString().equals( "1" ) ) {
+			if ( "1".equals( product.getIsFenbiChangePro().toString() ) ) {
 			    invPrice = CommonUtil.toDouble( product.getChangeFenbi() );
 			}
 		    } else if ( params.getType() == 6 && timeList != null && timeList.size() > 0 ) {//预售
@@ -440,7 +440,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( isSpe == 1 ) {//是否有规格（0没有 1有）
 	    Map< String,Object > invParams = new HashMap<>();
 	    invParams.put( "proId", proId );
-	    String[] specifica = ( proSpecificas.toString() ).split( "," );
+	    String[] specifica = proSpecificas.toString().split( "," );
 	    StringBuilder ids = new StringBuilder( "0" );
 	    for ( String valueIds : specifica ) {
 		if ( CommonUtil.isNotEmpty( valueIds ) ) {
@@ -457,13 +457,13 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( ids.toString() ) ) {
-		if ( !ids.toString().equals( "0" ) ) {
+		if ( !"0".equals( ids.toString() ) ) {
 		    invParams.put( "specificaIds", ids.substring( 2, ids.length() ) );
 		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( invParams );
 		    if ( null != proInv && CommonUtil.isNotEmpty( proInv ) ) {
 			invId = proInv.getId();
 			//判断商家是否有进销存
-			if ( isJxc == 0 || !pro.getProTypeId().toString().equals( "0" ) ) {//没有进销存才能判断商城的库存
+			if ( isJxc == 0 || !"0".equals( pro.getProTypeId().toString() ) ) {//没有进销存才能判断商城的库存
 			    if ( proInv.getInvNum() < proNum ) {
 				throw new BusinessException( ResponseEnums.STOCK_NULL_ERROR.getCode(), ResponseEnums.STOCK_NULL_ERROR.getDesc() );
 			    }
@@ -485,8 +485,8 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		throw new BusinessException( ResponseEnums.INV_NULL_ERROR.getCode(), ResponseEnums.INV_NULL_ERROR.getDesc() );
 	    }
 	}
-	if ( null == isSpe || CommonUtil.toString( isSpe ).equals( "" ) || isSpe == 0 ) {
-	    if ( erpInvId == 0 && isJxc == 1 && pro.getProTypeId().toString().equals( "0" ) ) {
+	if ( null == isSpe || "".equals( CommonUtil.toString( isSpe ) ) || isSpe == 0 ) {
+	    if ( erpInvId == 0 && isJxc == 1 && "0".equals( pro.getProTypeId().toString() ) ) {
 		erpInvId = pro.getErpInvId();
 	    }
 	    if ( pro.getProStockTotal() < proNum ) {

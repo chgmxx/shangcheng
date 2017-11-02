@@ -452,7 +452,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		isShouHuo = 1;
 	    }
 	    List< Map< String,Object > > detailList = new ArrayList< Map< String,Object > >();
-	    List< MallOrderDetail > list = orderDetailDAO.selectByOrderId( params );
+	    List< MallOrderDetail > list = orderDetailDAO.selectByOrderId( order.getId() );
 	    if ( list != null && list.size() > 0 ) {
 		for ( MallOrderDetail detail : list ) {
 		    Map< String,Object > detailMap = new HashMap< String,Object >();

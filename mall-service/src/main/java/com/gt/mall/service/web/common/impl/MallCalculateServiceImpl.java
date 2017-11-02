@@ -147,6 +147,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	//	double proUnionYouhuiTotal = 0;//已经优惠的联盟总额
 	for ( PhoneAddOrderShopDTO shopDTO : shopDTOList ) {//循环店铺集合
 	    double shopProductNewTotal = 0;//保存订单优惠后的商品总额
+	    double totalYouhuiMoney = 0;//保存订单优惠的金额
 	    //平摊联盟优惠
 	    for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合
 		double productNewTotal = productDTO.getProductNewTotalPrice();//商品优惠前的价格
@@ -171,7 +172,9 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		productDTO.setProductNewTotalPrice( discountHouPrice );
 
 		shopProductNewTotal = CommonUtil.add( shopProductNewTotal, productDTO.getProductNewTotalPrice() );//累加店铺优惠后的金额
+		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, productYouhuiPrice );
 	    }
+	    shopDTO.setTotalYouhuiMoney( CommonUtil.add( shopDTO.getTotalYouhuiMoney(), totalYouhuiMoney ) );
 	    shopDTO.setTotalNewMoney( CommonUtil.formatDoubleNumber( shopProductNewTotal ) );
 	}
 	return shopDTOList;
@@ -220,6 +223,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	//	double proUnionYouhuiTotal = 0;//已经优惠的联盟总额
 	for ( PhoneAddOrderShopDTO shopDTO : shopDTOList ) {//循环店铺集合
 	    double shopProductNewTotal = 0;//保存订单优惠后的商品总额
+	    double totalYouhuiMoney = 0;
 	    for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//商品集合
 		if ( CommonUtil.isEmpty( productDTO.getIsCanUseDiscount() ) && !"1".equals( productDTO.getIsCanUseDiscount().toString() ) ) {
 		    shopProductNewTotal = CommonUtil.add( shopProductNewTotal, productDTO.getProductNewTotalPrice() );
@@ -243,7 +247,9 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		productDTO.setUseDiscountYouhuiPrice( productYouhuiPrice );
 		productDTO.setProductNewTotalPrice( discountHouPrice );
 		shopProductNewTotal = CommonUtil.add( shopProductNewTotal, productDTO.getProductNewTotalPrice() );
+		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, productYouhuiPrice );
 	    }
+	    shopDTO.setTotalYouhuiMoney( CommonUtil.add( shopDTO.getTotalYouhuiMoney(), totalYouhuiMoney ) );
 	    shopDTO.setTotalNewMoney( shopProductNewTotal );
 
 	}
@@ -326,6 +332,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    double useCouponTotalPrice = 0;//已使用优惠券的商品金额
 	    double useCouponTotalNum = 0;//已使用优惠券的商品数量
 	    double shopProductNewTotal = 0;//保存订单优惠后的商品总额
+	    double totalYouhuiMoney = 0;
 	    //平摊 每个商品使用优惠券的 优惠金额
 	    for ( PhoneAddOrderProductDTO productDTO : productDTOList ) {//循环商品集合
 		boolean isCanUseYhq = CommonUtil.isEmpty( productDTO.getIsCanUseYhq() ) || !"1".equals( productDTO.getIsCanUseYhq().toString() );
@@ -335,6 +342,8 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		    shopProductNewTotal = CommonUtil.add( shopProductNewTotal, productDTO.getProductNewTotalPrice() );
 		    continue;
 		}
+		productDTO.setSelectCouponsId( couponsId );
+		productDTO.setSelectCouponsType( cardFrom );
 		double productTotalPrice = productDTO.getProductNewTotalPrice();//商品优惠前的总价
 		double productYouHuiHouTotalPrice = productTotalPrice;//商品优惠后的总价
 		double couponYouhuiPrice = 0;//优惠券优惠的金额
@@ -367,7 +376,12 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		useCouponTotalNum++;
 
 		shopProductNewTotal = CommonUtil.add( shopProductNewTotal, productDTO.getProductNewTotalPrice() );
+		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, couponYouhuiPrice );
 	    }
+	    shopDTO.setSelectCouponsId( couponsId );
+	    shopDTO.setSelectCouponsType( cardFrom );
+	    shopDTO.setSelectCouponsNum( couponNum > 0 ? couponNum : 0 );
+	    shopDTO.setTotalYouhuiMoney( CommonUtil.add( shopDTO.getTotalYouhuiMoney(), totalYouhuiMoney ) );
 	    shopDTO.setTotalNewMoney( CommonUtil.formatDoubleNumber( shopProductNewTotal ) );
 	}
 	return shopDTOList;
@@ -408,6 +422,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	for ( PhoneAddOrderShopDTO shopDTO : shopDTOList ) {//循环店铺集合
 	    double useFenbiNum = 0;
 	    double shopYouhuiHouTotalPrice = 0;//保存 店铺下 商品优惠后的总额
+	    double totalYouhuiMoney = 0;//保存订单下优惠的总额
 	    for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合
 		boolean isCanUseCoupon = CommonUtil.isEmpty( productDTO.getIsCanUseFenbi() ) || !"1".equals( productDTO.getIsCanUseFenbi().toString() );//是否能使用粉币
 		//已优惠粉币的商品数量 = 店铺下能使用粉币优惠的商品数量  && 已使用粉币优惠的 == 已使用粉币的优惠金额
@@ -436,9 +451,12 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 
 		shopYouhuiHouTotalPrice = CommonUtil.add( shopYouhuiHouTotalPrice, productDTO.getProductNewTotalPrice() );
 		useFenbiNum += productDTO.getUseFenbiNum();
+		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, fenbiYouhuiPrice );
 	    }
 	    shopDTO.setTotalNewMoney( CommonUtil.formatDoubleNumber( shopYouhuiHouTotalPrice ) );
 	    shopDTO.setUseFenbi( useFenbiNum );
+	    shopDTO.setFenbiYouhuiMoney( totalYouhuiMoney );
+	    shopDTO.setTotalYouhuiMoney( CommonUtil.add( shopDTO.getTotalYouhuiMoney(), totalYouhuiMoney ) );
 	}
 	return shopDTOList;
     }
@@ -478,6 +496,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	for ( PhoneAddOrderShopDTO shopDTO : shopDTOList ) {//循环店铺集合
 	    double useJifenNum = 0;
 	    double shopProductNewTotal = 0;//保存 店铺下 商品优惠后的总额
+	    double totalYouhuiMoney = 0;//保存 订单下 商品优惠的金额
 	    for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合
 		boolean isCanUseJifen = CommonUtil.isEmpty( productDTO.getIsCanUseJifen() ) || !"1".equals( productDTO.getIsCanUseJifen().toString() );
 		//已优惠积分的商品数量 = 店铺下能使用积分优惠的商品数量  && 已使用积分优惠的总额 == 已使用积分的优惠金额
@@ -508,9 +527,12 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 
 		shopProductNewTotal = CommonUtil.add( shopProductNewTotal, productDTO.getProductNewTotalPrice() );
 		useJifenNum += productDTO.getUseJifenNum();
+		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, jifenYouhuiPrice );
 	    }
 	    shopDTO.setTotalNewMoney( CommonUtil.formatDoubleNumber( shopProductNewTotal ) );
 	    shopDTO.setUseJifen( useJifenNum );
+	    shopDTO.setJifenYouhuiMoney( totalYouhuiMoney );
+	    shopDTO.setTotalYouhuiMoney( CommonUtil.add( shopDTO.getTotalYouhuiMoney(), totalYouhuiMoney ) );
 	}
 
 	return shopDTOList;

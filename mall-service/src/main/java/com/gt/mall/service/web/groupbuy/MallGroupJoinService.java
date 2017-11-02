@@ -15,31 +15,44 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallGroupJoinService extends BaseService<MallGroupJoin> {
+public interface MallGroupJoinService extends BaseService< MallGroupJoin > {
 
     /**
      * 获取开团人员
      *
      * @param params groupBuyId：团购id，joinUserId：用户id,buyerUserId:用户Id
      * @param member 用户
+     *
      * @return List
      */
-    List<Map<String, Object>> getJoinGroup(Map<String, Object> params, Member member);
+    List< Map< String,Object > > getJoinGroup( Map< String,Object > params, Member member );
 
     /**
      * 查询团购参与人
      *
      * @param params groupBuyId：团购id，joinId：参团id
+     *
      * @return 参与人
      */
-    List<Map<String, Object>> selectJoinByjoinId(Map<String, Object> params);
+    List< Map< String,Object > > selectJoinByjoinId( Map< String,Object > params );
 
     /**
      * 查询用户参加团购的数量
      *
      * @param params groupBuyId：团购id，joinUserId：用户id
+     *
      * @return 数量
      */
-    int selectCountByBuyId(Map<String, Object> params);
+    int selectCountByBuyId( Map< String,Object > params );
+
+    /**
+     * 查询拼团的参团人数
+     *
+     * @param groupBuyId 团购id
+     * @param orderId    订单id
+     *
+     * @return 参团人数
+     */
+    int selectGroupJoinPeopleNum( Integer groupBuyId, Integer orderId ,Integer orderDetailId);
 
 }

@@ -40,7 +40,7 @@ public class PhoneAddOrderShopDTO implements Serializable {
     @ApiModelProperty( name = "totalFreightMoney", value = "运费" )
     private double totalFreightMoney = 0;
 
-    @ApiModelProperty( name = "productResultList", value = "商品集合名称" )
+    @ApiModelProperty( name = "productResultList", value = "商品集合" )
     private List< PhoneAddOrderProductDTO > productResultList;
 
     @ApiModelProperty( name = "couponList", value = "卡券集合" )
@@ -49,6 +49,15 @@ public class PhoneAddOrderShopDTO implements Serializable {
     /*********************************提交订单接口，传值***************************************/
     @ApiModelProperty( name = "selectCouponsId", value = "选中优惠券的id" )
     private Integer selectCouponsId = 0;
+
+    @ApiModelProperty( name = "buyerMessage", value = "买家留言" )
+    private String buyerMessage;
+
+    @ApiModelProperty( name = "selectCouponsNum", value = "选中优惠券的数量", hidden = true )
+    private Integer selectCouponsNum = 0;
+
+    @ApiModelProperty( name = "selectCouponsType", value = "选中优惠券的类型 1 微信优惠券  2多粉优惠券", hidden = true )
+    private Integer selectCouponsType = 0;
 
     @ApiModelProperty( name = "useFenbi", value = "订单使用粉币的数量", hidden = true )
     private double useFenbi = 0;
@@ -59,7 +68,13 @@ public class PhoneAddOrderShopDTO implements Serializable {
     @ApiModelProperty( name = "totalNewMoney", value = "商品优惠后的总价（没包含运费）", hidden = true )
     private double totalNewMoney = 0;
 
-    @ApiModelProperty( name = "buyerMessage", value = "买家留言" )
-    private String buyerMessage;
+    @ApiModelProperty( name = "fenbiYouhuiMoney", value = "粉币优惠金额", hidden = true )
+    private double fenbiYouhuiMoney = 0;
+
+    @ApiModelProperty( name = "jifenYouhuiMoney", value = "积分优惠金额", hidden = true )
+    private double jifenYouhuiMoney = 0;
+
+    @ApiModelProperty( name = "totalYouhuiMoney", value = "订单总共优惠的金额", hidden = true )
+    private double totalYouhuiMoney = 0;
 
 }

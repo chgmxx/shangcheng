@@ -169,7 +169,7 @@ public class CommonUtil {
     public static String blob2String( Object obj ) {
 	String string = null;
 	try {
-	    if ( obj == null || obj.equals( "" ) ) {
+	    if ( obj == null || "".equals( obj ) ) {
 		return "";
 	    }
 	    byte[] bytes = (byte[]) obj;
@@ -313,7 +313,7 @@ public class CommonUtil {
     /**
      * 保留2位小数（四舍五入）
      */
-    public static Double getDecimal_2( Double d ) {
+    public static Double getDecimal( Double d ) {
 	if ( d != null ) {
 	    if ( d.toString().split( "\\." )[1].length() > 2 ) {
 		BigDecimal bg = new BigDecimal( d );
@@ -448,7 +448,7 @@ public class CommonUtil {
 	String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );
 	String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
 	// 文件大小
-	Integer Size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
+	Integer size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
 	// 判断上传图片是否是支持的格式
 
 	String path = PropertiesUtil.getResImagePath() + "/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit
@@ -712,5 +712,6 @@ public class CommonUtil {
 	}
 	return orderType;
     }
+
 
 }

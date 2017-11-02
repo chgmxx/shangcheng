@@ -39,7 +39,7 @@ public class Coupons {
     @ApiModelProperty( name = "addUser", value = "是否允许叠加 0不允许 1已允许" )
     private int addUser = 0;
 
-    @ApiModelProperty( name = "couponNum", value = "优惠券数量" )
+    @ApiModelProperty( name = "couponNum", value = "优惠券数量 允许叠加才显示" )
     private int couponNum = 1;
 
     /************************************* 以下是折扣券需要用到的参数 *************************************/

@@ -1,5 +1,6 @@
 package com.gt.mall.param.phone;
 
+import com.gt.mall.param.phone.order.PhoneToOrderPifatSpecificaDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -8,6 +9,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 分类验证
@@ -61,5 +63,8 @@ public class PhoneBuyNowDTO implements Serializable {
 
     @ApiModelProperty( name = "commission", value = "商品佣金" )
     private double commission = 0;
+
+    @ApiModelProperty( name = "pifaSpecificaDTOList", value = "批发规格集合" )
+    private List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList;
 
 }

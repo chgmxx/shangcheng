@@ -187,4 +187,9 @@ public class Constants {
      */
     public static final int FENBI_RUL_MULTIPLE = 10;
 
+    /**
+     * 订单完成后 能退款的天数
+     */
+    public static final int ORDER_FINISH_RETURN_DAY = 7;
+
 }

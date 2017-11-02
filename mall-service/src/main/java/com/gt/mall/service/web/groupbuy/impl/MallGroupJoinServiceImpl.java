@@ -1,7 +1,9 @@
 package com.gt.mall.service.web.groupbuy.impl;
 
-import com.gt.mall.base.BaseServiceImpl;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.service.inter.member.MemberService;
@@ -92,5 +94,34 @@ public class MallGroupJoinServiceImpl extends BaseServiceImpl< MallGroupJoinDAO,
     @Override
     public int selectCountByBuyId( Map< String,Object > params ) {
 	return groupJoinDAO.selectCountByBuyId( params );
+    }
+
+    @Override
+    public int selectGroupJoinPeopleNum( Integer groupBuyId, Integer orderId, Integer orderDetailId ) {
+	boolean groupBuyIdIsNotNull = CommonUtil.isNotEmpty( groupBuyId ) && groupBuyId > 0;
+	boolean orderIdIsNotNull = CommonUtil.isNotEmpty( orderId ) && orderId > 0;
+	boolean detailIdIsNotNull = CommonUtil.isNotEmpty( orderDetailId ) && orderDetailId > 0;
+	if ( groupBuyIdIsNotNull && orderIdIsNotNull && detailIdIsNotNull ) {
+	    MallGroupJoin groupJoin = new MallGroupJoin();
+	    groupJoin.setGroupBuyId( groupBuyId );
+	    groupJoin.setOrderId( orderId );
+	    groupJoin.setOrderDetailId( orderDetailId );
+	    MallGroupJoin join = groupJoinDAO.selectOne( groupJoin );
+	    if ( CommonUtil.isNotEmpty( join ) ) {
+		int pJoinId = join.getId();
+		if ( "0".equals( join.getJoinType().toString() ) ) {
+		    pJoinId = join.getPJoinId();
+		}
+		Wrapper< MallGroupJoin > joinWrapper = new EntityWrapper<>();
+		joinWrapper.where( "group_buy_id = {0}", groupBuyId );
+		joinWrapper.andNew( "p_join_id = {0} OR id= {0}", pJoinId );
+		Integer count = groupJoinDAO.selectCount( joinWrapper );
+		if ( CommonUtil.isNotEmpty( count ) ) {
+		    return count;
+		}
+	    }
+	}
+
+	return 0;
     }
 }

@@ -165,4 +165,15 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
      * @param memberBuyNum 粉丝已购买商品数量
      */
     boolean groupProductCanBuy( int groupBuyId, int invId, int productNum, int memberId, int memberBuyNum );
+
+    /**
+     * 团购订单是否能退款
+     *
+     * @param orderId       订单id
+     * @param orderDetailId 订单详情id
+     * @param groupBuyid    团购id
+     *
+     * @return true 能退款
+     */
+    boolean orderIsCanRenturn( Integer orderId, Integer orderDetailId, Integer groupBuyid );
 }

@@ -181,6 +181,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 		    } else {
 			product = JSONObject.parseObject( productMap.get( productDTO.getProductId() ).toString(), MallProduct.class );
 		    }
+		    productDTO.setCardReceiveId( product.getCardType() );
 		    productDTO.setProduct( product );
 		    productDTO.setProductNewTotalPrice( productDTO.getTotalPrice() );
 		    //		    productDTO.setProductNewOnePrice( productDTO.getProductPrice() );
@@ -306,6 +307,11 @@ public class MallCommonServiceImpl implements MallCommonService {
 	order.setUseFenbi( shopDTO.getUseFenbi() );
 	order.setUseJifen( shopDTO.getUseJifen() );
 	order.setCouponId( shopDTO.getSelectCouponsId() );
+	order.setCouponType( shopDTO.getSelectCouponsType() );
+	order.setCouponUseNum( shopDTO.getSelectCouponsNum() );
+	order.setDiscountMoney( shopDTO.getTotalYouhuiMoney() );
+	order.setFenbiDiscountMoney( shopDTO.getFenbiYouhuiMoney() );
+	order.setJifenDiscountMoney( shopDTO.getJifenYouhuiMoney() );
 	return order;
     }
 
@@ -385,6 +391,10 @@ public class MallCommonServiceImpl implements MallCommonService {
 	}
 	if ( CommonUtil.isNotEmpty( productDTO.getUseFenbiYouhuiPrice() ) ) {
 	    detail.setFenbiYouhui( CommonUtil.toBigDecimal( productDTO.getUseFenbiYouhuiPrice() ) );//粉币优惠的金额
+	}
+	if ( CommonUtil.isNotEmpty( productDTO.getUseCouponYouhuiPrice() ) ) {
+	    detail.setCouponType( productDTO.getSelectCouponsType() );
+	    detail.setUseCardId( productDTO.getSelectCouponsId() );
 	}
 	if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
 	    detail.setFlowId( product.getFlowId() );//流量id

@@ -250,7 +250,7 @@ public class ToOrderUtil {
 		if ( fenbiProductMoney < Constants.FENBI_RUL_MULTIPLE ) {
 		    fenbiProductMoney = Constants.FENBI_RUL_MULTIPLE;
 		}
-		double fenbiMoney = CommonUtil.getDecimal_2( fenbiProductMoney / Constants.FENBI_RUL_MULTIPLE ).intValue();
+		double fenbiMoney = CommonUtil.getDecimal( fenbiProductMoney / Constants.FENBI_RUL_MULTIPLE ).intValue();
 		bean.setFenbiNum( CommonUtil.multiply( jifenFenbiRule.getFenbiRatio(), fenbiMoney ) );
 		bean.setFenbiMoney( fenbiMoney * Constants.FENBI_RUL_MULTIPLE );
 	    }

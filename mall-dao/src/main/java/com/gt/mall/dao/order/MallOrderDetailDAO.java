@@ -25,30 +25,29 @@ public interface MallOrderDetailDAO extends BaseMapper< MallOrderDetail > {
      */
     int countDetailByProductId( Map< String,Object > params );
 
-
     /**
      * 根据订单id查询订单详情
      */
-    List<MallOrderDetail> selectByOrderId(Map<String, Object> params);
+    List< MallOrderDetail > selectByOrderId( Integer orderId );
 
     /**
      * 统计订单下购买了几件商品
      */
-    int countByOrderId(Map<String, Object> params);
+    int countByOrderId( Map< String,Object > params );
 
     /**
      * 分页订单详情
      */
-    List<MallOrderDetail> selectPageByOrderId(Map<String, Object> params);
+    List< MallOrderDetail > selectPageByOrderId( Map< String,Object > params );
 
     /**
      * 根据订单id查询订单详情
      */
-    List<MallOrderDetail> selectDetailByOrderIds(Map<String, Object> params);
+    List< MallOrderDetail > selectDetailByOrderIds( Map< String,Object > params );
 
     /**
      * 添加订单详情
      */
-    public int insertOrderDetail(List<MallOrderDetail> list);
+    public int insertOrderDetail( List< MallOrderDetail > list );
 
 }

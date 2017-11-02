@@ -64,6 +64,9 @@ public class PhoneToOrderDTO implements Serializable {
 
     @ApiModelProperty( name = "activityId", value = "活动id" )
     private Integer activityId;
+    
+    @ApiModelProperty( name = "groupJoinId", value = "参团id" )
+    private Integer groupJoinId;
 
     @ApiModelProperty( name = "orderId", value = "订单id" )
     private Integer orderId;

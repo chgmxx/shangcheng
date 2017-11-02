@@ -12,13 +12,13 @@ import java.util.Map;
 
 /**
  * <p>
- * 商城订单 服务类
+ * 商城提交订单 服务类
  * </p>
  *
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallOrderNewService extends BaseService< MallOrder > {
+public interface MallOrderSubmitService extends BaseService< MallOrder > {
 
     /**
      * 提交订单

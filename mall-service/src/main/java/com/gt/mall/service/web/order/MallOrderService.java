@@ -1,10 +1,9 @@
 package com.gt.mall.service.web.order;
 
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
-import com.gt.api.bean.session.Member;
-import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -32,6 +31,15 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public PageUtil findByPage( Map< String,Object > params );
 
     /**
+     * 重组订单列表
+     *
+     * @param list 订单集合
+     *
+     * @return 订单集合
+     */
+    List< MallOrder > getOrderListParams( List< MallOrder > list );
+
+    /**
      * 交易记录分页管理
      */
     public PageUtil findByTradePage( Map< String,Object > params );
@@ -47,34 +55,9 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public Map< String,Object > selectOrderList( Map< String,Object > params );
 
     /**
-     * 根据会员id 查询收货地址
-     */
-    public List< MemberAddress > selectShipAddress( Map< String,Object > params );
-
-    /**
-     * 关闭未付款订单
-     */
-    public void updateByNoMoney( Map< String,Object > params );
-
-    /**
-     * 根据Id查询单个订单
-     */
-    public MallOrder getOrderById( Integer orderId );
-
-    /**
-     * 根据memberId查询公众号信息
-     */
-    public WxPublicUsers getWpUser( Integer memberId );
-
-    /**
      * 支付成功后修改订单状态、库存、销量、规格
      */
     public int paySuccessModified( Map< String,Object > params, Member member );
-
-    /**
-     * 手机端订单列表
-     */
-    public PageUtil mobileOrderList( Map< String,Object > params, int busUserId ) throws Exception;
 
     /**
      * 申请退款
@@ -90,16 +73,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
      * 同意退款（用于支付宝退款）
      */
     public void agreanOrderReturn( Map< String,Object > params );
-
-    /**
-     * 根据订单详情id查询订单信息
-     */
-    public Map< String,Object > selectByDIdOrder( Integer detailId );
-
-    /**
-     * 查询退款信息
-     */
-    public MallOrderReturn selectByDId( Integer id );
 
     /**
      * 根据规格值Id查询规格Id
@@ -134,11 +107,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
      * @return
      */
     public HSSFWorkbook exportTradeExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist );
-
-    /**
-     * 查询订单详情
-     */
-    public MallOrderDetail selectOrderDetailById( Integer id );
 
     /**
      * 支付有礼
@@ -193,11 +161,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
      * 查询买家的账号参数
      */
     Map< String,Object > getMemberParams( Member member, Map< String,Object > params );
-
-    /**
-     * 清空session
-     */
-    public void clearSession( HttpServletRequest request );
 
     /**
      * 运费是否按照距离来算
