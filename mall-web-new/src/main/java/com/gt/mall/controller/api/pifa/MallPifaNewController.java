@@ -1,8 +1,8 @@
 package com.gt.mall.controller.api.pifa;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
@@ -16,8 +16,8 @@ import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,20 +222,20 @@ public class MallPifaNewController extends BaseController {
      * 设置批发商审核通不通过、启不启用
      */
     @ApiOperation( value = "设置批发商审核通不通过、启不启用", notes = "设置批发商审核通不通过、启不启用" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "ids", value = "批发Id", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "status", value = "审核  1通过 -1不通过", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "isUse", value = "是否启用 1启用 -1禁用", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @SysLogAnnotation( description = "设置批发商审核通不通过、启不启用", op_function = "4" )
     @RequestMapping( value = "/wholesalers/updateStatus", method = RequestMethod.POST )
-    public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "ids", value = "批发Id", required = true ) @RequestParam String ids,
-		    @ApiParam( name = "status", value = "审核  1通过 -1不通过", required = false ) @RequestParam Integer status,
-		    @ApiParam( name = "isUse", value = "是否启用 1启用 -1禁用", required = false ) @RequestParam Integer isUse ) {
+    public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response, String ids, Integer status, Integer isUse ) {
 	try {
 	    if ( !CommonUtil.isEmpty( ids ) ) {
 		String[] str = ( ids.toString() ).split( "," );
 		for ( int i = 0; i < str.length; i++ ) {
 		    MallPifaApply pifaApply = new MallPifaApply();
 		    pifaApply.setId( CommonUtil.toInteger( str[i] ) );
-		    if ( CommonUtil.isEmpty( status ) ) {
+		    if ( CommonUtil.isNotEmpty( status ) ) {
 			pifaApply.setCheckTime( new Date() );
 			pifaApply.setStatus( status );
 		    } else {
@@ -328,7 +328,8 @@ public class MallPifaNewController extends BaseController {
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet mallPaySet = (MallPaySet) JSONObject.toBean( JSONObject.fromObject( params ), MallPaySet.class );
-
+	    mallPaySet.setPfRemark( CommonUtil.urlEncode( mallPaySet.getPfRemark() ) );
+	    mallPaySet.setPfApplyRemark( CommonUtil.urlEncode( mallPaySet.getPfApplyRemark() ) );
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    MallPaySet paySet = mallPaySetService.selectByUserId( set );//查询登录者是否有设置商城

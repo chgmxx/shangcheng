@@ -13,6 +13,10 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.sellers.PhoneAddMallSetDTO;
+import com.gt.mall.param.phone.sellers.PhoneSellerProductDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -22,11 +26,13 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,8 +109,7 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public Map< String,Object > saveOrUpdateSeller( Member member,
-		    Map< String,Object > params ) {
+    public Map< String,Object > saveOrUpdateSeller( Member member, Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	boolean flag = false;
 	int count = 0;
@@ -281,8 +286,7 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public Map< String,Object > selectSellerByProId( int proId,
-		    MallSellerMallset mallSeller ) {
+    public Map< String,Object > selectSellerByProId( int proId, MallSellerMallset mallSeller ) {
 	Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "proId", proId );
 	params.put( "busUserId", mallSeller.getBusUserId() );
@@ -290,14 +294,12 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public List< Map< String,Object > > selectProductByBusUserId(
-		    Map< String,Object > params ) {
+    public List< Map< String,Object > > selectProductByBusUserId( Map< String,Object > params ) {
 	return mallSellerProductDAO.selectProductByBusUserId( params );
     }
 
     @Override
-    public List< Map< String,Object > > selectProductBySaleMember(
-		    Map< String,Object > params ) {
+    public List< Map< String,Object > > selectProductBySaleMember( Map< String,Object > params ) {
 	return mallSellerProductDAO.selectProductBySaleMember( params );
     }
 
@@ -528,6 +530,88 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	    return commissionMoney;
 	}
 	return 0;
+    }
+
+    @Override
+    public Map< String,Object > newSaveSeller( Member member, PhoneAddMallSetDTO mallSetDTO, Integer type ) {
+	Map< String,Object > resultMap = new HashMap< String,Object >();
+	EntityDtoConverter converter = new EntityDtoConverter();
+	boolean flag = false;
+	int count = 0;
+	int busUserId = member.getBusid();
+	if ( CommonUtil.isEmpty( type ) ) {
+	    type = 1;
+	}
+	if ( CommonUtil.isNotEmpty( mallSetDTO.getMallSet() ) ) {
+	    MallSellerMallset mallSet = new MallSellerMallset();
+	    converter.entityConvertDto( mallSetDTO.getMallSet(), mallSet );
+	    if ( CommonUtil.isEmpty( mallSet.getMallName() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商城名称不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getContactNumber() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "联系电话不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getQq() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "QQ不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getMallHeadPath() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商城头像不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getBannerPath() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "banner不能为空" );
+	    }
+
+	    if ( CommonUtil.isEmpty( mallSet.getId() ) ) {
+		//查询是否已经对商城进行设置
+		MallSellerMallset set = mallSellerMallsetDAO.selectBySaleMemberId( member.getId() );
+		if ( CommonUtil.isNotEmpty( set ) ) {
+		    mallSet.setId( set.getId() );
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( mallSet.getId() ) ) {
+		//修改商城设置
+		count = mallSellerMallsetDAO.updateById( mallSet );
+	    } else {
+		mallSet.setSaleMemberId( member.getId() );
+		mallSet.setBusUserId( busUserId );
+		//添加商城设置
+		count = mallSellerMallsetDAO.insert( mallSet );
+	    }
+	}
+
+	if ( count > 0 || CommonUtil.isNotEmpty( mallSetDTO.getSellerproList() ) ) {
+	    if ( type == 2 ) {
+		if ( CommonUtil.isNotEmpty( mallSetDTO.getSellerproList() ) ) {
+		    //编辑自选商品信息
+		    if ( mallSetDTO.getSellerproList() != null && mallSetDTO.getSellerproList().size() > 0 ) {
+			for ( PhoneSellerProductDTO sellerPro : mallSetDTO.getSellerproList() ) {
+			    MallSellerProduct mallSellerProduct = new MallSellerProduct();
+			    converter.entityConvertDto( sellerPro, mallSellerProduct );
+
+			    if ( CommonUtil.isEmpty( mallSellerProduct.getId() ) ) {
+				Map< String,Object > param = new HashMap< String,Object >();
+				param.put( "productId", mallSellerProduct.getProductId() );
+				param.put( "saleMemberId", member.getId() );
+				MallSellerProduct product = mallSellerProductDAO.selectByProIdSale( param );
+				if ( CommonUtil.isNotEmpty( product ) ) {
+				    mallSellerProduct.setId( product.getId() );
+				}
+			    }
+			    if ( CommonUtil.isEmpty( mallSellerProduct.getId() ) ) {
+				mallSellerProduct.setSaleMemberId( member.getId() );
+				mallSellerProduct.setBusUserId( busUserId );
+				count = mallSellerProductDAO.insert( mallSellerProduct );
+			    } else {
+				count = mallSellerProductDAO.updateById( mallSellerProduct );
+			    }
+			}
+		    }
+		}
+	    }
+	    flag = true;
+	}
+	resultMap.put( "flag", flag );
+	return resultMap;
     }
 
 }

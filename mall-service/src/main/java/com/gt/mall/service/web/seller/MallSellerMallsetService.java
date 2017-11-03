@@ -5,6 +5,7 @@ import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
+import com.gt.mall.param.phone.sellers.PhoneAddMallSetDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
@@ -48,6 +49,16 @@ public interface MallSellerMallsetService extends BaseService< MallSellerMallset
      * @return flag :{ true 修改成功  false 修改失败}
      */
     Map< String,Object > saveOrUpdateSeller( Member member, Map< String,Object > params );
+
+    /**
+     * 保存或修改商城设置
+     *
+     * @param member 用户
+     * @param mallSetDTO 商城设置的内容
+     *
+     * @return flag :{ true 修改成功  false 修改失败}
+     */
+    Map< String,Object > newSaveSeller( Member member, PhoneAddMallSetDTO mallSetDTO,Integer type);
 
     /**
      * 查询销售员首页的所有商品信息

@@ -102,5 +102,32 @@
             limit 1
         </where>
     </select>
+    <select id="selectSalePricerByUserId"  parameterType="Map" resultType="Map">
+        SELECT
+        s.id,
+        s.`member_id`,
+        s.`referees_member_id`,
+        s.`user_name`,
+        s.`company_name`,
+        s.`telephone`,
+        IFNULL(SUM(t.`product_price`), 0) sale_money
+        FROM
+        t_mall_seller s
+        LEFT JOIN t_mall_seller_order t
+        ON t.`sale_member_id` = s.`member_id`
+        AND t.`sale_member_id` > 0
+        <if test="startTime != null and startTime != ''">
+            AND t.`order_time` >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and t.order_time <![CDATA[<=]]> #{endTime}
+        </if>
+        GROUP BY s.`member_id`
+        ORDER BY SUM(t.`order_money`) DESC
+
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
 
 </mapper>

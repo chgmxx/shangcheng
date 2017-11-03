@@ -43,4 +43,11 @@ public interface MallSellerOrderDAO extends BaseMapper< MallSellerOrder > {
      * @return
      */
     MallSellerOrder selectBySellerOrder(MallSellerOrder order);
+
+    /**
+     * 查询商家销售员排名
+     * @param params
+     * @return
+     */
+    List<Map<String, Object>> selectSalePricerByUserId(Map<String, Object> params);
 }

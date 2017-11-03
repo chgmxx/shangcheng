@@ -131,10 +131,10 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     public Map< String,Object > selectAuctionById( Integer id ) {
 	Map< String,Object > map = auctionDAO.selectByAuctionId( id );
 	if ( map != null ) {
-	    float startPrice = Float.valueOf( map.get( "aucStartPrice" ).toString() );
-	    float aucLowestPrice = Float.valueOf( map.get( "aucLowestPrice" ).toString() );
-	    float aucLowerPrice = Float.valueOf( map.get( "aucLowerPrice" ).toString() );
-	    int minuTimes = Integer.valueOf( map.get( "aucLowerPriceTime" ).toString() );
+	    float startPrice = Float.valueOf( map.get( "aucStartPrice" ).toString() );//起拍价格
+	    float aucLowestPrice = Float.valueOf( map.get( "aucLowestPrice" ).toString() );//最低价格
+	    float aucLowerPrice = Float.valueOf( map.get( "aucLowerPrice" ).toString() );//降价金额
+	    int minuTimes = Integer.valueOf( map.get( "aucLowerPriceTime" ).toString() );//降价时间
 
 	    int diff = (int) ( ( startPrice - aucLowestPrice ) / aucLowerPrice * minuTimes );
 

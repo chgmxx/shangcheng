@@ -82,7 +82,9 @@ public class MallCommonServiceImpl implements MallCommonService {
     public boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo ) {
 	OldApiSms apiSms = new OldApiSms();
 	apiSms.setBusId( busId );
-	apiSms.setCompany( authorizerInfo );
+	if ( CommonUtil.isNotEmpty( authorizerInfo ) ) {
+	    apiSms.setCompany( authorizerInfo );
+	}
 	apiSms.setContent( content );
 	apiSms.setMobiles( mobile );
 	apiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );

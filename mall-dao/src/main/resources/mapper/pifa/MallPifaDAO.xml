@@ -91,6 +91,9 @@
         <if test="type == 2"><!-- 已结束的批发 -->
             and p.pf_start_time &lt; now() and p.pf_end_time &lt;= now()
         </if>
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
+        </if>
         <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
@@ -117,6 +120,9 @@
         </if>
         <if test="type == 2"><!-- 已结束的批发 -->
             and p.pf_start_time &lt; now() and p.pf_end_time &lt;= now()
+        </if>
+        <if test="shopId != null and shopId != ''">
+           and   p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null ">
             and
