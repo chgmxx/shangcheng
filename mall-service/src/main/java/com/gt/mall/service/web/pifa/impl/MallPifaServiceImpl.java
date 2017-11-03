@@ -514,6 +514,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	result.setActivityTimes( pifa.getTimes() );
 	result.setActivityStatus( pifa.getStatus() );
 	int pfStatus = mallPifaApplyService.getPifaApplay( member, mallPaySet );
+	pifaResult.setPfType( pifa.getPfType() );
 	pifaResult.setPfStatus( pfStatus );//批发状态
 	result.setActivityId( pifa.getId() );
 	double groupPrice = CommonUtil.toDouble( pifa.getPfPrice() );
