@@ -287,9 +287,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    boolean isSeller = mallSellerService.isSeller( member.getId() );//判断商户是否是销售员
 	    if ( !isSeller ) {
-		result.put( "isSeller", 0 );
-	    } else {
-		result.put( "isSeller", 1 );
+		return ServerResponse.createByErrorMessage( "该用户不是销售员！" );
 	    }
 
 	    //判断用户是否已经对商城进行设置
@@ -418,7 +416,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     * 自选商品列表（返回选中商品列表）
     * */
     @ApiOperation( value = "获取选择的商品列表", notes = "获取选择的商品列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "findIds", value = "选中商品id集合", paramType = "query", required = false, dataType = "String" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "findIds", value = "选中商品id集合", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
     @PostMapping( value = "selectedProducts", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getProductDetail( HttpServletRequest request, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String findIds ) {
@@ -590,26 +588,23 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
 	    result.put( "mallSet", mallSet );
 
+	    //分享出来的链接，保存销售员在缓存
+	    mallSellerService.setSaleMemberIdByRedis( member, saleMemberId, request, mallSet.getBusUserId() );
 
-	   /* if ( CommonUtil.isNotEmpty( params.get( "share" ) ) || saleMemberId > 0 ) {//分享出来的链接，保存销售员在缓存
-		mallSellerService.setSaleMemberIdByRedis( member, saleMemberId, request,  mallSet.getBusUserId() );
-	    }
-	    saleMemberId = mallSellerService.getSaleMemberIdByRedis( member, saleMemberId, request,  mallSet.getBusUserId() );
-	   */
-	   /* if ( saleMemberId > 0 && CommonUtil.isNotEmpty( member ) ) {//分享的用户 判断是否是销售员
-		mallSellerService.shareSellerIsSale( member, saleMemberId, mallSeller );
-	    }*/
+	    saleMemberId = mallSellerService.getSaleMemberIdByRedis( member, saleMemberId, request, mallSet.getBusUserId() );
 
 	    //查询销售员信息
 	    MallSeller mallSeller = mallSellerService.selectSellerByMemberId( saleMemberId );
 	    if ( CommonUtil.isNotEmpty( mallSeller ) ) {
 		result.put( "mallSeller", mallSeller );
 	    }
+	    if ( saleMemberId > 0 && CommonUtil.isNotEmpty( member ) ) {//分享的用户 判断是否是销售员
+		mallSellerService.shareSellerIsSale( member, saleMemberId, mallSeller );
+	    }
+
 	    boolean isSeller = mallSellerService.isSeller( saleMemberId );
 	    if ( !isSeller ) {
-		result.put( "isSeller", 0 );
-	    } else {
-		result.put( "isSeller", 1 );
+		return ServerResponse.createByErrorMessage( "该用户不是销售员！" );
 	    }
 
 	    //查询销售员选择的商品
@@ -848,8 +843,6 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
-	    member.setId( 381 );
-	    member.setOldid( null );
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.mergeData( seller, member );
 	    result.put( "seller", seller );
@@ -947,6 +940,66 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    logger.error( "获取销售规则信息接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "获取销售规则信息接口失败" );
+	}
+    }
+
+    @ApiOperation( value = "获取商品分享信息", notes = "获取商品分享信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "saleMemberId", value = "销售员ID", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "productId", value = "商品ID", paramType = "query", required = true, dataType = "int" ) } )
+    @ResponseBody
+    @PostMapping( value = "shareSeller", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse shareSeller( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer saleMemberId,
+		    Integer productId ) {
+	Map< String,Object > result = new HashMap<>();
+	try {
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	    loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );
+
+	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
+
+	    //分享出来的链接，保存销售员在缓存
+	    mallSellerService.setSaleMemberIdByRedis( member, saleMemberId, request, loginDTO.getBusId() );
+
+	    saleMemberId = mallSellerService.getSaleMemberIdByRedis( member, saleMemberId, request, loginDTO.getBusId() );
+
+	    //查询销售员信息
+	    MallSeller mallSeller = mallSellerService.selectSellerByMemberId( saleMemberId );
+	    Member sellerMember = memberService.findMemberById( mallSeller.getMemberId(), member );//查询销售员的用户信息
+	    request.setAttribute( "sellerMember", sellerMember );
+
+	    if ( saleMemberId > 0 && CommonUtil.isNotEmpty( mallSeller ) ) {//分享的用户 判断是否是销售员
+		mallSellerService.shareSellerIsSale( member, saleMemberId, mallSeller );
+	    }
+
+	    boolean isSeller = mallSellerService.isSeller( saleMemberId );
+	    if ( !isSeller ) {
+		return ServerResponse.createByErrorMessage( "该用户不是销售员！" );
+	    }
+
+	    //查询商品信息
+	    Map< String,Object > proMap = mallSellerMallSetService.selectSellerByProId( productId, mallSet );
+	    if ( CommonUtil.isNotEmpty( proMap ) ) {
+		double price = CommonUtil.toDouble( proMap.get( "pro_price" ) );
+		if ( CommonUtil.isNotEmpty( proMap.get( "inv_price" ) ) ) {
+		    double invPrice = CommonUtil.toDouble( proMap.get( "inv_price" ) );
+		    if ( invPrice > 0 ) {
+			price = invPrice;
+		    }
+		}
+		proMap.put( "price", price );
+		proMap = mallSellerMallSetService.getSellerProductPrice( proMap );
+	    }
+	    result.put( "productMap", proMap );
+
+	    result.put( "mallSeller", mallSeller );
+	    result.put( "member", member );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	} catch ( Exception e ) {
+	    logger.error( "获取商品分享信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "获取商品分享信息失败" );
 	}
     }
 }

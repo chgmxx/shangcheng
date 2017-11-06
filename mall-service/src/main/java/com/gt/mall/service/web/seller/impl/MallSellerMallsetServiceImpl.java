@@ -579,12 +579,12 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	    }
 	}
 
-	if ( count > 0 || CommonUtil.isNotEmpty( mallSetDTO.getSellerproList() ) ) {
+	if ( count > 0 || CommonUtil.isNotEmpty( mallSetDTO.getSellerProList() ) ) {
 	    if ( type == 2 ) {
-		if ( CommonUtil.isNotEmpty( mallSetDTO.getSellerproList() ) ) {
+		if ( CommonUtil.isNotEmpty( mallSetDTO.getSellerProList() ) ) {
 		    //编辑自选商品信息
-		    if ( mallSetDTO.getSellerproList() != null && mallSetDTO.getSellerproList().size() > 0 ) {
-			for ( PhoneSellerProductDTO sellerPro : mallSetDTO.getSellerproList() ) {
+		    if ( mallSetDTO.getSellerProList() != null && mallSetDTO.getSellerProList().size() > 0 ) {
+			for ( PhoneSellerProductDTO sellerPro : mallSetDTO.getSellerProList() ) {
 			    MallSellerProduct mallSellerProduct = new MallSellerProduct();
 			    converter.entityConvertDto( sellerPro, mallSellerProduct );
 
