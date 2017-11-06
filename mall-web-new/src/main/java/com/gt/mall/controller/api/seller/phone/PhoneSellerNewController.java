@@ -1,8 +1,6 @@
 package com.gt.mall.controller.api.seller.phone;
 
-import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
-import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ErrorInfo;
@@ -351,7 +349,6 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-member.setId( 366 );
 	    userLogin( request, response, loginDTO );
 
 	    params.put( "type", type );
@@ -429,7 +426,6 @@ member.setId( 366 );
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    member.setId( 381 );
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( member.getId() );
 	    if ( CommonUtil.isNotEmpty( findIds ) ) {
 		params.put( "mallSetId", mallSet.getId() );
@@ -676,11 +672,11 @@ member.setId( 366 );
     }
 
     @ApiOperation( value = "获取我的客户列表接口", notes = "获取我的客户列表接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = true, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @PostMapping( value = "clientList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > clientList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    int curPage ) {
+		    Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
@@ -727,16 +723,15 @@ member.setId( 366 );
     }
 
     @ApiOperation( value = "获取客户订单接口", notes = "获取客户订单接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "status", value = "为空查询全部 1待付款 2已付款 4已完成", paramType = "query", required = true, dataType = "int" ),
+    @ApiImplicitParams( { @ApiImplicitParam( name = "status", value = "为空查询全部 1待付款 2已付款 4已完成", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "custId", value = "客户ID", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @PostMapping( value = "clientOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > clientOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    int status, Integer custId ) {
+		    Integer status, Integer custId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-
 	    userLogin( request, response, loginDTO );
 
 	    MallPaySet set = new MallPaySet();
@@ -780,16 +775,20 @@ member.setId( 366 );
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
-
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.getSellerTwoCode( seller, member, CommonUtil.judgeBrowser( request ) );//获取二维码
-	    result.put( "seller", seller );//销售员信息
 
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( member.getId() );
-	    result.put( "mallSet", mallSet );
-	    result.put( "member", member );
-
+	    if ( CommonUtil.isNotEmpty( seller ) ) {
+		result.put( "qrCodePath", seller.getQrCodePath() );//二维码
+		result.put( "userName", seller.getUserName() );//销售员姓名
+	    }
+	    if ( CommonUtil.isNotEmpty( mallSet ) ) {
+		result.put( "mallName", mallSet.getMallName() );//商城名称
+		result.put( "mallIntroducation", mallSet.getMallIntroducation() );//商城简介
+		result.put( "mallHeadPath", mallSet.getMallHeadPath() );//商城头像地址
+	    }
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的二维码接口异常：" + e.getMessage() );
@@ -810,15 +809,19 @@ member.setId( 366 );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
-	    result.put( "seller", seller );//销售员信息
-
 	    //查询销售员信息
-	    Map< String,Object > sellerMap = mallSellerService.selectSellerBySaleId( member.getId() );
-	    result.put( "sellerMap", sellerMap );//销售员信息
-
+	   /* Map< String,Object > sellerMap = mallSellerService.selectSellerBySaleId( member.getId() );*/
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( member.getId() );
-	    result.put( "mallSet", mallSet );
-	    result.put( "member", member );
+	    if ( CommonUtil.isNotEmpty( seller ) ) {
+		result.put( "qrCodePath", seller.getQrCodePath() );//二维码
+		result.put( "headImagePath", seller.getHeadImagePath() );//销售员的用户头像地址
+		result.put( "userName", seller.getUserName() );//销售员姓名
+	    }
+	    if ( CommonUtil.isNotEmpty( mallSet ) ) {
+		result.put( "mallName", mallSet.getMallName() );//商城名称
+		result.put( "mallIntroducation", mallSet.getMallIntroducation() );//商城简介
+		result.put( "mallHeadPath", mallSet.getMallHeadPath() );//商城头像地址
+	    }
 
 	    String imageUrl = mallSellerService.createTempImage( member, seller, CommonUtil.judgeBrowser( request ) );
 	    if ( CommonUtil.isNotEmpty( imageUrl ) ) {
@@ -845,7 +848,8 @@ member.setId( 366 );
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
-
+	    member.setId( 381 );
+	    member.setOldid( null );
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.mergeData( seller, member );
 	    result.put( "seller", seller );
@@ -871,8 +875,8 @@ member.setId( 366 );
     @ApiOperation( value = "申请提现接口", notes = "申请提现接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "withdrawMoney", value = "提现金额", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
-    @PostMapping( value = "editWithdrawal", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< Map< String,Object > > editWithdrawal( HttpServletRequest request, HttpServletResponse response,
+    @PostMapping( value = "addWithdrawal", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< Map< String,Object > > addWithdrawal( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer withdrawMoney ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -885,7 +889,7 @@ member.setId( 366 );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorMessage( result.get( "msg" ).toString() );
 	    }
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	    return ServerResponse.createBySuccessCode();
 	} catch ( Exception e ) {
 	    logger.error( "申请提现接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -902,7 +906,6 @@ member.setId( 366 );
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
-
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "types", type );
 	    params.put( "type", 1 );
@@ -922,10 +925,9 @@ member.setId( 366 );
     }
 
     @ApiOperation( value = "获取销售规则信息接口", notes = "获取销售规则信息接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( @ApiImplicitParam( name = "type", value = "为空查询全部 1待完成 2已完成 3无效", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "saleRules", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse saleRules( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer type ) {
+    public ServerResponse saleRules( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );

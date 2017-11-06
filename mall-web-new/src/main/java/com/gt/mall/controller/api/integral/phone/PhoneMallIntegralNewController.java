@@ -208,18 +208,18 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
      */
     @ApiOperation( value = "获取积分商品信息", notes = "获取积分商品信息" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "id", value = "商品ID", paramType = "query", required = false, dataType = "int" ) } )
+		    @ApiImplicitParam( name = "productId", value = "商品ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "integralProduct", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralProduct( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer shopId, Integer id ) {
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer shopId, Integer productId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    Map< String,Object > params = new HashMap<>();
-	    params.put( "id", id );
+	    params.put( "id", productId );
 	    Map< String,Object > resultMap = integralService.selectProductDetail( member, params );
 	    if ( resultMap != null && resultMap.size() > 0 ) {
 		for ( String str : resultMap.keySet() ) {
@@ -288,7 +288,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "兑换积分异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	return ServerResponse.createBySuccessCode();
     }
 
 }
