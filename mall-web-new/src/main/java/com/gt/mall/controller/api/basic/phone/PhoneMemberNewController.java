@@ -68,6 +68,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( loginDTO.getBusId() ) && loginDTO.getBusId() > 0 ) {
 		result.setBusId( loginDTO.getBusId() );
 	    }
+	    result.setMemberName( member.getNickname() );
+	    result.setMemberImageUrl( member.getHeadimgurl() );
 
 	    int pfStatus = -2;
 	    int sellerStatus = -2;
