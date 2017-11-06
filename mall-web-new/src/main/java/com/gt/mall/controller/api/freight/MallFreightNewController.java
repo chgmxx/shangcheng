@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.freight;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
@@ -17,18 +18,23 @@ import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -132,7 +138,7 @@ public class MallFreightNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/expressList", method = RequestMethod.POST )
     public ServerResponse expressList( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > list = null;
+	List< DictBean > list = null;
 	try {
 	    //查询物流公司
 	    list = dictService.getDict( "1092" );

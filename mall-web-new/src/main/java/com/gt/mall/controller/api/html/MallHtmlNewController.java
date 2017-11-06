@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.enums.ResponseEnums;
@@ -284,7 +285,7 @@ public class MallHtmlNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/playList", method = RequestMethod.POST )
     public ServerResponse playList( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > playList = null;
+	List< DictBean > playList = null;
 	try {
 	    playList = dictService.getDict( "1048" );//获取播放器样式
 	} catch ( Exception e ) {

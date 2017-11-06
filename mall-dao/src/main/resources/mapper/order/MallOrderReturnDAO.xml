@@ -29,6 +29,8 @@
         <result column="wl_remark" property="wlRemark"/>
         <result column="return_fenbi" property="returnFenbi"/>
         <result column="return_jifen" property="returnJifen"/>
+        <result column="cargo_status" property="cargoStatus"/>
+        <result column="wl_images_url" property="wlImagesUrl"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -36,27 +38,29 @@
         id, order_id , order_detail_id, return_no , ret_handling_way , ret_reason_id , ret_reason ,
         ret_money , ret_telephone , ret_remark, images_url, shop_id, create_time, update_time, status, user_id ,
         no_return_reason , return_address , wl_company_id , wl_company , wl_no,
-        wl_telephone, wl_remark , return_fenbi , return_jifen
+        wl_telephone, wl_remark , return_fenbi , return_jifen, cargo_status, wl_images_url
     </sql>
 
-    <select id="selectByOrderDetailId" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallOrderReturn" >
+    <select id="selectByOrderDetailId" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallOrderReturn">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_order_return r
-        where order_id = #{orderId,jdbcType=INTEGER} and  order_detail_id = #{orderDetailId,jdbcType=INTEGER}
+        where order_id = #{orderId,jdbcType=INTEGER} and order_detail_id = #{orderDetailId,jdbcType=INTEGER}
     </select>
-    <select id="selectByReturnNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
-        select <include refid="Base_Column_List" />
+    <select id="selectByReturnNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_order_return r
         left join t_mall_order o on o.id=r.order_id
         where o.order_no = #{returnNo}
         limit 1
     </select>
 
-    <select id="selectByDetailIds" resultMap="BaseResultMap" parameterType="Map" >
-        select <include refid="Base_Column_List" />
+    <select id="selectByDetailIds" resultMap="BaseResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_order_return r
-        <where> 1=1
+        <where>1=1
             <if test="detailIdList != null ">
                 and
                 <foreach collection="detailIdList" index="index" item="item" open="(" separator="or" close=")">

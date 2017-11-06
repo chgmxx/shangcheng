@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallSecuritytradeQuit;
@@ -119,7 +120,7 @@ public class MallSecuritytradeController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/quitReasonMap", method = RequestMethod.POST )
     public ServerResponse quitReasonMap( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > typeMap = null;
+	List< DictBean > typeMap = null;
 	try {
 	    typeMap = dictService.getDict( "1073" );
 	} catch ( Exception e ) {

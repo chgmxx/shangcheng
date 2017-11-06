@@ -3,12 +3,13 @@ package com.gt.mall.service.web.applet.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.entityBo.MallAllEntity;
 import com.gt.entityBo.MallEntity;
 import com.gt.entityBo.MallShopEntity;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.api.bean.session.Member;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
@@ -633,11 +634,11 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    }
 	}*/
 	//查询粉币抵扣的比例
-	List< Map > currencyList = dictService.getDict( "1058" );
+	List< DictBean > currencyList = dictService.getDict( "1058" );
 	if ( currencyList != null && currencyList.size() > 0 ) {
-	    Map< String,Object > fenbiMap = currencyList.get( 0 );
+	    DictBean fenbiMap = currencyList.get( 0 );
 
-	    double itemValue = Double.parseDouble( fenbiMap.get( "item_value" ).toString() );
+	    double itemValue = Double.parseDouble( fenbiMap.getItem_value() );
 	    resultMap.put( "fenbi_dk_num", itemValue );
 	}
 	return resultMap;

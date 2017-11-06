@@ -36,6 +36,7 @@ public interface MallOrderSubmitService extends BaseService< MallOrder > {
      */
     String wxPayWay( double orderAllMoney, String orderNo, MallOrder order, int orderPayWay ) throws Exception;
 
+
     /**
      * 进入提交订单页面
      */

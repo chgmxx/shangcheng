@@ -603,15 +603,15 @@ public class CommonUtil {
     /**
      * 把用户集合改成用逗号隔开的字符串
      */
-    public static String getMememberIds( List< Integer > memberList, int memberId ) {
+    public static String getMememberIds( List< Integer > memberList, Integer memberId ) {
 	StringBuilder memberIds = new StringBuilder();
 	if ( memberList != null && memberList.size() > 0 ) {
 	    for ( Integer id : memberList ) {
 		memberIds.append( id ).append( "," );
 	    }
 	    memberIds = new StringBuilder( memberIds.substring( 0, memberIds.length() - 1 ) );
-	} else {
-	    memberIds = new StringBuilder( CommonUtil.toString( memberId ) );
+	} else if ( CommonUtil.isNotEmpty( memberId ) ) {
+	    memberIds = new StringBuilder( memberId.toString() );
 	}
 	return memberIds.toString();
     }
@@ -712,6 +712,5 @@ public class CommonUtil {
 	}
 	return orderType;
     }
-
 
 }

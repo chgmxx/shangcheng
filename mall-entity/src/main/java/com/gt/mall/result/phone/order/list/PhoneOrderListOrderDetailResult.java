@@ -53,4 +53,7 @@ public class PhoneOrderListOrderDetailResult implements Serializable {
     @ApiModelProperty( name = "isShowCommentButton", value = "是否显示评论按钮  1显示" )
     private Integer isShowCommentButton = 0;
 
+    @ApiModelProperty( name = "returnId", value = "退款id" )
+    private Integer returnId = 0;
+
 }

@@ -2,6 +2,7 @@ package com.gt.mall.service.web.order.impl;
 
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
@@ -12,10 +13,14 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
+import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
@@ -29,7 +34,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,31 +53,29 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private Logger logger = Logger.getLogger( MallOrderReturnServiceImpl.class );
 
     @Autowired
-    private MallOrderDAO mallOrderDAO;
-
+    private MallOrderDAO                mallOrderDAO;
     @Autowired
-    private MallProductDAO mallProductDAO;
-
+    private MallProductDAO              mallProductDAO;
     @Autowired
     private MallProductInventoryService mallProductInventoryService;
-
     @Autowired
-    private MallOrderService mallOrderService;
-
+    private MallOrderService            mallOrderService;
     @Autowired
-    private MallOrderDetailDAO mallOrderDetailDAO;
-
+    private MallOrderDetailDAO          mallOrderDetailDAO;
     @Autowired
-    private MemberService memberService;
-
+    private MemberService               memberService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
-
+    private WxPublicUserService         wxPublicUserService;
     @Autowired
-    private PayOrderService payOrderService;
-
+    private PayOrderService             payOrderService;
     @Autowired
-    private PayService payService;
+    private PayService                  payService;
+    @Autowired
+    private MallOrderDetailService      mallOrderDetailService;
+    @Autowired
+    private DictService                 dictService;
+    @Autowired
+    private MallOrderReturnDAO          mallOrderReturnDAO;
 
     /**
      * 系统退款（不是买家申请的）
@@ -259,5 +264,101 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	    }
 
 	}
+    }
+
+    @Override
+    public List< PhoneReturnWayResult > getReturnWayList( MallOrder order ) {
+
+	List< PhoneReturnWayResult > wayResultList = new ArrayList<>();
+	int payWay = order.getOrderPayWay();//2 货到付款 6 到店支付
+	int orderStatus = order.getOrderStatus();//3,已发货 4,已完成
+	int orderWallet = order.getIsWallet();//是否使用钱包支付 1已使用 其他的未使用
+	if ( payWay != 2 && payWay != 6 ) {
+	    wayResultList.add( new PhoneReturnWayResult( 1, Constants.RETURN_WAY[0] ) );
+	    if ( orderStatus == 3 || orderStatus == 4 ) {
+		wayResultList.add( new PhoneReturnWayResult( 2, Constants.RETURN_WAY[1] ) );
+	    }
+	} else {
+	    //货到付款或到店支付
+	    if ( orderStatus == 2 || orderStatus == 3 || orderStatus == 4 ) {
+		if ( orderWallet != 1 ) {
+		    wayResultList.add( new PhoneReturnWayResult( 2, Constants.RETURN_WAY[1] ) );
+		} else {
+		    if ( orderStatus == 3 || orderStatus == 4 ) {
+			//钱包支付
+			wayResultList.add( new PhoneReturnWayResult( 2, Constants.RETURN_WAY[2] ) );
+		    } else {
+			wayResultList.add( new PhoneReturnWayResult( 1, Constants.RETURN_WAY[0] ) );
+		    }
+		}
+	    }
+
+	}
+	return wayResultList;
+    }
+
+    @Override
+    public PhoneReturnProductResult getReturn( Integer orderDetailId, Integer returnId ) {
+	if ( CommonUtil.isEmpty( orderDetailId ) || orderDetailId == 0 ) {
+	    return null;
+	}
+	MallOrderDetail detail = mallOrderDetailService.selectById( orderDetailId );
+	if ( CommonUtil.isEmpty( detail ) ) {
+	    return null;
+	}
+	MallOrder order = mallOrderService.selectById( detail.getOrderId() );//查询订单信息
+	MallOrderReturn returns = new MallOrderReturn();
+	returns.setOrderId( detail.getOrderId() );
+	returns.setOrderDetailId( detail.getId() );
+	MallOrderReturn orderReturn = mallOrderReturnDAO.selectByOrderDetailId( returns );//退款详情
+	PhoneReturnProductResult result = new PhoneReturnProductResult();
+	result.setProductId( detail.getProductId() );
+	result.setShopId( detail.getShopId() );
+	result.setBusId( order.getBusUserId() );
+	result.setProductName( detail.getDetProName() );
+	result.setProductImageUrl( detail.getProductImageUrl() );
+	result.setOrderId( detail.getOrderId() );
+	if ( CommonUtil.isNotEmpty( detail.getProductSpeciname() ) ) {
+	    result.setProductSpecifica( detail.getProductSpeciname().replaceAll( ",", "/" ) );
+	}
+	double price = CommonUtil.toDouble( detail.getDetProPrice() ) * detail.getDetProNum();
+	if ( CommonUtil.isNotEmpty( detail.getTotalPrice() ) && detail.getTotalPrice() > 0 ) {
+	    price = CommonUtil.toDouble( detail.getTotalPrice() );
+	}
+	if ( CommonUtil.isNotEmpty( orderReturn ) && CommonUtil.isNotEmpty( orderReturn.getRetMoney() ) ) {
+	    price = CommonUtil.toDouble( orderReturn.getRetMoney() );
+	}
+	if ( ( order.getOrderPayWay() == 2 || order.getOrderPayWay() == 6 ) || order.getIsWallet() == 0 ) {
+	    price = 0;
+	}
+	result.setReturnPrice( price );
+	if ( price > 0 && CommonUtil.isNotEmpty( order.getOrderFreightMoney() ) ) {
+	    double freightMoney = CommonUtil.toDouble( order.getOrderFreightMoney() );
+	    if ( freightMoney > 0 ) {
+		result.setProductFreight( freightMoney );
+	    }
+	}
+	//查询退款原因
+	List< DictBean > dictBeanList = dictService.getDict( "1091" );
+	result.setReturnReasonList( dictBeanList );
+
+	if ( CommonUtil.isNotEmpty( orderReturn ) ) {
+	    result.setReturnId( orderReturn.getId() );
+	    result.setCargoStatus( orderReturn.getCargoStatus() );
+	    result.setRetReasonId( orderReturn.getRetReasonId() );
+	    result.setRetRemark( orderReturn.getRetRemark() );
+	    if ( CommonUtil.isNotEmpty( orderReturn.getImagesUrl() ) ) {
+		result.setReturnImageUrls( orderReturn.getImagesUrl().split( "," ) );
+	    }
+	}
+	if ( order.getOrderStatus() == 3 || order.getOrderStatus() == 4 ) {
+	    List< PhoneReturnWayResult > wayResultList = new ArrayList<>();
+	    wayResultList.add( new PhoneReturnWayResult( 0, "未收到货" ) );
+	    wayResultList.add( new PhoneReturnWayResult( 1, "已收到货" ) );
+	    result.setCargoStatusList( wayResultList );
+	    result.setIsShowCargoStatus( 1 );
+	}
+
+	return result;
     }
 }

@@ -1,9 +1,10 @@
 package com.gt.mall.controller.api.store;
 
-import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
@@ -96,7 +97,7 @@ public class MallStoreCertificationController extends BaseController {
 		    associative.setImageUrl( docImg[i] );
 		    mallImageAssociativeService.insert( associative );
 		}
-		JedisUtil.del( Constants.REDIS_KEY+code );//申请超级销售员成功，删除验证码
+		JedisUtil.del( Constants.REDIS_KEY + code );//申请超级销售员成功，删除验证码
 	    } else {
 		mallStoreCertService.updateById( storeCert );
 		/*List< MallImageAssociative > imageList = JSONArray.parseArray( params.get( "imageList" ).toString(), MallImageAssociative.class );*/
@@ -119,15 +120,15 @@ public class MallStoreCertificationController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/categoryMap", method = RequestMethod.POST )
     public ServerResponse categoryMap( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > categoryMap = null;
+	List< DictBean > categoryMap = null;
 	try {
 	    //获取认证的店铺类型
 	    categoryMap = dictService.getDict( "K002" );
-	    for ( Map map : categoryMap ) {
-		String value = (String) map.get( "item_value" );
+	    for ( DictBean map : categoryMap ) {
+		String value = map.getItem_value();
 		JSONObject foorerObj = JSONObject.fromObject( value );
-		map.put( "value", foorerObj.get( "title" ) );//名称
-		map.put( "childList", foorerObj.get( "array" ) );//子级
+		map.setValue( foorerObj.get( "title" ).toString() );//名称
+		map.setChildList( foorerObj.getJSONArray( "array" ) );//子级
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取认证的店铺类型异常：" + e.getMessage() );

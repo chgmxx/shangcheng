@@ -33,7 +33,7 @@ public class PhoneLoginDTO implements Serializable {
     @NotNull( message = "浏览器类型不为空" )
     private int browerType;
 
-    @ApiModelProperty( name = "ucLogin", value = "是否需要登陆 1不需要登陆 0 需要登陆")
+    @ApiModelProperty( name = "ucLogin", value = "是否需要登陆 1不需要登陆 0 需要登陆", hidden = true )
     private int ucLogin = 0;
 
 }

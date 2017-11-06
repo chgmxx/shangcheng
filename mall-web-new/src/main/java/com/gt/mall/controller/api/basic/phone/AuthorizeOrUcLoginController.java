@@ -1,4 +1,4 @@
-package com.gt.mall.controller.api.common;
+package com.gt.mall.controller.api.basic.phone;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

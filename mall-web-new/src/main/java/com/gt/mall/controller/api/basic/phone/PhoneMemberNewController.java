@@ -1,4 +1,4 @@
-package com.gt.mall.controller.api.common;
+package com.gt.mall.controller.api.basic.phone;
 
 import com.gt.api.bean.session.Member;
 import com.gt.mall.dto.ErrorInfo;
@@ -9,6 +9,8 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.result.phone.PhoneMemberResult;
+import com.gt.mall.result.phone.product.PhoneCollectProductResult;
+import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,6 +53,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     private MallSellerService    mallSellerService;
     @Autowired
     private MallOrderService     mallOrderService;
+    @Autowired
+    private MallCollectService   mallCollectService;
 
     @ApiOperation( value = "进入我的页面的接口", notes = "查询我的页面信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -132,18 +137,73 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     } )
     @ResponseBody
     @PostMapping( value = "isLogin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse isLogin( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO ) {
+    public ServerResponse isLogin( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
-	    logger.error( "是否需要登陆异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    logger.error( "是否需要登陆异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "是否需要登陆异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "是否需要登陆失败" );
+	}
+    }
+
+    /***************************************   以下接口为：收藏接口    ***************************************/
+
+    @ApiOperation( value = "手机端查看收藏列表的接口", notes = "我的收藏", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "collectList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< List< PhoneCollectProductResult > > collectList( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+
+	    List< PhoneCollectProductResult > resultList = mallCollectService.getCollectProductList( member.getId() );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultList );
+	} catch ( BusinessException e ) {
+	    logger.error( "查看收藏列表的接口异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "查看收藏列表的接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询我的收藏失败" );
+	}
+    }
+
+    @ApiOperation( value = "删除收藏商品接口", notes = "删除收藏商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams(
+		    @ApiImplicitParam( name = "ids", value = "删除收藏id集合", paramType = "query", required = true, dataType = "string" )
+    )
+    @ResponseBody
+    @PostMapping( value = "deleteCollect", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse deleteCollect( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String ids ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    return ServerResponse.createBySuccessCode();
+	} catch ( BusinessException e ) {
+	    logger.error( "删除收藏商品的接口异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "删除收藏商品的接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "删除收藏商品失败" );
 	}
     }
 

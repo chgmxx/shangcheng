@@ -32,4 +32,7 @@ public class PhoneOrderMemberAddressDTO implements Serializable {
     @ApiModelProperty( name = "memberAddress", value = "收货人地址" )
     private String memberAddress;
 
+    @ApiModelProperty( name = "memberDefault", value = "是否是默认地址  1默认地址" )
+    private Integer memberDefault = 0;
+
 }

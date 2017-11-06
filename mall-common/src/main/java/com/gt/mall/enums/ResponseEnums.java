@@ -25,7 +25,11 @@ public enum ResponseEnums {
     INV_NULL_ERROR( 1010, "您还未选择规格，请选择" ),
     ACTIVITY_ERROR( 1011, "活动被删除" ),
     ACTIVITY_MONEY_ERROR( 1012, "活动保证金未交" ),
-    INV_NO_JOIN_ERROR( 1013, "该规格未参加活动" );
+    INV_NO_JOIN_ERROR( 1013, "该规格未参加活动" ),
+    FENBI_NULL_ERROR(1014,"您的粉币不足，请重新充值再退给买家")
+
+
+    ;
 
     private final int    code;
     private final String desc;

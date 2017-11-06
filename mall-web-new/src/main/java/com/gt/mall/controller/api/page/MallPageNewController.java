@@ -1,8 +1,9 @@
 package com.gt.mall.controller.api.page;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.page.MallPage;
@@ -12,16 +13,19 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,13 +49,13 @@ import java.util.Map;
 public class MallPageNewController extends BaseController {
 
     @Autowired
-    private MallPageService  mallPageService;
+    private MallPageService mallPageService;
     @Autowired
-    private MallProductDAO   mallProductDAO;
+    private MallProductDAO  mallProductDAO;
     @Autowired
-    private DictService      dictService;
+    private DictService     dictService;
     @Autowired
-    private BusUserService   busUserService;
+    private BusUserService  busUserService;
 
     @ApiOperation( value = "商家的页面列表(分页)", notes = "商家的页面列表(分页)" )
     @ResponseBody
@@ -104,7 +108,7 @@ public class MallPageNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/typeMap", method = RequestMethod.POST )
     public ServerResponse typeMap( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > typeMap = null;
+	List< DictBean > typeMap = null;
 	try {
 	    //获取页面类型
 	    typeMap = dictService.getDict( "1073" );

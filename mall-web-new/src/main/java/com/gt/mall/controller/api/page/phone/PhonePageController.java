@@ -2,12 +2,15 @@ package com.gt.mall.controller.api.page.phone;
 
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.result.phone.PhoneCommonResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -34,9 +37,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +58,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 @RequestMapping( value = "/phonePage/L6tgXlBFeK/" )
-public class PhonePageController {
+public class PhonePageController extends AuthorizeOrUcLoginController {
 
     private static Logger logger = LoggerFactory.getLogger( PhonePageController.class );
 
@@ -293,7 +299,54 @@ public class PhonePageController {
 	    return ServerResponse.createByErrorMessage( "获取微信分享接口失败" );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.NO_SHARE_ERROR.getCode(), ResponseEnums.NO_SHARE_ERROR.getDesc(), false );
+    }
 
+    @ApiOperation( value = "上传图片接口", notes = "上传图片", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "uploadImage", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< String > uploadImage( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	    StringBuffer imageUrl = new StringBuffer();
+	    boolean flag = false;
+	    if ( request instanceof MultipartHttpServletRequest ) {
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		List< MultipartFile > userfile = multipartRequest.getFiles( "file" );
+		if ( CommonUtil.isNotEmpty( userfile ) && userfile.size() != 0 ) {
+		    for ( MultipartFile file : userfile ) {
+			Map< String,Object > returnMap = CommonUtil.fileUploadByBusUser( file, member.getBusid() );
+			if ( "1".equals( returnMap.get( "reTurn" ) ) ) {
+			    if ( CommonUtil.isNotEmpty( imageUrl ) ) {
+				imageUrl.append( "," );
+			    }
+			    imageUrl.append( returnMap.get( "message" ) );
+			    flag = true;
+
+			} else {
+			    flag = false;
+			    break;
+			}
+		    }
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( imageUrl ) && flag ) {
+		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), imageUrl.toString() );
+	    }
+
+	} catch ( BusinessException e ) {
+	    logger.error( "上传图片接口异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "上传图片接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "上传图片失败" );
+	}
+	return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "上传图片失败" );
     }
 
 }

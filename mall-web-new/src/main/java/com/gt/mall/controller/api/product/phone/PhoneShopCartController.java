@@ -2,7 +2,7 @@ package com.gt.mall.controller.api.product.phone;
 
 import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.Member;
-import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
+import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;

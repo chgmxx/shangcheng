@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.store;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
@@ -298,10 +299,10 @@ public class MallStoreNewController extends BaseController {
     public ServerResponse getStyleList( HttpServletRequest request, HttpServletResponse response ) throws IOException {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    List< Map > styleList = dictService.getDict( "k001" );
-	    for ( Map map : styleList ) {
-		String[] style = map.get( "item_value" ).toString().split( "," );
-		map.put( "style", style );
+	    List< DictBean > styleList = dictService.getDict( "k001" );
+	    for ( DictBean dictBean : styleList ) {
+		String[] style = dictBean.getItem_value().split( "," );
+		dictBean.setStyle( style );
 	    }
 	    result.put( "styleList", styleList );
 	    BusUser user = MallSessionUtils.getLoginUser( request );

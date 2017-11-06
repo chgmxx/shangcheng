@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.utils.CommonUtil;
 import org.apache.log4j.Logger;
@@ -64,7 +63,7 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
     }
 
     @Override
-    public void newInsertUpdBatchImage( Map< String,Object > map, Integer proId,Integer assType ) {
+    public void newInsertUpdBatchImage( Map< String,Object > map, Integer proId, Integer assType ) {
 	if ( !CommonUtil.isEmpty( map.get( "imageList" ) ) ) {
 	    Map< String,Object > imageMap = new HashMap< String,Object >();
 	    imageMap.put( "assId", proId );
@@ -116,6 +115,38 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
 	}
 	if ( CommonUtil.isNotEmpty( params.get( "assType" ) ) ) {
 	    wrapper.andNew( "ass_type = {0}", params.get( "assType" ) );
+	}
+	wrapper.orderBy( "ass_sort", true );
+	return imageAssociativeDAO.selectList( wrapper );
+    }
+
+    public List< MallImageAssociative > selectImageByAssId( Integer isMainImages, Integer assType, Integer assId ) {
+	Wrapper< MallImageAssociative > wrapper = new EntityWrapper<>();
+	wrapper.where( "is_delete = 0" );
+	if ( CommonUtil.isNotEmpty( isMainImages ) ) {
+	    wrapper.andNew( "is_main_images = {0}", isMainImages );
+	}
+	if ( CommonUtil.isNotEmpty( assType ) ) {
+	    wrapper.andNew( "ass_type = {0}", assType );
+	}
+	if ( CommonUtil.isNotEmpty( assId ) ) {
+	    wrapper.andNew( "ass_id = {0}", assId );
+	}
+	wrapper.orderBy( "ass_sort", true );
+	return imageAssociativeDAO.selectList( wrapper );
+    }
+
+    public List< MallImageAssociative > selectImageByAssIds( Integer isMainImages, Integer assType, List< Integer > assIds ) {
+	Wrapper< MallImageAssociative > wrapper = new EntityWrapper<>();
+	wrapper.where( "is_delete = 0" );
+	if ( CommonUtil.isNotEmpty( isMainImages ) ) {
+	    wrapper.andNew( "is_main_images = {0}", isMainImages );
+	}
+	if ( CommonUtil.isNotEmpty( assType ) ) {
+	    wrapper.andNew( "ass_type = {0}", assType );
+	}
+	if ( CommonUtil.isNotEmpty( assIds ) && assIds.size() > 0 ) {
+	    wrapper.in( "ass_id", assIds );
 	}
 	wrapper.orderBy( "ass_sort", true );
 	return imageAssociativeDAO.selectList( wrapper );

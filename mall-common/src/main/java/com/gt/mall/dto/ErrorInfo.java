@@ -28,6 +28,10 @@ public class ErrorInfo< T > extends ServerResponse< T > implements Serializable 
 	return createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
     }
 
+    public static < T > ErrorInfo< T > createByNullError() {
+	return createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+    }
+
     public static < T > ErrorInfo< T > createByErrorCodeMessage( int errorCode, String errorMessage ) {
 	return createByErrorCodeMessage( errorCode, errorMessage, null );
     }

@@ -49,7 +49,7 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     private Integer shopId;
 
     /**
-     * 商品谷歌
+     * 商品规格
      */
     @TableField( "product_specificas" )
     private String     productSpecificas;
