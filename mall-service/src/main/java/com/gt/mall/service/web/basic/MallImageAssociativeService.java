@@ -53,17 +53,38 @@ public interface MallImageAssociativeService extends BaseService< MallImageAssoc
      * @param map   delimageList：删除列表，imageList：图片列表
      * @param proId 关联id
      */
-    void newInsertUpdBatchImage( Map< String,Object > map, Integer proId ,Integer assType );
+    void newInsertUpdBatchImage( Map< String,Object > map, Integer proId, Integer assType );
 
     /**
      * 根据关联id来查询图片
      *
      * @param params isMainImages：是否是主图，assType：关联表类型，assId：关联id
      *
-     * @return  图片
+     * @return 图片
      */
     List< Map< String,Object > > selectImageByAssId( Map< String,Object > params );
 
     List< MallImageAssociative > getParamByProductId( Map< String,Object > params );
 
+    /**
+     * 根据单个的关联id查询图片集合
+     *
+     * @param isMainImages 是否是主图  不为空 才为条件
+     * @param assType      关联表类型
+     * @param assId        关联id
+     *
+     * @return 图片集合
+     */
+    List< MallImageAssociative > selectImageByAssId( Integer isMainImages, Integer assType, Integer assId );
+
+    /**
+     * 根据多个的关联id查询图片集合
+     *
+     * @param isMainImages 是否是主图  不为空 才为条件
+     * @param assType      关联表类型
+     * @param assIds       关联id集合
+     *
+     * @return 图片集合
+     */
+    List< MallImageAssociative > selectImageByAssIds( Integer isMainImages, Integer assType, List< Integer > assIds );
 }

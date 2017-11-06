@@ -4,6 +4,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.order.MallOrderReturn;
@@ -227,8 +228,8 @@ public class MallOrderNewController extends BaseController {
     @ApiOperation( value = "获取取消订单理由列表", notes = "获取取消订单理由列表" )
     @ResponseBody
     @RequestMapping( value = "/cancelReasonMap", method = RequestMethod.POST )
-    public ServerResponse cancelReasonMap( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > cancelReason = null;
+    public ServerResponse< List< DictBean > > cancelReasonMap( HttpServletRequest request, HttpServletResponse response ) {
+	List< DictBean > cancelReason = null;
 	try {
 	    cancelReason = dictService.getDict( "1079" );
 	} catch ( Exception e ) {

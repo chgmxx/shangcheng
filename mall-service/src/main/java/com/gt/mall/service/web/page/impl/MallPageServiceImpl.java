@@ -2,10 +2,11 @@ package com.gt.mall.service.web.page.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.dao.basic.MallCommentDAO;
@@ -180,7 +181,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "mallPage/index.do" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	params.put( "maxResult", pageSize );
-	List< Map > typeList = dictService.getDict( "1073" );//查询页面的所属分类
+	List< DictBean > typeList = dictService.getDict( "1073" );//查询页面的所属分类
 
 	//查询店铺id
 	List< Map< String,Object > > list = mallPageDAO.findByPage( params );
@@ -197,10 +198,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		    }
 		}
 		//循环页面分类
-		for ( Map map : typeList ) {
-		    int typeId = CommonUtil.toInteger( map.get( "item_key" ) );
+		for ( DictBean map : typeList ) {
+		    int typeId = CommonUtil.toInteger( map.getItem_key() );
 		    if ( pag_type_id == typeId ) {
-			pageMap.put( "item_value", map.get( "item_value" ) );
+			pageMap.put( "item_value", map.getItem_value() );
 			break;
 		    }
 		}
@@ -847,7 +848,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public List< Map< String,Object > > getSearchProductParam( List< Map< String,Object > > list, double discount, PhoneSearchProductDTO searchProductDTO ) {
 	List< Map< String,Object > > xlist = new ArrayList<>();
-	List< Integer > proIds = new ArrayList< Integer >();
+	List< Integer > proIds = new ArrayList<>();
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map1 : list ) {
 		map1 = productGetPriceNew( map1, discount, searchProductDTO );

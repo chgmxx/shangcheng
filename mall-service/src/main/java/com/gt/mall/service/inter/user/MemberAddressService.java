@@ -47,9 +47,11 @@ public interface MemberAddressService {
 
     /**
      * 把地址设为默认地址
+     *
      * @param addressId 地址id
+     *
      * @return true 成功
      */
-    boolean updateDefault(int addressId);
+    boolean updateDefault( int addressId );
 
 }

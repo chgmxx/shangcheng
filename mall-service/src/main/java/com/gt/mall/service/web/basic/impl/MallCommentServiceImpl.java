@@ -1,26 +1,31 @@
 package com.gt.mall.service.web.basic.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
-import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.result.phone.comment.PhoneCommentListCommentResult;
+import com.gt.mall.result.phone.comment.PhoneCommentListResult;
+import com.gt.mall.result.phone.comment.PhoneCommentProductResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.order.MallOrderDetailService;
+import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.PageUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +54,9 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     @Autowired
     private MallImageAssociativeDAO     mallImageAssociativeDAO;
     @Autowired
-    private MallOrderDetailDAO          mallOrderDetailDAO;
+    private MallOrderDetailService      mallOrderDetailService;
+    @Autowired
+    private MallOrderService            mallOrderService;
     @Autowired
     private MallPaySetService           mallPaySetService;
     @Autowired
@@ -103,7 +110,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    for ( Map< String,Object > map : productList ) {
 		if ( CommonUtil.isNotEmpty( map.get( "is_upload_image" ) ) ) {
 		    if ( map.get( "is_upload_image" ).toString().equals( "1" ) ) {
-			Map< String,Object > imageMap = new HashMap< String,Object >();
+			Map< String,Object > imageMap = new HashMap<>();
 			imageMap.put( "assId", map.get( "id" ) );
 			imageMap.put( "assType", 4 );
 			List< MallImageAssociative > imageList = mallImageAssociativeDAO.selectImageByAssId( imageMap );
@@ -115,7 +122,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 		if ( CommonUtil.isNotEmpty( map.get( "is_rep" ) ) ) {
 		    int isRep = CommonUtil.toInteger( map.get( "is_rep" ) );
 		    if ( isRep == 1 ) {
-			Map< String,Object > param = new HashMap< String,Object >();
+			Map< String,Object > param = new HashMap<>();
 			param.put( "appraise", map.get( "id" ) );
 			List childList = mallCommentDAO.ownerResponseList( param );
 			if ( childList != null && childList.size() > 0 ) {
@@ -138,60 +145,31 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     }
 
     @Override
-    public boolean checkComment( Map< String,Object > params ) {
-	if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
-
-	    String[] ids = JSONArray.parseArray( params.get( "ids" ).toString() ).toArray( new String[0] );
-	    params.put( "ids", ids );
-	}
-	int count = mallCommentDAO.batchUpdateComment( params );
-	if ( count > 0 ) {
-	    return true;
-	}
-	return false;
-    }
-
-    @Override
-    public boolean replatComment( Map< String,Object > params, int userId ) {
-	if ( CommonUtil.isNotEmpty( params.get( "params" ) ) ) {
-	    MallComment comment = (MallComment) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "params" ).toString() ), MallComment.class );
-	    comment.setCreateTime( new Date() );
-	    comment.setUserId( userId );
-	    comment.setUserType( 2 );
-	    int count = mallCommentDAO.insert( comment );
-	    if ( count > 0 ) {
-		MallComment pComment = new MallComment();
-		pComment.setId( comment.getRepPId() );
-		pComment.setIsRep( "1" );
-		mallCommentDAO.updateById( pComment );
-		return true;
-	    }
-	}
-	return false;
-    }
-
-    @Override
-    public MallComment addAppraise( Map< String,Object > map, MallComment mallComment, HttpServletRequest request ) {
-	logger.info( "进入添加评论方法" );
+    public MallComment addAppraise( String imageUrls, MallComment mallComment, HttpServletRequest request ) {
 
 	mallComment.setCreateTime( new Date() );
+	if ( CommonUtil.isNotEmpty( imageUrls ) ) {
+	    mallComment.setIsUploadImage( 1 );
+	} else {
+	    mallComment.setIsUploadImage( 0 );
+	}
+	mallComment.setUserType( 1 );
 	int count = mallCommentDAO.insert( mallComment );
 
 	if ( count > 0 ) {
 	    MallOrderDetail orderDetail = new MallOrderDetail();
 	    orderDetail.setAppraiseStatus( 1 );
-	    Wrapper wrapper = new EntityWrapper();
+	    Wrapper< MallOrderDetail > wrapper = new EntityWrapper<>();
 	    wrapper.where( "id={0} ", mallComment.getOrderDetailId() );
-	    mallOrderDetailDAO.update( orderDetail, wrapper );//评论添加完成，修改订单详情待评价的的状态
+	    mallOrderDetailService.update( orderDetail, wrapper );//评论添加完成，修改订单详情待评价的的状态
 
-	    if ( CommonUtil.isNotEmpty( map.get( "imageUrls" ) ) ) {
-		String imagePath = map.get( "imageUrls" ).toString();
-		String[] imageUrl = imagePath.split( ";" );
-		for ( int i = 0; i < imageUrl.length; i++ ) {
+	    if ( CommonUtil.isNotEmpty( imageUrls ) ) {
+		List< String > imageList = JSONArray.parseArray( imageUrls, String.class );
+		for ( int i = 0; i < imageList.size(); i++ ) {
 		    MallImageAssociative ass = new MallImageAssociative();
 		    ass.setAssType( 4 );
 		    ass.setAssId( mallComment.getId() );
-		    ass.setImageUrl( imageUrl[i] );
+		    ass.setImageUrl( imageList.get( i ) );
 		    if ( i == 0 ) {
 			ass.setIsMainImages( 1 );
 		    }
@@ -207,51 +185,6 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     }
 
     @Override
-    public PageUtil myAppraise( Map< String,Object > param ) {
-	param.put( "curPage", CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) ) );
-	int pageSize = 10000;
-	int rowCount = mallCommentDAO.countAppraise( param );//评论条数
-	PageUtil page = new PageUtil( CommonUtil.toInteger( param.get( "curPage" ) ), pageSize, rowCount, "mMember/79B4DE7C/myAppraise.do" );
-	param.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
-	param.put( "maxResult", pageSize );
-
-	List< Map< String,Object > > list = mallCommentDAO.findByPage( param );//查询我的评论
-	List< Map< String,Object > > list1 = new ArrayList< Map< String,Object > >();
-	for ( int i = 0; i < list.size(); i++ ) {
-	    Map< String,Object > p = list.get( i );
-	    param.put( "appraise", p.get( "id" ) );//评论id
-	    List hf = mallCommentDAO.ownerResponseList( param );//查询店家回复
-	    for ( int j = 0; j < hf.size(); j++ ) {
-		JSONObject h = JSONObject.parseObject( hf.get( j ).toString() );
-		if ( p.get( "id" ).equals( h.get( "rep_p_id" ) ) ) {
-		    p.put( "resContent", h );
-
-		}
-	    }
-	    if ( CommonUtil.isNotEmpty( p.get( "is_upload_image" ) ) ) {
-		if ( p.get( "is_upload_image" ).toString().equals( "1" ) ) {
-		    //该评论已经上传了图片
-		    Map< String,Object > imageMap = new HashMap< String,Object >();
-		    imageMap.put( "assId", p.get( "id" ) );
-		    imageMap.put( "assType", 4 );
-		    List< MallImageAssociative > imageList = mallImageAssociativeDAO.selectImageByAssId( imageMap );
-		    if ( imageList != null && imageList.size() > 0 ) {
-			p.put( "imageList", imageList );
-		    }
-		}
-	    }
-	    list1.add( p );
-	}
-	page.setSubList( list1 );
-	return page;
-    }
-
-    @Override
-    public MallComment selectComment( MallComment comment ) {
-	return mallCommentDAO.selectByComment( comment );
-    }
-
-    @Override
     public Map< String,Object > getProductComment( int busId, int productId, String feel ) {
 	int proId = CommonUtil.toInteger( productId );
 	Map< String,Object > maps = new HashMap<>();
@@ -262,7 +195,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	commentMap.put( "productId", proId );
 	if ( CommonUtil.isNotEmpty( set ) ) {
 	    if ( CommonUtil.isNotEmpty( set.getIsCommentCheck() ) ) {
-		if ( set.getIsCommentCheck().toString().equals( "1" ) ) {
+		if ( "1".equals( set.getIsCommentCheck().toString() ) ) {
 		    commentMap.put( "checkStatus", 1 );
 		}
 	    }
@@ -325,17 +258,13 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 			map.put( "specList", list );
 		    }
 		}
-		/*Map gradeMap = memberService.findGradeType( CommonUtil.toInteger( map.get( "user_id" ) ) );//查询会员卡片名称
-		if ( CommonUtil.isNotEmpty( gradeMap ) ) {
-		    map.put( "gradeTypeName", gradeMap.get( "gtName" ) );
-		}*/
 		if ( map.get( "is_rep" ).toString().equals( "1" ) ) {
 		    //查询回复内容
 		    Map< String,Object > replyMap = new HashMap<>();
 		    replyMap.put( "appraise", id );
-		    List< Map< String,Object > > replayList = mallCommentDAO.ownerResponseList( replyMap );
+		    List< MallComment > replayList = mallCommentDAO.ownerResponseList( replyMap );
 		    if ( replayList != null && replayList.size() > 0 ) {
-			map.put( "replyContent", replayList.get( 0 ).get( "content" ) );
+			map.put( "replyContent", replayList.get( 0 ).getContent() );
 		    }
 		}
 		Member member1 = memberService.findMemberById( CommonUtil.toInteger( map.get( "user_id" ) ), null );
@@ -349,6 +278,97 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    maps.put( "commentList", productCommentList );
 	}
 	return maps;
+    }
+
+    @Override
+    public PhoneCommentProductResult getCommentProduct( Integer orderDetailId ) {
+	if ( CommonUtil.isEmpty( orderDetailId ) || orderDetailId == 0 ) {
+	    return null;
+	}
+	PhoneCommentProductResult result = new PhoneCommentProductResult();
+	MallOrderDetail detail = mallOrderDetailService.selectById( orderDetailId );
+	if ( CommonUtil.isEmpty( detail ) ) {
+	    return null;
+	}
+	MallOrder order = mallOrderService.selectById( detail.getOrderId() );
+	result.setOrderId( order.getId() );
+	result.setProductId( detail.getProductId() );
+	result.setShopId( detail.getShopId() );
+	result.setBusId( order.getBusUserId() );
+	result.setProductName( detail.getDetProName() );
+	result.setProductImageUrl( detail.getProductImageUrl() );
+	if ( CommonUtil.isNotEmpty( detail.getProductSpeciname() ) ) {
+	    result.setProductSpecifica( detail.getProductSpeciname().replaceAll( ",", "/" ) );
+	}
+	result.setProductNum( detail.getDetProNum() );
+	return result;
+    }
+
+    @Override
+    public MallComment selectComment( MallComment comment ) {
+	return mallCommentDAO.selectByComment( comment );
+    }
+
+    @Override
+    public PhoneCommentListResult myCommentList( Integer memberId, Integer busId, Integer curPage ) {
+	PhoneCommentListResult result = new PhoneCommentListResult();
+	int pageSize = 10;
+	Map< String,Object > param = new HashMap<>();
+	//获取会员集合
+	List< Integer > memberList = memberService.findMemberListByIds( memberId );
+	if ( memberList != null && memberList.size() > 0 ) {
+	    param.put( "memberList", memberList );
+	} else {
+	    param.put( "memberId", memberId );
+	}
+	int rowCount = mallCommentDAO.countAppraise( param );//评论条数
+	curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	param.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	param.put( "maxResult", pageSize );
+	List< Map< String,Object > > list = mallCommentDAO.findByPage( param );//查询我的评论
+	List< PhoneCommentListCommentResult > commentList = new ArrayList<>();
+	for ( Map< String,Object > map : list ) {
+	    PhoneCommentListCommentResult commentResult = new PhoneCommentListCommentResult();
+	    commentResult.setFeel( CommonUtil.toInteger( map.get( "feel" ) ) );
+	    commentResult.setContent( CommonUtil.toString( map.get( "content" ) ) );
+	    Date createTime = DateTimeKit.parseDate( map.get( "createTime" ).toString() );
+	    commentResult.setCommentTime( DateTimeKit.format( createTime, DateTimeKit.DEFAULT_DATETIME_FORMAT_YYYYMMDD_MMSS ) );
+	    if ( CommonUtil.isNotEmpty( map.get( "product_speciname" ) ) ) {
+		commentResult.setProductSpecifica( CommonUtil.toString( map.get( "product_speciname" ) ) );
+	    }
+	    commentResult.setProductId( CommonUtil.toInteger( map.get( "product_id" ) ) );
+	    commentResult.setShopId( CommonUtil.toInteger( map.get( "shop_id" ) ) );
+	    commentResult.setProductName( CommonUtil.toString( map.get( "det_pro_name" ) ) );
+	    commentResult.setProductImageUrl( CommonUtil.toString( map.get( "product_image_url" ) ) );
+	    commentResult.setProductPrice( CommonUtil.toDouble( map.get( "total_price" ) ) );
+	    if ( CommonUtil.isNotEmpty( map.get( "is_rep" ) ) && "1".equals( map.get( "is_rep" ).toString() ) ) {
+		param.put( "appraise", map.get( "id" ) );//评论id
+		List< MallComment > replyList = mallCommentDAO.ownerResponseList( param );//查询店家回复
+		for ( int i = 0; i < replyList.size(); i++ ) {
+		    MallComment reply = replyList.get( i );
+		    if ( map.get( "id" ).toString().equals( reply.getRepPId().toString() ) ) {
+			commentResult.setReplyContent( reply.getContent() );
+			replyList.remove( i );
+			break;
+		    }
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( map.get( "is_upload_image" ) ) ) {
+		if ( map.get( "is_upload_image" ).toString().equals( "1" ) ) {
+		    //该评论已经上传了图片
+		    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( null, 4, CommonUtil.toInteger( map.get( "id" ) ) );
+		    if ( imageList != null && imageList.size() > 0 ) {
+			commentResult.setCommentImageList( imageList );
+		    }
+		}
+	    }
+	    commentList.add( commentResult );
+	}
+	result.setCommentResultList( commentList );
+	result.setCurPage( page.getCurPage() );
+	result.setPageCount( page.getPageCount() );
+	return result;
     }
 
 }

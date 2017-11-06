@@ -1,6 +1,7 @@
 package com.gt.mall.service.web.store.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.store.MallStoreCertificationDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStoreCertification;
@@ -38,13 +39,13 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
     public MallStoreCertification selectByStoreId( Integer storeId ) {
 	MallStoreCertification storeCert = mallStoreCertificationDAO.selectByStoreId( storeId );
 	if ( storeCert != null && storeCert.getStoType() == 1 ) {
-	    List< Map > categoryMap = dictService.getDict( "K002" );
+	    List< DictBean > categoryMap = dictService.getDict( "K002" );
 	    if ( categoryMap != null && categoryMap.size() > 0 ) {
-		for ( Map map : categoryMap ) {
-		    if ( CommonUtil.toInteger( map.get( "item_key" ) ) == storeCert.getStoCategory() ) {
-			String value = (String) map.get( "item_value" );
+		for ( DictBean dictBean : categoryMap ) {
+		    if ( dictBean.getItem_key().toString().equals( storeCert.getStoCategory().toString() ) ) {
+			String value = dictBean.getItem_value();
 			net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
-			map.put( "value", foorerObj.get( "title" ) );//名称
+			dictBean.setValue( foorerObj.get( "title" ).toString() );
 
 			storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
 			break;
@@ -62,13 +63,13 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
 	if ( certification != null ) {
 	    result.put( "stoType", certification.getStoType() == 0 ? "个人认证" : "企业认证" );
 
-	    List< Map > categoryMap = dictService.getDict( "K002" );
-	    for ( Map map : categoryMap ) {
-		Integer key = (Integer) map.get( "item_key" );
-		String value = (String) map.get( "item_value" );
+	    List< DictBean > categoryMap = dictService.getDict( "K002" );
+	    for ( DictBean dictBean : categoryMap ) {
+		Integer key = dictBean.getItem_key();
+		String value = dictBean.getItem_value();
 		JSONObject foorerObj = JSONObject.fromObject( value );
 
-		if ( certification.getStoCategory() == key ) {
+		if ( certification.getStoCategory().toString().equals( key.toString() ) ) {
 		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
 		    break;
 		}

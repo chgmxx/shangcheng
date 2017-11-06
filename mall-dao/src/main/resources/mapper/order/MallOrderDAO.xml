@@ -59,11 +59,11 @@
         <result column="use_fenbi" property="useFenbi"/>
         <result column="coupon_id" property="couponId"/>
         <result column="union_card_id" property="unionCardId"/>
-        <result column="fenbi_discount_money" property="fenbiDiscountMoney" />
-        <result column="jifen_discount_money" property="jifenDiscountMoney" />
-        <result column="discount_money" property="discountMoney" />
-        <result column="coupon_type" property="couponType" />
-        <result column="coupon_use_num" property="couponUseNum" />
+        <result column="fenbi_discount_money" property="fenbiDiscountMoney"/>
+        <result column="jifen_discount_money" property="jifenDiscountMoney"/>
+        <result column="discount_money" property="discountMoney"/>
+        <result column="coupon_type" property="couponType"/>
+        <result column="coupon_use_num" property="couponUseNum"/>
     </resultMap>
 
     <resultMap id="MoreResultMap" type="com.gt.mall.entity.order.MallOrder">
@@ -124,11 +124,11 @@
         <result column="use_fenbi" property="useFenbi"/>
         <result column="coupon_id" property="couponId"/>
         <result column="union_card_id" property="unionCardId"/>
-        <result column="fenbi_discount_money" property="fenbiDiscountMoney" />
-        <result column="jifen_discount_money" property="jifenDiscountMoney" />
-        <result column="discount_money" property="discountMoney" />
-        <result column="coupon_type" property="couponType" />
-        <result column="coupon_use_num" property="couponUseNum" />
+        <result column="fenbi_discount_money" property="fenbiDiscountMoney"/>
+        <result column="jifen_discount_money" property="jifenDiscountMoney"/>
+        <result column="discount_money" property="discountMoney"/>
+        <result column="coupon_type" property="couponType"/>
+        <result column="coupon_use_num" property="couponUseNum"/>
         <collection property="mallOrderDetail" column="id" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -183,6 +183,7 @@
                 <result column="user_id" property="userId" jdbcType="INTEGER"/>
                 <result column="no_return_reason" property="noReturnReason" jdbcType="VARCHAR"/>
                 <result column="return_address" property="returnAddress" jdbcType="VARCHAR"/>
+                <result column="cargo_status" property="cargoStatus"/>
             </collection>
         </collection>
     </resultMap>
@@ -243,11 +244,11 @@
         <result column="use_fenbi" property="useFenbi"/>
         <result column="coupon_id" property="couponId"/>
         <result column="union_card_id" property="unionCardId"/>
-        <result column="fenbi_discount_money" property="fenbiDiscountMoney" />
-        <result column="jifen_discount_money" property="jifenDiscountMoney" />
-        <result column="discount_money" property="discountMoney" />
-        <result column="coupon_type" property="couponType" />
-        <result column="coupon_use_num" property="couponUseNum" />
+        <result column="fenbi_discount_money" property="fenbiDiscountMoney"/>
+        <result column="jifen_discount_money" property="jifenDiscountMoney"/>
+        <result column="discount_money" property="discountMoney"/>
+        <result column="coupon_type" property="couponType"/>
+        <result column="coupon_use_num" property="couponUseNum"/>
         <collection property="mallOrderDetail" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -295,6 +296,7 @@
                 <result column="user_id" property="userId" jdbcType="INTEGER"/>
                 <result column="no_return_reason" property="noReturnReason" jdbcType="VARCHAR"/>
                 <result column="return_address" property="returnAddress" jdbcType="VARCHAR"/>
+                <result column="cargo_status" property="cargoStatus"/>
             </collection>
         </collection>
     </resultMap>

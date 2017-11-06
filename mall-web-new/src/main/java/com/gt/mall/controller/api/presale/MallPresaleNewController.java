@@ -5,6 +5,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.api.util.KeysUtil;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
@@ -353,8 +354,8 @@ public class MallPresaleNewController extends BaseController {
     @ApiOperation( value = "获取预售送礼礼品类型", notes = "获取预售送礼礼品类型" )
     @ResponseBody
     @RequestMapping( value = "/give/dictList", method = RequestMethod.POST )
-    public ServerResponse dictList( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map > list = null;
+    public ServerResponse<List< DictBean >> dictList( HttpServletRequest request, HttpServletResponse response ) {
+	List< DictBean > list = null;
 	try {
 	    list = dictService.getDict( "1143" );
 	} catch ( Exception e ) {

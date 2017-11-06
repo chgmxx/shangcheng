@@ -7,6 +7,7 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
@@ -25,6 +26,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.user.MemberAddressService;
@@ -37,6 +39,7 @@ import com.gt.mall.service.web.applet.MallOrderAppletService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
@@ -115,6 +118,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private MemberAddressService        memberAddressService;
     @Autowired
     private PayService                  payService;
+    @Autowired
+    private MallOrderReturnService      mallOrderReturnService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -761,51 +766,14 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( type == 0 ) {//申请退款
 	    // 查询退款原因
-	    List< Map > reasonList = dictService.getDict( "1091" );
+	    List< DictBean > reasonList = dictService.getDict( "1091" );
 	    resultMap.put( "reasonList", reasonList );
-	    List< Map< String,Object > > handWayList = new ArrayList< Map< String,Object > >();//处理方式
-	    Map< String,Object > handWayMap = new HashMap< String,Object >();
-	    if ( orderPayWay != 2 && orderPayWay != 6 ) {//支付方式不是货到付款和到点支付
-		handWayMap.put( "id", 1 );
-		handWayMap.put( "value", "我要退款，但不退货" );
-		handWayList.add( handWayMap );
-		if ( orderStatus == 3 || orderStatus == 4 ) {
-		    handWayMap = new HashMap< String,Object >();
-		    handWayMap.put( "id", 2 );
-		    handWayMap.put( "value", "我要退款退货" );
-		    handWayList.add( handWayMap );
-		}
-	    } else {
-		if ( isWallet == 0 && orderStatus == 2 ) {
-		    handWayMap = new HashMap< String,Object >();
-		    handWayMap.put( "id", 2 );
-		    handWayMap.put( "value", "我要退货" );
-		    handWayList.add( handWayMap );
-		} else if ( isWallet == 1 && orderStatus == 2 ) {
-		    handWayMap = new HashMap< String,Object >();
-		    handWayMap.put( "id", 1 );
-		    handWayMap.put( "value", "我要退款" );
-		    handWayList.add( handWayMap );
-		}
-		if ( orderStatus == 3 || orderStatus == 4 ) {
-		    if ( isWallet == 0 ) {
-			handWayMap = new HashMap< String,Object >();
-			handWayMap.put( "id", 2 );
-			handWayMap.put( "value", "我要退货" );
-			handWayList.add( handWayMap );
-		    } else {
-			handWayMap.put( "id", 1 );
-			handWayMap = new HashMap< String,Object >();
-			handWayMap.put( "value", "我要退款，但不退货" );
-			handWayList.add( handWayMap );
-		    }
-		}
-	    }
-	    //handWayList.add(handWayMap);
-	    resultMap.put( "handWayList", handWayList );
+
+	    List< PhoneReturnWayResult > wayResultList = mallOrderReturnService.getReturnWayList( order );
+	    resultMap.put( "handWayList", wayResultList );
 	} else if ( type == 1 ) {//填写物流公司
 	    //查询物流公司
-	    List< Map > comList = dictService.getDict( "1092" );
+	    List< DictBean > comList = dictService.getDict( "1092" );
 	    resultMap.put( "comList", comList );
 	}
 	//退款id

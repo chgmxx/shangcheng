@@ -192,4 +192,9 @@ public class Constants {
      */
     public static final int ORDER_FINISH_RETURN_DAY = 7;
 
+    /**
+     * 退款方式
+     */
+    public static final String[] RETURN_WAY = { "仅退款", "退货退款", "仅退货" };
+
 }

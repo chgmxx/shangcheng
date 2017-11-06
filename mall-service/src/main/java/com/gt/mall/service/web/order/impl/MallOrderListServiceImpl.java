@@ -179,6 +179,15 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 			    isNowReturn = false;
 			}
 		    }
+		    if ( isNowReturn ) {
+			MallOrderReturn returns = new MallOrderReturn();
+			returns.setOrderId( order.getId() );
+			returns.setOrderDetailId( detail.getId() );
+			MallOrderReturn orderReturn = mallOrderReturnDAO.selectByOrderDetailId( returns );
+			if ( CommonUtil.isNotEmpty( orderReturn ) ) {
+			    detailResult.setReturnId( orderReturn.getId() );
+			}
+		    }
 		    //判断订单详情是否能显示申请退款按钮
 		    detailResult.setIsShowApplyReturnButton( OrderUtil.getOrderIsShowReturnButton( order, detail, updateDay ) );
 		    //判断订单是否能显示评论按钮  1 能评论
@@ -258,6 +267,9 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		    orderReturn.setOrderId( order.getId() );
 		    orderReturn.setOrderDetailId( detail.getId() );
 		    mallOrderReturn = mallOrderReturnDAO.selectByOrderDetailId( orderReturn );
+		    if ( CommonUtil.isNotEmpty( mallOrderReturn ) ) {
+			detailResult.setReturnId( mallOrderReturn.getId() );
+		    }
 		}
 		//判断订单详情是否能显示申请退款按钮 1显示
 		int isShowAppllyReturn = OrderUtil.getOrderIsShowReturnButton( order, detail, updateDay );

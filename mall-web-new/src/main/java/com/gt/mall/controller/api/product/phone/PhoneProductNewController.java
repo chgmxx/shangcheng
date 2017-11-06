@@ -2,7 +2,7 @@ package com.gt.mall.controller.api.product.phone;
 
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
-import com.gt.mall.controller.api.common.AuthorizeOrUcLoginController;
+import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;

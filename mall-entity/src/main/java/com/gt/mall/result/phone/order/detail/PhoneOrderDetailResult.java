@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Date : 2017/10/12 0012
  * Time : 20:11
  */
-@ApiModel( value = "PhoneOrderListOrderDetailResult", description = "订单详情（进入提交列表返回结果）" )
+@ApiModel( value = "PhoneOrderDetailResult", description = "订单详情（进入提交列表返回结果）" )
 @Getter
 @Setter
 public class PhoneOrderDetailResult implements Serializable {
@@ -65,4 +65,6 @@ public class PhoneOrderDetailResult implements Serializable {
     @ApiModelProperty( name = "isShowApplySaleButton", value = "是否显示售后的按钮 1显示" )
     private Integer isShowApplySaleButton = 0;
 
+    @ApiModelProperty( name = "returnId", value = "退款id" )
+    private Integer returnId = 0;
 }

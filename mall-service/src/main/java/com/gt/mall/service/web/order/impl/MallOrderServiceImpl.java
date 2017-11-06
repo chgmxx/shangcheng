@@ -1250,8 +1250,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			if ( CommonUtil.isNotEmpty( oReturn.getReturnFenbi() ) && oReturn.getReturnFenbi() > 0 ) {
 			    BusUser busUser = busUserService.selectById( order.getBusUserId() );//根据商家id查询商家信息
 			    if ( busUser.getFansCurrency() - oReturn.getReturnFenbi() < 0 ) {
-				flags = false;
-				msg = "您的粉币不足，请重新充值再退给买家";
+				throw new BusinessException( ResponseEnums.FENBI_NULL_ERROR.getCode(), ResponseEnums.FENBI_NULL_ERROR.getDesc() );
 			    }
 			}
 
@@ -1282,6 +1281,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					}
 				    } else if ( wxPayOrder.getTradeState().equals( "NOTPAY" ) ) {
 					msg = "订单：" + wxPayOrder.getOutTradeNo() + "未支付";
+					throw new BusinessException( ResponseEnums.ERROR.getCode(), msg );
 				    }
 				} else {//退款金额等于0，则直接修改退款状态
 				    //退款成功修改退款状态
@@ -1374,6 +1374,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					    }
 					} else if ( wxPayOrder.getTradeState().equals( "NOTPAY" ) ) {
 					    msg = "订单：" + wxPayOrder.getOutTradeNo() + "未支付";
+					    throw new BusinessException( ResponseEnums.ERROR.getCode(), msg );
 					}
 				    } else if ( daifu.getDfPayWay().toString().equals( "2" ) ) {//支付宝退款
 					rFlag = false;
@@ -1460,6 +1461,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					}
 				    } else if ( wxPayOrder.getTradeState().equals( "NOTPAY" ) ) {
 					msg = "订单：" + wxPayOrder.getOutTradeNo() + "未支付";
+					throw new BusinessException( ResponseEnums.ERROR.getCode(), msg );
 				    }
 				} else {//退款金额等于0，则直接修改退款状态
 				    //退款成功修改退款状态
@@ -1886,7 +1888,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 		resultMap.put( "result", flag );
 		if ( !flag ) {
-		    break;
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "库存不够" );
+		    //		    break;
 		}
 	    }
 	    resultMap.put( "proTypeId", orderDetailList.get( 0 ).getProTypeId() );
@@ -1898,7 +1901,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     @Override
     public Map< String,Object > addMallDaifu( MallDaifu daifu ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
-
+	MallOrder mallOrder = mallOrderDAO.selectById( daifu.getOrderId() );
+	daifu.setDfPayMoney( mallOrder.getOrderMoney() );
 	List idList = mallOrderDAO.selectOrderPid( daifu.getOrderId() );
 	if ( idList.size() > 0 ) {
 	    for ( Object anIdList : idList ) {
@@ -1933,7 +1937,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		if ( !flag ) {
 		    resultMap.put( "result", false );
 		    resultMap.put( "msg", "已经有其他好友帮忙代付了" );
-		    return resultMap;
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "已经有其他好友帮忙代付了" );
 		}
 	    }
 	    MallDaifu df = mallDaifuDAO.selectBydf( daifu );
@@ -1959,6 +1963,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    break;
 			default:
 			    break;
+		    }
+		    if ( !flag ) {
+			throw new BusinessException( ResponseEnums.ERROR.getCode(), msg );
 		    }
 		} else {
 		    code = mallDaifuDAO.updateById( daifu );

@@ -43,6 +43,7 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.common.MallCalculateService;
 import com.gt.mall.service.web.common.MallCommonService;
+import com.gt.mall.service.web.common.MallMemberAddressService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.MallOrderSubmitService;
@@ -110,6 +111,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
     private MallTakeTheirService      mallTakeTheirService;
     @Autowired
     private MallCalculateService      mallCalculateService;
+    @Autowired
+    private MallMemberAddressService  mallMemberAddressService;
 
     @Transactional( rollbackFor = Exception.class )
     @Override
@@ -290,11 +293,11 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
 	subQrPayParams.setDesc( "商城下单" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	String returnUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/79B4DE7C/orderList.do";
-	String sucessUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/79B4DE7C/paySuccessModified.do";
+	String returnUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK/orderList.do";
+	String sucessUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK/paySuccessModified.do";
 	if ( order.getOrderPayWay() == 7 ) {
-	    sucessUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/79B4DE7C/daifuSuccess.do";
-	    returnUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/" + order.getId() + "/79B4DE7C/getDaiFu.do";
+	    sucessUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK/daifuSuccess.do";
+	    returnUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/" + order.getId() + "/L6tgXlBFeK/getDaiFu.do";
 	}
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
@@ -316,30 +319,6 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
     }
 
-    /**
-     * 拼装会员地址返回值
-     *
-     * @param addressMap 查询的地址
-     *
-     * @return 地址
-     */
-    private PhoneOrderMemberAddressDTO getMemberAddressResult( Map addressMap ) {
-	if ( CommonUtil.isEmpty( addressMap ) ) {
-	    return null;
-	}
-	PhoneOrderMemberAddressDTO memberAddress = new PhoneOrderMemberAddressDTO();
-	memberAddress.setId( CommonUtil.toInteger( addressMap.get( "id" ) ) );
-	memberAddress.setMemberName( addressMap.get( "memName" ).toString() );
-	memberAddress.setMemberPhone( addressMap.get( "memPhone" ).toString() );
-	String address = addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
-			.get( "memAddress" ).toString();
-	if ( CommonUtil.isNotEmpty( addressMap.get( "memZipCode" ) ) ) {
-	    address += addressMap.get( "memZipCode" ).toString();
-	}
-	memberAddress.setMemberAddress( address );
-	return memberAddress;
-    }
-
     @Override
     public PhoneToOrderResult toOrder( PhoneToOrderDTO params, Member member, PhoneLoginDTO loginDTO ) {
 	PhoneToOrderResult result = new PhoneToOrderResult();
@@ -359,11 +338,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( CommonUtil.isNotEmpty( params.getMemberAddressId() ) && params.getMemberAddressId() > 0 ) {
 	    MemberAddress memberAddress = memberAddressService.addreSelectId( params.getMemberAddressId() );
 	    if ( CommonUtil.isNotEmpty( memberAddress ) ) {
-		PhoneOrderMemberAddressDTO memberAddressResult = new PhoneOrderMemberAddressDTO();
-		memberAddressResult.setId( memberAddress.getId() );
-		memberAddressResult.setMemberAddress( memberAddress.getMemAddress() );
-		memberAddressResult.setMemberPhone( memberAddress.getMemPhone() );
-		memberAddressResult.setMemberName( memberAddress.getMemName() );
+		PhoneOrderMemberAddressDTO memberAddressResult = mallMemberAddressService.getMemberAddressResult( memberAddress );
 
 		result.setMemberAddressDTO( memberAddressResult );
 		provincesId = memberAddress.getMemProvince().toString();
@@ -380,7 +355,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
 		//获取会员的默认地址
 		Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
-		PhoneOrderMemberAddressDTO memberAddress = getMemberAddressResult( addressMap );
+		PhoneOrderMemberAddressDTO memberAddress = mallMemberAddressService.getMemberAddressResult( addressMap );
 		if ( CommonUtil.isNotEmpty( memberAddress ) ) {
 		    result.setMemberAddressDTO( memberAddress );
 		    provincesId = addressMap.get( "memProvince" ).toString();

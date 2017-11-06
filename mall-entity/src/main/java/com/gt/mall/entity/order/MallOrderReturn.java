@@ -153,6 +153,16 @@ public class MallOrderReturn extends Model< MallOrderReturn > {
      */
     @TableField( "return_jifen" )
     private Double     returnJifen;
+    /**
+     * 0 未收到货 1已收到货  -1 未填写
+     */
+    @TableField( "cargo_status" )
+    private Integer    cargoStatus;
+    /**
+     * 退货物流时上传的图片 用逗号隔开
+     */
+    @TableField( "wl_images_url" )
+    private String     wlImagesUrl;
 
     @Override
     protected Serializable pkVal() {
@@ -165,28 +175,29 @@ public class MallOrderReturn extends Model< MallOrderReturn > {
 			"id=" + id +
 			", orderId=" + orderId +
 			", orderDetailId=" + orderDetailId +
-			", returnNo=" + returnNo +
+			", returnNo='" + returnNo + '\'' +
 			", retHandlingWay=" + retHandlingWay +
 			", retReasonId=" + retReasonId +
-			", retReason=" + retReason +
+			", retReason='" + retReason + '\'' +
 			", retMoney=" + retMoney +
-			", retTelephone=" + retTelephone +
-			", retRemark=" + retRemark +
-			", imagesUrl=" + imagesUrl +
+			", retTelephone='" + retTelephone + '\'' +
+			", retRemark='" + retRemark + '\'' +
+			", imagesUrl='" + imagesUrl + '\'' +
 			", shopId=" + shopId +
 			", createTime=" + createTime +
 			", updateTime=" + updateTime +
 			", status=" + status +
 			", userId=" + userId +
-			", noReturnReason=" + noReturnReason +
-			", returnAddress=" + returnAddress +
+			", noReturnReason='" + noReturnReason + '\'' +
+			", returnAddress='" + returnAddress + '\'' +
 			", wlCompanyId=" + wlCompanyId +
-			", wlCompany=" + wlCompany +
-			", wlNo=" + wlNo +
-			", wlTelephone=" + wlTelephone +
-			", wlRemark=" + wlRemark +
+			", wlCompany='" + wlCompany + '\'' +
+			", wlNo='" + wlNo + '\'' +
+			", wlTelephone='" + wlTelephone + '\'' +
+			", wlRemark='" + wlRemark + '\'' +
 			", returnFenbi=" + returnFenbi +
 			", returnJifen=" + returnJifen +
-			"}";
+			", cargoStatus=" + cargoStatus +
+			'}';
     }
 }

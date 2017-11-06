@@ -1,7 +1,8 @@
 package com.gt.mall.service.inter.user;
 
+import com.gt.mall.bean.DictBean;
+
 import java.util.List;
-import java.util.Map;
 
 /**
  * 字典接口
@@ -18,7 +19,7 @@ public interface DictService {
      *
      * @return 键值对
      */
-    public List< Map > getDict( String dictType );
+    public List< DictBean > getDict( String dictType );
 
     /**
      * 查询字典 value值
