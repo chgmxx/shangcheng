@@ -206,7 +206,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	}
 
-	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 ) ) {//用商品价算会员价
+	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 ) ) {//用商品价算会员价
 	    double hyPrice = CommonUtil.toDouble( df.format( productPrice * discount ) );
 	    result.setHyPrice( hyPrice );//会员价
 	}
@@ -215,7 +215,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	}
 	result.setProductName( product.getProName() );//商品名称
 	result.setProductLabel( product.getProLabel() );//商品标签
-	if ( params.getType() == 0 ) {
+	if ( params.getType() == 0 || params.getType() == 7 ) {
 	    result.setProductPrice( productPrice );//商品价格
 	    if ( productPrice < productCostPrice && productCostPrice > 0 ) {
 		result.setProductCostPrice( productCostPrice );//商品原价
@@ -402,7 +402,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		    }
 		}
 		priceMap.put( "inv_price", df.format( invPrice ) );
-		if ( hyPrice > 0 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 ) ) {
+		if ( hyPrice > 0 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 ) ) {
 		    priceMap.put( "hyPrice", df.format( hyPrice ) );
 		}
 		if ( oldPrice > 0 ) {

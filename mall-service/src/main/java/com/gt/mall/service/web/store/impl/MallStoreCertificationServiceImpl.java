@@ -69,7 +69,7 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
 		String value = dictBean.getItem_value();
 		JSONObject foorerObj = JSONObject.fromObject( value );
 
-		if ( certification.getStoCategory().toString().equals( key.toString() ) ) {
+		if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
 		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
 		    break;
 		}

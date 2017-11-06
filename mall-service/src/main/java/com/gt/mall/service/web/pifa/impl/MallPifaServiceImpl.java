@@ -548,7 +548,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	pifaResult.setPfErrorMsg( errorMsg );
 	result.setPifaResult( pifaResult );
 	result.setInvIdList( invIdList );
-	result.setProductPrice( groupPrice );
+	result.setPfPrice( groupPrice );
 	return result;
     }
 
