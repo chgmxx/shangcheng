@@ -149,10 +149,9 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    List< Map< String,Object > > orderList = orderService.selectIntegralOrder( params );
 	    result.put( "orderList", orderList );
 
-	   /* if ( CommonUtil.isNotEmpty( shopId ) ) {
-		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
-		result.put( "shopId", shopId );
-	    }*/
+	    if ( CommonUtil.isNotEmpty( shopId ) ) {
+		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取兑换记录列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -191,10 +190,9 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		result.put( "memberIntegral", member.getIntegral() );
 	    }
 
-	  /*  if ( CommonUtil.isNotEmpty( shopId ) ) {
-		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
-		result.put( "shopId", shopId );
-	    }*/
+	    if ( CommonUtil.isNotEmpty( shopId ) ) {
+		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取积分明细列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -236,8 +234,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    result.put( "member", member );
 
 	    if ( CommonUtil.isNotEmpty( shopId ) ) {
-		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
-		/*result.put( "shopId", shopId );*/
+		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取积分商品信息异常：" + e.getMessage() );

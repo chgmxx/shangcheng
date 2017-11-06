@@ -26,7 +26,7 @@ public class PhoneAddMallSetDTO implements Serializable {
     @ApiModelProperty( name = "mallSet", value = "商城设置" )
     private PhoneSellerMallSetDTO mallSet;
 
-    @ApiModelProperty( name = "sellerproList", value = "自选商品列表" )
-    private List< PhoneSellerProductDTO > sellerproList;
+    @ApiModelProperty( name = "sellerProList", value = "自选商品列表" )
+    private List< PhoneSellerProductDTO > sellerProList;
 
 }
