@@ -7,6 +7,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
@@ -22,6 +23,7 @@ import com.gt.mall.result.phone.order.list.PhoneOrderListOrderDetailResult;
 import com.gt.mall.result.phone.order.list.PhoneOrderListOrderResult;
 import com.gt.mall.result.phone.order.list.PhoneOrderListResult;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallOrderListService;
@@ -49,21 +51,23 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
     private static Logger logger = LoggerFactory.getLogger( MallOrderListServiceImpl.class );
 
     @Autowired
-    private MallOrderDAO        mallOrderDAO;
+    private MallOrderDAO         mallOrderDAO;
     @Autowired
-    private MallOrderDetailDAO  mallOrderDetailDAO;
+    private MallOrderDetailDAO   mallOrderDetailDAO;
     @Autowired
-    private MallStoreService    mallStoreService;
+    private MallStoreService     mallStoreService;
     @Autowired
-    private MallOrderService    mallOrderService;
+    private MallOrderService     mallOrderService;
     @Autowired
-    private MallCommonService   mallCommonService;
+    private MallCommonService    mallCommonService;
     @Autowired
-    private MallPaySetService   mallPaySetService;
+    private MallPaySetService    mallPaySetService;
     @Autowired
-    private MallGroupBuyService mallGroupBuyService;
+    private MallGroupBuyService  mallGroupBuyService;
     @Autowired
-    private MallOrderReturnDAO  mallOrderReturnDAO;
+    private MallOrderReturnDAO   mallOrderReturnDAO;
+    @Autowired
+    private MallTakeTheirService mallTakeTheirService;
 
     @Override
     public PhoneOrderListResult orderList( PhoneOrderListDTO params, PhoneLoginDTO loginDTO, Member member ) {
@@ -175,7 +179,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		    detailResult.setProductSpecificaValue( detail.getProductSpeciname() );
 		    detailResult.setDetailStauts( detail.getStatus() );//订单状态
 		    isNowReturn = OrderUtil.getOrderIsNowReturn( detailStutas );
-		    boolean isGoupOrderCanReturn = false;
+		    boolean isGoupOrderCanReturn = true;
 		    if ( order.getOrderType() == 1 ) {
 			//团购订单是否能退款
 			isGoupOrderCanReturn = mallGroupBuyService.orderIsCanRenturn( order.getId(), detail.getId(), order.getGroupBuyId() );
@@ -184,14 +188,20 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 			    isNowReturn = false;
 			}
 		    }
-		    if ( isNowReturn ) {
-			MallOrderReturn returns = new MallOrderReturn();
-			returns.setOrderId( order.getId() );
-			returns.setOrderDetailId( detail.getId() );
-			MallOrderReturn orderReturn = mallOrderReturnDAO.selectByOrderDetailId( returns );
-			if ( CommonUtil.isNotEmpty( orderReturn ) ) {
-			    detailResult.setReturnId( orderReturn.getId() );
-			}
+		    if ( isNowReturn && detail.getOrderReturn() != null ) {
+			MallOrderReturn orderReturn = detail.getOrderReturn();
+
+			detailResult.setReturnId( orderReturn.getId() );
+			detailResult.setReturnMoney( CommonUtil.toDouble( orderReturn.getRetMoney() ) );
+			detailResult.setReturnType( orderReturn.getRetHandlingWay() );
+			detailResult.setReturnStatusDesc( OrderUtil.getReturnStatusName( orderReturn ) );
+			detailResult.setIsShowReturnWuliuButton( OrderUtil.getOrderIsShowReturnWuliuButton( isNowReturn, detailStutas, orderReturn ) );
+			detailResult.setIsShowUpdateReturnButton( OrderUtil.getOrderIsShowUpdateReturnButton( isNowReturn, detailStutas ) );
+			detailResult.setIsShowCloseReturnButton( OrderUtil.getOrderIsShowCloseReturnButton( isNowReturn, detailStutas, orderReturn ) );
+			detailResult.setIsShowApplySaleButton( OrderUtil.getOrderIsShowShouHuoButton( order, isNowReturn ) );
+			detailResult.setIsShowKanJinduButton( OrderUtil.getOrderIsShowKanJinduButton( orderReturn ) );
+			detailResult.setIsShowReturnDetailButton( OrderUtil.getOrderIsShowReturnDetailButton( orderReturn ) );
+
 		    }
 		    if ( isGoupOrderCanReturn ) {
 			//判断订单详情是否能显示申请退款按钮
@@ -234,7 +244,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	if ( CommonUtil.isEmpty( order ) ) {
 	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
 	}
-	if(order.getMemberIsDelete() == 1){
+	if ( order.getMemberIsDelete() == 1 ) {
 	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "订单已删除" );
 	}
 	List< Integer > busIds = new ArrayList<>();
@@ -269,7 +279,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		detailResult.setProductSpecificaValue( detail.getProductSpeciname() );
 		detailResult.setDetailStauts( detail.getStatus() );
 		isNowReturn = OrderUtil.getOrderIsNowReturn( detailStutas );
-		boolean isGoupOrderCanReturn = false;
+		boolean isGoupOrderCanReturn = true;
 		if ( order.getOrderType() == 1 ) {
 		    //团购订单是否能退款
 		    isGoupOrderCanReturn = mallGroupBuyService.orderIsCanRenturn( order.getId(), detail.getId(), order.getGroupBuyId() );
@@ -367,6 +377,13 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    result.setAppointmentDate( DateTimeKit.format( order.getAppointmentTime(), DateTimeKit.DEFAULT_DATE_FORMAT ) );
 	    result.setAppointmentStartTime( order.getAppointmentStartTime() );
 	    result.setAppointmentEndTime( order.getAppointmentEndTime() );
+	    if ( CommonUtil.isEmpty( order.getAppointmentAddress() ) ) {
+		MallTakeTheir take = mallTakeTheirService.selectById( order.getTakeTheirId() );
+		if ( CommonUtil.isNotEmpty( take ) ) {
+		    order.setAppointmentAddress( take.getVisitAddressDetail() );
+		}
+	    }
+	    result.setAppointmentAddress( order.getAppointmentAddress() );
 	}
 	//判断是否显示去支付按钮  （未支付 且 不是找人代付才能 显示去支付按钮）
 	result.setIsShowGoPayButton( OrderUtil.getOrderIsShowGoPayButton( order ) );
@@ -377,6 +394,8 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	//是否查看物流按钮 1显示
 	result.setIsShowKanWuLiuButton( OrderUtil.getOrderIsShowKanWuliuButton( order ) );
 	result.setDetailResultList( detailResultList );
+	result.setBuyerMessage( order.getOrderBuyerMessage() );
+	result.setBusMessage( order.getOrderSellerRemark() );
 	return result;
     }
 

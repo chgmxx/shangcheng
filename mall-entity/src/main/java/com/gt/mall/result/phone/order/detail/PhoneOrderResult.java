@@ -97,6 +97,9 @@ public class PhoneOrderResult implements Serializable {
     @ApiModelProperty( name = "appointmentEndTime", value = "提货结束时间" )
     private String appointmentEndTime;
 
+    @ApiModelProperty( name = "appointmentAddress", value = "提货地址" )
+    private String appointmentAddress;
+
     @ApiModelProperty( name = "isShowGoPayButton", value = "是否显示去支付按钮 1显示" )
     private Integer isShowGoPayButton = 0;
 
@@ -111,5 +114,11 @@ public class PhoneOrderResult implements Serializable {
 
     @ApiModelProperty( name = "detailResultList", value = "订单详情集合" )
     private List< PhoneOrderDetailResult > detailResultList;
+
+    @ApiModelProperty( name = "buyerMessage", value = "买家留言" )
+    private String buyerMessage;
+
+    @ApiModelProperty( name = "busMessage", value = "商家留言" )
+    private String busMessage;
 
 }

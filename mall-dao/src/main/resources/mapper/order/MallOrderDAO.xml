@@ -65,6 +65,7 @@
         <result column="coupon_type" property="couponType"/>
         <result column="coupon_use_num" property="couponUseNum"/>
         <result column="member_is_delete" property="memberIsDelete"/>
+        <result column="appointment_address" property="appointmentAddress"/>
     </resultMap>
 
     <resultMap id="MoreResultMap" type="com.gt.mall.entity.order.MallOrder">
@@ -131,6 +132,7 @@
         <result column="coupon_type" property="couponType"/>
         <result column="coupon_use_num" property="couponUseNum"/>
         <result column="member_is_delete" property="memberIsDelete"/>
+        <result column="appointment_address" property="appointmentAddress"/>
         <collection property="mallOrderDetail" column="id" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -251,6 +253,7 @@
         <result column="discount_money" property="discountMoney"/>
         <result column="coupon_type" property="couponType"/>
         <result column="coupon_use_num" property="couponUseNum"/>
+        <result column="appointment_address" property="appointmentAddress"/>
         <collection property="mallOrderDetail" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -340,7 +343,7 @@
         pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,is_wallet,
         order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi,
         express_name , use_jifen , use_fenbi , coupon_id , union_card_id, fenbi_discount_money , jifen_discount_money , discount_money ,
-        coupon_type,coupon_use_num,member_is_delete
+        coupon_type,coupon_use_num,member_is_delete,appointment_address
     </sql>
 
     <sql id="More_Column_List">
