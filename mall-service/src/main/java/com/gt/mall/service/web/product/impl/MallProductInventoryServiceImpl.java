@@ -492,6 +492,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 			    if ( ids.equals( specifica.getId().toString() ) ) {
 				xids.append( specifica.getSpecificaValueId() ).append( "," );
 				values.append( specifica.getSpecificaValue() ).append( "," );
+				break;
 			    }
 			}
 		    }
