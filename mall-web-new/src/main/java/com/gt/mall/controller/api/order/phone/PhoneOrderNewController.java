@@ -36,6 +36,7 @@ import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.OrderUtil;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -493,6 +494,43 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    logger.error( "确认收货异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "确认收货失败" );
+	}
+    }
+
+    @ApiOperation( value = "删除订单接口", notes = "删除订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams(
+		    @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" )
+    )
+    @ResponseBody
+    @PostMapping( value = "deleteOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse deleteOrder( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    MallOrder order = mallOrderService.selectById( orderId );
+	    int isCanDelete = OrderUtil.getOrderIsShowMemberDeleteButton( order );//判断是否能删除订单 1 能
+	    if ( isCanDelete != 1 ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除订单失败" );
+	    }
+	    MallOrder mallOrder = new MallOrder();
+	    mallOrder.setId( orderId );
+	    mallOrder.setMemberIsDelete( 1 );
+	    boolean isUp = mallOrderService.updateById( mallOrder );
+	    if ( !isUp ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除订单失败" );
+	    }
+	    return ServerResponse.createBySuccessCode();
+	} catch ( BusinessException e ) {
+	    logger.error( "删除订单异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "删除订单异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "删除订单失败" );
 	}
     }
 

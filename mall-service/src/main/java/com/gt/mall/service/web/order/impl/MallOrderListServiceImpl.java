@@ -67,6 +67,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 
     @Override
     public PhoneOrderListResult orderList( PhoneOrderListDTO params, PhoneLoginDTO loginDTO, Member member ) {
+	long startTime = System.currentTimeMillis();
 	PhoneOrderListResult result = new PhoneOrderListResult();
 
 	if ( CommonUtil.isNotEmpty( params.getOrderId() ) && params.getOrderId() > 0 ) {
@@ -83,8 +84,11 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	paramsMap.put( "busUserId", loginDTO.getBusId() );
 	paramsMap = mallOrderService.getMemberParams( member, paramsMap );//获取登录人的集合
 	paramsMap = OrderUtil.getOrderListParams( paramsMap, params );//重组查询参数
-	int pageSize = 1;
+	int pageSize = 20;
 	int countOrder = mallOrderDAO.countMobileOrderList( paramsMap );
+	if ( countOrder == 0 ) {
+	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "您还没有相关的订单" );
+	}
 	Integer curPage = CommonUtil.isEmpty( params.getCurPage() ) ? 1 : params.getCurPage();
 	paramsMap.put( "curPage", curPage );
 
@@ -149,7 +153,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    orderResult.setOrderNo( order.getOrderNo() );//订单号
 	    orderResult.setOrderStatus( order.getOrderStatus() );//订单状态
 	    orderResult.setOrderStatusName( OrderUtil.getOrderStatusMsgByOrder( orderStatus, order.getDeliveryMethod().toString() ) );//订单状态名称
-	    orderResult.setOrderCreateTime( DateTimeKit.format( order.getCreateTime(), DateTimeKit.DEFAULT_DATETIME_FORMAT ) );//下单时间
+	    orderResult.setOrderCreateTime( DateTimeKit.format( order.getCreateTime(), DateTimeKit.DEFAULT_DATETIME_FORMAT_2 ) );//下单时间
 	    long updateDay = 0;//计算修改时间到今天的天数
 	    if ( CommonUtil.isNotEmpty( order.getUpdateTime() ) ) {
 		updateDay = DateTimeKit.diffDays( new Date(), order.getUpdateTime() );
@@ -171,9 +175,10 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		    detailResult.setProductSpecificaValue( detail.getProductSpeciname() );
 		    detailResult.setDetailStauts( detail.getStatus() );//订单状态
 		    isNowReturn = OrderUtil.getOrderIsNowReturn( detailStutas );
+		    boolean isGoupOrderCanReturn = false;
 		    if ( order.getOrderType() == 1 ) {
 			//团购订单是否能退款
-			boolean isGoupOrderCanReturn = mallGroupBuyService.orderIsCanRenturn( order.getId(), detail.getId(), order.getGroupBuyId() );
+			isGoupOrderCanReturn = mallGroupBuyService.orderIsCanRenturn( order.getId(), detail.getId(), order.getGroupBuyId() );
 			if ( !isGoupOrderCanReturn ) {
 			    //团购订单不能退款
 			    isNowReturn = false;
@@ -188,8 +193,10 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 			    detailResult.setReturnId( orderReturn.getId() );
 			}
 		    }
-		    //判断订单详情是否能显示申请退款按钮
-		    detailResult.setIsShowApplyReturnButton( OrderUtil.getOrderIsShowReturnButton( order, detail, updateDay ) );
+		    if ( isGoupOrderCanReturn ) {
+			//判断订单详情是否能显示申请退款按钮
+			detailResult.setIsShowApplyReturnButton( OrderUtil.getOrderIsShowReturnButton( order, detail, updateDay ) );
+		    }
 		    //判断订单是否能显示评论按钮  1 能评论
 		    detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment ) );
 		    detailResultList.add( detailResult );
@@ -204,12 +211,18 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    orderResult.setIsShowGoPayButton( OrderUtil.getOrderIsShowGoPayButton( order ) );
 	    //判断是否显示确认收货按钮 (订单状态为已发货、不能是积分支付和粉币支付  以及 未退款的订单或退款成功的订单   才能显示确认收货的按钮)
 	    orderResult.setIsShowReceiveGoodButton( OrderUtil.getOrderIsShowShouHuoButton( order, isNowReturn ) );
+	    //判断是否显示代付详情按钮
+	    orderResult.setIsShowDaifuButton( OrderUtil.getOrderIsShowDaifuButton( order ) );
 	    orderResult.setDetailResultList( detailResultList );
 	    orderResultList.add( orderResult );
 	}
 	result.setOrderResultList( orderResultList );
 	result.setPageCount( page.getPageCount() );
 	result.setCurPage( page.getCurPage() );
+	long endTime = System.currentTimeMillis();
+
+	long executeTime = endTime - startTime;
+	logger.error( "订单列表访问的执行时间 : " + executeTime + "ms" );
 	return result;
     }
 
@@ -220,6 +233,9 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	MallOrder order = mallOrderDAO.selectById( orderId );
 	if ( CommonUtil.isEmpty( order ) ) {
 	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+	}
+	if(order.getMemberIsDelete() == 1){
+	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "订单已删除" );
 	}
 	List< Integer > busIds = new ArrayList<>();
 	busIds.add( order.getBusUserId() );
@@ -253,9 +269,10 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		detailResult.setProductSpecificaValue( detail.getProductSpeciname() );
 		detailResult.setDetailStauts( detail.getStatus() );
 		isNowReturn = OrderUtil.getOrderIsNowReturn( detailStutas );
+		boolean isGoupOrderCanReturn = false;
 		if ( order.getOrderType() == 1 ) {
 		    //团购订单是否能退款
-		    boolean isGoupOrderCanReturn = mallGroupBuyService.orderIsCanRenturn( order.getId(), detail.getId(), order.getGroupBuyId() );
+		    isGoupOrderCanReturn = mallGroupBuyService.orderIsCanRenturn( order.getId(), detail.getId(), order.getGroupBuyId() );
 		    if ( !isGoupOrderCanReturn ) {
 			//团购订单不能退款
 			isNowReturn = false;
@@ -272,8 +289,11 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		    }
 		}
 		//判断订单详情是否能显示申请退款按钮 1显示
-		int isShowAppllyReturn = OrderUtil.getOrderIsShowReturnButton( order, detail, updateDay );
-		detailResult.setIsShowApplyReturnButton( isShowAppllyReturn );
+		int isShowAppllyReturn = 0;
+		if ( isGoupOrderCanReturn ) {
+		    isShowAppllyReturn = OrderUtil.getOrderIsShowReturnButton( order, detail, updateDay );
+		    detailResult.setIsShowApplyReturnButton( isShowAppllyReturn );
+		}
 		//判断订单是否能显示评论按钮  1 能评论
 		detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment ) );
 		//是否显示退款物流的按钮 1显示

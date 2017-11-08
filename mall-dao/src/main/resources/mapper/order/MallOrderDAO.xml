@@ -64,6 +64,7 @@
         <result column="discount_money" property="discountMoney"/>
         <result column="coupon_type" property="couponType"/>
         <result column="coupon_use_num" property="couponUseNum"/>
+        <result column="member_is_delete" property="memberIsDelete"/>
     </resultMap>
 
     <resultMap id="MoreResultMap" type="com.gt.mall.entity.order.MallOrder">
@@ -129,6 +130,7 @@
         <result column="discount_money" property="discountMoney"/>
         <result column="coupon_type" property="couponType"/>
         <result column="coupon_use_num" property="couponUseNum"/>
+        <result column="member_is_delete" property="memberIsDelete"/>
         <collection property="mallOrderDetail" column="id" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -338,7 +340,7 @@
         pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,is_wallet,
         order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi,
         express_name , use_jifen , use_fenbi , coupon_id , union_card_id, fenbi_discount_money , jifen_discount_money , discount_money ,
-        coupon_type,coupon_use_num
+        coupon_type,coupon_use_num,member_is_delete
     </sql>
 
     <sql id="More_Column_List">
@@ -815,7 +817,7 @@
         t.is_wallet,t.bus_user_id ,t.`member_name` ,t.shop_id
         FROM t_mall_order t
 
-        where 1=1 and t.shop_id > 0
+        where t.member_is_delete = 0 and t.shop_id > 0
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id = #{busUserId}
         </if>
@@ -853,7 +855,7 @@
 
         from t_mall_order t
         left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
-        where t.shop_id > 0
+        where t.member_is_delete = 0 and t.shop_id > 0
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id = #{busUserId}
         </if>
@@ -894,7 +896,7 @@
         <if test="appraiseStatus != null or isReturn != null ">
             left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
         </if>
-        where t.shop_id > 0
+        where t.member_is_delete = 0 and t.shop_id > 0
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id=#{busUserId}
         </if>

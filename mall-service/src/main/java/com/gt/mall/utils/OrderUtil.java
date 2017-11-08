@@ -260,6 +260,20 @@ public class OrderUtil {
     }
 
     /**
+     * 是否显示代付详情
+     *
+     * @param order 订单
+     *
+     * @return 1显示
+     */
+    public static int getOrderIsShowDaifuButton( MallOrder order ) {
+	if ( order.getOrderPayWay() == 7 ) {
+	    return 1;
+	}
+	return 0;
+    }
+
+    /**
      * 是否显示查看物流的按钮
      *
      * @param order 订单

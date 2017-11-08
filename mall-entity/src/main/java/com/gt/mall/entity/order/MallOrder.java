@@ -327,6 +327,11 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
      */
     @TableField( "coupon_use_num" )
     private Integer couponUseNum;
+    /**
+     * 会员是否已删除
+     */
+    @TableField( "member_is_delete" )
+    private Integer memberIsDelete;
 
     @TableField( exist = false )
     private Integer updateDay;//修改订单的天数

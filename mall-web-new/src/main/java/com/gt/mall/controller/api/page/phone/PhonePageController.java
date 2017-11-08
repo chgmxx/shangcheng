@@ -152,7 +152,9 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		List< Map< String,Object > > pageList = mallPageService.selectPageIdByUserId( busId, shopList );
 		if ( pageList.size() > 0 ) {//获取首页的pageId
 		    shopId = CommonUtil.toInteger( pageList.get( 0 ).get( "pag_sto_id" ) );
-		    request.setAttribute( "pageid", pageList.get( 0 ).get( "id" ) );
+		    if ( CommonUtil.isNotEmpty( pageList.get( 0 ).get( "id" ) ) ) {
+			pageId = CommonUtil.toInteger( pageList.get( 0 ).get( "id" ) );
+		    }
 		    MallRedisUtils.getMallShopId( shopId );
 		}
 	    } else {

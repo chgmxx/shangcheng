@@ -485,11 +485,14 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 		StringBuilder xids = new StringBuilder();
 		StringBuilder values = new StringBuilder();
 		if ( specificaList != null && specificaList.size() > 0 ) {
-		    for ( int i = 0; i < specificaList.size(); i++ ) {
-			MallProductSpecifica specifica = specificaList.get( i );
-			if ( slist.contains( specifica.getId().toString() ) ) {
-			    xids.append( specifica.getSpecificaValueId() ).append( "," );
-			    values.append( specifica.getSpecificaValue() ).append( "," );
+		    for ( Object o : slist ) {
+			String ids = o.toString();
+			for ( int i = 0; i < specificaList.size(); i++ ) {
+			    MallProductSpecifica specifica = specificaList.get( i );
+			    if ( ids.equals( specifica.getId().toString() ) ) {
+				xids.append( specifica.getSpecificaValueId() ).append( "," );
+				values.append( specifica.getSpecificaValue() ).append( "," );
+			    }
 			}
 		    }
 		}

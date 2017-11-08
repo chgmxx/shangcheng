@@ -66,6 +66,9 @@ public class PhoneOrderListOrderResult implements Serializable {
     @ApiModelProperty( name = "isShowReceiveGoodButton", value = "是否显示确认收货按钮  1显示" )
     private Integer isShowReceiveGoodButton = 0;
 
+    @ApiModelProperty( name = "isShowDaifuButton", value = "是否显示代付详情 1显示" )
+    private Integer isShowDaifuButton = 0;
+
     @ApiModelProperty( name = "detailResultList", value = "订单详情集合" )
     private List< PhoneOrderListOrderDetailResult > detailResultList;
 

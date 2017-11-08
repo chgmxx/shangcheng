@@ -648,13 +648,13 @@ public class CommonUtil {
     public static String getSellerErrorMsg( int sellerStatus, double consumeMoney, double minCosumeMoney ) {
 	String errorMsg = "";
 	if ( sellerStatus == -2 || sellerStatus == -4 ) {
-	    if ( consumeMoney > 0 || minCosumeMoney > 0 ) {
+	    if ( ( consumeMoney > 0 || minCosumeMoney > 0 ) && consumeMoney < minCosumeMoney ) {
 		errorMsg = "加入超级销售员消费额必须要达到" + minCosumeMoney + "元，您的消费额只有" + consumeMoney + "元";
 	    }
 	} else if ( sellerStatus == 0 ) {
 	    errorMsg = "您的超级销售员申请在审核中请耐心等待1-3个工作日";
 	} else if ( sellerStatus == -1 ) {
-	    if ( consumeMoney > 0 || minCosumeMoney > 0 ) {
+	    if ( ( consumeMoney > 0 || minCosumeMoney > 0 ) && consumeMoney < minCosumeMoney ) {
 		errorMsg = "您的超级销售员申请不通过，且消费额没有达到" + minCosumeMoney + "元，不能继续申请，您的消费额只有" + consumeMoney + "元";
 	    } else {
 		errorMsg = "您的超级销售员申请不通过，确认要重新申请？";

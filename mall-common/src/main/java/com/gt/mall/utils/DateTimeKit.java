@@ -33,6 +33,10 @@ public class DateTimeKit {
      * 缺省的日期时间显示格式：yyyy-MM-dd HH:mm:ss
      */
     public static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    /**
+     * 缺省的日期时间显示格式：yyyy.MM.dd HH:mm:ss
+     */
+    public static final String DEFAULT_DATETIME_FORMAT_2 = "yyyy.MM.dd HH:mm:ss";
 
     /**
      * 缺省的日期时间显示格式：yyyy-MM-dd HH:mm:ss
