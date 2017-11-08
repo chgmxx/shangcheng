@@ -67,4 +67,5 @@ public class PhoneOrderDetailResult implements Serializable {
 
     @ApiModelProperty( name = "returnId", value = "退款id" )
     private Integer returnId = 0;
+
 }

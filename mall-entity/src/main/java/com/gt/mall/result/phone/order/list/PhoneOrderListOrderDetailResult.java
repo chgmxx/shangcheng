@@ -56,4 +56,36 @@ public class PhoneOrderListOrderDetailResult implements Serializable {
     @ApiModelProperty( name = "returnId", value = "退款id" )
     private Integer returnId = 0;
 
+    /******************  退款售后页面用到的参数  ************************/
+
+    @ApiModelProperty( name = "returnMoney", value = "退款金额" )
+    private double returnMoney = 0;
+
+    @ApiModelProperty( name = "returnType", value = "退款类型 1退款  2退款退货" )
+    private int returnType = -1;
+
+    @ApiModelProperty( name = "returnTypeDesc", value = "退款类型说明" )
+    private String returnTypeDesc;
+
+    @ApiModelProperty( name = "returnStatusDesc", value = "退款状态说明" )
+    private String returnStatusDesc;
+
+    @ApiModelProperty( name = "isShowReturnWuliuButton", value = "是否显示退货物流消息 1显示" )
+    private Integer isShowReturnWuliuButton = 0;
+
+    @ApiModelProperty( name = "isShowUpdateReturnButton", value = "是否显示修改退款的按钮 1显示" )
+    private Integer isShowUpdateReturnButton = 0;
+
+    @ApiModelProperty( name = "isShowCloseReturnButton", value = "是否显示撤销退款的按钮 1显示" )
+    private Integer isShowCloseReturnButton = 0;
+
+    @ApiModelProperty( name = "isShowApplySaleButton", value = "是否显示售后的按钮 1显示" )
+    private Integer isShowApplySaleButton = 0;
+
+    @ApiModelProperty( name = "isShowKanJinduButton", value = "是否显示查看进度按钮  1显示" )
+    private Integer isShowKanJinduButton = 0;
+
+    @ApiModelProperty( name = "isShowReturnDetailButton", value = "是否可以查看退款详情  1显示" )
+    private Integer isShowReturnDetailButton = 0;
+
 }

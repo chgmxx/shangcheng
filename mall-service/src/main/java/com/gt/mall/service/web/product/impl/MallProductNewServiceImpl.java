@@ -341,7 +341,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		pifaPriceList = mallPifaPriceService.selectPriceByGroupId( params.getActivityId() );
 	    }
 	}
-
+	double discount = mallProductService.getMemberDiscount( product.getIsMemberDiscount().toString(), member );
 	DecimalFormat df = new DecimalFormat( "0.00" );
 	if ( guigePrice != null && guigePrice.size() > 0 ) {
 	    for ( Map< String,Object > priceMap : guigePrice ) {
@@ -350,7 +350,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		int isJoin = 0;
 		double hyPrice = 0;
 		if ( params.getType() != 5 && params.getType() != 6 ) {
-		    double discount = mallProductService.getMemberDiscount( product.getIsMemberDiscount().toString(), member );
 		    if ( discount > 0 && discount < 1 ) {
 			hyPrice = invPrice * discount;
 		    }

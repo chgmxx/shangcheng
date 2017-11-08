@@ -51,4 +51,6 @@ public class PhoneMemberResult {
     @ApiModelProperty( name = "saleMemberId", value = "销售员id" )
     private int saleMemberId = 0;
 
+
+
 }

@@ -7,6 +7,7 @@ import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.DateTimeKitUtils;
 import com.gt.mall.constant.Constants;
+import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
@@ -25,6 +26,7 @@ import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.auction.MallAuctionService;
+import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -77,6 +79,8 @@ public class MallCommonServiceImpl implements MallCommonService {
     private FenBiFlowService         fenBiFlowService;
     @Autowired
     private MallSellerMallsetService mallSellerMallSetService;
+    @Autowired
+    private MallTakeTheirService     mallTakeTheirService;
 
     @Override
     public boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo ) {
@@ -284,6 +288,10 @@ public class MallCommonServiceImpl implements MallCommonService {
 	    order.setAppointmentStartTime( busDTO.getAppointmentStartTime() );
 	    order.setAppointmentEndTime( busDTO.getAppointmentEndTime() );
 	    order.setTakeTheirId( busDTO.getAppointmentId() );
+	    MallTakeTheir takeTheir = mallTakeTheirService.selectById( busDTO.getAppointmentId() );
+	    if ( CommonUtil.isNotEmpty( takeTheir ) ) {
+		order.setAppointmentAddress( takeTheir.getVisitAddressDetail() );
+	    }
 	}
 	order.setOrderMoney( CommonUtil.toBigDecimal( CommonUtil.add( shopDTO.getTotalNewMoney(), shopDTO.getTotalFreightMoney() ) ) );
 	order.setOrderFreightMoney( CommonUtil.toBigDecimal( shopDTO.getTotalFreightMoney() ) );

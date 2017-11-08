@@ -260,6 +260,20 @@ public class OrderUtil {
     }
 
     /**
+     * 是否显示代付详情
+     *
+     * @param order 订单
+     *
+     * @return 1显示
+     */
+    public static int getOrderIsShowDaifuButton( MallOrder order ) {
+	if ( order.getOrderPayWay() == 7 ) {
+	    return 1;
+	}
+	return 0;
+    }
+
+    /**
      * 是否显示查看物流的按钮
      *
      * @param order 订单
@@ -271,6 +285,68 @@ public class OrderUtil {
 	    return 1;
 	}
 	return 0;
+    }
+
+    /**
+     * 是否显示看进度按钮
+     *
+     * @param mallOrderReturn 退款
+     *
+     * @return 1显示
+     */
+    public static int getOrderIsShowKanJinduButton( MallOrderReturn mallOrderReturn ) {
+	String status = mallOrderReturn.getStatus().toString();
+	if ( !status.equals( "-3" ) ) {
+	    return 1;
+	}
+	return 0;
+    }
+
+    /**
+     * 是否显示看退款详情按钮
+     *
+     * @param mallOrderReturn 退款
+     *
+     * @return 1 显示
+     */
+    public static int getOrderIsShowReturnDetailButton( MallOrderReturn mallOrderReturn ) {
+	String status = mallOrderReturn.getStatus().toString();
+	if ( status.equals( "1" ) || status.equals( "5" ) ) {
+	    return 1;
+	}
+	return 0;
+    }
+
+    /**
+     * 获取退款说明
+     *
+     * @param mallOrderReturn 退款信息
+     *
+     * @return 说明
+     */
+    public static String getReturnStatusName( MallOrderReturn mallOrderReturn ) {
+	int status = mallOrderReturn.getStatus();
+	String statusMsg = "";
+	if ( status == 0 ) {
+	    statusMsg = "退款中";
+	} else if ( status == 1 ) {
+	    statusMsg = "退款成功";
+	} else if ( status == 5 ) {
+	    statusMsg = "退款退货成功";
+	} else if ( status == -1 ) {
+	    statusMsg = "卖家不同意退款";
+	} else if ( status == -2 ) {
+	    statusMsg = "退款已撤销";
+	} else if ( status == 2 ) {
+	    statusMsg = "商家已同意退款退货,请退货给商家";
+	} else if ( status == 3 ) {
+	    statusMsg = "已退货等待商家确认收货";
+	} else if ( status == 4 ) {
+	    statusMsg = "商家未收到货，不同意退款申请";
+	} else if ( status == 0 ) {
+	    statusMsg = "退款中";
+	}
+	return statusMsg;
     }
 
     /**
@@ -288,7 +364,7 @@ public class OrderUtil {
 	} else if ( "2".equals( orderStatus ) && "1".equals( deliveryMethod ) ) {
 	    statusName = "等待卖家发货";
 	} else if ( "2".equals( orderStatus ) && "2".equals( deliveryMethod ) ) {
-	    statusName = "等待买家提货";
+	    statusName = "待提货";
 	} else if ( "3".equals( orderStatus ) ) {
 	    statusName = "卖家已发货";
 	} else if ( "4".equals( orderStatus ) ) {

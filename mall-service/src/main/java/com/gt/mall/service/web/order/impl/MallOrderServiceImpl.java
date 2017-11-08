@@ -297,24 +297,26 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			}
 		    }
 		}
-		if ( ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 && orderReturnList != null && orderReturnList.size() > 0 ) || isDetail ) {
+		if ( ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) || isDetail ) {
 		    isDetail = true;
-		    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-			if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
-			    isDetail = true;
-			    if ( detail.getStatus() != -3 ) {
-				for ( int i = 0; i < orderReturnList.size(); i++ ) {
-				    MallOrderReturn mallOrderReturn = orderReturnList.get( i );
-				    if ( CommonUtil.toString( mallOrderReturn.getOrderDetailId() ).equals( CommonUtil.toString( detail.getId() ) ) && CommonUtil
-						    .toString( mallOrderReturn.getOrderId() ).equals( CommonUtil.toString( detail.getOrderId() ) ) ) {
-					detail.setOrderReturn( mallOrderReturn );
-					orderReturnList.remove( i );
-					break;
+		    if ( orderReturnList != null && orderReturnList.size() > 0 ) {
+			for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+			    if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
+				isDetail = true;
+				if ( detail.getStatus() != -3 ) {
+				    for ( int i = 0; i < orderReturnList.size(); i++ ) {
+					MallOrderReturn mallOrderReturn = orderReturnList.get( i );
+					if ( CommonUtil.toString( mallOrderReturn.getOrderDetailId() ).equals( CommonUtil.toString( detail.getId() ) ) && CommonUtil
+							.toString( mallOrderReturn.getOrderId() ).equals( CommonUtil.toString( detail.getOrderId() ) ) ) {
+					    detail.setOrderReturn( mallOrderReturn );
+					    orderReturnList.remove( i );
+					    break;
+					}
 				    }
 				}
+			    } else {
+				isDetail = false;
 			    }
-			} else {
-			    isDetail = false;
 			}
 		    }
 		}
