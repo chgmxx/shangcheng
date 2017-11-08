@@ -58,6 +58,20 @@ public class MallRedisUtils {
 	return 0;
     }
 
+    /**
+     * 获取商城的店铺id存到session
+     */
+    public static int getShopId() {
+	String redisKey = Constants.REDIS_KEY + "shopId";
+	if ( JedisUtil.exists( redisKey ) ) {
+	    Object idObj = JedisUtil.get( redisKey );
+	    if ( idObj != null ) {
+		return CommonUtil.toInteger( idObj );
+	    }
+	}
+	return 0;
+    }
+
     public int setIsShopBySession( Integer toShop, Integer shopId, Integer busId ) {
 	if ( CommonUtil.isEmpty( toShop ) || CommonUtil.isEmpty( shopId ) || CommonUtil.isEmpty( busId ) ) {
 	    return 0;

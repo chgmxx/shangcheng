@@ -105,7 +105,7 @@ public class MallPaySetController extends BaseController {
 	    }
 
 	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
-	    if ( messageList != null && messageList.size() > 0 ) {
+	    if ( messageList != null && msgArr != null && messageList.size() > 0 ) {
 		for ( Map map : messageList ) {
 		    for ( Map obj : msgArr ) {
 			map.put( "selected", "0" );
@@ -186,6 +186,7 @@ public class MallPaySetController extends BaseController {
 		    }
 		}
 	    }
+	    template_json = CommonUtil.urlEncode( template_json );
 	    Map temp = JSONObject.fromObject( template_json );
 
 	    if ( operation == 1 ) {

@@ -349,4 +349,28 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "上传图片失败" );
     }
 
+    @ApiOperation( value = "获取店铺ID", notes = "获取店铺ID", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
+    @PostMapping( value = "getShopId", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse getShopId( HttpServletRequest request, int busId ) {
+	Integer shopId = 0;
+	try {
+	    shopId = MallRedisUtils.getShopId();
+	    if ( shopId == 0 ) {
+		BusUser user = new BusUser();
+		user.setId( busId );
+		List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
+		if ( shopList != null && shopList.size() > 0 ) {
+		    shopId = CommonUtil.toInteger( shopList.get( 0 ).get( "id" ) );
+		}
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "获取店铺ID异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "获取店铺ID失败" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopId, false );
+    }
+
 }

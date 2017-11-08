@@ -254,7 +254,6 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddIntegralDTO integralDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
