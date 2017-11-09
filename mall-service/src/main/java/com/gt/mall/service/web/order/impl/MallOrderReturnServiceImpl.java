@@ -8,12 +8,15 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
 import com.gt.mall.dao.product.MallProductDAO;
+import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
+import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
@@ -25,6 +28,7 @@ import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.OrderUtil;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.result.pay.WxPayOrder;
@@ -76,6 +80,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private DictService                 dictService;
     @Autowired
     private MallOrderReturnDAO          mallOrderReturnDAO;
+    @Autowired
+    private MallStoreDAO                mallStoreDAO;
 
     /**
      * 系统退款（不是买家申请的）
@@ -358,6 +364,48 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	    result.setCargoStatusList( wayResultList );
 	    result.setIsShowCargoStatus( 1 );
 	}
+
+	return result;
+    }
+
+    @Override
+    public PhoneReturnResult returnDetail( Integer returnId ) {
+
+	MallOrderReturn orderReturn = mallOrderReturnDAO.selectById( returnId );//退款详情
+
+	MallOrderDetail detail = mallOrderDetailService.selectById( orderReturn.getOrderDetailId() );
+	MallStore store = mallStoreDAO.selectById( detail.getShopId() );
+	PhoneReturnResult result = new PhoneReturnResult();
+	result.setProductId( detail.getProductId() );
+	result.setShopId( detail.getShopId() );
+	if ( CommonUtil.isNotEmpty( store ) ) {
+	    result.setShopName( store.getStoName() );
+	}
+	result.setBusId( orderReturn.getUserId() );
+	result.setProductName( detail.getDetProName() );
+	result.setOrderId( detail.getOrderId() );
+
+	result.setReturnId( orderReturn.getId() );
+	result.setCreateTime( orderReturn.getCreateTime() );
+	result.setReturnPrice( orderReturn.getRetMoney().doubleValue() );
+	result.setRetHandlingWay( orderReturn.getRetHandlingWay() );
+	result.setReturnId( orderReturn.getId() );
+	result.setRetReasonId( orderReturn.getRetReasonId() );
+	result.setRetRemark( orderReturn.getRetRemark() );
+	result.setStatus( orderReturn.getStatus() );
+	result.setStatusName( OrderUtil.getReturnStatusName( orderReturn ) );
+	result.setReturnTime( orderReturn.getUpdateTime() );
+	//查询退款原因
+	List< DictBean > dictBeanList = dictService.getDict( "1091" );
+	if ( dictBeanList != null && dictBeanList.size() > 0 ) {
+	    for ( DictBean bean : dictBeanList ) {
+		if ( bean.getItem_key() == orderReturn.getRetReasonId() ) {
+		    result.setRetReasonName( bean.getItem_value() );
+		    break;
+		}
+	    }
+	}
+	//	result.setReturnReasonList( dictBeanList );
 
 	return result;
     }

@@ -3,15 +3,13 @@ package com.gt.mall.controller.api.order.phone;
 import com.gt.api.bean.session.Member;
 import com.gt.api.util.SessionUtils;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.basic.MallTakeTheirTime;
-import com.gt.mall.entity.order.MallDaifu;
-import com.gt.mall.entity.order.MallOrder;
-import com.gt.mall.entity.order.MallOrderDetail;
-import com.gt.mall.entity.order.MallOrderReturn;
+import com.gt.mall.entity.order.*;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneBuyNowDTO;
@@ -27,16 +25,14 @@ import com.gt.mall.result.phone.order.daifu.PhoneGetDaiFuResult;
 import com.gt.mall.result.phone.order.detail.PhoneOrderResult;
 import com.gt.mall.result.phone.order.list.PhoneOrderListResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
 import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.product.MallProductNewService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.EntityDtoConverter;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.OrderUtil;
+import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -69,25 +65,27 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     private static Logger logger = LoggerFactory.getLogger( PhoneOrderNewController.class );
 
     @Autowired
-    private MallProductNewService    mallProductNewService;//新的商品业务处理类
+    private MallProductNewService     mallProductNewService;//新的商品业务处理类
     @Autowired
-    private MallOrderSubmitService   mallOrderSubmitService;//提交订单业务处理类
+    private MallOrderSubmitService    mallOrderSubmitService;//提交订单业务处理类
     @Autowired
-    private MallTakeTheirTimeService mallTakeTheirTimeService;//上门自提时间业务处理类
+    private MallTakeTheirTimeService  mallTakeTheirTimeService;//上门自提时间业务处理类
     @Autowired
-    private MallTakeTheirService     mallTakeTheirService;//上门自提业务处理类
+    private MallTakeTheirService      mallTakeTheirService;//上门自提业务处理类
     @Autowired
-    private MallOrderService         mallOrderService;//订单业务处理类
+    private MallOrderService          mallOrderService;//订单业务处理类
     @Autowired
-    private MallOrderListService     mallOrderListService;//订单列表业务处理类
+    private MallOrderListService      mallOrderListService;//订单列表业务处理类
     @Autowired
-    private DictService              dictService;//字典接口
+    private DictService               dictService;//字典接口
     @Autowired
-    private MallOrderDetailService   mallOrderDetailService;//订单详情业务处理类
+    private MallOrderDetailService    mallOrderDetailService;//订单详情业务处理类
     @Autowired
-    private MallOrderReturnService   mallOrderReturnService;//订单退款业务处理类
+    private MallOrderReturnService    mallOrderReturnService;//订单退款业务处理类
     @Autowired
-    private MallDaifuService         mallDaifuService;//代付业务处理类
+    private MallDaifuService          mallDaifuService;//代付业务处理类
+    @Autowired
+    private MallOrderReturnLogService mallOrderReturnLogService;//订单退款日志处理类
 
     @ApiOperation( value = "立即购买接口", notes = "用户点击立即购买", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -147,8 +145,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "提交订单的接口", notes = "提交订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "submitOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< Map< String,Object > > submitOrder( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody PhoneAddOrderDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+    public ServerResponse< Map< String,Object > > submitOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody PhoneAddOrderDTO params,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -238,8 +236,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "手机端订单列表的接口", notes = "我的订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "orderList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< PhoneOrderListResult > orderList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneOrderListDTO params, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+    public ServerResponse< PhoneOrderListResult > orderList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneOrderListDTO params,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
@@ -264,8 +262,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiImplicitParams( @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "orderDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< PhoneOrderResult > orderDetail( HttpServletRequest request, HttpServletResponse response,
-		    Integer orderId, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+    public ServerResponse< PhoneOrderResult > orderDetail( HttpServletRequest request, HttpServletResponse response, Integer orderId,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
@@ -321,10 +319,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "查询退款信息接口", notes = "查询退款信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "orderDetailId", value = "订单详情id,必传", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" )
-    } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "orderDetailId", value = "订单详情id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ) } )
     @ResponseBody
     @PostMapping( value = "getReturn", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneReturnProductResult > getReturn( HttpServletRequest request, HttpServletResponse response,
@@ -348,11 +344,61 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	}
     }
 
+    @ApiOperation( value = "查询退款详情接口", notes = "查询退款详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ) } )
+    @ResponseBody
+    @PostMapping( value = "returnDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhoneReturnResult > returnDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    Integer returnId ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    PhoneReturnResult result = mallOrderReturnService.returnDetail( returnId );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	} catch ( BusinessException e ) {
+	    logger.error( "查询退款详情的接口异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "查询退款详情的接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询退款详情失败" );
+	}
+    }
+
+    @ApiOperation( value = "查询退款日志列表接口", notes = "查询退款日志列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ) } )
+    @ResponseBody
+    @PostMapping( value = "returnLogList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< List< Map< String,Object > > > returnLogList( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer returnId ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    List< Map< String,Object > > resultList = mallOrderReturnLogService.selectReturnLogList( returnId );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultList, false );
+	} catch ( BusinessException e ) {
+	    logger.error( "查询退款日志列表接口异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "查询退款日志列表的接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询退款日志列表失败" );
+	}
+    }
+
     @ApiOperation( value = "保存退款内容接口", notes = "保存退款内容", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "saveReturnContent", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse saveReturnContent( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnDTO orderReturnDTO ) {
+    public ServerResponse saveReturnContent( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnDTO orderReturnDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
@@ -361,17 +407,22 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    MallOrderReturn orderReturn = new MallOrderReturn();
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    converter.entityConvertDto( orderReturnDTO, orderReturn );
-
+	    boolean flag = false;
 	    if ( CommonUtil.isNotEmpty( orderReturn.getId() ) && orderReturn.getId() > 0 ) {
 		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnService.updateById( orderReturn );
+		flag = mallOrderReturnService.updateById( orderReturn );
 	    } else {
 		MallOrderDetail mallOrderDetail = mallOrderDetailService.selectById( orderReturn.getOrderDetailId() );
 		orderReturn.setReturnJifen( mallOrderDetail.getUseJifen() );
 		orderReturn.setReturnFenbi( mallOrderDetail.getUseFenbi() );
 		orderReturn.setCreateTime( new Date() );
 		orderReturn.setUserId( member.getId() );
-		mallOrderReturnService.insert( orderReturn );
+		flag = mallOrderReturnService.insert( orderReturn );
+	    }
+	    if ( flag ) {//添加退货日志记录
+		mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
+		//默认7天不处理，自动退款
+		mallOrderReturnLogService.waitSellerDispose( orderReturn.getId(), DateTimeKit.addDays( -7 ) );
 	    }
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
@@ -412,11 +463,11 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "保存退货物流接口", notes = "保存退货物流", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "saveReturnLogistics", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse saveReturnLogistics( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnLogisticsDTO orderReturnDTO ) {
+    public ServerResponse saveReturnLogistics( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnLogisticsDTO orderReturnDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
-
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    MallOrderReturn orderReturn = new MallOrderReturn();
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    converter.entityConvertDto( orderReturnDTO, orderReturn );
@@ -424,6 +475,10 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    orderReturn.setUpdateTime( new Date() );
 	    orderReturn.setStatus( 3 );
 	    mallOrderReturnService.updateById( orderReturn );
+
+	    //添加退货日志记录
+	    mallOrderReturnLogService.buyerReturnGoods( orderReturn.getId(), member.getId() );
+
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
 	    logger.error( "保存退货物流的接口异常：" + e.getCode() + "---" + e.getMessage() );
@@ -439,20 +494,20 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "撤销申请退款接口", notes = "撤销申请退款", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams(
-		    @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", required = true, dataType = "int" )
-    )
+    @ApiImplicitParams( @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "closeReturnOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse closeReturnOrder( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer returnId ) {
+    public ServerResponse closeReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    Integer returnId ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    MallOrderReturn orderReturn = mallOrderReturnService.selectById( returnId );
 	    orderReturn.setStatus( -2 );
 	    mallOrderService.updateOrderReturn( orderReturn, null, null );
-
+	    //添加退款日志记录
+	    mallOrderReturnLogService.buyerRevokeRefund( orderReturn.getId(), member.getId() );
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
 	    logger.error( "撤销申请退款异常：" + e.getCode() + "---" + e.getMessage() );
@@ -468,13 +523,10 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "确认收货接口", notes = "确认收货", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams(
-		    @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" )
-    )
+    @ApiImplicitParams( @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "confirmReceipt", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse confirmReceipt( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
+    public ServerResponse confirmReceipt( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
@@ -498,13 +550,10 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "删除订单接口", notes = "删除订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams(
-		    @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" )
-    )
+    @ApiImplicitParams( @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "deleteOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse deleteOrder( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
+    public ServerResponse deleteOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
@@ -535,13 +584,11 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "查询代付订单的接口", notes = "查询代付订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams(
-		    @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" )
-    )
+    @ApiImplicitParams( @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "getDaiFu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< PhoneGetDaiFuResult > getDaiFu( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
+    public ServerResponse< PhoneGetDaiFuResult > getDaiFu( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    Integer orderId ) {
 	try {
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
@@ -565,14 +612,12 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "好友代付的接口", notes = "好友代付", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "dfPayWay", value = "支付方式", paramType = "query", required = true, dataType = "int" )
-    } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "orderId", value = "订单id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "dfPayWay", value = "支付方式", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @PostMapping( value = "freindDaifu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< String > freindDaifu( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId, Integer dfPayWay ) {
+    public ServerResponse< String > freindDaifu( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    Integer orderId, Integer dfPayWay ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
