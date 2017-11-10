@@ -59,7 +59,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     @Autowired
     private MemberService             memberService;
 
-    @ApiOperation( value = "获取交纳预收定金信息", notes = "获取交纳预收定金信息" )
+    @ApiOperation( value = "进入交纳预收定金页面接口", notes = "进入交纳预收定金页面" )
     @ResponseBody
     @RequestMapping( value = "toAddDeposit", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > toAddDeposit( HttpServletRequest request, HttpServletResponse response,
@@ -158,7 +158,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     /**
      * 消息提醒
      */
-    @ApiOperation( value = "消息提醒", notes = "消息提醒" )
+    @ApiOperation( value = "消息提醒", notes = "消息提醒", hidden = true )
     @ResponseBody
     @RequestMapping( value = "messageRemind", method = RequestMethod.POST )
     public ServerResponse messageRemind( HttpServletRequest request, HttpServletResponse response,
@@ -185,7 +185,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "myDepositList", method = RequestMethod.POST )
     public ServerResponse myDepositList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	List< Map< String,Object > > depositList = null;
+	List< MallPresaleDeposit > depositList = null;
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );

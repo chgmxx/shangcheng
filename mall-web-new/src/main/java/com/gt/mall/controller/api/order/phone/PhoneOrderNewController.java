@@ -345,7 +345,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "查询退款详情接口", notes = "查询退款详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ,required = true) } )
     @ResponseBody
     @PostMapping( value = "returnDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneReturnResult > returnDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
@@ -370,7 +370,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "查询退款日志列表接口", notes = "查询退款日志列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ,required = true) } )
     @ResponseBody
     @PostMapping( value = "returnLogList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< List< Map< String,Object > > > returnLogList( HttpServletRequest request, HttpServletResponse response,

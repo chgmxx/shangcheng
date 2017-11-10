@@ -37,13 +37,12 @@ public class PhoneSearchDepositDTO implements Serializable {
     @Min( value = 1, message = "库存ID不能小于1" )
     private Integer invId;
 
-    @ApiModelProperty( name = "specId", value = "商品规格ID集合" )
-    private String specId;
-
-    @ApiModelProperty( name = "num", value = "数量" , required = true )
-    private Integer num;
-
-    @ApiModelProperty( name = "oMoney", value = "价格")
+    /*@ApiModelProperty( name = "oMoney", value = "价格" , required = true )
     private Integer oMoney;
 
+    @ApiModelProperty( name = "specId", value = "商品规格ID集合" )
+    private String specId;*/
+
+    @ApiModelProperty( name = "num", value = "数量" )
+    private Integer num;
 }

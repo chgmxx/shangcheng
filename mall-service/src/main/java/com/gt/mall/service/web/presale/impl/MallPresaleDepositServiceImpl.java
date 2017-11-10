@@ -342,7 +342,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	MallPresaleDeposit deposit = new MallPresaleDeposit();
 	EntityDtoConverter converter = new EntityDtoConverter();
 	converter.entityConvertDto( depositDTO, deposit );
- 
+
 	deposit.setUserId( member.getId() );
 	deposit.setIsSubmit( 0 );
 	MallPresaleDeposit dep = mallPresaleDepositDAO.selectByDeposit( deposit );
@@ -376,7 +376,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    }
 
 	    if ( deposit.getId() > 0 ) {
-		result.put( "code", ResponseEnums.SUCCESS.getCode() );
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );  
 		result.put( "id", deposit.getId() );
 		result.put( "no", deposit.getDepositNo() );
 		result.put( "payWay", deposit.getPayWay() );
@@ -480,7 +480,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     /**
      * 根据用户id查询我的所有的定金
      */
-    public List< Map< String,Object > > getMyPresale( MallPresaleDeposit deposit ) {
+    public List< MallPresaleDeposit > getMyPresale( MallPresaleDeposit deposit ) {
 	return mallPresaleDepositDAO.selectListByDepositPro( deposit );
     }
 

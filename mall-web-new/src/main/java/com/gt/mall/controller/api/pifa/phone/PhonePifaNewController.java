@@ -84,13 +84,12 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
 		    result.put( "pfApplayRemark", set.getPfApplyRemark() );
 		}
 	    }
-	    result.put( "memberId", member.getId() );
 	} catch ( Exception e ) {
 	    logger.error( "获取批发商申请说明信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取批发商申请说明信息异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
@@ -174,7 +173,7 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取短信验证码异常" );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCode();
     }
 
 }
