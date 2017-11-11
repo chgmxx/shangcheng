@@ -34,10 +34,7 @@ import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
 import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.product.MallProductNewService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.EntityDtoConverter;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.OrderUtil;
+import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -352,7 +349,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "查询退款详情接口", notes = "查询退款详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ,required = true) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int", required = true ) } )
     @ResponseBody
     @PostMapping( value = "returnDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneReturnResult > returnDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
@@ -377,7 +374,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "查询退款日志列表接口", notes = "查询退款日志列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int" ,required = true) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int", required = true ) } )
     @ResponseBody
     @PostMapping( value = "returnLogList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< List< Map< String,Object > > > returnLogList( HttpServletRequest request, HttpServletResponse response,
@@ -404,8 +401,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "保存退款内容接口", notes = "保存退款内容", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "saveReturnContent", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse saveReturnContent( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnDTO orderReturnDTO ) {
+    public ServerResponse saveReturnContent( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnDTO orderReturnDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
@@ -421,9 +418,10 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		    orderReturn.setId( oReturn.getId() );
 		}
 	    }
+	    boolean flag = false;
 	    if ( CommonUtil.isNotEmpty( orderReturn.getId() ) && orderReturn.getId() > 0 ) {
 		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnService.updateById( orderReturn );
+		flag = mallOrderReturnService.updateById( orderReturn );
 	    } else {
 		MallOrderDetail mallOrderDetail = mallOrderDetailService.selectById( orderReturn.getOrderDetailId() );
 		orderReturn.setReturnJifen( mallOrderDetail.getUseJifen() );
@@ -434,8 +432,15 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		if ( CommonUtil.isEmpty( orderReturn.getRetMoney() ) ) {
 		    orderReturn.setRetMoney( CommonUtil.toBigDecimal( 0 ) );
 		}
-		mallOrderReturnService.insert( orderReturn );
+		flag = mallOrderReturnService.insert( orderReturn );
 	    }
+
+	    if ( flag ) {//添加退货日志记录
+		mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
+		//默认7天不处理，自动退款
+		mallOrderReturnLogService.waitSellerDispose( orderReturn.getId(), DateTimeKit.addDays( -7 ) );
+	    }
+
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
 	    logger.error( "保存退款内容的接口异常：" + e.getCode() + "---" + e.getMessage() );
