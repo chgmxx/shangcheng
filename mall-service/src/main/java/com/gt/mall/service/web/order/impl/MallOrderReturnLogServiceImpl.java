@@ -99,7 +99,7 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	return mallOrderReturnLogService.insert( log );
     }
 
-    /*2等待卖家处理*/
+    /*2 等待卖家处理*/
     @Override
     public boolean waitSellerDispose( Integer returnId, Date deadlineTime ) {
 	MallOrderReturnLog log = new MallOrderReturnLog();

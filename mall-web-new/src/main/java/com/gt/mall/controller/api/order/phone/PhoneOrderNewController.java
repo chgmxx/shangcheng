@@ -412,13 +412,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    converter.entityConvertDto( orderReturnDTO, orderReturn );
 
-	    boolean flag = mallOrderReturnService.addOrderReturn( orderReturn );
-
-	    if ( flag ) {//添加退货日志记录
-		mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
-		//默认7天不处理，自动退款
-		mallOrderReturnLogService.waitSellerDispose( orderReturn.getId(), DateTimeKit.addDays( -7 ) );
-	    }
+	    mallOrderReturnService.addOrderReturn( orderReturn, member );
 
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {

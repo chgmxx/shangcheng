@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.order.impl;
 
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.DictBean;
@@ -26,10 +27,12 @@ import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
+import com.gt.mall.service.web.order.MallOrderReturnLogService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.OrderUtil;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
@@ -82,19 +85,23 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private MallOrderReturnDAO          mallOrderReturnDAO;
     @Autowired
     private MallStoreDAO                mallStoreDAO;
+    @Autowired
+    private MallOrderReturnLogService   mallOrderReturnLogService;
 
     /**
      * 申请订单退款
      */
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public boolean addOrderReturn( MallOrderReturn orderReturn ) {
+    public boolean addOrderReturn( MallOrderReturn orderReturn, Member member ) {
+	int status = 0;
 	if ( orderReturn != null ) {
 	    // 新增订单退款
 	    int num;
 	    MallOrderReturn oReturn = mallOrderReturnDAO.selectByOrderDetailId( orderReturn );
 	    if ( oReturn != null ) {
 		orderReturn.setId( oReturn.getId() );
+		status = oReturn.getStatus();
 		orderReturn.setStatus( oReturn.getStatus() );
 		if ( oReturn.getStatus() == -3 || oReturn.getStatus() == -1 ) {
 		    //不同意退款和  商家拒绝退款后   修改未  退款中
@@ -131,6 +138,20 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		num = mallOrderDetailDAO.updateById( detail );
 
 		if ( num > 0 ) {
+		    if ( status == -3 ) {
+			// 还未退款，添加退款日志记录
+			mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
+			//默认7天不处理，自动退款（系统消息）
+			mallOrderReturnLogService.waitSellerDispose( orderReturn.getId(), DateTimeKit.addDays( -7 ) );
+		    } else if ( status == 0 ) {
+			//修改退款
+		    } else if ( status == 3 ) {
+			//买家已填写退货物流
+			mallOrderReturnLogService.buyerReturnGoods( orderReturn.getId(), member.getId() );
+		    } else if ( status == -4 ) {
+			//修改退货物流
+		    }
+
 		    return true;
 		} else {
 		    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
@@ -140,7 +161,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	    }
 
 	}
-	return false;
+	throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
     }
 
     /**

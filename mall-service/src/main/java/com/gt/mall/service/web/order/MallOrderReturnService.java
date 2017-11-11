@@ -1,5 +1,6 @@
 package com.gt.mall.service.web.order;
 
+import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -24,7 +25,7 @@ public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
     /**
      * 申请退款
      */
-    boolean addOrderReturn( MallOrderReturn orderReturn );
+    boolean addOrderReturn( MallOrderReturn orderReturn ,Member member);
 
     /**
      * 系统退款（不是买家申请的）
