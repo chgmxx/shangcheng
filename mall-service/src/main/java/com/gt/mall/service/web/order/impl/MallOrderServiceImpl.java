@@ -1143,56 +1143,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	mallGroupJoinDAO.insert( groupJoin );
     }
 
-    /**
-     * 申请订单退款
-     */
-    @Override
-    @Transactional( rollbackFor = Exception.class )
-    public boolean addOrderReturn( MallOrderReturn orderReturn ) {
-	if ( orderReturn != null ) {
-	    // 新增订单退款
-	    int num;
-	    MallOrderReturn oReturn = mallOrderReturnDAO.selectByOrderDetailId( orderReturn );
-	    if ( oReturn != null ) {
-		orderReturn.setId( oReturn.getId() );
-	    }
-	    if ( CommonUtil.isNotEmpty( orderReturn.getOrderDetailId() ) ) {
-		MallOrderDetail detail = mallOrderDetailDAO.selectById( orderReturn.getOrderDetailId() );
-		if ( CommonUtil.isNotEmpty( detail ) ) {
-		    orderReturn.setShopId( detail.getShopId() );
-		    if ( detail.getUseFenbi() > 0 ) {
-			orderReturn.setReturnFenbi( detail.getUseFenbi() );
-		    }
-		    if ( detail.getUseJifen() > 0 ) {
-			orderReturn.setReturnJifen( detail.getUseJifen() );
-		    }
-		}
-	    }
-	    if ( CommonUtil.isEmpty( orderReturn.getId() ) ) {
-		orderReturn.setCreateTime( new Date() );
-		String orderNo = "TK" + System.currentTimeMillis();
-		orderReturn.setReturnNo( orderNo );
-		num = mallOrderReturnDAO.insert( orderReturn );
-	    } else {
-		orderReturn.setUpdateTime( new Date() );
-		num = mallOrderReturnDAO.updateById( orderReturn );
-	    }
-	    if ( num > 0 ) {
-		// 修改订单详情的状态
-		MallOrderDetail detail = new MallOrderDetail();
-		detail.setId( orderReturn.getOrderDetailId() );
-		detail.setStatus( orderReturn.getStatus() );
-		num = mallOrderDetailDAO.updateById( detail );
-
-		if ( num > 0 ) {
-		    return true;
-		}
-	    }
-
-	}
-	return false;
-    }
-
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void agreanOrderReturn( Map< String,Object > params ) {

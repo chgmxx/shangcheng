@@ -20,6 +20,12 @@ import java.util.List;
  */
 public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
 
+
+    /**
+     * 申请退款
+     */
+    boolean addOrderReturn( MallOrderReturn orderReturn );
+
     /**
      * 系统退款（不是买家申请的）
      */

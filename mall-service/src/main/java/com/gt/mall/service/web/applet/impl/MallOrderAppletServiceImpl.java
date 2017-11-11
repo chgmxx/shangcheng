@@ -813,7 +813,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	} else {
 	    orderReturn.setStatus( 0 );
 	}
-	boolean flag = orderService.addOrderReturn( orderReturn );
+	boolean flag = mallOrderReturnService.addOrderReturn( orderReturn );
 	if ( flag ) {
 	    resultMap.put( "code", 1 );
 	} else {

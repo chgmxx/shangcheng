@@ -62,13 +62,13 @@ public class PhoneReturnProductResult implements Serializable {
     private Integer activityId = 0;
 
     @ApiModelProperty( name = "returnId", value = "退款id" )
-    private int returnId = 0;
+    private Integer returnId;
 
     @ApiModelProperty( name = "cargoStatus", value = "货物状态 0 未收到货 1已收到货  -1 未填写" )
-    private int cargoStatus;
+    private Integer cargoStatus;
 
     @ApiModelProperty( name = "retReasonId", value = "退货原因id" )
-    private int retReasonId;
+    private Integer retReasonId;
 
     @ApiModelProperty( name = "retRemark", value = "退货说明" )
     private String retRemark;
@@ -81,6 +81,9 @@ public class PhoneReturnProductResult implements Serializable {
 
     @ApiModelProperty( name = "returnPhone", value = "退款手机号码" )
     private String returnPhone;
+
+    @ApiModelProperty( name = "returnWay", value = "处理方式  1,我要退款，但不退货  2,我要退款退货" )
+    private Integer returnWay;
 
     @ApiModelProperty( name = "cargoStatusList", value = "货物状态集合" )
     private List< PhoneReturnWayResult > cargoStatusList;

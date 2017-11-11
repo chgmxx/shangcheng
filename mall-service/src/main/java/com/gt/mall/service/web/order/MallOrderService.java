@@ -60,11 +60,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public int paySuccessModified( Map< String,Object > params, Member member );
 
     /**
-     * 申请退款
-     */
-    public boolean addOrderReturn( MallOrderReturn orderReturn );
-
-    /**
      * 修改申请退款
      */
     public Map< String,Object > updateOrderReturn( MallOrderReturn orderReturn, Object oObj, WxPublicUsers pUser ) throws Exception;

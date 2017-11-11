@@ -412,28 +412,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    converter.entityConvertDto( orderReturnDTO, orderReturn );
 
-	    if ( CommonUtil.isEmpty( orderReturn.getId() ) || orderReturn.getId() == 0 ) {
-		MallOrderReturn oReturn = mallOrderReturnService.selectByOrderDetailId( orderReturn.getOrderId(), orderReturn.getOrderDetailId() );
-		if ( CommonUtil.isNotEmpty( oReturn ) ) {
-		    orderReturn.setId( oReturn.getId() );
-		}
-	    }
-	    boolean flag = false;
-	    if ( CommonUtil.isNotEmpty( orderReturn.getId() ) && orderReturn.getId() > 0 ) {
-		orderReturn.setUpdateTime( new Date() );
-		flag = mallOrderReturnService.updateById( orderReturn );
-	    } else {
-		MallOrderDetail mallOrderDetail = mallOrderDetailService.selectById( orderReturn.getOrderDetailId() );
-		orderReturn.setReturnJifen( mallOrderDetail.getUseJifen() );
-		orderReturn.setReturnFenbi( mallOrderDetail.getUseFenbi() );
-		orderReturn.setCreateTime( new Date() );
-		orderReturn.setReturnNo( "TK" + System.currentTimeMillis() );
-		orderReturn.setUserId( member.getId() );
-		if ( CommonUtil.isEmpty( orderReturn.getRetMoney() ) ) {
-		    orderReturn.setRetMoney( CommonUtil.toBigDecimal( 0 ) );
-		}
-		flag = mallOrderReturnService.insert( orderReturn );
-	    }
+	    boolean flag = mallOrderReturnService.addOrderReturn( orderReturn );
 
 	    if ( flag ) {//添加退货日志记录
 		mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );

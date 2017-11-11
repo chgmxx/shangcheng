@@ -89,17 +89,6 @@ public class MyInterceptor implements HandlerInterceptor {
 	    Member member = null;//MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		request.setAttribute( "member", member );
-	    } else {
-		member = new Member();
-		member.setId( 1225352 );
-		//		member.setId( 562 );
-		member.setBusid( 42 );
-		member.setPublicId( 482 );
-		member.setPhone( "15017934717" );
-		member.setNickname( "杨倩" );
-		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
-		member.setOldid( "1225352,1225358,1225449" );
-		MallSessionUtils.setLoginMember( request, member );
 	    }
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) || passIntercepto( url ) ) {

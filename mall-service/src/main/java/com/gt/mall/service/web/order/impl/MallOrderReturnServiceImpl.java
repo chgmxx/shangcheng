@@ -15,6 +15,8 @@ import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
@@ -37,11 +39,9 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -82,6 +82,66 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private MallOrderReturnDAO          mallOrderReturnDAO;
     @Autowired
     private MallStoreDAO                mallStoreDAO;
+
+    /**
+     * 申请订单退款
+     */
+    @Override
+    @Transactional( rollbackFor = Exception.class )
+    public boolean addOrderReturn( MallOrderReturn orderReturn ) {
+	if ( orderReturn != null ) {
+	    // 新增订单退款
+	    int num;
+	    MallOrderReturn oReturn = mallOrderReturnDAO.selectByOrderDetailId( orderReturn );
+	    if ( oReturn != null ) {
+		orderReturn.setId( oReturn.getId() );
+		orderReturn.setStatus( oReturn.getStatus() );
+		if ( oReturn.getStatus() == -3 || oReturn.getStatus() == -1 ) {
+		    //不同意退款和  商家拒绝退款后   修改未  退款中
+		    orderReturn.setStatus( 0 );
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( orderReturn.getOrderDetailId() ) ) {
+		MallOrderDetail detail = mallOrderDetailDAO.selectById( orderReturn.getOrderDetailId() );
+		if ( CommonUtil.isNotEmpty( detail ) ) {
+		    orderReturn.setShopId( detail.getShopId() );
+		    if ( detail.getUseFenbi() > 0 ) {
+			orderReturn.setReturnFenbi( detail.getUseFenbi() );
+		    }
+		    if ( detail.getUseJifen() > 0 ) {
+			orderReturn.setReturnJifen( detail.getUseJifen() );
+		    }
+		}
+	    }
+	    if ( CommonUtil.isEmpty( orderReturn.getId() ) || orderReturn.getId() == 0 ) {
+		orderReturn.setCreateTime( new Date() );
+		String orderNo = "TK" + System.currentTimeMillis();
+		orderReturn.setReturnNo( orderNo );
+		orderReturn.setStatus( 0 );
+		num = mallOrderReturnDAO.insert( orderReturn );
+	    } else {
+		orderReturn.setUpdateTime( new Date() );
+		num = mallOrderReturnDAO.updateById( orderReturn );
+	    }
+	    if ( num > 0 ) {
+		// 修改订单详情的状态
+		MallOrderDetail detail = new MallOrderDetail();
+		detail.setId( orderReturn.getOrderDetailId() );
+		detail.setStatus( orderReturn.getStatus() );
+		num = mallOrderDetailDAO.updateById( detail );
+
+		if ( num > 0 ) {
+		    return true;
+		} else {
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+		}
+	    } else {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    }
+
+	}
+	return false;
+    }
 
     /**
      * 系统退款（不是买家申请的）
@@ -358,12 +418,15 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	if ( CommonUtil.isNotEmpty( orderReturn ) ) {
 	    result.setReturnId( orderReturn.getId() );
 	    result.setCargoStatus( orderReturn.getCargoStatus() );
-	    result.setRetReasonId( orderReturn.getRetReasonId() );
+	    if ( CommonUtil.isNotEmpty( orderReturn.getRetReasonId() ) ) {
+		result.setRetReasonId( orderReturn.getRetReasonId() );
+	    }
 	    result.setRetRemark( orderReturn.getRetRemark() );
 	    if ( CommonUtil.isNotEmpty( orderReturn.getImagesUrl() ) ) {
 		result.setReturnImageUrls( orderReturn.getImagesUrl().split( "," ) );
 	    }
 	    result.setReturnPhone( orderReturn.getRetTelephone() );
+	    result.setReturnWay( orderReturn.getRetHandlingWay() );
 	}
 	if ( order.getOrderStatus() == 3 || order.getOrderStatus() == 4 ) {
 	    List< PhoneReturnWayResult > wayResultList = new ArrayList<>();
