@@ -119,7 +119,11 @@ public class Constants {
     * {type} 退款 退款退货
     * */
     public static final String RETURN_APPLY = "买家发起{type}申请";
-
+    /*
+    * 1退款申请
+    * {type} 退款 退款退货
+    * */
+    public static final String RETURN_AGAIN_APPLY = "买家修改{type}申请";
     /*
     * 2待卖家处理
     * */
@@ -175,6 +179,11 @@ public class Constants {
      * 买家撤销退款
      * */
     public static final String BUYER_REVOKE_REFUND          = "买家撤销退款";
+
+    /*
+   * 买家重新提交物流信息
+   * */
+    public static final String BUYER_UPDATE_LOGISTICS          = "买家重新提交物流信息";
 
     /**********维权记录常量END*********************/
     /**

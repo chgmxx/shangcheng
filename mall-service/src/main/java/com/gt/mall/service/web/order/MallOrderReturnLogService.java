@@ -33,6 +33,8 @@ public interface MallOrderReturnLogService extends BaseService< MallOrderReturnL
      */
     boolean addBuyerRetutnApply( Integer returnId, Integer userId, Integer way );
 
+    boolean againRetutnApply( Integer returnId, Integer userId, Integer way );
+
     /**
      * 2等待卖家处理  系统消息
      *
@@ -113,5 +115,15 @@ public interface MallOrderReturnLogService extends BaseService< MallOrderReturnL
      * @return
      */
     boolean buyerRevokeRefund( Integer returnId, Integer userId );
+
+    /**
+     * 买家修改物流信息
+     *
+     * @param returnId 维权订单ID
+     * @param userId   用户或商家ID
+     *
+     * @return
+     */
+    boolean buyerUpdateLogistics( Integer returnId, Integer userId );
 
 }

@@ -143,13 +143,15 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
 			//默认7天不处理，自动退款（系统消息）
 			mallOrderReturnLogService.waitSellerDispose( orderReturn.getId(), DateTimeKit.addDays( -7 ) );
-		    } else if ( status == 0 ) {
-			//修改退款
+		    } else if ( status == -1 ) {
+			//修改申请
+			mallOrderReturnLogService.againRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
 		    } else if ( status == 3 ) {
 			//买家已填写退货物流
 			mallOrderReturnLogService.buyerReturnGoods( orderReturn.getId(), member.getId() );
-		    } else if ( status == -4 ) {
+		    } else if ( status == 4 ) {
 			//修改退货物流
+			mallOrderReturnLogService.buyerUpdateLogistics( orderReturn.getId(), member.getId() );
 		    }
 
 		    return true;

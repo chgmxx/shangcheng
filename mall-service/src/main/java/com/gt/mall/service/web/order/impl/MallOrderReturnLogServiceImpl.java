@@ -99,6 +99,26 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	return mallOrderReturnLogService.insert( log );
     }
 
+    @Override
+    public boolean againRetutnApply( Integer returnId, Integer userId, Integer way ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 0 );
+	log.setReturnStatus( -1 );
+
+	String msg = Constants.RETURN_AGAIN_APPLY;
+	if ( way == 1 ) {
+	    msg.replace( "{type}", "退货" );
+	} else {
+	    msg.replace( "{type}", "退货退款" );
+	}
+	log.setStatusContent( msg );
+	log.setGetData( 1 );
+	return mallOrderReturnLogService.insert( log );
+    }
+
     /*2 等待卖家处理*/
     @Override
     public boolean waitSellerDispose( Integer returnId, Date deadlineTime ) {
@@ -136,7 +156,7 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	log.setCreateTime( new Date() );
 	log.setUserId( userId );
 	log.setOperator( 0 );
-	log.setOperator( 3 );
+	log.setReturnStatus( 3 );
 	log.setStatusContent( Constants.BUYER_RETURN_GOODS );
 	log.setGetData( 3 );
 	return mallOrderReturnLogService.insert( log );
@@ -208,6 +228,19 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	log.setReturnStatus( -2 );
 	log.setStatusContent( Constants.BUYER_REVOKE_REFUND );
 
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    @Override
+    public boolean buyerUpdateLogistics( Integer returnId, Integer userId ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 0 );
+	log.setReturnStatus( 4 );
+	log.setStatusContent( Constants.BUYER_UPDATE_LOGISTICS );
+	log.setGetData( 3 );
 	return mallOrderReturnLogService.insert( log );
     }
 }
