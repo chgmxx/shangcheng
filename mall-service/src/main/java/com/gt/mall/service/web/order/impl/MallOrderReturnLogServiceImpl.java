@@ -3,6 +3,7 @@ package com.gt.mall.service.web.order.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
 import com.gt.mall.dao.order.MallOrderReturnLogDAO;
@@ -16,6 +17,7 @@ import com.gt.mall.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,13 +33,15 @@ import java.util.Map;
 public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderReturnLogDAO,MallOrderReturnLog > implements MallOrderReturnLogService {
 
     @Autowired
-    private MallOrderReturnLogDAO mallOrderReturnLogDAO;
+    private MallOrderReturnLogDAO     mallOrderReturnLogDAO;
     @Autowired
-    private MallOrderReturnDAO    mallOrderReturnDAO;
+    private MallOrderReturnDAO        mallOrderReturnDAO;
     @Autowired
-    private MallOrderDAO          mallOrderDAO;
+    private MallOrderDAO              mallOrderDAO;
     @Autowired
-    private MallStoreDAO          mallStoreDAO;
+    private MallStoreDAO              mallStoreDAO;
+    @Autowired
+    private MallOrderReturnLogService mallOrderReturnLogService;
 
     @Override
     public List< Map< String,Object > > selectReturnLogList( Integer returnId ) {
@@ -72,5 +76,138 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	    }
 	}
 	return logList;
+    }
+
+    /*1买家发起退款申请*/
+    @Override
+    public boolean addBuyerRetutnApply( Integer returnId, Integer userId, Integer way ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 0 );
+	log.setReturnStatus( -3 );
+
+	String msg = Constants.RETURN_APPLY;
+	if ( way == 1 ) {
+	    msg.replace( "{type}", "退货" );
+	} else {
+	    msg.replace( "{type}", "退货退款" );
+	}
+	log.setStatusContent( msg );
+	log.setGetData( 1 );
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /*2等待卖家处理*/
+    @Override
+    public boolean waitSellerDispose( Integer returnId, Date deadlineTime ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	//	log.setUserId(  );
+	log.setOperator( 2 );
+	log.setReturnStatus( -3 );
+	log.setStatusContent( Constants.WAIT_SELLER_DISPOSE );
+	log.setRemark( Constants.WAIT_SELLER_DISPOSE_REMARK );
+	log.setDeadlineTime( deadlineTime );
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /*3卖家同意申请*/
+    @Override
+    public boolean sellerAgreeApply( Integer returnId, Integer userId ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 1 );
+	log.setReturnStatus( 2 );
+	log.setStatusContent( Constants.SELLER_AGREE_APPLY );
+	//退货地址
+	log.setGetData( 2 );
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /*4买家已经退货  */
+    public boolean buyerReturnGoods( Integer returnId, Integer userId ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 0 );
+	log.setOperator( 3 );
+	log.setStatusContent( Constants.BUYER_RETURN_GOODS );
+	log.setGetData( 3 );
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /* 5卖家已收到货，并退款*/
+    public boolean sellerRefund( Integer returnId, Integer userId ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 1 );
+	log.setReturnStatus( 0 );//退款中
+	log.setStatusContent( Constants.SELLER_REFUND );
+	log.setRemark( Constants.SELLER_REFUND_REMARK );
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /*6退款成功*/
+    public boolean refundSuccess( Integer returnId, String payWay, String returnPrice ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	/*log.setUserId( userId );*/
+	log.setOperator( 2 );
+	log.setReturnStatus( 5 );
+	log.setStatusContent( Constants.REFUND_SUCCESS );
+	String msg = Constants.REFUND_SUCCESS_REMARK;
+	msg.replace( "{price}", returnPrice );
+	msg.replace( "{payWay}", payWay );
+	log.setRemark( msg );
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /*7卖家拒绝退款申请*/
+    public boolean sellerRefuseRefund( Integer returnId, Integer userId ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 1 );
+	log.setReturnStatus( -1 );
+	log.setStatusContent( Constants.SELLER_REFUSE_REFUND );
+	log.setRemark( Constants.SELLER_REFUSE_REFUND_REMARK );
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /*8申请维权介入*/
+    public boolean platformIntervention( Integer returnId, Integer userId, Integer type ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( type );
+	log.setReturnStatus( -1 );
+	String name = type == 1 ? "买家" : "卖家";
+	log.setStatusContent( name + Constants.PLATFORM_INTERVENTION );
+
+	return mallOrderReturnLogService.insert( log );
+    }
+
+    /*买家撤销退款*/
+    public boolean buyerRevokeRefund( Integer returnId, Integer userId ) {
+	MallOrderReturnLog log = new MallOrderReturnLog();
+	log.setReturnId( returnId );
+	log.setCreateTime( new Date() );
+	log.setUserId( userId );
+	log.setOperator( 0 );
+	log.setReturnStatus( -2 );
+	log.setStatusContent( Constants.BUYER_REVOKE_REFUND );
+
+	return mallOrderReturnLogService.insert( log );
     }
 }

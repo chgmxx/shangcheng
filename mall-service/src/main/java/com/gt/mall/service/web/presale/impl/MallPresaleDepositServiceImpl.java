@@ -13,16 +13,14 @@ import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.presale.PhoneAddDepositDTO;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.JedisUtil;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.result.pay.WxPayOrder;
@@ -94,14 +92,12 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     public PageUtil selectPresaleByShopId( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	int pageSize = 10;
 
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1
-			: CommonUtil.toInteger( params.get( "curPage" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 	int count = mallPresaleDepositDAO.selectByCount( params );
 
 	PageUtil page = new PageUtil( curPage, pageSize, count, "mPresale/deposit.do" );
-	int firstNum = pageSize
-			* ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
 	params.put( "firstNum", firstNum );// 起始页
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
@@ -340,6 +336,69 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	return result;
     }
 
+    @Override
+    public Map< String,Object > addDeposit( PhoneAddDepositDTO depositDTO, Member member, Integer browser ) throws Exception {
+	Map< String,Object > result = new HashMap<>();
+	MallPresaleDeposit deposit = new MallPresaleDeposit();
+	EntityDtoConverter converter = new EntityDtoConverter();
+	converter.entityConvertDto( depositDTO, deposit );
+
+	deposit.setUserId( member.getId() );
+	deposit.setIsSubmit( 0 );
+	MallPresaleDeposit dep = mallPresaleDepositDAO.selectByDeposit( deposit );
+
+	deposit.setBuyerUserType( browser );
+
+	String depNo = "YS" + System.currentTimeMillis();
+
+	if ( dep == null ) {
+	    deposit.setCreateTime( new Date() );
+	    deposit.setDepositNo( depNo );
+	    deposit.setUserId( member.getId() );
+	    mallPresaleDepositDAO.insert( deposit );
+	} else {//已经交纳了定金，无需再次交纳
+	    if ( dep.getDepositStatus().toString().equals( "1" ) ) {
+		result.put( "errorMsg", "您已经交纳了定金，无需再次交纳" );
+		result.put( "isReturn", 1 );
+		result.put( "code", ResponseEnums.ERROR.getCode() );
+	    } else {
+		deposit.setId( dep.getId() );
+		mallPresaleDepositDAO.updateById( deposit );
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );
+		deposit.setDepositNo( dep.getDepositNo() );
+	    }
+	}
+	if ( CommonUtil.isNotEmpty( deposit.getId() ) ) {
+
+	    result = isInvNum( deposit );//判断商品的库存
+	    if ( result.get( "code" ).toString().equals( CommonUtil.toString( ResponseEnums.ERROR.getCode() ) ) ) {
+		return result;
+	    }
+
+	    if ( deposit.getId() > 0 ) {
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );  
+		result.put( "id", deposit.getId() );
+		result.put( "no", deposit.getDepositNo() );
+		result.put( "payWay", deposit.getPayWay() );
+		MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
+		if ( deposit.getPayWay() == 1 || deposit.getPayWay() == 3 ) {
+		    deposit.setShopId( presale.getShopId() );
+		    String url = getWxAlipay( deposit, member );
+		    result.put( "payUrl", url );
+		} else if ( deposit.getPayWay() == 2 ) {
+		    Map< String,Object > params = new HashMap<>();
+		    params.put( "out_trade_no", deposit.getDepositNo() );
+		    paySuccessPresale( params );
+		    result.put( "payUrl", "/mallPage/" + deposit.getProductId() + "/" + presale.getShopId() + "/79B4DE7C/phoneProduct.do" );
+		}
+	    } else {
+		result.put( "code", ResponseEnums.ERROR.getCode() );
+		result.put( "errorMsg", "交纳定金失败" );
+	    }
+	}
+	return result;
+    }
+
     private String getWxAlipay( MallPresaleDeposit deposit, Member member ) throws Exception {
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
 	subQrPayParams.setTotalFee( CommonUtil.toDouble( deposit.getDepositMoney() ) );
@@ -421,7 +480,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     /**
      * 根据用户id查询我的所有的定金
      */
-    public List< Map< String,Object > > getMyPresale( MallPresaleDeposit deposit ) {
+    public List< MallPresaleDeposit > getMyPresale( MallPresaleDeposit deposit ) {
 	return mallPresaleDepositDAO.selectListByDepositPro( deposit );
     }
 

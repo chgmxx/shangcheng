@@ -74,6 +74,7 @@ public class MallHtml extends Model< MallHtml > {
     /**
      * 二维码图片url
      */
+    @TableField( "codeUrl" )
     private String  codeUrl;
     /**
      * 状态：0是发布，1：未发布

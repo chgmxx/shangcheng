@@ -5,6 +5,7 @@ import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
 
 import java.util.List;
@@ -52,6 +53,16 @@ public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
      * @return 退款信息
      */
     PhoneReturnProductResult getReturn( Integer orderDetailId, Integer returnId );
+
+    /**
+     * 查询退款详情
+     *
+     * @param returnId 退款id
+     *
+     * @return
+     */
+    PhoneReturnResult returnDetail( Integer returnId );
+
 
     /**
      * 根据订单id和订单详情id查询退款信息

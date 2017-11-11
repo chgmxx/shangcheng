@@ -6,7 +6,9 @@ import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionOfferDAO;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionOffer;
+import com.gt.mall.param.phone.auction.PhoneAddAuctionBiddingDTO;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.service.web.auction.MallAuctionOfferService;
 import org.apache.log4j.Logger;
@@ -92,5 +94,68 @@ public class MallAuctionOfferServiceImpl extends BaseServiceImpl< MallAuctionOff
 	}
 	return result;
 
+    }
+
+    @Override
+    public Map< String,Object > addOffer( PhoneAddAuctionBiddingDTO biddingDTO, String memberId ) {
+	boolean flag = true;
+	Map< String,Object > result = new HashMap< String,Object >();
+	String msg = "";
+	MallAuctionBidding bid = new MallAuctionBidding();
+	EntityDtoConverter converter = new EntityDtoConverter();
+	converter.entityConvertDto( biddingDTO, bid );
+
+	MallAuctionOffer offer = new MallAuctionOffer();
+	offer.setAucId( bid.getAucId() );
+	offer.setProId( bid.getProId() );
+	offer.setOfferMoney( bid.getAucPrice() );
+
+	String key = "zAuctionOffer_" + offer.getAucId();
+	Double money = Double.parseDouble( offer.getOfferMoney().toString() );
+	String value = memberId;
+	if ( JedisUtil.exists( key ) ) {
+	    Set< String > set = JedisUtil.zSort( key, 0, 0 );
+	    for ( String str : set ) {
+		double nowMoney = JedisUtil.zScore( key, str );
+		if ( str.equals( memberId ) ) {
+		    msg = "您的出价目前已经领先了，不能再次出价";
+		    flag = false;
+		    break;
+		} else if ( nowMoney >= money ) {
+		    msg = "有人抢先一步出价了，请重新出价";
+		    flag = false;
+		    break;
+		}
+	    }
+	}
+	if ( flag ) {
+	    offer.setCreateTime( new Date() );
+	    offer.setUserId( Integer.parseInt( memberId ) );
+	    auctionOfferDAO.insert( offer );
+	} else {//已经交纳了保证金，无需再次交纳
+	    result.put( "result", false );
+	    result.put( "msg", msg );
+	}
+	if ( CommonUtil.isNotEmpty( offer.getId() ) ) {
+	    if ( offer.getId() > 0 ) {
+		bid.setUserId( Integer.parseInt( memberId ) );
+		MallAuctionBidding bidding = auctionBiddingDAO.selectByBidding( bid );
+		if ( bidding == null ) {
+		    bid.setCreateTime( new Date() );
+		    auctionBiddingDAO.insert( bid );
+		} else {
+		    bid.setAucStatus( 0 );
+		    bid.setId( bidding.getId() );
+		    auctionBiddingDAO.updateBidByAucId( bid );
+		}
+		JedisUtil.zAdd( key, money, value );
+		result.put( "result", true );
+		result.put( "msg", "出价成功" );
+	    } else {
+		result.put( "result", false );
+		result.put( "msg", "出价失败" );
+	    }
+	}
+	return result;
     }
 }

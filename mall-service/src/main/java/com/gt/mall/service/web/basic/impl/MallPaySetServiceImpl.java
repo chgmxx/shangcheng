@@ -51,7 +51,11 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
     public int editPaySet( Map< String,Object > params ) {
 	int count = 0;
 	MallPaySet set = (MallPaySet) JSONObject.toJavaObject( JSONObject.parseObject( JSON.toJSONString( params ) ), MallPaySet.class );
-
+	set.setSmsMessage( CommonUtil.urlEncode( set.getSmsMessage() ) );
+	set.setPfRemark( CommonUtil.urlEncode( set.getPfRemark() ) );
+	set.setPfApplyRemark( CommonUtil.urlEncode( set.getPfApplyRemark() ) );
+	set.setBusMessageJson( CommonUtil.urlEncode( set.getBusMessageJson() ) );
+	set.setMessageJson( CommonUtil.urlEncode( set.getMessageJson() ) );
 	MallPaySet paySet = paySetDAO.selectOne( set );
 	if ( CommonUtil.isNotEmpty( set ) && CommonUtil.isNotEmpty( paySet ) ) {
 	    if ( CommonUtil.isEmpty( set.getId() ) && CommonUtil.isNotEmpty( paySet.getId() ) ) {

@@ -19,6 +19,7 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -325,9 +326,8 @@ public class MallPifaNewController extends BaseController {
     @RequestMapping( value = "/saveSet", method = RequestMethod.POST )
     public ServerResponse saveSetWholesaler( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet mallPaySet = (MallPaySet) JSONObject.toBean( JSONObject.fromObject( params ), MallPaySet.class );
+	    MallPaySet mallPaySet = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSON.toJSONString( params ), MallPaySet.class );
 	    mallPaySet.setPfRemark( CommonUtil.urlEncode( mallPaySet.getPfRemark() ) );
 	    mallPaySet.setPfApplyRemark( CommonUtil.urlEncode( mallPaySet.getPfApplyRemark() ) );
 	    MallPaySet set = new MallPaySet();

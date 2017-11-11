@@ -5,9 +5,12 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
+import com.gt.mall.entity.order.MallOrderReturnLog;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.OrderDTO;
@@ -15,6 +18,7 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallDaifuService;
+import com.gt.mall.service.web.order.MallOrderReturnLogService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -40,6 +44,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,21 +64,23 @@ import java.util.Map;
 public class MallOrderNewController extends BaseController {
 
     @Autowired
-    private MallOrderService       mallOrderService;
+    private MallOrderService          mallOrderService;
     @Autowired
-    private MallStoreService       mallStoreService;
+    private MallStoreService          mallStoreService;
     @Autowired
-    private MallGroupBuyService    mallGroupBuyService;
+    private MallGroupBuyService       mallGroupBuyService;
     @Autowired
-    private MallOrderDAO           mallOrderDAO;
+    private MallOrderDAO              mallOrderDAO;
     @Autowired
-    private MallDaifuService       mallDaifuService;
+    private MallDaifuService          mallDaifuService;
     @Autowired
-    private DictService            dictService;
+    private DictService               dictService;
     @Autowired
-    private BusUserService         busUserService;
+    private BusUserService            busUserService;
     @Autowired
-    private MallOrderReturnService mallOrderReturnService;
+    private MallOrderReturnService    mallOrderReturnService;
+    @Autowired
+    private MallOrderReturnLogService mallOrderReturnLogService;
 
     /*
     *
@@ -279,11 +286,43 @@ public class MallOrderNewController extends BaseController {
     public ServerResponse updateReturn( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    WxPublicUsers pUser = MallSessionUtils.getLoginPbUser( request );
-
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallOrderReturn orderReturn = com.alibaba.fastjson.JSONObject.parseObject( params.get( "return" ).toString(), MallOrderReturn.class );
 	    Map< String,Object > map = mallOrderService.updateOrderReturn( orderReturn, params.get( "order" ), pUser );
 	    Boolean flag = (Boolean) map.get( "flag" );
-	    if ( !flag ) {
+	    if ( flag ) {
+		if ( orderReturn.getStatus() == 1 ) {//同意退款申请
+		    mallOrderReturnLogService.sellerAgreeApply( orderReturn.getId(), user.getId() );
+		    MallOrderReturn orderReturn1 = mallOrderReturnService.selectById( orderReturn.getId() );
+		    MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+		    String payWay = "";
+		    if ( mallOrder.getOrderPayWay() == 1 ) {
+			payWay = "微信";
+		    } else if ( mallOrder.getOrderPayWay() == 9 ) {
+			payWay = "支付宝";
+		    }
+		    mallOrderReturnLogService.refundSuccess( orderReturn.getId(), payWay, orderReturn1.getRetMoney().toString() );
+
+		} else if ( orderReturn.getStatus() == 2 ) {//同意退款退货申请
+		    mallOrderReturnLogService.sellerAgreeApply( orderReturn.getId(), user.getId() );
+
+		} else if ( orderReturn.getStatus() == -1 ) {//拒绝申请
+		    mallOrderReturnLogService.sellerRefuseRefund( orderReturn.getId(), user.getId() );
+
+		} else if ( orderReturn.getStatus() == 5 ) {//确认收货并退款
+		    mallOrderReturnLogService.sellerRefund( orderReturn.getId(), user.getId() );
+
+		    MallOrderReturn orderReturn1 = mallOrderReturnService.selectById( orderReturn.getId() );
+		    MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+		    String payWay = "";
+		    if ( mallOrder.getOrderPayWay() == 1 ) {
+			payWay = "微信";
+		    } else if ( mallOrder.getOrderPayWay() == 9 ) {
+			payWay = "支付宝";
+		    }
+		    mallOrderReturnLogService.refundSuccess( orderReturn.getId(), payWay, orderReturn1.getRetMoney().toString() );
+		}
+	    } else {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改退款状态异常" );
 	    }
 	} catch ( BusinessException e ) {
