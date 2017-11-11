@@ -290,7 +290,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiImplicitParams( @ApiImplicitParam( name = "orderDetailId", value = "订单详情id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "getReturnStyle", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< List< PhoneReturnWayResult > > getTakeTheir( HttpServletRequest request, HttpServletResponse response,
+    public ServerResponse< PhoneReturnProductResult > getReturnStyle( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderDetailId ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
@@ -303,10 +303,12 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isEmpty( order ) ) {
 		return ErrorInfo.createByNullError();
 	    }
+	    PhoneReturnProductResult result = mallOrderReturnService.getReturnProduct( order, detail );
 
-	    List< PhoneReturnWayResult > resultList = mallOrderReturnService.getReturnWayList( order );
+	    List< PhoneReturnWayResult > returnWayList = mallOrderReturnService.getReturnWayList( order );
+	    result.setReturnWayList( returnWayList );
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultList, false );
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
 	} catch ( BusinessException e ) {
 	    logger.error( "查询退款方式的接口异常：" + e.getCode() + "---" + e.getMessage() );
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
@@ -334,7 +336,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 
 	    PhoneReturnProductResult result = mallOrderReturnService.getReturn( orderDetailId, returnId );
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
 	} catch ( BusinessException e ) {
 	    logger.error( "查询退款信息的接口异常：" + e.getCode() + "---" + e.getMessage() );
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
@@ -350,11 +352,13 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "保存退款内容接口", notes = "保存退款内容", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @PostMapping( value = "saveReturnContent", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @RequestMapping( value = "saveReturnContent", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse saveReturnContent( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnDTO orderReturnDTO ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+//	    logger.info( "retRason---" + orderReturnDTO.getRetReason() );
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -362,6 +366,12 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    converter.entityConvertDto( orderReturnDTO, orderReturn );
 
+	    if ( CommonUtil.isEmpty( orderReturn.getId() ) || orderReturn.getId() == 0 ) {
+		MallOrderReturn oReturn = mallOrderReturnService.selectByOrderDetailId( orderReturn.getOrderId(), orderReturn.getOrderDetailId() );
+		if ( CommonUtil.isNotEmpty( oReturn ) ) {
+		    orderReturn.setId( oReturn.getId() );
+		}
+	    }
 	    if ( CommonUtil.isNotEmpty( orderReturn.getId() ) && orderReturn.getId() > 0 ) {
 		orderReturn.setUpdateTime( new Date() );
 		mallOrderReturnService.updateById( orderReturn );
@@ -370,7 +380,11 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		orderReturn.setReturnJifen( mallOrderDetail.getUseJifen() );
 		orderReturn.setReturnFenbi( mallOrderDetail.getUseFenbi() );
 		orderReturn.setCreateTime( new Date() );
+		orderReturn.setReturnNo( "TK" + System.currentTimeMillis() );
 		orderReturn.setUserId( member.getId() );
+		if ( CommonUtil.isEmpty( orderReturn.getRetMoney() ) ) {
+		    orderReturn.setRetMoney( CommonUtil.toBigDecimal( 0 ) );
+		}
 		mallOrderReturnService.insert( orderReturn );
 	    }
 	    return ServerResponse.createBySuccessCode();

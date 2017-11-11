@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 评论
@@ -47,11 +48,11 @@ public class PhoneSubmitOrderReturnDTO implements Serializable {
     @ApiModelProperty( name = "retRemark", value = "退款说明" )
     private String retRemark;
 
-    @ApiModelProperty( name = "imageUrls", value = "图片地址,多张图片用逗号隔开" )
-    private String imageUrls;
+    @ApiModelProperty( name = "imagesUrl", value = "图片地址,多张图片用逗号隔开" )
+    private String imagesUrl;
 
     @ApiModelProperty( name = "retMoney", value = "退款金额", required = true )
-    private Double retMoney;
+    private BigDecimal retMoney;
 
     @ApiModelProperty( name = "retTelephone", value = "退货手机号码" )
     private String retTelephone;

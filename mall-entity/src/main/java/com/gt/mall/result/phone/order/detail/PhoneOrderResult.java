@@ -121,4 +121,10 @@ public class PhoneOrderResult implements Serializable {
     @ApiModelProperty( name = "busMessage", value = "商家留言" )
     private String busMessage;
 
+    @ApiModelProperty( name = "orderType", value = "活动类型 1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品" )
+    private Integer orderType = 0;
+
+    @ApiModelProperty( name = "activityId", value = "活动id" )
+    private Integer activityId = 0;
+
 }

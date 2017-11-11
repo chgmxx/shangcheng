@@ -188,12 +188,18 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 			    isNowReturn = false;
 			}
 		    }
-		    if ( isNowReturn && detail.getOrderReturn() != null ) {
+		    if ( detail.getOrderReturn() != null && CommonUtil.isNotEmpty( detail.getOrderReturn().getId() ) ) {
 			MallOrderReturn orderReturn = detail.getOrderReturn();
-
 			detailResult.setReturnId( orderReturn.getId() );
-			detailResult.setReturnMoney( CommonUtil.toDouble( orderReturn.getRetMoney() ) );
+			if ( CommonUtil.isNotEmpty( orderReturn.getRetMoney() ) ) {
+			    detailResult.setReturnMoney( CommonUtil.toDouble( orderReturn.getRetMoney() ) );
+			}
 			detailResult.setReturnType( orderReturn.getRetHandlingWay() );
+			if ( orderReturn.getRetHandlingWay() == 1 ) {
+			    detailResult.setReturnTypeDesc( "仅退款" );
+			} else {
+			    detailResult.setReturnTypeDesc( "退货并退款" );
+			}
 			detailResult.setReturnStatusDesc( OrderUtil.getReturnStatusName( orderReturn ) );
 			detailResult.setIsShowReturnWuliuButton( OrderUtil.getOrderIsShowReturnWuliuButton( isNowReturn, detailStutas, orderReturn ) );
 			detailResult.setIsShowUpdateReturnButton( OrderUtil.getOrderIsShowUpdateReturnButton( isNowReturn, detailStutas ) );
@@ -224,6 +230,8 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    //判断是否显示代付详情按钮
 	    orderResult.setIsShowDaifuButton( OrderUtil.getOrderIsShowDaifuButton( order ) );
 	    orderResult.setDetailResultList( detailResultList );
+	    orderResult.setOrderType( order.getOrderType() );
+	    orderResult.setActivityId( order.getGroupBuyId() );
 	    orderResultList.add( orderResult );
 	}
 	result.setOrderResultList( orderResultList );
@@ -396,6 +404,8 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	result.setDetailResultList( detailResultList );
 	result.setBuyerMessage( order.getOrderBuyerMessage() );
 	result.setBusMessage( order.getOrderSellerRemark() );
+	result.setOrderType( order.getOrderType() );
+	result.setActivityId( order.getGroupBuyId() );
 	return result;
     }
 

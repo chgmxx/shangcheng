@@ -1,10 +1,10 @@
 package com.gt.mall.config;
 
+import com.gt.mall.config.interceptor.BackInterceptor;
+import com.gt.mall.config.interceptor.MyInterceptor;
+import com.gt.mall.config.interceptor.PhoneInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 /**
  * 静态文件访问配置
@@ -20,6 +20,20 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
     public void addViewControllers( ViewControllerRegistry registry ) {
 	registry.addViewController( "/" ).setViewName( "/index.html" );
 	registry.addViewController( "/error" ).setViewName( "/error/404Two" );
+    }
+
+    @Override
+    public void addInterceptors( InterceptorRegistry registry ) {
+
+	//	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
+
+	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" ).excludePathPatterns( "/**/E9lM9uM4ct/**", "/**/L6tgXlBFeK/**" );
+	registry.addInterceptor( new BackInterceptor() ).addPathPatterns( "/**/E9lM9uM4ct/**" );
+	registry.addInterceptor( new PhoneInterceptor() ).addPathPatterns( "/**/L6tgXlBFeK/**" );
+
+	     	/*registry.addInterceptor(new SysLogInterceptor()).addPathPatterns("*//**");*/
+
+	super.addInterceptors( registry );
     }
 
     /**
@@ -42,4 +56,5 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
 	registry.addMapping( "/**" ).allowedHeaders( "*" ).allowedMethods( "*" ).allowedOrigins( "*" );
 	super.addCorsMappings( registry );
     }
+
 }

@@ -297,6 +297,22 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	return wayResultList;
     }
 
+    public PhoneReturnProductResult getReturnProduct( MallOrder order, MallOrderDetail detail ) {
+	PhoneReturnProductResult result = new PhoneReturnProductResult();
+	result.setProductId( detail.getProductId() );
+	result.setShopId( detail.getShopId() );
+	result.setBusId( order.getBusUserId() );
+	result.setProductName( detail.getDetProName() );
+	result.setProductImageUrl( detail.getProductImageUrl() );
+	result.setOrderId( detail.getOrderId() );
+	result.setOrderType( order.getOrderType() );
+	result.setActivityId( order.getGroupBuyId() );
+	if ( CommonUtil.isNotEmpty( detail.getProductSpeciname() ) ) {
+	    result.setProductSpecifica( detail.getProductSpeciname().replaceAll( ",", "/" ) );
+	}
+	return result;
+    }
+
     @Override
     public PhoneReturnProductResult getReturn( Integer orderDetailId, Integer returnId ) {
 	if ( CommonUtil.isEmpty( orderDetailId ) || orderDetailId == 0 ) {
@@ -311,16 +327,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	returns.setOrderId( detail.getOrderId() );
 	returns.setOrderDetailId( detail.getId() );
 	MallOrderReturn orderReturn = mallOrderReturnDAO.selectByOrderDetailId( returns );//退款详情
-	PhoneReturnProductResult result = new PhoneReturnProductResult();
-	result.setProductId( detail.getProductId() );
-	result.setShopId( detail.getShopId() );
-	result.setBusId( order.getBusUserId() );
-	result.setProductName( detail.getDetProName() );
-	result.setProductImageUrl( detail.getProductImageUrl() );
-	result.setOrderId( detail.getOrderId() );
-	if ( CommonUtil.isNotEmpty( detail.getProductSpeciname() ) ) {
-	    result.setProductSpecifica( detail.getProductSpeciname().replaceAll( ",", "/" ) );
-	}
+	PhoneReturnProductResult result = getReturnProduct( order, detail );//获取退款商品
 	double price = CommonUtil.toDouble( detail.getDetProPrice() ) * detail.getDetProNum();
 	if ( CommonUtil.isNotEmpty( detail.getTotalPrice() ) && detail.getTotalPrice() > 0 ) {
 	    price = CommonUtil.toDouble( detail.getTotalPrice() );
@@ -350,6 +357,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	    if ( CommonUtil.isNotEmpty( orderReturn.getImagesUrl() ) ) {
 		result.setReturnImageUrls( orderReturn.getImagesUrl().split( "," ) );
 	    }
+	    result.setReturnPhone( orderReturn.getRetTelephone() );
 	}
 	if ( order.getOrderStatus() == 3 || order.getOrderStatus() == 4 ) {
 	    List< PhoneReturnWayResult > wayResultList = new ArrayList<>();
@@ -360,5 +368,13 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	}
 
 	return result;
+    }
+
+    @Override
+    public MallOrderReturn selectByOrderDetailId( Integer orderId, Integer orderDetailId ) {
+	MallOrderReturn orderReturn = new MallOrderReturn();
+	orderReturn.setOrderId( orderId );
+	orderReturn.setOrderDetailId( orderDetailId );
+	return mallOrderReturnDAO.selectByOrderDetailId( orderReturn );
     }
 }

@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api.page.phone;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
@@ -10,7 +11,6 @@ import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.result.phone.PhoneCommonResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -42,7 +42,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -306,21 +305,22 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "上传图片接口", notes = "上传图片", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "uploadImage", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< String > uploadImage( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+    public ServerResponse< String > uploadImage( HttpServletRequest request, HttpServletResponse response ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
-
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	    int busId = CommonUtil.toInteger( request.getParameter( "busId" ) );
+	    //	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    StringBuffer imageUrl = new StringBuffer();
 	    boolean flag = false;
+	    logger.info( request.getParameter( "busId" ) );
 	    if ( request instanceof MultipartHttpServletRequest ) {
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		List< MultipartFile > userfile = multipartRequest.getFiles( "file" );
 		if ( CommonUtil.isNotEmpty( userfile ) && userfile.size() != 0 ) {
 		    for ( MultipartFile file : userfile ) {
-			Map< String,Object > returnMap = CommonUtil.fileUploadByBusUser( file, member.getBusid() );
+			Map< String,Object > returnMap = CommonUtil.fileUploadByBusUser( file, busId );
+			logger.info( "returnMap" + JSONObject.toJSONString( returnMap ) );
 			if ( "1".equals( returnMap.get( "reTurn" ) ) ) {
-			    if ( CommonUtil.isNotEmpty( imageUrl ) ) {
+			    if ( CommonUtil.isNotEmpty( imageUrl ) && imageUrl.length() > 0 ) {
 				imageUrl.append( "," );
 			    }
 			    imageUrl.append( returnMap.get( "message" ) );

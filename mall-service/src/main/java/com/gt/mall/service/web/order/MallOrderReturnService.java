@@ -2,6 +2,7 @@ package com.gt.mall.service.web.order;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
@@ -33,6 +34,16 @@ public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
     List< PhoneReturnWayResult > getReturnWayList( MallOrder order );
 
     /**
+     * 获取退款商品
+     *
+     * @param order  订单
+     * @param detail 订单详情
+     *
+     * @return 商品信息
+     */
+    PhoneReturnProductResult getReturnProduct( MallOrder order, MallOrderDetail detail );
+
+    /**
      * 查询退款信息
      *
      * @param orderDetailId 订单详情id
@@ -41,4 +52,12 @@ public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
      * @return 退款信息
      */
     PhoneReturnProductResult getReturn( Integer orderDetailId, Integer returnId );
+
+    /**
+     * 根据订单id和订单详情id查询退款信息
+     * @param orderId 订单id
+     * @param orderDetailId 订单详情id
+     * @return 退款信息
+     */
+    MallOrderReturn selectByOrderDetailId(Integer orderId,Integer orderDetailId);
 }

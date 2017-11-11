@@ -1,7 +1,8 @@
-package com.gt.mall.exception;
+package com.gt.mall.config;
 
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.ResponseEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
