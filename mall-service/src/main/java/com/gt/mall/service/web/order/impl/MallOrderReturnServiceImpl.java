@@ -480,7 +480,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	result.setOrderId( detail.getOrderId() );
 
 	result.setReturnId( orderReturn.getId() );
-	result.setCreateTime( orderReturn.getCreateTime() );
+	result.setCreateTime( DateTimeKit.getDateTime( orderReturn.getCreateTime() ) );
 	result.setReturnPrice( orderReturn.getRetMoney().doubleValue() );
 	result.setRetHandlingWay( orderReturn.getRetHandlingWay() );
 	result.setReturnId( orderReturn.getId() );
@@ -488,7 +488,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	result.setRetRemark( orderReturn.getRetRemark() );
 	result.setStatus( orderReturn.getStatus() );
 	result.setStatusName( OrderUtil.getReturnStatusName( orderReturn ) );
-	result.setReturnTime( orderReturn.getUpdateTime() );
+	result.setReturnTime( DateTimeKit.getDateTime( orderReturn.getUpdateTime() ) );
 	//查询退款原因
 	List< DictBean > dictBeanList = dictService.getDict( "1091" );
 	if ( dictBeanList != null && dictBeanList.size() > 0 ) {

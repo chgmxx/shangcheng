@@ -69,9 +69,9 @@ public class PhoneReturnResult implements Serializable {
     private List< DictBean > returnReasonList;*/
 
     @ApiModelProperty( name = "createTime", value = "申请时间" )
-    private Date createTime;
+    private String createTime;
 
     @ApiModelProperty( name = "returnTime", value = "退款时间" )
-    private Date returnTime;
+    private String returnTime;
 
 }
