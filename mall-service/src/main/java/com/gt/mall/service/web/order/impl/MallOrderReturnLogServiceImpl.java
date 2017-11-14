@@ -14,6 +14,7 @@ import com.gt.mall.entity.order.MallOrderReturnLog;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.web.order.MallOrderReturnLogService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,7 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 			map.put( "retMoney", orderReturn.getRetMoney() );
 			map.put( "retMoney", orderReturn.getRetMoney() );
 			map.put( "retRemark", orderReturn.getRetRemark() );
+			map.put( "cargoStatus", orderReturn.getCargoStatus() );
 		    } else if ( getData == 2 ) {//2卖家退货地址
 			MallStore store = mallStoreDAO.selectById( orderReturn.getShopId() );
 			map.put( "stoAddress", store.getStoAddress() );
@@ -71,6 +73,11 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 			map.put( "wlCompany", orderReturn.getWlCompany() );
 			map.put( "wlNo", orderReturn.getWlNo() );
 			map.put( "returnAddress", orderReturn.getReturnAddress() );
+		    } else if ( CommonUtil.isNotEmpty( map.get( "deadlineTime" ) ) ) {
+
+			long[] times = DateTimeKit.getDistanceTimes( map.get( "deadlineTime" ).toString(), map.get( "createTime" ).toString() );
+			map.put( "times", times );
+
 		    }
 		}
 	    }
@@ -90,9 +97,9 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 
 	String msg = Constants.RETURN_APPLY;
 	if ( way == 1 ) {
-	    msg.replace( "{type}", "退货" );
+	    msg = msg.replace( "{type}", "退货" );
 	} else {
-	    msg.replace( "{type}", "退货退款" );
+	    msg = msg.replace( "{type}", "退货并退款" );
 	}
 	log.setStatusContent( msg );
 	log.setGetData( 1 );
@@ -110,9 +117,9 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 
 	String msg = Constants.RETURN_AGAIN_APPLY;
 	if ( way == 1 ) {
-	    msg.replace( "{type}", "退货" );
+	    msg = msg.replace( "{type}", "退货" );
 	} else {
-	    msg.replace( "{type}", "退货退款" );
+	    msg = msg.replace( "{type}", "退货并退款" );
 	}
 	log.setStatusContent( msg );
 	log.setGetData( 1 );
@@ -185,8 +192,8 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	log.setReturnStatus( 5 );
 	log.setStatusContent( Constants.REFUND_SUCCESS );
 	String msg = Constants.REFUND_SUCCESS_REMARK;
-	msg.replace( "{price}", returnPrice );
-	msg.replace( "{payWay}", payWay );
+	msg = msg.replace( "{price}", returnPrice );
+	msg = msg.replace( "{payWay}", payWay );
 	log.setRemark( msg );
 	return mallOrderReturnLogService.insert( log );
     }
@@ -227,7 +234,7 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	log.setOperator( 0 );
 	log.setReturnStatus( -2 );
 	log.setStatusContent( Constants.BUYER_REVOKE_REFUND );
-
+	log.setRemark( Constants.BUYER_REVOKE_REFUND_REMARK );
 	return mallOrderReturnLogService.insert( log );
     }
 

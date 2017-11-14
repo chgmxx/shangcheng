@@ -127,7 +127,7 @@ public class Constants {
     /*
     * 2待卖家处理
     * */
-    public static final String WAIT_SELLER_DISPOSE          = "待卖家处理";
+    public static final String WAIT_SELLER_DISPOSE          = "等待卖家处理";
     /*
     * 2待卖家处理 备注
     * {date} 剩余时间
@@ -180,6 +180,7 @@ public class Constants {
      * */
     public static final String BUYER_REVOKE_REFUND          = "买家撤销退款";
 
+    public static final String BUYER_REVOKE_REFUND_REMARK          = "买家已撤销退款";
     /*
    * 买家重新提交物流信息
    * */
