@@ -21,6 +21,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWuLiuResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
@@ -94,21 +95,26 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     @Override
     @Transactional( rollbackFor = Exception.class )
     public boolean addOrderReturn( MallOrderReturn orderReturn, Member member ) {
-	int status = 0;
+	int status = -3;
+	Integer orderDetailId = orderReturn.getOrderDetailId();
 	if ( orderReturn != null ) {
 	    // 新增订单退款
 	    int num;
 	    MallOrderReturn oReturn = mallOrderReturnDAO.selectByOrderDetailId( orderReturn );
 	    if ( oReturn != null ) {
+		orderDetailId = oReturn.getOrderDetailId();
 		orderReturn.setId( oReturn.getId() );
 		status = oReturn.getStatus();
 		orderReturn.setStatus( oReturn.getStatus() );
 		if ( oReturn.getStatus() == -3 || oReturn.getStatus() == -1 ) {
 		    //不同意退款和  商家拒绝退款后   修改未  退款中
 		    orderReturn.setStatus( 0 );
+		} else if ( orderReturn.getStatus() == 2 || orderReturn.getStatus() == 4 ) {
+		    //商家已退货，等待买家确认收货
+		    orderReturn.setStatus( 3 );
 		}
 	    }
-	    if ( CommonUtil.isNotEmpty( orderReturn.getOrderDetailId() ) ) {
+	    if ( CommonUtil.isNotEmpty( orderReturn.getOrderDetailId() ) && ( CommonUtil.isEmpty( orderReturn.getId() ) || orderReturn.getId() == 0 ) ) {
 		MallOrderDetail detail = mallOrderDetailDAO.selectById( orderReturn.getOrderDetailId() );
 		if ( CommonUtil.isNotEmpty( detail ) ) {
 		    orderReturn.setShopId( detail.getShopId() );
@@ -133,7 +139,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	    if ( num > 0 ) {
 		// 修改订单详情的状态
 		MallOrderDetail detail = new MallOrderDetail();
-		detail.setId( orderReturn.getOrderDetailId() );
+		detail.setId( orderDetailId );
 		detail.setStatus( orderReturn.getStatus() );
 		num = mallOrderDetailDAO.updateById( detail );
 
@@ -510,5 +516,26 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	orderReturn.setOrderId( orderId );
 	orderReturn.setOrderDetailId( orderDetailId );
 	return mallOrderReturnDAO.selectByOrderDetailId( orderReturn );
+    }
+
+    @Override
+    public PhoneReturnWuLiuResult getReturnWuLiu( Integer returnId ) {
+	if ( returnId == 0 ) {
+	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+	}
+	MallOrderReturn orderReturn = mallOrderReturnDAO.selectById( returnId );
+	if ( CommonUtil.isEmpty( orderReturn ) ) {
+	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+	}
+	PhoneReturnWuLiuResult wuLiuResult = new PhoneReturnWuLiuResult();
+	wuLiuResult.setWlCompany( orderReturn.getWlCompany() );
+	wuLiuResult.setWlCompanyId( orderReturn.getWlCompanyId() );
+	wuLiuResult.setWlNo( orderReturn.getWlNo() );
+	wuLiuResult.setWlRemark( orderReturn.getWlRemark() );
+	wuLiuResult.setWlTelephone( orderReturn.getWlTelephone() );
+	if ( CommonUtil.isNotEmpty( orderReturn.getWlImagesUrl() ) ) {
+	    wuLiuResult.setWlImagesUrl( orderReturn.getWlImagesUrl().split( "," ) );
+	}
+	return wuLiuResult;
     }
 }
