@@ -29,12 +29,16 @@ import com.gt.mall.result.phone.order.list.PhoneOrderListResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWuLiuResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
 import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.product.MallProductNewService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
+import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.OrderUtil;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -48,7 +52,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -450,6 +453,32 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	}
     }
 
+    @ApiOperation( value = "获取退货物流接口", notes = "获取退货物流", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int", required = true ) } )
+    @ResponseBody
+    @PostMapping( value = "getReturnLogisticsDetail", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhoneReturnWuLiuResult > getReturnLogisticsDetail( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
+		    Integer returnId ) {
+	try {
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    PhoneReturnWuLiuResult returnWuLiuResult = mallOrderReturnService.getReturnWuLiu( returnId );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), returnWuLiuResult );
+	} catch ( BusinessException e ) {
+	    logger.error( "获取退货物流接口异常：" + e.getCode() + "---" + e.getMessage() );
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "获取退货物流接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "获取退货物流失败" );
+	}
+    }
+
     @ApiOperation( value = "保存退货物流接口", notes = "保存退货物流", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "saveReturnLogistics", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -462,12 +491,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    converter.entityConvertDto( orderReturnDTO, orderReturn );
 
-	    orderReturn.setUpdateTime( new Date() );
-	    orderReturn.setStatus( 3 );
-	    mallOrderReturnService.updateById( orderReturn );
-
-	    //添加退货日志记录
-	    mallOrderReturnLogService.buyerReturnGoods( orderReturn.getId(), member.getId() );
+	    mallOrderReturnService.addOrderReturn( orderReturn, member );
 
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {

@@ -8,6 +8,7 @@ import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWuLiuResult;
 
 import java.util.List;
 
@@ -66,7 +67,7 @@ public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
      *
      * @param returnId 退款id
      *
-     * @return
+     * @return 退款详情
      */
     PhoneReturnResult returnDetail( Integer returnId );
 
@@ -78,4 +79,11 @@ public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
      * @return 退款信息
      */
     MallOrderReturn selectByOrderDetailId(Integer orderId,Integer orderDetailId);
+
+    /**
+     * 获取退货物流信息
+     * @param returnId 退款id
+     * @return 物流信息
+     */
+    PhoneReturnWuLiuResult getReturnWuLiu(Integer returnId);
 }
