@@ -5,6 +5,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionOfferDAO;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
@@ -12,6 +13,7 @@ import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionBiddingDTO;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
@@ -25,10 +27,7 @@ import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -158,6 +157,30 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "兑换积分异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+    }
+
+    /**
+     * 储值卡支付成功的回调
+     */
+    @ApiModelProperty( hidden = true )
+    @GetMapping( value = "payWay", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
+		params.put( "out_trade_no", params.get( "no" ) );
+	    }
+	    auctionMarginService.paySuccessAuction( params );
+	    return ServerResponse.createBySuccessCode();
+	} catch ( BusinessException e ) {
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "拍卖缴纳定金回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖缴纳定金回调异常" );
+	}
     }
 
     /*抢拍记录 出价记录*/

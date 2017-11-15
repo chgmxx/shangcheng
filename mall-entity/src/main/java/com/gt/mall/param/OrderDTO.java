@@ -18,7 +18,7 @@ import java.util.List;
  */
 @JsonIgnoreProperties( { "handler", "hibernateLazyInitializer" } )
 @Data
-@ApiModel( value = "order" )
+@ApiModel( value = "order" ,description = "进入订单列表验证" )
 public class OrderDTO {
 
     /**

@@ -5,12 +5,10 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
-import com.gt.mall.entity.order.MallOrderReturnLog;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.OrderDTO;
@@ -32,19 +30,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +98,7 @@ public class MallOrderNewController extends BaseController {
     @ApiOperation( value = "订单列表(分页)", notes = "订单列表(分页)" )
     @ResponseBody
     @RequestMapping( value = "/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, OrderDTO orderQuery ) {
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute OrderDTO orderQuery ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Map< String,Object > params = new HashMap<>();
@@ -117,12 +112,12 @@ public class MallOrderNewController extends BaseController {
 	    }
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isEmpty( orderQuery.getShopId() ) ) {
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		params.put( "shoplist", shoplist );
 	    }
 
-	    PageUtil page = mallOrderService.findByPage( params );
+	    PageUtil page = mallOrderService.findByPage( params, shoplist );
 	    result.put( "page", page );
 	    //	    result.put( "urlPath", PropertiesUtil.getDomain() );
 	    result.put( "videourl", busUserService.getVoiceUrl( "79" ) );
@@ -296,10 +291,12 @@ public class MallOrderNewController extends BaseController {
 		    MallOrderReturn orderReturn1 = mallOrderReturnService.selectById( orderReturn.getId() );
 		    MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
 		    String payWay = "";
-		    if ( mallOrder.getOrderPayWay() == 1 ) {
+		    if ( mallOrder.getOrderPayWay() == 1 || mallOrder.getOrderPayWay() == 10 ) {
 			payWay = "微信";
 		    } else if ( mallOrder.getOrderPayWay() == 9 ) {
 			payWay = "支付宝";
+		    } else if ( mallOrder.getOrderPayWay() == 3 ) {
+			payWay = "储值卡";
 		    }
 		    mallOrderReturnLogService.refundSuccess( orderReturn.getId(), payWay, orderReturn1.getRetMoney().toString() );
 
@@ -315,10 +312,12 @@ public class MallOrderNewController extends BaseController {
 		    MallOrderReturn orderReturn1 = mallOrderReturnService.selectById( orderReturn.getId() );
 		    MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
 		    String payWay = "";
-		    if ( mallOrder.getOrderPayWay() == 1 ) {
+		    if ( mallOrder.getOrderPayWay() == 1 || mallOrder.getOrderPayWay() == 10 ) {
 			payWay = "微信";
 		    } else if ( mallOrder.getOrderPayWay() == 9 ) {
 			payWay = "支付宝";
+		    } else if ( mallOrder.getOrderPayWay() == 3 ) {
+			payWay = "储值卡";
 		    }
 		    mallOrderReturnLogService.refundSuccess( orderReturn.getId(), payWay, orderReturn1.getRetMoney().toString() );
 		}

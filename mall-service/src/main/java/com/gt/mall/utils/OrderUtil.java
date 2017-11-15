@@ -94,6 +94,27 @@ public class OrderUtil {
     }
 
     /**
+     * 根据 买家来源 获取 来源名称
+     *
+     * @param buyerUserType 买家来源
+     *
+     * @return
+     */
+    public static String getOrderTypeMsgByOrder( Integer buyerUserType ) {
+	String statusName = "";
+	if ( buyerUserType == null || buyerUserType == 0 ) {
+	    statusName = "PC端";
+	} else if ( buyerUserType == 1 ) {
+	    statusName = "微信";
+	} else if ( buyerUserType == 2 ) {
+	    statusName = "UC端";
+	} else if ( buyerUserType == 3 ) {
+	    statusName = "小程序";
+	}
+	return statusName;
+    }
+
+    /**
      * 判断订单详情是否正在退款
      *
      * @param status 订单详情状态
@@ -119,8 +140,7 @@ public class OrderUtil {
 	String proTypeId = detail.getProTypeId().toString();
 	String detailStatus = detail.getStatus().toString();
 	//扫码支付、积分支付、粉币支付  不可以退款
-	if ( "5".equals( orderStatus ) || "5".equals( orderPayWay ) || "4".equals( orderPayWay )
-			|| "8".equals( orderPayWay ) ) {
+	if ( "5".equals( orderStatus ) || "5".equals( orderPayWay ) || "4".equals( orderPayWay ) || "8".equals( orderPayWay ) ) {
 	    return 0;
 	}
 	//卡券购买,会员卡支付 ,流量 不可以退款
@@ -214,8 +234,7 @@ public class OrderUtil {
     public static int getOrderIsShowCloseReturnButton( boolean isNowReturn, String detailStatus, MallOrderReturn mallOrderReturn ) {
 	if ( isNowReturn ) {
 	    if ( ( "0".equals( detailStatus ) || "2".equals( detailStatus ) || "3".equals( detailStatus ) || "4".equals( detailStatus ) || "-1".equals( detailStatus ) )
-			    && CommonUtil
-			    .isNotEmpty( mallOrderReturn ) ) {
+			    && CommonUtil.isNotEmpty( mallOrderReturn ) ) {
 		return 1;
 	    }
 	}

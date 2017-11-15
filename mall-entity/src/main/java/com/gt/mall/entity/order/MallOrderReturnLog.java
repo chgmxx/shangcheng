@@ -71,7 +71,7 @@ public class MallOrderReturnLog extends Model< MallOrderReturnLog > {
      */
     private Integer operator;
     /**
-     * 是否需要抓取数据 0不需要 1退货申请 2卖家退货地址 3买家回寄的物流信息
+     * 是否有数据 0没有 1有
      */
     @TableField( "get_data" )
     private Integer getData;

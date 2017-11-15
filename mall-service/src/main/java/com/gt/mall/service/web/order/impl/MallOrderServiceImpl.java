@@ -27,6 +27,8 @@ import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.result.order.OrderDetailResult;
+import com.gt.mall.result.order.OrderResult;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
@@ -48,6 +50,7 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import com.gt.union.api.entity.param.UnionConsumeParam;
 import com.gt.union.api.entity.param.UnionRefundParam;
@@ -191,8 +194,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     @Autowired
     private MallLogOrderCallbackDAO mallLogOrderCallbackDAO;
 
+    @Autowired
+    private MallStoreService mallStoreService;
+
     @Override
-    public PageUtil findByPage( Map< String,Object > params ) {
+    public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
 	int status = 0;
@@ -214,7 +220,40 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	} else {
 	    list = mallOrderDAO.findReturnByPage( params );
 	}
-	page.setSubList( getOrderListParams( list ) );
+
+	getOrderListParams( list );
+	if ( list == null || list.size() == 0 ) {
+	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "您还没有相关的订单" );
+	}
+
+	List< OrderResult > orderResultList = new ArrayList< OrderResult >();
+	EntityDtoConverter converter = new EntityDtoConverter();
+	for ( MallOrder mallOrder : list ) {
+	    OrderResult orderResult = new OrderResult();
+	    converter.entityConvertDto( mallOrder, orderResult );
+	    for ( Map< String,Object > shopMap : shoplist ) {
+		if ( shopMap.get( "id" ).toString().equals( mallOrder.getShopId().toString() ) ) {
+		    orderResult.setShopName( shopMap.get( "sto_name" ).toString() );//店铺名称
+		    break;
+		}
+	    }
+	    orderResult.setOrderStatusName( OrderUtil.getOrderStatusMsgByOrder( mallOrder.getOrderStatus().toString(), mallOrder.getDeliveryMethod().toString() ) );
+	    orderResult.setTypeName( OrderUtil.getOrderTypeMsgByOrder( mallOrder.getBuyerUserType() ) );
+	    if ( mallOrder.getMallOrderDetail() != null && orderResult.getMallOrderDetail().size() > 0 ) {
+		List< OrderDetailResult > mallOrderDetials = new ArrayList< OrderDetailResult >();
+		for ( MallOrderDetail detail : mallOrder.getMallOrderDetail() ) {
+		    OrderDetailResult orderDetailResult = new OrderDetailResult();
+		    converter.entityConvertDto( detail, orderDetailResult );
+		    if ( detail.getOrderReturn() != null ) {
+			orderDetailResult.setStatusName( OrderUtil.getReturnStatusName( detail.getOrderReturn() ) );
+		    }
+		    mallOrderDetials.add( orderDetailResult );
+		}
+		orderResult.setMallOrderDetail( mallOrderDetials );
+	    }
+	    orderResultList.add( orderResult );
+	}
+	page.setSubList( orderResultList );
 	return page;
     }
 

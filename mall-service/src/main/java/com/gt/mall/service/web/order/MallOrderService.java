@@ -28,7 +28,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 分页管理
      */
-    public PageUtil findByPage( Map< String,Object > params );
+    public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shoplist );
 
     /**
      * 重组订单列表

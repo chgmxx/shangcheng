@@ -132,7 +132,12 @@ public class Constants {
     * 2待卖家处理 备注
     * {date} 剩余时间
     * */
-    public static final String WAIT_SELLER_DISPOSE_REMARK   = "如果卖家拒绝，需要您修改退款申请<br>如果卖家在{date}内未处理，系统将自动退款给您";
+    public static final String WAIT_SELLER_DISPOSE_REMARK   = "如果卖家拒绝，需要您修改退款申请";
+    /*
+  * 2待卖家处理 备注
+  * {date} 剩余时间
+  * */
+    public static final String WAIT_SELLER_DISPOSE_REMARK1   = " 如果卖家在{date}内未处理，系统将自动退款给您";
     /*
      * 3卖家同意申请
      * */
@@ -158,7 +163,7 @@ public class Constants {
      *  {payWay} 支付方式
      *  {price} 退款金额
      * */
-    public static final String REFUND_SUCCESS_REMARK        = "退款至{payWay}：{price}元";
+    public static final String REFUND_SUCCESS_REMARK        = "退款金额{payWay}：{price}元";
     /*
      * 7卖家拒绝退款申请
      * */
