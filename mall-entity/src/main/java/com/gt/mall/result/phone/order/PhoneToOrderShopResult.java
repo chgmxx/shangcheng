@@ -46,4 +46,7 @@ public class PhoneToOrderShopResult implements Serializable {
     @ApiModelProperty( name = "couponList", value = "卡券集合" )
     private List< Coupons > couponList;
 
+    @ApiModelProperty( name = "isCanUseYhqDiscount", value = "是否能使用优惠券抵扣 1 能" )
+    private Integer isCanUseYhqDiscount = 0;
+
 }

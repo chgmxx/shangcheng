@@ -54,14 +54,14 @@ public class ToOrderUtil {
 	}
 
 	if ( browerType == 1 && isHavePublic == 1 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
 	    payWayList.add( result );
 	} else {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 9, "支付宝支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 9, "支付宝支付", "alipay" );
 	    payWayList.add( result );
 	}
 	if ( memberCtId == 3 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "储值卡支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "储值卡支付", "chuzhika" );
 	    payWayList.add( result );
 	}
 	int isHuodao = 0;//是否显示货到付款
@@ -81,22 +81,22 @@ public class ToOrderUtil {
 	    }
 	}
 	if ( isHuodao == 1 && proTypeId == 0 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "货到付款" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "货到付款", "huodaofukuan" );
 	    payWayList.add( result );
 	}
 	if ( phoneToOrderDTO.getType() == 2 ) {//积分支付
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 4, "积分支付" );
-	    payWayList.add( result );
+	    //	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 4, "积分支付" ,"jifen");
+	    //	    payWayList.add( result );
 	} else if ( phoneToOrderDTO.getType() == 5 ) {//粉币支付
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 8, "粉币支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 8, "粉币支付", "fenbizhifu" );
 	    payWayList.add( result );
 	}
 	if ( CommonUtil.isNotEmpty( isStorePay ) && isStorePay == 1 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 6, "到店支付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 6, "到店支付", "daodianzhifu" );
 	    payWayList.add( result );
 	}
 	if ( isDaifu == 1 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 7, "找人代付" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 7, "找人代付", "daifukuan" );
 	    payWayList.add( result );
 	}
 	return payWayList;
@@ -105,21 +105,21 @@ public class ToOrderUtil {
     /**
      * 获取商家的配送方式
      */
-    public static List< PhoneOrderWayDTO > getDeliveryWay( PhoneToOrderDTO params, int proTypeId, Integer isShowTake, int busId ) {
+    public static List< PhoneOrderWayDTO > getDeliveryWay( PhoneToOrderDTO params, int proTypeId, Integer isShowTake, Integer toShop ) {
 	List< PhoneOrderWayDTO > wayResultList = new ArrayList<>();
 	int toshop = 0;
-	if ( CommonUtil.isNotEmpty( params.getToShop() ) ) {
-	    toshop = params.getToShop();
+	if ( CommonUtil.isNotEmpty( toShop ) ) {
+	    toshop = toShop;
 	}
 	if ( toshop == 1 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "到店购买" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "到店购买", "daodian" );
 	    wayResultList.add( result );
 	} else {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "快递配送" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "快递配送", "miankuaidi" );
 	    wayResultList.add( result );
 	}
 	if ( proTypeId == 0 && CommonUtil.isNotEmpty( isShowTake ) && isShowTake > 0 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "到店自提" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "到店自提", "daodianziti" );
 	    wayResultList.add( result );
 	}
 
@@ -150,8 +150,10 @@ public class ToOrderUtil {
 	    int cardTypes = -1;
 	    if ( "DISCOUNT".equals( cardType ) ) {//折扣券
 		cardTypes = 0;
-		coupons.setDiscount( CommonUtil.toDouble( map.get( "discount" ) ) );
-		couponsName = coupons.getDiscount() + "折";
+		double discount = CommonUtil.toDouble( map.get( "discount" ) );
+		discount = CommonUtil.div( discount, 10, 2 );
+		coupons.setDiscount( discount );
+		couponsName = map.get( "discount" ) + "折";
 	    } else if ( "CASH".equals( cardType ) ) {//满减券
 		cardTypes = 1;
 		coupons.setCashLeastCost( CommonUtil.toDouble( map.get( "cash_least_cost" ) ) );
@@ -189,8 +191,10 @@ public class ToOrderUtil {
 	    int cardTypes = -1;
 	    if ( "0".equals( cardType ) ) {//折扣券
 		cardTypes = 0;
-		coupons.setDiscount( CommonUtil.toDouble( map.get( "discount" ) ) );
-		couponsName = coupons.getDiscount() + "折";
+		double discount = CommonUtil.toDouble( map.get( "discount" ) );
+		discount = CommonUtil.div( discount, 10, 2 );
+		coupons.setDiscount( discount );
+		couponsName = map.get( "discount" ) + "折";
 	    } else if ( "1".equals( cardType ) ) {//满减券
 		cardTypes = 1;
 		coupons.setCashLeastCost( CommonUtil.toDouble( map.get( "cash_least_cost" ) ) );

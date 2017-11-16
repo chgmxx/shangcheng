@@ -67,4 +67,7 @@ public class PhoneBuyNowDTO implements Serializable {
     @ApiModelProperty( name = "pifaSpecificaDTOList", value = "批发规格集合" )
     private List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList;
 
+    @ApiModelProperty( name = "toShop", value = "是否是到店购买 1到店购买 0 线上" )
+    private Integer toShop = 0;
+
 }

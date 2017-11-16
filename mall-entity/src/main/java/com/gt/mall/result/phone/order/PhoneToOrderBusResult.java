@@ -80,6 +80,20 @@ public class PhoneToOrderBusResult implements Serializable {
     @ApiModelProperty( name = "memberPhone", value = "粉丝手机号码" )
     private String memberPhone;
 
+    @ApiModelProperty( name = "isCanUseMemberDiscount", value = "是否能使用会员折扣1 能" )
+    private Integer isCanUseMemberDiscount = 0;
+
+    @ApiModelProperty( name = "isCanUseUnionDiscount", value = "是否能使用联盟折扣 1 能" )
+    private Integer isCanUseUnionDiscount = 1;
+
+    @ApiModelProperty( name = "isCanUseJifenDiscount", value = "是否能使用积分抵扣 1 能" )
+    private Integer isCanUseJifenDiscount = 0;
+
+    @ApiModelProperty( name = "isCanUseFenbiDiscount", value = "是否能使用粉币抵扣 1 能" )
+    private Integer isCanUseFenbiDiscount = 0;
+
+    @ApiModelProperty( name = "isCanUseCouponDiscount", value = "是否能使用优惠券抵扣  1能" )
+    private Integer isCanUseYhqDiscount = 0;
 
     /*********************************联盟卡返回的接口***************************************/
 

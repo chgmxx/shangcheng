@@ -26,9 +26,13 @@ public class PhoneOrderWayDTO implements Serializable {
     @ApiModelProperty( name = "wayName", value = "支付方式名称" )
     private String wayName;
 
-    public PhoneOrderWayDTO( int id, String wayName ) {
+    @ApiModelProperty( name = "claName", value = "class名称" )
+    private String claName;
+
+    public PhoneOrderWayDTO( int id, String wayName ,String claName) {
 	this.id = id;
 	this.wayName = wayName;
+	this.claName = claName;
     }
 
     public PhoneOrderWayDTO() {

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -190,7 +189,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
      */
     private List< PhoneAddOrderShopDTO > calculateMemberDiscount( List< PhoneAddOrderShopDTO > shopDTOList, Double memberDiscount, Map cardMap ) {
 	double busCanUseDiscountProductPrice = 0;//保存能使用会员折扣的商品总额
-	List< Coupons > couponsList = new ArrayList<>();
+//	List< Coupons > couponsList = new ArrayList<>();
 	//保存能使用会员折扣的商品价格
 	for ( PhoneAddOrderShopDTO shopDTO : shopDTOList ) {//循环店铺集合
 	    for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合
@@ -201,7 +200,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 
 		}
 	    }
-	    //多粉优惠券
+	   /* //多粉优惠券
 	    if ( cardMap.containsKey( "duofenCards" + shopDTO.getWxShopId() ) ) {
 		Object obj = cardMap.get( "duofenCards" + shopDTO.getWxShopId() );
 		couponsList = ToOrderUtil.getDuofenCouponsResult( obj, couponsList );
@@ -210,7 +209,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    if ( cardMap.containsKey( "cardList" + shopDTO.getWxShopId() ) ) {
 		Object obj = cardMap.get( "cardList" + shopDTO.getWxShopId() );
 		couponsList = ToOrderUtil.getWxCouponsResult( obj, couponsList );
-	    }
+	    }*/
 	}
 	busCanUseDiscountProductPrice = CommonUtil.formatDoubleNumber( busCanUseDiscountProductPrice );
 	Double busDiscountYouhui = null;//保存商家下  折扣卡优惠的总额
@@ -332,7 +331,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    double useCouponTotalPrice = 0;//已使用优惠券的商品金额
 	    double useCouponTotalNum = 0;//已使用优惠券的商品数量
 	    double shopProductNewTotal = 0;//保存订单优惠后的商品总额
-	    double totalYouhuiMoney = 0;
+	    double totalYouhuiMoney = 0;//保存使用优惠券优惠的金额
 	    //平摊 每个商品使用优惠券的 优惠金额
 	    for ( PhoneAddOrderProductDTO productDTO : productDTOList ) {//循环商品集合
 		boolean isCanUseYhq = CommonUtil.isEmpty( productDTO.getIsCanUseYhq() ) || !"1".equals( productDTO.getIsCanUseYhq().toString() );

@@ -28,10 +28,14 @@ public class PhoneToOrderResult implements Serializable {
     private PhoneOrderMemberAddressDTO memberAddressDTO;
 
     @ApiModelProperty( name = "totalMoney", value = "商品总额（优惠前的价格）" )
-    private double totalMoney;
+    private double totalMoney = 0;
 
     @ApiModelProperty( name = "totalPayMoney", value = "合计（商品支付总价）" )
-    private double totalPayMoney;
+    private double totalPayMoney = 0;
+
+
+    @ApiModelProperty( name = "totalYouHuiMoney", value = "总优惠" )
+    private double totalYouHuiMoney = 0;
 
     @ApiModelProperty( name = "busResultList", value = "商家集合" )
     private List< PhoneToOrderBusResult > busResultList;

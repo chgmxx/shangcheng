@@ -35,10 +35,7 @@ import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
 import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.product.MallProductNewService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.EntityDtoConverter;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.OrderUtil;
+import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -111,6 +108,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		}
 	    }
 
+	    String value =  com.alibaba.fastjson.JSONObject.toJSONString( params );
+	    CookieUtil.addCookie( response, CookieUtil.TO_ORDER_KEY, value, 0 );
+
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
 	    logger.error( "立即购买异常：" + e.getMessage() );
@@ -134,7 +134,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO );
+	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO ,request);
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( BusinessException e ) {
@@ -235,7 +235,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "支付成功回调失败" );
 	}
-	return ServerResponse.createBySuccessCode();
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(),ResponseEnums.SUCCESS.getDesc() );
     }
 
     @ApiOperation( value = "手机端订单列表的接口", notes = "我的订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -670,7 +670,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		params.put( "out_trade_no", params.get( "no" ) );
 	    }
 	    mallOrderService.paySuccessDaifu( params );
-	    return ServerResponse.createBySuccessCode();
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(),ResponseEnums.SUCCESS.getDesc() );
 	} catch ( BusinessException e ) {
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
 		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );

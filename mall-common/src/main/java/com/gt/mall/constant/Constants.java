@@ -24,6 +24,11 @@ public class Constants {
     public final static String SOCKEY_KEY = "Mall-";
 
     /**
+     * cookie
+     */
+    public final static String COOKIE_KEY = "Mall-";
+
+    /**
      * 微场景
      */
     public static final String IMAGE_FOLDER_TYPE_4 = "4";
@@ -118,12 +123,12 @@ public class Constants {
     * 1退款申请
     * {type} 退款 退款退货
     * */
-    public static final String RETURN_APPLY                 = "买家发起{type}申请";
+    public static final String RETURN_APPLY = "买家发起{type}申请";
     /*
     * 1退款申请
     * {type} 退款 退款退货
     * */
-    public static final String RETURN_AGAIN_APPLY           = "买家修改{type}申请";
+    public static final String RETURN_AGAIN_APPLY = "买家修改{type}申请";
     /*
     * 2待卖家处理
     * */
@@ -137,7 +142,7 @@ public class Constants {
   * 2待卖家处理 备注
   * {date} 剩余时间
   * */
-    public static final String WAIT_SELLER_DISPOSE_REMARK1  = " 如果卖家在{date}内未处理，系统将自动退款给您";
+    public static final String WAIT_SELLER_DISPOSE_REMARK1   = " 如果卖家在{date}内未处理，系统将自动退款给您";
     /*
      * 3卖家同意申请
      * */
@@ -185,11 +190,11 @@ public class Constants {
      * */
     public static final String BUYER_REVOKE_REFUND          = "买家撤销退款";
 
-    public static final String BUYER_REVOKE_REFUND_REMARK = "买家已撤销退款";
+    public static final String BUYER_REVOKE_REFUND_REMARK          = "买家已撤销退款";
     /*
    * 买家重新提交物流信息
    * */
-    public static final String BUYER_UPDATE_LOGISTICS     = "买家重新提交物流信息";
+    public static final String BUYER_UPDATE_LOGISTICS          = "买家重新提交物流信息";
 
     /**********维权记录常量END*********************/
     /**
@@ -222,6 +227,7 @@ public class Constants {
      * 退货 确认收货 超出10天不做操作 系统自动确认收货天数
      */
     public static final int RETURN_AUTO_CONFIRM_TAKE_DAY = 10;
+
 
     /**
      * 退款方式

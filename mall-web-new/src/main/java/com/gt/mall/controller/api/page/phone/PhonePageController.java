@@ -299,7 +299,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "获取微信分享接口失败" );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.NO_SHARE_ERROR.getCode(), ResponseEnums.NO_SHARE_ERROR.getDesc(), false );
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
     }
 
     @ApiOperation( value = "上传图片接口", notes = "上传图片", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )

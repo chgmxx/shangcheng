@@ -28,6 +28,12 @@ public class Coupons {
 
     @ApiModelProperty( name = "image", value = "优惠券图片" )
     private String image;
+    
+    @ApiModelProperty( name = "startTime", value = "开始时间" )
+    private String startTime;
+
+    @ApiModelProperty( name = "endTime", value = "结束时间" )
+    private String endTime;
 
     /************************************* 以下是满减券需要用到的参数 *************************************/
     @ApiModelProperty( name = "cashLeastCost", value = "起用金额（满多少）" )
