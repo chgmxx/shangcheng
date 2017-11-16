@@ -35,4 +35,13 @@ public interface MallSellerIncomeDAO extends BaseMapper< MallSellerIncome > {
      * @return
      */
     List<MallSellerIncome> selectByCanWithIncome(MallSellerIncome income);
+
+    /**
+     * 查询订单的销售收益
+     *
+     * @param params
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectSellerIncome( Map< String,Object > params );
 }

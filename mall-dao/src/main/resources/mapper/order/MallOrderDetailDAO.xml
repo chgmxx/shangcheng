@@ -127,4 +127,28 @@
         </foreach>
     </insert>
 
+    <select id="selectTodayProduct" resultType="Map">
+        SELECT DISTINCT a.product_id,b.wx_shop_id
+        FROM t_mall_order_detail a
+        LEFT JOIN t_mall_store b ON a.shop_id=b.id
+        LEFT JOIN t_mall_order c ON a.order_id=c.id
+        WHERE 5 > c.order_status
+        AND c.order_status > 1
+        AND c.pay_time >= #{startTime}
+        and c.pay_time <![CDATA[<]]> #{endTime}
+        AND c.order_pay_way IN (1,3)
+    </select>
+    <select id="selectProductMoneyByWay" resultType="Map">
+        SELECT  SUM(a.det_pro_num) AS wxnum ,SUM(a.det_pro_num*a.det_pro_price) AS wxprice
+        FROM t_mall_order_detail a
+        LEFT JOIN t_mall_store b ON a.shop_id=b.id
+        LEFT JOIN t_mall_order c ON a.order_id=c.id
+        WHERE 5 > c.order_status
+        AND c.order_status > 1
+        AND c.pay_time >= #{startTime}
+        and c.pay_time <![CDATA[<]]> #{endTime}
+        AND a.product_id=#{productId}
+        AND c.order_pay_way=#{payWay}
+    </select>
+
 </mapper>

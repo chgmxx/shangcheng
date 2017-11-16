@@ -236,4 +236,8 @@
         AND t.shop_id=#{shopId}
     </select>
 
+    <select id="selectProductInvenById" parameterType="Map" resultType="Map">
+        select id,inv_num,inv_sale_num from t_mall_product_inventory where product_id = #{id} and is_delete = 0 and specifica_ids = #{specId}
+    </select>
+
 </mapper>

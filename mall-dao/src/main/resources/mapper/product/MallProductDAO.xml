@@ -569,4 +569,7 @@
         AND s.`is_delete`=0  AND t.`erp_pro_id`=0
         GROUP BY t.`pro_name`
     </select>
+    <update id="updateProViewNum" parameterType="Map">
+        update t_mall_product set views_num=#{viewsNum} where id=#{id}
+    </update>
 </mapper>

@@ -79,5 +79,24 @@
             </if>
         </where>
     </select>
-
+    <select id="selectAllReturnProduct" resultType="Map">
+        SELECT DISTINCT b.product_id,c.wx_shop_id
+        FROM t_mall_order_return a
+        LEFT JOIN t_mall_order_detail b ON a.order_detail_id=b.id
+        LEFT JOIN t_mall_store c ON b.shop_id=c.id
+        WHERE a.status=-1
+        AND a.update_time >= #{startTime}
+        and a.update_time <![CDATA[<]]> #{endTime}
+    </select>
+    <select id="selectProductMoneyByWay" resultType="Map">
+        SELECT SUM(b.det_pro_num) AS tkwxnum ,SUM(b.det_pro_num*b.det_pro_price) AS tkwxprice
+        FROM t_mall_order_return a
+        LEFT JOIN t_mall_order_detail b ON a.order_detail_id=b.id
+        LEFT JOIN t_mall_order c ON b.order_id=c.id
+        WHERE a.status=-1
+        AND c.order_pay_way= #{payWay}
+        AND b.product_id=#{productId}
+        AND a.update_time >= #{startTime}
+        and a.update_time <![CDATA[<]]> #{endTime}
+    </select>
 </mapper>

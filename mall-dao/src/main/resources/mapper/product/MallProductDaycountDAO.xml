@@ -28,5 +28,61 @@
          sale_totalprice, refund_num , refund_price , count_date , refund_minum , refund_miprice,
          refund_totalnum , refund_totalprice
     </sql>
+    <update id="updatetk" parameterType="com.gt.mall.entity.product.MallProductDaycount">
+        update t_mall_product_daycount
+        <set>
+
+            <if test="refundNum != null">
+                refund_num = #{refundNum,jdbcType=INTEGER},
+            </if>
+            <if test="refundPrice != null">
+                refund_price = #{refundPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="refundMinum != null">
+                refund_minum = #{refundMinum,jdbcType=INTEGER},
+            </if>
+            <if test="refundMiprice != null">
+                refund_miprice = #{refundMiprice,jdbcType=DECIMAL},
+            </if>
+            <if test="refundTotalnum != null">
+                refund_totalnum = #{refundTotalnum,jdbcType=INTEGER},
+            </if>
+            <if test="refundTotalprice != null">
+                refund_totalprice = #{refundTotalprice,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="isProductByDate" resultType="java.util.Map">
+        SELECT id FROM t_mall_product_daycount
+        WHERE product_id =#{productId}
+        AND count_date =#{date}
+    </select>
+    <select id="selectShopIdByDate" resultType="java.util.Map">
+        SELECT DISTINCT shop_id
+        FROM t_mall_product_daycount
+        WHERE count_date = #{date}
+    </select>
+    <select id="selectShopReturnListByDate" resultType="java.util.Map">
+        SELECT SUM(sale_num) AS saleNum,SUM(sale_price) AS salePrice,SUM(sale_miprice) AS saleMiprice,SUM(sale_minum) AS saleMinum,SUM(sale_totalnum) AS saleTotalnum,SUM(sale_totalprice) AS saleTotalprice,
+        SUM(refund_num) AS refundNum,SUM(refund_price) AS refundPrice,SUM(refund_minum) AS refundMinum,SUM(refund_miprice) AS refundMiprice,SUM(refund_totalnum) AS refundTotalnum,SUM(refund_totalprice) AS refundTotalprice
+        FROM t_mall_product_daycount
+        WHERE count_date = #{date}
+        AND shop_id = #{shopId}
+    </select>
+    <select id="selectLastMonthProduct" resultType="java.util.Map">
+        SELECT DISTINCT product_id,shop_id
+        FROM t_mall_product_daycount
+        WHERE #{startTime} > count_date
+        AND count_date >=  #{endTime}
+    </select>
+    <select id="countLastMonthProduct" resultType="java.util.Map">
+        SELECT SUM(sale_num) AS saleNum,SUM(sale_price) AS salePrice,SUM(sale_miprice) AS saleMiprice,SUM(sale_minum) AS saleMinum,SUM(sale_totalnum) AS saleTotalnum,SUM(sale_totalprice) AS saleTotalprice,
+        SUM(refund_num) AS refundNum,SUM(refund_price) AS refundPrice,SUM(refund_minum) AS refundMinum,SUM(refund_miprice) AS refundMiprice,SUM(refund_totalnum) AS refundTotalnum,SUM(refund_totalprice) AS refundTotalprice
+        FROM t_mall_product_daycount
+        WHERE #{startTime} > count_date
+        AND count_date >=  #{endTime}
+        AND product_id = #{productId}
+    </select>
 
 </mapper>
