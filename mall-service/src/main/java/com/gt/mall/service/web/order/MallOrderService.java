@@ -8,6 +8,7 @@ import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
+import com.gt.mall.result.order.OrderResult;
 import com.gt.mall.utils.PageUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -52,7 +53,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 查询订单信息
      */
-    public Map< String,Object > selectOrderList( Map< String,Object > params );
+    public OrderResult selectOrderList(Integer orderId);
 
     /**
      * 支付成功后修改订单状态、库存、销量、规格

@@ -81,7 +81,7 @@ public class OrderDetailResult {
     private BigDecimal discountedPrices;
 
     @ApiModelProperty( name = "createTime", value = "创建时间" )
-    private String createTime;
+    private Date createTime;
 
     @ApiModelProperty( name = "proTypeId", value = "实否是实物商品（0实物 1虚拟商品非会员卡 2虚拟商品（会员卡） 3虚拟商品（卡券购买））" )
     private Integer proTypeId;
@@ -131,33 +131,7 @@ public class OrderDetailResult {
     @ApiModelProperty( name = "couponType", value = "优惠券类型" )
     private Integer couponType;
 
-  /*  @TableField( exist = false )
-    private MallOrderReturn orderReturn;//退款
+    @ApiModelProperty( name = "returnResult", value = "退款信息" )
+    private OrderReturnResult returnResult;
 
-    @TableField( exist = false )
-    private Byte isReturn;//是否允许退款
-
-    @TableField( exist = false )
-    private double newTotalPrice;//优惠后的价格（用作存储）
-
-    @TableField( exist = false )
-    private double fenbiBeforeTotalPrice;//粉币优惠前的价格
-
-    @TableField( exist = false )
-    private double jifenBeforeTotalPrice;//积分优惠前的价格
-
-    @TableField( exist = false )
-    private Integer userCard = 0;  //是否允许会员卡打折  0不参与 1参与 （用于计算）
-
-    @TableField( exist = false )
-    private Integer useCoupon = 0;  //是否允许使用优惠券   0不参与 1参与 （用于计算）
-
-    @TableField( exist = false )
-    private Integer userJifen = 0;  //是否允许使用积分  0不参与 1参与 （用于计算）
-
-    @TableField( exist = false )
-    private Integer userFenbi = 0;//是否允许使用粉币  0不允许  1允许（用于计算）
-
-    @TableField( exist = false )
-    private Integer index = 0;// 生成的index 用于计算*/
 }

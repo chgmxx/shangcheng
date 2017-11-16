@@ -54,7 +54,7 @@
         <result column="flow_phone" property="flowPhone"/>
         <result column="flow_recharge_status" property="flowRechargeStatus"/>
         <result column="member_name" property="memberName" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
-        <result column="express_name" property="expressName"/>
+        <result column="other_express_name" property="otherExpressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
         <result column="coupon_id" property="couponId"/>
@@ -121,7 +121,7 @@
         <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR"/>
         <result column="flow_phone" property="flowPhone" jdbcType="VARCHAR"/>
         <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
-        <result column="express_name" property="expressName"/>
+        <result column="other_express_name" property="otherExpressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
         <result column="coupon_id" property="couponId"/>
@@ -243,7 +243,7 @@
         <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR"/>
         <result column="flow_phone" property="flowPhone" jdbcType="VARCHAR"/>
         <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
-        <result column="express_name" property="expressName"/>
+        <result column="other_express_name" property="otherExpressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
         <result column="coupon_id" property="couponId"/>
@@ -342,7 +342,7 @@
         take_their_id, is_message_notice, buyer_user_id, seller_user_id, shop_id, order_status, create_time,order_pay_no,
         pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,is_wallet,
         order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi,
-        express_name , use_jifen , use_fenbi , coupon_id , union_card_id, fenbi_discount_money , jifen_discount_money , discount_money ,
+        other_express_name , use_jifen , use_fenbi , coupon_id , union_card_id, fenbi_discount_money , jifen_discount_money , discount_money ,
         coupon_type,coupon_use_num,member_is_delete,appointment_address
     </sql>
 

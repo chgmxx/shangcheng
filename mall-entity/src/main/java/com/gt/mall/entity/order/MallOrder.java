@@ -279,8 +279,8 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     /**
      * 其它快递公司的物流名称
      */
-    @TableField( "express_name" )
-    private String  expressName;
+    @TableField( "other_express_name" )
+    private String  otherExpressName;
     /**
      * 订单使用积分的数量
      */

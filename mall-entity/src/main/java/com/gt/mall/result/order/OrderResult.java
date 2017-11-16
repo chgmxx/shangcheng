@@ -1,6 +1,8 @@
 package com.gt.mall.result.order;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.gt.mall.entity.basic.MallTakeTheir;
+import com.gt.mall.entity.order.MallDaifu;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -32,6 +34,9 @@ public class OrderResult {
 
     @ApiModelProperty( name = "memberName", value = "买家名称" )
     private String memberName;
+
+    @ApiModelProperty( name = "nickName", value = "会员昵称" )
+    private String nickName;
 
     @ApiModelProperty( name = "buyerUserId", value = "买家用户ID" )
     private int buyerUserId;
@@ -89,12 +94,37 @@ public class OrderResult {
     @ApiModelProperty( name = "receivePhone", value = "收货人联系方式" )
     private String receivePhone;
 
+    @ApiModelProperty( name = "expressId", value = "快递公司id" )
+    private String expressId;
+    @ApiModelProperty( name = "expressName", value = "快递公司名称" )
+    private String expressName;
     @ApiModelProperty( name = "expressNumber", value = "快递单号" )
     private String expressNumber;
     @ApiModelProperty( name = "expressTime", value = "发货时间" )
     private Date   expressTime;
+    @ApiModelProperty( name = "otherExpressName", value = "其它快递公司的快递名称" )
+    private String otherExpressName;
 
     @ApiModelProperty( name = "mallOrderDetail", value = "订单商品详情列表" )
     private List< OrderDetailResult > mallOrderDetail;
 
+    @ApiModelProperty( name = "mallDaifu", value = "找人代付信息" )
+    private MallDaifu     mallDaifu;
+    @ApiModelProperty( name = "takeTheir", value = "上门自提信息" )
+    private MallTakeTheir takeTheir;
+
+/*    @ApiModelProperty( name = "isShowRemarkButton", value = "是否显示提交备注按钮  1显示" )
+    private Integer isShowRemarkButton = 1;*/
+
+    @ApiModelProperty( name = "isShowUpdatePriceButton", value = "是否显示修改价格按钮 1显示" )
+    private Integer isShowUpdatePriceButton = 0;
+
+    @ApiModelProperty( name = "isShowCancelOrderButton", value = "是否显示取消订单按钮  1显示" )
+    private Integer isShowCancelOrderButton = 0;
+
+    @ApiModelProperty( name = "isShowDeliveryButton", value = "是否显示发货按钮  1显示" )
+    private Integer isShowDeliveryButton = 0;
+
+    @ApiModelProperty( name = "isShowPickUpGoodsButton", value = "是否显示确认已提货按钮  1显示" )
+    private Integer isShowPickUpGoodsButton = 0;
 }

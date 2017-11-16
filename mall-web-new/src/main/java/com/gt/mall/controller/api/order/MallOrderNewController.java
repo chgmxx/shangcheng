@@ -12,6 +12,7 @@ import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.OrderDTO;
+import com.gt.mall.result.order.OrderResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
@@ -31,9 +32,9 @@ import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletResponse;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -77,24 +78,6 @@ public class MallOrderNewController extends BaseController {
     @Autowired
     private MallOrderReturnLogService mallOrderReturnLogService;
 
-    /*
-    *
-    * 订单列表
-    * 批量导出
-    * 发货
-    *订单详情（订单信息，商品信息，维权信息）
-    *
-    * 同意退款申请
-    * 拒绝退款申请
-    * 申请多粉介入
-    * 确认收货
-    *
-    * 维权订单列表
-    * 维权订单批量导出
-    *
-    *
-    * */
-    //TODO 返回参数重新修改  状态,按钮显示 后台状态显示
     @ApiOperation( value = "订单列表(分页)", notes = "订单列表(分页)" )
     @ResponseBody
     @RequestMapping( value = "/list", method = RequestMethod.POST )
@@ -135,19 +118,13 @@ public class MallOrderNewController extends BaseController {
     @ApiOperation( value = "查看订单详情", notes = "查看订单详情" )
     @ResponseBody
     @RequestMapping( value = "/orderInfo", method = RequestMethod.POST )
-    public ServerResponse orderInfo( HttpServletRequest request, HttpServletResponse response,
+    public ServerResponse< OrderResult > orderInfo( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "订单ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > result = new HashMap<>();
+	OrderResult result = null;
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "orderId", id );
-	    Map< String,Object > orderList = mallOrderService.selectOrderList( params );
-	    result.putAll( orderList );
-
-	  /*  Wrapper< MallOrderReturn > returnWrapper = new EntityWrapper<>();
-	    returnWrapper.where( "order_id ={0}", id );
-	    MallOrderReturn oReturn = mallOrderReturnService.selectOne( returnWrapper );
-	    result.put( "orderReturn", oReturn );*/
+	    result = mallOrderService.selectOrderList( id );
 
 	} catch ( Exception e ) {
 	    logger.error( "查看订单详情异常：" + e.getMessage() );
@@ -245,7 +222,7 @@ public class MallOrderNewController extends BaseController {
     /**
      * 判断是否可以发货 （团购商品）
      */
-    @ApiOperation( value = "判断团购商品是否可以发货", notes = "判断团购商品是否可以发货" )
+    @ApiOperation( value = "判断团购商品是否可以发货", notes = "判断团购商品是否可以发货", hidden = true )
     @ResponseBody
     @RequestMapping( value = "/isGroupBuyDeliver", method = RequestMethod.POST )
     public ServerResponse isGroupBuyDeliver( HttpServletRequest request, HttpServletResponse response,
