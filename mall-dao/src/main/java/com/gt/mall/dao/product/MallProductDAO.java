@@ -189,4 +189,7 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
      */
     List< Map< String,Object > > selectProByUserIdGroupName( Integer userId );
 
+
+    void updateProViewNum( Map< String,Object > params );
+
 }

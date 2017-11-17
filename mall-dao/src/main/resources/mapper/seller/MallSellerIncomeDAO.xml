@@ -100,4 +100,10 @@
         where sale_member_id = #{saleMemberId} and income_commission > 0 and is_get = 0 AND no_receive_commission > 0
     </select>
 
+    <!-- 查询订单的销售收益 -->
+    <select id="selectSellerIncome" parameterType="Map" resultType="Map">
+        SELECT i.id,i.income_commission,i.sale_member_id,i.income_integral
+        FROM t_mall_seller_income i WHERE i.`order_detail_id`=#{orderDetailId} AND i.`order_id`=#{orderId} AND i.`sale_member_id`=#{saleMemberId}
+        and i.is_get=-1 and i.income_type=2
+    </select>
 </mapper>

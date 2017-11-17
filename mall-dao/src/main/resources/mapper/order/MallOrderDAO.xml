@@ -1314,6 +1314,82 @@
             limit #{firstResult},#{maxResult}
         </if>
     </select>
+    <select id="selectRealOrder" resultType="Map">
+        select o.id,o.order_status,o.buyer_user_id,o.order_no from t_mall_order o
+        WHERE o.order_status=3  AND (TIMESTAMPDIFF(DAY,o.update_time,NOW()) > 7 OR (o.update_time IS NULL AND TIMESTAMPDIFF(DAY,o.pay_time,NOW()) > 7 ))
+    </select>
 
+    <select id="selectRealOrderDetail" resultType="Map" parameterType="Map">
+        select d.id,d.`status`,d.total_price as totalPrice,(d.det_pro_price*d.det_pro_num) as sumPrice,d.return_day,d.sale_member_id,d.commission
+        from t_mall_order_detail d
+        where  d.order_id=#{id}
+    </select>
+    <update id="updateByOrder" parameterType="Map">
+        update t_mall_order set update_time=now()
+        <if test="order_status != null and order_status != ''">
+            , order_status = #{order_status}
+        </if>
+        where id=#{id}
+    </update>
 
+    <select id="selectFinishOrder" resultType="Map">
+        select o.id,o.order_status ,o.buyer_user_id ,o.order_no ,o.update_time ,o.group_buy_id,o.order_type
+        from t_mall_order o
+        left join t_mall_presale_rank r on r.order_id=o.id
+        where o.order_status=4 and r.is_give=0
+    </select>
+
+    <select id="selectOrderNoCommisssion" resultType="Map">
+        SELECT DISTINCT o.id,o.order_status ,o.buyer_user_id ,o.order_no ,o.update_time ,o.group_buy_id,o.order_type
+        FROM t_mall_order o
+        LEFT JOIN t_mall_order_detail d ON d.`order_id`=o.`id`
+        LEFT JOIN t_mall_seller_income i ON i.`order_detail_id`=d.`id`
+        WHERE d.`sale_member_id` > 0 AND i.income_type=2 AND i.is_get=-1 AND o.`order_status`=4
+        GROUP BY o.`id`
+    </select>
+    <select id="selectOrderFinishMoneyByShopId" resultType="java.lang.Double">
+        SELECT IFNULL(SUM(order_money),0)
+        FROM t_mall_order t
+        WHERE order_status = 4
+        AND SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)
+        AND DATEDIFF(NOW(),update_time) = 7
+        AND t.`shop_id`=  #{shopId}
+    </select>
+
+    <!-- 查询未支付的订单 -->
+    <select id="selectOrderById" parameterType="Map" resultMap="MoreResultMap">
+        select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
+        left join t_mall_order_detail d on d.order_id = t.id
+        left join t_mall_store s on s.id = t.shop_id
+        where 1=1
+        <if test="id != null and id != ''">
+            and t.id = #{id}
+        </if>
+        <if test="status != null and status != ''">
+            and t.order_status=#{status}
+        </if>
+        order by create_time
+    </select>
+    <update id="closeDaoDianOrder" parameterType="Map">
+        update t_mall_order set order_status = 5,update_time=now() where order_status=1 and TIMESTAMPDIFF(MINUTE,create_time,now()) > 30 and order_pay_way = 5
+    </update>
+    <select id="selectTodayShopByTime" resultType="Map">
+        SELECT DISTINCT(shop_id)
+        FROM t_mall_order
+        WHERE order_pay_way = 5
+        AND order_status > 1
+        AND order_status <![CDATA[<]]> 5
+        AND pay_time >= #{startTime}
+        and pay_time <![CDATA[<]]> #{endTime}
+    </select>
+    <select id="countTodayShopByTime" resultType="java.util.Map">
+        SELECT SUM(order_money) AS saleTotalprice
+        FROM t_mall_order
+        WHERE  order_pay_way=5
+        AND order_status > 1
+        AND order_status <![CDATA[<]]> 5
+        AND pay_time >= #{startTime}
+        and pay_time <![CDATA[<]]> #{endTime}
+        AND shop_id= #{shopId}
+    </select>
 </mapper>

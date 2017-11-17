@@ -2,6 +2,7 @@ package com.gt.mall.dao.order;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.order.MallOrderDetail;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -49,5 +50,26 @@ public interface MallOrderDetailDAO extends BaseMapper< MallOrderDetail > {
      * 添加订单详情
      */
     public int insertOrderDetail( List< MallOrderDetail > list );
+
+    /**
+     * 获取当天所有的商品id
+     *
+     * @param startTime
+     * @param endTime
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectTodayProduct( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime );
+
+    /**
+     * 获取单商品微信支付的数量和金额
+     *
+     * @param startTime
+     * @param endTime
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectProductMoneyByWay( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime, @Param( "productId" ) Integer productId,
+                    @Param( "payWay" ) Integer payWay );
 
 }

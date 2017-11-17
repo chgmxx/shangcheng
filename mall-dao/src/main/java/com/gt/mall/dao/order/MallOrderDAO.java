@@ -211,4 +211,76 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * 分页查询
      */
     List< Map< String,Object > > findByTradePage( Map< String,Object > params );
+
+    /**
+     * 查询7天内未确认收货的订单
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectRealOrder();
+
+    List< Map< String,Object > > selectRealOrderDetail( Map< String,Object > map );
+
+    void updateByOrder( Map< String,Object > params );
+
+    /**
+     * 查询已完成的订单（并不能退款）
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectFinishOrder();
+
+    /**
+     * 查询还未发放佣金的订单
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectOrderNoCommisssion();
+
+    /**
+     * 获得订单完成7天后的 总计金额
+     *
+     * @param shopId
+     *
+     * @return
+     */
+    Double selectOrderFinishMoneyByShopId( Integer shopId);
+
+    /**
+     * 根据订单id查询订单信息
+     *
+     * @param params
+     *
+     * @return
+     */
+    MallOrder selectOrderById( Map< String,Object > params );
+
+    /**
+     * 关闭到店支付的订单
+     *
+     * @return
+     */
+    int closeDaoDianOrder();
+
+    /**
+     * 获取当天店铺扫码支付情况
+     *
+     * @param startTime
+     * @param endTime
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectTodayShopByTime( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime );
+
+    /**
+     * 统计当天店铺扫码支付
+     *
+     * @param startTime
+     * @param endTime
+     * @param shopId
+     *
+     * @return
+     */
+    Map< String,Object > countTodayShopByTime( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime, @Param( "shopId" ) Integer shopId );
+
 }

@@ -72,4 +72,13 @@ public interface MallProductInventoryDAO extends BaseMapper< MallProductInventor
      */
     List< MallProductInventory > selectInvenByProIdsOrShopId( String productIds, Integer shopId );
 
+    /**
+     * 通过商品id查询商品库存
+     *
+     * @param map
+     *
+     * @return
+     */
+    Map< String,Object > selectProductInvenById( Map< String,Object > map );
+
 }

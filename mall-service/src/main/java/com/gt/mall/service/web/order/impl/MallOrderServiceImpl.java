@@ -255,7 +255,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		//是否显示修改价格按钮 1显示
 		orderResult.setIsShowUpdatePriceButton( 1 );
 	    } else if ( mallOrder.getOrderStatus() == 2 && mallOrder.getDeliveryMethod() == 1 ) {
-		if ( mallOrder.getGroupBuyId() != null ) {
+		if ( mallOrder.getGroupBuyId() != null && mallOrder.getGroupBuyId() != 0 ) {
 		    //查询团购需要参与的人数
 		    Map< String,Object > map = mallGroupBuyService.selectGroupBuyById( mallOrder.getGroupBuyId() );
 		    //查询已参加团购人数

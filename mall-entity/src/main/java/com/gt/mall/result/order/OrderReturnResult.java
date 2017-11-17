@@ -125,7 +125,7 @@ public class OrderReturnResult {
     @ApiModelProperty( name = "isShowUpdateAddressButton", value = "是否显示修改退货地址按钮 1显示" )
     private Integer isShowUpdateAddressButton = 0;
 
-    @ApiModelProperty( name = "applyTimes", value = "0退款申请倒计时" )
+    @ApiModelProperty( name = "applyTimes", value = "退款申请倒计时" )
     private long[] applyTimes;
 
     @ApiModelProperty( name = "takeTimes", value = "自动确认收货倒计时" )
