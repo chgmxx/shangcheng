@@ -860,7 +860,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		List< Integer > idList = JSONArray.parseArray( JSON.toJSONString( ids ), Integer.class );
 		mallShopCartDAO.deleteBatchIds( idList );//批量删除购物车信息
 	    } else if ( ids != null && ids.length == 1 ) {
-		mallShopCartDAO.deleteById( ids[0] );//单个删除购物车信息
+		mallShopCartDAO.deleteById( CommonUtil.toInteger( ids[0] ) );//单个删除购物车信息
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( params.getPifaSpecificaList() ) && params.getPifaSpecificaList().size() > 0 ) {
