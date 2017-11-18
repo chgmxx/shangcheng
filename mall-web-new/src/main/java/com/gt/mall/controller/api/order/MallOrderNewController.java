@@ -344,7 +344,7 @@ public class MallOrderNewController extends BaseController {
      */
     @ApiOperation( value = "商城导出订单", notes = "商城导出订单" )
     @RequestMapping( value = "/exportMallOrder", method = RequestMethod.GET )
-    public void exportMallOrder( HttpServletRequest request, HttpServletResponse response, OrderDTO orderQuery ) {
+    public void exportMallOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute OrderDTO orderQuery ) {
 	OutputStream out = null;
 	HSSFWorkbook workbook = null;
 	try {

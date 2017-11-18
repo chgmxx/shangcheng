@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api.store;
 
+import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
@@ -10,28 +11,28 @@ import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.param.basic.ImageAssociativeDTO;
+import com.gt.mall.param.phone.PhoneBuyNowDTO;
+import com.gt.mall.param.store.StoreCertDTO;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallSessionUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,43 +69,42 @@ public class MallStoreCertificationController extends BaseController {
      * 保存店铺认证信息
      */
     @ApiOperation( value = "保存店铺认证信息", notes = "保存店铺认证信息" )
+    @ApiImplicitParams( @ApiImplicitParam( name = "code", value = "验证码", paramType = "query", required = true, dataType = "String" ) )
     @ResponseBody
     @SysLogAnnotation( description = "保存店铺认证信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
-    public ServerResponse save( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public ServerResponse save( HttpServletRequest request, HttpServletResponse response, String code, @RequestBody @Valid @ModelAttribute StoreCertDTO storeCertDTO ) {
 	try {
-
-	    String code = params.get( "code" ).toString();
+	    if ( CommonUtil.isEmpty( code ) ) {
+		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "验证码不能为空" );
+	    }
 	    if ( CommonUtil.isEmpty( JedisUtil.get( Constants.REDIS_KEY + code ) ) ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "验证码不正确" );
 	    }
+	    MallStoreCertification storeCert = new MallStoreCertification();
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    converter.entityConvertDto( storeCertDTO, storeCert );
 
-	    MallStoreCertification storeCert = com.alibaba.fastjson.JSONObject.parseObject( params.get( "storeCert" ).toString(), MallStoreCertification.class );
 	    if ( CommonUtil.isEmpty( storeCert.getId() ) ) {
-		String[] docImg = params.get( "docImg" ).toString().split( "," );
-
-		if ( docImg != null && docImg.length > 0 ) {
-		    storeCert.setIsCertDoc( 1 );
-		}
 		storeCert.setCreateTime( new Date() );
 		mallStoreCertService.insert( storeCert );
 
-		for ( int i = 0; i < docImg.length; i++ ) {
-		    MallImageAssociative associative = new MallImageAssociative();
-		    associative.setAssId( storeCert.getId() );
-		    associative.setAssType( 6 );
-		    associative.setAssSort( i );
-		    associative.setImageUrl( docImg[i] );
-		    mallImageAssociativeService.insert( associative );
+		if ( storeCertDTO.getImageList() != null && storeCertDTO.getImageList().size() > 0 ) {
+		    for ( int i = 0; i < storeCertDTO.getImageList().size(); i++ ) {
+			MallImageAssociative associative = new MallImageAssociative();
+			converter.entityConvertDto( storeCertDTO.getImageList().get( i ), associative );
+			associative.setAssId( storeCert.getId() );
+			associative.setAssType( 6 );
+			associative.setAssSort( i );
+			mallImageAssociativeService.insert( associative );
+		    }
 		}
-		JedisUtil.del( Constants.REDIS_KEY + code );//申请超级销售员成功，删除验证码
 	    } else {
 		mallStoreCertService.updateById( storeCert );
-		/*List< MallImageAssociative > imageList = JSONArray.parseArray( params.get( "imageList" ).toString(), MallImageAssociative.class );*/
-		imageAssociativeService.newInsertUpdBatchImage( params, storeCert.getId(), 6 );
 
+		imageAssociativeService.newSaveImage( storeCertDTO.getImageList(), storeCert.getId(), 6 );
 	    }
-
+	    JedisUtil.del( Constants.REDIS_KEY + code );//保存成功，删除验证码
 	} catch ( Exception e ) {
 	    logger.error( "保存店铺认证信息异常：" + e.getMessage() );
 	    e.printStackTrace();

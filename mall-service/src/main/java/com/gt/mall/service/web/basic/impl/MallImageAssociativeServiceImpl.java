@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.param.basic.ImageAssociativeDTO;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,6 +96,45 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
 		    image.setIsDelete( 1 );
 		    imageAssociativeDAO.updateById( image );
 		}
+	    }
+	}
+    }
+
+    @Override
+    public void newSaveImage( List< ImageAssociativeDTO > imageAssociativeDTOS, Integer proId, Integer assType ) {
+
+	Map< String,Object > imageMap = new HashMap< String,Object >();
+	imageMap.put( "assId", proId );
+	imageMap.put( "assType", assType );
+	List< MallImageAssociative > imageList = imageAssociativeDAO.selectImageByAssId( imageMap );
+	EntityDtoConverter converter = new EntityDtoConverter();
+
+	if ( imageAssociativeDTOS != null && imageAssociativeDTOS.size() > 0 ) {
+	    for ( ImageAssociativeDTO images : imageAssociativeDTOS ) {
+		if ( CommonUtil.isEmpty( images.getId() ) ) {
+		    MallImageAssociative imageAssociative = new MallImageAssociative();
+		    converter.entityConvertDto( images, imageAssociative );
+		    imageAssociative.setAssId( proId );
+		    imageAssociative.setAssType( assType );
+		    imageAssociativeDAO.insert( imageAssociative );
+		} else {
+		    MallImageAssociative imageAssociative = new MallImageAssociative();
+		    converter.entityConvertDto( images, imageAssociative );
+		    imageAssociativeDAO.updateById( imageAssociative );
+		    //1.remove 存在的数据
+		    for ( MallImageAssociative image : imageList ) {
+			if ( image.getId() == images.getId() ) {
+			    imageList.remove( image );
+			}
+		    }
+		}
+	    }
+	}
+	//2.还存在的数据，进行删除
+	if ( imageList != null && imageList.size() > 0 ) {
+	    for ( MallImageAssociative image : imageList ) {
+		image.setIsDelete( 1 );
+		imageAssociativeDAO.updateById( image );
 	    }
 	}
     }

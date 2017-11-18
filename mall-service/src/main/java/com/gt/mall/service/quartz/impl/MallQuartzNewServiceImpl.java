@@ -79,8 +79,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     /**
      * 订单完成赠送物品  每天早上8点扫描
      */
-    //	@Scheduled(cron = "0 0/1 * * * ?")
-    @Scheduled( cron = "0 0 8 * * ?" )
+   /* @Scheduled( cron = "0 0 8 * * ?" )*/
     @Override
     public void orderFinish() {
 	System.out.println( "开始赠送物品" );
@@ -131,7 +130,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     /**
      * 关闭30分钟内未支付的订单
      */
-    @Scheduled( cron = "0 0/30 * * * ?" )//三十分钟更新一次
+    /*@Scheduled( cron = "0 0/30 * * * ?" )*///三十分钟更新一次
     @Override
     public void closeOrderNoPay() {
 	logger.info( "开始扫描30分钟内未支付的订单" );
@@ -163,7 +162,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     /**
      * 扫描已经结束的秒杀信息
      */
-    @Scheduled( cron = "0 0 2 * * ?" )//每天早上2点扫描
+   /* @Scheduled( cron = "0 0 2 * * ?" )*///每天早上2点扫描
     //	@Scheduled(cron = "0 0/1 * * * ?")//每隔50分钟扫描
     @Override
     public void endSeckill() {
@@ -320,7 +319,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	}
     }
 
-    @Scheduled( cron = "0 59 23 * * ?" )//每天23:59点扫描
+    /*@Scheduled( cron = "0 59 23 * * ?" )*///每天23:59点扫描
     @Override
     public void countIncomeNum() {
 	logger.info( "统计每天营业额" );
@@ -366,7 +365,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     /**
      * 统计每天页面访问数量
      */
-    @Scheduled( cron = "0 0 23 * * ?" )//每天23点扫描
+    /*@Scheduled( cron = "0 0 23 * * ?" )*///每天23点扫描
     @Override
     public void countPageVisitorNum() {
 	logger.info( "统计每天页面访问数量" );
@@ -482,7 +481,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     /**
-     * 自动确认收货并退款至买家  (买家退货物流,若卖家超出10天不做操作，系统自动确认卖家
+     * 自动确认收货并退款至买家(买家退货物流,若卖家超出10天不做操作，系统自动确认卖家
      * 收货并结算至买家账户)
      */
     @Override
@@ -502,7 +501,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     //统计商城信息
-    @Scheduled( cron = "0 0 1 * * ?" )
+    /*@Scheduled( cron = "0 0 1 * * ?" )*/
     @Override
     public void mallcount() {
 	if ( ip.equals( "183.47.242.2" ) ) {//多粉

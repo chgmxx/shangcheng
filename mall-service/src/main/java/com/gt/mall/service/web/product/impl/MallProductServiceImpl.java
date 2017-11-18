@@ -30,6 +30,7 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.result.product.ProductResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
@@ -190,8 +191,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    for ( Map< String,Object > map : productList ) {
 		int id = CommonUtil.toInteger( map.get( "id" ) );
 		proIdsList.add( id );
-		if ( CommonUtil.isNotEmpty( map.get( "is_specifica" ) ) ) {
-		    if ( map.get( "is_specifica" ).toString().equals( "1" ) ) {
+		if ( CommonUtil.isNotEmpty( map.get( "isSpecifica" ) ) ) {
+		    if ( map.get( "isSpecifica" ).toString().equals( "1" ) ) {
 			proIdsInvList.add( id );
 		    }
 		}
@@ -224,8 +225,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		//查看商品是否加入到秒杀
 		map.put( "isSeckill", isAddActivityByProId( seckillList, id ) );
 
-		if ( CommonUtil.isNotEmpty( map.get( "is_specifica" ) ) && invenList != null ) {
-		    if ( map.get( "is_specifica" ).toString().equals( "1" ) && invenList.size() > 0 ) {
+		if ( CommonUtil.isNotEmpty( map.get( "isSpecifica" ) ) && invenList != null ) {
+		    if ( map.get( "isSpecifica" ).toString().equals( "1" ) && invenList.size() > 0 ) {
 			for ( MallProductInventory inventory : invenList ) {
 			    if ( CommonUtil.toInteger( inventory.getProductId() ) == id ) {
 				map.put( "proPrice", inventory.getInvPrice() );
@@ -238,8 +239,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		int viewNum = getViews( map.get( "id" ).toString() );
 		map.put( "viewsNum", viewNum );
 
-		if ( CommonUtil.isNotEmpty( map.get( "erp_pro_id" ) ) && isJxc == 1 ) {
-		    int erpProId = CommonUtil.toInteger( map.get( "erp_pro_id" ) );
+		if ( CommonUtil.isNotEmpty( map.get( "erpProId" ) ) && isJxc == 1 ) {
+		    int erpProId = CommonUtil.toInteger( map.get( "erpProId" ) );
 		    if ( erpProId > 0 ) {
 			boolean isPro = true;
 			String shopid = map.get( "wxShopId" ).toString();
@@ -275,8 +276,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    if ( erpProArr != null && erpProArr.size() > 0 ) {
 		if ( productList != null && productList.size() > 0 ) {
 		    for ( Map< String,Object > map : productList ) {//循环商品
-			if ( CommonUtil.isNotEmpty( map.get( "erp_pro_id" ) ) ) {
-			    int erpProId = CommonUtil.toInteger( map.get( "erp_pro_id" ) );
+			if ( CommonUtil.isNotEmpty( map.get( "erpProId" ) ) ) {
+			    int erpProId = CommonUtil.toInteger( map.get( "erpProId" ) );
 			    if ( erpProId > 0 ) {
 				for ( Object object : erpProArr ) {//循环
 				    JSONArray proArr = JSONArray.parseArray( object.toString() );
@@ -301,7 +302,16 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		}
 	    }
 	}
-	page.setSubList( productList );
+	EntityDtoConverter converter = new EntityDtoConverter();
+	List< ProductResult > productResultList = new ArrayList<>();
+	if ( productList != null && productList.size() > 0 ) {
+	    for ( Map< String,Object > product : productList ) {
+		ProductResult productResult = new ProductResult();
+		converter.mapToBean( product, productResult );
+		productResultList.add( productResult );
+	    }
+	}
+	page.setSubList( productResultList );
 	return page;
     }
 

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +92,7 @@ public class MallGroupNewController extends BaseController {
     @SysLogAnnotation( description = "保存分组信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     @ApiOperation( value = "保存分组信息", notes = "保存分组信息", response = GroupDTO.class )
-    public ServerResponse save( HttpServletRequest request, HttpServletResponse response, GroupDTO group ) {
+    public ServerResponse save( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute GroupDTO group ) {
 	try {
 	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 	    List< MallImageAssociative > images = new ArrayList< MallImageAssociative >();
