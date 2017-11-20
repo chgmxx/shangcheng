@@ -95,7 +95,7 @@ public class OrderResult {
     private String receivePhone;
 
     @ApiModelProperty( name = "expressId", value = "快递公司id" )
-    private String expressId;
+    private Integer expressId;
     @ApiModelProperty( name = "expressName", value = "快递公司名称" )
     private String expressName;
     @ApiModelProperty( name = "expressNumber", value = "快递单号" )

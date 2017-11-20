@@ -26,6 +26,7 @@ import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,14 +91,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    int shopid = 0;
 	    if ( CommonUtil.isNotEmpty( mapmessage.get( "shop_id" ) ) ) {
 		shopid = CommonUtil.toInteger( mapmessage.get( "shop_id" ).toString() );
-		String mall_shopId = Constants.SESSION_KEY + "shopId";
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
-		    request.getSession().setAttribute( mall_shopId, mapmessage.get( "shop_id" ) );
-		} else {
-		    if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( mapmessage.get( "shop_id" ).toString() ) ) {
-			request.getSession().setAttribute( mall_shopId, mapmessage.get( "shop_id" ) );
-		    }
-		}
+		MallRedisUtils.getMallShopId( shopid );
 	    }
 
 	    //查询商品的拍卖信息
@@ -228,16 +222,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		result.put( "aucType", auction.getAucType() );
 	    }
 
-	    if ( CommonUtil.isNotEmpty( shopId ) ) {
-		String mall_shopId = Constants.SESSION_KEY + "shopId";
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( mall_shopId ) ) ) {
-		    request.getSession().setAttribute( mall_shopId, shopId );
-		} else {
-		    if ( !request.getSession().getAttribute( mall_shopId ).toString().equals( CommonUtil.toString( shopId ) ) ) {
-			request.getSession().setAttribute( mall_shopId, shopId );
-		    }
-		}
-	    }
+	    MallRedisUtils.getMallShopId( shopId );
 	} catch ( Exception e ) {
 	    logger.error( "获取出价记录列表异常：" + e.getMessage() );
 	    e.printStackTrace();

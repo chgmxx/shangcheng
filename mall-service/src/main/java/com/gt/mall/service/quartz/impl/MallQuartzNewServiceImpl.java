@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCountIncomeDAO;
+import com.gt.mall.dao.order.MallLogOrderCallbackDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
@@ -16,6 +17,7 @@ import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.store.MallShopDaycountDAO;
 import com.gt.mall.dao.store.MallShopMonthcountDAO;
 import com.gt.mall.entity.basic.MallCountIncome;
+import com.gt.mall.entity.order.MallLogOrderCallback;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.page.MallPage;
@@ -25,6 +27,7 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
 import com.gt.mall.service.quartz.MallQuartzNewService;
+import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
@@ -72,6 +75,10 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallShopDaycountDAO      mallShopDaycountDAO;
     @Autowired
     private MallShopMonthcountDAO    mallShopMonthcountDAO;
+    @Autowired
+    private MallLogOrderCallbackDAO  mallLogOrderCallbackDAO;
+    @Autowired
+    private MallOrderService         mallOrderService;
 
     private static String ip  = PropertiesUtil.getRedisHost();
     private static String pwd = PropertiesUtil.getRedisPassword();
@@ -753,6 +760,27 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		obj.setMonth( Integer.valueOf( smonth ) );
 		obj.setShopId( Integer.valueOf( shopmonmap.get( "shop_id" ).toString() ) );
 		mallShopMonthcountDAO.insert( obj );
+	    }
+	}
+    }
+
+    /*
+    * 支付成功，但回调失败的订单修改
+    * */
+    @Override
+    public void orderCallback() {
+	Wrapper< MallLogOrderCallback > wrapper = new EntityWrapper<>();
+	wrapper.where( "is_resolved = 0" );
+	wrapper.orderBy( "create_time" );
+	List< MallLogOrderCallback > orderCallbackList = mallLogOrderCallbackDAO.selectList( wrapper );
+	if ( orderCallbackList != null && orderCallbackList.size() > 0 ) {
+	    for ( MallLogOrderCallback orderCallback : orderCallbackList ) {
+		Map< String,Object > params = new HashMap<>();
+		params.put( "out_trade_no", orderCallback.getOrderNo() );
+		params.put( "returnLogStatus", orderCallback.getLogStatus() );
+		mallOrderService.paySuccessModified( params, null );
+		orderCallback.setIsResolved( 1 );
+		mallLogOrderCallbackDAO.updateById( orderCallback );
 	    }
 	}
     }

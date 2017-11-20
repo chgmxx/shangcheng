@@ -426,12 +426,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    List< Map< String,Object > > list = mallOrderDAO.findByTradePage( params );
 	    if ( list != null && list.size() > 0 ) {
 		for ( Map< String,Object > order : list ) {
-		    Integer orderStatus = CommonUtil.toInteger( order.get( "order_status" ) );
+		    Integer orderStatus = CommonUtil.toInteger( order.get( "orderStatus" ) );
 		    Integer returnStatus = null;
-		    order.put( "member_name", CommonUtil.blob2String( order.get( "member_name" ) ) );
+		    order.put( "memberName", CommonUtil.blob2String( order.get( "memberName" ) ) );
 
-		    if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {
-			returnStatus = CommonUtil.toInteger( order.get( "return_status" ) );
+		    if ( CommonUtil.isNotEmpty( order.get( "returnStatus" ) ) ) {
+			returnStatus = CommonUtil.toInteger( order.get( "returnStatus" ) );
 		    }
 		    if ( returnStatus == null && ( orderStatus == 1 || orderStatus == 2 || orderStatus == 3 ) ) {
 			order.put( "status", "2" );
@@ -590,9 +590,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    //默认7天无回应，则自动同意
 			    try {
 				Date date = DateTimeKit.addDate( orderReturn.getUpdateTime(), Constants.WAIT_APPLY_RETURN_DAY );
-				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date ), "yyyy-MM-dd HH:mm:ss" );
+				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), "yyyy-MM-dd HH:mm:ss" );
 				if ( cont == -1 ) {
-				    long[] times = DateTimeKit.getDistanceTimes( DateTimeKit.getDateTime( date ), DateTimeKit.getDateTime() );
+				    long[] times = DateTimeKit.getDistanceTimes( DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), DateTimeKit.getDateTime() );
 				    returnResult.setApplyTimes( times );
 				}
 			    } catch ( Exception e ) {
@@ -608,14 +608,14 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    //默认7天无回应，则自动收货
 			    try {
 				Date date = DateTimeKit.addDate( orderReturn.getUpdateTime(), Constants.RETURN_AUTO_CONFIRM_TAKE_DAY );
-				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date ), "yyyy-MM-dd HH:mm:ss" );
+				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), "yyyy-MM-dd HH:mm:ss" );
 				if ( cont == -1 ) {
-				    long[] times = DateTimeKit.getDistanceTimes( DateTimeKit.getDateTime( date ), DateTimeKit.getDateTime() );
+				    long[] times = DateTimeKit.getDistanceTimes( DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), DateTimeKit.getDateTime() );
 				    returnResult.setTakeTimes( times );
 				}
 			    } catch ( Exception e ) {
 				e.printStackTrace();
-				throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "获取收货有句话申请倒计时异常：" + e.getMessage() );
+				throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "获取收货确认倒计时异常：" + e.getMessage() );
 			    }
 			} else if ( orderReturn.getStatus() == 4 ) {
 			    //是否显示修改退货地址按钮 1显示

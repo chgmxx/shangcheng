@@ -324,7 +324,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "sellerOrderCount", sellerOrderCount );//查询客户订单的个数
 	    result.put( "member", member );
 
-	    mallPageService.getCustomer( request, member.getBusid() );
+//	    mallPageService.getCustomer( request, member.getBusid() );
 	} catch ( Exception e ) {
 	    logger.error( "获取超级销售员主页信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -615,7 +615,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( mallSet.getBusUserId() );//查询商城底部菜单
 	    result.put( "footerMenuMap", footerMenuMap );
 
-	    mallPageService.getCustomer( request, mallSet.getBusUserId() );
+	   /* mallPageService.getCustomer( request, mallSet.getBusUserId() );*/
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( Exception e ) {

@@ -738,6 +738,9 @@
                 <if test="expressDelivery != '' and expressDelivery != null">
                     ,express_number = #{expressDelivery}
                 </if>
+                <if test="otherExpressName != '' and otherExpressName != null">
+                    ,other_express_name = #{otherExpressName}
+                </if>
             </when>
             <otherwise>
                 <if test="orderSellerRemark != '' and orderSellerRemark != null">
@@ -1268,8 +1271,9 @@
         </if>
     </select>
     <select id="findByTradePage" parameterType="Map" resultType="Map">
-        SELECT t.id,t.`shop_id`,t.create_time,d.`det_pro_name`, d.total_price,t.order_no,t.order_money, t.order_freight_money, t.buyer_user_id ,
-        t.member_name,t.order_status,r.`status` AS return_status
+        SELECT t.id,t.`shop_id`as shopId,t.create_time as createTime,d.`det_pro_name` as proName, d.total_price as totalPrice,t.order_no as orderNo,
+        t.order_money as orderMoney, t.order_freight_money as orderFreightMoney, t.buyer_user_id as buyerUserId ,
+        t.member_name as memberName,t.order_status as orderStatus ,r.`status` AS return_status
         FROM t_mall_order t
         LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
         LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id

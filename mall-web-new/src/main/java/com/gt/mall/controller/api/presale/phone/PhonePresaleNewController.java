@@ -75,14 +75,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    int shopid = 0;
 	    if ( CommonUtil.isNotEmpty( mapmessage.get( "shop_id" ) ) ) {
 		shopid = CommonUtil.toInteger( mapmessage.get( "shop_id" ).toString() );
-
-		if ( CommonUtil.isEmpty( request.getSession().getAttribute( "shopId" ) ) ) {
-		    request.getSession().setAttribute( "shopId", mapmessage.get( "shop_id" ) );
-		} else {
-		    if ( !request.getSession().getAttribute( "shopId" ).toString().equals( mapmessage.get( "shop_id" ).toString() ) ) {
-			request.getSession().setAttribute( "shopId", mapmessage.get( "shop_id" ) );
-		    }
-		}
+		MallRedisUtils.getMallShopId( shopid );
 	    }
 	    int proNum = 1;
 	    if ( CommonUtil.isNotEmpty( searchDTO.getNum() ) ) {

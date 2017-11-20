@@ -42,6 +42,20 @@ public class MallQuartzApiController {
     @Autowired
     private MallQuartzService    mallQuartzService;
 
+    @ApiOperation( value = "修改支付成功回调失败的订单", notes = "修改支付成功回调失败的订单" )
+    @ResponseBody
+    @RequestMapping( value = "/orderCallback", method = RequestMethod.POST )
+    public ServerResponse orderCallback( HttpServletRequest request, HttpServletResponse response ) {
+	try {
+	    mallQuartzNewService.orderCallback();
+	} catch ( Exception e ) {
+	    logger.error( "修改支付成功回调失败的订单异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改支付成功回调失败的订单异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
+
     @ApiOperation( value = "统计商城信息", notes = "统计商城信息" )
     @ResponseBody
     @RequestMapping( value = "/mallCount", method = RequestMethod.POST )
