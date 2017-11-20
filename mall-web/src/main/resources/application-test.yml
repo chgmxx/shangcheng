@@ -87,6 +87,8 @@ web:
  domain: mall.deeptel.com.cn
  #网页访问路径
  homeUrl: https://mall.deeptel.com.cn/
+ #手机端页面路径访问
+ phoneWebHomeUrl: http://mall.deeptel.com.cn/html/phone/index.html/#/
 
 ####图片资源ftp 配置
 static:

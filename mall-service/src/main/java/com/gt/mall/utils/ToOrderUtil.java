@@ -7,8 +7,8 @@ import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.param.phone.order.PhoneOrderUserDTO;
-import com.gt.mall.param.phone.order.PhoneToOrderDTO;
 import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
+import com.gt.mall.param.phone.order.PhoneToOrderDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +31,12 @@ public class ToOrderUtil {
      * @param isStorePay      商家是否开启了到店支付
      * @param mallPaySetList  商城设置
      * @param proTypeId       商品类型 参考t_mall_product表
+     * @param type            订单类型
      *
      * @return 支付方式集合
      */
     public static List< PhoneOrderWayDTO > getPayWay( int browerType, List< PhoneOrderUserDTO > userDTOList, PhoneToOrderDTO phoneToOrderDTO,
-		    Integer isStorePay, List< MallPaySet > mallPaySetList, int proTypeId ) {
+		    Integer isStorePay, List< MallPaySet > mallPaySetList, int proTypeId, Integer type ) {
 	List< PhoneOrderWayDTO > payWayList = new ArrayList<>();
 
 	int isHavePublic = 0;
@@ -84,12 +85,14 @@ public class ToOrderUtil {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "货到付款", "huodaofukuan" );
 	    payWayList.add( result );
 	}
-	if ( phoneToOrderDTO.getType() == 2 ) {//积分支付
-	    //	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 4, "积分支付" ,"jifen");
-	    //	    payWayList.add( result );
-	} else if ( phoneToOrderDTO.getType() == 5 ) {//粉币支付
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 8, "粉币支付", "fenbizhifu" );
-	    payWayList.add( result );
+	if ( CommonUtil.isNotEmpty( type ) ) {
+	    if ( type == 2 ) {//积分支付
+		//	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 4, "积分支付" ,"jifen");
+		//	    payWayList.add( result );
+	    } else if ( type == 5 ) {//粉币支付
+		PhoneOrderWayDTO result = new PhoneOrderWayDTO( 8, "粉币支付", "fenbizhifu" );
+		payWayList.add( result );
+	    }
 	}
 	if ( CommonUtil.isNotEmpty( isStorePay ) && isStorePay == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 6, "到店支付", "daodianzhifu" );

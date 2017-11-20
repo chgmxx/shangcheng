@@ -29,12 +29,6 @@ public class PhoneAddOrderProductDTO implements Serializable {
     @ApiModelProperty( name = "shopId", value = "店铺id" )
     private int shopId;
 
-    @ApiModelProperty( name = "busUserId", value = "商家id" )
-    private int busUserId;
-
-    @ApiModelProperty( name = "productName", value = "商品名称" )
-    private String productName;
-
     @ApiModelProperty( name = "productImageUrl", value = "商品图片" )
     private String productImageUrl;
 
@@ -53,36 +47,11 @@ public class PhoneAddOrderProductDTO implements Serializable {
     @ApiModelProperty( name = "totalPrice", value = "商品总价（商品价格*数量）" )
     private double totalPrice;
 
-    @ApiModelProperty( name = "productWeight", value = "商品重量" )
-    private double productWeight = 0;
-
     @ApiModelProperty( name = "productNum", value = "商品数量" )
     private int productNum;
 
-    //是否能使用积分
-    @ApiModelProperty( name = "isCanUseJifen", value = "是否能使用积分1 能使用 0不能使用" )
-    private Integer isCanUseJifen = 0;
-
-    //是否能使用粉币
-    @ApiModelProperty( name = "isCanUseFenbi", value = "是否能使用粉币 1能使用" )
-    private Integer isCanUseFenbi = 0;
-
-    //是否能使用优惠券
-    @ApiModelProperty( name = "isCanUseYhq", value = "是否能使用优惠券 1能使用" )
-    private Integer isCanUseYhq = 0;
-
-    //是否能使用会员折扣
-    @ApiModelProperty( name = "isCanUseDiscount", value = "是否能使用会员折扣 1能使用" )
-    private Integer isCanUseDiscount = 0;
-
-    @ApiModelProperty( name = "proTypeId", value = "商品类型  0,实物商品 1,虚拟商品非会员卡 2虚拟商品（会员卡） 3 虚拟商品（卡券包） 4虚拟商品（流量包）" )
-    private Integer proTypeId = 0;
-
     @ApiModelProperty( name = "pfSpecResultList", value = "批发规格集合（批发商品  且 有规格则必传）" )
     private List< PhoneOrderPifaSpecDTO > pfSpecResultList;
-
-    @ApiModelProperty( name = "cardReceiveId", value = "卡券id", hidden = true )
-    private Integer cardReceiveId;
 
     @ApiModelProperty( name = "activityId", value = "活动id(如果是活动商品，必传)" )
     private Integer activityId;
@@ -100,6 +69,31 @@ public class PhoneAddOrderProductDTO implements Serializable {
     private Double commission;
 
     /******************************** 以下参数 不需要前端传值，用作后台计算和生成订单 ********************************/
+    @ApiModelProperty( name = "productWeight", value = "商品重量", hidden = true )
+    private double productWeight = 0;
+
+    @ApiModelProperty( name = "cardReceiveId", value = "卡券id", hidden = true )
+    private Integer cardReceiveId;
+
+    //是否能使用积分
+    @ApiModelProperty( name = "isCanUseJifen", value = "是否能使用积分1 能使用 0不能使用", hidden = true )
+    private Integer isCanUseJifen = 0;
+
+    //是否能使用粉币
+    @ApiModelProperty( name = "isCanUseFenbi", value = "是否能使用粉币 1能使用", hidden = true )
+    private Integer isCanUseFenbi = 0;
+
+    //是否能使用优惠券
+    @ApiModelProperty( name = "isCanUseYhq", value = "是否能使用优惠券 1能使用", hidden = true )
+    private Integer isCanUseYhq = 0;
+
+    //是否能使用会员折扣
+    @ApiModelProperty( name = "isCanUseDiscount", value = "是否能使用会员折扣 1能使用", hidden = true )
+    private Integer isCanUseDiscount = 0;
+
+    @ApiModelProperty( name = "proTypeId", value = "商品类型  0,实物商品 1,虚拟商品非会员卡 2虚拟商品（会员卡） 3 虚拟商品（卡券包） 4虚拟商品（流量包）", hidden = true )
+    private Integer proTypeId = 0;
+
     @ApiModelProperty( name = "productYouhuiPrice", value = "商品优惠的价格", hidden = true )
     private Double productYouhuiPrice;
 
@@ -108,25 +102,25 @@ public class PhoneAddOrderProductDTO implements Serializable {
 
     //以下参数 是计算优惠的参数
     @ApiModelProperty( name = "useUnionDiscountYouhuiPrice", value = "使用联盟卡优惠的价格", hidden = true )
-    private Double useUnionDiscountYouhuiPrice;
+    private double useUnionDiscountYouhuiPrice = 0;
 
     @ApiModelProperty( name = "useDiscountYouhuiPrice", value = "使用会员卡优惠的价格", hidden = true )
-    private Double useDiscountYouhuiPrice;
+    private double useDiscountYouhuiPrice = 0;
 
     @ApiModelProperty( name = "useCouponYouhuiPrice", value = "使用优惠券优惠的价格", hidden = true )
-    private Double useCouponYouhuiPrice;
+    private double useCouponYouhuiPrice = 0;
 
     @ApiModelProperty( name = "useFenbiNum", value = "使用粉币的数量", hidden = true )
-    private Double useFenbiNum;
+    private double useFenbiNum = 0;
 
     @ApiModelProperty( name = "useFenbiYouhuiPrice", value = "使用粉币优惠的价格", hidden = true )
-    private Double useFenbiYouhuiPrice;
+    private double useFenbiYouhuiPrice = 0;
 
     @ApiModelProperty( name = "useJifenNum", value = "使用积分的数量", hidden = true )
-    private Double useJifenNum;
+    private double useJifenNum = 0;
 
     @ApiModelProperty( name = "useJifenYouhuiPrice", value = "使用积分优惠的价格", hidden = true )
-    private Double useJifenYouhuiPrice;
+    private double useJifenYouhuiPrice = 0;
 
     @ApiModelProperty( name = "product", value = "商品对象", hidden = true )
     private MallProduct product;

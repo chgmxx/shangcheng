@@ -84,9 +84,11 @@ redisSession:
 
 web:
  #域名
- domain: mall.yifriend.net:8080
+ domain: nb.mall.deeptel.com.cn
  #网页访问路径
- homeUrl: http://mall.yifriend.net:8080/
+ homeUrl: http://nb.mall.deeptel.com.cn/
+ #手机端页面路径访问
+ phoneWebHomeUrl: http://nb.mall.deeptel.com.cn/html/phone/index.html/#/
 
 ####图片资源ftp 配置
 static:

@@ -132,6 +132,7 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 	try {
 
 	    List< PhoneShopCartOrderDTO > params = JSONArray.parseArray( str, PhoneShopCartOrderDTO.class );
+
 	    mallShopCartService.shopCartOrder( params );
 	} catch ( BusinessException e ) {
 	    logger.error( "购物车去结算异常：" + e.getMessage() );

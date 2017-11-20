@@ -108,6 +108,8 @@ article:
 resource:
  url:
   prefix: http://maint.yifriend.net/upload/
+ #手机端页面路径访问
+ phoneWebHomeUrl: http://maint.yifriend.net/html/phone/index.html/#/
 
 #图片存放路径
 res:

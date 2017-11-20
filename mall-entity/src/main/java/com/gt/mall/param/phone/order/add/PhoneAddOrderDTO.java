@@ -1,7 +1,5 @@
 package com.gt.mall.param.phone.order.add;
 
-import com.gt.mall.param.phone.order.PhoneOrderMemberAddressDTO;
-import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -25,9 +23,6 @@ public class PhoneAddOrderDTO implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 
-    @ApiModelProperty( name = "memberAddressDTO", value = "会员地址集合" )
-    private PhoneOrderMemberAddressDTO memberAddressDTO;
-
     @ApiModelProperty( name = "totalMoney", value = "商品总额（优惠前的价格）" )
     private double totalMoney;
 
@@ -36,9 +31,6 @@ public class PhoneAddOrderDTO implements Serializable {
 
     @ApiModelProperty( name = "busResultList", value = "商家集合" )
     private List< PhoneAddOrderBusDTO > busResultList;
-
-    @ApiModelProperty( name = "payWayList", value = "支付方式集合" )
-    private List< PhoneOrderWayDTO > payWayList;
 
     @ApiModelProperty( name = "selectPayWayId", value = "选中的支付方式id" )
     private Integer selectPayWayId;
@@ -60,13 +52,16 @@ public class PhoneAddOrderDTO implements Serializable {
 
     /******************************** 以下参数 不需要前端传值，用作后台计算和生成订单 ********************************/
 
+    @ApiModelProperty( name = "wxShopIds", value = "门店id ，多个以逗号分割" )
+    private String wxShopIds = "";
+
+    @ApiModelProperty( name = "busIds", value = "商家id，多个以逗号分割" )
+    private String busIds = "";
+
     @ApiModelProperty( name = "productMap", value = "商品集合", hidden = true )
     private Map< Integer,Object > productMap = new HashMap<>();
 
-    @ApiModelProperty( name = "wxShopIds", value = "门店id ，多个以逗号分割", hidden = true )
-    private String wxShopIds = "";
-
-    @ApiModelProperty( name = "busIds", value = "商家id，多个以逗号分割", hidden = true )
-    private String busIds = "";
+    @ApiModelProperty( name = "isCalculation", value = "是否计算", hidden = true )
+    private boolean isCalculation = false;
 
 }

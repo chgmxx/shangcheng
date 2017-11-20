@@ -84,9 +84,11 @@ redisSession:
 
 web:
  #域名
- domain: mall.yifriend.net:8080
+ domain: mall.duofriend.com
  #网页访问路径
- homeUrl: http://mall.yifriend.net:8080/
+ homeUrl: http://mall.duofriend.com/
+ #手机端页面路径访问
+ phoneWebHomeUrl: http://mall.duofriend.com/html/phone/index.html/#/
 
 ####图片资源ftp 配置
 static:
@@ -103,7 +105,7 @@ static:
 #访问文章资源URL
 article:
  url:
-  prefix: http://mall.yifriend.net:8080/
+  prefix: http://mall.duofriend.com/
 #访问资源URL
 resource:
  url:
@@ -128,20 +130,19 @@ mq:
 http:
  #总项目请求地址
  wxmp:
-  domain: http://wxmp.yifriend.net:12882/
-#  domain: http://yifriend.net/
+  domain: http://duofriend.com/
   key: WXMP2017
  #会员key 和 请求地址
  member:
-  domain: http://member.deeptel.com.cn/
+  domain: http://member.duofriend.com/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
  union:
-  domain: http://union.duofee.com/
+  domain: http://union.duofriend.com/
   key: SR36E9KIYDLIU1VB6WX20HCW494QL97T
  #进销存的请求地址、token 用户名  和token密码
  jxc:
   #进销存 地址
-  domain: http://jxc.duofee.com/jxc/
+  domain: http://jxc.duofriend.com/jxc/
   #进销存token用户名
   account: e_shop
   #进销存token密码

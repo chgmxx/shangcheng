@@ -28,8 +28,8 @@ public class PhoneAddOrderShopDTO implements Serializable {
     @ApiModelProperty( name = "wxShopId", value = "微信门店id" )
     private int wxShopId;
 
-    @ApiModelProperty( name = "shopName", value = "店铺名称" )
-    private String shopName;
+//    @ApiModelProperty( name = "shopName", value = "店铺名称" )
+//    private String shopName;
 
     @ApiModelProperty( name = "totalNum", value = "商品总数" )
     private int totalNum;
@@ -43,8 +43,9 @@ public class PhoneAddOrderShopDTO implements Serializable {
     @ApiModelProperty( name = "productResultList", value = "商品集合" )
     private List< PhoneAddOrderProductDTO > productResultList;
 
-    @ApiModelProperty( name = "couponList", value = "卡券集合" )
+    @ApiModelProperty( name = "couponList", value = "卡券集合", hidden = true )
     private List< Coupons > couponList;
+
 
     /*********************************提交订单接口，传值***************************************/
     @ApiModelProperty( name = "selectCouponsId", value = "选中优惠券的id" )

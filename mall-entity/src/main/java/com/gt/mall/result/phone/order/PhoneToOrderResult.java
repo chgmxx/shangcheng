@@ -49,4 +49,9 @@ public class PhoneToOrderResult implements Serializable {
     @ApiModelProperty( name = "proTypeId", value = "商品类型id", hidden = true )
     private int proTypeId;
 
+    @ApiModelProperty( name = "type", value = "活动类型，1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品" )
+    private Integer type = 0;
+
+    @ApiModelProperty( name = "activityId", value = "活动id" )
+    private Integer activityId = 0;
 }

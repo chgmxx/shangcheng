@@ -69,6 +69,7 @@ public class MallMemberAddressServiceImpl implements MallMemberAddressService {
 	    address += addressMap.get( "memZipCode" ).toString();
 	}
 	memberAddress.setMemberAddress( address );
+	memberAddress.setAddressProvince( CommonUtil.toInteger( addressMap.get( "memProvince" ) ) );
 	return memberAddress;
     }
 
@@ -84,6 +85,7 @@ public class MallMemberAddressServiceImpl implements MallMemberAddressService {
 	}
 	memberAddressResult.setMemberAddress( address );
 	memberAddressResult.setMemberDefault( memberAddress.getMemDefault() );
+	memberAddressResult.setAddressProvince( memberAddress.getMemProvince() );
 	return memberAddressResult;
     }
 

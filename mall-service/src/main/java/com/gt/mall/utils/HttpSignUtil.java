@@ -36,6 +36,8 @@ public class HttpSignUtil {
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
 	    if ( type == 0 ) {
 		newUrl = "http://113.106.202.53:13885/" + url;
+	    } else if ( type == 3 ) {
+		newUrl = "https://union.deeptel.com.cn/" + url;
 	    }
 	    /*if(type == 1){
 		newUrl = "http://192.168.2.12:8070/" + url;

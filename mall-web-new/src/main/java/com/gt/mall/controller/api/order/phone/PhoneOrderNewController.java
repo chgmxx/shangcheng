@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api.order.phone;
 
+import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.Member;
 import com.gt.api.util.SessionUtils;
 import com.gt.mall.bean.DictBean;
@@ -99,17 +100,21 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		memberId = member.getId();
 	    }
+	    JSONObject obj = JSONObject.fromObject( params );
 	    mallProductNewService
 			    .calculateInventory( params.getProductId(), params.getProductSpecificas(), params.getProductNum(), params.getType(), params.getActivityId(), memberId );
-	    if ( CommonUtil.isNotEmpty( params.getPifaSpecificaDTOList() ) && params.getPifaSpecificaDTOList().size() > 0 ) {
-		for ( PhoneToOrderPifatSpecificaDTO pifatSpecificaDTO : params.getPifaSpecificaDTOList() ) {
+	    if ( CommonUtil.isNotEmpty( params.getPifaSpecificaDTOList() ) ) {
+		List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList = JSONArray.parseArray( params.getPifaSpecificaDTOList(), PhoneToOrderPifatSpecificaDTO.class );
+		obj.remove( "pifaSpecificaDTOList" );
+		obj.put( "pifaSpecificaDTOList", pifaSpecificaDTOList );
+		for ( PhoneToOrderPifatSpecificaDTO pifatSpecificaDTO : pifaSpecificaDTOList ) {
 		    mallProductNewService.calculateInventory( params.getProductId(), pifatSpecificaDTO.getSpecificaValueIds(), pifatSpecificaDTO.getProductNum(), params.getType(),
 				    params.getActivityId(), memberId );
 		}
 	    }
 
-	    String value =  com.alibaba.fastjson.JSONObject.toJSONString( params );
-	    CookieUtil.addCookie( response, CookieUtil.TO_ORDER_KEY, value, 0 );
+	    logger.error( "cookie存值：" + obj.toString() );
+	    CookieUtil.addCookie( response, CookieUtil.TO_ORDER_KEY, obj.toString(), 0 );
 
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
@@ -134,7 +139,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO ,request);
+	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO, request );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( BusinessException e ) {
@@ -148,16 +153,18 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "提交订单的接口", notes = "提交订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( @ApiImplicitParam( name = "params", value = "参数,必传", paramType = "query", required = true, dataType = "String" ) )
     @ResponseBody
     @PostMapping( value = "submitOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< Map< String,Object > > submitOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody PhoneAddOrderDTO params,
+    public ServerResponse< Map< String,Object > > submitOrder( HttpServletRequest request, HttpServletResponse response, String params,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    Map< String,Object > resultMap = mallOrderSubmitService.submitOrder( params, member, loginDTO.getBrowerType() );
+	    PhoneAddOrderDTO addOrderDTO = com.alibaba.fastjson.JSONObject.parseObject( params, PhoneAddOrderDTO.class );
+	    Map< String,Object > resultMap = mallOrderSubmitService.submitOrder( addOrderDTO, member, loginDTO.getBrowerType() );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	} catch ( BusinessException e ) {
@@ -235,7 +242,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "支付成功回调失败" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(),ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     @ApiOperation( value = "手机端订单列表的接口", notes = "我的订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -670,7 +677,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		params.put( "out_trade_no", params.get( "no" ) );
 	    }
 	    mallOrderService.paySuccessDaifu( params );
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(),ResponseEnums.SUCCESS.getDesc() );
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
 	} catch ( BusinessException e ) {
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
 		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );

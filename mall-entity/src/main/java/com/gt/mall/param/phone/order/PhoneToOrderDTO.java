@@ -25,9 +25,6 @@ public class PhoneToOrderDTO implements Serializable {
     @Min( value = 0, message = "商品id不能小于0" )
     private Integer from = 0;
 
-    @ApiModelProperty( name = "type", value = "活动类型，1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品" )
-    private Integer type = 0;
-
     @ApiModelProperty( name = "busId", value = "购物车id，多个以逗号隔开（从购物车结算进入，必须传此参数）" )
     private String cartIds;
 

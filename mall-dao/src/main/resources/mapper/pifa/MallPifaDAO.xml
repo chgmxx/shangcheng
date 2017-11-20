@@ -291,7 +291,12 @@
         <include refid="pifa_Column_List"></include>
         from t_mall_pifa p
         where p.is_delete = 0 and p.is_use = 1
-        and p.product_id=#{productId} and p.shop_id=#{shopId}
+        <if test="productId != null">
+            and p.product_id=#{productId}
+        </if>
+        <if test="shopId != null">
+            and p.shop_id=#{shopId}
+        </if>
         <if test="id != null and id > 0">
             and p.id = #{id}
         </if>

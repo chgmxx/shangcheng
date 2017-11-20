@@ -16,6 +16,8 @@ public class PropertiesUtil {
 
     private static String homeUrl;//网页地址
 
+    private static String phoneWebHomeUrl;//手机端域名
+
     private static String jxcUrl;//进销存 地址
 
     private static String jxcAccount;//进销存token用户名
@@ -68,6 +70,11 @@ public class PropertiesUtil {
     @Value( "${web.homeUrl}" )
     public void setHomeUrl( String homeUrl ) {
 	PropertiesUtil.homeUrl = homeUrl;
+    }
+
+    @Value( "${web.phoneWebHomeUrl}" )
+    public void setPhoneWebHomeUrl( String phoneWebHomeUrl ) {
+	PropertiesUtil.phoneWebHomeUrl = phoneWebHomeUrl;
     }
 
     @Value( "${http.jxc.domain}" )
@@ -251,6 +258,10 @@ public class PropertiesUtil {
 
     public static String getHomeUrl() {
 	return homeUrl;
+    }
+
+    public static String getPhoneWebHomeUrl() {
+	return phoneWebHomeUrl;
     }
 
     public static String getJxcUrl() {

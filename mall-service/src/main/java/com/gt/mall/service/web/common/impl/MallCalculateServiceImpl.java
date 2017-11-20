@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +62,22 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		isCalculate = false;
 		break;
 	    }
+	    if(couponFlag){
+		for ( PhoneAddOrderShopDTO shopDTO : busDTO.getShopResultList() ) {
+		    List< Coupons > couponsList = new ArrayList<>();
+		    //多粉优惠券
+		    if ( cardMap.containsKey( "duofenCards" + shopDTO.getWxShopId() ) ) {
+			Object obj = cardMap.get( "duofenCards" + shopDTO.getWxShopId() );
+			couponsList = ToOrderUtil.getDuofenCouponsResult( obj, couponsList );
+		    }
+		    //微信优惠券
+		    if ( cardMap.containsKey( "cardList" + shopDTO.getWxShopId() ) ) {
+			Object obj = cardMap.get( "cardList" + shopDTO.getWxShopId() );
+			couponsList = ToOrderUtil.getWxCouponsResult( obj, couponsList );
+		    }
+		    shopDTO.setCouponList( couponsList );
+		}
+	    }
 	    int ctId = 0;
 	    if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) ) {
 		ctId = CommonUtil.toInteger( cardMap.get( "ctId" ) );
@@ -74,6 +91,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		    memberDiscount = CommonUtil.toDouble( cardMap.get( "discount" ) );
 		}
 	    }
+	    busDTO.setMemberDiscount( memberDiscount );
 	    Double memberUnionDiscount = busDTO.getUnionDiscount();//折扣卡的折扣
 	    Double busFenbiYouhui = busDTO.getFenbiMoney();//保存商家下 粉币优惠的总额
 	    Double busJifenYouhui = busDTO.getJifenMoney();//保存商家下 积分优惠的总额
@@ -189,7 +207,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
      */
     private List< PhoneAddOrderShopDTO > calculateMemberDiscount( List< PhoneAddOrderShopDTO > shopDTOList, Double memberDiscount, Map cardMap ) {
 	double busCanUseDiscountProductPrice = 0;//保存能使用会员折扣的商品总额
-//	List< Coupons > couponsList = new ArrayList<>();
+	//	List< Coupons > couponsList = new ArrayList<>();
 	//保存能使用会员折扣的商品价格
 	for ( PhoneAddOrderShopDTO shopDTO : shopDTOList ) {//循环店铺集合
 	    for ( PhoneAddOrderProductDTO productDTO : shopDTO.getProductResultList() ) {//循环商品集合

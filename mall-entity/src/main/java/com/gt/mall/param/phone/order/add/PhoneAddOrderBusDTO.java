@@ -1,7 +1,5 @@
 package com.gt.mall.param.phone.order.add;
 
-import com.gt.mall.bean.member.JifenAndFenbiRule;
-import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -26,14 +24,14 @@ public class PhoneAddOrderBusDTO implements Serializable {
     @ApiModelProperty( name = "busId", value = "商家id" )
     private Integer busId;
 
-    @ApiModelProperty( name = "busName", value = "商家名称" )
-    private String busName;
-
-    @ApiModelProperty( name = "publicId", value = "公众号id" )
-    private Integer publicId;
-
-    @ApiModelProperty( name = "busImageUrl", value = "商家头像" )
-    private String busImageUrl;
+//    @ApiModelProperty( name = "busName", value = "商家名称" )
+//    private String busName;
+//
+//    @ApiModelProperty( name = "publicId", value = "公众号id" )
+//    private Integer publicId;
+//
+//    @ApiModelProperty( name = "busImageUrl", value = "商家头像" )
+//    private String busImageUrl;
 
     @ApiModelProperty( name = "productTotalMoney", value = "商品总价" )
     private double productTotalMoney;
@@ -47,35 +45,26 @@ public class PhoneAddOrderBusDTO implements Serializable {
     @ApiModelProperty( name = "totalMoney", value = "订单总价（包含运费）" )
     private double totalMoney;
 
-    @ApiModelProperty( name = "deliveryWayList", value = "配送方式集合" )
-    private List< PhoneOrderWayDTO > deliveryWayList;
+//    @ApiModelProperty( name = "deliveryWayList", value = "配送方式集合" )
+//    private List< PhoneOrderWayDTO > deliveryWayList;
 
     @ApiModelProperty( name = "toOrderShopResultList", value = "店铺集合" )
     private List< PhoneAddOrderShopDTO > shopResultList;
 
-    @ApiModelProperty( name = "takeId", value = "上门自提id" )
-    private Integer takeId;
-
-    @ApiModelProperty( name = "takeAddress", value = "上门自提地址" )
-    private String takeAddress;
-
-    @ApiModelProperty( name = "memberDiscount", value = "会员折扣数" )
-    private double memberDiscount = 0;
-
-    @ApiModelProperty( name = "jifenNum", value = "会员拥有的积分数量" )
+    @ApiModelProperty( name = "jifenNum", value = "能抵扣的积分数量" )
     private Double jifenNum;
 
     @ApiModelProperty( name = "jifenMoney", value = "积分数量抵扣的积分金额" )
     private Double jifenMoney;
 
-    @ApiModelProperty( name = "fenbiNum", value = "粉币数量" )
+    @ApiModelProperty( name = "fenbiNum", value = "能抵扣的粉币数量" )
     private Double fenbiNum;
 
     @ApiModelProperty( name = "fenbiMoney", value = "粉币数量抵扣的粉币金额" )
     private Double fenbiMoney;
 
-    @ApiModelProperty( name = "jifenFenbiRule", value = "积分粉币兑换规则" )
-    private JifenAndFenbiRule jifenFenbiRule;
+//    @ApiModelProperty( name = "jifenFenbiRule", value = "积分粉币兑换规则" )
+//    private JifenAndFenbiRule jifenFenbiRule;
 
     @ApiModelProperty( name = "memberPhone", value = "粉丝手机号码" )
     private String memberPhone;
@@ -114,10 +103,15 @@ public class PhoneAddOrderBusDTO implements Serializable {
     @ApiModelProperty( name = "isSelectUnion", value = "是否选中联盟 1选中" )
     private Integer isSelectUnion = 0;
 
-    @ApiModelProperty( name = "tihuoUserName", value = "提货人姓名" )
+    /*********************************上门自提，传值***************************************/
+
+    @ApiModelProperty( name = "takeAddress", value = "上门自提地址" )
+    private String takeAddress;
+
+    @ApiModelProperty( name = "appointmentUserName", value = "提货人姓名" )
     private String appointmentUserName;
 
-    @ApiModelProperty( name = "tihuoUserPhone", value = "提货人手机号码" )
+    @ApiModelProperty( name = "appointmentUserPhone", value = "提货人手机号码" )
     private String appointmentUserPhone;
 
     @ApiModelProperty( name = "appointmentId", value = "提货id" )
@@ -132,7 +126,12 @@ public class PhoneAddOrderBusDTO implements Serializable {
     @ApiModelProperty( name = "appointmentEndTime", value = "提货结束时间" )
     private String appointmentEndTime;
 
+    /*************************************   以下参数不做传值，只做后续计算和判断    ******************************************/
+
     @ApiModelProperty( name = "totalNewMoney", value = "商品优惠后的总价（没包含运费）", hidden = true )
     private double totalNewMoney = 0;
+
+    @ApiModelProperty( name = "memberDiscount", value = "会员折扣数" ,hidden = true)
+    private double memberDiscount = 0;
 
 }

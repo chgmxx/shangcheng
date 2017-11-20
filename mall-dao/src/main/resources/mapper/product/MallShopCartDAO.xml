@@ -23,14 +23,13 @@
         <result column="sale_member_id" property="saleMemberId"/>
         <result column="commission" property="commission"/>
         <result column="is_check" property="isCheck"/>
-        <result column="session_id" property="sessionId"/>
         <result column="bus_user_id" property="busUserId"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, product_id , shop_id , product_specificas , product_num , product_message , user_id , create_time , product_speciname , price, primary_price ,
-        pro_code , user_type , discount, pro_spec_str, pro_type, sale_member_id , commission, is_check , session_id , bus_user_id
+        pro_code , user_type , discount, pro_spec_str, pro_type, sale_member_id , commission, is_check ,  bus_user_id
     </sql>
 
     <select id="selectByShopCart" parameterType="com.gt.mall.entity.product.MallShopCart" resultType="Map">

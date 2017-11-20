@@ -6,6 +6,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.DateTimeKitUtils;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.order.MallOrder;
@@ -22,12 +23,14 @@ import com.gt.mall.param.phone.order.add.PhoneAddOrderShopDTO;
 import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.common.MallCommonService;
+import com.gt.mall.service.web.common.MallMemberAddressService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.seckill.MallSeckillService;
@@ -81,6 +84,10 @@ public class MallCommonServiceImpl implements MallCommonService {
     private MallSellerMallsetService mallSellerMallSetService;
     @Autowired
     private MallTakeTheirService     mallTakeTheirService;
+    @Autowired
+    private MemberAddressService     memberAddressService;
+    @Autowired
+    MallMemberAddressService mallMemberAddressService;
 
     @Override
     public boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo ) {
@@ -148,6 +155,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 	if ( CommonUtil.isNotEmpty( params.getOrderType() ) ) {
 	    orderType = params.getOrderType();
 	}
+
 	StringBuilder wxShopIds = new StringBuilder( "," );
 	String busIds;
 	Map< Integer,Object > productMap = params.getProductMap();
@@ -166,6 +174,10 @@ public class MallCommonServiceImpl implements MallCommonService {
 			    .isEmpty( busDTO.getAppointmentStartTime() ) || CommonUtil.isEmpty( busDTO.getAppointmentEndTime() ) || CommonUtil
 			    .isEmpty( busDTO.getAppointmentUserPhone() ) ) ) {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还没填写提货人信息" );
+	    }
+	    if ( busDTO.getIsSelectCoupons() == 1 || busDTO.getIsSelectDiscount() == 1 || busDTO.getIsSelectFenbi() == 1 || busDTO.getIsSelectJifen() == 1
+			    || busDTO.getIsSelectUnion() == 1 ) {
+		params.setCalculation( true );
 	    }
 	    busDTO.setTotalNewMoney( busDTO.getTotalMoney() );
 	    if ( CommonUtil.isNotEmpty( busDTO.getBusId() ) && !wxShopIds.toString().contains( "," + busDTO.getBusId() + "," ) ) {
@@ -187,15 +199,20 @@ public class MallCommonServiceImpl implements MallCommonService {
 		    } else {
 			product = JSONObject.parseObject( productMap.get( productDTO.getProductId() ).toString(), MallProduct.class );
 		    }
+		    productDTO.setIsCanUseDiscount( CommonUtil.toInteger( product.getIsMemberDiscount() ) );//是否能使用会员折扣
+		    productDTO.setIsCanUseYhq( CommonUtil.toInteger( product.getIsCoupons() ) );//是否能使用优惠券
+		    productDTO.setIsCanUseJifen( CommonUtil.toInteger( product.getIsIntegralDeduction() ) );//是否能使用积分抵扣
+		    productDTO.setIsCanUseFenbi( CommonUtil.toInteger( product.getIsFenbiDeduction() ) );//是否能使用粉币抵扣
 		    productDTO.setCardReceiveId( product.getCardType() );
 		    productDTO.setProduct( product );
 		    productDTO.setProductNewTotalPrice( productDTO.getTotalPrice() );
+		    productDTO.setProductWeight( CommonUtil.toDouble( product.getProWeight() ) );
 		    //		    productDTO.setProductNewOnePrice( productDTO.getProductPrice() );
 		    int proTypeId = 0;//商品类型  0,实物商品 1,虚拟商品非会员卡 2虚拟商品（会员卡） 3 虚拟商品（卡券包） 4虚拟商品（流量包）
 		    if ( CommonUtil.isNotEmpty( productDTO.getProTypeId() ) ) {
 			proTypeId = productDTO.getProTypeId();
 		    }
-
+		    productDTO.setProTypeId( proTypeId );
 		    //选择快递配送，商品是实物 且  没传地址
 		    if ( deliverWayId == 1 && addressId == 0 && ( CommonUtil.isEmpty( productDTO.getProTypeId() ) || proTypeId == 0 ) ) {//1 快递配送
 			throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还没选择收货地址" );
@@ -275,12 +292,15 @@ public class MallCommonServiceImpl implements MallCommonService {
     @Override
     public MallOrder getOrderParams( PhoneAddOrderShopDTO shopDTO, PhoneAddOrderBusDTO busDTO, PhoneAddOrderDTO params, Member member ) {
 	MallOrder order = new MallOrder();
-	if ( busDTO.getSelectDeliveryWayId() == 1 && CommonUtil.isNotEmpty( params.getMemberAddressDTO() ) ) {//快递配送
-	    PhoneOrderMemberAddressDTO memberAddress = params.getMemberAddressDTO();
-	    order.setReceiveId( memberAddress.getId() );
-	    order.setReceiveName( memberAddress.getMemberName() );
-	    order.setReceiveAddress( memberAddress.getMemberAddress() );
-	    order.setReceivePhone( memberAddress.getMemberPhone() );
+	if ( busDTO.getSelectDeliveryWayId() == 1 && CommonUtil.isNotEmpty( params.getSelectMemberAddressId() ) ) {//快递配送
+	    MemberAddress memberAddress = memberAddressService.addreSelectId( params.getSelectMemberAddressId() );
+	    if ( CommonUtil.isNotEmpty( memberAddress ) ) {
+		PhoneOrderMemberAddressDTO memberAddressResult = mallMemberAddressService.getMemberAddressResult( memberAddress );
+		order.setReceiveId( memberAddressResult.getId() );
+		order.setReceiveName( memberAddressResult.getMemberName() );
+		order.setReceiveAddress( memberAddressResult.getMemberAddress() );
+		order.setReceivePhone( memberAddressResult.getMemberPhone() );
+	    }
 	} else if ( busDTO.getSelectDeliveryWayId() == 2 ) {
 	    order.setAppointmentName( busDTO.getAppointmentUserName() );
 	    order.setAppointmentTelephone( busDTO.getAppointmentUserPhone() );
@@ -356,7 +376,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 	detail.setDetPrivivilege( CommonUtil.toBigDecimal( oldPrice ) );//商品原价
 	detail.setReturnDay( product.getReturnDay() );//完成订单后在有效天数内退款
 	if ( CommonUtil.isNotEmpty( memberDiscount ) ) {
-	    int discount = CommonUtil.toInteger( CommonUtil.multiply( memberDiscount, 100 ) );
+	    int discount = CommonUtil.toIntegerByDouble( CommonUtil.multiply( memberDiscount, 100 ) );
 	    detail.setDiscount( discount );//折扣数
 	}
 	double youhuiPrice = CommonUtil.formatDoubleNumber(

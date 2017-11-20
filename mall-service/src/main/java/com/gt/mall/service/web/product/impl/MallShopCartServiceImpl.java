@@ -892,6 +892,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
     public void shopCartOrder( List< PhoneShopCartOrderDTO > params ) {
 	if ( params != null && params.size() > 0 ) {
 	    for ( PhoneShopCartOrderDTO cartDto : params ) {
+		if ( CommonUtil.isEmpty( cartDto.getId() ) || CommonUtil.isEmpty( cartDto.getProductNum() ) ) {
+		    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
+		}
 		MallShopCart shopCart = new MallShopCart();
 		MallShopCart cart = mallShopCartDAO.selectById( cartDto.getId() );
 		if ( CommonUtil.isNotEmpty( cartDto.getPifatSpecificaDTOList() ) && cartDto.getPifatSpecificaDTOList().size() > 0 && CommonUtil
@@ -908,11 +911,16 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			    shopCart.setProSpecStr( JSON.toJSONString( newObj ) );
 			}
 		    }
+		} else if ( cart.getProType() > 0 && CommonUtil.isNotEmpty( cart.getProSpecStr() ) ) {
+		    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
 		}
 		shopCart.setId( cartDto.getId() );
 		shopCart.setProductNum( cartDto.getProductNum() );
-		mallShopCartDAO.updateByShopCart( shopCart );
+		mallShopCartDAO.updateById( shopCart );
+//		mallShopCartDAO.updateByShopCart( shopCart );
 	    }
+	} else {
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
 	}
     }
 
