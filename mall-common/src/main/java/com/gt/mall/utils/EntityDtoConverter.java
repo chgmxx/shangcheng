@@ -1,7 +1,10 @@
 package com.gt.mall.utils;
 
+import org.springframework.cglib.beans.BeanMap;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * DTO转换
@@ -56,5 +59,19 @@ public class EntityDtoConverter {
 	    }
 	}
 	return null;
+    }
+
+    /**
+     * 将map装换为bean对象
+     *
+     * @param map
+     * @param bean
+     *
+     * @return
+     */
+    public static < T > T mapToBean( Map< String,Object > map, T bean ) {
+	BeanMap beanMap = BeanMap.create( bean );
+	beanMap.putAll( map );
+	return bean;
     }
 }

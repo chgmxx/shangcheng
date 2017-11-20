@@ -46,7 +46,7 @@ public class ImageAssociativeDTO {
     /**
      * 关联表类型 1关联商品表 t_mall_product表的id  2关联商品分组表t_mall_group的id  3关联上门自提表 t_mall_take_their表的id   4关联评价表t_mall_comment表的id  5关联店铺表t_mall_store的id
      */
-    @ApiModelProperty( value = "关联表类型 1关联商品表id  2关联商品分组表id  3关联上门自提表id   4关联评价表id  5关联店铺表id", required = true )
+    @ApiModelProperty( value = "关联表类型 1关联商品表id  2关联商品分组表id  3关联上门自提表id   4关联评价表id  5关联店铺表id 6关联店铺认证表", required = true )
     private Integer assType;
     /**
      * 排序

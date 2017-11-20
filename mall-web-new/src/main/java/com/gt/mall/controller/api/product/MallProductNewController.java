@@ -8,8 +8,10 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.result.product.ProductResult;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -53,47 +55,51 @@ public class MallProductNewController extends BaseController {
     private CardService                 cardService;
     @Autowired
     private MallFreightService          mallFreightService;
+    @Autowired
+    private DictService                 dictService;
 
     @ApiOperation( value = "商品列表(分页)", notes = "商品列表(分页)" )
     @ResponseBody
-    @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "proType", value = "0全部  1上架商品   2未上架  3审核不通过", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "proName", value = "商品名称", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer proType, String proName, Integer shopId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    //isPublish  checkStatus proName  proType(页面标识)  type(传1 售罄商品)
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    if ( user != null ) {
-		int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-		long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
-		params.put( "isJxc", isJxc );
-		if ( shoplist != null && shoplist.size() > 0 ) {
-		    if ( CommonUtil.isNotEmpty( params.get( "proType" ) ) ) {
-			int proType = CommonUtil.toInteger( params.get( "proType" ) );
-			if ( proType == 1 ) {//上架
-			    params.put( "is_publish", 1 );
-			    params.put( "check_status", 1 );
-			} else if ( proType == 2 ) {//未上架
-			    params.put( "is_publish", 0 );
-			} else if ( proType == 3 ) {//审核不通过
-			    params.put( "check_status", -1 );
-			}
-		    }
-		    if ( CommonUtil.isEmpty( params.get( "shopId" ) ) ) {
-			params.put( "shoplist", shoplist );
-		    }
-		    PageUtil page = mallProductService.selectByUserId( params, shoplist );
-		    result.put( "page", page );
-		}
-		   /* result.put( "proMaxNum", dictService.getDiBserNum( userPId, 5, "1094" ) );//可新增商品总数*/
-		result.put( "proType", params.get( "proType" ) );
-		result.put( "proName", params.get( "proName" ) );
-
-		if ( isJxc == 1 ) {
-		    mallProductService.syncErpPro( user.getId(), request );//把未同步的商品进行同步
-		}
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "curPage", curPage );
+	    params.put( "proName", proName );
+	    params.put( "shopId", shopId );
+	    if ( proType == 1 ) {//上架
+		params.put( "is_publish", 1 );
+		params.put( "check_status", 1 );
+	    } else if ( proType == 2 ) {//未上架
+		params.put( "is_publish", 0 );
+	    } else if ( proType == 3 ) {//审核不通过
+		params.put( "check_status", -1 );
 	    }
+
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
+	    params.put( "isJxc", isJxc );
+	    if ( shoplist != null && shoplist.size() > 0 ) {
+		if ( CommonUtil.isEmpty( shopId ) ) {
+		    params.put( "shoplist", shoplist );
+		}
+		PageUtil page = mallProductService.selectByUserId( params, shoplist );
+		result.put( "page", page );
+	    }
+	    result.put( "proMaxNum", dictService.getDiBserNum( userPId, 5, "1094" ) );//可新增商品总数
+
+	    if ( isJxc == 1 ) {
+		mallProductService.syncErpPro( user.getId(), request );//把未同步的商品进行同步
+	    }
+
 	    result.put( "videourl", busUserService.getVoiceUrl( "77" ) );
 	} catch ( Exception e ) {
 	    logger.error( "商品列表异常：" + e.getMessage() );
@@ -101,97 +107,6 @@ public class MallProductNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品列表异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
-
-    /**
-     * 获取链接
-     */
-    @ApiOperation( value = "获取链接", notes = "获取链接" )
-    @ResponseBody
-    @RequestMapping( value = "/link", method = RequestMethod.POST )
-    public ServerResponse link( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "商品ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    MallProduct product = mallProductService.selectById( id );
-	    String url = PropertiesUtil.getHomeUrl() + "mallPage/" + product.getId() + "/" + product.getShopId() + "/79B4DE7C/phoneProduct.do?toshop=0";
-	    result.put( "link", url );//链接
-
-	} catch ( Exception e ) {
-	    logger.error( "获取链接：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
-
-    /**
-     * 批量处理商品(删除，送审，上架，下架)
-     */
-    @ApiOperation( value = "批量处理商品（删除，送审，上架，下架）", notes = "批量处理商品（删除，送审，上架，下架）" )
-    @ResponseBody
-    @SysLogAnnotation( description = "商品管理-商品列表：批量处理商品（删除，送审，上架，下架）", op_function = "3" )
-    @RequestMapping( value = "/batchProduct", method = RequestMethod.POST )
-    public ServerResponse batchProduct( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "ids", value = "商品Id集合，用逗号隔开", required = true ) @RequestParam( "ids" ) String ids, @RequestParam Map< String,Object > params ) {
-
-	logger.info( "进入批量处理controller" );
-	response.setCharacterEncoding( "utf-8" );
-
-	try {
-	   /* String[] id = (String[]) net.sf.json.JSONArray.toArray( net.sf.json.JSONArray.fromObject( ids ), String.class );*/
-	    String[] id = ids.split( "," );
-	    boolean flag = mallProductService.batchUpdateProduct( params, id );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "操作失败！" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "批量处理商品信息：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
-    }
-
-    /**
-     * 生成二维码的图片
-     */
-/*    @ApiOperation( value = "生成二维码的图片", notes = "生成二维码的图片" )
-    @ResponseBody
-    @RequestMapping( value = "/generateQRCode", method = RequestMethod.GET )*/
-  /*  public void generateQRCode( @RequestBody Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
-	try {
-	    String id = params.get( "id" ).toString();
-	    String shopId = params.get( "shopId" ).toString();
-	    BusUser user = SessionUtils.getLoginUser( request );
-	    String content = PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/" + shopId + "/79B4DE7C/phoneProduct.do?toshop=1";
-	    QRcodeKit.buildQRcode( content, 200, 200, response );
-	} catch ( Exception e ) {
-	    logger.error( "获取到店支付二维码的图片失败：" + e.getMessage() );
-	    e.printStackTrace();
-	}
-    }*/
-
-    /**
-     * 到店购买
-     */
-    @ApiOperation( value = "到店购买", notes = "到店购买" )
-    @ResponseBody
-    @RequestMapping( value = "/codeIframs", method = RequestMethod.POST )
-    public ServerResponse codeIframs( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
-	Map< String,Object > resulst = new HashMap< String,Object >();
-	try {
-	    String id = params.get( "id" ).toString();
-	    String shopId = params.get( "shopId" ).toString();
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    //下载二维码地址
-	    String html = PropertiesUtil.getHomeUrl() + "/mallPage/" + id + "/" + shopId + "/79B4DE7C/phoneProduct.do?uId=" + user.getId() + "&toshop=1";
-	    resulst.put( "html", html );
-	} catch ( Exception e ) {
-	    logger.error( "获取到店购买信息失败：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resulst );
     }
 
     @ApiOperation( value = "获取各状态下商品总数", notes = "获取各状态下商品总数" )
@@ -228,6 +143,67 @@ public class MallProductNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商城的统计概况异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+    }
+
+    /**
+     * 批量处理商品(删除，送审，上架，下架)
+     */
+    @ApiOperation( value = "批量处理商品（删除，送审，上架，下架）", notes = "批量处理商品（删除，送审，上架，下架）" )
+    @ResponseBody
+    @SysLogAnnotation( description = "商品管理-商品列表：批量处理商品（删除，送审，上架，下架）", op_function = "3" )
+    @RequestMapping( value = "/batchProduct", method = RequestMethod.POST )
+    public ServerResponse batchProduct( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "ids", value = "商品Id集合，用逗号隔开", required = true ) @RequestParam( "ids" ) String ids,
+		    @ApiParam( name = "type", value = "类型 1删除 2送审 3上架 4下架", required = true ) @RequestParam( "type" ) Integer type ) {
+
+	logger.info( "进入批量处理controller" );
+	response.setCharacterEncoding( "utf-8" );
+
+	try {
+	   /* String[] id = (String[]) net.sf.json.JSONArray.toArray( net.sf.json.JSONArray.fromObject( ids ), String.class );*/
+	    Map< String,Object > params = new HashMap<>();
+	    if ( type == 1 ) {//删除
+		params.put( "isDelete", 1 );
+	    } else if ( type == 2 ) {//送审
+		params.put( "checkStatus", 0 );
+	    } else if ( type == 3 ) {//上架
+		params.put( "isPublish", 1 );
+	    } else if ( type == 4 ) {//下架
+		params.put( "isPublish", -1 );
+	    }
+	    String[] id = ids.split( "," );
+	    boolean flag = mallProductService.batchUpdateProduct( params, id );
+	    if ( !flag ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "操作失败！" );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "批量处理商品信息：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
+
+    /**
+     * 获取商品信息
+     */
+    @ApiOperation( value = "获取商品信息", notes = "获取商品信息" )
+    @ResponseBody
+    @RequestMapping( value = "/productInfo", method = RequestMethod.POST )
+    public ServerResponse productInfo( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "商品Id", required = true ) @RequestParam Integer id ) {
+	MallProduct product = null;
+	try {
+	    product = mallProductService.selectById( id );
+	    if ( product != null && product.getIsDelete() > 0 ) {
+		product = null;
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "获取商品分组信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商品信息异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), product );
     }
 
     /**
@@ -269,28 +245,6 @@ public class MallProductNewController extends BaseController {
     }
 
     /**
-     * 获取商品信息
-     */
-    @ApiOperation( value = "获取商品信息", notes = "获取商品信息" )
-    @ResponseBody
-    @RequestMapping( value = "/productInfo", method = RequestMethod.POST )
-    public ServerResponse productInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "商品Id", required = true ) @RequestParam Integer id ) {
-	MallProduct product = null;
-	try {
-	    product = mallProductService.selectById( id );
-	    if ( product != null && product.getIsDelete() > 0 ) {
-		product = null;
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取商品分组信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商品信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), product );
-    }
-
-    /**
      * 新增商品
      */
     @ApiOperation( value = "新增商品信息", notes = "新增商品信息" )
@@ -301,16 +255,12 @@ public class MallProductNewController extends BaseController {
 	try {
 	    int code = 1;
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    if ( user != null ) {
-		Map< String,Object > resultMap = mallProductService.addProduct( params, user, request );
-		if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
-		    code = CommonUtil.toInteger( resultMap.get( "code" ) );
-		}
-		if ( code != 1 ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存商品失败" );
-		}
-	    } else {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc() );
+	    Map< String,Object > resultMap = mallProductService.addProduct( params, user, request );
+	    if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
+		code = CommonUtil.toInteger( resultMap.get( "code" ) );
+	    }
+	    if ( code != 1 ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存商品失败" );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "新增商品信息异常：" + e.getMessage() );
@@ -331,13 +281,9 @@ public class MallProductNewController extends BaseController {
 	try {
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    if ( user != null ) {
-		boolean flag = mallProductService.newUpdateProduct( params, user, request );
-		if ( !flag ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改商品失败" );
-		}
-	    } else {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc() );
+	    boolean flag = mallProductService.newUpdateProduct( params, user, request );
+	    if ( !flag ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改商品失败" );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "修改商品信息异常：" + e.getMessage() );

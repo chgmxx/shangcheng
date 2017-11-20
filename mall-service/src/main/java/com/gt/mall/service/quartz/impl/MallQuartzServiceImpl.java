@@ -59,7 +59,7 @@ public class MallQuartzServiceImpl implements MallQuartzService {
     /**
      * 对已结束未成团的订单进行退款
      */
-    @Scheduled( cron = "0 0 3 * * ?" )//每天早上3点扫描
+   /* @Scheduled( cron = "0 0 3 * * ?" )*///每天早上3点扫描
     //	@Scheduled(cron = "0 0 17 * * ?")//每天下午2点点扫描
     //	@Scheduled(cron = "0 0/2 * * * ?")//每隔2分钟扫描
     @Override
@@ -101,7 +101,7 @@ public class MallQuartzServiceImpl implements MallQuartzService {
     /**
      * 对已结束未成团的订单进行退款
      */
-    @Scheduled( cron = "0 0 1 * * ?" )//每天早上1点扫描
+    /*@Scheduled( cron = "0 0 1 * * ?" )*///每天早上1点扫描
     //	@Scheduled(cron = "0 0 17 * * ?")//每天下午2点点扫描
     //	@Scheduled(cron = "0 0/2 * * * ?")//每隔2分钟扫描
     @Override
@@ -162,7 +162,7 @@ public class MallQuartzServiceImpl implements MallQuartzService {
     /**
      * 短信提醒预售开始时间和结束时间
      */
-    @Scheduled( cron = "0 0 0/2 * * ?" )//两个小时扫描一次
+//    @Scheduled( cron = "0 0 0/2 * * ?" )//两个小时扫描一次
     @Override
     public void presaleStar() {
 	try {

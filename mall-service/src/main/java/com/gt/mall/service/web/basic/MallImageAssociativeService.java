@@ -2,6 +2,7 @@ package com.gt.mall.service.web.basic;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.param.basic.ImageAssociativeDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,8 @@ public interface MallImageAssociativeService extends BaseService< MallImageAssoc
      * @param proId 关联id
      */
     void newInsertUpdBatchImage( Map< String,Object > map, Integer proId, Integer assType );
+
+    void newSaveImage( List< ImageAssociativeDTO > imageList, Integer proId, Integer assType );
 
     /**
      * 根据关联id来查询图片
