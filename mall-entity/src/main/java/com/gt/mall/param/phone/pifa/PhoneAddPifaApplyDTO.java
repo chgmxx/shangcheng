@@ -32,7 +32,7 @@ public class PhoneAddPifaApplyDTO implements Serializable {
 
     @ApiModelProperty( name = "telephone", value = "手机号码", required = true )
     @NotNull( message = "手机号码不能为空" )
-    private Integer telephone;
+    private String telephone;
 
     @ApiModelProperty( name = "remark", value = "备注" )
     private String remark;
