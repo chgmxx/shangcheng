@@ -67,7 +67,7 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	    for ( Map< String,Object > map : logList ) {
 		Integer getData = CommonUtil.toInteger( map.get( "getData" ) );
 		map.put( "orderDetailId", orderReturn.getOrderDetailId() );
-		map.put( "returnStatus", orderReturn.getStatus() );
+		map.put( "nowReturnStatus", orderReturn.getStatus() );
 		if ( getData > 0 ) {
 		    net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( map.get( "remark" ) );
 		    map.put( "remark", foorerObj );
