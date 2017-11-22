@@ -61,11 +61,13 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	wrapper.where( "return_id = {0}", returnId );
 	wrapper.orderBy( "create_time,id" );
 	List< Map< String,Object > > logList = mallOrderReturnLogDAO.selectMaps( wrapper );
-
+	MallOrderReturn orderReturn = mallOrderReturnDAO.selectById( returnId );
 	if ( logList != null && logList.size() > 0 ) {
 	    int i = 1;
 	    for ( Map< String,Object > map : logList ) {
 		Integer getData = CommonUtil.toInteger( map.get( "getData" ) );
+		map.put( "orderDetailId", orderReturn.getOrderDetailId() );
+		map.put( "returnStatus", orderReturn.getStatus() );
 		if ( getData > 0 ) {
 		    net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( map.get( "remark" ) );
 		    map.put( "remark", foorerObj );
@@ -86,7 +88,6 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 		}
 
 		if ( i == logList.size() ) {
-		    MallOrderReturn orderReturn = mallOrderReturnDAO.selectById( returnId );
 		    if ( orderReturn.getStatus() == -1 || orderReturn.getStatus() == 2 ) {
 			MallOrder order = mallOrderDAO.selectById( orderReturn.getOrderId() );
 			MallOrderDetail orderDetail = mallOrderDetailDAO.selectById( orderReturn.getOrderDetailId() );
@@ -116,14 +117,11 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 			    //是否显示退款物流的按钮 1显示
 			    map.put( "isShowReturnWuLiuButton", OrderUtil.getOrderIsShowReturnWuliuButton( isNowReturn, orderReturn.getStatus().toString(), orderReturn ) );
 			} else if ( orderReturn.getStatus() == -1 ) {//拒绝申请
-			    //是否显示申请售后的按钮 1显示
+			    //显示申请退款按钮 1显示
 			    if ( isShowAppllyReturn == 1 && "4".equals( order.getOrderStatus() ) ) {
-				//显示申请售后的按钮
+				//显示申请退款按钮
 				map.put( "isShowApplyReturnButton", 1 );
-				//不显示申请退款的按钮
-				map.put( "isShowApplyReturnButton", 0 );
 			    }
-			    map.put( "isShowUpdateReturnButton", OrderUtil.getOrderIsShowUpdateReturnButton( isNowReturn, orderReturn.getStatus().toString() ) );
 			}
 		    }
 		}
