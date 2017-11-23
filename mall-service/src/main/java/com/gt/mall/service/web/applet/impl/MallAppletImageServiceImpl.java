@@ -7,6 +7,8 @@ import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.applet.MallAppletImageService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
@@ -79,8 +81,8 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	imageMaps.put( "id", image.getId() );
 	imageMaps.put( "imageUrl", image.getImageUrl() );
-	imageMaps.put( "pro_id", image.getProId() );
-	imageMaps.put( "shop_id", image.getShopId() );
+	imageMaps.put( "proId", image.getProId() );
+	imageMaps.put( "shopId", image.getShopId() );
 	imageMaps.put( "type", image.getType() );
 	return imageMaps;
     }
@@ -88,7 +90,13 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl< MallAppletImage
     @Override
     public boolean editImage( Map< String,Object > params, int userId ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallAppletImage appletImage = JSONObject.parseObject( JSON.toJSONString( params), MallAppletImage.class );
+	    MallAppletImage appletImage = JSONObject.parseObject( JSON.toJSONString( params ), MallAppletImage.class );
+	    if ( appletImage.getType() == 1 && CommonUtil.isEmpty( appletImage.getProId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "商品不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( appletImage.getImageUrl() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "图片不能为空" );
+	    }
 	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
 		int count = 0;
 		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {

@@ -148,11 +148,13 @@ public class MallStoreCertificationController extends BaseController {
 	MallStoreCertification storeCert = null;
 	try {
 	    storeCert = mallStoreCertService.selectById( id );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "assType", 6 );
-	    params.put( "assId", storeCert.getId() );
-	    List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( params );
-	    storeCert.setImageList( imageAssociativeList );
+	    if ( storeCert != null && storeCert.getIsCertDoc() == 1 ) {
+		Map< String,Object > params = new HashMap<>();
+		params.put( "assType", 6 );
+		params.put( "assId", storeCert.getId() );
+		List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( params );
+		storeCert.setImageList( imageAssociativeList );
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取店铺认证信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -172,10 +174,8 @@ public class MallStoreCertificationController extends BaseController {
 	try {
 	    MallStoreCertification storeCert = mallStoreCertService.selectById( id );
 	    if ( storeCert != null ) {
-		MallStoreCertification cert = new MallStoreCertification();
-		cert.setId( id );
-		cert.setIsDelete( 1 );
-		mallStoreCertService.updateById( cert );
+		storeCert.setIsDelete( 1 );
+		mallStoreCertService.updateById( storeCert );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "认证信息设置失效异常：" + e.getMessage() );

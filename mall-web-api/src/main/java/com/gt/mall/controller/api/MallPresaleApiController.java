@@ -38,6 +38,20 @@ public class MallPresaleApiController {
     @Autowired
     private MallPresaleDepositService mallPresaleDepositService;
 
+    @ApiOperation( value = "交纳保证金成功回调", notes = "交纳保证金成功回调" )
+    @ResponseBody
+    @RequestMapping( value = "/paySuccessPresale", method = RequestMethod.GET )
+    public ServerResponse paySuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	try {
+	    mallPresaleDepositService.paySuccessPresale( params );
+	} catch ( Exception e ) {
+	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金成功回调异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
     @ApiOperation( value = "退定金成功回调", notes = "退定金成功回调接口" )
     @ResponseBody
     @RequestMapping( value = "/returnSuccessBack", method = RequestMethod.GET )
@@ -50,12 +64,12 @@ public class MallPresaleApiController {
 	    wrapper.where( "deposit_no= {0}", outTradeNo );
 	    Map< String,Object > deposit = mallPresaleDepositService.selectMap( wrapper );
 
- 	    Map< String,Object > map = new HashMap<>();
-	    map.put( "id", deposit.get("id") );
-	    map.put( "user_id", deposit.get("userId") );
-	    map.put( "pay_way", deposit.get("payWay") );
-	    map.put( "deposit_money", deposit.get("depositMoney") );
-	    map.put( "deposit_no", deposit.get("depositNo") );
+	    Map< String,Object > map = new HashMap<>();
+	    map.put( "id", deposit.get( "id" ) );
+	    map.put( "user_id", deposit.get( "userId" ) );
+	    map.put( "pay_way", deposit.get( "payWay" ) );
+	    map.put( "deposit_money", deposit.get( "depositMoney" ) );
+	    map.put( "deposit_no", deposit.get( "depositNo" ) );
 	    Map< String,Object > result = mallPresaleDepositService.returnEndPresale( map );
 	    if ( CommonUtil.isNotEmpty( result.get( "result" ) ) ) {
 		boolean flag = (boolean) result.get( "result" );
@@ -69,7 +83,7 @@ public class MallPresaleApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退定金成功回调接口异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCode();
     }
 
 }

@@ -69,15 +69,19 @@ public class MallStoreNewController extends BaseController {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    result.put( "userName", user.getName() );//商家名称
 	    result.put( "userLogo", "" );//商家头像
+
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    set = mallPaySetService.selectByUserId( set );
 	    result.put( "isSecuritytrade", set.getIsSecuritytrade() );//担保交易
+
 	    int pid = MallSessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
+
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "userId", user.getId() );
 	    params.put( "pid", pid );
+
 	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
 	    if ( shopList != null && shopList.size() > 0 ) {
 		PageUtil page = mallStoreService.findByPage( params, shopList );
@@ -89,7 +93,7 @@ public class MallStoreNewController extends BaseController {
 		    countnum = 1;
 		}
 		result.put( "page", page );
-		result.put( "isShopAdd", countnum );//是否新增店铺
+		result.put( "isShopAdd", countnum );//是否新增店铺 0可以 1不可以
 	    }
 
 	    result.put( "videourl", busUserService.getVoiceUrl( "8" ) );

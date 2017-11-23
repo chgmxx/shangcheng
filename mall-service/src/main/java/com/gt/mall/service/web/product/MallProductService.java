@@ -209,4 +209,9 @@ public interface MallProductService extends BaseService< MallProduct > {
      * 扣除商品库存
      */
     boolean diffProductStock( MallProduct pro, MallOrderDetail detail, MallOrder order );
+
+    /**
+     * 查询待审核商品列表
+     */
+    PageUtil selectWaitCheckList( Map< String,Object > params );
 }

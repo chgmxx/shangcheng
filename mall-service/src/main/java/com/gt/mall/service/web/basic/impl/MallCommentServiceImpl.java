@@ -109,7 +109,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( Map< String,Object > map : productList ) {
 		if ( CommonUtil.isNotEmpty( map.get( "is_upload_image" ) ) ) {
-		    if ( map.get( "is_upload_image" ).toString().equals( "1" ) ) {
+		    if ( map.get( "isUploadImage" ).toString().equals( "1" ) ) {
 			Map< String,Object > imageMap = new HashMap<>();
 			imageMap.put( "assId", map.get( "id" ) );
 			imageMap.put( "assType", 4 );
@@ -119,8 +119,8 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 			}
 		    }
 		}
-		if ( CommonUtil.isNotEmpty( map.get( "is_rep" ) ) ) {
-		    int isRep = CommonUtil.toInteger( map.get( "is_rep" ) );
+		if ( CommonUtil.isNotEmpty( map.get( "isRep" ) ) ) {
+		    int isRep = CommonUtil.toInteger( map.get( "isRep" ) );
 		    if ( isRep == 1 ) {
 			Map< String,Object > param = new HashMap<>();
 			param.put( "appraise", map.get( "id" ) );
@@ -132,8 +132,8 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 		}
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    for ( Map< String,Object > shopMap : shoplist ) {
-			if ( map.get( "shop_id" ).toString().equals( shopMap.get( "id" ).toString() ) ) {
-			    map.put( "sto_name", shopMap.get( "sto_name" ) );
+			if ( map.get( "shopId" ).toString().equals( shopMap.get( "id" ).toString() ) ) {
+			    map.put( "stoName", shopMap.get( "sto_name" ) );
 			    break;
 			}
 		    }

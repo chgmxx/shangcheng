@@ -648,7 +648,6 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		} else if ( type == 2 ) {
 		    params.put( "startTime", DateTimeKit.getDateTime() );
 		    params.put( "endTime", DateTimeKit.getDateTime( DateTimeKit.addMonths( -1 ) ) );
-
 		} else if ( type == 3 ) {
 		    params.put( "startTime", DateTimeKit.getDateTime() );
 		    params.put( "endTime", DateTimeKit.getDateTime( DateTimeKit.addMonths( -12 ) ) );

@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.integral.MallIntegralImageDAO;
 import com.gt.mall.entity.integral.MallIntegralImage;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.integral.MallIntegralImageService;
 import com.gt.mall.utils.CommonUtil;
@@ -74,6 +76,12 @@ public class MallIntegralImageServiceImpl extends BaseServiceImpl< MallIntegralI
     public boolean editImage( Map< String,Object > params, int userId ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
 	    MallIntegralImage appletImage = (MallIntegralImage) JSONObject.toJavaObject( JSONObject.parseObject( JSON.toJSONString( params ) ), MallIntegralImage.class );
+	    if ( CommonUtil.isEmpty( appletImage.getShopId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "店铺不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( appletImage.getImageUrl() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "图片不能为空" );
+	    }
 	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
 		int count = 0;
 		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {

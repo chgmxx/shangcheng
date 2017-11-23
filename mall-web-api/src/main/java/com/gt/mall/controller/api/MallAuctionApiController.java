@@ -38,6 +38,20 @@ public class MallAuctionApiController {
     @Autowired
     private MallAuctionMarginService mallAuctionMarginService;
 
+    @ApiOperation( value = "交纳保证金成功回调", notes = "交纳保证金成功回调" )
+    @ResponseBody
+    @RequestMapping( value = "/paySuccessAuction", method = RequestMethod.GET )
+    public ServerResponse paySuccessAuction( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	try {
+	    mallAuctionMarginService.paySuccessAuction( params );
+	} catch ( Exception e ) {
+	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金成功回调异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
     @ApiOperation( value = "退保证金成功回调", notes = "退保证金成功回调接口" )
     @ResponseBody
     @RequestMapping( value = "/returnSuccessBack", method = RequestMethod.GET )
@@ -73,7 +87,7 @@ public class MallAuctionApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金成功回调接口异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCode();
     }
 
 }

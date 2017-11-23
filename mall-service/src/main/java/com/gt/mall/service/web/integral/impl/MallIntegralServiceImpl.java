@@ -17,6 +17,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -422,6 +423,18 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	if ( CommonUtil.isNotEmpty( params.get( "integral" ) ) ) {
 	    MallIntegral mallIntegral = (MallIntegral) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "integral" ).toString() ), MallIntegral.class );
+	    if ( CommonUtil.isEmpty( mallIntegral.getShopId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "店铺不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallIntegral.getProductId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "商品不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallIntegral.getMoney() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "积分不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallIntegral.getStartTime() ) ||CommonUtil.isEmpty( mallIntegral.getEndTime() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "开始或结束时间不能为空" );
+	    }
 	    MallIntegral integral = null;
 	    if ( CommonUtil.isNotEmpty( mallIntegral.getProductId() ) ) {
 		Map< String,Object > map = new HashMap< String,Object >();

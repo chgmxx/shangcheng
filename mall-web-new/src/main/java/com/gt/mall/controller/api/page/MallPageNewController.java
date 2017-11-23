@@ -72,7 +72,6 @@ public class MallPageNewController extends BaseController {
 	    PageUtil page = mallPageService.findByPage( params, user, request );
 
 	    result.put( "page", page );
-	    result.put( "shopId", shopId );
 	    result.put( "videourl", busUserService.getVoiceUrl( "78" ) );
 
 	} catch ( Exception e ) {
@@ -131,6 +130,12 @@ public class MallPageNewController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPage page = com.alibaba.fastjson.JSONObject.parseObject( params.get( "page" ).toString(), MallPage.class );
+	    if ( CommonUtil.isEmpty( page.getPagName() ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面名称不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( page.getPagTypeId() ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面名称不能为空" );
+	    }
 	    page.setPagUserId( MallSessionUtils.getLoginUser( request ).getId() );
 	    page.setPagCreateTime( new Date() );
 	    mallPageService.saveOrUpdate( page, user );
@@ -155,10 +160,13 @@ public class MallPageNewController extends BaseController {
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "ids", value = "页面ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
-	Map< String,Object > result = new HashMap<>();
 	try {
 	    String id[] = ids.toString().split( "," );
-	    mallPageService.delete( id );
+	    Map< String,Object > result = mallPageService.delete( id );
+	    boolean flag = (boolean) result.get( "result" );
+	    if ( !flag ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "message" ).toString() );
+	    }
 	} catch ( BusinessException e ) {
 	    logger.error( "删除页面信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -173,7 +181,7 @@ public class MallPageNewController extends BaseController {
 
     /**
      * 获取店铺链接
-     */
+     *//*
     @ApiOperation( value = "获取链接", notes = "获取链接" )
     @ResponseBody
     @RequestMapping( value = "/link", method = RequestMethod.POST )
@@ -183,14 +191,14 @@ public class MallPageNewController extends BaseController {
 	try {
 	    String url = PropertiesUtil.getHomeUrl() + "mallPage/" + id + "/79B4DE7C/viewHomepage.do";
 	    result.put( "link", url );//店铺链接
-	   /* result.put( "smsLink", url );//短信链接*/
+	   *//* result.put( "smsLink", url );//短信链接*//*
 	} catch ( Exception e ) {
 	    logger.error( "获取链接：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
+    }*/
 
     /**
      * 进入页面设计
@@ -368,15 +376,15 @@ public class MallPageNewController extends BaseController {
 	    //	    String check = request.getParameter( "check" ).toString();
 	    //获取店铺下的商品
 	    PageUtil page = mallPageService.product( params );
-	    String url = PropertiesUtil.getHomeUrl();
+	    /*String url = PropertiesUtil.getHomeUrl();*/
 
 	    result.put( "page", page );
 	    result.put( "groLs", groLs );
-	    result.put( "proName", params.get( "proName" ) );
-	    result.put( "groupId", params.get( "groupId" ) );
+	    //	    result.put( "proName", params.get( "proName" ) );
+	    //	    result.put( "groupId", params.get( "groupId" ) );
 	    //	    result.put( "check", check );
-	    result.put( "stoId", stoId );
-	    result.put( "url", url );
+	    //	    result.put( "stoId", stoId );
+	    //	    result.put( "url", url );
 	} catch ( Exception e ) {
 	    logger.error( "页面设计-选择商品异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -427,14 +435,11 @@ public class MallPageNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Integer stoId = Integer.valueOf( params.get( "stoId" ).toString() );
-	    String url = PropertiesUtil.getHomeUrl();//域名
-	    result.put( "url", url );
 	    List< Map< String,Object > > presaleList = mallPageService.productPresale( stoId, params );
 	    result.put( "presaleList", presaleList );
-	    result.put( "proName", params.get( "proName" ) );
-	    result.put( "groupId", params.get( "groupId" ) );
-/*	    result.put( "check", params.get( "check" ) );*/
-	    result.put( "stoId", params.get( "stoId" ) );
+	    //	    result.put( "proName", params.get( "proName" ) );
+	    //	    result.put( "groupId", params.get( "groupId" ) );
+	    //	    result.put( "stoId", params.get( "stoId" ) );
 
 	} catch ( Exception e ) {
 	    logger.error( "选择预售商品出错：" + e.getMessage() );

@@ -78,7 +78,6 @@ public class MallCommentNewController extends BaseController {
 		}
 	    }
 	    result.put( "isComment", isComment );
-
 	    if ( isComment ) {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 
@@ -143,9 +142,9 @@ public class MallCommentNewController extends BaseController {
 	} catch ( Exception e ) {
 	    logger.error( "回复评论异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError();
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCode();
     }
 
     /**
@@ -172,9 +171,9 @@ public class MallCommentNewController extends BaseController {
 	} catch ( Exception e ) {
 	    logger.error( "审核评论异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError();
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCode();
     }
 
 }

@@ -11,14 +11,12 @@ import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.result.store.StoreResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.MallJxcHttpClientUtil;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.shop.ShopSubsop;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
@@ -67,27 +65,39 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "store/index.do" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	params.put( "maxResult", pageSize );
-
 	params.put( "shopList", shopList );
+
+	List< StoreResult > storeResultList = new ArrayList<>();
+	EntityDtoConverter converter = new EntityDtoConverter();
 
 	List< Map< String,Object > > list = mallStoreDao.findByPage( params );
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > shopMap : list ) {
 		int id = CommonUtil.toInteger( shopMap.get( "id" ) );
+		StoreResult storeResult = new StoreResult();
+		converter.mapToBean( shopMap, storeResult );
 		MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
-		shopMap.put( "storeCert", storeCertification );
+		if ( storeCertification != null ) {
+		    storeResult.setCertId( storeCertification.getId() );
+		    storeResult.setCertStoType( storeCertification.getStoType() );
+		    if ( storeCertification.getStoType() == 1 ) {
+			storeResult.setCertStoCategory( storeCertification.getStoCategory() );
+			storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
+		    }
+		}
 		for ( Map< String,Object > maps : shopList ) {
 		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
 		    if ( id == shopIds ) {
-			shopMap.put( "sto_name", maps.get( "sto_name" ) );
-			shopMap.put( "sto_address", maps.get( "address" ) );
+			storeResult.setStoName( maps.get( "sto_name" ).toString() );
+			storeResult.setStoAddress( maps.get( "address" ).toString() );
 			break;
 		    }
 		}
+		storeResultList.add( storeResult );
 	    }
 	}
 
-	page.setSubList( list );
+	page.setSubList( storeResultList );
 	return page;
     }
 
@@ -152,20 +162,20 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return newStoreList;
     }
 
-//    @Override
-//    public int getShopBySession( HttpSession session, int shopId ) {
-//	String sessionKey = Constants.SESSION_KEY + "shopId";
-//	if ( CommonUtil.isEmpty( session.getAttribute( sessionKey ) ) ) {
-//	    session.setAttribute( sessionKey, shopId );
-//	} else {
-//	    if ( !session.getAttribute( sessionKey ).toString().equals( String.valueOf( shopId ) ) ) {
-//		session.setAttribute( sessionKey, shopId );
-//	    } else {
-//		shopId = CommonUtil.toInteger( session.getAttribute( sessionKey ) );
-//	    }
-//	}
-//	return shopId;
-//    }
+    //    @Override
+    //    public int getShopBySession( HttpSession session, int shopId ) {
+    //	String sessionKey = Constants.SESSION_KEY + "shopId";
+    //	if ( CommonUtil.isEmpty( session.getAttribute( sessionKey ) ) ) {
+    //	    session.setAttribute( sessionKey, shopId );
+    //	} else {
+    //	    if ( !session.getAttribute( sessionKey ).toString().equals( String.valueOf( shopId ) ) ) {
+    //		session.setAttribute( sessionKey, shopId );
+    //	    } else {
+    //		shopId = CommonUtil.toInteger( session.getAttribute( sessionKey ) );
+    //	    }
+    //	}
+    //	return shopId;
+    //    }
 
     @Override
     public int createCangku( int shopId, BusUser user, int uType ) {

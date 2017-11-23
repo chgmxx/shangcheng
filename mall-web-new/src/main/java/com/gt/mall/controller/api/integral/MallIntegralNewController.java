@@ -163,9 +163,9 @@ public class MallIntegralNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-    /**
+   /* *//**
      * 获取链接
-     */
+     *//*
     @ApiOperation( value = "获取链接", notes = "获取链接" )
     @ResponseBody
     @RequestMapping( value = "/link", method = RequestMethod.POST )
@@ -183,7 +183,7 @@ public class MallIntegralNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
+    }*/
 
 
     /***********************************积分商城图片***********************************************/
@@ -298,9 +298,9 @@ public class MallIntegralNewController extends BaseController {
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
-    /**
+  /*  *//**
      * 获取链接
-     */
+     *//*
     @ApiOperation( value = "获取积分商城图片链接", notes = "获取积分商城图片链接" )
     @ResponseBody
     @RequestMapping( value = "/image/link", method = RequestMethod.POST )
@@ -316,6 +316,6 @@ public class MallIntegralNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
+    }*/
 
 }

@@ -66,7 +66,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	param.put( "shopList", shopList );// 每页显示商品的数量selectFreightByShopId
 
 	count = freightDAO.selectCountByShopId( param );
-	PageUtil page = new PageUtil( curPage, pageSize, count, "mFreight/index.do" );
+	PageUtil page = new PageUtil( curPage, pageSize, count, "/mallFreight/E9lM9uM4ct/list.do" );
 	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
 	param.put( "firstNum", firstNum );// 起始页
 	param.put( "maxNum", pageSize );// 每页显示商品的数量

@@ -21,6 +21,7 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
+import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.pifa.MallPifa;
@@ -2593,4 +2594,31 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
 	return true;
     }
+
+    @Override
+    public PageUtil selectWaitCheckList( Map< String,Object > param ) {
+	List< Map< String,Object > > productList = null;
+
+	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
+	int pageSize = CommonUtil.isEmpty( param.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( param.get( "pageSize" ) );
+
+	param.put( "curPage", curPage );
+	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
+	wrapper.where( "is_delete=0 and check_status ==1  and is_platform_check = 0" );
+	wrapper.in( "user_id", param.get( "userIds" ).toString() );
+	int count = mallProductDAO.selectCount( wrapper );
+
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	param.put( "firstNum", firstNum );// 起始页
+	param.put( "maxNum", pageSize );// 每页显示商品的数量
+
+	if ( count > 0 ) {// 判断商品是否有数据
+	    param.put( "userIds", param.get( "userIds" ).toString().split( "," ) );
+	    productList = mallProductDAO.selectWaitCheckList( param );// 查询商品总数
+	}
+	page.setSubList( productList );
+	return page;
+    }
+
 }

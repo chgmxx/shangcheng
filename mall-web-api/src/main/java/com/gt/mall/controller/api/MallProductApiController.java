@@ -4,16 +4,20 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallProduct;
+import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.service.web.product.MallProductDetailService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,18 +49,29 @@ public class MallProductApiController {
     @Autowired
     private MallProductService          mallProductService;
     @Autowired
+    private MallProductDetailService    mallProductDetailService;
+    @Autowired
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MallProductInventoryService productInventoryService;
 
     @ApiOperation( value = "待审核商品的接口", notes = "获取所有商家待审核的商品" )
-    @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "userIds", value = "商城用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/index", method = RequestMethod.GET )
-    public ServerResponse index( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @RequestMapping( value = "/waitCheckList", method = RequestMethod.GET )
+    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String userIds ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "curPage", curPage );
+	    params.put( "pageSize", pageSize );
+	    if ( CommonUtil.isNotEmpty( userIds ) ) {
+		params.put( "userIds", userIds );
+	    }
+	    PageUtil page = mallProductService.selectWaitCheckList( params );
+	    result.put( "page", page );
 	} catch ( Exception e ) {
 	    logger.error( "获取待审核商品的异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -65,13 +80,65 @@ public class MallProductApiController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
+    @ApiOperation( value = "查看商品明细", notes = "查看商品明细" )
+    @ResponseBody
+    @RequestMapping( value = "/productDeatil", method = RequestMethod.GET )
+    public ServerResponse productDeatil( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "商品Id", required = true ) @RequestParam Integer id ) {
+	Map< String,Object > result = new HashMap<>();
+	try {
+	    MallProduct product = mallProductService.selectById( id );
+	    if ( product != null ) {
+		if ( product.getIsDelete() > 0 ) {
+		    product = null;
+		}
+		MallProductDetail productDetail = mallProductDetailService.selectByProductId( product.getId() );
+		result.put( "product", product );
+		result.put( "productDetail", productDetail );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "查看商品明细异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查看商品明细异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+    }
+
+    @ApiOperation( value = "商品审核", notes = "商品审核" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "商品ID", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "status", value = "审核状态 -1审核失败 1审核成功", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "checkReason", value = "审核不通过的原因", paramType = "query", required = false, dataType = "String" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/productCheck", method = RequestMethod.GET )
+    public ServerResponse productCheck( HttpServletRequest request, HttpServletResponse response, Integer id, Integer status, String checkReason ) {
+
+	try {
+	    MallProduct product = mallProductService.selectById( id );
+	    if ( product != null ) {
+		if ( status == 1 ) {
+		    product.setIsPlatformCheck( 1 );
+		} else {
+		    product.setIsPlatformCheck( 0 );
+		    product.setCheckStatus( -1 );
+		    product.setCheckReason( checkReason );
+		}
+		mallProductService.updateById( product );
+	    } else {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品不存在" );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "商品审核异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品审核异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
 
     @ApiOperation( value = "修改商品库存(秒杀订单)", notes = "MQ调用-修改商品库存(秒杀订单)" )
     @ResponseBody
     @RequestMapping( value = "/upProInvNumBySeckill", method = RequestMethod.POST )
     public ServerResponse upProInvNumBySeckill( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	//params  四个参数 (db 数据源, productId , productNum, proSpecificas)
-	Map< String,Object > result = new HashMap<>();
 	try {
 	    String dbName = CommonUtil.toString( params.get( "db" ) );
 	    String proSpecificas = "";
@@ -203,6 +270,6 @@ public class MallProductApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改商品库存(秒杀订单)异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCode();
     }
 }

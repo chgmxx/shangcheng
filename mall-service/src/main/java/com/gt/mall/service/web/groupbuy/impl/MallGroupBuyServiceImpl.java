@@ -138,6 +138,19 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	if ( CommonUtil.isNotEmpty( groupMap.get( "groupBuy" ) ) ) {
 	    MallGroupBuy groupBuy = JSONObject.toJavaObject( JSONObject.parseObject( groupMap.get( "groupBuy" ).toString() ), MallGroupBuy.class );
 	    groupBuy.setGName( CommonUtil.urlEncode( groupBuy.getGName() ) );
+	    if ( CommonUtil.isEmpty( groupBuy.getShopId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "店铺不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( groupBuy.getProductId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "商品不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( groupBuy.getGName() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "活动名称不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( groupBuy.getGStartTime() ) ||CommonUtil.isEmpty( groupBuy.getGEndTime() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "开始或结束时间不能为空" );
+	    }
+
 	    //判断选择的商品是否已经存在未开始和进行中的团购中
 	    List< MallGroupBuy > buyList = mallGroupBuyDAO.selectGroupByProId( groupBuy );
 	    if ( buyList == null || buyList.size() == 0 ) {

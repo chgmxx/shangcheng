@@ -335,7 +335,11 @@ public class MallProduct extends Model< MallProduct > {
      */
     @TableField( "template_id" )
     private Integer    templateId;
-
+    /**
+     * 平台是否已审核 0 未审核 1已审核
+     */
+    @TableField( "is_platform_check" )
+    private Integer    isPlatformCheck;
 
     @Override
     protected Serializable pkVal() {

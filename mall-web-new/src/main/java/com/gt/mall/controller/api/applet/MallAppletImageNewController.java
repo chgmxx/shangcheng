@@ -116,9 +116,9 @@ public class MallAppletImageNewController extends BaseController {
 	} catch ( Exception e ) {
 	    logger.error( "保存小程序图片信息异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	    return ServerResponse.createByError();
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCode();
     }
 
     /**
@@ -153,7 +153,7 @@ public class MallAppletImageNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除小程序图片信息异常" );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCode();
     }
 
 }
