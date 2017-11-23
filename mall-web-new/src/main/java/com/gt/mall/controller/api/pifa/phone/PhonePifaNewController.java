@@ -1,43 +1,22 @@
 package com.gt.mall.controller.api.pifa.phone;
 
 import com.gt.api.bean.session.Member;
-import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
-import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
-import com.gt.mall.dao.auction.MallAuctionOfferDAO;
-import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.auction.MallAuction;
-import com.gt.mall.entity.auction.MallAuctionBidding;
-import com.gt.mall.entity.auction.MallAuctionMargin;
-import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifaApply;
-import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.param.phone.PhoneLoginDTO;
-import com.gt.mall.param.phone.auction.PhoneAddAuctionBiddingDTO;
-import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
 import com.gt.mall.param.phone.pifa.PhoneAddPifaApplyDTO;
-import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.service.inter.wxshop.SmsService;
-import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.service.web.auction.MallAuctionBiddingService;
-import com.gt.mall.service.web.auction.MallAuctionMarginService;
-import com.gt.mall.service.web.auction.MallAuctionOfferService;
-import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.common.MallCommonService;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -46,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -107,7 +88,7 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isEmpty( code ) ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "请输入验证码" );
 	    } else {
-		String jedCode = JedisUtil.get( code );
+		String jedCode = JedisUtil.get( Constants.REDIS_KEY + code );
 		if ( CommonUtil.isEmpty( jedCode ) ) {
 		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "验证码超时或错误" );
 		}

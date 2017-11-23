@@ -26,6 +26,8 @@ public class DateTimeKit {
 
     public static final String DEFAULT_DATE_FORMAT_YYYYMMDD = "yyyyMMdd";
 
+    public static final String DATE_FORMAT_YYYYMMDD_1 = "yyyy/MM/dd";
+
 
     public static final String DEFAULT_DATE_FORMAT_YYYYMM = "yyyyMM";
 

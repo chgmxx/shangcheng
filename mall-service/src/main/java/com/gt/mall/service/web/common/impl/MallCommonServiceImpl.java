@@ -8,6 +8,7 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.DateTimeKitUtils;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.constant.Constants;
+import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -87,7 +88,9 @@ public class MallCommonServiceImpl implements MallCommonService {
     @Autowired
     private MemberAddressService     memberAddressService;
     @Autowired
-    MallMemberAddressService mallMemberAddressService;
+    private MallMemberAddressService mallMemberAddressService;
+    @Autowired
+    private MallOrderDAO             mallOrderDAO;
 
     @Override
     public boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo ) {
@@ -140,11 +143,17 @@ public class MallCommonServiceImpl implements MallCommonService {
      */
     @Override
     public PhoneAddOrderDTO isOrderParams( PhoneAddOrderDTO params, Member member ) {
+	if ( CommonUtil.isNotEmpty( params.getOrderId() ) && params.getOrderId() > 0 ) {
+	    MallOrder mallOrder = mallOrderDAO.selectById( params.getOrderId() );
+	    if ( mallOrder.getOrderStatus() > 1 ) {
+		throw new BusinessException( ResponseEnums.ORDER_PAY_ERROR.getCode(), ResponseEnums.ORDER_PAY_ERROR.getDesc() );
+	    }
+	}
 	if ( CommonUtil.isEmpty( params.getBusResultList() ) ) {
 	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
 	}
 	if ( CommonUtil.isEmpty( params.getSelectPayWayId() ) || params.getSelectPayWayId() == 0 ) {
-	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还未选择支付方式" );
+	    throw new BusinessException( ResponseEnums.NO_SELECT_PAY_WAY_ERROR.getCode(), ResponseEnums.NO_SELECT_PAY_WAY_ERROR.getDesc() );
 	}
 	int selectPayWayId = params.getSelectPayWayId();//支付方式
 	int addressId = 0;
@@ -162,10 +171,10 @@ public class MallCommonServiceImpl implements MallCommonService {
 	StringBuilder busIdsBuilder = new StringBuilder( "," );
 	for ( PhoneAddOrderBusDTO busDTO : params.getBusResultList() ) {//循环商家集合
 	    if ( CommonUtil.isEmpty( busDTO.getShopResultList() ) ) {
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
+		throw new BusinessException( ResponseEnums.ORDER_PARAMS_ERROR.getCode(), ResponseEnums.ORDER_PARAMS_ERROR.getDesc() );
 	    }
 	    if ( CommonUtil.isEmpty( busDTO.getSelectDeliveryWayId() ) || busDTO.getSelectDeliveryWayId() == 0 ) {
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还没选中配送方式" );
+		throw new BusinessException( ResponseEnums.NO_SELECT_DELIVERY_WAY.getCode(), ResponseEnums.NO_SELECT_DELIVERY_WAY.getDesc() );
 	    }
 	    AddOrderUtil.isJiFenOrFenbi( selectPayWayId, member, busDTO.getProductTotalMoney() );//判断粉币积分是否足够  ，不够 抛异常
 	    int deliverWayId = busDTO.getSelectDeliveryWayId();
@@ -173,7 +182,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 	    if ( deliverWayId == 2 && ( CommonUtil.isEmpty( busDTO.getAppointmentId() ) || CommonUtil.isEmpty( busDTO.getAppointmentUserName() ) || CommonUtil
 			    .isEmpty( busDTO.getAppointmentStartTime() ) || CommonUtil.isEmpty( busDTO.getAppointmentEndTime() ) || CommonUtil
 			    .isEmpty( busDTO.getAppointmentUserPhone() ) ) ) {
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还没填写提货人信息" );
+		throw new BusinessException( ResponseEnums.NO_TIHUO_ERROR.getCode(), ResponseEnums.NO_TIHUO_ERROR.getDesc() );
 	    }
 	    if ( busDTO.getIsSelectCoupons() == 1 || busDTO.getIsSelectDiscount() == 1 || busDTO.getIsSelectFenbi() == 1 || busDTO.getIsSelectJifen() == 1
 			    || busDTO.getIsSelectUnion() == 1 ) {
@@ -185,7 +194,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 	    }
 	    for ( PhoneAddOrderShopDTO shopDTO : busDTO.getShopResultList() ) {//循环店铺集合
 		if ( CommonUtil.isEmpty( shopDTO.getSelectCouponsId() ) ) {
-		    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );
+		    throw new BusinessException( ResponseEnums.ORDER_PARAMS_ERROR.getCode(), ResponseEnums.ORDER_PARAMS_ERROR.getDesc() );
 		}
 		if ( CommonUtil.isNotEmpty( shopDTO.getWxShopId() ) && !wxShopIds.toString().contains( "," + shopDTO.getWxShopId() + "," ) ) {
 		    wxShopIds.append( shopDTO.getWxShopId() ).append( "," );
@@ -215,7 +224,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 		    productDTO.setProTypeId( proTypeId );
 		    //选择快递配送，商品是实物 且  没传地址
 		    if ( deliverWayId == 1 && addressId == 0 && ( CommonUtil.isEmpty( productDTO.getProTypeId() ) || proTypeId == 0 ) ) {//1 快递配送
-			throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您还没选择收货地址" );
+			throw new BusinessException( ResponseEnums.NO_SELECT_SHOUHUO_ADDRESS.getCode(), ResponseEnums.NO_SELECT_SHOUHUO_ADDRESS.getDesc() );
 		    }
 		    //判断批发商品的库存是否足够，不够抛异常
 		    if ( CommonUtil.isNotEmpty( params.getOrderType() ) && params.getOrderType() == 7 && null != productDTO.getPfSpecResultList()
@@ -234,7 +243,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 			    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
 				JSONObject cardObj = JSONObject.parseObject( cardMap.get( "recevieMap" ).toString() );
 				if ( CommonUtil.isNotEmpty( cardObj.get( "guoqi" ) ) && "1".equals( cardObj.getString( "guoqi" ) ) ) {
-				    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "卡券包已过期不能购买" );
+				    throw new BusinessException( ResponseEnums.CAR_RECEVIE_GUOQI_ERROR.getCode(), ResponseEnums.CAR_RECEVIE_GUOQI_ERROR.getDesc());
 				}
 			    }
 			}
@@ -250,7 +259,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 		    }
 
 		    if ( "4".equals( product.getProTypeId().toString() ) && CommonUtil.isEmpty( params.getFlowPhone() ) ) {
-			throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "流量充值，您还没输入手机号码" );
+			throw new BusinessException( ResponseEnums.FLOW_NO_PHONE_ERROR.getCode(), ResponseEnums.FLOW_NO_PHONE_ERROR.getDesc() );
 		    }
 		    if ( "4".equals( product.getProTypeId().toString() ) && CommonUtil.isNotEmpty( params.getFlowPhone() ) ) {//流量充值，判断手机号码
 			ReqGetMobileInfo reqGetMobileInfo = new ReqGetMobileInfo();
@@ -264,10 +273,10 @@ public class MallCommonServiceImpl implements MallCommonService {
 			    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 
 			    if ( "中国联通".equals( mobileInfo.getSupplier() ) && flow.getType() == 10 ) {
-				throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "充值失败,联通号码至少30MB" );
+				throw new BusinessException( ResponseEnums.FLOW_LIANTONG_ERROR.getCode(), ResponseEnums.FLOW_LIANTONG_ERROR.getDesc() );
 			    }
 			    if ( flow.getCount() == 0 ) {
-				throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "流量数量不足，不能充值" );
+				throw new BusinessException( ResponseEnums.FLOW_ERROR.getCode(), ResponseEnums.FLOW_ERROR.getDesc() );
 			    }
 			}
 		    }
@@ -342,6 +351,10 @@ public class MallCommonServiceImpl implements MallCommonService {
 	order.setDiscountMoney( shopDTO.getTotalYouhuiMoney() );
 	order.setFenbiDiscountMoney( shopDTO.getFenbiYouhuiMoney() );
 	order.setJifenDiscountMoney( shopDTO.getJifenYouhuiMoney() );
+	if ( busDTO.getIsSelectUnion() == 1 ) {
+	    //使用了联盟折扣
+	    order.setUnionCardId( busDTO.getUnionCardId() );
+	}
 	return order;
     }
 

@@ -214,7 +214,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 			detailResult.setIsShowApplyReturnButton( OrderUtil.getOrderIsShowReturnButton( order, detail, updateDay ) );
 		    }
 		    //判断订单是否能显示评论按钮  1 能评论
-		    detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment ) );
+		    detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment, detail ) );
 		    detailResultList.add( detailResult );
 		    orderNum += detail.getDetProNum();
 		}
@@ -313,7 +313,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		    detailResult.setIsShowApplyReturnButton( isShowAppllyReturn );
 		}
 		//判断订单是否能显示评论按钮  1 能评论
-		detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment ) );
+		detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment, detail ) );
 		//是否显示退款物流的按钮 1显示
 		detailResult.setIsShowReturnWuLiuButton( OrderUtil.getOrderIsShowReturnWuliuButton( isNowReturn, detailStutas, mallOrderReturn ) );
 		//是否显示修改退款的按钮 1显示

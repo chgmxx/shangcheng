@@ -44,4 +44,10 @@ public class PhoneCommentProductResult implements Serializable {
     @ApiModelProperty( name = "productNum", value = "商品数量" )
     private int productNum;
 
+    @ApiModelProperty( name = "orderType", value = "订单类型" )
+    private int orderType = 0;
+
+    @ApiModelProperty( name = "activityId", value = "活动id" )
+    private int activityId = 0;
+
 }

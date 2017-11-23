@@ -180,7 +180,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	}
     }
 
-    @ApiOperation( value = "查询上门自提地址的接口", notes = "根据上门自提id查询上门自提时间", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "查询上门自提时间的接口", notes = "根据上门自提id查询上门自提时间", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "takeId", value = "上门自提id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "getTakeTheirTime", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )

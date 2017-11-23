@@ -50,6 +50,9 @@ public class PhoneAddOrderDTO implements Serializable {
     @ApiModelProperty( name = "shopCartIds", value = "购物车id，多个用逗号隔开" )
     private String shopCartIds;
 
+    @ApiModelProperty( name = "orderId", value = "订单id" )
+    private Integer orderId;
+
     /******************************** 以下参数 不需要前端传值，用作后台计算和生成订单 ********************************/
 
     @ApiModelProperty( name = "wxShopIds", value = "门店id ，多个以逗号分割" )

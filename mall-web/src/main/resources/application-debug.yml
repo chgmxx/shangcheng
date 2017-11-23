@@ -87,6 +87,8 @@ web:
  domain: mall.yifriend.net
  #网页访问路径
  homeUrl: http://mall.yifriend.net/
+ #手机端页面路径访问
+ phoneWebHomeUrl: http://maint.yifriend.net/html/phone/index.html/#/
 
 ####图片资源ftp 配置
 static:
@@ -108,8 +110,6 @@ article:
 resource:
  url:
   prefix: http://maint.yifriend.net/upload/
-  #手机端页面路径访问
-  phoneWebHomeUrl: http://maint.yifriend.net/html/phone/index.html/#/
 
 #图片存放路径
 res:

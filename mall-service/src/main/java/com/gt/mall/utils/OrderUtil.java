@@ -166,8 +166,8 @@ public class OrderUtil {
      *
      * @return 0 不能评价
      */
-    public static int getOrderIsShowCommentButton( String orderStatus, boolean isReturn, boolean isOpenComment ) {
-	if ( "4".equals( orderStatus ) && isOpenComment && !isReturn ) {
+    public static int getOrderIsShowCommentButton( String orderStatus, boolean isReturn, boolean isOpenComment ,MallOrderDetail detail) {
+	if ( "4".equals( orderStatus ) && isOpenComment && !isReturn && !detail.getAppraiseStatus().toString().equals( "1")) {
 	    return 1;
 	}
 	return 0;

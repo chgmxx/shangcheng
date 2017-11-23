@@ -138,6 +138,9 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
 	    memberAddress.setDfMemberId( member.getId() );
 
 	    MemberAddress address = JSONObject.parseObject( JSON.toJSONString( memberAddress ), MemberAddress.class );
+	    if ( CommonUtil.isEmpty( address.getMemHouseMember() ) ) {
+		address.setMemHouseMember( "" );
+	    }
 	    boolean flag = memberAddressService.addOrUpdateAddre( address );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorMessage( "保存地址信息失败" );
@@ -157,14 +160,16 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "设为默认地址的接口", notes = "设为默认地址", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( @ApiImplicitParam( name = "addressId", value = "地址id，必传", paramType = "query", dataType = "int", required = true ) )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "addressId", value = "地址id，必传", paramType = "query", dataType = "int", required = true ),
+		    @ApiImplicitParam( name = "upMemberId", value = "会员id，必传", paramType = "query", dataType = "int", required = true ) } )
     @ResponseBody
     @PostMapping( value = "defaultAddress", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse defaultAddress( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer addressId ) {
+		    Integer addressId, Integer upMemberId ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
-	    boolean flag = memberAddressService.updateDefault( addressId );
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	    boolean flag = memberAddressService.updateDefault( addressId, member.getId() );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorMessage( "设为默认地址失败" );
 	    }

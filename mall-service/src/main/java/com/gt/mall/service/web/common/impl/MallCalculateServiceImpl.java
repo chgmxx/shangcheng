@@ -53,27 +53,27 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    Integer isSelectCoupon = busDTO.getIsSelectCoupons();//是否选中优惠券 1选中
 	    Integer isSelectJifen = busDTO.getIsSelectJifen();//是否选中积分抵扣 1选中
 	    Integer isSelectFenbi = busDTO.getIsSelectFenbi();//是否选中粉币抵扣 1选中
-	    boolean unionFlag = CommonUtil.isEmpty( isSelectCoupon ) || !"1".equals( isSelectCoupon.toString() );
-	    boolean discountFlag = CommonUtil.isEmpty( isSelectCoupon ) || !"1".equals( isSelectDiscount.toString() );
-	    boolean couponFlag = CommonUtil.isEmpty( isSelectUnion ) || !"1".equals( isSelectUnion.toString() );
-	    boolean jifenFlag = CommonUtil.isEmpty( isSelectJifen ) || !"1".equals( isSelectJifen.toString() );
-	    boolean fenbiFlag = CommonUtil.isEmpty( isSelectFenbi ) || !"1".equals( isSelectFenbi.toString() );
+	    boolean unionFlag = CommonUtil.isNotEmpty( isSelectUnion ) && "1".equals( isSelectUnion.toString() );
+	    boolean discountFlag = CommonUtil.isNotEmpty( isSelectDiscount ) && "1".equals( isSelectDiscount.toString() );
+	    boolean couponFlag = CommonUtil.isNotEmpty( isSelectCoupon ) && "1".equals( isSelectCoupon.toString() );
+	    boolean jifenFlag = CommonUtil.isNotEmpty( isSelectJifen ) && "1".equals( isSelectJifen.toString() );
+	    boolean fenbiFlag = CommonUtil.isNotEmpty( isSelectFenbi ) && "1".equals( isSelectFenbi.toString() );
 	    if ( unionFlag && discountFlag && couponFlag && jifenFlag && fenbiFlag ) {
 		isCalculate = false;
 		break;
 	    }
-	    if(couponFlag){
+	    if ( couponFlag ) {
 		for ( PhoneAddOrderShopDTO shopDTO : busDTO.getShopResultList() ) {
 		    List< Coupons > couponsList = new ArrayList<>();
 		    //多粉优惠券
 		    if ( cardMap.containsKey( "duofenCards" + shopDTO.getWxShopId() ) ) {
 			Object obj = cardMap.get( "duofenCards" + shopDTO.getWxShopId() );
-			couponsList = ToOrderUtil.getDuofenCouponsResult( obj, couponsList );
+			couponsList = ToOrderUtil.getDuofenCouponsResult( obj, couponsList, shopDTO.getSelectCouponsId() );
 		    }
 		    //微信优惠券
 		    if ( cardMap.containsKey( "cardList" + shopDTO.getWxShopId() ) ) {
 			Object obj = cardMap.get( "cardList" + shopDTO.getWxShopId() );
-			couponsList = ToOrderUtil.getWxCouponsResult( obj, couponsList );
+			couponsList = ToOrderUtil.getWxCouponsResult( obj, couponsList, shopDTO.getSelectCouponsId() );
 		    }
 		    shopDTO.setCouponList( couponsList );
 		}
@@ -387,7 +387,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		    couponYouhuiPrice = CommonUtil.subtract( shopYouhuiHouTotalPrice, useCouponTotalPrice );//商品优惠的金额 = 店铺下优惠的总额 - 已经优惠的总价
 		    productYouHuiHouTotalPrice = CommonUtil.subtract( productTotalPrice, couponYouhuiPrice );//商品优惠后的总价 = 商品优惠前的总价 - 商品优惠的金额
 		}
-		productDTO.setUseDiscountYouhuiPrice( couponYouhuiPrice );
+		productDTO.setUseCouponYouhuiPrice( couponYouhuiPrice );
 		productDTO.setProductNewTotalPrice( productYouHuiHouTotalPrice );
 		useCouponTotalPrice += couponYouhuiPrice;
 		useCouponTotalNum++;
@@ -430,7 +430,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    return shopDTOList;
 	}
 	busCanUseFenbiProductPrice = CommonUtil.formatDoubleNumber( busCanUseFenbiProductPrice );
-	JifenAndFenbBean bean = ToOrderUtil.getJifenFenbiParams( jifenFenbiRule, busCanUseFenbiProductPrice, 0, cardMap );
+	JifenAndFenbBean bean = ToOrderUtil.getJifenFenbiParams( jifenFenbiRule, 0, busCanUseFenbiProductPrice, cardMap );
 	if ( bean == null || bean.getFenbiMoney() == 0 || bean.getFenbiNum() == 0 ) {
 	    return shopDTOList;
 	}
@@ -504,7 +504,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    return shopDTOList;
 	}
 	busCanUseJifenProductPrice = CommonUtil.formatDoubleNumber( busCanUseJifenProductPrice );
-	JifenAndFenbBean bean = ToOrderUtil.getJifenFenbiParams( jifenFenbiRule, 0, busCanUseJifenProductPrice, cardMap );
+	JifenAndFenbBean bean = ToOrderUtil.getJifenFenbiParams( jifenFenbiRule, busCanUseJifenProductPrice, 0, cardMap );
 	if ( bean == null || bean.getJifenMoney() == 0 || bean.getJifenNum() == 0 ) {
 	    return shopDTOList;
 	}

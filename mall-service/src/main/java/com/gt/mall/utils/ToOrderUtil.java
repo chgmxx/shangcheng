@@ -11,6 +11,7 @@ import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import com.gt.mall.param.phone.order.PhoneToOrderDTO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -132,7 +133,7 @@ public class ToOrderUtil {
     /**
      * 重组微信优惠券
      */
-    public static List< Coupons > getWxCouponsResult( Object couponObj, List< Coupons > couponsList ) {
+    public static List< Coupons > getWxCouponsResult( Object couponObj, List< Coupons > couponsList, Integer selectCouponId ) {
 	if ( couponsList == null || couponsList.size() == 0 ) {
 	    couponsList = new ArrayList<>();
 	}
@@ -165,6 +166,13 @@ public class ToOrderUtil {
 	    }
 	    coupons.setCouponsName( couponsName );
 	    coupons.setCardType( cardTypes );//卡券类型 0折扣券 1减免券
+	    if ( CommonUtil.isNotEmpty( selectCouponId ) && selectCouponId > 0 ) {
+		if ( selectCouponId.toString().equals( coupons.getId().toString() ) ) {
+		    coupons.setIsDefaultSelect( 1 );
+		    couponsList.add( 0, coupons );
+		    continue;
+		}
+	    }
 	    couponsList.add( coupons );
 	}
 	return couponsList;
@@ -173,7 +181,7 @@ public class ToOrderUtil {
     /**
      * 重组多粉优惠券
      */
-    public static List< Coupons > getDuofenCouponsResult( Object couponObj, List< Coupons > couponsList ) {
+    public static List< Coupons > getDuofenCouponsResult( Object couponObj, List< Coupons > couponsList, Integer selectCouponId ) {
 	if ( couponsList == null || couponsList.size() == 0 ) {
 	    couponsList = new ArrayList<>();
 	}
@@ -187,9 +195,18 @@ public class ToOrderUtil {
 	for ( Map map : duofenList ) {
 	    Coupons coupons = new Coupons();
 	    coupons.setId( CommonUtil.toInteger( map.get( "gId" ) ) );//优惠券id
-	    coupons.setCouponsFrom( 1 );//优惠券来源（ 1 微信优惠券  2多粉优惠券 ）.
+	    coupons.setCouponsFrom( 2 );//优惠券来源（ 1 微信优惠券  2多粉优惠券 ）.
 	    coupons.setImage( CommonUtil.toString( map.get( "image" ) ) );
 	    String cardType = CommonUtil.toString( map.get( "card_type" ) );// 0 折扣券   1 满减券
+	    Date date = new Date(  );
+	    if(CommonUtil.isNotEmpty( map.get( "startTime" ) )){
+		date.setTime( Long.valueOf( map.get( "startTime" ).toString() ) );
+		coupons.setStartTime(  DateTimeKit.format( date,DateTimeKit.DATE_FORMAT_YYYYMMDD_1 ) );
+	    }
+	    if(CommonUtil.isNotEmpty( map.get( "endTime" ) )){
+		date.setTime( Long.valueOf( map.get( "endTime" ).toString() ) );
+		coupons.setEndTime(  DateTimeKit.format( date,DateTimeKit.DATE_FORMAT_YYYYMMDD_1 ) );
+	    }
 	    String couponsName = "";//卡券名称
 	    int cardTypes = -1;
 	    if ( "0".equals( cardType ) ) {//折扣券
@@ -210,8 +227,15 @@ public class ToOrderUtil {
 		}
 	    }
 	    coupons.setCouponsName( couponsName );
-	    couponsList.add( coupons );
 	    coupons.setCardType( cardTypes );//卡券类型 0折扣券 1减免券
+	    if ( CommonUtil.isNotEmpty( selectCouponId ) && selectCouponId > 0 ) {
+		if ( selectCouponId.toString().equals( coupons.getId().toString() ) ) {
+		    coupons.setIsDefaultSelect( 1 );
+		    couponsList.add( 0, coupons );
+		    continue;
+		}
+	    }
+	    couponsList.add( coupons );
 	}
 
 	return couponsList;

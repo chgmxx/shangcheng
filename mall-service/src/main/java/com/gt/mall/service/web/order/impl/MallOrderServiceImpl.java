@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.entityBo.PaySuccessBo;
+import com.gt.entityBo.NewErpPaySuccessBo;
+import com.gt.entityBo.PayTypeBo;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -685,12 +686,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		logStatus = 0;
 		e.printStackTrace();
 	    }
-	} else {
+	}
+	if ( mallOrderList == null || mallOrderList.size() == 0 ) {
 	    MallOrder mallOrder = mallOrderDAO.getOrderById( order.getId() );
 	    mallOrderList.add( mallOrder );
 	}
 
-	if ( ( mallOrderList != null && mallOrderList.size() > 0 && order.getOrderPayWay() != 7 ) || returnLogStatus > 0 ) {
+	if ( ( mallOrderList != null && mallOrderList.size() > 0 && order.getOrderPayWay() != 7 ) || ( returnLogStatus == -1 || returnLogStatus > 0 ) ) {
 	    try {
 		paySuccess( mallOrderList, pbUser, busUser, returnLogStatus );//支付成功回调储值卡支付，积分支付，粉币支付
 	    } catch ( BusinessException e ) {
@@ -822,7 +824,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private void paySuccess( List< MallOrder > mallOrderList, WxPublicUsers pbUser, BusUser user, Integer returnLogStatus ) {
 	MallOrder order = mallOrderList.get( 0 );
 	double discountMoney = 0;//折扣后的金额
-	boolean useCoupon = false;//是否使用优惠券
 	String codes = "";//优惠券code
 	int couponType = -1;//优惠券类型  0 微信  1多粉
 	boolean isFenbi = false;//是否使用粉币
@@ -836,6 +837,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	int userPId = busUserService.getMainBusId( order.getBusUserId() );//查询商家总账号
 	long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	List< Map< String,Object > > erpList = new ArrayList<>();
+
+	List< NewErpPaySuccessBo > successBoList = new ArrayList<>();
 	MallStore store = null;
 	for ( MallOrder mallOrder : mallOrderList ) {
 	    if ( CommonUtil.isEmpty( user ) ) {
@@ -845,12 +848,19 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( !mallOrder.getBusUserId().toString().equals( CommonUtil.toString( userPId ) ) ) {
 		uType = 0;
 	    }
+	    //会员回调
+	    NewErpPaySuccessBo successBo = new NewErpPaySuccessBo();
+	    successBo.setMemberId( order.getBuyerUserId() );//会员id
 	    if ( mallOrder.getMallOrderDetail() != null ) {
 		for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
-		    if ( isJxc == 1 && orderDetail.getProTypeId() == 0 ) {//商家开通进销存，并且还是 实物商品
-			if ( CommonUtil.isEmpty( store ) || store.getId().toString().equals( orderDetail.getShopId() ) ) {
-			    store = mallStoreDAO.selectById( orderDetail.getShopId() );
+
+		    if ( CommonUtil.isEmpty( store ) || store.getId().toString().equals( orderDetail.getShopId() ) ) {
+			store = mallStoreDAO.selectById( orderDetail.getShopId() );
+			if ( CommonUtil.isNotEmpty( store ) && CommonUtil.isNotEmpty( store.getWxShopId() ) ) {
+			    successBo.setStoreId( store.getWxShopId() );//门店id
 			}
+		    }
+		    if ( isJxc == 1 && orderDetail.getProTypeId() == 0 ) {//商家开通进销存，并且还是 实物商品
 			Map< String,Object > erpMap = new HashMap<>();
 			erpMap.put( "uId", user.getId() );
 			erpMap.put( "uType", uType );//用户类型
@@ -864,10 +874,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 		    flowId = orderDetail.getFlowId();
 		    flowRecordId = orderDetail.getFlowRecordId();
-		    discountMoney += orderDetail.getTotalPrice();
+		    discountMoney += CommonUtil.toDouble( orderDetail.getDiscountedPrices() );
 		    //优惠券code
 		    if ( CommonUtil.isNotEmpty( orderDetail.getCouponCode() ) ) {
-			useCoupon = true;
 			if ( CommonUtil.isNotEmpty( codes ) ) {
 			    codes += ",";
 			}
@@ -902,6 +911,40 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		isFenbi = true;
 		fenbiNum += CommonUtil.toDouble( order.getOrderMoney() );
 	    }
+
+	    successBo.setOrderCode( order.getOrderNo() );//订单号
+	    successBo.setTotalMoney( CommonUtil.add( CommonUtil.toDouble( order.getOrderMoney() ), discountMoney ) );//应付金额
+	    successBo.setDiscountMoney( discountMoney );//优惠金额
+	    successBo.setDiscountAfterMoney( CommonUtil.toDouble( order.getOrderMoney() ) );//优惠后金额
+	    successBo.setUcType( CommonUtil.getMemberUcType( order.getOrderType() ) );//消费类型 字典1197
+	    if ( CommonUtil.isNotEmpty( mallOrder.getCouponId() ) ) {
+		successBo.setUseCoupon( 1 );//是否使用优惠券  0不使用 1使用
+		successBo.setCouponType( couponType );//优惠券类型 0微信 1多粉优惠券
+		successBo.setCardId( order.getCouponId() ); //卡券id
+		successBo.setNumber( order.getCouponUseNum() );//卡券使用数量
+	    }
+	    if ( isFenbi ) {
+		successBo.setUserFenbi( 1 );
+		successBo.setFenbiNum( fenbiNum );
+	    }
+	    if ( isJifen ) {
+		successBo.setUserJifen( 1 );
+		successBo.setJifenNum( CommonUtil.toIntegerByDouble( jifenNum ) );
+	    }
+	    PayTypeBo payTypeBo = new PayTypeBo();
+	    int isWallet = 0;
+	    if ( CommonUtil.isNotEmpty( order.getIsWallet() ) ) {
+		isWallet = order.getIsWallet();
+	    }
+	    payTypeBo.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), isWallet ) );//支付方式 查询看字典1198
+	    payTypeBo.setPayMoney( CommonUtil.toDouble( order.getOrderMoney() ) );
+	    List< PayTypeBo > typeBoList = new ArrayList<>();
+	    typeBoList.add( payTypeBo );
+	    successBo.setPayTypeBos( typeBoList );
+
+	    successBo.setDataSource( order.getBuyerUserType() );//数据来源 0:pc端 1:微信 2:uc端 3:小程序 4魔盒 5:ERP
+	    successBo.setIsDiatelyGive( 1 );////是否立即赠送 0延迟送 1立即送
+	    successBoList.add( successBo );
 	}
 
 	if ( returnLogStatus == -1 || returnLogStatus == 1 ) {
@@ -917,13 +960,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	}
-	if ( returnLogStatus == -1 || returnLogStatus == 2 ) {
+	if ( returnLogStatus == -1 || returnLogStatus <= 2 ) {
 	    //微信联盟核销
 	    if ( CommonUtil.isNotEmpty( order.getUnionCardId() ) && order.getUnionCardId() > 0 ) {
 		UnionConsumeParam unionConsumeParam = new UnionConsumeParam();
 		unionConsumeParam.setBusId( user.getId() );//消费的商家id
 		unionConsumeParam.setModel( Constants.UNION_MODEL );//行业模型，商城：1
-		unionConsumeParam.setModelDesc( "商城下单" );//消费的订单描述
+		unionConsumeParam.setModelDesc( "mallxiadan" );//消费的订单描述
 		unionConsumeParam.setOrderNo( order.getOrderNo() );//订单号
 		unionConsumeParam.setGiveIntegralNow( false );//是否可以立刻赠送积分，默认立刻赠送，否则请填0
 		unionConsumeParam.setType( 2 );//线上或线下使用联盟卡 1：线下 2：线上
@@ -933,15 +976,19 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		unionConsumeParam.setOrderType( CommonUtil.getUnionType( order.getOrderPayWay() ) );//支付方式：0：现金 1：微信 2：支付宝， 若有其他支付方式，请告知
 		//	    unionConsumeParam.setUnionId( 0 );
 		unionConsumeParam.setUnionCardId( order.getUnionCardId() );
+		unionConsumeParam.setStatus( 1 );//支付状态：1：未支付 2：已支付 3：已退款
 		try {
-		    unionConsumeService.unionConsume( unionConsumeParam );
+		    boolean flag = unionConsumeService.unionConsume( unionConsumeParam );
+		    if ( !flag ) {
+			throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "商家联盟线上核销异常", "2" );
+		    }
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "商家联盟线上核销异常：" + e.getMessage(), "2" );
 		}
 	    }
 	}
-	if ( returnLogStatus == -1 || returnLogStatus == 3 ) {
+	if ( returnLogStatus == -1 || returnLogStatus <= 3 ) {
 	    if ( erpList != null && erpList.size() > 0 && isJxc == 1 ) {
 		try {
 		    Map< String,Object > erpMap = new HashMap<>();
@@ -960,39 +1007,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	}
-
-	int isWallet = 0;
-	if ( CommonUtil.isNotEmpty( order.getIsWallet() ) ) {
-	    isWallet = order.getIsWallet();
-	}
-	if ( returnLogStatus == -1 || returnLogStatus == 4 ) {
-
-	    //会员回调
-	    PaySuccessBo successBo = new PaySuccessBo();
-	    successBo.setMemberId( order.getBuyerUserId() );//会员id
-	    successBo.setOrderCode( order.getOrderNo() );//订单号
-	    successBo.setTotalMoney( CommonUtil.toDouble( order.getOrderOldMoney() ) );//订单原价
-	    successBo.setDiscountMoney( discountMoney );//折扣后的价格（不包含运费）
-	    successBo.setPay( CommonUtil.toDouble( order.getOrderMoney() ) );
-	    successBo.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), isWallet ) );////支付方式 查询看字典1198
-	    successBo.setUcType( CommonUtil.getMemberUcType( order.getOrderType() ) );//消费类型 字典1197
-	    if ( useCoupon ) {
-		successBo.setUseCoupon( useCoupon );//是否使用优惠券
-		successBo.setCouponType( couponType );//优惠券类型 0微信 1多粉优惠券
-		successBo.setCodes( codes );//使用优惠券code值 用来核销卡券
-	    }
-	    if ( isFenbi ) {
-		successBo.setUserFenbi( isFenbi );
-		successBo.setFenbiNum( fenbiNum );
-	    }
-	    if ( isJifen ) {
-		successBo.setUserJifen( isJifen );
-		successBo.setJifenNum( CommonUtil.toIntegerByDouble( jifenNum ) );
-	    }
-	    successBo.setDelay( 0 ); //会员赠送物品 0延迟送 1立即送  -1 不赠送物品
-	    successBo.setDataSource( order.getBuyerUserType() );
-	    if ( memberService.isMember( order.getBuyerUserId() ) ) {
-		Map< String,Object > payMap = memberPayService.paySuccess( successBo );
+	if ( returnLogStatus == -1 || returnLogStatus <= 4 ) {
+	    if ( memberService.isMember( order.getBuyerUserId() ) || isFenbi || isJifen || CommonUtil.isNotEmpty( order.getCouponId() )) {
+		Map< String,Object > payMap = memberPayService.paySuccessNew( successBoList );
 		if ( CommonUtil.isNotEmpty( payMap ) ) {
 		    if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {
 			logger.error( "会员回调失败" + payMap.get( "errorMsg" ) );
@@ -1010,7 +1027,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	String messages = "支付成功，请您耐心等待，我们将稍后为您发货";
 	if ( CommonUtil.isNotEmpty( order.getReceiveId() ) ) {
 	    if ( CommonUtil.isNotEmpty( order.getReceivePhone() ) ) {
-		String telephone = order.getReceivePhone().toString();
+		String telephone = order.getReceivePhone();
 		MallPaySet paySet = new MallPaySet();
 		paySet.setUserId( member.getBusid() );
 		MallPaySet set = mallPaySetService.selectByUserId( paySet );

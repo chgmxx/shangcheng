@@ -1,6 +1,7 @@
 package com.gt.mall.result.phone.order;
 
 import com.gt.mall.bean.member.JifenAndFenbiRule;
+import com.gt.mall.entity.basic.MallTakeTheirTime;
 import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -80,6 +81,8 @@ public class PhoneToOrderBusResult implements Serializable {
     @ApiModelProperty( name = "memberPhone", value = "粉丝手机号码" )
     private String memberPhone;
 
+    /**********************************去支付返回以下参数****************************************/
+
     @ApiModelProperty( name = "isCanUseMemberDiscount", value = "是否能使用会员折扣1 能" )
     private Integer isCanUseMemberDiscount = 0;
 
@@ -95,6 +98,18 @@ public class PhoneToOrderBusResult implements Serializable {
     @ApiModelProperty( name = "isCanUseCouponDiscount", value = "是否能使用优惠券抵扣  1能" )
     private Integer isCanUseYhqDiscount = 0;
 
+    @ApiModelProperty( name = "isSelectJifen", value = "是否选中积分  1选中" )
+    private Boolean isSelectJifen = false;
+
+    @ApiModelProperty( name = "isSelectFenbi", value = "是否选中粉币  1选中" )
+    private Boolean isSelectFenbi = false;
+
+    @ApiModelProperty( name = "isSelectDiscount", value = "是否选中会员卡折扣 1选中" )
+    private Boolean isSelectDiscount = true;
+
+    @ApiModelProperty( name = "checkedUnion", value = "是否选中联盟 1选中" )
+    private Boolean isSelectUnion = false;
+
     /*********************************联盟卡返回的接口***************************************/
 
     @ApiModelProperty( name = "unionStatus", value = "联盟状态 -1：没有联盟信息，不显示 0：没有关联联盟卡，需绑定联盟卡 1：返回联盟折扣" )
@@ -108,5 +123,30 @@ public class PhoneToOrderBusResult implements Serializable {
 
     @ApiModelProperty( name = "unionCardId", value = "联盟卡id" )
     private Integer unionCardId;
+
+    /*********************************到店自提选择以下返回的接口***************************************/
+    @ApiModelProperty( name = "selectDeliveryWayId", value = "选中配送方式的id  1, 快递配送  2,上门自提  3到店购买" )
+    private Integer selectDeliveryWayId = 0;
+
+    @ApiModelProperty( name = "selectDelivery", value = "默认选中的配送方式" )
+    private PhoneOrderWayDTO selectDelivery;
+
+    @ApiModelProperty( name = "appointmentUserName", value = "提货人姓名" )
+    private String appointmentUserName;
+
+    @ApiModelProperty( name = "appointmentUserPhone", value = "提货人手机号码" )
+    private String appointmentUserPhone;
+
+    //    @ApiModelProperty( name = "appointmentDate", value = "提货日期" )
+    //    private String appointmentDate;
+    //
+    //    @ApiModelProperty( name = "appointmentStartTime", value = "提货开始时间" )
+    //    private String appointmentStartTime;
+    //
+    //    @ApiModelProperty( name = "appointmentEndTime", value = "提货结束时间" )
+    //    private String appointmentEndTime;
+
+    @ApiModelProperty( name = "selectTakeTime", value = "到店自提时间" )
+    private MallTakeTheirTime selectTakeTime;
 
 }

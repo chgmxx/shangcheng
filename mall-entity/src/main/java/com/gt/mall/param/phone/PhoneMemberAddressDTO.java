@@ -47,4 +47,7 @@ public class PhoneMemberAddressDTO implements Serializable {
     @ApiModelProperty( name = "dfMemberId", value = "粉丝id", hidden = true )
     private Integer dfMemberId;
 
+    @ApiModelProperty( name = "memHouseMember", value = "门牌号" )
+    private String memHouseMember;
+
 }

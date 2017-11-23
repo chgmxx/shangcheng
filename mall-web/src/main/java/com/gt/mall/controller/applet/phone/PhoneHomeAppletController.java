@@ -1,9 +1,9 @@
 package com.gt.mall.controller.applet.phone;
 
 import com.alibaba.fastjson.JSON;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.MemberAddressService;
@@ -763,7 +763,8 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.info( "设置默认地址的参数：" + params );
 
 	    int id = CommonUtil.toInteger( params.get( "id" ) );
-	    boolean reuslt = memberAddressService.updateDefault( id );
+	    int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+	    boolean reuslt = memberAddressService.updateDefault( id, memberId );
 	    if ( reuslt ) {
 		resultMap.put( "code", 1 );
 	    } else {

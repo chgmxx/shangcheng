@@ -28,7 +28,7 @@ public class Coupons {
 
     @ApiModelProperty( name = "image", value = "优惠券图片" )
     private String image;
-    
+
     @ApiModelProperty( name = "startTime", value = "开始时间" )
     private String startTime;
 
@@ -51,5 +51,9 @@ public class Coupons {
     /************************************* 以下是折扣券需要用到的参数 *************************************/
     @ApiModelProperty( name = "discount", value = "折扣券的折扣" )
     private double discount;
+
+    @ApiModelProperty( name = "isSelect", value = "是否被默认选中 0 未被默认选中" )
+    private Integer isDefaultSelect = 0;
+
 
 }
