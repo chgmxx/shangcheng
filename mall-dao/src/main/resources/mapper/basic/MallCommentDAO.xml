@@ -163,7 +163,10 @@
         order by c.createTime desc
     </select>
     <select id="selectCommentList" parameterType="Map" resultType="Map">
-        select c.*,o.order_no,d.det_pro_name
+        select c.id, c.order_id as orderId , c.order_detail_id as orderDetailId , c.product_id as productId , c.content, c.is_upload_image as isUploadImage , c.feel, c.descript_start as
+        descriptStart , c.service_start as serviceStart , c.speeed_start as speeedStart, c.rep_p_id as repPId , c.user_id as userId , c.user_type as userType , c.is_rep as isRep ,
+        c.shop_id as shopId, c.createTime, c.is_delete as isDelete , c.check_status as checkStatus
+        ,o.order_no as orderNo,d.det_pro_name as proName
         from t_mall_comment c
         left join t_mall_order o on o.id=c.order_id
         left join t_mall_order_detail d on d.id=c.order_detail_id

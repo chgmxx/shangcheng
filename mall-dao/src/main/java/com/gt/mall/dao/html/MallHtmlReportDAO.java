@@ -3,6 +3,9 @@ package com.gt.mall.dao.html;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.html.MallHtmlReport;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * html 商城举报信息 Mapper 接口
@@ -31,4 +34,13 @@ public interface MallHtmlReportDAO extends BaseMapper<MallHtmlReport> {
      * @return 是否成功
      */
     int updateReportNumByHtmlId(Integer num, Integer html_id, Integer style);
+
+    /**
+     * 得到所有的H5模板列表
+     *
+     * @param params user_id 商家Id，firstNum：页数，maxNum 数量
+     *
+     *
+     */
+    List<Map<String, Object>> selectAllByPage( Map< String,Object > params );
 }

@@ -63,6 +63,7 @@
         <result column="is_sync_erp" property="isSyncErp"/>
         <result column="is_merge_pro_erp" property="isMergeProErp"/>
         <result column="template_id" property="templateId"/>
+        <result column="is_platform_check" property="isPlatformCheck"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -75,7 +76,7 @@
 		is_delete,two_code_path,is_specifica,return_day,is_integral_change_pro,change_integral,views_num,is_show_views,
 		is_return,member_type,is_integral_deduction,is_fenbi_deduction,is_fenbi_change_pro,change_fenbi,
 		pro_label,pro_weight,sales_base,card_type,is_mall_show,flow_id, flow_record_id, erp_pro_id, erp_inv_id, is_sync_erp,
-    	is_merge_pro_erp,template_id
+    	is_merge_pro_erp,template_id,is_platform_check
     </sql>
 
     <select id="countProductByGroup" resultType="Map">
@@ -126,7 +127,7 @@
     <select id="selectByUserId" resultType="java.util.Map">
         select p.id as id, i.image_url as imageUrl,p.pro_name as proName, p.pro_price as proPrice,p.pro_stock_total as
         stockTotal, p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as
-        checkStatus,  p.check_reason as checkReason,p.shop_id as shopId ,p.two_code_path as twoCodePath,p.return_day as returnDay,
+        checkStatus, p.check_reason as checkReason,p.shop_id as shopId ,p.two_code_path as twoCodePath,p.return_day as returnDay,
         views_num as viewsNum, is_show_views as isShowView, is_integral_deduction as isIntegralDeduction,is_fenbi_deduction as isFenbiDeduction,p.is_specifica as isSpecifica,
         p.sales_base as salesBase ,p.erp_pro_id as erpProId,p.erp_inv_id as erpInvId,s.wx_shop_id as wxShopId
         from t_mall_product p
@@ -158,6 +159,24 @@
                 p.shop_id = #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
+        order by p.create_time desc
+        limit #{firstNum},#{maxNum}
+    </select>
+    <!-- 查询所有待审核的商品信息-->
+    <select id="selectWaitCheckList" resultType="java.util.Map">
+        select p.id as id, p.pro_name as proName, p.pro_price as proPrice,p.pro_stock_total as stockTotal ,p.pro_type_id as proTypeId
+        p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish, p.check_status as checkStatus,
+        p.check_reason as checkReason,p.shop_id as shopId, p.is_specifica as isSpecifica, p.is_platform_check as isPlatFormCheck
+        from t_mall_product p
+        where p.is_delete=0 and p.is_mall_show=0
+        <if test="userIds != null">
+            and p.user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+
         order by p.create_time desc
         limit #{firstNum},#{maxNum}
     </select>

@@ -38,6 +38,11 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
     List< Map< String,Object > > selectByUserId( Map< String,Object > params );
 
     /**
+     * 根据用户id来查询商品信息
+     */
+    List< Map< String,Object > > selectWaitCheckList( Map< String,Object > params );
+
+    /**
      * 批量修改商品信息
      *
      * @Title: batchUpdateProduct
@@ -188,7 +193,6 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
      * @return
      */
     List< Map< String,Object > > selectProByUserIdGroupName( Integer userId );
-
 
     void updateProViewNum( Map< String,Object > params );
 

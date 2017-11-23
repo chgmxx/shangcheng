@@ -46,7 +46,7 @@
         </if>
     </select>
     <select id="getCountListByTimes" resultType="java.util.Map">
-        SELECT t.count_date ,SUM(t.income_price) incomeCount
+        SELECT t.count_date as countDate ,SUM(t.income_price) incomeCount
         FROM `t_mall_count_income` t
         WHERE 1=1
         <if test="startDate != null and startDate != ''">

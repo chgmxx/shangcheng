@@ -25,5 +25,24 @@
         WHERE html_id=#{html_id}
         AND style=#{style}
     </select>
+    <select id="selectAllByPage" resultType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>,a.htmlname,a.bus_user_id,a.codeUrl
+        FROM t_mall_html_report r
+        LEFT JOIN t_mall_html a ON r.`html_id`=a.id
+        WHERE 1=1
+        <if test="htmlName != null and htmlname != '' ">
+            and a.htmlname =#{htmlName}
+        </if>
+        <if test="userIds != null">
+           and a.pid in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        limit #{firstNum},#{maxNum}
+
+    </select>
 
 </mapper>
