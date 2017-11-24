@@ -389,7 +389,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	Wrapper< MallProductInventory > wrapper = new EntityWrapper<>();
 	wrapper.where( "is_delete = 0 and product_id = {0} and specifica_ids = {1}", params.get( "proId" ), params.get( "specificaIds" ) );
 	MallProductInventory inventory = new MallProductInventory();
-	inventory.setInvNum( CommonUtil.toInteger( params.get( "total" ) ) );
+	inventory.setInvNum( CommonUtil.toIntegerByDouble( CommonUtil.toDouble( params.get( "total" ) ) ) );
 	inventory.setInvSaleNum( CommonUtil.toInteger( params.get( "saleNum" ) ) );
 	return mallProductInventoryDAO.update( inventory, wrapper );
     }

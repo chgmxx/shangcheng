@@ -201,7 +201,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    seller.setBusUserId( member.getBusid() );
 	    seller.setApplyTime( new Date() );
 	    seller.setAddTime( new Date() );
-	    seller.setMemberId( params.getMemberId() );
+//	    seller.setMemberId( params.getMemberId() );
 
 	    //查询是否已申请超级销售员
 	    MallSeller isMallSeller = mallSellerService.selectMallSeller( seller );

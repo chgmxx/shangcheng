@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.basic.phone;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
+import com.gt.api.util.KeysUtil;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.enums.ResponseEnums;
@@ -69,17 +70,12 @@ public class AuthorizeOrUcLoginController {
 	    }
 	}
 
-	String otherRedisKey = CommonUtil.getCode();
-	Map< String,Object > redisMap = new HashMap<>();
-	redisMap.put( "redisKey", otherRedisKey );
-	redisMap.put( "redisValue", loginDTO.getUrl() );
-	redisMap.put( "setime", 5 * 60 );
-	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpSignKey() );
+	KeysUtil keysUtil = new KeysUtil(  );
+	String requestUrl= keysUtil.getEncString( loginDTO.getUrl() );
 
 	Map< String,Object > queryMap = new HashMap<>();
-	queryMap.put( "otherRedisKey", otherRedisKey );
+	queryMap.put( "returnUrl", requestUrl );
 	queryMap.put( "browser", browser );
-	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
 	queryMap.put( "busId", busId );
 	if ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) {
 	    queryMap.put( "uclogin", uclogin );

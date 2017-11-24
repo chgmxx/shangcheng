@@ -23,6 +23,10 @@ public class PhoneAddOrderProductDTO implements Serializable {
 
     private static final long serialVersionUID = 3450211057951003430L;
 
+
+    @ApiModelProperty( name = "orderDetailId", value = "订单详情id" )
+    private Integer orderDetailId = 0;
+
     @ApiModelProperty( name = "productId", value = "商品id" )
     private int productId;
 

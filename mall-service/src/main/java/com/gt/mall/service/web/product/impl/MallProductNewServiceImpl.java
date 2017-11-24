@@ -287,7 +287,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		if ( CommonUtil.isNotEmpty( obj ) ) {
 		    result.setIsShowCardRecevie( 1 );
 		    result.setIsShowLiJiBuyButton( 1 );
-		    result.setIsShowAddShopButton( 0 );
+		    isShowAddShop = 0;
 		    if ( obj.containsKey( "cardRecevieId" ) ) {//卡券包id
 			result.setCardRecevieId( obj.getInteger( "cardRecevieId" ) );
 		    }
@@ -299,6 +299,9 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		    }
 		}
 	    }
+	}
+	if(product.getProTypeId() != 0){
+	    isShowAddShop = 0;
 	}
 	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
 	paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );

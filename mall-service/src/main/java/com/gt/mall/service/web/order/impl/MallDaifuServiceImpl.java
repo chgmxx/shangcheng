@@ -56,6 +56,7 @@ public class MallDaifuServiceImpl extends BaseServiceImpl< MallDaifuDAO,MallDaif
 	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
 	}
 
+	PhoneGetDaiFuResult daiFuResult = new PhoneGetDaiFuResult();
 	List< PhoneGetDaiFuProductResult > productResultList = new ArrayList<>();
 	for ( MallOrderDetail detail : detailList ) {
 	    PhoneGetDaiFuProductResult productResult = new PhoneGetDaiFuProductResult();
@@ -66,8 +67,8 @@ public class MallDaifuServiceImpl extends BaseServiceImpl< MallDaifuDAO,MallDaif
 	    productResult.setProductNum( detail.getDetProNum() );
 	    productResult.setProductPrice( CommonUtil.toDouble( detail.getDetProPrice() ) );
 	    productResultList.add( productResult );
+	    daiFuResult.setShopId( detail.getShopId() );
 	}
-	PhoneGetDaiFuResult daiFuResult = new PhoneGetDaiFuResult();
 	daiFuResult.setBusId( mallOrder.getBusUserId() );
 	daiFuResult.setOrderMoney( CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
 	daiFuResult.setRecevieUserName( mallOrder.getReceiveName() );
@@ -94,7 +95,12 @@ public class MallDaifuServiceImpl extends BaseServiceImpl< MallDaifuDAO,MallDaif
 		daiFuResult.setDaifuId( df.getId() );
 	    }
 	}
-
+	if ( CommonUtil.isNotEmpty( mallOrder.getOrderType() ) ) {
+	    daiFuResult.setOrderType( mallOrder.getOrderType() );
+	}
+	if ( CommonUtil.isNotEmpty( mallOrder.getGroupBuyId() ) ) {
+	    daiFuResult.setActivityId( mallOrder.getGroupBuyId() );
+	}
 	return daiFuResult;
     }
 }

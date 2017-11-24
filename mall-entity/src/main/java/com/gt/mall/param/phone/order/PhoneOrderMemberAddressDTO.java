@@ -38,4 +38,7 @@ public class PhoneOrderMemberAddressDTO implements Serializable {
     @ApiModelProperty( name = "addressProvince", value = "地址所在的省份" )
     private Integer addressProvince;
 
+    @ApiModelProperty( name = "memberId", value = "粉丝id" )
+    private Integer memberId;
+
 }

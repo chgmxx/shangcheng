@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.basic.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.Member;
@@ -164,12 +163,12 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    mallOrderDetailService.update( orderDetail, wrapper );//评论添加完成，修改订单详情待评价的的状态
 
 	    if ( CommonUtil.isNotEmpty( imageUrls ) ) {
-		List< String > imageList = JSONArray.parseArray( imageUrls, String.class );
-		for ( int i = 0; i < imageList.size(); i++ ) {
+		String[] imageArr = imageUrls.split( "," );
+		for ( int i = 0; i < imageArr.length; i++ ) {
 		    MallImageAssociative ass = new MallImageAssociative();
 		    ass.setAssType( 4 );
 		    ass.setAssId( mallComment.getId() );
-		    ass.setImageUrl( imageList.get( i ) );
+		    ass.setImageUrl( imageArr[i] );
 		    if ( i == 0 ) {
 			ass.setIsMainImages( 1 );
 		    }
@@ -291,6 +290,9 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    return null;
 	}
 	MallOrder order = mallOrderService.selectById( detail.getOrderId() );
+	if ( CommonUtil.isEmpty( order ) ) {
+	    return null;
+	}
 	result.setOrderId( order.getId() );
 	result.setProductId( detail.getProductId() );
 	result.setShopId( detail.getShopId() );
@@ -301,6 +303,12 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    result.setProductSpecifica( detail.getProductSpeciname().replaceAll( ",", "/" ) );
 	}
 	result.setProductNum( detail.getDetProNum() );
+	if ( CommonUtil.isNotEmpty( order.getOrderType() ) ) {
+	    result.setOrderType( order.getOrderType() );
+	}
+	if ( CommonUtil.isNotEmpty( order.getGroupBuyId() ) ) {
+	    result.setActivityId( order.getGroupBuyId() );
+	}
 	return result;
     }
 

@@ -52,6 +52,6 @@ public interface MemberAddressService {
      *
      * @return true 成功
      */
-    boolean updateDefault( int addressId );
+    boolean updateDefault( int addressId,int upMemberId );
 
 }

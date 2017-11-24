@@ -65,8 +65,8 @@ public class MallMemberAddressServiceImpl implements MallMemberAddressService {
 	memberAddress.setMemberPhone( addressMap.get( "memPhone" ).toString() );
 	String address = addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
 			.get( "memAddress" ).toString();
-	if ( CommonUtil.isNotEmpty( addressMap.get( "memZipCode" ) ) ) {
-	    address += addressMap.get( "memZipCode" ).toString();
+	if ( CommonUtil.isNotEmpty( addressMap.get( "memHouseMember" ) ) ) {
+	    address += addressMap.get( "memHouseMember" ).toString();
 	}
 	memberAddress.setMemberAddress( address );
 	memberAddress.setAddressProvince( CommonUtil.toInteger( addressMap.get( "memProvince" ) ) );
@@ -86,6 +86,7 @@ public class MallMemberAddressServiceImpl implements MallMemberAddressService {
 	memberAddressResult.setMemberAddress( address );
 	memberAddressResult.setMemberDefault( memberAddress.getMemDefault() );
 	memberAddressResult.setAddressProvince( memberAddress.getMemProvince() );
+	memberAddressResult.setMemberId( memberAddress.getDfMemberId() );
 	return memberAddressResult;
     }
 

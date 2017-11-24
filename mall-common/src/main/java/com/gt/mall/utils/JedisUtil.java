@@ -145,6 +145,7 @@ public class JedisUtil {
 	    pool = getPool();
 	    jedis = pool.getResource();
 	    value = jedis.get( key );
+//	    return null;
 	} catch ( Exception e ) {
 	    // 释放redis对象
 	    pool.returnBrokenResource( jedis );

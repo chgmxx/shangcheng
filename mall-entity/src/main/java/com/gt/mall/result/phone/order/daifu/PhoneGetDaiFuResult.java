@@ -48,4 +48,12 @@ public class PhoneGetDaiFuResult implements Serializable {
     @ApiModelProperty( name = "daifuId", value = "代付id" )
     private Integer daifuId;
 
+    @ApiModelProperty( name = "shopId", value = "店铺id" )
+    private Integer shopId;
+
+    @ApiModelProperty( name = "orderType", value = "订单类型 1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品" )
+    private int orderType = 0;
+
+    @ApiModelProperty( name = "activityId", value = "活动id" )
+    private int activityId = 0;
 }
