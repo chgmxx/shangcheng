@@ -657,7 +657,8 @@ public class CommonUtil {
 	    if ( ( consumeMoney > 0 || minCosumeMoney > 0 ) && consumeMoney < minCosumeMoney ) {
 		errorMsg = "您的超级销售员申请不通过，且消费额没有达到" + minCosumeMoney + "元，不能继续申请，您的消费额只有" + consumeMoney + "元";
 	    } else {
-		errorMsg = "您的超级销售员申请不通过，确认要重新申请？";
+//		errorMsg = "您的超级销售员申请不通过，确认要重新申请？";
+		errorMsg = "您的审核不通过不可重复发起申请";
 	    }
 	} else if ( sellerStatus == -3 ) {
 	    errorMsg = "您的超级销售员已经被暂停了，不能继续使用";

@@ -178,6 +178,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    result = mallSeckillService.getSeckillProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result );
 	} else if ( params.getType() == 4 ) {//查询拍卖商品
 	    isShowAddShop = 0;
+	    result.setIsShowLiJiBuyButton( 0 );
 	    result = mallAuctionService.getAuctionProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
 	} else if ( params.getType() == 5 ) {//查询粉币商品
 	    if ( "1".equals( product.getIsFenbiChangePro().toString() ) ) {
@@ -206,7 +207,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	}
 
-	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1) ) {//用商品价算会员价
+	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1 ) ) {//用商品价算会员价
 	    double hyPrice = CommonUtil.toDouble( df.format( productPrice * discount ) );
 	    result.setHyPrice( hyPrice );//会员价
 	}
@@ -262,7 +263,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
 		//获取会员的默认地址
 		Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
-		if ( CommonUtil.isNotEmpty( addressMap ) ) {
+		if ( CommonUtil.isNotEmpty( addressMap ) && addressMap.size() > 0 ) {
 		    String address = addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
 				    .get( "memAddress" ).toString();
 		    if ( CommonUtil.isNotEmpty( addressMap.get( "memZipCode" ) ) ) {
@@ -406,7 +407,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		    }
 		}
 		priceMap.put( "inv_price", df.format( invPrice ) );
-		if ( hyPrice > 0 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1) ) {
+		if ( hyPrice > 0 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1 ) ) {
 		    priceMap.put( "hyPrice", df.format( hyPrice ) );
 		}
 		if ( oldPrice > 0 ) {

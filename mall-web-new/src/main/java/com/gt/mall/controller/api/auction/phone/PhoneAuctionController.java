@@ -1,7 +1,6 @@
 package com.gt.mall.controller.api.auction.phone;
 
 import com.gt.api.bean.session.Member;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dao.auction.MallAuctionBiddingDAO;
 import com.gt.mall.dao.auction.MallAuctionOfferDAO;
@@ -17,17 +16,16 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionBiddingDTO;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
-import com.gt.mall.param.phone.integral.PhoneAddIntegralDTO;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionOfferService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.MarginUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -116,10 +114,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    } else {
 		isAliPay = 1;//可以支付宝支付
 	    }
-
-	    result.put( "isWxPay", isWxPay );
-	    result.put( "isAliPay", isAliPay );
-	    result.put( "memType", memType );
+	    result.put( "payWayList", MarginUtil.getPayWay( isWxPay, isAliPay, memType ) );
 	    result.put( "proSpecificaIds", guige.get( "xids" ) );
 	} catch ( Exception e ) {
 	    logger.error( "获取交纳保证金信息异常：" + e.getMessage() );

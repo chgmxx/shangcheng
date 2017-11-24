@@ -56,7 +56,7 @@ public class MallMemberAddressServiceImpl implements MallMemberAddressService {
      */
     @Override
     public PhoneOrderMemberAddressDTO getMemberAddressResult( Map addressMap ) {
-	if ( CommonUtil.isEmpty( addressMap ) ) {
+	if ( CommonUtil.isEmpty( addressMap ) || addressMap.size() == 0 ) {
 	    return null;
 	}
 	PhoneOrderMemberAddressDTO memberAddress = new PhoneOrderMemberAddressDTO();
