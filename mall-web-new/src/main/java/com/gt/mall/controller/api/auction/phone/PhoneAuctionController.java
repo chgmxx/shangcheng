@@ -10,6 +10,7 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
+import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -22,6 +23,7 @@ import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionOfferService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
@@ -69,6 +71,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     private MallAuctionOfferService   auctionOfferService;
     @Autowired
     private MemberService             memberService;
+    @Autowired
+    private MallProductService        mallProductService;
 
     /*交纳保证金接口*/
     @ApiOperation( value = "获取交纳保证金信息", notes = "获取交纳保证金信息" )
@@ -84,25 +88,26 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
-	    Map mapmessage = pageService.querySelct( proId );//获取商品信息
+	    //	    Map mapmessage = pageService.querySelct( proId );//获取商品信息
+	    MallProduct product = mallProductService.selectById( proId );//获取商品信息
 
 	    int shopid = 0;
-	    if ( CommonUtil.isNotEmpty( mapmessage.get( "shop_id" ) ) ) {
-		shopid = CommonUtil.toInteger( mapmessage.get( "shop_id" ).toString() );
+	    if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
+		shopid = product.getShopId();
 		MallRedisUtils.getMallShopId( shopid );
 	    }
 
 	    //查询商品的拍卖信息
 	    MallAuction auction = auctionService.getAuctionByProId( proId, shopid, auctionId );
 	    result.put( "aucMargin", auction.getAucMargin() );
-	    result.put( "mapmessage", mapmessage );
+	    result.put( "product", product );
 
 	    //	    List imagelist = pageService.imageProductList( proId, 1 );//获取轮播图列表
 	    //	    result.put( "imagelist", imagelist.get( 0 ) );
 
-	    String is_specifica = mapmessage.get( "is_specifica" ).toString();
+	    String is_specifica = product.getIsSpecifica().toString();
 	    Map guige = new HashMap();
-	    if ( is_specifica.equals( "1" ) || is_specifica == "1" ) {
+	    if ( is_specifica.equals( "1" ) ) {
 		guige = pageService.productSpecifications( proId, invId + "" );
 	    }
 
