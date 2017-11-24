@@ -407,7 +407,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	if ( CommonUtil.isNotEmpty( seckill.getPriceList() ) ) {
 	    for ( MallSeckillPrice price : seckill.getPriceList() ) {
 		if ( price.getIsJoinGroup() == 1 ) {
-		    if ( result.getInvId() == 0 ) {
+		    if ( result.getInvId() == 0 || result.getInvId() == price.getInvenId()) {
 			seckillPrice = CommonUtil.toDouble( price.getSeckillPrice() );
 			result.setInvId( price.getInvenId() );
 		    }

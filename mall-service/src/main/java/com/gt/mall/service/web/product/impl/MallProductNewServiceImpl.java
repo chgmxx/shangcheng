@@ -206,7 +206,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	}
 
-	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 ) ) {//用商品价算会员价
+	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1) ) {//用商品价算会员价
 	    double hyPrice = CommonUtil.toDouble( df.format( productPrice * discount ) );
 	    result.setHyPrice( hyPrice );//会员价
 	}
@@ -215,7 +215,8 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	}
 	result.setProductName( product.getProName() );//商品名称
 	result.setProductLabel( product.getProLabel() );//商品标签
-	if ( params.getType() == 0 || params.getType() == 7 ) {
+	//普通商品和批发商品，团购商品
+	if ( params.getType() == 0 || params.getType() == 7 || params.getType() == 1 ) {
 	    result.setProductPrice( productPrice );//商品价格
 	    if ( productPrice < productCostPrice && productCostPrice > 0 ) {
 		result.setProductCostPrice( productCostPrice );//商品原价
@@ -300,7 +301,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		}
 	    }
 	}
-	if(product.getProTypeId() != 0){
+	if ( product.getProTypeId() != 0 ) {
 	    isShowAddShop = 0;
 	}
 	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
@@ -362,7 +363,8 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 			for ( MallGroupBuyPrice buyPrice : groupBuyPricesList ) {
 			    if ( buyPrice.getInvenId().toString().equals( priceMap.get( "id" ).toString() ) ) {
 				oldPrice = invPrice;
-				invPrice = CommonUtil.toDouble( buyPrice.getGroupPrice() );
+				//				invPrice = CommonUtil.toDouble( buyPrice.getGroupPrice() );
+				priceMap.put( "groupPrice", buyPrice.getGroupPrice() );
 				groupBuyPricesList.remove( buyPrice );
 				isJoin = buyPrice.getIsJoinGroup();
 				break;
@@ -404,7 +406,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		    }
 		}
 		priceMap.put( "inv_price", df.format( invPrice ) );
-		if ( hyPrice > 0 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 ) ) {
+		if ( hyPrice > 0 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1) ) {
 		    priceMap.put( "hyPrice", df.format( hyPrice ) );
 		}
 		if ( oldPrice > 0 ) {

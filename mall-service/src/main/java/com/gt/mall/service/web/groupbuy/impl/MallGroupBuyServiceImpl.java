@@ -147,7 +147,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	    if ( CommonUtil.isEmpty( groupBuy.getGName() ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "活动名称不能为空" );
 	    }
-	    if ( CommonUtil.isEmpty( groupBuy.getGStartTime() ) ||CommonUtil.isEmpty( groupBuy.getGEndTime() ) ) {
+	    if ( CommonUtil.isEmpty( groupBuy.getGStartTime() ) || CommonUtil.isEmpty( groupBuy.getGEndTime() ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "开始或结束时间不能为空" );
 	    }
 
@@ -468,10 +468,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	if ( CommonUtil.isNotEmpty( groupBuy.getPriceList() ) ) {
 	    for ( MallGroupBuyPrice price : groupBuy.getPriceList() ) {
 		if ( price.getIsJoinGroup() == 1 ) {
-		    if ( result.getInvId() == 0 ) {
+		    if (result.getInvId() == 0 || result.getInvId() == price.getInvenId() ) {
 			groupPrice = CommonUtil.toDouble( price.getGroupPrice() );
 			result.setInvId( price.getInvenId() );
 		    }
+//		    result.setInvId( price.getInvenId() );
 		    if ( result.getInvId() > 0 ) {
 			invIdList.add( price.getInvenId() );
 		    }
@@ -479,7 +480,9 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	    }
 	}
 	result.setInvIdList( invIdList );
-	result.setProductPrice( groupPrice );
+	//	result.setProductPrice( groupPrice );
+	result.setGroupPrice( groupPrice );
+	result.setGroupPeopleNum( groupBuy.getGPeopleNum() );
 
 	Map< String,Object > groupMap = new HashMap<>();
 	groupMap.put( "groupBuyId", groupBuy.getId() );
