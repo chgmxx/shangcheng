@@ -88,6 +88,18 @@ public class MallGroupJoin extends Model< MallGroupJoin > {
     @TableField( "p_join_id" )
     private Integer    pJoinId;
 
+    /**
+     * 参团人名称
+     */
+    @TableField( "join_user_name" )
+    private String joinUserName;
+
+    /**
+     * 参团人头像
+     */
+    @TableField( "join_user_headimgurl" )
+    private String joinUserHeadimgurl;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;
@@ -95,19 +107,21 @@ public class MallGroupJoin extends Model< MallGroupJoin > {
 
     @Override
     public String toString() {
-	return "MallGroupJoin{" +
-			"id=" + id +
-			", groupBuyId=" + groupBuyId +
-			", specificaIds=" + specificaIds +
-			", joinPrice=" + joinPrice +
-			", joinUserId=" + joinUserId +
-			", joinType=" + joinType +
-			", orderId=" + orderId +
-			", orderDetailId=" + orderDetailId +
-			", joinTime=" + joinTime +
-			", joinStatus=" + joinStatus +
-			", productId=" + productId +
-			", pJoinId=" + pJoinId +
-			"}";
+        return "MallGroupJoin{" +
+                        "id=" + id +
+                        ", groupBuyId=" + groupBuyId +
+                        ", specificaIds=" + specificaIds +
+                        ", joinPrice=" + joinPrice +
+                        ", joinUserId=" + joinUserId +
+                        ", joinType=" + joinType +
+                        ", orderId=" + orderId +
+                        ", orderDetailId=" + orderDetailId +
+                        ", joinTime=" + joinTime +
+                        ", joinStatus=" + joinStatus +
+                        ", productId=" + productId +
+                        ", pJoinId=" + pJoinId +
+                        ", joinUserName=" + joinUserName +
+                        ", joinUserHeadimgurl=" + joinUserHeadimgurl +
+                        "}";
     }
 }

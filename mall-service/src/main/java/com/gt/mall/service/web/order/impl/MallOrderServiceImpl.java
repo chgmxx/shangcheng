@@ -1298,10 +1298,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
      * 订单成功添加数据到参团表
      */
     private void addGroupBuyJoin( MallOrder order, MallOrderDetail orderDetail ) {
+	Member member = memberService.findMemberById( order.getBuyerUserId(), null );
 	MallGroupJoin groupJoin = new MallGroupJoin();
 	groupJoin.setGroupBuyId( order.getGroupBuyId() );
 	groupJoin.setJoinTime( new Date() );
 	groupJoin.setJoinUserId( order.getBuyerUserId() );
+	groupJoin.setJoinUserName( member.getNickname() );
+	groupJoin.setJoinUserHeadimgurl( member.getHeadimgurl() );
 	groupJoin.setOrderId( order.getId() );
 	groupJoin.setSpecificaIds( orderDetail.getProductSpecificas() );
 	groupJoin.setProductId( orderDetail.getProductId() );
