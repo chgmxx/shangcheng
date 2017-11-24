@@ -917,7 +917,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    successBo.setDiscountMoney( discountMoney );//优惠金额
 	    successBo.setDiscountAfterMoney( CommonUtil.toDouble( order.getOrderMoney() ) );//优惠后金额
 	    successBo.setUcType( CommonUtil.getMemberUcType( order.getOrderType() ) );//消费类型 字典1197
-	    if ( CommonUtil.isNotEmpty( mallOrder.getCouponId() ) ) {
+	    if ( CommonUtil.isNotEmpty( mallOrder.getCouponId() ) && mallOrder.getCouponId() > 0 ) {
 		successBo.setUseCoupon( 1 );//是否使用优惠券  0不使用 1使用
 		successBo.setCouponType( couponType );//优惠券类型 0微信 1多粉优惠券
 		successBo.setCardId( order.getCouponId() ); //卡券id

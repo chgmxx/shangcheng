@@ -144,6 +144,12 @@ public class PhoneProductDetailResult implements Serializable {
     @ApiModelProperty( name = "joinList", value = "参团集合" )
     private List< Map< String,Object > > joinList;
 
+    @ApiModelProperty( name = "groupPrice", value = "团购价格" )
+    private double groupPrice = 0;
+
+    @ApiModelProperty( name = "groupPeopleNum", value = "拼团人数" )
+    private int groupPeopleNum = 0;
+
     /*********************************** 以下参数预售商品需要 ***********************************/
 
     @ApiModelProperty( name = "presaleResult", value = "预售结果" )
