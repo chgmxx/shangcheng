@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 竞拍保证金参数
@@ -35,7 +36,7 @@ public class PhoneAddAuctionMarginDTO implements Serializable {
     @ApiModelProperty( name = "marginMoney", value = "保证金金额", required = true )
     @NotNull( message = "保证金金额不能为空" )
     @Min( value = 1, message = "保证金金额不能小于1" )
-    private Integer marginMoney;
+    private BigDecimal marginMoney;
 
     @ApiModelProperty( name = "proName", value = "商品名称", required = true )
     private String proName;
@@ -47,6 +48,6 @@ public class PhoneAddAuctionMarginDTO implements Serializable {
     private String proSpecificaIds;
 
     @ApiModelProperty( name = "payWay", value = "支付方式 1 微信支付 2 储值卡支付  3 支付宝支付", required = true )
-    private String payWay;
+    private Integer payWay;
 
 }

@@ -29,11 +29,11 @@ public class MarginUtil {
 	    payWayList.add( result );
 	}
 	if ( isAliPay == 1 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 9, "支付宝支付", "alipay" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "支付宝支付", "alipay" );
 	    payWayList.add( result );
 	}
 	if ( memType == 3 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "储值卡支付", "chuzhika" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "储值卡支付", "chuzhika" );
 	    payWayList.add( result );
 	}
 	return payWayList;

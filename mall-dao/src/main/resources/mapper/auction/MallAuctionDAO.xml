@@ -278,9 +278,15 @@
         <include refid="Base_Column_List"></include>
         from t_mall_auction g
         where g.is_delete = 0 and g.is_use = 1
+        <if test="productId != null">
         and g.product_id=#{productId}
+        </if>
+        <if test="shopId != null">
         and g.shop_id=#{shopId}
+        </if>
+        <if test="id != null">
         and g.id=#{id}
+        </if>
         limit 1
     </select>
     <select id="selectCountByShopId" parameterType="Map" resultType="java.lang.Integer">

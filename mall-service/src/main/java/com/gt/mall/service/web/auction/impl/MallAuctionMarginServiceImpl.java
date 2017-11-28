@@ -11,6 +11,7 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
@@ -232,18 +233,15 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	} else {//已经交纳了保证金，无需再次交纳
 	    if ( aucMargin.getMarginStatus().toString().equals( "1" ) ) {
 		result.put( "isReturn", "1" );
-		result.put( "errorMsg", "您已经交纳了保证金，无需再次交纳" );
-		result.put( "code", ResponseEnums.ERROR.getCode() );
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "您已经交纳了保证金，无需再次交纳" );
 	    } else {
 		margin.setId( aucMargin.getId() );
 		auctionMarginDAO.updateById( margin );
-		result.put( "code", ResponseEnums.SUCCESS.getCode() );
 		margin.setAucNo( aucMargin.getAucNo() );
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( margin.getId() ) ) {
 	    if ( margin.getId() > 0 ) {
-		result.put( "code", ResponseEnums.SUCCESS.getCode() );
 		result.put( "id", margin.getId() );
 		result.put( "no", margin.getAucNo() );
 		result.put( "payWay", margin.getPayWay() );
@@ -256,12 +254,9 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		    Map< String,Object > params = new HashMap<>();
 		    params.put( "out_trade_no", margin.getAucNo() );
 		    paySuccessAuction( params );
-		    result.put( "payUrl", "/mAuction/79B4DE7C/myMargin.do?busId=" + member.getBusid() );
 		}
-
 	    } else {
-		result.put( "code", ResponseEnums.ERROR.getCode() );
-		result.put( "errorMsg", "交纳保证金失败" );
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "交纳保证金失败" );
 	    }
 	}
 	return result;

@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
@@ -21,7 +21,6 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
-import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.pifa.MallPifa;
@@ -1164,16 +1163,19 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    }
 		}
 		MallProductInventory inventory = mallProductInventoryService.selectBySpecIds( proId, proSpecId );
-		maps.put( "id", inventory.getId() );
-		maps.put( "inv_price", inventory.getInvPrice() );
-		maps.put( "inv_num", inventory.getInvNum() );
-		maps.put( "erp_inv_id", inventory.getErpInvId() );
-		maps.put( "erp_specvalue_id", inventory.getErpSpecvalueId() );
+		if(CommonUtil.isNotEmpty( inventory )){
+		    maps.put( "id", inventory.getId() );
+		    maps.put( "inv_price", inventory.getInvPrice() );
+		    maps.put( "inv_num", inventory.getInvNum() );
+		    maps.put( "erp_inv_id", inventory.getErpInvId() );
+		    maps.put( "erp_specvalue_id", inventory.getErpSpecvalueId() );
 
-		maps.put( "specifica_values", specifica_value.toString() );
-		maps.put( "specificaName", specificaName );
-		if ( CommonUtil.isNotEmpty( specificaImageUrl ) ) {
-		    maps.put( "specifica_img_url", specificaImageUrl );
+		    maps.put( "specifica_values", specifica_value.toString() );
+		    maps.put( "specificaName", specificaName );
+		    if ( CommonUtil.isNotEmpty( specificaImageUrl ) ) {
+			maps.put( "specifica_img_url", specificaImageUrl );
+		    }
+
 		}
 	    }
 	}

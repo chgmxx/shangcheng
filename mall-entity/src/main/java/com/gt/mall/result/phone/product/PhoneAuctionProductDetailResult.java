@@ -110,4 +110,7 @@ public class PhoneAuctionProductDetailResult implements Serializable {
     @ApiModelProperty( name = "isShowDeposit", value = "是否显示缴纳保证金的按钮  1显示" )
     private int isShowDeposit = -1;
 
+    @ApiModelProperty( name = "nowPrice", value = "当前价" )
+    private double nowPrice = 0;
+
 }
