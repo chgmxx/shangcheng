@@ -1,5 +1,6 @@
 package com.gt.mall.config;
 
+import com.gt.mall.config.interceptor.ApiInterceptor;
 import com.gt.mall.config.interceptor.BackInterceptor;
 import com.gt.mall.config.interceptor.MyInterceptor;
 import com.gt.mall.config.interceptor.PhoneInterceptor;
@@ -27,9 +28,10 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
 
 	//	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
 
-	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" ).excludePathPatterns( "/**/E9lM9uM4ct/**", "/**/L6tgXlBFeK/**" );
+	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" ).excludePathPatterns( "/**/E9lM9uM4ct/**", "/**/L6tgXlBFeK/**", "/**/mallAPI/**" );
 	registry.addInterceptor( new BackInterceptor() ).addPathPatterns( "/**/E9lM9uM4ct/**" );
 	registry.addInterceptor( new PhoneInterceptor() ).addPathPatterns( "/**/L6tgXlBFeK/**" );
+	registry.addInterceptor( new ApiInterceptor() ).addPathPatterns( "/**/mallAPI/**" );
 
 	     	/*registry.addInterceptor(new SysLogInterceptor()).addPathPatterns("*//**");*/
 
