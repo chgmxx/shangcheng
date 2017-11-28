@@ -534,7 +534,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	Map cardMap = null;
 	double discount = 0;
 	//只有实体物品才去查询信息
-	if ( mallShopList != null && mallShopList.size() > 0 && proTypeId == 0 && type == 0 ) {
+	if ( mallShopList != null && mallShopList.size() > 0 && proTypeId == 0 ) {
 	    StringBuilder wxShopIds = new StringBuilder( "," );
 	    for ( Map< String,Object > maps : mallShopList ) {
 		if ( CommonUtil.isNotEmpty( maps.get( "wxShopId" ) ) && !wxShopIds.toString().contains( "," + maps.get( "wxShopId" ) + "," ) ) {

@@ -525,7 +525,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	}*/
 	MallAuction auction = getAuctionByProId( proId, shopId, activityId );
 	if ( CommonUtil.isEmpty( auction ) ) {
-	    return result;
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), ResponseEnums.ACTIVITY_ERROR.getDesc() );
 	}
 	result.setActivityTimes( auction.getTimes() );
 	result.setActivityId( auction.getId() );
@@ -537,13 +537,19 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	int isShowMargin = 0;
 	PhoneAuctionProductDetailResult auctionResult = new PhoneAuctionProductDetailResult();
 
-	MallAuctionMargin margin = new MallAuctionMargin();
-	margin.setAucId( auction.getId() );
-	margin.setMarginStatus( 1 );
-	//查询缴纳保证金数量
-	List< MallAuctionMargin > marginList = mallAuctionMarginService.getMyAuction( margin );
+	List< MallAuctionMargin > marginList = null;
+	if ( CommonUtil.isNotEmpty( member ) ) {
+
+	    MallAuctionMargin margin = new MallAuctionMargin();
+	    margin.setAucId( auction.getId() );
+	    margin.setMarginStatus( 1 );
+	    margin.setUserId( member.getId() );
+	    //查询缴纳保证金数量
+	    marginList = mallAuctionMarginService.getMyAuction( margin );
+	}
 	MallAuctionBidding bid = new MallAuctionBidding();
 	bid.setAucId( auction.getId() );
+	int isOffer = 0;
 	if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
 	    //查询出价次数
 	    MallAuctionOffer offer = new MallAuctionOffer();
@@ -573,6 +579,13 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		    }
 		}
 	    }
+	    if ( auction.getIsMargin() == 0 || ( auction.getIsMargin() == 1 && marginList.size() > 0 ) ) {
+		isOffer = 1;
+		if ( auctionResult.getIsWin() == -1 ) {//还未胜出
+		    auction.setNowPrice( auction.getNowPrice() + CommonUtil.toDouble( auction.getAucAddPrice() ) );
+		    auctionResult.setIsChujia( 1 );
+		}
+	    }
 	} else {//降价拍
 	    List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
 	    if ( bidList != null && bidList.size() > 0 ) {
@@ -594,6 +607,9 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    auctionResult.setAucLowerPriceTime( auction.getAucLowerPriceTime() );//降价时间（每多少分钟）
 	    auctionResult.setAucLowerPrice( CommonUtil.toDouble( auction.getAucLowerPrice() ) );//降价金额（每多少分钟降价多少元）
 	    aucTypeVal = "降价拍卖";
+	    if ( marginList.size() > 0 && auction.getIsMargin() == 1 ) {
+		auctionResult.setIsLijiPai( 1 );
+	    }
 	} else {
 	    auctionResult.setAucAddPrice( CommonUtil.toDouble( auction.getAucAddPrice() ) );//加价幅度
 	}
@@ -603,6 +619,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    isShowMargin = auction.getIsMargin();
 	}
 	auctionResult.setIsShowDeposit( isShowMargin );
+	auctionResult.setNowPrice( auction.getNowPrice() );
 
 	result.setAuctionResult( auctionResult );
 
@@ -622,9 +639,9 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	}
 	if ( auction.getStatus() == 0 ) {
 	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的拍卖商品活动还未开始" );
-	} else if ( auction.getStatus() == -1 ) {
+	} /*else if ( auction.getStatus() == -1 ) {
 	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的拍卖商品活动已结束" );
-	}
+	}*/
 	int maxBuyNum = auction.getAucRestrictionNum();
 	if ( maxBuyNum > 0 && memberBuyNum > -1 ) {
 	    if ( memberBuyNum + productNum > maxBuyNum ) {

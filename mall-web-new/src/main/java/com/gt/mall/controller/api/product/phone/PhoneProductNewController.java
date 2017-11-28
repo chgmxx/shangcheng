@@ -247,6 +247,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		}
 	    }
 
+	} catch ( BusinessException be ) {
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "商品信息接口异常：" + e.getMessage() );
 	    e.printStackTrace();

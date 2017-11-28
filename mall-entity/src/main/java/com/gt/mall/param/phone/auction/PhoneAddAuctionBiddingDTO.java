@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 兑换商品参数
@@ -35,7 +36,7 @@ public class PhoneAddAuctionBiddingDTO implements Serializable {
     @ApiModelProperty( name = "aucPrice", value = "中拍价格", required = true )
     @NotNull( message = "中拍价格不能为空" )
     @Min( value = 1, message = "中拍价格不能小于1" )
-    private Integer aucPrice;
+    private BigDecimal aucPrice;
 
     @ApiModelProperty( name = "proName", value = "商品名称", required = true )
     private String proName;

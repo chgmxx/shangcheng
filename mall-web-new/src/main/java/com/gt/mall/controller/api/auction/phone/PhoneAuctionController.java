@@ -11,7 +11,6 @@ import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
 import com.gt.mall.entity.product.MallProduct;
-import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
@@ -142,10 +141,9 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    result = auctionMarginService.addMargin( marginDTO, member );
-	    if ( !result.get( "code" ).toString().equals( "1" ) ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "errorMsg" ).toString() );
-	    }
-	} catch ( Exception e ) {
+	}catch ( BusinessException be ) {
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
+	}  catch ( Exception e ) {
 	    logger.error( "兑换积分异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "兑换积分异常" );

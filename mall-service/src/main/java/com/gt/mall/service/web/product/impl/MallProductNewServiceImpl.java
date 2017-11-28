@@ -270,9 +270,13 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 			address += addressMap.get( "memZipCode" ).toString();
 		    }
 		    result.setMemberAddress( address );
-		    provinces = addressMap.get( "memProvince" ).toString();
-		    memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
-		    memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+		    if(CommonUtil.isNotEmpty( addressMap.get( "memProvince" ) )){
+			provinces = addressMap.get( "memProvince" ).toString();
+		    }
+		    if(CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" )  )){
+			memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
+			memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+		    }
 		}
 	    }
 	}
@@ -306,7 +310,9 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    isShowAddShop = 0;
 	}
 	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
-	paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );
+	if(CommonUtil.isNotEmpty( provinces )){
+	    paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );
+	}
 	paramsDto.setToshop( params.getToShop() );
 	paramsDto.setJuli( CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude ) );
 	PhoneFreightShopDTO freightShopDTO = new PhoneFreightShopDTO();//运费店铺传参
