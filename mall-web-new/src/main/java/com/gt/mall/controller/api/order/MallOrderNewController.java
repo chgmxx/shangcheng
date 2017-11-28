@@ -110,10 +110,11 @@ public class MallOrderNewController extends BaseController {
     }
 
     @ApiOperation( value = "获取各状态下订单总数", notes = "获取各状态下订单总数" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "orderType", value = "页面 0所有订单  -1维权订单 默认0", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/countStatus", method = RequestMethod.POST )
-    public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response, Integer shopId ) {
+    public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer orderType ) {
 	BusUser user = MallSessionUtils.getLoginUser( request );
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -125,50 +126,51 @@ public class MallOrderNewController extends BaseController {
 	    if ( CommonUtil.isEmpty( shopId ) ) {
 		params.put( "shoplist", shoplist );
 	    }
-	    //全部
-	    Integer status_total = mallOrderService.countStatus( params );
-	    //待付款
-	    params.put( "status", "1" );
-	    Integer status1 = mallOrderService.countStatus( params );
-	    //待发货
-	    params.put( "status", "2" );
-	    Integer status2 = mallOrderService.countStatus( params );
-	    //已发货
-	    params.put( "status", "3" );
-	    Integer status3 = mallOrderService.countStatus( params );
-	    //已完成
-	    params.put( "status", "4" );
-	    Integer status4 = mallOrderService.countStatus( params );
-	    //已关闭
-	    params.put( "status", "5" );
-	    Integer status5 = mallOrderService.countStatus( params );
+	    if ( orderType == -1 ) {
+		//退款全部
+		params.put( "status", "7" );
+		Integer status7 = mallOrderService.countStatus( params );
+		//8退款处理中
+		params.put( "status", "8" );
+		Integer status8 = mallOrderService.countStatus( params );
+		//退款结束
+		params.put( "status", "9" );
+		Integer status9 = mallOrderService.countStatus( params );
 
-	    //退款中
-	    params.put( "status", "6" );
-	    Integer status6 = mallOrderService.countStatus( params );
-	    //退款全部
-	    params.put( "status", "7" );
-	    Integer status7 = mallOrderService.countStatus( params );
-	    //8退款处理中
-	    params.put( "status", "8" );
-	    Integer status8 = mallOrderService.countStatus( params );
-	    //退款结束
-	    params.put( "status", "9" );
-	    Integer status9 = mallOrderService.countStatus( params );
+		result.put( "status7", status7 );
+		result.put( "status8", status8 );
+		result.put( "status9", status9 );
+	    } else {
+		//全部
+		Integer status_total = mallOrderService.countStatus( params );
+		//待付款
+		params.put( "status", "1" );
+		Integer status1 = mallOrderService.countStatus( params );
+		//待发货
+		params.put( "status", "2" );
+		Integer status2 = mallOrderService.countStatus( params );
+		//已发货
+		params.put( "status", "3" );
+		Integer status3 = mallOrderService.countStatus( params );
+		//已完成
+		params.put( "status", "4" );
+		Integer status4 = mallOrderService.countStatus( params );
+		//已关闭
+		params.put( "status", "5" );
+		Integer status5 = mallOrderService.countStatus( params );
+		//退款中
+		params.put( "status", "6" );
+		Integer status6 = mallOrderService.countStatus( params );
 
-	    result.put( "status_total", status_total );
-	    result.put( "status1", status1 );
-	    result.put( "status2", status2 );
-	    result.put( "status3", status3 );
-	    result.put( "status4", status4 );
-	    result.put( "status5", status5 );
-	    result.put( "status6", status6 );
-	    result.put( "status7", status7 );
-	    result.put( "status8", status8 );
-	    result.put( "status9", status9 );
-	} catch ( Exception e )
-
-	{
+		result.put( "status_total", status_total );
+		result.put( "status1", status1 );
+		result.put( "status2", status2 );
+		result.put( "status3", status3 );
+		result.put( "status4", status4 );
+		result.put( "status5", status5 );
+		result.put( "status6", status6 );
+	    }
+	} catch ( Exception e ) {
 	    logger.error( "获取各状态下订单总数异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取各状态下订单总数异常" );

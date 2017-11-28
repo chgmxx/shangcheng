@@ -44,7 +44,7 @@ public class ServerResponse< T > implements Serializable {
 
     /*前端web域名*/
     @ApiModelProperty( name = "webPath", value = "前端web域名" )
-    private String webPath = PropertiesUtil.getHomeUrl();
+    private String webPath = PropertiesUtil.getPhoneWebHomeUrl();
 
     /*泛型数据*/
     @ApiModelProperty( name = "data", value = "返回数据" )
