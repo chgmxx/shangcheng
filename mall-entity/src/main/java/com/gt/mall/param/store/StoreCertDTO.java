@@ -63,6 +63,9 @@ public class StoreCertDTO {
     @ApiModelProperty( name = "certImgUrl", value = "主体为企业必传 商标注册通知书,商标注册证，商标使用许可合同，渠道授权书，证明函文件" )
     private String certImgUrl;
 
+    @ApiModelProperty( name = "tradeMarkImg", value = "商标注册证 旗舰店使用" )
+    private String tradeMarkImg;
+
     @ApiModelProperty( name = "isCertDoc", value = "是否有补充资料  0无 1有" )
     private Integer isCertDoc;
 

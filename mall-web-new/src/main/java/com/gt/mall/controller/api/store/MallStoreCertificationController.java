@@ -128,7 +128,9 @@ public class MallStoreCertificationController extends BaseController {
 		String value = map.getItem_value();
 		JSONObject foorerObj = JSONObject.fromObject( value );
 		map.setValue( foorerObj.get( "title" ).toString() );//名称
-		map.setChildList( foorerObj.getJSONArray( "array" ) );//子级
+		if ( CommonUtil.isNotEmpty( foorerObj.get( "array" ) ) ) {
+		    map.setChildList( foorerObj.getJSONArray( "array" ) );//子级
+		}
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取认证的店铺类型异常：" + e.getMessage() );

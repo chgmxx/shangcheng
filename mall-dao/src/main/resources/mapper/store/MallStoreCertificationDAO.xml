@@ -17,6 +17,7 @@
         <result column="sto_category" property="stoCategory"/>
         <result column="cert_type" property="certType"/>
         <result column="cert_img_url" property="certImgUrl"/>
+        <result column="trade_mark_img" property="tradeMarkImg"/>
         <result column="is_cert_doc" property="isCertDoc"/>
         <result column="is_delete" property="isDelete"/>
         <result column="create_time" property="createTime"/>
@@ -26,7 +27,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, sto_id, sto_type, name, company_name, id_number,id_card_front ,id_card_back , bus_license_img , bus_license_no , sto_category ,
-        cert_type , cert_img_url, is_cert_doc , is_delete,create_time,check_status
+        cert_type , cert_img_url,trade_mark_img, is_cert_doc , is_delete,create_time,check_status
     </sql>
     <select id="selectByStoreId" parameterType="com.gt.mall.entity.store.MallStoreCertification" resultMap="BaseResultMap">
         select

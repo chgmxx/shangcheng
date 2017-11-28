@@ -93,6 +93,11 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
     @TableField( "cert_img_url" )
     private String  certImgUrl;
     /**
+     * 商标注册证 旗舰店2 认证8使用
+     */
+    @TableField( "trade_mark_img" )
+    private String  tradeMarkImg;
+    /**
      * 是否有补充资料  0无 1有
      */
     @TableField( "is_cert_doc" )
