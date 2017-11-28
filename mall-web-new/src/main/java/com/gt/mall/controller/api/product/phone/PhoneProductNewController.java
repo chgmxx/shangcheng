@@ -11,6 +11,7 @@ import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.*;
+import com.gt.mall.result.applet.param.AppletGroupDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
@@ -105,7 +106,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @RequestMapping( value = "classAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< List< Map< String,Object > > > classAll( HttpServletRequest request, @Valid @ModelAttribute PhoneGroupDTO params ) {
+    public ServerResponse< List< AppletGroupDTO > > classAll( HttpServletRequest request, @Valid @ModelAttribute PhoneGroupDTO params ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
 	    map.put( "shopId", params.getShopId() );
@@ -115,7 +116,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		map.put( "classId", params.getGroupId() );
 	    }
 	    map.put( "busId", params.getBusId() );
-	    List< Map< String,Object > > classList = mallHomeAppletService.selectGroupsByShopId( map );
+	    List< AppletGroupDTO > classList = mallHomeAppletService.selectGroupsByShopId( map );
 
 	    MallRedisUtils.getMallShopId( params.getShopId() );
 
@@ -305,11 +306,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "查询商品评价接口", notes = "商品详情页面查看商品评价", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ),
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "feel", value = "评论状态 1好评 0中评 -1差评", paramType = "query", dataType = "String" )
-    } )
+		    @ApiImplicitParam( name = "feel", value = "评论状态 1好评 0中评 -1差评", paramType = "query", dataType = "String" ) } )
     @ResponseBody
     @PostMapping( value = "getProductComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getProductComment( HttpServletRequest request, int busId, int productId, String feel ) {

@@ -1,10 +1,20 @@
 package com.gt.mall.controller.applet.phone;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.MemberAddress;
+import com.gt.mall.param.applet.AppletAddReturnOrderDTO;
+import com.gt.mall.param.applet.AppletSubmitOrderDTO;
+import com.gt.mall.param.applet.AppletToSubmitOrderDTO;
+import com.gt.mall.param.applet.ProductSearchDTO;
+import com.gt.mall.result.applet.AppletMallIndexResult;
+import com.gt.mall.result.applet.AppletProductDetailResult;
+import com.gt.mall.result.applet.AppletShopResult;
+import com.gt.mall.result.applet.param.AppletGroupDTO;
+import com.gt.mall.result.applet.param.AppletImageDTO;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -17,10 +27,10 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,19 +88,23 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @RequestMapping( "79B4DE7C/shopList" )
-    public void shopList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void shopList( HttpServletRequest request, HttpServletResponse response, Integer userId, String longitude, String latitude ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "userId", userId );
+	    params.put( "longitude", longitude );
+	    params.put( "latitude", latitude );
 	    logger.info( "进入店铺列表的参数：" + params );
 	    //查询店铺列表
-	    List< Map< String,Object > > shopList = mallHomeAppletService.getShopList( params );
+	    List< AppletShopResult > shopList = mallHomeAppletService.getShopList( params );
 	    resultMap.put( "shopList", shopList );
 
 	} catch ( Exception e ) {
 	    logger.error( "进入店铺列表异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -99,43 +113,46 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param shopId
+     * @param memberId
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/pageIndex" )
-    public void pageIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< String,Object > resultMap = new HashMap< String,Object >();
+    public void pageIndex( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId ) throws IOException {
+	AppletMallIndexResult indexResult = new AppletMallIndexResult();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "shopId", shopId );
+	    params.put( "memberId", memberId );
+	    EntityDtoConverter converter = new EntityDtoConverter();
 	    logger.info( "进入商城首页参数：" + params );
 	    //查询商品一级分类
 	    params.put( "isFrist", 1 );
-	    List< Map< String,Object > > firstList = mallHomeAppletService.selectGroupsByShopId( params );
-	    resultMap.put( "firstList", firstList );
+	    List< AppletGroupDTO > firstList = mallHomeAppletService.selectGroupsByShopId( params );
+	    indexResult.setFirstList( firstList );
 
 	    //查询全部商品
 	    PageUtil productPage = mallHomeAppletService.productAllList( params );
-	    resultMap.put( "productPage", productPage );
-
+	    indexResult.setProductPage( productPage );
 	    //查询商品活动
 	    Map< String,Object > activityMap = mallHomeAppletService.getActivityList( params );
-	    resultMap.putAll( activityMap );
-	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
-		int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
+	    converter.mapToBean( activityMap, indexResult );
+	    if ( CommonUtil.isNotEmpty( memberId ) ) {
 		if ( memberId > 0 ) {
 		    Member member = memberService.findMemberById( memberId, null );
 		    params.put( "userId", member.getBusid() );
 		    //查询首页轮播图
-		    List< Map< String,Object > > imageList = mallHomeAppletService.getAppletImageByBusUser( params );
-		    resultMap.put( "imageList", imageList );
+		    List< AppletImageDTO > imageList = mallHomeAppletService.getAppletImageByBusUser( params );
+		    indexResult.setImageList( imageList );
 		}
 	    }
-	    resultMap.put( "imageHttp", PropertiesUtil.getResourceUrl() );
+	    indexResult.setImageHttp( PropertiesUtil.getResourceUrl() );
 	} catch ( Exception e ) {
 	    logger.error( "商城小程序首页异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( indexResult ) ) );
 	}
     }
 
@@ -144,16 +161,19 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param searchDTO
      */
     @RequestMapping( "/79B4DE7C/productPage" )
-    public void productPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public void productPage( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) {
 	try {
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    Map< String,Object > params = new HashMap<>();
+	    params = converter.beanToMap( searchDTO );
 	    logger.info( "分页查询商品参数：" + params );
 	    //分页查询商品
 	    PageUtil productPage = mallHomeAppletService.productAllList( params );
 
-	    CommonUtil.write( response, JSONObject.fromObject( productPage ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( productPage ) ) );
 
 	} catch ( Exception e ) {
 	    logger.error( "分页查询商品异常。。。" + e.getMessage() );
@@ -166,30 +186,34 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param classId
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/classAll" )
-    public void classAll( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void classAll( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer classId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "shopId", shopId );
+	    params.put( "memberId", memberId );
+	    params.put( "classId", classId );
 	    logger.info( "进入全部分类页面参数：" + params );
 	    //查询子分类
-	    List< Map< String,Object > > classList = mallHomeAppletService.selectGroupsByShopId( params );
+	    List< AppletGroupDTO > classList = mallHomeAppletService.selectGroupsByShopId( params );
 	    resultMap.put( "classList", classList );
 
 	    //查询商品一级分类
 	    params.put( "isFrist", 1 );
 	    params.remove( "classId" );
-	    List< Map< String,Object > > firstList = mallHomeAppletService.selectGroupsByShopId( params );
+	    List< AppletGroupDTO > firstList = mallHomeAppletService.selectGroupsByShopId( params );
 	    resultMap.put( "firstList", firstList );
 
 	} catch ( Exception e ) {
 	    logger.error( "进入全部分类页面异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -198,32 +222,36 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param searchDTO
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/productAll" )
-    public void productAll( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void productAll( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    Map< String,Object > params = new HashMap<>();
+	    params = converter.beanToMap( searchDTO );
 	    logger.info( "进入全部商品页面参数：" + params );
 	    //查询商品信息
 	    PageUtil productPage = mallHomeAppletService.productAllList( params );
 	    resultMap.put( "productPage", productPage );
 	    //查询商品一级分类
 	    params.put( "isFrist", 1 );
-	    List< Map< String,Object > > firstList = mallHomeAppletService.selectGroupsByShopId( params );
+	    List< AppletGroupDTO > firstList = mallHomeAppletService.selectGroupsByShopId( params );
 	    resultMap.put( "firstList", firstList );
 	} catch ( Exception e ) {
 	    logger.error( "进入全部商品页面异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
     /**
      * 查询商品的规格
+     * 无效接口
      *
      * @param request
      * @param response
@@ -243,7 +271,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "查询商品的规格异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -252,51 +280,60 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param shopId    店铺ID
+     * @param memberId  会员ID
+     * @param productId 商品ID
+     * @param province  默认为0
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/phoneProduct" )
-    public void phoneProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	Map< String,Object > resultMap = new HashMap< String,Object >();
+    public void phoneProduct( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer productId, Integer province ) throws IOException {
+	AppletProductDetailResult productDetailResult = new AppletProductDetailResult();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "shopId", shopId );
+	    params.put( "memberId", memberId );
+	    params.put( "productId", productId );
+	    params.put( "province", province );
 	    logger.info( "进入商品详细页面参数：" + params );
 	    //查询商品信息
-	    resultMap = mallHomeAppletService.selectProductDetailById( params );
+	    productDetailResult = mallHomeAppletService.selectProductDetailById( params );
 
 	} catch ( Exception e ) {
 	    logger.error( "进入商品详细页面异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( productDetailResult ) ) );
 	}
     }
 
     /**
      * 查询商品的评价
      *
+     * @param request
+     * @param response
+     * @param memberId 会员ID
+     * @param proId    商品ID
+     * @param feel     评论状态
+     *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/getProductComment" )
-    public void getProductComment( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void getProductComment( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer proId, String feel ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    logger.info( "查询商品评价的参数：" + params );
-	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( CommonUtil.isNotEmpty( params.get( "proId" ) ) ) ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-		String feel = "";
-		if ( CommonUtil.isNotEmpty( params.get( "feel" ) ) ) {
-		    feel = CommonUtil.toString( params.get( "feel" ) );
-		}
-		resultMap = mallCommentService.getProductComment( member.getBusid(), CommonUtil.toInteger( params.get( "proId" ) ), feel );
+	    logger.info( "查询商品评价的参数：memberId=" + memberId + "proId=" + proId + "feel=" + feel );
+	    if ( CommonUtil.isNotEmpty( memberId ) && CommonUtil.isNotEmpty( CommonUtil.isNotEmpty( proId ) ) ) {
+		Member member = memberService.findMemberById( memberId, null );
+		resultMap = mallCommentService.getProductComment( member.getBusid(), proId, feel );
 		resultMap.put( "imageHttp", PropertiesUtil.getResourceUrl() );
 	    }
-
 	} catch ( Exception e ) {
 	    logger.error( "查询商品评价出错:" + e );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -315,7 +352,6 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "商品加入购物车参数：" + params );
-
 	    resultMap = mallHomeAppletService.addshopping( params );
 	} catch ( Exception e ) {
 	    resultMap.put( "code", "-1" );
@@ -323,7 +359,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "商品加入购物车异常:" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -332,14 +368,18 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param shopId
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/shopCart" )
-    public void shopCart( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void shopCart( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer busUserId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "shopId", shopId );
+	    params.put( "memberId", memberId );
+	    params.put( "busUserId", busUserId );
 	    logger.info( "进入购物车页面的参数：" + params );
 
 	    resultMap = mallProductAppletService.shoppingcare( params, request );
@@ -348,7 +388,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "进入购物车页面异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -363,15 +403,15 @@ public class PhoneHomeAppletController extends BaseController {
     @SuppressWarnings( { "deprecation", "unchecked" } )
     @SysLogAnnotation( description = "小程序购物车页面-删除购物车内的商品", op_function = "3" )
     @RequestMapping( "79B4DE7C/shoppingdelete" )
-    public void shoppingdelect( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void shoppingdelect( HttpServletRequest request, HttpServletResponse response, Integer memberId, String ids ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    logger.info( "删除购物车内的商品参数：" + params );
-	    List< Integer > ids = new ArrayList< Integer >();
-	    if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
-		ids = JSONArray.toList( JSONArray.fromObject( params.get( "ids" ) ) );
+	    logger.info( "删除购物车内的商品参数：" + ids );
+	    List< Integer > idList = new ArrayList< Integer >();
+	    if ( CommonUtil.isNotEmpty( ids ) ) {
+		idList = JSONArray.toList( JSONArray.fromObject( ids ) );
 	    }
-	    mallProductAppletService.shoppingdelete( ids );
+	    mallProductAppletService.shoppingdelete( idList );
 	    resultMap.put( "code", "1" );
 	} catch ( Exception e ) {
 	    resultMap.put( "code", "-1" );
@@ -379,7 +419,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "删除购物车内商品失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -397,7 +437,6 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    logger.info( "购物车去结算的参数：" + params );
-
 	    mallProductAppletService.shoppingorder( params );
 	    resultMap.put( "code", "1" );
 	} catch ( Exception e ) {
@@ -406,7 +445,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "结算购物车失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -415,26 +454,26 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param memberId
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/memberIndex" )
-    public void memberIndex( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void memberIndex( HttpServletRequest request, HttpServletResponse response, Integer memberId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    logger.info( "进入我的页面的参数：" + params );
-	    resultMap = mallHomeAppletService.getMemberPage( params );
+	    logger.info( "进入我的页面的参数：" + memberId );
+	    resultMap = mallHomeAppletService.getMemberPage( memberId );
 	} catch ( Exception e ) {
 	    logger.error( "我的页面异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
     /**
-     * 立即购买
+     * 立即购买 无效接口
      *
      * @param request
      * @param response
@@ -454,7 +493,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "立即购买异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -467,13 +506,16 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @RequestMapping( "79B4DE7C/toSubmitOrder" )
-    public void toSubmitOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void toSubmitOrder( HttpServletRequest request, HttpServletResponse response, AppletToSubmitOrderDTO toSubmitOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    Map< String,Object > params = new HashMap<>();
+	    params = converter.beanToMap( toSubmitOrderDTO );
 	    logger.info( "进入提交订单页面的参数：" + params );
 	    String version = "";//保存版本号
-	    if ( CommonUtil.isNotEmpty( params.get( "version" ) ) ) {
-		version = CommonUtil.toString( params.get( "version" ) );
+	    if ( CommonUtil.isNotEmpty( toSubmitOrderDTO.getVersion() ) ) {
+		version = toSubmitOrderDTO.getVersion();
 	    }
 	    if ( version.equals( "1.1.0" ) ) {
 		resultMap = mallNewOrderAppletService.toSubmitOrder( params );
@@ -485,7 +527,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "进入提交订单的页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -498,13 +540,16 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @RequestMapping( "79B4DE7C/submitOrder" )
-    public void submitOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void submitOrder( HttpServletRequest request, HttpServletResponse response, AppletSubmitOrderDTO submitOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    Map< String,Object > params = new HashMap<>();
+	    params = converter.beanToMap( submitOrderDTO );
 	    logger.info( "提交订单的参数：" + params );
 	    String version = "";//保存版本号
-	    if ( CommonUtil.isNotEmpty( params.get( "version" ) ) ) {
-		version = CommonUtil.toString( params.get( "version" ) );
+	    if ( CommonUtil.isNotEmpty( submitOrderDTO.getVersion() ) ) {
+		version = submitOrderDTO.getVersion();
 	    }
 	    if ( version.equals( "1.1.0" ) ) {
 		resultMap = mallNewOrderAppletService.submitOrder( params );
@@ -519,7 +564,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    e.printStackTrace();
 	} finally {
 	    logger.info( "提交订单返回参数：" + resultMap );
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -528,14 +573,19 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param memberId
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/orderList" )
-    public void orderList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void orderList( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer curPage, Integer busUserId, Integer type ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "memberId", memberId );
+	    params.put( "curPage", curPage );
+	    params.put( "busUserId", busUserId );
+	    params.put( "type", type );
 	    logger.info( "进入订单列表页面的参数：" + params );
 
 	    PageUtil page = mallOrderAppletService.getOrderList( params );
@@ -545,7 +595,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "订单列表页面异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -569,7 +619,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "订单列表页面异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -578,15 +628,19 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param orderNo
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/appletWxOrder" )
 
-    public void appletWxOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void appletWxOrder( HttpServletRequest request, HttpServletResponse response, String orderNo, Integer memberId, String appid ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "orderNo", orderNo );//订单号
+	    params.put( "memberId", memberId );//会员ID
+	    params.put( "appid", appid );//appid
 	    logger.info( "微信订单支付的参数：" + params );
 	    String obj = mallOrderAppletService.appletWxOrder( params );
 	    resultMap.put( "params", obj );
@@ -594,7 +648,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "微信订单支付异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -608,9 +662,13 @@ public class PhoneHomeAppletController extends BaseController {
      */
     @SysLogAnnotation( description = "小程序我的订单页面-去支付", op_function = "3" )
     @RequestMapping( "79B4DE7C/orderGoPay" )
-    public void orderGoPay( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void orderGoPay( HttpServletRequest request, HttpServletResponse response, Integer order_id, Integer memberId, String appid ) throws IOException {
 	Map< Object,Object > resultMap = new HashMap< Object,Object >();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "order_id", order_id );//订单ID
+	    params.put( "memberId", memberId );//会员ID
+	    params.put( "appid", appid );//appid
 	    logger.info( "去支付的参数：" + params );
 	    resultMap = mallOrderAppletService.orderGoPay( params, CommonUtil.getpath( request ) );
 	} catch ( Exception e ) {
@@ -619,7 +677,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "订单去支付失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -645,7 +703,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "确认收货失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -669,7 +727,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "进入退款页面异常：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -683,10 +741,13 @@ public class PhoneHomeAppletController extends BaseController {
      */
     @SysLogAnnotation( description = "小程序我的订单页面-提交退款信息", op_function = "3" )
     @RequestMapping( "79B4DE7C/submitReturnOrder" )
-    public void submitReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void submitReturnOrder( HttpServletRequest request, HttpServletResponse response, AppletAddReturnOrderDTO addReturnOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    logger.info( "提交退款信息的参数：" + params );
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    Map< String,Object > params = new HashMap<>();
+	    params = converter.beanToMap( addReturnOrderDTO );
+	    logger.info( "提交退款信息的参数：" + addReturnOrderDTO );
 	    resultMap = mallOrderAppletService.submitReturnOrder( params );
 
 	} catch ( Exception e ) {
@@ -695,7 +756,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "提交退款失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -721,7 +782,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "撤销退款失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -744,7 +805,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "进入我的地址页面失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -778,7 +839,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "设置默认地址失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -803,7 +864,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "设置默认地址失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -843,7 +904,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "提交地址失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -877,7 +938,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.error( "保存地址失败：" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
-	    CommonUtil.write( response, JSONObject.fromObject( resultMap ) );
+	    CommonUtil.write( response, JSONObject.parseObject( JSON.toJSONString( resultMap ) ) );
 	}
     }
 
@@ -956,15 +1017,19 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param params
+     * @param calculationDTO
      *
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/calculationPreferential" )
-    public void calculationPreferential( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
+    public void calculationPreferential( HttpServletRequest request, HttpServletResponse response, AppletSubmitOrderDTO calculationDTO ) throws IOException {
 	Map< String,Object > resultMap = null;
-	logger.info( "商城小程序计算订单的优惠信息：" + params );
+	logger.info( "商城小程序计算订单的优惠信息：" + calculationDTO );
 	try {
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    Map< String,Object > params = new HashMap<>();
+	    params = converter.beanToMap( calculationDTO );
+
 	   /* resultMap = mallNewOrderAppletService.calculationPreferential( params );*/
 	    resultMap = mallNewOrderAppletService.newCalculationPreferential( params );
 	} catch ( Exception e ) {

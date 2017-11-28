@@ -131,7 +131,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    resultMap.put( "addressMap", getAddressParams( addressMap ) );
 	    params.put( "mem_province", addressMap.get( "memProvince" ) );
 	}
-	resultMap.put( "memberPhone", member.getPhone() );
+//	resultMap.put( "memberPhone", member.getPhone() );
 	WxPublicUsers wxPublicUsers = null;
 	if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
 	    wxPublicUsers = wxPublicUserService.selectById( member.getPublicId() );
@@ -284,10 +284,13 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    }
 		    memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), shopMap.get( "wx_shop_id" ).toString() );
 		    if ( proTypeId == 0 && isYhq ) {
-			List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + wxShopId );
-			if ( null != coupon && coupon.size() > 0 ) {
-			    coupon = getCouponDuofen( coupon, yhqMoney, 1 );
-			    shopMap.put( "coupon", coupon );
+			/*List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + wxShopId );*/
+			if ( CommonUtil.isNotEmpty( memberCard.get( "cardList" + wxShopId ) ) ) {
+			    List< Map< String,Object > > coupon = net.sf.json.JSONArray.fromObject( memberCard.get( "cardList" + wxShopId ) );
+			    if ( null != coupon && coupon.size() > 0 ) {
+				coupon = getCouponDuofen( coupon, yhqMoney, 1 );
+				shopMap.put( "coupon", coupon );
+			    }
 			}
 
 			//查询多粉优惠券
@@ -472,10 +475,13 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    memberCard = memberService.findCardAndShopIdsByMembeId( member.getId(), store.getWxShopId().toString() );
 
 	    if ( proTypeId == 0 && isYhq ) {
-		List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + store.getWxShopId() );
-		if ( null != coupon && coupon.size() > 0 ) {
-		    coupon = getCouponDuofen( coupon, yhqMoney, 1 );
-		    shopMap.put( "coupon", coupon );
+		/*List< Map< String,Object > > coupon = (List< Map< String,Object > >) memberCard.get( "cardList" + store.getWxShopId() );*/
+		if ( CommonUtil.isNotEmpty( memberCard.get( "cardList" + store.getWxShopId() ) ) ) {
+		    List< Map< String,Object > > coupon = net.sf.json.JSONArray.fromObject( memberCard.get( "cardList" + store.getWxShopId() ) );
+		    if ( null != coupon && coupon.size() > 0 ) {
+			coupon = getCouponDuofen( coupon, yhqMoney, 1 );
+			shopMap.put( "coupon", coupon );
+		    }
 		}
 
 		//查询多粉优惠券
@@ -2025,8 +2031,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		}
 	    }
 	} else {
-	    Map< String,Object > result = productService
-			    .calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
+	    Map< String,Object > result = productService.calculateInventory( detail.getProductId(), detail.getProductSpecificas(), detail.getDetProNum(), order.getBuyerUserId() );
 	    if ( result.get( "result" ).toString().equals( "false" ) ) {
 		msg = result.get( "msg" ).toString();
 		code = -1;

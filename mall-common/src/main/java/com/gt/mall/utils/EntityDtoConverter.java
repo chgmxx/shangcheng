@@ -1,5 +1,6 @@
 package com.gt.mall.utils;
 
+import com.google.common.collect.Maps;
 import org.springframework.cglib.beans.BeanMap;
 
 import java.lang.reflect.Field;
@@ -73,5 +74,25 @@ public class EntityDtoConverter {
 	BeanMap beanMap = BeanMap.create( bean );
 	beanMap.putAll( map );
 	return bean;
+    }
+
+    /**
+     * 将对象装换为map
+     *
+     * @param bean
+     *
+     * @return
+     */
+    public static < T > Map< String,Object > beanToMap( T bean ) {
+	Map< String,Object > map = Maps.newHashMap();
+	if ( bean != null ) {
+	    BeanMap beanMap = BeanMap.create( bean );
+	    for ( Object key : beanMap.keySet() ) {
+		if ( CommonUtil.isNotEmpty( beanMap.get( key ) ) ) {
+		    map.put( key + "", beanMap.get( key ) );
+		}
+	    }
+	}
+	return map;
     }
 }
