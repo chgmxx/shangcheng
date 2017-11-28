@@ -209,6 +209,21 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallOrderReturnLogService mallOrderReturnLogService;
 
     @Override
+    public Integer countStatus( Map< String,Object > params ) {
+	int status = 0;
+	if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
+	    status = CommonUtil.toInteger( params.get( "status" ) );
+	}
+	int rowCount = 0;
+	if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
+	    rowCount = mallOrderDAO.count( params );
+	} else {
+	    rowCount = mallOrderDAO.countReturn( params );
+	}
+	return rowCount;
+    }
+
+    @Override
     public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = 10;
@@ -1008,7 +1023,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	}
 	if ( returnLogStatus == -1 || returnLogStatus <= 4 ) {
-	    if ( memberService.isMember( order.getBuyerUserId() ) || isFenbi || isJifen || CommonUtil.isNotEmpty( order.getCouponId() )) {
+	    if ( memberService.isMember( order.getBuyerUserId() ) || isFenbi || isJifen || CommonUtil.isNotEmpty( order.getCouponId() ) ) {
 		Map< String,Object > payMap = memberPayService.paySuccessNew( successBoList );
 		if ( CommonUtil.isNotEmpty( payMap ) ) {
 		    if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {

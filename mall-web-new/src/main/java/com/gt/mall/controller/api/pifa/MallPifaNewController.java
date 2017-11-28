@@ -65,7 +65,7 @@ public class MallPifaNewController extends BaseController {
     @ApiOperation( value = "批发列表(分页)", notes = "批发列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "type", value = "活动状态", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "type", value = "活动状态 -2已失效 1进行中 -1 未开始  2已结束", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type, Integer shopId ) {

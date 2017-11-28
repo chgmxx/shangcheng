@@ -46,6 +46,9 @@
         <if test="proName != null">
             and p.pro_name like '%${proName}%'
         </if>
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
+        </if>
         <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
@@ -71,6 +74,9 @@
         </if>
         <if test="proName != null">
             and p.pro_name like '%${proName}%'
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null">
             and

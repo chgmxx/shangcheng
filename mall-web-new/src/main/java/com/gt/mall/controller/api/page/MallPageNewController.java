@@ -130,11 +130,15 @@ public class MallPageNewController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPage page = com.alibaba.fastjson.JSONObject.parseObject( params.get( "page" ).toString(), MallPage.class );
+
+	    if ( CommonUtil.isEmpty( page.getPagStoId() ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "所属店铺不能为空" );
+	    }
 	    if ( CommonUtil.isEmpty( page.getPagName() ) ) {
 		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面名称不能为空" );
 	    }
 	    if ( CommonUtil.isEmpty( page.getPagTypeId() ) ) {
-		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面名称不能为空" );
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面分类不能为空" );
 	    }
 	    page.setPagUserId( MallSessionUtils.getLoginUser( request ).getId() );
 	    page.setPagCreateTime( new Date() );
@@ -406,8 +410,8 @@ public class MallPageNewController extends BaseController {
 	    Integer stoId = Integer.valueOf( params.get( "stoId" ).toString() );
 	    PageUtil page = mallPageService.selectListBranch( stoId, params );
 	    result.put( "page", page );
-	    String ym = PropertiesUtil.getHomeUrl();//域名
-	    result.put( "ym", ym );
+	   /* String ym = PropertiesUtil.getHomeUrl();//域名
+	    result.put( "ym", ym );*/
 	    int pageindex = 0;
 	    if ( CommonUtil.isNotEmpty( page ) ) {
 		pageindex = page.getCurPage();

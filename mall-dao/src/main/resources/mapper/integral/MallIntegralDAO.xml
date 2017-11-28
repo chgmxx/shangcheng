@@ -53,7 +53,7 @@
         <if test="type == 2"><!-- 已结束的积分商品-->
             and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
-        <if test="type == 3"><!-- 已失效的积分商品 -->
+        <if test="type == -2"><!-- 已失效的积分商品 -->
             i.is_use= -1
         </if>
         <if test="shoplist != null">
@@ -83,7 +83,7 @@
         <if test="type == 2"><!-- 已结束的积分商品-->
             and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
-        <if test="type == 3"><!-- 已失效的积分商品 -->
+        <if test="type == -2"><!-- 已失效的积分商品 -->
             i.is_use= -1
         </if>
         <if test="shoplist != null ">

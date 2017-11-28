@@ -116,6 +116,9 @@
         <if test="checkStatus != null and checkStatus != ''">
             and p.check_status = #{checkStatus}
         </if>
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
+        </if>
         <if test="shoplist != null ">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">

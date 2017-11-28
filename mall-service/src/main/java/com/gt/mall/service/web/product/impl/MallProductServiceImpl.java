@@ -151,6 +151,11 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     private FenBiFlowService fenBiFlowService;
 
     @Override
+    public Integer selectCountByUserId( Map< String,Object > params ) {
+	return mallProductDAO.selectCountByUserId( params );
+    }
+
+    @Override
     public PageUtil selectByUserId( Map< String,Object > param, List< Map< String,Object > > shoplist ) {
 	List< Map< String,Object > > productList = null;
 	int pageSize = 20;
@@ -1163,7 +1168,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    }
 		}
 		MallProductInventory inventory = mallProductInventoryService.selectBySpecIds( proId, proSpecId );
-		if(CommonUtil.isNotEmpty( inventory )){
+		if ( CommonUtil.isNotEmpty( inventory ) ) {
 		    maps.put( "id", inventory.getId() );
 		    maps.put( "inv_price", inventory.getInvPrice() );
 		    maps.put( "inv_num", inventory.getInvNum() );

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.dao.product.MallSearchLabelDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallGroup;
@@ -28,10 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -54,6 +52,8 @@ public class MallGroupNewController extends BaseController {
     private MallGroupService              mallGroupService;
     @Autowired
     private MallStoreService              mallStoreService;
+    @Autowired
+    private MallSearchLabelDAO            mallSearchLabelDAO;
 
     @ApiOperation( value = "商品分组列表(分页)", notes = "商品分组列表(分页)" )
     @ResponseBody
@@ -99,7 +99,7 @@ public class MallGroupNewController extends BaseController {
 
 	    if ( !CommonUtil.isEmpty( userId ) ) {
 		MallGroup mallGroup = JSONObject.parseObject( JSON.toJSONString( group ), MallGroup.class );
-		mallGroup.setGroupName( CommonUtil.urlEncode(mallGroup.getGroupName()) );
+		mallGroup.setGroupName( CommonUtil.urlEncode( mallGroup.getGroupName() ) );
 		if ( !CommonUtil.isEmpty( group.getImageList() ) ) {
 		    images = JSONArray.parseArray( JSON.toJSONString( group.getImageList() ), MallImageAssociative.class );
 		}
@@ -219,20 +219,35 @@ public class MallGroupNewController extends BaseController {
      * 推荐分组
      */
     @ApiOperation( value = "推荐分组", notes = "推荐分组" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "groupId", value = "分组ID", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "status", value = "1推荐 2取消推荐", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @SysLogAnnotation( description = "推荐分组", op_function = "4" )
     @RequestMapping( value = "/recommend", method = RequestMethod.POST )
-    public ServerResponse recommend( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public ServerResponse recommend( HttpServletRequest request, HttpServletResponse response, Integer groupId, Integer status ) {
 	try {
 	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
-	    if ( !CommonUtil.isEmpty( userId ) ) {
-		List< MallSearchLabel > labelList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "labelList" ).toString(), MallSearchLabel.class );
-		boolean flag = mallGroupService.saveOrUpdateGroupLabel( labelList, userId );
-		if ( !flag ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "推荐分组异常" );
+
+	    MallGroup mallGroup = mallGroupService.selectById( groupId );
+	    if ( mallGroup != null ) {
+		MallSearchLabel label = new MallSearchLabel();
+		label.setUserId( userId );
+		label.setShopId( mallGroup.getShopId() );
+		label.setGroupId( groupId );
+
+		MallSearchLabel sLabel = mallSearchLabelDAO.selectOne( label );
+		if ( CommonUtil.isNotEmpty( sLabel ) ) {
+		    label.setId( sLabel.getId() );
 		}
-	    } else {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc() );
+		if ( status == 2 ) {
+		    label.setIsDelete( 1 );
+		}
+		if ( CommonUtil.isNotEmpty( label.getId() ) ) {
+		    mallSearchLabelDAO.updateById( label );
+		} else {
+		    label.setCreateTime( new Date() );
+		    mallSearchLabelDAO.insert( label );
+		}
 	    }
 	} catch ( BusinessException e ) {
 	    logger.error( "推荐分组信息异常：" + e.getMessage() );
@@ -243,6 +258,6 @@ public class MallGroupNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "推荐分组异常" );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
     }
 }

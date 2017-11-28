@@ -97,6 +97,15 @@ public class MallProductTemplateController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallProductTemplate template = JSONObject.parseObject( params.get( "template" ).toString(), MallProductTemplate.class );
+	    if ( CommonUtil.isEmpty( template.getName() ) ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "模板名称不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( template.getTemplateCss() ) ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "模板样式不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( template.getTemplateData() ) ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "模板数据不能为空" );
+	    }
 	    if ( template != null ) {
 		template.setName( CommonUtil.urlEncode( template.getName() ) );
 		template.setTemplateData( CommonUtil.urlEncode( template.getTemplateData() ) );

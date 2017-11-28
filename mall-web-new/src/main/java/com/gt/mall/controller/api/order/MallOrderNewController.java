@@ -21,10 +21,7 @@ import com.gt.mall.service.web.order.MallOrderReturnLogService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.DateTimeKit;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +29,7 @@ import org.springframework.cglib.beans.BeanMap;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletResponse;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,15 +82,10 @@ public class MallOrderNewController extends BaseController {
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute OrderDTO orderQuery ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    EntityDtoConverter converter = new EntityDtoConverter();
 	    Map< String,Object > params = new HashMap<>();
-	    if ( orderQuery != null ) {
-		BeanMap beanMap = BeanMap.create( orderQuery );
-		for ( Object key : beanMap.keySet() ) {
-		    if ( CommonUtil.isNotEmpty( beanMap.get( key ) ) ) {
-			params.put( key + "", beanMap.get( key ) );
-		    }
-		}
-	    }
+	    params = converter.beanToMap( orderQuery );
+
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -104,12 +97,83 @@ public class MallOrderNewController extends BaseController {
 	    result.put( "page", page );
 	    //	    result.put( "urlPath", PropertiesUtil.getDomain() );
 	    result.put( "videourl", busUserService.getVoiceUrl( "79" ) );
+	} catch ( BusinessException e ) {
+	    logger.error( "订单列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "订单列表异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "订单列表异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+    }
+
+    @ApiOperation( value = "获取各状态下订单总数", notes = "获取各状态下订单总数" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/countStatus", method = RequestMethod.POST )
+    public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response, Integer shopId ) {
+	BusUser user = MallSessionUtils.getLoginUser( request );
+	Map< String,Object > result = new HashMap<>();
+	try {
+	    //订单状态（1,待付款 2,待发货 3,已发货 4,已完成 5,已关闭  6退款中 7全部 8退款处理中 9 退款结束）
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "userId", user.getId() );
+	    params.put( "shopId", shopId );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		params.put( "shoplist", shoplist );
+	    }
+	    //全部
+	    Integer status_total = mallOrderService.countStatus( params );
+	    //待付款
+	    params.put( "status", "1" );
+	    Integer status1 = mallOrderService.countStatus( params );
+	    //待发货
+	    params.put( "status", "2" );
+	    Integer status2 = mallOrderService.countStatus( params );
+	    //已发货
+	    params.put( "status", "3" );
+	    Integer status3 = mallOrderService.countStatus( params );
+	    //已完成
+	    params.put( "status", "4" );
+	    Integer status4 = mallOrderService.countStatus( params );
+	    //已关闭
+	    params.put( "status", "5" );
+	    Integer status5 = mallOrderService.countStatus( params );
+
+	    //退款中
+	    params.put( "status", "6" );
+	    Integer status6 = mallOrderService.countStatus( params );
+	    //退款全部
+	    params.put( "status", "7" );
+	    Integer status7 = mallOrderService.countStatus( params );
+	    //8退款处理中
+	    params.put( "status", "8" );
+	    Integer status8 = mallOrderService.countStatus( params );
+	    //退款结束
+	    params.put( "status", "9" );
+	    Integer status9 = mallOrderService.countStatus( params );
+
+	    result.put( "status_total", status_total );
+	    result.put( "status1", status1 );
+	    result.put( "status2", status2 );
+	    result.put( "status3", status3 );
+	    result.put( "status4", status4 );
+	    result.put( "status5", status5 );
+	    result.put( "status6", status6 );
+	    result.put( "status7", status7 );
+	    result.put( "status8", status8 );
+	    result.put( "status9", status9 );
+	} catch ( Exception e )
+
+	{
+	    logger.error( "获取各状态下订单总数异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取各状态下订单总数异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**

@@ -137,7 +137,7 @@ public class MallStoreCertificationController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取认证的店铺类型异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), categoryMap );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), categoryMap, false );
     }
 
     /**

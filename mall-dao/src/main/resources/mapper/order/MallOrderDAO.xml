@@ -585,7 +585,7 @@
             </foreach>
         </if>
         <if test="shopId!= null and shopId != ''">
-            and t.shop_id = #{shopId}
+            and d.shop_id = #{shopId}
         </if>
         <if test="status != null and status != ''">
             <if test="status == 6 || status == 8">
@@ -677,7 +677,7 @@
             </foreach>
         </if>
         <if test="shopId!= null and shopId != ''">
-            and t.shop_id = #{shopId}
+            and d.shop_id = #{shopId}
         </if>
         <if test="status != null and status != ''">
             <if test="status == 6 || status == 8">

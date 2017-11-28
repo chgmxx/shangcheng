@@ -8,6 +8,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
+import io.swagger.models.auth.In;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -22,6 +23,13 @@ import java.util.Map;
  * @since 2017-07-20
  */
 public interface MallProductService extends BaseService< MallProduct > {
+
+    /**
+     * 统计各状态下的数量
+     * @param params
+     * @return
+     */
+    Integer selectCountByUserId(Map< String,Object > params);
 
     /**
      * 根据用户id来查询商品

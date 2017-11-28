@@ -27,6 +27,13 @@ import java.util.Map;
 public interface MallOrderService extends BaseService< MallOrder > {
 
     /**
+     * 统计各状态下的数量
+     * @param params
+     * @return
+     */
+    Integer countStatus(Map< String,Object > params);
+
+    /**
      * 分页管理
      */
     public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shoplist );

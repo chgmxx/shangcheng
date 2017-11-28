@@ -1,6 +1,7 @@
 package com.gt.mall.controller.api.store;
 
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
@@ -67,8 +68,9 @@ public class MallStoreNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    WxPublicUsers wxPublicUsers = MallSessionUtils.getLoginPbUser( request );
 	    result.put( "userName", user.getName() );//商家名称
-	    result.put( "userLogo", "" );//商家头像
+	    result.put( "userLogo", wxPublicUsers.getHeadImg() );//商家头像
 
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );

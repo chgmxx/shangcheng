@@ -74,12 +74,12 @@ public class MallProductNewController extends BaseController {
 	    params.put( "proName", proName );
 	    params.put( "shopId", shopId );
 	    if ( proType == 1 ) {//上架
-		params.put( "is_publish", 1 );
-		params.put( "check_status", 1 );
+		params.put( "isPublish", "1" );
+		params.put( "checkStatus", "1" );
 	    } else if ( proType == 2 ) {//未上架
-		params.put( "is_publish", 0 );
+		params.put( "isPublish", "0" );
 	    } else if ( proType == 3 ) {//审核不通过
-		params.put( "check_status", -1 );
+		params.put( "checkStatus", "-1" );
 	    }
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
@@ -110,37 +110,44 @@ public class MallProductNewController extends BaseController {
     }
 
     @ApiOperation( value = "获取各状态下商品总数", notes = "获取各状态下商品总数" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/countStatus", method = RequestMethod.POST )
-    public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response ) {
+    public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response, Integer shopId ) {
 	BusUser user = MallSessionUtils.getLoginUser( request );
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "shopId", shopId );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		params.put( "shoplist", shoplist );
+	    }
 	    //全部商品
-	    Wrapper groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "user_id = {0} and is_delete = 0 ", user.getId() );
-	    int status_total = mallProductService.selectCount( groupWrapper );
+	    Integer status_total = mallProductService.selectCountByUserId( params );
 	    //已上架商品  （审核成功，上架）
-	    groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "user_id = {0} and is_delete = 0 and is_publish =1 and check_status =1 ", user.getId() );
-	    int status1 = mallProductService.selectCount( groupWrapper );
+	    params.put( "isPublish", "1" );
+	    params.put( "checkStatus", "1" );
+	    Integer status1 = mallProductService.selectCountByUserId( params );
 	    //未上架商品
-	    groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "user_id = {0} and is_delete = 0 and is_publish = 0", user.getId() );
-	    int status2 = mallProductService.selectCount( groupWrapper );
+	    params.remove( "checkStatus" );
+	    params.put( "isPublish", "0" );
+	    Integer status2 = mallProductService.selectCountByUserId( params );
 	    //审核不通过
-	    groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "user_id = {0} and is_delete = 0 and check_status = -1 ", user.getId() );
-	    int status3 = mallProductService.selectCount( groupWrapper );
+	    params.remove( "isPublish" );
+	    params.put( "checkStatus", "-1" );
+	    Integer status3 = mallProductService.selectCountByUserId( params );
 
 	    result.put( "status_total", status_total );
 	    result.put( "status1", status1 );
 	    result.put( "status2", status2 );
 	    result.put( "status3", status3 );
-	} catch ( Exception e ) {
-	    logger.error( "商城店铺管理异常：" + e.getMessage() );
+	} catch ( Exception e )
+
+	{
+	    logger.error( "获取各状态下商品总数异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商城的统计概况异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取各状态下商品总数异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
