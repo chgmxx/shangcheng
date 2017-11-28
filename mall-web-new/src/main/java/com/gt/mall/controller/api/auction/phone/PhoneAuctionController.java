@@ -179,50 +179,47 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 
     /*抢拍记录 出价记录*/
     @ApiOperation( value = "获取出价记录列表", notes = "获取出价记录列表" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "productId", value = "商品ID", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "auctionId", value = "拍卖ID", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "type", value = "1 商品详情 2 出价/抢拍记录", paramType = "query", required = true, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "auctionId", value = "拍卖ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "shopdetails", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > shopdetails( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer productId, Integer shopId, Integer auctionId, Integer type ) {
+		    Integer auctionId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
-
-	    MallAuction auction = auctionService.getAuctionByProId( productId, shopId, auctionId );
-	    if ( type == 1 ) {//商品详情
-		MallProductDetail obj = pageService.shopdetails( productId );
+	    MallAuction auction = auctionService.selectById( auctionId );
+	    //	    MallAuction auction = auctionService.getAuctionByProId( productId, shopId, auctionId );
+	    /*if ( type == 1 ) {//商品详情
+		MallProductDetail obj = pageService.shopdetails( auction.getProductId() );
 		result.put( "proDetail", obj );
-	    } else if ( type == 2 ) {
-		if ( auction != null ) {
-		    MallAuctionBidding bid = new MallAuctionBidding();
-		    bid.setAucId( auction.getId() );
-		    if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
-			//查询出价次数
-			MallAuctionOffer offer = new MallAuctionOffer();
-			offer.setAucId( auction.getId() );
-			List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
-			for ( MallAuctionOffer offer1 : offerList ) {
-			    Member member1 = memberService.findMemberById( offer.getUserId(), null );
-			    if ( member1 != null ) {
-				offer1.setNickname( member1.getNickname() );
-			    }
+	    } else if ( type == 2 ) {*/
+	    if ( auction != null ) {
+		MallAuctionBidding bid = new MallAuctionBidding();
+		bid.setAucId( auction.getId() );
+		if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
+		    //查询出价次数
+		    MallAuctionOffer offer = new MallAuctionOffer();
+		    offer.setAucId( auction.getId() );
+		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
+		    for ( MallAuctionOffer offer1 : offerList ) {
+			Member member1 = memberService.findMemberById( offer.getUserId(), null );
+			if ( member1 != null ) {
+			    offer1.setNickname( member1.getNickname() );
 			}
-			result.put( "offerList", offerList );
-		    } else {//降价拍
-			List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
-			result.put( "bidList", bidList );
 		    }
+		    result.put( "offerList", offerList );
+		} else {//降价拍
+		    List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
+		    result.put( "bidList", bidList );
 		}
 	    }
+	    /*}*/
 	    if ( auction != null ) {
 		result.put( "aucType", auction.getAucType() );
 	    }
 
-	    MallRedisUtils.getMallShopId( shopId );
+	    MallRedisUtils.getMallShopId( auction.getShopId() );
 	} catch ( Exception e ) {
 	    logger.error( "获取出价记录列表异常：" + e.getMessage() );
 	    e.printStackTrace();
