@@ -95,8 +95,12 @@ public class MallOrderNewController extends BaseController {
 
 	    PageUtil page = mallOrderService.findByPage( params, shoplist );
 	    result.put( "page", page );
-	    //	    result.put( "urlPath", PropertiesUtil.getDomain() );
-	    result.put( "videourl", busUserService.getVoiceUrl( "79" ) );
+	    if ( orderQuery.getCurPage() == null || orderQuery.getCurPage() == 1 ) {
+		Map< String,Object > count = mallOrderService.countStatus( params );
+		result.put( "count", count );
+		result.put( "videourl", busUserService.getVoiceUrl( "79" ) );
+	    }
+
 	} catch ( BusinessException e ) {
 	    logger.error( "订单列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -109,7 +113,7 @@ public class MallOrderNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
-    @ApiOperation( value = "获取各状态下订单总数", notes = "获取各状态下订单总数" )
+    /*@ApiOperation( value = "获取各状态下订单总数", notes = "获取各状态下订单总数" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "orderType", value = "页面 0所有订单  -1维权订单 默认0", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
@@ -176,7 +180,7 @@ public class MallOrderNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取各状态下订单总数异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
-    }
+    }*/
 
     /**
      * 查看订单详情

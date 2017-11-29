@@ -151,8 +151,33 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     private FenBiFlowService fenBiFlowService;
 
     @Override
-    public Integer selectCountByUserId( Map< String,Object > params ) {
-	return mallProductDAO.selectCountByUserId( params );
+    public Map< String,Object > countStatus( Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
+	params.remove( "isPublish" );
+	params.remove( "isPublishs" );
+	params.remove( "checkStatus" );
+	//全部商品
+	Integer status_total = mallProductDAO.selectCountByUserId( params );
+	//已上架商品  （审核成功，上架）
+	params.put( "isPublish", "1" );
+	params.put( "checkStatus", "1" );
+	Integer status1 = mallProductDAO.selectCountByUserId( params );
+	//未上架商品
+	params.remove( "checkStatus" );
+	params.remove( "isPublish" );
+	params.put( "isPublishs", "0,-1".split( "," ) );
+	Integer status2 = mallProductDAO.selectCountByUserId( params );
+	//审核不通过
+	params.remove( "isPublish" );
+	params.remove( "isPublishs" );
+	params.put( "checkStatus", "-1" );
+	Integer status3 = mallProductDAO.selectCountByUserId( params );
+
+	result.put( "status_total", status_total );
+	result.put( "status1", status1 );
+	result.put( "status2", status2 );
+	result.put( "status3", status3 );
+	return result;
     }
 
     @Override

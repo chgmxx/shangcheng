@@ -77,7 +77,7 @@ public class MallProductNewController extends BaseController {
 		params.put( "isPublish", "1" );
 		params.put( "checkStatus", "1" );
 	    } else if ( proType == 2 ) {//未上架
-		params.put( "isPublish", "0" );
+		params.put( "isPublishs", "0,-1".split( "," ) );
 	    } else if ( proType == 3 ) {//审核不通过
 		params.put( "checkStatus", "-1" );
 	    }
@@ -91,16 +91,21 @@ public class MallProductNewController extends BaseController {
 		if ( CommonUtil.isEmpty( shopId ) ) {
 		    params.put( "shoplist", shoplist );
 		}
-		PageUtil page = mallProductService.selectByUserId( params, shoplist );
-		result.put( "page", page );
 	    }
-	    result.put( "proMaxNum", dictService.getDiBserNum( userPId, 5, "1094" ) );//可新增商品总数
+	    PageUtil page = mallProductService.selectByUserId( params, shoplist );
+	    result.put( "page", page );
 
-	    if ( isJxc == 1 ) {
-		mallProductService.syncErpPro( user.getId(), request );//把未同步的商品进行同步
+	    if ( curPage == null || curPage == 1 ) {
+		//各状态统计总数
+		Map< String,Object > count = mallProductService.countStatus( params );
+		result.put( "count", count );
+		result.put( "proMaxNum", dictService.getDiBserNum( userPId, 5, "1094" ) );//可新增商品总数
+
+		if ( isJxc == 1 ) {
+		    mallProductService.syncErpPro( user.getId(), request );//把未同步的商品进行同步
+		}
+		result.put( "videourl", busUserService.getVoiceUrl( "77" ) );
 	    }
-
-	    result.put( "videourl", busUserService.getVoiceUrl( "77" ) );
 	} catch ( Exception e ) {
 	    logger.error( "商品列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -109,16 +114,19 @@ public class MallProductNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
-    @ApiOperation( value = "获取各状态下商品总数", notes = "获取各状态下商品总数" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+
+   /* @ApiOperation( value = "获取各状态下商品总数", notes = "获取各状态下商品总数" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "proName", value = "商品名称", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/countStatus", method = RequestMethod.POST )
-    public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response, Integer shopId ) {
+    public ServerResponse countStatus( HttpServletRequest request, HttpServletResponse response, String proName, Integer shopId ) {
 	BusUser user = MallSessionUtils.getLoginUser( request );
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    Map< String,Object > params = new HashMap<>();
+	    params.put( "proName", proName );
 	    params.put( "shopId", shopId );
 	    if ( CommonUtil.isEmpty( shopId ) ) {
 		params.put( "shoplist", shoplist );
@@ -131,10 +139,12 @@ public class MallProductNewController extends BaseController {
 	    Integer status1 = mallProductService.selectCountByUserId( params );
 	    //未上架商品
 	    params.remove( "checkStatus" );
-	    params.put( "isPublish", "0" );
+	    params.remove( "isPublish" );
+	    params.put( "isPublishs", "0,-1".split( "," ) );
 	    Integer status2 = mallProductService.selectCountByUserId( params );
 	    //审核不通过
 	    params.remove( "isPublish" );
+	    params.remove( "isPublishs" );
 	    params.put( "checkStatus", "-1" );
 	    Integer status3 = mallProductService.selectCountByUserId( params );
 
@@ -142,15 +152,14 @@ public class MallProductNewController extends BaseController {
 	    result.put( "status1", status1 );
 	    result.put( "status2", status2 );
 	    result.put( "status3", status3 );
-	} catch ( Exception e )
-
-	{
+	} catch ( Exception e ) {
 	    logger.error( "获取各状态下商品总数异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取各状态下商品总数异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
+*/
 
     /**
      * 批量处理商品(删除，送审，上架，下架)

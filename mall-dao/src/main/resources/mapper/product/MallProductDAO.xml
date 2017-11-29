@@ -107,6 +107,13 @@
         <if test="isPublish != null and isPublish != ''">
             and p.is_publish = #{isPublish}
         </if>
+        <if test="isPublishs != null">
+            and p.is_publish in
+            <foreach collection="isPublishs" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
         <if test="proStockTotal != null and proStockTotal != ''">
             and p.pro_stock_total = #{proStockTotal}
         </if>
@@ -143,6 +150,13 @@
         </if>
         <if test="isPublish != null and isPublish != ''">
             and p.is_publish = #{isPublish}
+        </if>
+        <if test="isPublishs != null">
+            and p.is_publish in
+            <foreach collection="isPublishs" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
         </if>
         <if test="proStockTotal != null and shopId != ''">
             and p.pro_stock_total = #{proStockTotal}

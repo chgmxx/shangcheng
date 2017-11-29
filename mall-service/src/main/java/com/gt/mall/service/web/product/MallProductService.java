@@ -29,7 +29,7 @@ public interface MallProductService extends BaseService< MallProduct > {
      * @param params
      * @return
      */
-    Integer selectCountByUserId(Map< String,Object > params);
+    Map< String,Object > countStatus(Map< String,Object > params);
 
     /**
      * 根据用户id来查询商品

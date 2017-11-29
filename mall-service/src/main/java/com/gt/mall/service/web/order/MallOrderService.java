@@ -31,7 +31,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
      * @param params
      * @return
      */
-    Integer countStatus(Map< String,Object > params);
+    Map< String,Object > countStatus(Map< String,Object > params);
 
     /**
      * 分页管理

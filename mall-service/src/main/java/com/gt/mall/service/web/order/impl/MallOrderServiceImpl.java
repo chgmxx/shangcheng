@@ -209,18 +209,55 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallOrderReturnLogService mallOrderReturnLogService;
 
     @Override
-    public Integer countStatus( Map< String,Object > params ) {
-	int status = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
-	    status = CommonUtil.toInteger( params.get( "status" ) );
-	}
-	int rowCount = 0;
-	if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
-	    rowCount = mallOrderDAO.count( params );
+    public Map< String,Object > countStatus( Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
+	params.remove( "status" );
+	if ( CommonUtil.toInteger( params.get( "orderType" ) ) == -1 ) {
+	    //退款全部
+	    params.put( "status", "7" );
+	    Integer status7 = mallOrderDAO.countReturn( params );
+	    //8退款处理中
+	    params.put( "status", "8" );
+	    Integer status8 = mallOrderDAO.countReturn( params );
+	    //退款结束
+	    params.put( "status", "9" );
+	    Integer status9 = mallOrderDAO.countReturn( params );
+
+	    result.put( "status7", status7 );
+	    result.put( "status8", status8 );
+	    result.put( "status9", status9 );
 	} else {
-	    rowCount = mallOrderDAO.countReturn( params );
+	    //全部
+	    Integer status_total = mallOrderDAO.count( params );
+	    //待付款
+	    params.put( "status", "1" );
+	    Integer status1 = mallOrderDAO.count( params );
+	    //待发货
+	    params.put( "status", "2" );
+	    Integer status2 = mallOrderDAO.count( params );
+	    //已发货
+	    params.put( "status", "3" );
+	    Integer status3 = mallOrderDAO.count( params );
+	    //已完成
+	    params.put( "status", "4" );
+	    Integer status4 = mallOrderDAO.count( params );
+	    //已关闭
+	    params.put( "status", "5" );
+	    Integer status5 = mallOrderDAO.count( params );
+	    //退款中
+	    params.put( "status", "6" );
+	    Integer status6 = mallOrderDAO.countReturn( params );
+
+	    result.put( "status_total", status_total );
+	    result.put( "status1", status1 );
+	    result.put( "status2", status2 );
+	    result.put( "status3", status3 );
+	    result.put( "status4", status4 );
+	    result.put( "status5", status5 );
+	    result.put( "status6", status6 );
 	}
-	return rowCount;
+
+	return result;
     }
 
     @Override
