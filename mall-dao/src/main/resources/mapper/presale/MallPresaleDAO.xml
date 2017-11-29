@@ -186,15 +186,19 @@
         <include refid="Base_Column_List"></include>
         from t_mall_presale g
         where g.is_delete = 0 and g.is_use = 1
-        and g.product_id=#{productId}
-        and g.shop_id=#{shopId}
+        <if test="productId != null">
+          and g.product_id=#{productId}
+        </if>
+        <if test="shopId != null">
+          and g.shop_id=#{shopId}
+        </if>
         <if test="id != null and id > 0">
             and g.id=#{id}
         </if>
         <if test="id == null or id == 0">
             and (g.sale_start_time &lt;= now() and now() &lt; g.sale_end_time or g.sale_start_time > now() and g.sale_end_time > now())
-            limit 1
         </if>
+        limit 1
     </select>
 
 

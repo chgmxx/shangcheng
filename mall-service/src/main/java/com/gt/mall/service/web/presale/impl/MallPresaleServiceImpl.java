@@ -422,7 +422,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    if ( deposit != null ) {
 		if ( deposit.getDepositStatus().toString().equals( "1" ) ) {
 		    isBuyFlag = true;
-
+		    presaleResult.setOrderNum( deposit.getProNum() );
 		    presaleResult.setWeiMoney( CommonUtil.subtract( CommonUtil.toDouble( deposit.getOrderMoney() ), CommonUtil.toDouble( deposit.getDepositMoney() ) ) );
 		}
 	    }
@@ -439,7 +439,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	result.setIsShowLiJiBuyButton( 0 );//隐藏立即购买
 	if ( isBuyFlag ) {
 	    if ( presale.getStatus() == 1 ) {
-		presaleResult.setIsShowPresaleButton( 1 );//显示预定按钮
+		presaleResult.setIsShowWeiMoneyButton( 1 );//显示尾款按钮
 	    } else if ( presale.getStatus() == 0 ) {
 		presaleResult.setIsShowStartButton( 1 );//显示即将开售按钮
 	    }
@@ -451,7 +451,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( deposit ) ) {
-	    if ( isBuyFlag && presale.getStatus() == 0 ) {
+	    if ( isBuyFlag && presale.getStatus() == 1 ) {
 		presaleResult.setPayDespositStatus( 1 );//已缴纳定金
 	    }
 	}
@@ -1117,39 +1117,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    proPrice = CommonUtil.toDouble( map.get( "pro_price" ) );
 		}
 		List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( CommonUtil.toInteger( map.get( "activityId" ) ) );
-		if ( timeList != null && timeList.size() > 0 ) {
-		    for ( MallPresaleTime mallPresaleTime : timeList ) {
-			Date startTime = DateTimeKit.parse( mallPresaleTime.getStartTime(), "yyyy-MM-dd HH:mm:ss" );
-			Date endTime = DateTimeKit.parse( mallPresaleTime.getEndTime(), "yyyy-MM-dd HH:mm:ss" );
-			Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
-			if ( startTime.getTime() <= nowTime.getTime() && nowTime.getTime() < endTime.getTime() ) {
-			    if ( mallPresaleTime.getPriceType() == 2 ) {
-				presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() );
-			    } else {
-				presaleDiscount = CommonUtil.toDouble( mallPresaleTime.getPrice() ) / 100;
-			    }
-			    double d = CommonUtil.multiply( proPrice, presaleDiscount );
-			    if ( mallPresaleTime.getSaleType() == 1 ) {//上涨价格
-				if ( mallPresaleTime.getPriceType() == 2 ) {//按价格
-				    proPrice = CommonUtil.add( proPrice, presaleDiscount );//proPrice = proPrice + presaleDiscount;
-				} else {//按百分比
-				    proPrice = CommonUtil.add( proPrice, d );
-				    //proPrice = proPrice + ( proPrice * ( presaleDiscount ) );
-				}
-			    } else if ( mallPresaleTime.getSaleType() == 2 ) {//下调金额
-				if ( mallPresaleTime.getPriceType() == 2 ) {//按价格
-				    proPrice = CommonUtil.subtract( proPrice, presaleDiscount );// proPrice = proPrice - presaleDiscount;
-				} else {//按百分比
-				    proPrice = CommonUtil.subtract( proPrice, d );
-				    //proPrice = proPrice - ( proPrice * ( presaleDiscount ) );
-				}
-			    }
-			    map.put( "price", proPrice );
-			    break;
-			}
-
-		    }
-		}
+		map.put( "price", getPresalePrice( proPrice, timeList ) );
 		list.add( map );
 	    }
 	    list = mallPageService.getSearchProductParam( list, 1, searchProductDTO );

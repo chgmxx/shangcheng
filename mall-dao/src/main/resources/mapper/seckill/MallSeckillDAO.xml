@@ -275,8 +275,12 @@
         <include refid="group_Column_List"></include>
         from t_mall_seckill g
         where g.is_delete = 0 and g.is_use = 1
-        and g.product_id=#{productId}
-        and g.shop_id=#{shopId}
+        <if test="productId != null">
+          and g.product_id=#{productId}
+        </if>
+        <if test="shopId != null">
+          and g.shop_id=#{shopId}
+        </if>
         <if test="id != null and id > 0">
             and g.id = #{id}
         </if>

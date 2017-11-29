@@ -185,8 +185,10 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		activityPrice = CommonUtil.toDouble( product.getChangeFenbi() );
 		isShowAddShop = 0;
 		result.setUnit( "粉币" );
+		result.setProductPrice( activityPrice );
 	    }
 	} else if ( params.getType() == 6 ) {//查询预售商品
+	    activityPrice = productPrice;
 	    isShowAddShop = 0;
 	    result.setProductPrice( activityPrice );
 	    result = mallPresaleService.getPresaleProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
@@ -270,10 +272,10 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 			address += addressMap.get( "memZipCode" ).toString();
 		    }
 		    result.setMemberAddress( address );
-		    if(CommonUtil.isNotEmpty( addressMap.get( "memProvince" ) )){
+		    if ( CommonUtil.isNotEmpty( addressMap.get( "memProvince" ) ) ) {
 			provinces = addressMap.get( "memProvince" ).toString();
 		    }
-		    if(CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" )  )){
+		    if ( CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) ) {
 			memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
 			memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
 		    }
@@ -310,7 +312,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    isShowAddShop = 0;
 	}
 	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
-	if(CommonUtil.isNotEmpty( provinces )){
+	if ( CommonUtil.isNotEmpty( provinces ) ) {
 	    paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );
 	}
 	paramsDto.setToshop( params.getToShop() );

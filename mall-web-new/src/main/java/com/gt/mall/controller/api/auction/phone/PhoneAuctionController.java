@@ -109,6 +109,9 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    if ( is_specifica.equals( "1" ) ) {
 		guige = pageService.productSpecifications( proId, invId + "" );
 	    }
+	    if(guige != null && guige.size() > 0){
+		result.put( "proSpecificaIds", guige.get( "xids" ) );
+	    }
 
 	    int memType = memberService.isCardType( member.getId() );
 	    int isWxPay = 0;//不能微信支付
@@ -119,7 +122,6 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		isAliPay = 1;//可以支付宝支付
 	    }
 	    result.put( "payWayList", MarginUtil.getPayWay( isWxPay, isAliPay, memType ) );
-	    result.put( "proSpecificaIds", guige.get( "xids" ) );
 	} catch ( Exception e ) {
 	    logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -144,9 +146,9 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	}catch ( BusinessException be ) {
 	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
 	}  catch ( Exception e ) {
-	    logger.error( "兑换积分异常：" + e.getMessage() );
+	    logger.error( "交纳保证金异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "兑换积分异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
@@ -201,7 +203,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		    offer.setAucId( auction.getId() );
 		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
 		    for ( MallAuctionOffer offer1 : offerList ) {
-			Member member1 = memberService.findMemberById( offer.getUserId(), null );
+			Member member1 = memberService.findMemberById( offer1.getUserId(), null );
 			if ( member1 != null ) {
 			    offer1.setNickname( member1.getNickname() );
 			}

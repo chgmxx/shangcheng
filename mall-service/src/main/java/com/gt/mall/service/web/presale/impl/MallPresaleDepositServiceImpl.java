@@ -1,10 +1,12 @@
 package com.gt.mall.service.web.presale.impl;
 
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
+import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PaySuccessBo;
+import com.gt.entityBo.PayTypeBo;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.*;
@@ -31,10 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -198,11 +197,9 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
      * 储值卡支付
      */
     private int petCartPay( MallPresaleDeposit deposit ) {
-	PaySuccessBo sucess = new PaySuccessBo();
-	sucess.setMemberId( deposit.getUserId() );//会员id
 	MallStore store = mallStoreDAO.selectById( deposit.getShopId() );
-	sucess.setStoreId( store.getWxShopId() );//门店id
-	sucess.setOrderCode( deposit.getOrderNo() );//订单号
+
+	PaySuccessBo sucess = new PaySuccessBo();
 	sucess.setTotalMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );//原价
 	sucess.setDiscountMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );//折扣后金额
 	sucess.setPay( CommonUtil.toDouble( deposit.getDepositMoney() ) );//支付金额
@@ -214,16 +211,47 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	sucess.setUcType( 101 );//消费方式 对应字典表 1197
 	sucess.setDelay( -1 );//不赠送物品
 	sucess.setDataSource( deposit.getBuyerUserType() );
+
+	NewErpPaySuccessBo successBo = new NewErpPaySuccessBo();
+	successBo.setMemberId( deposit.getUserId() );//会员id
+	successBo.setStoreId( store.getWxShopId() );//门店id
+
+	successBo.setOrderCode( deposit.getOrderNo() );//订单号
+	successBo.setTotalMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );//应付金额
+	successBo.setDiscountMoney( 0d );//优惠金额
+	successBo.setDiscountAfterMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );//优惠后金额
+	successBo.setUcType( Constants.PRESALE_PAY_TYPE );//消费类型 字典1197
+	//	    successBo.setUseCoupon( 1 );//是否使用优惠券  0不使用 1使用
+	//	    successBo.setCouponType( couponType );//优惠券类型 0微信 1多粉优惠券
+	//	    successBo.setCardId( order.getCouponId() ); //卡券id
+	//	    successBo.setNumber( order.getCouponUseNum() );//卡券使用数量
+	//	    successBo.setUserFenbi( 1 );
+	//	    successBo.setFenbiNum( fenbiNum );
+	//	    successBo.setUserJifen( 1 );
+	//	    successBo.setJifenNum( CommonUtil.toIntegerByDouble( jifenNum ) );
+
+	PayTypeBo payTypeBo = new PayTypeBo();
+	payTypeBo.setPayType( CommonUtil.getMemberPayTypeByPresale( deposit.getPayWay(), 0 ) );//支付方式 查询看字典1198
+	payTypeBo.setPayMoney( CommonUtil.toDouble( deposit.getDepositMoney() ) );
+	List< PayTypeBo > typeBoList = new ArrayList<>();
+	typeBoList.add( payTypeBo );
+	successBo.setPayTypeBos( typeBoList );
+
+	successBo.setDataSource( deposit.getBuyerUserType() );//数据来源 0:pc端 1:微信 2:uc端 3:小程序 4魔盒 5:ERP
+	successBo.setIsDiatelyGive( 1 );////是否立即赠送 0延迟送 1立即送
+
 	//支付
-	Map< String,Object > resultMap = memberPayService.paySuccess( sucess );
-	int code = CommonUtil.toInteger( resultMap.get( "code" ) );
-	if ( code == 1 ) {//支付成功
-	    return 1;
-	} else if ( code == 5006 ) {//储值卡金额不够
-	    return -2;
-	} else {//支付失败
-	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
+	Map< String,Object > payMap = memberPayService.paySuccessNewDan( successBo );
+	if ( CommonUtil.isNotEmpty( payMap ) ) {
+	    if ( CommonUtil.toInteger( payMap.get( "code" ) ) != 1 ) {
+		String msg = ResponseEnums.INTER_ERROR.getDesc();
+		if ( CommonUtil.isNotEmpty( payMap.get( "errorMsg" ) ) ) {
+		    msg = payMap.get( "errorMsg" ).toString();
+		}
+		throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), msg );
+	    }
 	}
+	return 1;
     }
 
     /**
@@ -358,9 +386,10 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    mallPresaleDepositDAO.insert( deposit );
 	} else {//已经交纳了定金，无需再次交纳
 	    if ( dep.getDepositStatus().toString().equals( "1" ) ) {
-		result.put( "errorMsg", "您已经交纳了定金，无需再次交纳" );
+		//		result.put( "errorMsg", "您已经交纳了定金，无需再次交纳" );
 		result.put( "isReturn", 1 );
-		result.put( "code", ResponseEnums.ERROR.getCode() );
+		//		result.put( "code", ResponseEnums.ERROR.getCode() );
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "您已经交纳了定金，无需再次交纳" );
 	    } else {
 		deposit.setId( dep.getId() );
 		mallPresaleDepositDAO.updateById( deposit );
@@ -376,7 +405,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    }
 
 	    if ( deposit.getId() > 0 ) {
-		result.put( "code", ResponseEnums.SUCCESS.getCode() );  
+		result.put( "code", ResponseEnums.SUCCESS.getCode() );
 		result.put( "id", deposit.getId() );
 		result.put( "no", deposit.getDepositNo() );
 		result.put( "payWay", deposit.getPayWay() );
@@ -389,11 +418,12 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		    Map< String,Object > params = new HashMap<>();
 		    params.put( "out_trade_no", deposit.getDepositNo() );
 		    paySuccessPresale( params );
-		    result.put( "payUrl", "/mallPage/" + deposit.getProductId() + "/" + presale.getShopId() + "/79B4DE7C/phoneProduct.do" );
+		    //		    result.put( "payUrl", "/mallPage/" + deposit.getProductId() + "/" + presale.getShopId() + "/79B4DE7C/phoneProduct.do" );
 		}
 	    } else {
 		result.put( "code", ResponseEnums.ERROR.getCode() );
 		result.put( "errorMsg", "交纳定金失败" );
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "交纳定金失败" );
 	    }
 	}
 	return result;
@@ -473,6 +503,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	} else {
 	    result.put( "errorMsg", "预售商品的库存不够" );
 	    result.put( "code", ResponseEnums.ERROR.getCode() );
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "预售商品的库存不够" );
 	}
 	return result;
     }

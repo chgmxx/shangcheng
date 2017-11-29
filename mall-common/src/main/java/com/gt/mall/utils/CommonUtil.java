@@ -521,8 +521,44 @@ public class CommonUtil {
 	    case 8://粉币支付
 		payType = 12;
 		break;
+	    case 9://支付宝
+		payType = 0;
+		break;
+	    case 10://小程序支付
+		payType = 1;
+		break;
 	    default:
 		payType = 10;//现金支付
+		break;
+	}
+	if ( isWallet == 1 ) {
+	    payType = 1;
+	}
+	return payType;
+    }
+
+    /**
+     * 预售获取会员的支付方式
+     *
+     * @param payWay   支付方式  传 order.getOrderPayWay
+     * @param isWallet 是否使用钱包支付   1已使用  0未使用 -1正在支付  传 order.getIsWallet
+     *
+     * @return @return 支付方式（调用 memberPayService.paySuccess用的，不适用与其他的接口）
+     */
+    public static int getMemberPayTypeByPresale( int payWay, int isWallet ) {
+	int payType = 0;//现金支付
+	switch ( payWay ) {
+	    case 1://微信支付
+		payType = 1;
+		break;
+	    case 2://储值卡支付
+		payType = 5;
+		break;
+	    case 3://支付宝
+		payType = 0;
+		break;
+	    default:
+		payType = 1;//微信支付
 		break;
 	}
 	if ( isWallet == 1 ) {
@@ -657,7 +693,7 @@ public class CommonUtil {
 	    if ( ( consumeMoney > 0 || minCosumeMoney > 0 ) && consumeMoney < minCosumeMoney ) {
 		errorMsg = "您的超级销售员申请不通过，且消费额没有达到" + minCosumeMoney + "元，不能继续申请，您的消费额只有" + consumeMoney + "元";
 	    } else {
-//		errorMsg = "您的超级销售员申请不通过，确认要重新申请？";
+		//		errorMsg = "您的超级销售员申请不通过，确认要重新申请？";
 		errorMsg = "您的审核不通过不可重复发起申请";
 	    }
 	} else if ( sellerStatus == -3 ) {

@@ -234,4 +234,9 @@ public class Constants {
      */
     public static final String[] RETURN_WAY = { "仅退款", "退货退款", "仅退货" };
 
+    /**
+     * 预售 消费方式 对应字典表 1197
+     */
+    public static final int PRESALE_PAY_TYPE = 101;
+
 }

@@ -3,7 +3,6 @@ package com.gt.mall.service.inter.member.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.entityBo.MallAllEntity;
 import com.gt.entityBo.NewErpPaySuccessBo;
-import com.gt.entityBo.PaySuccessBo;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
@@ -48,14 +47,18 @@ public class MemberPayServiceImpl implements MemberPayService {
      *
      * @return 对象
      */
-    @Override
-    public Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
-    }
-
+    //    @Override
+    //    public Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
+    //	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
+    //    }
     @Override
     public Map< String,Object > paySuccessNew( List< NewErpPaySuccessBo > paySuccessBo ) {
 	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessShopsByErpBalance" );
+    }
+
+    @Override
+    public Map< String,Object > paySuccessNewDan( NewErpPaySuccessBo paySuccessBo ) {
+	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessByErpBalance" );
     }
 
 }

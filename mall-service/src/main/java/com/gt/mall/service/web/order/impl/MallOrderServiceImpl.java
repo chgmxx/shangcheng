@@ -1026,9 +1026,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( memberService.isMember( order.getBuyerUserId() ) || isFenbi || isJifen || CommonUtil.isNotEmpty( order.getCouponId() ) ) {
 		Map< String,Object > payMap = memberPayService.paySuccessNew( successBoList );
 		if ( CommonUtil.isNotEmpty( payMap ) ) {
-		    if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {
+		    if ( CommonUtil.toInteger( payMap.get( "code" ) ) != 1 ) {
+			String msg = ResponseEnums.INTER_ERROR.getDesc();
+			if ( CommonUtil.isNotEmpty( payMap.get( "errorMsg" ) ) ) {
+			    msg = payMap.get( "errorMsg" ).toString();
+			}
 			logger.error( "会员回调失败" + payMap.get( "errorMsg" ) );
-			throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), CommonUtil.toString( payMap.get( "errorMsg" ) ) );
+			throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), msg );
 		    }
 		}
 	    }

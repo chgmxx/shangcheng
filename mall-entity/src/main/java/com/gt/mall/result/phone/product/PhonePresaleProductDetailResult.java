@@ -62,4 +62,7 @@ public class PhonePresaleProductDetailResult implements Serializable {
     @ApiModelProperty( name = "payDespositStatus", value = "缴纳定金状态 1已缴纳 0未缴纳" )
     private int payDespositStatus = 0;
 
+    @ApiModelProperty( name = "orderNum", value = "订购数量" )
+    private Integer orderNum;
+
 }

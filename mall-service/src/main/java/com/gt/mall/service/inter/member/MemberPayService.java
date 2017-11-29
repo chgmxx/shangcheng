@@ -2,7 +2,6 @@ package com.gt.mall.service.inter.member;
 
 import com.gt.entityBo.MallAllEntity;
 import com.gt.entityBo.NewErpPaySuccessBo;
-import com.gt.entityBo.PaySuccessBo;
 
 import java.util.List;
 import java.util.Map;
@@ -31,14 +30,24 @@ public interface MemberPayService {
      *
      * @return 对象
      */
-    Map< String,Object > paySuccess( PaySuccessBo paySuccessBo );
+    //    Map< String,Object > paySuccess( PaySuccessBo paySuccessBo );
+
     /**
-     * 支付成功回调   传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款
+     * 支付成功回调 (跨门店)  传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款
      *
      * @param paySuccessBo 对象
      *
      * @return 对象
      */
-    Map<String,Object> paySuccessNew(List<NewErpPaySuccessBo> paySuccessBo);
+    Map< String,Object > paySuccessNew( List< NewErpPaySuccessBo > paySuccessBo );
+
+    /**
+     * 支付成功回调 (单门店)  传入值具体描述请看实体类 储值卡支付 直接调用 回调类以处理储值卡扣款
+     *
+     * @param paySuccessBo 对象
+     *
+     * @return 对象
+     */
+    Map< String,Object > paySuccessNewDan( NewErpPaySuccessBo paySuccessBo );
 
 }

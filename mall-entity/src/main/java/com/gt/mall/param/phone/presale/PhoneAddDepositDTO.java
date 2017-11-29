@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 用户缴纳定金参数
@@ -35,7 +36,7 @@ public class PhoneAddDepositDTO implements Serializable {
     @ApiModelProperty( name = "depositMoney", value = "定金金额", required = true )
     @NotNull( message = "定金金额不能为空" )
     @Min( value = 1, message = "定金金额不能小于1" )
-    private Integer depositMoney;
+    private BigDecimal depositMoney;
 
     @ApiModelProperty( name = "proName", value = "商品名称", required = true )
     private String proName;
@@ -47,8 +48,11 @@ public class PhoneAddDepositDTO implements Serializable {
     private String proSpecificaIds;
 
     @ApiModelProperty( name = "payWay", value = "支付方式 1 微信支付 2 储值卡支付  3 支付宝支付", required = true )
-    private String payWay;
+    private Integer payWay;
 
     @ApiModelProperty( name = "orderMoney", value = "订购价 预定时的价格", required = true )
-    private String orderMoney;
+    private BigDecimal orderMoney;
+
+    @ApiModelProperty( name = "proNum", value = "商品数量", required = true )
+    private Integer proNum;
 }

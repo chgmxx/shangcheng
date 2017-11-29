@@ -1,32 +1,34 @@
 package com.gt.mall.controller.api.presale.phone;
 
 import com.gt.api.bean.session.Member;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
-import com.gt.mall.dao.presale.MallPresaleDepositDAO;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.auction.MallAuction;
-import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.presale.MallPresale;
 import com.gt.mall.entity.presale.MallPresaleDeposit;
+import com.gt.mall.entity.presale.MallPresaleTime;
+import com.gt.mall.entity.product.MallProduct;
+import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
-import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
-import com.gt.mall.param.phone.pifa.PhoneAddPifaApplyDTO;
 import com.gt.mall.param.phone.presale.PhoneAddDepositDTO;
 import com.gt.mall.param.phone.presale.PhoneSearchDepositDTO;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
-import com.gt.mall.utils.*;
-import io.swagger.annotations.*;
+import com.gt.mall.service.web.presale.MallPresaleTimeService;
+import com.gt.mall.service.web.product.MallProductInventoryService;
+import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallRedisUtils;
+import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.MarginUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -37,7 +39,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -53,13 +57,19 @@ import java.util.*;
 public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 
     @Autowired
-    private MallPresaleService        mallPresaleService;
+    private MallPresaleService          mallPresaleService;
     @Autowired
-    private MallPresaleDepositService mallPresaleDepositService;
+    private MallPresaleDepositService   mallPresaleDepositService;
     @Autowired
-    private MallPageService           pageService;
+    private MallPageService             pageService;
     @Autowired
-    private MemberService             memberService;
+    private MemberService               memberService;
+    @Autowired
+    private MallProductService          mallProductService;
+    @Autowired
+    private MallPresaleTimeService      mallPresaleTimeService;
+    @Autowired
+    private MallProductInventoryService mallProductInventoryService;
 
     @ApiOperation( value = "进入交纳预收定金页面接口", notes = "进入交纳预收定金页面" )
     @ResponseBody
@@ -71,10 +81,10 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
-	    Map mapmessage = pageService.querySelct( searchDTO.getProId() );//获取商品信息
+	    MallProduct product = mallProductService.selectById( searchDTO.getProId() );//获取商品信息
 	    int shopid = 0;
-	    if ( CommonUtil.isNotEmpty( mapmessage.get( "shop_id" ) ) ) {
-		shopid = CommonUtil.toInteger( mapmessage.get( "shop_id" ).toString() );
+	    if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
+		shopid = product.getShopId();
 		MallRedisUtils.getMallShopId( shopid );
 	    }
 	    int proNum = 1;
@@ -91,20 +101,33 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    }
 
 	    result.put( "presale", presale );
-	    result.put( "mapmessage", mapmessage );
+	    result.put( "product", product );
+	    double proPrice = CommonUtil.toDouble( product.getProPrice() );
+	    if ( CommonUtil.isNotEmpty( searchDTO.getInvId() ) && searchDTO.getInvId() > 0 ) {
+		MallProductInventory inventory = mallProductInventoryService.selectById( searchDTO.getInvId() );
+		if ( "0".equals( inventory.getIsDelete().toString() ) && inventory.getProductId().toString().equals( searchDTO.getProId().toString() ) ) {
+		    proPrice = CommonUtil.toDouble( inventory.getInvPrice() );
+		}
+	    }
+
+	    List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( presale.getId() );
+	    proPrice = mallPresaleService.getPresalePrice( proPrice, timeList );
+	    DecimalFormat df = new DecimalFormat( "######0.00" );
+	    proPrice = CommonUtil.toDouble( df.format( proPrice ) );
+	    result.put( "orderPrice", df.format( proPrice * searchDTO.getNum() ) );//订购价
 
 	    List imagelist = pageService.imageProductList( searchDTO.getProId(), 1 );//获取轮播图列表
 	    result.put( "imagelist", imagelist.get( 0 ) );
-	    String is_specifica = mapmessage.get( "is_specifica" ).toString();
+	    String is_specifica = product.getIsSpecifica().toString();
 	    Map guige = new HashMap();
 	    if ( is_specifica.equals( "1" ) ) {
 		guige = pageService.productSpecifications( searchDTO.getProId(), searchDTO.getInvId() + "" );
 	    }
 
 	    int memType = memberService.isCardType( member.getId() );
-	    result.put( "memType", memType );
-	    result.put( "memberId", member.getId() );
-	    result.put( "guige", guige );
+	    if ( guige != null && guige.size() > 0 ) {
+		result.put( "proSpecificaIds", guige.get( "xids" ) );
+	    }
 
 	    Map< String,Object > publicMap = pageService.publicMapByUserId( member.getBusid() );
 	    int isWxPay = 0;//不能微信支付
@@ -114,9 +137,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    } else {
 		isAliPay = 1;
 	    }
+	    result.put( "payWayList", MarginUtil.getPayWay( isWxPay, isAliPay, memType ) );
 
-	    result.put( "isWxPay", isWxPay );
-	    result.put( "isAliPay", isAliPay );
 	} catch ( Exception e ) {
 	    logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -139,9 +161,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    result = mallPresaleDepositService.addDeposit( depositDTO, member, loginDTO.getBrowerType() );
-	    if ( !result.get( "code" ).toString().equals( "1" ) ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "errorMsg" ).toString() );
-	    }
+	} catch ( BusinessException be ) {
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "交纳定金异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -210,14 +231,10 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    userLogin( request, response, loginDTO );
 
 	    MallPresaleDeposit deposit = new MallPresaleDeposit();
-	    if ( CommonUtil.isNotEmpty( member.getOldid() ) ) {
-		List< String > lists = new ArrayList<>();
-		for ( String oldMemberId : member.getOldid().split( "," ) ) {
-		    if ( CommonUtil.isNotEmpty( oldMemberId ) ) {
-			lists.add( oldMemberId );
-		    }
-		}
-		deposit.setOldUserIdList( lists );
+	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
+
+	    if ( CommonUtil.isNotEmpty( memberList ) && memberList.size() > 0 ) {
+		deposit.setOldUserIdList( memberList );
 	    } else {
 		deposit.setUserId( member.getId() );
 	    }

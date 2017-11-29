@@ -52,7 +52,7 @@ public class HttpSignUtil {
 		Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( obj ), newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
 	    } else if ( type == 3 ) {//商家联盟的接口
-		String params = JSONObject.toJSONString(obj);
+		String params = JSONObject.toJSONString( obj );
 		Map map = HttpClienUtils.reqPost( params, newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
 	    } else {//会员、联盟
