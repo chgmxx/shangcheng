@@ -31,6 +31,8 @@ public class ProductResult {
     private String  shopName;
     @ApiModelProperty( name = "wxShopId", value = "门店ID" )
     private Integer wxShopId;
+    @ApiModelProperty( name = "userId", value = "商家ID" )
+    private Integer userId;
 
     @ApiModelProperty( name = "imageUrl", value = "商品图片" )
     private String     imageUrl;

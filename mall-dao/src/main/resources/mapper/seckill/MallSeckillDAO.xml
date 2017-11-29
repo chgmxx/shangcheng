@@ -51,7 +51,7 @@
     </sql>
     <sql id="page_Column_List">
         g.id, g.product_id, s_name, s_price, s_start_time, s_end_time, s_max_buy_num,
-        shop_id, g.create_time, is_use,
+        shop_id, g.create_time, is_use,g.user_id,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.s_start_time &gt; now() and g.s_end_time &gt; now() then 0<!--未开始  -->

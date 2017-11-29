@@ -86,7 +86,7 @@
     </sql>
     <sql id="group_product_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
-        g.shop_id, g.create_time, is_use,
+        g.shop_id, g.create_time, is_use,g.user_id,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
