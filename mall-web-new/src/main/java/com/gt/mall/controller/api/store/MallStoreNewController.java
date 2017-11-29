@@ -70,8 +70,9 @@ public class MallStoreNewController extends BaseController {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = MallSessionUtils.getLoginPbUser( request );
 	    result.put( "userName", user.getName() );//商家名称
-	    result.put( "userLogo", wxPublicUsers.getHeadImg() );//商家头像
-
+	    if ( wxPublicUsers != null ) {
+		result.put( "userLogo", wxPublicUsers.getHeadImg() );//商家头像
+	    }
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    set = mallPaySetService.selectByUserId( set );
