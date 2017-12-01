@@ -55,6 +55,9 @@ public class PhoneToOrderResult implements Serializable {
     @ApiModelProperty( name = "activityId", value = "活动id" )
     private Integer activityId = 0;
 
+    @ApiModelProperty( name = "joinActivityId", value = "参加活动id" )
+    private int joinActivityId = 0;
+
     @ApiModelProperty( name = "selectPayWayId", value = "选中的支付方式id" )
     private Integer selectPayWayId;
 

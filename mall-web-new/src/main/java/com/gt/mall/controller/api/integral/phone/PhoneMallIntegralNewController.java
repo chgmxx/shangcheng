@@ -1,10 +1,13 @@
 package com.gt.mall.controller.api.integral.phone;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.integral.MallIntegralImage;
+import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.integral.PhoneAddIntegralDTO;
 import com.gt.mall.service.inter.member.MemberService;
@@ -12,8 +15,8 @@ import com.gt.mall.service.web.integral.MallIntegralImageService;
 import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.Api;
@@ -55,6 +58,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     private MallOrderService         orderService;
     @Autowired
     private MemberService            memberService;
+    @Autowired
+    private MallStoreService         mallStoreService;
 
     /**
      * 获取积分商城商品列表
@@ -62,23 +67,27 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     @ApiOperation( value = "获取积分商城商品列表", notes = "获取积分商城商品列表" )
     @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
-    @RequestMapping( value = "{shopId}/integralProductList", method = RequestMethod.POST )
+    @RequestMapping( value = "integralProductList", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralProductList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, @PathVariable int shopId, Integer curPage ) {
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
-	    boolean isShop = pageService.wxShopIsDelete( shopId, null );
-	    result.put( "isShop", isShop );
-	    if ( isShop ) {
-		Map< String,Object > params = new HashMap<>();
-		params.put( "shopId", shopId );
-		params.put( "curPage", curPage );
-		PageUtil page = integralService.selectIntegralByUserId( params );
-
-		result.put( "page", page );
+	    BusUser user = new BusUser();
+	    user.setId( loginDTO.getBusId() );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    if ( shoplist == null || shoplist.size() == 0 ) {
+		throw new BusinessException( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 	    }
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "busId", shoplist );
+	    params.put( "curPage", curPage );
+	    PageUtil page = integralService.selectIntegralByUserId( params );
+
+	    result.put( "page", page );
+	} catch ( BusinessException be ) {
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "获取积分商城商品列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -92,9 +101,9 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
      */
     @ApiOperation( value = "获取积分数量,轮播图片", notes = "获取积分数量,轮播图片" )
     @ResponseBody
-    @RequestMapping( value = "{shopId}/integralImage", method = RequestMethod.POST )
+    @RequestMapping( value = "integralImage", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralImage( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, @PathVariable int shopId ) {
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    loginDTO.setUcLogin( 1 );
@@ -114,12 +123,12 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 
 	    //查询轮播图片
 	    Map< String,Object > params = new HashMap<>();
-	    params.put( "shopId", shopId );
+	    //	    params.put( "shopId", shopId );
 	    params.put( "userId", loginDTO.getBusId() );
 	    List< MallIntegralImage > imageList = integralImageService.getIntegralImageByUser( params );
 	    result.put( "imageList", imageList );
 
-	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+	    //	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 
 	} catch ( Exception e ) {
 	    logger.error( "获取积分数量,轮播图片异常：" + e.getMessage() );
@@ -133,11 +142,11 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
      * 获取兑换记录列表
      */
     @ApiOperation( value = "获取兑换记录列表", notes = "获取兑换记录列表" )
-    @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) )
+    @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "当前页数", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "recordList", method = RequestMethod.POST )
-    public ServerResponse< Map< String,Object > > recordList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer shopId ) {
+    public ServerResponse< Map< String,Object > > recordList( HttpServletRequest request, HttpServletResponse response,
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    userLogin( request, response, loginDTO );
@@ -145,13 +154,25 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "buyerUserId", member.getId() );
 	    params.put( "busUserId", loginDTO.getBusId() );
-	    //查询兑换记录
-	    List< Map< String,Object > > orderList = orderService.selectIntegralOrder( params );
-	    result.put( "orderList", orderList );
+	    params.put( "curPage", curPage );
+	    List< MallOrder > orderList = orderService.selectIntegeralOrder( params );
+	    double totalIntegral = 0;
+	    if ( orderList != null && orderList.size() > 0 ) {
+		params.put( "totalOrderNum", orderList.size() );
+		//查询兑换记录
+		PageUtil pageUtil = orderService.selectIntegralOrder( params );
+		result.put( "pageUtil", pageUtil );
 
-	    if ( CommonUtil.isNotEmpty( shopId ) ) {
-		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+		if ( orderList != null && orderList.size() > 0 ) {
+		    for ( MallOrder mallOrder : orderList ) {
+			if ( CommonUtil.isEmpty( mallOrder ) || CommonUtil.isEmpty( mallOrder.getOrderMoney() ) ) {
+			    continue;
+			}
+			totalIntegral = CommonUtil.add( totalIntegral, CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
+		    }
+		}
 	    }
+	    result.put( "totalIntegral", totalIntegral );
 	} catch ( Exception e ) {
 	    logger.error( "获取兑换记录列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -164,12 +185,11 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
      * 获取积分明细列表
      */
     @ApiOperation( value = "获取积分明细列表", notes = "获取积分明细列表" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
+    @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "当前页数", paramType = "query", required = false, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "integralDetail", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralDetail( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer shopId, Integer curPage ) {
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    userLogin( request, response, loginDTO );
@@ -183,6 +203,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    map.put( "page", firstNum );
 	    map.put( "pageSize", pageSize );
 	    List< Map > list = memberService.findCardrecordList( map );
+	    result.put( "curPage", curPage );
 	    result.put( "integralList", list );
 	    //查询我的积分
 	    if ( CommonUtil.isNotEmpty( member ) ) {
@@ -190,9 +211,9 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		result.put( "memberIntegral", member.getIntegral() );
 	    }
 
-	    if ( CommonUtil.isNotEmpty( shopId ) ) {
-		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
-	    }
+	    //	    if ( CommonUtil.isNotEmpty( shopId ) ) {
+	    //		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+	    //	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取积分明细列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -205,12 +226,12 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
      * 获取积分商品信息
      */
     @ApiOperation( value = "获取积分商品信息", notes = "获取积分商品信息" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "productId", value = "商品ID", paramType = "query", required = true, dataType = "int" ) } )
+    @ApiImplicitParams(
+		    @ApiImplicitParam( name = "productId", value = "商品ID", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "integralProduct", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralProduct( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer shopId, Integer productId ) {
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer productId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    loginDTO.setUcLogin( 1 );
@@ -233,9 +254,6 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    }
 	    result.put( "member", member );
 
-	    if ( CommonUtil.isNotEmpty( shopId ) ) {
-		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
-	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取积分商品信息异常：" + e.getMessage() );
 	    e.printStackTrace();

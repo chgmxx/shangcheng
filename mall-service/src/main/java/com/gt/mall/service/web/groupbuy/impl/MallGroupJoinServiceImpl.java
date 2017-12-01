@@ -9,11 +9,13 @@ import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +60,10 @@ public class MallGroupJoinServiceImpl extends BaseServiceImpl< MallGroupJoinDAO,
 		    } else {
 			flag = false;
 		    }
+		    String joinTime = map.get( "joinTime" ).toString();
+		    Date joinDate = DateTimeKit.parse( joinTime, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+		    Date endTime = DateTimeKit.addHours( joinDate, 24 );
+		    map.put( "joinTime", ( endTime.getTime() - joinDate.getTime() ) / 1000 );
 		    map.put( "count", joinGroupList.size() );
 		    int num = CommonUtil.toInteger( map.get( "pelpleNum" ) );
 		    map.put( "joinNum", num - joinGroupList.size() );

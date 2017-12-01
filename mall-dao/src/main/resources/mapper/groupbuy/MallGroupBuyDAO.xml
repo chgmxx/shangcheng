@@ -321,13 +321,11 @@
         gb.id as gBuyId,gb.g_price as price ,gb.g_start_time as startTime ,gb.g_end_time as endTime,gb.g_people_num as
         peopleNum,a.shop_id as shopId,d.id as inv_id,
         a.return_day,
-        gb.g_max_buy_num as maxNum
+        gb.g_max_buy_num as maxNum,a.user_id as busId
         from t_mall_group_buy gb
         left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
-        is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where
-        is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
         left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
         left join t_mall_group g on g.id=pg.group_id and g.is_delete=0

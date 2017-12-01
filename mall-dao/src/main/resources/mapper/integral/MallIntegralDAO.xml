@@ -135,15 +135,10 @@
     </select>
 
     <select id="selectIntegralByShopids" parameterType="Map" resultType="Map">
-        SELECT DISTINCT(a.id),a.pro_name,i.`money`,c.image_url,e.specifica_img_url
+        SELECT DISTINCT(a.id) as id,a.pro_name,i.`money`,i.shop_id,i.user_id as busId,i.product_id
         FROM t_mall_integral i
         LEFT JOIN t_mall_product a ON i.`product_id`=a.`id` AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
-        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
-        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
-        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
         <if test="shoplist != null ">
             and
@@ -163,12 +158,7 @@
         SELECT count(DISTINCT a.id)
         FROM t_mall_integral i
         LEFT JOIN t_mall_product a ON i.`product_id`=a.`id` AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
-        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
-        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
-        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0  AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
         <if test="shoplist != null ">
             and

@@ -43,7 +43,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      */
     int upOrderByorderNo( Map< String,Object > params );
 
-
     /**
      * 查询订单详细信息
      */
@@ -114,11 +113,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
     List< MallOrder > selectOrderByFinish();
 
     /**
-     * 计算有多少人参团
-     */
-    Map< String,Object > groupJoinPeopleNum( Map< String,Object > params );
-
-    /**
      * 查询所有未支付的订单
      */
     List< MallOrder > selectNoPayOrder( Map< String,Object > params );
@@ -179,6 +173,11 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
     List< Map< String,Object > > selectIntegralOrder( Map< String,Object > params );
 
     /**
+     * 查询积分订单
+     */
+    List< Map< String,Object > > selectIntegralOrderList( Map< String,Object > params );
+
+    /**
      * 查询充值失败和未充值的订单
      */
     List< Map< String,Object > > selectOrderFlow();
@@ -197,7 +196,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * 根据订单id查询订单信息
      *
      * @param id 订单id
-     *
      */
     Map< String,Object > selectMapById( int id );
 
@@ -205,7 +203,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * 获取条数
      */
     int tradeCount( Map< String,Object > params );
-
 
     /**
      * 分页查询
@@ -244,7 +241,7 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      *
      * @return
      */
-    Double selectOrderFinishMoneyByShopId( Integer shopId);
+    Double selectOrderFinishMoneyByShopId( Integer shopId );
 
     /**
      * 根据订单id查询订单信息

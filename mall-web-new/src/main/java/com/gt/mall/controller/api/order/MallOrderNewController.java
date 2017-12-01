@@ -5,6 +5,7 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.order.MallOrder;
@@ -75,6 +76,8 @@ public class MallOrderNewController extends BaseController {
     private MallOrderReturnService    mallOrderReturnService;
     @Autowired
     private MallOrderReturnLogService mallOrderReturnLogService;
+    @Autowired
+    private MallGroupJoinDAO          mallGroupJoinDAO;
 
     @ApiOperation( value = "订单列表(分页)", notes = "订单列表(分页)" )
     @ResponseBody
@@ -306,7 +309,7 @@ public class MallOrderNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "orderId", orderId );
 	    params.put( "groupBuyId", groupBuyId );
-	    Map< String,Object > map1 = mallOrderDAO.groupJoinPeopleNum( params );
+	    Map< String,Object > map1 = mallGroupJoinDAO.groupJoinPeopleNum( params );
 	    if ( Integer.parseInt( map.get( "gPeopleNum" ).toString() ) == Integer.parseInt( map1.get( "num" ).toString() ) ) {
 		flag = true;//团购商品可以发货
 	    }

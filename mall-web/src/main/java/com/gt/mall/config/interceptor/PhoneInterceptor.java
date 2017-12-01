@@ -34,9 +34,9 @@ public class PhoneInterceptor implements HandlerInterceptor {
 	    request.setAttribute( "member", member );
 	} else {
 	    member = new Member();
-//	    	    member.setId( 1225509 );
-//	    	    member.setId( 1225352 );//折扣卡
-	    member.setId( 1225542 );//储值卡
+//	    	    	    member.setId( 1225509 );
+	    member.setId( 1225352 );//折扣卡
+//	    	    member.setId( 1225542 );//储值卡
 	    member.setBusid( 42 );
 	    member.setPublicId( 482 );
 	    member.setPhone( "15017934717" );

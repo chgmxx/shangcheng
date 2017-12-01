@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.basic.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallCollectDAO;
 import com.gt.mall.entity.basic.MallCollect;
@@ -104,16 +103,19 @@ public class MallCollectServiceImpl extends BaseServiceImpl< MallCollectDAO,Mall
     public boolean deleteCollect( String ids ) {
 	if ( CommonUtil.isNotEmpty( ids ) ) {
 
-	    Integer[] deleteIds = (Integer[]) JSONArray.toJSON( JSONArray.parseObject( ids ) );
+	    String[] deleteIds = ids.split( "," );
 	    if ( deleteIds == null || deleteIds.length == 0 ) {
-		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "请选择要删除收藏" );
 	    }
 	    Map< String,Object > params = new HashMap<>();
+	    params.put( "isDelete", 1 );
 	    params.put( "ids", deleteIds );
 	    int count = collectDAO.batchUpdateCollect( params );
 	    if ( count > 0 ) {
 		return true;
 	    }
+	} else {
+	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "请选择要删除收藏" );
 	}
 	return false;
     }

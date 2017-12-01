@@ -13,6 +13,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
+import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
@@ -120,6 +121,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private PayService                  payService;
     @Autowired
     private MallOrderReturnService      mallOrderReturnService;
+    @Autowired
+    private MallGroupJoinDAO            mallGroupJoinDAO;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -488,7 +491,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 			joinParams.put( "orderDetailId", detail.getId() );
 			joinParams.put( "groupBuyId", buy.getId() );
 			//查询是否已成团
-			Map< String,Object > joinMap = orderDAO.groupJoinPeopleNum( joinParams );
+			Map< String,Object > joinMap = mallGroupJoinDAO.groupJoinPeopleNum( joinParams );
 			if ( joinMap != null ) {
 			    int count = CommonUtil.toInteger( joinMap.get( "num" ) );
 			    //团购凑齐人允许退款

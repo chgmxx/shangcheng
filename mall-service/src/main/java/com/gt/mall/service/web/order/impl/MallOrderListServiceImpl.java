@@ -3,11 +3,13 @@ package com.gt.mall.service.web.order.impl;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.constant.Constants;
+import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
+import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
@@ -68,6 +70,8 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
     private MallOrderReturnDAO   mallOrderReturnDAO;
     @Autowired
     private MallTakeTheirService mallTakeTheirService;
+    @Autowired
+    private MallGroupJoinDAO     mallGroupJoinDAO;
 
     @Override
     public PhoneOrderListResult orderList( PhoneOrderListDTO params, PhoneLoginDTO loginDTO, Member member ) {
@@ -406,6 +410,27 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	result.setBusMessage( order.getOrderSellerRemark() );
 	result.setOrderType( order.getOrderType() );
 	result.setActivityId( order.getGroupBuyId() );
+	result.setBuyerUserId( order.getBuyerUserId() );
+	result.setJoinId( order.getPJoinId() );
+	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType() == 1 && CommonUtil.isNotEmpty( order.getGroupBuyId() ) && order.getGroupBuyId() > 0 ) {
+	    MallGroupBuy mallGroupBuy = mallGroupBuyService.selectById( order.getGroupBuyId() );
+
+	    //查询参团情况
+	    Map< String,Object > groupMap = new HashMap<>();
+	    groupMap.put( "groupBuyId", order.getGroupBuyId() );
+	    groupMap.put( "orderId", order.getId() );
+	    Map< String,Object > countMap = mallGroupJoinDAO.groupJoinPeopleNum( groupMap );
+	    if ( CommonUtil.isNotEmpty( countMap ) && CommonUtil.isNotEmpty( countMap.get( "pId" ) ) ) {
+		result.setJoinId( CommonUtil.toInteger( countMap.get( "pId" ) ) );
+		result.setJoinNum( CommonUtil.toInteger( countMap.get( "num" ) ) );
+		if ( result.getJoinNum() < mallGroupBuy.getGPeopleNum() ) {
+		    result.setOrderStatusName( "待成团," + result.getOrderStatusName() );
+		    result.setOrderStatusMsg( OrderUtil.getOrderStatusByGroup( mallGroupBuy, result.getJoinNum() ) );
+		} else {
+		    result.setOrderStatusName( "已成团," + result.getOrderStatusName() );
+		}
+	    }
+	}
 	return result;
     }
 

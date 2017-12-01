@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyPriceDAO;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
@@ -15,10 +15,13 @@ import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.seller.MallSellerJoinProductDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
+import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.entity.integral.MallIntegral;
-import com.gt.mall.entity.order.MallOrderDetail;
+import com.gt.mall.entity.product.MallProduct;
+import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
@@ -26,10 +29,12 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyPriceService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.CommonUtil;
@@ -55,33 +60,37 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     private Logger log = Logger.getLogger( MallGroupBuyServiceImpl.class );
 
     @Autowired
-    private MallGroupBuyDAO          mallGroupBuyDAO;
+    private MallGroupBuyDAO             mallGroupBuyDAO;
     @Autowired
-    private MallGroupBuyPriceDAO     mallGroupBuyPriceDAO;
+    private MallGroupBuyPriceDAO        mallGroupBuyPriceDAO;
     @Autowired
-    private MallGroupBuyPriceService mallGroupBuyPriceService;
+    private MallGroupBuyPriceService    mallGroupBuyPriceService;
     @Autowired
-    private MallGroupJoinDAO         mallGroupJoinDAO;
+    private MallGroupJoinDAO            mallGroupJoinDAO;
     @Autowired
-    private MallIntegralDAO          mallIntegralDAO;
+    private MallIntegralDAO             mallIntegralDAO;
     @Autowired
-    private MallSellerJoinProductDAO mallSellerJoinProductDAO;
+    private MallSellerJoinProductDAO    mallSellerJoinProductDAO;
     @Autowired
-    private MallSearchKeywordService mallSearchKeywordService;
+    private MallSearchKeywordService    mallSearchKeywordService;
     @Autowired
-    private MallOrderDetailDAO       mallOrderDetailDAO;
+    private MallOrderDetailDAO          mallOrderDetailDAO;
     @Autowired
-    private MallOrderDAO             mallOrderDAO;
+    private MallOrderDAO                mallOrderDAO;
     @Autowired
-    private MallProductService       mallProductService;
+    private MallProductService          mallProductService;
     @Autowired
-    private MallStoreDAO             mallStoreDAO;
+    private MallStoreDAO                mallStoreDAO;
     @Autowired
-    private WxPublicUserService      wxPublicUserService;
+    private WxPublicUserService         wxPublicUserService;
     @Autowired
-    private MallPageService          mallPageService;
+    private MallPageService             mallPageService;
     @Autowired
-    private MallGroupJoinService     mallGroupJoinService;
+    private MallGroupJoinService        mallGroupJoinService;
+    @Autowired
+    private MallImageAssociativeService mallImageAssociativeService;
+    @Autowired
+    private MallProductInventoryService mallProductInventoryService;
 
     @Override
     public PageUtil selectGroupBuyByShopId( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist ) {
@@ -468,11 +477,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	if ( CommonUtil.isNotEmpty( groupBuy.getPriceList() ) ) {
 	    for ( MallGroupBuyPrice price : groupBuy.getPriceList() ) {
 		if ( price.getIsJoinGroup() == 1 ) {
-		    if (result.getInvId() == 0 || result.getInvId() == price.getInvenId() ) {
+		    if ( result.getInvId() == 0 || result.getInvId() == price.getInvenId() ) {
 			groupPrice = CommonUtil.toDouble( price.getGroupPrice() );
 			result.setInvId( price.getInvenId() );
 		    }
-//		    result.setInvId( price.getInvenId() );
+		    //		    result.setInvId( price.getInvenId() );
 		    if ( result.getInvId() > 0 ) {
 			invIdList.add( price.getInvenId() );
 		    }
@@ -496,58 +505,66 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
     }
 
     @Override
-    public Map< String,Object > getGroupBuyById( String memberId, int id ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "id", id );
-	//通过团购id获取团购信息
-	List< Map< String,Object > > productList = mallGroupBuyDAO.selectgbProductByShopId( params );
-	if ( productList != null && productList.size() > 0 ) {
-	    Map< String,Object > map2 = productList.get( 0 );
-	    String is_specifica = map2.get( "is_specifica" ).toString();//是否有规格，1有规格，有规格取规格里面的值
-	    if ( is_specifica.equals( "1" ) ) {
-		map2.put( "old_price", map2.get( "inv_price" ) );
-		if ( CommonUtil.isNotEmpty( map2.get( "specifica_img_url" ) ) ) {
-		    map2.put( "image_url", map2.get( "specifica_img_url" ) );
-		}
-	    } else {
-		map2.put( "old_price", map2.get( "pro_price" ) );
-	    }
-	    String is_member_discount = map2.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
-	    if ( is_member_discount.equals( "1" ) ) {
-		map2.put( "price", Math.ceil( ( Double.parseDouble( map2.get( "price" ).toString() ) ) * 100 ) / 100 );
-	    }
-	    Date endTime = DateTimeKit.parse( map2.get( "endTime" ).toString(), "yyyy-MM-dd HH:mm:ss" );
-	    Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
-
-	    map2.put( "times", ( endTime.getTime() - nowTime.getTime() ) / 1000 );
-	    //			String endTime = map2.get("endTime").toString();//团购结束时间
-	    //			long[] times = DateTimeKit.getDistanceTimes(endTime, DateTimeKit.format(new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT));
-	    //			map2.put("times", times);
-
-	    if ( CommonUtil.isNotEmpty( memberId ) ) {
-		params.put( "groupBuyId", id );
-		params.put( "buyerUserId", memberId );
-		List< Map< String,Object > > list = mallGroupJoinDAO.selectJoinGroupByProId( params );
-		Map< String,Object > resultMap = list.get( 0 );
-		int orderDetailId = CommonUtil.toInteger( resultMap.get( "orderDetailId" ) );
-
-		MallOrderDetail detail = mallOrderDetailDAO.selectById( orderDetailId );
-
-		if ( CommonUtil.isNotEmpty( detail.getProductSpecificas() ) ) {
-		    String specificaIds = detail.getProductSpecificas();
-		    Map< String,Object > map = mallProductService.getProInvIdBySpecId( specificaIds, detail.getProductId() );
-		    if ( CommonUtil.isNotEmpty( map ) ) {
-			if ( CommonUtil.isNotEmpty( map.get( "specifica_values" ) ) ) {
-			    String specificaValues = CommonUtil.toString( map.get( "specifica_values" ) );
-			    specificaValues = specificaValues.replace( ",", " " );
-			    map2.put( "specifica_values", specificaValues );
-			}
-		    }
-		}
-	    }
-	    return map2;
+    public Map< String,Object > getGroupBuyById( MallGroupBuy mallGroupBuy, int proId, int joinId ) {
+	Map< String,Object > resultMap = new HashMap<>();
+	MallGroupJoin mallGroupJoin = mallGroupJoinDAO.selectById( joinId );
+	//获取商品信息
+	MallProduct product = mallProductService.selectById( proId );
+	if ( CommonUtil.isEmpty( product ) || CommonUtil.isEmpty( mallGroupJoin ) ) {
+	    return null;
 	}
-	return null;
+	List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, product.getId() );
+	if ( imageList != null && imageList.size() > 0 ) {
+	    resultMap.put( "imageUrl", imageList.get( 0 ).getImageUrl() );
+	}
+	double price = CommonUtil.toDouble( product.getProPrice() );
+	resultMap.put( "proName", product.getProName() );
+	resultMap.put( "id", product.getId() );
+	resultMap.put( "shopId", product.getShopId() );
+	resultMap.put( "busId", product.getUserId() );
+	resultMap.put( "isSpecifica", product.getIsSpecifica() );
+	resultMap.put( "maxNum", product.getProRestrictionNum() );
+
+	Integer invId = 0;
+	if ( CommonUtil.isNotEmpty( product.getIsSpecifica() ) ) {//存在规格
+	    String isSpecifica = product.getIsSpecifica().toString();
+	    if ( isSpecifica.equals( "1" ) ) {
+
+		MallProductInventory inven = mallProductInventoryService.selectByIsDefault( product.getId() );
+		if ( inven != null ) {
+		    invId = inven.getId();
+		    resultMap.put( "invId", inven.getId() );
+		    price = CommonUtil.toDouble( inven.getInvPrice() );
+
+		    Map< String,Object > guige = mallProductInventoryService.productSpecifications( product.getId(), inven.getId().toString() );
+		    if ( CommonUtil.isNotEmpty( guige ) ) {
+			resultMap.put( "specificaIds", guige.get( "xids" ) );
+			resultMap.put( "specificaName", guige.get( "specifica_name" ) );
+		    }
+		    //		    resultMap.put( "guige", guige );//规格信息 xids specifica_name
+		} else {
+		    product.setIsSpecifica( 0 );
+		}
+	    }
+	}
+	resultMap.put( "oldPrice", price );
+	price = CommonUtil.toDouble( mallGroupBuy.getGPrice() );
+	List< MallGroupBuyPrice > priceList = mallGroupBuyPriceService.selectPriceByGroupId( mallGroupBuy.getId() );
+	if ( priceList != null && priceList.size() > 0 ) {
+	    for ( MallGroupBuyPrice buyPrice : priceList ) {
+		if ( invId.toString().equals( buyPrice.getInvenId().toString() ) ) {
+		    price = CommonUtil.toDouble( buyPrice.getGroupPrice() );
+		    break;
+		}
+	    }
+	}
+
+	//	groupBuy.setPriceList( priceList );
+	resultMap.put( "price", price );
+	Date endTime = DateTimeKit.parse( mallGroupBuy.getGEndTime(), "yyyy-MM-dd HH:mm:ss" );
+	Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
+	resultMap.put( "times", ( endTime.getTime() - nowTime.getTime() ) / 1000 );
+	return resultMap;
     }
 
     @Override
@@ -580,7 +597,7 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	    params.put( "orderDetailId", detailId );
 	    params.put( "groupBuyId", buy.getId() );
 	    //查询是否已成团
-	    Map< String,Object > joinMap = mallOrderDAO.groupJoinPeopleNum( params );
+	    Map< String,Object > joinMap = mallGroupJoinDAO.groupJoinPeopleNum( params );
 	    if ( joinMap != null ) {
 		int count = CommonUtil.toInteger( joinMap.get( "num" ) );
 		//团购凑齐人允许退款

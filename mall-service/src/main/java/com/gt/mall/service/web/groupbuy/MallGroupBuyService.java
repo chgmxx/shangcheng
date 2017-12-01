@@ -103,12 +103,12 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
     /**
      * 获取团购信息
      *
-     * @param memberId 用户Id
-     * @param id       团购id
+     * @param mallGroupBuy 团购对象
+     * @param proId        商品id
      *
      * @return map
      */
-    Map< String,Object > getGroupBuyById( String memberId, int id );
+    Map< String,Object > getGroupBuyById( MallGroupBuy mallGroupBuy, int proId, int joinId );
 
     /**
      * 通过团购id查询公众号信息

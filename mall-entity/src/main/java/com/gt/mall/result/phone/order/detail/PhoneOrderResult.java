@@ -127,4 +127,13 @@ public class PhoneOrderResult implements Serializable {
     @ApiModelProperty( name = "activityId", value = "活动id" )
     private Integer activityId = 0;
 
+    @ApiModelProperty( name = "joinId", value = "参团id" )
+    private Integer joinId = 0;
+
+    @ApiModelProperty( name = "joinNum", value = "参团数量" )
+    private Integer joinNum = 0;
+
+    @ApiModelProperty( name = "buyerUserId", value = "买家" )
+    private Integer buyerUserId = 0;
+
 }

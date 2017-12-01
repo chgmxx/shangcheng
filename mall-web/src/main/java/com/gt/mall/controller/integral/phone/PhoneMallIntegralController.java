@@ -178,8 +178,8 @@ public class PhoneMallIntegralController extends AuthorizeOrLoginController {
 	    params.put( "buyerUserId", member.getId() );
 	    params.put( "busUserId", userid );
 	    //查询兑换记录
-	    List< Map< String,Object > > orderList = orderService.selectIntegralOrder( params );
-	    request.setAttribute( "orderList", orderList );
+	    PageUtil pageUtil = orderService.selectIntegralOrder( params );
+	    request.setAttribute( "pageUtil", pageUtil );
 
 	    if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
 		int shopId = CommonUtil.toInteger( params.get( "shopId" ) );

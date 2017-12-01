@@ -508,6 +508,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    result.setBusResultList( busResultList );
 	    result.setType( buyNowDTO.getType() );
 	    result.setActivityId( buyNowDTO.getActivityId() );
+	    result.setJoinActivityId( buyNowDTO.getJoinActivityId() );
 	    result.setProTypeId( product.getProTypeId() );
 	    type = buyNowDTO.getType();
 	    toShop = buyNowDTO.getToShop();
@@ -594,15 +595,15 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		int isStorePay = 0;
 		if ( isShowTake != null && isShowTake.size() > 0 ) {
 		    for ( Map< String,Object > isShowMap : isShowTake ) {
-		        boolean isFlag = false;
-		        if(CommonUtil.isNotEmpty( busResult.getTakeId() ) && busResult.getTakeId() > 0){
-		            if(busResult.getTakeId().toString().equals( isShowMap.get( "takeId" ).toString() )){
+			boolean isFlag = false;
+			if ( CommonUtil.isNotEmpty( busResult.getTakeId() ) && busResult.getTakeId() > 0 ) {
+			    if ( busResult.getTakeId().toString().equals( isShowMap.get( "takeId" ).toString() ) ) {
 				isFlag = true;
 			    }
-			}else if ( CommonUtil.toString( busResult.getBusId() ).equals( isShowMap.get( "user_id" ).toString() ) ) {
+			} else if ( CommonUtil.toString( busResult.getBusId() ).equals( isShowMap.get( "user_id" ).toString() ) ) {
 			    isFlag = true;
 			}
-			if(isFlag){
+			if ( isFlag ) {
 			    takeId = CommonUtil.toInteger( isShowMap.get( "takeId" ) );
 			    takeAddress = CommonUtil.toString( isShowMap.get( "visitAddressDetail" ) );
 			    isStorePay = CommonUtil.toInteger( isShowMap.get( "isStorePay" ) );

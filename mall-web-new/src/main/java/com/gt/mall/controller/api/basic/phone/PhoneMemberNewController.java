@@ -195,6 +195,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
+	    mallCollectService.deleteCollect( ids );
+
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
 	    logger.error( "删除收藏商品的接口异常：" + e.getCode() + "---" + e.getMessage() );

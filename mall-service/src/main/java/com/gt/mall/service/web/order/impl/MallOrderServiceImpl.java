@@ -331,7 +331,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    Map< String,Object > params1 = new HashMap<>();
 		    params1.put( "orderId", mallOrder.getId() );
 		    params1.put( "groupBuyId", mallOrder.getGroupBuyId() );
-		    Map< String,Object > map1 = mallOrderDAO.groupJoinPeopleNum( params1 );
+		    Map< String,Object > map1 = mallGroupJoinDAO.groupJoinPeopleNum( params1 );
 		    if ( Integer.parseInt( map.get( "gPeopleNum" ).toString() ) == Integer.parseInt( map1.get( "num" ).toString() ) ) {
 			//是否显示发货按钮  1显示
 			orderResult.setIsShowDeliveryButton( 1 );
@@ -745,7 +745,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    mallOrderList.add( mallOrder );
 		}
 	    } catch ( BusinessException e ) {
-		logger.error( e.getMessage() );
 		log_message = e.getMessage();
 		logStatus = CommonUtil.toInteger( e.getData() );
 	    } catch ( Exception e ) {
@@ -764,6 +763,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    try {
 		paySuccess( mallOrderList, pbUser, busUser, returnLogStatus );//支付成功回调储值卡支付，积分支付，粉币支付
 	    } catch ( BusinessException e ) {
+		System.out.println( "e = " + e );
 		logger.error( "支付成功回调——" + e.getMessage() );
 		log_message = "支付成功回调——" + e.getMessage();
 		logStatus = CommonUtil.toInteger( e.getData() );
@@ -1085,7 +1085,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    msg = payMap.get( "errorMsg" ).toString();
 			}
 			logger.error( "会员回调失败" + payMap.get( "errorMsg" ) );
-			throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), msg );
+			throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), msg, "4" );
 		    }
 		}
 	    }
@@ -2893,9 +2893,28 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     }
 
     @Override
-    public List< Map< String,Object > > selectIntegralOrder( Map< String,Object > params ) {
+    public PageUtil selectIntegralOrder( Map< String,Object > params ) {
 	List< Map< String,Object > > orderList = new ArrayList<>();
-	List< Map< String,Object > > list = mallOrderDAO.selectIntegralOrder( params );
+	int pageSize = 10;
+
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	params.put( "curPage", curPage );
+	Wrapper< MallOrder > wrapper = new EntityWrapper<>();
+	wrapper.where( "bus_user_id={0} and buyer_user_id={1}", params.get( "busUserId" ), params.get( "buyerUserId" ) );
+	int count;
+	if ( params.containsKey( "totalOrderNum" ) && CommonUtil.isNotEmpty( params.get( "totalOrderNum" ) ) ) {
+	    count = CommonUtil.toInteger( params.get( "totalOrderNum" ) );
+	} else {
+	    count = mallOrderDAO.selectCount( wrapper );
+	}
+	if ( CommonUtil.isEmpty( count ) ) {
+	    return null;
+	}
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	params.put( "firstNum", firstNum );// 起始页
+	params.put( "maxNum", pageSize );// 每页显示商品的数量
+	List< Map< String,Object > > list = mallOrderDAO.selectIntegralOrderList( params );
 		/*DecimalFormat df = new DecimalFormat("######0.00");*/
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map : list ) {
@@ -2910,7 +2929,17 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		orderList.add( map );
 	    }
 	}
-	return orderList;
+	page.setSubList( orderList );
+	return page;
+    }
+
+    @Override
+    public List< MallOrder > selectIntegeralOrder( Map< String,Object > params ) {
+	Wrapper< MallOrder > wrapper = new EntityWrapper<>();
+	wrapper.setSqlSelect( "order_money" );
+	wrapper.where( "bus_user_id={0} and buyer_user_id={1} and order_type = 2", params.get( "busUserId" ), params.get( "buyerUserId" ) );
+	return mallOrderDAO.selectList( wrapper );
+
     }
 
     /**

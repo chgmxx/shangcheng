@@ -47,4 +47,5 @@ public class SystemException extends RuntimeException {
     public String getData() {
 	return data;
     }
+
 }

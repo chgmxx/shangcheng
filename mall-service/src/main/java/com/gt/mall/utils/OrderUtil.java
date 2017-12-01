@@ -1,7 +1,9 @@
 package com.gt.mall.utils;
 
+import com.gt.api.util.DateTimeKitUtils;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
@@ -166,8 +168,8 @@ public class OrderUtil {
      *
      * @return 0 不能评价
      */
-    public static int getOrderIsShowCommentButton( String orderStatus, boolean isReturn, boolean isOpenComment ,MallOrderDetail detail) {
-	if ( "4".equals( orderStatus ) && isOpenComment && !isReturn && !detail.getAppraiseStatus().toString().equals( "1")) {
+    public static int getOrderIsShowCommentButton( String orderStatus, boolean isReturn, boolean isOpenComment, MallOrderDetail detail ) {
+	if ( "4".equals( orderStatus ) && isOpenComment && !isReturn && !detail.getAppraiseStatus().toString().equals( "1" ) ) {
 	    return 1;
 	}
 	return 0;
@@ -379,13 +381,13 @@ public class OrderUtil {
     public static String getOrderStatusMsgBydetail( String orderStatus, String detailStatus, String deliveryMethod, MallOrderReturn mallOrderReturn ) {
 	String statusName = "";
 	if ( "1".equals( orderStatus ) ) {
-	    statusName = "等待买家付款";
+	    statusName = "待付款";
 	} else if ( "2".equals( orderStatus ) && "1".equals( deliveryMethod ) ) {
-	    statusName = "等待卖家发货";
+	    statusName = "待发货";
 	} else if ( "2".equals( orderStatus ) && "2".equals( deliveryMethod ) ) {
 	    statusName = "待提货";
 	} else if ( "3".equals( orderStatus ) ) {
-	    statusName = "卖家已发货";
+	    statusName = "已发货";
 	} else if ( "4".equals( orderStatus ) ) {
 	    statusName = "交易成功";
 	} else if ( "5".equals( orderStatus ) ) {
@@ -437,6 +439,30 @@ public class OrderUtil {
 		}
 		countdown += "自动确认";
 	    }
+	}
+	return countdown;
+    }
+
+    public static String getOrderStatusByGroup( MallGroupBuy mallGroupBuy, int num ) {
+	String countdown = "";
+	if ( CommonUtil.isNotEmpty( mallGroupBuy ) ) {
+	    String endTime = mallGroupBuy.getGEndTime();
+	    String date = DateTimeKit.getDateTime( DateTimeKitUtils.DEFAULT_DATETIME_FORMAT );
+	    long[] times = DateTimeKit.getDistanceTimes( date, endTime );
+	    if ( times != null && times.length > 0 ) {
+		countdown = "拼团需 ";
+		if ( times[0] > 0 ) {
+		    countdown += times[0] + " 天 ";
+		}
+		if ( times[1] > 0 ) {
+		    countdown += times[1] + " 时 ";
+		}
+		if ( times[2] > 0 ) {
+		    countdown += times[2] + " 分 ";
+		}
+		countdown += "内邀请" + ( mallGroupBuy.getGPeopleNum() - num ) + "位好友参团";
+	    }
+
 	}
 	return countdown;
     }

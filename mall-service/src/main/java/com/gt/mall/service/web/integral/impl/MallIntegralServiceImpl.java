@@ -21,6 +21,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -55,6 +56,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     private MallIntegralDAO             integralDAO;
     @Autowired
     private MallImageAssociativeDAO     imageAssociativeDAO;
+    @Autowired
+    private MallImageAssociativeService mallImageAssociativeService;
     @Autowired
     private MallProductDAO              productDAO;
     @Autowired
@@ -97,14 +100,31 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	List< Map< String,Object > > list = integralDAO.selectIntegralByShopids( params );
+	List< Integer > proIds = new ArrayList<>();
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map : list ) {
-		if ( CommonUtil.isNotEmpty( map.get( "specifica_img_url" ) ) ) {
-		    map.put( "product_image", PropertiesUtil.getResourceUrl() + map.get( "specifica_img_url" ) );
-		} else {
-		    map.put( "product_image", PropertiesUtil.getResourceUrl() + map.get( "image_url" ) );
+		if ( CommonUtil.isNotEmpty( map.get( "product_id" ) ) && !proIds.contains( CommonUtil.toInteger( map.get( "product_id" ) ) ) ) {
+		    proIds.add( CommonUtil.toInteger( map.get( "product_id" ) ) );
 		}
 		productList.add( map );
+	    }
+	}
+	if ( proIds != null && proIds.size() > 0 ) {
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssIds( 1, 1, proIds );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		productList = new ArrayList<>();
+		for ( Map< String,Object > map : list ) {
+		    String id = map.get( "id" ).toString();
+		    for ( int i = 0; i < imageList.size(); i++ ) {
+			MallImageAssociative imageAssociative = imageList.get( i );
+			if ( CommonUtil.isNotEmpty( imageAssociative.getImageUrl() ) && imageAssociative.getAssId().toString().equals( id ) ) {
+			    map.put( "image_url", imageAssociative.getImageUrl() );
+			    imageList.remove( i );
+			    break;
+			}
+		    }
+		    productList.add( map );
+		}
 	    }
 	}
 	page.setSubList( productList );
@@ -432,7 +452,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    if ( CommonUtil.isEmpty( mallIntegral.getMoney() ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "积分不能为空" );
 	    }
-	    if ( CommonUtil.isEmpty( mallIntegral.getStartTime() ) ||CommonUtil.isEmpty( mallIntegral.getEndTime() ) ) {
+	    if ( CommonUtil.isEmpty( mallIntegral.getStartTime() ) || CommonUtil.isEmpty( mallIntegral.getEndTime() ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "开始或结束时间不能为空" );
 	    }
 	    MallIntegral integral = null;

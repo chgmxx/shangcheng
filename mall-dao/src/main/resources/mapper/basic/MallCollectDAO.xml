@@ -28,7 +28,7 @@
         </set>
         where id in
         <foreach close=")" collection="ids" index="index" item="item" open="(" separator=",">
-            #{item,jdbcType=INTEGER}
+            #{item}
         </foreach>
     </update>
     <select id="selectByCollect" parameterType="map" resultMap="BaseResultMap">

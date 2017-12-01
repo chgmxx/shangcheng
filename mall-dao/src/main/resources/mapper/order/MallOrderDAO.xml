@@ -1018,13 +1018,6 @@
         where  t.shop_id > 0 and t.order_status=4 and d.return_day &lt;= TIMESTAMPDIFF(DAY,t.update_time,now()) and t.give_status=0 and mem_card_type > 0 and t.order_pay_way != 4
     </select>
 
-    <select id="groupJoinPeopleNum" resultType="map" parameterType="map">
-        select count(j.id) as num,if(j.p_join_id = 0,j.id,j.p_join_id) as pId
-        from t_mall_group_join j
-        right join t_mall_group_join j1 on j1.group_buy_id = j.group_buy_id
-        and ( if(j.p_join_id > 0, j.id = j1.p_join_id  or j.id=j1.id or j.p_join_id = j1.p_join_id or j.p_join_id=j1.id,j.id = j1.p_join_id  or j.id=j1.id) )
-        where j.group_buy_id=#{groupBuyId} and j.order_id = #{orderId}
-    </select>
     <!-- 查询未支付的订单 -->
     <select id="selectNoPayOrder" parameterType="Map" resultMap="MoreResultMap">
         select
@@ -1217,6 +1210,24 @@
             AND d.`product_id` = #{productId}
         </if>
         order by o.id desc
+    </select>
+
+    <select id="selectIntegralOrderList" parameterType="Map" resultType="Map">
+        SELECT d.`det_pro_name`,d.`det_pro_num`,d.`det_pro_price`,o.`pay_time`,o.create_time,o.order_money
+        FROM (
+        select o.`pay_time`,o.create_time,o.order_money,o.id
+        from t_mall_order o
+        WHERE o.`order_type` = 2
+        <if test="buyerUserId != null and buyerUserId != ''">
+            and o.buyer_user_id=#{buyerUserId}
+        </if>
+        <if test="busUserId != null and busUserId != ''">
+            and o.bus_user_id=#{busUserId}
+        </if>
+        order by o.id desc
+        limit #{firstNum},#{maxNum}
+        ) as o
+        LEFT JOIN t_mall_order_detail d ON o.`id`=d.`order_id`
     </select>
 
     <select id="selectOrderFlow" resultType="Map">

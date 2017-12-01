@@ -67,7 +67,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 查询订单信息
      */
-    public OrderResult selectOrderList(Integer orderId);
+    public OrderResult selectOrderList( Integer orderId );
 
     /**
      * 支付成功后修改订单状态、库存、销量、规格
@@ -184,7 +184,16 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 查询积分订单
      */
-    List< Map< String,Object > > selectIntegralOrder( Map< String,Object > params );
+    PageUtil selectIntegralOrder( Map< String,Object > params );
+
+    /**
+     * 统计累计积分数量
+     *
+     * @param params
+     *
+     * @return
+     */
+    List< MallOrder > selectIntegeralOrder( Map< String,Object > params );
 
     /**
      * 计算库存是否足够
