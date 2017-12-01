@@ -27,6 +27,13 @@ import java.util.Map;
 public interface MallOrderService extends BaseService< MallOrder > {
 
     /**
+     * 根据状态统计总数
+     * @param params
+     * @return
+     */
+    Integer count(Map< String,Object > params);
+
+    /**
      * 统计各状态下的数量
      * @param params
      * @return

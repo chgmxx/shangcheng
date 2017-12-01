@@ -241,6 +241,8 @@ public class MallGroupNewController extends BaseController {
 		}
 		if ( status == 2 ) {
 		    label.setIsDelete( 1 );
+		}else{
+		    label.setIsDelete( 0 );
 		}
 		if ( CommonUtil.isNotEmpty( label.getId() ) ) {
 		    mallSearchLabelDAO.updateById( label );

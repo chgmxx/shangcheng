@@ -1,12 +1,17 @@
 package com.gt.mall.controller.api.basic;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
+import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -40,6 +42,10 @@ public class MallCountIncomeController extends BaseController {
     private MallCountIncomeService mallCountIncomeService;
     @Autowired
     private MallStoreService       mallStoreService;
+    @Autowired
+    private MallProductService     mallProductService;
+    @Autowired
+    private MallOrderService       mallOrderService;
 
     /**
      * 获取时间段的统计金额
@@ -103,7 +109,7 @@ public class MallCountIncomeController extends BaseController {
 	    countParams.put( "endDate", yesterday );
 	    Integer sevenCount = mallCountIncomeService.getCountByTimes( countParams );
 	    result.put( "sevenCount", sevenCount );//7天营业额
-
+	    //TODO 待结算金额  可用金额
 	    result.put( "settlementCount", 0 );//待结算金额
 	    result.put( "usableBalance", 0 );//可用余额
 	} catch ( Exception e ) {
@@ -128,26 +134,70 @@ public class MallCountIncomeController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-
+	    List< Integer > shopIds = new ArrayList<>();
+	    for ( Map map : shoplist ) {
+		shopIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+	    }
 	    Map< String,Object > params = new HashMap<>();
-	    params.put( "startDate", startDate );
-	    params.put( "endDate", endDate );
+
 	    params.put( "shopId", shopId );
 	    if ( CommonUtil.isEmpty( shopId ) ) {
 		params.put( "shoplist", shoplist );
 	    }
+	    if ( CommonUtil.isEmpty( startDate ) ) {
+		startDate = DateTimeKit.format( DateTimeKit.addMonths( -1 ) );
+		endDate = DateTimeKit.getDate();
+	    }
+	    params.put( "startDate", startDate );
+	    params.put( "endDate", endDate );
 	    List< Map< String,Object > > countList = mallCountIncomeService.getCountListByTimes( params );
-	    result.put( "countList", countList );
+	    //	    String[] date = new String[countList.size()];
+	    String[] data = new String[countList.size()];
+	    int i = 0;
+	    for ( Map map : countList ) {
+		int day = DateTimeKit.getDay( DateTimeKit.parseDate( map.get( "countDate" ).toString() ) );//日份
+		//		date[i] = day + "";
+		data[i] = map.get( "incomeCount" ).toString();
+		i++;
+	    }
+	    //	    result.put( "date", date );//日份列表
+	    result.put( "data", data );//数据列表
 
 	    Calendar cal = Calendar.getInstance();
+	    String day = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
 	    cal.add( Calendar.DATE, -1 );
 	    String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
 	    cal.add( Calendar.DATE, -6 );
 	    String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
 
-	    result.put( "todayPayOrderNum", 0 );//今日付款订单数
-	    result.put( "waitPayOrderNum", 0 );//待付款订单数
-	    result.put( "waitDeliveryOrderNum", 0 );//待发货订单数
+	    Wrapper groupWrapper = new EntityWrapper();
+	    groupWrapper.where( "TO_DAYS(create_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		groupWrapper.in( "shop_id", shopIds );
+	    } else {
+		groupWrapper.and( "shop_id ={0}", shopId );
+	    }
+	    Integer todayPayOrderNum = mallOrderService.selectCount( groupWrapper );
+	    groupWrapper = new EntityWrapper();
+	    groupWrapper.where( " order_status = 1" );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		groupWrapper.in( "shop_id", shopIds );
+	    } else {
+		groupWrapper.and( "shop_id ={0}", shopId );
+	    }
+	    Integer waitPayOrderNum = mallOrderService.selectCount( groupWrapper );
+	    groupWrapper = new EntityWrapper();
+	    groupWrapper.where( " order_status = 2 " );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		groupWrapper.in( "shop_id", shopIds );
+	    } else {
+		groupWrapper.and( "shop_id ={0}", shopId );
+	    }
+	    Integer waitDeliveryOrderNum = mallOrderService.selectCount( groupWrapper );
+
+	    result.put( "todayPayOrderNum", todayPayOrderNum );//今日付款订单数
+	    result.put( "waitPayOrderNum", waitPayOrderNum );//待付款订单数
+	    result.put( "waitDeliveryOrderNum", waitDeliveryOrderNum );//待发货订单数
 
 	    Map< String,Object > countParams = new HashMap<>();
 	    countParams.put( "type", 1 );

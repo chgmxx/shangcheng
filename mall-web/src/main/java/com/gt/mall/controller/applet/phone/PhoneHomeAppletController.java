@@ -113,8 +113,8 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param shopId
-     * @param memberId
+     * @param shopId   店铺ID
+     * @param memberId 会员ID
      *
      * @throws IOException
      */
@@ -186,7 +186,9 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param classId
+     * @param shopId   店铺ID
+     * @param memberId 会员ID
+     * @param classId  父级分类ID
      *
      * @throws IOException
      */
@@ -368,7 +370,9 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param shopId
+     * @param shopId    店铺ID
+     * @param memberId  会员ID
+     * @param busUserId 商家ID
      *
      * @throws IOException
      */
@@ -397,6 +401,8 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
+     * @param memberId 会员ID
+     * @param ids      购物车ID集合
      *
      * @throws IOException
      */
@@ -454,7 +460,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param memberId
+     * @param memberId 会员ID
      *
      * @throws IOException
      */
@@ -573,7 +579,10 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param memberId
+     * @param memberId  会员ID
+     * @param curPage   页数
+     * @param busUserId 商家ID
+     * @param type      0 全部 1待支付 2待发货 3待收货  4已完成
      *
      * @throws IOException
      */
@@ -628,7 +637,9 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
-     * @param orderNo
+     * @param orderNo  订单号
+     * @param memberId 会员ID
+     * @param appid    appid
      *
      * @throws IOException
      */
@@ -657,6 +668,9 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param request
      * @param response
+     * @param order_id 订单ID
+     * @param memberId 会员ID
+     * @param appid    appid
      *
      * @throws IOException
      */

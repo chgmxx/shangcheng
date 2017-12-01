@@ -209,6 +209,22 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallOrderReturnLogService mallOrderReturnLogService;
 
     @Override
+    public Integer count( Map< String,Object > params ) {
+	int status = 0;
+	if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
+	    status = CommonUtil.toInteger( params.get( "status" ) );
+	}
+	int count = 0;
+	if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
+	    count = mallOrderDAO.count( params );
+	} else {
+	    count = mallOrderDAO.countReturn( params );
+	}
+
+	return count;
+    }
+
+    @Override
     public Map< String,Object > countStatus( Map< String,Object > params ) {
 	Map< String,Object > result = new HashMap<>();
 	params.remove( "status" );
@@ -483,8 +499,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    Integer returnStatus = null;
 		    order.put( "memberName", CommonUtil.blob2String( order.get( "memberName" ) ) );
 
-		    if ( CommonUtil.isNotEmpty( order.get( "returnStatus" ) ) ) {
-			returnStatus = CommonUtil.toInteger( order.get( "returnStatus" ) );
+		    if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {
+			returnStatus = CommonUtil.toInteger( order.get( "return_status" ) );
 		    }
 		    if ( returnStatus == null && ( orderStatus == 1 || orderStatus == 2 || orderStatus == 3 ) ) {
 			order.put( "status", "2" );
@@ -2460,7 +2476,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    cellTitle.setCellValue( titles[i] );
 	    cellTitle.setCellStyle( styleTitle );//给标题加样式
 	}
-	sheet.setColumnWidth( 14, 100 * 256 );
+	sheet.setDefaultColumnWidth( 20  );
+	sheet.setColumnWidth( 2, 60 * 256 );
 	HSSFCellStyle centerStyle = workbook.createCellStyle();
 	centerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );// 设置单元格左右居中
 
@@ -2480,7 +2497,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     private int getTradeOrderList( HSSFSheet sheet, HSSFCellStyle valueStyle, HSSFCellStyle leftStyle, Map< String,Object > order, int i, List< Map< String,Object > > shopList ) {
 	String state = "";//订单状态
-	Integer orderStatus = CommonUtil.toInteger( order.get( "order_status" ) );
+	Integer orderStatus = CommonUtil.toInteger( order.get( "orderStatus" ) );
 	Integer returnStatus = null;
 
 	if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {
@@ -2499,19 +2516,19 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	/*int start = i;*/
 	String name = "";
 	String price = "";
-	if ( CommonUtil.isNotEmpty( order.get( "det_pro_name" ) ) ) {
-	    name = order.get( "det_pro_name" ).toString();
+	if ( CommonUtil.isNotEmpty( order.get( "proName" ) ) ) {
+	    name = order.get( "proName" ).toString();
 	}
-	if ( CommonUtil.isNotEmpty( order.get( "total_price" ) ) ) {
-	    name = order.get( "total_price" ).toString();
+	if ( CommonUtil.isNotEmpty( order.get( "totalPrice" ) ) ) {
+	    price = order.get( "totalPrice" ).toString();
 	}
-	Date date = DateTimeKit.parseDate( order.get( "create_time" ).toString(), "yyyy/MM/dd HH:mm" );
+	Date date = DateTimeKit.parseDate( order.get( "createTime" ).toString(), "yyyy/MM/dd HH:mm" );
 	String createTime = DateTimeKit.format( date, DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	HSSFRow row = sheet.createRow( i );
 	createCell( row, 0, createTime, valueStyle );
-	createCell( row, 1, order.get( "order_no" ).toString(), valueStyle );
+	createCell( row, 1, order.get( "orderNo" ).toString(), valueStyle );
 	createCell( row, 2, name, valueStyle );
-	createCell( row, 3, CommonUtil.blob2String( order.get( "member_name" ) ), valueStyle );
+	createCell( row, 3, CommonUtil.blob2String( order.get( "memberName" ) ), valueStyle );
 	createCell( row, 4, price, valueStyle );
 	createCell( row, 5, state, valueStyle );
 	i++;
