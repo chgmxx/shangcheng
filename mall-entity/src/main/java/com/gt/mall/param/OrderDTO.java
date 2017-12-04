@@ -64,7 +64,7 @@ public class OrderDTO {
     /**
      * 订单状态
      */
-    @ApiModelProperty( name = "status", value = "订单状态（1,待付款 2,待发货 3,已发货 4,已完成 5,已关闭  6退款中 7全部 8退款处理中 9 退款结束）" )
+    @ApiModelProperty( name = "status", value = "订单状态（0全部 1,待付款 2,待发货 3,已发货 4,已完成 5,已关闭  6退款中 7全部 8退款处理中 9 退款结束）" )
     private Integer status;
 
     /**
