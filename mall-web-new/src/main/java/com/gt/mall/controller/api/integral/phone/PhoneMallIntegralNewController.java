@@ -81,7 +81,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		throw new BusinessException( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 	    }
 	    Map< String,Object > params = new HashMap<>();
-	    params.put( "busId", shoplist );
+	    params.put( "shoplist", shoplist );
 	    params.put( "curPage", curPage );
 	    PageUtil page = integralService.selectIntegralByUserId( params );
 
@@ -251,8 +251,10 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		if ( isMember ) {
 		    result.put( "isMember", 1 );
 		}
+		result.put( "memberId", member.getId() );
+		result.put( "memberIntegral", member.getIntegral() );
 	    }
-	    result.put( "member", member );
+	    //	    result.put( "member", member );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取积分商品信息异常：" + e.getMessage() );
@@ -290,19 +292,14 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    params.put( "uId", loginDTO.getBusId() );
 
 	    result = integralService.recordIntegral( params, member, browser, request );
-	    if ( !result.get( "code" ).toString().equals( "1" ) ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
-	    }
-	    /*if ( resultMap.get( "code" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( resultMap.get( "proTypeId" ) ) ) {
-		request.getSession().setAttribute( Constants.SESSION_KEY + "integral_order", params );
-	    }*/
-
+	} catch ( BusinessException be ) {
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "兑换积分异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "兑换积分异常" );
 	}
-	return ServerResponse.createBySuccessCode();
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
 }

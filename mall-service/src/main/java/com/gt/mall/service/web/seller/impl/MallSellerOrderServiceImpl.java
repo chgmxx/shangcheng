@@ -64,7 +64,7 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
 
 	List< Map< String,Object > > countList = mallSellerDAO.selectSellerByBusUserId( params );
 
-	int pageSize = 10;
+	int pageSize = 15;
 	int count = countList.size();
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );

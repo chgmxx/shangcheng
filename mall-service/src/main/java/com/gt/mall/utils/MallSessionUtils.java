@@ -152,7 +152,7 @@ public class MallSessionUtils {
      * @return 主账号id
      */
     public static int getAdminUserId( int userId, HttpServletRequest request ) {
-	Object object = request.getSession().getAttribute( Constants.SESSION_ADMIN_KEY );
+	Object object = request.getSession().getAttribute( Constants.SESSION_ADMIN_KEY + "_" + userId );
 	if ( CommonUtil.isNotEmpty( object ) ) {
 	    return CommonUtil.toInteger( object );
 	}
