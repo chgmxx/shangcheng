@@ -101,7 +101,7 @@ public class MallGroupNewController extends BaseController {
 		MallGroup mallGroup = JSONObject.parseObject( JSON.toJSONString( group ), MallGroup.class );
 		mallGroup.setGroupName( CommonUtil.urlEncode( mallGroup.getGroupName() ) );
 		if ( !CommonUtil.isEmpty( group.getImageList() ) ) {
-		    images = JSONArray.parseArray( JSON.toJSONString( group.getImageList() ), MallImageAssociative.class );
+		    images = JSONArray.parseArray( group.getImageList(), MallImageAssociative.class );
 		}
 
 		boolean flag = mallGroupService.saveOrUpdateGroup( mallGroup, images, userId );
@@ -171,14 +171,21 @@ public class MallGroupNewController extends BaseController {
     public ServerResponse groupInfo( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "分组ID", required = true ) @RequestParam Integer id ) {
 	MallGroup group = null;
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    group = mallGroupService.selectById( id );
+	    Map< String,Object > params2 = new HashMap<>();
+	    params2.put( "assType", 2 );
+	    params2.put( "assId", id );
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectByAssId( params2 );
+	    result.put( "group", group );
+	    result.put( "imageList", imageList );
 	} catch ( Exception e ) {
 	    logger.error( "获取商品分组信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商品分组信息异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), group );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -241,7 +248,7 @@ public class MallGroupNewController extends BaseController {
 		}
 		if ( status == 2 ) {
 		    label.setIsDelete( 1 );
-		}else{
+		} else {
 		    label.setIsDelete( 0 );
 		}
 		if ( CommonUtil.isNotEmpty( label.getId() ) ) {

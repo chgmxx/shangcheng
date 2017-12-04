@@ -86,6 +86,6 @@ public class GroupDTO {
     private Integer sortOrder;
 
     @ApiModelProperty( value = " 图片列表" )
-    private List< ImageAssociativeDTO > imageList;
+    private String imageList;
 
 }
