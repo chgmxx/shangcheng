@@ -175,6 +175,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneCommonResult > getCustomer( HttpServletRequest request, int shopId ) {
 	PhoneCommonResult result = new PhoneCommonResult();
 	try {
+
 	    MallStore store = mallStoreService.selectById( shopId );
 	    if ( CommonUtil.isNotEmpty( store ) ) {
 		if ( CommonUtil.isNotEmpty( store.getStoQqCustomer() ) ) {
@@ -185,7 +186,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    if ( isAdvert ) {
 		result.setIsAdvert( 1 );
 	    }
-
+	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的客服异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -200,6 +201,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "getShopStyle", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getShopStyle( HttpServletRequest request, int busId ) {
 	try {
+	    MallRedisUtils.setUserId( busId );
 	    MallPaySet mallPaySet = mallPaySetService.selectByUserId( busId );
 	    if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
 		if ( CommonUtil.isNotEmpty( mallPaySet.getStyleKey() ) ) {
@@ -239,6 +241,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		    result.put( "keywordList", keywordList );
 		}
 	    }
+	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	} catch ( Exception e ) {
 	    logger.error( "查询历史搜索和推荐搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -256,6 +259,9 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "clearSearchGroup", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse clearSearchGroup( HttpServletRequest request, HttpServletResponse response, int shopId ) throws IOException {
 	try {
+	    if(shopId == 0){
+//	        return se
+	    }
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "shopId", shopId );
 	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
@@ -263,6 +269,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		params.put( "userId", member.getId() );
 		mallGroupService.clearSearchKeyWord( params );
 	    }
+	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {

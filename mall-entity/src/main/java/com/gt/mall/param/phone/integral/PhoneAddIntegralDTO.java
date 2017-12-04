@@ -41,6 +41,6 @@ public class PhoneAddIntegralDTO implements Serializable {
     private String productSpecificas;
 
     @ApiModelProperty( name = "flowPhone", value = "手机号码" )
-    private Integer flowPhone;
+    private String flowPhone;
 
 }
