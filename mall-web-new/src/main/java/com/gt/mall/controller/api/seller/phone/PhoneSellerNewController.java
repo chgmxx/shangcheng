@@ -642,6 +642,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( seller ) && CommonUtil.isNotEmpty( member ) ) {
 		Map< String,Object > params = new HashMap<>();
 		params.put( "curPage", curPage );
+		params.put( "busId",loginDTO.getBusId() );
 		if ( type == 1 ) {
 		    params.put( "startTime", DateTimeKit.getDateTime() );
 		    params.put( "endTime", DateTimeKit.getDateTime( DateTimeKit.addDays( -7 ) ) );

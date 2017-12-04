@@ -77,12 +77,26 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
 
 	List< Map< String,Object > > rankList = mallSellerOrderDAO.selectSalePricerByUserId( params );
 	if ( rankList != null && rankList.size() > 0 ) {
+	    String memberIds = "";
 	    for ( Map< String,Object > rankMap : rankList ) {
 		if ( CommonUtil.isNotEmpty( rankMap.get( "member_id" ) ) ) {
-		    Member member = memberService.findMemberById( CommonUtil.toInteger( rankMap.get( "member_id" ) ), null );
-		    if ( member != null ) {
-			rankMap.put( "headimgurl", member.getHeadimgurl() );
-			rankMap.put( "nickname", member.getNickname() );
+		    memberIds += rankMap.get( "member_id" ) + ",";
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( memberIds ) ) {
+		List< Map > memberList = memberService.findMemberByIds( memberIds, CommonUtil.toInteger( params.get( "busId" ) ) );
+		if ( memberList != null && memberList.size() > 0 ) {
+		    for ( Map< String,Object > rankMap : rankList ) {
+			String rMemberId = CommonUtil.toString( rankMap.get( "member_id" ) );
+			for ( Map< String,Object > member : memberList ) {
+			    String memberId = CommonUtil.toString( member.get( "id" ) );
+			    if ( rMemberId.equals( memberId )) {
+				rankMap.put( "headimgurl", member.get( "headimgurl" ) );
+				rankMap.put( "nickname", member.get( "nickname" ) );
+				break;
+			    }
+
+			}
 		    }
 		}
 	    }

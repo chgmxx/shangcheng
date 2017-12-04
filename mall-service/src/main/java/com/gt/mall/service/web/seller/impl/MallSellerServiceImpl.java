@@ -161,6 +161,31 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	List< Map< String,Object > > rankList = mallSellerDAO.selectSellerByBusUserId( params );
+
+	String memberIds = "";
+	for ( Map< String,Object > rankMap : rankList ) {
+	    if ( CommonUtil.isNotEmpty( rankMap.get( "member_id" ) ) ) {
+		memberIds += rankMap.get( "member_id" ) + ",";
+	    }
+	}
+	if ( CommonUtil.isNotEmpty( memberIds ) ) {
+	    List< Map > memberList = memberService.findMemberByIds( memberIds, member.getBusid() );
+	    if ( memberList != null && memberList.size() > 0 ) {
+		for ( Map< String,Object > rankMap : rankList ) {
+		    String rMemberId = CommonUtil.toString( rankMap.get( "member_id" ) );
+		    for ( Map< String,Object > member1 : memberList ) {
+			String memberId = CommonUtil.toString( member1.get( "id" ) );
+			if ( rMemberId.equals( memberId )) {
+			    rankMap.put( "headimgurl", member1.get( "headimgurl" ) );
+			    rankMap.put( "nickname", member1.get( "nickname" ) );
+			    break;
+			}
+
+		    }
+		}
+	    }
+	}
+
 	if ( type == 2 ) {
 	    if ( rankList != null && rankList.size() > 0 ) {
 		for ( Map< String,Object > rankMap : rankList ) {
