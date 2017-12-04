@@ -75,8 +75,7 @@ public class MallGroupNewController extends BaseController {
 		params.put( "type", 1 );//显示推荐数据
 		PageUtil page = mallGroupService.findGroupByPage( params, shoplist, user.getId() );// 获取分组集合
 		result.put( "page", page );
-		MallGroup group = mallGroupService.selectById( pId );
-		result.put( "pGroup", group );//父级分组对象
+		result.put( "pId", pId );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "商品分组列表异常：" + e.getMessage() );
@@ -242,7 +241,7 @@ public class MallGroupNewController extends BaseController {
 		}
 		if ( status == 2 ) {
 		    label.setIsDelete( 1 );
-		} else {
+		}else{
 		    label.setIsDelete( 0 );
 		}
 		if ( CommonUtil.isNotEmpty( label.getId() ) ) {
