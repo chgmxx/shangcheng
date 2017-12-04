@@ -57,34 +57,36 @@ public class MallCommentNewController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "queryName", value = "订单号或商品名称", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "feel", value = "评价状态 -1 差评 0 中评 1好评", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "feel", value = "评价状态 -1 差评 0 中评 1好评", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "startTime", value = "评价起始时间", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "endTime", value = "评价结束时间", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String queryName, Integer shopId, Integer feel, String startTime,
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String queryName, Integer shopId, String feel, String startTime,
 		    String endTime ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    boolean isComment = false;
+	    Integer isComment = 0;
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    set = paySetService.selectByUserId( set );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
 		if ( CommonUtil.isNotEmpty( set.getIsComment() ) ) {
-		    if ( set.getIsComment() == 1 ) {
-			isComment = true;
-		    }
+		    // 0不开启   1开启 2关闭评论及买家评价
+		    isComment = set.getIsComment();
 		}
 	    }
 	    result.put( "isComment", isComment );
-	    if ( isComment ) {
+	    if ( isComment == 1 ) {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 
 		Map< String,Object > params = new HashMap<>();
 		params.put( "curPage", curPage );
 		params.put( "queryName", queryName );
 		params.put( "shopId", shopId );
+		if ( CommonUtil.isNotEmpty( feel ) && "all".equals( feel ) ) {
+		    feel = "";
+		}
 		params.put( "feel", feel );
 		params.put( "startTime", startTime );
 		params.put( "endTime", endTime );
