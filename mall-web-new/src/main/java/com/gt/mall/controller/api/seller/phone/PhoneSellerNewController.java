@@ -719,11 +719,12 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "获取客户订单接口", notes = "获取客户订单接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( { @ApiImplicitParam( name = "status", value = "为空查询全部 1待付款 2已付款 4已完成", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "custId", value = "客户ID", paramType = "query", required = false, dataType = "int" ) } )
+		    @ApiImplicitParam( name = "custId", value = "客户ID", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @PostMapping( value = "clientOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > clientOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer status, Integer custId ) {
+		    Integer status, Integer custId,Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
@@ -742,15 +743,16 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    }
 
 	    Map< String,Object > params = new HashMap<>();
+	    params.put( "busId", loginDTO.getBusId() );
+	    params.put( "curPage", curPage );
 	    params.put( "status", status );
 	    params.put( "custId", custId );
 	    params.put( "isCheck", isCheck );
 	    params.put( "fromType", 1 );
 	    params = mallOrderService.getMemberParams( member, params );
-
 	    //查询客户订单
-	    List< Map< String,Object > > sellerOrderList = mallSellerOrderService.selectOrderByClientId( params );
-	    result.put( "sellerOrderList", sellerOrderList );
+	    PageUtil page = mallSellerOrderService.selectOrderByClientId( params );
+	    result.put( "page", page );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
 	} catch ( Exception e ) {

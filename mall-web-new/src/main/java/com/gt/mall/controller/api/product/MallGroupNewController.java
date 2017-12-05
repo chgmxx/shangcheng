@@ -174,6 +174,10 @@ public class MallGroupNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    group = mallGroupService.selectById( id );
+	    if ( CommonUtil.isNotEmpty( group.getGroupPId() ) && group.getGroupPId() > 0 ) {
+		MallGroup pGroup = mallGroupService.selectById( group.getGroupPId() );
+		result.put( "pGroupName", pGroup.getGroupName() );
+	    }
 	    Map< String,Object > params2 = new HashMap<>();
 	    params2.put( "assType", 2 );
 	    params2.put( "assId", id );

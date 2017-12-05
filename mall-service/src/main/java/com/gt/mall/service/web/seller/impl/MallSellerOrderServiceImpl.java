@@ -45,18 +45,50 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
      * 查询客户的订单
      */
     @Override
-    public List< Map< String,Object > > selectOrderByClientId( Map< String,Object > params ) {
+    public PageUtil selectOrderByClientId( Map< String,Object > params ) {
+	int pageSize = 10;
+	int count = mallSellerOrderDAO.countOrderByClient( params );
+
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	params.put( "curPage", curPage );
+
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	params.put( "firstNum", firstNum );// 起始页
+	params.put( "maxNum", pageSize );// 每页显示商品的数量
+
 	List< Map< String,Object > > mapList = mallSellerOrderDAO.selectOrderByClientId( params );
 	if ( mapList != null && mapList.size() > 0 ) {
-	    for ( Map< String,Object > map : mapList ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( map.get( "buyer_user_id" ) ), null );
-		if ( member != null ) {
-		    map.put( "nickname", member.getNickname() );
+	    String memberIds = "";
+	    if ( CommonUtil.isNotEmpty( params.get( "oldMemberIds" ) ) ) {
+		List< Integer > memberList = (List< Integer >) params.get( "oldMemberIds" );
+		for ( Integer id : memberList ) {
+		    memberIds += id + ",";
+		}
+	    } else {
+		memberIds = params.get( "memberId" ).toString();
+	    }
+	    if ( CommonUtil.isNotEmpty( memberIds ) ) {
+		List< Map > memberList = memberService.findMemberByIds( memberIds, CommonUtil.toInteger( params.get( "busId" ) ) );
+		if ( memberList != null && memberList.size() > 0 ) {
+		    for ( Map< String,Object > rankMap : mapList ) {
+			String rMemberId = CommonUtil.toString( rankMap.get( "buyer_user_id" ) );
+			for ( Map< String,Object > member : memberList ) {
+			    String memberId = CommonUtil.toString( member.get( "id" ) );
+			    if ( rMemberId.equals( memberId ) ) {
+				rankMap.put( "headimgurl", member.get( "headimgurl" ) );
+				rankMap.put( "nickname", member.get( "nickname" ) );
+				break;
+			    }
+
+			}
+		    }
 		}
 	    }
 	}
+	page.setSubList( mapList );
 
-	return mapList;
+	return page;
     }
 
     @Override
@@ -90,7 +122,7 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
 			String rMemberId = CommonUtil.toString( rankMap.get( "member_id" ) );
 			for ( Map< String,Object > member : memberList ) {
 			    String memberId = CommonUtil.toString( member.get( "id" ) );
-			    if ( rMemberId.equals( memberId )) {
+			    if ( rMemberId.equals( memberId ) ) {
 				rankMap.put( "headimgurl", member.get( "headimgurl" ) );
 				rankMap.put( "nickname", member.get( "nickname" ) );
 				break;

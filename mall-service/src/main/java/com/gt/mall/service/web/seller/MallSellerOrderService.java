@@ -30,7 +30,7 @@ public interface MallSellerOrderService extends BaseService< MallSellerOrder > {
      * @param params 参数
      * @return 订单信息
      */
-    List<Map<String, Object> > selectOrderByClientId(Map<String, Object> params);
+    PageUtil selectOrderByClientId(Map<String, Object> params);
 
     /**
      * 查询销售员收益积分排行榜
