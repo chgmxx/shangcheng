@@ -115,20 +115,20 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 			    }
 
 			}
+			String statusName = "";
+			int is_get = CommonUtil.toInteger( map.get( "is_get" ) );
+			if ( is_get == 0 ) {
+			    statusName = "待完成";
+			} else if ( is_get == 1 ) {
+			    statusName = "已完成";
+			} else if ( is_get == -1 ) {
+			    statusName = "待完成";
+			} else if ( is_get == -2 ) {
+			    statusName = "无效";
+			}
+			map.put( "statusName", statusName );
 		    }
 		}
-		String statusName = "";
-		int is_get = CommonUtil.toInteger( map.get( "is_get" ) );
-		if ( is_get == 0 ) {
-		    statusName = "待完成";
-		} else if ( is_get == 1 ) {
-		    statusName = "已完成";
-		} else if ( is_get == -1 ) {
-		    statusName = "待完成";
-		} else if ( is_get == -2 ) {
-		    statusName = "无效";
-		}
-		map.put( "statusName", statusName );
 	    }
 	}
 
