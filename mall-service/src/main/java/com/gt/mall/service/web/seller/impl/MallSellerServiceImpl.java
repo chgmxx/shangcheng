@@ -95,11 +95,27 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public List< Map< String,Object > > selectTotalIncome( Map< String,Object > params ) {
 	List< Map< String,Object > > mapList = mallSellerIncomeDAO.selectTotalIncome( params );
 	if ( mapList != null && mapList.size() > 0 ) {
+	    String memberIds = "";
 	    for ( Map< String,Object > map : mapList ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( map.get( "buyer_user_id" ) ), null );
-		if ( member != null ) {
-		    map.put( "nickname", member.getNickname() );
-		    map.put( "headimgurl", member.getHeadimgurl() );
+		if ( CommonUtil.isNotEmpty( map.get( "buyer_user_id" ) ) ) {
+		    memberIds += map.get( "buyer_user_id" ) + ",";
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( memberIds ) ) {
+		List< Map > memberList = memberService.findMemberByIds( memberIds, CommonUtil.toInteger( params.get( "busId" ) ) );
+		if ( memberList != null && memberList.size() > 0 ) {
+		    for ( Map< String,Object > map : mapList ) {
+			String rMemberId = CommonUtil.toString( map.get( "buyer_user_id" ) );
+			for ( Map< String,Object > member1 : memberList ) {
+			    String memberId = CommonUtil.toString( member1.get( "id" ) );
+			    if ( rMemberId.equals( memberId ) ) {
+				map.put( "headimgurl", member1.get( "headimgurl" ) );
+				map.put( "nickname", member1.get( "nickname" ) );
+				break;
+			    }
+
+			}
+		    }
 		}
 		String statusName = "";
 		int is_get = CommonUtil.toInteger( map.get( "is_get" ) );

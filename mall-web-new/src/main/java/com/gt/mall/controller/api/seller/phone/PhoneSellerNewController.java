@@ -350,7 +350,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
-
+	    params.put( "busId",loginDTO.getBusId() );
 	    params.put( "type", type );
 	    params = mallOrderService.getMemberParams( member, params );
 	    if ( params.containsKey( "memberId" ) ) {
@@ -920,6 +920,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
+	    params.put( "busId",loginDTO.getBusId() );
 	    params.put( "types", type );
 	    params.put( "type", 1 );
 	    params = mallOrderService.getMemberParams( member, params );
