@@ -101,6 +101,18 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		    map.put( "nickname", member.getNickname() );
 		    map.put( "headimgurl", member.getHeadimgurl() );
 		}
+		String statusName = "";
+		int is_get = CommonUtil.toInteger( map.get( "is_get" ) );
+		if ( is_get == 0 ) {
+		    statusName = "待完成";
+		} else if ( is_get == 1 ) {
+		    statusName = "已完成";
+		} else if ( is_get == -1 ) {
+		    statusName = "待完成";
+		} else if ( is_get == -2 ) {
+		    statusName = "无效";
+		}
+		map.put( "statusName", statusName );
 	    }
 	}
 
@@ -175,7 +187,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		    String rMemberId = CommonUtil.toString( rankMap.get( "member_id" ) );
 		    for ( Map< String,Object > member1 : memberList ) {
 			String memberId = CommonUtil.toString( member1.get( "id" ) );
-			if ( rMemberId.equals( memberId )) {
+			if ( rMemberId.equals( memberId ) ) {
 			    rankMap.put( "headimgurl", member1.get( "headimgurl" ) );
 			    rankMap.put( "nickname", member1.get( "nickname" ) );
 			    break;

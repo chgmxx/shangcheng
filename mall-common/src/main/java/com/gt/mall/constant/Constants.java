@@ -239,4 +239,6 @@ public class Constants {
      */
     public static final int PRESALE_PAY_TYPE = 101;
 
+    public static final String MEMBER_URL  = "/phoneMemberController/${userid}/79B4DE7C/findMember_1.do";
+
 }

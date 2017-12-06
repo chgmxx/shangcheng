@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.seller.impl;
 
-import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.dao.seller.MallSellerOrderDAO;
@@ -8,6 +7,7 @@ import com.gt.mall.entity.seller.MallSellerOrder;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.seller.MallSellerOrderService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.OrderUtil;
 import com.gt.mall.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,6 +82,8 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
 			    }
 
 			}
+			String statusName = OrderUtil.getOrderStatusMsgByOrder( rankMap.get( "order_status" ).toString(), "1" );
+			rankMap.put( "statusName", statusName );
 		    }
 		}
 	    }

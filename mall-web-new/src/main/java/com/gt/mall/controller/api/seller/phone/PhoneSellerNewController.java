@@ -201,7 +201,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    seller.setBusUserId( member.getBusid() );
 	    seller.setApplyTime( new Date() );
 	    seller.setAddTime( new Date() );
-//	    seller.setMemberId( params.getMemberId() );
+	    //	    seller.setMemberId( params.getMemberId() );
 
 	    //查询是否已申请超级销售员
 	    MallSeller isMallSeller = mallSellerService.selectMallSeller( seller );
@@ -323,8 +323,9 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "sellerCount", sellerCount );//查询客户的个数
 	    result.put( "sellerOrderCount", sellerOrderCount );//查询客户订单的个数
 	    result.put( "member", member );
+	    result.put( "memberUrl", PropertiesUtil.getWxmpDomain() + Constants.MEMBER_URL.replace( "${userid}", loginDTO.getBusId().toString() ) );
 
-//	    mallPageService.getCustomer( request, member.getBusid() );
+	    //	    mallPageService.getCustomer( request, member.getBusid() );
 	} catch ( Exception e ) {
 	    logger.error( "获取超级销售员主页信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -339,10 +340,11 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
      * @param type 1 统计销售佣金  2统计销售积分 3统计销售额
      */
     @ApiOperation( value = "统计收益", notes = "统计收益（1销售佣金、2销售积分、3销售额）" )
+    @ApiImplicitParams( @ApiImplicitParam( name = "type", value = "1销售佣金、2销售积分、3销售额 ,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
-    @RequestMapping( value = "{type}/totalIncome", method = RequestMethod.POST )
+    @RequestMapping( value = "totalIncome", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > totalIncome( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    @PathVariable int type ) {
+		    int type ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Map< String,Object > params = new HashMap<>();
@@ -574,9 +576,10 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "获取我的商城信息", notes = "获取我的商城信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( @ApiImplicitParam( name = "saleMemberId", value = "销售员id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
-    @PostMapping( value = "{saleMemberId}/mallIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse mallIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int saleMemberId,
+    @PostMapping( value = "mallIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse mallIndex( HttpServletRequest request, HttpServletResponse response, int saleMemberId,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -642,7 +645,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( seller ) && CommonUtil.isNotEmpty( member ) ) {
 		Map< String,Object > params = new HashMap<>();
 		params.put( "curPage", curPage );
-		params.put( "busId",loginDTO.getBusId() );
+		params.put( "busId", loginDTO.getBusId() );
 		if ( type == 1 ) {
 		    params.put( "startTime", DateTimeKit.getDateTime() );
 		    params.put( "endTime", DateTimeKit.getDateTime( DateTimeKit.addDays( -7 ) ) );
@@ -724,7 +727,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "clientOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > clientOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer status, Integer custId,Integer curPage ) {
+		    Integer status, Integer custId, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
@@ -847,13 +850,28 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    userLogin( request, response, loginDTO );
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.mergeData( seller, member );
-	    result.put( "seller", seller );
-
 	    //查询提现条件
 	    MallSellerSet sellerSet = mallSellerService.selectByBusUserId( seller.getBusUserId() );
+	    double withdrawMoney = 0;//可提现金额
 	    if ( CommonUtil.isNotEmpty( sellerSet ) ) {
 		result.put( "sellerSet", sellerSet );
+		double lowestMoney = 0;
+		if ( CommonUtil.isNotEmpty( sellerSet.getWithdrawalLowestMoney() ) ) {
+		    lowestMoney = CommonUtil.toDouble( sellerSet.getWithdrawalLowestMoney() );
+		}
+		if ( CommonUtil.isNotEmpty( seller ) ) {
+		    double canPresentedCommission = CommonUtil.toDouble( seller.getCanPresentedCommission() );
+		    double multiple = CommonUtil.toDouble( sellerSet.getWithdrawalMultiple() );
+		    //提现规则  1按最底提现金额 2按倍数提现
+		    if ( sellerSet.getWithdrawalType() == 1 && canPresentedCommission >= lowestMoney ) {
+			withdrawMoney = canPresentedCommission;
+		    } else if ( sellerSet.getWithdrawalType() == 2 && canPresentedCommission >= multiple ) {
+			withdrawMoney = CommonUtil.subtract( canPresentedCommission, CommonUtil.div( canPresentedCommission, multiple, 3 ) );
+		    }
+		}
 	    }
+	    result.put( "seller", seller );
+	    result.put( "withdrawMoney", withdrawMoney );
 
 	    //查询销售员的提现记录
 	    List< MallSellerWithdraw > withdrawList = mallSellerWithdrawService.selectBySaleMemberId( member );
