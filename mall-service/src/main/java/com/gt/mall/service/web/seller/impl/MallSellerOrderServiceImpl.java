@@ -60,13 +60,10 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
 	List< Map< String,Object > > mapList = mallSellerOrderDAO.selectOrderByClientId( params );
 	if ( mapList != null && mapList.size() > 0 ) {
 	    String memberIds = "";
-	    if ( CommonUtil.isNotEmpty( params.get( "oldMemberIds" ) ) ) {
-		List< Integer > memberList = (List< Integer >) params.get( "oldMemberIds" );
-		for ( Integer id : memberList ) {
-		    memberIds += id + ",";
+	    for ( Map< String,Object > map : mapList ) {
+		if ( CommonUtil.isNotEmpty( map.get( "buyer_user_id" ) ) ) {
+		    memberIds += map.get( "buyer_user_id" ) + ",";
 		}
-	    } else {
-		memberIds = params.get( "memberId" ).toString();
 	    }
 	    if ( CommonUtil.isNotEmpty( memberIds ) ) {
 		List< Map > memberList = memberService.findMemberByIds( memberIds, CommonUtil.toInteger( params.get( "busId" ) ) );

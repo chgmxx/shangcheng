@@ -195,9 +195,11 @@ public class MallOrderNewController extends BaseController {
 		    @ApiParam( name = "id", value = "订单ID", required = true ) @RequestParam Integer id ) {
 	OrderResult result = null;
 	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "orderId", id );
-	    result = mallOrderService.selectOrderList( id );
+	    result = mallOrderService.selectOrderList( id,shoplist );
 
 	} catch ( Exception e ) {
 	    logger.error( "查看订单详情异常：" + e.getMessage() );

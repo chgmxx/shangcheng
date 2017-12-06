@@ -223,6 +223,7 @@
         <result column="express_time" property="expressTime" jdbcType="TIMESTAMP"/>
         <result column="buyer_cancel_reason" property="buyerCancelReason" jdbcType="INTEGER"/>
         <result column="seller_cancel_reason" property="sellerCancelReason" jdbcType="INTEGER"/>
+        <result column="buyer_user_type" property="buyerUserType"/>
         <!-- <result column="mem_name" property="recUserName" jdbcType="VARCHAR" />
          <result column="mem_phone" property="recTelephone" jdbcType="VARCHAR" />-->
         <result column="updateDay" property="updateDay" jdbcType="INTEGER"/>
@@ -434,7 +435,7 @@
             and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
         </if>
         <if test="type != null and type != ''">
-            and t.order_type = #{orderType}
+            and t.order_type = #{type}
         </if>
         <if test="orderSource != null and orderSource != ''">
             and t.buyer_user_type = #{orderSource}
@@ -452,7 +453,7 @@
     <select id="findByPage" resultMap="PhoneResultMap" parameterType="map">
         SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
         t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address , TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS update_time,
-        t.delivery_method,t.is_wallet,t.`shop_id`,t.buyer_user_id , t.member_name
+        t.delivery_method,t.is_wallet,t.`shop_id`,t.buyer_user_id , t.member_name,t.buyer_user_type
         FROM t_mall_order t
         <where>
             <if test="userId != null and userId != ''">
@@ -491,7 +492,7 @@
                 and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
             </if>
             <if test="type != null and type != ''">
-                and t.order_type = #{orderType}
+                and t.order_type = #{type}
             </if>
             <if test="orderSource != null and orderSource != ''">
                 and t.buyer_user_type = #{orderSource}
@@ -559,7 +560,7 @@
                 and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
             </if>
             <if test="type != null and type != ''">
-                and t.order_type = #{orderType}
+                and t.order_type = #{type}
             </if>
             <if test="orderSource != null and orderSource != ''">
                 and t.buyer_user_type = #{orderSource}
@@ -602,7 +603,7 @@
     <select id="findReturnByPage" resultMap="PhoneResultMap" parameterType="map">
         SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
         t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time AS updateDay,
-        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name
+        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name,t.buyer_user_type
 
         ,d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name, d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname
 
@@ -611,7 +612,7 @@
         SELECT
         t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
         t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time ,
-        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name
+        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name,t.buyer_user_type
         FROM t_mall_order t
         <where>
             ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) or (t.order_pay_way!=5))
@@ -651,7 +652,7 @@
                 and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
             </if>
             <if test="type != null and type != ''">
-                and t.order_type = #{orderType}
+                and t.order_type = #{type}
             </if>
             <if test="orderSource != null and orderSource != ''">
                 and t.buyer_user_type = #{orderSource}

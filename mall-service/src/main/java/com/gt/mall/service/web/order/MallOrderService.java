@@ -67,7 +67,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 查询订单信息
      */
-    public OrderResult selectOrderList( Integer orderId );
+    public OrderResult selectOrderList( Integer orderId,List< Map< String,Object > > shoplist  );
 
     /**
      * 支付成功后修改订单状态、库存、销量、规格

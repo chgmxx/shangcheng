@@ -141,7 +141,7 @@ public class MallProductTemplateController extends BaseController {
     @SysLogAnnotation( description = "删除商品页模板信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "ids", value = "分组ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
+		    @ApiParam( name = "ids", value = "模板ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( ids ) ) {

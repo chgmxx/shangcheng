@@ -283,6 +283,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	int status = 0;
 	if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
 	    status = CommonUtil.toInteger( params.get( "status" ) );
+	    if ( status == 0 ) {
+		params.remove( "status" );
+	    }
 	}
 	int rowCount = 0;
 	if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
@@ -301,9 +304,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 
 	getOrderListParams( list );
-	if ( list == null || list.size() == 0 ) {
+	/*if ( list == null || list.size() == 0 ) {
 	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "您还没有相关的订单" );
-	}
+	}*/
 
 	List< OrderResult > orderResultList = new ArrayList< OrderResult >();
 	EntityDtoConverter converter = new EntityDtoConverter();
@@ -349,13 +352,44 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( mallOrder.getMallOrderDetail() != null && orderResult.getMallOrderDetail().size() > 0 ) {
 		List< OrderDetailResult > mallOrderDetials = new ArrayList< OrderDetailResult >();
 		for ( MallOrderDetail detail : mallOrder.getMallOrderDetail() ) {
-		    OrderDetailResult orderDetailResult = new OrderDetailResult();
-		    converter.entityConvertDto( detail, orderDetailResult );
-		    if ( detail.getOrderReturn() != null ) {
-			orderDetailResult.setStatusName( OrderUtil.getReturnStatusName( detail.getOrderReturn() ) );
-			returnStatus = detail.getOrderReturn().getStatus();
+		    if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
+			OrderDetailResult orderDetailResult = new OrderDetailResult();
+			converter.entityConvertDto( detail, orderDetailResult );
+			if ( detail.getOrderReturn() != null ) {
+			    orderDetailResult.setStatusName( OrderUtil.getReturnStatusName( detail.getOrderReturn() ) );
+			    returnStatus = detail.getOrderReturn().getStatus();
+			}
+
+			MallOrderReturn returns = new MallOrderReturn();
+			returns.setOrderId( detail.getOrderId() );
+			returns.setOrderDetailId( detail.getId() );
+			MallOrderReturn orderReturn = mallOrderReturnDAO.selectByOrderDetailId( returns );
+			if ( orderReturn != null ) {
+			    OrderReturnResult returnResult = new OrderReturnResult();
+			    converter.entityConvertDto( orderReturn, returnResult );
+			    if ( orderReturn.getStatus() == 0 ) {
+				//是否显示拒绝退款申请按钮 1显示
+				returnResult.setIsShowRefuseApplyButton( 1 );
+				if ( orderReturn.getRetHandlingWay() == 1 ) {
+				    //是否显示同意退款申请按钮 1显示
+				    returnResult.setIsShowAgreeApplyButton( 1 );
+				} else if ( orderReturn.getRetHandlingWay() == 2 ) {
+				    //是否显示同意退货退款按钮 1显示
+				    returnResult.setIsShowAgreeRetGoodsApplyButton( 1 );
+				}
+			    } else if ( orderReturn.getStatus() == 3 ) {
+				//是否显示确认收货并退款按钮 1显示
+				returnResult.setIsShowConfirmTakeButton( 1 );
+				//是否显示拒绝确认收货按钮 1显示
+				returnResult.setIsShowRefuseConfirmTakeButton( 1 );
+			    } else if ( orderReturn.getStatus() == 4 ) {
+				//是否显示修改退货地址按钮 1显示
+				returnResult.setIsShowUpdateAddressButton( 1 );
+			    }
+			    orderDetailResult.setReturnResult( returnResult );
+			}
+			mallOrderDetials.add( orderDetailResult );
 		    }
-		    mallOrderDetials.add( orderDetailResult );
 		}
 		orderResult.setMallOrderDetail( mallOrderDetials );
 	    }
@@ -613,12 +647,20 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     }
 
     @Override
-    public OrderResult selectOrderList( Integer orderId ) {
+    public OrderResult selectOrderList( Integer orderId, List< Map< String,Object > > shoplist ) {
 	OrderResult result = new OrderResult();
 	EntityDtoConverter converter = new EntityDtoConverter();
 	MallOrder order = mallOrderDAO.selectById( orderId );
 	if ( order != null ) {
 	    converter.entityConvertDto( order, result );
+	    for ( Map< String,Object > shopMap : shoplist ) {
+		if ( shopMap.get( "id" ).toString().equals( order.getShopId().toString() ) ) {
+		    result.setShopName( shopMap.get( "sto_name" ).toString() );//店铺名称
+		    break;
+		}
+	    }
+	    result.setOrderStatusName( OrderUtil.getOrderStatusMsgByOrder( order.getOrderStatus().toString(), order.getDeliveryMethod().toString() ) );
+	    result.setTypeName( OrderUtil.getOrderTypeMsgByOrder( order.getBuyerUserType() ) );
 	    if ( order.getOrderPayWay() == 7 ) {
 		MallDaifu daifu = mallDaifuService.selectByDfOrderNo( order.getOrderNo().toString() );
 		result.setMallDaifu( daifu );
@@ -639,6 +681,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		for ( MallOrderDetail detail : details ) {
 		    OrderDetailResult detailResult = new OrderDetailResult();
 		    converter.entityConvertDto( detail, detailResult );
+
 		    MallOrderReturn returns = new MallOrderReturn();
 		    returns.setOrderId( orderId );
 		    returns.setOrderDetailId( detail.getId() );
@@ -646,6 +689,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    if ( orderReturn != null ) {
 			OrderReturnResult returnResult = new OrderReturnResult();
 			converter.entityConvertDto( orderReturn, returnResult );
+			detailResult.setStatusName( OrderUtil.getReturnStatusName( orderReturn) );
 			if ( orderReturn.getStatus() == 0 ) {
 			    //是否显示拒绝退款申请按钮 1显示
 			    returnResult.setIsShowRefuseApplyButton( 1 );
@@ -2258,7 +2302,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    cellTitle.setCellValue( titles[i] );
 	    cellTitle.setCellStyle( styleTitle );//给标题加样式
 	}
-	sheet.setColumnWidth( 14, 100 * 256 );
+	sheet.setDefaultColumnWidth( 20 );
+	sheet.setColumnWidth( 14, 60 * 256 );
 	HSSFCellStyle centerStyle = workbook.createCellStyle();
 	centerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );// 设置单元格左右居中
 
@@ -2350,25 +2395,27 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }*/
 	    if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-		    Integer dStatus = detail.getStatus();
 		    String sale = "";
-		    if ( orderStatus != 5 ) {
-			if ( dStatus == 0 ) {
-			    sale = "退款中";
-			} else if ( dStatus == 1 ) {
-			    sale = "退款成功";
-			} else if ( dStatus == 2 ) {
-			    sale = "商家已同意退款退货，等待买家退货";
-			} else if ( dStatus == 3 ) {
-			    sale = "已退货等待商家确认收货";
-			} else if ( dStatus == 4 ) {
-			    sale = "商家未收到货，不同意退款申请";
-			} else if ( dStatus == 5 ) {
-			    sale = "退款退货成功";
-			} else if ( dStatus == -1 ) {
-			    sale = "退款失败(商家不同意退款)";
-			} else if ( dStatus == -2 ) {
-			    sale = "买家撤销退款";
+		    if ( CommonUtil.isNotEmpty( detail.getStatus() ) ) {
+			Integer dStatus = detail.getStatus();
+			if ( orderStatus != 5 ) {
+			    if ( dStatus == 0 ) {
+				sale = "退款中";
+			    } else if ( dStatus == 1 ) {
+				sale = "退款成功";
+			    } else if ( dStatus == 2 ) {
+				sale = "商家已同意退款退货，等待买家退货";
+			    } else if ( dStatus == 3 ) {
+				sale = "已退货等待商家确认收货";
+			    } else if ( dStatus == 4 ) {
+				sale = "商家未收到货，不同意退款申请";
+			    } else if ( dStatus == 5 ) {
+				sale = "退款退货成功";
+			    } else if ( dStatus == -1 ) {
+				sale = "退款失败(商家不同意退款)";
+			    } else if ( dStatus == -2 ) {
+				sale = "买家撤销退款";
+			    }
 			}
 		    }
 		    HSSFRow row = sheet.createRow( i );
@@ -2476,7 +2523,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    cellTitle.setCellValue( titles[i] );
 	    cellTitle.setCellStyle( styleTitle );//给标题加样式
 	}
-	sheet.setDefaultColumnWidth( 20  );
+	sheet.setDefaultColumnWidth( 20 );
 	sheet.setColumnWidth( 2, 60 * 256 );
 	HSSFCellStyle centerStyle = workbook.createCellStyle();
 	centerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );// 设置单元格左右居中
