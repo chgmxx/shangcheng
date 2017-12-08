@@ -91,6 +91,7 @@
         <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
         <result column="order_status" property="orderStatus" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="order_pay_no" property="orderPayNo" jdbcType="VARCHAR"/>
         <result column="pay_time" property="payTime" jdbcType="TIMESTAMP"/>
         <result column="express_way" property="expressWay" jdbcType="INTEGER"/>
@@ -375,7 +376,8 @@
      </sql>
 
     <sql id="Order_OrderDetail_List">
-        t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,
+        t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time,
         t.order_start,t.order_pay_way,t.delivery_method,t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id,
         t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,t.pay_time,express_way,t.express_id,t.express_number,
         t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,
@@ -453,7 +455,7 @@
     <select id="findByPage" resultMap="PhoneResultMap" parameterType="map">
         SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
         t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address , TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS update_time,
-        t.delivery_method,t.is_wallet,t.`shop_id`,t.buyer_user_id , t.member_name,t.buyer_user_type
+        t.delivery_method,t.is_wallet,t.`shop_id`,t.buyer_user_id , t.member_name,t.buyer_user_type,t.order_seller_remark
         FROM t_mall_order t
         <where>
             <if test="userId != null and userId != ''">
@@ -588,7 +590,10 @@
         <if test="shopId!= null and shopId != ''">
             and d.shop_id = #{shopId}
         </if>
-        <if test="status != null and status != ''">
+        <if test="returnStatus != null and returnStatus != ''">
+            and d.status = #{returnStatus}
+        </if>
+        <if test="(returnStatus == '' or returnStatus == null ) and status != null and status != ''">
             <if test="status == 6 || status == 8">
                 and d.status != -3 and d.status != 1 and d.status != 5 and d.status != -2
             </if>
@@ -680,7 +685,10 @@
         <if test="shopId!= null and shopId != ''">
             and d.shop_id = #{shopId}
         </if>
-        <if test="status != null and status != ''">
+        <if test="returnStatus != null and returnStatus != ''">
+            and d.status = #{returnStatus}
+        </if>
+        <if test="(returnStatus == '' or returnStatus == null ) and status != null and status != ''">
             <if test="status == 6 || status == 8">
                 <!-- and ( d.status = 0 or d.status = 2 or d.status = 3 or d.status = 4 or d.status = -1) -->
 

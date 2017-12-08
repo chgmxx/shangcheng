@@ -130,4 +130,7 @@ public class OrderReturnResult {
 
     @ApiModelProperty( name = "takeTimes", value = "自动确认收货倒计时" )
     private long[] takeTimes;
+
+    @ApiModelProperty( name = "refundUrl", value = "封装支付宝退款地址" )
+    private String refundUrl;
 }

@@ -29,7 +29,7 @@ public class OrderResult {
     @ApiModelProperty( name = "shopId", value = "店铺ID" )
     private int shopId;
 
-    @ApiModelProperty( name = "shopName", value = "商家名称" )
+    @ApiModelProperty( name = "shopName", value = "店铺名称" )
     private String shopName;
 
     @ApiModelProperty( name = "memberName", value = "买家名称" )
@@ -78,6 +78,12 @@ public class OrderResult {
 
     @ApiModelProperty( name = "createTime", value = "创建订单时间" )
     private Date createTime;
+
+    @ApiModelProperty( name = "updateTime", value = "修改时间" )
+    private Date updateTime;
+
+    @ApiModelProperty( name = "orderPayNo", value = "支付流水号" )
+    private String orderPayNo;
 
     @ApiModelProperty( name = "payTime", value = "付款时间" )
     private Date payTime;
