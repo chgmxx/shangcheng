@@ -74,16 +74,18 @@ public class PurchaseOrderNewController extends BaseController {
     @ApiOperation( value = "报价单列表(分页)", notes = "报价单列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "status", value = "状态", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "search", value = "报价单号", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "startTime", value = "创建开始时间", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "endTime", value = "创建结束时间", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String search, String startTime, String endTime ) {
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage,String status, String search, String startTime, String endTime ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
+	    params.put( "status", status );
 	    params.put( "search", search );
 	    params.put( "startTime", startTime );
 	    params.put( "endTime", endTime );

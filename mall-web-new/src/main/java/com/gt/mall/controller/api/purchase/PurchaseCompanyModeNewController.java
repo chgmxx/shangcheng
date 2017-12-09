@@ -56,7 +56,7 @@ public class PurchaseCompanyModeNewController extends BaseController {
 	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
-	    params.put( "keyword", keyWord );
+	    params.put( "keyWord", keyWord );
 	    params.put( "busId", busUser.getId() );
 
 	    PageUtil page = companyService.findList( params );
