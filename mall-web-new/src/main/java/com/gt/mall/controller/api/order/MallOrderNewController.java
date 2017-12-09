@@ -318,16 +318,13 @@ public class MallOrderNewController extends BaseController {
 	OutputStream out = null;
 	HSSFWorkbook workbook = null;
 	try {
+	    EntityDtoConverter converter = new EntityDtoConverter();
 	    Map< String,Object > params = new HashMap<>();
-	    if ( orderQuery != null ) {
-		BeanMap beanMap = BeanMap.create( orderQuery );
-		for ( Object key : beanMap.keySet() ) {
-		    if ( CommonUtil.isNotEmpty( beanMap.get( key ) ) ) {
-			params.put( key + "", beanMap.get( key ) );
-		    }
-		}
-	    }
+	    params = converter.beanToMap( orderQuery );
+
+
 	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
 	    String[] titles = new String[] { "订单编号", "商品", "单价", "数量", "实付金额", "优惠", "运费", "买家", "下单时间", "订单状态", "配送方式", "售后", "所属店铺", "付款方式", "收货信息", "买家留言", "卖家备注" };

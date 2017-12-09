@@ -274,6 +274,7 @@
             <result column="returnDay" property="returnDay" jdbcType="INTEGER"/>
             <result column="discount" property="discount" jdbcType="INTEGER"/>
             <result column="pro_type_id" property="proTypeId" jdbcType="INTEGER"/>
+            <result column="total_price" property="totalPrice" jdbcType="INTEGER"/>
             <result column="use_fenbi" property="useFenbi" jdbcType="INTEGER"/>
             <result column="use_jifen" property="useJifen" jdbcType="DOUBLE"/>
             <result column="coupon_code" property="couponCode" jdbcType="VARCHAR"/>
@@ -453,10 +454,17 @@
         </if>
     </select>
     <select id="findByPage" resultMap="PhoneResultMap" parameterType="map">
-        SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address , TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS update_time,
-        t.delivery_method,t.is_wallet,t.`shop_id`,t.buyer_user_id , t.member_name,t.buyer_user_type,t.order_seller_remark
+       SELECT t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
+        t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
+        t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
+        t.group_buy_id,t.order_type,t.p_join_id, d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,
+        d.det_pro_name, d.det_pro_code,d.det_privivilege,d.status ,d.id AS dId,t.shop_id,t.order_old_money,
+        d.pro_type_id, t.order_pid,d.use_fenbi,d.use_jifen,d.return_day AS returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
+        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,
+        t.buyer_user_type,t.is_wallet,d.total_price
         FROM t_mall_order t
+        left join t_mall_order_detail d on d.order_id = t.id
         <where>
             <if test="userId != null and userId != ''">
                 and t.bus_user_id = #{userId}
@@ -606,18 +614,25 @@
         </if>
     </select>
     <select id="findReturnByPage" resultMap="PhoneResultMap" parameterType="map">
-        SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time AS updateDay,
-        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name,t.buyer_user_type
-
-        ,d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name, d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname
-
+        SELECT t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
+        t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
+        t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
+        t.group_buy_id,t.order_type,t.p_join_id, d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,
+        d.det_pro_name, d.det_pro_code,d.det_privivilege,d.status ,d.id AS dId,t.shop_id,t.order_old_money,
+        d.pro_type_id, t.order_pid,d.use_fenbi,d.use_jifen,d.return_day AS returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
+        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,
+        t.buyer_user_type,t.is_wallet,d.total_price
         FROM
         (
         SELECT
         t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time ,
-        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name,t.buyer_user_type
+        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time , t.delivery_method,
+        t.is_wallet,t.buyer_user_id, t.member_name,t.buyer_user_type,
+
+        t.receive_id,t.order_buyer_message,t.order_seller_remark,t.order_start,t.invoice_title,t.take_their_id,t.is_message_notice,
+        t.seller_user_id,t.express_way,t.express_id,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.order_type,t.p_join_id,
+        t.shop_id,t.order_old_money,t.order_pid,t.bus_user_id
         FROM t_mall_order t
         <where>
             ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) or (t.order_pay_way!=5))

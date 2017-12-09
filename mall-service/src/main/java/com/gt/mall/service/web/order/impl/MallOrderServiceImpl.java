@@ -2119,7 +2119,21 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	//循环数据
 	if ( type == 1 ) {
 	    //			getOrderList(params,sheet,valueStyle);
-	    List< MallOrder > data = mallOrderDAO.explodOrder( params );
+	    List< MallOrder > data = null;
+//	    mallOrderDAO.explodOrder( params );
+	    int status = 0;
+	    if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
+		status = CommonUtil.toInteger( params.get( "status" ) );
+		if ( status == 0 ) {
+		    params.remove( "status" );
+		}
+	    }
+	    if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
+		data = mallOrderDAO.findByPage( params );
+	    } else {
+		data = mallOrderDAO.findReturnByPage( params );
+	    }
+
 	    int j = 1;
 	    for ( MallOrder order : data ) {
 		j = getOrderList( sheet, centerStyle, leftStyle, order, j, shoplist );
@@ -2990,8 +3004,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				Date date = DateTimeKit.addDate( orderReturn.getCreateTime(), Constants.WAIT_APPLY_RETURN_DAY );
 				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), "yyyy-MM-dd HH:mm:ss" );
 				if ( cont == -1 ) {
-				    long[] times = DateTimeKit.getDistanceTimes( DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), DateTimeKit.getDateTime() );
-				    returnResult.setApplyTimes( times );
+				    returnResult.setApplyTimes((date.getTime()-new Date().getTime()) / 1000);
 				}
 			    } catch ( Exception e ) {
 				e.printStackTrace();
@@ -3004,11 +3017,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    returnResult.setIsShowRefuseConfirmTakeButton( 1 );
 			    //默认7天无回应，则自动收货
 			    try {
-				Date date = DateTimeKit.addDate( orderReturn.getUpdateTime(), Constants.RETURN_AUTO_CONFIRM_TAKE_DAY );
+				Date date = DateTimeKit.addDate( orderReturn.getUpdateTime(), Constants.RETURN_AUTO_CONFIRM_TAKE_DAY );//倒计时最终时间
 				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), "yyyy-MM-dd HH:mm:ss" );
 				if ( cont == -1 ) {
-				    long[] times = DateTimeKit.getDistanceTimes( DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), DateTimeKit.getDateTime() );
-				    returnResult.setTakeTimes( times );
+				    returnResult.setTakeTimes((date.getTime()-new Date().getTime()) / 1000);
 				}
 			    } catch ( Exception e ) {
 				e.printStackTrace();
