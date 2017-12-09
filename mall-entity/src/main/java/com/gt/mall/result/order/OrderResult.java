@@ -29,7 +29,7 @@ public class OrderResult {
     @ApiModelProperty( name = "shopId", value = "店铺ID" )
     private int shopId;
 
-    @ApiModelProperty( name = "shopName", value = "商家名称" )
+    @ApiModelProperty( name = "shopName", value = "店铺名称" )
     private String shopName;
 
     @ApiModelProperty( name = "memberName", value = "买家名称" )
@@ -65,8 +65,11 @@ public class OrderResult {
     @ApiModelProperty( name = "orderStatusName", value = "订单状态名称" )
     private String orderStatusName;
 
-    @ApiModelProperty( name = "orderSellerRemark", value = "买家备注" )
+    @ApiModelProperty( name = "orderSellerRemark", value = "卖家备注" )
     private String orderSellerRemark;
+
+    @ApiModelProperty( name = "orderBuyerMessage", value = "买家留言" )
+    private String orderBuyerMessage;
 
     @ApiModelProperty( name = "buyerUserType", value = "买家 数据来源 0:pc端 1:微信 2:uc端 3:小程序" )
     private Integer buyerUserType;
@@ -75,6 +78,12 @@ public class OrderResult {
 
     @ApiModelProperty( name = "createTime", value = "创建订单时间" )
     private Date createTime;
+
+    @ApiModelProperty( name = "updateTime", value = "修改时间" )
+    private Date updateTime;
+
+    @ApiModelProperty( name = "orderPayNo", value = "支付流水号" )
+    private String orderPayNo;
 
     @ApiModelProperty( name = "payTime", value = "付款时间" )
     private Date payTime;

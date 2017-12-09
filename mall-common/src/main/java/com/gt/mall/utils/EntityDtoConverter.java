@@ -89,7 +89,7 @@ public class EntityDtoConverter {
 	    BeanMap beanMap = BeanMap.create( bean );
 	    for ( Object key : beanMap.keySet() ) {
 		if ( CommonUtil.isNotEmpty( beanMap.get( key ) ) ) {
-		    map.put( key + "", beanMap.get( key ) );
+		    map.put( key + "", beanMap.get( key ).toString() );
 		}
 	    }
 	}

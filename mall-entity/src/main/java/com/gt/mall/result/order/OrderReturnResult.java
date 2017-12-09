@@ -126,8 +126,11 @@ public class OrderReturnResult {
     private Integer isShowUpdateAddressButton = 0;
 
     @ApiModelProperty( name = "applyTimes", value = "退款申请倒计时" )
-    private long[] applyTimes;
+    private long applyTimes;
 
     @ApiModelProperty( name = "takeTimes", value = "自动确认收货倒计时" )
-    private long[] takeTimes;
+    private long takeTimes;
+
+    @ApiModelProperty( name = "refundUrl", value = "封装支付宝退款地址" )
+    private String refundUrl;
 }
