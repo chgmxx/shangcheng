@@ -7,6 +7,8 @@ import lombok.Data;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 搜索商品所需参数
@@ -22,7 +24,7 @@ public class PhoneSearchProductDTO implements Serializable {
 
     @ApiModelProperty( name = "shopId", value = "店铺ID，必传", required = true )
     @NotNull( message = "店铺ID不能为空" )
-    @Min( value = 1, message = "店铺ID不能小于1" )
+    @Min( value = -1, message = "店铺ID不能小于1" )
     private Integer shopId;
 
     @ApiModelProperty( name = "busId", value = "商家id，必传", required = true )
@@ -45,6 +47,9 @@ public class PhoneSearchProductDTO implements Serializable {
     @ApiModelProperty( name = "type", value = "类型，1.团购 3.秒杀 4.拍卖 5 粉币 6预售 7批发" )
     private Integer type = 0;
 
+    @ApiModelProperty( name = "saleMemberId", value = "销售员id " )
+    private Integer saleMemberId = 0;
+
     @ApiModelProperty( name = "curPage", value = "当前页" )
     private Integer curPage = 1;
 
@@ -53,5 +58,8 @@ public class PhoneSearchProductDTO implements Serializable {
 
     @ApiModelProperty( name = "maxNum", value = "显示数量 ", hidden = true )
     private int maxNum;
+
+    @ApiModelProperty( name = "shopList", value = "店铺列表，查询用的，可不传值", hidden = true )
+    private List< Map< String,Object > > shopList;
 
 }

@@ -465,12 +465,6 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
      */
     @Override
     public PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
-
-	if ( CommonUtil.isNotEmpty( member ) ) {
-	    //新增搜索关键词
-	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
-	}
-
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
 	int rowCount = mallPifaDAO.selectCountGoingPifaProduct( searchProductDTO );

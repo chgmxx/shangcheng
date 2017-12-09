@@ -2,8 +2,8 @@ package com.gt.mall.service.web.seller.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.seller.MallSellerJoinProductDAO;
@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,54 +196,53 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	    }
 	    if ( productList != null && productList.size() > 0 ) {
 		double discount = mallProductService.getMemberDiscount( "1", member );//商品折扣
+		productList = mallPageService.getSearchProductParam( productList, discount, null );
 
-		boolean isPifa = mallPifaApplyService.isPifa( member );
-
-		List< Map< String,Object > > proList = new ArrayList< Map< String,Object > >();
-		for ( Map< String,Object > map : productList ) {
-		    //int proId = CommonUtil.toInteger(map.get("id"));
-		    double price = CommonUtil.toDouble( map.get( "pro_price" ) );
-		    String image_url = map.get( "image_url" ).toString();
-		    if ( map.get( "is_specifica" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( map.get( "inv_price" ) ) ) {
-			price = CommonUtil.toDouble( map.get( "inv_price" ) );
-			if ( CommonUtil.isNotEmpty( map.get( "specifica_img_url" ) ) ) {
-			    image_url = map.get( "specifica_img_url" ).toString();
-			}
-		    }
-		    /*MallSellerJoinProduct joinProduct = mallSellerJoinProductDao.selectByProId(proId);
-		    double commissionMoney = 0;
-		    if(CommonUtil.isNotEmpty(joinProduct)){
-			    double commissionRate = CommonUtil.toDouble(joinProduct.getCommissionRate());//佣金比例
-			    if(joinProduct.getCommissionType() == 1){//按百分比
-				    commissionMoney = price*(commissionRate/100);
-				    //price += CommonUtil.toDouble(df.format(commissionMoney));
-			    }else if(joinProduct.getCommissionType() == 2){//按固定金额
-				    commissionMoney = commissionRate;
-				    //price += commissionRate;
-			    }
-		    }*/
-
-		    DecimalFormat df = new DecimalFormat( "######0.00" );
-		    String is_member_discount = map.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
-		    if ( is_member_discount.equals( "1" ) ) {
-			if ( price > 0 && discount > 0 && discount < 1 ) {
-			    double hyPrice = price * discount;
-			    hyPrice = CommonUtil.toDouble( df.format( hyPrice ) );
-			    //map.put("hyPrice",df.format(hyPrice+commissionMoney));
-			    map.put( "hyPrice", df.format( hyPrice ) );
-			}
-		    }
-
-		    double pfPrice = mallPifaService.getPifaPriceByProIds( isPifa, CommonUtil.toInteger( map.get( "id" ) ) );
-		    if ( pfPrice >= 0 ) {
-			map.put( "pfPrice", df.format( pfPrice ) );
-		    }
-		    //price = commissionMoney+price;
-		    map.put( "image_url", image_url );
-		    map.put( "price", df.format( price ) );
-		    proList.add( map );
-		}
-		productList = proList;
+		//		List< Map< String,Object > > proList = new ArrayList< Map< String,Object > >();
+		//		for ( Map< String,Object > map : productList ) {
+		//		    //int proId = CommonUtil.toInteger(map.get("id"));
+		//		    double price = CommonUtil.toDouble( map.get( "pro_price" ) );
+		//		    String image_url = map.get( "image_url" ).toString();
+		//		    if ( map.get( "is_specifica" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( map.get( "inv_price" ) ) ) {
+		//			price = CommonUtil.toDouble( map.get( "inv_price" ) );
+		//			if ( CommonUtil.isNotEmpty( map.get( "specifica_img_url" ) ) ) {
+		//			    image_url = map.get( "specifica_img_url" ).toString();
+		//			}
+		//		    }
+		//		    /*MallSellerJoinProduct joinProduct = mallSellerJoinProductDao.selectByProId(proId);
+		//		    double commissionMoney = 0;
+		//		    if(CommonUtil.isNotEmpty(joinProduct)){
+		//			    double commissionRate = CommonUtil.toDouble(joinProduct.getCommissionRate());//佣金比例
+		//			    if(joinProduct.getCommissionType() == 1){//按百分比
+		//				    commissionMoney = price*(commissionRate/100);
+		//				    //price += CommonUtil.toDouble(df.format(commissionMoney));
+		//			    }else if(joinProduct.getCommissionType() == 2){//按固定金额
+		//				    commissionMoney = commissionRate;
+		//				    //price += commissionRate;
+		//			    }
+		//		    }*/
+		//
+		//		    DecimalFormat df = new DecimalFormat( "######0.00" );
+		//		    String is_member_discount = map.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
+		//		    if ( is_member_discount.equals( "1" ) ) {
+		//			if ( price > 0 && discount > 0 && discount < 1 ) {
+		//			    double hyPrice = price * discount;
+		//			    hyPrice = CommonUtil.toDouble( df.format( hyPrice ) );
+		//			    //map.put("hyPrice",df.format(hyPrice+commissionMoney));
+		//			    map.put( "hyPrice", df.format( hyPrice ) );
+		//			}
+		//		    }
+		//
+		//		    double pfPrice = mallPifaService.getPifaPriceByProIds( isPifa, CommonUtil.toInteger( map.get( "id" ) ) );
+		//		    if ( pfPrice >= 0 ) {
+		//			map.put( "pfPrice", df.format( pfPrice ) );
+		//		    }
+		//		    //price = commissionMoney+price;
+		//		    map.put( "image_url", image_url );
+		//		    map.put( "price", df.format( price ) );
+		//		    proList.add( map );
+		//		}
+		//		productList = proList;
 	    }
 
 	    return productList;
@@ -295,12 +293,14 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 
     @Override
     public List< Map< String,Object > > selectProductByBusUserId( Map< String,Object > params ) {
-	return mallSellerProductDAO.selectProductByBusUserId( params );
+	List< Map< String,Object > > productList = mallSellerProductDAO.selectProductByBusUserId( params );
+	return mallPageService.getSearchProductParam( productList, 1, null );
     }
 
     @Override
     public List< Map< String,Object > > selectProductBySaleMember( Map< String,Object > params ) {
-	return mallSellerProductDAO.selectProductBySaleMember( params );
+	List< Map< String,Object > > productList = mallSellerProductDAO.selectProductBySaleMember( params );
+	return mallPageService.getSearchProductParam( productList, 1, null );
     }
 
     @Override
@@ -323,11 +323,14 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params, String type, int rType, double discount, boolean isPifa ) {
+    public PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params, Member member ) {
 	boolean isJoinProduct = true;
-	List< Map< String,Object > > xlist = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 	int pageSize = 10;
+	double discount = 1;//商品折扣
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    discount = mallProductService.getMemberDiscount( "1", member );//商品折扣
+	}
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	PageUtil page = new PageUtil();
 	if ( CommonUtil.isNotEmpty( mallSet ) ) {
@@ -335,7 +338,7 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 		if ( mallSet.getIsOpenOptional() == 1 ) {//查询销售员自选的商品
 		    isJoinProduct = false;
 		    //					Map<String, Object> map = new HashMap<String, Object>();
-		    params.put( "id", mallSet.getId() );
+		    params.put( "mallSetId", mallSet.getId() );
 		    params.put( "saleMemberId", mallSet.getSaleMemberId() );
 		    int rowCount = mallSellerProductDAO.selectCountProductAllByMallSet( params );
 
@@ -361,13 +364,14 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	    }
 	}
 	if ( list != null && list.size() > 0 ) {
-	    for ( int i = 0; i < list.size(); i++ ) {
-		Map< String,Object > map1 = list.get( i );
-		map1.put( "rType", params.get( "rType" ) );
-		map1 = mallPageService.productGetPrice( map1, discount, isPifa );
-		xlist.add( map1 );
-	    }
-	    page.setSubList( xlist );
+	    //	    for ( int i = 0; i < list.size(); i++ ) {
+	    //		Map< String,Object > map1 = list.get( i );
+	    //		map1.put( "rType", params.get( "rType" ) );
+	    //		map1 = mallPageService.getSearchProductParam( map1, discount, isPifa );
+	    //		xlist.add( map1 );
+	    //	    }
+	    list = mallPageService.getSearchProductParam( list, discount, null );
+	    page.setSubList( list );
 	}
 	return page;
     }
@@ -497,7 +501,7 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	    double commissionMoney = 0;//佣金
 	    if ( commissionType == 1 ) {//按百分比
 		commissionMoney = result.getProductPrice() * ( commission_rate / 100 );
-		if ( commissionMoney <= 0 ) {
+		if ( commissionMoney <= 0.01 ) {
 		    commissionMoney = 0.01;
 		}
 	    } else if ( commissionType == 2 ) {//按固定金额
@@ -608,6 +612,8 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 		    }
 		}
 	    }
+	    flag = true;
+	} else if ( CommonUtil.isEmpty( mallSetDTO.getSellerProList() ) && count > 0 ) {
 	    flag = true;
 	}
 	resultMap.put( "flag", flag );

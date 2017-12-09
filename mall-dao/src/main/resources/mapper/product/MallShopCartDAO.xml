@@ -74,6 +74,12 @@
             <if test="proSpecStr != null">
                 pro_spec_str = #{proSpecStr,jdbcType=VARCHAR},
             </if>
+            <if test="saleMemberId != null">
+                sale_member_id = #{saleMemberId},
+            </if>
+            <if test="commission != null">
+                commission = #{commission},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>

@@ -219,8 +219,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( orderList != null && orderList.size() > 0 ) {
 	    for ( int i = 0; i < orderList.size(); i++ ) {
 		MallOrder mallOrder = orderList.get( i );
-		mallOrder.setOrderNo( "SC" + System.currentTimeMillis() );
-		mallOrder.setCreateTime( new Date() );
+
 		if ( orderPId > 0 ) {
 		    mallOrder.setOrderPid( orderPId );
 		}
@@ -229,6 +228,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		    mallOrder.setUpdateTime( new Date() );
 		    count = mallOrderDAO.updateById( mallOrder );
 		} else {
+		    mallOrder.setOrderNo( "SC" + System.currentTimeMillis() );
+		    mallOrder.setCreateTime( new Date() );
 		    count = mallOrderDAO.insert( mallOrder );
 		}
 		if ( count < 0 ) {
@@ -890,6 +891,12 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( CommonUtil.isNotEmpty( cartMap.get( "pro_type_id" ) ) ) {
 	    result.setProTypeId( CommonUtil.toInteger( cartMap.get( "pro_type_id" ) ) );
 	}
+	if ( CommonUtil.isNotEmpty( cartMap.get( "sale_member_id" ) ) ) {
+	    result.setSaleMemberId( CommonUtil.toInteger( cartMap.get( "sale_member_id" ) ) );
+	}
+	if ( CommonUtil.isNotEmpty( cartMap.get( "commission" ) ) ) {
+	    result.setCommission( CommonUtil.toDouble( cartMap.get( "commission" ) ) );
+	}
 	return result;
     }
 
@@ -977,6 +984,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
 	    result.setProTypeId( CommonUtil.toInteger( product.getProTypeId() ) );
 	}
+	result.setSaleMemberId( buyNowDTO.getSaleMemberId() );
+	result.setCommission( buyNowDTO.getCommission() );
 	return result;
     }
 
@@ -1171,6 +1180,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    result.setProTypeId( CommonUtil.toInteger( product.getProTypeId() ) );
 	}
 	result.setOrderDetailId( detail.getId() );
+	result.setSaleMemberId( detail.getSaleMemberId() );
+	result.setCommission( CommonUtil.toDouble( detail.getCommission() ) );
 	return result;
     }
 

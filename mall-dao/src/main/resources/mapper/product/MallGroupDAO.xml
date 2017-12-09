@@ -103,8 +103,14 @@
         SELECT b.id AS group_id,b.group_name,b.is_child,b.shop_id
         FROM t_mall_group b
         WHERE b.is_delete=0
-        <if test="shopId != null and shopId != ''">
+        <if test="shopId != null and shopId != '' and shopId > 0">
             AND b.shop_id= #{shopId}
+        </if>
+        <if test="shopList != null">
+            and b.shop_id in
+            <foreach collection="shopList" index="index" item="item" open="(" separator="," close=")">
+               #{item.id,jdbcType=INTEGER}
+            </foreach>
         </if>
         <if test="isFrist != null and isFrist != ''">
             AND b.is_first_parents=1

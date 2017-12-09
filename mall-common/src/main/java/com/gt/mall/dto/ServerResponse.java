@@ -79,7 +79,7 @@ public class ServerResponse< T > implements Serializable {
 	if ( isShow ) {
 	    this.imgUrl = PropertiesUtil.getResourceUrl();
 	    this.path = PropertiesUtil.getHomeUrl();
-	    this.webPath = PropertiesUtil.getHomeUrl();
+	    this.webPath = PropertiesUtil.getPhoneWebHomeUrl();
 	} else {
 	    this.imgUrl = null;
 	    this.path = null;

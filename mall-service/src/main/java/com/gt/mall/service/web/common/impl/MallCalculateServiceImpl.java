@@ -79,8 +79,10 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		}
 	    }
 	    int ctId = 0;
-	    if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) ) {
-		ctId = CommonUtil.toInteger( cardMap.get( "ctId" ) );
+	    if(CommonUtil.isNotEmpty( cardMap )){
+		if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) ) {
+		    ctId = CommonUtil.toInteger( cardMap.get( "ctId" ) );
+		}
 	    }
 	    if ( ctId != 2 ) {
 		discountFlag = false;

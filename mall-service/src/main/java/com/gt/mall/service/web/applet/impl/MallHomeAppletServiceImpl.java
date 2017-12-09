@@ -125,16 +125,34 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< Map< String,Object > > groupList = mallGroupDAO.selectGroupsByShopId( params );
 	if ( groupList != null && groupList.size() > 0 ) {
 	    List< Map< String,Object > > imageList = null;
-	    if ( CommonUtil.isEmpty( params.get( "isFrist" ) ) ) {
-		List< Integer > idList = new ArrayList<>();
-		for ( Map< String,Object > map : groupList ) {
-		    if ( !idList.contains( CommonUtil.toInteger( map.get( "group_id" ) ) ) ) {
-			idList.add( CommonUtil.toInteger( map.get( "group_id" ) ) );
+	    List< MallGroup > childList = null;
+	    List< Integer > cIdList = new ArrayList<>();
+	    List< Integer > idList = new ArrayList<>();
+	    for ( Map< String,Object > map : groupList ) {
+		int groupId = CommonUtil.toInteger( map.get( "group_id" ) );
+		if ( CommonUtil.isEmpty( params.get( "isFrist" ) ) ) {
+		    if ( !idList.contains( groupId ) ) {
+			idList.add( groupId );
 		    }
 		}
+		if ( CommonUtil.isNotEmpty( map.get( "is_child" ) ) ) {
+		    int isChild = CommonUtil.toInteger( map.get( "is_child" ) );
+		    if ( isChild == 1 && !cIdList.contains( groupId ) ) {
+			cIdList.add( groupId );
+		    }
+		}
+	    }
+	    if ( idList != null && idList.size() > 0 ) {
 		params.put( "assIds", idList );
 		params.put( "assType", 2 );
 		imageList = imageAssociativeDAO.selectByAssIds( params );
+	    }
+	    if ( cIdList != null && cIdList.size() > 0 ) {
+		Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
+		groupWrapper.in( "group_p_id", cIdList );
+		groupWrapper.where( "is_delete = 0" );
+		groupWrapper.groupBy( "group_p_id" );
+		childList = groupDAO.selectList( groupWrapper );
 	    }
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    for ( Map< String,Object > map : groupList ) {
@@ -144,15 +162,15 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		String groupId = CommonUtil.toString( map.get( "group_id" ) );
 		if ( CommonUtil.isNotEmpty( map.get( "is_child" ) ) ) {
 		    isChild = CommonUtil.toInteger( map.get( "is_child" ) );
-		    if ( isChild == 1 ) {
+		    if ( isChild == 1 && childList != null && childList.size() > 0 ) {
 			//查询分类是否有子类
-			Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
-			groupWrapper.where( "group_p_id = {0}", groupId );
-			List< MallGroup > list = groupDAO.selectList( groupWrapper );
-			if ( list != null && list.size() > 0 ) {
-			    isChild = 1;
-			} else {
-			    isChild = 0;
+			for ( int i = 0; i < childList.size(); i++ ) {
+			    MallGroup mallGroup = childList.get( i );
+			    if ( mallGroup.getGroupPId().toString().equals( groupId ) ) {
+				isChild = 1;
+				childList.remove( i );
+				break;
+			    }
 			}
 		    }
 		}

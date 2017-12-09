@@ -151,7 +151,10 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	Map< String,Object > storeMap = mallStoreService.findShopByStoreId( product.getShopId() );
 
 	//查询商品是否已收藏
-	boolean isCollect = mallCollectService.getProductCollect( params.getProductId(), member.getId() );
+	boolean isCollect = false;
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    isCollect = mallCollectService.getProductCollect( params.getProductId(), member.getId() );
+	}
 
 	//获取粉丝的折扣
 	double discount = mallProductService.getMemberDiscount( product.getIsMemberDiscount().toString(), member );
@@ -209,7 +212,9 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	}
 
-	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1 ) ) {//用商品价算会员价
+	//用商品价算会员价  批发，团购，销售员才显示
+	if ( discount > 0 && discount < 1 && ( CommonUtil.isEmpty( params.getType() ) || params.getType() == 0 || params.getType() == 7 || params.getType() == 1
+			|| params.getType() == 8 ) ) {
 	    double hyPrice = CommonUtil.toDouble( df.format( productPrice * discount ) );
 	    result.setHyPrice( hyPrice );//会员价
 	}
@@ -218,8 +223,8 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	}
 	result.setProductName( product.getProName() );//商品名称
 	result.setProductLabel( product.getProLabel() );//商品标签
-	//普通商品和批发商品，团购商品
-	if ( params.getType() == 0 || params.getType() == 7 || params.getType() == 1 ) {
+	//普通商品和批发商品，团购商品，销售商品
+	if ( params.getType() == 0 || params.getType() == 7 || params.getType() == 1 || params.getType() == 8 ) {
 	    result.setProductPrice( productPrice );//商品价格
 	    if ( productPrice < productCostPrice && productCostPrice > 0 ) {
 		result.setProductCostPrice( productCostPrice );//商品原价

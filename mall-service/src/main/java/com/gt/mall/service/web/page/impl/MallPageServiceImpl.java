@@ -827,10 +827,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 
     @Override
     public PageUtil productAllListNew( PhoneSearchProductDTO searchProductDTO, double discount, Member member ) {
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) ) {
-	    //新增搜索关键词
-	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
-	}
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
 	int rowCount = mallProductDAO.selectCountAllByShopidsNew( searchProductDTO );
@@ -897,11 +893,13 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		costPrice = price;
 	    }
 	}
-	if ( searchProductDTO.getType() == 5 ) {
-	    price = CommonUtil.toDouble( map1.get( "change_fenbi" ) );
-	    proMap.put( "unit", "粉币" );
-	} else if ( searchProductDTO.getType() > 0 && CommonUtil.isNotEmpty( map1.get( "price" ) ) ) {
-	    price = CommonUtil.toDouble( map1.get( "price" ) );
+	if ( CommonUtil.isNotEmpty( searchProductDTO ) ) {
+	    if ( searchProductDTO.getType() == 5 ) {
+		price = CommonUtil.toDouble( map1.get( "change_fenbi" ) );
+		proMap.put( "unit", "粉币" );
+	    } else if ( searchProductDTO.getType() > 0 && CommonUtil.isNotEmpty( map1.get( "price" ) ) ) {
+		price = CommonUtil.toDouble( map1.get( "price" ) );
+	    }
 	}
 	if ( price > 0 ) {
 	    proMap.put( "price", df.format( price ) );
@@ -936,7 +934,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	proMap.put( "shop_id", map1.get( "shop_id" ) );
 	proMap.put( "id", map1.get( "id" ) );
 
-	if ( searchProductDTO.getType() > 0 ) {
+	if ( CommonUtil.isNotEmpty( searchProductDTO ) && searchProductDTO.getType() > 0 ) {
 	    if ( CommonUtil.isNotEmpty( map1.get( "endTime" ) ) && CommonUtil.isEmpty( map1.get( "activityStatus" ) ) ) {
 		Date endTimes = DateTimeKit.parse( map1.get( "endTime" ).toString(), "yyyy-MM-dd HH:mm:ss" );
 		Date startTimes = DateTimeKit.parse( map1.get( "startTime" ).toString(), "yyyy-MM-dd HH:mm:ss" );
@@ -966,12 +964,13 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( CommonUtil.isNotEmpty( map1.get( "peopleNum" ) ) ) {
 	    proMap.put( "peopleNum", map1.get( "peopleNum" ) );//拼团人数
 	}
-	if ( searchProductDTO.getType() == 4 ) {
+	if ( CommonUtil.isNotEmpty( searchProductDTO ) && searchProductDTO.getType() == 4 ) {
 	    proMap.put( "lowerPrice", map1.get( "lowerPrice" ) );//降价金额（每多少分钟降价多少元）
 	    proMap.put( "lowerPriceTime", map1.get( "lowerPriceTime" ) );//降价时间（每多少分钟）
 	    proMap.put( "lowestPrice", map1.get( "lowestPrice" ) );//最低价格
 	    proMap.put( "aucType", map1.get( "aucType" ) );//拍卖类型 1 降价拍 2升价拍
 	}
+	proMap.put( "user_id", map1.get( "user_id" ) );
 	return proMap;
     }
 

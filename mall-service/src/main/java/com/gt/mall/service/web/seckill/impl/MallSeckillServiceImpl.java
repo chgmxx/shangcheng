@@ -615,12 +615,6 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      */
     @Override
     public PageUtil searchSeckillAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
-
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) ) {
-	    //新增搜索关键词
-	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
-	}
-
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
 	int rowCount = mallSeckillDAO.selectCountGoingSeckillProduct( searchProductDTO );

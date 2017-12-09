@@ -290,6 +290,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		detailResult.setProductPrice( CommonUtil.toDouble( detail.getDetProPrice() ) );
 		detailResult.setProductSpecificaValue( detail.getProductSpeciname() );
 		detailResult.setDetailStauts( detail.getStatus() );
+		detailResult.setSaleMemberId( detail.getSaleMemberId() );
 		isNowReturn = OrderUtil.getOrderIsNowReturn( detailStutas );
 		boolean isGoupOrderCanReturn = true;
 		if ( order.getOrderType() == 1 ) {

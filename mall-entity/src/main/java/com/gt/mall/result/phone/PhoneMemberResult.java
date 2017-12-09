@@ -51,6 +51,9 @@ public class PhoneMemberResult {
     @ApiModelProperty( name = "saleMemberId", value = "销售员id" )
     private int saleMemberId = 0;
 
+    @ApiModelProperty( name = "isLogin", value = "是否登陆" )
+    private int isLogin = 0;
+
 
 
 }

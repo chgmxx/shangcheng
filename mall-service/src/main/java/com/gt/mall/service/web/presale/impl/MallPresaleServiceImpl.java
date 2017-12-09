@@ -1088,10 +1088,6 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
      */
     @Override
     public PageUtil searchPresaleAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) ) {
-	    //新增搜索关键词
-	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
-	}
 	PageUtil page = new PageUtil();
 	if ( !searchProductDTO.getSort().equals( "price" ) ) {
 	    int pageSize = 10;

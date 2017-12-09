@@ -1,7 +1,5 @@
 package com.gt.mall.param.phone.sellers;
 
-import com.gt.mall.bean.member.JifenAndFenbiRule;
-import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
