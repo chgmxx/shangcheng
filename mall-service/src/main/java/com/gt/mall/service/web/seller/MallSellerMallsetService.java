@@ -110,7 +110,7 @@ public interface MallSellerMallsetService extends BaseService< MallSellerMallset
     /**
      * 查询销售员自选的商品
      */
-    PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params, String type, int rType, double discount, boolean isPifa );
+    PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params,  Member member  );
 
     /**
      * 查询销售佣金

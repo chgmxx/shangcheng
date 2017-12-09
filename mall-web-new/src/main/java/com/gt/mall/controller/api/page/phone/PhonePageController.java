@@ -21,6 +21,7 @@ import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.product.MallSearchLabelService;
+import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
@@ -81,6 +82,8 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     private WxPublicUserService      wxPublicUserService;
     @Autowired
     private MallCommonService        mallCommonService;
+    @Autowired
+    private MallSellerService        mallSellerService;
 
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -143,23 +146,30 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		//显示首页的菜单按钮，并查询首页id
 		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	    }
-	    int pageId = 0;
-	    if ( shopId == 0 ) {
-		BusUser busUser = new BusUser();
-		busUser.setId( busId );
-		List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( busUser, request );
-		List< Map< String,Object > > pageList = mallPageService.selectPageIdByUserId( busId, shopList );
-		if ( pageList.size() > 0 ) {//获取首页的pageId
-		    shopId = CommonUtil.toInteger( pageList.get( 0 ).get( "pag_sto_id" ) );
-		    if ( CommonUtil.isNotEmpty( pageList.get( 0 ).get( "id" ) ) ) {
-			pageId = CommonUtil.toInteger( pageList.get( 0 ).get( "id" ) );
-		    }
-		    MallRedisUtils.getMallShopId( shopId );
-		}
+	    Member member = MallSessionUtils.getLoginMember( request, busId );
+	    int saleMemberId = mallSellerService.getSaleMemberIdByRedis( member, 0, request, busId );
+	    if ( saleMemberId > 0 ) {
+		result.put( "saleMemberId", saleMemberId );
 	    } else {
-		pageId = mallPageService.getPageIdByShopId( shopId );
+		int pageId = 0;
+		if ( shopId == 0 ) {
+		    BusUser busUser = new BusUser();
+		    busUser.setId( busId );
+		    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( busUser, request );
+		    List< Map< String,Object > > pageList = mallPageService.selectPageIdByUserId( busId, shopList );
+		    if ( pageList.size() > 0 ) {//获取首页的pageId
+			shopId = CommonUtil.toInteger( pageList.get( 0 ).get( "pag_sto_id" ) );
+			if ( CommonUtil.isNotEmpty( pageList.get( 0 ).get( "id" ) ) ) {
+			    pageId = CommonUtil.toInteger( pageList.get( 0 ).get( "id" ) );
+			}
+			MallRedisUtils.getMallShopId( shopId );
+		    }
+		} else {
+		    pageId = mallPageService.getPageIdByShopId( shopId );
+		}
+		result.put( "pageId", pageId );
 	    }
-	    result.put( "pageId", pageId );
+
 	} catch ( Exception e ) {
 	    logger.error( "获取店铺首页id异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -259,8 +269,8 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "clearSearchGroup", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse clearSearchGroup( HttpServletRequest request, HttpServletResponse response, int shopId ) throws IOException {
 	try {
-	    if(shopId == 0){
-//	        return se
+	    if ( shopId == 0 ) {
+		//	        return se
 	    }
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "shopId", shopId );

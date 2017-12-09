@@ -613,10 +613,6 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 
     @Override
     public PageUtil searchGroupBuyProduct( PhoneSearchProductDTO searchProductDTO, Member member ) {
-	if ( CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) && CommonUtil.isNotEmpty( member ) ) {
-	    mallSearchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
-	}
-
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
 	int rowCount = mallGroupBuyDAO.selectCountGoingGroupProduct( searchProductDTO );

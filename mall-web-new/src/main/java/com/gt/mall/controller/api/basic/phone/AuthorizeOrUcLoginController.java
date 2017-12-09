@@ -56,22 +56,22 @@ public class AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isEmpty( guoqiJson ) || guoqiJson.size() == 0 ) {
 		return null;
 	    }
-	    Integer code = CommonUtil.toInteger( guoqiJson.get( "code" ) );
-	    if ( code == 0 ) {
-		Object guoqi = guoqiJson.get( "guoqi" );
-		if ( CommonUtil.isNotEmpty( guoqi ) ) {
-		    throw new BusinessException( ResponseEnums.BUS_GUOQI_ERROR.getCode(), ResponseEnums.BUS_GUOQI_ERROR.getDesc(), guoqiJson.get( "guoqiUrl" ).toString() );
-		}
-		setBusGuoqi( guoqiJson, busId );
-		Object remoteUcLogin = guoqiJson.get( "remoteUcLogin" );
-		if ( browser == 99 && ( ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
-		    return null;
-		}
+	}
+	Integer code = CommonUtil.toInteger( guoqiJson.get( "code" ) );
+	if ( code == 0 ) {
+	    Object guoqi = guoqiJson.get( "guoqi" );
+	    if ( CommonUtil.isNotEmpty( guoqi ) ) {
+		throw new BusinessException( ResponseEnums.BUS_GUOQI_ERROR.getCode(), ResponseEnums.BUS_GUOQI_ERROR.getDesc(), guoqiJson.get( "guoqiUrl" ).toString() );
+	    }
+	    setBusGuoqi( guoqiJson, busId );
+	    Object remoteUcLogin = guoqiJson.get( "remoteUcLogin" );
+	    if ( browser == 99 && ( ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
+		return null;
 	    }
 	}
 
-	KeysUtil keysUtil = new KeysUtil(  );
-	String requestUrl= keysUtil.getEncString( loginDTO.getUrl() );
+	KeysUtil keysUtil = new KeysUtil();
+	String requestUrl = keysUtil.getEncString( loginDTO.getUrl() );
 
 	Map< String,Object > queryMap = new HashMap<>();
 	queryMap.put( "returnUrl", requestUrl );
@@ -82,7 +82,7 @@ public class AuthorizeOrUcLoginController {
 	}
 	logger.info( " ResponseEnums.NEED_LOGIN.getCode()" + ResponseEnums.NEED_LOGIN.getCode() );
 	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
-			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap ) );
+			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap ) );
     }
 
     private void setBusGuoqi( JSONObject json, int busId ) {

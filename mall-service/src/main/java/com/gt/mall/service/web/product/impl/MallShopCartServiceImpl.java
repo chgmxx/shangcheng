@@ -917,7 +917,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		shopCart.setId( cartDto.getId() );
 		shopCart.setProductNum( cartDto.getProductNum() );
 		mallShopCartDAO.updateById( shopCart );
-//		mallShopCartDAO.updateByShopCart( shopCart );
+		//		mallShopCartDAO.updateByShopCart( shopCart );
 	    }
 	} else {
 	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), ResponseEnums.PARAMS_NULL_ERROR.getDesc() );

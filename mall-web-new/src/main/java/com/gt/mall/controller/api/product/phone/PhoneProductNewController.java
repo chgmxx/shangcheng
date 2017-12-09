@@ -8,6 +8,7 @@ import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductParam;
+import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.*;
@@ -26,6 +27,8 @@ import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.*;
 import com.gt.mall.service.web.seckill.MallSeckillService;
+import com.gt.mall.service.web.seller.MallSellerMallsetService;
+import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
@@ -102,6 +105,12 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private MemberService                 memberService;
     @Autowired
     private MallCollectService            mallCollectService;
+    @Autowired
+    private MallSellerMallsetService      mallSellerMallSetService;
+    @Autowired
+    private MallSellerService             mallSellerService;
+    @Autowired
+    private MallSearchKeywordService      mallSearchKeywordService;
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -109,9 +118,15 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< List< AppletGroupDTO > > classAll( HttpServletRequest request, @Valid @ModelAttribute PhoneGroupDTO params ) {
 	try {
 	    Map< String,Object > map = new HashMap<>();
-	    map.put( "shopId", params.getShopId() );
+
+	    if ( CommonUtil.isEmpty( params.getShopId() ) || params.getShopId() == 0 ) {
+		List< Map< String,Object > > shoplist = mallStoreService.findShopByUserId( params.getBusId(), request );
+		map.put( "shopList", shoplist );
+	    } else {
+		map.put( "shopId", params.getShopId() );
+	    }
 	    if ( CommonUtil.isEmpty( params.getGroupId() ) || params.getGroupId() == 0 ) {
-		map.put( "isFrist", 1 );
+		map.put( "isFrist", 1 );//查询父类
 	    } else {
 		map.put( "classId", params.getGroupId() );
 	    }
@@ -142,10 +157,12 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		params.setSearchContent( CommonUtil.urlEncode( params.getSearchContent() ) );//搜索内容转码
 	    }
 	    if ( CommonUtil.isEmpty( params.getCurPage() ) || params.getCurPage() == 1 ) {
-		//判断店铺和门店是否已经被删除
-		boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
-		if ( !isShop ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
+		if ( params.getShopId() > 0 ) {
+		    //判断店铺和门店是否已经被删除
+		    boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
+		    if ( !isShop ) {
+			return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
+		    }
 		}
 		//封装登陆参数
 		loginDTO.setUcLogin( 1 );//不需要登陆
@@ -164,6 +181,14 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    }
 		}
 	    }
+	    if ( CommonUtil.isEmpty( params.getShopId() ) || params.getShopId() == 0 ) {
+		List< Map< String,Object > > shoplist = mallStoreService.findShopByUserId( params.getBusId(), request );
+		params.setShopList( shoplist );
+	    }
+	    if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( params.getSearchContent() ) ) {
+		//新增搜索关键词
+		mallSearchKeywordService.insertSeachKeyWord( member.getId(), params.getShopId(), params.getSearchContent() );
+	    }
 	    PageUtil page = null;
 	    if ( params.getType() == 0 || params.getType() == 5 ) {//0 查询普通商品 5 查询粉币商品
 		double discount = mallProductService.getMemberDiscount( "1", member );
@@ -178,6 +203,20 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		page = mallPresaleService.searchPresaleAll( params, member );
 	    } else if ( params.getType() == 7 ) {//查询批发商品
 		page = mallPifaService.searchPifaAll( params, member );
+	    } else if ( params.getType() == 8 && CommonUtil.isNotEmpty( params.getSaleMemberId() ) && params.getSaleMemberId() > 0 ) {//查询销售商品
+		Integer saleMemberId = mallSellerService.getSaleMemberIdByRedis( member, params.getSaleMemberId(), request, params.getBusId() );
+		result.put( "saleMemberId", saleMemberId );
+
+		MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( params.getSaleMemberId() );
+		Map< String,Object > map = new HashMap<>();
+		map.put( "busUserId", member.getBusid() );
+		map.put( "groupId", params.getGroupId() );
+		map.put( "curPage", params.getCurPage() );
+		map.put( "proName", params.getSearchContent() );
+		map.put( "type", params.getType() );
+		map.put( "sort", params.getSort() );
+		map.put( "isDesc", params.getIsDesc() );
+		page = mallSellerMallSetService.selectProductBySaleMember( mallSet, map, member );
 	    }
 	    result.put( "productList", page );
 

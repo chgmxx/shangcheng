@@ -288,7 +288,7 @@ public class MallStoreNewController extends BaseController {
     @RequestMapping( value = "/generateQRCode", method = RequestMethod.GET )
     public void generateQRCode( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "url", value = "地址", required = true ) @RequestParam String url ) {
 	try {
-	    String content = PropertiesUtil.getHomeUrl() + url;
+	    String content = PropertiesUtil.getPhoneWebHomeUrl() + url;
 	    QRcodeKit.buildQRcode( content, 200, 200, response );
 	} catch ( Exception e ) {
 	    logger.error( "自动生成二维码异常：" + e.getMessage() );

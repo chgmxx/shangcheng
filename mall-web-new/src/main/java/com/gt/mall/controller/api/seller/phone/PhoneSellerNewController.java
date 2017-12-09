@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api.seller.phone;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
@@ -350,7 +351,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
-	    params.put( "busId",loginDTO.getBusId() );
+	    params.put( "busId", loginDTO.getBusId() );
 	    params.put( "type", type );
 	    params = mallOrderService.getMemberParams( member, params );
 	    if ( params.containsKey( "memberId" ) ) {
@@ -386,25 +387,23 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    userLogin( request, response, loginDTO );
-	    params.put( "uId", member.getBusid() );
+	    params.put( "busUserId", member.getBusid() );
 	    params.put( "groupId", groupId );
 	    params.put( "curPage", curPage );
 	    if ( CommonUtil.isNotEmpty( proName ) ) {
 		proName = new String( proName.getBytes( "iso8859-1" ), "utf-8" );
 		params.put( "proName", proName );
 	    }
-	    double discount = mallProductService.getMemberDiscount( "1", member );//商品折扣
-	    result.put( "discount", discount );
-
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( member.getId() );
-	    boolean isPifa = mallPifaApplyService.isPifa( member );
+	    //	    boolean isPifa = mallPifaApplyService.isPifa( member );
 	    params.put( "isFindSeller", 1 );
 	    //查询已设置佣金的商品
-	    PageUtil page = mallSellerMallSetService.selectProductBySaleMember( mallSet, params, "1", 0, discount, isPifa );
+	    PageUtil page = mallSellerMallSetService.selectProductBySaleMember( mallSet, params, member );
 	    result.put( "page", page );
 	   /* //获取店铺所有的分类
 	    List classList = mallPageService.storeList( null, 1, loginDTO.getBusId() );
 	    result.put( "classList", classList );*/
+	    result.put( "saleMemberId", member.getId() );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取自选商品列表异常：" + e.getMessage() );
@@ -498,16 +497,21 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "保存商城设置", notes = "保存商城设置", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "type", value = "1基本信息 2自选商品", paramType = "query", required = false, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "type", value = "1基本信息 2自选商品", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "mallSet", value = "商城设置", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @PostMapping( value = "addMallSet", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse addMallSet( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    PhoneAddMallSetDTO mallSetDTO, Integer type ) {
+		    String mallSet, Integer type ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
+	    if ( CommonUtil.isEmpty( mallSet ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+	    }
 
+	    PhoneAddMallSetDTO mallSetDTO = JSONObject.parseObject( mallSet, PhoneAddMallSetDTO.class );
 	    result = mallSellerMallSetService.newSaveSeller( member, mallSetDTO, type );
 	    boolean flag = (boolean) result.get( "flag" );
 	    if ( !flag ) {
@@ -614,11 +618,6 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Map< String,Object > params = new HashMap<>();
 	    List< Map< String,Object > > productList = mallSellerMallSetService.selectProductByMallIndex( member, params, mallSet );
 	    result.put( "productList", productList );
-
-	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( mallSet.getBusUserId() );//查询商城底部菜单
-	    result.put( "footerMenuMap", footerMenuMap );
-
-	   /* mallPageService.getCustomer( request, mallSet.getBusUserId() );*/
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( Exception e ) {
@@ -920,7 +919,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
-	    params.put( "busId",loginDTO.getBusId() );
+	    params.put( "busId", loginDTO.getBusId() );
 	    params.put( "types", type );
 	    params.put( "type", 1 );
 	    params = mallOrderService.getMemberParams( member, params );
@@ -1015,6 +1014,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    result.put( "mallSeller", mallSeller );
 	    result.put( "member", member );
+	    result.put( "mallSet", mallSet );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
 	} catch ( Exception e ) {

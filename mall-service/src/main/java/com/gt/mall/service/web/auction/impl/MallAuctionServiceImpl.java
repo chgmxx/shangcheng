@@ -431,12 +431,6 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 
     @Override
     public PageUtil searchAuctionAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
-
-	if ( CommonUtil.isNotEmpty( searchProductDTO.getSearchContent() ) && CommonUtil.isNotEmpty( member ) ) {
-	    //保存到搜索关键字表
-	    searchKeywordService.insertSeachKeyWord( member.getId(), searchProductDTO.getShopId(), searchProductDTO.getSearchContent() );
-	}
-
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
 	int rowCount = auctionDAO.selectCountGoingAuctionProduct( searchProductDTO );
