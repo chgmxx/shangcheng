@@ -55,10 +55,12 @@ public class PurchaseCompanyMode extends Model<PurchaseCompanyMode> {
     /**
      * 经纬度
      */
+    	@TableField("longitude")
 	private String longitude;
     /**
      * 经纬度
      */
+    	@TableField("latitude")
 	private String latitude;
 
 

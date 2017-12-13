@@ -118,7 +118,7 @@ public class PurchaseOrderNewController extends BaseController {
 	    if ( order.getOrderType().equals( "1" ) ) {
 		//查询分期
 		List< Map< String,Object > > termList = termDAO.findTermList( id );
-		request.setAttribute( "termList", termList );
+		result.put( "termList", termList );
 	    }
 	    //订单的公司模板
 	    PurchaseCompanyMode company = companyModeService.selectById( order.getCompanyId() );
@@ -179,18 +179,22 @@ public class PurchaseOrderNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    PurchaseOrder order = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "order" ).toString() ), PurchaseOrder.class );
 	    order.setOrderTitle( CommonUtil.urlEncode( order.getOrderTitle() ) );
 	    order.setOrderDescribe( CommonUtil.urlEncode( order.getOrderDescribe() ) );
 	    order.setOrderExplain( CommonUtil.urlEncode( order.getOrderExplain() ) );
+	    order.setBusId( user.getId() );
 	    List< PurchaseOrderDetails > orderDetailsList = JSONArray.parseArray( params.get( "orderDetailsList" ).toString(), PurchaseOrderDetails.class );
-	    List< PurchaseTerm > termList = JSONArray.parseArray( params.get( "termList" ).toString(), PurchaseTerm.class );
+	    List< PurchaseTerm > termList=null;
+	    if ( CommonUtil.isNotEmpty( params.get( "termList" ) ) ) {
+		termList = JSONArray.parseArray( params.get( "termList" ).toString(), PurchaseTerm.class );
+	    }
 	    List< PurchaseCarousel > carouselList = JSONArray.parseArray( params.get( "carouselList" ).toString(), PurchaseCarousel.class );
 
 	    Map< String,Object > map = purchaseOrderService.saveOrder( order, orderDetailsList, termList, carouselList );
-	    Boolean flag = (Boolean) map.get( "result" );
-	    if ( !flag ) {
+	    String flag =map.get( "result" ).toString();
+	    if ( !Boolean.valueOf( flag ) ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存报价单失败" );
 	    }
 	} catch ( BusinessException e ) {

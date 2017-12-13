@@ -6,6 +6,7 @@ import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
@@ -85,15 +86,20 @@ public class MallSpecificaNewController extends BaseController {
 	    //type:2  1 规格， 2 参数
 	    //shopId:177 店铺ID
 	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
-
 	    if ( !CommonUtil.isEmpty( map.get( "specId" ) ) ) {// 添加规格值
 		MallSpecificaValue value = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecificaValue.class );
+		if(CommonUtil.isEmpty( value.getSpecValue() )){
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "值不能为空" );
+		}
 		value.setSpecValue( CommonUtil.urlEncode( value.getSpecValue() ) );
 		value.setUserId( userId );
 		mallProductSpecificaService.insertSpecificaValue( value );
 		id = value.getId();
 	    } else {// 添加规格名称
 		MallSpecifica spe = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecifica.class );
+		if(CommonUtil.isEmpty( spe.getSpecName() )){
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "名称不能为空" );
+		}
 		spe.setSpecName( CommonUtil.urlEncode( spe.getSpecName() ) );
 		spe.setUserId( userId );
 		spe.setCreateTime( new Date() );
