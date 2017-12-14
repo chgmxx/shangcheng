@@ -19,7 +19,6 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -98,6 +97,7 @@ public class MallPifaNewController extends BaseController {
 		    result.put( "page", page );
 		}
 	    }
+	    result.put( "videourl", busUserService.getVoiceUrl( "84" ) );
 	} catch ( Exception e ) {
 	    logger.error( "获取批发列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -209,8 +209,6 @@ public class MallPifaNewController extends BaseController {
 	    params.put( "userId", user.getId() );
 	    PageUtil page = mallPifaService.wholesalerList( params );
 	    result.put( "page", page );
-	    result.put( "videourl", busUserService.getVoiceUrl( "84" ) );
-
 	} catch ( Exception e ) {
 	    logger.error( "获取批发商列表异常：" + e.getMessage() );
 	    e.printStackTrace();

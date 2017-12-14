@@ -168,7 +168,8 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 		    //判断本商品是否正在团购中
 		    MallGroupBuy buy = mallGroupBuyDAO.selectGroupByIds( groupBuy.getId() );
 
-		    if ( buy.getStatus() == 1 && CommonUtil.isNotEmpty( buy.getJoinId() ) ) {//正在进行团购的商品不能修改
+		    if ( buy.getStatus() == 1 && CommonUtil.isNotEmpty( buy.getJoinId() ) && !buy.getProductId().toString()
+				    .equals( groupBuy.getProductId().toString() ) ) {//正在进行团购的商品不能修改
 			code = -2;
 			status = buy.getStatus();
 		    } else {

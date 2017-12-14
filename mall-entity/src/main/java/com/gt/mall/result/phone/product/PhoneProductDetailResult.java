@@ -124,7 +124,7 @@ public class PhoneProductDetailResult implements Serializable {
     private Integer cardRecevieId;
 
     /*************************************************** 以下参数活动商品需要 ***************************************************/
-    @ApiModelProperty( name = "type", value = "活动类型 1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品" )
+    @ApiModelProperty( name = "type", value = "活动类型 1.团购商品 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品 8 销售员" )
     private int type;//活动类型
 
     @ApiModelProperty( name = "invList", value = "库存id集合" )

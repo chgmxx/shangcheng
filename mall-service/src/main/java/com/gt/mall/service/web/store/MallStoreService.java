@@ -72,7 +72,7 @@ public interface MallStoreService extends BaseService< MallStore > {
      *
      * @return 店铺id
      */
-//    int getShopBySession( HttpSession session, int shopId );
+    //    int getShopBySession( HttpSession session, int shopId );
 
     /**
      * 创建仓库  对接进销存
@@ -112,6 +112,15 @@ public interface MallStoreService extends BaseService< MallStore > {
      * @return 店铺信息
      */
     Map< String,Object > findShopByStoreId( Integer id );
+
+    /**
+     * 根据店铺id查询店铺信息
+     *
+     * @param shopId 店铺id
+     *
+     * @return 店铺信息
+     */
+    MallStore findShopByShopId( Integer shopId );
 
     /**
      * 保存或修改店铺

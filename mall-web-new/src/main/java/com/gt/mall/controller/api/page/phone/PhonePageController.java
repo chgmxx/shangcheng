@@ -3,21 +3,28 @@ package com.gt.mall.controller.api.page.phone;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.api.util.SessionUtils;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
+import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallSearchKeyword;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.result.phone.PhoneCommonResult;
+import com.gt.mall.result.phone.PhonePageResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.product.MallSearchLabelService;
@@ -26,6 +33,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
@@ -84,6 +92,10 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     private MallCommonService        mallCommonService;
     @Autowired
     private MallSellerService        mallSellerService;
+    @Autowired
+    private MallPifaApplyService     mallPifaApplyService;
+    @Autowired
+    private MallProductDAO           mallProductDAO;
 
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -114,6 +126,165 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    return ServerResponse.createByErrorMessage( "获取商家的门店列表失败" );
 	}
 	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该商家没有门店列表" );
+    }
+
+    /**
+     * 手机访问商家主页面接口
+     */
+    //    @SuppressWarnings( "unchecked" )
+    //    @RequestMapping( "{id}/79B4DE7C/pageIndex" )
+    //    @AfterAnno( style = "9", remark = "微商城访问记录" )
+    @ApiOperation( value = "获取商城首页数据", notes = "获取商城首页数据", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @ApiImplicitParams( {
+		    @ApiImplicitParam( name = "pageId", value = "首页id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "url", value = "当前页面地址", paramType = "query", dataType = "String" )
+    } )
+    @PostMapping( value = "pageIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhonePageResult > pageIndex( HttpServletRequest request, HttpServletResponse response, Integer pageId, String url ) throws IOException {
+	PhonePageResult result = new PhonePageResult();
+	try {
+	    int userid = 0;
+	    //根据页面id查询页面信息
+	    MallPage page = mallPageService.selectById( pageId );
+	    if ( CommonUtil.isEmpty( page ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面已删除" );
+	    }
+	    //从session中获取member信息
+	    Member member = SessionUtils.getLoginMember( request, page.getPagUserId() );
+	    //根据商家id获取公众号信息
+	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( page.getPagUserId() );
+	    MallStore mallStore = mallStoreService.findShopByShopId( page.getPagStoId() );
+
+	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
+	    loginDTO.setBusId( page.getPagUserId() );
+	    loginDTO.setUcLogin( 1 );
+	    loginDTO.setUrl( CommonUtil.isNotEmpty( url ) ? url : CommonUtil.getpath( request ) );
+	    loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
+	    userLogin( request, response, loginDTO );
+	    mallSellerService.clearSaleMemberIdByRedis( member, request, userid );
+
+	    if ( CommonUtil.isEmpty( mallStore ) || CommonUtil.isEmpty( mallStore.getIsDelete() ) || "1".equals( mallStore.getIsDelete().toString() ) ) {
+		throw new BusinessException( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
+	    }
+	    String headImg = "";
+	    String http = PropertiesUtil.getResourceUrl();
+	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+		if ( CommonUtil.isNotEmpty( wxPublicUsers.getHeadImg() ) ) {
+		    headImg = wxPublicUsers.getHeadImg();
+		}
+	    }
+	    if ( CommonUtil.isEmpty( headImg ) ) {
+		if ( CommonUtil.isNotEmpty( mallStore.getStoHeadImg() ) ) {
+		    headImg = http + mallStore.getStoHeadImg();
+		}
+	    }
+
+	    String dataJson = "[]";
+	    String picJson = "[]";
+	    if ( page.getPagData() != null ) {
+		MallPaySet set = new MallPaySet();
+		set.setUserId( userid );
+		set = mallPaySetService.selectByUserId( set );
+		int state = mallPifaApplyService.getPifaApplay( member, set );
+
+		net.sf.json.JSONArray jsonobj = net.sf.json.JSONArray.fromObject( page.getPagData() );//转换成JSON数据
+		net.sf.json.JSONArray XinJson = new net.sf.json.JSONArray();//获取新的数组对象
+		for ( int i = 0; i < jsonobj.size(); i++ ) {
+		    net.sf.json.JSONArray XinidJSon = new net.sf.json.JSONArray();
+		    if ( CommonUtil.isEmpty( jsonobj.get( i ) ) ) {
+			XinJson.add( "null" );
+			continue;
+		    } else {
+			if ( jsonobj.get( i ).equals( "null" ) ) {
+			    XinJson.add( "null" );
+			    continue;
+			}
+		    }
+		    Map< String,Object > map1 = (Map) jsonobj.get( i );
+		    if ( CommonUtil.isEmpty( map1.get( "imgID" ) ) ) {
+			continue;
+		    }
+		    String imaid = map1.get( "imgID" ).toString();
+		    String type = map1.get( "type" ).toString();//如果type==1 代表来自与页面商品信息，2代表轮播图里面的信息
+		    net.sf.json.JSONArray jsonobjX = net.sf.json.JSONArray.fromObject( imaid );//转换成JSON数据
+		    for ( int j = 0; j < jsonobjX.size(); j++ ) {
+			if ( CommonUtil.isNotEmpty( jsonobjX.get( j ) ) ) {
+			    if ( jsonobjX.get( j ).toString().equals( "null" ) ) {
+				continue;
+			    }
+			    Map< String,Object > map2 = (Map) jsonobjX.get( j );
+			    Object selecttype = map2.get( "selecttype" );
+			    Boolean res = true;
+			    if ( selecttype != null ) {
+				Object mapid = map2.get( "id" );
+				if ( selecttype == "2" || selecttype.equals( "2" ) ) {
+				    if ( mapid != null && !mapid.equals( null ) && !mapid.equals( "" ) ) {
+					Integer mapid1 = Integer.valueOf( mapid.toString() );
+					if ( !mapid1.toString().equals( "-1" ) && !mapid1.toString().equals( "-2" ) ) {
+					    try {
+						Map< String,Object > map3 = mallPageService.selectBranch( mapid1 );
+						map2.put( "title", map3.get( "pag_name" ) );
+					    } catch ( Exception e ) {
+						map2.remove( "url" );
+					    }
+					}
+				    }
+				} else if ( selecttype == "6" || selecttype.equals( "6" ) ) {//预售商品
+				    map2 = mallPageService.getProductPresale( map2, member );
+				}
+			    }
+			    //res == true 时，代表商品正常，res == false 代表商品已删除
+			    if ( res ) {
+				XinidJSon.add( map2 );
+			    }
+			}
+		    }
+		    map1.put( "imgID", XinidJSon );
+		    XinJson.add( map1 );
+
+		}
+		picJson = XinJson.toString();
+	    }
+	    if ( page.getPagCss() != null ) {
+		dataJson = page.getPagCss();
+	    }
+
+	    Map< String,Object > params = new HashMap< String,Object >();
+	    params.put( "shopId", page.getPagStoId() );
+	    int countproduct = mallProductDAO.selectCountAllByShopids( params );
+	    result.setCountProduct( countproduct );
+	    //	    Date dat = DateTimeKit.addHours( DateTimeKit.getNow(), -168 );
+	    //	    String time = DateTimeKit.getDateTime( dat, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	    //	    int xincound = mallPageService.counttime( page.getPagStoId(), time );
+	    //	    Integer mainid = 0;
+	    //	    List list = mallPageService.pagecountid( page.getPagStoId() );
+	    //	    if ( list.size() > 0 ) {
+	    //		Map map = (Map) list.get( 0 );
+	    //		mainid = Integer.valueOf( map.get( "id" ).toString() );
+	    //	    }
+	    result.setDataJson( dataJson );
+	    result.setPicJson( picJson );
+
+	    MallRedisUtils.getMallShopId( page.getPagStoId() );//从session获取店铺id  或  把店铺id存入session
+
+	    if ( CommonUtil.isEmpty( mallStore.getStoPicture() ) ) {
+		result.setStoPicture( PropertiesUtil.getResourceUrl() + mallStore.getStoPicture() );
+	    }
+	    result.setBusId( page.getPagUserId() );
+	    result.setShareTitle( mallStore.getStoName() + "-" + page.getPagName() );
+	    result.setStoName( mallStore.getStoName() );
+	    result.setSharePicture( headImg );
+	    result.setPageName( page.getPagName() );
+
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+	} catch ( Exception e ) {
+	    logger.error( "访问商城首页异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "访问商城首页异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     @ApiOperation( value = "获取商家的底部菜单", notes = "获取商家的底部菜单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )

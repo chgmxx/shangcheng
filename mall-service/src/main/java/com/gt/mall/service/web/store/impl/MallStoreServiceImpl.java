@@ -269,6 +269,39 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return storeMap;
     }
 
+    @Override
+    public MallStore findShopByShopId( Integer shopId ) {
+	MallStore store = mallStoreDao.selectById( shopId );
+	if ( CommonUtil.isNotEmpty( store.getWxShopId() ) ) {
+	    WsWxShopInfo shopInfo = wxShopService.getShopById( store.getWxShopId() );
+	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
+		store.setStoName( shopInfo.getBusinessName() );
+		store.setStoPhone( shopInfo.getTelephone() );
+		store.setStoLongitude( shopInfo.getLongitude() );
+		store.setStoLatitude( shopInfo.getLatitude() );
+		if ( CommonUtil.isNotEmpty( shopInfo.getProvince() ) ) {
+		    store.setStoProvince( CommonUtil.toInteger( shopInfo.getProvince() ) );
+		}
+		if ( CommonUtil.isNotEmpty( shopInfo.getCity() ) ) {
+		    store.setStoCity( CommonUtil.toInteger( shopInfo.getCity() ) );
+		}
+		if ( CommonUtil.isNotEmpty( shopInfo.getDistrict() ) ) {
+		    store.setStoArea( CommonUtil.toInteger( shopInfo.getDistrict() ) );
+		}
+		store.setStoHouseMember( shopInfo.getDetail() );
+		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( store.getWxShopId() );
+		if ( photoList != null && photoList.size() > 0 ) {
+		    store.setStoPicture( photoList.get( 0 ).getLocalAddress() );
+		}
+		store.setStoAddress( getWxShopDetailAddress( shopInfo ) );
+		if ( shopInfo.getStatus() == -1 ) {
+		    store.setIsDelete( 1 );
+		}
+	    }
+	}
+	return store;
+    }
+
     private String getWxShopDetailAddress( WsWxShopInfo shopInfo ) {
 	String cityids = shopInfo.getProvince() + "," + shopInfo.getCity() + "," + shopInfo.getDistrict();
 	List< Map > cityList = wxShopService.queryBasisCityIds( cityids );

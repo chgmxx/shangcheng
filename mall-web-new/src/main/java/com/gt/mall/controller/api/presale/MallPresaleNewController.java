@@ -225,7 +225,7 @@ public class MallPresaleNewController extends BaseController {
 		result.put( "page", page );
 	    }
 	    result.put( "busId", user.getId() );
-	    result.put( "alipayUrl", PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refund.do" );
+	    result.put( "alipayUrl", PropertiesUtil.getWxmpDomain() + "alipay/79B4DE7C/refund.do" );
 	} catch ( Exception e ) {
 	    logger.error( "获取拍卖定金管理列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -354,7 +354,7 @@ public class MallPresaleNewController extends BaseController {
     @ApiOperation( value = "获取预售送礼礼品类型", notes = "获取预售送礼礼品类型" )
     @ResponseBody
     @RequestMapping( value = "/give/dictList", method = RequestMethod.POST )
-    public ServerResponse<List< DictBean >> dictList( HttpServletRequest request, HttpServletResponse response ) {
+    public ServerResponse< List< DictBean > > dictList( HttpServletRequest request, HttpServletResponse response ) {
 	List< DictBean > list = null;
 	try {
 	    list = dictService.getDict( "1143" );

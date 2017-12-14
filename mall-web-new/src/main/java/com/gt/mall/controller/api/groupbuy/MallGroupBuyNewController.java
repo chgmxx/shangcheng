@@ -126,7 +126,6 @@ public class MallGroupBuyNewController extends BaseController {
 	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
 		code = groupBuyService.editGroupBuy( params, userId );// 编辑商品
 	    }
-
 	    if ( code == -2 ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "正在进行团购的商品不能修改" );
 	    } else if ( code <= 0 ) {
