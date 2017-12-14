@@ -23,6 +23,9 @@
         <include refid="Base_Column_List"/>
         from purchase_company_mode
         where bus_id=#{busId}
+        <if test="keyWord != null and keyWord != ''">
+            and (company_tel=#{keyWord} or company_name=#{keyWord} or company_address=#{keyWord})
+        </if>
         <if test="companyTel != null and companyTel != ''">
             and company_tel=#{companyTel}
         </if>
@@ -42,7 +45,7 @@
         from purchase_company_mode
         where bus_id=#{busId}
         <if test="keyWord != null and keyWord != ''">
-            and (company_tel=#{keyWord} or company_tel=#{keyWord} or company_address=#{keyWord})
+            and (company_tel=#{keyWord} or company_name=#{keyWord} or company_address=#{keyWord})
         </if>
         <if test="companyTel != null and companyTel != ''">
             and company_tel=#{companyTel}

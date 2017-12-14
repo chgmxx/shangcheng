@@ -51,6 +51,9 @@
         <if test="null != shoplist and shoplist.size == 1">
             and i.shop_id=#{shopId }
         </if>
+        <if test="shopId != null and shopId != ''">
+            and i.shop_id=#{shopId }
+        </if>
     </select>
     <!-- 根据拍卖分页 -->
     <select id="selectByPage" resultMap="PageResultMap" parameterType="Map">
@@ -68,6 +71,9 @@
             </foreach>
         </if>
         <if test="null != shoplist and shoplist.size == 1">
+            and i.shop_id=#{shopId }
+        </if>
+        <if test="shopId != null and shopId != ''">
             and i.shop_id=#{shopId }
         </if>
         order by i.create_time desc

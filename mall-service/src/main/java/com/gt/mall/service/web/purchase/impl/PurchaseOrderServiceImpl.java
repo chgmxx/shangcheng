@@ -107,13 +107,13 @@ public class PurchaseOrderServiceImpl extends BaseServiceImpl< PurchaseOrderDAO,
 		order.setOrderStatus( "1" );
 		order.setOrderNumber( "CG" + new Date().getTime() );
 		purchaseOrderDAO.insert( order );
-		for ( int i = 0; i < termList.size(); i++ ) {
-		    termList.get( i ).setOrderId( order.getId() );
-		}
-		for ( int i = 0; i < carouselList.size(); i++ ) {
-		    carouselList.get( i ).setOrderId( order.getId() );
-		}
-
+//		for ( int i = 0; i < termList.size(); i++ ) {
+//		    termList.get( i ).setOrderId( order.getId() );
+//		}
+//		for ( int i = 0; i < carouselList.size(); i++ ) {
+//		    carouselList.get( i ).setOrderId( order.getId() );
+//		    carouselList.get( i ).setBusId( order.getBusId() );
+//		}
 	    }
 	    if ( CommonUtil.isNotEmpty( order.getId() ) ) {
 		String detailIds = "";
@@ -153,6 +153,7 @@ public class PurchaseOrderServiceImpl extends BaseServiceImpl< PurchaseOrderDAO,
 			if ( CommonUtil.isNotEmpty( termList.get( a ).getId() ) ) {
 			    purchaseTermDAO.updateById( termList.get( a ) );
 			} else {
+			    termList.get( a ).setOrderId( order.getId() );
 			    purchaseTermDAO.insert( termList.get( a ) );
 			}
 			if ( termIds.equals( "" ) ) {
@@ -175,6 +176,8 @@ public class PurchaseOrderServiceImpl extends BaseServiceImpl< PurchaseOrderDAO,
 			if ( CommonUtil.isNotEmpty( carouselList.get( i ).getId() ) ) {
 			    purchaseCarouselDAO.updateById( carouselList.get( i ) );
 			} else {
+			    carouselList.get( i ).setOrderId( order.getId() );
+			    carouselList.get( i ).setBusId( order.getBusId() );
 			    purchaseCarouselDAO.insert( carouselList.get( i ) );
 			}
 			if ( carouselIds.equals( "" ) ) {

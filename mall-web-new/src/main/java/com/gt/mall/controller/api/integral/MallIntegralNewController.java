@@ -163,28 +163,6 @@ public class MallIntegralNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-   /* *//**
-     * 获取链接
-     *//*
-    @ApiOperation( value = "获取链接", notes = "获取链接" )
-    @ResponseBody
-    @RequestMapping( value = "/link", method = RequestMethod.POST )
-    public ServerResponse link( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "积分ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-
-	    MallIntegral integral = integralService.selectById( id );
-	    String url = PropertiesUtil.getHomeUrl() + "/phoneIntegral/79B4DE7C/integralProduct.do?id=" + integral.getId() + "&uId=" + integral.getUserId() + "&shopId=" + integral
-			    .getShopId();
-	    result.put( "link", url );//链接
-	} catch ( Exception e ) {
-	    logger.error( "获取链接：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }*/
-
 
     /***********************************积分商城图片***********************************************/
 

@@ -54,7 +54,7 @@
             and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
         <if test="type == -2"><!-- 已失效的积分商品 -->
-            i.is_use= -1
+            and i.is_use= -1
         </if>
         <if test="shoplist != null">
             and
@@ -84,7 +84,7 @@
             and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
         <if test="type == -2"><!-- 已失效的积分商品 -->
-            i.is_use= -1
+            and i.is_use= -1
         </if>
         <if test="shoplist != null ">
             and
@@ -102,8 +102,8 @@
 
     <select id="selectByIds" resultType="Map" parameterType="java.lang.Integer">
         SELECT
-        i.id, i.product_id, i.money, i.start_time, i.end_time, i.type, i.user_id, i.shop_id, i.create_time,
-        i.is_delete, i.is_use, c.image_url AS imageUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
+        i.id, i.product_id as productId, i.money, i.start_time as startTime, i.end_time as endTime, i.type, i.user_id as userId, i.shop_id as shopId, i.create_time as createTime,
+        i.is_delete as isDelete, i.is_use as isUse, c.image_url AS imageUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
         ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice ,p.pro_stock_total as proStockTotal
         FROM t_mall_integral i
         LEFT JOIN t_mall_product p ON i.product_id = p.id

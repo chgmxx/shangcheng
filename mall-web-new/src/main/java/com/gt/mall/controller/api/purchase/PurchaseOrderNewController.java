@@ -74,16 +74,18 @@ public class PurchaseOrderNewController extends BaseController {
     @ApiOperation( value = "报价单列表(分页)", notes = "报价单列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "status", value = "状态", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "search", value = "报价单号", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "startTime", value = "创建开始时间", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "endTime", value = "创建结束时间", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String search, String startTime, String endTime ) {
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage,String status, String search, String startTime, String endTime ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
+	    params.put( "status", status );
 	    params.put( "search", search );
 	    params.put( "startTime", startTime );
 	    params.put( "endTime", endTime );
@@ -116,7 +118,7 @@ public class PurchaseOrderNewController extends BaseController {
 	    if ( order.getOrderType().equals( "1" ) ) {
 		//查询分期
 		List< Map< String,Object > > termList = termDAO.findTermList( id );
-		request.setAttribute( "termList", termList );
+		result.put( "termList", termList );
 	    }
 	    //订单的公司模板
 	    PurchaseCompanyMode company = companyModeService.selectById( order.getCompanyId() );
@@ -177,18 +179,22 @@ public class PurchaseOrderNewController extends BaseController {
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    PurchaseOrder order = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "order" ).toString() ), PurchaseOrder.class );
 	    order.setOrderTitle( CommonUtil.urlEncode( order.getOrderTitle() ) );
 	    order.setOrderDescribe( CommonUtil.urlEncode( order.getOrderDescribe() ) );
 	    order.setOrderExplain( CommonUtil.urlEncode( order.getOrderExplain() ) );
+	    order.setBusId( user.getId() );
 	    List< PurchaseOrderDetails > orderDetailsList = JSONArray.parseArray( params.get( "orderDetailsList" ).toString(), PurchaseOrderDetails.class );
-	    List< PurchaseTerm > termList = JSONArray.parseArray( params.get( "termList" ).toString(), PurchaseTerm.class );
+	    List< PurchaseTerm > termList=null;
+	    if ( CommonUtil.isNotEmpty( params.get( "termList" ) ) ) {
+		termList = JSONArray.parseArray( params.get( "termList" ).toString(), PurchaseTerm.class );
+	    }
 	    List< PurchaseCarousel > carouselList = JSONArray.parseArray( params.get( "carouselList" ).toString(), PurchaseCarousel.class );
 
 	    Map< String,Object > map = purchaseOrderService.saveOrder( order, orderDetailsList, termList, carouselList );
-	    Boolean flag = (Boolean) map.get( "result" );
-	    if ( !flag ) {
+	    String flag =map.get( "result" ).toString();
+	    if ( !Boolean.valueOf( flag ) ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存报价单失败" );
 	    }
 	} catch ( BusinessException e ) {
