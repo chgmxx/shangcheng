@@ -16,9 +16,11 @@ import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.purchase.PurchaseCompanyModeService;
 import com.gt.mall.service.web.purchase.PurchaseOrderService;
 import com.gt.mall.service.web.purchase.PurchaseOrderStatisticsService;
+import com.gt.mall.service.web.purchase.PurchaseReceivablesService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.OrderUtil;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +57,8 @@ public class PurchaseOrderNewController extends BaseController {
     PurchaseCompanyModeService companyModeService;
     @Autowired
     PurchaseReceivablesDAO     receivablesDAO;
+    @Autowired
+    PurchaseReceivablesService purchaseReceivablesService;
     @Autowired
     PurchaseLanguageDAO        languageDAO;
     @Autowired
@@ -79,7 +84,7 @@ public class PurchaseOrderNewController extends BaseController {
 		    @ApiImplicitParam( name = "startTime", value = "创建开始时间", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "endTime", value = "创建结束时间", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
-    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage,String status, String search, String startTime, String endTime ) {
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String status, String search, String startTime, String endTime ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser busUser = MallSessionUtils.getLoginUser( request );
@@ -186,14 +191,14 @@ public class PurchaseOrderNewController extends BaseController {
 	    order.setOrderExplain( CommonUtil.urlEncode( order.getOrderExplain() ) );
 	    order.setBusId( user.getId() );
 	    List< PurchaseOrderDetails > orderDetailsList = JSONArray.parseArray( params.get( "orderDetailsList" ).toString(), PurchaseOrderDetails.class );
-	    List< PurchaseTerm > termList=null;
+	    List< PurchaseTerm > termList = null;
 	    if ( CommonUtil.isNotEmpty( params.get( "termList" ) ) ) {
 		termList = JSONArray.parseArray( params.get( "termList" ).toString(), PurchaseTerm.class );
 	    }
 	    List< PurchaseCarousel > carouselList = JSONArray.parseArray( params.get( "carouselList" ).toString(), PurchaseCarousel.class );
 
 	    Map< String,Object > map = purchaseOrderService.saveOrder( order, orderDetailsList, termList, carouselList );
-	    String flag =map.get( "result" ).toString();
+	    String flag = map.get( "result" ).toString();
 	    if ( !Boolean.valueOf( flag ) ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存报价单失败" );
 	    }
@@ -251,23 +256,28 @@ public class PurchaseOrderNewController extends BaseController {
      * 查看收款详情
      */
     @ApiOperation( value = "查看收款详情", notes = "查看收款详情" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "orderId", value = "报价单ID", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "memberId", value = "用户ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/receivablesDetails", method = RequestMethod.POST )
-    public ServerResponse receivablesDetails( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "orderId", value = "报价单ID", required = true ) @RequestParam Integer orderId,
-		    @ApiParam( name = "memberId", value = "用户ID", required = true ) @RequestParam Integer memberId ) {
+    public ServerResponse receivablesDetails( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer orderId, Integer memberId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = memberService.findMemberById( memberId, null );//查询用户信息
 	    if ( member != null && member.getMcId() != null ) { //如果用户存在会员卡
-		MemberCard card =memberService.findMemberCardByMcId(member.getMcId());// 查询会员卡信息
-		result.put( "card", card );
+		MemberCard card = memberService.findMemberCardByMcId( member.getMcId() );// 查询会员卡信息
+		result.put( "cardNo", card.getCardNo() );
 	    }
 	    result.put( "member", member );
 	    PurchaseOrder order = purchaseOrderService.selectById( orderId );
 	    result.put( "order", order );
-	    List< Map< String,Object > > receivablesList = receivablesDAO.findReceivablesList( orderId );//查询报价单收款记录
-	    result.put( "receivablesList", receivablesList );
+
+	    Map< String,Object > parms = new HashMap<>();
+	    parms.put( "curPage", curPage );
+	    parms.put( "orderId", orderId );
+	    PageUtil page = purchaseReceivablesService.findList( parms );//查询报价单收款记录
+	    result.put( "page", page );
 	} catch ( Exception e ) {
 	    logger.error( "查看收款详情异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -280,26 +290,54 @@ public class PurchaseOrderNewController extends BaseController {
      * 获取留言列表
      */
     @ApiOperation( value = "获取留言列表", notes = "获取留言列表,并将所有留言设为已读" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "orderId", value = "报价单ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/languageList", method = RequestMethod.POST )
-    public ServerResponse languageList( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "orderId", value = "报价单ID", required = true ) @RequestParam Integer orderId ) {
-	List< Map< String,Object > > languageList = null;
+    public ServerResponse languageList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer orderId ) {
+	Map< String,Object > result = new HashMap<>();
 	try {
-	    //查询留言
-	    languageList = languageDAO.findLanguangeList( orderId );
-	    for ( int i = 0; i < languageList.size(); i++ ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( languageList.get( i ).get( "member_id" ) ), null );
-		languageList.get( i ).put( "headimgurl", member.getHeadimgurl() );
-		if ( CommonUtil.isNotEmpty( member.getNickname() ) ) {
-		    try {
-			String bytes = member.getNickname();
-			languageList.get( i ).put( "nickname", new String( bytes.getBytes(), "UTF-8" ) );
-		    } catch ( Exception e ) {
-			languageList.get( i ).put( "nickname", null );
+	    Map< String,Object > parms = new HashMap<>();
+	    parms.put( "orderId", orderId );
+	    int pageSize = 10;
+	    int count = 0;
+	    List< Map< String,Object > > languageList = new ArrayList< Map< String,Object > >();
+	    curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
+	    count = languageDAO.findListCount( parms );
+	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    parms.put( "pageFirst", ( page.getCurPage() - 1 ) * 10 );
+	    parms.put( "pageLast", 10 );
+	    if ( count > 0 ) {
+		languageList = languageDAO.findList( parms );
+		if ( languageList != null && languageList.size() > 0 ) {
+		    String memberIds = "";
+		    for ( Map< String,Object > map : languageList ) {
+			if ( CommonUtil.isNotEmpty( map.get( "memberId" ) ) ) {
+			    memberIds += map.get( "memberId" ) + ",";
+			}
+		    }
+		    if ( CommonUtil.isNotEmpty( memberIds ) ) {
+			List< Map > memberList = memberService.findMemberByIds( memberIds, user.getId() );
+			if ( memberList != null && memberList.size() > 0 ) {
+			    for ( Map< String,Object > rankMap : languageList ) {
+				String rMemberId = CommonUtil.toString( rankMap.get( "memberId" ) );
+				for ( Map< String,Object > member : memberList ) {
+				    String memberId = CommonUtil.toString( member.get( "id" ) );
+				    if ( rMemberId.equals( memberId ) ) {
+					rankMap.put( "headimgurl", member.get( "headimgurl" ) );
+					rankMap.put( "nickname", member.get( "nickname" ) );
+					break;
+				    }
+				}
+			    }
+			}
 		    }
 		}
 	    }
+	    page.setSubList( languageList );
+	    result.put( "page", page );
+
 	    //设置订单的留言为已阅状态
 	    languageDAO.updateLanguangeByOrderId( orderId );
 	} catch ( Exception e ) {
@@ -307,43 +345,45 @@ public class PurchaseOrderNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取留言列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), languageList );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
      * 获取用户留言详情列表
      */
     @ApiOperation( value = "获取用户留言详情列表", notes = "获取用户留言详情列表" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+		    @ApiImplicitParam( name = "orderId", value = "报价单ID", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "memberId", value = "用户ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/languageDetails", method = RequestMethod.POST )
-    public ServerResponse languageDetails( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "orderId", value = "报价单ID", required = true ) @RequestParam Integer orderId,
-		    @ApiParam( name = "memberId", value = "用户ID", required = true ) @RequestParam Integer memberId ) {
-	List< Map< String,Object > > languageDetailList = null;
+    public ServerResponse languageDetails( HttpServletRequest request, HttpServletResponse response,Integer curPage, Integer orderId, Integer memberId ) {
+
+	Map< String,Object > result = new HashMap<>();
 	try {
-	    PurchaseLanguage language = new PurchaseLanguage();
-	    language.setOrderId( orderId );
-	    language.setMemberId( memberId );
-	    //查询留言
-	    languageDetailList = languageDAO.findLanguangeDetails( language );
-	    for ( int i = 0; i < languageDetailList.size(); i++ ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( languageDetailList.get( i ).get( "member_id" ) ), null );
-		languageDetailList.get( i ).put( "headimgurl", member.getHeadimgurl() );
-		if ( CommonUtil.isNotEmpty( member.getNickname() ) ) {
-		    try {
-			String bytes = member.getNickname();
-			languageDetailList.get( i ).put( "nickname", new String( bytes.getBytes(), "UTF-8" ) );
-		    } catch ( Exception e ) {
-			languageDetailList.get( i ).put( "nickname", null );
-		    }
-		}
+	    Map< String,Object > parms = new HashMap<>();
+	    parms.put( "orderId", orderId );
+	    parms.put( "memberId", memberId );
+	    int pageSize = 10;
+	    int count = 0;
+	    List< Map< String,Object > > languageList = new ArrayList< Map< String,Object > >();
+	    curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
+	    count = languageDAO.findDetailListCount( parms );
+	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	    parms.put( "pageFirst", ( page.getCurPage() - 1 ) * 10 );
+	    parms.put( "pageLast", 10 );
+	    if ( count > 0 ) {
+		languageList = languageDAO.findDetailList( parms );
+
 	    }
+	    page.setSubList( languageList );
+	    result.put( "page", page );
 	} catch ( Exception e ) {
 	    logger.error( "获取用户留言详情列表异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取用户留言详情列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), languageDetailList );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -359,7 +399,7 @@ public class PurchaseOrderNewController extends BaseController {
 	    PurchaseLanguage language = new PurchaseLanguage();
 	    language.setId( languageId );
 	    language.setIsRead( "1" );
-	    language.setAdminContent( CommonUtil.urlEncode( languageContent) );
+	    language.setAdminContent( CommonUtil.urlEncode( languageContent ) );
 	    languageDAO.updateById( language );
 	} catch ( Exception e ) {
 	    logger.error( "商家回复买家的留言异常：" + e.getMessage() );

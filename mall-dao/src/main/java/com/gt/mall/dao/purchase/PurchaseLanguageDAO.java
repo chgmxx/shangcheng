@@ -18,6 +18,38 @@ import java.util.Map;
 public interface PurchaseLanguageDAO extends BaseMapper<PurchaseLanguage> {
 
     /**
+     * 分页查询
+     *
+     * @param parms orderId：订单Id，pageFirst:页数,pageLast：记录数
+     * @return list
+     */
+    List<Map<String, Object>> findList(Map<String, Object> parms);
+
+    /**
+     * 分页查询的订单条数
+     *
+     * @param parms orderId：订单Id
+     * @return 数量
+     */
+    Integer findListCount(Map<String, Object> parms);
+
+    /**
+     * 分页查询留言详情
+     *
+     * @param parms orderId：订单Id，pageFirst:页数,pageLast：记录数
+     * @return list
+     */
+    List<Map<String, Object>> findDetailList(Map<String, Object> parms);
+
+    /**
+     * 分页查询的留言详情条数
+     *
+     * @param parms orderId：订单Id
+     * @return 数量
+     */
+    Integer findDetailListCount(Map<String, Object> parms);
+
+    /**
      * 查询该订单id的留言数据
      *
      * @param orderId 订单id

@@ -10,27 +10,27 @@
         <result column="look_date" property="lookDate"/>
         <result column="look_ip" property="lookIp"/>
         <result column="bus_id" property="busId"/>
+        <result column="member_name" property="memberName" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
+        <result column="member_headimgurl" property="memberHeadimgurl"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, order_id , member_id , look_date , look_ip , bus_id
+        id, order_id , member_id , look_date , look_ip , bus_id,member_name ,member_headimgurl
     </sql>
-    <select id="findList" resultType="Map">
+    <select id="findList" parameterType="Map" resultMap="BaseResultMap">
         select
         pos.id,
         pos.look_date,
-        pos.look_ip
-        pos.member_id
---         twb.nickname,
---         twb.headimgurl
+        pos.look_ip ,
+        pos.member_id ,
+        pos.member_name ,
+        pos.member_headimgurl
         from purchase_order_statistics pos
-        <!--TODO  需关连 t_wx_bus_member 方法-->
---         left join t_wx_bus_member twb on twb.id=pos.member_id
         where pos.bus_id=#{busId} and pos.order_id=#{orderId}
-        <!--<if test="nickname !=null and nickname != ''">-->
-            <!--and twb.nickname like '%${nickname}%'-->
-        <!--</if>-->
+        <if test="nickname !=null and nickname != ''">
+             and pos.member_name like '%${nickname}%'
+        </if>
         order by pos.look_date desc
         limit #{pageFirst},#{pageLast}
     </select>
@@ -39,12 +39,10 @@
         select
         count(*)
         from purchase_order_statistics pos
-        <!--TODO  需关连 t_wx_bus_member 方法-->
---       left join t_wx_bus_member twb on twb.id=pos.member_id
         where pos.bus_id=#{busId} and pos.order_id=#{orderId}
-        <!--<if test="nickname !=null and nickname != ''">-->
-            <!--and twb.nickname like '%${nickname}%'-->
-        <!--</if>-->
+        <if test="nickname !=null and nickname != ''">
+            and pos.member_name like '%${nickname}%'
+        </if>
     </select>
 
 </mapper>

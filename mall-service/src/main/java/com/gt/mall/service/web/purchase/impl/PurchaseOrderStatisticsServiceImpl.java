@@ -46,20 +46,6 @@ public class PurchaseOrderStatisticsServiceImpl extends BaseServiceImpl< Purchas
 	    parms.put( "pageLast", 10 );
 	    if ( count > 0 ) {
 		map = purchaseOrderStatisticsDAO.findList( parms );
-		if ( map != null && map.size() > 0 ) {//如果返回的结果不为空
-		    for ( int i = 0; i < map.size(); i++ ) {
-			Member member = memberService.findMemberById( CommonUtil.toInteger( map.get( i ).get( "member_id" ) ), null );
-			map.get( i ).put( "headimgurl", member.getHeadimgurl() );
-			if ( CommonUtil.isNotEmpty( member.getNickname() ) ) {
-			    try {
-				String bytes = member.getNickname();
-				map.get( i ).put( "nickname", new String( bytes.getBytes(), "UTF-8" ) );
-			    } catch ( Exception e ) {
-				map.get( i ).put( "nickname", null );
-			    }
-			}
-		    }
-		}
 	    }
 	    page.setSubList( map );
 	    return page;
