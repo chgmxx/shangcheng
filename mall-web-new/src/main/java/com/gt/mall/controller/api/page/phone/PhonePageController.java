@@ -20,7 +20,6 @@ import com.gt.mall.result.phone.PhoneCommonResult;
 import com.gt.mall.result.phone.PhonePageResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -35,7 +34,6 @@ import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.util.entity.param.wx.WxJsSdk;
-import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -85,8 +83,6 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     @Autowired
     private DictService              dictService;
     @Autowired
-    private WxShopService            wxShopService;
-    @Autowired
     private WxPublicUserService      wxPublicUserService;
     @Autowired
     private MallCommonService        mallCommonService;
@@ -96,37 +92,6 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     private MallPifaApplyService     mallPifaApplyService;
     @Autowired
     private MallProductDAO           mallProductDAO;
-
-    @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ResponseBody
-    @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
-    @PostMapping( value = "shopList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse shopList( HttpServletRequest request, int busId ) {
-	try {
-	    BusUser user = new BusUser();
-	    user.setId( busId );
-	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
-	    if ( shopList != null && shopList.size() > 0 ) {
-
-		for ( Map< String,Object > shopMap : shopList ) {
-		    //获取门店图片
-		    List< WsShopPhoto > imageList = wxShopService.getShopPhotoByShopId( CommonUtil.toInteger( shopMap.get( "wxShopId" ) ) );
-		    if ( imageList != null && imageList.size() > 0 ) {
-			shopMap.put( "stoPicture", imageList.get( 0 ).getLocalAddress() );
-		    }
-		    shopMap.remove( "wxShopId" );
-		    shopMap.remove( "stoLongitude" );
-		    shopMap.remove( "stoLatitude" );
-		}
-		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopList, true );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取商家的门店列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "获取商家的门店列表失败" );
-	}
-	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该商家没有门店列表" );
-    }
 
     /**
      * 手机访问商家主页面接口
