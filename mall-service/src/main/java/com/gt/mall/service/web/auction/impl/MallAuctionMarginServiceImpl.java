@@ -368,6 +368,9 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( aucNo );
+	    if ( CommonUtil.isEmpty( wxPayOrder ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "记录不存在" );
+	    }
 	    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 
 		WxmemberPayRefund refund = new WxmemberPayRefund();

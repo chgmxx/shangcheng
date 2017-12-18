@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +36,11 @@ public class HttpSignUtil {
 	    int type = CommonUtil.isNotEmpty( types ) && types.length > 0 ? types[0] : 0;
 	    String signKey = CommonUtil.getHttpSignKey( type );
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
-	    if ( type == 0 ) {
-		newUrl = "http://113.106.202.53:13885/" + url;
-	    } else if ( type == 3 ) {
-		newUrl = "https://union.deeptel.com.cn/" + url;
-	    }
+//	    if ( type == 0 ) {
+//		newUrl = "http://113.106.202.53:13885/" + url;
+//	    } else if ( type == 3 ) {
+//		newUrl = "https://union.deeptel.com.cn/" + url;
+//	    }
 	    /*if(type == 1){
 		newUrl = "http://192.168.2.12:8070/" + url;
 	    }*/
@@ -88,8 +90,10 @@ public class HttpSignUtil {
 	if ( resultObj.containsKey( "code" ) && resultObj.getInteger( "code" ) == 0 ) {
 	    logger.info( "data = " + resultObj.getString( "data" ) );
 	    return resultObj.getString( "data" );
-	} else {
-	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
+	}
+	logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
+	if ( resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.get( "msg" ) ) ) {
+	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
 	}
 	return null;
     }
@@ -118,6 +122,7 @@ public class HttpSignUtil {
 	if ( resultObj.containsKey( "msg" ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
 	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
+	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
 	}
 	if ( resultObj.containsKey( "data" ) ) {
 	    resultMap.put( "data", resultObj.get( "data" ) );

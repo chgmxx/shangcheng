@@ -270,6 +270,8 @@ public class MallAuctionNewController extends BaseController {
 	    if ( !flag ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金异常" );
 	    }
+	} catch ( BusinessException be ) {
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "退保证金异常：" + e.getMessage() );
 	    e.printStackTrace();
