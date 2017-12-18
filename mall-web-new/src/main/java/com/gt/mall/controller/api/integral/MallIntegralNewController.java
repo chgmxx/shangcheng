@@ -72,6 +72,7 @@ public class MallIntegralNewController extends BaseController {
 		}
 		PageUtil page = integralService.selectIntegralByPage( params, user.getId(), shoplist );
 		result.put( "page", page );
+		result.put( "userId", user.getId() );
 	    }
 	    /*request.setAttribute("videourl", course.urlquery("86"));*/
 	} catch ( Exception e ) {

@@ -6,6 +6,7 @@ import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.purchase.PurchaseOrderDAO;
 import com.gt.mall.dao.purchase.PurchaseReceivablesDAO;
 import com.gt.mall.dao.purchase.PurchaseTermDAO;
+import com.gt.mall.entity.purchase.PurchaseLanguage;
 import com.gt.mall.entity.purchase.PurchaseOrder;
 import com.gt.mall.entity.purchase.PurchaseReceivables;
 import com.gt.mall.entity.purchase.PurchaseTerm;
@@ -14,6 +15,7 @@ import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.purchase.PurchaseReceivablesService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.util.entity.result.pay.WxPayOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +153,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    purchaseReceivablesDAO.insert( receivables );
 
 	    Member member = memberService.findMemberById( memberId, null );
-	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo(receivablesNumber);
+	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( receivablesNumber );
 	    if ( wxPayOrder != null ) {
 		receivablesNumber = "CG" + System.currentTimeMillis();
 		receivables.setReceivablesNumber( receivablesNumber );
@@ -367,6 +369,35 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    updateUserConsume( receivables );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
+	}
+    }
+
+    /**
+     * 分页查询数据
+     *
+     * @param parms
+     *
+     * @return
+     */
+    @Override
+    public PageUtil findList( Map< String,Object > parms ) {
+	try {
+	    int pageSize = 10;
+	    int count = 0;
+	    List< Map< String,Object > > map = new ArrayList< Map< String,Object > >();
+	    int curPage = CommonUtil.isEmpty( parms.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( parms.get( "curPage" ) );
+	    count = purchaseReceivablesDAO.findListCount( parms );
+	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	    parms.put( "pageFirst", ( page.getCurPage() - 1 ) * 10 );
+	    parms.put( "pageLast", 10 );
+	    if ( count > 0 ) {
+		map = purchaseReceivablesDAO.findList( parms );
+	    }
+	    page.setSubList( map );
+	    return page;
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    return null;
 	}
     }
 }

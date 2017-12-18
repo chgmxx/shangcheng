@@ -38,6 +38,18 @@ public class PurchaseOrderStatistics extends Model<PurchaseOrderStatistics> {
      */
 	@TableField("member_id")
 	private Integer memberId;
+
+	/**
+	 * 用户名称
+	 */
+	@TableField("member_name")
+	private String memberName;
+
+	/**
+	 * 用户头像
+	 */
+	@TableField("member_headimgurl")
+	private String memberHeadimgurl;
     /**
      * 浏览时间
      */
