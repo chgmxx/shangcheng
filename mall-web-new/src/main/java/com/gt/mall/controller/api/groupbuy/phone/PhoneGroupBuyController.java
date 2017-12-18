@@ -2,6 +2,7 @@ package com.gt.mall.controller.api.groupbuy.phone;
 
 import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.enums.ResponseEnums;
@@ -153,11 +154,11 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	    params.put( "shopId", groupBuy.getShopId() );
 	    //	    List< Map< String,Object > > productList = groupBuyService.getGroupBuyAll( member, params );// 查询店铺下所有加入团购的商品
 
-//	    PhoneSearchProductDTO searchProductDTO = new PhoneSearchProductDTO();
-//	    searchProductDTO.setShopId( groupBuy.getShopId() );
-//	    searchProductDTO.setBusId( groupBuy.getUserId() );
-//	    searchProductDTO.setType( 1 );
-//	    PageUtil pageUtil = groupBuyService.searchGroupBuyProduct( searchProductDTO, member );
+	    //	    PhoneSearchProductDTO searchProductDTO = new PhoneSearchProductDTO();
+	    //	    searchProductDTO.setShopId( groupBuy.getShopId() );
+	    //	    searchProductDTO.setBusId( groupBuy.getUserId() );
+	    //	    searchProductDTO.setType( 1 );
+	    //	    PageUtil pageUtil = groupBuyService.searchGroupBuyProduct( searchProductDTO, member );
 
 	    result.put( "title", title );//分享标题
 	    result.put( "describe", describe );//分享描述
@@ -166,9 +167,11 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	    result.put( "productMap", productMap );//团购商品信息
 	    result.put( "joinList", joinList );//参团人列表
 	    //	    result.put( "productList", productList );//其它团购列表
-//	    result.put( "productPage", pageUtil );
+	    //	    result.put( "productPage", pageUtil );
 	    result.put( "groupId", groupBuy.getId() );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取团购详情信息异常：" + e.getMessage() );
 	    e.printStackTrace();

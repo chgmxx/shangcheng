@@ -137,7 +137,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), classList );
 
-	} catch ( Exception e ) {
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	}  catch ( Exception e ) {
 	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询商品分类接口失败" );
@@ -220,6 +222,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    }
 	    result.put( "productList", page );
 
+	}  catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "商品搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -288,7 +292,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    }
 
 	} catch ( BusinessException be ) {
-	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "商品信息接口异常：" + e.getMessage() );
 	    e.printStackTrace();

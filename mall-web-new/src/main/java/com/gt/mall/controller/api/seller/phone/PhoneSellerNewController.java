@@ -327,6 +327,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "memberUrl", PropertiesUtil.getWxmpDomain() + Constants.MEMBER_URL.replace( "${userid}", loginDTO.getBusId().toString() ) );
 
 	    //	    mallPageService.getCustomer( request, member.getBusid() );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取超级销售员主页信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -362,6 +364,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    result.put( "incomeList", incomeList );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取自选商品列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -405,6 +409,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "classList", classList );*/
 	    result.put( "saleMemberId", member.getId() );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取自选商品列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -454,6 +460,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    }
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), selectProList, true );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取选择的商品列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -488,6 +496,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "mallSet", mallSet );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取商城设置信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -620,6 +630,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "productList", productList );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的商城信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -660,6 +672,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		result.put( "page", rankList );
 	    }
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取销售员排行榜异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -711,6 +725,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "member", member );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的客户列表接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -757,6 +773,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "page", page );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取客户订单接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -789,6 +807,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		result.put( "mallHeadPath", mallSet.getMallHeadPath() );//商城头像地址
 	    }
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的二维码接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -831,6 +851,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		}
 	    }
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取推广海报信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -877,6 +899,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "withdrawList", withdrawList );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的提现信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -930,6 +954,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    incomeList = mallSellerService.selectTotalIncome( params );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), incomeList, false );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取佣金明细接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -956,6 +982,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "member", member );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取销售规则信息接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -1017,6 +1045,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "mallSet", mallSet );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取商品分享信息异常：" + e.getMessage() );
 	    e.printStackTrace();

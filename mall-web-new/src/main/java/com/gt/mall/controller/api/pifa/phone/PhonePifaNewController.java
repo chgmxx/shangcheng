@@ -3,10 +3,12 @@ package com.gt.mall.controller.api.pifa.phone;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.pifa.PhoneAddPifaApplyDTO;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -65,6 +67,8 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
 		    result.put( "pfApplayRemark", set.getPfApplyRemark() );
 		}
 	    }
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取批发商申请说明信息异常：" + e.getMessage() );
 	    e.printStackTrace();

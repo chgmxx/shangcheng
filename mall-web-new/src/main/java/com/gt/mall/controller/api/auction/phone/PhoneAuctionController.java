@@ -109,7 +109,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    if ( is_specifica.equals( "1" ) ) {
 		guige = pageService.productSpecifications( proId, invId + "" );
 	    }
-	    if(guige != null && guige.size() > 0){
+	    if ( guige != null && guige.size() > 0 ) {
 		result.put( "proSpecificaIds", guige.get( "xids" ) );
 	    }
 
@@ -122,6 +122,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		isAliPay = 1;//可以支付宝支付
 	    }
 	    result.put( "payWayList", MarginUtil.getPayWay( isWxPay, isAliPay, memType ) );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -143,9 +145,9 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    result = auctionMarginService.addMargin( marginDTO, member );
-	}catch ( BusinessException be ) {
+	} catch ( BusinessException be ) {
 	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
-	}  catch ( Exception e ) {
+	} catch ( Exception e ) {
 	    logger.error( "交纳保证金异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金异常" );
@@ -220,6 +222,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    }
 
 	    MallRedisUtils.getMallShopId( auction.getShopId() );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取出价记录列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -246,6 +250,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    if ( !flag ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
 	    }
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "拍卖出价异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -278,6 +284,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    }
 	    marginList = auctionMarginService.getMyAuction( margin );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的保证金列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -296,6 +304,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    userLogin( request, response, loginDTO );
 	    bidList = auctionBiddingService.selectMyBidding( member );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的竞拍列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -315,6 +325,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 
 	    bidList = auctionBiddingService.selectMyHuoBid( member );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的获拍金列表异常：" + e.getMessage() );
 	    e.printStackTrace();

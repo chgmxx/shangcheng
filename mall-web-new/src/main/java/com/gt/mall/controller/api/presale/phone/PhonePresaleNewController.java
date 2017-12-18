@@ -139,6 +139,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    }
 	    result.put( "payWayList", MarginUtil.getPayWay( isWxPay, isAliPay, memType ) );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -241,6 +243,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 
 	    depositList = mallPresaleDepositService.getMyPresale( deposit );
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取我的定金列表异常：" + e.getMessage() );
 	    e.printStackTrace();

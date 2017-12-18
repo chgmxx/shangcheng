@@ -117,9 +117,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    CookieUtil.addCookie( response, CookieUtil.TO_ORDER_KEY, obj.toString(), 0 );
 
 	    return ServerResponse.createBySuccessCode();
-	} catch ( BusinessException e ) {
-	    logger.error( "立即购买异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "立即购买异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -142,10 +141,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO, request );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
-	} catch ( BusinessException e ) {
-	    logger.error( "进入提交订单页面的接口异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
+	}  catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	}  catch ( Exception e ) {
 	    logger.error( "进入提交订单页面的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "请求提交订单的数据失败" );
@@ -188,7 +186,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	try {
 	    List< MallTakeTheirTime > timeList = mallTakeTheirTimeService.selectTakeTheirTime( takeId );//查询到店自提的默认地址
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), timeList, false );
-	} catch ( Exception e ) {
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	}  catch ( Exception e ) {
 	    logger.error( "查询上门自提时间的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询上门自提时间失败" );
@@ -210,7 +210,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    //根据公众号id查询提取信息
 	    List< MallTakeTheir > takeList = mallTakeTheirService.selectByBusUserId( map );
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), takeList, false );
-	} catch ( Exception e ) {
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	}  catch ( Exception e ) {
 	    logger.error( "查询上门自提地址的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询上门自提地址失败" );

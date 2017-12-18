@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.integral.phone;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.integral.MallIntegralImage;
 import com.gt.mall.entity.order.MallOrder;
@@ -130,6 +131,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 
 	    //	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取积分数量,轮播图片异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -173,6 +176,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		}
 	    }
 	    result.put( "totalIntegral", totalIntegral );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取兑换记录列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -214,6 +219,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    //	    if ( CommonUtil.isNotEmpty( shopId ) ) {
 	    //		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	    //	    }
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "获取积分明细列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -256,7 +263,9 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    }
 	    //	    result.put( "member", member );
 
-	} catch ( Exception e ) {
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	}  catch ( Exception e ) {
 	    logger.error( "获取积分商品信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商品信息异常" );

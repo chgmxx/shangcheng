@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.product.phone;
 import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
+import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -92,10 +93,9 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-	} catch ( BusinessException e ) {
-	    logger.error( "查询购物车异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
+	}  catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	}  catch ( Exception e ) {
 	    logger.error( "查询购物车异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询购物车失败" );

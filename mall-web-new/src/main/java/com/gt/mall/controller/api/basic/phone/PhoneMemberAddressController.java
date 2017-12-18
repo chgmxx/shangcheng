@@ -118,7 +118,9 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
 		list = wxShopService.queryCityByLevel( 2 );
 	    }
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list, false );
-	} catch ( Exception e ) {
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	}  catch ( Exception e ) {
 	    logger.error( "手机端查询省市区的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询查询省市区失败" );
