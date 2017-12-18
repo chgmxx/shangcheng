@@ -145,21 +145,6 @@ public class MallSessionUtils {
     }
 
     /**
-     * 从session中获取主账号id
-     *
-     * @param userId 商家id
-     *
-     * @return 主账号id
-     */
-    public static int getAdminUserId( int userId, HttpServletRequest request ) {
-	Object object = request.getSession().getAttribute( Constants.SESSION_ADMIN_KEY + "_" + userId );
-	if ( CommonUtil.isNotEmpty( object ) ) {
-	    return CommonUtil.toInteger( object );
-	}
-	return 0;
-    }
-
-    /**
      * 从session 中获取是否已经开通了进销存
      *
      * @param userId 商家总账号id

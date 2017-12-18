@@ -1,14 +1,11 @@
 package com.gt.mall.controller.api.product;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.result.product.ProductResult;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
@@ -17,16 +14,23 @@ import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -83,7 +87,8 @@ public class MallProductNewController extends BaseController {
 	    }
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	    int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    long isJxc = mallStoreService.getIsErpCount( userPId, request );//判断商家是否有进销存 0没有 1有(从session获取)
 	    params.put( "isJxc", isJxc );
@@ -234,7 +239,7 @@ public class MallProductNewController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+	    int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 	    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	    if ( isJxc == 1 ) {
 		result.put( "noShowSt", 1 );//不显示实体物品

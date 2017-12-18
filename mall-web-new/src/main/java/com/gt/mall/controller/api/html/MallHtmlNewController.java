@@ -73,7 +73,7 @@ public class MallHtmlNewController extends BaseController {
 	    } else {
 		boolean isadmin = busUserService.getIsAdmin( user.getId() );
 		if ( isadmin ) {
-		    Integer zhuid = MallSessionUtils.getAdminUserId( user.getId(), request );//获取父类的id
+		    int zhuid = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 		    user = busUserService.selectById( zhuid );
 		    ispid = 1;
 		} else {

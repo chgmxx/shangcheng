@@ -216,7 +216,7 @@ public class MallGroupBuyNewController extends BaseController {
 			params.put( "shoplist", shoplist );
 		    }
 		}
-		int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 		long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 		params.put( "isJxc", isJxc );
 
@@ -247,7 +247,7 @@ public class MallGroupBuyNewController extends BaseController {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    if ( CommonUtil.isNotEmpty( user ) && CommonUtil.isNotEmpty( params ) ) {
 		Integer proId = CommonUtil.toInteger( params.get( "proId" ) );
-		int userPId = MallSessionUtils.getAdminUserId( user.getId(), request );//通过用户名查询主账号id
+		int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 		long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
 		int isSPec = 1;

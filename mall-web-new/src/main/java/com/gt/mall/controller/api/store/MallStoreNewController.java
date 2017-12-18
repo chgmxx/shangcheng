@@ -78,7 +78,7 @@ public class MallStoreNewController extends BaseController {
 	    set = mallPaySetService.selectByUserId( set );
 	    result.put( "isSecuritytrade", set.getIsSecuritytrade() );//担保交易
 
-	    int pid = MallSessionUtils.getAdminUserId( user.getId(), request );//查询总账号id
+	    int pid = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
