@@ -88,7 +88,7 @@ web:
  #网页访问路径
  homeUrl: http://mall.duofriend.com/
  #手机端页面路径访问
- phoneWebHomeUrl: http://mall.duofriend.com/html/phone/index.html#/
+ phoneWebHomeUrl: http://mall.duofriend.com/html/phone/index.html#
 
 ####图片资源ftp 配置
 static:

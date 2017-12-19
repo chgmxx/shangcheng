@@ -89,7 +89,7 @@ web:
  #网页访问路径
  homeUrl: http://mall.yifriend.net:8080/
  #手机端页面路径访问
- phoneWebHomeUrl: http://192.168.2.100:8081/html/phone/index.html#/
+ phoneWebHomeUrl: http://192.168.2.100:8081/html/phone/index.html#
 
 ####图片资源ftp 配置
 static:
