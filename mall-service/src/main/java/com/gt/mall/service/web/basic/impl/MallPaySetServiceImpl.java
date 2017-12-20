@@ -79,6 +79,10 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 		    }
 		}
 	    }
+	    //修改updateById无法修改的数据
+	    mallPaySet.setOrderCancel( set.getOrderCancel() );
+	    mallPaySet.setCheckSellerPhone( set.getCheckSellerPhone() );
+	    paySetDAO.updateAllColumnById( mallPaySet );
 	}
 	if ( count < 0 ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );

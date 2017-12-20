@@ -118,7 +118,7 @@ public class MallFreightNewController extends BaseController {
     @ApiOperation( value = "根据店铺ID获取物流信息", notes = "根据店铺ID获取物流信息" )
     @ResponseBody
     @RequestMapping( value = "/getFreightByShopId", method = RequestMethod.POST )
-    public ServerResponse freightList( HttpServletRequest request, HttpServletResponse response,
+    public ServerResponse getFreightByShopId( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "shopId", value = "店铺ID", required = true ) @RequestParam Integer shopId ) {
 	MallFreight freight = null;
 	try {

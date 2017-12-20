@@ -16,6 +16,8 @@ public class PropertiesUtil {
 
     private static String homeUrl;//网页地址
 
+    private static String marketingUrl; //商城营销路径
+
     private static String phoneWebHomeUrl;//手机端域名
 
     private static String jxcUrl;//进销存 地址
@@ -70,6 +72,11 @@ public class PropertiesUtil {
     @Value( "${web.homeUrl}" )
     public void setHomeUrl( String homeUrl ) {
 	PropertiesUtil.homeUrl = homeUrl;
+    }
+
+    @Value( "${web.marketingUrl}" )
+    public void setMarketingUrl( String marketingUrl ) {
+	PropertiesUtil.marketingUrl = marketingUrl;
     }
 
     @Value( "${web.phoneWebHomeUrl}" )
@@ -258,6 +265,10 @@ public class PropertiesUtil {
 
     public static String getHomeUrl() {
 	return homeUrl;
+    }
+
+    public static String getMarketingUrl() {
+	return marketingUrl;
     }
 
     public static String getPhoneWebHomeUrl() {

@@ -228,20 +228,28 @@ public class MallPaySetController extends BaseController {
      */
     @ApiOperation( value = "判断有无认证服务号", notes = "判断有无认证服务号" )
     @ResponseBody
-    @SysLogAnnotation( description = "保存商城设置信息", op_function = "2" )
+    @SysLogAnnotation( description = "判断有无认证服务号", op_function = "2" )
     @RequestMapping( value = "/isAuthService", method = RequestMethod.POST )
     public ServerResponse isAuthService( HttpServletRequest request, HttpServletResponse response ) {
-	boolean flag = true;
+	Integer flag = null;
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( user.getId() );
-	    if ( wxPublicUsers == null ) {flag = false;}
+	    if ( wxPublicUsers == null ) {
+		flag = -1;//未认证;
+	    } else if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
+		flag = -1;//未认证
+	    } else if ( wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
+		flag = 1; //有服务号
+	    } else {
+		flag = 0; //无服务号
+	    }
 	} catch ( BusinessException e ) {
-	    logger.error( "保存页面信息异常：" + e.getMessage() );
+	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "保存页面信息异常：" + e.getMessage() );
+	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}

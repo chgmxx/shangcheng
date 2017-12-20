@@ -99,7 +99,7 @@
     </sql>
     <sql id="page_Column_List">
         g.id, auc_id, pro_id, pro_name, pro_img_url, auc_no, margin_money, margin_status, pay_way,
-        pay_time, return_time, is_return,g.user_id,g.create_time,a.auc_type as aucType,
+        pay_time, return_time, is_return,g.user_id,g.create_time,a.auc_type,
         s.sto_name as shopName,
         case
         when a.is_use = -1 then -2<!--已失效  -->

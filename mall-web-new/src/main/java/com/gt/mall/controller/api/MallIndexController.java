@@ -1,9 +1,7 @@
 package com.gt.mall.controller.api;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.base.BaseController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.CardService;
@@ -13,8 +11,9 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.QRcodeKit;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.QRcodeKit;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.*;
@@ -76,36 +75,23 @@ public class MallIndexController extends BaseController {
 	//商家当前可提现金额
 	int withdraw_money = 0;
 	try {
-	    Wrapper groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "bus_user_id = {0} and order_status = 2 ", user.getId() );
-	    unfilled_orders_num = mallOrderService.selectCount( groupWrapper );
-
 	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
-	    String ids = "";
-	    for ( Map< String,Object > map : shopList ) {
-		if ( "".equals( ids ) ) {
-		    ids = map.get( "id" ).toString();
-		} else {
-		    ids += "," + map.get( "id" ).toString();
-		}
-	    }
-	    groupWrapper = new EntityWrapper();
-	    //	    groupWrapper.where( "is_delete = 0" );
-	    groupWrapper.in( "shop_id", ids );
-	    groupWrapper.notIn( "status", "5,-1,-2" );
-
-	    bad_orders_num = mallOrderReturnService.selectCount( groupWrapper );
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "userId", user.getId() );
+	    params.put( "shoplist", shopList );
+	    params.put( "status", "2" );
+	    unfilled_orders_num = mallOrderService.count( params );
+	    params.put( "status", "6" );
+	    bad_orders_num = mallOrderService.count( params );
 
 	    Calendar calendar = Calendar.getInstance();//此时打印它获取的是系统当前时间
 	    calendar.add( Calendar.DATE, -1 );    //得到前一天
 	    String yestedayDate = new SimpleDateFormat( "yyyy-MM-dd" ).format( calendar.getTime() );
 
-	    groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "bus_user_id = {0}", user.getId() );
-	    //	    groupWrapper.and( "is_delete = 0" );
-	    groupWrapper.and( "create_time = {0}", 2 );
-	    groupWrapper.between( "create_time", yestedayDate, yestedayDate + "23:59:59" );
-	    yesterday_orders_num = mallOrderService.selectCount( groupWrapper );
+	    params.put( "status", "0" );
+	    params.put( "startTime", yestedayDate );
+	    params.put( "endTime", mallOrderService + "23:59:59" );
+	    yesterday_orders_num = mallOrderService.count( params );
 
 	    result.put( "unfilled_orders_num", unfilled_orders_num );
 	    result.put( "bad_orders_num", bad_orders_num );
@@ -133,6 +119,21 @@ public class MallIndexController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "判断是否是管理员异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), isAdminFlag );
+    }
+
+    @ApiOperation( value = "获取商城营销地址", notes = "获取商城营销地址" )
+    @ResponseBody
+    @RequestMapping( value = "/getMarketingUrl", method = RequestMethod.POST )
+    public ServerResponse getMarketingUrl( HttpServletRequest request, HttpServletResponse response ) {
+	String url = "";
+	try {
+	    url = PropertiesUtil.getMarketingUrl();
+	} catch ( Exception e ) {
+	    logger.error( "获取商城营销的地址异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商城营销的地址异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url );
     }
 
     @ApiOperation( value = "获取门店列表", notes = "获取门店列表" )
