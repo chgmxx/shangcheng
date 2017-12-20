@@ -88,7 +88,7 @@ public class MallHtmlNewController extends BaseController {
 		}
 		result.put( "iscreat", iscreat );
 	    }
-	    result.put( "ispid", ispid );
+//	    result.put( "ispid", ispid );
 	    result.put( "videourl", busUserService.getVoiceUrl( "87" ) );
 	} catch ( Exception e ) {
 	    logger.error( "h5商城列表异常：" + e.getMessage() );
@@ -175,8 +175,6 @@ public class MallHtmlNewController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallHtml obj = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), MallHtml.class );
-	    obj.setHtmlname( CommonUtil.urlEncode( obj.getHtmlname() ) );
-	    obj.setIntroduce( CommonUtil.urlEncode( obj.getIntroduce() ) );
 	    htmlService.addorUpdateSave( obj, user );
 	} catch ( BusinessException e ) {
 	    logger.error( "保存修改信息异常：" + e.getMessage() );

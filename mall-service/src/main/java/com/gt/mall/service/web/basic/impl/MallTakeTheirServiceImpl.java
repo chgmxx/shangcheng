@@ -15,6 +15,7 @@ import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.basic.MallTakeTheirTime;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.utils.CommonUtil;
@@ -48,6 +49,8 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
     private MallImageAssociativeDAO     imageAssociativeDAO;
     @Autowired
     private MallPaySetDAO               paySetDAO;
+    @Autowired
+    private WxShopService               wxShopService;
 
     @Override
     public PageUtil selectByUserId( Map< String,Object > param ) {
@@ -118,6 +121,16 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	if ( CommonUtil.isNotEmpty( params ) ) {
 	    MallTakeTheir take = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "take" ).toString() ), MallTakeTheir.class );
 	    if ( CommonUtil.isNotEmpty( take ) ) {
+		List< Map > cityList = wxShopService.queryBasisCityIds( take.getVisitProvinceId() + "," + take.getVisitCityId() + "," + take.getVisitAreaId() );
+		String visitAddressDetail = "";
+		if ( cityList != null && cityList.size() > 0 ) {
+		    for ( Map map : cityList ) {
+			String cityName = CommonUtil.toString( map.get( "city_name" ) );
+			visitAddressDetail += cityName;
+		    }
+		}
+		visitAddressDetail+=take.getVisitAddress();
+		take.setVisitAddressDetail( visitAddressDetail );
 		if ( CommonUtil.isNotEmpty( take.getId() ) ) {
 		    code = mallTakeTheirDAO.updateById( take );
 		} else {

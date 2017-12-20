@@ -63,7 +63,7 @@
         </if>
     </select>
     <select id="selectByPage" resultType="java.util.Map">
-        SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state,bus_user_id
+        SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state,bus_user_id,introduce
         FROM t_mall_html a
         WHERE a.source_type=2 and a.bus_user_id=#{user_id}
         <if test="pid == 0 ">
