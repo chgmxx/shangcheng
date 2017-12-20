@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.auction.MallAuctionDAO;
@@ -399,14 +399,19 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	if ( CommonUtil.isNotEmpty( product.getProCostPrice() ) ) {
 	    proCostPrice = CommonUtil.toDouble( product.getProCostPrice() );
 	}
-	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-	int userPId = busUserService.getMainBusId( member.getBusid() );//通过用户名查询主账号id
-	long isJxc = 0;
-	busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
+	Member member = null;
+	if(params.containsKey( "memberId" ) && CommonUtil.isNotEmpty( params.get( "memberId" ) )){
+	    member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
+	}
 	//计算会员价
 	double discount = 1;//商品折扣
-	if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( product.getIsMemberDiscount() ) ) {
-	    discount = productService.getMemberDiscount( CommonUtil.toString( product.getIsMemberDiscount() ), member );//获取会员折扣
+	long isJxc = 0 ;
+	if(CommonUtil.isNotEmpty( member )){
+	    int userPId = busUserService.getMainBusId( member.getBusid() );//通过用户名查询主账号id
+	    isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
+	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( product.getIsMemberDiscount() ) ) {
+		discount = productService.getMemberDiscount( CommonUtil.toString( product.getIsMemberDiscount() ), member );//获取会员折扣
+	    }
 	}
 	//查询商品价格
 	if ( CommonUtil.isNotEmpty( product.getIsSpecifica() ) ) {
@@ -491,20 +496,20 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    productMap.setMember_price( memberProPrice );
 	}
 
-	//计算批发价
-	boolean isPifa = pifaApplyService.isPifa( member );
-	if ( isPifa ) {
-	    MallPifa pifa = pifaService.getPifaByProId( product.getId(), product.getShopId(), 0 );
-	    if ( CommonUtil.isNotEmpty( pifa ) ) {
-		productMap.setWholesale_price( pifa.getPfPrice().doubleValue() );
-	    }
-	}
-
 	Map addressMap = null;
 	//获取收货地址
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
 	    addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
+
+	    //计算批发价
+	    boolean isPifa = pifaApplyService.isPifa( member );
+	    if ( isPifa ) {
+		MallPifa pifa = pifaService.getPifaByProId( product.getId(), product.getShopId(), 0 );
+		if ( CommonUtil.isNotEmpty( pifa ) ) {
+		    productMap.setWholesale_price( pifa.getPfPrice().doubleValue() );
+		}
+	    }
 	}
 	if ( addressMap != null && addressMap.size() > 0 ) {
 	    if ( CommonUtil.isNotEmpty( addressMap ) ) {
@@ -564,15 +569,17 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< MallProductParam > paramList = productParamService.getParamByProductId( productId );
 	productMap.setParamList( paramList );
 
-	//查询用户id
-	List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
-	params.put( "memberList", memberList );
+	if(CommonUtil.isNotEmpty( member )){
+	    //查询用户id
+	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
+	    params.put( "memberList", memberList );
 
-	//查询购物车的数量
-	params.put( "type", 0 );
-	params.put( "busUserId", product.getUserId() );
-	int shopCartNum = shopCartDAO.selectShopCartNum( params );
-	productMap.setShopCartNum( shopCartNum );
+	    //查询购物车的数量
+	    params.put( "type", 0 );
+	    params.put( "busUserId", product.getUserId() );
+	    int shopCartNum = shopCartDAO.selectShopCartNum( params );
+	    productMap.setShopCartNum( shopCartNum );
+	}
 	return productMap;
     }
 

@@ -1,9 +1,12 @@
 package com.gt.mall.param.applet;
 
+import com.gt.mall.entity.order.MallOrder;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -38,7 +41,7 @@ public class AppletSubmitOrderDTO implements Serializable {
     /**
      * 粉币数量
      */
-    private Integer fenbi;
+    private Double fenbi;
 
     /**
      * 积分可抵扣的金额
@@ -47,7 +50,7 @@ public class AppletSubmitOrderDTO implements Serializable {
     /**
      * 积分数量
      */
-    private Integer integral;
+    private Double integral;
     /**
      * 是否已经使用积分 1已经使用积分   0没使用
      */
@@ -64,38 +67,33 @@ public class AppletSubmitOrderDTO implements Serializable {
      * 是否已经使用商家联盟   1已经使用商家联盟     0没使用
      */
     private Integer isUseUnion;
+
     /**
-     * 能使用商家联盟的商品数量
+     * 是否已经使用了折扣 1已经使用
      */
-    private Integer unionProNum;
-    /**
-     * 能使用商家联盟的商品总价
-     */
-    private Double  unionProMoney;
-    /**
-     * 能使用粉币的商品数量
-     */
-    private Integer fenbiProNum;
-    /**
-     * 能使用粉币的商品总价
-     */
-    private Double fenbiProMoney;
-    /**
-     * 能使用积分的商品数量
-     */
-    private Integer jifenProNum;
-    /**
-     * 能使用积分的商品总价
-     */
-    private Double jifenProMoney;
+    private Integer isUseDiscount;
+
     /**
      * 版本号
      */
     private String  version;
 
     /**
-     * 订单信息 json格式
+     * 订单集合 json格式
      */
     private String order;
+
+    /**
+     * 订单店铺集合
+     */
+    @ApiModelProperty( name = "orderList", value = "订单店铺集合", hidden = true )
+    private List< MallOrder > orderList;
+
+    @ApiModelProperty( name = "wxShopIds", value = "微信门店id", hidden = true )
+    private String wxShopIds;
+
+    @ApiModelProperty( name = "memberDiscount", value = "会员折扣", hidden = true )
+    private Double memberDiscount;
+
 
 }

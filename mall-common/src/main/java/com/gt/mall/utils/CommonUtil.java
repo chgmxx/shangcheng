@@ -327,6 +327,20 @@ public class CommonUtil {
 
     }
 
+    public static Double getDecimalStr( Double d, int len ) {
+	if ( d != null ) {
+	    if ( d.toString().split( "\\." )[1].length() > 2 ) {
+		if ( len > 0 ) {
+		    len = len + 1;
+		}
+		BigDecimal bg = new BigDecimal( d );
+		int index = d.toString().indexOf( "." ) + 2;
+		return CommonUtil.toDouble( d.toString().substring( 0, index ) );
+	    }
+	}
+	return d;
+    }
+
     private final static double PI = 3.14159265358979323; // 圆周率
     private final static double R  = 6371229; // 地球的半径
 

@@ -198,14 +198,14 @@ public class ToOrderUtil {
 	    coupons.setCouponsFrom( 2 );//优惠券来源（ 1 微信优惠券  2多粉优惠券 ）.
 	    coupons.setImage( CommonUtil.toString( map.get( "image" ) ) );
 	    String cardType = CommonUtil.toString( map.get( "card_type" ) );// 0 折扣券   1 满减券
-	    Date date = new Date(  );
-	    if(CommonUtil.isNotEmpty( map.get( "startTime" ) )){
+	    Date date = new Date();
+	    if ( CommonUtil.isNotEmpty( map.get( "startTime" ) ) ) {
 		date.setTime( Long.valueOf( map.get( "startTime" ).toString() ) );
-		coupons.setStartTime(  DateTimeKit.format( date,DateTimeKit.DATE_FORMAT_YYYYMMDD_1 ) );
+		coupons.setStartTime( DateTimeKit.format( date, DateTimeKit.DATE_FORMAT_YYYYMMDD_1 ) );
 	    }
-	    if(CommonUtil.isNotEmpty( map.get( "endTime" ) )){
+	    if ( CommonUtil.isNotEmpty( map.get( "endTime" ) ) ) {
 		date.setTime( Long.valueOf( map.get( "endTime" ).toString() ) );
-		coupons.setEndTime(  DateTimeKit.format( date,DateTimeKit.DATE_FORMAT_YYYYMMDD_1 ) );
+		coupons.setEndTime( DateTimeKit.format( date, DateTimeKit.DATE_FORMAT_YYYYMMDD_1 ) );
 	    }
 	    String couponsName = "";//卡券名称
 	    int cardTypes = -1;
@@ -268,6 +268,14 @@ public class ToOrderUtil {
 		bean.setJifenNum( CommonUtil.multiply( jifenFenbiRule.getJifenRatio(), jifenProductMoney ) );
 		bean.setJifenMoney( jifenProductMoney );
 	    }
+	}
+	if ( fenbiProductMoney > 0 ) {
+	    System.out.println( "能使用粉币抵扣的商家总额 = " + fenbiProductMoney + "---" + CommonUtil.getDecimal( fenbiProductMoney ) );
+	    fenbiProductMoney = CommonUtil.getDecimal( fenbiProductMoney );
+	}
+	if ( jifenProductMoney > 0 ) {
+	    System.out.println( "能使用积分抵扣的商家总额 = " + jifenProductMoney + "---" + CommonUtil.getDecimal( jifenProductMoney ) );
+	    jifenProductMoney = CommonUtil.getDecimal( jifenProductMoney );
 	}
 	//粉币起兑金额  小于 能兑换粉币的商品金额  且 能兑换粉币的商品金额  小于 会员传来的粉币
 	if ( jifenFenbiRule.getFenbiStartMoney() > 0 && jifenFenbiRule.getFenbiStartMoney() < fenbiProductMoney && fenbiProductMoney > 0 ) {//显示积分抵扣的按钮

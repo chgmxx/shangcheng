@@ -1,10 +1,11 @@
 package com.gt.mall.service.web.applet;
 
-import com.gt.mall.base.BaseService;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
+import com.gt.mall.param.applet.AppletSubmitOrderDTO;
 
 import java.util.Map;
 
@@ -28,22 +29,13 @@ public interface MallNewOrderAppletService extends BaseService< MallAppletImage 
     Map< String,Object > toSubmitOrder( Map< String,Object > params );
 
     /**
-     * 计算订单的优惠信息（积分抵扣、粉币抵扣、优惠券、商家联盟折扣）  1.1新增方法
-     *
-     * @param params
-     *
-     * @return
-     */
-    Map< String,Object > calculationPreferential( Map< String,Object > params );
-
-    /**
      * 提交订单的页面
      *
-     * @param params
+     * @param submitOrderDTO
      *
      * @return
      */
-    Map< String,Object > submitOrder( Map< String,Object > params );
+    Map< String,Object > submitOrder( AppletSubmitOrderDTO submitOrderDTO );
 
     /**
      * 计算订单的优惠信息（积分抵扣、粉币抵扣、优惠券、商家联盟折扣） 调用会员接口
@@ -52,7 +44,7 @@ public interface MallNewOrderAppletService extends BaseService< MallAppletImage 
      *
      * @return
      */
-    Map< String,Object > newCalculationPreferential( Map< String,Object > params );
+    Map< String,Object > newCalculationPreferential( AppletSubmitOrderDTO params );
 
     /**
      * 验证订单信息

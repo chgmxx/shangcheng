@@ -220,20 +220,44 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     @TableField( exist = false )
     private double jifenBeforeTotalPrice;//积分优惠前的价格
 
-    @TableField( exist = false )
-    private Integer userCard = 0;  //是否允许会员卡打折  0不参与 1参与 （用于计算）
+    //    @TableField( exist = false )
+    //    private Integer userCard = 0;  //是否允许会员卡打折  0不参与 1参与 （用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer useCoupon = 0;  //是否允许使用优惠券   0不参与 1参与 （用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer userJifen = 0;  //是否允许使用积分  0不参与 1参与 （用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer userFenbi = 0;//是否允许使用粉币  0不允许  1允许（用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer index = 0;// 生成的index 用于计算
 
+    /**
+     * 是否能使用会员折扣
+     */
     @TableField( exist = false )
-    private Integer useCoupon = 0;  //是否允许使用优惠券   0不参与 1参与 （用于计算）
+    private Integer isCanUseDiscount;
 
+    /**
+     * 是否能使用优惠券
+     */
     @TableField( exist = false )
-    private Integer userJifen = 0;  //是否允许使用积分  0不参与 1参与 （用于计算）
+    private Integer isCanUseCoupons;
 
+    /**
+     * 是否能使用积分
+     */
     @TableField( exist = false )
-    private Integer userFenbi = 0;//是否允许使用粉币  0不允许  1允许（用于计算）
+    private Integer isCanUseJifen;
 
+    /**
+     * 是否能使用粉币
+     */
     @TableField( exist = false )
-    private Integer index = 0;// 生成的index 用于计算
+    private Integer isCanUseFenbi;
 
     @Override
     protected Serializable pkVal() {

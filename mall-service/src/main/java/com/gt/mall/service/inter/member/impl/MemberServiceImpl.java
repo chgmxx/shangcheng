@@ -57,6 +57,9 @@ public class MemberServiceImpl implements MemberService {
 	    if ( CommonUtil.isNotEmpty( memberObj.get( "mcId" ) ) ) {
 		member.setMcId( CommonUtil.toInteger( memberObj.get( "mcId" ) ) );
 	    }
+	    if(CommonUtil.isNotEmpty( memberObj.get( "phone" ) )){
+	        member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
+	    }
 	}
 	return member;
     }

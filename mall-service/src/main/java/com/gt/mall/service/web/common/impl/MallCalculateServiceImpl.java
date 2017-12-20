@@ -42,11 +42,8 @@ public class MallCalculateServiceImpl implements MallCalculateService {
     @Override
     public PhoneAddOrderDTO calculateOrder( PhoneAddOrderDTO params, Member member ) {
 	boolean isCalculate = true;
-	Map cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), params.getWxShopIds() );
+	Map cardMap = null;
 	JifenAndFenbiRule jifenFenbiRule = null;//通过商家id查询积分和粉币规则
-	if ( CommonUtil.isNotEmpty( params.getBusIds() ) ) {
-	    jifenFenbiRule = memberService.jifenAndFenbiRule( CommonUtil.toInteger( params.getBusIds() ) );
-	}
 	for ( PhoneAddOrderBusDTO busDTO : params.getBusResultList() ) {//循环商家集合
 	    Integer isSelectUnion = busDTO.getIsSelectUnion();//是否选中联盟  1选中
 	    Integer isSelectDiscount = busDTO.getIsSelectDiscount();//是否选中会员折扣 1 选中
@@ -58,9 +55,12 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    boolean couponFlag = CommonUtil.isNotEmpty( isSelectCoupon ) && "1".equals( isSelectCoupon.toString() );
 	    boolean jifenFlag = CommonUtil.isNotEmpty( isSelectJifen ) && "1".equals( isSelectJifen.toString() );
 	    boolean fenbiFlag = CommonUtil.isNotEmpty( isSelectFenbi ) && "1".equals( isSelectFenbi.toString() );
-	    if ( unionFlag && discountFlag && couponFlag && jifenFlag && fenbiFlag ) {
+	    if ( !unionFlag && !discountFlag && !couponFlag && !jifenFlag && !fenbiFlag ) {
 		isCalculate = false;
 		break;
+	    }
+	    if ( CommonUtil.isEmpty( cardMap ) ) {
+		cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), params.getWxShopIds() );
 	    }
 	    if ( couponFlag ) {
 		for ( PhoneAddOrderShopDTO shopDTO : busDTO.getShopResultList() ) {
@@ -78,8 +78,13 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		    shopDTO.setCouponList( couponsList );
 		}
 	    }
+	    if ( jifenFlag || fenbiFlag ) {
+		if ( CommonUtil.isNotEmpty( params.getBusIds() ) && CommonUtil.isEmpty( jifenFenbiRule ) ) {
+		    jifenFenbiRule = memberService.jifenAndFenbiRule( CommonUtil.toInteger( params.getBusIds() ) );
+		}
+	    }
 	    int ctId = 0;
-	    if(CommonUtil.isNotEmpty( cardMap )){
+	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
 		if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) ) {
 		    ctId = CommonUtil.toInteger( cardMap.get( "ctId" ) );
 		}
@@ -94,7 +99,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 		}
 	    }
 	    busDTO.setMemberDiscount( memberDiscount );
-	    Double memberUnionDiscount = busDTO.getUnionDiscount();//折扣卡的折扣
+	    Double memberUnionDiscount = busDTO.getUnionDiscount();//联盟折扣
 	    Double busFenbiYouhui = busDTO.getFenbiMoney();//保存商家下 粉币优惠的总额
 	    Double busJifenYouhui = busDTO.getJifenMoney();//保存商家下 积分优惠的总额
 

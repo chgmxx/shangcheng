@@ -6,6 +6,7 @@ import com.gt.api.bean.session.Member;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.MemberAddress;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.applet.AppletAddReturnOrderDTO;
 import com.gt.mall.param.applet.AppletSubmitOrderDTO;
 import com.gt.mall.param.applet.AppletToSubmitOrderDTO;
@@ -53,7 +54,7 @@ import java.util.Map;
  * @since 2017-07-20
  */
 @Controller
-@RequestMapping( "/mallApplet" )
+@RequestMapping( "/mallApplet/79B4DE7C" )
 public class PhoneHomeAppletController extends BaseController {
 
     @Autowired
@@ -87,7 +88,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/shopList" )
+    @RequestMapping( "shopList" )
     public void shopList( HttpServletRequest request, HttpServletResponse response, Integer userId, String longitude, String latitude ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -118,7 +119,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/pageIndex" )
+    @RequestMapping( "pageIndex" )
     public void pageIndex( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId ) throws IOException {
 	AppletMallIndexResult indexResult = new AppletMallIndexResult();
 	try {
@@ -163,7 +164,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @param response
      * @param searchDTO
      */
-    @RequestMapping( "/79B4DE7C/productPage" )
+    @RequestMapping( "productPage" )
     public void productPage( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) {
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
@@ -192,7 +193,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/classAll" )
+    @RequestMapping( "classAll" )
     public void classAll( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer classId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -228,7 +229,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/productAll" )
+    @RequestMapping( "productAll" )
     public void productAll( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -261,7 +262,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/getProductSpecifica" )
+    @RequestMapping( "getProductSpecifica" )
     public void getProductSpecifica( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -289,7 +290,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/phoneProduct" )
+    @RequestMapping( "phoneProduct" )
     public void phoneProduct( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer productId, Integer province ) throws IOException {
 	AppletProductDetailResult productDetailResult = new AppletProductDetailResult();
 	try {
@@ -321,7 +322,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/getProductComment" )
+    @RequestMapping( "getProductComment" )
     public void getProductComment( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer proId, String feel ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -349,7 +350,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "商城小程序-商品购物车保存", op_function = "2" )
-    @RequestMapping( "/79B4DE7C/addshopping" )
+    @RequestMapping( "addshopping" )
     public void addshopping( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -376,7 +377,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/shopCart" )
+    @RequestMapping( "shopCart" )
     public void shopCart( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer busUserId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
@@ -408,7 +409,7 @@ public class PhoneHomeAppletController extends BaseController {
      */
     @SuppressWarnings( { "deprecation", "unchecked" } )
     @SysLogAnnotation( description = "小程序购物车页面-删除购物车内的商品", op_function = "3" )
-    @RequestMapping( "79B4DE7C/shoppingdelete" )
+    @RequestMapping( "shoppingdelete" )
     public void shoppingdelect( HttpServletRequest request, HttpServletResponse response, Integer memberId, String ids ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -438,7 +439,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "小程序购物车页面-结算购物车内的商品", op_function = "3" )
-    @RequestMapping( "79B4DE7C/shoppingorder" )
+    @RequestMapping( "shoppingorder" )
     public void shoppingOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -464,7 +465,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/memberIndex" )
+    @RequestMapping( "memberIndex" )
     public void memberIndex( HttpServletRequest request, HttpServletResponse response, Integer memberId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -486,7 +487,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/productBuyNow" )
+    @RequestMapping( "productBuyNow" )
     public void productBuyNow( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -511,18 +512,19 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/toSubmitOrder" )
+    @RequestMapping( "toSubmitOrder" )
     public void toSubmitOrder( HttpServletRequest request, HttpServletResponse response, AppletToSubmitOrderDTO toSubmitOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
-	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( toSubmitOrderDTO );
-	    logger.info( "进入提交订单页面的参数：" + params );
+	    logger.info( "进入提交订单页面的参数：" + toSubmitOrderDTO );
 	    String version = "";//保存版本号
 	    if ( CommonUtil.isNotEmpty( toSubmitOrderDTO.getVersion() ) ) {
 		version = toSubmitOrderDTO.getVersion();
 	    }
+
+	    Map< String,Object > params = new HashMap<>();
+	    EntityDtoConverter converter = new EntityDtoConverter();
+	    params = converter.beanToMap( toSubmitOrderDTO );
 	    if ( version.equals( "1.1.0" ) ) {
 		resultMap = mallNewOrderAppletService.toSubmitOrder( params );
 	    } else {
@@ -545,7 +547,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/submitOrder" )
+    @RequestMapping( "submitOrder" )
     public void submitOrder( HttpServletRequest request, HttpServletResponse response, AppletSubmitOrderDTO submitOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -557,12 +559,16 @@ public class PhoneHomeAppletController extends BaseController {
 	    if ( CommonUtil.isNotEmpty( submitOrderDTO.getVersion() ) ) {
 		version = submitOrderDTO.getVersion();
 	    }
-	    if ( version.equals( "1.1.0" ) ) {
-		resultMap = mallNewOrderAppletService.submitOrder( params );
+	    if ( version.equals( "1.1.1" ) ) {
+		resultMap = mallNewOrderAppletService.submitOrder( submitOrderDTO );
 	    } else {
 		resultMap = mallOrderAppletService.submitOrder( params );
 	    }
 
+	} catch ( BusinessException be ) {
+	    resultMap.put( "code", "-1" );
+	    resultMap.put( "errorMsg", be.getMessage() );
+	    be.printStackTrace();
 	} catch ( Exception e ) {
 	    resultMap.put( "code", "-1" );
 	    resultMap.put( "errorMsg", "提交订单失败" );
@@ -586,7 +592,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/orderList" )
+    @RequestMapping( "orderList" )
     public void orderList( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer curPage, Integer busUserId, Integer type ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -617,7 +623,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/orderDetail" )
+    @RequestMapping( "orderDetail" )
     public void orderDetail( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -643,7 +649,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/appletWxOrder" )
+    @RequestMapping( "appletWxOrder" )
 
     public void appletWxOrder( HttpServletRequest request, HttpServletResponse response, String orderNo, Integer memberId, String appid ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
@@ -675,7 +681,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-去支付", op_function = "3" )
-    @RequestMapping( "79B4DE7C/orderGoPay" )
+    @RequestMapping( "orderGoPay" )
     public void orderGoPay( HttpServletRequest request, HttpServletResponse response, Integer order_id, Integer memberId, String appid ) throws IOException {
 	Map< Object,Object > resultMap = new HashMap< Object,Object >();
 	try {
@@ -704,7 +710,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-确认收货", op_function = "3" )
-    @RequestMapping( "79B4DE7C/confirmReceipt" )
+    @RequestMapping( "confirmReceipt" )
     public void confirmReceipt( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -729,7 +735,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/toReturnOrder" )
+    @RequestMapping( "toReturnOrder" )
     public void toReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -754,7 +760,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-提交退款信息", op_function = "3" )
-    @RequestMapping( "79B4DE7C/submitReturnOrder" )
+    @RequestMapping( "submitReturnOrder" )
     public void submitReturnOrder( HttpServletRequest request, HttpServletResponse response, AppletAddReturnOrderDTO addReturnOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -783,7 +789,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-撤销退款", op_function = "3" )
-    @RequestMapping( "79B4DE7C/closeReturnOrder" )
+    @RequestMapping( "closeReturnOrder" )
     public void closeReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -808,7 +814,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/addressList" )
+    @RequestMapping( "addressList" )
     public void addressList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -831,7 +837,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/addressDefault" )
+    @RequestMapping( "addressDefault" )
     public void addressDefault( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -865,7 +871,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/addressDelete" )
+    @RequestMapping( "addressDelete" )
     public void addressDelete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -890,7 +896,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/toAddress" )
+    @RequestMapping( "toAddress" )
     public void toAddress( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -930,7 +936,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "79B4DE7C/addressSubmit" )
+    @RequestMapping( "addressSubmit" )
     public void addressSubmit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -961,7 +967,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @param params
      */
-    @RequestMapping( value = "79B4DE7C/queryCity" )
+    @RequestMapping( value = "queryCity" )
     public void queryCity( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    int id = CommonUtil.toInteger( params.get( "id" ) );
@@ -980,7 +986,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/getValCode" )
+    @RequestMapping( "getValCode" )
     public void getValCode( HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = null;
 	try {
@@ -1007,7 +1013,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/bindPhone" )
+    @RequestMapping( "bindPhone" )
     public void bindPhone( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = null;
 	logger.info( "商城小程序绑定手机号码参数：" + params );
@@ -1028,26 +1034,17 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 计算订单的优惠信息  1.1版新增接口
-     *
-     * @param request
-     * @param response
-     * @param calculationDTO
-     *
-     * @throws IOException
      */
-    @RequestMapping( "/79B4DE7C/calculationPreferential" )
-    public void calculationPreferential( HttpServletRequest request, HttpServletResponse response, AppletSubmitOrderDTO calculationDTO ) throws IOException {
-	Map< String,Object > resultMap = null;
-	logger.info( "商城小程序计算订单的优惠信息：" + calculationDTO );
+    @RequestMapping( "calculationPreferential" )
+    public void calculationPreferential( HttpServletRequest request, HttpServletResponse response, @RequestParam AppletSubmitOrderDTO submitOrderDTO ) throws IOException {
+	Map< String,Object > resultMap = new HashMap<>();
+	logger.info( "商城小程序计算订单的优惠信息：" + submitOrderDTO );
 	try {
-	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( calculationDTO );
-
-	   /* resultMap = mallNewOrderAppletService.calculationPreferential( params );*/
-	    resultMap = mallNewOrderAppletService.newCalculationPreferential( params );
+	    resultMap = mallNewOrderAppletService.newCalculationPreferential( submitOrderDTO );
+	} catch ( BusinessException be ) {
+	    resultMap.put( "code", be.getCode() );
+	    resultMap.put( "errorMsg", be.getMessage() );
 	} catch ( Exception e ) {
-	    resultMap = new HashMap<>();
 	    resultMap.put( "code", "-1" );
 	    resultMap.put( "errorMsg", "计算订单的优惠信息失败" );
 	    logger.error( "商城小程序计算订单的优惠信息失败：" + e.getMessage() );

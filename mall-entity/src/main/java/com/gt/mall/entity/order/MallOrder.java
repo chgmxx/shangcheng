@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.gt.mall.bean.member.Coupons;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -335,8 +336,8 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     /**
      * 自提点地址
      */
-    @TableField("appointment_address")
-    private String appointmentAddress;
+    @TableField( "appointment_address" )
+    private String  appointmentAddress;
 
     @TableField( exist = false )
     private Integer updateDay;//修改订单的天数
@@ -365,6 +366,14 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     @TableField( exist = false )
     private Integer useCoupon;//是否使用优惠券  用于计算
 
+    @TableField( exist = false )
+    private Coupons selectCoupon;//选择优惠券3
+
+//    @TableField( exist = false )
+//    private double totalYouhuiMoney;//优惠总金额
+
+    @TableField( exist = false )
+    private double totalNewMoney;//订单优惠后的金额
 
     @Override
     protected Serializable pkVal() {

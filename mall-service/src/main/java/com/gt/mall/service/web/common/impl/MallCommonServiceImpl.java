@@ -243,7 +243,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 			    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
 				JSONObject cardObj = JSONObject.parseObject( cardMap.get( "recevieMap" ).toString() );
 				if ( CommonUtil.isNotEmpty( cardObj.get( "guoqi" ) ) && "1".equals( cardObj.getString( "guoqi" ) ) ) {
-				    throw new BusinessException( ResponseEnums.CAR_RECEVIE_GUOQI_ERROR.getCode(), ResponseEnums.CAR_RECEVIE_GUOQI_ERROR.getDesc());
+				    throw new BusinessException( ResponseEnums.CAR_RECEVIE_GUOQI_ERROR.getCode(), ResponseEnums.CAR_RECEVIE_GUOQI_ERROR.getDesc() );
 				}
 			    }
 			}

@@ -128,7 +128,7 @@
 
         LEFT JOIN t_mall_product d ON a.product_id=d.id
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
-        WHERE b.is_delete=0 and a.is_check=1 and d.is_delete=0 and d.is_publish=1 and d.check_status=1
+        WHERE b.is_delete=0 and d.is_delete=0 and d.is_publish=1 and d.check_status=1
         <if test="cartIds != null">
             and a.id in
             <foreach collection="cartIds" index="index" item="item" open="(" separator="," close=")">

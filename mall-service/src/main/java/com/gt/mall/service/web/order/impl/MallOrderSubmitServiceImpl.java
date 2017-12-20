@@ -461,7 +461,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    proTypeId = product.getProTypeId();
 
 	    //查询公众号名称或商家名称以及图片
-	    List< PhoneToOrderBusResult > busResultList = new ArrayList<>();//返回给页面的商家接话
+	    List< PhoneToOrderBusResult > busResultList = new ArrayList<>();//返回给页面的商家集合
 	    PhoneToOrderBusResult busResult = mallCommonService.getBusUserNameOrImage( product.getUserId() );//返回给页面的商家对象
 
 	    List< PhoneToOrderShopResult > shopResultList = new ArrayList<>();//返回给页面的店铺对象
