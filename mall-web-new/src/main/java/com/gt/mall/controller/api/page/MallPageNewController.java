@@ -244,6 +244,9 @@ public class MallPageNewController extends BaseController {
 		    }
 		    Map< String,Object > map1 = (Map< String,Object >) jsonobj.get( i );
 		    if ( CommonUtil.isEmpty( map1.get( "imgID" ) ) ) {
+			if(map1.get( "type" ).toString().equals( "7" )){
+			    XinJson.add( map1 );
+			}
 			continue;
 		    }
 		    String imaid = map1.get( "imgID" ).toString();

@@ -7,6 +7,7 @@ import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
 import com.gt.util.entity.param.pay.ApiEnterprisePayment;
+import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.result.pay.EnterprisePaymentResult;
@@ -47,6 +48,18 @@ public class PayServiceImpl implements PayService {
 	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
 	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
 	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), EnterprisePaymentResult.class );
+	}
+	return null;
+    }
+
+    @Override
+    public PayWay getPayWay( Integer busId ) {
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( busId );
+	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "getPayWay.do", 2 );
+	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
+	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
+	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), PayWay.class );
 	}
 	return null;
     }

@@ -109,12 +109,12 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhonePageResult > pageIndex( HttpServletRequest request, HttpServletResponse response, Integer pageId, String url ) throws IOException {
 	PhonePageResult result = new PhonePageResult();
 	try {
-	    int userid = 0;
 	    //根据页面id查询页面信息
 	    MallPage page = mallPageService.selectById( pageId );
 	    if ( CommonUtil.isEmpty( page ) ) {
 		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面已删除" );
 	    }
+	    int userid = page.getPagUserId();
 	    //从session中获取member信息
 	    Member member = SessionUtils.getLoginMember( request, page.getPagUserId() );
 	    //根据商家id获取公众号信息
@@ -148,10 +148,10 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    String dataJson = "[]";
 	    String picJson = "[]";
 	    if ( page.getPagData() != null ) {
-		MallPaySet set = new MallPaySet();
-		set.setUserId( userid );
-		set = mallPaySetService.selectByUserId( set );
-		int state = mallPifaApplyService.getPifaApplay( member, set );
+//		MallPaySet set = new MallPaySet();
+//		set.setUserId( userid );
+//		set = mallPaySetService.selectByUserId( set );
+//		int state = mallPifaApplyService.getPifaApplay( member, set );
 
 		net.sf.json.JSONArray jsonobj = net.sf.json.JSONArray.fromObject( page.getPagData() );//转换成JSON数据
 		net.sf.json.JSONArray XinJson = new net.sf.json.JSONArray();//获取新的数组对象
@@ -167,9 +167,9 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 			}
 		    }
 		    Map< String,Object > map1 = (Map) jsonobj.get( i );
-//		    logger.error( "map" + JSONObject.toJSON( map1 ) );
+		    //		    logger.error( "map" + JSONObject.toJSON( map1 ) );
 		    if ( CommonUtil.isEmpty( map1.get( "imgID" ) ) ) {
-		        if(map1.get( "type" ).toString().equals( "7" )){
+			if ( map1.get( "type" ).toString().equals( "7" ) ) {
 			    XinJson.add( map1 );
 			}
 			continue;

@@ -330,11 +330,12 @@ public class CommonUtil {
     public static Double getDecimalStr( Double d, int len ) {
 	if ( d != null ) {
 	    if ( d.toString().split( "\\." )[1].length() > 2 ) {
+		len = len == 0 ? 2 : len;
 		if ( len > 0 ) {
 		    len = len + 1;
 		}
 		BigDecimal bg = new BigDecimal( d );
-		int index = d.toString().indexOf( "." ) + 2;
+		int index = d.toString().indexOf( "." ) + len;
 		return CommonUtil.toDouble( d.toString().substring( 0, index ) );
 	    }
 	}
