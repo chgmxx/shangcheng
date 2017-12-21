@@ -1194,7 +1194,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		adcServicesInfo.setModel( 101 );//模块ID
 		adcServicesInfo.setMobile( orders.getFlowPhone() );//充值手机号
 		adcServicesInfo.setPrizeCount( flow.getType() );//流量数
-		adcServicesInfo.setMemberId( memberId.toString() );//用户Id
+		adcServicesInfo.setMemberId( memberId );//用户Id
 		adcServicesInfo.setPublicId( pbUser.getId() );//商家公众号Id
 		adcServicesInfo.setBusId( orders.getBusUserId() ); //根据平台用户Id获取微信订阅号用户信息
 		adcServicesInfo.setId( orders.getId() );//订单id

@@ -39,7 +39,7 @@ public interface MallCountIncomeService extends BaseService< MallCountIncome > {
      *
      * @return
      */
-    Integer getCountByTimes( Map< String,Object > params );
+    String getCountByTimes( Map< String,Object > params );
 
     /**
      * 获取时间段内的收入金额列表

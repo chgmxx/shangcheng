@@ -132,24 +132,6 @@ public class MallSecuritytradeController extends BaseController {
     }
 
     /**
-     * 判断商家是否有微信支付平台
-     */
-    @ApiOperation( value = "判断商家是否有微信支付平台", notes = "判断商家是否有微信支付平台" )
-    @ResponseBody
-    @RequestMapping( value = "/isWxPayUser", method = RequestMethod.POST )
-    public ServerResponse ae( HttpServletRequest request, HttpServletResponse response ) {
-	Boolean flag = true;
-	try {
-	    //TODO 判断商家是否有微信支付平台
-	} catch ( Exception e ) {
-	    logger.error( "判断商家是否有微信支付平台异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag );
-    }
-
-    /**
      * 保存退出担保交易信息
      */
     @ApiOperation( value = "保存退出担保交易信息", notes = "保存退出担保交易信息" )

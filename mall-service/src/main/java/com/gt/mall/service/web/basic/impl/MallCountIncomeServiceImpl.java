@@ -91,7 +91,7 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
     }
 
     @Override
-    public Integer getCountByTimes( Map< String,Object > params ) {
+    public String getCountByTimes( Map< String,Object > params ) {
 
 	return mallCountIncomeDAO.getCountByTimes( params );
     }

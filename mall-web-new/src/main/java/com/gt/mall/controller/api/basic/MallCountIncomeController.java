@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.entity.basic.MallCountIncome;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
 import com.gt.mall.service.web.order.MallOrderService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -47,37 +49,52 @@ public class MallCountIncomeController extends BaseController {
     @Autowired
     private MallOrderService       mallOrderService;
 
-    /**
-     * 获取时间段的统计金额
-     */
-   /* @ApiOperation( value = "获取时间段的统计金额", notes = "获取时间段的统计金额", response = GroupDTO.class )
+    @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据",hidden = true)
     @ResponseBody
-    @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "type", value = "类型 1收入金额 2营业额", paramType = "query", required = true, dataType = "int" ) } )
-    @RequestMapping( value = "/getCountByDate", method = RequestMethod.POST )
-    public ServerResponse getCountByDate( HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, Integer shopId, Integer type ) {
-	Integer dateCount = 0;
+    @RequestMapping( value = "/test", method = RequestMethod.POST )
+    public ServerResponse test( HttpServletRequest request, HttpServletResponse response ) {
+	Map< String,Object > result = new HashMap<>();
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "startDate", startDate );
-	    params.put( "endDate", endDate );
-	    params.put( "type", type );
-	    params.put( "shopId", shopId );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-		params.put( "shoplist", shoplist );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    //	    Calendar cal = Calendar.getInstance();
+	    //	    cal.add( Calendar.DATE, -60 );
+	    //	    String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    //	    Date day =DateTimeKit.parseDate( yesterday );
+	    ////	    Date date=DateTimeKit.getNow();
+
+	    Calendar dd = Calendar.getInstance();//定义日期实例
+	    Calendar cc = Calendar.getInstance();//定义日期实例
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-21" );//定义起始日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-20" );//定义起始日期
+	    dd.setTime( d1 );
+	    cc.setTime( d2 );
+
+	    while ( cc.before( dd ) ) {
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+		String str = sdf.format( cc.getTime() );
+		System.out.println( str );//输出日期结果
+		for ( Map< String,Object > map : shoplist ) {
+		    MallCountIncome countIncome = new MallCountIncome();
+		    countIncome.setBusId( user.getId() );
+		    countIncome.setCountDate( DateTimeKit.parseDate( str ) );
+		    countIncome.setIncomePrice( new BigDecimal( ( Math.random() * 1000 ) ) );
+		    countIncome.setTradePrice( new BigDecimal( ( Math.random() * 1000 ) ) );
+		    countIncome.setShopId( CommonUtil.toInteger( map.get( "id" ) ) );
+		    countIncome.setTurnover( new BigDecimal( ( Math.random() * 1000 ) ) );
+		    countIncome.setRefundPrice( new BigDecimal( ( Math.random() * countIncome.getTradePrice().doubleValue() ) ) );
+
+		    mallCountIncomeService.insert( countIncome );
+		}
+		cc.add( Calendar.DATE, 1 );//进行当前日期加1
 	    }
-	    dateCount = mallCountIncomeService.getCountByTimes( params );
 	} catch ( Exception e ) {
-	    logger.error( "获取时间段的统计金额异常：" + e.getMessage() );
+	    logger.error( "生成交易记录数据异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取时间段的统计金额异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "生成交易记录数据异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), dateCount );
-    }*/
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+    }
 
     /**
      * 获取交易记录的营业额统计
@@ -101,13 +118,13 @@ public class MallCountIncomeController extends BaseController {
 	    countParams.put( "date", yesterday );
 	    countParams.put( "type", 2 );
 	    countParams.put( "shoplist", shoplist );
-	    Integer yesterCount = mallCountIncomeService.getCountByTimes( countParams );
+	    String yesterCount = mallCountIncomeService.getCountByTimes( countParams );
 	    result.put( "yesterCount", yesterCount );//昨天营业额
 	    //7日营业额（前7天-昨天）
 	    countParams.remove( "date" );
 	    countParams.put( "startDate", sevenday );
 	    countParams.put( "endDate", yesterday );
-	    Integer sevenCount = mallCountIncomeService.getCountByTimes( countParams );
+	    String sevenCount = mallCountIncomeService.getCountByTimes( countParams );
 	    result.put( "sevenCount", sevenCount );//7天营业额
 	    //TODO 待结算金额  可用金额
 	    result.put( "settlementCount", 0 );//待结算金额
@@ -148,8 +165,9 @@ public class MallCountIncomeController extends BaseController {
 		startDate = DateTimeKit.format( DateTimeKit.addMonths( -1 ) );
 		endDate = DateTimeKit.getDate();
 	    }
-	    params.put( "startDate", startDate );
-	    params.put( "endDate", endDate );
+
+	    params.put( "startDate", DateTimeKit.format(DateTimeKit.parse(startDate,"" )));
+	    params.put( "endDate", DateTimeKit.format(DateTimeKit.parse(endDate ,"")));
 	    List< Map< String,Object > > countList = mallCountIncomeService.getCountListByTimes( params );
 	    //	    String[] date = new String[countList.size()];
 	    String[] data = new String[countList.size()];
@@ -207,12 +225,12 @@ public class MallCountIncomeController extends BaseController {
 		countParams.put( "shopId", shopId );
 	    }
 	    countParams.put( "date", yesterday );
-	    Integer yesterPrice = mallCountIncomeService.getCountByTimes( countParams );
+	    String yesterPrice = mallCountIncomeService.getCountByTimes( countParams );
 
 	    countParams.remove( "date" );
 	    countParams.put( "startDate", sevenday );
 	    countParams.put( "endDate", yesterday );
-	    Integer sevenCount = mallCountIncomeService.getCountByTimes( countParams );
+	    String sevenCount = mallCountIncomeService.getCountByTimes( countParams );
 	    result.put( "yesterIncomeCount", yesterPrice );//昨天总收入
 	    result.put( "sevenIncomeCount", sevenCount );//7天总收入
 

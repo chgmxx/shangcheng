@@ -5,6 +5,7 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.CardService;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
@@ -15,6 +16,7 @@ import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.QRcodeKit;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
+import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,8 @@ public class MallIndexController extends BaseController {
     private CardService            cardService;
     @Autowired
     private MallProductService     mallProductService;
+    @Autowired
+    private PayService             payService;
 
     @ApiOperation( value = "获取商城的统计概况", notes = "获取商城的统计概况" )
     @ResponseBody
@@ -134,6 +138,32 @@ public class MallIndexController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商城营销的地址异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url );
+    }
+
+    /**
+     * 判断商家是否有商户支付平台
+     *
+     */
+    @ApiOperation( value = "判断商家是否有商户支付平台", notes = "判断商家是否有商户支付平台" )
+    @ResponseBody
+    @RequestMapping( value = "/isWxPayUser", method = RequestMethod.POST )
+    public ServerResponse isWxPayUser( HttpServletRequest request, HttpServletResponse response ) {
+	Boolean flag = false;
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    PayWay payWay = payService.getPayWay( user.getId() );
+	    System.out.print( payWay.getWxpay() );
+	    if ( payWay != null && payWay.getWxpay() == 0 && payWay.getAlipay() == 0 ) {
+		flag = true;
+	    } else {
+		flag = false;
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "判断商家是否有商户支付平台异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag );
     }
 
     @ApiOperation( value = "获取门店列表", notes = "获取门店列表" )

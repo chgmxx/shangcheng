@@ -18,7 +18,7 @@
     <sql id="Base_Column_List">
         id, count_date ,trade_price, refund_price, income_price, turnover,shop_id , bus_id
     </sql>
-    <select id="getCountByTimes" resultType="java.lang.Integer">
+    <select id="getCountByTimes" resultType="java.lang.String">
         SELECT
         <if test="type != null and type != ''">
             <if test="type == 1">IFNULL(SUM(t.income_price),0)</if>

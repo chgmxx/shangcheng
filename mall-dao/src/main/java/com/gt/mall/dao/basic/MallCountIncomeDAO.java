@@ -23,7 +23,7 @@ public interface MallCountIncomeDAO extends BaseMapper< MallCountIncome > {
      *
      * @return
      */
-    Integer getCountByTimes( Map< String,Object > params );
+    String getCountByTimes( Map< String,Object > params );
 
     /**
      * 获取时间段的收入金额列表
