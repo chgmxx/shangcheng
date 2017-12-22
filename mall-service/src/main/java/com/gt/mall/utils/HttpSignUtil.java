@@ -36,11 +36,11 @@ public class HttpSignUtil {
 	    int type = CommonUtil.isNotEmpty( types ) && types.length > 0 ? types[0] : 0;
 	    String signKey = CommonUtil.getHttpSignKey( type );
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
-//	    if ( type == 0 ) {
-//		newUrl = "http://113.106.202.53:13885/" + url;
-//	    } else if ( type == 3 ) {
-//		newUrl = "https://union.deeptel.com.cn/" + url;
-//	    }
+	    //	    if ( type == 0 ) {
+	    //		newUrl = "http://113.106.202.53:13885/" + url;
+	    //	    } else if ( type == 3 ) {
+	    //		newUrl = "https://union.deeptel.com.cn/" + url;
+	    //	    }
 	    /*if(type == 1){
 		newUrl = "http://192.168.2.12:8070/" + url;
 	    }*/
@@ -119,7 +119,7 @@ public class HttpSignUtil {
 	} else {
 	    resultMap.put( "code", code );
 	}
-	if ( resultObj.containsKey( "msg" ) ) {
+	if ( resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.getString( "msg" ) ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
 	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
 	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );

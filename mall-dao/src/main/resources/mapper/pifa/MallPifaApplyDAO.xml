@@ -32,12 +32,8 @@
 
     <update id="updateSetWholesaler" parameterType="map">
         UPDATE t_mall_pay_set SET pf_set = #{pfSet}
-        <if test="pfRemark != null and pfRemark != ''">
             ,pf_remark = #{pfRemark}
-        </if>
-        <if test="pfApplyRemark != null and pfApplyRemark != ''">
             ,pf_apply_remark = #{pfApplyRemark}
-        </if>
         <if test="isPf != null and isPf != ''">
             ,is_pf = #{isPf}
         </if>

@@ -78,6 +78,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	    if ( groupList != null && groupList.size() > 0 && param.containsKey( "isProNum" ) ) {
 		for ( Map< String,Object > map : groupList ) {
 		    groupIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+		    map.put( "COUNT", "0" );//默认商品数量为0
 		}
 		Map< String,Object > params = new HashMap<>();
 		params.put( "groupIds", groupIds );
@@ -89,7 +90,6 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 			if ( productList == null || productList.size() == 0 ) {
 			    break;
 			}
-			map.put( "COUNT", "0" );
 			for ( Map< String,Object > productMap : productList ) {
 			    int groupId = CommonUtil.toInteger( productMap.get( "groupId" ) );
 			    if ( groupId == id ) {

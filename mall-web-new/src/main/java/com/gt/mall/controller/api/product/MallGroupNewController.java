@@ -70,7 +70,11 @@ public class MallGroupNewController extends BaseController {
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		params.put( "userId", user.getId() );
 		params.put( "curPage", curPage );
-		params.put( "groupPId", pId );
+		if ( CommonUtil.isNotEmpty( pId ) ){
+		    params.put( "groupPId", pId );
+		}else{
+		    params.put( "groupPId", "0" );
+		}
 		params.put( "isLabel", 0 );
 		params.put( "type", 1 );//显示推荐数据
 		PageUtil page = mallGroupService.findGroupByPage( params, shoplist, user.getId() );// 获取分组集合

@@ -2975,8 +2975,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		details = mallOrderDetailDAO.selectByOrderId( order.getId() );
 	    }
 	    List< OrderDetailResult > detailResults = new ArrayList<>();
-	    if ( details != null && details.size() > 0 ) {
+	    //扫码支付 没有商品
+	    if ( details != null && details.size() > 0 && order.getOrderPayWay() != 5 ) {
 		for ( MallOrderDetail detail : details ) {
+		    if ( detail.getId() == null ) {
+			continue;
+		    }
 		    OrderDetailResult detailResult = new OrderDetailResult();
 		    converter.entityConvertDto( detail, detailResult );
 
@@ -3004,7 +3008,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				Date date = DateTimeKit.addDate( orderReturn.getCreateTime(), Constants.WAIT_APPLY_RETURN_DAY );
 				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), "yyyy-MM-dd HH:mm:ss" );
 				if ( cont == -1 ) {
-				    returnResult.setApplyTimes((date.getTime()-new Date().getTime()) / 1000);
+				    returnResult.setApplyTimes( ( date.getTime() - new Date().getTime() ) / 1000 );
 				}
 			    } catch ( Exception e ) {
 				e.printStackTrace();
@@ -3020,7 +3024,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				Date date = DateTimeKit.addDate( orderReturn.getUpdateTime(), Constants.RETURN_AUTO_CONFIRM_TAKE_DAY );//倒计时最终时间
 				int cont = DateTimeKit.dateCompare( DateTimeKit.getDateTime(), DateTimeKit.getDateTime( date, "yyyy-MM-dd HH:mm:ss" ), "yyyy-MM-dd HH:mm:ss" );
 				if ( cont == -1 ) {
-				    returnResult.setTakeTimes((date.getTime()-new Date().getTime()) / 1000);
+				    returnResult.setTakeTimes( ( date.getTime() - new Date().getTime() ) / 1000 );
 				}
 			    } catch ( Exception e ) {
 				e.printStackTrace();

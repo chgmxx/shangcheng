@@ -326,8 +326,8 @@ public class MallPifaNewController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet mallPaySet = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSON.toJSONString( params ), MallPaySet.class );
-	    mallPaySet.setPfRemark( CommonUtil.urlEncode( mallPaySet.getPfRemark() ) );
-	    mallPaySet.setPfApplyRemark( CommonUtil.urlEncode( mallPaySet.getPfApplyRemark() ) );
+//	    mallPaySet.setPfRemark( CommonUtil.urlEncode( mallPaySet.getPfRemark() ) );
+//	    mallPaySet.setPfApplyRemark( CommonUtil.urlEncode( mallPaySet.getPfApplyRemark() ) );
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    MallPaySet paySet = mallPaySetService.selectByUserId( set );//查询登录者是否有设置商城
@@ -341,8 +341,8 @@ public class MallPifaNewController extends BaseController {
 		}
 	    } else {
 		params.put( "userId", user.getId() );
-		params.put( "pfRemark", CommonUtil.urlEncode( params.get( "pfRemark" ).toString() ) );
-		params.put( "pfApplyRemark", CommonUtil.urlEncode( params.get( "pfApplyRemark" ).toString() ) );
+//		params.put( "pfRemark", CommonUtil.urlEncode( params.get( "pfRemark" ).toString() ) );
+//		params.put( "pfApplyRemark", CommonUtil.urlEncode( params.get( "pfApplyRemark" ).toString() ) );
 		count = mallPifaService.updateSetWholesaler( params );//修改批发商城设置
 	    }
 

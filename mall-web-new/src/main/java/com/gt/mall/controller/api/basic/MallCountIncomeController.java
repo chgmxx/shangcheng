@@ -49,7 +49,7 @@ public class MallCountIncomeController extends BaseController {
     @Autowired
     private MallOrderService       mallOrderService;
 
-    @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据",hidden = true)
+    @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据")
     @ResponseBody
     @RequestMapping( value = "/test", method = RequestMethod.POST )
     public ServerResponse test( HttpServletRequest request, HttpServletResponse response ) {
@@ -57,22 +57,16 @@ public class MallCountIncomeController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    //	    Calendar cal = Calendar.getInstance();
-	    //	    cal.add( Calendar.DATE, -60 );
-	    //	    String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-	    //	    Date day =DateTimeKit.parseDate( yesterday );
-	    ////	    Date date=DateTimeKit.getNow();
+	    Calendar end = Calendar.getInstance();//定义日期实例
+	    Calendar start = Calendar.getInstance();//定义日期实例
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-22" );//定义起始日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-21" );//定义起始日期
+	    end.setTime( d1 );
+	    start.setTime( d2 );
 
-	    Calendar dd = Calendar.getInstance();//定义日期实例
-	    Calendar cc = Calendar.getInstance();//定义日期实例
-	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-21" );//定义起始日期
-	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-20" );//定义起始日期
-	    dd.setTime( d1 );
-	    cc.setTime( d2 );
-
-	    while ( cc.before( dd ) ) {
+	    while ( start.before( end ) ) {
 		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-		String str = sdf.format( cc.getTime() );
+		String str = sdf.format( start.getTime() );
 		System.out.println( str );//输出日期结果
 		for ( Map< String,Object > map : shoplist ) {
 		    MallCountIncome countIncome = new MallCountIncome();
@@ -86,7 +80,7 @@ public class MallCountIncomeController extends BaseController {
 
 		    mallCountIncomeService.insert( countIncome );
 		}
-		cc.add( Calendar.DATE, 1 );//进行当前日期加1
+		start.add( Calendar.DATE, 1 );//进行当前日期加1
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "生成交易记录数据异常：" + e.getMessage() );
