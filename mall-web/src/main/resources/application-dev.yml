@@ -134,8 +134,6 @@ http:
  #总项目请求地址
  wxmp:
   domain: http://yifriend.net/
-#  domain: http://wxmp.yifriend.net:8080/
-#  domain: http://yifriend.net/
   key: WXMP2017
  #会员key 和 请求地址
  member:
@@ -152,3 +150,8 @@ http:
   account: e_shop
   #进销存token密码
   pwx: shop12345
+ core:
+  # 增值服务域名
+  domain: http://core.yifriend.net/
+  #增值服务 key
+  key: APPLIC2017

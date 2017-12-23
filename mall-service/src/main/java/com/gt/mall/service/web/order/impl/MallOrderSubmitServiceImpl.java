@@ -559,7 +559,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPhone() ) && proTypeId == 0 && type == 0 ) {
 	    UnionCardDiscountParam unionParams = new UnionCardDiscountParam();
 	    unionParams.setBusId( member.getBusid() );
-	    unionParams.setMemberId( member.getId() );
+	    //	    unionParams.setMemberId( member.getId() );
 	    unionParams.setPhone( member.getPhone() );
 	    unionResult = UnionCardService.consumeUnionDiscount( unionParams );//获取联盟折扣
 	}
@@ -587,7 +587,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		    busResult.setUnionDiscount( unionResult.getDiscount() );
 		    busResult.setUnionCardId( unionResult.getCardId() );
 		    busResult.setUnionStatus( unionResult.getCode() );
-		    busResult.setUnionId( unionResult.getUnionId() );
+		    //		    busResult.setUnionId( unionResult.getUnionId() );
 		}
 
 		int takeId = 0;//上门自提id

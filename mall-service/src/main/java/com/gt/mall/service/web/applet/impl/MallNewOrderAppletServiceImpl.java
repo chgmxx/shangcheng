@@ -467,7 +467,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		if ( CommonUtil.isNotEmpty( member.getPhone() ) && proTypeId == 0 ) {
 		    UnionCardDiscountParam unionParams = new UnionCardDiscountParam();
 		    unionParams.setBusId( member.getBusid() );
-		    unionParams.setMemberId( member.getId() );
+		    //		    unionParams.setMemberId( member.getId() );
 		    unionParams.setPhone( member.getPhone() );
 		    unionResult = unionCardService.consumeUnionDiscount( unionParams );//获取联盟折扣
 		    if ( CommonUtil.isNotEmpty( unionResult ) ) {

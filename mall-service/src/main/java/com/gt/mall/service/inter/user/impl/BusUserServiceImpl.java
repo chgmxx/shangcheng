@@ -29,7 +29,7 @@ public class BusUserServiceImpl implements BusUserService {
 
     private static final String USER_GUOQ_URL = "/8A5DA52E/busUserApi/";
 
-    private static final String USER_SHOP_URL = "/8A5DA52E/busCommonApi/";
+    //    private static final String USER_SHOP_URL = "/8A5DA52E/busCommonApi/";
 
     @Override
     public BusUser selectById( int busUserId ) {
@@ -147,15 +147,15 @@ public class BusUserServiceImpl implements BusUserService {
 	return null;
     }
 
-//    @Override
-//    public List< WsWxShopInfoExtend > getShopIdListByUserId( int userId ) {
-//	Map< String,Object > params = new HashMap<>();
-//	params.put( "userId", userId );
-//	String result = HttpSignUtil.signHttpSelect( params, USER_SHOP_URL + "getShopIdList.do", 1 );
-//	if ( CommonUtil.isNotEmpty( result ) ) {
-//	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
-//	}
-//	return null;
-//    }
+    //    @Override
+    //    public List< WsWxShopInfoExtend > getShopIdListByUserId( int userId ) {
+    //	Map< String,Object > params = new HashMap<>();
+    //	params.put( "userId", userId );
+    //	String result = HttpSignUtil.signHttpSelect( params, USER_SHOP_URL + "getShopIdList.do", 1 );
+    //	if ( CommonUtil.isNotEmpty( result ) ) {
+    //	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
+    //	}
+    //	return null;
+    //    }
 
 }

@@ -115,13 +115,13 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	    if ( CommonUtil.isNotEmpty( member.getPhone() ) ) {
 		UnionCardDiscountParam unionParams = new UnionCardDiscountParam();
 		unionParams.setBusId( member.getBusid() );
-		unionParams.setMemberId( member.getId() );
+		//		unionParams.setMemberId( member.getId() );
 		unionParams.setPhone( member.getPhone() );
 		UnionDiscountResult unionResult = unionCardService.consumeUnionDiscount( unionParams );//获取联盟折扣
 		if ( CommonUtil.isNotEmpty( unionResult ) ) {
 		    if ( unionResult.getCode() == 1 ) {
 			memberUnionDiscount = unionResult.getDiscount();
-			unionCardId = unionResult.getUnionId();
+			unionCardId = unionResult.getCardId();
 		    }
 		}
 	    }

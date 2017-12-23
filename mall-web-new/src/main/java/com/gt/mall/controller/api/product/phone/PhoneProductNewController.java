@@ -14,6 +14,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.*;
 import com.gt.mall.result.applet.param.AppletGroupDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
@@ -111,6 +112,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private MallSellerService             mallSellerService;
     @Autowired
     private MallSearchKeywordService      mallSearchKeywordService;
+    @Autowired
+    private CoreService                   coreService;
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -138,8 +141,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), classList );
 
 	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
-	}  catch ( Exception e ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+	} catch ( Exception e ) {
 	    logger.error( "查询商品分类接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询商品分类接口失败" );
@@ -155,6 +158,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	Map< String,Object > result = new HashMap<>();
 	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	try {
+	    if ( CommonUtil.isNotEmpty( params.getType() ) && params.getType() > 0 ) {//判断活动是否已经过期
+		Integer status = coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( params.getType().toString() ) );
+	    }
 	    if ( CommonUtil.isNotEmpty( params.getSearchContent() ) ) {
 		params.setSearchContent( CommonUtil.urlEncode( params.getSearchContent() ) );//搜索内容转码
 	    }
@@ -222,8 +228,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    }
 	    result.put( "productList", page );
 
-	}  catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "商品搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -292,7 +298,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    }
 
 	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
 	    logger.error( "商品信息接口异常：" + e.getMessage() );
 	    e.printStackTrace();
