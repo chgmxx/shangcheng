@@ -149,3 +149,8 @@ http:
   account: e_shop
   #进销存token密码
   pwx: shop12345
+ core:
+  # 增值服务域名
+  domain: https://core.duofriend.com/
+  #增值服务 key
+  key: APPLIC2017

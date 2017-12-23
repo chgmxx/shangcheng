@@ -1,11 +1,7 @@
 package com.gt.mall.service.inter.union;
 
-import com.gt.union.api.entity.param.BindCardParam;
 import com.gt.union.api.entity.param.UnionCardDiscountParam;
-import com.gt.union.api.entity.param.UnionPhoneCodeParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
-
-import java.util.Map;
 
 /**
  * 调用联盟卡接口
@@ -22,17 +18,17 @@ public interface UnionCardService {
      */
     UnionDiscountResult consumeUnionDiscount( UnionCardDiscountParam param );
 
-    /**
-     * 绑定联盟卡，获取手机验证码
-     *
-     * @return 验证码
-     */
-    Map phoneCode( UnionPhoneCodeParam phoneCodeParam );
-
-    /**
-     * 绑定联盟卡
-     *
-     * @return true 成功
-     */
-    Map uionCardBind( BindCardParam bindCardParam );
+//    /**
+    //     * 绑定联盟卡，获取手机验证码
+    //     *
+    //     * @return 验证码
+    //     */
+    //    Map phoneCode( UnionPhoneCodeParam phoneCodeParam );
+    //
+    //    /**
+    //     * 绑定联盟卡
+    //     *
+    //     * @return true 成功
+    //     */
+    //    Map uionCardBind( BindCardParam bindCardParam );
 }

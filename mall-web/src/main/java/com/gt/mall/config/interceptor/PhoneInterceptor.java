@@ -2,6 +2,7 @@ package com.gt.mall.config.interceptor;
 
 import com.gt.api.bean.session.Member;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallSessionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -32,18 +33,21 @@ public class PhoneInterceptor implements HandlerInterceptor {
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    request.setAttribute( "member", member );
 	} else {
-//	    member = new Member();
-//	    member.setId( 366 );//销售员测试
-////	    	    	    member.setId( 1225509 );
-////	    member.setId( 1225352 );//折扣卡
-////	    	    member.setId( 1225542 );//储值卡
-//	    member.setBusid( 42 );
-//	    member.setPublicId( 482 );
-//	    member.setPhone( "15017934717" );
-//	    member.setNickname( "杨倩" );
-//	    member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
-//	    //	    member.setOldid( "1225352,1225358,1225449" );
-//	    MallSessionUtils.setLoginMember( request, member );
+	    if ( request.getServerName().contains( "192.168.2" ) ) {
+		member = new Member();
+		//	    member.setId( 366 );//销售员测试
+		//	    	    	    member.setId( 1225509 );
+		member.setId( 1225352 );//折扣卡
+		//	    	    member.setId( 1225542 );//储值卡
+		member.setBusid( 42 );
+		member.setPublicId( 482 );
+		member.setPhone( "15017934717" );
+		member.setNickname( "杨倩" );
+		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
+		//	    	    member.setOldid( "1225352,1225358,1225449" );
+		MallSessionUtils.setLoginMember( request, member );
+	    }
+
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }

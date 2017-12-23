@@ -64,6 +64,10 @@ public class PropertiesUtil {
 
     private static String unionSignKey;//调用联盟接口的签名key
 
+    private static String coreDomain;//调用服务增值的域名
+
+    private static String coreSignKey; //调用服务增值的签名key
+
     @Value( "${web.domain}" )
     public void setDomain( String domain ) {
 	PropertiesUtil.domain = domain;
@@ -194,6 +198,16 @@ public class PropertiesUtil {
 	PropertiesUtil.unionSignKey = unionSignKey;
     }
 
+    @Value( "${http.core.domain}" )
+    public void setCoreDomain( String coreDomain ) {
+	PropertiesUtil.coreDomain = coreDomain;
+    }
+
+    @Value( "${http.core.key}" )
+    public void setCoreSignKey( String coreSignKey ) {
+	PropertiesUtil.coreSignKey = coreSignKey;
+    }
+
     /**
      * 获取联盟的签名key
      */
@@ -317,5 +331,13 @@ public class PropertiesUtil {
 
     public static Integer getRedisDataBase() {
 	return redisDataBase;
+    }
+
+    public static String getCoreDomain() {
+	return coreDomain;
+    }
+
+    public static String getCoreSignKey() {
+	return coreSignKey;
     }
 }

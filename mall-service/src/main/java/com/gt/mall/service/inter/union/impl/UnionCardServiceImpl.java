@@ -4,14 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.service.inter.union.UnionCardService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
-import com.gt.union.api.entity.param.BindCardParam;
 import com.gt.union.api.entity.param.RequestApiParam;
 import com.gt.union.api.entity.param.UnionCardDiscountParam;
-import com.gt.union.api.entity.param.UnionPhoneCodeParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /**
  * 调用联盟卡实现类
@@ -39,18 +35,18 @@ public class UnionCardServiceImpl implements UnionCardService {
 	return null;
     }
 
-    @Override
-    public Map phoneCode( UnionPhoneCodeParam phoneCodeParam ) {
-	RequestApiParam< UnionPhoneCodeParam > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( phoneCodeParam );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "phoneCode", 3 );
-    }
-
-    @Override
-    public Map uionCardBind( BindCardParam bindCardParam ) {
-	RequestApiParam< BindCardParam > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( bindCardParam );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "uionCardBind", 3 );
-    }
+//    @Override
+//    public Map phoneCode( UnionPhoneCodeParam phoneCodeParam ) {
+//	RequestApiParam< UnionPhoneCodeParam > requestApiParam = new RequestApiParam<>();
+//	requestApiParam.setReqdata( phoneCodeParam );
+//	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "phoneCode", 3 );
+//    }
+//
+//    @Override
+//    public Map uionCardBind( BindCardParam bindCardParam ) {
+//	RequestApiParam< BindCardParam > requestApiParam = new RequestApiParam<>();
+//	requestApiParam.setReqdata( bindCardParam );
+//	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "uionCardBind", 3 );
+//    }
 
 }

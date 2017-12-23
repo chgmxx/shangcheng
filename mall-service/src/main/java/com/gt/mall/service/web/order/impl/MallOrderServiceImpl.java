@@ -772,7 +772,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    successBo.setMemberId( order.getBuyerUserId() );//会员id
 	    if ( mallOrder.getMallOrderDetail() != null ) {
 		for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
-
 		    if ( CommonUtil.isEmpty( store ) || store.getId().toString().equals( orderDetail.getShopId() ) ) {
 			store = mallStoreDAO.selectById( orderDetail.getShopId() );
 			if ( CommonUtil.isNotEmpty( store ) && CommonUtil.isNotEmpty( store.getWxShopId() ) ) {
