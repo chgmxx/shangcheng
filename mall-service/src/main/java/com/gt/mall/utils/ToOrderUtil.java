@@ -290,8 +290,9 @@ public class ToOrderUtil {
 		    fenbiProductMoney = Constants.FENBI_RUL_MULTIPLE;
 		}
 		double fenbiMoney = CommonUtil.getDecimal( fenbiProductMoney / Constants.FENBI_RUL_MULTIPLE ).intValue();
+		fenbiMoney = fenbiMoney * 10;
 		bean.setFenbiNum( CommonUtil.multiply( jifenFenbiRule.getFenbiRatio(), fenbiMoney ) );
-		bean.setFenbiMoney( fenbiMoney * Constants.FENBI_RUL_MULTIPLE );
+		bean.setFenbiMoney( fenbiMoney );
 	    }
 	}
 	return bean;

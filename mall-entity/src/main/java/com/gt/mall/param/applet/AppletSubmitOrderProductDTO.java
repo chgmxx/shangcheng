@@ -94,6 +94,11 @@ public class AppletSubmitOrderProductDTO implements Serializable {
      */
     private String proSpecStr;
 
+    /**
+     * 订单详情id
+     */
+    private Integer detailId;
+
     @ApiModelProperty( name = "mallProduct", value = "商品对象", hidden = true )
     private MallProduct mallProduct;
 

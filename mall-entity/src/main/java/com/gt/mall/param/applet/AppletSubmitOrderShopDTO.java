@@ -115,4 +115,9 @@ public class AppletSubmitOrderShopDTO implements Serializable {
      */
     private String appointmentEndTime;
 
+    /**
+     * 订单id
+     */
+    private Integer orderId;
+
 }

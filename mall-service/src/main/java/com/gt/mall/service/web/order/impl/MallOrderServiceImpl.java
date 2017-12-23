@@ -2120,7 +2120,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( type == 1 ) {
 	    //			getOrderList(params,sheet,valueStyle);
 	    List< MallOrder > data = null;
-//	    mallOrderDAO.explodOrder( params );
+	    //	    mallOrderDAO.explodOrder( params );
 	    int status = 0;
 	    if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
 		status = CommonUtil.toInteger( params.get( "status" ) );

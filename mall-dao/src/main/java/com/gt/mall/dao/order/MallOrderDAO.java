@@ -73,6 +73,15 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
     List< MallOrder > mobileOrderList( Map< String,Object > params );
 
     /**
+     * 查询评论订单
+     *
+     * @param params
+     *
+     * @return
+     */
+    List< MallOrder > mobileOrderListByComment( Map< String,Object > params );
+
+    /**
      * 手机端订单列表
      */
     List< MallOrder > mobileMyOrderList( Map< String,Object > params );

@@ -141,9 +141,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO, request );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
-	}  catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
-	}  catch ( Exception e ) {
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+	} catch ( Exception e ) {
 	    logger.error( "进入提交订单页面的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "请求提交订单的数据失败" );
@@ -167,6 +167,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	} catch ( BusinessException e ) {
 	    logger.error( "提交订单的接口异常：" + e.getMessage() );
+	    e.printStackTrace();
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
 		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
 	    }
@@ -187,8 +188,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    List< MallTakeTheirTime > timeList = mallTakeTheirTimeService.selectTakeTheirTime( takeId );//查询到店自提的默认地址
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), timeList, false );
 	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
-	}  catch ( Exception e ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+	} catch ( Exception e ) {
 	    logger.error( "查询上门自提时间的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询上门自提时间失败" );
@@ -211,8 +212,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    List< MallTakeTheir > takeList = mallTakeTheirService.selectByBusUserId( map );
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), takeList, false );
 	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
-	}  catch ( Exception e ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+	} catch ( Exception e ) {
 	    logger.error( "查询上门自提地址的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询上门自提地址失败" );

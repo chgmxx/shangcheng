@@ -171,6 +171,9 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    List< PhoneOrderListOrderDetailResult > detailResultList = new ArrayList<>();
 	    if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+		    if ( CommonUtil.isEmpty( detail.getId() ) ) {
+			continue;
+		    }
 		    String detailStutas = detail.getStatus().toString();
 		    PhoneOrderListOrderDetailResult detailResult = new PhoneOrderListOrderDetailResult();
 		    detailResult.setOrderDetailId( detail.getId() );//订单详情id
@@ -236,7 +239,10 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    orderResult.setDetailResultList( detailResultList );
 	    orderResult.setOrderType( order.getOrderType() );
 	    orderResult.setActivityId( order.getGroupBuyId() );
-	    orderResultList.add( orderResult );
+	    orderResult.setOrderPayWay( order.getOrderPayWay() );
+	    if ( detailResultList.size() > 0 || ( detailResultList.size() == 0 && order.getOrderPayWay() == 5 ) ) {
+		orderResultList.add( orderResult );
+	    }
 	}
 	result.setOrderResultList( orderResultList );
 	result.setPageCount( page.getPageCount() );
@@ -432,6 +438,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		}
 	    }
 	}
+	result.setOrderPayWay( order.getOrderPayWay() );
 	return result;
     }
 

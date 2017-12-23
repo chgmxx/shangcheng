@@ -136,4 +136,7 @@ public class PhoneOrderResult implements Serializable {
     @ApiModelProperty( name = "buyerUserId", value = "买家" )
     private Integer buyerUserId = 0;
 
+    @ApiModelProperty( name = "orderPayWay", value = "支付方式" )
+    private Integer orderPayWay = 0;
+
 }

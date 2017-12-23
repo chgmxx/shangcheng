@@ -1,6 +1,5 @@
 package com.gt.mall.param.applet;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,7 +40,7 @@ public class AppletToSubmitOrderDTO implements Serializable {
      */
     private String version;
     /**
-     * 1购物车结算 2立即购买
+     * 1购物车结算 2立即购买 3去支付
      */
     private String from;
 
@@ -50,6 +49,9 @@ public class AppletToSubmitOrderDTO implements Serializable {
      * 购物车商品ID集合
      */
     private String cartIds;
+
+    /**************去支付传的参数*******************************/
+    private Integer orderId;
 
     /**************立即购买传的参数*******************************/
     /**

@@ -392,7 +392,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 	    int discount = CommonUtil.toIntegerByDouble( CommonUtil.multiply( memberDiscount, 100 ) );
 	    detail.setDiscount( discount );//折扣数
 	}
-	double youhuiPrice = CommonUtil.formatDoubleNumber(
+	double youhuiPrice = CommonUtil.getDecimal(
 			productDTO.getUseUnionDiscountYouhuiPrice() + productDTO.getUseCouponYouhuiPrice() + productDTO.getUseDiscountYouhuiPrice() + productDTO
 					.getUseFenbiYouhuiPrice() + productDTO.getUseJifenYouhuiPrice() );
 	detail.setDiscountedPrices( CommonUtil.toBigDecimal( youhuiPrice ) );//商品优惠的总价

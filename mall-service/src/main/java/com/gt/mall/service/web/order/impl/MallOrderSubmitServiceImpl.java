@@ -210,7 +210,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    orderList.add( 0, parentOrder );
 	}
 	//	if ( orderList != null ) {
-	//	    logger.error( JSONArray.toJSONString( orderList ) );
+	//	    //		    logger.error( JSONArray.toJSONString( orderList ) );
 	//	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	//	}
 	String orderPNo = "";
@@ -368,7 +368,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		if ( detailList != null && detailList.size() > 0 ) {
 		    mallOrder.setMallOrderDetail( detailList );
 		}
-		params.setFrom( 2 );
+		params.setFrom( 3 );
 		if ( mallOrder.getDeliveryMethod() == 1 && CommonUtil.isNotEmpty( mallOrder.getReceiveId() ) && mallOrder.getReceiveId() > 0 ) {
 		    params.setMemberAddressId( mallOrder.getReceiveId() );
 		}
@@ -443,7 +443,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 
 		result = getToOrderParams( productResultList, busUserList, freightList, mallShopList, params, result, provincesId, memberLongitude, memberLangitude );
 	    }
-	} else if ( params.getFrom() == 0 ) {//立即购买
+	} else if ( params.getFrom() == 2 ) {//立即购买
 	    Cookie cookie = CookieUtil.getCookieByName( request, CookieUtil.TO_ORDER_KEY );
 	    PhoneBuyNowDTO buyNowDTO = null;
 	    if ( cookie != null && cookie.getValue() != null ) {
@@ -513,7 +513,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    result.setProTypeId( product.getProTypeId() );
 	    type = buyNowDTO.getType();
 	    toShop = buyNowDTO.getToShop();
-	} else if ( params.getFrom() == 2 && CommonUtil.isNotEmpty( mallOrder ) ) {//去支付进来的
+	} else if ( params.getFrom() == 3 && CommonUtil.isNotEmpty( mallOrder ) ) {//去支付进来的
 
 	    busUserList.add( mallOrder.getBusUserId() );
 	    shopList.add( mallOrder.getShopId() );

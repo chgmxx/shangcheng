@@ -276,68 +276,68 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     private Integer flowRechargeStatus;
 
     @TableField( "member_name" )
-    private String  memberName;
+    private String memberName;
     /**
      * 其它快递公司的物流名称
      */
     @TableField( "other_express_name" )
-    private String  otherExpressName;
+    private String otherExpressName;
     /**
      * 订单使用积分的数量
      */
     @TableField( "use_jifen" )
-    private Double  useJifen;
+    private Double  useJifen    = 0d;
     /**
      * 订单使用粉币的数量
      */
     @TableField( "use_fenbi" )
-    private Double  useFenbi;
+    private Double  useFenbi    = 0d;
     /**
      * 联盟卡id
      */
     @TableField( "union_card_id" )
-    private Integer unionCardId;
+    private Integer unionCardId = 0;
     /**
      * 使用卡券的id
      */
     @TableField( "coupon_id" )
-    private Integer couponId;
+    private Integer couponId    = 0;
 
     /**
      * 粉币优惠的金额
      */
     @TableField( "fenbi_discount_money" )
-    private Double  fenbiDiscountMoney;
+    private Double  fenbiDiscountMoney = 0d;
     /**
      * 积分优惠的金额
      */
     @TableField( "jifen_discount_money" )
-    private Double  jifenDiscountMoney;
+    private Double  jifenDiscountMoney = 0d;
     /**
      * 总共优惠的金额
      */
     @TableField( "discount_money" )
-    private Double  discountMoney;
+    private Double  discountMoney      = 0d;
     /**
      * 优惠券类型  1 微信优惠券  2多粉优惠券
      */
     @TableField( "coupon_type" )
-    private Integer couponType;
+    private Integer couponType         = 0;
     /**
      * 优惠券使用数量
      */
     @TableField( "coupon_use_num" )
-    private Integer couponUseNum;
+    private Integer couponUseNum       = 0;
     /**
      * 会员是否已删除
      */
     @TableField( "member_is_delete" )
-    private Integer memberIsDelete;
+    private Integer memberIsDelete     = 0;
     /**
      * 自提点地址
      */
     @TableField( "appointment_address" )
-    private String  appointmentAddress;
+    private String appointmentAddress;
 
     @TableField( exist = false )
     private Integer updateDay;//修改订单的天数
@@ -369,8 +369,8 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     @TableField( exist = false )
     private Coupons selectCoupon;//选择优惠券3
 
-//    @TableField( exist = false )
-//    private double totalYouhuiMoney;//优惠总金额
+    //    @TableField( exist = false )
+    //    private double totalYouhuiMoney;//优惠总金额
 
     @TableField( exist = false )
     private double totalNewMoney;//订单优惠后的金额

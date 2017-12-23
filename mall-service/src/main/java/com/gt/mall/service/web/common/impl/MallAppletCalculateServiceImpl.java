@@ -7,8 +7,6 @@ import com.gt.mall.bean.member.JifenAndFenbBean;
 import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
-import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.applet.AppletSubmitOrderDTO;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
@@ -147,15 +145,95 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	if ( jifenFlag && CommonUtil.isNotEmpty( jifenFenbiRule ) ) {//计算积分优惠
 	    orderList = calculateMemberJifen( orderList, busJifenYouhui, jifenFenbiRule, cardMap );
 	}
-	for ( MallOrder order : orderList ) {
-	    order.setOrderOldMoney( order.getOrderMoney() );
-	    order.setOrderMoney( CommonUtil.toBigDecimal( order.getTotalNewMoney() ) );
-	    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-		double newTotalPrice = detail.getNewTotalPrice();
-		detail.setTotalPrice( newTotalPrice );
-		detail.setDetPrivivilege( detail.getDetProPrice() );
-		detail.setDetProPrice( CommonUtil.toBigDecimal( CommonUtil.div( newTotalPrice, detail.getDetProNum(), 2 ) ) );
+	//以下参数用于避免 四舍五入 后数值 多0.1或小0.1
+	double youhuiTotalMoney = 0;
 
+	for ( MallOrder order : orderList ) {
+	    if ( CommonUtil.isNotEmpty( order.getDiscountMoney() ) ) {
+		youhuiTotalMoney = CommonUtil.add( youhuiTotalMoney, order.getDiscountMoney() );
+	    }
+	}
+	youhuiTotalMoney = CommonUtil.getDecimal( youhuiTotalMoney );
+	double youhuiMoney = 0;
+	for ( int i = 0; i < orderList.size(); i++ ) {
+	    MallOrder order = orderList.get( i );
+	    double newOrderMoney = order.getTotalNewMoney();
+	    if ( CommonUtil.isNotEmpty( order.getOrderFreightMoney() ) ) {
+		newOrderMoney = CommonUtil.add( order.getTotalNewMoney(), CommonUtil.toDouble( order.getOrderFreightMoney() ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( order.getFenbiDiscountMoney() ) && order.getFenbiDiscountMoney() > 0 ) {
+		order.setFenbiDiscountMoney( CommonUtil.getDecimal( order.getFenbiDiscountMoney() ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( order.getJifenDiscountMoney() ) && order.getJifenDiscountMoney() > 0 ) {
+		order.setJifenDiscountMoney( CommonUtil.getDecimal( order.getJifenDiscountMoney() ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( order.getUseJifen() ) && order.getUseJifen() > 0 ) {
+		order.setUseJifen( CommonUtil.getDecimal( order.getUseJifen() ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( order.getUseFenbi() ) && order.getUseFenbi() > 0 ) {
+		order.setUseFenbi( CommonUtil.getDecimal( order.getUseFenbi() ) );
+	    }
+	    order.setOrderMoney( CommonUtil.toBigDecimal( newOrderMoney ) );
+	    if ( CommonUtil.isNotEmpty( order.getDiscountMoney() ) ) {
+		logger.error( "总优惠：：：：：：：：：：" + order.getDiscountMoney() );
+		if ( i + 1 == orderList.size() ) {
+		    order.setDiscountMoney( CommonUtil.subtract( youhuiTotalMoney, youhuiMoney ) );
+		}
+		order.setDiscountMoney( CommonUtil.getDecimal( order.getDiscountMoney() ) );
+		youhuiMoney = CommonUtil.add( youhuiMoney, order.getDiscountMoney() );
+	    }
+	    logger.error( "商品总数：" + order.getTotalNewMoney() + "使用积分总数：" + order.getUseJifen() + "----使用粉币总数：" + order.getUseFenbi() );
+	    double totalFenbiNum = 0, totalJifenNum = 0, fenbiYouhuiTotal = 0, jifenYouhuiTotal = 0, totalProductMoney = 0;
+	    for ( int j = 0; j < order.getMallOrderDetail().size(); j++ ) {
+		MallOrderDetail detail = order.getMallOrderDetail().get( j );
+
+		double newTotalPrice = detail.getNewTotalPrice();
+		if ( j + 1 == order.getMallOrderDetail().size() ) {
+		    newTotalPrice = CommonUtil.subtract( order.getTotalNewMoney(), totalProductMoney );
+		}
+		detail.setTotalPrice( CommonUtil.getDecimal( newTotalPrice ) );
+		totalProductMoney = CommonUtil.add( totalProductMoney, detail.getTotalPrice() );
+
+		detail.setDetPrivivilege( detail.getDetProPrice() );
+		detail.setDetProPrice( CommonUtil.toBigDecimal( CommonUtil.div( detail.getTotalPrice(), detail.getDetProNum(), 2 ) ) );
+		if ( CommonUtil.isNotEmpty( detail.getDiscountedPrices() ) ) {
+		    double discountPrice = CommonUtil.toDouble( detail.getDiscountedPrices() );
+		    detail.setDiscountedPrices( CommonUtil.toBigDecimal( CommonUtil.getDecimal( discountPrice ) ) );
+		}
+		if ( CommonUtil.isNotEmpty( detail.getUseJifen() ) && detail.getUseJifen() > 0 ) {
+		    if ( j + 1 == order.getMallOrderDetail().size() ) {
+			detail.setUseJifen( CommonUtil.subtract( order.getUseJifen(), totalJifenNum ) );
+		    }
+		    detail.setUseJifen( CommonUtil.getDecimal( detail.getUseJifen() ) );
+		    totalJifenNum = CommonUtil.add( totalJifenNum, detail.getUseJifen() );
+		}
+		if ( CommonUtil.isNotEmpty( detail.getUseFenbi() ) && detail.getUseFenbi() > 0 ) {
+		    if ( j + 1 == order.getMallOrderDetail().size() ) {
+			detail.setUseFenbi( CommonUtil.subtract( order.getUseFenbi(), totalFenbiNum ) );
+		    }
+		    detail.setUseFenbi( CommonUtil.getDecimal( detail.getUseFenbi() ) );
+		    totalFenbiNum = CommonUtil.add( totalFenbiNum, detail.getUseFenbi() );
+		}
+		if ( CommonUtil.isNotEmpty( detail.getFenbiYouhui() ) && CommonUtil.toDouble( detail.getFenbiYouhui() ) > 0 ) {
+		    double fenbiYouhui = CommonUtil.toDouble( detail.getFenbiYouhui() );
+		    if ( j + 1 == order.getMallOrderDetail().size() ) {
+			fenbiYouhui = CommonUtil.subtract( order.getFenbiDiscountMoney(), fenbiYouhuiTotal );
+		    }
+		    detail.setFenbiYouhui( CommonUtil.toBigDecimal( CommonUtil.getDecimal( fenbiYouhui ) ) );
+		    fenbiYouhuiTotal = CommonUtil.add( fenbiYouhuiTotal, CommonUtil.toDouble( detail.getFenbiYouhui() ) );
+		}
+		if ( CommonUtil.isNotEmpty( detail.getIntegralYouhui() ) && CommonUtil.toDouble( detail.getIntegralYouhui() ) > 0 ) {
+		    double jifenYouhui = CommonUtil.toDouble( detail.getIntegralYouhui() );
+		    if ( j + 1 == order.getMallOrderDetail().size() ) {
+			jifenYouhui = CommonUtil.subtract( order.getJifenDiscountMoney(), jifenYouhuiTotal );
+		    }
+		    detail.setIntegralYouhui( CommonUtil.toBigDecimal( CommonUtil.getDecimal( jifenYouhui ) ) );
+		    jifenYouhuiTotal = CommonUtil.add( jifenYouhuiTotal, CommonUtil.toDouble( detail.getIntegralYouhui() ) );
+		}
+		//		logger.error( "原价：" + detail.getDetPrivivilege() + "---优惠了：" + detail.getDiscountedPrices() + "----剩余金额：" + CommonUtil.getDecimal( detail.getNewTotalPrice() ) );
+		logger.error( "商品总价：" + detail.getTotalPrice() + "使用积分数量：" + detail.getUseJifen() + "---积分总优惠：" + detail.getIntegralYouhui() + "----使用粉币数量：" + detail.getUseFenbi()
+				+ "----粉币总优惠：" + detail
+				.getFenbiYouhui() );
 	    }
 	}
 
@@ -163,9 +241,9 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	    return params;
 	}
 	logger.info( "优惠后的参数：" + JSON.toJSONString( params ) );
-	if ( CommonUtil.isNotEmpty( params ) ) {
-	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
-	}
+	//	if ( CommonUtil.isNotEmpty( params ) ) {
+	//	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+	//	}
 	return params;
     }
 
@@ -237,7 +315,8 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	    order.setUnionDiscountMoney( totalYouhuiMoney );
 	    order.setUnionCardId( unionCardId );
 	    order.setDiscountMoney( CommonUtil.add( order.getDiscountMoney(), totalYouhuiMoney ) );
-	    order.setTotalNewMoney( CommonUtil.formatDoubleNumber( shopProductNewTotal ) );
+	    order.setTotalNewMoney( shopProductNewTotal );
+	    logger.error( "totalYouhuiMoney====联盟优惠========" + totalYouhuiMoney );
 	}
 	return orderList;
     }
@@ -263,7 +342,7 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 		}
 	    }
 	}
-	busCanUseDiscountProductPrice = CommonUtil.getDecimalStr( busCanUseDiscountProductPrice, 2 );
+	//	busCanUseDiscountProductPrice = CommonUtil.getDecimalStr( busCanUseDiscountProductPrice, 2 );
 	Double busDiscountYouhui = null;//保存商家下  折扣卡优惠的总额
 	if ( busCanUseDiscountProductPrice > 0 && memberDiscount > 0 && memberDiscount < 1 ) {
 	    double discountYouhuiHouPrice = CommonUtil.multiply( busCanUseDiscountProductPrice, memberDiscount );
@@ -306,11 +385,14 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 		//		detail.setProductNewTotalPrice( discountHouPrice );
 		shopProductNewTotal = CommonUtil.add( shopProductNewTotal, detail.getNewTotalPrice() );
 		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, productYouhuiPrice );
+
+		//		logger.error( "会员折扣优惠后的价格：" + detail.getNewTotalPrice() );
 	    }
 	    logger.error( "会员折扣优惠后的价格：" + shopProductNewTotal + "--优惠了：" + totalYouhuiMoney + "元 " );
 	    order.setDiscountMoney( CommonUtil.add( order.getDiscountMoney(), totalYouhuiMoney ) );
 	    order.setTotalNewMoney( shopProductNewTotal );
 
+	    logger.error( "totalYouhuiMoney====会员折扣优惠========" + totalYouhuiMoney );
 	}
 	return orderList;
     }
@@ -340,7 +422,7 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	    if ( canUseCouponProductPrice == 0 || canUseCouponProductNum == 0 ) {//能使用优惠券的商品总价和商品总数 = 0  则跳出当前循环
 		continue;
 	    }
-	    canUseCouponProductPrice = CommonUtil.getDecimalStr( canUseCouponProductPrice, 2 );
+	    //	    canUseCouponProductPrice = CommonUtil.getDecimalStr( canUseCouponProductPrice, 2 );
 	    int cardFrom = coupons.getCouponsFrom();//优惠券来源（ 1 微信优惠券  2多粉优惠券 ）
 	    int cardType = coupons.getCardType();//卡券类型 0折扣券 1减免券
 	    int addUse = coupons.getAddUser();//是否允许叠加 0不允许 1已允许 (多粉优惠券也可以)
@@ -436,16 +518,18 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 
 		shopProductNewTotal = CommonUtil.add( shopProductNewTotal, detail.getNewTotalPrice() );
 		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, couponYouhuiPrice );
+		logger.error( "优惠券优惠后的价格：" + detail.getNewTotalPrice() + "优惠了：" + couponYouhuiPrice );
 	    }
-	    logger.error( "优惠券优惠后的价格：" + shopProductNewTotal + "--优惠了：" + totalYouhuiMoney + "元 " );
+	    logger.error( "优惠券优惠后的价格orders：" + shopProductNewTotal + "--优惠了：" + totalYouhuiMoney + "元 " );
 	    order.setCouponId( coupons.getId() );
 	    order.setCouponType( coupons.getCouponsFrom() );
 	    order.setCouponUseNum( coupons.getCouponNum() > 0 ? coupons.getCouponNum() : 0 );
 	    //	    order.setSelectCouponsId( couponsId );
 	    //	    order.setSelectCouponsType( cardFrom );
 	    //	    order.setSelectCouponsNum( couponNum > 0 ? couponNum : 0 );
+	    logger.error( "totalYouhuiMoney====优惠券优惠========" + totalYouhuiMoney );
 	    order.setDiscountMoney( CommonUtil.add( order.getDiscountMoney(), totalYouhuiMoney ) );
-	    order.setTotalNewMoney( CommonUtil.getDecimalStr( shopProductNewTotal, 2 ) );
+	    order.setTotalNewMoney( shopProductNewTotal );
 	}
 	return orderList;
     }
@@ -466,7 +550,7 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {//循环商品集合
 		if ( CommonUtil.isNotEmpty( detail.getIsCanUseFenbi() ) && "1".equals( detail.getIsCanUseFenbi().toString() )
 				&& detail.getNewTotalPrice() > 0 ) {
-		    logger.error( "能使用粉币的商品金额-------------" + detail.getNewTotalPrice() );
+		    //		    logger.error( "能使用粉币的商品金额-------------" + detail.getNewTotalPrice() );
 		    //把能使用粉币的商品 总价 累计起来
 		    busCanUseFenbiProductPrice = CommonUtil.add( busCanUseFenbiProductPrice, detail.getNewTotalPrice() );
 		    busCanUseFenbiProductNum++;
@@ -476,7 +560,7 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	if ( busCanUseFenbiProductPrice == 0 || busCanUseFenbiProductNum == 0 ) {//能使用粉币的商品总价和商品总数 = 0
 	    return orderList;
 	}
-	busCanUseFenbiProductPrice = CommonUtil.getDecimalStr( busCanUseFenbiProductPrice, 2 );
+	//	busCanUseFenbiProductPrice = CommonUtil.getDecimalStr( busCanUseFenbiProductPrice, 2 );
 	JifenAndFenbBean bean = ToOrderUtil.getJifenFenbiParams( jifenFenbiRule, 0, busCanUseFenbiProductPrice, cardMap );
 	if ( bean == null || bean.getFenbiMoney() == 0 || bean.getFenbiNum() == 0 ) {
 	    return orderList;
@@ -504,11 +588,15 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 		} else {
 		    //单个商品使用粉币优惠的金额 = （（商品的总价 / 能使用粉币的商品总价） * 粉币总共能优惠的金额）
 		    fenbiYouhuiPrice = CommonUtil.multiply( CommonUtil.div( detail.getNewTotalPrice(), busCanUseFenbiProductPrice, 10 ), bean.getFenbiMoney() );
+		    //		    logger.error( "计算：" + detail.getNewTotalPrice() + "/" + busCanUseFenbiProductPrice + "*" + bean.getFenbiMoney() );
 		}
-		if ( productTotalPrice < fenbiYouhuiPrice ) {
-		    fenbiYouhuiPrice = productTotalPrice;
-		}
+		//		if ( productTotalPrice < fenbiYouhuiPrice ) {
+		//		    fenbiYouhuiPrice = productTotalPrice;
+		//		}
 		productYouHuiHouTotalPrice = CommonUtil.subtract( productTotalPrice, fenbiYouhuiPrice );
+		if ( productYouHuiHouTotalPrice < 0 ) {
+		    productYouHuiHouTotalPrice = 0;
+		}
 
 		//		detail.setUseFenbiNum( CommonUtil.multiply( jifenFenbiRule.getFenbiRatio(), fenbiYouhuiPrice ) );
 		//		detail.setUseFenbiYouhuiPrice( fenbiYouhuiPrice );
@@ -530,13 +618,15 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 		shopYouhuiHouTotalPrice = CommonUtil.add( shopYouhuiHouTotalPrice, detail.getNewTotalPrice() );
 		useFenbiNum += detail.getUseFenbi();
 		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, fenbiYouhuiPrice );
+		//		logger.error( "粉币优惠后的价格：" + detail.getNewTotalPrice() + "--优惠了：" + fenbiYouhuiPrice);
 	    }
 	    logger.error( "粉币优惠后的价格：" + shopYouhuiHouTotalPrice + "--优惠了：" + totalYouhuiMoney + "元 -- 使用了：" + useFenbiNum + "粉币" );
-	    order.setTotalNewMoney( CommonUtil.getDecimalStr( shopYouhuiHouTotalPrice, 2 ) );
+	    order.setTotalNewMoney( shopYouhuiHouTotalPrice );
 	    order.setUseFenbi( useFenbiNum );
 	    //	    order.setFenbiYouhuiMoney( totalYouhuiMoney );
 	    order.setFenbiDiscountMoney( totalYouhuiMoney );
 	    order.setDiscountMoney( CommonUtil.add( order.getDiscountMoney(), totalYouhuiMoney ) );
+	    logger.error( "totalYouhuiMoney====粉币优惠========" + totalYouhuiMoney );
 	}
 	return orderList;
     }
@@ -566,7 +656,7 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	if ( busCanUseJifenProductPrice == 0 || busCanUseJifenProductNum == 0 ) {//能使用积分的商品总价和商品总数 = 0
 	    return orderList;
 	}
-	busCanUseJifenProductPrice = CommonUtil.getDecimalStr( busCanUseJifenProductPrice, 2 );
+	//	busCanUseJifenProductPrice = CommonUtil.getDecimalStr( busCanUseJifenProductPrice, 2 );
 	JifenAndFenbBean bean = ToOrderUtil.getJifenFenbiParams( jifenFenbiRule, busCanUseJifenProductPrice, 0, cardMap );
 	if ( bean == null || bean.getJifenMoney() == 0 || bean.getJifenNum() == 0 ) {
 	    return orderList;
@@ -594,12 +684,15 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 		    jifenYouhuiPrice = CommonUtil.subtract( bean.getJifenMoney(), useJifenTotalPrice );
 		} else {
 		    //单个商品使用积分优惠的金额 = （（商品的总价 / 能使用积分的商品总价） * 积分总共能优惠的金额）
-		    jifenYouhuiPrice = CommonUtil.multiply( CommonUtil.div( detail.getNewTotalPrice(), busCanUseJifenProductPrice, 3 ), bean.getJifenMoney() );
+		    jifenYouhuiPrice = CommonUtil.multiply( CommonUtil.div( detail.getNewTotalPrice(), busCanUseJifenProductPrice, 10 ), bean.getJifenMoney() );
 		}
-		if ( productTotalPrice < jifenYouhuiPrice ) {
-		    jifenYouhuiPrice = productTotalPrice;
-		}
+		//		if ( productTotalPrice < jifenYouhuiPrice ) {
+		//		    jifenYouhuiPrice = productTotalPrice;
+		//		}
 		productYouHuiHouTotalPrice = CommonUtil.subtract( productTotalPrice, jifenYouhuiPrice );
+		if ( productYouHuiHouTotalPrice < 0 ) {
+		    productYouHuiHouTotalPrice = 0;
+		}
 
 		//		detail.setUseJifenNum( CommonUtil.multiply( jifenFenbiRule.getJifenRatio(), jifenYouhuiPrice ) );
 		//		detail.setUseJifenYouhuiPrice( jifenYouhuiPrice );
@@ -612,8 +705,8 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 		discount = CommonUtil.add( discount, jifenYouhuiPrice );
 		detail.setDiscountedPrices( CommonUtil.toBigDecimal( discount ) );
 		detail.setNewTotalPrice( productYouHuiHouTotalPrice );
-		detail.setUseFenbi( CommonUtil.multiply( jifenFenbiRule.getJifenRatio(), jifenYouhuiPrice ) );
-		detail.setFenbiYouhui( CommonUtil.toBigDecimal( jifenYouhuiPrice ) );
+		detail.setUseJifen( CommonUtil.multiply( jifenFenbiRule.getJifenRatio(), jifenYouhuiPrice ) );
+		detail.setIntegralYouhui( CommonUtil.toBigDecimal( jifenYouhuiPrice ) );
 
 		useJifenTotalPrice += jifenYouhuiPrice;
 		useJifenTotalNum++;
@@ -623,11 +716,12 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 		totalYouhuiMoney = CommonUtil.add( totalYouhuiMoney, jifenYouhuiPrice );
 	    }
 	    logger.error( "积分优惠后的价格：" + shopProductNewTotal + "--优惠了：" + totalYouhuiMoney + "元 -- 使用了：" + useJifenNum + "积分" );
-	    order.setTotalNewMoney( CommonUtil.getDecimalStr( shopProductNewTotal, 2 ) );
+	    order.setTotalNewMoney( shopProductNewTotal );
 	    order.setUseJifen( useJifenNum );
 	    //	    order.setJifenYouhuiMoney( totalYouhuiMoney );
 	    order.setJifenDiscountMoney( totalYouhuiMoney );
 	    order.setDiscountMoney( CommonUtil.add( order.getDiscountMoney(), totalYouhuiMoney ) );
+	    logger.error( "totalYouhuiMoney====积分优惠========" + totalYouhuiMoney );
 	}
 
 	return orderList;

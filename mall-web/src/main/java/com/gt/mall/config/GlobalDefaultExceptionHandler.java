@@ -2,6 +2,7 @@ package com.gt.mall.config;
 
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.exception.ResponseEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,15 @@ public class GlobalDefaultExceptionHandler {
 	logger.error( e.getMessage() );
 	e.printStackTrace();
 	return modelAndView;
+    }
+
+    // 页面
+    // 业务异常处理 页面跳转
+    @ResponseBody
+    @ExceptionHandler( value = BusinessException.class )
+    public ErrorInfo< String > defaultErrorHandlerModel( HttpServletRequest request, BusinessException e ) {
+	logger.error( "错误：" + e.getCode() + "---" + e.getMessage() + "---" + e.getData() );
+	return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
     }
 
     // 统一异常处理 Ajax请求
