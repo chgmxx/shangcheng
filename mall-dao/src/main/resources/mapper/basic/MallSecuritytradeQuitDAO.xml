@@ -18,5 +18,37 @@
     <sql id="Base_Column_List">
         id, create_time, quit_reason_id, remark, user_id , check_status, refuse_reason , check_time
     </sql>
+	<select id="selectAllByPage" resultType="java.util.Map">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM t_mall_securitytrade_quit a
+		WHERE 1=1
+		<if test="checkStatus != null and checkStatus != '' ">
+			and a.check_status =#{checkStatus}
+		</if>
+		<if test="userIds != null">
+			and a.user_id in
+			<foreach collection="userIds" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</if>
+		limit #{firstNum},#{maxNum}
+	</select>
+	<select id="selectAllCount" resultType="java.lang.Integer">
+		SELECT count(a.id)
+		FROM t_mall_securitytrade_quit a
+		WHERE 1=1
+		<if test="userIds != null">
+			and a.user_id in
+			<foreach collection="userIds" item="id" index="index"
+					 open="(" close=")" separator=",">
+				#{id}
+			</foreach>
+		</if>
+		<if test="checkStatus != null and checkStatus != '' ">
+			and a.check_status =#{checkStatus}
+		</if>
+	</select>
 
 </mapper>

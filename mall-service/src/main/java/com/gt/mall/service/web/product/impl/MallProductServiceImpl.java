@@ -2636,8 +2636,10 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
 	param.put( "curPage", curPage );
 	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete=0 and check_status ==1  and is_platform_check = 0" );
-	wrapper.in( "user_id", param.get( "userIds" ).toString() );
+	wrapper.where( "is_delete=0 and check_status =1  and is_platform_check = 0" );
+	if ( CommonUtil.isNotEmpty( param.get( "userIds" ) ) ) {
+	    wrapper.in( "user_id", param.get( "userIds" ).toString() );
+	}
 	int count = mallProductDAO.selectCount( wrapper );
 
 	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
@@ -2646,7 +2648,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	param.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	if ( count > 0 ) {// 判断商品是否有数据
-	    param.put( "userIds", param.get( "userIds" ).toString().split( "," ) );
+	    if ( CommonUtil.isNotEmpty( param.get( "userIds" ) ) ) {
+		param.put( "userIds", param.get( "userIds" ).toString().split( "," ) );
+	    }
 	    productList = mallProductDAO.selectWaitCheckList( param );// 查询商品总数
 	}
 	page.setSubList( productList );

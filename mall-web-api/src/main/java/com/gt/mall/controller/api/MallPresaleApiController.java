@@ -43,6 +43,8 @@ public class MallPresaleApiController {
     @RequestMapping( value = "/paySuccessPresale", method = RequestMethod.GET )
     public ServerResponse paySuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
+	    //params 传参 out_trade_no：保证金编号 transaction_id：支付单号
+	    logger.info( "交纳保证金成功回调参数：" + JSONObject.fromObject( params ) );
 	    mallPresaleDepositService.paySuccessPresale( params );
 	} catch ( Exception e ) {
 	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
@@ -64,18 +66,22 @@ public class MallPresaleApiController {
 	    wrapper.where( "deposit_no= {0}", outTradeNo );
 	    Map< String,Object > deposit = mallPresaleDepositService.selectMap( wrapper );
 
-	    Map< String,Object > map = new HashMap<>();
-	    map.put( "id", deposit.get( "id" ) );
-	    map.put( "user_id", deposit.get( "userId" ) );
-	    map.put( "pay_way", deposit.get( "payWay" ) );
-	    map.put( "deposit_money", deposit.get( "depositMoney" ) );
-	    map.put( "deposit_no", deposit.get( "depositNo" ) );
-	    Map< String,Object > result = mallPresaleDepositService.returnEndPresale( map );
-	    if ( CommonUtil.isNotEmpty( result.get( "result" ) ) ) {
-		boolean flag = (boolean) result.get( "result" );
-		if ( !flag ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+	    if ( deposit !=null && deposit.size()>0 ) {
+		Map< String,Object > map = new HashMap<>();
+		map.put( "id", deposit.get( "id" ) );
+		map.put( "user_id", deposit.get( "userId" ) );
+		map.put( "pay_way", deposit.get( "payWay" ) );
+		map.put( "deposit_money", deposit.get( "depositMoney" ) );
+		map.put( "deposit_no", deposit.get( "depositNo" ) );
+		Map< String,Object > result = mallPresaleDepositService.returnEndPresale( map );
+		if ( CommonUtil.isNotEmpty( result.get( "result" ) ) ) {
+		    boolean flag = (boolean) result.get( "result" );
+		    if ( !flag ) {
+			return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+		    }
 		}
+	    }else{
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退定金成功回调接口异常" );
 	    }
 
 	} catch ( Exception e ) {

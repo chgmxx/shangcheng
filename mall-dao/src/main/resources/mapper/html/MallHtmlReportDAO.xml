@@ -27,7 +27,7 @@
     </select>
     <select id="selectAllByPage" resultType="java.util.Map">
         SELECT
-        <include refid="Base_Column_List"/>,a.htmlname,a.bus_user_id,a.codeUrl
+        r.id, r.html_id , r.style,r.report_num ,a.htmlname,a.bus_user_id,a.codeUrl
         FROM t_mall_html_report r
         LEFT JOIN t_mall_html a ON r.`html_id`=a.id
         WHERE 1=1
@@ -35,14 +35,44 @@
             and a.htmlname =#{htmlName}
         </if>
         <if test="userIds != null">
-           and a.pid in
+            and(
+            a.pid in
             <foreach collection="userIds" item="id" index="index"
                      open="(" close=")" separator=",">
                 #{id}
             </foreach>
+            or a.bus_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            )
         </if>
         limit #{firstNum},#{maxNum}
 
+    </select>
+    <select id="selectAllCount" resultType="java.lang.Integer">
+        SELECT count(r.id)
+        FROM t_mall_html_report r
+        LEFT JOIN t_mall_html a ON r.`html_id`=a.id
+        WHERE 1=1
+        <if test="htmlName != null and htmlname != '' ">
+            and a.htmlname =#{htmlName}
+        </if>
+        <if test="userIds != null">
+            and(
+            a.pid in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            or a.bus_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
     </select>
 
 </mapper>

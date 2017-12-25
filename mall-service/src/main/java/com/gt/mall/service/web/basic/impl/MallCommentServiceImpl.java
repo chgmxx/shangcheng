@@ -91,7 +91,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
     @Override
     public PageUtil selectCommentPage( Map< String,Object > params, List< Map< String,Object > > shoplist ) {
 	List< Map< String,Object > > productList = null;
-	int pageSize = 10;
+	int pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 10 : CommonUtil.toInteger( params.get( "pageSize" ) );
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );

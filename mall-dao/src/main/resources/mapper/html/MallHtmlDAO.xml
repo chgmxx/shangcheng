@@ -80,13 +80,42 @@
             and a.htmlname =#{htmlName}
         </if>
         <if test="userIds != null">
-            and a.pid in
+            and(
+            a.pid in
             <foreach collection="userIds" item="id" index="index"
                      open="(" close=")" separator=",">
                 #{id}
             </foreach>
+            or a.bus_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            )
         </if>
         limit #{firstNum},#{maxNum}
+    </select>
+    <select id="selectAllCount" resultType="java.lang.Integer">
+        SELECT count(a.id)
+        FROM t_mall_html a
+        WHERE 1=1
+        <if test="htmlName != null and htmlname != '' ">
+            and a.htmlname =#{htmlName}
+        </if>
+        <if test="userIds != null">
+            and(
+            a.pid in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            or a.bus_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
     </select>
 
 </mapper>

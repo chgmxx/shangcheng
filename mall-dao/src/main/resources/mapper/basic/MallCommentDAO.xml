@@ -160,6 +160,13 @@
                 c.shop_id= #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
+        <if test="userIds != null">
+            and c.user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
         order by c.createTime desc
     </select>
     <select id="selectCommentList" parameterType="Map" resultType="Map">
@@ -193,6 +200,13 @@
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 c.shop_id= #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="userIds != null">
+            and c.user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
             </foreach>
         </if>
         order by c.createTime desc

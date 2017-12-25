@@ -8,6 +8,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.utils.CommonUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -50,7 +51,7 @@ public class MallOrderApiController {
 		    @ApiImplicitParam( name = "totalFee", value = "订单金额", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "memberId", value = "会员ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
-    @RequestMapping( value = "/scanLinePay", method = RequestMethod.GET )
+    @RequestMapping( value = "/scanLinePay", method = RequestMethod.POST )
     public ServerResponse scanLinePay( HttpServletRequest request, HttpServletResponse response, Integer shopId, String totalFee, Integer memberId ) {
 	try {
 	    Member member = memberService.findMemberById( memberId, null );
@@ -58,13 +59,16 @@ public class MallOrderApiController {
 	    MallOrder order = new MallOrder();
 	    order.setOrderNo( "SC" + System.currentTimeMillis() );
 	    order.setOrderMoney( new BigDecimal( totalFee ) );
-	    order.setOrderPayWay( 5 );//下线支付
-	    order.setSellerUserId( wxPublicUsers.getId() );
+	    order.setOrderPayWay( 5 );//扫码支付
+	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+		order.setSellerUserId( wxPublicUsers.getId() );//公众号ID
+	    }
 	    order.setShopId( shopId );
 	    order.setOrderStatus( 1 );
 	    order.setCreateTime( new Date() );
 	    order.setPayTime( new Date() );
-	    order.setBuyerUserId( wxPublicUsers.getBusUserId() );
+	    order.setBuyerUserId( member.getId() );//买家ID
+	    order.setBusUserId( member.getBusid() );//商家ID
 	    mallOrderService.insert( order );
 	} catch ( Exception e ) {
 	    logger.error( "线下订单接口异常：" + e.getMessage() );

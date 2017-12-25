@@ -72,6 +72,15 @@ public interface MallHtmlDAO extends BaseMapper<MallHtml> {
     int countHtmlModelList();
 
     /**
+     * 统计数量
+     *
+     * @param params
+     *
+     * @return 数量
+     */
+    int selectAllCount( Map< String,Object > params );
+
+    /**
      * 得到所有的H5模板列表
      *
      * @param params user_id 商家Id，firstNum：页数，maxNum 数量

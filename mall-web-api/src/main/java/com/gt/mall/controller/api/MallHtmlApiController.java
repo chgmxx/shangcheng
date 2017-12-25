@@ -53,9 +53,9 @@ public class MallHtmlApiController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "htmlName", value = "商城名称", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "userIds", value = "商城用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
+		    @ApiImplicitParam( name = "userIds", value = "商家用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/htmlList", method = RequestMethod.GET )
+    @RequestMapping( value = "/htmlList", method = RequestMethod.POST )
     public ServerResponse htmlList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String htmlName, String userIds ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -68,8 +68,7 @@ public class MallHtmlApiController {
 	    if ( CommonUtil.isNotEmpty( userIds ) ) {
 		params.put( "userIds", userIds.split( "," ) );
 	    }
-	    Wrapper< MallHtml > wrapper = new EntityWrapper<>();
-	    int count = mallHtmlService.selectCount( wrapper );
+	    int count = mallHtmlDAO.selectAllCount( params );
 
 	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
 	    int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
@@ -91,7 +90,7 @@ public class MallHtmlApiController {
 
     @ApiOperation( value = "设置为模板", notes = "设置为模板" )
     @ResponseBody
-    @RequestMapping( value = "/setModel", method = RequestMethod.GET )
+    @RequestMapping( value = "/setModel", method = RequestMethod.POST )
     public ServerResponse setModel( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板Id", required = true ) @RequestParam Integer id ) {
 	try {
 	    MallHtml mallHtml = mallHtmlService.selectById( id );
@@ -114,7 +113,7 @@ public class MallHtmlApiController {
 
     @ApiOperation( value = "发布模板", notes = "发布模板" )
     @ResponseBody
-    @RequestMapping( value = "/publishModel", method = RequestMethod.GET )
+    @RequestMapping( value = "/publishModel", method = RequestMethod.POST )
     public ServerResponse publishModel( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "模板Id", required = true ) @RequestParam Integer id ) {
 	try {
@@ -134,12 +133,12 @@ public class MallHtmlApiController {
     }
 
     @ApiOperation( value = "修改h5商城", notes = "修改h5商城" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "模板ID", paramType = "query", required = false, dataType = "int" ),
+    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "模板ID", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "introduce", value = "商城介绍", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "htmlName", value = "商城名称", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "htmlName", value = "商城名称", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "bakurl", value = "背景图路径", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/updateHtml", method = RequestMethod.GET )
+    @RequestMapping( value = "/updateHtml", method = RequestMethod.POST )
     public ServerResponse updateHtml( HttpServletRequest request, HttpServletResponse response, Integer id, String htmlName, String introduce, String bakurl ) {
 	try {
 	    MallHtml mallHtml = mallHtmlService.selectById( id );
@@ -161,8 +160,9 @@ public class MallHtmlApiController {
 
     @ApiOperation( value = "删除H5商城", notes = "删除H5商城" )
     @ResponseBody
-    @RequestMapping( value = "/delHtml", method = RequestMethod.GET )
-    public ServerResponse delHtml( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "模板Id", required = true ) @RequestParam Integer id ) {
+    @RequestMapping( value = "/delHtml", method = RequestMethod.POST )
+    public ServerResponse delHtml( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "模板Id", required = true ) @RequestParam Integer id ) {
 	try {
 	    MallHtml mallHtml = mallHtmlService.selectById( id );
 	    if ( mallHtml != null ) {
@@ -184,9 +184,9 @@ public class MallHtmlApiController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "htmlName", value = "商城名称", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "userIds", value = "商城用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
+		    @ApiImplicitParam( name = "userIds", value = "商家用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/htmlReport", method = RequestMethod.GET )
+    @RequestMapping( value = "/htmlReport", method = RequestMethod.POST )
     public ServerResponse htmlReport( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String htmlName, String userIds ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -199,8 +199,7 @@ public class MallHtmlApiController {
 	    if ( CommonUtil.isNotEmpty( userIds ) ) {
 		params.put( "userIds", userIds.split( "," ) );
 	    }
-	    Wrapper< MallHtml > wrapper = new EntityWrapper<>();
-	    int count = mallHtmlService.selectCount( wrapper );
+	    int count = mallHtmlReportDAO.selectAllCount( params );
 
 	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
 	    int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
@@ -222,7 +221,7 @@ public class MallHtmlApiController {
 
     @ApiOperation( value = "禁用H5商城", notes = "禁用H5商城" )
     @ResponseBody
-    @RequestMapping( value = "/disableHtml", method = RequestMethod.GET )
+    @RequestMapping( value = "/disableHtml", method = RequestMethod.POST )
     public ServerResponse disableHtml( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "htmlId", value = "模板Id", required = true ) @RequestParam Integer htmlId ) {
 	try {
@@ -243,8 +242,8 @@ public class MallHtmlApiController {
 
     @ApiOperation( value = "删除举报信息", notes = "删除举报信息" )
     @ResponseBody
-    @RequestMapping( value = "/disableHtml", method = RequestMethod.GET )
-    public ServerResponse delReport( HttpServletRequest request, HttpServletResponse response,
+    @RequestMapping( value = "/disableReport", method = RequestMethod.POST )
+    public ServerResponse disableReport( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "htmlId", value = "模板Id", required = true ) @RequestParam Integer htmlId ) {
 	try {
 	    MallHtml mallHtml = mallHtmlService.selectById( htmlId );
@@ -268,13 +267,13 @@ public class MallHtmlApiController {
 
     @ApiOperation( value = "获取举报明细", notes = "获取举报明细" )
     @ResponseBody
-    @RequestMapping( value = "/reportInfo", method = RequestMethod.GET )
+    @RequestMapping( value = "/reportInfo", method = RequestMethod.POST )
     public ServerResponse reportInfo( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "htmlId", value = "模板Id", required = true ) @RequestParam Integer htmlId ) {
 	List< Map< String,Object > > reportList = null;
 	try {
 	    Wrapper< MallHtmlReport > wrapper = new EntityWrapper<>();
-	    wrapper.setSqlSelect( "style,SUM(report_num)" );
+	    wrapper.setSqlSelect( "style,SUM(report_num) reportNum " );
 	    wrapper.where( "html_id = {0}", htmlId );
 	    wrapper.groupBy( "style" );
 	    reportList = mallHtmlReportDAO.selectMaps( wrapper );

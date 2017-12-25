@@ -451,8 +451,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
   /*  @Scheduled( cron = "0/10 * * * * ?" ) // 每10秒执行一次*/
     @Override
     public void cancelReturn() {
-	Date date1 = DateTimeKit.addDays( -7 );
-	String date3 = DateTimeKit.format( date1 );//7天后的时间日期
+//	Date date1 = DateTimeKit.addDays( -7 );
+//	String date3 = DateTimeKit.format( date1 );//7天后的时间日期
 
 	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
 	//查询 当前时间 大于等于 7天后的时间

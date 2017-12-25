@@ -60,7 +60,7 @@ public class MallProductApiController {
 		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
 		    @ApiImplicitParam( name = "userIds", value = "商城用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/waitCheckList", method = RequestMethod.GET )
+    @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
     public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String userIds ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
@@ -82,7 +82,7 @@ public class MallProductApiController {
 
     @ApiOperation( value = "查看商品明细", notes = "查看商品明细" )
     @ResponseBody
-    @RequestMapping( value = "/productDeatil", method = RequestMethod.GET )
+    @RequestMapping( value = "/productDeatil", method = RequestMethod.POST )
     public ServerResponse productDeatil( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "商品Id", required = true ) @RequestParam Integer id ) {
 	Map< String,Object > result = new HashMap<>();
@@ -109,7 +109,7 @@ public class MallProductApiController {
 		    @ApiImplicitParam( name = "status", value = "审核状态 -1审核失败 1审核成功", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "checkReason", value = "审核不通过的原因", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/productCheck", method = RequestMethod.GET )
+    @RequestMapping( value = "/productCheck", method = RequestMethod.POST )
     public ServerResponse productCheck( HttpServletRequest request, HttpServletResponse response, Integer id, Integer status, String checkReason ) {
 
 	try {
@@ -221,7 +221,8 @@ public class MallProductApiController {
 			    }
 			}
 		    }
-		    /*proSql = "select id,inv_num,inv_sale_num from t_mall_product_inventory where product_id = " + proId + " and is_delete = 0 and specifica_ids = '" + specIds + "'";*/
+		    /*proSql = "select id,inv_num,inv_sale_num from t_mall_product_inventory where
+		     product_id = " + proId + " and is_delete = 0 and specifica_ids = '" + specIds + "'";*/
 		    Wrapper proWrapper = new EntityWrapper();
 		    proWrapper.setSqlSelect( "id,inv_num,inv_sale_num " );
 		    proWrapper.where( "product_id = {0} and is_delete = 0 and specifica_ids = {1}", proId, specIds );

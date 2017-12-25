@@ -181,7 +181,7 @@
     </select>
     <!-- 查询所有待审核的商品信息-->
     <select id="selectWaitCheckList" resultType="java.util.Map">
-        select p.id as id, p.pro_name as proName, p.pro_price as proPrice,p.pro_stock_total as stockTotal ,p.pro_type_id as proTypeId
+        select p.id as id, p.pro_name as proName, p.pro_price as proPrice,p.pro_stock_total as stockTotal ,p.pro_type_id as proTypeId,
         p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish, p.check_status as checkStatus,
         p.check_reason as checkReason,p.shop_id as shopId, p.is_specifica as isSpecifica, p.is_platform_check as isPlatFormCheck
         from t_mall_product p
