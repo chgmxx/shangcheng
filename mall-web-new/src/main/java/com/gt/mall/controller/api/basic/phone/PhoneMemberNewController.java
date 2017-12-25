@@ -1,6 +1,7 @@
 package com.gt.mall.controller.api.basic.phone;
 
 import com.gt.api.bean.session.Member;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -9,6 +10,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.result.phone.PhoneMemberResult;
+import com.gt.mall.result.phone.PhoneUrlResult;
 import com.gt.mall.result.phone.product.PhoneCollectProductResult;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -17,6 +19,7 @@ import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -211,6 +214,27 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	    logger.error( "删除收藏商品的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "删除收藏商品失败" );
+	}
+    }
+
+    @ApiOperation( value = "获取其他项目的地址", notes = "获取其他项目的地址", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "Integer" ) )
+    @ResponseBody
+    @PostMapping( value = "memberCenter", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse< PhoneUrlResult > memberCenter( HttpServletRequest request, HttpServletResponse response, String busId, Integer type ) {
+	try {
+	    PhoneUrlResult result = new PhoneUrlResult();
+	    String memberCenterUrl = PropertiesUtil.getWxmpDomain() + Constants.MEMBER_URL.replace( "${userid}", busId );
+	    //	    String memberCenterUrl = PropertiesUtil.getMemberDomain() + Constants.MEMBER_NEW_URL.replace( "${userid}", busId.toString() );
+
+	    String couponUrl = PropertiesUtil.getWxmpDomain() + Constants.COUPON_URL.replace( "${userid}", busId );
+	    result.setMemberCenterUrl( memberCenterUrl );
+	    result.setMemberCouponUrl( couponUrl );
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	} catch ( Exception e ) {
+	    logger.error( "获取会员中心的地址异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "获取会员中心的地址" );
 	}
     }
 

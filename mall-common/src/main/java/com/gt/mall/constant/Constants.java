@@ -239,4 +239,8 @@ public class Constants {
 
     public static final String MEMBER_URL = "/phoneMemberController/${userid}/79B4DE7C/findMember_1.do";
 
+    public static final String MEMBER_NEW_URL = "/html/phone/index.html#/home/${userid}";
+
+    public static final String COUPON_URL = "/phone_2MemberController/79B4DE7C/memberCardList_1.do?busId=${userid}";
+
 }

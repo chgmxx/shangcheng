@@ -2,6 +2,7 @@ package com.gt.mall.controller.api.product.phone;
 
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
@@ -17,6 +18,7 @@ import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallCollectService;
@@ -32,10 +34,7 @@ import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.MallRedisUtils;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -114,6 +113,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private MallSearchKeywordService      mallSearchKeywordService;
     @Autowired
     private CoreService                   coreService;
+    @Autowired
+    private WxPublicUserService           wxPublicUserService;
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -160,6 +161,11 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	try {
 	    if ( CommonUtil.isNotEmpty( params.getType() ) && params.getType() > 0 ) {//判断活动是否已经过期
 		Integer status = coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( params.getType().toString() ) );
+		if ( CommonUtil.isNotEmpty( status ) ) {
+		    if ( !status.toString().equals( "0" ) ) {
+
+		    }
+		}
 	    }
 	    if ( CommonUtil.isNotEmpty( params.getSearchContent() ) ) {
 		params.setSearchContent( CommonUtil.urlEncode( params.getSearchContent() ) );//搜索内容转码
@@ -296,7 +302,12 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    result.setSecuritytrade( Boolean.valueOf( map.get( "isSecuritytrade" ).toString() ) );
 		}
 	    }
-
+	    WxPublicUsers publicUser = wxPublicUserService.selectByUserId( loginDTO.getBusId() );
+	    if ( CommonUtil.isNotEmpty( publicUser ) && CommonUtil.isNotEmpty( member ) ) {
+		if ( CommonUtil.isNotEmpty( publicUser.getQrcodeUrl() ) ) {
+		    result.setQrcodeUrl( PropertiesUtil.getResourceUrl() + publicUser.getQrcodeUrl() );
+		}
+	    }
 	} catch ( BusinessException be ) {
 	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {

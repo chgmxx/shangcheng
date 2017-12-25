@@ -22,7 +22,7 @@ public class CoreServiceImpl implements CoreService {
     @Override
     public Integer payModel( int busId, String modelStyle ) {
 	Map< String,Object > params = new HashMap<>();
-	params.put( "busId", busId );
+	params.put( "busid", busId );
 	params.put( "modelStyle", modelStyle );
 	//判断商家信息 1是否过期 2公众号是否变更过
 	String result = HttpSignUtil.signHttpSelect( params, BUS_ADDER + "passModel", 4 );
