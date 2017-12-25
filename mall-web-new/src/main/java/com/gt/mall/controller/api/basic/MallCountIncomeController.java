@@ -59,8 +59,8 @@ public class MallCountIncomeController extends BaseController {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    Calendar end = Calendar.getInstance();//定义日期实例
 	    Calendar start = Calendar.getInstance();//定义日期实例
-	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-22" );//定义起始日期
-	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-21" );//定义起始日期
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-25" );//定义起始日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-23" );//定义起始日期
 	    end.setTime( d1 );
 	    start.setTime( d2 );
 
@@ -175,6 +175,7 @@ public class MallCountIncomeController extends BaseController {
 	    //	    result.put( "date", date );//日份列表
 	    result.put( "data", data );//数据列表
 
+
 	    Calendar cal = Calendar.getInstance();
 	    String day = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
 	    cal.add( Calendar.DATE, -1 );
@@ -190,22 +191,19 @@ public class MallCountIncomeController extends BaseController {
 		groupWrapper.and( "shop_id ={0}", shopId );
 	    }
 	    Integer todayPayOrderNum = mallOrderService.selectCount( groupWrapper );
-	    groupWrapper = new EntityWrapper();
-	    groupWrapper.where( " order_status = 1" );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
-		groupWrapper.in( "shop_id", shopIds );
-	    } else {
-		groupWrapper.and( "shop_id ={0}", shopId );
+
+	    Map< String,Object > params1 = new HashMap<>();
+	    params1.put( "userId", user.getId() );
+	    if ( CommonUtil.isNotEmpty( shopId ) ) {
+		params1.put( "shopId", shopId );
+	    }else {
+		params1.put( "shoplist", shoplist );
 	    }
-	    Integer waitPayOrderNum = mallOrderService.selectCount( groupWrapper );
-	    groupWrapper = new EntityWrapper();
-	    groupWrapper.where( " order_status = 2 " );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
-		groupWrapper.in( "shop_id", shopIds );
-	    } else {
-		groupWrapper.and( "shop_id ={0}", shopId );
-	    }
-	    Integer waitDeliveryOrderNum = mallOrderService.selectCount( groupWrapper );
+	    params1.put( "status", "1" );
+	    Integer waitPayOrderNum = mallOrderService.count( params1 );
+
+	    params1.put( "status", "2" );
+	    Integer waitDeliveryOrderNum = mallOrderService.count( params1 );
 
 	    result.put( "todayPayOrderNum", todayPayOrderNum );//今日付款订单数
 	    result.put( "waitPayOrderNum", waitPayOrderNum );//待付款订单数
