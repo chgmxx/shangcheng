@@ -812,54 +812,5 @@ public class CommonUtil {
 	return model_style;
     }
 
-    /**
-     * 获取活动名称（增值服务用到）
-     *
-     * @param type 1.团购商品 2积分 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品
-     *
-     * @return 活动名称
-     */
-    public static String getActivityName( String type ) {
-	if ( CommonUtil.isEmpty( type ) ) {
-	    return null;
-	}
-	switch ( type ) {
-	    case "1":
-		return "团购";
-	    case "2":
-		return "积分商城";
-	    case "3":
-		return "秒杀";
-	    case "4":
-		return "拍卖";
-	    case "5":
-		return "粉币";
-	    case "6":
-		return "预售";
-	    case "7":
-		return "批发";
-	    default:
-		break;
-	}
-	return type;
-    }
-
-    /**
-     * 获取活动结果是否过期
-     *
-     * @param type 1.团购商品 2积分 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品
-     *
-     * @return 是否已过期
-     */
-    public static String getAddedStyleError( String type, int status ) {
-	if ( status == 1 ) {
-	    return "商家已过期";
-	} else if ( status == 2 ) {
-	    return getActivityName( type ) + "已过期";
-	} else if ( status == 3 ) {
-	    return getActivityName( type ) + "已删除";
-	}
-	return "";
-    }
 
 }
