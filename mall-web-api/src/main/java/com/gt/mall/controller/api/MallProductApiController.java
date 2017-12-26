@@ -3,11 +3,13 @@ package com.gt.mall.controller.api;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.product.MallProductDetailService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -54,6 +56,8 @@ public class MallProductApiController {
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MallProductInventoryService productInventoryService;
+    @Autowired
+    private MallImageAssociativeService mallImageAssociativeService;//图片业务处理类
 
     @ApiOperation( value = "待审核商品的接口", notes = "获取所有商家待审核的商品" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
@@ -77,7 +81,7 @@ public class MallProductApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取待审核商品的异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result,false );
     }
 
     @ApiOperation( value = "查看商品明细", notes = "查看商品明细" )
@@ -87,15 +91,16 @@ public class MallProductApiController {
 		    @ApiParam( name = "id", value = "商品Id", required = true ) @RequestParam Integer id ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    MallProduct product = mallProductService.selectById( id );
-	    if ( product != null ) {
-		if ( product.getIsDelete() > 0 ) {
-		    product = null;
-		}
-		MallProductDetail productDetail = mallProductDetailService.selectByProductId( product.getId() );
-		result.put( "product", product );
-		result.put( "productDetail", productDetail );
-	    }
+	    // 查询商品图片
+	    Map< String,Object > imageParam = new HashMap<>();
+	    imageParam.put( "assId", id );
+	    imageParam.put( "assType", 1 );
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.getParamByProductId( imageParam );
+
+	    MallProductDetail productDetail = mallProductDetailService.selectByProductId( id );
+	    result.put( "imageList", imageList );
+	    result.put( "productDetail", productDetail );
+
 	} catch ( Exception e ) {
 	    logger.error( "查看商品明细异常：" + e.getMessage() );
 	    e.printStackTrace();

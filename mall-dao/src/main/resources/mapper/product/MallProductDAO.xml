@@ -183,7 +183,7 @@
     <select id="selectWaitCheckList" resultType="java.util.Map">
         select p.id as id, p.pro_name as proName, p.pro_price as proPrice,p.pro_stock_total as stockTotal ,p.pro_type_id as proTypeId,
         p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish, p.check_status as checkStatus,
-        p.check_reason as checkReason,p.shop_id as shopId, p.is_specifica as isSpecifica, p.is_platform_check as isPlatFormCheck
+        p.check_reason as checkReason,p.shop_id as shopId, p.is_specifica as isSpecifica, p.is_platform_check as isPlatFormCheck,p.user_id as userId
         from t_mall_product p
         where p.is_delete=0 and p.is_mall_show=0
         <if test="userIds != null">

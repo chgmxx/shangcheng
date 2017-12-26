@@ -3,6 +3,7 @@ package com.gt.mall.controller.api;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.basic.MallSecuritytradeQuitDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallComment;
@@ -11,6 +12,7 @@ import com.gt.mall.entity.basic.MallSecuritytradeQuit;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallSecuritytradeQuitService;
@@ -57,6 +59,8 @@ public class MallSecuritytradeApiController {
     private MallSecuritytradeQuitDAO     mallSecuritytradeQuitDAO;
     @Autowired
     private MallPaySetService            mallPaySetService;
+    @Autowired
+    private DictService                  dictService;
 
     @ApiOperation( value = "待审核退出担保交易的接口", notes = "获取所有待审核退出担保交易的列表" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
@@ -68,12 +72,12 @@ public class MallSecuritytradeApiController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 
-	    List< Map< String,Object > > htmlList = null;
+	    List< Map< String,Object > > securitytradeList = null;
 	    curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
 	    pageSize = CommonUtil.isEmpty( pageSize ) ? 15 : pageSize;
 
 	    Map< String,Object > params = new HashMap<>();
-	    params.put( "checkStatus","0");
+	    params.put( "checkStatus", "0" );
 	    if ( CommonUtil.isNotEmpty( userIds ) ) {
 		params.put( "userIds", userIds.split( "," ) );
 	    }
@@ -85,20 +89,31 @@ public class MallSecuritytradeApiController {
 	    params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	    if ( count > 0 ) {// 判断是否有数据
-		htmlList = mallSecuritytradeQuitDAO.selectAllByPage( params );// 查询h5商城总数
+		securitytradeList = mallSecuritytradeQuitDAO.selectAllByPage( params );// 查询退出申请总数
+		List< DictBean > typeMap = dictService.getDict( "1073" );
+		if ( securitytradeList != null && securitytradeList.size() > 0 && typeMap.size() > 0 ) {
+		    for ( Map< String,Object > map : securitytradeList ) {
+			Integer quitReasonId = CommonUtil.toInteger( map.get( "quit_reason_id" ) );
+			for ( DictBean bean : typeMap ) {
+			    if ( quitReasonId == bean.getItem_key() ) {
+				map.put( "reasonName", bean.getItem_value() );
+			    }
+			}
+		    }
+		}
 	    }
-	    page.setSubList( htmlList );
+	    page.setSubList( securitytradeList );
 	    result.put( "page", page );
 	} catch ( Exception e ) {
 	    logger.error( "获取所有待审核退出担保交易的列表异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取所有待审核退出担保交易的列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     @ApiOperation( value = "担保交易审核", notes = "担保交易审核" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "评论ID", paramType = "query", required = true, dataType = "int" ),
+    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "退出申请ID", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "status", value = "审核状态  1通过 -1不通过", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "reason", value = "不通过理由", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody

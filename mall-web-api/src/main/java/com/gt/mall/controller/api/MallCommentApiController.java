@@ -74,7 +74,7 @@ public class MallCommentApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取待审核评论列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result ,false);
     }
 
     @ApiOperation( value = "评论审核", notes = "评论审核" )

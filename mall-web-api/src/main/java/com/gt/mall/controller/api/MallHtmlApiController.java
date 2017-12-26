@@ -186,8 +186,8 @@ public class MallHtmlApiController {
 		    @ApiImplicitParam( name = "htmlName", value = "商城名称", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "userIds", value = "商家用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/htmlReport", method = RequestMethod.POST )
-    public ServerResponse htmlReport( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String htmlName, String userIds ) {
+    @RequestMapping( value = "/htmlReportList", method = RequestMethod.POST )
+    public ServerResponse htmlReportList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String htmlName, String userIds ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    List< Map< String,Object > > htmlList = null;
@@ -312,6 +312,6 @@ public class MallHtmlApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取举报明细异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), reportList );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), reportList,false );
     }
 }
