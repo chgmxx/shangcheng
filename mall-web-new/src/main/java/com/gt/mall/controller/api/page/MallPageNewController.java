@@ -7,11 +7,13 @@ import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.page.MallPage;
+import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
@@ -49,13 +51,15 @@ import java.util.Map;
 public class MallPageNewController extends BaseController {
 
     @Autowired
-    private MallPageService mallPageService;
+    private MallPageService  mallPageService;
     @Autowired
-    private MallProductDAO  mallProductDAO;
+    private MallProductDAO   mallProductDAO;
     @Autowired
-    private DictService     dictService;
+    private DictService      dictService;
     @Autowired
-    private BusUserService  busUserService;
+    private BusUserService   busUserService;
+    @Autowired
+    private MallStoreService mallStoreService;
 
     @ApiOperation( value = "商家的页面列表(分页)", notes = "商家的页面列表(分页)" )
     @ResponseBody
@@ -207,9 +211,9 @@ public class MallPageNewController extends BaseController {
     /**
      * 进入页面设计
      */
-    //    @ApiOperation( value = "进入页面设计", notes = "进入页面设计" )
-    //    @ResponseBody
-    //    @RequestMapping( value = "/designPage", method = RequestMethod.POST )
+    @ApiOperation( value = "进入页面设计", notes = "进入页面设计" )
+    @ResponseBody
+    @RequestMapping( value = "/designPage", method = RequestMethod.GET )
     public ServerResponse designPage( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "页面ID", required = true ) @RequestParam Integer id ) {
 	Map< String,Object > result = new HashMap<>();
@@ -244,7 +248,7 @@ public class MallPageNewController extends BaseController {
 		    }
 		    Map< String,Object > map1 = (Map< String,Object >) jsonobj.get( i );
 		    if ( CommonUtil.isEmpty( map1.get( "imgID" ) ) ) {
-			if(map1.get( "type" ).toString().equals( "7" )){
+			if ( map1.get( "type" ).toString().equals( "7" ) ) {
 			    XinJson.add( map1 );
 			}
 			continue;
@@ -305,29 +309,12 @@ public class MallPageNewController extends BaseController {
 	    }
 
 	    if ( CommonUtil.isNotEmpty( map.get( "pag_sto_id" ) ) ) {
-		Map storeMap = mallPageService.shopmessage( CommonUtil.toInteger( map.get( "pag_sto_id" ) ), null );//获取店铺信息
+		MallStore mallStore = mallStoreService.findShopByShopId( CommonUtil.toInteger( map.get( "pag_sto_id" ) ) );
 
-		String name = "";//店铺名称
-		if ( CommonUtil.isEmpty( storeMap.get( "business_name" ) ) ) {
-		    name = storeMap.get( "sto_name" ).toString();
-		} else {
-		    name = storeMap.get( "business_name" ).toString();
+		result.put( "stoName", mallStore.getStoName() );
+		if ( CommonUtil.isNotEmpty( mallStore.getStoPicture() ) ) {
+		    result.put( "stoPicture", PropertiesUtil.getResourceUrl() + mallStore.getStoPicture() );
 		}
-		//店铺图片
-		if ( CommonUtil.isEmpty( storeMap.get( "stoPicture" ) ) ) {
-		    storeMap.put( "stoPicture", storeMap.get( "sto_qr_code" ).toString() );
-		}
-
-		if ( CommonUtil.isEmpty( headImg ) ) {
-		    if ( CommonUtil.isNotEmpty( storeMap ) ) {
-			if ( CommonUtil.isNotEmpty( storeMap.get( "sto_head_img" ) ) ) {
-			    headImg = PropertiesUtil.getResourceUrl() + storeMap.get( "sto_head_img" ).toString();
-			}
-		    }
-		}
-
-		result.put( "stoName", name );
-		result.put( "stoPicture", PropertiesUtil.getResourceUrl() + storeMap.get( "stoPicture" ) );
 	    }
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "id", id );

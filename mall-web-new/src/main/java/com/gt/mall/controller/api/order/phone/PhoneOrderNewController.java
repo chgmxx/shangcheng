@@ -2,7 +2,6 @@ package com.gt.mall.controller.api.order.phone;
 
 import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.Member;
-import com.gt.api.util.SessionUtils;
 import com.gt.mall.bean.DictBean;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ErrorInfo;
@@ -229,11 +228,10 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse paySuccessModified( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	logger.info( " 支付成功回调参数：" + JSONObject.fromObject( params ) );
 	try {
-	    if ( CommonUtil.isEmpty( params.get( "busId" ) ) ) {
+	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) ) {
 		return ServerResponse.createByErrorMessage( "支付成功回调失败：参数=" + JSONObject.fromObject( params ) );
 	    }
-	    int busId = CommonUtil.toInteger( params.get( "busId" ) );
-	    mallOrderService.paySuccessModified( params, SessionUtils.getLoginMember( request, busId ) );
+	    mallOrderService.paySuccessModified( params, null );
 	} catch ( BusinessException e ) {
 	    logger.error( "支付成功回调异常：" + e.getCode() + "---" + e.getMessage() );
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
