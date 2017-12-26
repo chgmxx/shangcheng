@@ -1304,11 +1304,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				throw new BusinessException( ResponseEnums.FENBI_NULL_ERROR.getCode(), ResponseEnums.FENBI_NULL_ERROR.getDesc() );
 			    }
 			}
-
 			if ( order != null && flags ) {
+			    if(CommonUtil.isEmpty( pUser )){
+				pUser = wxPublicUserService.selectByUserId( order.getBusUserId() );
+			    }
 			    if ( ( order.getOrderPayWay() == 1 || order.getIsWallet() == 1 ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 				if ( Double.parseDouble( oReturn.getRetMoney().toString() ) > 0 ) {//退款金额大于0，则进行微信退款
-				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( order.getOrderNo() );
+				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( order.getOrderNo());
 				    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 					WxmemberPayRefund refund = new WxmemberPayRefund();
 					refund.setMchid( pUser.getMchId() );// 商户号
@@ -1486,7 +1488,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				resultMap.put( "code", 1 );
 			    } else if ( order.getOrderPayWay() == 10 ) {//微信小程序退款
 				if ( Double.parseDouble( oReturn.getRetMoney().toString() ) > 0 ) {//退款金额大于0，则进行微信退款
-				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( order.getOrderNo() );
+				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( payMap.get( "orderNo" ).toString() );
 				    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 					BusIdAndindustry busIdAndindustry = new BusIdAndindustry();
 					busIdAndindustry.setBusId( order.getBusUserId() );
