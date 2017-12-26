@@ -225,7 +225,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
      */
     @ApiOperation( value = "支付成功回调的接口", notes = "支付成功回调", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, hidden = true )
     @ResponseBody
-    @PostMapping( value = "/79B4DE7C/paySuccessModified" )
+    @PostMapping( value = "paySuccessModified" )
     public ServerResponse paySuccessModified( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
 	logger.info( " 支付成功回调参数：" + JSONObject.fromObject( params ) );
 	try {
