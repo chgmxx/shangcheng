@@ -324,47 +324,42 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     @Override
     public boolean saveOrUpdate( MallStore sto, BusUser user ) throws BusinessException {
 	try {
-	    String message = valtion( sto );
-	    if ( CommonUtil.isNotEmpty( message ) ) {
-		throw new BusinessException( ResponseEnums.ERROR.getCode(), "店铺数据不能为空" );
+	    sto.setStoIsMain( -1 );
+	    int count = 0;
+	    int id = 0;
+	    if ( CommonUtil.isNotEmpty( sto.getId() ) ) {
+		id = sto.getId();
+	    }
+	    //判断是否已经选择店铺id
+	    List< MallStore > list = findByShopId( sto.getWxShopId(), id );
+	    if ( list != null && list.size() > 0 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "请重新选择店铺，该店铺已经被添加" );
 	    } else {
-		sto.setStoIsMain( -1 );
-		int count = 0;
-		int id = 0;
-		if ( CommonUtil.isNotEmpty( sto.getId() ) ) {
-		    id = sto.getId();
-		}
-		//判断是否已经选择店铺id
-		List< MallStore > list = findByShopId( sto.getWxShopId(), id );
-		if ( list != null && list.size() > 0 ) {
-		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "请重新选择店铺，该店铺已经被添加" );
-		} else {
-		    if ( CommonUtil.isEmpty( sto.getId() ) ) {
-			count = mallStoreDao.insert( sto );
-			if ( count <= 0 ) {
-			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
-			} else {
-			    ShopSubsop shopSubsop = new ShopSubsop();
-			    shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
-			    shopSubsop.setShopId( sto.getWxShopId() );
-			    shopSubsop.setSubShop( sto.getId() );
-			    boolean flag = wxShopService.addShopSubShop( shopSubsop );
-			    if ( !flag ) {
-				throw new BusinessException( ResponseEnums.ERROR.getCode(), "添加门店中间表异常" );
-			    }
-			}
+		if ( CommonUtil.isEmpty( sto.getId() ) ) {
+		    count = mallStoreDao.insert( sto );
+		    if ( count <= 0 ) {
+			throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 		    } else {
-			MallStore store = mallStoreDao.selectById( sto.getId() );
-			store.setStoHeadImg( sto.getStoHeadImg() );
-			store.setStoLinkman( sto.getStoLinkman() );
-			store.setStoPhone( sto.getStoPhone() );
-			store.setStoIsSms( sto.getStoIsSms() );
-			store.setStoSmsTelephone( sto.getStoSmsTelephone() );
-			store.setStoQqCustomer( sto.getStoQqCustomer() );
-			count = mallStoreDao.updateAllColumnById( store );
-			if ( count <= 0 ) {
-			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
+			ShopSubsop shopSubsop = new ShopSubsop();
+			shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
+			shopSubsop.setShopId( sto.getWxShopId() );
+			shopSubsop.setSubShop( sto.getId() );
+			boolean flag = wxShopService.addShopSubShop( shopSubsop );
+			if ( !flag ) {
+			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "添加门店中间表异常" );
 			}
+		    }
+		} else {
+		    MallStore store = mallStoreDao.selectById( sto.getId() );
+		    store.setStoHeadImg( sto.getStoHeadImg() );
+		    store.setStoLinkman( sto.getStoLinkman() );
+		    store.setStoPhone( sto.getStoPhone() );
+		    store.setStoIsSms( sto.getStoIsSms() );
+		    store.setStoSmsTelephone( sto.getStoSmsTelephone() );
+		    store.setStoQqCustomer( sto.getStoQqCustomer() );
+		    count = mallStoreDao.updateAllColumnById( store );
+		    if ( count <= 0 ) {
+			throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 		    }
 		}
 	    }
@@ -394,34 +389,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "删除失败，系统异常！" );
 	}
 	return true;
-    }
-
-    /**
-     * 验证信息
-     */
-    private String valtion( MallStore sto ) {
-	String message = "";
-	if ( CommonUtil.isEmpty( sto.getWxShopId() ) ) {
-	    message = "请选择门店";
-	} else if ( CommonUtil.isEmpty( sto.getStoName() ) ) {
-	    message = "请填写店铺名称！";
-	} else if ( CommonUtil.isEmpty( sto.getStoPicture() ) ) {
-	    message = "请上传店铺图片！";
-	}
-	//		else if (CommonUtil.isEmpty(sto.getStoCity())) {
-	//			message = "请选择店铺所在的省市区！";
-	//		}
-	else if ( CommonUtil.isEmpty( sto.getStoAddress() ) ) {
-	    message = "请选择店铺地址！";
-	} else if ( CommonUtil.isEmpty( sto.getStoLinkman() ) ) {
-	    message = "请填写联系人！";
-	} else if ( CommonUtil.isEmpty( sto.getStoPhone() ) ) {
-	    message = "请填写联系电话！";
-	}
-	//		else if (!CommonUtil.isMobileNO(sto.getStoPhone())) {
-	//			message = "请填写正确的联系电话！";
-	//		}
-	return message;
     }
 
     /**

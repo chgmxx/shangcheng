@@ -1,8 +1,11 @@
 package com.gt.mall.config.interceptor;
 
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,8 +37,9 @@ public class BackInterceptor implements HandlerInterceptor {
 		user.setName( "gt123456" );
 		user.setPid( 0 );
 		MallSessionUtils.setLoginUser( request, user );
+	    } else {
+		throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), PropertiesUtil.getWxmpDomain() );
 	    }
-	    //	    throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), PropertiesUtil.getWxmpDomain() );
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
