@@ -11,6 +11,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.pifa.PhoneAddPifaApplyDTO;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.pifa.MallPifaService;
@@ -50,6 +51,8 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
     private MallPaySetService mallPaySetService;
     @Autowired
     private MallCommonService mallCommonService;
+    @Autowired
+    private CoreService       coreService;
 
     @ApiOperation( value = "获取批发商申请说明信息", notes = "获取批发商申请说明信息" )
     @ResponseBody
@@ -58,6 +61,8 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "7" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 

@@ -326,12 +326,10 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
 	subQrPayParams.setDesc( "商城下单" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	//	String returnUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK/orderList.do";
 	String returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/order/list/" + order.getBusUserId() + "/0";
-	String sucessUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK/paySuccessModified.do";
+	String sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/paySuccessModified.do";
 	if ( order.getOrderPayWay() == 7 ) {
-	    sucessUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK/daifuSuccess.do";
-	    //	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/phoneOrder/" + order.getId() + "/L6tgXlBFeK/getDaiFu.do";
+	    sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/daifuSuccess.do";
 	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/order/daifu/" + order.getBusUserId() + "/" + order.getId();
 	}
 	subQrPayParams.setReturnUrl( returnUrl );

@@ -16,6 +16,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionBiddingDTO;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
@@ -72,6 +73,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     private MemberService             memberService;
     @Autowired
     private MallProductService        mallProductService;
+    @Autowired
+    private CoreService               coreService;
 
     /*交纳保证金接口*/
     @ApiOperation( value = "获取交纳保证金信息", notes = "获取交纳保证金信息" )
@@ -84,6 +87,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		    Integer proId, Integer invId, Integer auctionId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -188,6 +192,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		    Integer auctionId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
 	    MallAuction auction = auctionService.selectById( auctionId );
@@ -266,6 +272,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     public ServerResponse myMarginList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	List< MallAuctionMargin > marginList = null;
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -300,6 +308,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     public ServerResponse myBiddingList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	List< Map< String,Object > > bidList = null;
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    bidList = auctionBiddingService.selectMyBidding( member );
@@ -320,6 +330,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     public ServerResponse myHuoPaiList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	List< Map< String,Object > > bidList = null;
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 

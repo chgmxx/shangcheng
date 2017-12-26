@@ -87,7 +87,7 @@ public class HttpSignUtil {
 	}
 	logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
 	if ( resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.get( "msg" ) ) ) {
-	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
+//	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
 	}
 	return null;
     }
