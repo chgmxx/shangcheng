@@ -782,14 +782,14 @@ public class CommonUtil {
 	    case "1": //团购
 		model_style = "Z002";
 		break;
+	    case "2": //积分商城
+		model_style = "Z005";
+		break;
 	    case "3": //秒杀
 		model_style = "Z001";
 		break;
-	    case "8": //超级销售员
-		model_style = "Z003";
-		break;
-	    case "2": //积分商城
-		model_style = "Z005";
+	    case "4": //拍卖
+		model_style = "Z009";
 		break;
 	    case "6": //预售
 		model_style = "Z006";
@@ -797,8 +797,8 @@ public class CommonUtil {
 	    case "7": //批发
 		model_style = "Z007";
 		break;
-	    case "4": //拍卖
-		model_style = "Z009";
+	    case "8": //超级销售员
+		model_style = "Z003";
 		break;
 	    case "报价":
 		model_style = "Z008";
@@ -811,6 +811,5 @@ public class CommonUtil {
 	}
 	return model_style;
     }
-
 
 }

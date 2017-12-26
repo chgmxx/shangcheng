@@ -171,11 +171,11 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    List< PhoneOrderListOrderDetailResult > detailResultList = new ArrayList<>();
 	    if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+		    PhoneOrderListOrderDetailResult detailResult = new PhoneOrderListOrderDetailResult();
 		    if ( CommonUtil.isEmpty( detail.getId() ) ) {
 			continue;
 		    }
 		    String detailStutas = detail.getStatus().toString();
-		    PhoneOrderListOrderDetailResult detailResult = new PhoneOrderListOrderDetailResult();
 		    detailResult.setOrderDetailId( detail.getId() );//订单详情id
 		    detailResult.setShopId( detail.getShopId() );//店铺id
 		    detailResult.setProductId( detail.getProductId() );//商品id

@@ -16,6 +16,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.sellers.PhoneAddMallSetDTO;
 import com.gt.mall.param.phone.sellers.PhoneAddSellersDTO;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
@@ -75,6 +76,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     private MallOrderService          mallOrderService;
     @Autowired
     private MallSellerWithdrawService mallSellerWithdrawService;
+    @Autowired
+    private CoreService               coreService;
 
     @ApiOperation( value = "判断是否可以申请超级销售员", notes = "判断是否可以申请超级销售员", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -82,6 +85,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< Map< String,Object > > isApplySeller( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Map< String,Object > resultMap = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
@@ -283,6 +288,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -350,6 +357,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    int type ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
@@ -387,6 +396,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    String proName, Integer groupId, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -429,6 +440,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     public ServerResponse getProductDetail( HttpServletRequest request, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String findIds ) {
 	List< Map< String,Object > > selectProList = null;
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( member.getId() );
@@ -477,6 +490,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     public ServerResponse mallSetInfo( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer type ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -597,6 +612,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
@@ -649,6 +666,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    Integer type, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    //查询销售员信息
@@ -690,6 +709,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    member = memberService.findMemberById( member.getId(), member );
@@ -745,6 +766,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    Integer status, Integer custId, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -790,6 +813,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    //查询销售员信息
@@ -823,6 +848,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -867,6 +894,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -916,6 +945,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer withdrawMoney ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
@@ -940,6 +971,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     public ServerResponse withdrawalDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer type ) {
 	List< Map< String,Object > > incomeList = null;
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
@@ -969,6 +1002,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     public ServerResponse saleRules( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -1000,6 +1035,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    Integer productId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );

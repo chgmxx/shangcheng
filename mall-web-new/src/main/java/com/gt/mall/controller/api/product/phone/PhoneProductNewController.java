@@ -160,12 +160,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	try {
 	    if ( CommonUtil.isNotEmpty( params.getType() ) && params.getType() > 0 ) {//判断活动是否已经过期
-		Integer status = coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( params.getType().toString() ) );
-		if ( CommonUtil.isNotEmpty( status ) ) {
-		    if ( !status.toString().equals( "0" ) ) {
-
-		    }
-		}
+		coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( params.getType().toString() ) );
 	    }
 	    if ( CommonUtil.isNotEmpty( params.getSearchContent() ) ) {
 		params.setSearchContent( CommonUtil.urlEncode( params.getSearchContent() ) );//搜索内容转码
@@ -252,6 +247,9 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	PhoneProductDetailResult result;
 	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	try {
+	    if ( CommonUtil.isNotEmpty( params.getType() ) && params.getType() > 0 ) {//判断活动是否已经过期
+		coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( params.getType().toString() ) );
+	    }
 	    //判断店铺和门店是否已经被删除
 	    boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
 	    if ( !isShop ) {

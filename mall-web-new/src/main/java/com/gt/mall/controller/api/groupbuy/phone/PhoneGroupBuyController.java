@@ -8,15 +8,9 @@ import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
-import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
-import com.gt.mall.service.web.page.MallPageService;
-import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.service.web.product.MallProductService;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
-import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
@@ -50,25 +44,11 @@ import java.util.Map;
 public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 
     @Autowired
-    private MallStoreService            storeService;
+    private MallGroupBuyService  groupBuyService;
     @Autowired
-    private MallGroupBuyService         groupBuyService;
+    private MallGroupJoinService groupJoinService;
     @Autowired
-    private MallProductService          productService;
-    @Autowired
-    private MallProductInventoryService productInventoryService;
-    @Autowired
-    private MallProductSpecificaService productSpecificaService;
-    @Autowired
-    private BusUserService              busUserService;
-    @Autowired
-    private MallProductService          mallProductService;
-    @Autowired
-    private MallGroupJoinService        groupJoinService;
-    @Autowired
-    private MallPageService             pageService;
-    @Autowired
-    private MemberService               memberService;
+    private CoreService          coreService;
 
     /**
      * 获取团购详情信息
@@ -83,6 +63,7 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, int id, Integer joinId, Integer buyerUserId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "1" ) );////判断活动是否已经过期
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );

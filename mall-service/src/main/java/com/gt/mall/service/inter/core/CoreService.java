@@ -14,7 +14,7 @@ public interface CoreService {
      * @param busId      商家id
      * @param modelStyle 模块属性
      *
-     * @return 0是没过期，1是商家过期，2是模块过期,3是模块已删除
+     * @return true 没过期  过期会抛异常
      */
-    Integer payModel( int busId, String modelStyle );
+    Boolean payModel( int busId, String modelStyle );
 }

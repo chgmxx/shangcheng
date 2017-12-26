@@ -14,6 +14,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.presale.PhoneAddDepositDTO;
 import com.gt.mall.param.phone.presale.PhoneSearchDepositDTO;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
@@ -70,6 +71,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     private MallPresaleTimeService      mallPresaleTimeService;
     @Autowired
     private MallProductInventoryService mallProductInventoryService;
+    @Autowired
+    private CoreService                 coreService;
 
     @ApiOperation( value = "进入交纳预收定金页面接口", notes = "进入交纳预收定金页面" )
     @ResponseBody
@@ -78,6 +81,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneSearchDepositDTO searchDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 
@@ -229,6 +234,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     public ServerResponse myDepositList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	List< MallPresaleDeposit > depositList = null;
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
+
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    userLogin( request, response, loginDTO );
 

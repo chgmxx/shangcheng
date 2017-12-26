@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.mall.bean.DictBean;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,242 +54,8 @@ public class MallHtmlController extends BaseController {
     private WxPublicUserService   wxPublicUserService;
     @Autowired
     private BusUserService        busUserService;
-
-    /**
-     * h5 商城列表页
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     */
-    @RequestMapping( "/htmllist" )
-    public String htmllist( HttpServletRequest request, HttpServletResponse response ) {
-	String jsp = "";
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
-	    Map< String,Object > map = htmlService.htmlList( request );
-	    request.setAttribute( "image", PropertiesUtil.getResourceUrl() );
-	    request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
-	    request.setAttribute( "map", map );
-	    Integer iscreat = 0;//是否还可以创建h5商城0 可以，1不可以
-	    Integer ispid = 0;//是否是主账号，0是主账号，1是子账号管理，2是子账号用户
-	    //pid==0 主账户,否则是子账户
-	    if ( user.getPid() == 0 ) {
-	    } else {
-		boolean isadmin = busUserService.getIsAdmin( user.getId() );
-		if ( isadmin ) {
-		    int zhuid = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
-		    user = busUserService.selectById( zhuid );
-		    ispid = 1;
-		} else {
-		    ispid = 2;
-		}
-	    }
-	    if ( ispid != 2 ) {
-		Integer maxcj = Integer.valueOf( dictService.getDiBserNum( user.getId(), 16, "1140" ) );
-		Integer ycj = htmlService.htmltotal( user.getId() );//主账户之下已创建的数量
-		if ( ycj >= maxcj ) {
-		    iscreat = 1;
-		}
-		request.setAttribute( "iscreat", iscreat );
-	    }
-	    request.setAttribute( "ispid", ispid );
-	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "87" ) );
-	    jsp = "mall/htmlmall/htmllist";
-	} catch ( Exception e ) {
-	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/404Two";
-	    e.printStackTrace();
-	}
-	return jsp;
-
-    }
-
-    /**
-     * h5 模板列表
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     */
-    @RequestMapping( "/modelList" )
-    public String modelList( HttpServletRequest request, HttpServletResponse response ) {
-	String jsp = "";
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
-	    Map< String,Object > map = htmlService.modelList( request );
-	    request.setAttribute( "image", PropertiesUtil.getResourceUrl() );
-	    request.setAttribute( "map", map );
-	    jsp = "mall/htmlmall/modelList";
-	} catch ( Exception e ) {
-	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/404Two";
-	}
-	return jsp;
-
-    }
-
-    /**
-     * 商城信息添加
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     */
-    @RequestMapping( "/addOrUpdate" )
-    public String addOrUpdate( HttpServletRequest request, HttpServletResponse response ) {
-	Object idOb = request.getParameter( "id" );
-	//如果id为null，代表是新增
-	if ( CommonUtil.isEmpty( idOb ) ) {
-	    request.setAttribute( "pageTitle", "添加信息" );
-	} else {
-	    Integer id = Integer.valueOf( idOb.toString() );
-	    MallHtml map = htmlService.selectById( id );
-	    request.setAttribute( "map", map );
-	    request.setAttribute( "id", id );
-	    request.setAttribute( "pageTitle", "修改信息" );
-	}
-	return "mall/htmlmall/addOrUpdate";
-
-    }
-
-    /**
-     * h5信息保存
-     *
-     * @param request
-     * @param response
-     * @param obj
-     *
-     * @throws IOException
-     */
-    @RequestMapping( "/addorUpdateSave" )
-    @SysLogAnnotation( description = "html5商城信息保", op_function = "3" )
-    public void addorUpdateSave( HttpServletRequest request, HttpServletResponse response, MallHtml obj ) throws IOException {
-	Map< String,Object > map = new HashMap< String,Object >();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
-	    htmlService.addorUpdateSave( obj, user );
-	    map.put( "error", "0" );
-	} catch ( Exception e ) {
-	    map.put( "error", "1" );
-	    map.put( "message", "操作失败" );
-	    logger.error( "h5 商城保存页异常:" + e.getMessage() );
-	}
-	CommonUtil.write( response, map );
-    }
-
-    /**
-     * 删除页面
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
-     */
-    @RequestMapping( "/delect" )
-    @SysLogAnnotation( description = "html5商城 型号的删除", op_function = "4" )
-    public void delect( HttpServletRequest request, HttpServletResponse response ) throws IOException {
-	Map< String,Object > map = new HashMap< String,Object >();
-	try {
-	    Integer id = Integer.valueOf( request.getParameter( "id" ).toString() );
-	    htmlService.deleteById( id );
-	    map.put( "error", "0" );
-	} catch ( Exception e ) {
-	    map.put( "error", "1" );
-	    map.put( "message", "删除失败" );
-	    logger.error( "h5 商城删除异常:" + e.getMessage() );
-	}
-	CommonUtil.write( response, map );
-    }
-
-    /**
-     * 修改页面设计
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     */
-    @RequestMapping( "/updateHtml" )
-    public String updateHtml( HttpServletRequest request, HttpServletResponse response ) {
-	String jsp = "";
-	try {
-	    Object id = request.getParameter( "id" );
-	    MallHtml obj = htmlService.selectById( Integer.valueOf( id.toString() ) );
-	    request.setAttribute( "obj", obj );
-	    jsp = "mall/htmlmall/mall_h5/HtmlMall";
-	} catch ( Exception e ) {
-	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
-	    jsp = "error/404Two";
-	}
-	return jsp;
-    }
-
-    /**
-     * html5商城背景音乐
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     */
-    @RequestMapping( "/musicUrl" )
-    public String musicUrl( HttpServletRequest request, HttpServletResponse response ) {
-	request.setAttribute( "musicurl", request.getParameter( "musicurl" ) );
-	request.setAttribute( "musicname", request.getParameter( "musicname" ) );
-	request.setAttribute( "addres", request.getParameter( "addres" ) );
-	request.setAttribute( "player_style", request.getParameter( "player_style" ) );
-	request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
-
-	List< DictBean > playList = dictService.getDict( "1048" );//获取播放器样式
-	request.setAttribute( "playlist", playList );
-	return "/mall/htmlmall/musicUrl";
-
-    }
-
-    /**
-     * 页面保存
-     *
-     * @param request
-     * @param response
-     * @param obj
-     *
-     * @throws IOException
-     */
-    @RequestMapping( "/htmlSave" )
-    @SysLogAnnotation( description = "html5商城保存页面设计", op_function = "3" )
-    public void htmlSave( HttpServletRequest request, HttpServletResponse response, MallHtml obj ) throws IOException {
-	Map< String,Object > map = new HashMap< String,Object >();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
-	    htmlService.htmlSave( obj, user );
-	    map.put( "error", "0" );
-	} catch ( Exception e ) {
-	    map.put( "error", "1" );
-	    map.put( "message", "操作失败" );
-	    logger.error( "h5 商城保存页异常:" + e.getMessage() );
-	}
-	CommonUtil.write( response, map );
-    }
-
-    /**
-     * h5商城二维码预览
-     *
-     * @param request
-     * @param response
-     *
-     * @return
-     */
-    @RequestMapping( "/ylcodeurl" )
-    public String htmlimage( HttpServletRequest request, HttpServletResponse response ) {
-	String image = request.getParameter( "url" ).toString();
-	request.setAttribute( "url", PropertiesUtil.getResourceUrl() + image );
-	return "/mall/htmlmall/ylcodeurl";
-
-    }
+    @Autowired
+    private CoreService           coreService;
 
     /**
      * h5商城手机
@@ -305,6 +70,12 @@ public class MallHtmlController extends BaseController {
     public String phoneHtml( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) {
 	String jsp = "";
 	MallHtml obj = htmlService.selectById( id );
+
+	try {
+	    coreService.payModel( obj.getBusUserId(), CommonUtil.getAddedStyle( "H5商城" ) );////判断活动是否已经过期
+	} catch ( BusinessException be ) {
+	    request.setAttribute( "guoqiError", 1 );
+	}
 	//举报关闭该页面
 	if ( obj.getReportstate() == 1 ) {
 	    jsp = "error/ban";
@@ -483,7 +254,7 @@ public class MallHtmlController extends BaseController {
 	    //pid==0 主账户,否则是子账户
 	    if ( user.getPid() == 0 ) {
 	    } else {
-		Integer zhuid = busUserService.getMainBusId( user.getId());//获取父类的id
+		Integer zhuid = busUserService.getMainBusId( user.getId() );//获取父类的id
 		user = busUserService.selectById( zhuid );
 		ispid = 1;
 	    }

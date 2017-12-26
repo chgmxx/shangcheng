@@ -11,6 +11,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.param.phone.integral.PhoneAddIntegralDTO;
+import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.integral.MallIntegralImageService;
 import com.gt.mall.service.web.integral.MallIntegralService;
@@ -61,6 +62,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     private MemberService            memberService;
     @Autowired
     private MallStoreService         mallStoreService;
+    @Autowired
+    private CoreService              coreService;
 
     /**
      * 获取积分商城商品列表
@@ -73,6 +76,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
 	    BusUser user = new BusUser();
@@ -107,6 +111,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
@@ -152,6 +157,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    Map< String,Object > params = new HashMap<>();
@@ -197,6 +204,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -241,6 +250,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer productId ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
@@ -264,8 +275,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    //	    result.put( "member", member );
 
 	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
-	}  catch ( Exception e ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+	} catch ( Exception e ) {
 	    logger.error( "获取积分商品信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商品信息异常" );
