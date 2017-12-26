@@ -402,6 +402,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	result.setOrderId( detail.getOrderId() );
 	result.setOrderType( order.getOrderType() );
 	result.setActivityId( order.getGroupBuyId() );
+	result.setReturnPrice( detail.getTotalPrice() );
 	if ( CommonUtil.isNotEmpty( detail.getProductSpeciname() ) ) {
 	    result.setProductSpecifica( detail.getProductSpeciname().replaceAll( ",", "/" ) );
 	}
@@ -430,7 +431,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	if ( CommonUtil.isNotEmpty( orderReturn ) && CommonUtil.isNotEmpty( orderReturn.getRetMoney() ) ) {
 	    price = CommonUtil.toDouble( orderReturn.getRetMoney() );
 	}
-	if ( ( order.getOrderPayWay() == 2 || order.getOrderPayWay() == 6 ) || order.getIsWallet() == 0 ) {
+	if ( ( order.getOrderPayWay() == 2 || order.getOrderPayWay() == 6 ) && order.getIsWallet() == 0 ) {
 	    price = 0;
 	}
 	result.setReturnPrice( price );
