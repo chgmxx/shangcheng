@@ -2,7 +2,13 @@
  * Created by Administrator on 2016/3/22.
  */
 
-var app = angular.module('app',['ngSanitize',"farbtastic",'admin','commodity','swiper',"classify","interval","dragPlan","search","reservation","time","header"]);
+var app = angular.module('app',[
+    'ngSanitize',"farbtastic",'admin','commodity',
+    'swiper',"classify","interval","dragPlan","search",
+    "reservation","time","header","title","textNav",
+    "picNav","window","goShop","notice","guide","coupon",
+    "grouping","commodityList","richText"
+]);
 
 Array.prototype.changeAt = function(num1,num2){
 	if(isNaN(num1)||num1>this.length||isNaN(num2)||num2>this.length||num1==num2){return false;}

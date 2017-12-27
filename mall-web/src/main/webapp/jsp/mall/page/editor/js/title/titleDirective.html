@@ -1,0 +1,155 @@
+<div class="titleDirective" ng-controller="titleController">
+	<div style="height:15px;"></div>
+    <div class="control-group">
+        <div>
+        	<span class="leftName"><i style="color:#f00">*</i>标题名：</span>
+       		<input type="text" value="{{dataedit.title}}" ng-model="dataedit.title"/>
+       	</div>
+    </div>
+    <!-- <div class="control-group">
+       	<div>
+        	<span class="leftName">标题模版：</span>
+       		<label><input type="radio" name="titleWay" value="0" ng-model="dataedit.titleWay"/>传统样式 </label>
+       		<label style="margin-left: 10px;"><input type="radio" name="titleWay" value="1" ng-model="dataedit.titleWay"/>模仿微信图文页样式</label>
+       	</div>
+    </div> -->
+    
+    <!-- <div ng-show="dataedit.titleWay == 1">
+    	<div class="control-group">
+	       	<div>
+	        	<span class="leftName">日期：</span>
+	        	<span style="position: relative;">
+	       			<input type="text" class="dateInput02" value="{{dataedit.time}}" ng-model="dataedit.time"/>
+	       		</span>
+	       	</div>
+	    </div>
+	    <div class="control-group">
+	       	<div>
+	        	<span class="leftName">作者：</span>
+	        	<span style="position: relative;">
+	       			<input type="text" value="{{dataedit.author}}" ng-model="dataedit.author"/>
+	       		</span>
+	       	</div>
+	    </div>
+	    <div class="control-group">
+	       	<div>
+	        	<span class="leftName">链接标题：</span>
+	        	<span style="position: relative;">
+	       			<input type="text" value="{{dataedit.linkName}}" ng-model="dataedit.linkName"/>
+	       		</span>
+	       	</div>
+	    </div>
+	    
+	    <div class="swiperDirective">
+		    <div class="control-group">
+		    	<ul>
+		            <li>
+				    	<div class="choice-content">
+				            <div class="control-group">
+				                <label class="swiper-label">链接：</label>
+				                
+				                <div class="control-action hsaLine" ng-show="picJson[pageEdit].imgID[0].id">
+				                    <span ng-bind="picJson[pageEdit].imgID[0].title">商品| 123456</span>
+				                    <i class="remove_btn" ng-click="removeswipername(0)">×</i>
+				                </div>
+				
+				                <div class="control-action">
+				                    <div class="notLine" ng-hide="picJson[pageEdit].imgID[0].id">
+				                        <a>设置链接到的页面地址<label class="caret"></label></a>
+				                    </div>
+				                    <div class="hsaLine" ng-show="picJson[pageEdit].imgID[0].id">
+				                        <a style="margin-left: 15px;">修改<label class="caret"></label></a>
+				                    </div>
+				                    <div class="dropdown-menu">
+				                        <div type="1" onclick="lbTypeClick(this,1)">商品</div>
+				                        <div type="2" onclick="lbTypeClick(this,1)">分类</div>
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+			        </li>
+		        </ul>
+		    </div>
+	    </div>
+    </div> -->
+    
+    <div ng-show="dataedit.titleWay == 0">
+	    <div class="control-group">
+	       	<div>
+	        	<span class="leftName">副标题：</span>
+	        	<span style="position: relative;">
+	       			<input type="text" style="width: 250px;" value="{{dataedit.viceTitle}}" ng-model="dataedit.viceTitle"/>
+	       			<input type="text" style="width: 250px;" class="dateInput" value="{{dataedit.viceTitle}}" ng-model="dataedit.viceTitle">
+	       		</span>
+	       		<span class="dateBtn">日期</span>
+	       	</div>
+	    </div>
+	    <div class="control-group">
+	       	<div>
+	        	<span class="leftName">显示：</span>
+	        	
+	       		<label class="regular-radio">
+	       			<input class="regular-radio" type="radio" value="left" name="showWay" ng-model="dataedit.showWay"/>
+	       			<span></span>居左
+	       		</label>
+	       		
+	       		<label class="regular-radio" style="margin-left: 60px;">
+	       			<input type="radio" value="center" name="showWay" ng-model="dataedit.showWay"/>
+	       			<span></span>居中
+	       		</label>
+	       		
+	       		<label class="regular-radio" style="margin-left: 60px;">
+	       			<input type="radio" value="right" name="showWay" ng-model="dataedit.showWay"/>
+	       			<span></span>居右
+	       		</label>
+	       	</div>
+	    </div>
+	    <div class="control-group">
+	       	<div>
+	        	<span class="leftName">背景颜色：</span>
+	       		<input type="color" style="width:50px;" value="{{dataedit.background}}" ng-model="dataedit.background"/>
+	       	</div>
+	    </div>
+    
+	    <!-- <div class="swiperDirective" ng-if="dataedit.navName">
+		    <div class="control-group">
+		    	<ul>
+		            <li>
+				    	<div class="choice-content">
+				            <div class="control-group">
+				                <label class="swiper-label">名称：</label><input type="text" ng-model="dataedit.navName">
+				            </div>
+				            <div class="control-group">
+				                <label class="swiper-label">链接：</label>
+				                
+				                <div class="control-action hsaLine" ng-show="picJson[pageEdit].imgID[0].id">
+				                    <span ng-bind="picJson[pageEdit].imgID[0].title">商品| 123456</span>
+				                    <i class="remove_btn" ng-click="removeswipername(0)">×</i>
+				                </div>
+				
+				                <div class="control-action">
+				                    <div class="notLine" ng-hide="picJson[pageEdit].imgID[0].id">
+				                        <a>设置链接到的页面地址<label class="caret"></label></a>
+				                    </div>
+				                    <div class="hsaLine" ng-show="picJson[pageEdit].imgID[0].id">
+				                        <a style="margin-left: 15px;">修改<label class="caret"></label></a>
+				                    </div>
+				                    <div class="dropdown-menu">
+				                        <div type="1" onclick="lbTypeClick(this,1)">商品</div>
+				                        <div type="2" onclick="lbTypeClick(this,1)">分类</div>
+				                    </div>
+				                </div>
+				            </div>
+				        </div>
+				        <div class="actions">
+				            <i class="add_btn" ng-click="addswiperpic($index)">+</i>
+				            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
+				        </div>
+			        </li>
+		        </ul>
+		    </div>
+	    </div> -->
+    
+    	<!-- <div class="addswiper" ng-if="!dataedit.navName" onclick="materiallayer(1)"><i class="icon-add"></i>添加一个文本导航</div> -->
+	</div>
+</div>

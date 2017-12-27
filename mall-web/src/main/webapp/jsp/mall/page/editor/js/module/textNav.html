@@ -1,0 +1,11 @@
+<div class="textNavModule">
+	<div class="list" ng-repeat="data in data.list">
+		<span ng-if="data.title" ng-bind="data.title"></span>
+		<span ng-if="!data.title">点此添加一个『文本导航』</span>
+		<i style="background-image:url(images/arrow.png)"></i>
+	</div>
+</div>
+
+<div class="actions">
+    <div class="actions-wrap"><span class="action edit">编辑</span><span class="action add" ng-click="addmoduleAny($index+1,$event)">加内容</span><span class="action delete" ng-click="removemodule($index)">删除</span></div>
+</div>

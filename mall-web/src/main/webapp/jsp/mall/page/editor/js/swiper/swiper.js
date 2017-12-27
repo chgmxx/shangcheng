@@ -13,7 +13,7 @@ angular.module('swiper',[]).controller("swiperController",["$scope",function($sc
     }
     
     $scope.swiperuploadpic = function(param){
-    	$scope.pic_index = param;
+    	$scope.$parent.$parent.pic_index = param;
     }
     
 

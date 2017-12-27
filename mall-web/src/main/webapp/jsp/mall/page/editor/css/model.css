@@ -1,0 +1,266 @@
+@charset "utf-8";
+
+.picUploadNamebox ul{
+    width: 100%;
+}
+.picUploadNamebox ul li{
+	height: 104px;
+    box-sizing: border-box;
+    position: relative;
+    border: 1px solid #bfcbd9;
+    margin: 0px 10px;
+    padding: 14px;
+    background: #fff;
+    zoom: 1;
+    border-radius: 3px;
+}
+.picUploadNamebox .choice-content-box{
+    vertical-align: top;
+    float: left;
+}
+.picUploadNamebox .choice-content-box-r{
+	width: 330px;
+}
+.picUploadNamebox .choice-content-photo{
+    width: 72px;
+    height: 72px;
+    border: 1px dashed #c0ccda;
+    cursor: pointer;
+}
+
+.picUploadNamebox ul li .choice-content{
+    float: left;
+    width: 280px;
+}
+
+.picUploadNamebox .swiper-label{
+    float: left;
+    width: 64px;
+    text-align: right;
+    padding-top: 5px;
+    margin-bottom: 0;
+    font-size: 14px;
+    line-height: 18px;
+    cursor: default;
+}
+
+.picUploadNamebox .control-action{
+    padding-top: 5px;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 18px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: top;
+}
+.picUploadNamebox .control-action.hsaLine{
+	padding-top: 0px;
+}
+.picUploadNamebox .control-action:hover .dropdown-menu{
+    display: block;
+}
+.picUploadNamebox .control-action a{
+    color: #07d;
+}
+.picUploadNamebox .caret{
+    margin-top: 8px;
+    margin-left: 5px;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: top;
+    border-top: 4px solid #bfcbd9;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+.picUploadNamebox .dropdown-menu{
+    min-width: 110px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,0.125);
+    border-radius: 4px;
+    display: none;
+}
+.picUploadNamebox .dropdown-menu>div{
+    padding: 3px 15px;
+    font-weight: 400;
+    color: #333;
+    white-space: nowrap;
+    line-height: 20px;
+    clear: both;
+}
+.picUploadNamebox .dropdown-menu>div:hover{
+    color: #ffffff;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#648bf5), to(#2866f2));
+    background-image: -webkit-linear-gradient(top, #648bf5, #2866f2);
+    background-image: -moz-linear-gradient(top, #648bf5, #2866f2);
+    background-image: linear-gradient(to bottom, #648bf5, #2866f2);
+    -webkit-box-shadow: #5a82eb 0px 1px 0px inset,#1758e7 0px -1px 0px inset;
+    box-shadow: #5a82eb 0px 1px 0px inset,#1758e7 0px -1px 0px inset;
+}
+
+.picUploadNamebox .control-action button .caret{
+    margin-left: 47px;
+    margin-top: 6px;
+}
+.picUploadNamebox .control-action button{
+    width: 78px;
+    height: 30px;
+    padding: 4px 12px;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+.picUploadNamebox table td.current{
+    -webkit-box-shadow: 0 0 0 2px #bbb inset;
+    box-shadow: 0 0 0 2px #bbb inset;
+    padding: 2px;
+}
+
+.picUploadNamebox .jy{
+    opacity: 0.6;
+    line-height: 14px;
+    font-size: 12px;
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+/* .picUploadNamebox .hsaLine,.classifyDirective .choice_pic{
+    display: none;
+}
+.picUploadNamebox .choice-content{
+	display:none;
+} */
+
+.picUploadNamebox .hsaLine span{
+    background-color: #e4e8f1;
+    max-width: 148px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    white-space: nowrap;
+    font-weight: normal;
+    font-size: 12px;
+    vertical-align: top;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 7px 15px;
+    line-height: 14px;
+    color: #48576a;
+}
+.picUploadNamebox .hsaLine .remove_btn{
+    position: absolute;
+    top: -7px;
+    right: -13px;
+}
+
+/**********************************************************/
+.edit-box-list{
+	width: 100%;
+	display: table;
+}
+.edit-box-list>div{
+	display: table-row;
+}
+.edit-box-list-left{
+    width: 87px;
+    text-align: right;
+}
+.edit-box-list-cell{
+	display: table-cell;
+}
+
+/**********************************************************/
+
+.el-checkbox__inner input{
+	display:none;
+}
+.el-checkbox__inner input:checked + span:after {
+    box-sizing: content-box;
+    content: "";
+    border: 2px solid #fff;
+    border-left: 0;
+    border-top: 0;
+    height: 8px;
+    left: 5px;
+    position: absolute;
+    top: 2px;
+    transform: rotate(45deg) scaleY(1);
+    width: 4px;
+    transition: transform .15s cubic-bezier(.71,-.46,.88,.6) .05s;
+    transform-origin: center;
+}
+.el-checkbox__inner input:checked + span{
+    background-color: #20a0ff;
+    border-color: #0190fe;
+}
+.el-checkbox__inner span {
+    display: inline-block;
+    position: relative;
+    border: 1px solid #bfcbd9;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    background-color: #fff;
+    z-index: 1;
+    transition: border-color .25s cubic-bezier(.71,-.46,.29,1.46),background-color .25s cubic-bezier(.71,-.46,.29,1.46);
+	vertical-align: middle;
+}
+
+/**********************************************************/
+.regular-radio input{
+	display: none;
+}
+.regular-radio input:checked + span {
+    background-color: #e9ecee;
+    color: #99a1a7;
+    border: 1px solid #20a0ff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1), inset 0px 0px 10px rgba(0,0,0,0.1);
+}
+.regular-radio span {
+    -webkit-appearance: none;
+    background-color: #fafafa;
+    border: 1px solid #cacece;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+    padding: 9px;
+    border-radius: 50px;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+.regular-radio input:checked + span:after {
+    content: ' ';
+    width: 12px;
+    height: 12px;
+    border-radius: 50px;
+    position: absolute;
+    top: 3px;
+    background: #20a0ff;
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.3);
+    text-shadow: 0px;
+    left: 3px;
+    font-size: 32px;
+}
+
+
+

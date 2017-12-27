@@ -1,0 +1,10 @@
+<div class="goShopModule" ng-controller="goShopController">
+	<a class="custom-store-link">
+		<i class="custom-store-img"></i>
+		<span class="custom-store-name">{{data.stoName}}</span>
+		<span class="custom-store-enter">{{data.name}}</span>
+	</a>
+</div>
+<div class="actions">
+    <div class="actions-wrap"><span class="action edit">编辑</span><span class="action add" ng-click="addmoduleAny($index+1,$event)">加内容</span><span class="action delete" ng-click="removemodule($index)">删除</span></div>
+</div>
