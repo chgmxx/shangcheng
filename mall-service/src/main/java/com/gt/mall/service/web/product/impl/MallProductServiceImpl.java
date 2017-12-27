@@ -689,11 +689,20 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 			mallProductGroupDAO.insert( mallProductGroup );
 		    }
 		}
+	    }else{
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品分组不能为空" );
+	    }
+	    if(CommonUtil.isEmpty( params.get( "imageList" ))){
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品图片不能为空" );
 	    }
 	    // 批量添加商品图片
 	    mallImageAssociativeService.insertUpdBatchImage( params, product.getId() );
 
 	    Map< String,Object > specMap = new HashMap<>();
+
+	    if ( product.getIsSpecifica() ==1 && CommonUtil.isEmpty( params.get( "speList" )) ){
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品规格不能为空" );
+	    }
 	    // 批量添加商品规格
 	    if ( !CommonUtil.isEmpty( params.get( "speList" ) ) ) {
 		if ( params.get( "speList" ) != null ) {
@@ -2582,6 +2591,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 	}
 
+	if(CommonUtil.isEmpty( params.get( "imageList" ))){
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品图片不能为空" );
+	}
 	// 添加或修改图片
 	mallImageAssociativeService.newInsertUpdBatchImage( params, product.getId(), 1 );
 
@@ -2595,6 +2607,10 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 
 	Map< String,Object > specMap = new HashMap<>();
+
+	if ( product.getIsSpecifica() ==1 && CommonUtil.isEmpty( params.get( "speList" )) ){
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品规格不能为空" );
+	}
 	// 批量添加或修改商品规格
 	if ( CommonUtil.isNotEmpty( params.get( "speList" ) ) ) {
 	    specMap = mallProductSpecificaService.newSaveOrUpdateBatch( params.get( "speList" ), product.getId(), flag );
@@ -2613,6 +2629,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	// 批量添加商品分组
 	if ( !CommonUtil.isEmpty( params.get( "groupList" ) ) ) {
 	    mallProductGroupService.saveOrUpdate( params.get( "groupList" ), product.getId() );
+	}else{
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品分组不能为空" );
 	}
 
 	int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id

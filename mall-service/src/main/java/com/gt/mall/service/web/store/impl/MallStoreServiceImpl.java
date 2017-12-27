@@ -584,4 +584,12 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	}
     }
 
+    @Override
+    public boolean shopIsOpenMall( Integer shopId ) {
+	Integer count = mallStoreDao.shopIsOpenMall( shopId );
+	if ( count > 0 ) {
+	    return true;
+	}
+	return false;
+    }
 }

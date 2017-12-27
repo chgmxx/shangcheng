@@ -188,4 +188,13 @@ public interface MallStoreService extends BaseService< MallStore > {
      * @return true 是管理员
      */
     public boolean getIsAdminUser( int userId, HttpServletRequest request );
+
+    /**
+     * 查询门店是否开通商城并拥有页面
+     *
+     * @param shopId 门店id
+     *
+     * @return true 已经开通了商城   false 没有开通商城
+     */
+    public boolean shopIsOpenMall( Integer shopId );
 }
