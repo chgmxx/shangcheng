@@ -188,27 +188,6 @@ public class MallPageNewController extends BaseController {
     }
 
     /**
-     * 获取店铺链接
-     *//*
-    @ApiOperation( value = "获取链接", notes = "获取链接" )
-    @ResponseBody
-    @RequestMapping( value = "/link", method = RequestMethod.POST )
-    public ServerResponse link( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "页面ID", required = true ) @RequestParam Integer id )
-		    throws IOException {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    String url = PropertiesUtil.getHomeUrl() + "mallPage/" + id + "/79B4DE7C/viewHomepage.do";
-	    result.put( "link", url );//店铺链接
-	   *//* result.put( "smsLink", url );//短信链接*//*
-	} catch ( Exception e ) {
-	    logger.error( "获取链接：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }*/
-
-    /**
      * 进入页面设计
      */
     @ApiOperation( value = "进入页面设计", notes = "进入页面设计" )
@@ -444,4 +423,25 @@ public class MallPageNewController extends BaseController {
 
     }
 
+    /**
+     * 弹出该店铺预售信息
+     */
+    @ApiOperation( value = "根据店铺id查询页面id", notes = "根据店铺id查询页面id" )
+    @ApiImplicitParams( @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = true, dataType = "int" ) )
+    @ResponseBody
+    @RequestMapping( value = "/getPageIdByShopId", method = RequestMethod.GET )
+    public ServerResponse< Integer > getPageIdByShopId( HttpServletRequest request, HttpServletResponse response, Integer shopId ) {
+	try {
+	    //获取店页面id
+	    int pageId = mallPageService.getPageIdByShopId( shopId );
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), pageId );
+
+	} catch ( Exception e ) {
+	    logger.error( "获取页面链接异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取页面链接异常" );
+	}
+
+    }
 }
