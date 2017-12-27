@@ -1,9 +1,9 @@
 package com.gt.mall.service.inter.member;
 
 import com.gt.api.bean.session.Member;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
-import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 
 import java.util.List;
@@ -65,15 +65,6 @@ public interface MemberService {
      * @return 消费是否充足
      */
     Map< String,Object > isAdequateMoney( int memberId, double money );
-
-    /**
-     * 储值卡退款
-     *
-     * @param params {busId:商家id，orderNo：单号，ucType：消费类型，money：退款金额}
-     *
-     * @return 消费是否充足
-     */
-    Map< String,Object > refundMoney( Map< String,Object > params );
 
     /**
      * 判断粉丝是否是会员
@@ -148,13 +139,11 @@ public interface MemberService {
     boolean updateJifen( UserConsumeParams consumeParams );
 
     /**
-     * 退款包括了储值卡退款(包括积分和粉币) TODO 改了
-     *
-     * @param returnParams 参数
-     *
-     * @return 是否退款成功
+     * 订单退款
+     * @param erpRefundBo 参数
+     * @return 否退款成功
      */
-    Map< String,Object > refundMoneyAndJifenAndFenbi( ReturnParams returnParams );
+    Map< String,Object > refundMoney(ErpRefundBo erpRefundBo);
 
     /**
      * 查询会员卡信息

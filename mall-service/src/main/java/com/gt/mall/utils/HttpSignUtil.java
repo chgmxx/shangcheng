@@ -87,7 +87,7 @@ public class HttpSignUtil {
 	}
 	logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
 	if ( resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.get( "msg" ) ) ) {
-//	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
+	    //	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
 	}
 	return null;
     }
@@ -116,7 +116,9 @@ public class HttpSignUtil {
 	if ( code != 0 && resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.getString( "msg" ) ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
 	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
-	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
+	    if ( CommonUtil.isEmpty( type[1] ) ) {
+		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
+	    }
 	}
 	if ( resultObj.containsKey( "data" ) ) {
 	    resultMap.put( "data", resultObj.get( "data" ) );

@@ -6,10 +6,10 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.freight.MallFreightDAO;
@@ -1305,12 +1305,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    }
 			}
 			if ( order != null && flags ) {
-			    if(CommonUtil.isEmpty( pUser )){
+			    if ( CommonUtil.isEmpty( pUser ) ) {
 				pUser = wxPublicUserService.selectByUserId( order.getBusUserId() );
 			    }
 			    if ( ( order.getOrderPayWay() == 1 || order.getIsWallet() == 1 ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 				if ( Double.parseDouble( oReturn.getRetMoney().toString() ) > 0 ) {//退款金额大于0，则进行微信退款
-				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( order.getOrderNo());
+				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( order.getOrderNo() );
 				    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 					WxmemberPayRefund refund = new WxmemberPayRefund();
 					refund.setMchid( pUser.getMchId() );// 商户号
@@ -1780,18 +1780,19 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 
 	    if ( memberService.isMember( order.getBuyerUserId() ) ) {
-		ReturnParams returnParams = new ReturnParams();
-		returnParams.setBusId( order.getBusUserId() );
-		returnParams.setOrderNo( order.getOrderNo() );
-		returnParams.setMoney( returnMoney );
-		returnParams.setFenbi( returnFenbi );
-		returnParams.setJifen( CommonUtil.toIntegerByDouble( returnJifen ) );
 
-		Map< String,Object > resultMap = memberService.refundMoneyAndJifenAndFenbi( returnParams );
+		ErpRefundBo erpRefundBo = new ErpRefundBo();
+		erpRefundBo.setBusId( order.getBusUserId() );//商家id
+		erpRefundBo.setOrderCode( detailMap.get( "orderNo" ).toString() );////订单号
+		erpRefundBo.setRefundPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );////退款方式 字典1198
+		erpRefundBo.setRefundMoney( returnMoney ); //退款金额
+		erpRefundBo.setRefundJifen( CommonUtil.toIntegerByDouble( returnJifen ) );//退款积分
+		erpRefundBo.setRefundFenbi( returnFenbi ); //退款粉币
+		erpRefundBo.setRefundDate( new Date().getTime() );
+		Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
 		if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == -1 ) {
-		    //同步失败，存入redis todo  定时器还未做
-		    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( returnParams ) );
-		    //		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
+		    //同步失败，存入redis
+		    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
 		}
 	    }
 	}

@@ -388,7 +388,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "returnId", value = "退款id,必传", paramType = "query", dataType = "int", required = true ) } )
     @ResponseBody
     @PostMapping( value = "returnLogList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse< List< Map< String,Object > > > returnLogList( HttpServletRequest request, HttpServletResponse response,
+    public ServerResponse returnLogList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer returnId ) {
 	try {
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
