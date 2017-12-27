@@ -3,6 +3,7 @@ package com.gt.mall.service.quartz.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCountIncomeDAO;
 import com.gt.mall.dao.order.MallLogOrderCallbackDAO;
@@ -21,18 +22,19 @@ import com.gt.mall.entity.order.MallLogOrderCallback;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.page.MallPage;
+import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDaycount;
 import com.gt.mall.entity.product.MallProductMonthcount;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.DateTimeKit;
-import com.gt.mall.utils.MultipleJedisUtil;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -79,6 +81,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallLogOrderCallbackDAO  mallLogOrderCallbackDAO;
     @Autowired
     private MallOrderService         mallOrderService;
+    @Autowired
+    private MemberService            memberService;
 
     private static String ip  = PropertiesUtil.getRedisHost();
     private static String pwd = PropertiesUtil.getRedisPassword();
@@ -451,8 +455,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
   /*  @Scheduled( cron = "0/10 * * * * ?" ) // 每10秒执行一次*/
     @Override
     public void cancelReturn() {
-//	Date date1 = DateTimeKit.addDays( -7 );
-//	String date3 = DateTimeKit.format( date1 );//7天后的时间日期
+	//	Date date1 = DateTimeKit.addDays( -7 );
+	//	String date3 = DateTimeKit.format( date1 );//7天后的时间日期
 
 	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
 	//查询 当前时间 大于等于 7天后的时间
@@ -782,6 +786,34 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		orderCallback.setIsResolved( 1 );
 		mallLogOrderCallbackDAO.updateById( orderCallback );
 	    }
+	}
+    }
+
+    /**
+     * 调用会员退款接口
+     */
+    @Override
+    public void memberRefund() {
+	try {
+	    String key = Constants.REDIS_KEY + "member_return_jifen";
+	    //判断是否存在会员退款jedis
+	    if ( JedisUtil.exists( key) ) {
+		List refundList = JedisUtil.lpoplist( key, 0, -1 );//获取所有记录
+		if ( refundList != null ) {
+		    for ( int i = 0; i < refundList.size(); i++ ) {
+			String str = refundList.get( i ).toString();
+			ErpRefundBo erpRefundBo = JSONObject.parseObject( str, ErpRefundBo.class );
+			Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
+			if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
+			    //清空统计
+			    JedisUtil.listDel( key, i, str );
+			}
+		    }
+		}
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "调用会员退款接口异常" + e );
+	    e.printStackTrace();
 	}
     }
 }

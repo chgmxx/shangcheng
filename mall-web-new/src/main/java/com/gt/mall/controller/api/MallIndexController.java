@@ -122,7 +122,7 @@ public class MallIndexController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "判断是否是管理员异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), isAdminFlag );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), isAdminFlag, false );
     }
 
     @ApiOperation( value = "获取商城营销地址", notes = "获取商城营销地址" )
@@ -137,12 +137,26 @@ public class MallIndexController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商城营销的地址异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
+    }
+
+    @ApiOperation( value = "获取素材库地址", notes = "获取素材库地址" )
+    @ResponseBody
+    @RequestMapping( value = "/getMaterialUrl", method = RequestMethod.POST )
+    public ServerResponse getMaterialUrl( HttpServletRequest request, HttpServletResponse response ) {
+	String url = "";
+	try {
+	    url = PropertiesUtil.getMaterialUrl();
+	} catch ( Exception e ) {
+	    logger.error( "获取素材库地址异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取素材库地址异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
     }
 
     /**
      * 判断商家是否有商户支付平台
-     *
      */
     @ApiOperation( value = "判断商家是否有商户支付平台", notes = "判断商家是否有商户支付平台" )
     @ResponseBody

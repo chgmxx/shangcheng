@@ -63,4 +63,9 @@ public interface MallQuartzNewService {
     * 支付成功，但回调失败的订单修改
     * */
     void orderCallback();
+
+    /**
+     * 调用会员退款接口
+     */
+    void memberRefund();
 }

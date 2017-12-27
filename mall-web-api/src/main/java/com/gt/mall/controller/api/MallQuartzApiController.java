@@ -218,4 +218,19 @@ public class MallQuartzApiController {
 	}
 	return ServerResponse.createBySuccessCode();
     }
+
+    @ApiOperation( value = "调用会员退款接口", notes = "调用会员退款接口" )
+    @ResponseBody
+    @RequestMapping( value = "/memberRefund", method = RequestMethod.POST )
+    public ServerResponse memberRefund( HttpServletRequest request, HttpServletResponse response ) {
+	//
+	try {
+	    mallQuartzNewService.memberRefund();
+	} catch ( Exception e ) {
+	    logger.error( "调用会员退款接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "调用会员退款接口异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
 }
