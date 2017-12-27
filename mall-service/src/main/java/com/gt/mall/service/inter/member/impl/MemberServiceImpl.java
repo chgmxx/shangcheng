@@ -3,9 +3,9 @@ package com.gt.mall.service.inter.member.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
-import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.member.MemberService;
@@ -57,8 +57,8 @@ public class MemberServiceImpl implements MemberService {
 	    if ( CommonUtil.isNotEmpty( memberObj.get( "mcId" ) ) ) {
 		member.setMcId( CommonUtil.toInteger( memberObj.get( "mcId" ) ) );
 	    }
-	    if(CommonUtil.isNotEmpty( memberObj.get( "phone" ) )){
-	        member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
+	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
+		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
 	    }
 	}
 	return member;
@@ -151,21 +151,6 @@ public class MemberServiceImpl implements MemberService {
 	params.put( "memberId", memberId );
 	params.put( "money", money );
 	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "isAdequateMoney" );
-	if ( CommonUtil.isNotEmpty( resultMap ) ) {
-	    return resultMap;
-	}
-	return null;
-    }
-
-    /**
-     * 储值卡退款
-     *
-     * @param params {busId:商家id，orderNo：单号，ucType：消费类型，money：退款金额}
-     *
-     * @return 消费是否充足
-     */
-    public Map< String,Object > refundMoney( Map< String,Object > params ) {
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "refundMoney" );
 	if ( CommonUtil.isNotEmpty( resultMap ) ) {
 	    return resultMap;
 	}
@@ -301,8 +286,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map< String,Object > refundMoneyAndJifenAndFenbi( ReturnParams returnParams ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( returnParams, MEMBER_URL + "refundMoneyAndJifenAndFenbi" );
+    public Map< String,Object > refundMoney( ErpRefundBo erpRefundBo ) {
+	return HttpSignUtil.signHttpInsertOrUpdate( erpRefundBo, MEMBER_URL + "refundErp", 1, -1 );
     }
 
     @Override

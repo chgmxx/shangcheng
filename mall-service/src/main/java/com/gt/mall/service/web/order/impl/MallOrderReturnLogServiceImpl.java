@@ -1,7 +1,6 @@
 package com.gt.mall.service.web.order.impl;
 
 import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
@@ -167,7 +166,9 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 	map.put( "货物状态：", cargo );
 	map.put( "退款原因：", orderReturn.getRetReason() );
 	map.put( "退款金额：", orderReturn.getRetMoney() + "元" );
-	map.put( "退款说明：", orderReturn.getRetRemark() );
+	if ( CommonUtil.isNotEmpty( orderReturn.getRetRemark() ) ) {
+	    map.put( "退款说明：", orderReturn.getRetRemark() );
+	}
 
 	log.setRemark( JSONUtils.toJSONString( map ) );
 	return mallOrderReturnLogService.insert( log );

@@ -591,24 +591,25 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    }
 
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
-	    Member member = memberService.findMemberById( memberId, null );
-	    Map< String,Object > returnParams = new HashMap<>();
-	    returnParams.put( "busId", member.getBusid() );
-	    returnParams.put( "orderNo", depNo );
-	    returnParams.put( "money", money );
-	    //储值卡退款
-	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
-	    if ( payResultMap != null ) {
-		if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
-		    int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
-		    if ( code == 1 ) {//退款成功修改退款状态
-			updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
-		    } else {
-			resultMap.put( "result", false );
-			resultMap.put( "msg", payResultMap.get( "errorMsg" ) );
-		    }
-		}
-	    }
+	    //todo
+//	    Member member = memberService.findMemberById( memberId, null );
+//	    Map< String,Object > returnParams = new HashMap<>();
+//	    returnParams.put( "busId", member.getBusid() );
+//	    returnParams.put( "orderNo", depNo );
+//	    returnParams.put( "money", money );
+//	    //储值卡退款
+//	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
+//	    if ( payResultMap != null ) {
+//		if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
+//		    int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
+//		    if ( code == 1 ) {//退款成功修改退款状态
+//			updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
+//		    } else {
+//			resultMap.put( "result", false );
+//			resultMap.put( "msg", payResultMap.get( "errorMsg" ) );
+//		    }
+//		}
+//	    }
 	} else if ( payWay.toString().equals( "3" ) && !map.containsKey( "isAlipay" ) ) {
 	    updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
 	}

@@ -221,17 +221,17 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			returnParams.put( "busId", busUserId );
 			returnParams.put( "orderNo", orderNo );
 			returnParams.put( "money", orderMoney );
-			//储值卡退款
-			Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
-			if ( payResultMap != null ) {
-			    if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
-				int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
-				if ( code == 1 ) {//退款成功修改退款状态
-				    resultFlag = true;
-				    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
-				}
-			    }
-			}
+			//储值卡退款 todo1
+//			Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
+//			if ( payResultMap != null ) {
+//			    if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
+//				int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
+//				if ( code == 1 ) {//退款成功修改退款状态
+//				    resultFlag = true;
+//				    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
+//				}
+//			    }
+//			}
 		    }
 
 		    boolean flag = false;

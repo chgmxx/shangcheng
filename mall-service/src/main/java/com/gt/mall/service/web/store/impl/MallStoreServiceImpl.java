@@ -47,11 +47,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     private static Logger logger = LoggerFactory.getLogger( MallStoreServiceImpl.class );
 
     @Autowired
-    private MallStoreDAO mallStoreDao;
-
+    private MallStoreDAO                  mallStoreDao;
     @Autowired
-    private WxShopService wxShopService;
-
+    private WxShopService                 wxShopService;
     @Autowired
     private BusUserService                busUserService;
     @Autowired
