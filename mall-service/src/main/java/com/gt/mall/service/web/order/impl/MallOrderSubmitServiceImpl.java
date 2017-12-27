@@ -198,6 +198,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    totalOrderOldMoney = CommonUtil.add( totalOrderOldMoney, busDTO.getTotalMoney() );
 
 	}
+	if ( params.getTotalPayMoney() != totalOrderMoney ) {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "订单优惠计算异常" );
+	}
 	if ( CommonUtil.isNotEmpty( parentOrder ) ) {
 	    parentOrder.setOrderMoney( CommonUtil.toBigDecimal( totalOrderMoney ) );//订单实付金额（包含运费）
 	    parentOrder.setOrderFreightMoney( CommonUtil.toBigDecimal( totalOrderFreightMoney ) );//订单总运费

@@ -2,6 +2,7 @@ package com.gt.mall.service.web.order.impl;
 
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.DictBean;
 import com.gt.mall.constant.Constants;
@@ -34,6 +35,7 @@ import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.OrderUtil;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
@@ -205,7 +207,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			    Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );  //微信退款
 			    logger.error( "微信退款的返回值：" + JSONObject.fromObject( resultmap ) );
 			    if ( resultmap != null ) {
-				if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+				String code = resultmap.get( "code" ).toString();
+				if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 				    resultFlag = true;
 				    //退款成功修改退款状态
 				    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
@@ -217,21 +220,49 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			}
 
 		    } else if ( orderPayWay == 3 && CommonUtil.isNotEmpty( pUser ) ) {//储值卡退款
-			Map< String,Object > returnParams = new HashMap<>();
-			returnParams.put( "busId", busUserId );
-			returnParams.put( "orderNo", orderNo );
-			returnParams.put( "money", orderMoney );
-			//储值卡退款 todo1
-//			Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
-//			if ( payResultMap != null ) {
-//			    if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
-//				int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
-//				if ( code == 1 ) {//退款成功修改退款状态
-//				    resultFlag = true;
-//				    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
-//				}
-//			    }
-//			}
+			//			Map< String,Object > returnParams = new HashMap<>();
+			//			returnParams.put( "busId", busUserId );
+			//			returnParams.put( "orderNo", orderNo );
+			//			returnParams.put( "money", orderMoney );
+			//储值卡退款
+			//			Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
+			//			if ( payResultMap != null ) {
+			//			    if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
+			//				int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
+			//				if ( code == 1 ) {//退款成功修改退款状态
+			//				    resultFlag = true;
+			//				    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
+			//				}
+			//			    }
+			//			}
+			int is_wallet = 0;
+			double use_fenbi = 0;
+			double use_jifen = 0;
+			if ( CommonUtil.isNotEmpty( detailMap.get( "is_wallet" ) ) ) {
+			    is_wallet = CommonUtil.toInteger( detailMap.get( "is_wallet" ) );
+			}
+			if ( CommonUtil.isNotEmpty( detailMap.get( "use_fenbi" ) ) ) {
+			    use_fenbi = CommonUtil.toDouble( detailMap.get( "use_fenbi" ) );
+			}
+			if ( CommonUtil.isNotEmpty( detailMap.get( "use_jifen" ) ) ) {
+			    use_jifen = CommonUtil.toDouble( detailMap.get( "use_jifen" ) );
+			}
+			ErpRefundBo erpRefundBo = new ErpRefundBo();
+			erpRefundBo.setBusId( busUserId );//商家id
+			erpRefundBo.setOrderCode( orderNo );////订单号
+			erpRefundBo.setRefundPayType( CommonUtil.getMemberPayType( orderPayWay, is_wallet ) );////退款方式 字典1198
+			erpRefundBo.setRefundMoney( orderMoney ); //退款金额
+			erpRefundBo.setRefundJifen( CommonUtil.toIntegerByDouble( use_jifen ) );//退款积分
+			erpRefundBo.setRefundFenbi( use_fenbi ); //退款粉币
+			erpRefundBo.setRefundDate( new Date().getTime() );
+			Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
+			if ( CommonUtil.toInteger( resultMap.get( "code" ) ) != 1 ) {
+			    //同步失败，存入redis
+			    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
+			} else {
+			    resultFlag = true;
+			    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
+			}
 		    }
 
 		    boolean flag = false;
@@ -282,7 +313,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );//小程序退款
 			logger.info( "小程序退款返回值：" + JSONObject.fromObject( resultmap ) );
 			if ( resultmap != null ) {
-			    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+			    String code = resultmap.get( "code" ).toString();
+			    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 				resultFlag = true;
 				//退款成功修改退款状态
 				updateReturnStatus( pUser, detailMap, returnNo );//微信退款
@@ -329,11 +361,11 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	    MallProduct product = mallProductDAO.selectById( productId );
 	    if ( product != null ) {
 
-		product.setProStockTotal( product.getProStockTotal() + productNum );//商品库存
-		if ( product.getProSaleTotal() - productNum > 0 ) {
-		    product.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
-		}
-		mallProductDAO.updateById( product );
+		Map< String,Object > productParams = new HashMap<>();
+		productParams.put( "type", 1 );
+		productParams.put( "product_id", product.getId() );
+		productParams.put( "pro_num", productNum );
+		mallProductDAO.updateProductStock( productParams );
 
 		//修改商品规格库存
 		if ( product.getIsSpecifica() == 1 ) {
@@ -342,19 +374,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		    proMap.put( "specificaIds", specIds );
 		    proMap.put( "proId", productId );
 		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );
-		    int total = proInv.getInvNum() + productNum;//库存
-		    if ( total < 0 ) {
-			total = 0;
-		    }
-		    int invSaleNum;
-		    if ( !CommonUtil.isEmpty( proInv.getInvSaleNum() ) ) {
-			invSaleNum = proInv.getInvSaleNum() - productNum;//销量
-		    } else {
-			invSaleNum = productNum;//销量
-		    }
-		    proMap.put( "total", total );
-		    proMap.put( "saleNum", invSaleNum );
-		    mallProductInventoryService.updateProductInventory( proMap );
+		    mallProductInventoryService.updateProductInventory( proInv, productNum, 1 );
 		}
 	    }
 

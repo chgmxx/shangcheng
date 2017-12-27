@@ -37,7 +37,7 @@ public class PayServiceImpl implements PayService {
     public Map< String,Object > wxmemberPayRefund( WxmemberPayRefund refund ) {
 	RequestUtils< WxmemberPayRefund > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( refund );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2 );
+	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2,1 );
     }
 
     @Override

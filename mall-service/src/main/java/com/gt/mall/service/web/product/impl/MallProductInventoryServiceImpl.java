@@ -385,13 +385,16 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
-    public int updateProductInventory( Map< String,Object > params ) {
-	Wrapper< MallProductInventory > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete = 0 and product_id = {0} and specifica_ids = {1}", params.get( "proId" ), params.get( "specificaIds" ) );
-	MallProductInventory inventory = new MallProductInventory();
-	inventory.setInvNum( CommonUtil.toIntegerByDouble( CommonUtil.toDouble( params.get( "total" ) ) ) );
-	inventory.setInvSaleNum( CommonUtil.toInteger( params.get( "saleNum" ) ) );
-	return mallProductInventoryDAO.update( inventory, wrapper );
+    public int updateProductInventory( MallProductInventory inventory, Integer proNum, Integer type ) {
+	if ( CommonUtil.isEmpty( proNum ) || proNum == 0 ) {
+	    return 0;
+	}
+	Map< String,Object > params = new HashMap<>();
+	params.put( "type", type );
+	params.put( "inventory_id", inventory.getId() );
+	params.put( "product_id", inventory.getProductId() );
+	params.put( "pro_num", proNum );
+	return mallProductInventoryDAO.updateProductStock( params );
     }
 
     @Override

@@ -35,9 +35,14 @@ public class AppletSubmitOrderDTO implements Serializable {
     private Double  totalAllMoney;
 
     /**
+     * 合计（订单支付总价）
+     */
+    private double totalPayMoney;
+
+    /**
      * 粉币可抵扣的金额
      */
-    private Double  fenbi_money;
+    private Double fenbi_money;
     /**
      * 粉币数量
      */
@@ -50,7 +55,7 @@ public class AppletSubmitOrderDTO implements Serializable {
     /**
      * 积分数量
      */
-    private Double integral;
+    private Double  integral;
     /**
      * 是否已经使用积分 1已经使用积分   0没使用
      */
@@ -76,7 +81,7 @@ public class AppletSubmitOrderDTO implements Serializable {
     /**
      * 版本号
      */
-    private String  version;
+    private String version;
 
     /**
      * 订单集合 json格式
@@ -94,6 +99,5 @@ public class AppletSubmitOrderDTO implements Serializable {
 
     @ApiModelProperty( name = "memberDiscount", value = "会员折扣", hidden = true )
     private Double memberDiscount;
-
 
 }

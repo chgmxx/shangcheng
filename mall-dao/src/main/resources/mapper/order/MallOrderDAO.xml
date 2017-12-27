@@ -454,7 +454,7 @@
         </if>
     </select>
     <select id="findByPage" resultMap="PhoneResultMap" parameterType="map">
-       SELECT t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        SELECT t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
         t.receive_name,t.receive_address,t.receive_phone, t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
         t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
         t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
@@ -465,70 +465,70 @@
         d.pro_type_id, d.use_fenbi,d.use_jifen,d.return_day AS returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
         d.use_card_id,d.commission,d.sale_member_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,d.total_price
         FROM (
-            select
-            t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
-            t.receive_name,t.receive_address,t.receive_phone, t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
-            t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
-            t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
-            t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,t.buyer_user_type,t.is_wallet,t.bus_user_id,t.shop_id,t.order_old_money
-            from t_mall_order t
-            <where>
-                <if test="userId != null and userId != ''">
-                    and t.bus_user_id = #{userId}
-                </if>
-                <if test="shoplist != null ">
-                    and
-                    <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                        t.shop_id = #{item.id,jdbcType=INTEGER}
-                    </foreach>
-                </if>
-                <if test="startTime != null and startTime != ''">
-                    and t.create_time >= #{startTime}
-                </if>
-                <if test="endTime != null and endTime != ''">
-                    and t.create_time <![CDATA[<=]]> #{endTime}
-                </if>
-                <if test="orderType != 0">
-                    <if test="orderType == 1">and t.order_status = #{orderType}</if>
-                    <if test="orderType == 2">and t.delivery_method = #{orderType}</if>
-                    <if test="orderType == 3">and t.order_pay_way = 2</if>
-                </if>
-                <if test="status != null and status != ''">
-                    <if test="status &lt; 6">
-                        and t.order_status = #{status}
-                    </if>
-                </if>
-                <if test="orderFilter != 0">
-                    <if test="orderFilter == 1">and t.order_no = #{orderNo}<!-- and t.order_no like CONCAT(CONCAT('%', #{orderNo}),'%')  --></if>
-                    <if test="orderFilter == 2"><!-- and order_no = #{orderNo} --></if>
-                    <if test="orderFilter == 3">and t.receive_name = #{orderNo}<!-- and t.receive_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
-                    <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
-                    <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
-                </if>
-                <if test="queryName != null and queryName != ''">
-                    and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
-                </if>
-                <if test="type != null and type != ''">
-                    and t.order_type = #{type}
-                </if>
-                <if test="orderSource != null and orderSource != ''">
-                    and t.buyer_user_type = #{orderSource}
-                </if>
-                <if test="orderPayWay != null and orderPayWay != ''">
-                    and t.order_pay_way = #{orderPayWay}
-                </if>
-                <if test="deliveryMethod != null and deliveryMethod != ''">
-                    and t.delivery_method = #{deliveryMethod}
-                </if>
-                <if test="shopId!= null and shopId != ''">
-                    and t.shop_id = #{shopId}
-                </if>
-                and ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
-            </where>
-            ORDER BY t.id desc
-            <if test="firstResult != null and maxResult != null">
-                limit #{firstResult},#{maxResult}
+        select
+        t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone, t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
+        t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
+        t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
+        t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,t.buyer_user_type,t.is_wallet,t.bus_user_id,t.shop_id,t.order_old_money
+        from t_mall_order t
+        <where>
+            <if test="userId != null and userId != ''">
+                and t.bus_user_id = #{userId}
             </if>
+            <if test="shoplist != null ">
+                and
+                <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                    t.shop_id = #{item.id,jdbcType=INTEGER}
+                </foreach>
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and t.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and t.create_time <![CDATA[<=]]> #{endTime}
+            </if>
+            <if test="orderType != 0">
+                <if test="orderType == 1">and t.order_status = #{orderType}</if>
+                <if test="orderType == 2">and t.delivery_method = #{orderType}</if>
+                <if test="orderType == 3">and t.order_pay_way = 2</if>
+            </if>
+            <if test="status != null and status != ''">
+                <if test="status &lt; 6">
+                    and t.order_status = #{status}
+                </if>
+            </if>
+            <if test="orderFilter != 0">
+                <if test="orderFilter == 1">and t.order_no = #{orderNo}<!-- and t.order_no like CONCAT(CONCAT('%', #{orderNo}),'%')  --></if>
+                <if test="orderFilter == 2"><!-- and order_no = #{orderNo} --></if>
+                <if test="orderFilter == 3">and t.receive_name = #{orderNo}<!-- and t.receive_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
+                <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
+                <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
+            </if>
+            <if test="queryName != null and queryName != ''">
+                and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+            </if>
+            <if test="type != null and type != ''">
+                and t.order_type = #{type}
+            </if>
+            <if test="orderSource != null and orderSource != ''">
+                and t.buyer_user_type = #{orderSource}
+            </if>
+            <if test="orderPayWay != null and orderPayWay != ''">
+                and t.order_pay_way = #{orderPayWay}
+            </if>
+            <if test="deliveryMethod != null and deliveryMethod != ''">
+                and t.delivery_method = #{deliveryMethod}
+            </if>
+            <if test="shopId!= null and shopId != ''">
+                and t.shop_id = #{shopId}
+            </if>
+            and ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
+        </where>
+        ORDER BY t.id desc
+        <if test="firstResult != null and maxResult != null">
+            limit #{firstResult},#{maxResult}
+        </if>
         ) t
         left join t_mall_order_detail d on d.order_id = t.id
     </select>
@@ -893,36 +893,36 @@
         d.return_day AS returnDay,d.det_privivilege, d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,d.pro_type_id
 
         from (
-            select
-            t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.pay_time,t.update_time,
-            t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method, t.bus_user_id,t.shop_id
-            from t_mall_order t
-            where t.member_is_delete = 0 and t.shop_id > 0
-            <if test="busUserId != null and busUserId != ''">
-                and t.bus_user_id = #{busUserId}
-            </if>
-            <if test="memberId != null and memberId != ''  and (oldMemberIds == null)">
-                and t.buyer_user_id = #{memberId}
-            </if>
-            <if test="oldMemberIds != null and oldMemberIds.size > 0">
-                and t.buyer_user_id in
-                <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="," close=")">
-                    #{item,jdbcType=INTEGER}
-                </foreach>
-            </if>
-            <if test="orderType != null and orderType != ''">
-                and t.order_type = #{orderType}
-            </if>
-            <if test="id != null and id != ''">
-                and t.id=#{id}
-            </if>
-            <if test="type != null and type != '' and type != 0">
-                and t.order_status = #{type}
-            </if>
-            ORDER BY t.id desc,t.pay_time desc
-            <if test="firstNum != null and maxNum != null">
-                limit #{firstNum},#{maxNum}
-            </if>
+        select
+        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.pay_time,t.update_time,
+        t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method, t.bus_user_id,t.shop_id
+        from t_mall_order t
+        where t.member_is_delete = 0 and t.shop_id > 0 and t.order_pay_way != 5
+        <if test="busUserId != null and busUserId != ''">
+            and t.bus_user_id = #{busUserId}
+        </if>
+        <if test="memberId != null and memberId != ''  and (oldMemberIds == null)">
+            and t.buyer_user_id = #{memberId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds.size > 0">
+            and t.buyer_user_id in
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="orderType != null and orderType != ''">
+            and t.order_type = #{orderType}
+        </if>
+        <if test="id != null and id != ''">
+            and t.id=#{id}
+        </if>
+        <if test="type != null and type != '' and type != 0">
+            and t.order_status = #{type}
+        </if>
+        ORDER BY t.id desc,t.pay_time desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
         ) t
         left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
     </select>
@@ -1023,7 +1023,7 @@
         o.order_status as orderStatus,d.shop_id as shopId ,o.order_pid,o.is_wallet,o.bus_user_id,
         if(o.order_pid = 0 || o.order_pid is null,o.order_no,(SELECT  order_no from t_mall_order where o.order_pid=id)) as orderNo,
         d.product_id as productId,d.det_pro_num as proNum,o.buyer_user_id,o.order_pay_way,o.order_no,o.order_type,o.group_buy_id,d.product_specificas
-        ,d.use_fenbi,d.use_jifen,d.total_price,o.receive_address,d.flow_id,d.flow_record_id
+        ,d.use_fenbi,d.use_jifen,d.total_price,o.receive_address,d.flow_id,d.flow_record_id,d.use_fenbi,d.use_jifen
         from t_mall_order_detail d
         left join t_mall_order o on d.order_id = o.id
         where d.id = #{detailId}

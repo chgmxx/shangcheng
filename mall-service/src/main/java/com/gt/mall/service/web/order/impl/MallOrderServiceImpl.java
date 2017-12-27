@@ -993,10 +993,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    order = mallOrderDAO.getOrderById( order.getId() );
 	}
 	Map< String,Object > map = new HashMap<>();
-	String shopIds = order.getShopId() + ",";
-	if ( null != params.get( "shopIds" ) && !params.get( "shopIds" ).equals( "" ) ) {
-	    shopIds += params.get( "shopIds" ) + ",";
-	}
 	if ( order.getOrderType() == 6 ) {
 	    mallPresaleService.diffInvNum( order );
 	}
@@ -1324,7 +1320,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					logger.error( "微信退款的返回值：" + JSONObject.fromObject( resultmap ) );
 
 					if ( CommonUtil.isNotEmpty( resultmap ) ) {
-					    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+					    String code = resultmap.get( "code" ).toString();
+					    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 						//退款成功修改退款状态
 						updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
 
@@ -1405,7 +1402,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					    Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );  //微信退款
 					    logger.error( "微信退款的返回值：" + JSONObject.fromObject( resultmap ) );
 					    if ( resultmap != null ) {
-						if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+						String code = resultmap.get( "code" ).toString();
+						if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 						    //退款成功修改退款状态
 						    updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
 						    if ( order.getOrderPayWay() == 7 ) {//找人代付
@@ -1451,7 +1449,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 						Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );//小程序退款
 						logger.info( "小程序退款返回值：" + JSONObject.fromObject( resultmap ) );
 						if ( CommonUtil.isNotEmpty( resultmap ) ) {
-						    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+						    String code = resultmap.get( "code" ).toString();
+						    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 							//退款成功修改退款状态
 							updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
 							if ( order.getOrderPayWay() == 7 ) {//找人代付
@@ -1504,7 +1503,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );//小程序退款
 					logger.info( "小程序退款返回值：" + JSONObject.fromObject( resultmap ) );
 					if ( resultmap != null ) {
-					    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+					    String code = resultmap.get( "code" ).toString();
+					    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 						//退款成功修改退款状态
 						updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
 
@@ -1614,7 +1614,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    List< MallOrderDetail > detailList = mallOrderDetailDAO.selectByOrderId( obj.getInt( "id" ) );
 		    if ( detailList != null && detailList.size() > 0 ) {
 			for ( MallOrderDetail mallOrderDetail : detailList ) {
-			    updateInvenNum( null, null, order, mallOrderDetail );
+			    MallOrderReturn refund = new MallOrderReturn();
+			    refund.setOrderId( order.getId() );
+			    refund.setOrderDetailId( mallOrderDetail.getId() );
+			    MallOrderReturn orderReturn = mallOrderReturnDAO.selectByOrderDetailId( refund );
+			    orderReturn.setStatus( 1 );
+			    updateInvenNum( orderReturn, null, order, mallOrderDetail );
 			}
 		    }
 		}
@@ -1622,7 +1627,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		List< MallOrderDetail > detailList = mallOrderDetailDAO.selectByOrderId( order.getId() );
 		if ( detailList != null && detailList.size() > 0 ) {
 		    for ( MallOrderDetail mallOrderDetail : detailList ) {
-			updateInvenNum( null, null, order, mallOrderDetail );
+			MallOrderReturn refund = new MallOrderReturn();
+			refund.setOrderId( order.getId() );
+			refund.setOrderDetailId( mallOrderDetail.getId() );
+			MallOrderReturn orderReturn = mallOrderReturnDAO.selectByOrderDetailId( refund );
+			orderReturn.setStatus( 1 );
+			updateInvenNum( orderReturn, null, order, mallOrderDetail );
 		    }
 		}
 	    }
@@ -1690,13 +1700,18 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		int erpInvenId = product.getErpInvId();
 		String invKey = "hSeckill";//秒杀库存的key
 		if ( isJxc == 0 || !product.getProTypeId().toString().equals( "0" ) ) {
-		    MallProduct p = new MallProduct();
-		    p.setId( product.getId() );
-		    p.setProStockTotal( product.getProStockTotal() + productNum );//商品库存
-		    if ( product.getProSaleTotal() - productNum > 0 ) {
-			p.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
-		    }
-		    mallProductDAO.updateById( p );
+		    //		    MallProduct p = new MallProduct();
+		    //		    p.setId( product.getId() );
+		    //		    p.setProStockTotal( product.getProStockTotal() + productNum );//商品库存
+		    //		    if ( product.getProSaleTotal() - productNum > 0 ) {
+		    //			p.setProSaleTotal( product.getProSaleTotal() - productNum );//商品销量
+		    //		    }
+		    //		    mallProductDAO.updateById( p );
+		    Map< String,Object > productParams = new HashMap<>();
+		    productParams.put( "type", 1 );
+		    productParams.put( "product_id", product.getId() );
+		    productParams.put( "pro_num", productNum );
+		    mallProductDAO.updateProductStock( productParams );
 		}
 
 		if ( orderType == 3 && seckillId > 0 ) {
@@ -1714,7 +1729,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    proMap.put( "proId", productId );
 		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );
 		    erpInvenId = proInv.getErpInvId();
-		    int total = proInv.getInvNum() + productNum;//库存
+		    /*int total = proInv.getInvNum() + productNum;//库存
 		    if ( total < 0 ) {
 			total = 0;
 		    }
@@ -1725,9 +1740,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			invSaleNum = productNum;//销量
 		    }
 		    proMap.put( "total", total );
-		    proMap.put( "saleNum", invSaleNum );
+		    proMap.put( "saleNum", invSaleNum );*/
 		    if ( isJxc == 0 || !product.getProTypeId().toString().equals( "0" ) ) {
-			mallProductInventoryService.updateProductInventory( proMap );
+			mallProductInventoryService.updateProductInventory( proInv, productNum, 1 );//修改规格的库存
 		    }
 
 		    String field = seckillId + "_" + detailMap.get( "product_specificas" ).toString();
@@ -1790,7 +1805,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		erpRefundBo.setRefundFenbi( returnFenbi ); //退款粉币
 		erpRefundBo.setRefundDate( new Date().getTime() );
 		Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
-		if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == -1 ) {
+		if ( CommonUtil.toInteger( resultMap.get( "code" ) ) != 1 ) {
 		    //同步失败，存入redis
 		    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
 		}

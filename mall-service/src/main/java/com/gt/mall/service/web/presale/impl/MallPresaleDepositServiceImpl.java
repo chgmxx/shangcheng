@@ -3,6 +3,7 @@ package com.gt.mall.service.web.presale.impl;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
@@ -567,6 +568,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	String returnNo = "YSHTK" + System.currentTimeMillis();
 	map.put( "return_no", returnNo );
 
+	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( depNo );
+
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 
 	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( depNo );
@@ -580,7 +583,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );
 		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject( resultmap ).toString() );
 		if ( resultmap != null ) {
-		    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+		    String code = resultmap.get( "code" ).toString();
+		    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 			//退款成功修改退款状态
 			updateReturnStatus( pUser, map, returnNo );//微信退款
 		    } else {
@@ -591,25 +595,26 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    }
 
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
-	    //todo
-//	    Member member = memberService.findMemberById( memberId, null );
-//	    Map< String,Object > returnParams = new HashMap<>();
-//	    returnParams.put( "busId", member.getBusid() );
-//	    returnParams.put( "orderNo", depNo );
-//	    returnParams.put( "money", money );
-//	    //储值卡退款
-//	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
-//	    if ( payResultMap != null ) {
-//		if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
-//		    int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
-//		    if ( code == 1 ) {//退款成功修改退款状态
-//			updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
-//		    } else {
-//			resultMap.put( "result", false );
-//			resultMap.put( "msg", payResultMap.get( "errorMsg" ) );
-//		    }
-//		}
-//	    }
+	    Member member = memberService.findMemberById( memberId, null );
+	    ErpRefundBo erpRefundBo = new ErpRefundBo();
+	    erpRefundBo.setBusId( member.getBusid() );//商家id
+	    erpRefundBo.setOrderCode( deposit.getDepositNo() );////订单号
+	    erpRefundBo.setRefundPayType( CommonUtil.getMemberPayTypeByPresale( deposit.getPayWay(), 0 ) );////退款方式 字典1198
+	    erpRefundBo.setRefundMoney( money ); //退款金额
+	    erpRefundBo.setRefundDate( new Date().getTime() );
+	    Map< String,Object > memberResultMap = memberService.refundMoney( erpRefundBo );
+	    if ( CommonUtil.toInteger( memberResultMap.get( "code" ) ) != 1 ) {
+		//同步失败，存入redis
+		JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
+
+		resultMap.put( "result", false );
+		if ( CommonUtil.isNotEmpty( memberResultMap.get( "errorMsg" ) ) ) {
+		    resultMap.put( "msg", memberResultMap.get( "errorMsg" ) );
+		}
+	    } else {
+		updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
+
+	    }
 	} else if ( payWay.toString().equals( "3" ) && !map.containsKey( "isAlipay" ) ) {
 	    updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
 	}

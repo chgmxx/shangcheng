@@ -1270,16 +1270,14 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    msg = "提交订单失败，请稍后重试";
 	}
 	if ( code > 0 ) {//提交订单成功，并且是货到付款，
-	    if ( orderPayWay == 4 ) {
-		//TODO 修改积分  memberPayService.updateMemberIntergral()
+	    /*if ( orderPayWay == 4 ) {
 		Map< String,Object > payRresult = null;
-		//                        memberPayService.updateMemberIntergral(null, member.getId(), CommonUtil.toInteger(-orderMoney));
 		if ( CommonUtil.isNotEmpty( payRresult.get( "result" ) ) ) {
 		    if ( CommonUtil.toString( payRresult.get( "result" ) ).equals( "2" ) ) {
 			orderService.paySuccessModified( params, member );//修改库存和订单状态
 		    }
 		}
-	    }
+	    }*/
 	    if ( orderPayWay == 2 ) {
 		params.put( "status", 2 );
 		params.put( "out_trade_no", orderNo );

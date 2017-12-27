@@ -1538,7 +1538,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    resultMap.put( "errorMsg", msg );
 	} else {
 	    if ( CommonUtil.isNotEmpty( proIds ) && userId > 0 ) {
-		int userPId = busUserService.getMainBusId(  userId );//通过用户名查询主账号id
+		int userPId = busUserService.getMainBusId( userId );//通过用户名查询主账号id
 		Map< String,Object > syncParams = new HashMap<>();
 		syncParams.put( "productIds", proIds.substring( 0, proIds.length() - 1 ) );
 		syncParams.put( "rootUid", userPId );
@@ -2362,11 +2362,11 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	proMap.put( "total", total );
 	proMap.put( "saleNum", saleNum );
 	proMap.put( "proId", detail.getProductId() );
-	MallProduct mallProduct = new MallProduct();
-	mallProduct.setId( detail.getProductId() );
-	mallProduct.setProStockTotal( total );
-	mallProduct.setProSaleTotal( saleNum );
-	mallProductDAO.updateById( mallProduct );//修改商品库存
+	Map< String,Object > productParams = new HashMap<>();
+	productParams.put( "type", 2 );
+	productParams.put( "product_id", detail.getProductId() );
+	productParams.put( "pro_num",  detail.getDetProNum()  );
+	mallProductDAO.updateProductStock( productParams );
 	if ( null != pro.getIsSpecifica() && CommonUtil.isNotEmpty( pro.getIsSpecifica() ) ) {
 	    if ( pro.getIsSpecifica() == 1 ) {//该商品存在规格
 		if ( order.getOrderType() != 7 ) {
@@ -2406,21 +2406,11 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     private void diffProductInvStockNum( Map< String,Object > proMap, int proNum ) {
 	MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );//根据商品规格id查询商品库存
-	double total = 0;
-	if ( CommonUtil.isNotEmpty( proInv.getInvNum() ) ) {
-	    total = proInv.getInvNum();
-	}
-	int invSaleNum = 0;
-	if ( CommonUtil.isNotEmpty( proInv.getInvSaleNum() ) ) {
-	    invSaleNum = proInv.getInvSaleNum();
-	}
-	proMap.put( "total", total - proNum > 0 ? total - proNum : 0 );
-	proMap.put( "saleNum", invSaleNum + proNum );
-	mallProductInventoryService.updateProductInventory( proMap );//修改规格的库存
+	mallProductInventoryService.updateProductInventory( proInv, proNum, 2 );//修改规格的库存
     }
 
     /**
-     * 同步商品库存  todo  还没测
+     * 同步商品库存
      *
      * @param params
      * @param productIds

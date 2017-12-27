@@ -98,8 +98,14 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
 
     /**
      * 根据商品ID和规格id修改库存信息
+     *
+     * @param inventory 库存对象
+     * @param proNum    数量
+     * @param type      1 加库存减销量（退款）   2减库存价销量（购买）
+     *
+     * @return
      */
-    int updateProductInventory( Map< String,Object > params );
+    int updateProductInventory( MallProductInventory inventory, Integer proNum, Integer type );
 
     /**
      * 根据商品获取产品默认规格

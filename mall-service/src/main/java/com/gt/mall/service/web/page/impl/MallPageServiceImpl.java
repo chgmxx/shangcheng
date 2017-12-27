@@ -1433,25 +1433,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public List< Map< String,Object > > productPresale( Integer stoId, Map< String,Object > params ) {
 
-	/*String sql = "SELECT distinct(a.id),a.pro_price,a.pro_name as proName,a.is_specifica,b.product_introdu as product_introdu,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id,"
-			+ " mp.sale_start_time,mp.sale_end_time,mp.id as presaleId,mp.order_num"
-			+ " from t_mall_presale mp"
-			+ " left join t_mall_product a  on a.id=mp.product_id"
-			+ " LEFT JOIN t_mall_product_detail b ON a.id=b.product_id"
-			+ " LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id"
-			+ " LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id"
-			+ " LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id "
-			+ " WHERE a.shop_id=" + stoId + " AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 "
-			+ " and ((mp.sale_start_time > now() and   mp.sale_end_time > now() ) or (mp.sale_start_time <= now() and now() < mp.sale_end_time))"
-			+ " and mp.is_use=1 and mp.is_delete=0";*/
 	params.put( "shopId", params.get( "stoId" ) );
 	if ( CommonUtil.isNotEmpty( params.get( "proName" ) ) ) {
 	    params.put( "searchName", params.get( "proName" ) );
-	    /*sql += " and a.pro_name like '%" + params.get( "proName" ) + "%'";*/
 	}
-	/*if ( CommonUtil.isNotEmpty( params.get( "groupId" ) ) ) {
-	    sql += " and a.id in (select product_id from t_mall_product_group where group_id = " + params.get( "groupId" ) + ")";
-	}*/
 	List< Map< String,Object > > list = mallPresaleDAO.selectBySearchNames( params );
 	List< Map< String,Object > > proList = new ArrayList<>();
 	if ( list != null && list.size() > 0 ) {

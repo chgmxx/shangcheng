@@ -243,4 +243,7 @@ public class Constants {
 
     public static final String COUPON_URL = "/phone_2MemberController/79B4DE7C/memberCardList_1.do?busId=${userid}";
 
+
+    public static final String FINISH_REFUND_STATUS = "-14";
+
 }
