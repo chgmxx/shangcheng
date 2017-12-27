@@ -3,7 +3,6 @@
 	<div class="inb text-l">
 	
 	    <div class="app-preview">
-	        <div class="app-header"></div>
 	        <div class="app-entry">
 	            <div class="app-title">
 	                <h1><span>微页面标题</span></h1>
@@ -25,7 +24,29 @@
 	                	<div class="module pr" ng-if="data.type == 6" ng-include="'js/module/reservation.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
 	                
 	                	<div class="module pr" ng-if="data.type == 7"  ng-include="'js/module/header.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 8"  ng-include="'js/module/title.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 9"  ng-include="'js/module/textNav.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 10"  ng-include="'js/module/picNav.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 11"  ng-include="'js/module/window.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 12"  ng-include="'js/module/goShop.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 13"  ng-include="'js/module/notice.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
+	                	
+	                	<div class="module pr" ng-if="data.type == 14"  ng-include="'js/module/guide.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>
 	                
+	                	<div class="module pr" ng-if="data.type == 15"  ng-include="'js/module/coupon.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>	                
+
+	                	<div class="module pr" ng-if="data.type == 16"  ng-include="'js/module/grouping.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>	
+	                	
+	                	<div class="module pr" ng-if="data.type == 17"  ng-include="'js/module/commodityList.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>                
+
+	                	<div class="module pr" ng-if="data.type == 18"  ng-include="'js/module/richText.html'" ng-click="setShowEdit(data,$index,$event)" my-plan></div>                
+
 	                </div>
 	
 	            </div>
@@ -36,44 +57,100 @@
 	                <ul>
 	                    <li ng-click="addcommodity()"><a>商品</a></li>
 	                    <li ng-click="addswiper()"><a>轮播</a></li>
-	                    <li ng-click="addclassify()"><a>分类</a></li>
-	                    <li ng-click="addinterval()"><a>间隔</a></li>
-	                    <li ng-click="addsearch()"><a>搜索</a></li>
+	                    <li ng-click="addclassify()"><a>魔方</a></li>
+	                    <li ng-click="addinterval()"><a>辅助<br>空白</a></li>
+	                    <li ng-click="addsearch()"><a>商品<br>搜索</a></li>
 	                    <li ng-click="addreservation()"><a>预售</a></li>
+	                    <li ng-click="addtitle()"><a>标题</a></li>
+	                    <li ng-click="addTextNav()"><a>文本<br>导航</a></li>
+	                    <li ng-click="addPicNav()"><a>图片<br>导航</a></li>
+	                    <li ng-click="addWindow()"><a>橱窗</a></li>
+	                    <li ng-click="addGoShop()"><a>进入<br>店铺</a></li>
+	                    <li ng-click="addNotice()"><a>公告</a></li>
+	                    <li ng-click="addGuide()"><a>辅助线</a></li>
+	                    <!-- <li ng-click="addCoupon()"><a>优惠券</a></li> -->
+	                    <li ng-click="addGrouping()"><a>商品<br>分组</a></li>
+	                    <li ng-click="addcommodityList()"><a>商品<br>列表</a></li>
+	                    <li ng-click="addRichText()"><a>富文本</a></li>
 	                </ul>
 	            </div>
 	        </div>
+	        <div style="height:600px"></div>
 	    </div>
 	    <div class="app-sidebar" style="margin-top: {{positionTop}}px">
 	        <div class="arrow"></div>
 	        <div class="app-sidebar-inner">
 	        
-	            <div ng-if="showEdit(1)">
+	            <div ng-if="edit == 1">
 	                <div commodity-draggable></div>
 	            </div>
 	
-	            <div ng-if="showEdit(2)">
+	            <div ng-if="edit == 2">
 	                <div swiper-draggable></div>
 	            </div>
 	
-	            <div ng-if="showEdit(3)">
+	            <div ng-if="edit == 3">
 	                <div classify-draggable dataedit="dataedit"></div>
 	            </div>
 	            
-	            <div ng-if="showEdit(4)">
+	            <div ng-if="edit == 4">
 	                <div interval-draggable></div>
 	            </div>
 	            
-	            <div ng-if="showEdit(5)">
+	            <div ng-if="edit == 5">
 					<div search-draggable></div>
 				</div>
 				
-				<div ng-if="showEdit(6)">
+				<div ng-if="edit == 6">
 					<div reservation-draggable></div>
 				</div>
 				
-				<div ng-if="showEdit(7)">
+				<div ng-if="edit == 7">
 					<div header-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 8">
+					<div title-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 9">
+					<div text-nav-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 10">
+					<div pic-nav-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 11">
+					<div window-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 12">
+					<div go-shop-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 13">
+					<div notice-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 14">
+					<div guide-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 15">
+					<div coupon-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 16">
+					<div grouping-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 17">
+					<div commodity-list-draggable></div>
+				</div>
+				
+				<div ng-if="edit == 18">
+					<div rich-text-draggable></div>
 				</div>
 	        </div>
 	    </div>
@@ -90,5 +167,6 @@
         <div id="addswiperpic" ng-click="addswiperpic()"></div>
         <div id="addswiperpic_last" ng-click="addswiperpic_last()"></div>
         <div id="saveclassify" ng-click="saveclassify()"></div>
+        <div id="saverichText" ng-click="saverichText()"></div>
     </div>
 </div>

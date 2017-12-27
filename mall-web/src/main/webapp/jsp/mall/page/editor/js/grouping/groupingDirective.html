@@ -1,0 +1,412 @@
+<div class="commodityDirective groupingDirective" ng-controller="groupingController">
+    <div class="control-group">
+        <label class="control-label">分组模板：</label>
+        <div class="controls">
+            <label class="radio inline regular-radio">
+                <input type="radio" name="groupingNav" value="0" ng-model="dataedit.nav">
+                <span></span>左侧菜单
+            </label>
+            <label class="radio inline regular-radio">
+                <input type="radio" name="groupingNav" value="1" ng-model="dataedit.nav">
+                <span></span>顶部菜单
+            </label>
+        </div>
+    </div>
+    
+    <div class="control-group">
+    	<div class="grouping-sources">
+   			<div class="grouping-source">商品来源：<span class="text">商品组一</span><span class="btn">修改</span></div>
+	    	<div class="actions">
+	            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
+	        </div>
+    	</div>
+    </div>
+    <div class="control-group">
+    	<div class="grouping-sources">
+   			<div class="grouping-source">商品来源：<span class="text">商品组二</span><span class="btn">修改</span></div>
+	    	<div class="actions">
+	            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
+	        </div>
+    	</div>
+    </div>
+    <div class="control-group">
+    	<div class="grouping-sources">
+   			<div class="grouping-source">商品来源：<span class="text">商品组三</span><span class="btn">修改</span></div>
+	    	<div class="actions">
+	            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
+	        </div>
+    	</div>
+    </div>
+    
+    <div class="control-group">
+    	<div class="add-grouping">添加一个商品分组</div>
+    </div>
+    
+    <div class="control-group">
+    	<p class="app-component-desc help-desc">选择商品来源后，左侧实时预览暂不支持显示其包含的商品数据</p>
+    </div>
+    
+    <div class="control-group" ng-if="dataedit.nav!=0">
+        <label class="control-label">列表样式：</label>
+        <div class="controls">
+            <label class="radio inline regular-radio" ng-click="setpage(0)">
+                <input type="radio" name="size" value="0" ng-model="dataedit.page">
+                <span></span>大图
+            </label>
+            <label class="radio inline regular-radio" ng-click="setpage(1)">
+                <input type="radio" name="size" value="1" ng-model="dataedit.page">
+                <span></span>小图
+            </label>
+            <label class="radio inline regular-radio" ng-click="setpage(2)">
+                <input type="radio" name="size" value="2" ng-model="dataedit.page">
+                <span></span>一大两小
+            </label>
+            <label class="radio inline regular-radio" ng-click="setpage(3)">
+                <input type="radio" name="size" value="3" ng-model="dataedit.page">
+                <span></span>详细列表
+            </label>
+        </div>
+    </div>
+    
+    <div ng-if="dataedit.page == 0&&dataedit.nav!=0">
+    	<div class="control-group">
+			<label class="control-label">显示风格：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+			        <span></span>卡片式
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+			        <span></span>极简式
+			    </label>
+			</div>
+	  	</div>
+	  	<div class="control-group" ng-hide="dataedit.css == 1" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="buy_btn" value="1" ng-model="dataedit.btn">
+				<span style="margin-right:8px"></span>显示购买按钮
+			</label>
+	  	</div>
+	  	<div class="control-group" ng-show="dataedit.btn && dataedit.css != 1">
+			<label class="control-label">按钮样式：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+			        <span></span>样式1
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+			        <span></span>样式2
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+			        <span></span>样式3
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+			        <span></span>样式4
+			    </label>
+			</div>
+	  	</div>
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="title" ng-model="dataedit.name">
+				<span style="margin-right:8px"></span>显示商品名 (小图不显示名称)
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="show_sub_title" ng-model="dataedit.intro">
+				<span style="margin-right:8px"></span>显示商品简介
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="price" ng-model="dataedit.price">
+				<span style="margin-right:8px"></span>显示价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.label">
+				<span style="margin-right:8px"></span>显示标签
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_discount">
+				<span style="margin-right:8px"></span>显示折扣价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_other">
+				<span style="margin-right:8px"></span>显示会员价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_wholesale">
+				<span style="margin-right:8px"></span>显示批发价格
+			</label>
+	  	</div>
+    </div>
+
+    <div ng-if="dataedit.page == 1&&dataedit.nav!=0">
+	  	<div class="control-group">
+			<label class="control-label">显示风格：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+			        <span></span>卡片式
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+			        <span></span>极简式
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="3" ng-model="dataedit.css">
+			        <span></span>促销
+			    </label>
+			</div>
+	  	</div>
+	  	
+	  	<div class="control-group" ng-hide="dataedit.css == 1 || dataedit.css == 3" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="buy_btn" value="1" ng-model="dataedit.btn">
+				<span style="margin-right:8px"></span>显示购买按钮
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group"  ng-hide="!dataedit.btn || dataedit.css == 1 || dataedit.css == 3">
+	  		<label class="control-label">按钮样式：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+			        <span></span>样式1
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+			        <span></span>样式2
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+			        <span></span>样式3
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+			        <span></span>样式4
+			    </label>
+			</div>
+	  	</div>
+	  	
+	  	<div ng-hide="dataedit.css == 1 || dataedit.css == 3">
+	  		<div class="control-group" style="padding-left: 17px;">
+	            <label class="el-checkbox__inner">
+					<input type="checkbox" name="title" ng-model="dataedit.name">
+					<span style="margin-right:8px"></span>显示商品名 (小图不显示名称)
+				</label>
+		  	</div>
+		  	<div class="control-group" style="padding-left: 17px;">
+	            <label class="el-checkbox__inner">
+					<input type="checkbox" ng-model="dataedit.label">
+					<span style="margin-right:8px"></span>显示标签
+				</label>
+		  	</div>
+		  	
+		  	<div class="control-group" style="padding-left: 17px;">
+	            <label class="el-checkbox__inner">
+					<input type="checkbox" ng-model="dataedit.price_discount">
+					<span style="margin-right:8px"></span>显示折扣价格
+				</label>
+		  	</div>
+		  	
+		  	<div class="control-group" style="padding-left: 17px;">
+	            <label class="el-checkbox__inner">
+					<input type="checkbox" ng-model="dataedit.price_other">
+					<span style="margin-right:8px"></span>显示会员价格
+				</label>
+		  	</div>
+		  	
+		  	<div class="control-group" style="padding-left: 17px;">
+	            <label class="el-checkbox__inner">
+					<input type="checkbox" ng-model="dataedit.price_wholesale">
+					<span style="margin-right:8px"></span>显示批发价格
+				</label>
+		  	</div>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="price" ng-model="dataedit.price">
+				<span style="margin-right:8px"></span>显示价格
+			</label>
+	  	</div>
+	  	
+    </div>
+
+    <div ng-if="dataedit.page == 2&&dataedit.nav!=0">
+        <div class="control-group">
+			<label class="control-label">显示风格：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+			        <span></span>卡片式
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+			        <span></span>极简式
+			    </label>
+			</div>
+	  	</div>
+	  	<div class="control-group" ng-hide="dataedit.css == 1" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="buy_btn" value="1" ng-model="dataedit.btn">
+				<span style="margin-right:8px"></span>显示购买按钮
+			</label>
+	  	</div>
+	  	<div class="control-group" ng-show="dataedit.btn && dataedit.css != 1">
+			<label class="control-label">按钮样式：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+			        <span></span>样式1
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+			        <span></span>样式2
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+			        <span></span>样式3
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+			        <span></span>样式4
+			    </label>
+			</div>
+	  	</div>
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="title" ng-model="dataedit.name">
+				<span style="margin-right:8px"></span>显示商品名 (小图不显示名称)
+			</label>
+	  	</div>
+	  	
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="price" ng-model="dataedit.price">
+				<span style="margin-right:8px"></span>显示价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.label">
+				<span style="margin-right:8px"></span>显示标签
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_discount">
+				<span style="margin-right:8px"></span>显示折扣价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_other">
+				<span style="margin-right:8px"></span>显示会员价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_wholesale">
+				<span style="margin-right:8px"></span>显示批发价格
+			</label>
+	  	</div>
+	  	
+    </div>
+
+    <div ng-if="dataedit.page == 3&&dataedit.nav!=0">
+        <div class="control-group">
+			<label class="control-label">显示风格：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="0" ng-model="dataedit.css">
+			        <span></span>卡片式
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="size_type" value="1" ng-model="dataedit.css">
+			        <span></span>极简式
+			    </label>
+			</div>
+	  	</div>
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" name="buy_btn" value="1" ng-model="dataedit.btn">
+				<span style="margin-right:8px"></span>显示购买按钮
+			</label>
+	  	</div>
+	  	<div class="control-group" ng-show="dataedit.btn">
+			<label class="control-label">按钮样式：</label>
+			<div class="controls">
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="0" ng-model="dataedit.btnpage">
+			        <span></span>样式1
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="1" ng-model="dataedit.btnpage">
+			        <span></span>样式2
+			    </label>
+			    <label class="radio inline regular-radio" ng-hide="dataedit.css == 1">
+			        <input type="radio" name="buy_btn_type" value="2" ng-model="dataedit.btnpage">
+			        <span></span>样式3
+			    </label>
+			    <label class="radio inline regular-radio">
+			        <input type="radio" name="buy_btn_type" value="3" ng-model="dataedit.btnpage">
+			        <span></span>样式4
+			    </label>
+			</div>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.label">
+				<span style="margin-right:8px"></span>显示标签
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_discount">
+				<span style="margin-right:8px"></span>显示折扣价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_other">
+				<span style="margin-right:8px"></span>显示会员价格
+			</label>
+	  	</div>
+	  	
+	  	<div class="control-group" style="padding-left: 17px;">
+            <label class="el-checkbox__inner">
+				<input type="checkbox" ng-model="dataedit.price_wholesale">
+				<span style="margin-right:8px"></span>显示批发价格
+			</label>
+	  	</div>   
+    </div>
+
+</div>

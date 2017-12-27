@@ -3,9 +3,9 @@ package com.gt.mall.controller.api.product;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.product.MallSearchLabelDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
@@ -19,8 +19,8 @@ import com.gt.mall.service.web.product.MallGroupService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,9 +70,9 @@ public class MallGroupNewController extends BaseController {
 	    if ( shoplist != null && shoplist.size() > 0 ) {
 		params.put( "userId", user.getId() );
 		params.put( "curPage", curPage );
-		if ( CommonUtil.isNotEmpty( pId ) ){
+		if ( CommonUtil.isNotEmpty( pId ) ) {
 		    params.put( "groupPId", pId );
-		}else{
+		} else {
 		    params.put( "groupPId", "0" );
 		}
 		params.put( "isLabel", 0 );
@@ -277,4 +277,5 @@ public class MallGroupNewController extends BaseController {
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
     }
+
 }

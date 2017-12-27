@@ -26,7 +26,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=8">
 <![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script src="/js/plugin/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
+<script src="js/jquery-1.8.3.min.js?<%= System.currentTimeMillis()%>"></script>
 <script type="text/javascript">
 	function fh(){
 		parent.go_back();

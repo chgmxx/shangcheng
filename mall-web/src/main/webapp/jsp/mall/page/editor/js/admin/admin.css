@@ -2,7 +2,6 @@
     position: relative;
     float: left;
     width: 350px;
-    border: 1px solid #e5e5e5;
     border-bottom-width: 0;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -19,7 +18,6 @@
 .app-preview .app-entry {
     width: 320px;
     margin: 0 auto;
-    padding-bottom: 11px;
     min-height: 200px;
     border: 1px solid #c5c5c5;
     background: #f9f9f9;
@@ -44,12 +42,11 @@
 }
 .app-preview .app-add-field{
     position: relative;
-    left: -1px;
-    top: -1px;
+    top: 17px;
     border: 1px solid #ddd;
     padding: 0 14px 4px 14px;
-    background: #f8f8f8;
-    width: 350px;
+    background: #fff;
+    width: 322px;
     margin: 0 auto;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -68,6 +65,7 @@
     font-size: 12px;
     margin-left: -5px;
     zoom: 1;
+    padding-left: 1px;
 }
 .app-preview .js-add-region ul:after {
     content: "";
@@ -77,22 +75,25 @@
 .app-preview .js-add-region li {
     float: left;
     display: table;
-    margin: 0 0 10px 5px;
-    background: #fff;
+    margin: 0 9px 10px 0px;
+    background: #fbfdff;
+}
+.app-preview .js-add-region li:nth-child(5n){
+	margin-right: 0px;
 }
 .app-preview .js-add-region li a{
     display: table-cell;
-    width: 60px;
-    height: 40px;
+    width: 52px;
+    height: 52px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    border: 1px solid #d1d1d1;
+    border: 1px dashed #c0ccda;
     line-height: 14px;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
-    color: #07d;
+    color: #20a0ff;
     text-decoration: none;
 }
 .app-sidebar{
@@ -108,23 +109,22 @@
     height: 0px;
     border-style: solid;
     border-width: 8px 10px 8px 0;
-    border-color: transparent #d1d1d1 transparent transparent;
+    border-color: transparent #bfcbd9 transparent transparent;
     position: absolute;
     left: -10px;
     top: 19px;
 }
 .app-sidebar .arrow:after{
     content: "";
-    border-right-color: #f8f8f8;
+    border-right-color: #fff;
     left: 1px;
     top: -8px;
 }
 .app-sidebar .app-sidebar-inner{
     padding: 12px 10px;
-    min-height: 28px;
-    background: #f8f8f8;
+    background: #fff;
     border-radius: 5px;
-    border: 1px solid #d1d1d1;
+    border: 1px solid #bfcbd9;
 }
 .shade{
     width: 100%;
@@ -172,7 +172,6 @@
 .app-add-field{
     position: relative;
     padding: 0 14px 4px 14px;
-    background: #f8f8f8;
     width: 350px;
     margin: 0 auto;
     -webkit-box-sizing: border-box;

@@ -1,0 +1,23 @@
+<div class="windowModule {{data.picGap==1?'borNo':''}}" data-aaa="111">
+	<div ng-if="data.title" class="windowModule-wrap-title" ng-bind="data.title"></div>
+	<div class="windowModule-pic" ng-if="data.showWay==0">
+		<div class="windowModule-pic-left bg-cover bg7" style="background-image: url({{data.pic[0].src}})"></div>
+		<div class="windowModule-pic-right">
+			<div class="bg-cover bg7" style="background-image: url({{data.pic[1].src}})"></div>
+			<div class="bg-cover bg7" style="background-image: url({{data.pic[2].src}})"></div>
+		</div>
+	</div>
+	<div class="windowModule-pic way02" ng-if="data.showWay==1">
+		<div class="bg-cover" style="background-image: url({{data.pic[0].src}})"></div>
+		<div class="bg-cover windowModule-pic-center" style="background-image: url({{data.pic[1].src}});"></div>
+		<div class="bg-cover" style="background-image: url({{data.pic[2].src}})"></div>
+	</div>
+	<div class="main">
+		<div ng-if="data.contentTitle" class="windowModule-body-title" ng-bind="data.contentTitle"></div>
+		<div ng-if="data.contentExplain" class="windowModule-body-desc" ng-bind="data.contentExplain"></div>
+	</div>
+</div>
+
+<div class="actions">
+    <div class="actions-wrap"><span class="action edit">编辑</span><span class="action add" ng-click="addmoduleAny($index+1,$event)">加内容</span><span class="action delete" ng-click="removemodule($index)">删除</span></div>
+</div>

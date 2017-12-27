@@ -1,13 +1,14 @@
-.control-group{margin-bottom: 10px;}
+.commodityDirective .control-group{
+	padding: 10px 0;
+}
 .control-label{
     width: 87px;
     cursor: default;
     display: block;
     float: left;
     font-size: 14px;
-    line-height: 18px;
+    line-height: 20px;
     text-align: right;
-    padding-top: 5px;
 }
 .controls{
     margin-left: 93px;
@@ -22,7 +23,7 @@
     display: inline-block;
     width: 100%;
     height: 100%;
-    line-height: 50px;
+    line-height: 70px;
     text-align: center;
     cursor: pointer;
 }
@@ -30,11 +31,16 @@
     float: left;
     margin: 0 10px 10px 0;
     display: block;
-    width: 50px;
-    height: 50px;
-    border: 1px solid #ddd;
-    background-color: #fff;
+    width: 70px;
+    height: 70px;
+    border: 1px solid #c0ccda;
     position: relative;
+    background-color: #fbfdff;
+}
+.commodityDirective .fgx{
+	height: 1px;
+    margin: 10px 0 10px 17px;
+	background-color: #bfcbd9;
 }
 .icon-add {
     display: inline-block;
@@ -42,17 +48,13 @@
     height: 14px;
     background: url("../../images/icon-add.png") no-repeat 0;
 }
-.controls>.radio:first-child {
-    padding-top: 5px;
-}
 .checkbox.inline, .radio.inline {
     display: inline-block;
-    padding-top: 5px;
     margin-bottom: 0;
     vertical-align: middle;
 }
 .radio, .checkbox {
-    padding-left: 16px;
+	width: 88px;
     cursor: pointer;
 }
 .checkbox input[type=checkbox], .radio input[type=radio] {
@@ -63,9 +65,7 @@
     margin-left: -16px;
     margin-top: 4px;
 }
-.checkbox.inline+.checkbox.inline, .radio.inline+.radio.inline {
-    margin-left: 10px;
-}
+
 .controls-card{
     padding: 20px;
     margin-right: 20px;
@@ -89,9 +89,6 @@
     background-color: #f8f8f8;
     background-size: 6px 6px;
 }
-.app-preview .photo-block .img_class{
-	height: 100px;
-}
 .goods-card ul li{
     display: inline-block;
     margin: 4px 0;
@@ -99,9 +96,6 @@
 }
 .goods-card01 ul li:nth-child(3n-2){
     width: 100%;
-}
-.goods-card01 ul li:nth-child(3n-2) .photo-block{
-    height: 292px;
 }
 .goods-card01 ul li:nth-child(3n-1),.goods-card01 ul li:nth-child(3n){
     width: 50%;

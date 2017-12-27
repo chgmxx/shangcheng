@@ -83,7 +83,8 @@
 #bgcolor,#color,#borderColor,.btncolor,.color-form .forminput{
     position: absolute;
     right: 0;
-    height: 24px;
+    height: 100%;
+    box-sizing: border-box;
     width: 87px;
     border: 0;
     border-left: 1px solid #ccc;

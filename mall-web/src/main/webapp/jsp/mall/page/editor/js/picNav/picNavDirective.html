@@ -1,0 +1,39 @@
+<div class="swiperDirective" ng-controller="picNavController">
+    <div class="control-group">
+        <ul>
+            <li ng-repeat="data in dataedit.pic">
+                <div class="choice-image">
+                    <img ng-src="{{data.src}}">
+                    <a onclick="materiallayer(0)" ng-click="swiperuploadpic($index)">重新选择</a>
+                </div>
+                <div class="choice-content">
+                    <div class="control-group">
+                        <label class="swiper-label">标题：</label><input type="text" ng-model="data.title" maxlength="5">
+                    </div>
+                    <div class="control-group">
+                        <label class="swiper-label">链接：</label>
+                        
+                        <div class="control-action hsaLine" ng-show="picJson[pageEdit].imgID[$index].id">
+                            <span class="" ng-bind="picJson[pageEdit].imgID[$index].title">商品| 123456</span>
+                            <i class="remove_btn" ng-click="removeswipername($index)">×</i>
+                        </div>
+
+                        <div class="control-action">
+                            <div class="notLine" ng-hide="picJson[pageEdit].imgID[$index].id">
+                                <a>设置链接到的页面地址<label class="caret"></label></a>
+                            </div>
+                            <div class="hsaLine" ng-show="picJson[pageEdit].imgID[$index].id">
+                                <a style="margin-left: 15px;">修改<label class="caret"></label></a>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div type="1" onclick="lbTypeClick(this,1)">商品</div>
+                                <div type="2" onclick="lbTypeClick(this,1)">分类</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>

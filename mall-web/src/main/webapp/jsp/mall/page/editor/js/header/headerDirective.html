@@ -2,8 +2,14 @@
     <div class="control-group">
     	<label class="control-label">显示隐藏：</label>
     	<div class="interval-slider">
-	    	<label><input type="radio" name="radio" ng-model="dataJson[pageEdit].radio"  ng-value="true">显示</label>
-	    	<label><input type="radio" name="radio" ng-model="dataJson[pageEdit].radio"  ng-value="false">隐藏</label>
+	    	<label class="radio inline regular-radio">
+	    		<input type="radio" name="radio" ng-model="dataJson[pageEdit].radio"  ng-value="true">
+	    		<span></span>显示
+    		</label>
+	    	<label class="radio inline regular-radio">
+	    		<input type="radio" name="radio" ng-model="dataJson[pageEdit].radio"  ng-value="false">
+	    		<span></span>隐藏
+    		</label>
     	</div>
     </div>
 </div>

@@ -98,7 +98,6 @@
             <div class="t2" style="width: 40%;">商品名称</div>
             <div class="t3" style="width: 40%;">状态</div>
         </div>
-
         <div class="msg-list">
             <div class="txt-tle2" id="list">
                 <c:forEach items="${presaleList}" var="pro">
