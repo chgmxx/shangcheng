@@ -41,7 +41,8 @@ public enum ResponseEnums {
 
     //订单相关的响应 end
 
-    URL_GUOQI_ERROR( 1025, "链接已过期/模块已删除" )
+    URL_GUOQI_ERROR( 1025, "链接已过期/模块已删除" ),
+    GRAND_ERROR( 1026, "请使用微信进行授权" )
     ;
 
     private final int    code;

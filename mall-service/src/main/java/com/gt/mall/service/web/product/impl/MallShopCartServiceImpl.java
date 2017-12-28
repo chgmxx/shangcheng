@@ -560,6 +560,9 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	}
 	//获取会员折扣
 	double discount = mallProductService.getMemberDiscount( "1", member );
+	if ( CommonUtil.isEmpty( shopParams.get( "memberList" ) ) && CommonUtil.isEmpty( shopParams.get( "memberId" ) ) && CommonUtil.isEmpty( shopParams.get( "checkIds" ) ) ) {
+	    return null;
+	}
 
 	List< Map< String,Object > > list = mallShopCartDAO.selectShopCartByMemberId( shopParams );//查询购物车信息
 

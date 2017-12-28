@@ -27,10 +27,7 @@ import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.EntityDtoConverter;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -123,6 +120,8 @@ public class PhoneHomeAppletController extends BaseController {
     public void pageIndex( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId ) throws IOException {
 	AppletMallIndexResult indexResult = new AppletMallIndexResult();
 	try {
+//	    Member member = MallSessionUtils.getLoginMember( request );
+//	    member.getPublicId()
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "shopId", shopId );
 	    params.put( "memberId", memberId );

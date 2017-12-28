@@ -246,4 +246,7 @@ public class Constants {
 
     public static final String FINISH_REFUND_STATUS = "-14";
 
+
+    public static final Integer SELLER_FoLLOW_STATUS = 13;
+
 }

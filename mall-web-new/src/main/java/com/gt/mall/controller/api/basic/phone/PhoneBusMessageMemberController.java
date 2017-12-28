@@ -3,11 +3,9 @@ package com.gt.mall.controller.api.basic.phone;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.Member;
-import com.gt.mall.base.BaseController;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallBusMessageMember;
-import com.gt.mall.entity.basic.MallSecuritytradeQuit;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
@@ -21,11 +19,13 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.util.Date;
 
 /**
@@ -53,7 +53,7 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	try {
 	    Integer browser = CommonUtil.judgeBrowser( request );
 	    if ( browser != 1 ) {//微信
-		return ServerResponse.createByErrorMessage( "请使用微信进行授权!" );
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.GRAND_ERROR.getCode(), ResponseEnums.GRAND_ERROR.getDesc() );
 	    }
 	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
 	    loginDTO.setBusId( busId );
