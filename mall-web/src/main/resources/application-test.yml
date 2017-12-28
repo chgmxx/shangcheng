@@ -9,10 +9,24 @@ spring:
 # profiles: dev
  #redis配置
  redis:
-  host: 113.106.202.51
-  port: 6379
+  #host: 113.106.202.51
+  #port: 6379
   password: gt@123456
   database: 3
+  timeout: 5000
+  cluster:
+   nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.53:9379
+   maxRedirects: 3
+  sentinel:
+    #     # comma-separated list of host:port pairs  哨兵的配置列表
+    nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
+    #     # name of Redis server  哨兵监听的Redis server的名称
+    master: mymaster
+  pool:
+    max-wait: -1
+    min-idle: 0
+    max-active: 200
+    max-idle: 20
 #redis session共享
  session:
    store-type: redis
@@ -69,6 +83,9 @@ spring:
 
 
 ######################## 测试环境配置 ########################
+# 是否开启Swagger接口展示
+swagger:
+  show: false
 #JedisUtil 用到的配置
 redis:
  host: 113.106.202.51

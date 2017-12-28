@@ -96,16 +96,13 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     /**
      * 手机访问商家主页面接口
      */
-    //    @SuppressWarnings( "unchecked" )
-    //    @RequestMapping( "{id}/79B4DE7C/pageIndex" )
-    //    @AfterAnno( style = "9", remark = "微商城访问记录" )
-    @ApiOperation( value = "获取商城首页数据", notes = "获取商城首页数据", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "获取商城首页数据", notes = "获取商城首页数据", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( {
 		    @ApiImplicitParam( name = "pageId", value = "首页id,必传", paramType = "query", required = true, dataType = "int" ),
 		    @ApiImplicitParam( name = "url", value = "当前页面地址", paramType = "query", dataType = "String" )
     } )
-    @PostMapping( value = "pageIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @GetMapping( value = "pageIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhonePageResult > pageIndex( HttpServletRequest request, HttpServletResponse response, Integer pageId, String url ) throws IOException {
 	PhonePageResult result = new PhonePageResult();
 	try {
@@ -148,10 +145,10 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    String dataJson = "[]";
 	    String picJson = "[]";
 	    if ( page.getPagData() != null ) {
-//		MallPaySet set = new MallPaySet();
-//		set.setUserId( userid );
-//		set = mallPaySetService.selectByUserId( set );
-//		int state = mallPifaApplyService.getPifaApplay( member, set );
+		//		MallPaySet set = new MallPaySet();
+		//		set.setUserId( userid );
+		//		set = mallPaySetService.selectByUserId( set );
+		//		int state = mallPifaApplyService.getPifaApplay( member, set );
 
 		net.sf.json.JSONArray jsonobj = net.sf.json.JSONArray.fromObject( page.getPagData() );//转换成JSON数据
 		net.sf.json.JSONArray XinJson = new net.sf.json.JSONArray();//获取新的数组对象
@@ -170,6 +167,8 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		    //		    logger.error( "map" + JSONObject.toJSON( map1 ) );
 		    if ( CommonUtil.isEmpty( map1.get( "imgID" ) ) ) {
 			if ( map1.get( "type" ).toString().equals( "7" ) ) {
+			    map1.put( "stoName", mallStore.getStoName() );
+			    map1.put( "headImg", headImg );
 			    XinJson.add( map1 );
 			}
 			continue;
@@ -434,10 +433,10 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     /**
      * 获取微信分享
      */
-    @ApiOperation( value = "微信分享接口", notes = "获取微信分享", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "微信分享接口", notes = "获取微信分享", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "url", value = "当前地址", paramType = "query", required = true, dataType = "String" ) )
-    @PostMapping( value = "wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @GetMapping( value = "wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
