@@ -113,6 +113,8 @@ web:
  marketingUrl: http://core.yifriend.net/html/application/busAdded/index.html?dictstyle=05f8fd040284859d
  #素材库路径
  materialUrl: https://suc.deeptel.com.cn/common/material.do
+ #多粉二维码关注
+ duofenTwoCodeUrl: http://maint.deeptel.com.cn/image/2/gh_32251ec4c8e9/1/1509331696065.jpg
 
 ####图片资源ftp 配置
 static:
