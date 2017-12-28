@@ -273,22 +273,24 @@ public class MallProductNewController extends BaseController {
     @SysLogAnnotation( description = "新增商品", op_function = "2" )
     @RequestMapping( value = "/add", method = RequestMethod.POST )
     public ServerResponse add( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > resultMap = null;
 	try {
 	    int code = 1;
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > resultMap = mallProductService.addProduct( params, user, request );
+	    resultMap = mallProductService.addProduct( params, user, request );
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
 		code = CommonUtil.toInteger( resultMap.get( "code" ) );
 	    }
 	    if ( code != 1 ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存商品失败" );
 	    }
+	    resultMap.put( "userId", user.getId() );
 	} catch ( Exception e ) {
 	    logger.error( "新增商品信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
     }
 
     /**

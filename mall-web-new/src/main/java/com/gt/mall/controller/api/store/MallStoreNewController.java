@@ -56,19 +56,17 @@ import java.util.Map;
 public class MallStoreNewController extends BaseController {
 
     @Autowired
-    private MallStoreService       mallStoreService;
+    private MallStoreService  mallStoreService;
     @Autowired
-    private BusUserService         busUserService;
+    private BusUserService    busUserService;
     @Autowired
-    private WxShopService          wxShopService;
+    private WxShopService     wxShopService;
     @Autowired
-    private DictService            dictService;
+    private DictService       dictService;
     @Autowired
-    private MallPaySetService      mallPaySetService;
+    private MallPaySetService mallPaySetService;
     @Autowired
-    private MallOrderService       mallOrderService;
-    @Autowired
-    private MallOrderReturnService mallOrderReturnService;
+    private MallOrderService  mallOrderService;
 
     @ApiOperation( value = "商家的店铺列表(分页)", notes = "商家的店铺列表(分页)" )
     @ResponseBody
@@ -164,8 +162,10 @@ public class MallStoreNewController extends BaseController {
 	Map< String,Object > sto = new HashMap<>();
 	try {
 	    sto = mallStoreService.findShopByStoreId( id );
-	    String[] stoSmsTelephone = sto.get( "stoSmsTelephone" ).toString().split( ";" );
-	    sto.put( "stoSmsTelephone", stoSmsTelephone );
+	    if ( CommonUtil.isNotEmpty( sto.get( "stoSmsTelephone" ) ) ) {
+		String[] stoSmsTelephone = sto.get( "stoSmsTelephone" ).toString().split( ";" );
+		sto.put( "stoSmsTelephone", stoSmsTelephone );
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取商家店铺信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -298,26 +298,26 @@ public class MallStoreNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-    /**
-     * 获取店铺链接
-     */
-    @ApiOperation( value = "获取店铺链接", notes = "获取店铺链接" )
-    @ResponseBody
-    @RequestMapping( value = "/link", method = RequestMethod.POST )
-    public ServerResponse link( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "pageId", value = "页面ID", required = true ) @RequestParam Integer pageId ) throws IOException {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    String url = PropertiesUtil.getHomeUrl() + "/mallPage/" + pageId + "/79B4DE7C/viewHomepage.do";
-	    result.put( "storeLink", url );//店铺链接
-	    result.put( "smsLink", url );//短信链接
-	} catch ( Exception e ) {
-	    logger.error( "获取店铺链接：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
+    //    /**
+    //     * 获取店铺链接
+    //     */
+    //    @ApiOperation( value = "获取店铺链接", notes = "获取店铺链接" )
+    //    @ResponseBody
+    //    @RequestMapping( value = "/link", method = RequestMethod.POST )
+    //    public ServerResponse link( HttpServletRequest request, HttpServletResponse response,
+    //		    @ApiParam( name = "pageId", value = "页面ID", required = true ) @RequestParam Integer pageId ) throws IOException {
+    //	Map< String,Object > result = new HashMap<>();
+    //	try {
+    //	    String url = PropertiesUtil.getHomeUrl() + "/mallPage/" + pageId + "/79B4DE7C/viewHomepage.do";
+    //	    result.put( "storeLink", url );//店铺链接
+    //	    result.put( "smsLink", url );//短信链接
+    //	} catch ( Exception e ) {
+    //	    logger.error( "获取店铺链接：" + e.getMessage() );
+    //	    e.printStackTrace();
+    //	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+    //	}
+    //	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+    //    }
 
     /**
      * 自动生成二维码

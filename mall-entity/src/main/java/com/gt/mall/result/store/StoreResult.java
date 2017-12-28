@@ -99,6 +99,8 @@ public class StoreResult {
     @ApiModelProperty( name = "stoHeadImg", value = "商城店铺头像" )
     private String stoHeadImg;
 
+    @ApiModelProperty( name = "pageId", value = "店铺页面ID" )
+    private Integer pageId;
 
     @ApiModelProperty( name = "certId", value = "店铺认证ID" )
     private Integer certId;
@@ -107,5 +109,5 @@ public class StoreResult {
     @ApiModelProperty( name = "certStoCategory", value = "认证店铺  1 普通店铺  2旗舰店  3专卖店  4直营店" )
     private Integer certStoCategory;
     @ApiModelProperty( name = "certStoCategoryName", value = "认证店铺名称" )
-    private String certStoCategoryName;
+    private String  certStoCategoryName;
 }
