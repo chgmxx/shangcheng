@@ -267,9 +267,9 @@ public interface MallSellerService extends BaseService< MallSeller > {
     MallSeller getSellerTwoCode( MallSeller seller, Member member, int browerType );
 
     /**
-     * 生成商家的二维码
+     * 生成商家的二维码  （返回的是全路径）
      */
-    public String insertTwoCode( String scene_id, WxPublicUsers wxPublicUsers );
+    public String insertTwoCode( Integer externalId, WxPublicUsers wxPublicUsers );
 
     /**
      * 合并销售员的数据

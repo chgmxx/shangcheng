@@ -244,7 +244,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    result.setStoName( mallStore.getStoName() );
 	    result.setSharePicture( headImg );
 	    result.setPageName( page.getPagName() );
-
+	    result.setShopId( page.getPagStoId() );
 	} catch ( BusinessException be ) {
 	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {

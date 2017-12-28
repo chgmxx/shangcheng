@@ -510,9 +510,11 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	return count > 0;
     }
 
-    public String insertTwoCode( String scene_id, WxPublicUsers wxPublicUsers ) {
+    @Override
+    public String insertTwoCode( Integer externalId, WxPublicUsers wxPublicUsers ) {
 	QrcodeCreateFinal createFinal = new QrcodeCreateFinal();
-	createFinal.setScene_id( scene_id );
+	createFinal.setModel( Constants.SELLER_FoLLOW_STATUS );
+	createFinal.setExternalId( externalId );
 	createFinal.setPublicId( wxPublicUsers.getId() );
 	return wxPublicUserService.qrcodeCreateFinal( createFinal );
     }
@@ -543,11 +545,13 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public int insertSelective( MallSeller seller, Member member ) {
 	WxPublicUsers wxPublicUsers = wxPublicUserService.selectById( member.getPublicId() );
 	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-	    String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
-	    String ticket = insertTwoCode( scene_id, wxPublicUsers );
-	    seller.setQrCodeTicket( ticket );
-	    seller.setSceneKey( scene_id );
-	    seller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+	    //	    String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
+	    //	    String ticket = insertTwoCode( scene_id, wxPublicUsers );
+	    //	    seller.setQrCodeTicket( ticket );
+	    //	    seller.setSceneKey( scene_id );
+	    //	    seller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+	    String twoCodeUrl = insertTwoCode( seller.getId(), wxPublicUsers );
+	    seller.setQrCodePath( twoCodeUrl );
 	}
 	return mallSellerDAO.insert( seller );
     }
@@ -1116,18 +1120,21 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    String newimage = seller.getQrCodePath();
 	    newimage = URLConnectionDownloader.isConnect( newimage );//判断
 	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isEmpty( newimage ) ) {
-		String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
-		String ticket = insertTwoCode( scene_id, wxPublicUsers );
+		//		String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
+		//		String twoCodeUrl = insertTwoCode( scene_id, wxPublicUsers );
+		//		MallSeller mallSeller = new MallSeller();
+		//		mallSeller.setQrCodeTicket( ticket );
+		//		mallSeller.setSceneKey( scene_id );
+		//		mallSeller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+		String twoCodeUrl = insertTwoCode( seller.getId(), wxPublicUsers );
 		MallSeller mallSeller = new MallSeller();
-		mallSeller.setQrCodeTicket( ticket );
-		mallSeller.setSceneKey( scene_id );
-		mallSeller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+		mallSeller.setQrCodePath( twoCodeUrl );
 		mallSeller.setId( seller.getId() );
 		int count = mallSellerDAO.updateById( mallSeller );
 		if ( count > 0 ) {
-		    seller.setQrCodeTicket( ticket );
-		    seller.setSceneKey( scene_id );
-		    seller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+		    //		    seller.setQrCodeTicket( ticket );
+		    //		    seller.setSceneKey( scene_id );
+		    seller.setQrCodePath( twoCodeUrl );
 		}
 	    }
 	}

@@ -94,7 +94,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
     public String qrcodeCreateFinal( QrcodeCreateFinal createFinal ) {
 	RequestUtils< QrcodeCreateFinal > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( createFinal );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "qrcodeCreateFinal.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "newqrcodeCreateFinal.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return result;
 	}
