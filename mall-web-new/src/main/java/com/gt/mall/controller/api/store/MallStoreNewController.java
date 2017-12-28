@@ -1,10 +1,13 @@
 package com.gt.mall.controller.api.store;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStore;
@@ -14,8 +17,11 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.order.MallOrderReturnService;
+import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
+import com.gt.util.entity.param.shop.ShopSubsop;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
@@ -59,6 +65,8 @@ public class MallStoreNewController extends BaseController {
     private DictService       dictService;
     @Autowired
     private MallPaySetService mallPaySetService;
+    @Autowired
+    private MallOrderService  mallOrderService;
 
     @ApiOperation( value = "商家的店铺列表(分页)", notes = "商家的店铺列表(分页)" )
     @ResponseBody
@@ -154,8 +162,10 @@ public class MallStoreNewController extends BaseController {
 	Map< String,Object > sto = new HashMap<>();
 	try {
 	    sto = mallStoreService.findShopByStoreId( id );
-	    String[] stoSmsTelephone = sto.get( "stoSmsTelephone" ).toString().split( ";" );
-	    sto.put( "stoSmsTelephone", stoSmsTelephone );
+	    if ( CommonUtil.isNotEmpty( sto.get( "stoSmsTelephone" ) ) ) {
+		String[] stoSmsTelephone = sto.get( "stoSmsTelephone" ).toString().split( ";" );
+		sto.put( "stoSmsTelephone", stoSmsTelephone );
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取商家店铺信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -243,10 +253,38 @@ public class MallStoreNewController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    String id[] = ids.toString().split( "," );
-	    boolean flag = mallStoreService.deleteShop( id );
-	    if ( flag ) {
-		MallSessionUtils.setShopListBySession( user.getId(), null, request );
-		mallStoreService.findAllStoByUser( user, request );
+	    //必须该店铺没有未完成订单或者处于维权的订单，否则不予删除；
+	    if ( id != null && id.length > 0 ) {
+		for ( String str : id ) {
+		    Wrapper groupWrapper = new EntityWrapper();
+		    groupWrapper.where( "order_status < 4 and bus_user_id ={0}", user.getId() );
+		    groupWrapper.and( "shop_id ={0}", CommonUtil.toInteger( str ) );
+		    //未完成订单
+		    Integer num = mallOrderService.selectCount( groupWrapper );
+
+		    Map< String,Object > params = new HashMap<>();
+		    params.put( "userId", user.getId() );
+		    params.put( "shopId", CommonUtil.toInteger( str ) );
+		    params.put( "status", "6" );
+		    Integer badNum = mallOrderService.count( params );//维权订单
+		    if ( num == 0 && badNum == 0 ) {
+			MallStore mallStore = new MallStore();
+			mallStore.setId( CommonUtil.toInteger( str ) );
+			mallStore.setIsDelete( 1 );
+			boolean count = mallStoreService.updateById( mallStore );
+			if ( count ) {
+			    ShopSubsop shopSubsop = new ShopSubsop();
+			    shopSubsop.setSubShop( CommonUtil.toInteger( str ) );
+			    shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
+			    wxShopService.updateBySubShop( shopSubsop );
+
+			    MallSessionUtils.setShopListBySession( user.getId(), null, request );
+			    mallStoreService.findAllStoByUser( user, request );
+			}
+		    } else {
+			throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "该店铺还有未完成订单，无法删除！" );
+		    }
+		}
 	    }
 	} catch ( BusinessException e ) {
 	    logger.error( "删除店铺信息异常：" + e.getMessage() );
@@ -260,26 +298,26 @@ public class MallStoreNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-    /**
-     * 获取店铺链接
-     */
-    @ApiOperation( value = "获取店铺链接", notes = "获取店铺链接" )
-    @ResponseBody
-    @RequestMapping( value = "/link", method = RequestMethod.POST )
-    public ServerResponse link( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "pageId", value = "页面ID", required = true ) @RequestParam Integer pageId ) throws IOException {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    String url = PropertiesUtil.getHomeUrl() + "/mallPage/" + pageId + "/79B4DE7C/viewHomepage.do";
-	    result.put( "storeLink", url );//店铺链接
-	    result.put( "smsLink", url );//短信链接
-	} catch ( Exception e ) {
-	    logger.error( "获取店铺链接：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
+    //    /**
+    //     * 获取店铺链接
+    //     */
+    //    @ApiOperation( value = "获取店铺链接", notes = "获取店铺链接" )
+    //    @ResponseBody
+    //    @RequestMapping( value = "/link", method = RequestMethod.POST )
+    //    public ServerResponse link( HttpServletRequest request, HttpServletResponse response,
+    //		    @ApiParam( name = "pageId", value = "页面ID", required = true ) @RequestParam Integer pageId ) throws IOException {
+    //	Map< String,Object > result = new HashMap<>();
+    //	try {
+    //	    String url = PropertiesUtil.getHomeUrl() + "/mallPage/" + pageId + "/79B4DE7C/viewHomepage.do";
+    //	    result.put( "storeLink", url );//店铺链接
+    //	    result.put( "smsLink", url );//短信链接
+    //	} catch ( Exception e ) {
+    //	    logger.error( "获取店铺链接：" + e.getMessage() );
+    //	    e.printStackTrace();
+    //	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+    //	}
+    //	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+    //    }
 
     /**
      * 自动生成二维码

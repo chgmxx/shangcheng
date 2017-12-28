@@ -77,8 +77,9 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 			}
 			inventory.setSpecificaIds( specId.toString() );// 规格值
 		    }
-
-		    inventory.setInvCode( map.get( "invCode" ).toString() );
+		    if ( CommonUtil.isNotEmpty( map.get( "invCode" ) ) ) {
+			inventory.setInvCode( CommonUtil.toString( map.get( "invCode" ) ) );
+		    }
 		    inventory.setInvNum( CommonUtil.toInteger( map.get( "invNum" ) ) );
 		    inventory.setInvPrice( BigDecimal.valueOf( Double.valueOf( map.get( "invPrice" ).toString() ) ) );
 		    inventory.setIsDefault( CommonUtil.toInteger( map.get( "isDefault" ) ) );
