@@ -79,6 +79,7 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 		mallBusMessageMember.setPublicId( member.getPublicId() );
 		mallBusMessageMember.setNickName( member.getNickname() );
 		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
+		mallBusMessageMember.setBusId( member.getBusid() );
 		mallBusMessageMemberService.insert( mallBusMessageMember );
 	    }
 	    return ServerResponse.createBySuccessCode();

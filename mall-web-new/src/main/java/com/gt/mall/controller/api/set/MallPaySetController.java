@@ -1,14 +1,19 @@
 package com.gt.mall.controller.api.set;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.entity.basic.MallBusMessageMember;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
@@ -44,9 +49,11 @@ import java.util.Map;
 public class MallPaySetController extends BaseController {
 
     @Autowired
-    private MallPaySetService   mallPaySetService;
+    private MallPaySetService           mallPaySetService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private MallBusMessageMemberService mallBusMessageMemberService;
 
     /**
      * 获取商城设置
@@ -235,14 +242,21 @@ public class MallPaySetController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( user.getId() );
-	    if ( wxPublicUsers == null ) {
+	    //商家有无授权
+	    Wrapper wrapper = new EntityWrapper<>();
+	    wrapper.where( "is_delete =0 and bus_id= {0}", user.getId() );
+	    List< MallBusMessageMember > busMessageMemberList = mallBusMessageMemberService.selectList( wrapper );
+
+	    if ( wxPublicUsers == null || busMessageMemberList == null || busMessageMemberList.size() == 0 ) {
 		flag = -1;//未认证;
-	    } else if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
-		flag = -1;//未认证
-	    } else if ( wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
-		flag = 1; //有服务号
 	    } else {
-		flag = 0; //无服务号
+		if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
+		    flag = -1;//未认证
+		} else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
+		    flag = 1; //有服务号
+		} else {
+		    flag = 0; //无服务号
+		}
 	    }
 	} catch ( BusinessException e ) {
 	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );

@@ -62,6 +62,11 @@ public class MallBusMessageMember extends Model< MallBusMessageMember > {
      */
     @TableField( "is_delete" )
     private Integer isDelete;
+    /**
+     * 商家ID
+     */
+    @TableField( "bus_id" )
+    private Integer busId;
 
     @Override
     protected Serializable pkVal() {
