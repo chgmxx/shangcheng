@@ -20,6 +20,8 @@ public class PropertiesUtil {
 
     private static String materialUrl; //素材库路径
 
+    private static String duofenTwoCodeUrl; //素材库路径
+
     private static String phoneWebHomeUrl;//手机端域名
 
     private static String jxcUrl;//进销存 地址
@@ -88,6 +90,11 @@ public class PropertiesUtil {
     @Value( "${web.marketingUrl}" )
     public void setMarketingUrl( String marketingUrl ) {
 	PropertiesUtil.marketingUrl = marketingUrl;
+    }
+
+    @Value( "${web.duofenTwoCodeUrl}" )
+    public void setDuofenTwoCodeUrl( String duofenTwoCodeUrl ) {
+	PropertiesUtil.duofenTwoCodeUrl = duofenTwoCodeUrl;
     }
 
     @Value( "${web.phoneWebHomeUrl}" )
@@ -294,6 +301,10 @@ public class PropertiesUtil {
 
     public static String getMaterialUrl() {
 	return materialUrl;
+    }
+
+    public static String getDuofenTwoCodeUrl() {
+	return duofenTwoCodeUrl;
     }
 
     public static String getPhoneWebHomeUrl() {

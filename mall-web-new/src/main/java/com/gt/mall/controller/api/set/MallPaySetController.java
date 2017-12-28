@@ -17,6 +17,7 @@ import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -239,6 +240,7 @@ public class MallPaySetController extends BaseController {
     @RequestMapping( value = "/isAuthService", method = RequestMethod.POST )
     public ServerResponse isAuthService( HttpServletRequest request, HttpServletResponse response ) {
 	Integer flag = null;
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( user.getId() );
@@ -252,12 +254,16 @@ public class MallPaySetController extends BaseController {
 	    } else {
 		if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
 		    flag = -1;//未认证
-		} else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
+		} else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2
+			&& CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
 		    flag = 1; //有服务号
 		} else {
 		    flag = 0; //无服务号
 		}
 	    }
+	    result.put( "flag", flag );
+	    result.put( "busId", user.getId() );
+	    result.put( "duofenTwoCodeUrl", PropertiesUtil.getDuofenTwoCodeUrl() );//多粉二维码地址
 	} catch ( BusinessException e ) {
 	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -267,7 +273,7 @@ public class MallPaySetController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
 }
