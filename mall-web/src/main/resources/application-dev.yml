@@ -14,9 +14,11 @@ spring:
   password: gt@123456
   database: 3
   timeout: 5000
+  #redis集群配置
   cluster:
    nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.53:9379
    maxRedirects: 3
+  #redis集群配置
   sentinel:
     #     # comma-separated list of host:port pairs  哨兵的配置列表
     nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
@@ -82,6 +84,9 @@ spring:
         multi-statement-allow: true
 
 ######################## 开发环境配置 ########################
+# 是否开启Swagger接口展示
+swagger:
+  show: true
 #JedisUtil 用到的配置
 redis:
  host: 113.106.202.51

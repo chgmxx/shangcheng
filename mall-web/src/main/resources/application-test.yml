@@ -83,6 +83,9 @@ spring:
 
 
 ######################## 测试环境配置 ########################
+# 是否开启Swagger接口展示
+swagger:
+  show: false
 #JedisUtil 用到的配置
 redis:
  host: 113.106.202.51
