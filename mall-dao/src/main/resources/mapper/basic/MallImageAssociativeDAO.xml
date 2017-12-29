@@ -27,7 +27,7 @@
 
     <!-- 根据关联id来查询图片 -->
     <select id="selectImageByAssId" parameterType="map" resultMap="BaseResultMap">
-        select
+        select id,ass_type,
         image_url,ass_id,is_main_images
         from t_mall_image_associative
         where is_delete = 0

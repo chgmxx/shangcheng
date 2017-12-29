@@ -185,8 +185,8 @@ public class MallProductNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    if ( type == 1 ) {//删除
 		params.put( "isDelete", 1 );
-	    } else if ( type == 2 ) {//送审
-		params.put( "checkStatus", 0 );
+//	    } else if ( type == 2 ) {//送审
+//		params.put( "checkStatus", 0 );
 	    } else if ( type == 3 ) {//上架
 		params.put( "isPublish", 1 );
 	    } else if ( type == 4 ) {//下架

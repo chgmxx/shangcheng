@@ -643,6 +643,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		product.setReturnDay( 0 );
 	    }
 	    product.setIsSyncErp( 0 );
+	    product.setCheckStatus( 1 );
 	    proId = mallProductDAO.insert( product );
 	}
 	if ( proId > 0 ) {
@@ -689,10 +690,10 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 			mallProductGroupDAO.insert( mallProductGroup );
 		    }
 		}
-	    }else{
+	    } else {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品分组不能为空" );
 	    }
-	    if(CommonUtil.isEmpty( params.get( "imageList" ))){
+	    if ( CommonUtil.isEmpty( params.get( "imageList" ) ) ) {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品图片不能为空" );
 	    }
 	    // 批量添加商品图片
@@ -700,7 +701,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
 	    Map< String,Object > specMap = new HashMap<>();
 
-	    if ( product.getIsSpecifica() ==1 && CommonUtil.isEmpty( params.get( "speList" )) ){
+	    if ( product.getIsSpecifica() == 1 && CommonUtil.isEmpty( params.get( "speList" ) ) ) {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品规格不能为空" );
 	    }
 	    // 批量添加商品规格
@@ -2365,7 +2366,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	Map< String,Object > productParams = new HashMap<>();
 	productParams.put( "type", 2 );
 	productParams.put( "product_id", detail.getProductId() );
-	productParams.put( "pro_num",  detail.getDetProNum()  );
+	productParams.put( "pro_num", detail.getDetProNum() );
 	mallProductDAO.updateProductStock( productParams );
 	if ( null != pro.getIsSpecifica() && CommonUtil.isNotEmpty( pro.getIsSpecifica() ) ) {
 	    if ( pro.getIsSpecifica() == 1 ) {//该商品存在规格
@@ -2561,6 +2562,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		}
 	    }
 	    product.setIsSyncErp( 0 );
+	    product.setCheckStatus( 1 );
+	    product.setIsPlatformCheck( 0 );//平台审核 未审核
 	    // 修改商品信息
 	    mallProductDAO.updateById( product );
 	}
@@ -2581,7 +2584,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 	}
 
-	if(CommonUtil.isEmpty( params.get( "imageList" ))){
+	if ( CommonUtil.isEmpty( params.get( "imageList" ) ) ) {
 	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品图片不能为空" );
 	}
 	// 添加或修改图片
@@ -2598,7 +2601,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
 	Map< String,Object > specMap = new HashMap<>();
 
-	if ( product.getIsSpecifica() ==1 && CommonUtil.isEmpty( params.get( "speList" )) ){
+	if ( product.getIsSpecifica() == 1 && CommonUtil.isEmpty( params.get( "speList" ) ) ) {
 	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品规格不能为空" );
 	}
 	// 批量添加或修改商品规格
@@ -2619,7 +2622,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	// 批量添加商品分组
 	if ( !CommonUtil.isEmpty( params.get( "groupList" ) ) ) {
 	    mallProductGroupService.saveOrUpdate( params.get( "groupList" ), product.getId() );
-	}else{
+	} else {
 	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品分组不能为空" );
 	}
 
@@ -2644,7 +2647,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
 	param.put( "curPage", curPage );
 	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete=0 and check_status =1  and is_platform_check = 0" );
+	wrapper.where( "is_delete=0 and p.is_mall_show=0 and check_status =1  and is_platform_check = 0" );
 	if ( CommonUtil.isNotEmpty( param.get( "userIds" ) ) ) {
 	    wrapper.in( "user_id", param.get( "userIds" ).toString() );
 	}
