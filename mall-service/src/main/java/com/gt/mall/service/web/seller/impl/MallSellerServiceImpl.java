@@ -1096,17 +1096,21 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
     @Override
     public MallSeller getSellerTwoCode( MallSeller seller, Member member, int browerType ) {
-
 	if ( browerType != 1 || CommonUtil.isEmpty( member.getPublicId() ) ) {//UC版
+	    if ( CommonUtil.isNotEmpty( seller.getUcqrCodePath() ) ) {
+		String headPaths = URLConnectionDownloader.isConnect( PropertiesUtil.getResourceUrl() + seller.getUcqrCodePath() );//判断
+		if ( CommonUtil.isEmpty( headPaths ) ) {
+		    seller.setUcqrCodePath( null );
+		}
+	    }
 	    if ( CommonUtil.isEmpty( seller.getUcqrCodePath() ) ) {
-		String url = PropertiesUtil.getHomeUrl() + "/phoneSellers/" + member.getId() + "/79B4DE7C/mallIndex.do?uId=" + member.getBusid();
+		String url = PropertiesUtil.getHomeUrl() + "/seller/mallindex/" + member.getBusid() + "/" + member.getId();
 		String nowDate = DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD );
 		String codePath = QRcodeKit
 				.buildQRcode( url, PropertiesUtil.getResImagePath() + "/" + member.getPhone() + "/" + Constants.IMAGE_FOLDER_TYPE_15 + "/" + nowDate + "/", 200,
 						200 );
 		codePath = PropertiesUtil.getResourceUrl() + codePath.split( "upload/" )[1];
 		MallSeller mallSeller = new MallSeller();
-		//mallSeller.setQrCodePath(codePath);
 		mallSeller.setUcqrCodePath( codePath );
 		mallSeller.setId( seller.getId() );
 		int count = mallSellerDAO.updateById( mallSeller );
@@ -1120,20 +1124,12 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    String newimage = seller.getQrCodePath();
 	    newimage = URLConnectionDownloader.isConnect( newimage );//判断
 	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isEmpty( newimage ) ) {
-		//		String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
-		//		String twoCodeUrl = insertTwoCode( scene_id, wxPublicUsers );
-		//		MallSeller mallSeller = new MallSeller();
-		//		mallSeller.setQrCodeTicket( ticket );
-		//		mallSeller.setSceneKey( scene_id );
-		//		mallSeller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
 		String twoCodeUrl = insertTwoCode( seller.getId(), wxPublicUsers );
 		MallSeller mallSeller = new MallSeller();
 		mallSeller.setQrCodePath( twoCodeUrl );
 		mallSeller.setId( seller.getId() );
 		int count = mallSellerDAO.updateById( mallSeller );
 		if ( count > 0 ) {
-		    //		    seller.setQrCodeTicket( ticket );
-		    //		    seller.setSceneKey( scene_id );
 		    seller.setQrCodePath( twoCodeUrl );
 		}
 	    }

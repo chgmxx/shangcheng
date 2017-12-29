@@ -180,9 +180,11 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    isShowAddShop = 0;
 	    result = mallSeckillService.getSeckillProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result );
 	} else if ( params.getType() == 4 ) {//查询拍卖商品
-	    isShowAddShop = 0;
-	    result.setIsShowLiJiBuyButton( 0 );
 	    result = mallAuctionService.getAuctionProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
+	    if ( CommonUtil.isEmpty( result.getActivityId() ) || result.getActivityId() > 0 ) {
+		isShowAddShop = 0;
+		result.setIsShowLiJiBuyButton( 0 );
+	    }
 	} else if ( params.getType() == 5 ) {//查询粉币商品
 	    if ( "1".equals( product.getIsFenbiChangePro().toString() ) ) {
 		activityPrice = CommonUtil.toDouble( product.getChangeFenbi() );
@@ -192,9 +194,11 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	} else if ( params.getType() == 6 ) {//查询预售商品
 	    activityPrice = productPrice;
-	    isShowAddShop = 0;
-	    result.setProductPrice( activityPrice );
 	    result = mallPresaleService.getPresaleProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
+	    if ( CommonUtil.isEmpty( result.getActivityId() ) || result.getActivityId() > 0 ) {
+		isShowAddShop = 0;
+		result.setProductPrice( activityPrice );
+	    }
 	} else if ( params.getType() == 7 ) {//查询批发商品
 	    result = mallPifaService.getPifaProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
 	}
@@ -295,7 +299,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    Map< String,Object > cardMap = cardService.findDuofenCardByReceiveId( product.getCardType() );
 	    logger.info( "卡券包：" + JSON.toJSONString( cardMap ) );
 	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
-
 		JSONObject obj = ProductUtil.getCardReceive( cardMap );
 		if ( CommonUtil.isNotEmpty( obj ) ) {
 		    result.setIsShowCardRecevie( 1 );

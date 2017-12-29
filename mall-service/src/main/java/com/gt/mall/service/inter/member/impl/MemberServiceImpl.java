@@ -81,12 +81,15 @@ public class MemberServiceImpl implements MemberService {
 	    member = isEmptyMember( memberObj, member );
 	    member.setFansCurrency( memberObj.getDouble( "fansCurrency" ) );
 	    member.setIntegral( memberObj.getInteger( "integral" ) );
+	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
+		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
+	    }
 	}
 	return member;
     }
 
     /**
-     * 绑定手机号
+     * 绑定手机号(小程序)
      *
      * @param params 参数{memberId：会员id，code：短信校验码，phone：手机号，busId：商家id}
      * @param member member对象
@@ -100,6 +103,19 @@ public class MemberServiceImpl implements MemberService {
 	    member.setPhone( memberObj.getString( "phone" ) );
 	}
 	return member;
+    }
+
+    @Override
+    public boolean bingdingPhoneH5( Integer busId, String phone, Integer memberId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	params.put( "phone", phone );
+	params.put( "busId", busId );
+	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5" );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return result.get( "code" ).toString().equals( "1" );
+	}
+	return false;
     }
 
     /**

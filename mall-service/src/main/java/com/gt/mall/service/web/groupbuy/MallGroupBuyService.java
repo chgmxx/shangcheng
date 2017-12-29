@@ -1,8 +1,8 @@
 package com.gt.mall.service.web.groupbuy;
 
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
-import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
@@ -176,4 +176,13 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
      * @return true 能退款
      */
     boolean orderIsCanRenturn( Integer orderId, Integer orderDetailId, Integer groupBuyid );
+
+    /**
+     * 查询团购信息
+     *
+     * @param groupBuyId 团购id
+     *
+     * @return
+     */
+    MallGroupBuy selectBuyByProductId( Integer groupBuyId );
 }

@@ -345,7 +345,6 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	}
 	seckill = mallSeckillDAO.selectBuyByProductId( seckill );
 	if ( seckill != null && CommonUtil.isNotEmpty( seckill.getId() ) ) {
-
 	    String key = "hSeckill";
 	    String field = seckill.getId().toString();
 	    if ( JedisUtil.hExists( key, field ) ) {
@@ -396,6 +395,11 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	if ( seckill == null ) {
 	    return result;
 	}
+	if ( seckill.getStatus() == -1 || seckill.getStatus() == -2 ) {
+	    result.setType( 0 );
+	    result.setActivityId( 0 );
+	    return null;
+	}
 	result.setActivityTimes( seckill.getTimes() );
 	result.setActivityId( seckill.getId() );
 	if ( CommonUtil.isNotEmpty( seckill.getSMaxBuyNum() ) && seckill.getSMaxBuyNum() > 0 ) {
@@ -407,7 +411,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	if ( CommonUtil.isNotEmpty( seckill.getPriceList() ) ) {
 	    for ( MallSeckillPrice price : seckill.getPriceList() ) {
 		if ( price.getIsJoinGroup() == 1 ) {
-		    if ( result.getInvId() == 0 || result.getInvId() == price.getInvenId()) {
+		    if ( result.getInvId() == 0 || result.getInvId() == price.getInvenId() ) {
 			seckillPrice = CommonUtil.toDouble( price.getSeckillPrice() );
 			result.setInvId( price.getInvenId() );
 		    }

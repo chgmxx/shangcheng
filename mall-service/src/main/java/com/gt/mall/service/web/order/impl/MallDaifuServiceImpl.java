@@ -81,11 +81,15 @@ public class MallDaifuServiceImpl extends BaseServiceImpl< MallDaifuDAO,MallDaif
 	    daiFuResult.setIsShowTimes( 1 );
 	    daiFuResult.setTimes( times );
 	}
-	if ( browerType == 1 && CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) && member.getPublicId() > 0 ) {
-	    daiFuResult.setIsShowWxPay( 1 );
-	} else {
-	    daiFuResult.setIsShowAliPay( 1 );
+	if ( mallOrder.getOrderStatus() == 1 && times > 0 ) {
+	    if ( browerType == 1 && CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) && member.getPublicId() > 0 ) {
+		daiFuResult.setIsShowWxPay( 1 );
+	    } else {
+		daiFuResult.setIsShowAliPay( 1 );
+	    }
+	    daiFuResult.setIsShowDaifu( 1 );
 	}
+
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    MallDaifu daifu = new MallDaifu();
 	    daifu.setOrderId( orderId );

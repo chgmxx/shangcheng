@@ -68,10 +68,19 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	    loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );
 
-	    MallGroupBuy groupBuy = groupBuyService.selectById( id );
+	    MallGroupBuy groupBuy = groupBuyService.selectBuyByProductId( id );
 	    if ( CommonUtil.isEmpty( groupBuy ) ) {
 		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
 	    }
+	    result.put( "status", groupBuy.getStatus() );
+
+	    if ( groupBuy.getStatus() == -1 ) {
+		result.put( "statusMsg", "活动已结束" );
+	    } else if ( groupBuy.getStatus() == -2 ) {
+		result.put( "statusMsg", "活动已失效" );
+	    }
+
+	    //	    if(groupBuy.getGStartTime())
 
 	    if ( buyerUserId == null && CommonUtil.isNotEmpty( member ) ) {
 		buyerUserId = member.getId();

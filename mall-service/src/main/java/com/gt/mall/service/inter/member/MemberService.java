@@ -28,7 +28,7 @@ public interface MemberService {
     Member findMemberById( int memberId, Member member );
 
     /**
-     * 绑定手机号
+     * 绑定手机号(小程序)
      *
      * @param params 参数{memberId：会员id，code：短信校验码，phone：手机号，busId：商家id}
      * @param member member对象
@@ -36,6 +36,17 @@ public interface MemberService {
      * @return 会员对象
      */
     Member bingdingPhone( Map< String,Object > params, Member member );
+
+    /**
+     * 绑定手机号(H5)
+     *
+     * @param busId    商家id
+     * @param phone    手机号码
+     * @param memberId 会员id
+     *
+     * @return true 成功
+     */
+    boolean bingdingPhoneH5( Integer busId, String phone, Integer memberId );
 
     /**
      * 根据粉丝id获取会员折扣
@@ -140,10 +151,12 @@ public interface MemberService {
 
     /**
      * 订单退款
+     *
      * @param erpRefundBo 参数
+     *
      * @return 否退款成功
      */
-    Map< String,Object > refundMoney(ErpRefundBo erpRefundBo);
+    Map< String,Object > refundMoney( ErpRefundBo erpRefundBo );
 
     /**
      * 查询会员卡信息

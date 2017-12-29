@@ -859,9 +859,15 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	   /* Map< String,Object > sellerMap = mallSellerService.selectSellerBySaleId( member.getId() );*/
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( member.getId() );
 	    if ( CommonUtil.isNotEmpty( seller ) ) {
+		seller = mallSellerService.getSellerTwoCode( seller, member, CommonUtil.judgeBrowser( request ) );//获取二维码
 		result.put( "qrCodePath", seller.getQrCodePath() );//二维码
-		result.put( "headImagePath", seller.getHeadImagePath() );//销售员的用户头像地址
+		if ( CommonUtil.isNotEmpty( seller.getHeadImagePath() ) ) {
+		    result.put( "headImagePath", seller.getHeadImagePath() );//销售员的用户头像地址
+		}
 		result.put( "userName", seller.getUserName() );//销售员姓名
+	    }
+	    if ( !result.containsKey( "headImagePath" ) || CommonUtil.isEmpty( result.get( "headImagePath" ) ) ) {
+		result.put( "headImagePath", member.getHeadimgurl() );
 	    }
 	    if ( CommonUtil.isNotEmpty( mallSet ) ) {
 		result.put( "mallName", mallSet.getMallName() );//商城名称

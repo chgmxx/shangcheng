@@ -504,6 +504,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	if ( pifa == null ) {
 	    return result;
 	}
+	if ( pifa.getStatus() == -1 || pifa.getStatus() == -2 ) {
+	    return result;
+	}
 	result.setPfPrice( CommonUtil.toDouble( pifa.getPfPrice() ) );
 	result.setActivityTimes( pifa.getTimes() );
 	result.setActivityStatus( pifa.getStatus() );

@@ -362,6 +362,14 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	Double memberLongitude = params.getLongitude();//会员经度
 	Double memberLangitude = params.getLangitude();//会员纬度
 	MallOrder mallOrder = null;
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    if ( CommonUtil.isEmpty( member.getPhone() ) ) {
+		member = memberService.findMemberById( member.getId(), member );
+	    }
+	    if ( CommonUtil.isNotEmpty( member.getPhone() ) ) {
+		result.setMemberPhone( member.getPhone() );
+	    }
+	}
 	if ( CommonUtil.isNotEmpty( params.getOrderId() ) && params.getOrderId() > 0 ) {
 	    mallOrder = mallOrderDAO.selectById( params.getOrderId() );
 	    if ( CommonUtil.isNotEmpty( mallOrder ) ) {

@@ -42,6 +42,9 @@ public class PhoneGetDaiFuResult implements Serializable {
     @ApiModelProperty( name = "isShowAliPay", value = "是否显示支付宝支付 1显示" )
     private Integer isShowAliPay = 0;
 
+    @ApiModelProperty( name = "isShowDaifu", value = "是否显示发起代付请求按钮  1显示" )
+    private Integer isShowDaifu = 0;
+
     @ApiModelProperty( name = "productResultList", value = "商品集合" )
     private List< PhoneGetDaiFuProductResult > productResultList;
 
