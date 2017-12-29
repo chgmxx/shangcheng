@@ -304,7 +304,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    list = mallOrderDAO.findReturnByPage( params );
 	}
 
-	getOrderListParams( list );
+	list = getOrderListParams( list );
 	/*if ( list == null || list.size() == 0 ) {
 	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "您还没有相关的订单" );
 	}*/
@@ -421,8 +421,16 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    }
 		}
 
-		if ( isDetail || order.getOrderPayWay() == 5 ) {
-		    orderList.add( order );
+		for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+		    if ( CommonUtil.isEmpty( detail.getId() ) || detail.getId() == 0 ) {
+			isDetail = false;
+			break;
+		    }
+		}
+		if ( isDetail ) {
+		    if ( order.getMallOrderDetail().size() > 0 || ( order.getMallOrderDetail().size() == 0 && order.getOrderPayWay() == 5 ) ) {
+			orderList.add( order );
+		    }
 		}
 	    }
 	}
@@ -2233,6 +2241,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }*/
 	    if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+		    if ( CommonUtil.isEmpty( detail.getId() ) || detail.getId() == 0 ) {
+			continue;
+		    }
 		    String sale = "";
 		    if ( CommonUtil.isNotEmpty( detail.getStatus() ) ) {
 			Integer dStatus = detail.getStatus();
