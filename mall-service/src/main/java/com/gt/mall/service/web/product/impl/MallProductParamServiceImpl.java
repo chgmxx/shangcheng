@@ -92,6 +92,7 @@ public class MallProductParamServiceImpl extends BaseServiceImpl< MallProductPar
 			    if ( str.equals( defaultStr ) ) {
 				param.setId( param1.getId() );
 				defaultList.remove( param1 );
+				break;
 			    }
 			}
 		    }

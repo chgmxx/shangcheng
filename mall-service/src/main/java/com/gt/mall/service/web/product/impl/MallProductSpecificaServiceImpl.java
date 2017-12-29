@@ -135,6 +135,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 			    if ( str.equals( str1 ) ) {
 				spe.setId( specifica.getId() );
 				defaultList.remove( specifica );
+				break;
 			    }
 			}
 		    }

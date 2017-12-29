@@ -131,6 +131,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 			for ( MallProductSpecifica speci : list ) {
 			    String str = speci.getSpecificaNameId() + "_" + speci.getSpecificaValueId();
 			    if ( !specId.toString().equals( "" ) ) {
+
 				specId.append( "," );
 			    }
 			    JSONObject jObj = JSONObject.parseObject( specMap.get( str ).toString() );
@@ -144,6 +145,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 				if ( specId.toString().equals( inventory1.getSpecificaIds() ) ) {
 				    inventory.setId( inventory1.getId() );
 				    defaultList.remove( inventory1 );
+				    break;
 				}
 			    }
 			}

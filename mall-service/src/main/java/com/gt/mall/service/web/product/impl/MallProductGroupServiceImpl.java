@@ -43,6 +43,7 @@ public class MallProductGroupServiceImpl extends BaseServiceImpl< MallProductGro
 			if ( group.getGroupId() == mallProductGroup.getGroupId() ) {
 			    mallProductGroup.setId( group.getId() );
 			    defaultList.remove( group );
+			    break;
 			}
 		    }
 		}

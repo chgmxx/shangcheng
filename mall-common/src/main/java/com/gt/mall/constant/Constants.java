@@ -249,4 +249,7 @@ public class Constants {
 
     public static final Integer SELLER_FoLLOW_STATUS = 13;
 
+    //粉丝消息提醒模板
+    public static final String BUY_SUCCESS_NOTICE="购买成功通知";
+
 }

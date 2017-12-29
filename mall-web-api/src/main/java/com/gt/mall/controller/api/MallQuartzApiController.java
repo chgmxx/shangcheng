@@ -146,7 +146,7 @@ public class MallQuartzApiController {
 	try {
 	    mallQuartzNewService.autoConfirmTakeDelivery();//自动确认收货
 	} catch ( Exception e ) {
-	    logger.error( "维权自动确认收货异常：" + e.getMessage() );
+	    logger.error( "订单自动确认收货异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "维权自动确认收货异常" );
 	}
