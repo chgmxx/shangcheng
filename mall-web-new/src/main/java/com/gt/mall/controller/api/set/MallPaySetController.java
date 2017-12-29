@@ -7,6 +7,7 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallBusMessageMember;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -113,18 +114,23 @@ public class MallPaySetController extends BaseController {
 	    }
 
 	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
+	    List< Map > messages = new ArrayList< Map >();
 	    if ( messageList != null && msgArr != null && messageList.size() > 0 ) {
 		for ( Map map : messageList ) {
-		    for ( Map obj : msgArr ) {
-			map.put( "selected", "0" );
-			if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
-			    map.put( "selected", "1" );
-			    break;
+		    if ( map.get( "title" ).equals( Constants.BUY_SUCCESS_NOTICE ) ) {
+			for ( Map obj : msgArr ) {
+			    map.put( "selected", "0" );
+			    if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+				map.put( "selected", "1" );
+				break;
+			    }
 			}
+			messages.add( map );
+			break;
 		    }
 		}
 	    }
-	    result.put( "messageList", messageList );
+	    result.put( "messageList", messages );
 	} catch ( Exception e ) {
 	    logger.error( "获取消息模板异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -254,14 +260,13 @@ public class MallPaySetController extends BaseController {
 	    } else {
 		if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
 		    flag = -1;//未认证
-		} else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2
-			&& CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
+		} else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
 		    flag = 1; //有服务号
 		} else {
 		    flag = 0; //无服务号
 		}
 	    }
-	    result.put( "flag", flag );
+	    result.put( "flag", 1 );
 	    result.put( "busId", user.getId() );
 	    result.put( "duofenTwoCodeUrl", PropertiesUtil.getDuofenTwoCodeUrl() );//多粉二维码地址
 	} catch ( BusinessException e ) {

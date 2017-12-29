@@ -130,6 +130,13 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	    group.setEditTime( new Date() );
 	    group.setEditUserId( userId );
 	    groupId = mallGroupDAO.updateById( group );
+
+	    Map< String,Object > imageMap = new HashMap< String,Object >();
+	    imageMap.put( "assId", group.getId() );
+	    imageMap.put( "assType", "2" );
+	    //所有关连图片
+	    List< MallImageAssociative > allIImageList = mallImageAssociativeDAO.selectImageByAssId( imageMap );
+
 	    if ( imageList != null && imageList.size() > 0 ) {
 		for ( MallImageAssociative image : imageList ) {
 		    if ( CommonUtil.isEmpty( image.getId() ) ) {
@@ -137,7 +144,21 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 			mallImageAssociativeDAO.insert( image );
 		    } else {
 			mallImageAssociativeDAO.updateById( image );
+			//1.remove 存在的数据
+			for ( MallImageAssociative mallImage : allIImageList ) {
+			    if ( image.getId().equals( mallImage.getId() ) ) {
+				allIImageList.remove( mallImage );
+				break;
+			    }
+			}
 		    }
+		}
+	    }
+	    //2.还存在的数据，进行删除
+	    if ( allIImageList != null && allIImageList.size() > 0 ) {
+		for ( MallImageAssociative image : allIImageList ) {
+		    image.setIsDelete( 1 );
+		    mallImageAssociativeDAO.updateById( image );
 		}
 	    }
 	}

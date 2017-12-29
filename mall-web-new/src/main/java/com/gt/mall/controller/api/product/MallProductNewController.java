@@ -299,8 +299,8 @@ public class MallProductNewController extends BaseController {
     @ApiOperation( value = "修改商品信息", notes = "修改商品信息" )
     @ResponseBody
     @SysLogAnnotation( description = "修改商品", op_function = "2" )
-    @RequestMapping( value = "/updete", method = RequestMethod.POST )
-    public ServerResponse updete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @RequestMapping( value = "/update", method = RequestMethod.POST )
+    public ServerResponse update( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );

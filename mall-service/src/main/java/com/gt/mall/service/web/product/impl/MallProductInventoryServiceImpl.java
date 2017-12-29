@@ -131,6 +131,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 			for ( MallProductSpecifica speci : list ) {
 			    String str = speci.getSpecificaNameId() + "_" + speci.getSpecificaValueId();
 			    if ( !specId.toString().equals( "" ) ) {
+
 				specId.append( "," );
 			    }
 			    JSONObject jObj = JSONObject.parseObject( specMap.get( str ).toString() );
@@ -144,13 +145,15 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 				if ( specId.toString().equals( inventory1.getSpecificaIds() ) ) {
 				    inventory.setId( inventory1.getId() );
 				    defaultList.remove( inventory1 );
+				    break;
 				}
 			    }
 			}
 			inventory.setSpecificaIds( specId.toString() );// 规格值
 		    }
-
-		    inventory.setInvCode( map.get( "invCode" ).toString() );
+		    if ( CommonUtil.isNotEmpty( map.get( "invCode" ) ) ) {
+			inventory.setInvCode( map.get( "invCode" ).toString() );
+		    }
 		    inventory.setInvNum( CommonUtil.toInteger( map.get( "invNum" ) ) );
 		    inventory.setInvPrice( BigDecimal.valueOf( Double.valueOf( map.get( "invPrice" ).toString() ) ) );
 		    inventory.setIsDefault( CommonUtil.toInteger( map.get( "isDefault" ) ) );
