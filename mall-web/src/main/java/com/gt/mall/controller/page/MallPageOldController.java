@@ -6,6 +6,7 @@ import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.page.MallPage;
+import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -59,7 +60,7 @@ public class MallPageOldController extends AuthorizeOrLoginController {
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String viewHomepage( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws Exception {
 
-	return "redirect:/mallPage/" + id + "/79B4DE7C/pageIndex.do";
+	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + id;
     }
 
     /**
@@ -69,7 +70,7 @@ public class MallPageOldController extends AuthorizeOrLoginController {
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String pageIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int id ) throws IOException {
 
-	return "/mall/phonepage/phoneHomepage";
+	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + id;
     }
 
     /**
@@ -79,15 +80,8 @@ public class MallPageOldController extends AuthorizeOrLoginController {
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String phoneProduct( HttpServletRequest request, HttpServletResponse response, @PathVariable int id, @PathVariable int shopid, @RequestParam Map< String,Object > param )
 		    throws Exception {
-	logger.info( "进入商城商品详细页面。。。" );
-	String jsp = "/mall/product/phone/phone_product_detail";
-	try {
-
-	} catch ( Exception e ) {
-	    logger.error( "访问商城商品详细页面异常：" + e.getMessage() );
-	    e.printStackTrace();
-	}
-	return jsp;
+	MallProduct product = mallProductDAO.selectById( id );
+	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/goods/details/" + shopid + "/" + product.getUserId() + "/0/" + id + "/0";
     }
 
     /**
@@ -96,20 +90,21 @@ public class MallPageOldController extends AuthorizeOrLoginController {
     @RequestMapping( "{shopid}/79B4DE7C/shoppingall" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String shoppingall( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopid, @RequestParam Map< String,Object > params ) throws Exception {
-	try {
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	    logger.error( "商品搜索页面异常：" + e.getMessage() );
+	int userid = 0;
+	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+	    userid = CommonUtil.toInteger( params.get( "uId" ) );
 	}
-	return "mall/product/phone/shoppingall";
-
+	if ( userid <= 0 ) {
+	    MallStore mallStore = mallStoreService.selectById( shopid );
+	    userid = mallStore.getStoUserId();
+	}
+	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() +"/classify/" + shopid + "/" + userid + "/0/k=k";
     }
 
     /**
      * 进入页面设计
      */
     @ApiOperation( value = "进入页面设计", notes = "进入页面设计" )
-    //    @ResponseBody
     @RequestMapping( value = "/designPage", method = RequestMethod.GET )
     public String designPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {

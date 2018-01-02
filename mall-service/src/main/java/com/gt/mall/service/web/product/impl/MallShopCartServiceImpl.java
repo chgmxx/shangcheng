@@ -571,12 +571,14 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	//保存购物车返回值
 	List< PhoneShopCartListResult > resultList = new ArrayList<>();
 	PhoneShopCartListResult shopCartResult = new PhoneShopCartListResult();
+	shopCartResult.setBusId( member.getBusid() );
 	shopCartResult.setUserName( userName );
 	shopCartResult.setUserImageUrl( userHeadImage );
 
 	//保存失效购物车值
 	List< PhoneShopCartListResult > sxResultList = new ArrayList<>();
 	PhoneShopCartListResult sxShopCartResult = new PhoneShopCartListResult();
+	sxShopCartResult.setBusId( member.getBusid() );
 	sxShopCartResult.setUserName( userName );
 	sxShopCartResult.setUserImageUrl( userHeadImage );
 

@@ -172,6 +172,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		product.setIsSpecifica( 0 );
 	    }
 	}
+	result.setType( params.getType() );
 	double activityPrice = 0;//活动价 避免会员价用活动价来算
 	int isShowAddShop = 1;//是否显示“加入购物车按钮” 1显示
 	if ( params.getType() == 1 ) {//查询团购商品

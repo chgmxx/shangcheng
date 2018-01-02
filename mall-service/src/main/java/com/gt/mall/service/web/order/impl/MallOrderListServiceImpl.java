@@ -145,7 +145,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		orderResult.setBusName( busResult.getBusName() );//商家名称
 		orderResult.setBusImageUrl( busResult.getBusImageUrl() );//商家头像
 	    }
-	    orderResult.setShopId( order.getId() );//店铺id
+	    orderResult.setShopId( order.getShopId() );//店铺id
 	    if ( mallShopList != null && mallShopList.size() > 0 ) {
 		for ( Map< String,Object > shopMap : mallShopList ) {
 		    if ( shopMap.get( "id" ).toString().equals( order.getShopId().toString() ) ) {
@@ -224,6 +224,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		    detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment, detail ) );
 		    detailResultList.add( detailResult );
 		    orderNum += detail.getDetProNum();
+		    orderResult.setShopId( detail.getShopId() );//店铺id
 		}
 	    } else {
 		orderNum = 1;

@@ -24,6 +24,9 @@ public class PhoneShopCartListResult {
     @ApiModelProperty( name = "userImageUrl", value = "商家头像（如果有公众号取公众号的头像，没有公众号给默认头像）" )
     private String userImageUrl;
 
+    @ApiModelProperty( name = "busId", value = "商家id" )
+    private Integer busId;
+
     @ApiModelProperty( name = "shopResultList", value = "购物车店铺集合" )
     private List< PhoneShopResult > shopResultList;
 
