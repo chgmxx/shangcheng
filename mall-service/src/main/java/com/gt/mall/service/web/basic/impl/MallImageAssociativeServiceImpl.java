@@ -85,6 +85,7 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
 			for ( MallImageAssociative image : imageList ) {
 			    if ( image.getId() == images.getId() ) {
 				imageList.remove( image );
+				break;
 			    }
 			}
 		    }
@@ -125,6 +126,7 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
 		    for ( MallImageAssociative image : imageList ) {
 			if ( image.getId() == images.getId() ) {
 			    imageList.remove( image );
+			    break;
 			}
 		    }
 		}

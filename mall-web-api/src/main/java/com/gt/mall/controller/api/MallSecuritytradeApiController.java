@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,23 +65,25 @@ public class MallSecuritytradeApiController {
     private DictService                  dictService;
 
     @ApiOperation( value = "待审核退出担保交易的接口", notes = "获取所有待审核退出担保交易的列表" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
+//    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+//		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
+//		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
-    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String userIds ) {
+    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    Map< String,Object > params = new HashMap<>();
+	    logger.info( "接收到的参数：" + param );
+	    params = JSONObject.parseObject( param );
 
 	    List< Map< String,Object > > securitytradeList = null;
-	    curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
-	    pageSize = CommonUtil.isEmpty( pageSize ) ? 15 : pageSize;
+	    Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	    Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
 
-	    Map< String,Object > params = new HashMap<>();
 	    params.put( "checkStatus", "0" );
-	    if ( CommonUtil.isNotEmpty( userIds ) ) {
-		params.put( "userIds", userIds.split( "," ) );
+	    if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
+		params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
 	    }
 	    int count = mallSecuritytradeQuitDAO.selectAllCount( params );
 
@@ -113,20 +117,24 @@ public class MallSecuritytradeApiController {
     }
 
     @ApiOperation( value = "担保交易审核", notes = "担保交易审核" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "退出申请ID", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "status", value = "审核状态  1通过 -1不通过", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "reason", value = "不通过理由", paramType = "query", required = false, dataType = "String" ) } )
+//    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "退出申请ID", paramType = "query", required = true, dataType = "int" ),
+//		    @ApiImplicitParam( name = "status", value = "审核状态  1通过 -1不通过", paramType = "query", required = true, dataType = "int" ),
+//		    @ApiImplicitParam( name = "reason", value = "不通过理由", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/securityCheck", method = RequestMethod.POST )
-    public ServerResponse commentCheck( HttpServletRequest request, HttpServletResponse response, Integer id, Integer status, String reason ) {
+    public ServerResponse commentCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	try {
-	    MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( id );
-	    quit.setCheckStatus( status );
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
+	    MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
+	    quit.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
 	    quit.setCheckTime( new Date() );
-	    quit.setRefuseReason( reason );
+	    if ( CommonUtil.isNotEmpty( params.get( "reason" ) ) ) {
+		quit.setRefuseReason( params.get( "reason" ).toString() );
+	    }
 	    boolean flag = mallSecuritytradeQuitService.updateById( quit );
 
-	    if ( status == 1 ) {
+	    if ( CommonUtil.toInteger( params.get( "status" ) )  == 1 ) {
 		MallPaySet set = new MallPaySet();
 		set.setUserId( quit.getUserId() );
 		set = mallPaySetService.selectByUserId( set );

@@ -101,6 +101,7 @@ public class MallIndexController extends BaseController {
 	    result.put( "bad_orders_num", bad_orders_num );
 	    result.put( "yesterday_orders_num", yesterday_orders_num );
 	    result.put( "withdraw_money", withdraw_money );
+	    result.put( "domain", PropertiesUtil.getWxmpDomain() );
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();

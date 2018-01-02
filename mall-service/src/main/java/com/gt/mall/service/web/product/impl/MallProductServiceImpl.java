@@ -2647,7 +2647,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
 	param.put( "curPage", curPage );
 	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete=0 and p.is_mall_show=0 and check_status =1  and is_platform_check = 0" );
+	wrapper.where( "is_delete=0 and is_mall_show=0 and check_status =1  and is_platform_check = 0" );
 	if ( CommonUtil.isNotEmpty( param.get( "userIds" ) ) ) {
 	    wrapper.in( "user_id", param.get( "userIds" ).toString() );
 	}

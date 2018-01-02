@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.dto.ServerResponse;
@@ -24,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,20 +58,23 @@ public class MallProductApiController {
     private MallImageAssociativeService mallImageAssociativeService;//图片业务处理类
 
     @ApiOperation( value = "待审核商品的接口", notes = "获取所有商家待审核的商品" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "userIds", value = "商城用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
+    //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "userIds", value = "商城用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
-    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String userIds ) {
+    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    //	    Map< String,Object > params = new HashMap<>();
+	    //	    params.put( "curPage", curPage );
+	    //	    params.put( "pageSize", pageSize );
+	    //	    if ( CommonUtil.isNotEmpty( userIds ) ) {
+	    //		params.put( "userIds", userIds );
+	    //	    }
 	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "pageSize", pageSize );
-	    if ( CommonUtil.isNotEmpty( userIds ) ) {
-		params.put( "userIds", userIds );
-	    }
+	    logger.info( "接收到的参数：" + param );
+	    params = JSONObject.parseObject( param );
 	    PageUtil page = mallProductService.selectWaitCheckList( params );
 	    result.put( "page", page );
 	} catch ( Exception e ) {
@@ -81,23 +82,26 @@ public class MallProductApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取待审核商品的异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result,false );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     @ApiOperation( value = "查看商品明细", notes = "查看商品明细" )
     @ResponseBody
     @RequestMapping( value = "/productDeatil", method = RequestMethod.POST )
-    public ServerResponse productDeatil( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "商品Id", required = true ) @RequestParam Integer id ) {
+    public ServerResponse productDeatil( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+	//	@ApiParam( name = "id", value = "商品Id", required = true ) @RequestParam Integer id )
 	Map< String,Object > result = new HashMap<>();
 	try {
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
 	    // 查询商品图片
 	    Map< String,Object > imageParam = new HashMap<>();
-	    imageParam.put( "assId", id );
+
+	    imageParam.put( "assId", params.get( "id" ) );
 	    imageParam.put( "assType", 1 );
 	    List< MallImageAssociative > imageList = mallImageAssociativeService.getParamByProductId( imageParam );
 
-	    MallProductDetail productDetail = mallProductDetailService.selectByProductId( id );
+	    MallProductDetail productDetail = mallProductDetailService.selectByProductId( CommonUtil.toInteger( params.get( "id" ) ) );
 	    result.put( "imageList", imageList );
 	    result.put( "productDetail", productDetail );
 
@@ -110,27 +114,31 @@ public class MallProductApiController {
     }
 
     @ApiOperation( value = "商品审核", notes = "商品审核" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "商品ID", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "status", value = "审核状态 -1审核失败 1审核成功", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "checkReason", value = "审核不通过的原因", paramType = "query", required = false, dataType = "String" ) } )
+    //    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "商品ID,多个用逗号隔开 必传", paramType = "query", required = true, dataType = "String" ),
+    //		    @ApiImplicitParam( name = "status", value = "审核状态 -1审核失败 1审核成功", paramType = "query", required = true, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "checkReason", value = "审核不通过的原因", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/productCheck", method = RequestMethod.POST )
-    public ServerResponse productCheck( HttpServletRequest request, HttpServletResponse response, Integer id, Integer status, String checkReason ) {
-
+    public ServerResponse productCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	try {
-	    MallProduct product = mallProductService.selectById( id );
-	    if ( product != null ) {
-		if ( status == 1 ) {
-		    product.setIsPlatformCheck( 1 );
-		} else {
-		    product.setIsPlatformCheck( 0 );
-		    product.setCheckStatus( -1 );
-		    product.setCheckReason( checkReason );
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
+
+	    params.put( "checkStatus", params.get( "status" ) );
+	    params.put( "isPlatformCheck", "1" );
+	    //	    if ( status != 1 ) {
+	    //		params.put( "checkReason", checkReason );
+	    //	    }
+	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
+		String[] ids = params.get( "id" ).toString().split( "," );
+		boolean flag = mallProductService.batchUpdateProduct( params, ids );
+		if ( !flag ) {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品审核失败" );
 		}
-		mallProductService.updateById( product );
 	    } else {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品不存在" );
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商品审核失败" );
 	    }
+
 	} catch ( Exception e ) {
 	    logger.error( "商品审核异常：" + e.getMessage() );
 	    e.printStackTrace();

@@ -1,22 +1,22 @@
 package com.gt.mall.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.CommonUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * 商城店铺相关接口
@@ -36,11 +36,12 @@ public class MallStoreApiController {
     @ApiOperation( value = "查询门店是否开通商城并拥有页面", notes = "查询门店是否开通商城并拥有页面" )
     @ResponseBody
     @RequestMapping( value = "/shopIsOpenMall", method = RequestMethod.POST )
-    public ServerResponse shopIsOpenMall( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "wxShopId", value = "门店id", required = true ) @RequestParam Integer wxShopId ) {
+    public ServerResponse shopIsOpenMall( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Boolean flag = true;
 	try {
-	    flag = mallStoreService.shopIsOpenMall( wxShopId );
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
+	    flag = mallStoreService.shopIsOpenMall( CommonUtil.toInteger( params.get( "wxShopId" ) ) );
 	} catch ( Exception e ) {
 	    logger.error( "查询门店是否开通商城异常：" + e.getMessage() );
 	    e.printStackTrace();

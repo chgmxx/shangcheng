@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.dto.ServerResponse;
@@ -16,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,15 +42,15 @@ public class MallSellerApiController {
     private MallSellerService mallSellerService;
 
     @ApiOperation( value = "关注送积分", notes = "关注送积分" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "关注人id", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "secenKey", value = "生成二维码时的key", paramType = "query", required = true, dataType = "String" ) } )
+//    @ApiImplicitParams( { @ApiImplicitParam( name = "memberId", value = "关注人id", paramType = "query", required = true, dataType = "int" ),
+//		    @ApiImplicitParam( name = "secenKey", value = "生成二维码时的key", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/sellerSendIntegral", method = RequestMethod.POST )
-    public ServerResponse sellerSendIntegral( HttpServletRequest request, HttpServletResponse response, Integer memberId, String secenKey ) {
+    public ServerResponse sellerSendIntegral( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	try {
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "memberId", memberId );
-	    params.put( "scene_id", secenKey );
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
+	    params.put( "scene_id", params.get( "secenKey" ) );
 	    Map< String,Object > result = mallSellerService.sellerSendIntegral( params );
 	    boolean flag = (boolean) result.get( "flag" );
 	    if ( !flag ) {

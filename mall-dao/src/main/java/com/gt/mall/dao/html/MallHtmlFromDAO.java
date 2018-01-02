@@ -44,5 +44,5 @@ public interface MallHtmlFromDAO extends BaseMapper< MallHtmlFrom > {
      *
      * @return 表单信息
      */
-    Map< String,Object > htmlFromView( Integer id );
+    Map< String,Object > htmlFromView( @Param( "id" ) Integer id );
 }

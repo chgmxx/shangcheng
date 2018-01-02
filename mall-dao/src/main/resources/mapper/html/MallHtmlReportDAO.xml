@@ -27,12 +27,12 @@
     </select>
     <select id="selectAllByPage" resultType="java.util.Map">
         SELECT
-        r.id, r.html_id , r.style,r.report_num ,a.htmlname,a.bus_user_id,a.codeUrl
+        r.id, r.html_id , r.style,r.report_num ,a.htmlname,a.bus_user_id,a.codeUrl,a.state
         FROM t_mall_html_report r
         LEFT JOIN t_mall_html a ON r.`html_id`=a.id
         WHERE 1=1
-        <if test="htmlName != null and htmlname != '' ">
-            and a.htmlname =#{htmlName}
+        <if test="htmlName != null and htmlName != '' ">
+            and a.htmlname like CONCAT(CONCAT('%', #{htmlName}),'%')
         </if>
         <if test="userIds != null">
             and(
@@ -41,6 +41,7 @@
                      open="(" close=")" separator=",">
                 #{id}
             </foreach>
+            AND a.pid>0
             or a.bus_user_id in
             <foreach collection="userIds" item="id" index="index"
                      open="(" close=")" separator=",">
@@ -56,8 +57,8 @@
         FROM t_mall_html_report r
         LEFT JOIN t_mall_html a ON r.`html_id`=a.id
         WHERE 1=1
-        <if test="htmlName != null and htmlname != '' ">
-            and a.htmlname =#{htmlName}
+        <if test="htmlName != null and htmlName != '' ">
+            and a.htmlname like CONCAT(CONCAT('%', #{htmlName}),'%')
         </if>
         <if test="userIds != null">
             and(
@@ -66,6 +67,7 @@
                      open="(" close=")" separator=",">
                 #{id}
             </foreach>
+            AND a.pid>0
             or a.bus_user_id in
             <foreach collection="userIds" item="id" index="index"
                      open="(" close=")" separator=",">

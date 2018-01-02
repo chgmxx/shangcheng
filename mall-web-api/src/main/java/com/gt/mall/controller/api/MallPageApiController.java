@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.bean.DictBean;
@@ -22,10 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,12 +59,13 @@ public class MallPageApiController {
     @ApiOperation( value = "获取页面列表", notes = "获取页面列表" )
     @ResponseBody
     @RequestMapping( value = "/pageList", method = RequestMethod.POST )
-    public ServerResponse pageList( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "userId", value = "商家Id", required = true ) @RequestParam Integer userId ) {
+    public ServerResponse pageList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	List< Map > pageList = null;
 	try {
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
 	    Wrapper wrapper = new EntityWrapper();
-	    wrapper.where( "pag_user_id = {0}  ", userId );
+	    wrapper.where( "pag_user_id = {0}  ", CommonUtil.toInteger( params.get( "userId" ) ) );
 	    List< MallPage > list = mallPageService.selectList( wrapper );
 	    if ( list != null && list.size() > 0 ) {
 		pageList = new ArrayList<>();
@@ -92,8 +91,7 @@ public class MallPageApiController {
     @ApiOperation( value = "根据门店id查询首页id", notes = "根据门店id查询首页id" )
     @ResponseBody
     @RequestMapping( value = "/getPageIdByShopId", method = RequestMethod.POST )
-    public ServerResponse getPageIdByShopId( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "wxShopId", value = "门店ID", required = true ) @RequestParam Integer wxShopId ) {
+    public ServerResponse getPageIdByShopId( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Integer pageId = 0;
 	try {
 	    //pageId = mallPageService.getPageIdByShopId( shopId );
@@ -107,8 +105,8 @@ public class MallPageApiController {
 	    if ( shopInfo == null ) {pageId = 0;}
 	    if ( shopInfo.getStatus() == -1 ) {pageId = 0;}
 */
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "wxShopId", wxShopId );
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
 	    List< Map< String,Object > > pageList = mallPageDAO.selectPageByWxShopId( params );
 	    if ( pageList != null && pageList.size() > 0 ) {
 		pageId = CommonUtil.toInteger( pageList.get( 0 ).get( "id" ).toString() );

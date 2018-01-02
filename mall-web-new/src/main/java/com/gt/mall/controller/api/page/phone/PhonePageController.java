@@ -21,6 +21,7 @@ import com.gt.mall.result.phone.PhonePageResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.basic.MallVisitorService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
@@ -92,16 +93,16 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     private MallPifaApplyService     mallPifaApplyService;
     @Autowired
     private MallProductDAO           mallProductDAO;
+    @Autowired
+    private MallVisitorService       mallVisitorService;
 
     /**
      * 手机访问商家主页面接口
      */
     @ApiOperation( value = "获取商城首页数据", notes = "获取商城首页数据", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "pageId", value = "首页id,必传", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "url", value = "当前页面地址", paramType = "query", dataType = "String" )
-    } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "pageId", value = "首页id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "url", value = "当前页面地址", paramType = "query", dataType = "String" ) } )
     @GetMapping( value = "pageIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhonePageResult > pageIndex( HttpServletRequest request, HttpServletResponse response, Integer pageId, String url ) throws IOException {
 	PhonePageResult result = new PhonePageResult();
@@ -531,4 +532,33 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopId, false );
     }
 
+    @ApiOperation( value = "新增浏览量", notes = "新增浏览量", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "id", value = "页面ID/商品ID,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "type", value = "0页面 1商品,必传", paramType = "query", required = true, dataType = "int" ) } )
+    @PostMapping( value = "addViewsNum", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse addVisitor( HttpServletRequest request, Integer busId, Integer id, Integer type ) {
+	try {
+	    Integer memberId = null;
+	    Member member = MallSessionUtils.getLoginMember( request, busId );
+	    if ( member != null ) {
+		memberId = member.getId();
+	    }
+	    Boolean result = false;
+	    if ( type == 0 ) {
+		result = mallVisitorService.savePageVisitor( CommonUtil.getIpAddr( request ), memberId, id );
+	    } else {
+		result = mallVisitorService.saveProductVisitor( CommonUtil.getIpAddr( request ), memberId, id );
+	    }
+	    if ( !result ) {
+		return ServerResponse.createByErrorMessage( "新增浏览量失败" );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "新增浏览量异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "新增浏览量失败" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
 }
