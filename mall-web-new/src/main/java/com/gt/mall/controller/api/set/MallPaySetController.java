@@ -269,6 +269,7 @@ public class MallPaySetController extends BaseController {
 	    result.put( "flag", 1 );
 	    result.put( "busId", user.getId() );
 	    result.put( "duofenTwoCodeUrl", PropertiesUtil.getDuofenTwoCodeUrl() );//多粉二维码地址
+	    result.put( "domain", PropertiesUtil.getWxmpDomain() );
 	} catch ( BusinessException e ) {
 	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );
 	    e.printStackTrace();

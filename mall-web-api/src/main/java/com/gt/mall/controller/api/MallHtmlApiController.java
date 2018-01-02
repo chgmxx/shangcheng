@@ -121,7 +121,7 @@ public class MallHtmlApiController {
 	    Map< String,Object > params = JSONObject.parseObject( param );
 	    MallHtml mallHtml = mallHtmlService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	    if ( mallHtml != null ) {
-		mallHtml.setState( 0 );
+		mallHtml.setState( CommonUtil.toInteger( params.get( "state" ) ) );
 		mallHtmlService.updateById( mallHtml );
 	    } else {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "h5商城不存在" );
@@ -239,7 +239,7 @@ public class MallHtmlApiController {
 	    Map< String,Object > params = JSONObject.parseObject( param );
 	    MallHtml mallHtml = mallHtmlService.selectById( CommonUtil.toInteger( params.get( "htmlId" ) ) );
 	    if ( mallHtml != null ) {
-		mallHtml.setReportstate( CommonUtil.toInteger( params.get( "state" ) ) );
+		mallHtml.setState( CommonUtil.toInteger( params.get( "state" ) ) );
 		mallHtmlDAO.updateById( mallHtml );
 	    } else {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "h5商城不存在" );
@@ -281,7 +281,7 @@ public class MallHtmlApiController {
 	    Map< String,Object > params = JSONObject.parseObject( param );
 	    MallHtml mallHtml = mallHtmlService.selectById( CommonUtil.toInteger( params.get( "htmlId" ) ) );
 	    if ( mallHtml != null ) {
-		mallHtml.setReportstate( 1 );
+		mallHtml.setReportstate( 0 );
 		mallHtmlDAO.updateById( mallHtml );
 
 		Wrapper< MallHtmlReport > wrapper = new EntityWrapper<>();

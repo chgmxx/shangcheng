@@ -117,6 +117,7 @@ public class MallHtmlController extends BaseController {
 	    Integer style = Integer.valueOf( request.getParameter( "style" ).toString() );
 	    Integer htmlid = Integer.valueOf( request.getParameter( "htmlid" ).toString() );
 	    htmlReportService.htmlReport( htmlid, style );
+
 	    map.put( "reTurn", "0" );
 	    map.put( "message", "操作成功" );
 	} catch ( Exception e ) {
