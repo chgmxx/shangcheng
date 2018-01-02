@@ -176,9 +176,15 @@ public class MallHtmlApiController {
 	    Map< String,Object > params = JSONObject.parseObject( param );
 	    MallHtml mallHtml = mallHtmlService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	    if ( mallHtml != null ) {
-		Wrapper< MallHtml > wrapper = new EntityWrapper<>();
-		wrapper.where( "id= {0}", CommonUtil.toInteger( params.get( "id" ) ) );
-		mallHtmlDAO.delete( wrapper );
+		Wrapper< MallHtmlReport > wrapperReport = new EntityWrapper<>();
+		wrapperReport.where( "html_id = {0}", CommonUtil.toInteger( params.get( "id" ) ) );
+		mallHtmlReportDAO.delete( wrapperReport );
+
+		mallHtml.setIsDelete( 1 );
+		mallHtmlDAO.updateById( mallHtml );
+//		Wrapper< MallHtml > wrapper = new EntityWrapper<>();
+//		wrapper.where( "id= {0}", CommonUtil.toInteger( params.get( "id" ) ) );
+//		mallHtmlDAO.delete( wrapper );
 	    } else {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "h5商城不存在" );
 	    }

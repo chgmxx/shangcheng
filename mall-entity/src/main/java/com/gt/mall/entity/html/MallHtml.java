@@ -110,6 +110,12 @@ public class MallHtml extends Model< MallHtml > {
      */
     private String  bakurl;
 
+    /**
+     * 是否删除 0 未删除  1已删除
+     */
+    @TableField( "is_delete" )
+    private Integer    isDelete;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;
@@ -137,6 +143,7 @@ public class MallHtml extends Model< MallHtml > {
 			", modelid=" + modelid +
 			", introduce=" + introduce +
 			", bakurl=" + bakurl +
+			", isDelete=" + isDelete +
 			"}";
     }
 }

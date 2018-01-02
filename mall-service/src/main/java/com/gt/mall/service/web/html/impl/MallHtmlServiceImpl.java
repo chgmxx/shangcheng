@@ -185,7 +185,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 
 	Wrapper< MallHtml > pageWrapper = new EntityWrapper<>();
-	pageWrapper.where( "source_type = 1  and state=0" );
+	pageWrapper.where( "source_type = 1 AND is_delete=0 and state=0" );
 	int count = htmlDAO.selectCount( pageWrapper );
 
 	PageUtil page = new PageUtil( curPage, pageSize, count, "" );

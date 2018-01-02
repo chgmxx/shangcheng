@@ -29,7 +29,7 @@
         SELECT
         r.id, r.html_id , r.style,r.report_num ,a.htmlname,a.bus_user_id,a.codeUrl,a.state
         FROM t_mall_html_report r
-        LEFT JOIN t_mall_html a ON r.`html_id`=a.id
+        LEFT JOIN t_mall_html a ON r.`html_id`=a.id  AND a.is_delete=0
         WHERE 1=1
         <if test="htmlName != null and htmlName != '' ">
             and a.htmlname like CONCAT(CONCAT('%', #{htmlName}),'%')
@@ -55,7 +55,7 @@
     <select id="selectAllCount" resultType="java.lang.Integer">
         SELECT count(r.id)
         FROM t_mall_html_report r
-        LEFT JOIN t_mall_html a ON r.`html_id`=a.id
+        LEFT JOIN t_mall_html a ON r.`html_id`=a.id  AND a.is_delete=0
         WHERE 1=1
         <if test="htmlName != null and htmlName != '' ">
             and a.htmlname like CONCAT(CONCAT('%', #{htmlName}),'%')
