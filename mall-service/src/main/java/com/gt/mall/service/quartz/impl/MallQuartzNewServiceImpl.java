@@ -3,6 +3,7 @@ package com.gt.mall.service.quartz.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCountIncomeDAO;
@@ -22,22 +23,19 @@ import com.gt.mall.entity.order.MallLogOrderCallback;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.page.MallPage;
-import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDaycount;
 import com.gt.mall.entity.product.MallProductMonthcount;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
-import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
 import com.gt.mall.utils.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +81,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallOrderService         mallOrderService;
     @Autowired
     private MemberService            memberService;
+    @Autowired
+    private WxPublicUserService      wxPublicUserService;
 
     private static String ip  = PropertiesUtil.getRedisHost();
     private static String pwd = PropertiesUtil.getRedisPassword();
@@ -120,8 +120,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				/*memberPayService.giveGood( orderNo );//赠送状态*/
 
 				//修改赠送状态
-				order.setGiveStatus( 1 );
-				mallOrderDAO.upOrderNoById( order );
+				//				order.setGiveStatus( 1 );
+				//				mallOrderDAO.upOrderNoById( order );
 
 				//mOrderService.insertPayLog(order);//添加支付有礼的日志信息
 				//TODO 联盟积分赠送
@@ -779,12 +779,24 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	List< MallLogOrderCallback > orderCallbackList = mallLogOrderCallbackDAO.selectList( wrapper );
 	if ( orderCallbackList != null && orderCallbackList.size() > 0 ) {
 	    for ( MallLogOrderCallback orderCallback : orderCallbackList ) {
-		Map< String,Object > params = new HashMap<>();
-		params.put( "out_trade_no", orderCallback.getOrderNo() );
-		params.put( "returnLogStatus", orderCallback.getLogStatus() );
-		mallOrderService.paySuccessModified( params, null );
-		orderCallback.setIsResolved( 1 );
-		mallLogOrderCallbackDAO.updateById( orderCallback );
+		//		Map< String,Object > params = new HashMap<>();
+		//		params.put( "out_trade_no", orderCallback.getOrderNo() );
+		//		params.put( "returnLogStatus", orderCallback.getLogStatus() );
+		//		mallOrderService.paySuccessModified( params, null );
+		MallOrder order = mallOrderDAO.selectOrderByOrderNo( orderCallback.getOrderNo() );
+		WxPublicUsers pbUser = wxPublicUserService.selectByMemberId( order.getBuyerUserId() );
+
+		List< MallOrder > mallOrderList = mallOrderDAO.getOrderByOrderPId( order.getId() );
+		if ( mallOrderList == null || mallOrderList.size() == 0 ) {
+		    MallOrder mallOrder = mallOrderDAO.getOrderById( order.getId() );
+		    mallOrderList.add( mallOrder );
+		}
+
+		boolean flag = mallOrderService.paySuccess( mallOrderList, pbUser, orderCallback.getLogStatus().toString(), orderCallback.getOrderNo() );//支付成功回调储值卡支付，积分支付，粉币支付
+		if ( flag ) {
+		    orderCallback.setIsResolved( 1 );
+		    mallLogOrderCallbackDAO.updateById( orderCallback );
+		}
 	    }
 	}
     }
@@ -797,7 +809,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	try {
 	    String key = Constants.REDIS_KEY + "member_return_jifen";
 	    //判断是否存在会员退款jedis
-	    if ( JedisUtil.exists( key) ) {
+	    if ( JedisUtil.exists( key ) ) {
 		List refundList = JedisUtil.lpoplist( key, 0, -1 );//获取所有记录
 		if ( refundList != null ) {
 		    for ( int i = 0; i < refundList.size(); i++ ) {

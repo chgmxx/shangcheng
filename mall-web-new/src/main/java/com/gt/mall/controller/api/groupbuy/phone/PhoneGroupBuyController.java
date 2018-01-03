@@ -97,7 +97,7 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( productMap ) && CommonUtil.isNotEmpty( groupBuy.getGPeopleNum() ) ) {
 		chaPeopleNum = groupBuy.getGPeopleNum() - joinList.size();
 	    }
-	    String title = "还差" + chaPeopleNum + "人、我" + productMap.get( "price" ) + "元团了" + productMap.get( "pro_name" ) + "商品";
+	    String title = "还差" + chaPeopleNum + "人、我" + productMap.get( "price" ) + "元团了" + productMap.get( "proName" ) + "商品";
 	    double old_price = 0;
 	    double price = CommonUtil.toDouble( productMap.get( "price" ) );
 	    if ( CommonUtil.isNotEmpty( productMap.get( "oldPrice" ) ) ) {

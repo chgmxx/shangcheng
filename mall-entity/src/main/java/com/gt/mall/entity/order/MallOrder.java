@@ -345,8 +345,8 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     @TableField( exist = false )
     private String orderPNo;//父类的订单编号
 
-    @TableField( exist = false )
-    private String shopName;//店铺名称
+//    @TableField( exist = false )
+    //    private String shopName;//店铺名称
 
     @TableField( exist = false )
     private List< MallOrderDetail > mallOrderDetail;        //商品详情

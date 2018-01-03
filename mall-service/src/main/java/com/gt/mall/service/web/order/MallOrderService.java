@@ -79,6 +79,18 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public int paySuccessModified( Map< String,Object > params, Member member );
 
     /**
+     * 成功回调
+     *
+     * @param mallOrderList   订单集合
+     * @param pbUser          公众号对象
+     * @param returnLogStatus 回调日志状态
+     * @param orderNo         订单号
+     *
+     * @return true 成功，失败会抛异常
+     */
+    boolean paySuccess( List< MallOrder > mallOrderList, WxPublicUsers pbUser, String returnLogStatus, String orderNo );
+
+    /**
      * 修改申请退款
      */
     public Map< String,Object > updateOrderReturn( MallOrderReturn orderReturn, Object oObj, WxPublicUsers pUser ) throws Exception;
