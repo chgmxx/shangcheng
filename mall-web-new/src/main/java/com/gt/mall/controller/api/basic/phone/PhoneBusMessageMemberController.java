@@ -51,7 +51,7 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 		    @ApiImplicitParam( name = "url", value = "地址,必传", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "grant/{busId}", method = RequestMethod.GET )
-    public ServerResponse grant( HttpServletRequest request, HttpServletResponse response, @PathVariable Integer busId, @PathVariable String url ) {
+    public ServerResponse grant( HttpServletRequest request, HttpServletResponse response, @PathVariable Integer busId, String url ) {
 	try {
 	    Integer browser = CommonUtil.judgeBrowser( request );
 	    if ( browser != 1 ) {//微信
