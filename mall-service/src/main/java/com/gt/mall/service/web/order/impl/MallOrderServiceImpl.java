@@ -684,20 +684,20 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    }
 		}
 	    }
-	    if ( CommonUtil.isNotEmpty( telePhone ) ) {
-		OldApiSms oldApiSms = new OldApiSms();
-		oldApiSms.setMobiles( telePhone.toString() );
-		oldApiSms.setCompany( busUser.getMerchant_name() );
-		oldApiSms.setBusId( member.getBusid() );
-		oldApiSms.setModel( Constants.SMS_MODEL );
-		oldApiSms.setContent( CommonUtil.format( "你的商城有新的订单，请登录" + Constants.doMainName + "网站查看详情。" ) );
-		try {
-		    smsService.sendSmsOld( oldApiSms );
-		} catch ( Exception e ) {
-		    e.printStackTrace();
-		    logger.error( "短信推送消息异常：" + e.getMessage() );
-		}
-	    }
+	    //	    if ( CommonUtil.isNotEmpty( telePhone ) ) {
+	    //		OldApiSms oldApiSms = new OldApiSms();
+	    //		oldApiSms.setMobiles( telePhone.toString() );
+	    //		oldApiSms.setCompany( busUser.getMerchant_name() );
+	    //		oldApiSms.setBusId( member.getBusid() );
+	    //		oldApiSms.setModel( Constants.SMS_MODEL );
+	    //		oldApiSms.setContent( CommonUtil.format( "你的商城有新的订单，请登录" + Constants.doMainName + "网站查看详情。" ) );
+	    //		try {
+	    //		    smsService.sendSmsOld( oldApiSms );
+	    //		} catch ( Exception e ) {
+	    //		    e.printStackTrace();
+	    //		    logger.error( "短信推送消息异常：" + e.getMessage() );
+	    //		}
+	    //	    }
 	}
 
 	if ( CommonUtil.isNotEmpty( pbUser ) ) {
@@ -708,7 +708,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		logger.error( "购买成功消息模板发送异常" + e.getMessage() );
 	    }
 	    try {
-		mallBusMessageMemberService.buyerPaySuccess( order, busUser, 0 );
+		mallBusMessageMemberService.buyerPaySuccess( order, busUser, 0, telePhone.toString() );
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 		logger.error( "提醒商家消息失败异常" + e.getMessage() );

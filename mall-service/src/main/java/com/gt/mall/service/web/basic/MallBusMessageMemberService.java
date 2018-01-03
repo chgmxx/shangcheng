@@ -33,7 +33,7 @@ public interface MallBusMessageMemberService extends BaseService< MallBusMessage
      * @param busUser
      * @param type    发送类型 0全部 1短信 2模板
      */
-    void buyerPaySuccess( MallOrder order, BusUser busUser, Integer type );
+    void buyerPaySuccess( MallOrder order, BusUser busUser, Integer type,String telePhone );
 
     /**
      * 买家确认收货通知商家

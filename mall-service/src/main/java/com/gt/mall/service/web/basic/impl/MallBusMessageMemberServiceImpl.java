@@ -13,6 +13,7 @@ import com.gt.mall.entity.html.MallHtmlFrom;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
+import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.SmsService;
@@ -21,6 +22,7 @@ import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.PropertiesUtil;
@@ -62,6 +64,8 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
     private MemberService               memberService;
     @Autowired
     private MallBusMessageMemberService mallBusMessageMemberService;
+    @Autowired
+    private MallStoreService            mallStoreService;
 
     /**
      * 获取选中的商家模板ID
@@ -101,7 +105,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
     }
 
     @Override
-    public void buyerPaySuccess( MallOrder order, BusUser busUser, Integer type ) {
+    public void buyerPaySuccess( MallOrder order, BusUser busUser, Integer type, String telePhone ) {
 	List< MallOrderDetail > orderDetails = mallOrderDetailService.getOrderDetailList( order.getId() );
 	String proName = "";
 	if ( orderDetails != null && orderDetails.size() > 0 ) {
@@ -111,11 +115,9 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 	    }
 	    String messages = "用户【" + busUser.getName() + "】成功购买您的商品【" + proName + "】，请尽快登录商城后台发货";
 	    if ( type == 0 || type == 1 ) {//短信
-		if ( CommonUtil.isNotEmpty( busUser.getPhone() ) ) {
-		    String telephone = busUser.getPhone();
-
+		if ( CommonUtil.isNotEmpty( telePhone ) ) {
 		    OldApiSms oldApiSms = new OldApiSms();
-		    oldApiSms.setMobiles( telephone );
+		    oldApiSms.setMobiles( telePhone );
 		    oldApiSms.setCompany( busUser.getMerchant_name() );
 		    oldApiSms.setBusId( busUser.getId() );
 		    oldApiSms.setModel( Constants.SMS_MODEL );
@@ -164,10 +166,16 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 	    BusUser busUser = busUserService.selectById( order.getSellerUserId() );
 	    String messages = "用户【" + busUser.getName() + "】成功购买您的商品，并确认收货成功，查看详情请登录商城后台。";
 	    if ( type == 0 || type == 1 ) {//短信
-		if ( CommonUtil.isNotEmpty( busUser.getPhone() ) ) {
-
+		MallStore store = mallStoreService.selectById( order.getShopId() );
+		String telPhone = "";
+		if ( store != null && store.getStoIsSms() == 1 ) {//1是推送
+		    if ( store.getStoSmsTelephone() != null ) {
+			telPhone = store.getStoSmsTelephone();
+		    }
+		}
+		if ( CommonUtil.isNotEmpty( telPhone ) ) {
 		    OldApiSms oldApiSms = new OldApiSms();
-		    oldApiSms.setMobiles( busUser.getPhone() );
+		    oldApiSms.setMobiles( telPhone );
 		    oldApiSms.setCompany( busUser.getMerchant_name() );
 		    oldApiSms.setBusId( busUser.getId() );
 		    oldApiSms.setModel( Constants.SMS_MODEL );
@@ -213,9 +221,16 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 	if ( busUser != null ) {
 	    String messages = "用户【" + busUser.getName() + "】发起了【" + ( orderReturn.getRetHandlingWay() == 1 ? "退款" : "退货退款" ) + "】，请尽快登录商城后台查看并及时处理。";
 	    if ( type == 0 || type == 1 ) {//短信
-		if ( CommonUtil.isNotEmpty( busUser.getPhone() ) ) {
+		MallStore store = mallStoreService.selectById( orderReturn.getShopId() );
+		String telPhone = "";
+		if ( store != null && store.getStoIsSms() == 1 ) {//1是推送
+		    if ( store.getStoSmsTelephone() != null ) {
+			telPhone = store.getStoSmsTelephone();
+		    }
+		}
+		if ( CommonUtil.isNotEmpty( telPhone ) ) {
 		    OldApiSms oldApiSms = new OldApiSms();
-		    oldApiSms.setMobiles( busUser.getPhone() );
+		    oldApiSms.setMobiles( telPhone );
 		    oldApiSms.setCompany( busUser.getMerchant_name() );
 		    oldApiSms.setBusId( busUser.getId() );
 		    oldApiSms.setModel( Constants.SMS_MODEL );
