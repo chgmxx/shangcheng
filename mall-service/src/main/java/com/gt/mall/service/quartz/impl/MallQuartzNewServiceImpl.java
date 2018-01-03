@@ -91,9 +91,6 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     @Autowired
     private WxPublicUserService      wxPublicUserService;
 
-    private static String ip  = PropertiesUtil.getRedisHost();
-    private static String pwd = PropertiesUtil.getRedisPassword();
-
     /**
      * 订单完成赠送物品  每天早上8点扫描
      */
