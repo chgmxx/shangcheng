@@ -5,7 +5,9 @@ import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.MallPresaleRankDAO;
-import com.gt.mall.dao.product.*;
+import com.gt.mall.dao.product.MallProductDAO;
+import com.gt.mall.dao.product.MallProductInventoryDAO;
+import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.dao.seller.MallSellerIncomeDAO;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -19,7 +21,9 @@ import com.gt.mall.entity.seller.MallSellerIncome;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.order.QuartzOrderService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.JedisUtil;
 import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
 import com.gt.util.entity.param.fenbiFlow.UpdateFenbiReduce;
@@ -58,10 +62,10 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
     private MemberService       memberService;
 
     @Override
-    public void closeOrderNoPay( String key, String ip, String pwd ) {
+    public void closeOrderNoPay( String key ) {
 	//判断是否存在未支付的订单
-	if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-	    Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有未支付的订单
+	if ( JedisUtil.exists( key ) ) {
+	    Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有未支付的订单
 	    if ( map != null ) {
 		Set< String > set = map.keySet();
 		for ( String orderId : set ) {
@@ -75,9 +79,9 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 			long mins = DateTimeKit.minsBetween( times, eDate, 60000, format );
 			if ( mins > 30 ) {// 订单已经支付了30分钟还未退款
 			    // 恢复订单库存
-			    boolean flag = addInvNum( orderId, ip, pwd );
+			    boolean flag = addInvNum( orderId );
 			    if ( flag ) {
-				MultipleJedisUtil.mapdel( key, orderId, ip, pwd );
+				JedisUtil.mapdel( key, orderId );
 			    }
 			}
 		    }
@@ -87,11 +91,11 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
     }
 
     @Override
-    public void newCloseOrderNoPay( String key, String ip, String pwd ) {
+    public void newCloseOrderNoPay( String key ) {
 
 	//判断是否存在未支付的订单
-	if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-	    Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有未支付的订单
+	if ( JedisUtil.exists( key ) ) {
+	    Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有未支付的订单
 	    if ( map != null ) {
 		Set< String > set = map.keySet();
 		for ( String orderId : set ) {
@@ -110,11 +114,11 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 			String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;
 			String eDate = DateTimeKit.format( new Date(), format );
 			long mins = DateTimeKit.minsBetween( times, eDate, 60000, format );
-			if ( mins > orderCancel ) {// 订单已经超过设定时间还未退款
+			if ( mins >= orderCancel ) {// 订单已经超过设定时间还未退款
 			    // 恢复订单库存
-			    boolean flag = addInvNum( orderId, ip, pwd );
+			    boolean flag = addInvNum( orderId );
 			    if ( flag ) {
-				MultipleJedisUtil.mapdel( key, orderId, ip, pwd );
+				JedisUtil.mapdel( key, orderId );
 			    }
 			}
 		    }
@@ -123,7 +127,7 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	}
     }
 
-    public boolean addInvNum( String orderId, String ip, String pwd ) {
+    public boolean addInvNum( String orderId ) {
 	boolean flag = false;
 	Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "id", orderId );
@@ -138,18 +142,18 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 		    String seckill = order.getGroupBuyId().toString();
 		    MallOrderDetail detail = order.getMallOrderDetail().get( 0 );
 		    if ( order.getOrderStatus() == 1 ) {//未支付的才恢复库存
-			if ( MultipleJedisUtil.hExists( invKey, seckill, ip, pwd ) ) {
+			if ( JedisUtil.hExists( invKey, seckill ) ) {
 			    // 恢复商品库存
-			    int invNum = CommonUtil.toInteger( MultipleJedisUtil.maoget( invKey, seckill, ip, pwd ) );
-			    MultipleJedisUtil.map( invKey, seckill, ( invNum + 1 ) + "", ip, pwd );
+			    int invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckill ) );
+			    JedisUtil.map( invKey, seckill, ( invNum + 1 ) + "" );
 			}
 			if ( CommonUtil.isNotEmpty( detail.getProductSpecificas() ) ) {
 			    String specificas = detail.getProductSpecificas();
 			    String field = seckill + "_" + specificas;
-			    if ( MultipleJedisUtil.hExists( invKey, field, ip, pwd ) ) {
+			    if ( JedisUtil.hExists( invKey, field ) ) {
 				// 恢复商品规格库存
-				int invNum = CommonUtil.toInteger( MultipleJedisUtil.maoget( invKey, field, ip, pwd ) );
-				MultipleJedisUtil.map( invKey, field, ( invNum + 1 ) + "", ip, pwd );
+				int invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, field ) );
+				JedisUtil.map( invKey, field, ( invNum + 1 ) + "" );
 			    }
 			}
 		    } else {

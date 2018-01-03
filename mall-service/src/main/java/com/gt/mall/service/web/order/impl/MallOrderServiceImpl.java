@@ -43,6 +43,7 @@ import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
+import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
@@ -207,7 +208,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallGroupBuyService mallGroupBuyService;
 
     @Autowired
-    private MallOrderReturnLogService mallOrderReturnLogService;
+    private MallOrderReturnLogService   mallOrderReturnLogService;
+    @Autowired
+    private MallBusMessageMemberService mallBusMessageMemberService;
 
     @Override
     public Integer count( Map< String,Object > params ) {
@@ -485,6 +488,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 	int count = mallOrderDAO.upOrderNoOrRemark( params );
 	Object type = params.get( "type" );
+	Object status = params.get( "status" );
 	Object express = params.get( "express" );
 	if ( null != type && type.equals( "2" ) ) {//取消订单
 	    if ( count == 1 ) {
@@ -492,6 +496,17 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		count = mallOrderDAO.upOrderNoOrRemark( params );
 	    }
 	}
+	if ( null != status && status.equals( "4" ) ) {//确认收货
+	    if ( count == 1 ) {
+		try {
+		    mallBusMessageMemberService.buyerConfirmReceipt( CommonUtil.toInteger( params.get( "orderId" ) ), 0 );
+		} catch ( Exception e ) {
+		    e.printStackTrace();
+		    logger.error( "提醒商家消息失败异常" + e.getMessage() );
+		}
+	    }
+	}
+
 	if ( null != express && express.equals( "1" ) ) {
 	    if ( count == 1 ) {
 		params.put( "status", 3 );
@@ -692,6 +707,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		e.printStackTrace();
 		logger.error( "购买成功消息模板发送异常" + e.getMessage() );
 	    }
+	    try {
+		mallBusMessageMemberService.buyerPaySuccess( order, busUser, 0 );
+	    } catch ( Exception e ) {
+		e.printStackTrace();
+		logger.error( "提醒商家消息失败异常" + e.getMessage() );
+	    }
+
 	}
 	try {
 	    smsMessageTel( order, member, busUser );//短信提醒买家

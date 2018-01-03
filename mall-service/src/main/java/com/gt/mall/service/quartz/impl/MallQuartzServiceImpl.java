@@ -8,14 +8,13 @@ import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.quartz.MallQuartzService;
-import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
+import com.gt.mall.utils.CommonUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -162,7 +161,7 @@ public class MallQuartzServiceImpl implements MallQuartzService {
     /**
      * 短信提醒预售开始时间和结束时间
      */
-//    @Scheduled( cron = "0 0 0/2 * * ?" )//两个小时扫描一次
+    //    @Scheduled( cron = "0 0 0/2 * * ?" )//两个小时扫描一次
     @Override
     public void presaleStar() {
 	try {

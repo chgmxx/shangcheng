@@ -1,6 +1,5 @@
 package com.gt.mall.service.web.order;
 
-
 import com.gt.mall.entity.order.MallOrder;
 
 import java.util.Map;
@@ -10,9 +9,9 @@ import java.util.Map;
  */
 public interface QuartzOrderService {
 
-    void closeOrderNoPay( String ip, String key, String pwd );
+    void closeOrderNoPay( String key );
 
-    void newCloseOrderNoPay( String ip, String key, String pwd );
+    void newCloseOrderNoPay( String key );
 
     /**
      * 添加购买日志（用在支付有礼）

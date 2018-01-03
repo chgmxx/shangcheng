@@ -21,6 +21,7 @@ import com.gt.mall.dao.store.MallShopMonthcountDAO;
 import com.gt.mall.entity.basic.MallCountIncome;
 import com.gt.mall.entity.order.MallLogOrderCallback;
 import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallProductDaycount;
@@ -28,12 +29,16 @@ import com.gt.mall.entity.product.MallProductMonthcount;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
+import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
-import com.gt.mall.utils.*;
+import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.JedisUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -82,10 +87,9 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     @Autowired
     private MemberService            memberService;
     @Autowired
+    private MallStoreService         mallStoreService;
+    @Autowired
     private WxPublicUserService      wxPublicUserService;
-
-    private static String ip  = PropertiesUtil.getRedisHost();
-    private static String pwd = PropertiesUtil.getRedisPassword();
 
     /**
      * 订单完成赠送物品  每天早上8点扫描
@@ -120,8 +124,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				/*memberPayService.giveGood( orderNo );//赠送状态*/
 
 				//修改赠送状态
-				//				order.setGiveStatus( 1 );
-				//				mallOrderDAO.upOrderNoById( order );
+				order.setGiveStatus( 1 );
+				mallOrderDAO.upOrderNoById( order );
 
 				//mOrderService.insertPayLog(order);//添加支付有礼的日志信息
 				//TODO 联盟积分赠送
@@ -147,7 +151,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	logger.info( "开始扫描30分钟内未支付的订单" );
 	try {
 	    String key = Constants.REDIS_KEY + "hSeckill_nopay";
-	    quartzOrderService.closeOrderNoPay( key, ip, pwd );
+	    quartzOrderService.closeOrderNoPay( key );
 
 	} catch ( Exception e ) {
 	    logger.error( "扫描30分钟内未支付的秒杀订单异常" + e );
@@ -156,7 +160,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 
 	try {
 	    String key = Constants.REDIS_KEY + "hOrder_nopay";
-	    quartzOrderService.closeOrderNoPay( key, ip, pwd );
+	    quartzOrderService.closeOrderNoPay( key );
 	} catch ( Exception e ) {
 	    logger.error( "扫描30分钟内未支付的订单异常" + e );
 	    e.printStackTrace();
@@ -181,8 +185,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	try {
 	    String key = Constants.REDIS_KEY + "hSeckill";
 	    int seckId = 0;
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String str : set ) {
@@ -195,7 +199,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				if ( seckill.getStatus() == -1 || seckill.getIsDelete().toString().equals( "1" ) ) {
 				    logger.error( "订单：" + str + "，已经结束" );
 				    //秒杀结束，从redis中删除对应的秒杀信息
-				    MultipleJedisUtil.mapdel( key, str, ip, pwd );
+				    JedisUtil.mapdel( key, str );
 				}
 			    }
 			}
@@ -299,8 +303,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	logger.info( "开始同步商品浏览量" );
 	try {
 	    String key = Constants.REDIS_KEY + "proViewNum";
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String str : set ) {
@@ -337,8 +341,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	try {
 	    String key = Constants.REDIS_KEY + "todayIncomeCount";
 	    //判断是否存在页面访问数量
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有店铺营业额
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有店铺营业额
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String shopId : set ) {
@@ -349,10 +353,12 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    Integer refundPrice = obj.getInteger( "refundPrice" );//当天退款金额
 			    //查询 当前时间 大于等于 7天后的时间
 			    double incomePrice = mallOrderDAO.selectOrderFinishMoneyByShopId( CommonUtil.toInteger( shopId ) );
-
+			    MallStore store = mallStoreService.selectById( shopId );
 			    //保存
 			    MallCountIncome income = new MallCountIncome();
-			    income.setBusId( 42 );
+			    if ( store != null ) {
+				income.setBusId( store.getStoUserId() );
+			    }
 			    income.setShopId( CommonUtil.toInteger( shopId ) );
 			    income.setCountDate( new Date() );
 			    income.setTradePrice( CommonUtil.toBigDecimal( tradePrice ) );
@@ -362,7 +368,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    mallCountIncomeDAO.insert( income );
 
 			    //清空统计
-			    MultipleJedisUtil.mapdel( key, shopId, ip, pwd );
+			    JedisUtil.mapdel( key, shopId );
 			}
 		    }
 		}
@@ -383,8 +389,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	try {
 	    String key = Constants.REDIS_KEY + "pageVisitor";
 	    //判断是否存在页面访问数量
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有页面访问数量
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有页面访问数量
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String pageId : set ) {
@@ -401,7 +407,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				mallPageDAO.updateById( page );
 			    }
 			    //清空统计
-			    MultipleJedisUtil.mapdel( key, pageId, ip, pwd );
+			    JedisUtil.mapdel( key, pageId );
 			}
 		    }
 		}
@@ -419,7 +425,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     public void closeNoPayOrder() {
 	try {
 	    String key = Constants.REDIS_KEY + "hOrder_nopay";
-	    quartzOrderService.newCloseOrderNoPay( key, ip, pwd );
+	    quartzOrderService.newCloseOrderNoPay( key );
 	} catch ( Exception e ) {
 	    logger.error( "扫描未支付的订单异常" + e );
 	    e.printStackTrace();
@@ -467,6 +473,12 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		orderReturn.setStatus( -3 );
 		orderReturn.setUpdateTime( new Date() );
 		mallOrderReturnDAO.updateById( orderReturn );
+
+		MallOrderDetail detail = new MallOrderDetail();
+		detail.setId( orderReturn.getOrderDetailId() );
+		detail.setStatus( -3 );
+		orderDetailDAO.updateById( detail );
+
 	    }
 	}
     }
@@ -485,6 +497,12 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		orderReturn.setStatus( 1 );
 		orderReturn.setUpdateTime( new Date() );
 		mallOrderReturnDAO.updateById( orderReturn );
+
+		MallOrderDetail detail = new MallOrderDetail();
+		detail.setId( orderReturn.getOrderDetailId() );
+		detail.setStatus( 1 );
+		orderDetailDAO.updateById( detail );
+
 		// TODO 退款
 	    }
 	}
@@ -506,6 +524,11 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		orderReturn.setStatus( 5 );
 		orderReturn.setUpdateTime( new Date() );
 		mallOrderReturnDAO.updateById( orderReturn );
+
+		MallOrderDetail detail = new MallOrderDetail();
+		detail.setId( orderReturn.getOrderDetailId() );
+		detail.setStatus( 5 );
+		orderDetailDAO.updateById( detail );
 		// TODO 退款
 	    }
 	}
@@ -515,79 +538,41 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     /*@Scheduled( cron = "0 0 1 * * ?" )*/
     @Override
     public void mallcount() {
-	if ( ip.equals( "183.47.242.2" ) ) {//多粉
-	    try {
-		Date date = DateTimeKit.getNow();//获取当前日期
-		Date date1 = DateTimeKit.addDays( -1 );//昨天日期
-		String date2 = DateTimeKit.format( date );//当天的时间日期
-		String date3 = DateTimeKit.format( date1 );//昨天的时间日期
+	try {
+	    Date date = DateTimeKit.getNow();//获取当前日期
+	    Date date1 = DateTimeKit.addDays( -1 );//昨天日期
+	    String date2 = DateTimeKit.format( date );//当天的时间日期
+	    String date3 = DateTimeKit.format( date1 );//昨天的时间日期
 
-		//1.当天商品- 修改商品的数量和金额
-		todayProduct( date3, date2 );
-		//2.退款商品 （单商品的退款数量与金额）
-		productReturn( date3, date2 );
-		//3.店铺退款
-		shopReturnCount( date3 );
-		//4.店铺扫码支付
-		shopScanPay( date3, date2 );
+	    //1.当天商品- 修改商品的数量和金额
+	    todayProduct( date3, date2 );
+	    //2.退款商品 （单商品的退款数量与金额）
+	    productReturn( date3, date2 );
+	    //3.店铺退款
+	    shopReturnCount( date3 );
+	    //4.店铺扫码支付
+	    shopScanPay( date3, date2 );
 
-		int day = DateTimeKit.getCurrentDay();//获取当前日
-		//如果当前日是1号，就开始统计商品每月的数据图和店铺的销售情况
-		if ( day == 1 ) {
-		    int year = DateTimeKit.getCurrentYear();//获取当前年份
-		    int month = DateTimeKit.getCurrentMonth();//获取当前月份
-		    String time = DateTimeKit.getFirstDayOfsMonth( year, month );//获取上一个月的第一天
-		    String syear = time.split( "-" )[0];//上一个月的年份
-		    String smonth = time.split( "-" )[1];//上一个月的月份
+	    int day = DateTimeKit.getCurrentDay();//获取当前日
+	    //如果当前日是1号，就开始统计商品每月的数据图和店铺的销售情况
+	    if ( day == 1 ) {
+		int year = DateTimeKit.getCurrentYear();//获取当前年份
+		int month = DateTimeKit.getCurrentMonth();//获取当前月份
+		String time = DateTimeKit.getFirstDayOfsMonth( year, month );//获取上一个月的第一天
+		String syear = time.split( "-" )[0];//上一个月的年份
+		String smonth = time.split( "-" )[1];//上一个月的月份
 
-		    //5.上月销售商品
-		    lastMonthSaleProduct( date2, time, syear, smonth );
+		//5.上月销售商品
+		lastMonthSaleProduct( date2, time, syear, smonth );
 
-		    //6.统计店铺每月销售情况
-		    getMonthShopSale( date2, time, syear, smonth );
-		}
-	    } catch ( Exception e ) {
-		System.out.println( "定时统计商城报错" );
-		e.printStackTrace();
+		//6.统计店铺每月销售情况
+		getMonthShopSale( date2, time, syear, smonth );
 	    }
-	} else {//翼粉
-	    try {
-		//TODO 多数据源
-		Date date = DateTimeKit.getNow();//获取当前日期
-		Date date1 = DateTimeKit.addDays( -1 );//昨天日期
-		String date2 = DateTimeKit.format( date );//当天的时间日期
-		String date3 = DateTimeKit.format( date1 );//昨天的时间日期
-
-		//1.当天商品- 修改商品的数量和金额
-		todayProduct( date3, date2 );
-		//2.退款商品 （单商品的退款数量与金额）
-		productReturn( date3, date2 );
-		//3.店铺退款
-		shopReturnCount( date3 );
-		//4.店铺扫码支付
-		shopScanPay( date3, date2 );
-
-		int day = DateTimeKit.getCurrentDay();//获取当前日
-		//如果当前日是1号，就开始统计商品每月的数据图和店铺的销售情况
-		if ( day == 1 ) {
-		    int year = DateTimeKit.getCurrentYear();//获取当前年份
-		    int month = DateTimeKit.getCurrentMonth();//获取当前月份
-		    String time = DateTimeKit.getFirstDayOfsMonth( year, month );//获取上一个月的第一天
-		    String syear = time.split( "-" )[0];//上一个月的年份
-		    String smonth = time.split( "-" )[1];//上一个月的月份
-
-		    //5.上月销售商品
-		    lastMonthSaleProduct( date2, time, syear, smonth );
-
-		    //6.统计店铺每月销售情况
-		    getMonthShopSale( date2, time, syear, smonth );
-		}
-	    } catch ( Exception e ) {
-		System.out.println( "定时统计商城报错" );
-		e.printStackTrace();
-	    }
+	} catch ( Exception e ) {
+	    System.out.println( "定时统计商城报错" );
+	    e.printStackTrace();
 	}
-	//
+
     }
 
     //1.当天商品
