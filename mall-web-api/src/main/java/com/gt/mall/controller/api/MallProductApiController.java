@@ -168,16 +168,8 @@ public class MallProductApiController {
 	    Wrapper groupWrapper = new EntityWrapper();
 	    groupWrapper.setSqlSelect( "pro_stock_total,pro_sale_total,is_specifica" );
 	    groupWrapper.where( "id = {0}", proId );
-	   /* mallProductService.selectMap( groupWrapper );*/
-	    Map< String,Object > proMap = new HashMap< String,Object >();
-	    //TODO 多数据源
-	    /*if(dbName.equals("df")){//多粉
-		proMap = daoUtil.queryForMap(proSql);
-	    }else if(dbName.equals("cs")){
-		proMap = daoUtilCS.queryForMap(proSql);
-	    }else{//翼粉
-		proMap = daoUtilYF.queryForMap(proSql);
-	    }*/
+	    Map< String,Object > proMap = mallProductService.selectMap( groupWrapper );
+
 	    if ( proMap != null ) {
 		int invNum = Integer.parseInt( proMap.get( "pro_stock_total" ).toString() );//库存
 		int saleNum = 0;//销量
@@ -195,15 +187,8 @@ public class MallProductApiController {
 		mallProduct.setId( CommonUtil.toInteger( proId ) );
 		mallProduct.setProStockTotal( invNum );
 		mallProduct.setProSaleTotal( saleNum );
-		/*mallProductService.updateById( mallProduct );*/
-		//TODO 多数据源
-		/*if ( dbName.equals( "df" ) ) {//多粉
-		    daoUtil.execute( upSql );
-		} else if ( dbName.equals( "cs" ) ) {
-		    daoUtilCS.execute( upSql );
-		} else {//翼粉
-		    daoUtilYF.execute( upSql );
-		}*/
+		mallProductService.updateById( mallProduct );
+
 		if ( isSpec == 1 ) {//该商品存在规格
 		    String specIds = "";
 		    //获取规格的库存和销售额
@@ -213,17 +198,7 @@ public class MallProductApiController {
 			    Wrapper< MallProductSpecifica > wrapper = new EntityWrapper<>();
 			    wrapper.setSqlSelect( "id" );
 			    wrapper.where( "product_id={0} and is_delete = 0 and specifica_value_id= {1}", proId, str );
-			   /* productSpecificaService.selectMaps( wrapper );*/
-
-			    List< Map< String,Object > > specList = new ArrayList< Map< String,Object > >();
-			    //TODO 多数据源
-			    /*if ( dbName.equals( "df" ) ) {//多粉
-				specList = daoUtil.queryForList( sql );
-			    } else if ( dbName.equals( "cs" ) ) {
-				specList = daoUtilCS.queryForList( sql );
-			    } else {//翼粉
-				specList = daoUtilYF.queryForList( sql );
-			    }*/
+			    List< Map< String,Object > > specList = productSpecificaService.selectMaps( wrapper );
 			    if ( specList != null && specList.size() > 0 ) {
 				for ( Map< String,Object > map : specList ) {
 				    if ( !specIds.equals( "" ) ) {
@@ -234,22 +209,12 @@ public class MallProductApiController {
 			    }
 			}
 		    }
-		    /*proSql = "select id,inv_num,inv_sale_num from t_mall_product_inventory where
-		     product_id = " + proId + " and is_delete = 0 and specifica_ids = '" + specIds + "'";*/
+
 		    Wrapper proWrapper = new EntityWrapper();
 		    proWrapper.setSqlSelect( "id,inv_num,inv_sale_num " );
 		    proWrapper.where( "product_id = {0} and is_delete = 0 and specifica_ids = {1}", proId, specIds );
-		 /*   Map< String,Object > invMap= productInventoryService.selectMap( proWrapper );*/
+		    Map< String,Object > invMap = productInventoryService.selectMap( proWrapper );
 
-		    Map< String,Object > invMap = new HashMap< String,Object >();
-		    //TODO 多数据源
-		    /*if ( dbName.equals( "df" ) ) {//多粉
-			invMap = daoUtil.queryForMap( proSql );
-		    } else if ( dbName.equals( "cs" ) ) {
-			invMap = daoUtilCS.queryForMap( proSql );
-		    } else {//翼粉
-			invMap = daoUtilYF.queryForMap( proSql );
-		    }*/
 		    if ( invMap != null ) {
 			int invStockNum = 0;//库存
 			if ( CommonUtil.isNotEmpty( invMap.get( "inv_num" ) ) ) {
@@ -262,20 +227,13 @@ public class MallProductApiController {
 			int invId = CommonUtil.toInteger( invMap.get( "id" ) );
 			invStockNum = invStockNum - productNum;
 			invSaleNum = invSaleNum + productNum;
-			/*upSql = "update t_mall_product_inventory set inv_num=" + invStockNum + ",inv_sale_num=" + invSaleNum + " where id=" + invId;*/
+
 			MallProductInventory inventory = new MallProductInventory();
 			inventory.setId( invId );
 			inventory.setInvNum( invStockNum );
 			inventory.setInvSaleNum( invSaleNum );
-			/*productInventoryService.updateById( inventory );*/
-			//TODO 多数据源
-			/*if ( dbName.equals( "df" ) ) {//多粉
-			    daoUtil.execute( upSql );
-			} else if ( dbName.equals( "cs" ) ) {
-			    daoUtilCS.execute( upSql );
-			} else {//翼粉
-			    daoUtilYF.execute( upSql );
-			}*/
+			productInventoryService.updateById( inventory );
+
 		    }
 		}
 	    }
