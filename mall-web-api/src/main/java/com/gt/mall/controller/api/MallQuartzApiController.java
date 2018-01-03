@@ -82,14 +82,14 @@ public class MallQuartzApiController {
     @RequestMapping( value = "/closeOrderNoPay", method = RequestMethod.POST )
     public ServerResponse closeOrderNoPay( HttpServletRequest request, HttpServletResponse response ) {
 	//三十分钟更新一次
-	try {
+	/*try {
 	    //关闭未付款认单,未支付的秒杀订单
 	    mallQuartzNewService.closeOrderNoPay();
 	} catch ( Exception e ) {
 	    logger.error( "关闭30分钟内未支付的订单异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "关闭30分钟内未支付的订单异常" );
-	}
+	}*/
 	try {
 	    //关闭未付款认单
 	    mallQuartzNewService.closeNoPayOrder();

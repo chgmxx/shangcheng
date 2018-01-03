@@ -2,6 +2,7 @@ package com.gt.mall.dao.seller;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.seller.MallSeller;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface MallSellerDAO extends BaseMapper< MallSeller > {
     /**
      * 修改销售员状态
      */
-    boolean updateStatusByUserId( Integer status, Integer user_id );
+    boolean updateStatusByUserId( @Param( "status" ) Integer status, @Param("user_id") Integer user_id );
 
     /**
      * 查询客户的数量
