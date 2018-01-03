@@ -3,6 +3,7 @@ package com.gt.mall.service.quartz.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCountIncomeDAO;
@@ -30,6 +31,7 @@ import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
@@ -86,6 +88,11 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MemberService            memberService;
     @Autowired
     private MallStoreService         mallStoreService;
+    @Autowired
+    private WxPublicUserService      wxPublicUserService;
+
+    private static String ip  = PropertiesUtil.getRedisHost();
+    private static String pwd = PropertiesUtil.getRedisPassword();
 
     /**
      * 订单完成赠送物品  每天早上8点扫描
@@ -760,12 +767,24 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	List< MallLogOrderCallback > orderCallbackList = mallLogOrderCallbackDAO.selectList( wrapper );
 	if ( orderCallbackList != null && orderCallbackList.size() > 0 ) {
 	    for ( MallLogOrderCallback orderCallback : orderCallbackList ) {
-		Map< String,Object > params = new HashMap<>();
-		params.put( "out_trade_no", orderCallback.getOrderNo() );
-		params.put( "returnLogStatus", orderCallback.getLogStatus() );
-		mallOrderService.paySuccessModified( params, null );
-		orderCallback.setIsResolved( 1 );
-		mallLogOrderCallbackDAO.updateById( orderCallback );
+		//		Map< String,Object > params = new HashMap<>();
+		//		params.put( "out_trade_no", orderCallback.getOrderNo() );
+		//		params.put( "returnLogStatus", orderCallback.getLogStatus() );
+		//		mallOrderService.paySuccessModified( params, null );
+		MallOrder order = mallOrderDAO.selectOrderByOrderNo( orderCallback.getOrderNo() );
+		WxPublicUsers pbUser = wxPublicUserService.selectByMemberId( order.getBuyerUserId() );
+
+		List< MallOrder > mallOrderList = mallOrderDAO.getOrderByOrderPId( order.getId() );
+		if ( mallOrderList == null || mallOrderList.size() == 0 ) {
+		    MallOrder mallOrder = mallOrderDAO.getOrderById( order.getId() );
+		    mallOrderList.add( mallOrder );
+		}
+
+		boolean flag = mallOrderService.paySuccess( mallOrderList, pbUser, orderCallback.getLogStatus().toString(), orderCallback.getOrderNo() );//支付成功回调储值卡支付，积分支付，粉币支付
+		if ( flag ) {
+		    orderCallback.setIsResolved( 1 );
+		    mallLogOrderCallbackDAO.updateById( orderCallback );
+		}
 	    }
 	}
     }

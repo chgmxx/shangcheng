@@ -75,15 +75,16 @@ public class MemberServiceImpl implements MemberService {
     public Member findMemberById( int memberId, Member member ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findByMemberId" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByMemberId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
-	    JSONObject memberObj = JSONObject.parseObject( data );
-	    member = isEmptyMember( memberObj, member );
-	    member.setFansCurrency( memberObj.getDouble( "fansCurrency" ) );
-	    member.setIntegral( memberObj.getInteger( "integral" ) );
-	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
-		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
-	    }
+	    member = JSONObject.parseObject( data, Member.class );
+	    //	    JSONObject memberObj = JSONObject.parseObject( data );
+	    //	    member = isEmptyMember( memberObj, member );
+	    //	    member.setFansCurrency( memberObj.getDouble( "fansCurrency" ) );
+	    //	    member.setIntegral( memberObj.getInteger( "integral" ) );
+	    //	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
+	    //		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
+	    //	    }
 	}
 	return member;
     }

@@ -383,7 +383,7 @@
         t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,t.pay_time,express_way,t.express_id,t.express_number,
         t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,
         d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,d.det_pro_name,
-        d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,t.shop_id,s.sto_name,t.order_old_money,t.coupon_code as couponCode,p.is_return,
+        d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,t.shop_id,t.order_old_money,t.coupon_code as couponCode,p.is_return,
         d.pro_type_id,t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time
         ,t.order_pid,d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
         d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,
@@ -835,7 +835,6 @@
     <select id="getOrderById" resultMap="MoreResultMap" parameterType="java.lang.Integer">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         where t.id = #{orderId}
     </select>
@@ -843,7 +842,6 @@
     <select id="getOrderByOrderPId" resultMap="MoreResultMap" parameterType="java.lang.Integer">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         where t.order_pid = #{orderId}
     </select>
@@ -1100,7 +1098,6 @@
         <include refid="Order_OrderDetail_List"></include>
         from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         where t.order_status=1 and TIMESTAMPDIFF(MINUTE,t.create_time,now()) > #{times}
         <if test="orderType != null and orderType != ''">
@@ -1246,7 +1243,6 @@
     <select id="getOrderByIdOrOne" resultMap="MoreResultMap" parameterType="java.lang.Integer">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         <if test="orderId != null and orderId != 0">
             where t.id = #{orderId}
@@ -1451,7 +1447,6 @@
     <select id="selectOrderById" parameterType="Map" resultMap="MoreResultMap">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         where 1=1
         <if test="id != null and id != ''">
             and t.id = #{id}

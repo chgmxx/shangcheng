@@ -440,6 +440,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     @GetMapping( value = "wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
 	try {
+	    logger.error( "需要分享的链接：" + url );
 	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 	    if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) ) {
 		WxJsSdk wxJsSdk = new WxJsSdk();
