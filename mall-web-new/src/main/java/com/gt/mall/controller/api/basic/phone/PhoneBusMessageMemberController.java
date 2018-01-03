@@ -12,6 +12,7 @@ import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -57,7 +58,8 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	    }
 	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
 	    loginDTO.setBusId( busId );
-	    loginDTO.setUcLogin( 1 );
+	    loginDTO.setUrl( PropertiesUtil.getHomeUrl() + "phoneBusMessageMember/L6tgXlBFeK/grant/" + busId );
+	    loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    //新增
@@ -84,15 +86,15 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	    }
 	    return ServerResponse.createBySuccessCode();
 	} catch ( BusinessException e ) {
-	    logger.error( "商家是否授权异常：" + e.getCode() + "---" + e.getMessage() );
+	    logger.error( "商家授权异常：" + e.getCode() + "---" + e.getMessage() );
 	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
 		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
 	    }
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "商家是否授权异常：" + e.getMessage() );
+	    logger.error( "商家授权异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "商家是否授权失败" );
+	    return ServerResponse.createByErrorMessage( "商家授权失败" );
 	}
     }
 }

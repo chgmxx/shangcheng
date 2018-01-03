@@ -28,6 +28,7 @@ import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderReturnLogService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
@@ -90,6 +91,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private MallStoreDAO                mallStoreDAO;
     @Autowired
     private MallOrderReturnLogService   mallOrderReturnLogService;
+    @Autowired
+    private MallBusMessageMemberService mallBusMessageMemberService;
 
     /**
      * 申请订单退款
@@ -134,6 +137,13 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		orderReturn.setReturnNo( orderNo );
 		orderReturn.setStatus( 0 );
 		num = mallOrderReturnDAO.insert( orderReturn );
+		try {
+		    mallBusMessageMemberService.buyerOrderReturn( orderReturn, member.getBusid(), 0 );
+		} catch ( Exception e ) {
+		    e.printStackTrace();
+		    logger.error( "提醒商家消息失败异常" + e.getMessage() );
+		}
+
 	    } else {
 		orderReturn.setUpdateTime( new Date() );
 		num = mallOrderReturnDAO.updateById( orderReturn );

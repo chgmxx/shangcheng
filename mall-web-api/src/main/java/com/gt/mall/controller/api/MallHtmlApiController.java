@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.dao.html.MallHtmlDAO;
+import com.gt.mall.dao.html.MallHtmlFromDAO;
 import com.gt.mall.dao.html.MallHtmlReportDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.html.MallHtml;
+import com.gt.mall.entity.html.MallHtmlFrom;
 import com.gt.mall.entity.html.MallHtmlReport;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.web.html.MallHtmlService;
@@ -46,6 +48,8 @@ public class MallHtmlApiController {
     private MallHtmlDAO       mallHtmlDAO;
     @Autowired
     private MallHtmlReportDAO mallHtmlReportDAO;
+    @Autowired
+    private MallHtmlFromDAO   mallHtmlFromDAO;
 
     @ApiOperation( value = "h5商城列表", notes = "h5商城列表" )
     //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
@@ -176,15 +180,20 @@ public class MallHtmlApiController {
 	    Map< String,Object > params = JSONObject.parseObject( param );
 	    MallHtml mallHtml = mallHtmlService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	    if ( mallHtml != null ) {
+		//删除举报信息
 		Wrapper< MallHtmlReport > wrapperReport = new EntityWrapper<>();
 		wrapperReport.where( "html_id = {0}", CommonUtil.toInteger( params.get( "id" ) ) );
 		mallHtmlReportDAO.delete( wrapperReport );
+		//删除表单信息
+		Wrapper< MallHtmlFrom > wrapperForm = new EntityWrapper<>();
+		wrapperForm.where( "html_id = {0}", CommonUtil.toInteger( params.get( "id" ) ) );
+		mallHtmlFromDAO.delete( wrapperForm );
 
 		mallHtml.setIsDelete( 1 );
 		mallHtmlDAO.updateById( mallHtml );
-//		Wrapper< MallHtml > wrapper = new EntityWrapper<>();
-//		wrapper.where( "id= {0}", CommonUtil.toInteger( params.get( "id" ) ) );
-//		mallHtmlDAO.delete( wrapper );
+		//		Wrapper< MallHtml > wrapper = new EntityWrapper<>();
+		//		wrapper.where( "id= {0}", CommonUtil.toInteger( params.get( "id" ) ) );
+		//		mallHtmlDAO.delete( wrapper );
 	    } else {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "h5商城不存在" );
 	    }

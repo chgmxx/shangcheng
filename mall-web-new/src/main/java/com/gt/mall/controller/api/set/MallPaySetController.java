@@ -32,10 +32,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -100,6 +97,7 @@ public class MallPaySetController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map > msgArr = null;
+	    List< Map > busMsgArr = null;
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
@@ -108,13 +106,13 @@ public class MallPaySetController extends BaseController {
 		    msgArr = JSONArray.fromObject( set.getMessageJson() );
 		}
 		if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
-		    JSONArray busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
-		    result.put( "busMsgArr", busMsgArr );
+		    busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
 		}
 	    }
 
 	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
-	    List< Map > messages = new ArrayList< Map >();
+	    List< Map > messages = new ArrayList< Map >();//粉丝消息模板
+	    List< Map > busMessages = new ArrayList< Map >();//商家消息模板
 	    if ( messageList != null && msgArr != null && messageList.size() > 0 ) {
 		for ( Map map : messageList ) {
 		    if ( map.get( "title" ).equals( Constants.BUY_SUCCESS_NOTICE ) ) {
@@ -126,11 +124,24 @@ public class MallPaySetController extends BaseController {
 			    }
 			}
 			messages.add( map );
-			break;
+		    } else {
+			List< String > fauCodeList = new ArrayList< String >();
+			fauCodeList = Arrays.asList( Constants.BUS_TEMPLATE_LIST );
+			if ( fauCodeList.contains( map.get( "title" ) ) == true ) {
+			    for ( Map obj : busMsgArr ) {
+				map.put( "selected", "0" );
+				if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+				    map.put( "selected", "1" );
+				    break;
+				}
+			    }
+			    busMessages.add( map );
+			}
 		    }
 		}
 	    }
 	    result.put( "messageList", messages );
+	    result.put( "busMessages", busMessages );
 	} catch ( Exception e ) {
 	    logger.error( "获取消息模板异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -266,7 +277,7 @@ public class MallPaySetController extends BaseController {
 		    flag = 0; //无服务号
 		}
 	    }
-	    result.put( "flag", 1 );
+	    result.put( "flag", flag );
 	    result.put( "busId", user.getId() );
 	    result.put( "duofenTwoCodeUrl", PropertiesUtil.getDuofenTwoCodeUrl() );//多粉二维码地址
 	    result.put( "domain", PropertiesUtil.getWxmpDomain() );

@@ -1,5 +1,6 @@
 package com.gt.mall.controller.api;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.store.MallStoreCertificationDAO;
@@ -16,10 +17,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,22 +48,24 @@ public class MallStoreCertificationApiController extends BaseController {
     private MallImageAssociativeService   mallImageAssociativeService;
 
     @ApiOperation( value = "待审核店铺认证列表", notes = "待审核店铺认证列表" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
+    //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
-    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer pageSize, String userIds ) {
+    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    List< Map< String,Object > > certList = null;
-	    curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
-	    pageSize = CommonUtil.isEmpty( pageSize ) ? 15 : pageSize;
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
 
-	    Map< String,Object > params = new HashMap<>();
+	    List< Map< String,Object > > certList = null;
+	    Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	    Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
+
 	    params.put( "checkStatus", "0" );
-	    if ( CommonUtil.isNotEmpty( userIds ) ) {
-		params.put( "userIds", userIds.split( "," ) );
+	    if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
+		params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
 	    }
 	    int count = mallStoreCertificationDAO.selectAllCount( params );
 
@@ -110,10 +110,13 @@ public class MallStoreCertificationApiController extends BaseController {
     @ApiOperation( value = "获取店铺认证信息", notes = "获取店铺认证信息" )
     @ResponseBody
     @RequestMapping( value = "/certInfo", method = RequestMethod.POST )
-    public ServerResponse certInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id ) {
+    public ServerResponse certInfo( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	MallStoreCertification storeCert = null;
 	try {
-	    storeCert = mallStoreCertService.selectById( id );
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
+
+	    storeCert = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	    if ( storeCert != null ) {
 		if ( storeCert.getStoType() == 1 ) {
 		    List< DictBean > categoryMap = dictService.getDict( "K002" );
@@ -129,10 +132,10 @@ public class MallStoreCertificationApiController extends BaseController {
 		    }
 		}
 		if ( storeCert.getIsCertDoc() == 1 ) {
-		    Map< String,Object > params = new HashMap<>();
-		    params.put( "assType", 6 );
-		    params.put( "assId", storeCert.getId() );
-		    List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( params );
+		    Map< String,Object > assParams = new HashMap<>();
+		    assParams.put( "assType", 6 );
+		    assParams.put( "assId", storeCert.getId() );
+		    List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( assParams );
 		    storeCert.setImageList( imageAssociativeList );
 		}
 	    }
@@ -151,11 +154,14 @@ public class MallStoreCertificationApiController extends BaseController {
     @ApiOperation( value = "认证审核", notes = "认证审核" )
     @ResponseBody
     @RequestMapping( value = "/certCheck", method = RequestMethod.POST )
-    public ServerResponse certCheck( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status ) {
+    public ServerResponse certCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+//		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status
 	try {
-	    MallStoreCertification certification = mallStoreCertService.selectById( id );
-	    certification.setCheckStatus( status );
+	    logger.info( "接收到的参数：" + param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
+
+	    MallStoreCertification certification = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
+	    certification.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
 	    boolean flag = mallStoreCertService.updateById( certification );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证审核异常" );

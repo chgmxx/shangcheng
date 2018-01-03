@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,11 +40,12 @@ public class MallAuctionApiController {
 
     @ApiOperation( value = "交纳保证金成功回调", notes = "交纳保证金成功回调" )
     @ResponseBody
-    @RequestMapping( value = "/paySuccessAuction", method = RequestMethod.GET )
-    public ServerResponse paySuccessAuction( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @RequestMapping( value = "/paySuccessAuction", method = RequestMethod.POST )
+    public ServerResponse paySuccessAuction( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	try {
 	    //params 传参 out_trade_no：保证金编号 transaction_id：支付单号
-	    logger.info( "交纳保证金成功回调参数：" + JSONObject.fromObject( params ) );
+	    logger.info( "交纳保证金成功回调参数：" + JSONObject.fromObject( param ) );
+	    Map< String,Object > params = JSONObject.fromObject( param );
 	    mallAuctionMarginService.paySuccessAuction( params );
 	} catch ( Exception e ) {
 	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
@@ -59,11 +57,12 @@ public class MallAuctionApiController {
 
     @ApiOperation( value = "退保证金成功回调", notes = "退保证金成功回调接口" )
     @ResponseBody
-    @RequestMapping( value = "/returnSuccessBack", method = RequestMethod.GET )
-    public ServerResponse returnSuccessBack( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @RequestMapping( value = "/returnSuccessBack", method = RequestMethod.POST )
+    public ServerResponse returnSuccessBack( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	try {
 	    //params 传参 outTradeNo：保证金编号
-	    logger.info( "退保证金成功回调参数：" + JSONObject.fromObject( params ) );
+	    logger.info( "退保证金成功回调参数：" + JSONObject.fromObject( param ) );
+	    Map< String,Object > params = JSONObject.fromObject( param );
 	    String outTradeNo = params.get( "outTradeNo" ).toString();
 
 	    Wrapper< MallAuctionMargin > wrapper = new EntityWrapper<>();
