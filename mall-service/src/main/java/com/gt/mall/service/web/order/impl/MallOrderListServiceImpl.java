@@ -422,22 +422,29 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	result.setJoinId( order.getPJoinId() );
 	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType() == 1 && CommonUtil.isNotEmpty( order.getGroupBuyId() ) && order.getGroupBuyId() > 0 ) {
 	    MallGroupBuy mallGroupBuy = mallGroupBuyService.selectById( order.getGroupBuyId() );
-
-	    //查询参团情况
-	    Map< String,Object > groupMap = new HashMap<>();
-	    groupMap.put( "groupBuyId", order.getGroupBuyId() );
-	    groupMap.put( "orderId", order.getId() );
-	    Map< String,Object > countMap = mallGroupJoinDAO.groupJoinPeopleNum( groupMap );
-	    if ( CommonUtil.isNotEmpty( countMap ) && CommonUtil.isNotEmpty( countMap.get( "pId" ) ) ) {
-		result.setJoinId( CommonUtil.toInteger( countMap.get( "pId" ) ) );
-		result.setJoinNum( CommonUtil.toInteger( countMap.get( "num" ) ) );
-		if ( result.getJoinNum() < mallGroupBuy.getGPeopleNum() ) {
-		    result.setOrderStatusName( "待成团," + result.getOrderStatusName() );
-		    result.setOrderStatusMsg( OrderUtil.getOrderStatusByGroup( mallGroupBuy, result.getJoinNum() ) );
-		} else {
-		    result.setOrderStatusName( "已成团," + result.getOrderStatusName() );
+	    if ( mallGroupBuy != null && mallGroupBuy.getIsDelete() == 0 && mallGroupBuy.getIsUse() == 1 ) {
+		//查询参团情况
+		Map< String,Object > groupMap = new HashMap<>();
+		groupMap.put( "groupBuyId", order.getGroupBuyId() );
+		groupMap.put( "orderId", order.getId() );
+		Map< String,Object > countMap = mallGroupJoinDAO.groupJoinPeopleNum( groupMap );
+		if ( CommonUtil.isNotEmpty( countMap ) && CommonUtil.isNotEmpty( countMap.get( "pId" ) ) ) {
+		    result.setJoinId( CommonUtil.toInteger( countMap.get( "pId" ) ) );
+		    result.setJoinNum( CommonUtil.toInteger( countMap.get( "num" ) ) );
+		    if ( order.getOrderStatus() != 4 ) {
+			if ( result.getJoinNum() < mallGroupBuy.getGPeopleNum() ) {
+			    result.setOrderStatusName( "待成团," + result.getOrderStatusName() );
+			    result.setOrderStatusMsg( OrderUtil.getOrderStatusByGroup( mallGroupBuy, result.getJoinNum() ) );
+			} else {
+			    result.setOrderStatusName( "已成团," + result.getOrderStatusName() );
+			}
+		    }
 		}
+	    } else {
+		result.setActivityId( 0 );
+		result.setOrderType( 0 );
 	    }
+
 	}
 	result.setOrderPayWay( order.getOrderPayWay() );
 	return result;

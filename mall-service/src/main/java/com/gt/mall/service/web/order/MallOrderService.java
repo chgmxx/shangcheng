@@ -28,17 +28,21 @@ public interface MallOrderService extends BaseService< MallOrder > {
 
     /**
      * 根据状态统计总数
+     *
      * @param params
+     *
      * @return
      */
-    Integer count(Map< String,Object > params);
+    Integer count( Map< String,Object > params );
 
     /**
      * 统计各状态下的数量
+     *
      * @param params
+     *
      * @return
      */
-    Map< String,Object > countStatus(Map< String,Object > params);
+    Map< String,Object > countStatus( Map< String,Object > params );
 
     /**
      * 分页管理
@@ -67,7 +71,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 查询订单信息
      */
-    public OrderResult selectOrderList( Integer orderId,List< Map< String,Object > > shoplist  );
+    public OrderResult selectOrderList( Integer orderId, List< Map< String,Object > > shoplist );
 
     /**
      * 支付成功后修改订单状态、库存、销量、规格
@@ -126,7 +130,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 发送消息模板
      */
-    public void sendMsg( MallOrder order, int type );
+    public void sendMsg( MallOrder order, int type, WxPublicUsers publicUser );
 
     /**
      * 同步订单

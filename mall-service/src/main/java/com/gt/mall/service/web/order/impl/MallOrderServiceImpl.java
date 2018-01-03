@@ -710,7 +710,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	    if ( CommonUtil.isNotEmpty( pbUser ) ) {
 		try {
-		    sendMsg( order, 4 );//发送消息模板
+		    sendMsg( order, 4, pbUser );//发送消息模板
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		    logger.error( "购买成功消息模板发送异常" + e.getMessage() );
@@ -2492,15 +2492,14 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
      * 发送消息模板
      */
     @Override
-    public void sendMsg( MallOrder order, int type ) {
+    public void sendMsg( MallOrder order, int type, WxPublicUsers publicUser ) {
 
 	int id = 0;
 	String title = "";
 	if ( type == 4 ) {//购买成功通知
 	    title = "购买成功通知";
 	}
-	JSONObject msgObj = new JSONObject();
-	WxPublicUsers publicUser = wxPublicUserService.selectByUserId( order.getSellerUserId() );//通过商家id查询商家公众号id
+	//	WxPublicUsers publicUser = wxPublicUserService.selectById( order.getSellerUserId() );//通过商家id查询商家公众号id
 	MallPaySet paySet = new MallPaySet();
 	if ( CommonUtil.isNotEmpty( publicUser ) ) {
 	    paySet.setUserId( publicUser.getBusUserId() );
@@ -2524,11 +2523,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	}
 
-	if ( CommonUtil.isNotEmpty( msgObj ) && id > 0 ) {
+	if ( id > 0 ) {
 	    List< Object > objs = new ArrayList<>();
 	    objs.add( "您好，您已购买成功" );
 	    objs.add( "您的商品已经购买成功，请耐心等待商家发货" );
-	    String url = PropertiesUtil.getHomeUrl() + "/mMember/79B4DE7C/toUser.do?member_id=" + order.getBuyerUserId() + "&uId=" + order.getSellerUserId();
+	    String url = PropertiesUtil.getPhoneWebHomeUrl() + "/order/detail/" + publicUser.getBusUserId() + "/" + order.getId();
 
 	    SendWxMsgTemplate template = new SendWxMsgTemplate();
 	    template.setId( id );

@@ -70,7 +70,7 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 
 	    MallGroupBuy groupBuy = groupBuyService.selectBuyByProductId( id );
 	    if ( CommonUtil.isEmpty( groupBuy ) ) {
-		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+		throw new BusinessException( ResponseEnums.URL_GUOQI_ERROR.getCode(), ResponseEnums.URL_GUOQI_ERROR.getDesc() );
 	    }
 	    result.put( "status", groupBuy.getStatus() );
 
