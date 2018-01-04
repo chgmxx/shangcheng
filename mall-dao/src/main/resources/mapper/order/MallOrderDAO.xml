@@ -104,7 +104,7 @@
         <!-- <result column="mem_phone" property="recTelephone" jdbcType="VARCHAR" />-->
         <result column="updateDay" property="updateDay" jdbcType="INTEGER"/>
         <result column="orderPNo" property="orderPNo" jdbcType="VARCHAR"/>
-        <result column="sto_name" property="shopName" jdbcType="VARCHAR"/>
+       <!-- <result column="sto_name" property="shopName" jdbcType="VARCHAR"/>-->
         <result column="order_old_money" property="orderOldMoney" jdbcType="DECIMAL"/>
         <result column="mem_card_type" property="memCardType" jdbcType="INTEGER"/>
         <result column="group_buy_id" property="groupBuyId" jdbcType="INTEGER"/>
@@ -134,6 +134,7 @@
         <result column="coupon_use_num" property="couponUseNum"/>
         <result column="member_is_delete" property="memberIsDelete"/>
         <result column="appointment_address" property="appointmentAddress"/>
+        <result column="buyer_user_type" property="buyerUserType"/>
         <collection property="mallOrderDetail" column="id" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -381,13 +382,16 @@
         t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time,
         t.order_start,t.order_pay_way,t.delivery_method,t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id,
         t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,t.pay_time,express_way,t.express_id,t.express_number,
-        t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,
+        t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,
+        t.bus_user_id,t.shop_id,t.order_old_money,t.coupon_code as couponCode,t.buyer_user_type,
+        t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time,
+        t.flow_phone,t.buyer_user_type,t.is_wallet,t.use_jifen,t.use_fenbi,t.coupon_id,t.union_card_id,t.coupon_type,t.coupon_use_num,
+
         d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,d.det_pro_name,
-        d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,t.shop_id,t.order_old_money,t.coupon_code as couponCode,p.is_return,
-        d.pro_type_id,t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time
-        ,t.order_pid,d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
-        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,
-        t.flow_phone,t.buyer_user_type,t.is_wallet,t.use_jifen,t.use_fenbi,t.coupon_id,t.union_card_id,t.coupon_type,t.coupon_use_num
+        d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,p.is_return,
+        d.pro_type_id,
+        d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
+        d.use_card_id,d.commission,d.sale_member_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str
     </sql>
 
     <select id="selectOrderByAuctId" resultType="java.util.Map">

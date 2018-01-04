@@ -1325,7 +1325,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/phoneOrder/79B4DE7C/paySuccessModified.do" );
 
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
 	int payWay = 1;
 	/*if ( order.getOrderPayWay() == 9 ) {
 	    payWay = 2;
