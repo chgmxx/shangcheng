@@ -47,10 +47,11 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
     private MallBusMessageMemberService mallBusMessageMemberService;
 
     @ApiOperation( value = "商家是否授权", notes = "商家是否授权" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
+		    @ApiImplicitParam( name = "url", value = "地址,必传", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "grant/{busId}", method = RequestMethod.GET )
-    public ServerResponse grant( HttpServletRequest request, HttpServletResponse response, @PathVariable Integer busId ) {
+    public ServerResponse grant( HttpServletRequest request, HttpServletResponse response, @PathVariable Integer busId, String url ) {
 	try {
 	    Integer browser = CommonUtil.judgeBrowser( request );
 	    if ( browser != 1 ) {//微信
@@ -58,7 +59,7 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	    }
 	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
 	    loginDTO.setBusId( busId );
-	    loginDTO.setUrl( PropertiesUtil.getHomeUrl() + "phoneBusMessageMember/L6tgXlBFeK/grant/" + busId );
+	    loginDTO.setUrl( url );
 	    loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
