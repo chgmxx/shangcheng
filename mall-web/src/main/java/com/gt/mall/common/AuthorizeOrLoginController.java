@@ -33,10 +33,13 @@ public class AuthorizeOrLoginController {
     private static final String GETWXPULICMSG = "/8A5DA52E/busUserApi/getWxPulbicMsg.do";
 
     public String userLogin( HttpServletRequest request, HttpServletResponse response, Map< String,Object > map ) throws Exception {
+	if ( CommonUtil.isEmpty( map.get( "busId" ) ) || CommonUtil.isEmpty( map.get( "url" ) ) ) {
+	    return null;
+	}
 	Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 	Integer browser = CommonUtil.judgeBrowser( request );
 	Integer uclogin = null;
-	if(CommonUtil.isNotEmpty( map.get( "ucLogin" )  )){
+	if ( CommonUtil.isNotEmpty( map.get( "ucLogin" ) ) ) {
 	    uclogin = CommonUtil.toInteger( map.get( "ucLogin" ) );
 	}
 	Member member = MallSessionUtils.getLoginMember( request, busId );
