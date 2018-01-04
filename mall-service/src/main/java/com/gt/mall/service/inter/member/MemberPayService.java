@@ -50,4 +50,15 @@ public interface MemberPayService {
      */
     Map< String,Object > paySuccessNewDan( NewErpPaySuccessBo paySuccessBo );
 
+    /**
+     * 评论修改会员积分或粉币
+     *
+     * @param memberId 会员id
+     * @param jifen    积分
+     * @param fenbi    积分
+     *
+     * @return code		code=0 成功
+     */
+    Map< String,Object > updateJifenAndFenBiByPinglu( Integer memberId, Integer jifen, Double fenbi );
+
 }

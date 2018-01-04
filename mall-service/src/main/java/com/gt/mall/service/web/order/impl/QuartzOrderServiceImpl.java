@@ -18,16 +18,12 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerIncome;
+import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.order.QuartzOrderService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.JedisUtil;
-import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
-import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
-import com.gt.util.entity.param.fenbiFlow.UpdateFenbiReduce;
-import com.gt.util.entity.result.fenbi.FenBiCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +43,6 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
     private MallProductInventoryDAO mallProductInventoryDAO;
 
     @Autowired
-    private FenBiFlowService fenBiFlowService;
-
-    @Autowired
     private MallPaySetDAO paySetMapper;
 
     @Autowired
@@ -60,6 +53,8 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
     private MallSellerDAO       mallSellerDAO;
     @Autowired
     private MemberService       memberService;
+    @Autowired
+    private MemberPayService    memberPayService;
 
     @Override
     public void closeOrderNoPay( String key ) {
@@ -314,28 +309,28 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	}
 	int orderId = CommonUtil.toInteger( map.get( "id" ) );
 	int userId = 0;//商户id
-	int publicId = 0;//公众号id
-	int integral = 0;//积分
-	double fenbi = 0;//粉币
-	int totalIntegral = 0;//历史积分
+	//	int publicId = 0;//公众号id
+	//	int integral = 0;//积分
+	//	double fenbi = 0;//粉币
+	//	int totalIntegral = 0;//历史积分
 
 	Member member1 = memberService.findMemberById( memberId, null );
 	if ( CommonUtil.isNotEmpty( member1 ) ) {
 	    if ( CommonUtil.isNotEmpty( member1.getBusid() ) ) {
 		userId = member1.getBusid();
 	    }
-	    if ( CommonUtil.isNotEmpty( member1.getPublicId() ) ) {
-		publicId = member1.getPublicId();
-	    }
-	    if ( CommonUtil.isNotEmpty( member1.getIntegral() ) ) {
-		integral = member1.getIntegral();
-	    }
-	    if ( CommonUtil.isNotEmpty( member1.getFansCurrency() ) ) {
-		fenbi = member1.getFansCurrency();
-	    }
-	    if ( CommonUtil.isNotEmpty( member1.getTotalintegral() ) ) {
-		totalIntegral = member1.getTotalintegral();
-	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getPublicId() ) ) {
+	    //		publicId = member1.getPublicId();
+	    //	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getIntegral() ) ) {
+	    //		integral = member1.getIntegral();
+	    //	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getFansCurrency() ) ) {
+	    //		fenbi = member1.getFansCurrency();
+	    //	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getTotalintegral() ) ) {
+	    //		totalIntegral = member1.getTotalintegral();
+	    //	    }
 	}
 	boolean isOpenGive = false;//是否开启预售送礼
 	//查询是否开启了预售送礼
@@ -351,7 +346,7 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	    }
 	}
 	if ( isOpenGive ) {
-	    if ( userId > 0 && publicId > 0 ) {
+	    if ( userId > 0 ) {
 
 		MallPresaleRank rank = new MallPresaleRank();
 		rank.setOrderId( orderId );
@@ -362,18 +357,17 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 		MallPresaleRank presaleRank = rankMapper.selectByPresale( rank );
 
 		if ( CommonUtil.isNotEmpty( presaleRank ) ) {
-		    Member member = new Member();
-		    boolean flag = false;
-
 		    int giveType = presaleRank.getType();
 		    int giveNum = presaleRank.getGiveNum();
-		    if ( giveType == 1 ) {//送积分
-			member.setIntegral( integral + giveNum );
-			member.setIntegraldate( new Date() );
-			member.setTotalintegral( totalIntegral + giveNum );
-			flag = true;
-		    } else if ( giveType == 2 ) {//送粉币
-			int rec_type = 1;//1：粉币 2：流量
+		    if ( presaleRank.getGiveNum() > 0 ) {
+
+			Integer integral = 0;
+			Double fenbi = 0d;
+			if ( giveType == 1 ) {//送积分
+			    integral = giveNum;
+			} else if ( giveType == 2 ) {//送粉币
+			    fenbi = CommonUtil.toDouble( giveNum );
+			/*int rec_type = 1;//1：粉币 2：流量
 			int fre_type = 34;//冻结类型  34 商城预售送粉币
 			int fkId = 0;//外键ID
 			FenbiSurplus surplus = new FenbiSurplus();
@@ -393,9 +387,9 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 
 			    FenbiFlowRecord record = fenBiFlowService.getFenbiFlowRecord( surplus );
 			    if ( CommonUtil.isNotEmpty( record ) ) {
-				/*FenbiFlowRecord fenbiFlow = new FenbiFlowRecord();
+				*//*FenbiFlowRecord fenbiFlow = new FenbiFlowRecord();
 				fenbiFlow.setId( record.getId() );
-				fenbiFlow.setRecUseCount( Double.valueOf( record.getRecUseCount() + giveNum ) );*/
+				fenbiFlow.setRecUseCount( Double.valueOf( record.getRecUseCount() + giveNum ) );*//*
 				UpdateFenbiReduce reduce = new UpdateFenbiReduce();
 				reduce.setBusId( userId );
 				reduce.setCount( Double.valueOf( record.getRecUseCount() + giveNum ) );
@@ -405,28 +399,19 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 				flag = true;
 			    }
 
+			}*/
+			}
+			Map< String,Object > resultMap = memberPayService.updateJifenAndFenBiByPinglu( memberId, integral, fenbi );
+			if ( resultMap.get( "code" ).toString().equals( "1" ) ) {
+			    MallPresaleRank ranks = new MallPresaleRank();
+			    ranks.setId( presaleRank.getId() );
+			    ranks.setIsGive( "1" );
+			    rankMapper.updateById( ranks );
 			}
 		    }
-		    if ( flag ) {
-			member.setId( memberId );
-			//TODO  修改会员积分。粉币
-			/*memberMapper.updateByPrimaryKeySelective( member );*/
 
-			MallPresaleRank ranks = new MallPresaleRank();
-			ranks.setId( presaleRank.getId() );
-			ranks.setIsGive( "1" );
-			rankMapper.updateById( ranks );
-
-		    }
-
-		} else {
-		    //logger.info("预定送礼：没有查出评论");
 		}
-	    } else {
-		//logger.info("预定送礼：用户没有关注公众号");
 	    }
-	} else {
-	    //logger.info("预定送礼：没有开启评论送礼");
 	}
     }
 

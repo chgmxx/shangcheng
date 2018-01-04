@@ -176,7 +176,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 		    mallImageAssociativeDAO.insert( ass );//添加图片
 		}
 	    }
-	    mallCommentGiveService.commentGive( mallComment.getId(), request, mallComment.getUserId() );
+	    /*mallCommentGiveService.commentGive( mallComment.getId(), request, mallComment.getUserId() );*/
 
 	    return mallComment;
 	}

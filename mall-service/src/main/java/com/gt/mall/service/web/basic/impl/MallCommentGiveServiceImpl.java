@@ -2,35 +2,24 @@ package com.gt.mall.service.web.basic.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.BusUser;
-import com.gt.api.bean.session.Member;
-import com.gt.mall.constant.Constants;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallCommentDAO;
 import com.gt.mall.dao.basic.MallCommentGiveDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;
-import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCommentGive;
-import com.gt.mall.entity.basic.MallPaySet;
-import com.gt.mall.enums.ResponseEnums;
-import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
-import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
-import com.gt.util.entity.param.fenbiFlow.UpdateFenbiReduce;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -60,7 +49,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 
     @Override
     public void commentGive( int commentId, HttpServletRequest request, int memberId ) {
-	int userId = 0;//商户id
+	/*int userId = 0;//商户id
 	//	int publicId = 0;//公众号id
 	int integral = 0;//积分
 	double fenbi = 0;//粉币
@@ -103,7 +92,6 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 			    member.setIntegraldate( new Date() );
 			    member.setTotalintegral( totalIntegral + give.getNum() );
 			} else if ( giveType == 2 ) {//送粉币
-
 			    FenbiSurplus fenbiSurplus = new FenbiSurplus();
 			    fenbiSurplus.setBusId( userId );//商家id
 			    fenbiSurplus.setFkId( userId );//外键ID
@@ -123,7 +111,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 			    } else {
 				saveFenbiFlow( userId, CommonUtil.toDouble( give.getNum() ) );
 			    }
-			}
+			}//暂不冻结粉币
 		    } else {
 			logger.info( "评论送礼：没有设置评论送礼" );
 		    }
@@ -136,7 +124,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 	    }
 	} else {
 	    logger.info( "评论送礼：用户没有关注公众号" );
-	}
+	}*/
 
     }
 
@@ -160,17 +148,18 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 		    count = commentGiveDAO.insert( mallCommentGive );
 		}
 		if ( count > 0 ) {
-		    if ( mallCommentGive.getGiveType().toString().equals( "2" ) ) {
-			FenbiSurplus fenbiSurplus = new FenbiSurplus();
-			fenbiSurplus.setBusId( user.getId() );//商家id
-			fenbiSurplus.setFkId( user.getId() );//外键ID
-			fenbiSurplus.setFre_type( Constants.COMMNET_GIVE_TYPE );//冻结类型    30 评论送礼（赠送粉币）
-			fenbiSurplus.setRec_type( Constants.FENBI_GIEVE_TYPE );//1：粉币 2：流量
-			FenbiFlowRecord flowRecord = fenBiFlowService.getFenbiFlowRecord( fenbiSurplus );
-			if ( CommonUtil.isEmpty( flowRecord ) ) {
-			    saveFenbiFlow( user.getId(), null );
-			}
-		    }
+		    //暂时不冻结粉币
+//		    if ( mallCommentGive.getGiveType().toString().equals( "2" ) ) {
+//			FenbiSurplus fenbiSurplus = new FenbiSurplus();
+//			fenbiSurplus.setBusId( user.getId() );//商家id
+//			fenbiSurplus.setFkId( user.getId() );//外键ID
+//			fenbiSurplus.setFre_type( Constants.COMMNET_GIVE_TYPE );//冻结类型    30 评论送礼（赠送粉币）
+//			fenbiSurplus.setRec_type( Constants.FENBI_GIEVE_TYPE );//1：粉币 2：流量
+//			FenbiFlowRecord flowRecord = fenBiFlowService.getFenbiFlowRecord( fenbiSurplus );
+//			if ( CommonUtil.isEmpty( flowRecord ) ) {
+//			    saveFenbiFlow( user.getId(), null );
+//			}
+//		    }
 		    flag = true;
 		} else {
 		    flag = false;
@@ -183,7 +172,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
     /**
      * 粉币冻结
      */
-    private void saveFenbiFlow( int userId, Double count ) {
+    /*private void saveFenbiFlow( int userId, Double count ) {
 	FenbiFlowRecord fenbiFlowRecord = new FenbiFlowRecord();
 	fenbiFlowRecord.setBusUserId( userId );
 	fenbiFlowRecord.setRecType( Constants.FENBI_GIEVE_TYPE );
@@ -195,7 +184,7 @@ public class MallCommentGiveServiceImpl extends BaseServiceImpl< MallCommentGive
 	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "冻结流量失败" );
 	}
-    }
+    }*/
 
     @Override
     public List< MallCommentGive > getGiveByUserId( int userId ) {

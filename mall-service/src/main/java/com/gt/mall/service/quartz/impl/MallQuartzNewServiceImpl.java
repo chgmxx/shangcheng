@@ -266,6 +266,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    if ( orderType == 6 && groupBuyId > 0 ) {
 				quartzOrderService.presaleOrderGive( map );
 			    }
+
 			}
 		    }
 		}
