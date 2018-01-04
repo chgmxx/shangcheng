@@ -128,13 +128,13 @@ public class MallQuartzApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天营业额异常" );
 	}
-	try {
-	    mallQuartzNewService.countPageVisitorNum();
-	} catch ( Exception e ) {
-	    logger.error( "统计每天页面访问数量异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天页面访问数量异常" );
-	}
+//	try {
+//	    mallQuartzNewService.countPageVisitorNum();
+//	} catch ( Exception e ) {
+//	    logger.error( "统计每天页面访问数量异常：" + e.getMessage() );
+//	    e.printStackTrace();
+//	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天页面访问数量异常" );
+//	}
 	return ServerResponse.createBySuccessCode();
     }
 
@@ -230,6 +230,21 @@ public class MallQuartzApiController {
 	    logger.error( "调用会员退款接口异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "调用会员退款接口异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "评论送礼", notes = "评论送礼" )
+    @ResponseBody
+    @RequestMapping( value = "/commentGive", method = RequestMethod.POST )
+    public ServerResponse commentGive( HttpServletRequest request, HttpServletResponse response ) {
+	//
+	try {
+	    mallQuartzNewService.commentGive();
+	} catch ( Exception e ) {
+	    logger.error( "评论送礼异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "评论送礼异常" );
 	}
 	return ServerResponse.createBySuccessCode();
     }
