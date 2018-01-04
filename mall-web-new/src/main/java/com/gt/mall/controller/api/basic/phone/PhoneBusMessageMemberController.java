@@ -12,7 +12,6 @@ import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -50,7 +49,7 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
 		    @ApiImplicitParam( name = "url", value = "地址,必传", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "grant/{busId}", method = RequestMethod.GET )
+    @RequestMapping( value = "grant/{busId}", method = RequestMethod.POST )
     public ServerResponse grant( HttpServletRequest request, HttpServletResponse response, @PathVariable Integer busId, String url ) {
 	try {
 	    Integer browser = CommonUtil.judgeBrowser( request );
