@@ -30,16 +30,10 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.product.MallSearchLabelService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.MallRedisUtils;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -562,4 +556,21 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	}
 	return ServerResponse.createBySuccessCode();
     }
+
+    /**
+     * 自动生成二维码
+     */
+    @ApiOperation( value = "生成二维码", notes = "生成二维码" )
+    @RequestMapping( value = "/generateQRCode", method = RequestMethod.GET )
+    public void generateQRCode( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "url", value = "地址", required = true ) @RequestParam String url ) {
+	try {
+	    String content = PropertiesUtil.getPhoneWebHomeUrl() + url;
+	    QRcodeKit.buildQRcode( content, 200, 200, response );
+	} catch ( Exception e ) {
+	    logger.error( "自动生成二维码异常：" + e.getMessage() );
+	    e.printStackTrace();
+	}
+    }
+
+
 }
