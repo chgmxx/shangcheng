@@ -1648,44 +1648,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	return cardService.findDuofenCardByReceiveId( receiveId );
     }
 
-    @Override
-    public Map< String,Object > getPublicByUserMap( Map< String,Object > userMap ) {
-	Map< String,Object > publicUserid = null;
-	if ( CommonUtil.isNotEmpty( userMap ) ) {
-	    String pid = userMap.get( "pid" ).toString();
-	    if ( pid.equals( "0" ) ) {
-		publicUserid = publicUserid( Integer.valueOf( userMap.get( "id" ).toString() ) );
-	    } else {
-		publicUserid = publicUserid( Integer.valueOf( userMap.get( "pid" ).toString() ) );
-	    }
-	}
-	return publicUserid;
-    }
-
-    private Map< String,Object > publicUserid( Integer userid ) {
-	Map< String,Object > resultMap = new HashMap<>();
-	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( userid );
-	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-	    resultMap.put( "id", wxPublicUsers.getId() );
-	    resultMap.put( "qrcode_url", wxPublicUsers.getQrcodeUrl() );
-	    resultMap.put( "bus_user_id", wxPublicUsers.getBusUserId() );
-	}
-	return resultMap;
-    }
-
-    /**
-     * 保存地址到reids
-     */
-    @Override
-    public Map< String,Object > saveRedisByUrl( Member member, int userid, HttpServletRequest request ) {
-	Map< String,Object > loginMap = new HashMap<>();
-	String url = CommonUtil.getpath( request );
-	url = url.substring( url.indexOf( request.getServletPath() ), url.length() );
-	loginMap.put( "busId", userid );
-	loginMap.put( "requestUrl", url );
-	request.setAttribute( "userid", userid );
-	return loginMap;
-    }
 
     @Override
     public void mergeShoppCart( Member member, HttpServletRequest request, HttpServletResponse response ) {

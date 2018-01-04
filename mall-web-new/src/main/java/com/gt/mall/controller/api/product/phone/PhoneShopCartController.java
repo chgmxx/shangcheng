@@ -85,8 +85,8 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    loginDTO.setUcLogin( 1 );//不需要登陆
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    /*loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
 	    PhoneShopCartResult result = mallShopCartService.getShopCart( member, busId, type, request, response );
 

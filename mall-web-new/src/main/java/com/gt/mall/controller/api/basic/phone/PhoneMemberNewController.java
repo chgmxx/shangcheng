@@ -73,8 +73,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	try {
 	    PhoneMemberResult result = new PhoneMemberResult();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    loginDTO.setUcLogin( 1 );//不需要登陆
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    /*loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 	    if ( CommonUtil.isNotEmpty( loginDTO.getBusId() ) && loginDTO.getBusId() > 0 ) {
 		result.setBusId( loginDTO.getBusId() );
 	    }
@@ -178,7 +178,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< List< PhoneCollectProductResult > > collectList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -206,7 +206,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "deleteCollect", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse deleteCollect( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String ids ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    mallCollectService.deleteCollect( ids );
 
@@ -252,7 +252,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "bingdingPhoneH5", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse bingdingPhoneH5( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO, String phone, String code ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    if ( CommonUtil.isEmpty( code ) ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "请输入验证码" );

@@ -337,16 +337,6 @@ public interface MallPageService extends BaseService< MallPage > {
     Map< String,Object > getCardReceive( int receiveId );
 
     /**
-     * 查询商家的公众号
-     */
-    public Map< String,Object > getPublicByUserMap( Map< String,Object > userMap );
-
-    /**
-     * 保存跳转地址到redis
-     */
-    public Map< String,Object > saveRedisByUrl( Member member, int userid, HttpServletRequest request );
-
-    /**
      * 根据商品id获取商品部分信息
      */
     public List< Map< String,Object > > getProductListByIds( String ids, Member member, double discount, MallPaySet set, boolean isPifa );

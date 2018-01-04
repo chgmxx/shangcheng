@@ -89,7 +89,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    Map< String,Object > resultMap = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    boolean isError = false;
 	    boolean isIndex = false;
@@ -184,7 +184,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    String msg = "";
 	    boolean result = false;
 	    int count = 0;
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    if ( CommonUtil.isEmpty( params.getUserName() ) ) {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "姓名不能为空" );
 	    } else if ( CommonUtil.isEmpty( params.getTelephone() ) ) {
@@ -291,7 +291,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    boolean isSeller = mallSellerService.isSeller( member.getId() );//判断商户是否是销售员
 	    if ( !isSeller ) {
@@ -361,7 +361,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    params.put( "busId", loginDTO.getBusId() );
 	    params.put( "type", type );
 	    params = mallOrderService.getMemberParams( member, params );
@@ -401,7 +401,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    params.put( "busUserId", member.getBusid() );
 	    params.put( "groupId", groupId );
 	    params.put( "curPage", curPage );
@@ -493,7 +493,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    if ( CommonUtil.isEmpty( type ) ) {
 		type = 1;
@@ -531,7 +531,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    if ( CommonUtil.isEmpty( mallSet ) ) {
 		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
 	    }
@@ -563,7 +563,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    Integer status ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    MallSellerMallset sellerMallset = new MallSellerMallset();
 	    sellerMallset.setId( id );
@@ -587,7 +587,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     public ServerResponse deleteMallPro( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer id ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "id", id );
 	    result = mallSellerMallSetService.deleteSellerProduct( params );
@@ -615,8 +615,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 
 	    //查询商城设置
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
@@ -669,7 +669,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    if ( CommonUtil.isNotEmpty( seller ) && CommonUtil.isNotEmpty( member ) ) {
@@ -712,7 +712,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    member = memberService.findMemberById( member.getId(), member );
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -769,7 +769,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( member.getBusid() );
@@ -816,7 +816,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.getSellerTwoCode( seller, member, CommonUtil.judgeBrowser( request ) );//获取二维码
@@ -851,7 +851,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -903,7 +903,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.mergeData( seller, member );
 	    //查询提现条件
@@ -954,7 +954,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "withdraw", "{withdrawMoney: " + withdrawMoney + "}" );
 	    result = mallSellerWithdrawService.saveWithdraw( member.getId(), params, 0 );
@@ -980,7 +980,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "busId", loginDTO.getBusId() );
 	    params.put( "types", type );
@@ -1011,7 +1011,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -1044,8 +1044,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
 

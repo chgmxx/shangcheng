@@ -84,7 +84,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    MallProduct product = mallProductService.selectById( searchDTO.getProId() );//获取商品信息
 	    int shopid = 0;
@@ -164,7 +164,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 		    PhoneAddDepositDTO depositDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    result = mallPresaleDepositService.addDeposit( depositDTO, member, loginDTO.getBrowerType() );
@@ -237,7 +237,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    MallPresaleDeposit deposit = new MallPresaleDeposit();
 	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息

@@ -77,8 +77,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 	    BusUser user = new BusUser();
 	    user.setId( loginDTO.getBusId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -112,8 +112,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    //查询我的积分
@@ -159,7 +159,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "buyerUserId", member.getId() );
@@ -206,7 +206,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    Map< String,Object > map = new HashMap<>();
@@ -252,8 +252,8 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "id", productId );
@@ -294,7 +294,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddIntegralDTO integralDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    member = memberService.findMemberById( member.getId(), member );

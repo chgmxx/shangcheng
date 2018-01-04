@@ -65,8 +65,8 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "1" ) );////判断活动是否已经过期
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 
 	    MallGroupBuy groupBuy = groupBuyService.selectBuyByProductId( id );
 	    if ( CommonUtil.isEmpty( groupBuy ) ) {

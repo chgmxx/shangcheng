@@ -56,7 +56,7 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneCommentListResult > collectList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -83,7 +83,7 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneCommentProductResult > toCommentProduct( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderDetailId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    PhoneCommentProductResult result = mallCommentService.getCommentProduct( orderDetailId );
 
@@ -108,7 +108,7 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     public ServerResponse< Integer > saveComment( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    @RequestBody @Valid @ModelAttribute PhoneMallCommentDTO mallCommentDTO, String imageUrls ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -149,8 +149,8 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer id ) {
 	try {
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
 	    PhoneCommentSuccessResult result = new PhoneCommentSuccessResult();
 	    //查询商品评论

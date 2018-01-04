@@ -3,7 +3,6 @@ package com.gt.mall.controller.api.basic.phone;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
-import com.gt.api.util.FilterMemberUtils;
 import com.gt.api.util.KeysUtil;
 import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.mall.constant.Constants;
@@ -38,8 +37,7 @@ public class AuthorizeOrUcLoginController {
 	Integer busId = loginDTO.getBusId();
 	Integer browser = CommonUtil.judgeBrowser( request );
 	Integer uclogin = loginDTO.getUcLogin();
-	Member member = FilterMemberUtils.getLoginMember( request );
-//	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    //用户的所属商家和传进来的商家id相同不必登陆

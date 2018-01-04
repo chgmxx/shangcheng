@@ -57,7 +57,7 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     public ServerResponse< List< PhoneOrderMemberAddressDTO > > addressList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -85,7 +85,7 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     public ServerResponse< MemberAddress > selectAddressById( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer addressId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    MemberAddress memberAddress = memberAddressService.addreSelectId( CommonUtil.toInteger( addressId ) );
 
@@ -133,7 +133,7 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     public ServerResponse saveAddress( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    @RequestBody @Valid @ModelAttribute PhoneMemberAddressDTO memberAddress ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -169,7 +169,7 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     public ServerResponse defaultAddress( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer addressId, Integer upMemberId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    boolean flag = memberAddressService.updateDefault( addressId, member.getId() );
 	    if ( !flag ) {

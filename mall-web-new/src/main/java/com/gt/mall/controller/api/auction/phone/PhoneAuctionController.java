@@ -89,7 +89,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    //	    Map mapmessage = pageService.querySelct( proId );//获取商品信息
 	    MallProduct product = mallProductService.selectById( proId );//获取商品信息
@@ -146,7 +146,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		    PhoneAddAuctionMarginDTO marginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    result = auctionMarginService.addMargin( marginDTO, member );
 	} catch ( BusinessException be ) {
@@ -194,8 +194,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 	    MallAuction auction = auctionService.selectById( auctionId );
 	    //	    MallAuction auction = auctionService.getAuctionByProId( productId, shopId, auctionId );
 	    /*if ( type == 1 ) {//商品详情
@@ -248,7 +248,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		    PhoneAddAuctionBiddingDTO biddingDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    result = auctionOfferService.addOffer( biddingDTO, member.getId().toString() );
@@ -275,7 +275,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    MallAuctionMargin margin = new MallAuctionMargin();
 
@@ -311,7 +311,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 	    bidList = auctionBiddingService.selectMyBidding( member );
 
 	} catch ( BusinessException be ) {
@@ -333,7 +333,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    bidList = auctionBiddingService.selectMyHuoBid( member );
 
