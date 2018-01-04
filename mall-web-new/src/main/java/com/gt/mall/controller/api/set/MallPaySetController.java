@@ -266,8 +266,10 @@ public class MallPaySetController extends BaseController {
 	    wrapper.where( "is_delete =0 and bus_id= {0}", user.getId() );
 	    List< MallBusMessageMember > busMessageMemberList = mallBusMessageMemberService.selectList( wrapper );
 
-	    if ( wxPublicUsers == null || busMessageMemberList == null || busMessageMemberList.size() == 0 ) {
+	    if ( wxPublicUsers == null ) {
 		flag = -1;//未认证;
+	    } else if ( busMessageMemberList == null || busMessageMemberList.size() == 0 ) {
+		flag = -2;//未授权;
 	    } else {
 		if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
 		    flag = -1;//未认证
