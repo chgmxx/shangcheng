@@ -1316,7 +1316,7 @@
         FROM t_mall_order t
         LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
         LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id
-        WHERE 1=1
+        WHERE d.id>0
         <if test="userId != null and userId != ''">
             and t.bus_user_id = #{userId}
         </if>
@@ -1360,7 +1360,7 @@
         FROM t_mall_order t
         LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
         LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id
-        WHERE 1=1
+        WHERE d.id>0
         <if test="userId != null and userId != ''">
             and t.bus_user_id = #{userId}
         </if>

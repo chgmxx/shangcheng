@@ -2438,8 +2438,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( CommonUtil.isNotEmpty( order.get( "proName" ) ) ) {
 	    name = order.get( "proName" ).toString();
 	}
-	if ( CommonUtil.isNotEmpty( order.get( "totalPrice" ) ) ) {
-	    price = order.get( "totalPrice" ).toString();
+	if ( CommonUtil.isNotEmpty( order.get( "orderMoney" ) ) ) {
+	    price = order.get( "orderMoney" ).toString();
 	}
 	Date date = DateTimeKit.parseDate( order.get( "createTime" ).toString(), "yyyy/MM/dd HH:mm" );
 	String createTime = DateTimeKit.format( date, DateTimeKit.DEFAULT_DATETIME_FORMAT );
