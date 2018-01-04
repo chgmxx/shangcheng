@@ -18,6 +18,7 @@ import com.gt.mall.dao.product.MallProductMonthcountDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.store.MallShopDaycountDAO;
 import com.gt.mall.dao.store.MallShopMonthcountDAO;
+import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCountIncome;
 import com.gt.mall.entity.order.MallLogOrderCallback;
 import com.gt.mall.entity.order.MallOrder;
@@ -33,6 +34,8 @@ import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
+import com.gt.mall.service.web.basic.MallCommentGiveService;
+import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -90,6 +93,10 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallStoreService         mallStoreService;
     @Autowired
     private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private MallCommentService       mallCommentService;
+    @Autowired
+    private MallCommentGiveService   mallCommentGiveService;
 
     /**
      * 订单完成赠送物品  每天早上8点扫描
@@ -464,23 +471,27 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     public void cancelReturn() {
 	//	Date date1 = DateTimeKit.addDays( -7 );
 	//	String date3 = DateTimeKit.format( date1 );//7天后的时间日期
+	try {
+	    Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
+	    //查询 当前时间 大于等于 7天后的时间
+	    wrapper.where( "status = -1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
+	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
+	    if ( returnList != null && returnList.size() > 0 ) {
+		for ( MallOrderReturn orderReturn : returnList ) {
+		    orderReturn.setStatus( -3 );
+		    orderReturn.setUpdateTime( new Date() );
+		    mallOrderReturnDAO.updateById( orderReturn );
 
-	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
-	//查询 当前时间 大于等于 7天后的时间
-	wrapper.where( "status = -1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
-	List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
-	if ( returnList != null && returnList.size() > 0 ) {
-	    for ( MallOrderReturn orderReturn : returnList ) {
-		orderReturn.setStatus( -3 );
-		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnDAO.updateById( orderReturn );
+		    MallOrderDetail detail = new MallOrderDetail();
+		    detail.setId( orderReturn.getOrderDetailId() );
+		    detail.setStatus( -3 );
+		    orderDetailDAO.updateById( detail );
 
-		MallOrderDetail detail = new MallOrderDetail();
-		detail.setId( orderReturn.getOrderDetailId() );
-		detail.setStatus( -3 );
-		orderDetailDAO.updateById( detail );
-
+		}
 	    }
+	} catch ( Exception e ) {
+	    logger.error( "取消维权异常" + e );
+	    e.printStackTrace();
 	}
     }
 
@@ -489,23 +500,28 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
      */
     @Override
     public void autoRefund() {
-	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
-	//查询  当前时间 大于等于 7天后的时间
-	wrapper.where( "status = 0 and ret_handling_way = 1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
-	List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
-	if ( returnList != null && returnList.size() > 0 ) {
-	    for ( MallOrderReturn orderReturn : returnList ) {
-		orderReturn.setStatus( 1 );
-		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnDAO.updateById( orderReturn );
+	try {
+	    Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
+	    //查询  当前时间 大于等于 7天后的时间
+	    wrapper.where( "status = 0 and ret_handling_way = 1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
+	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
+	    if ( returnList != null && returnList.size() > 0 ) {
+		for ( MallOrderReturn orderReturn : returnList ) {
+		    orderReturn.setStatus( 1 );
+		    orderReturn.setUpdateTime( new Date() );
+		    mallOrderReturnDAO.updateById( orderReturn );
 
-		MallOrderDetail detail = new MallOrderDetail();
-		detail.setId( orderReturn.getOrderDetailId() );
-		detail.setStatus( 1 );
-		orderDetailDAO.updateById( detail );
+		    MallOrderDetail detail = new MallOrderDetail();
+		    detail.setId( orderReturn.getOrderDetailId() );
+		    detail.setStatus( 1 );
+		    orderDetailDAO.updateById( detail );
 
-		// TODO 退款
+		    // TODO 退款
+		}
 	    }
+	} catch ( Exception e ) {
+	    logger.error( "自动退款给买家异常" + e );
+	    e.printStackTrace();
 	}
 
     }
@@ -516,22 +532,27 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
      */
     @Override
     public void returnGoodsByRefund() {
-	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
-	//查询 当前时间 大于等于 10天后的时间
-	wrapper.where( "status = 3 and ret_handling_way = 2 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 10 DAY)" );
-	List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
-	if ( returnList != null && returnList.size() > 0 ) {
-	    for ( MallOrderReturn orderReturn : returnList ) {
-		orderReturn.setStatus( 5 );
-		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnDAO.updateById( orderReturn );
+	try {
+	    Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
+	    //查询 当前时间 大于等于 10天后的时间
+	    wrapper.where( "status = 3 and ret_handling_way = 2 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 10 DAY)" );
+	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
+	    if ( returnList != null && returnList.size() > 0 ) {
+		for ( MallOrderReturn orderReturn : returnList ) {
+		    orderReturn.setStatus( 5 );
+		    orderReturn.setUpdateTime( new Date() );
+		    mallOrderReturnDAO.updateById( orderReturn );
 
-		MallOrderDetail detail = new MallOrderDetail();
-		detail.setId( orderReturn.getOrderDetailId() );
-		detail.setStatus( 5 );
-		orderDetailDAO.updateById( detail );
-		// TODO 退款
+		    MallOrderDetail detail = new MallOrderDetail();
+		    detail.setId( orderReturn.getOrderDetailId() );
+		    detail.setStatus( 5 );
+		    orderDetailDAO.updateById( detail );
+		    // TODO 退款
+		}
 	    }
+	} catch ( Exception e ) {
+	    logger.error( "自动确认收货并退款至买家异常" + e );
+	    e.printStackTrace();
 	}
     }
 
@@ -811,6 +832,25 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "调用会员退款接口异常" + e );
+	    e.printStackTrace();
+	}
+    }
+
+    @Override
+    public void commentGive() {
+	try {
+	    Wrapper< MallComment > wrapper = new EntityWrapper<>();
+	    wrapper.where( "is_delete =0 and rep_p_id =0 and give_status = 1 and SYSDATE() >= give_time" );
+	    List< MallComment > commentList = mallCommentService.selectList( wrapper );
+	    if ( commentList != null && commentList.size() > 0 ) {
+		for ( MallComment comment : commentList ) {
+		    mallCommentGiveService.commentGive( comment.getId(), null, comment.getUserId() );
+		    comment.setGiveStatus( 2 );
+		    mallCommentService.updateById( comment );
+		}
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "评论送礼异常" + e );
 	    e.printStackTrace();
 	}
     }
