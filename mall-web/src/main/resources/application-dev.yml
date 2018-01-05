@@ -108,7 +108,7 @@ web:
  #网页访问路径
  homeUrl: http://localhost:8080/
  #手机端页面路径访问
- phoneWebHomeUrl: http://192.168.2.100:8081/html/phone/index.html
+ phoneWebHomeUrl: http://192.168.2.100:8081/html/phone/index.html#
  #商城营销路径
  marketingUrl: http://core.yifriend.net/html/application/busAdded/index.html?dictstyle=05f8fd040284859d
  #素材库路径
