@@ -89,14 +89,14 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 		if ( i == logList.size() ) {
 		    if ( orderReturn.getStatus() == -1 || orderReturn.getStatus() == 2 ) {
 			MallOrder order = mallOrderDAO.selectById( orderReturn.getOrderId() );
-			MallOrderDetail orderDetail = mallOrderDetailDAO.selectById( orderReturn.getOrderDetailId() );
+			// MallOrderDetail orderDetail = mallOrderDetailDAO.selectById( orderReturn.getOrderDetailId() );
 			long updateDay = 0;//计算修改时间到今天的天数
 			if ( CommonUtil.isNotEmpty( order.getUpdateTime() ) ) {
 			    updateDay = DateTimeKit.diffDays( new Date(), order.getUpdateTime() );
 			}
 			boolean isNowReturn = false;//定义订单是否退款  false 没退款
 			isNowReturn = OrderUtil.getOrderIsNowReturn( orderReturn.getStatus().toString() );
-			boolean isGoupOrderCanReturn = true;
+			/*boolean isGoupOrderCanReturn = true;
 			if ( order.getOrderType() == 1 ) {
 			    //团购订单是否能退款
 
@@ -110,14 +110,15 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 			int isShowAppllyReturn = 0;
 			if ( isGoupOrderCanReturn ) {
 			    isShowAppllyReturn = OrderUtil.getOrderIsShowReturnButton( order, orderDetail, updateDay );
-			}
+			}*/
 
 			if ( orderReturn.getStatus() == 2 ) {//同意申请
 			    //是否显示退款物流的按钮 1显示
 			    map.put( "isShowReturnWuLiuButton", OrderUtil.getOrderIsShowReturnWuliuButton( isNowReturn, orderReturn.getStatus().toString(), orderReturn ) );
 			} else if ( orderReturn.getStatus() == -1 ) {//拒绝申请
 			    //显示申请退款按钮 1显示
-			    if ( isShowAppllyReturn == 1 && "4".equals( order.getOrderStatus() ) ) {
+			    //if ( isShowAppllyReturn == 1 && "4".equals( order.getOrderStatus() ) ) {
+			    if ( updateDay >= 0 && updateDay < Constants.ORDER_FINISH_RETURN_DAY ) {
 				//显示申请退款按钮
 				map.put( "isShowApplyReturnButton", 1 );
 			    }
