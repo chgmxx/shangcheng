@@ -323,10 +323,17 @@ public class MallStoreNewController extends BaseController {
      * 自动生成二维码
      */
     @ApiOperation( value = "生成二维码", notes = "生成二维码" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "url", value = "地址", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "status", value = "类型", paramType = "query", required = true, dataType = "int" ) } )
     @RequestMapping( value = "/generateQRCode", method = RequestMethod.GET )
-    public void generateQRCode( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "url", value = "地址", required = true ) @RequestParam String url ) {
+    public void generateQRCode( HttpServletRequest request, HttpServletResponse response, String url, Integer status ) {
 	try {
-	    String content = PropertiesUtil.getPhoneWebHomeUrl() + url;
+	    String content = "";
+	    if ( CommonUtil.isNotEmpty( status ) ) {
+		content = PropertiesUtil.getHomeUrl() + url;
+	    } else {
+		content = PropertiesUtil.getPhoneWebHomeUrl() + url;
+	    }
 	    QRcodeKit.buildQRcode( content, 200, 200, response );
 	} catch ( Exception e ) {
 	    logger.error( "自动生成二维码异常：" + e.getMessage() );
