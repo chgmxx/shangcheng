@@ -46,11 +46,11 @@ public class ToOrderUtil {
 	int isHaveZhifuBao = 0;
 	int memberCtId = 0;
 	for ( PhoneOrderUserDTO orderUserDTO : userDTOList ) {
-	    /*if ( CommonUtil.isNotEmpty( orderUserDTO.getPublicId() ) && orderUserDTO.getPublicId() > 0 ) {
+	    if ( CommonUtil.isNotEmpty( orderUserDTO.getPublicId() ) && orderUserDTO.getPublicId() > 0 ) {
 		isHavePublic = 1;
 	    } else {
 		isHavePublic = 0;
-	    }*/
+	    }
 	    if ( CommonUtil.isNotEmpty( orderUserDTO.getMemberCtId() ) && orderUserDTO.getMemberCtId() > 0 ) {
 		memberCtId = orderUserDTO.getMemberCtId();
 	    } else {
