@@ -31,8 +31,6 @@
     <select id="findAllList" resultType="Map" parameterType="java.lang.Integer">
 
         select
-        m.headimgurl,
-        m.nickname,
         l.id,
         l.language_time,
         l.order_id,
@@ -42,8 +40,6 @@
         l.language_content
         from
         purchase_language l
-        left join
-        t_wx_bus_member m on m.id = l.member_id
         where order_id =#{orderId} order by language_time desc
     </select>
     <select id="findLanguangeDetails" resultType="Map" parameterType="com.gt.mall.entity.purchase.PurchaseLanguage">

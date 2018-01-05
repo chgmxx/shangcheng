@@ -153,6 +153,10 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    mallComment.setIsUploadImage( 0 );
 	}
 	mallComment.setUserType( 1 );
+	MallOrderDetail mallOrderDetail = mallOrderDetailService.selectById( mallComment.getOrderDetailId() );
+	if ( CommonUtil.isNotEmpty( mallOrderDetail ) ) {
+	    mallComment.setShopId( mallOrderDetail.getShopId() );
+	}
 	int count = mallCommentDAO.insert( mallComment );
 
 	if ( count > 0 ) {

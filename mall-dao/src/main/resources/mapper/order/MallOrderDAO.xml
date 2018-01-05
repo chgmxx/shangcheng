@@ -961,7 +961,7 @@
         <if test="type != null and type != '' and type != 0">
             and t.order_status = #{type}
         </if>
-        <if test="appraiseStatus != null and appraiseStatus != ''">
+        <if test="appraiseStatus != null">
             and d.appraise_status = #{appraiseStatus}
             <if test="appraiseStatus == 0"><!-- 查询未评价的订单(订单状态必须为已完成) -->
                 and t.order_status = 4
@@ -999,7 +999,7 @@
         <if test="type != null and type != ''  and type != 0">
             and t.order_status = #{type}
         </if>
-        <if test="appraiseStatus != null and appraiseStatus != ''">
+        <if test="appraiseStatus != null">
             and d.appraise_status = #{appraiseStatus}
             <if test="appraiseStatus == 0"><!-- 查询未评价的订单(订单状态必须为已完成) -->
                 and t.order_status = 4

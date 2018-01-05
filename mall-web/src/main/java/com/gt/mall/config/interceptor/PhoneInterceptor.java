@@ -3,6 +3,8 @@ package com.gt.mall.config.interceptor;
 import com.gt.api.bean.session.Member;
 import com.gt.api.util.SessionUtils;
 import com.gt.mall.common.AuthorizeOrLoginController;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import org.apache.log4j.Logger;
@@ -54,7 +56,10 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 		//	    	    member.setOldid( "1225352,1225358,1225449" );
 		MallSessionUtils.setLoginMember( request, member );
 	    } else {
-		userLogin( request, response, params );
+		String returnStr = userLogin( request, response, params );
+		if ( CommonUtil.isNotEmpty( returnStr ) ) {
+		    throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), returnStr );
+		}
 	    }
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求*/

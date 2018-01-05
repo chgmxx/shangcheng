@@ -149,7 +149,6 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
 		if ( giveStatus == 1 ) {
 		    MallOrder order = mallOrderService.selectById( mallComment.getOrderId() );
 		    giveTime = DateTimeKit.addDate( order.getUpdateTime(), Constants.ORDER_FINISH_RETURN_DAY );
-
 		}
 		mallComment.setGiveTime( giveTime );
 		mallComment.setGiveStatus( giveStatus );

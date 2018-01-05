@@ -2,6 +2,7 @@ package com.gt.mall.service.inter.member;
 
 import com.gt.api.bean.session.Member;
 import com.gt.entityBo.ErpRefundBo;
+import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -214,5 +215,19 @@ public interface MemberService {
      * @return 积分和粉币规则
      */
     JifenAndFenbiRule jifenAndFenbiRule( int busId );
+
+
+    /**
+     * 根据ids集合查询粉丝信息返回包含数据(id,昵称，手机号码,头像)
+     * @param params  busId :商家id    ids:粉丝id集合
+     * @return  粉丝信息集合  头像 昵称 等
+     */
+    List<Map< String,Object >>  findMemberByIds(Map< String,Object > params );
+
+    /**
+     * 会员 积分 和 粉币核销 包括优惠券
+     * @param newErpPaySuccessBo
+     */
+    void newPaySuccessByErpBalance(NewErpPaySuccessBo newErpPaySuccessBo);
 
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.entityBo.ErpRefundBo;
+import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -14,6 +15,7 @@ import com.gt.mall.utils.HttpSignUtil;
 import com.gt.mall.utils.JedisUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -381,6 +383,32 @@ public class MemberServiceImpl implements MemberService {
 	    return JSONObject.parseObject( data, JifenAndFenbiRule.class );
 	}
 	return null;
+    }
+
+    @Override
+    public List< Map< String,Object > > findMemberByIds( Map< String,Object > params ) {
+	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByIds" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    JSONArray array = JSONArray.parseArray( data );
+	    for ( int a = 0; a < array.size(); a++ ) {
+		JSONObject object = array.getJSONObject( a );
+		Map< String,Object > map = new HashMap< String,Object >();
+		map.put( "memberId", object.getInteger( "id" ) );
+		map.put( "nickname", object.getString( "nickname" ) );
+		map.put( "headimgurl", object.getString( "headimgurl" ) );
+		list.add( map );
+	    }
+	}
+	return list;
+    }
+
+    /**
+     * 会员 积分 和 粉币核销 包括优惠券
+     */
+    @Override
+    public void newPaySuccessByErpBalance( NewErpPaySuccessBo newErpPaySuccessBo ) {
+	HttpSignUtil.signHttpSelect( newErpPaySuccessBo, MEMBER_URL + "newPaySuccessByErpBalance" );
     }
 
 }

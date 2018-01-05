@@ -105,8 +105,11 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	paramsMap.put( "firstNum", firstNum );// 起始页
 	paramsMap.put( "maxNum", pageSize );// 每页显示商品的数量
 	List< MallOrder > list;
+	if ( params.getType().toString().equals( "5" ) ) {
+	    paramsMap.put( "appraiseStatus", 0 );
+	}
 	if ( paramsMap.containsKey( "appraiseStatus" ) || paramsMap.containsKey( "isReturn" ) ) {
-	    list = mallOrderDAO.mobileOrderList( paramsMap );
+	    list = mallOrderDAO.mobileOrderListByComment( paramsMap );
 	} else {
 	    list = mallOrderDAO.mobileMyOrderList( paramsMap );
 	}

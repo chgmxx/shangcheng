@@ -37,10 +37,10 @@ import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
 import com.gt.mall.result.phone.order.PhoneToOrderProductResult;
 import com.gt.mall.result.phone.order.PhoneToOrderResult;
 import com.gt.mall.result.phone.order.PhoneToOrderShopResult;
-import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
 import com.gt.mall.service.inter.user.MemberAddressService;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
@@ -57,6 +57,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import com.gt.union.api.entity.param.UnionCardDiscountParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
+import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +85,6 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 
     @Autowired
     private MallOrderDAO              mallOrderDAO;
-    @Autowired
-    private MemberPayService          memberPayService;
     @Autowired
     private MallProductService        mallProductService;
     @Autowired
@@ -122,6 +121,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
     private MallMemberAddressService  mallMemberAddressService;
     @Autowired
     private UnionCardService          UnionCardService;
+    @Autowired
+    private PayService                payService;
 
     @Transactional( rollbackFor = Exception.class )
     @Override
@@ -579,6 +580,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	List< PhoneOrderUserDTO > orderUserDTOList = new ArrayList<>();//集合用来算支付方式的
 	//循环结果，查询商家的支付方式和配送方式
 	if ( CommonUtil.isNotEmpty( result ) && CommonUtil.isNotEmpty( result.getBusResultList() ) ) {
+	    List< PayWay > payWayList = new ArrayList<>();
 	    for ( PhoneToOrderBusResult busResult : result.getBusResultList() ) {
 		//是否能使用会员折扣1 能
 		Integer isCanUseMemberDiscount = 0;
@@ -720,9 +722,11 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		phoneOrderUserDTO.setPublicId( busResult.getPublicId() );
 		phoneOrderUserDTO.setBusId( busResult.getBusId() );
 		orderUserDTOList.add( phoneOrderUserDTO );
+		PayWay payWay = payService.getPayWay( busResult.getBusId() );
+		payWayList.add( payWay );
 	    }
 	    //获取商家的支付方式
-	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil.getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type );
+	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil.getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type, payWayList );
 	    result.setPayWayList( wayResultList );
 	    if ( CommonUtil.isNotEmpty( result.getSelectPayWayId() ) && result.getSelectPayWayId() > 0 ) {
 		for ( PhoneOrderWayDTO phoneOrderWayDTO : wayResultList ) {

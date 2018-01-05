@@ -85,8 +85,9 @@ public class AuthorizeOrLoginController {
 	if ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) {
 	    queryMap.put( "uclogin", uclogin );
 	}
-	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
-			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap ) );
+//	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
+//			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap ) );
+	return PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap );
     }
 
     private void setBusGuoqi( JSONObject json, int busId ) {
