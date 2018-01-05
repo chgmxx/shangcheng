@@ -21,6 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -183,6 +184,27 @@ public class MallCommentNewController extends BaseController {
 	    return ServerResponse.createByError();
 	}
 	return ServerResponse.createBySuccessCode();
+    }
+
+    /**
+     * 获取评论送礼设置
+     */
+    @ApiOperation( value = "获取评论送礼设置", notes = "获取评论送礼设置" )
+    @ResponseBody
+    @RequestMapping( value = "/giveInfo", method = RequestMethod.POST )
+    public ServerResponse commentGiveInfo( HttpServletRequest request, HttpServletResponse response ) {
+	List< MallCommentGive > giveList = null;
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    //评论送礼设置
+	    giveList = mallCommentGiveService.getGiveByUserId( user.getId() );
+
+	} catch ( Exception e ) {
+	    logger.error( "获取评论送礼设置异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取评论送礼设置异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), giveList );
     }
 
     /**

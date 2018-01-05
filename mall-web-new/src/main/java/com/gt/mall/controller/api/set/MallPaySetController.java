@@ -55,8 +55,6 @@ public class MallPaySetController extends BaseController {
     private WxPublicUserService         wxPublicUserService;
     @Autowired
     private MallBusMessageMemberService mallBusMessageMemberService;
-    @Autowired
-    private MallCommentGiveService      mallCommentGiveService;
 
     /**
      * 获取商城设置
@@ -82,8 +80,6 @@ public class MallPaySetController extends BaseController {
 		    result.put( "foorerObj", foorerObj );//手机端底部菜单
 		}
 	    }
-	    List< MallCommentGive > giveList = mallCommentGiveService.getGiveByUserId( user.getId() );
-	    result.put( "giveList", giveList );//评论送礼设置
 	} catch ( Exception e ) {
 	    logger.error( "获取商城设置异常：" + e.getMessage() );
 	    e.printStackTrace();
