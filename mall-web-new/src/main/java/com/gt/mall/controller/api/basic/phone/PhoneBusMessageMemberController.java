@@ -8,6 +8,7 @@ import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallBusMessageMember;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -55,14 +57,21 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	    if ( browser != 1 ) {//微信
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.GRAND_ERROR.getCode(), ResponseEnums.GRAND_ERROR.getDesc() );
 	    }
-//	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
-//	    loginDTO.setBusId( busId );
-//	    loginDTO.setUrl( url );
-//	    loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
+	    loginDTO.setBusId( busId );
+	    loginDTO.setUrl( url );
+	    loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    Member member = MallSessionUtils.getLoginMember( request, busId );
+
+	    Wrapper wrapper1 = new EntityWrapper<>();
+	    wrapper1.where( "is_delete =0 and bus_id= {0}", member.getBusid() );
+	    List< MallBusMessageMember > busMemberList = mallBusMessageMemberService.selectList( wrapper1 );
+	    if ( busMemberList != null && busMemberList.size() > 5 ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.GRANT_MAX_ERROR.getCode(), ResponseEnums.GRANT_MAX_ERROR.getDesc() );
+	    }
 
 	    //新增
-	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    Wrapper wrapper = new EntityWrapper<>();
 	    wrapper.where( "is_delete =0 and member_id= {0}", member.getId() );
 	    MallBusMessageMember mallBusMessageMember = mallBusMessageMemberService.selectOne( wrapper );

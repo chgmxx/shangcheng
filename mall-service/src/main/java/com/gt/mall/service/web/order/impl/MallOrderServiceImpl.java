@@ -2742,6 +2742,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( CommonUtil.isNotEmpty( address ) ) {
 	    resultMap.put( "memberAddress", address );//客户地址
 	}
+	resultMap.put( "orderStatus", order.getOrderStatus() );
 	resultMap.put( "store", shopName );//所属店铺
 	resultMap.put( "orderNum", order.getOrderNo() );//订单编号
 	resultMap.put( "orderTime", DateTimeKit.formatDateByFormat( order.getCreateTime(), "yyyy-MM-dd HH:mm:ss" ) );//下单时间
@@ -2975,6 +2976,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    result.setOrderStatusName( OrderUtil.getOrderStatusMsgByOrder( order.getOrderStatus().toString(), order.getDeliveryMethod().toString() ) );
 	    result.setTypeName( OrderUtil.getOrderTypeMsgByOrder( order.getBuyerUserType() ) );
+	    result.setOrderTypeName( OrderUtil.getOrderTypeByOrder( order.getOrderType() ) );
 	    if ( order.getOrderPayWay() == 7 ) {
 		MallDaifu daifu = mallDaifuService.selectByDfOrderNo( order.getOrderNo().toString() );
 		result.setMallDaifu( daifu );

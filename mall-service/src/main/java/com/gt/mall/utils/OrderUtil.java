@@ -69,6 +69,28 @@ public class OrderUtil {
 	return isOpenComment;
     }
 
+    public static String getOrderTypeByOrder( Integer orderType ) {
+	String statusName = "";
+	if ( orderType == null || orderType == 0 ) {
+	    statusName = "普通订单";
+	} else if ( orderType == 1 ) {
+	    statusName = "团购订单";
+	} else if ( orderType == 2 ) {
+	    statusName = "积分订单";
+	} else if ( orderType == 3 ) {
+	    statusName = "秒杀订单";
+	} else if ( orderType == 4 ) {
+	    statusName = "拍卖订单";
+	} else if ( orderType == 5 ) {
+	    statusName = "粉币订单";
+	} else if ( orderType == 6 ) {
+	    statusName = "预售订单";
+	} else if ( orderType == 7 ) {
+	    statusName = "批发订单";
+	}
+	return statusName;
+    }
+
     /**
      * 根据订单状态和 配送方式 获取 状态名称
      *

@@ -1,12 +1,16 @@
 package com.gt.mall.controller.api.basic;
 
+import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallComment;
+import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -22,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,11 +51,13 @@ import java.util.Map;
 public class MallCommentNewController extends BaseController {
 
     @Autowired
-    private MallCommentService commentService;
+    private MallCommentService     commentService;
     @Autowired
-    private MallPaySetService  paySetService;
+    private MallPaySetService      paySetService;
     @Autowired
-    private MallStoreService   storeService;
+    private MallStoreService       storeService;
+    @Autowired
+    private MallCommentGiveService mallCommentGiveService;
 
     @ApiOperation( value = "评价列表(分页)", notes = "评价列表(分页)" )
     @ResponseBody
@@ -176,6 +183,32 @@ public class MallCommentNewController extends BaseController {
 	    return ServerResponse.createByError();
 	}
 	return ServerResponse.createBySuccessCode();
+    }
+
+    /**
+     * 保存评论送礼信息
+     */
+    @ApiOperation( value = "保存评论送礼信息", notes = "保存评论送礼信息" )
+    @ResponseBody
+    @RequestMapping( value = "/saveCommentGive", method = RequestMethod.POST )
+    public ServerResponse saveCommentGive( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    List< MallCommentGive > giveList = JSONArray.parseArray( params.get( "giveList" ).toString(), MallCommentGive.class );
+	    boolean flag = mallCommentGiveService.editCommentGive( giveList, user );
+	    if ( !flag ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存评论送礼信息异常" );
+	    }
+	} catch ( BusinessException e ) {
+	    logger.error( "保存评论送礼信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "保存评论送礼信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
 }

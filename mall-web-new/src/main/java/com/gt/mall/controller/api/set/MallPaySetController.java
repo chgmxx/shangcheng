@@ -10,11 +10,13 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallBusMessageMember;
+import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
+import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
@@ -53,6 +55,8 @@ public class MallPaySetController extends BaseController {
     private WxPublicUserService         wxPublicUserService;
     @Autowired
     private MallBusMessageMemberService mallBusMessageMemberService;
+    @Autowired
+    private MallCommentGiveService      mallCommentGiveService;
 
     /**
      * 获取商城设置
@@ -78,6 +82,8 @@ public class MallPaySetController extends BaseController {
 		    result.put( "foorerObj", foorerObj );//手机端底部菜单
 		}
 	    }
+	    List< MallCommentGive > giveList = mallCommentGiveService.getGiveByUserId( user.getId() );
+	    result.put( "giveList", giveList );//评论送礼设置
 	} catch ( Exception e ) {
 	    logger.error( "获取商城设置异常：" + e.getMessage() );
 	    e.printStackTrace();
