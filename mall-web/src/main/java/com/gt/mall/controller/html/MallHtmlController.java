@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
 import com.gt.mall.exception.BusinessException;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +59,76 @@ public class MallHtmlController extends BaseController {
     private BusUserService        busUserService;
     @Autowired
     private CoreService           coreService;
+
+    /**
+     * 修改页面设计
+     *
+     * @param request
+     * @param response
+     *
+     * @return
+     */
+    @RequestMapping( "/updateHtml" )
+    public String updateHtml( HttpServletRequest request, HttpServletResponse response ) {
+	String jsp = "";
+	try {
+	    Object id = request.getParameter( "id" );
+	    MallHtml obj = htmlService.selectById( Integer.valueOf( id.toString() ) );
+	    request.setAttribute( "obj", obj );
+	    jsp = "mall/htmlmall/mall_h5/HtmlMall";
+	} catch ( Exception e ) {
+	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
+	    jsp = "error/404Two";
+	}
+	return jsp;
+    }
+
+    /**
+     * html5商城背景音乐
+     *
+     * @param request
+     * @param response
+     *
+     * @return
+     */
+    @RequestMapping( "/musicUrl" )
+    public String musicUrl( HttpServletRequest request, HttpServletResponse response ) {
+	request.setAttribute( "musicurl", request.getParameter( "musicurl" ) );
+	request.setAttribute( "musicname", request.getParameter( "musicname" ) );
+	request.setAttribute( "addres", request.getParameter( "addres" ) );
+	request.setAttribute( "player_style", request.getParameter( "player_style" ) );
+	request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
+
+	List< DictBean > playList = dictService.getDict( "1048" );//获取播放器样式
+	request.setAttribute( "playlist", playList );
+	return "/mall/htmlmall/musicUrl";
+
+    }
+
+    /**
+     * 页面保存
+     *
+     * @param request
+     * @param response
+     * @param obj
+     *
+     * @throws IOException
+     */
+    @RequestMapping( "/htmlSave" )
+    @SysLogAnnotation( description = "html5商城保存页面设计", op_function = "3" )
+    public void htmlSave( HttpServletRequest request, HttpServletResponse response, MallHtml obj ) throws IOException {
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
+	    htmlService.htmlSave( obj, user );
+	    map.put( "error", "0" );
+	} catch ( Exception e ) {
+	    map.put( "error", "1" );
+	    map.put( "message", "操作失败" );
+	    logger.error( "h5 商城保存页异常:" + e.getMessage() );
+	}
+	CommonUtil.write( response, map );
+    }
 
     /**
      * h5商城手机
