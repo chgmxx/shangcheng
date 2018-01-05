@@ -2,9 +2,11 @@ package com.gt.mall.service.web.purchase;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.purchase.PurchaseReceivables;
+import com.gt.mall.utils.PageUtil;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * <p>
@@ -64,4 +66,12 @@ public interface PurchaseReceivablesService extends BaseService<PurchaseReceivab
      */
     String addReceivables( HttpServletRequest request, Integer memberId, Integer orderId, Integer busId, String buyMode, Double money, Double fansCurrency, Double integral,
                     String coupon, String termId, Double discount );
+
+    /**
+     * 分页查询数据
+     *
+     * @param parms
+     * @return
+     */
+    PageUtil findList(Map<String, Object> parms);
 }

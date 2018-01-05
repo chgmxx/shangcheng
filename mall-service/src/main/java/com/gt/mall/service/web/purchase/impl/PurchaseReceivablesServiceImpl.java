@@ -13,6 +13,7 @@ import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.purchase.PurchaseReceivablesService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PageUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,11 +50,11 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
     @Autowired
     private PayOrderService        payOrderService;
     @Autowired
-    private PayService        payService;
-
+    private PayService             payService;
 
     /**
      * 使用手机端支付调用方法
+     *
      * @param memberId
      * @param busId
      * @param termId
@@ -66,12 +68,13 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
      * @param dvId
      * @param disCountdepict
      * @param judgeBrowser
+     *
      * @return
      * @throws Exception
      */
     @Override
-    public void aliCgPay( Integer memberId, Integer busId, String termId, Double money, Double discountmoney, Double fenbi, Integer jifen, Double discount,
-		    String paymentType, Integer orderId, Integer dvId, String disCountdepict,Integer judgeBrowser) throws Exception {
+    public void aliCgPay( Integer memberId, Integer busId, String termId, Double money, Double discountmoney, Double fenbi, Integer jifen, Double discount, String paymentType,
+		    Integer orderId, Integer dvId, String disCountdepict, Integer judgeBrowser ) throws Exception {
 	if ( CommonUtil.isEmpty( memberId ) || CommonUtil.isEmpty( money ) ) {
 	    throw new Exception();
 	}
@@ -102,21 +105,21 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    //receivables.setReceivablesNumber( receivablesNumber );
 	    //purchaseReceivablesDAO.updateById( receivables );
 	    //}
-	    SubQrPayParams subQrPayParams=new SubQrPayParams();
-	    subQrPayParams.setAppidType(0);
-	    subQrPayParams.setBusId(busId);
-	    subQrPayParams.setDesc("对外报价订单支付");
-	    subQrPayParams.setIsreturn(1);
-	    subQrPayParams.setIsSendMessage(0);
-	    subQrPayParams.setMemberId(memberId);
-	    subQrPayParams.setModel(35);
-	    subQrPayParams.setNotifyUrl(PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/payBackMethod.do");
-	    subQrPayParams.setOrderNum(receivablesNumber);
-	    subQrPayParams.setPayWay(judgeBrowser);
-	    subQrPayParams.setReturnUrl(PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/findOrder.do?orderId=" + orderId);
-	    subQrPayParams.setSourceType(1);
-	    subQrPayParams.setTotalFee(discountmoney);
-	    payService.payapi(subQrPayParams);
+	    SubQrPayParams subQrPayParams = new SubQrPayParams();
+	    subQrPayParams.setAppidType( 0 );
+	    subQrPayParams.setBusId( busId );
+	    subQrPayParams.setDesc( "对外报价订单支付" );
+	    subQrPayParams.setIsreturn( 1 );
+	    subQrPayParams.setIsSendMessage( 0 );
+	    subQrPayParams.setMemberId( memberId );
+	    subQrPayParams.setModel( 35 );
+	    subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/payBackMethod.do" );
+	    subQrPayParams.setOrderNum( receivablesNumber );
+	    subQrPayParams.setPayWay( judgeBrowser );
+	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/findOrder.do?orderId=" + orderId );
+	    subQrPayParams.setSourceType( 1 );
+	    subQrPayParams.setTotalFee( discountmoney );
+	    payService.payapi( subQrPayParams );
 
 	} catch ( Exception e ) {
 	    throw new Exception();
@@ -125,7 +128,9 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 
     /**
      * 支付回调方法
+     *
      * @param receivablesNumber
+     *
      * @throws Exception
      */
     @Override
@@ -157,28 +162,27 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    order.setMemberId( receivable.getMemberId() );
 	    purchaseOrderDAO.updateById( order );
 	}
-	if (order.getOrderType().equals("1")) {
+	if ( order.getOrderType().equals( "1" ) ) {
 	    //查询分期
-	    List<Map<String, Object>> termList = purchaseTermDAO.findTermList(order.getId());
-	    for (int i = 0; i < termList.size(); i++) {
-		PurchaseTerm term = (PurchaseTerm) termList.get(i);
-		if (term.getTermBuy().equals("0")) {
+	    List< Map< String,Object > > termList = purchaseTermDAO.findTermList( order.getId() );
+	    for ( int i = 0; i < termList.size(); i++ ) {
+		PurchaseTerm term = (PurchaseTerm) termList.get( i );
+		if ( term.getTermBuy().equals( "0" ) ) {
 		    break;
 		}
-		if(i==termList.size()-1){
-		    PurchaseOrder orderEntity=new PurchaseOrder();
-		    orderEntity.setId(order.getId());
-		    orderEntity.setOrderStatus("3");
-		    purchaseOrderDAO.updateById(orderEntity);
+		if ( i == termList.size() - 1 ) {
+		    PurchaseOrder orderEntity = new PurchaseOrder();
+		    orderEntity.setId( order.getId() );
+		    orderEntity.setOrderStatus( "3" );
+		    purchaseOrderDAO.updateById( orderEntity );
 		}
 	    }
-	}
-	else {
-	    if(!receivable.getBuyMode().equals("4")){
-		PurchaseOrder orderEntity=new PurchaseOrder();
-		orderEntity.setId(order.getId());
-		orderEntity.setOrderStatus("3");
-		purchaseOrderDAO.updateById(orderEntity);
+	} else {
+	    if ( !receivable.getBuyMode().equals( "4" ) ) {
+		PurchaseOrder orderEntity = new PurchaseOrder();
+		orderEntity.setId( order.getId() );
+		orderEntity.setOrderStatus( "3" );
+		purchaseOrderDAO.updateById( orderEntity );
 	    }
 
 	}
@@ -212,7 +216,7 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 	    receivables.setDiscount( discount );
 	    receivables.setFansCorrency( fansCurrency );
 	    receivables.setHaveTerm( termId == null || termId.equals( "" ) ? "0" : "1" );
-	    receivables.setIntegral(integral);
+	    receivables.setIntegral( integral );
 	    receivables.setMemberId( memberId );
 	    receivables.setMoney( money );
 	    receivables.setReceivablesNumber( "CG" + System.currentTimeMillis() );
@@ -228,8 +232,37 @@ public class PurchaseReceivablesServiceImpl extends BaseServiceImpl< PurchaseRec
 		term.setTermBuy( "1" );
 		purchaseTermDAO.updateById( term );
 	    }
-	    updateUserConsume(receivables);
+	    updateUserConsume( receivables );
 	    return receivables.getReceivablesNumber();
+	} catch ( Exception e ) {
+	    e.printStackTrace();
+	    return null;
+	}
+    }
+
+    /**
+     * 分页查询数据
+     *
+     * @param parms
+     *
+     * @return
+     */
+    @Override
+    public PageUtil findList( Map< String,Object > parms ) {
+	try {
+	    int pageSize = 10;
+	    int count = 0;
+	    List< Map< String,Object > > map = new ArrayList< Map< String,Object > >();
+	    int curPage = CommonUtil.isEmpty( parms.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( parms.get( "curPage" ) );
+	    count = purchaseReceivablesDAO.findListCount( parms );
+	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	    parms.put( "pageFirst", ( page.getCurPage() - 1 ) * 10 );
+	    parms.put( "pageLast", 10 );
+	    if ( count > 0 ) {
+		map = purchaseReceivablesDAO.findList( parms );
+	    }
+	    page.setSubList( map );
+	    return page;
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    return null;
