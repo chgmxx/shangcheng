@@ -18,7 +18,7 @@ function go_back(){
 //素材库回调方法
 function image(id,url){
 	layer.closeAll();
-	debugger;
+	// debugger;
 	if(url!=null&&url!=""&&url!=undefined){
 		$("#imageurlst").val(url);
 		
@@ -59,7 +59,7 @@ function music(){
 		        shift : 1,
 		        maxmin: false,
 		        area: ['500px', '420px'],//定义宽、高
-		        content: '/mallhtml/musicUrl.do?musicurl='+musicurl+"&musicname="+musicname+"&addres="+addres+"&player_style="+player_style,
+		        content: '/mallhtml/E9lM9uM4ct/musicUrl.do?musicurl='+musicurl+"&musicname="+musicname+"&addres="+addres+"&player_style="+player_style,
 		        yes : function(index){
 		            layer.close(index);
 		        },

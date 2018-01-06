@@ -17,14 +17,12 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.html.MallHtmlFromService;
 import com.gt.mall.service.web.html.MallHtmlReportService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.DateTimeKit;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,7 +66,7 @@ public class MallHtmlController extends BaseController {
      *
      * @return
      */
-    @RequestMapping( "/updateHtml" )
+    @RequestMapping( "/E9lM9uM4ct/updateHtml" )
     public String updateHtml( HttpServletRequest request, HttpServletResponse response ) {
 	String jsp = "";
 	try {
@@ -91,7 +89,7 @@ public class MallHtmlController extends BaseController {
      *
      * @return
      */
-    @RequestMapping( "/musicUrl" )
+    @RequestMapping( "/E9lM9uM4ct/musicUrl" )
     public String musicUrl( HttpServletRequest request, HttpServletResponse response ) {
 	request.setAttribute( "musicurl", request.getParameter( "musicurl" ) );
 	request.setAttribute( "musicname", request.getParameter( "musicname" ) );
@@ -114,7 +112,7 @@ public class MallHtmlController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "/htmlSave" )
+    @RequestMapping( "/E9lM9uM4ct/htmlSave" )
     @SysLogAnnotation( description = "html5商城保存页面设计", op_function = "3" )
     public void htmlSave( HttpServletRequest request, HttpServletResponse response, MallHtml obj ) throws IOException {
 	Map< String,Object > map = new HashMap< String,Object >();
@@ -128,6 +126,24 @@ public class MallHtmlController extends BaseController {
 	    logger.error( "h5 商城保存页异常:" + e.getMessage() );
 	}
 	CommonUtil.write( response, map );
+    }
+
+    /**
+     * h5商城二维码预览
+     *
+     * @param request
+     * @param response
+     *
+     * @return
+     */
+    @RequestMapping( "/E9lM9uM4ct/ylcodeurl" )
+    public String htmlimage( HttpServletRequest request, HttpServletResponse response ) {
+	String id = request.getParameter( "id" ).toString();
+	String url = "mallhtml/" + id + "/79B4DE7C/phoneHtml.do";
+	request.setAttribute( "url", url );
+	request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
+	return "/mall/htmlmall/ylcodeurl";
+
     }
 
     /**
@@ -149,11 +165,11 @@ public class MallHtmlController extends BaseController {
 	} catch ( BusinessException be ) {
 	    request.setAttribute( "guoqiError", 1 );
 	}
+	Integer style = 1;//0代表是微信有公主号，1没有
 	//举报关闭该页面
 	if ( obj.getReportstate() == 1 ) {
 	    jsp = "error/ban";
 	} else {
-	    Integer style = 1;//0代表是微信有公主号，1没有
 	    String ua = ( (HttpServletRequest) request ).getHeader( "user-agent" ).toLowerCase();
 	    if ( ua.indexOf( "micromessenger" ) > 0 ) {// 是否来自于微信浏览器打开
 		//来自于商家这边
@@ -166,11 +182,11 @@ public class MallHtmlController extends BaseController {
 		    }
 		}
 	    }
-	    String http = PropertiesUtil.getResourceUrl();
-	    request.setAttribute( "style", style );
-	    request.setAttribute( "msg", obj );
-	    request.setAttribute( "http", http );
 	}
+	request.setAttribute( "style", style );
+	String http = PropertiesUtil.getResourceUrl();
+	request.setAttribute( "msg", obj );
+	request.setAttribute( "http", http );
 	return "/mall/htmlmall/phone/phonehtml";
 
     }
