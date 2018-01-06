@@ -228,7 +228,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	    map.put( "busId", busId );
 	    String returnStr = userLogin( request, response, map );
 	    if ( CommonUtil.isNotEmpty( returnStr ) ) {
-		return returnStr;
+		return "redirect:"+returnStr;
 	    }
 	    //判断是否存在合同 ,如果有合同跳转合同页面待用户确认
 	    if ( request.getParameter( "haveContract" ) != null && request.getParameter( "haveContract" ).toString().equals( "0" ) ) {
@@ -346,10 +346,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	map.put( "busId", busId );
 	String returnStr = userLogin( request, response, map );
 	if ( CommonUtil.isNotEmpty( returnStr ) ) {
-	    return returnStr;
-	}
-	if ( CommonUtil.isNotEmpty( returnStr ) ) {
-	    return returnStr;
+	    return "redirect:"+returnStr;
 	}
 	PurchaseOrder order = orderService.selectById( Integer.parseInt( request.getParameter( "orderId" ) ) );
 	request.setAttribute( "orderId", order.getId() );
@@ -596,7 +593,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 		map.put( "busId", busId );
 		String returnStr = userLogin( request, response, map );
 		if ( CommonUtil.isNotEmpty( returnStr ) ) {
-		    return returnStr;
+		    return "redirect:"+returnStr;
 		}
 		request.setAttribute( "payType", 1 );
 	    }
