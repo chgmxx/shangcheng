@@ -306,7 +306,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	} else if ( firstOrder.getOrderPayWay() == 4 ) {
 	    returnUrlType = 3;
 	}
-	if ( totalOrderMoney > 0 && ( firstOrder.getOrderPayWay() == 1 || firstOrder.getOrderPayWay() == 9 ) ) {
+	if ( totalOrderMoney > 0 && ( firstOrder.getOrderPayWay() == 1 || firstOrder.getOrderPayWay() == 9 || firstOrder.getOrderPayWay() == 11 ) ) {
 	    returnUrlType = 4;
 	    String url = wxPayWay( totalOrderMoney, orderPNo, firstOrder, firstOrder.getOrderPayWay() );
 	    result.put( "url", url );
