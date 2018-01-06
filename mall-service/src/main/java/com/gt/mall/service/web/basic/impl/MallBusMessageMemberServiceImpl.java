@@ -157,7 +157,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			    template.setId( id );
 			    template.setUrl( url );
 			    template.setMemberId( busMessageMember.getMemberId() );
-			    template.setPublicId( busMessageMember.getPublicId() );
+			    template.setPublicId( CommonUtil.toInteger( PropertiesUtil.getDuofenPublicId() ) );
 			    template.setObjs( objs );
 
 			    wxPublicUserService.sendWxMsgTemplate( template );
@@ -216,7 +216,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			    template.setId( id );
 			    template.setUrl( url );
 			    template.setMemberId( busMessageMember.getMemberId() );
-			    template.setPublicId( busMessageMember.getPublicId() );
+			    template.setPublicId( CommonUtil.toInteger( PropertiesUtil.getDuofenPublicId() ) );
 			    template.setObjs( objs );
 			    wxPublicUserService.sendWxMsgTemplate( template );
 			}
@@ -284,7 +284,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			    template.setId( id );
 			    template.setUrl( url );
 			    template.setMemberId( busMessageMember.getMemberId() );
-			    template.setPublicId( busMessageMember.getPublicId() );
+			    template.setPublicId( CommonUtil.toInteger( PropertiesUtil.getDuofenPublicId() ) );
 			    template.setObjs( objs );
 			    wxPublicUserService.sendWxMsgTemplate( template );
 			}

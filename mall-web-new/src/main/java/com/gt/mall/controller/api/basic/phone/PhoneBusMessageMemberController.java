@@ -77,8 +77,6 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	    wrapper.where( "is_delete =0 and member_id= {0}", member.getId() );
 	    MallBusMessageMember mallBusMessageMember = mallBusMessageMemberService.selectOne( wrapper );
 	    if ( mallBusMessageMember != null ) {
-		mallBusMessageMember.setCreateTime( new Date() );
-		mallBusMessageMember.setMemberId( member.getId() );
 		mallBusMessageMember.setNickName( member.getNickname() );
 		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
 		mallBusMessageMemberService.updateById( mallBusMessageMember );
@@ -86,7 +84,7 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 		mallBusMessageMember = new MallBusMessageMember();
 		mallBusMessageMember.setCreateTime( new Date() );
 		mallBusMessageMember.setMemberId( member.getId() );
-		mallBusMessageMember.setPublicId( CommonUtil.toInteger( PropertiesUtil.getDuofenPublicId() ) );
+		mallBusMessageMember.setPublicId( member.getPublicId() );
 		mallBusMessageMember.setNickName( member.getNickname() );
 		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
 		mallBusMessageMember.setBusId( member.getBusid() );
