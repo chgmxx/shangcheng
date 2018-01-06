@@ -267,6 +267,12 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    net.sf.json.JSONObject objs = new net.sf.json.JSONObject();
 	    String times = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    objs.put( "times", times );
+	    MallPaySet paySet = mallPaySetService.selectByUserId( orderList.get( 0 ).getBusUserId() );
+	    if ( paySet != null ) {
+		if ( CommonUtil.isNotEmpty( paySet.getOrderCancel() ) ) {
+		    objs.put( "orderCancel", paySet.getOrderCancel() );
+		}
+	    }
 	    objs.put( "orderId", orderPId );
 	    JedisUtil.map( key, orderPId + "", objs.toString() );
 	}
@@ -300,7 +306,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	} else if ( firstOrder.getOrderPayWay() == 4 ) {
 	    returnUrlType = 3;
 	}
-	if ( totalOrderMoney > 0 && ( firstOrder.getOrderPayWay() == 1 || firstOrder.getOrderPayWay() == 9 ) ) {
+	if ( totalOrderMoney > 0 && ( firstOrder.getOrderPayWay() == 1 || firstOrder.getOrderPayWay() == 9 || firstOrder.getOrderPayWay() == 11 ) ) {
 	    returnUrlType = 4;
 	    String url = wxPayWay( totalOrderMoney, orderPNo, firstOrder, firstOrder.getOrderPayWay() );
 	    result.put( "url", url );
@@ -339,15 +345,18 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
 	if ( orderPayWay <= 0 ) {
 	    orderPayWay = 1;
 	    if ( order.getOrderPayWay() == 9 ) {
 		orderPayWay = 2;
 	    }
-	    if ( CommonUtil.isNotEmpty( order.getIsWallet() ) && order.getIsWallet() == 1 ) {
+	    if ( order.getOrderPayWay() == 11 ) {//多粉钱包支付
 		orderPayWay = 3;
 	    }
+	    /*if ( CommonUtil.isNotEmpty( order.getIsWallet() ) && order.getIsWallet() == 1 ) {
+		orderPayWay = 3;
+	    }*/
 	}
 
 	subQrPayParams.setPayWay( orderPayWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
@@ -722,9 +731,10 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		phoneOrderUserDTO.setPublicId( busResult.getPublicId() );
 		phoneOrderUserDTO.setBusId( busResult.getBusId() );
 		orderUserDTOList.add( phoneOrderUserDTO );
-		PayWay payWay = payService.getPayWay( busResult.getBusId() );
-		payWayList.add( payWay );
+
 	    }
+	    PayWay payWay = payService.getPayWay( busUserList.get( 0 ) );
+	    payWayList.add( payWay );
 	    //获取商家的支付方式
 	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil.getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type, payWayList );
 	    result.setPayWayList( wayResultList );

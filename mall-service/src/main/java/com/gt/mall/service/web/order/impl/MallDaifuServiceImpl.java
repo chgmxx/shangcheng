@@ -10,11 +10,13 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.result.phone.order.daifu.PhoneGetDaiFuProductResult;
 import com.gt.mall.result.phone.order.daifu.PhoneGetDaiFuResult;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.web.order.MallDaifuService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
+import com.gt.util.entity.param.pay.PayWay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,8 @@ public class MallDaifuServiceImpl extends BaseServiceImpl< MallDaifuDAO,MallDaif
     private MallOrderService       mallOrderService;
     @Autowired
     private MallOrderDetailService mallOrderDetailService;
+    @Autowired
+    private PayService             payService;
 
     @Override
     public MallDaifu selectByDfOrderNo( String dfOrderNo ) {
@@ -82,10 +86,15 @@ public class MallDaifuServiceImpl extends BaseServiceImpl< MallDaifuDAO,MallDaif
 	    daiFuResult.setTimes( times );
 	}
 	if ( mallOrder.getOrderStatus() == 1 && times > 0 ) {
-	    if ( browerType == 1 && CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) && member.getPublicId() > 0 ) {
-		daiFuResult.setIsShowWxPay( 1 );
-	    } else {
-		daiFuResult.setIsShowAliPay( 1 );
+	    PayWay payWay = payService.getPayWay( member.getBusid() );
+	    if ( CommonUtil.isNotEmpty( payWay ) ) {
+		if ( payWay.getDfpay() == 0 ) {
+		    daiFuResult.setIsShowDuofenPay( 1 );
+		} else if ( browerType == 1 && payWay.getWxpay() == 0 ) {
+		    daiFuResult.setIsShowWxPay( 1 );
+		} else if ( browerType != 1 && payWay.getAlipay() == 0 ) {
+		    daiFuResult.setIsShowAliPay( 1 );
+		}
 	    }
 	    daiFuResult.setIsShowDaifu( 1 );
 	}
