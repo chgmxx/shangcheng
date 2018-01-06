@@ -145,7 +145,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			List< Object > objs = new ArrayList<>();
 			objs.add( "您店铺有买家下单付款成功啦！" );
 			objs.add( order.getOrderNo() );
-			objs.add( order.getProductAllMoney() + "元" );
+			objs.add( order.getOrderMoney() + "元" );
 			objs.add( member.getNickname() );
 			objs.add( member.getPhone() );
 			objs.add( "请尽快登录后台处理订单！" );
