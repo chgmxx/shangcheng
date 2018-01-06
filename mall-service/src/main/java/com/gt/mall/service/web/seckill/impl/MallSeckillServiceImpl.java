@@ -659,7 +659,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	}
 	if ( invId > 0 ) {
 	    List< MallSeckillPrice > mallSeckillPrices = mallSeckillPriceService.selectPriceByInvId( seckillId, invId );
-	    if ( mallSeckillPrices != null && mallSeckillPrices.size() == 0 ) {
+	    if ( mallSeckillPrices != null && mallSeckillPrices.size() > 0 ) {
 		MallSeckillPrice buyPrice = mallSeckillPrices.get( 0 );
 		if ( buyPrice.getIsJoinGroup() == 0 ) {
 		    throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), ResponseEnums.INV_NO_JOIN_ERROR.getDesc() );
