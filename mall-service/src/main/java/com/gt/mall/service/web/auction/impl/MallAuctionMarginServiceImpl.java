@@ -280,8 +280,11 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/mAuction/margin.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;
-	if ( mallAuctionMargin.getPayWay() == 3 ) {
+	if ( mallAuctionMargin.getPayWay() == 3 ) {//支付宝支付
 	    payWay = 2;
+	}
+	if ( mallAuctionMargin.getPayWay() == 4 ) {
+	    payWay = 3;
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 

@@ -226,12 +226,18 @@ public class MallCommonServiceImpl implements MallCommonService {
 		    if ( deliverWayId == 1 && addressId == 0 && ( CommonUtil.isEmpty( productDTO.getProTypeId() ) || proTypeId == 0 ) ) {//1 快递配送
 			throw new BusinessException( ResponseEnums.NO_SELECT_SHOUHUO_ADDRESS.getCode(), ResponseEnums.NO_SELECT_SHOUHUO_ADDRESS.getDesc() );
 		    }
-		    //判断批发商品的库存是否足够，不够抛异常
-		    if ( CommonUtil.isNotEmpty( params.getOrderType() ) && params.getOrderType() == 7 && null != productDTO.getPfSpecResultList()
-				    && productDTO.getPfSpecResultList().size() > 0 ) {//判断批发商品的库存
+		    //以下是判断商品库存的
+		    if ( orderType == 7 && null != productDTO.getPfSpecResultList()
+				    && productDTO.getPfSpecResultList().size() > 0 ) { //判断批发商品的库存是否足够，不够抛异常
 			for ( PhoneOrderPifaSpecDTO pifaSpecDTO : productDTO.getPfSpecResultList() ) {
 			    mallProductService.calculateInventory( productDTO.getProductId(), pifaSpecDTO.getSpecificaIds(), pifaSpecDTO.getTotalNum(), member.getId() );
 			}
+		    } else if ( orderType == 4 ) {//拍卖判断库存  ，超过了库存会抛异常
+			mallAuctionService.isMaxNum( productDTO.getActivityId(), member.getId().toString() );
+		    } else if ( orderType == 6 ) {//商品预售  ，超过了库存会抛异常
+			mallPresaleService.isMaxNum( productDTO.getActivityId(), member.getId().toString(), productDTO.getProductSpecificaValue(), productDTO.getProductNum() );
+		    } else if ( orderType == 3 ) {//秒杀  ，超过了库存会抛异常
+			mallSeckillService.isInvNum( productDTO.getActivityId(), productDTO.getProductSpecificaValue(), productDTO.getProductNum() );
 		    } else {//判断普通商品的库存是否足够，不够抛异常
 			mallProductService.calculateInventory( productDTO.getProductId(), productDTO.getProductSpecificaValue(), productDTO.getProductNum(), member.getId() );
 		    }
@@ -247,15 +253,6 @@ public class MallCommonServiceImpl implements MallCommonService {
 				}
 			    }
 			}
-		    }
-
-		    //拍卖商品 和预售商品 以及秒杀商品 判断库存   ，超过了库存会抛异常
-		    if ( orderType == 4 ) {
-			mallAuctionService.isMaxNum( productDTO.getActivityId(), member.getId().toString() );
-		    } else if ( orderType == 6 ) {//商品预售
-			mallPresaleService.isMaxNum( productDTO.getActivityId(), member.getId().toString(), productDTO.getProductSpecificaValue(), productDTO.getProductNum() );
-		    } else if ( orderType == 3 ) {
-			mallSeckillService.isInvNum( productDTO.getActivityId(), productDTO.getProductSpecificaValue(), productDTO.getProductNum() );
 		    }
 
 		    if ( "4".equals( product.getProTypeId().toString() ) && CommonUtil.isEmpty( params.getFlowPhone() ) ) {

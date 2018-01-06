@@ -186,7 +186,7 @@
         p.check_reason as checkReason,p.shop_id as shopId, p.is_specifica as isSpecifica, p.is_platform_check as isPlatFormCheck,p.user_id as userId
         from t_mall_product p
         where p.is_delete=0 and p.is_mall_show=0
-        and check_status =1  and is_platform_check = 0
+        and is_platform_check = 0
         <if test="userIds != null">
             and p.user_id in
             <foreach collection="userIds" item="id" index="index"

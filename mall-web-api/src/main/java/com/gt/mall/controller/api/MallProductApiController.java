@@ -57,13 +57,13 @@ public class MallProductApiController {
     @Autowired
     private MallImageAssociativeService mallImageAssociativeService;//图片业务处理类
 
-    @ApiOperation( value = "待审核商品的接口", notes = "获取所有商家待审核的商品" )
+    @ApiOperation( value = "商品列表的接口", notes = "获取所有商家所有商品列表" )
     //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
     //		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
     //		    @ApiImplicitParam( name = "userIds", value = "商城用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
-    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+    @RequestMapping( value = "/list", method = RequestMethod.POST )
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    //	    Map< String,Object > params = new HashMap<>();
