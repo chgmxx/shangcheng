@@ -153,8 +153,10 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 			retainage = 0.0;
 		    }
 		}
+
 		//查询收款
 		List< Map< String,Object > > receivablesList = receivablesDAO.findReceivablesList( order.getId() );
+		request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
 		request.setAttribute( "order", order );
 		request.setAttribute( "stage", stage );
 		request.setAttribute( "nowMoney", nowMoney );
