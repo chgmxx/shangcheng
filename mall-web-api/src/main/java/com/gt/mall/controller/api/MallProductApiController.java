@@ -3,9 +3,9 @@ package com.gt.mall.controller.api;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
@@ -17,19 +17,18 @@ import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +52,11 @@ public class MallProductApiController {
     @Autowired
     private MallProductSpecificaService productSpecificaService;
     @Autowired
-    private MallProductInventoryService productInventoryService;
+    private MallProductInventoryService mallProductInventoryService;
     @Autowired
     private MallImageAssociativeService mallImageAssociativeService;//图片业务处理类
+    @Autowired
+    private MallProductDAO              mallProductDAO;
 
     @ApiOperation( value = "商品列表的接口", notes = "获取所有商家所有商品列表" )
     //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
@@ -150,10 +151,10 @@ public class MallProductApiController {
     @ApiOperation( value = "修改商品库存(秒杀订单)", notes = "MQ调用-修改商品库存(秒杀订单)" )
     @ResponseBody
     @RequestMapping( value = "/upProInvNumBySeckill", method = RequestMethod.POST )
-    public ServerResponse upProInvNumBySeckill( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    public ServerResponse upProInvNumBySeckill( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	//params  四个参数 (db 数据源, productId , productNum, proSpecificas)
 	try {
-	    String dbName = CommonUtil.toString( params.get( "db" ) );
+	    logger.error( "异常：" + params );
 	    String proSpecificas = "";
 	    String proId = params.get( "productId" ).toString();
 	    Integer productNum = 0;
@@ -171,30 +172,20 @@ public class MallProductApiController {
 	    Map< String,Object > proMap = mallProductService.selectMap( groupWrapper );
 
 	    if ( proMap != null ) {
-		int invNum = Integer.parseInt( proMap.get( "pro_stock_total" ).toString() );//库存
-		int saleNum = 0;//销量
 		int isSpec = 0;//是否有规格
-		if ( CommonUtil.isNotEmpty( proMap.get( "pro_sale_total" ) ) ) {
-		    saleNum = Integer.parseInt( proMap.get( "pro_sale_total" ).toString() );
-		}
 		if ( CommonUtil.isNotEmpty( proMap.get( "is_specifica" ) ) ) {
 		    isSpec = Integer.parseInt( proMap.get( "is_specifica" ).toString() );
 		}
-		invNum = invNum - productNum;
-		saleNum = saleNum + productNum;
-		/*String upSql = "update t_mall_product set pro_stock_total=" + invNum + ",pro_sale_total=" + saleNum + " where id=" + proId;*/
-		MallProduct mallProduct = new MallProduct();
-		mallProduct.setId( CommonUtil.toInteger( proId ) );
-		mallProduct.setProStockTotal( invNum );
-		mallProduct.setProSaleTotal( saleNum );
-		mallProductService.updateById( mallProduct );
-
+		Map< String,Object > productParams = new HashMap<>();
+		productParams.put( "type", 2 );
+		productParams.put( "product_id", proId );
+		productParams.put( "pro_num", productNum );
+		mallProductDAO.updateProductStock( productParams );
 		if ( isSpec == 1 ) {//该商品存在规格
 		    String specIds = "";
 		    //获取规格的库存和销售额
 		    for ( String str : proSpecificas.split( "," ) ) {
 			if ( str != null && !str.equals( "" ) ) {
-			  /*  String sql = "select id from t_mall_product_specifica where product_id = " + proId + " and is_delete = 0 and specifica_value_id=" + str;*/
 			    Wrapper< MallProductSpecifica > wrapper = new EntityWrapper<>();
 			    wrapper.setSqlSelect( "id" );
 			    wrapper.where( "product_id={0} and is_delete = 0 and specifica_value_id= {1}", proId, str );
@@ -209,32 +200,10 @@ public class MallProductApiController {
 			    }
 			}
 		    }
-
-		    Wrapper proWrapper = new EntityWrapper();
-		    proWrapper.setSqlSelect( "id,inv_num,inv_sale_num " );
-		    proWrapper.where( "product_id = {0} and is_delete = 0 and specifica_ids = {1}", proId, specIds );
-		    Map< String,Object > invMap = productInventoryService.selectMap( proWrapper );
-
-		    if ( invMap != null ) {
-			int invStockNum = 0;//库存
-			if ( CommonUtil.isNotEmpty( invMap.get( "inv_num" ) ) ) {
-			    invStockNum = CommonUtil.toInteger( invMap.get( "inv_num" ).toString() );
-			}
-			int invSaleNum = 0;//销量
-			if ( CommonUtil.isNotEmpty( invMap.get( "inv_sale_num" ) ) ) {
-			    invSaleNum = CommonUtil.toInteger( invMap.get( "inv_sale_num" ).toString() );
-			}
-			int invId = CommonUtil.toInteger( invMap.get( "id" ) );
-			invStockNum = invStockNum - productNum;
-			invSaleNum = invSaleNum + productNum;
-
-			MallProductInventory inventory = new MallProductInventory();
-			inventory.setId( invId );
-			inventory.setInvNum( invStockNum );
-			inventory.setInvSaleNum( invSaleNum );
-			productInventoryService.updateById( inventory );
-
-		    }
+		    proMap.put( "proId", proId );
+		    proMap.put( "specificaIds", specIds );
+		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );//根据商品规格id查询商品库存
+		    mallProductInventoryService.updateProductInventory( proInv, productNum, 2 );//修改规格的库存
 		}
 	    }
 	} catch ( Exception e ) {

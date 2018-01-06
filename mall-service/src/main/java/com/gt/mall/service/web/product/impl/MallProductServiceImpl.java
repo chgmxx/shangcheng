@@ -2360,8 +2360,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	Map< String,Object > proMap = new HashMap<>();
 	Integer total = ( pro.getProStockTotal() - detail.getDetProNum() );
 	Integer saleNum = ( pro.getProSaleTotal() + detail.getDetProNum() );
-	proMap.put( "total", total );
-	proMap.put( "saleNum", saleNum );
+//	proMap.put( "total", total );
+//	proMap.put( "saleNum", saleNum );
 	proMap.put( "proId", detail.getProductId() );
 	Map< String,Object > productParams = new HashMap<>();
 	productParams.put( "type", 2 );

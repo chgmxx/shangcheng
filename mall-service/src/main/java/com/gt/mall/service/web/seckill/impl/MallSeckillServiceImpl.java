@@ -2,9 +2,11 @@ package com.gt.mall.service.web.seckill.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.mq.MqBean;
 import com.gt.api.bean.session.BusUser;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.Member;
+import com.gt.api.util.MqUtils;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.seckill.MallSeckillJoinDAO;
@@ -539,7 +541,14 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
 		try {
 		    logger.info( "mq参数：" + obj );
-		    socketService.mqSendMessage( obj.toString() );
+		    List< MqBean > mqBeanList = new ArrayList<>();
+		    MqBean mqBean = new MqBean();
+		    mqBean.setMqIp( PropertiesUtil.getMqIp() );
+		    mqBean.setPort( CommonUtil.toInteger( PropertiesUtil.getMqPort() ) );
+		    mqBeanList.add( mqBean );
+		    MqUtils mq = new MqUtils( mqBeanList, PropertiesUtil.getMqUser(), PropertiesUtil.getMqPassWord() );
+		    mq.MqMessage( PropertiesUtil.getMqSeckillExchange(), PropertiesUtil.getMqSeckillQueueName(), obj.toString() );
+		    //		    socketService.mqSendMessage( obj.toString() );
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		}
