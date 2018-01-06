@@ -64,6 +64,9 @@ public class MallStoreCertificationApiController extends BaseController {
 	    Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
 
 	    //	    params.put( "checkStatus", "0" );
+	    if ( CommonUtil.isNotEmpty( params.get( "checkStatus" ) ) ) {
+		params.put( "checkStatus", params.get( "checkStatus" ).toString() );
+	    }
 	    if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
 		params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
 	    }
