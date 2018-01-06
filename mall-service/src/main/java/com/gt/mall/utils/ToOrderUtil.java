@@ -99,10 +99,10 @@ public class ToOrderUtil {
 		}
 	    }
 	}
-	if ( isHaveAlipay == 1 && isOpenDanbao == 1 ) {
+	/*if ( isHaveAlipay == 1 && isOpenDanbao == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 11, "多粉钱包支付", "duofenlogoyuanwenjian-" );
 	    phoneOrderWayList.add( result );
-	} else if ( browerType == 1 && isHaveWx == 1 ) {
+	} else*/ if ( browerType == 1 && isHaveWx == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
 	    phoneOrderWayList.add( result );
 	} else if ( browerType != 1 && isHaveAlipay == 1 ) {
