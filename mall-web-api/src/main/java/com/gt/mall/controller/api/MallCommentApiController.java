@@ -46,38 +46,36 @@ public class MallCommentApiController {
     @Autowired
     private MallStoreService   storeService;
 
-    @ApiOperation( value = "待审核评论的接口", notes = "获取所有商家待审核的评论" )
-//    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-//		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认10条", paramType = "query", required = false, dataType = "int" ),
-//		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
+    @ApiOperation( value = "商品评论列表的接口", notes = "获取所有订单评论列表" )
+    //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认10条", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
-    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+    @RequestMapping( value = "/list", method = RequestMethod.POST )
+    public ServerResponse list( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    //	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    //	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    logger.info( "接收到的参数：" + param );
 	    Map< String,Object > params = JSONObject.parseObject( param );
 	    //	    params.put( "curPage", curPage );
 	    //	    params.put( "pageSize", pageSize );
 	    //	    params.put( "shoplist", shoplist );
 	    //	    params.put( "userIds", userIds );
-	    params.put( "checkStatus", "0" );
+	    //	    params.put( "checkStatus", "0" );
 	    // 查询会员下面的评论
 	    PageUtil page = mallCommentService.selectCommentPage( params, null );
 	    result.put( "page", page );
 	} catch ( Exception e ) {
-	    logger.error( "待审核评论的接口异常：" + e.getMessage() );
+	    logger.error( "商品评论列表的接口异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取待审核评论列表异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商品评论列表异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     @ApiOperation( value = "评论审核", notes = "评论审核" )
-//    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "评论ID", paramType = "query", required = true, dataType = "int" ),
-//		    @ApiImplicitParam( name = "status", value = "审核状态 -1审核失败 1审核成功", paramType = "query", required = true, dataType = "int" ) } )
+    //    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "评论ID", paramType = "query", required = true, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "status", value = "审核状态 -1审核失败 1审核成功", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/commentCheck", method = RequestMethod.POST )
     public ServerResponse commentCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {

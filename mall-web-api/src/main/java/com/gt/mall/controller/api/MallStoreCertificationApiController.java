@@ -52,8 +52,8 @@ public class MallStoreCertificationApiController extends BaseController {
     //		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
     //		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
-    @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
-    public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
+    @RequestMapping( value = "/certList", method = RequestMethod.POST )
+    public ServerResponse certList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    logger.info( "接收到的参数：" + param );
@@ -63,7 +63,7 @@ public class MallStoreCertificationApiController extends BaseController {
 	    Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	    Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
 
-	    params.put( "checkStatus", "0" );
+	    //	    params.put( "checkStatus", "0" );
 	    if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
 		params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
 	    }
@@ -79,10 +79,10 @@ public class MallStoreCertificationApiController extends BaseController {
 		if ( certList != null && certList.size() > 0 ) {
 		    List< DictBean > categoryMap = dictService.getDict( "K002" );
 		    for ( Map< String,Object > map : certList ) {
-			if ( CommonUtil.toInteger( map.get( "sto_type" ) ) == 1 ) {
+			if ( CommonUtil.toInteger( map.get( "stoType" ) ) == 1 ) {
 			    if ( categoryMap != null && categoryMap.size() > 0 ) {
 				for ( DictBean dictBean : categoryMap ) {
-				    if ( dictBean.getItem_key().toString().equals( map.get( "sto_category" ).toString() ) ) {
+				    if ( dictBean.getItem_key().toString().equals( map.get( "stoCategory" ).toString() ) ) {
 					String value = dictBean.getItem_value();
 					net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
 					map.put( "stoCategoryName", foorerObj.get( "title" ).toString() );
@@ -101,7 +101,7 @@ public class MallStoreCertificationApiController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "待审核店铺认证列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -155,7 +155,7 @@ public class MallStoreCertificationApiController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/certCheck", method = RequestMethod.POST )
     public ServerResponse certCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-//		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status
+	//		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status
 	try {
 	    logger.info( "接收到的参数：" + param );
 	    Map< String,Object > params = JSONObject.parseObject( param );
