@@ -22,6 +22,7 @@ import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
@@ -65,7 +66,11 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
     @Autowired
     private MallBusMessageMemberService mallBusMessageMemberService;
     @Autowired
+    private MallBusMessageMemberDAO     mallBusMessageMemberDAO;
+    @Autowired
     private MallStoreService            mallStoreService;
+    @Autowired
+    private MallPageService             mallPageService;
 
     /**
      * 获取选中的商家模板ID
@@ -98,10 +103,10 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
     }
 
     @Override
-    public MallBusMessageMember selectByPublicId( Integer publicId ) {
+    public List< MallBusMessageMember > selectByBusId( Integer busId ) {
 	Wrapper< MallBusMessageMember > wrapper = new EntityWrapper<>();
-	wrapper.where( "public_id = {0}", publicId );
-	return mallBusMessageMemberService.selectOne( wrapper );
+	wrapper.where( "bus_id = {0}", busId );
+	return mallBusMessageMemberDAO.selectList( wrapper );
     }
 
     @Override
@@ -133,27 +138,31 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 	    if ( type == 0 || type == 2 ) {//模板
 		Integer id = isOpenPaySetByBusMessage( busUser.getId(), Constants.BUS_TEMPLATE_LIST[0] );
 		if ( id > 0 ) {
-		    Member member = memberService.findMemberById( order.getBuyerUserId(), null );//买家
-		    Member sellerMember = memberService.findMemberById( order.getSellerUserId(), null );//商家
-		    MallBusMessageMember busMessageMember = selectByPublicId( sellerMember.getPublicId() );//商家
-		    List< Object > objs = new ArrayList<>();
-		    objs.add( "您店铺有买家下单付款成功啦！" );
-		    objs.add( order.getOrderNo() );
-		    objs.add( order.getProductAllMoney() + "元" );
-		    objs.add( member.getNickname() );
-		    objs.add( member.getPhone() );
-		    objs.add( "请尽快登录后台处理订单！" );
-		    String url = "";
+		    List< MallBusMessageMember > busMessageMemberList = selectByBusId( busUser.getId() );//商家
+		    if ( busMessageMemberList != null && busMessageMemberList.size() > 0 ) {
+			Member member = memberService.findMemberById( order.getBuyerUserId(), null );//买家
+			int pageId = mallPageService.getPageIdByShopId( order.getShopId() );
+			List< Object > objs = new ArrayList<>();
+			objs.add( "您店铺有买家下单付款成功啦！" );
+			objs.add( order.getOrderNo() );
+			objs.add( order.getProductAllMoney() + "元" );
+			objs.add( member.getNickname() );
+			objs.add( member.getPhone() );
+			objs.add( "请尽快登录后台处理订单！" );
+			logger.info( "发送消息模板参数：" + objs );
 
-		    SendWxMsgTemplate template = new SendWxMsgTemplate();
-		    template.setId( id );
-		    template.setUrl( url );
-		    template.setMemberId( busMessageMember.getMemberId() );
-		    template.setPublicId( busMessageMember.getPublicId() );
-		    template.setObjs( objs );
+			for ( MallBusMessageMember busMessageMember : busMessageMemberList ) {
+			    String url = PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + pageId;
+			    SendWxMsgTemplate template = new SendWxMsgTemplate();
+			    template.setId( id );
+			    template.setUrl( url );
+			    template.setMemberId( busMessageMember.getMemberId() );
+			    template.setPublicId( busMessageMember.getPublicId() );
+			    template.setObjs( objs );
 
-		    logger.info( "发送消息模板参数：" + objs );
-		    wxPublicUserService.sendWxMsgTemplate( template );
+			    wxPublicUserService.sendWxMsgTemplate( template );
+			}
+		    }
 		}
 	    }
 	}
@@ -163,7 +172,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
     public void buyerConfirmReceipt( Integer orderId, Integer type ) {
 	MallOrder order = mallOrderService.selectById( orderId );
 	if ( order != null ) {
-	    BusUser busUser = busUserService.selectById( order.getSellerUserId() );
+	    BusUser busUser = busUserService.selectById( order.getBusUserId() );
 	    String messages = "用户【" + busUser.getName() + "】成功购买您的商品，并确认收货成功，查看详情请登录商城后台。";
 	    if ( type == 0 || type == 1 ) {//短信
 		MallStore store = mallStoreService.selectById( order.getShopId() );
@@ -191,25 +200,27 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 	    if ( type == 0 || type == 2 ) {//模板
 		Integer id = isOpenPaySetByBusMessage( busUser.getId(), Constants.BUS_TEMPLATE_LIST[1] );
 		if ( id > 0 ) {
-		    Member sellerMember = memberService.findMemberById( order.getSellerUserId(), null );//商家
-		    MallBusMessageMember busMessageMember = selectByPublicId( sellerMember.getPublicId() );//商家
+		    List< MallBusMessageMember > busMessageMemberList = selectByBusId( order.getBusUserId() );//商家
+		    if ( busMessageMemberList != null && busMessageMemberList.size() > 0 ) {
+			int pageId = mallPageService.getPageIdByShopId( order.getShopId() );
+			List< Object > objs = new ArrayList<>();
+			objs.add( "买家已经确认收货" );
+			objs.add( order.getOrderNo() );
+			objs.add( DateTimeKit.format( order.getExpressTime(), "yyyy-MM-dd HH:mm:ss" ) );
+			objs.add( "详情请点击查看" );
+			logger.info( "发送消息模板参数：" + objs );
 
-		    List< Object > objs = new ArrayList<>();
-		    objs.add( "买家已经确认收货" );
-		    objs.add( order.getOrderNo() );
-		    objs.add( DateTimeKit.format( order.getExpressTime(), "yyyy-MM-dd HH:mm:ss" ) );
-		    objs.add( "详情请点击查看" );
-		    String url = "";
-
-		    SendWxMsgTemplate template = new SendWxMsgTemplate();
-		    template.setId( id );
-		    template.setUrl( url );
-		    template.setMemberId( busMessageMember.getMemberId() );
-		    template.setPublicId( busMessageMember.getPublicId() );
-		    template.setObjs( objs );
-
-		    logger.info( "发送消息模板参数：" + objs );
-		    wxPublicUserService.sendWxMsgTemplate( template );
+			for ( MallBusMessageMember busMessageMember : busMessageMemberList ) {
+			    String url = PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + pageId;
+			    SendWxMsgTemplate template = new SendWxMsgTemplate();
+			    template.setId( id );
+			    template.setUrl( url );
+			    template.setMemberId( busMessageMember.getMemberId() );
+			    template.setPublicId( busMessageMember.getPublicId() );
+			    template.setObjs( objs );
+			    wxPublicUserService.sendWxMsgTemplate( template );
+			}
+		    }
 		}
 	    }
 	}
@@ -247,36 +258,38 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 		Integer id = isOpenPaySetByBusMessage( busUser.getId(), Constants.BUS_TEMPLATE_LIST[2] );
 		if ( id > 0 ) {
 		    MallOrder order = mallOrderService.selectById( orderReturn.getOrderId() );
-		    List< MallOrderDetail > orderDetails = mallOrderDetailService.getOrderDetailList( orderReturn.getOrderId() );
-		    String proName = "";
-		    if ( orderDetails != null && orderDetails.size() > 0 ) {
-			for ( MallOrderDetail detail : orderDetails ) {
-			    if ( !proName.equals( "" ) ) {proName += ",";}
-			    proName += detail.getDetProName();
+		    List< MallBusMessageMember > busMessageMemberList = selectByBusId( order.getBusUserId() );//商家
+		    if ( busMessageMemberList != null && busMessageMemberList.size() > 0 ) {
+			List< MallOrderDetail > orderDetails = mallOrderDetailService.getOrderDetailList( orderReturn.getOrderId() );
+			String proName = "";
+			if ( orderDetails != null && orderDetails.size() > 0 ) {
+			    for ( MallOrderDetail detail : orderDetails ) {
+				if ( !proName.equals( "" ) ) {proName += ",";}
+				proName += detail.getDetProName();
+			    }
+			}
+			int pageId = mallPageService.getPageIdByShopId( order.getShopId() );
+			List< Object > objs = new ArrayList<>();
+			objs.add( "您的店铺有买家申请维权。" );
+			objs.add( order.getOrderNo() );
+			objs.add( proName );
+			objs.add( order.getReceiveName() );
+			objs.add( order.getReceivePhone() );
+			objs.add( orderReturn.getRetReason() );
+			objs.add( "请尽快到后台处理。" );
+			logger.info( "发送消息模板参数：" + objs );
+			for ( MallBusMessageMember busMessageMember : busMessageMemberList ) {
+			    String url = PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + pageId;
+			    SendWxMsgTemplate template = new SendWxMsgTemplate();
+			    template.setId( id );
+			    template.setUrl( url );
+			    template.setMemberId( busMessageMember.getMemberId() );
+			    template.setPublicId( busMessageMember.getPublicId() );
+			    template.setObjs( objs );
+			    wxPublicUserService.sendWxMsgTemplate( template );
 			}
 		    }
-		    Member sellerMember = memberService.findMemberById( order.getSellerUserId(), null );//商家
-		    MallBusMessageMember busMessageMember = selectByPublicId( sellerMember.getPublicId() );//商家
 
-		    List< Object > objs = new ArrayList<>();
-		    objs.add( "您的店铺有买家申请维权。" );
-		    objs.add( order.getOrderNo() );
-		    objs.add( proName );
-		    objs.add( order.getReceiveName() );
-		    objs.add( order.getReceivePhone() );
-		    objs.add( orderReturn.getRetReason() );
-		    objs.add( "请尽快到后台处理。" );
-		    String url = "";
-
-		    SendWxMsgTemplate template = new SendWxMsgTemplate();
-		    template.setId( id );
-		    template.setUrl( url );
-		    template.setMemberId( busMessageMember.getMemberId() );
-		    template.setPublicId( busMessageMember.getPublicId() );
-		    template.setObjs( objs );
-
-		    logger.info( "发送消息模板参数：" + objs );
-		    wxPublicUserService.sendWxMsgTemplate( template );
 		}
 	    }
 	}

@@ -12,6 +12,7 @@ import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -78,7 +79,6 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	    if ( mallBusMessageMember != null ) {
 		mallBusMessageMember.setCreateTime( new Date() );
 		mallBusMessageMember.setMemberId( member.getId() );
-		mallBusMessageMember.setPublicId( member.getPublicId() );
 		mallBusMessageMember.setNickName( member.getNickname() );
 		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
 		mallBusMessageMemberService.updateById( mallBusMessageMember );
@@ -86,7 +86,7 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 		mallBusMessageMember = new MallBusMessageMember();
 		mallBusMessageMember.setCreateTime( new Date() );
 		mallBusMessageMember.setMemberId( member.getId() );
-		mallBusMessageMember.setPublicId( member.getPublicId() );
+		mallBusMessageMember.setPublicId( CommonUtil.toInteger( PropertiesUtil.getDuofenPublicId() ) );
 		mallBusMessageMember.setNickName( member.getNickname() );
 		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
 		mallBusMessageMember.setBusId( member.getBusid() );

@@ -40,7 +40,7 @@ public class MallProductGroupServiceImpl extends BaseServiceImpl< MallProductGro
 	    for ( MallProductGroup mallProductGroup : groupList ) {
 		if ( defaultList != null ) {
 		    for ( MallProductGroup group : defaultList ) {
-			if ( group.getGroupId() == mallProductGroup.getGroupId() ) {
+			if ( group.getGroupId().equals( mallProductGroup.getGroupId() ) ) {
 			    mallProductGroup.setId( group.getId() );
 			    defaultList.remove( group );
 			    break;
@@ -57,7 +57,7 @@ public class MallProductGroupServiceImpl extends BaseServiceImpl< MallProductGro
 	    }
 	}
 
-	if ( defaultList !=null && defaultList.size()>0 ){
+	if ( defaultList != null && defaultList.size() > 0 ) {
 	    for ( MallProductGroup group : defaultList ) {
 		group.setIsDelete( 1 );
 		mallProductGroupDAO.updateById( group );

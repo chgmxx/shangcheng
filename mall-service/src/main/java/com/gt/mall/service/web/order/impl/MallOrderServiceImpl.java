@@ -490,13 +490,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	Object type = params.get( "type" );
 	Object status = params.get( "status" );
 	Object express = params.get( "express" );
-	if ( null != type && type.equals( "2" ) ) {//取消订单
+	if ( null != type && type.toString().equals( "2" ) ) {//取消订单
 	    if ( count == 1 ) {
 		params.put( "status", 5 );
 		count = mallOrderDAO.upOrderNoOrRemark( params );
 	    }
 	}
-	if ( null != status && status.equals( "4" ) ) {//确认收货
+	if ( null != status && status.toString().equals( "4" ) ) {//确认收货
 	    if ( count == 1 ) {
 		try {
 		    mallBusMessageMemberService.buyerConfirmReceipt( CommonUtil.toInteger( params.get( "orderId" ) ), 0 );
