@@ -228,8 +228,9 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	    map.put( "busId", busId );
 	    String returnStr = userLogin( request, response, map );
 	    if ( CommonUtil.isNotEmpty( returnStr ) ) {
-		return returnStr;
-	    }
+			request.setAttribute("returnUrl", returnStr);
+			return "mall/purchase/phone/authorizationBack";
+		}
 	    //判断是否存在合同 ,如果有合同跳转合同页面待用户确认
 	    if ( request.getParameter( "haveContract" ) != null && request.getParameter( "haveContract" ).toString().equals( "0" ) ) {
 		List< Map< String,Object > > contractListMap = contractOrderDAO.findContractOrderList( Integer.parseInt( request.getParameter( "orderId" ).toString() ) );
@@ -346,10 +347,8 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	map.put( "busId", busId );
 	String returnStr = userLogin( request, response, map );
 	if ( CommonUtil.isNotEmpty( returnStr ) ) {
-	    return returnStr;
-	}
-	if ( CommonUtil.isNotEmpty( returnStr ) ) {
-	    return returnStr;
+		request.setAttribute("returnUrl", returnStr);
+		return "mall/purchase/phone/authorizationBack";
 	}
 	PurchaseOrder order = orderService.selectById( Integer.parseInt( request.getParameter( "orderId" ) ) );
 	request.setAttribute( "orderId", order.getId() );
@@ -596,7 +595,8 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 		map.put( "busId", busId );
 		String returnStr = userLogin( request, response, map );
 		if ( CommonUtil.isNotEmpty( returnStr ) ) {
-		    return returnStr;
+			request.setAttribute("returnUrl", returnStr);
+			return "mall/purchase/phone/authorizationBack";
 		}
 		request.setAttribute( "payType", 1 );
 	    }
