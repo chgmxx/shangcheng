@@ -42,15 +42,16 @@ public class ToOrderUtil {
 		    Integer isStorePay, List< MallPaySet > mallPaySetList, int proTypeId, Integer type, List< PayWay > payWayList ) {
 	List< PhoneOrderWayDTO > phoneOrderWayList = new ArrayList<>();
 
-	int isHavePublic = 0;
-	int isHaveZhifuBao = 0;
+	int isHaveWx = -1;//是否有微信支付  1 有 0 没有
+	int isHaveAlipay = -1;//是否有支付宝支付  1 有 0 没有
+	int isHaveDuofen = -1;//是否有多粉支付  1 有 0 没有
 	int memberCtId = 0;
 	for ( PhoneOrderUserDTO orderUserDTO : userDTOList ) {
-	    if ( CommonUtil.isNotEmpty( orderUserDTO.getPublicId() ) && orderUserDTO.getPublicId() > 0 ) {
-		isHavePublic = 1;
-	    } else {
-		isHavePublic = 0;
-	    }
+	    //	    if ( CommonUtil.isNotEmpty( orderUserDTO.getPublicId() ) && orderUserDTO.getPublicId() > 0 ) {
+	    //		isHavePublic = 1;
+	    //	    } else {
+	    //		isHavePublic = 0;
+	    //	    }
 	    if ( CommonUtil.isNotEmpty( orderUserDTO.getMemberCtId() ) && orderUserDTO.getMemberCtId() > 0 ) {
 		memberCtId = orderUserDTO.getMemberCtId();
 	    } else {
@@ -58,20 +59,25 @@ public class ToOrderUtil {
 	    }
 	}
 	if ( payWayList != null && payWayList.size() > 0 ) {
-
+	    for ( int i = 0; i < payWayList.size(); i++ ) {
+		PayWay payWay = payWayList.get( i );
+		if ( isHaveWx != 0 ) {
+		    if ( CommonUtil.isNotEmpty( payWay.getWxpay() ) && payWay.getWxpay() == 0 ) {
+			isHaveWx = 1;
+		    } else {
+			isHaveWx = 0;
+		    }
+		}
+		if ( isHaveAlipay != 0 ) {
+		    if ( CommonUtil.isNotEmpty( payWay.getAlipay() ) && payWay.getAlipay() == 0 ) {
+			isHaveAlipay = 1;
+		    } else {
+			isHaveAlipay = 1;
+		    }
+		}
+	    }
 	}
-
-	if ( browerType == 1 && isHavePublic == 1 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
-	    phoneOrderWayList.add( result );
-	} else {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 9, "支付宝支付", "alipay" );
-	    phoneOrderWayList.add( result );
-	}
-	if ( memberCtId == 3 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "储值卡支付", "chuzhika" );
-	    phoneOrderWayList.add( result );
-	}
+	int isOpenDanbao = -1;
 	int isHuodao = 0;//是否显示货到付款
 	int isDaifu = 0;//是否允许代付
 	if ( mallPaySetList != null && mallPaySetList.size() > 0 ) {
@@ -86,7 +92,26 @@ public class ToOrderUtil {
 		} else {
 		    isDaifu = 0;
 		}
+		if ( CommonUtil.isNotEmpty( mallPaySet.getIsSecuritytrade() ) && mallPaySet.getIsSecuritytrade() == 1 ) {
+		    isOpenDanbao = 1;
+		} else {
+		    isOpenDanbao = 0;
+		}
 	    }
+	}
+	if ( isHaveAlipay == 1 && isOpenDanbao == 1 ) {
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 11, "多粉钱包支付", "duofenlogoyuanwenjian-" );
+	    phoneOrderWayList.add( result );
+	} else if ( browerType == 1 && isHaveWx == 1 ) {
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
+	    phoneOrderWayList.add( result );
+	} else if ( browerType != 1 && isHaveAlipay == 1 ) {
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 9, "支付宝支付", "alipay" );
+	    phoneOrderWayList.add( result );
+	}
+	if ( memberCtId == 3 ) {
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "储值卡支付", "chuzhika" );
+	    phoneOrderWayList.add( result );
 	}
 	if ( isHuodao == 1 && proTypeId == 0 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "货到付款", "huodaofukuan" );

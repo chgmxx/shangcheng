@@ -638,7 +638,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	//微信支付，支付宝支付，小程序支付  在支付时已经消息推送了
 	if ( CommonUtil.toDouble( order.getOrderMoney() ) > 0 && ( order.getOrderPayWay() != 1 && order.getOrderPayWay() != 9 && order.getOrderPayWay() != 10 ) ) {
-	    String url = PropertiesUtil.getHomeUrl() + "/html/back/views/order/index.html#/allOrder";
+	    String url = PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder";
 	    if ( CommonUtil.isNotEmpty( member.getBusid() ) ) {
 		try {
 		    Map< String,Object > socketParams = new HashMap<>();
