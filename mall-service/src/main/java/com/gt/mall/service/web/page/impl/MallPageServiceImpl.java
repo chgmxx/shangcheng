@@ -1657,25 +1657,29 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    return;
 	}
 	Wrapper< MallShopCart > wrapper = new EntityWrapper<>();
-	wrapper.setSqlSelect( "id,product_id,shop_id,product_specificas" );
-	wrapper.isNotNull( "user_id" );
+	wrapper.setSqlSelect( "id,product_id,shop_id,product_specificas,user_id,product_num" );
+	//	wrapper.isNotNull( "user_id" );
 	wrapper.in( "id", shoppCartIds.split( "," ) );
+	wrapper.where( "id", 0 );
 	List< Map< String,Object > > list = mallShopCartDAO.selectMaps( wrapper );
 	StringBuilder id = new StringBuilder();//购物车id
 	if ( list != null && list.size() > 0 ) {
-	    String[] ids = new String[] {};
+	    mallShopCartDAO.updateShopCarts( member.getId(), member.getBusid(), shoppCartIds.split( "," ) );
+	    List< Integer > ids = new ArrayList<>();
 	    String deletes = "";
 	    for ( Map< String,Object > map : list ) {
+		int product_num = CommonUtil.toInteger( map.get( "product_num" ) );
 		wrapper = new EntityWrapper<>();
-		wrapper.setSqlSelect( "id" );
+		wrapper.setSqlSelect( "id,product_num" );
 		wrapper.where( "product_id = {0} AND shop_id={1} AND product_specificas= {2} AND user_id={3}", map.get( "product_id" ), map.get( "shop_id" ),
 				map.get( "product_specificas" ), member.getId() );
 		List< Map< String,Object > > countList = mallShopCartDAO.selectMaps( wrapper );
 		if ( countList.size() > 0 ) {
+		    int num = CommonUtil.toInteger( countList.get( 0 ).get( "product_num" ) ) + product_num;
 		    //数量+1
 		    MallShopCart cart = new MallShopCart();
 		    cart.setId( CommonUtil.toInteger( countList.get( 0 ).get( "id" ) ) );
-		    cart.setProductNum( 1 );
+		    cart.setProductNum( num );
 		    mallShopCartDAO.updateByShopCart( cart );
 
 		    //记录id，删除多余记录
@@ -1684,24 +1688,16 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		    } else {
 			deletes += "," + map.get( "id" ).toString();
 		    }
-
-		} else {
-		    //记录id，变更用户
-		    ids[ids.length] = map.get( "id" ).toString();
 		}
 		id.append( map.get( "id" ).toString() ).append( "," );
-	    }
-	    if ( CommonUtil.isNotEmpty( ids ) && ids.length > 0 ) {
-		mallShopCartDAO.updateShopCarts( member.getId(), member.getBusid(), ids );
-
 	    }
 	    if ( !"".equals( deletes ) ) {
 		shoppingdelect( deletes, "", 1 );
 	    }
-	    if ( id != null && id.length() > 1 ) {
-		id = new StringBuilder( id.substring( 0, id.length() - 1 ) );
-		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, id.toString(), Constants.COOKIE_SHOP_CART_TIME );
-	    }
+	    //	    if ( id != null && id.length() > 1 ) {
+	    //		id = new StringBuilder( id.substring( 0, id.length() - 1 ) );
+	    //		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, id.toString(), Constants.COOKIE_SHOP_CART_TIME );
+	    //	    }
 	}
 
     }

@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
@@ -485,11 +484,11 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 	int count;
 	List< Map< String,Object > > cartList = mallShopCartDAO.selectByShopCart( mallShopCart );
-	Cookie cookie = CookieUtil.getCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
+	String cookieVales = CookieUtil.findCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    cartList = mallShopCartDAO.selectByShopCart( mallShopCart );
-	} else if ( cookie != null && cookie.getValue() != null ) {
-	    cartList = mallPageService.selectByShopCart( mallShopCart, cookie.getValue() );
+	} else if ( CommonUtil.isNotEmpty( cookieVales ) ) {
+	    cartList = mallPageService.selectByShopCart( mallShopCart, cookieVales );
 	}
 	if ( cartList != null && cartList.size() > 0 ) {
 	    Map< String,Object > map = cartList.get( 0 );
@@ -501,13 +500,11 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	} else {
 	    count = mallShopCartDAO.insert( mallShopCart );
 	}
-	if ( CommonUtil.isEmpty( member ) ) {
-	    String value = mallShopCart.getId().toString();
-	    if ( cookie != null && cookie.getValue() != null ) {
-		value = cookie.getValue() + "," + mallShopCart.getId();
-	    }
-	    CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, value, Constants.COOKIE_SHOP_CART_TIME );
+	String value = mallShopCart.getId().toString();
+	if ( CommonUtil.isNotEmpty( cookieVales ) ) {
+	    value = cookieVales + "," + mallShopCart.getId();
 	}
+	CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, value, Constants.COOKIE_SHOP_CART_TIME );
 	if ( count <= 0 ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
@@ -584,6 +581,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 
 	List< PhoneShopResult > shopResultList = new ArrayList<>();
 	List< PhoneShopResult > sxShopResultList = new ArrayList<>();
+	StringBuilder id = new StringBuilder();//购物车id
 	if ( shopList != null && shopList.size() > 0 ) {
 	    for ( Map< String,Object > shopMap : shopList ) {
 		int shopId = CommonUtil.toInteger( shopMap.get( "id" ) );
@@ -607,6 +605,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			    if ( result.getIsError() == 1 ) {
 				sxProductList.add( result );
 			    } else {
+				id.append( result.getId() ).append( "," );
 				productList.add( result );
 			    }
 			    removeList.add( result );
@@ -622,6 +621,10 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		if ( sxProductList != null && sxProductList.size() > 0 ) {
 		    sxShopResultList.add( getShopCartShopParams( shopId, shopMap.get( "sto_name" ).toString(), sxProductList ) );
 		}
+	    }
+	    if ( id != null && id.length() > 1 ) {
+		id = new StringBuilder( id.substring( 0, id.length() - 1 ) );
+		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, id.toString(), Constants.COOKIE_SHOP_CART_TIME );
 	    }
 	}
 	PhoneShopCartResult result = new PhoneShopCartResult();
@@ -772,9 +775,11 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 			cart.setPrimaryPrice( BigDecimal.valueOf( primaryPrice ) );
 			mallShopCartDAO.updateById( cart );
 		    }
-		    if ( productNum > stockNum ) {
+		    if ( productNum > stockNum && stockNum == 0 ) {
 			code = 0;
 			msg = "商品已售罄";
+		    } else if ( productNum > stockNum && stockNum > 0 ) {
+			productNum = stockNum;
 		    }
 		}
 		int pifaId = 0;
