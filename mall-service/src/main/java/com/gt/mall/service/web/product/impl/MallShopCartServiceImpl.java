@@ -500,13 +500,13 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	    count = mallShopCartDAO.updateByShopCart( mallShopCart );
 	} else {
 	    count = mallShopCartDAO.insert( mallShopCart );
-	    if ( CommonUtil.isEmpty( member ) ) {
-		String value = mallShopCart.getId().toString();
-		if ( cookie != null && cookie.getValue() != null ) {
-		    value = cookie.getValue() + "," + mallShopCart.getId();
-		}
-		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, value, Constants.COOKIE_SHOP_CART_TIME );
+	}
+	if ( CommonUtil.isEmpty( member ) ) {
+	    String value = mallShopCart.getId().toString();
+	    if ( cookie != null && cookie.getValue() != null ) {
+		value = cookie.getValue() + "," + mallShopCart.getId();
 	    }
+	    CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, value, Constants.COOKIE_SHOP_CART_TIME );
 	}
 	if ( count <= 0 ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
@@ -571,14 +571,14 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	//保存购物车返回值
 	List< PhoneShopCartListResult > resultList = new ArrayList<>();
 	PhoneShopCartListResult shopCartResult = new PhoneShopCartListResult();
-	shopCartResult.setBusId( member.getBusid() );
+	shopCartResult.setBusId( busId );
 	shopCartResult.setUserName( userName );
 	shopCartResult.setUserImageUrl( userHeadImage );
 
 	//保存失效购物车值
 	List< PhoneShopCartListResult > sxResultList = new ArrayList<>();
 	PhoneShopCartListResult sxShopCartResult = new PhoneShopCartListResult();
-	sxShopCartResult.setBusId( member.getBusid() );
+	sxShopCartResult.setBusId( busId );
 	sxShopCartResult.setUserName( userName );
 	sxShopCartResult.setUserImageUrl( userHeadImage );
 
