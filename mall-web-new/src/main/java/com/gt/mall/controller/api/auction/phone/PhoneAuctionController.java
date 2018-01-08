@@ -10,6 +10,7 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
+import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -23,6 +24,7 @@ import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionOfferService;
 import com.gt.mall.service.web.auction.MallAuctionService;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
@@ -58,27 +60,29 @@ import java.util.Map;
 public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 
     @Autowired
-    private MallAuctionService        auctionService;
+    private MallAuctionService          auctionService;
     @Autowired
-    private MallPageService           pageService;
+    private MallPageService             pageService;
     @Autowired
-    private MallAuctionMarginService  auctionMarginService;
+    private MallAuctionMarginService    auctionMarginService;
     @Autowired
-    private MallAuctionBiddingService auctionBiddingService;
+    private MallAuctionBiddingService   auctionBiddingService;
     @Autowired
-    private MallAuctionOfferDAO       auctionOfferDAO;
+    private MallAuctionOfferDAO         auctionOfferDAO;
     @Autowired
-    private MallAuctionBiddingDAO     auctionBiddingDAO;
+    private MallAuctionBiddingDAO       auctionBiddingDAO;
     @Autowired
-    private MallAuctionOfferService   auctionOfferService;
+    private MallAuctionOfferService     auctionOfferService;
     @Autowired
-    private MemberService             memberService;
+    private MemberService               memberService;
     @Autowired
-    private MallProductService        mallProductService;
+    private MallProductService          mallProductService;
     @Autowired
-    private CoreService               coreService;
+    private CoreService                 coreService;
     @Autowired
-    private PayService                payService;
+    private PayService                  payService;
+    @Autowired
+    private MallImageAssociativeService mallImageAssociativeService;
 
     /*交纳保证金接口*/
     @ApiOperation( value = "获取交纳保证金信息", notes = "获取交纳保证金信息" )
@@ -110,6 +114,11 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 
 	    //	    List imagelist = pageService.imageProductList( proId, 1 );//获取轮播图列表
 	    //	    result.put( "imagelist", imagelist.get( 0 ) );
+
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, proId );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		result.put( "imageObj", imageList.get( 0 ) );
+	    }
 
 	    String is_specifica = product.getIsSpecifica().toString();
 	    Map guige = new HashMap();
