@@ -34,6 +34,7 @@ import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
 import com.gt.mall.service.web.order.*;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
@@ -49,9 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 订单页面相关接口
@@ -88,6 +87,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     private MallDaifuService          mallDaifuService;//代付业务处理类
     @Autowired
     private MallOrderReturnLogService mallOrderReturnLogService;//订单退款日志处理类
+    @Autowired
+    private MallPageService           mallPageService;//页面业务处理类
 
     @ApiOperation( value = "立即购买接口", notes = "用户点击立即购买", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -163,6 +164,10 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    PhoneAddOrderDTO addOrderDTO = com.alibaba.fastjson.JSONObject.parseObject( params, PhoneAddOrderDTO.class );
 	    Map< String,Object > resultMap = mallOrderSubmitService.submitOrder( addOrderDTO, member, loginDTO.getBrowerType() );
 
+	    if ( CommonUtil.isNotEmpty( addOrderDTO.getShopCartIds() ) ) {
+		mallPageService.mergeShoppCart( member, request, response );
+	    }
+
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	} catch ( BusinessException e ) {
 	    logger.error( "提交订单的接口异常：" + e.getMessage() );
@@ -176,6 +181,26 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "提交订单失败" );
 	}
+    }
+
+    public static void main( String[] args ) {
+	String[] deleteStr = new String[] { "2", "5", "9" };
+	String cartIds = "1,2,4,5,8,9,0";
+	if ( deleteStr != null && deleteStr.length > 0 && CommonUtil.isNotEmpty( cartIds ) ) {
+	    cartIds = "," + cartIds + ",";
+	    for ( String deleteId : deleteStr ) {
+		if ( CommonUtil.isNotEmpty( deleteId ) ) {
+		    deleteId = "," + deleteId + ",";
+		    if ( cartIds.contains( deleteId ) ) {
+			String[] ids = cartIds.split( deleteId );
+			if ( ids.length == 2 ) {
+			    cartIds = ids[0] + "," + ids[1];
+			}
+		    }
+		}
+	    }
+	}
+	System.out.println( "cartStr = " + cartIds );
     }
 
     @ApiOperation( value = "查询上门自提时间的接口", notes = "根据上门自提id查询上门自提时间", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
