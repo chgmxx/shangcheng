@@ -531,7 +531,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	int isShowMargin = 0;
 	PhoneAuctionProductDetailResult auctionResult = new PhoneAuctionProductDetailResult();
 
-	List< MallAuctionMargin > marginList = null;
+	List< MallAuctionMargin > marginList = new ArrayList<>();
 	if ( CommonUtil.isNotEmpty( member ) ) {
 
 	    MallAuctionMargin margin = new MallAuctionMargin();
@@ -601,7 +601,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    auctionResult.setAucLowerPriceTime( auction.getAucLowerPriceTime() );//降价时间（每多少分钟）
 	    auctionResult.setAucLowerPrice( CommonUtil.toDouble( auction.getAucLowerPrice() ) );//降价金额（每多少分钟降价多少元）
 	    aucTypeVal = "降价拍卖";
-	    if ( marginList.size() > 0 && auction.getIsMargin() == 1 ) {
+	    if ( ( marginList.size() > 0 && auction.getIsMargin() == 1 ) || auction.getIsMargin() == 0 ) {
 		auctionResult.setIsLijiPai( 1 );
 	    }
 	} else {
