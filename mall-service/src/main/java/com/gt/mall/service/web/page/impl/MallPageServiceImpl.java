@@ -1648,7 +1648,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	return cardService.findDuofenCardByReceiveId( receiveId );
     }
 
-
     @Override
     public void mergeShoppCart( Member member, HttpServletRequest request, HttpServletResponse response ) {
 	//1.得到所有cookie中的商品
@@ -1669,7 +1668,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    for ( Map< String,Object > map : list ) {
 		wrapper = new EntityWrapper<>();
 		wrapper.setSqlSelect( "id" );
-		wrapper.where( "t.product_id = {0} AND t.shop_id={1} AND t.product_specificas= {2} AND t.user_id={3}", map.get( "product_id" ), map.get( "shop_id" ),
+		wrapper.where( "product_id = {0} AND shop_id={1} AND product_specificas= {2} AND user_id={3}", map.get( "product_id" ), map.get( "shop_id" ),
 				map.get( "product_specificas" ), member.getId() );
 		List< Map< String,Object > > countList = mallShopCartDAO.selectMaps( wrapper );
 		if ( countList.size() > 0 ) {
