@@ -183,26 +183,6 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	}
     }
 
-    public static void main( String[] args ) {
-	String[] deleteStr = new String[] { "2", "5", "9" };
-	String cartIds = "1,2,4,5,8,9,0";
-	if ( deleteStr != null && deleteStr.length > 0 && CommonUtil.isNotEmpty( cartIds ) ) {
-	    cartIds = "," + cartIds + ",";
-	    for ( String deleteId : deleteStr ) {
-		if ( CommonUtil.isNotEmpty( deleteId ) ) {
-		    deleteId = "," + deleteId + ",";
-		    if ( cartIds.contains( deleteId ) ) {
-			String[] ids = cartIds.split( deleteId );
-			if ( ids.length == 2 ) {
-			    cartIds = ids[0] + "," + ids[1];
-			}
-		    }
-		}
-	    }
-	}
-	System.out.println( "cartStr = " + cartIds );
-    }
-
     @ApiOperation( value = "查询上门自提时间的接口", notes = "根据上门自提id查询上门自提时间", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "takeId", value = "上门自提id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
