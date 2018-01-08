@@ -138,13 +138,13 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	//判断参数传值是否完整
 	params = mallCommonService.isOrderParams( params, member );
 
-	if ( params.isCalculation() ) {
+	if ( params.isCalculation() && ( CommonUtil.isEmpty( params.getOrderType() ) || params.getOrderType() <= 0 ) ) {
 	    //会员计算
 	    params = mallCalculateService.calculateOrder( params, member );
-	    if ( CommonUtil.isEmpty( browser ) || browser == 99 ) {
-		browser = 0;
-	    }
 	    logger.info( "计算后的参数：" + JSONArray.toJSON( params ) );
+	}
+	if ( CommonUtil.isEmpty( browser ) || browser == 99 ) {
+	    browser = 0;
 	}
 
 	List< MallOrder > orderList = new ArrayList<>();
