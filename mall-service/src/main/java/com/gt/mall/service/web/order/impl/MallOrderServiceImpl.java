@@ -2080,7 +2080,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		int payWay = 1;
 		if ( daifu.getDfPayWay() == 2 ) {
 		    payWay = 9;
-		}else if ( daifu.getDfPayWay() == 4 ) {
+		} else if ( daifu.getDfPayWay() == 4 ) {
 		    payWay = 11;
 		}
 		order.setBuyerUserId( daifu.getDfUserId() );
@@ -2999,7 +2999,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		//是否显示修改价格按钮 1显示
 		result.setIsShowUpdatePriceButton( 1 );
 	    } else if ( order.getOrderStatus() == 2 && order.getDeliveryMethod() == 1 ) {
-		if ( order.getGroupBuyId() != null && order.getGroupBuyId() != 0 ) {
+		if ( order.getGroupBuyId() != null && order.getGroupBuyId() != 0 && order.getOrderType() == 1 ) {
 		    //查询团购需要参与的人数
 		    Map< String,Object > map = mallGroupBuyService.selectGroupBuyById( order.getGroupBuyId() );
 		    //查询已参加团购人数
