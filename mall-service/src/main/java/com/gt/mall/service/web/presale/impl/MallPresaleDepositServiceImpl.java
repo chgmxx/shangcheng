@@ -410,8 +410,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		result.put( "id", deposit.getId() );
 		result.put( "no", deposit.getDepositNo() );
 		result.put( "payWay", deposit.getPayWay() );
-		MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
 		if ( deposit.getPayWay() == 1 || deposit.getPayWay() == 3 ) {
+		    MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
 		    deposit.setShopId( presale.getShopId() );
 		    String url = getWxAlipay( deposit, member );
 		    result.put( "payUrl", url );
