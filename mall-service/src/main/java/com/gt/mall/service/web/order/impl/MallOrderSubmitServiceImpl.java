@@ -340,7 +340,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	String sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/paySuccessModified.do";
 	if ( order.getOrderPayWay() == 7 ) {
 	    sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/daifuSuccess.do";
-	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/order/daifu/" + order.getBusUserId() + "/" + order.getId();
+	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/daifu/" + order.getBusUserId() + "/" + order.getId();
 	}
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)

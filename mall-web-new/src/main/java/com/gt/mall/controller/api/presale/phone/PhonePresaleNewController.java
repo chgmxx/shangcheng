@@ -178,8 +178,10 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     /**
      * 储值卡支付成功的回调
      */
+    @ApiOperation( value = "预售缴纳定金回调的接口", notes = "预售缴纳定金回调", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, hidden = true )
     @ApiModelProperty( hidden = true )
-    @GetMapping( value = "payWay", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "payWay" )
     public ServerResponse payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
 	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {

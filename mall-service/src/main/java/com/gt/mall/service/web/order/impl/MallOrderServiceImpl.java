@@ -2075,11 +2075,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( code > 0 && CommonUtil.isNotEmpty( daifu.getId() ) ) {
 		id = daifu.getId();
 	    }
-	    if ( daifu.getDfPayWay() == 1 || daifu.getDfPayWay() == 2 || daifu.getDfPayWay() == 3 ) {
+	    if ( daifu.getDfPayWay() == 1 || daifu.getDfPayWay() == 2 || daifu.getDfPayWay() == 4 ) {
 		MallOrder order = mallOrderDAO.selectById( daifu.getOrderId() );
 		int payWay = 1;
 		if ( daifu.getDfPayWay() == 2 ) {
 		    payWay = 9;
+		}else if ( daifu.getDfPayWay() == 4 ) {
+		    payWay = 11;
 		}
 		order.setBuyerUserId( daifu.getDfUserId() );
 		String url = mallOrderSubmitService.wxPayWay( CommonUtil.toDouble( daifu.getDfPayMoney() ), daifu.getDfOrderNo(), order, payWay );
