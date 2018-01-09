@@ -21,10 +21,7 @@ import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,8 +77,8 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
      *
      * @return
      */
-    @RequestMapping( "/79B4DE7C/findOrder" )
-    public String findOrder( HttpServletRequest request, @RequestParam Integer orderId ) {
+    @RequestMapping( "/79B4DE7C/{orderId}/findOrder" )
+    public String findOrder( HttpServletRequest request, @PathVariable("orderId") Integer orderId ) {
 	try {
 	    String memberIds = "";//粉丝id集合
 	    String stage = ""; //期数
@@ -440,7 +437,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	    subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/payBackMethod.do" );
 	    subQrPayParams.setOrderNum( receivablesNumber );
 	    subQrPayParams.setPayWay( CommonUtil.judgeBrowser( request ) == 1 ? 1 : 2 );
-	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/findOrder.do?orderId=" + orderId );
+	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do" );
 	    subQrPayParams.setSourceType( 1 );
 	    subQrPayParams.setTotalFee( discountmoney );
 
@@ -659,7 +656,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "redirect:/purchasePhone/79B4DE7C/findOrder.do?orderId=" + orderId;
+	return "redirect:/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do";
     }
 
     /**
