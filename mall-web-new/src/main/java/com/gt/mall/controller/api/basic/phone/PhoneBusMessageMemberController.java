@@ -12,6 +12,7 @@ import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -76,9 +77,6 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 	    wrapper.where( "is_delete =0 and member_id= {0}", member.getId() );
 	    MallBusMessageMember mallBusMessageMember = mallBusMessageMemberService.selectOne( wrapper );
 	    if ( mallBusMessageMember != null ) {
-		mallBusMessageMember.setCreateTime( new Date() );
-		mallBusMessageMember.setMemberId( member.getId() );
-		mallBusMessageMember.setPublicId( member.getPublicId() );
 		mallBusMessageMember.setNickName( member.getNickname() );
 		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
 		mallBusMessageMemberService.updateById( mallBusMessageMember );

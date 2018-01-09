@@ -25,10 +25,10 @@ public class MarginUtil {
     public static List< PhoneOrderWayDTO > getPayWay( int memType, PayWay payWay, int browserType ) {
 	List< PhoneOrderWayDTO > payWayList = new ArrayList<>();
 	if ( CommonUtil.isNotEmpty( payWay ) ) {
-	    if ( payWay.getDfpay() == 0 ) {
+	    /*if ( payWay.getDfpay() == 0 ) {
 		PhoneOrderWayDTO result = new PhoneOrderWayDTO( 4, "多粉钱包支付", "duofenlogoyuanwenjian-" );
 		payWayList.add( result );
-	    } else if ( payWay.getWxpay() == 0 && browserType == 1 ) {
+	    } else */if ( payWay.getWxpay() == 0 && browserType == 1 ) {
 		PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
 		payWayList.add( result );
 	    } else if ( payWay.getAlipay() == 0 && browserType != 1 ) {

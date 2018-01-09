@@ -490,13 +490,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	Object type = params.get( "type" );
 	Object status = params.get( "status" );
 	Object express = params.get( "express" );
-	if ( null != type && type.equals( "2" ) ) {//取消订单
+	if ( null != type && type.toString().equals( "2" ) ) {//取消订单
 	    if ( count == 1 ) {
 		params.put( "status", 5 );
 		count = mallOrderDAO.upOrderNoOrRemark( params );
 	    }
 	}
-	if ( null != status && status.equals( "4" ) ) {//确认收货
+	if ( null != status && status.toString().equals( "4" ) ) {//确认收货
 	    if ( count == 1 ) {
 		try {
 		    mallBusMessageMemberService.buyerConfirmReceipt( CommonUtil.toInteger( params.get( "orderId" ) ), 0 );
@@ -2075,11 +2075,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( code > 0 && CommonUtil.isNotEmpty( daifu.getId() ) ) {
 		id = daifu.getId();
 	    }
-	    if ( daifu.getDfPayWay() == 1 || daifu.getDfPayWay() == 2 || daifu.getDfPayWay() == 3 ) {
+	    if ( daifu.getDfPayWay() == 1 || daifu.getDfPayWay() == 2 || daifu.getDfPayWay() == 4 ) {
 		MallOrder order = mallOrderDAO.selectById( daifu.getOrderId() );
 		int payWay = 1;
 		if ( daifu.getDfPayWay() == 2 ) {
 		    payWay = 9;
+		} else if ( daifu.getDfPayWay() == 4 ) {
+		    payWay = 11;
 		}
 		order.setBuyerUserId( daifu.getDfUserId() );
 		String url = mallOrderSubmitService.wxPayWay( CommonUtil.toDouble( daifu.getDfPayMoney() ), daifu.getDfOrderNo(), order, payWay );
@@ -2997,7 +2999,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		//是否显示修改价格按钮 1显示
 		result.setIsShowUpdatePriceButton( 1 );
 	    } else if ( order.getOrderStatus() == 2 && order.getDeliveryMethod() == 1 ) {
-		if ( order.getGroupBuyId() != null && order.getGroupBuyId() != 0 ) {
+		if ( order.getGroupBuyId() != null && order.getGroupBuyId() != 0 && order.getOrderType() == 1 ) {
 		    //查询团购需要参与的人数
 		    Map< String,Object > map = mallGroupBuyService.selectGroupBuyById( order.getGroupBuyId() );
 		    //查询已参加团购人数

@@ -7,6 +7,8 @@ import com.gt.mall.entity.basic.MallBusMessageMember;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderReturn;
 
+import java.util.List;
+
 /**
  * <p>
  * 商家消息模板提醒用户表 服务类
@@ -20,11 +22,11 @@ public interface MallBusMessageMemberService extends BaseService< MallBusMessage
     /**
      * 根据公众号ID查询数据
      *
-     * @param publicId
+     * @param busId
      *
      * @return
      */
-    MallBusMessageMember selectByPublicId( Integer publicId );
+    List<MallBusMessageMember> selectByBusId( Integer busId );
 
     /**
      * 买家付款成功通知商家

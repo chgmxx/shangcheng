@@ -112,7 +112,7 @@ public class MallOrderReturnLogServiceImpl extends BaseServiceImpl< MallOrderRet
 			    isShowAppllyReturn = OrderUtil.getOrderIsShowReturnButton( order, orderDetail, updateDay );
 			}*/
 
-			if ( orderReturn.getStatus() == 2 ) {//同意申请
+			if ( orderReturn.getStatus() == 2 || orderReturn.getStatus() == 4 ) {//同意申请
 			    //是否显示退款物流的按钮 1显示
 			    map.put( "isShowReturnWuLiuButton", OrderUtil.getOrderIsShowReturnWuliuButton( isNowReturn, orderReturn.getStatus().toString(), orderReturn ) );
 			} else if ( orderReturn.getStatus() == -1 ) {//拒绝申请

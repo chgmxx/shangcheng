@@ -2218,6 +2218,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	flowRecord.setFlowType( flow.getType() );//流量类型
 	flowRecord.setFlowId( flow.getId() );//流量表ID
 	flowRecord.setId( product.getFlowRecordId() );
+	flowRecord.setRollStatus( 0 );
+	flowRecord.setRecUseCount( 0d );
+	flowRecord.setRecCreatetime( DateTimeKit.getDateTime() );
 	Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( flowRecord );
 	if ( CommonUtil.isNotEmpty( resultMap.get( "id" ) ) && CommonUtil.isNotEmpty( product.getId() ) ) {
 	    MallProduct pro = new MallProduct();
@@ -2360,8 +2363,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	Map< String,Object > proMap = new HashMap<>();
 	Integer total = ( pro.getProStockTotal() - detail.getDetProNum() );
 	Integer saleNum = ( pro.getProSaleTotal() + detail.getDetProNum() );
-	proMap.put( "total", total );
-	proMap.put( "saleNum", saleNum );
+	//	proMap.put( "total", total );
+	//	proMap.put( "saleNum", saleNum );
 	proMap.put( "proId", detail.getProductId() );
 	Map< String,Object > productParams = new HashMap<>();
 	productParams.put( "type", 2 );
@@ -2645,9 +2648,12 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
 	int pageSize = CommonUtil.isEmpty( param.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( param.get( "pageSize" ) );
 
-//	param.put( "curPage", curPage );
+	//	param.put( "curPage", curPage );
 	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete=0 and is_mall_show=0 and is_platform_check = 0" );
+	wrapper.where( "is_delete=0 and is_mall_show=0" );
+	if ( CommonUtil.isNotEmpty( param.get( "checkStatus" ) ) ) {
+	    wrapper.and( "check_status ={0}", param.get( "checkStatus" ) );
+	}
 	if ( CommonUtil.isNotEmpty( param.get( "userIds" ) ) ) {
 	    wrapper.in( "user_id", param.get( "userIds" ).toString() );
 	}

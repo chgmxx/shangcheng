@@ -112,6 +112,8 @@ web:
  materialUrl: https://suc.deeptel.com.cn/common/material.do
  #多粉二维码关注
  duofenTwoCodeUrl: http://maint.deeptel.com.cn/image/2/gh_32251ec4c8e9/1/1509331696065.jpg
+ #多粉的公众号id（用作给商家发送消息模板）
+ duofenPublicId: 482
 
 ####图片资源ftp 配置
 static:
@@ -141,10 +143,15 @@ dianxin:
 
 #消息队列
 mq:
- #队列转换器
- exchange: gt.exchange.message
- #队列名称
- queueName: gt.queueName.message
+ ip: 113.106.202.51
+ port: 5672
+ user: guest
+ password: gt@123456@
+ seckill:
+  #队列转换器
+  exchange: mall.seckill.exchange
+  #队列名称
+  queueName: mall.seckill.queueName
 
 
 

@@ -53,8 +53,9 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 		member.setPhone( "15017934717" );
 		member.setNickname( "杨倩" );
 		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
-		//	    	    member.setOldid( "1225352,1225358,1225449" );
+		member.setOldid( "1225352,1225358,1225449" );
 		MallSessionUtils.setLoginMember( request, member );
+		//		MallSessionUtils.setLoginMember( request, null );
 	    } else {
 		String returnStr = userLogin( request, response, params );
 		if ( CommonUtil.isNotEmpty( returnStr ) ) {

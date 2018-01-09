@@ -62,6 +62,9 @@ public class MallCommentApiController {
 	    //	    params.put( "shoplist", shoplist );
 	    //	    params.put( "userIds", userIds );
 	    //	    params.put( "checkStatus", "0" );
+	    if ( CommonUtil.isNotEmpty( params.get( "checkStatus" ) ) ) {
+		params.put( "checkStatus", params.get( "checkStatus" ).toString() );
+	    }
 	    // 查询会员下面的评论
 	    PageUtil page = mallCommentService.selectCommentPage( params, null );
 	    result.put( "page", page );
