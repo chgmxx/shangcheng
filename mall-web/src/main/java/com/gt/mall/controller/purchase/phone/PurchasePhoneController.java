@@ -1,7 +1,9 @@
 package com.gt.mall.controller.purchase.phone;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.api.dto.ResponseUtils;
+import com.gt.api.util.KeysUtil;
 import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
 import com.gt.mall.common.AuthorizeOrLoginController;
@@ -13,6 +15,7 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PropertiesUtil;
+import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -400,13 +403,52 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/aliCgPay" )
-    public void cgPay( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer memberId, @RequestParam Integer busId, String termId,
+	@ResponseBody
+    public String cgPay( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer memberId, @RequestParam Integer busId, String termId,
 		    @RequestParam double money, @RequestParam double discountmoney, Double fenbi, Integer jifen, Double discount, @RequestParam String paymentType,
 		    @RequestParam Integer orderId, Integer dvId, String disCountdepict ) throws IOException {
 	try {
-	    receivablesService.aliCgPay( memberId, busId, termId, money, discountmoney, fenbi, jifen, discount, paymentType, orderId, dvId, disCountdepict,
-			    CommonUtil.judgeBrowser( request ) == 99 ? 1 : 2 );
+		//新增收款记录
+		PurchaseReceivables receivables = new PurchaseReceivables();
+		receivables.setBusId( busId );
+		receivables.setBuyMode( paymentType );
+		receivables.setBuyTime( new Date() );
+		receivables.setCoupon( dvId != null ? dvId.toString() : null );
+		receivables.setDiscount( discount );
+		receivables.setFansCorrency( fenbi );
+		receivables.setHaveTerm( termId == null || termId.equals( "" ) ? "0" : "1" );
+		receivables.setIntegral( Double.parseDouble( jifen.toString() ) );
+		receivables.setMemberId( memberId );
+		receivables.setMoney( discountmoney );
+		String receivablesNumber = "CG" + System.currentTimeMillis();
+		receivables.setReceivablesNumber( receivablesNumber );
+		receivables.setOrderId( orderId );
+		receivables.setBuyStatus( 0 );
+		receivables.setTermId( termId == null || termId.equals( "" ) ? null : Integer.parseInt( termId ) );
+		receivablesDAO.insert( receivables );
+
+		SubQrPayParams subQrPayParams = new SubQrPayParams();
+		subQrPayParams.setAppidType( 0 );
+		subQrPayParams.setBusId( busId );
+		subQrPayParams.setDesc( "对外报价订单支付" );
+		subQrPayParams.setIsreturn( 1 );
+		subQrPayParams.setIsSendMessage( 0 );
+		subQrPayParams.setMemberId( memberId );
+		subQrPayParams.setModel( 35 );
+		subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/payBackMethod.do" );
+		subQrPayParams.setOrderNum( receivablesNumber );
+		subQrPayParams.setPayWay(  CommonUtil.judgeBrowser( request ) == 99 ? 1 : 2  );
+		subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/findOrder.do?orderId=" + orderId );
+		subQrPayParams.setSourceType( 1 );
+		subQrPayParams.setTotalFee( discountmoney );
+
+		KeysUtil keysUtil=new KeysUtil();
+		String parms=keysUtil.getEncString(JSONObject.toJSONString(subQrPayParams));
+		return  PropertiesUtil.getWxmpDomain()+"/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj="+parms;
+
 	} catch ( Exception e ) {
+			e.printStackTrace();
+			return null;
 	}
     }
 

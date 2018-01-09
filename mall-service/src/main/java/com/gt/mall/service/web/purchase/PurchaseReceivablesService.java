@@ -19,30 +19,6 @@ import java.util.Map;
 public interface PurchaseReceivablesService extends BaseService<PurchaseReceivables> {
 
 
-
-    /**
-     * 采购模块手机支付
-     *
-     * @param memberId
-     * @param busId
-     * @param termId
-     * @param money
-     * @param discountmoney
-     * @param fenbi
-     * @param jifen
-     * @param discount
-     * @param paymentType
-     * @param orderId
-     * @param dvId
-     * @param disCountdepict
-     * @return
-     * @throws Exception
-     */
-    public void aliCgPay(Integer memberId, Integer busId, String termId, Double money, Double discountmoney,
-                    Double fenbi, Integer jifen, Double discount, String paymentType, Integer orderId,
-                    Integer dvId, String disCountdepict,Integer judgeBrowser) throws Exception;
-
-
     /**
      * 订单支付后回调此处进行后续操作
      *

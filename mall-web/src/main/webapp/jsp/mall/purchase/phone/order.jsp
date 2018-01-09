@@ -235,7 +235,30 @@
             var busId="${order.busId}";
             var payType = $('input[name="checkbox1"]:checked').val();
             if ((payType == 0 || payType == "0" || payType == 1 || payType == "1") && discountmoney>0) {//手机端支付
-                location.href="/purchasePhone/79B4DE7C/aliCgPay.do?memberId="+memberId+"&discountmoney="+discountmoney+"&orderId="+orderId+"&money="+money+"&fenbi="+fenbi+"&jifen="+jifen+"&discount="+discount+"&paymentType="+payType+"&busId="+busId+"&termId="+termId;
+                  $.ajax({
+                                    url : "/purchasePhone/79B4DE7C/aliCgPay.do",
+                                    data : {
+                                        "memberId" : memberId,
+                                        "orderId" : orderId,
+                                        "money" : money,
+                                        "fenbi":fenbi,
+                                        "jifen":jifen,
+                                        "discount":discount,
+                                        "paymentType":payType,
+                                        "busId":busId,
+                                        "termId":termId,
+                                        "discountmoney":discountmoney
+                                    },
+                                    type : "POST",
+                                    dataType : "JSON",
+                                    success : function(data) {
+                                        if (data!=null) {
+                                            window.location.href = data;
+                                        } else {
+                                            alert("支付异常!");
+                                        }
+                                    }
+                                })
             } else if ((payType == 5 || payType == "5")  && discountmoney>0) {//余额支付
                 var yue="${memberData.money}";
                 if(discountmoney-0>yue-0){
