@@ -2218,6 +2218,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	flowRecord.setFlowType( flow.getType() );//流量类型
 	flowRecord.setFlowId( flow.getId() );//流量表ID
 	flowRecord.setId( product.getFlowRecordId() );
+	flowRecord.setRollStatus( 0 );
+	flowRecord.setRecUseCount( 0d );
+	flowRecord.setRecCreatetime( DateTimeKit.getDateTime() );
 	Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( flowRecord );
 	if ( CommonUtil.isNotEmpty( resultMap.get( "id" ) ) && CommonUtil.isNotEmpty( product.getId() ) ) {
 	    MallProduct pro = new MallProduct();
