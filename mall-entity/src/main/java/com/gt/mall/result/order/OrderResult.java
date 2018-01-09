@@ -90,6 +90,9 @@ public class OrderResult {
 
     @ApiModelProperty( name = "orderType", value = "订单类型（1.拼团 2积分 3.秒杀 4.拍卖 5 粉币 6预售 7批发）" )
     private int orderType = 0;
+    @ApiModelProperty( name = "orderTypeName", value = "订单类型名称" )
+    private String orderTypeName;
+
     @ApiModelProperty( name = "groupBuyId", value = "营销关联表id" )
     private int groupBuyId;
 
@@ -106,13 +109,13 @@ public class OrderResult {
     @ApiModelProperty( name = "expressId", value = "快递公司id" )
     private Integer expressId;
     @ApiModelProperty( name = "expressName", value = "快递公司名称" )
-    private String expressName;
+    private String  expressName;
     @ApiModelProperty( name = "expressNumber", value = "快递单号" )
-    private String expressNumber;
+    private String  expressNumber;
     @ApiModelProperty( name = "expressTime", value = "发货时间" )
-    private Date   expressTime;
+    private Date    expressTime;
     @ApiModelProperty( name = "otherExpressName", value = "其它快递公司的快递名称" )
-    private String otherExpressName;
+    private String  otherExpressName;
 
     @ApiModelProperty( name = "mallOrderDetail", value = "订单商品详情列表" )
     private List< OrderDetailResult > mallOrderDetail;

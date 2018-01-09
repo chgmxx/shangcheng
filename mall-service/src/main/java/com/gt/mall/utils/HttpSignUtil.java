@@ -116,7 +116,7 @@ public class HttpSignUtil {
 	if ( code != 0 && resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.getString( "msg" ) ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
 	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
-	    if ( CommonUtil.isEmpty( type[1] ) ) {
+	    if ( ( type.length >= 2 && CommonUtil.isEmpty( type[1] ) ) && type.length < 2 ) {
 		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
 	    }
 	}

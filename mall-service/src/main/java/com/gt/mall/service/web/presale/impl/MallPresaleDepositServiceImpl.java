@@ -3,6 +3,7 @@ package com.gt.mall.service.web.presale.impl;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
@@ -409,8 +410,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		result.put( "id", deposit.getId() );
 		result.put( "no", deposit.getDepositNo() );
 		result.put( "payWay", deposit.getPayWay() );
-		MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
 		if ( deposit.getPayWay() == 1 || deposit.getPayWay() == 3 ) {
+		    MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
 		    deposit.setShopId( presale.getShopId() );
 		    String url = getWxAlipay( deposit, member );
 		    result.put( "payUrl", url );
@@ -440,14 +441,19 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	subQrPayParams.setMemberId( member.getId() );//会员id
 	subQrPayParams.setDesc( "预售缴纳定金" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/mallPage/" + deposit.getProductId() + "/" + deposit.getShopId() + "/79B4DE7C/phoneProduct.do" );
+	subQrPayParams.setReturnUrl(
+			PropertiesUtil.getPhoneWebHomeUrl() + "/goods/details/" + deposit.getShopId() + "/" + member.getBusid() + "/6/" + deposit.getProductId() + "/" + deposit
+					.getPresaleId() );
 	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
-			+ "/phonePresale/L6tgXlBFeK/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
-	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/mPresale/deposit.do" );//推送路径(尽量不要带参数)
-	int payWay = 1;
-	if ( deposit.getPayWay() == 3 ) {
+			+ "phonePresale/L6tgXlBFeK/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	subQrPayParams.setIsSendMessage( 0 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
+	//	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/mPresale/deposit.do" );//推送路径(尽量不要带参数)
+	int payWay = 1;//微信支付
+	if ( deposit.getPayWay() == 3 ) {//支付宝支付
 	    payWay = 2;
+	}
+	if ( deposit.getPayWay() == 4 ) {//多粉钱包支付
+	    payWay = 3;
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 
@@ -524,10 +530,15 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	if ( List != null && List.size() > 0 ) {
 	    for ( int i = 0; i < List.size(); i++ ) {
 				/*boolean isReturn = true;*/
-		Map< String,Object > map = List.get( i );
-		log.info( map );
-		map.put( "isAlipay", false );
-		returnEndPresale( map );
+		try {
+		    Map< String,Object > map = List.get( i );
+		    log.info( map );
+		    map.put( "isAlipay", false );
+		    returnEndPresale( map );
+		} catch ( Exception e ) {
+		    logger.error( "扫描已结束的预售定金异常" + e );
+		    e.printStackTrace();
+		}
 
 		/*String endTimes = map.get("create_time").toString();
 		String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;
@@ -567,6 +578,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	String returnNo = "YSHTK" + System.currentTimeMillis();
 	map.put( "return_no", returnNo );
 
+	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( depNo );
+
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 
 	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( depNo );
@@ -580,7 +593,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		Map< String,Object > resultmap = payService.wxmemberPayRefund( refund );
 		log.info( "JSONObject.fromObject(resultmap).toString()" + JSONObject.fromObject( resultmap ).toString() );
 		if ( resultmap != null ) {
-		    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+		    String code = resultmap.get( "code" ).toString();
+		    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 			//退款成功修改退款状态
 			updateReturnStatus( pUser, map, returnNo );//微信退款
 		    } else {
@@ -591,25 +605,26 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    }
 
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
-	    //todo
-//	    Member member = memberService.findMemberById( memberId, null );
-//	    Map< String,Object > returnParams = new HashMap<>();
-//	    returnParams.put( "busId", member.getBusid() );
-//	    returnParams.put( "orderNo", depNo );
-//	    returnParams.put( "money", money );
-//	    //储值卡退款
-//	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
-//	    if ( payResultMap != null ) {
-//		if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
-//		    int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
-//		    if ( code == 1 ) {//退款成功修改退款状态
-//			updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
-//		    } else {
-//			resultMap.put( "result", false );
-//			resultMap.put( "msg", payResultMap.get( "errorMsg" ) );
-//		    }
-//		}
-//	    }
+	    Member member = memberService.findMemberById( memberId, null );
+	    ErpRefundBo erpRefundBo = new ErpRefundBo();
+	    erpRefundBo.setBusId( member.getBusid() );//商家id
+	    erpRefundBo.setOrderCode( deposit.getDepositNo() );////订单号
+	    erpRefundBo.setRefundPayType( CommonUtil.getMemberPayTypeByPresale( deposit.getPayWay(), 0 ) );////退款方式 字典1198
+	    erpRefundBo.setRefundMoney( money ); //退款金额
+	    erpRefundBo.setRefundDate( new Date().getTime() );
+	    Map< String,Object > memberResultMap = memberService.refundMoney( erpRefundBo );
+	    if ( CommonUtil.toInteger( memberResultMap.get( "code" ) ) != 1 ) {
+		//同步失败，存入redis
+		JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
+
+		resultMap.put( "result", false );
+		if ( CommonUtil.isNotEmpty( memberResultMap.get( "errorMsg" ) ) ) {
+		    resultMap.put( "msg", memberResultMap.get( "errorMsg" ) );
+		}
+	    } else {
+		updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
+
+	    }
 	} else if ( payWay.toString().equals( "3" ) && !map.containsKey( "isAlipay" ) ) {
 	    updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
 	}

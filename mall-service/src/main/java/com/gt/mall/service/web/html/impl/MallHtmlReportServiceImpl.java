@@ -1,7 +1,9 @@
 package com.gt.mall.service.web.html.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.dao.html.MallHtmlDAO;
 import com.gt.mall.dao.html.MallHtmlReportDAO;
+import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlReport;
 import com.gt.mall.service.web.html.MallHtmlReportService;
 import org.apache.log4j.Logger;
@@ -17,25 +19,32 @@ import org.springframework.stereotype.Service;
  * @since 2017-07-20
  */
 @Service
-public class MallHtmlReportServiceImpl extends BaseServiceImpl<MallHtmlReportDAO, MallHtmlReport> implements MallHtmlReportService {
+public class MallHtmlReportServiceImpl extends BaseServiceImpl< MallHtmlReportDAO,MallHtmlReport > implements MallHtmlReportService {
 
-    private Logger log = Logger.getLogger(MallHtmlReportServiceImpl.class);
+    private Logger log = Logger.getLogger( MallHtmlReportServiceImpl.class );
 
     @Autowired
     private MallHtmlReportDAO htmlReportDAO;
+    @Autowired
+    private MallHtmlDAO       htmlDAO;
 
     @Override
-    public void htmlReport(Integer htmlid, Integer style) {
-        int num = htmlReportDAO.countReportNumByHtmlId(htmlid, style);
-        if (num > 0) {
-            num += 1;
-            htmlReportDAO.updateReportNumByHtmlId(num, htmlid, style);
-        } else {
-            MallHtmlReport obj = new MallHtmlReport();
-            obj.setReportNum(1);
-            obj.setStyle(style);
-            obj.setHtmlId(htmlid);
-            htmlReportDAO.insert(obj);
-        }
+    public void htmlReport( Integer htmlid, Integer style ) {
+	int num = htmlReportDAO.countReportNumByHtmlId( htmlid, style );
+	if ( num > 0 ) {
+	    num += 1;
+	    htmlReportDAO.updateReportNumByHtmlId( num, htmlid, style );
+	} else {
+	    MallHtmlReport obj = new MallHtmlReport();
+	    obj.setReportNum( 1 );
+	    obj.setStyle( style );
+	    obj.setHtmlId( htmlid );
+	    htmlReportDAO.insert( obj );
+	    MallHtml html = new MallHtml();
+	    html.setId( htmlid );
+	    html.setReportstate( 1 );
+	    htmlDAO.updateById( html );
+
+	}
     }
 }

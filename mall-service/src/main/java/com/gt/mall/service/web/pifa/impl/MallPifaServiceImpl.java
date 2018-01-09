@@ -241,9 +241,6 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		    num = mallPifaDAO.insert( pifa );
 		}
 		if ( CommonUtil.isNotEmpty( pifa.getId() ) ) {
-		    //					String key = "hSeckill";
-		    //					String field = pifa.getId().toString();
-		    //					JedisUtil.map(key, field, pifa.getsNum()+"");
 		    if ( status != 1 ) {
 			mallPifaPriceService.editPifaPrice( pifaMap, pifa.getId(), flag );
 		    }
@@ -502,6 +499,9 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	//通过商品id查询批发信息
 	MallPifa pifa = getPifaByProId( proId, shopId, activityId );
 	if ( pifa == null ) {
+	    return result;
+	}
+	if ( pifa.getStatus() == -1 || pifa.getStatus() == -2 ) {
 	    return result;
 	}
 	result.setPfPrice( CommonUtil.toDouble( pifa.getPfPrice() ) );

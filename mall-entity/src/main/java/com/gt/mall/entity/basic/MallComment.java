@@ -115,6 +115,16 @@ public class MallComment extends Model< MallComment > {
      */
     @TableField( "check_status" )
     private Integer checkStatus;
+    /**
+     *可送礼时间
+     */
+    @TableField( "give_time" )
+    private Date giveTime;
+    /**
+     * 送礼状态  0无需送礼 1未送 2已送
+     */
+    @TableField( "give_status" )
+    private Integer giveStatus;
 
     @Override
     protected Serializable pkVal() {
@@ -142,6 +152,8 @@ public class MallComment extends Model< MallComment > {
 			", createTime=" + createTime +
 			", isDelete=" + isDelete +
 			", checkStatus=" + checkStatus +
+			", giveTime=" + giveTime +
+			", giveStatus=" + giveStatus +
 			"}";
     }
 }

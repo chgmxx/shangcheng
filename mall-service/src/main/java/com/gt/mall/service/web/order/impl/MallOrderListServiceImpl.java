@@ -105,8 +105,11 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	paramsMap.put( "firstNum", firstNum );// 起始页
 	paramsMap.put( "maxNum", pageSize );// 每页显示商品的数量
 	List< MallOrder > list;
+	if ( params.getType().toString().equals( "5" ) ) {
+	    paramsMap.put( "appraiseStatus", 0 );
+	}
 	if ( paramsMap.containsKey( "appraiseStatus" ) || paramsMap.containsKey( "isReturn" ) ) {
-	    list = mallOrderDAO.mobileOrderList( paramsMap );
+	    list = mallOrderDAO.mobileOrderListByComment( paramsMap );
 	} else {
 	    list = mallOrderDAO.mobileMyOrderList( paramsMap );
 	}
@@ -145,7 +148,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		orderResult.setBusName( busResult.getBusName() );//商家名称
 		orderResult.setBusImageUrl( busResult.getBusImageUrl() );//商家头像
 	    }
-	    orderResult.setShopId( order.getId() );//店铺id
+	    orderResult.setShopId( order.getShopId() );//店铺id
 	    if ( mallShopList != null && mallShopList.size() > 0 ) {
 		for ( Map< String,Object > shopMap : mallShopList ) {
 		    if ( shopMap.get( "id" ).toString().equals( order.getShopId().toString() ) ) {
@@ -224,6 +227,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 		    detailResult.setIsShowCommentButton( OrderUtil.getOrderIsShowCommentButton( orderStatus, isNowReturn, isOpenComment, detail ) );
 		    detailResultList.add( detailResult );
 		    orderNum += detail.getDetProNum();
+		    orderResult.setShopId( detail.getShopId() );//店铺id
 		}
 	    } else {
 		orderNum = 1;
@@ -421,22 +425,29 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	result.setJoinId( order.getPJoinId() );
 	if ( CommonUtil.isNotEmpty( order.getOrderType() ) && order.getOrderType() == 1 && CommonUtil.isNotEmpty( order.getGroupBuyId() ) && order.getGroupBuyId() > 0 ) {
 	    MallGroupBuy mallGroupBuy = mallGroupBuyService.selectById( order.getGroupBuyId() );
-
-	    //查询参团情况
-	    Map< String,Object > groupMap = new HashMap<>();
-	    groupMap.put( "groupBuyId", order.getGroupBuyId() );
-	    groupMap.put( "orderId", order.getId() );
-	    Map< String,Object > countMap = mallGroupJoinDAO.groupJoinPeopleNum( groupMap );
-	    if ( CommonUtil.isNotEmpty( countMap ) && CommonUtil.isNotEmpty( countMap.get( "pId" ) ) ) {
-		result.setJoinId( CommonUtil.toInteger( countMap.get( "pId" ) ) );
-		result.setJoinNum( CommonUtil.toInteger( countMap.get( "num" ) ) );
-		if ( result.getJoinNum() < mallGroupBuy.getGPeopleNum() ) {
-		    result.setOrderStatusName( "待成团," + result.getOrderStatusName() );
-		    result.setOrderStatusMsg( OrderUtil.getOrderStatusByGroup( mallGroupBuy, result.getJoinNum() ) );
-		} else {
-		    result.setOrderStatusName( "已成团," + result.getOrderStatusName() );
+	    if ( mallGroupBuy != null && mallGroupBuy.getIsDelete() == 0 && mallGroupBuy.getIsUse() == 1 ) {
+		//查询参团情况
+		Map< String,Object > groupMap = new HashMap<>();
+		groupMap.put( "groupBuyId", order.getGroupBuyId() );
+		groupMap.put( "orderId", order.getId() );
+		Map< String,Object > countMap = mallGroupJoinDAO.groupJoinPeopleNum( groupMap );
+		if ( CommonUtil.isNotEmpty( countMap ) && CommonUtil.isNotEmpty( countMap.get( "pId" ) ) ) {
+		    result.setJoinId( CommonUtil.toInteger( countMap.get( "pId" ) ) );
+		    result.setJoinNum( CommonUtil.toInteger( countMap.get( "num" ) ) );
+		    if ( order.getOrderStatus() != 4 ) {
+			if ( result.getJoinNum() < mallGroupBuy.getGPeopleNum() ) {
+			    result.setOrderStatusName( "待成团," + result.getOrderStatusName() );
+			    result.setOrderStatusMsg( OrderUtil.getOrderStatusByGroup( mallGroupBuy, result.getJoinNum() ) );
+			} else {
+			    result.setOrderStatusName( "已成团," + result.getOrderStatusName() );
+			}
+		    }
 		}
+	    } else {
+		result.setActivityId( 0 );
+		result.setOrderType( 0 );
 	    }
+
 	}
 	result.setOrderPayWay( order.getOrderPayWay() );
 	return result;

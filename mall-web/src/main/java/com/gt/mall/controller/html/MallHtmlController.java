@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.entity.html.MallHtmlFrom;
 import com.gt.mall.exception.BusinessException;
@@ -15,19 +17,18 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.html.MallHtmlFromService;
 import com.gt.mall.service.web.html.MallHtmlReportService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.DateTimeKit;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,6 +59,94 @@ public class MallHtmlController extends BaseController {
     private CoreService           coreService;
 
     /**
+     * 修改页面设计
+     *
+     * @param request
+     * @param response
+     *
+     * @return
+     */
+    @RequestMapping( "/E9lM9uM4ct/updateHtml" )
+    public String updateHtml( HttpServletRequest request, HttpServletResponse response ) {
+	String jsp = "";
+	try {
+	    Object id = request.getParameter( "id" );
+	    MallHtml obj = htmlService.selectById( Integer.valueOf( id.toString() ) );
+	    request.setAttribute( "obj", obj );
+	    jsp = "mall/htmlmall/mall_h5/HtmlMall";
+	} catch ( Exception e ) {
+	    logger.error( "h5 商城列表页异常:" + e.getMessage() );
+	    jsp = "error/404Two";
+	}
+	return jsp;
+    }
+
+    /**
+     * html5商城背景音乐
+     *
+     * @param request
+     * @param response
+     *
+     * @return
+     */
+    @RequestMapping( "/E9lM9uM4ct/musicUrl" )
+    public String musicUrl( HttpServletRequest request, HttpServletResponse response ) {
+	request.setAttribute( "musicurl", request.getParameter( "musicurl" ) );
+	request.setAttribute( "musicname", request.getParameter( "musicname" ) );
+	request.setAttribute( "addres", request.getParameter( "addres" ) );
+	request.setAttribute( "player_style", request.getParameter( "player_style" ) );
+	request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
+
+	List< DictBean > playList = dictService.getDict( "1048" );//获取播放器样式
+	request.setAttribute( "playlist", playList );
+	return "/mall/htmlmall/musicUrl";
+
+    }
+
+    /**
+     * 页面保存
+     *
+     * @param request
+     * @param response
+     * @param obj
+     *
+     * @throws IOException
+     */
+    @RequestMapping( "/E9lM9uM4ct/htmlSave" )
+    @SysLogAnnotation( description = "html5商城保存页面设计", op_function = "3" )
+    public void htmlSave( HttpServletRequest request, HttpServletResponse response, MallHtml obj ) throws IOException {
+	Map< String,Object > map = new HashMap< String,Object >();
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
+	    htmlService.htmlSave( obj, user );
+	    map.put( "error", "0" );
+	} catch ( Exception e ) {
+	    map.put( "error", "1" );
+	    map.put( "message", "操作失败" );
+	    logger.error( "h5 商城保存页异常:" + e.getMessage() );
+	}
+	CommonUtil.write( response, map );
+    }
+
+    /**
+     * h5商城二维码预览
+     *
+     * @param request
+     * @param response
+     *
+     * @return
+     */
+    @RequestMapping( "/E9lM9uM4ct/ylcodeurl" )
+    public String htmlimage( HttpServletRequest request, HttpServletResponse response ) {
+	String id = request.getParameter( "id" ).toString();
+	String url = "mallhtml/" + id + "/79B4DE7C/phoneHtml.do";
+	request.setAttribute( "url", url );
+	request.setAttribute( "http", PropertiesUtil.getHomeUrl() );
+	return "/mall/htmlmall/ylcodeurl";
+
+    }
+
+    /**
      * h5商城手机
      *
      * @param request
@@ -76,11 +165,11 @@ public class MallHtmlController extends BaseController {
 	} catch ( BusinessException be ) {
 	    request.setAttribute( "guoqiError", 1 );
 	}
+	Integer style = 1;//0代表是微信有公主号，1没有
 	//举报关闭该页面
 	if ( obj.getReportstate() == 1 ) {
 	    jsp = "error/ban";
 	} else {
-	    Integer style = 1;//0代表是微信有公主号，1没有
 	    String ua = ( (HttpServletRequest) request ).getHeader( "user-agent" ).toLowerCase();
 	    if ( ua.indexOf( "micromessenger" ) > 0 ) {// 是否来自于微信浏览器打开
 		//来自于商家这边
@@ -93,11 +182,11 @@ public class MallHtmlController extends BaseController {
 		    }
 		}
 	    }
-	    String http = PropertiesUtil.getResourceUrl();
-	    request.setAttribute( "style", style );
-	    request.setAttribute( "msg", obj );
-	    request.setAttribute( "http", http );
 	}
+	request.setAttribute( "style", style );
+	String http = PropertiesUtil.getResourceUrl();
+	request.setAttribute( "msg", obj );
+	request.setAttribute( "http", http );
 	return "/mall/htmlmall/phone/phonehtml";
 
     }
@@ -117,6 +206,7 @@ public class MallHtmlController extends BaseController {
 	    Integer style = Integer.valueOf( request.getParameter( "style" ).toString() );
 	    Integer htmlid = Integer.valueOf( request.getParameter( "htmlid" ).toString() );
 	    htmlReportService.htmlReport( htmlid, style );
+
 	    map.put( "reTurn", "0" );
 	    map.put( "message", "操作成功" );
 	} catch ( Exception e ) {

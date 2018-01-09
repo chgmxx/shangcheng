@@ -98,7 +98,7 @@
                 <div class="">
                     <div class="order_item_pic order_item_left">
                         <div>
-                            <img src="${product.productImg}" alt="商品图片">
+                            <img src="${http}${product.productImg}" alt="商品图片">
                         </div>
                     </div>
                     <div class="order_item_detail order_item_right">

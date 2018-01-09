@@ -193,7 +193,9 @@
                 #{id}
             </foreach>
         </if>
-
+        <if test="checkStatus != null and checkStatus != ''">
+            and p.check_status = #{checkStatus}
+        </if>
         order by p.create_time desc
         limit #{firstNum},#{maxNum}
     </select>
@@ -211,6 +213,12 @@
             </if>
             <if test="checkStatus != null">
                 check_status = #{checkStatus},
+            </if>
+            <if test="isPlatformCheck != null">
+                is_platform_check = #{isPlatformCheck},
+            </if>
+            <if test="checkReason != null">
+                check_reason = #{checkReason},
             </if>
             <if test="returnDay != null">
                 return_day = #{returnDay},

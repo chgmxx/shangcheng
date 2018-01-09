@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.auction.MallAuction;
@@ -48,6 +49,7 @@ import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallJxcHttpClientUtil;
 import com.gt.mall.utils.ProductUtil;
 import org.slf4j.Logger;
@@ -172,6 +174,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		product.setIsSpecifica( 0 );
 	    }
 	}
+	result.setType( params.getType() );
 	double activityPrice = 0;//活动价 避免会员价用活动价来算
 	int isShowAddShop = 1;//是否显示“加入购物车按钮” 1显示
 	if ( params.getType() == 1 ) {//查询团购商品
@@ -180,9 +183,11 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    isShowAddShop = 0;
 	    result = mallSeckillService.getSeckillProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result );
 	} else if ( params.getType() == 4 ) {//查询拍卖商品
-	    isShowAddShop = 0;
-	    result.setIsShowLiJiBuyButton( 0 );
 	    result = mallAuctionService.getAuctionProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
+	    if ( CommonUtil.isEmpty( result.getActivityId() ) || result.getActivityId() > 0 ) {
+		isShowAddShop = 0;
+		result.setIsShowLiJiBuyButton( 0 );
+	    }
 	} else if ( params.getType() == 5 ) {//查询粉币商品
 	    if ( "1".equals( product.getIsFenbiChangePro().toString() ) ) {
 		activityPrice = CommonUtil.toDouble( product.getChangeFenbi() );
@@ -192,9 +197,11 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    }
 	} else if ( params.getType() == 6 ) {//查询预售商品
 	    activityPrice = productPrice;
-	    isShowAddShop = 0;
-	    result.setProductPrice( activityPrice );
 	    result = mallPresaleService.getPresaleProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
+	    if ( CommonUtil.isEmpty( result.getActivityId() ) || result.getActivityId() > 0 ) {
+		isShowAddShop = 0;
+		result.setProductPrice( activityPrice );
+	    }
 	} else if ( params.getType() == 7 ) {//查询批发商品
 	    result = mallPifaService.getPifaProductDetail( product.getId(), product.getShopId(), params.getActivityId(), result, member, mallPaySet );
 	}
@@ -295,7 +302,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    Map< String,Object > cardMap = cardService.findDuofenCardByReceiveId( product.getCardType() );
 	    logger.info( "卡券包：" + JSON.toJSONString( cardMap ) );
 	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
-
 		JSONObject obj = ProductUtil.getCardReceive( cardMap );
 		if ( CommonUtil.isNotEmpty( obj ) ) {
 		    result.setIsShowCardRecevie( 1 );
@@ -431,6 +437,25 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		    if ( commissionMoney > 0 ) {
 			priceMap.put( "commissionMoney", df.format( commissionMoney ) );
 		    }
+		}
+		if ( params.getType() == 3 ) {//获取秒杀库存
+		    String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
+		    String productSpecificas = priceMap.get( "xsid" ).toString();
+		    //查询秒杀商品的库存
+		    Integer invNum = null;
+		    if ( CommonUtil.isNotEmpty( productSpecificas ) ) {
+			//有规格，取规格的库存
+			invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, params.getActivityId() + "_" + productSpecificas ) );
+		    }
+		    if ( CommonUtil.isEmpty( invNum ) || invNum == 0 ) {
+			invNum = CommonUtil.toInteger( priceMap.get( "inv_num" ) );
+
+			String key = Constants.REDIS_SECKILL_NAME;
+			String field = params.getActivityId() + "_" + productSpecificas;
+			JedisUtil.map( key, field, invNum.toString() );
+
+		    }
+		    priceMap.put( "inv_num", invNum );
 		}
 
 	    }

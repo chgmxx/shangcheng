@@ -34,6 +34,6 @@ public class PhoneLoginDTO implements Serializable {
     private int browerType;
 
     @ApiModelProperty( name = "ucLogin", value = "是否需要登陆 1不需要登陆 0 需要登陆", hidden = true )
-    private int ucLogin = 0;
+    private Integer ucLogin = null;
 
 }

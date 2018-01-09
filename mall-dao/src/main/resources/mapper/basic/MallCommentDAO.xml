@@ -22,13 +22,15 @@
         <result column="createTime" property="createTime"/>
         <result column="is_delete" property="isDelete"/>
         <result column="check_status" property="checkStatus"/>
+        <result column="give_time" property="giveTime"/>
+        <result column="give_status" property="giveStatus"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, order_id , order_detail_id , product_id , content, is_upload_image , feel, descript_start ,
         service_start , speeed_start, rep_p_id , user_id , user_type , is_rep , shop_id, createTime,
-        is_delete , check_status
+        is_delete , check_status,give_time,give_status
     </sql>
 
     <update id="batchUpdateComment" parameterType="java.util.Map">

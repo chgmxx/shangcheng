@@ -27,14 +27,12 @@ import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.EntityDtoConverter;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,7 +86,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "shopList" )
+    @RequestMapping( value = "shopList", method = RequestMethod.GET )
     public void shopList( HttpServletRequest request, HttpServletResponse response, Integer userId, String longitude, String latitude ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -119,10 +117,12 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "pageIndex" )
+    @RequestMapping( value = "pageIndex", method = RequestMethod.GET )
     public void pageIndex( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId ) throws IOException {
 	AppletMallIndexResult indexResult = new AppletMallIndexResult();
 	try {
+	    //	    Member member = MallSessionUtils.getLoginMember( request );
+	    //	    member.getPublicId()
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "shopId", shopId );
 	    params.put( "memberId", memberId );
@@ -164,7 +164,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @param response
      * @param searchDTO
      */
-    @RequestMapping( "productPage" )
+    @RequestMapping( value = "productPage", method = RequestMethod.GET )
     public void productPage( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) {
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
@@ -193,7 +193,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "classAll" )
+    @RequestMapping( value = "classAll", method = RequestMethod.GET )
     public void classAll( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer classId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -229,7 +229,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "productAll" )
+    @RequestMapping( value = "productAll", method = RequestMethod.GET )
     public void productAll( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -262,7 +262,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "getProductSpecifica" )
+    @RequestMapping( value = "getProductSpecifica", method = RequestMethod.GET )
     public void getProductSpecifica( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -290,7 +290,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "phoneProduct" )
+    @RequestMapping( value = "phoneProduct", method = RequestMethod.GET )
     public void phoneProduct( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer productId, Integer province ) throws IOException {
 	AppletProductDetailResult productDetailResult = new AppletProductDetailResult();
 	try {
@@ -322,7 +322,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "getProductComment" )
+    @RequestMapping( value = "getProductComment", method = RequestMethod.GET )
     public void getProductComment( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer proId, String feel ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -350,7 +350,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "商城小程序-商品购物车保存", op_function = "2" )
-    @RequestMapping( "addshopping" )
+    @RequestMapping( value = "addshopping", method = RequestMethod.GET )
     public void addshopping( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -377,7 +377,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "shopCart" )
+    @RequestMapping( value = "shopCart", method = RequestMethod.GET )
     public void shopCart( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer busUserId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap<>();
 	try {
@@ -409,7 +409,7 @@ public class PhoneHomeAppletController extends BaseController {
      */
     @SuppressWarnings( { "deprecation", "unchecked" } )
     @SysLogAnnotation( description = "小程序购物车页面-删除购物车内的商品", op_function = "3" )
-    @RequestMapping( "shoppingdelete" )
+    @RequestMapping( value = "shoppingdelete", method = RequestMethod.GET )
     public void shoppingdelect( HttpServletRequest request, HttpServletResponse response, Integer memberId, String ids ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -439,7 +439,7 @@ public class PhoneHomeAppletController extends BaseController {
      * @throws IOException
      */
     @SysLogAnnotation( description = "小程序购物车页面-结算购物车内的商品", op_function = "3" )
-    @RequestMapping( "shoppingorder" )
+    @RequestMapping( value = "shoppingorder", method = RequestMethod.GET )
     public void shoppingOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -465,7 +465,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "memberIndex" )
+    @RequestMapping( value = "memberIndex", method = RequestMethod.GET )
     public void memberIndex( HttpServletRequest request, HttpServletResponse response, Integer memberId ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -487,7 +487,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "productBuyNow" )
+    @RequestMapping( value = "productBuyNow", method = RequestMethod.GET )
     public void productBuyNow( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -512,7 +512,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( "toSubmitOrder" )
+    @RequestMapping( value = "toSubmitOrder" ,method = RequestMethod.GET)
     public void toSubmitOrder( HttpServletRequest request, HttpServletResponse response, AppletToSubmitOrderDTO toSubmitOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {

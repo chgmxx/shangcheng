@@ -1,10 +1,13 @@
 package com.gt.mall.controller.api.basic.phone;
 
 import com.gt.api.bean.session.Member;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneLoginDTO;
@@ -12,9 +15,13 @@ import com.gt.mall.param.phone.comment.PhoneMallCommentDTO;
 import com.gt.mall.result.phone.comment.PhoneCommentListResult;
 import com.gt.mall.result.phone.comment.PhoneCommentProductResult;
 import com.gt.mall.result.phone.comment.PhoneCommentSuccessResult;
+import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
+import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.MallSessionUtils;
 import io.swagger.annotations.Api;
@@ -30,6 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +55,13 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     @Autowired
     private MallCommentService          mallCommentService;
     @Autowired
+    private MallCommentGiveService      mallCommentGiveService;
+    @Autowired
     private MallImageAssociativeService mallImageAssociativeService;
+    @Autowired
+    private MallPaySetService           mallPaySetService;
+    @Autowired
+    private MallOrderService            mallOrderService;
 
     @ApiOperation( value = "手机端查看评论列表的接口", notes = "我的评论", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "当前页数", paramType = "query", dataType = "int" ) )
@@ -56,7 +70,7 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneCommentListResult > collectList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -83,7 +97,7 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneCommentProductResult > toCommentProduct( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderDetailId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    PhoneCommentProductResult result = mallCommentService.getCommentProduct( orderDetailId );
 
@@ -108,7 +122,7 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     public ServerResponse< Integer > saveComment( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    @RequestBody @Valid @ModelAttribute PhoneMallCommentDTO mallCommentDTO, String imageUrls ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -120,8 +134,41 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
 	    //判断用户是否已经评论了，防止重复评论
 	    MallComment isComment = mallCommentService.selectComment( mallComment );
 	    if ( CommonUtil.isEmpty( isComment ) && CommonUtil.isEmpty( mallComment.getId() ) ) {
+
+		Date giveTime = null; //可送礼时间
+		Integer giveStatus = 0; //送礼状态
+		//查询是否开启了评论送礼
+		MallPaySet set = new MallPaySet();
+		set.setUserId( loginDTO.getBusId() );
+		MallPaySet payset = mallPaySetService.selectByUserId( set );
+		if ( CommonUtil.isNotEmpty( payset ) ) {
+		    if ( payset.getIsCommentGive().toString().equals( "1" ) ) {
+			giveStatus = 1;
+		    }
+		}
+		if ( giveStatus == 1 ) {
+		    MallOrder order = mallOrderService.selectById( mallComment.getOrderId() );
+		    giveTime = DateTimeKit.addDate( order.getUpdateTime(), Constants.ORDER_FINISH_RETURN_DAY );
+		}
+		mallComment.setGiveTime( giveTime );
+		mallComment.setGiveStatus( giveStatus );
+
 		MallComment comment = mallCommentService.addAppraise( imageUrls, mallComment, request );
 		if ( CommonUtil.isNotEmpty( comment ) ) {
+		    if ( giveStatus == 1 ) {
+			int ret = new Date().compareTo( giveTime );
+			if ( ret == 1 ) {
+			    //评论送礼
+			    try {
+				mallCommentGiveService.commentGive( comment.getId(), request, comment.getUserId() );
+				comment.setGiveStatus( 2 );
+				mallCommentService.updateById( comment );
+			    } catch ( Exception e ) {
+				logger.error( "评论赠送商品异常：" + e.getMessage() );
+				e.printStackTrace();
+			    }
+			}
+		    }
 		    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), comment.getId() );
 		}
 	    } else {
@@ -146,11 +193,10 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "commentSuccess", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneCommentSuccessResult > commentSuccess( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer id ) {
+		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer id ) {
 	try {
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
 	    PhoneCommentSuccessResult result = new PhoneCommentSuccessResult();
 	    //查询商品评论

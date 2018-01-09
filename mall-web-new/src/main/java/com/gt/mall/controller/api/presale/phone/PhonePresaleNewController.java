@@ -16,6 +16,7 @@ import com.gt.mall.param.phone.presale.PhoneAddDepositDTO;
 import com.gt.mall.param.phone.presale.PhoneSearchDepositDTO;
 import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.presale.MallPresaleService;
@@ -26,6 +27,7 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.MarginUtil;
+import com.gt.util.entity.param.pay.PayWay;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -73,6 +75,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     private MallProductInventoryService mallProductInventoryService;
     @Autowired
     private CoreService                 coreService;
+    @Autowired
+    private PayService                  payService;
 
     @ApiOperation( value = "进入交纳预收定金页面接口", notes = "进入交纳预收定金页面" )
     @ResponseBody
@@ -84,7 +88,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    MallProduct product = mallProductService.selectById( searchDTO.getProId() );//获取商品信息
 	    int shopid = 0;
@@ -134,15 +138,8 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 		result.put( "proSpecificaIds", guige.get( "xids" ) );
 	    }
 
-	    Map< String,Object > publicMap = pageService.publicMapByUserId( member.getBusid() );
-	    int isWxPay = 0;//不能微信支付
-	    int isAliPay = 0;//不能支付宝支付
-	    if ( ( CommonUtil.judgeBrowser( request ) == 1 && CommonUtil.isNotEmpty( publicMap ) ) ) {
-		isWxPay = 1;//可以微信支付
-	    } else {
-		isAliPay = 1;
-	    }
-	    result.put( "payWayList", MarginUtil.getPayWay( isWxPay, isAliPay, memType ) );
+	    PayWay payWay = payService.getPayWay( loginDTO.getBusId() );
+	    result.put( "payWayList", MarginUtil.getPayWay( memType, payWay, CommonUtil.judgeBrowser( request ) ) );
 
 	} catch ( BusinessException be ) {
 	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
@@ -164,7 +161,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 		    PhoneAddDepositDTO depositDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    result = mallPresaleDepositService.addDeposit( depositDTO, member, loginDTO.getBrowerType() );
@@ -181,8 +178,10 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     /**
      * 储值卡支付成功的回调
      */
+    @ApiOperation( value = "预售缴纳定金回调的接口", notes = "预售缴纳定金回调", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, hidden = true )
     @ApiModelProperty( hidden = true )
-    @GetMapping( value = "payWay", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "payWay" )
     public ServerResponse payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
 	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
@@ -237,7 +236,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    MallPresaleDeposit deposit = new MallPresaleDeposit();
 	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息

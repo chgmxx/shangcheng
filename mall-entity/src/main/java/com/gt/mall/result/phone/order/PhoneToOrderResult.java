@@ -33,7 +33,6 @@ public class PhoneToOrderResult implements Serializable {
     @ApiModelProperty( name = "totalPayMoney", value = "合计（商品支付总价）" )
     private double totalPayMoney = 0;
 
-
     @ApiModelProperty( name = "totalYouHuiMoney", value = "总优惠" )
     private double totalYouHuiMoney = 0;
 
@@ -63,5 +62,8 @@ public class PhoneToOrderResult implements Serializable {
 
     @ApiModelProperty( name = "selectPayWay", value = "默认选中的支付方式" )
     private PhoneOrderWayDTO selectPayWay;
+
+    @ApiModelProperty( name = "memberPhone", value = "会员手机号码" )
+    private String memberPhone;
 
 }

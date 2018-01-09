@@ -23,41 +23,42 @@
         <result column="modelid" property="modelid"/>
         <result column="introduce" property="introduce"/>
         <result column="bakurl" property="bakurl"/>
+        <result column="is_delete" property="isDelete"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, dataJson, dataBg, dataTransverse, musicurl, addres, musicname, player_style , bus_user_id , creattime, codeUrl, state, pid, htmlname,
-        reportstate, source_type , modelid, introduce, bakurl
+        reportstate, source_type , modelid, introduce, bakurl,is_delete
     </sql>
     <select id="getHtmlByUserId" resultType="java.util.Map">
         SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state,bus_user_id
         FROM t_mall_html a
-        WHERE a.source_type=2 and a.bus_user_id=#{user_id}
+        WHERE is_delete = 0 and a.source_type=2 and a.bus_user_id=#{user_id}
         <if test="pid == 0 ">
             OR a.pid=#{user_id}
         </if>
         limit #{firstNum},#{pageSize}
     </select>
     <select id="countHtmlByUserId" resultType="java.lang.Integer">
-        SELECT COUNT(1) FROM t_mall_html a WHERE a.source_type=2 and a.bus_user_id=#{user_id}
+        SELECT COUNT(1) FROM t_mall_html a WHERE a.is_delete = 0 and a.source_type=2 and a.bus_user_id=#{user_id}
         <if test="pid == 0 ">
             OR a.pid=#{user_id}
         </if>
     </select>
     <select id="getHtmlModelList" resultType="java.util.Map">
       SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state FROM t_mall_html  a
-      WHERE  a.source_type=1 and a.state=0
+      WHERE  a.is_delete = 0 and a.source_type=1 and a.state=0
        limit #{firstNum},#{pageSize}
     </select>
     <select id="countHtmlModelList" resultType="java.lang.Integer">
-       SELECT COUNT(1) FROM t_mall_html a  WHERE a.source_type=1 and a.state=0
+       SELECT COUNT(1) FROM t_mall_html a  WHERE a.is_delete = 0 and a.source_type=1 and a.state=0
     </select>
 
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(a.id)
         from t_mall_html a
-        WHERE a.source_type=2 and a.bus_user_id=#{user_id}
+        WHERE a.is_delete = 0 and a.source_type=2 and a.bus_user_id=#{user_id}
         <if test="pid == 0 ">
             OR a.pid=#{user_id}
         </if>
@@ -65,7 +66,7 @@
     <select id="selectByPage" resultType="java.util.Map">
         SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state,bus_user_id,introduce
         FROM t_mall_html a
-        WHERE a.source_type=2 and a.bus_user_id=#{user_id}
+        WHERE a.is_delete = 0 and a.source_type=2 and a.bus_user_id=#{user_id}
         <if test="pid == 0 ">
             OR a.pid=#{user_id}
         </if>
@@ -75,9 +76,9 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM t_mall_html a
-        WHERE 1=1
-        <if test="htmlName != null and htmlname != '' ">
-            and a.htmlname =#{htmlName}
+        WHERE is_delete = 0
+        <if test="htmlName != null and htmlName != '' ">
+            and a.htmlname like CONCAT(CONCAT('%', #{htmlName}),'%')
         </if>
         <if test="userIds != null">
             and(
@@ -86,6 +87,7 @@
                      open="(" close=")" separator=",">
                 #{id}
             </foreach>
+            AND a.pid>0
             or a.bus_user_id in
             <foreach collection="userIds" item="id" index="index"
                      open="(" close=")" separator=",">
@@ -93,14 +95,16 @@
             </foreach>
             )
         </if>
+        ORDER BY source_type ASC
         limit #{firstNum},#{maxNum}
     </select>
     <select id="selectAllCount" resultType="java.lang.Integer">
         SELECT count(a.id)
         FROM t_mall_html a
-        WHERE 1=1
-        <if test="htmlName != null and htmlname != '' ">
-            and a.htmlname =#{htmlName}
+        WHERE is_delete = 0
+        <if test="htmlName != null and htmlName != '' ">
+            and a.htmlname like CONCAT(CONCAT('%', #{htmlName}),'%')
+
         </if>
         <if test="userIds != null">
             and(
@@ -109,6 +113,7 @@
                      open="(" close=")" separator=",">
                 #{id}
             </foreach>
+            AND a.pid>0
             or a.bus_user_id in
             <foreach collection="userIds" item="id" index="index"
                      open="(" close=")" separator=",">

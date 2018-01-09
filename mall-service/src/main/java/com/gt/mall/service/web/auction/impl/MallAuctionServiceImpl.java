@@ -130,17 +130,17 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
     @Override
     public Map< String,Object > selectAuctionById( Integer id ) {
 	Map< String,Object > map = auctionDAO.selectByAuctionId( id );
-//	if ( map != null ) {
-//	    float startPrice = Float.valueOf( map.get( "aucStartPrice" ).toString() );//起拍价格
-//	    float aucLowestPrice = Float.valueOf( map.get( "aucLowestPrice" ).toString() );//最低价格
-//	    float aucLowerPrice = Float.valueOf( map.get( "aucLowerPrice" ).toString() );//降价金额
-//	    int minuTimes = Integer.valueOf( map.get( "aucLowerPriceTime" ).toString() );//降价时间
-//
-//	    int diff = (int) ( ( startPrice - aucLowestPrice ) / aucLowerPrice * minuTimes );
-//
-//	    int[] times = DateTimeKit.minuteForTimes( diff );
-//	    map.put( "times", times );
-//	}
+	//	if ( map != null ) {
+	//	    float startPrice = Float.valueOf( map.get( "aucStartPrice" ).toString() );//起拍价格
+	//	    float aucLowestPrice = Float.valueOf( map.get( "aucLowestPrice" ).toString() );//最低价格
+	//	    float aucLowerPrice = Float.valueOf( map.get( "aucLowerPrice" ).toString() );//降价金额
+	//	    int minuTimes = Integer.valueOf( map.get( "aucLowerPriceTime" ).toString() );//降价时间
+	//
+	//	    int diff = (int) ( ( startPrice - aucLowestPrice ) / aucLowerPrice * minuTimes );
+	//
+	//	    int[] times = DateTimeKit.minuteForTimes( diff );
+	//	    map.put( "times", times );
+	//	}
 	return map;
     }
 
@@ -531,7 +531,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	int isShowMargin = 0;
 	PhoneAuctionProductDetailResult auctionResult = new PhoneAuctionProductDetailResult();
 
-	List< MallAuctionMargin > marginList = null;
+	List< MallAuctionMargin > marginList = new ArrayList<>();
 	if ( CommonUtil.isNotEmpty( member ) ) {
 
 	    MallAuctionMargin margin = new MallAuctionMargin();
@@ -601,7 +601,7 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 	    auctionResult.setAucLowerPriceTime( auction.getAucLowerPriceTime() );//降价时间（每多少分钟）
 	    auctionResult.setAucLowerPrice( CommonUtil.toDouble( auction.getAucLowerPrice() ) );//降价金额（每多少分钟降价多少元）
 	    aucTypeVal = "降价拍卖";
-	    if ( marginList.size() > 0 && auction.getIsMargin() == 1 ) {
+	    if ( ( marginList.size() > 0 && auction.getIsMargin() == 1 ) || auction.getIsMargin() == 0 ) {
 		auctionResult.setIsLijiPai( 1 );
 	    }
 	} else {

@@ -10,6 +10,7 @@ import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionBidding;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.entity.auction.MallAuctionOffer;
+import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -18,16 +19,19 @@ import com.gt.mall.param.phone.auction.PhoneAddAuctionBiddingDTO;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
 import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.auction.MallAuctionOfferService;
 import com.gt.mall.service.web.auction.MallAuctionService;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallRedisUtils;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.MarginUtil;
+import com.gt.util.entity.param.pay.PayWay;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -56,25 +60,29 @@ import java.util.Map;
 public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 
     @Autowired
-    private MallAuctionService        auctionService;
+    private MallAuctionService          auctionService;
     @Autowired
-    private MallPageService           pageService;
+    private MallPageService             pageService;
     @Autowired
-    private MallAuctionMarginService  auctionMarginService;
+    private MallAuctionMarginService    auctionMarginService;
     @Autowired
-    private MallAuctionBiddingService auctionBiddingService;
+    private MallAuctionBiddingService   auctionBiddingService;
     @Autowired
-    private MallAuctionOfferDAO       auctionOfferDAO;
+    private MallAuctionOfferDAO         auctionOfferDAO;
     @Autowired
-    private MallAuctionBiddingDAO     auctionBiddingDAO;
+    private MallAuctionBiddingDAO       auctionBiddingDAO;
     @Autowired
-    private MallAuctionOfferService   auctionOfferService;
+    private MallAuctionOfferService     auctionOfferService;
     @Autowired
-    private MemberService             memberService;
+    private MemberService               memberService;
     @Autowired
-    private MallProductService        mallProductService;
+    private MallProductService          mallProductService;
     @Autowired
-    private CoreService               coreService;
+    private CoreService                 coreService;
+    @Autowired
+    private PayService                  payService;
+    @Autowired
+    private MallImageAssociativeService mallImageAssociativeService;
 
     /*交纳保证金接口*/
     @ApiOperation( value = "获取交纳保证金信息", notes = "获取交纳保证金信息" )
@@ -89,9 +97,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
-	    //	    Map mapmessage = pageService.querySelct( proId );//获取商品信息
 	    MallProduct product = mallProductService.selectById( proId );//获取商品信息
 
 	    int shopid = 0;
@@ -108,6 +115,11 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    //	    List imagelist = pageService.imageProductList( proId, 1 );//获取轮播图列表
 	    //	    result.put( "imagelist", imagelist.get( 0 ) );
 
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, proId );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		result.put( "imageObj", imageList.get( 0 ) );
+	    }
+
 	    String is_specifica = product.getIsSpecifica().toString();
 	    Map guige = new HashMap();
 	    if ( is_specifica.equals( "1" ) ) {
@@ -118,14 +130,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    }
 
 	    int memType = memberService.isCardType( member.getId() );
-	    int isWxPay = 0;//不能微信支付
-	    int isAliPay = 0;//不能支付宝支付
-	    if ( CommonUtil.judgeBrowser( request ) == 1 ) {
-		isWxPay = 1;//可以微信支付
-	    } else {
-		isAliPay = 1;//可以支付宝支付
-	    }
-	    result.put( "payWayList", MarginUtil.getPayWay( isWxPay, isAliPay, memType ) );
+	    PayWay payWay = payService.getPayWay( loginDTO.getBusId() );
+	    result.put( "payWayList", MarginUtil.getPayWay( memType, payWay, CommonUtil.judgeBrowser( request ) ) );
 	} catch ( BusinessException be ) {
 	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
@@ -146,7 +152,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		    PhoneAddAuctionMarginDTO marginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    result = auctionMarginService.addMargin( marginDTO, member );
 	} catch ( BusinessException be ) {
@@ -162,8 +168,10 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     /**
      * 储值卡支付成功的回调
      */
+    @ApiOperation( value = "拍卖缴纳定金回调的接口", notes = "拍卖缴纳定金回调", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, hidden = true )
     @ApiModelProperty( hidden = true )
-    @GetMapping( value = "payWay", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "payWay", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
 	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
@@ -194,8 +202,8 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 	    MallAuction auction = auctionService.selectById( auctionId );
 	    //	    MallAuction auction = auctionService.getAuctionByProId( productId, shopId, auctionId );
 	    /*if ( type == 1 ) {//商品详情
@@ -248,7 +256,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		    PhoneAddAuctionBiddingDTO biddingDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    result = auctionOfferService.addOffer( biddingDTO, member.getId().toString() );
@@ -275,7 +283,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    MallAuctionMargin margin = new MallAuctionMargin();
 
@@ -311,7 +319,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    bidList = auctionBiddingService.selectMyBidding( member );
 
 	} catch ( BusinessException be ) {
@@ -333,7 +341,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    bidList = auctionBiddingService.selectMyHuoBid( member );
 

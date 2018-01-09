@@ -1,6 +1,7 @@
 package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.mall.constant.Constants;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -26,6 +27,8 @@ public class JedisUtil {
 	    config.setMaxWaitMillis( 3000 * 100 );
 	    // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
 	    config.setTestOnBorrow( true );
+	    //	    pool = new JedisPool( config, "113.106.202.51", 6379, 60000, "gt@123456",
+	    //			    3 );
 	    if ( CommonUtil.isNotEmpty( PropertiesUtil.getRedisPassword() ) ) {
 		pool = new JedisPool( config, PropertiesUtil.getRedisHost(), CommonUtil.toInteger( PropertiesUtil.getRedisPort() ), 60000, PropertiesUtil.getRedisPassword(),
 				PropertiesUtil.getRedisDataBase() );
@@ -37,10 +40,13 @@ public class JedisUtil {
     }
 
     public static void main( String[] args ) {
-	Map< String,Integer > params = new HashMap< String,Integer >();
-	params.put( "total", 36002 );
-	params.put( "daysCount", 211 );
-	set( "busCount", JSONObject.toJSONString( params ) );
+	//	Map< String,Integer > params = new HashMap< String,Integer >();
+	//	params.put( "total", 36002 );
+	//	params.put( "daysCount", 211 );
+	//	set( "busCount", JSONObject.toJSONString( params ) );
+
+	Map< String,String > seckillMap = JedisUtil.mapGetAll( Constants.REDIS_SECKILL_NAME );
+	System.out.println( "seckillMap = " + JSONObject.toJSON( seckillMap ) );
     }
 
     /**
@@ -145,7 +151,7 @@ public class JedisUtil {
 	    pool = getPool();
 	    jedis = pool.getResource();
 	    value = jedis.get( key );
-//	    return null;
+	    //	    return null;
 	} catch ( Exception e ) {
 	    // 释放redis对象
 	    pool.returnBrokenResource( jedis );

@@ -83,8 +83,9 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
 			imageAssociativeDAO.updateById( images );
 			//1.remove 存在的数据
 			for ( MallImageAssociative image : imageList ) {
-			    if ( image.getId() == images.getId() ) {
+			    if ( image.getId().equals( images.getId() ) ) {
 				imageList.remove( image );
+				break;
 			    }
 			}
 		    }
@@ -125,6 +126,7 @@ public class MallImageAssociativeServiceImpl extends BaseServiceImpl< MallImageA
 		    for ( MallImageAssociative image : imageList ) {
 			if ( image.getId() == images.getId() ) {
 			    imageList.remove( image );
+			    break;
 			}
 		    }
 		}

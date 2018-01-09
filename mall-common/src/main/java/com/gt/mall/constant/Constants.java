@@ -243,4 +243,15 @@ public class Constants {
 
     public static final String COUPON_URL = "/phone_2MemberController/79B4DE7C/memberCardList_1.do?busId=${userid}";
 
+    public static final String FINISH_REFUND_STATUS = "-14";
+
+    public static final Integer SELLER_FoLLOW_STATUS = 13;
+
+    //粉丝消息提醒模板
+    public static final String   BUY_SUCCESS_NOTICE = "购买成功通知";
+    //商家消息模板
+    public static final String[] BUS_TEMPLATE_LIST  = { "付款成功通知", "确认收货提醒", "申请维权通知" };
+
+    public static final String REDIS_SECKILL_NAME = "hSeckill";
+
 }

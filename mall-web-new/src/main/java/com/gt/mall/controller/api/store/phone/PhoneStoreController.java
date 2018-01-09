@@ -65,12 +65,12 @@ public class PhoneStoreController {
 	    if ( shopList != null && shopList.size() > 0 ) {
 		for ( Map< String,Object > map : fenbiShopList ) {
 		    for ( Map< String,Object > shopInfo : shopList ) {
-			if ( CommonUtil.toInteger( map.get( "shopId" ) ) == CommonUtil.toInteger( shopInfo.get( "id" ) ) ) {
+			if ( CommonUtil.toString( map.get( "shopId" ) ).equals( CommonUtil.toString( shopInfo.get( "id" ) ) ) ) {
 			    map.remove( "shopId" );
 			    map.put( "id", shopInfo.get( "id" ) );
 			    map.put( "shopName", shopInfo.get( "shopName" ) );
 			    map.put( "address", shopInfo.get( "sto_address" ) );
-//			    map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "classify/" + shopInfo.get( "id" ) + "/" + busId + "/5/k=k" );
+			    //			    map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "classify/" + shopInfo.get( "id" ) + "/" + busId + "/5/k=k" );
 			    break;
 			}
 		    }

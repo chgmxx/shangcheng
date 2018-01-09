@@ -21,6 +21,7 @@ import com.gt.mall.result.phone.PhonePageResult;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.basic.MallVisitorService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
@@ -29,16 +30,10 @@ import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.product.MallSearchLabelService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.MallRedisUtils;
-import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.wx.WxJsSdkResult;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,20 +87,17 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     private MallPifaApplyService     mallPifaApplyService;
     @Autowired
     private MallProductDAO           mallProductDAO;
+    @Autowired
+    private MallVisitorService       mallVisitorService;
 
     /**
      * 手机访问商家主页面接口
      */
-    //    @SuppressWarnings( "unchecked" )
-    //    @RequestMapping( "{id}/79B4DE7C/pageIndex" )
-    //    @AfterAnno( style = "9", remark = "微商城访问记录" )
-    @ApiOperation( value = "获取商城首页数据", notes = "获取商城首页数据", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "获取商城首页数据", notes = "获取商城首页数据", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
-    @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "pageId", value = "首页id,必传", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "url", value = "当前页面地址", paramType = "query", dataType = "String" )
-    } )
-    @PostMapping( value = "pageIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "pageId", value = "首页id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "url", value = "当前页面地址", paramType = "query", dataType = "String" ) } )
+    @GetMapping( value = "pageIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhonePageResult > pageIndex( HttpServletRequest request, HttpServletResponse response, Integer pageId, String url ) throws IOException {
 	PhonePageResult result = new PhonePageResult();
 	try {
@@ -148,10 +140,10 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    String dataJson = "[]";
 	    String picJson = "[]";
 	    if ( page.getPagData() != null ) {
-//		MallPaySet set = new MallPaySet();
-//		set.setUserId( userid );
-//		set = mallPaySetService.selectByUserId( set );
-//		int state = mallPifaApplyService.getPifaApplay( member, set );
+		//		MallPaySet set = new MallPaySet();
+		//		set.setUserId( userid );
+		//		set = mallPaySetService.selectByUserId( set );
+		//		int state = mallPifaApplyService.getPifaApplay( member, set );
 
 		net.sf.json.JSONArray jsonobj = net.sf.json.JSONArray.fromObject( page.getPagData() );//转换成JSON数据
 		net.sf.json.JSONArray XinJson = new net.sf.json.JSONArray();//获取新的数组对象
@@ -170,6 +162,8 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		    //		    logger.error( "map" + JSONObject.toJSON( map1 ) );
 		    if ( CommonUtil.isEmpty( map1.get( "imgID" ) ) ) {
 			if ( map1.get( "type" ).toString().equals( "7" ) ) {
+			    map1.put( "stoName", mallStore.getStoName() );
+			    map1.put( "headImg", headImg );
 			    XinJson.add( map1 );
 			}
 			continue;
@@ -245,7 +239,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    result.setStoName( mallStore.getStoName() );
 	    result.setSharePicture( headImg );
 	    result.setPageName( page.getPagName() );
-
+	    result.setShopId( page.getPagStoId() );
 	} catch ( BusinessException be ) {
 	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
@@ -434,12 +428,13 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     /**
      * 获取微信分享
      */
-    @ApiOperation( value = "微信分享接口", notes = "获取微信分享", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiOperation( value = "微信分享接口", notes = "获取微信分享", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @ApiImplicitParams( @ApiImplicitParam( name = "url", value = "当前地址", paramType = "query", required = true, dataType = "String" ) )
-    @PostMapping( value = "wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @GetMapping( value = "wxShare", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse wxShare( HttpServletRequest request, HttpServletResponse response, String url ) throws IOException {
 	try {
+	    logger.error( "需要分享的链接：" + url );
 	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
 	    if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPublicId() ) ) {
 		WxJsSdk wxJsSdk = new WxJsSdk();
@@ -531,5 +526,51 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopId, false );
     }
+
+    @ApiOperation( value = "新增浏览量", notes = "新增浏览量", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "id", value = "页面ID/商品ID,必传", paramType = "query", required = true, dataType = "int" ),
+		    @ApiImplicitParam( name = "type", value = "0页面 1商品,必传", paramType = "query", required = true, dataType = "int" ) } )
+    @PostMapping( value = "addViewsNum", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse addVisitor( HttpServletRequest request, Integer busId, Integer id, Integer type ) {
+	try {
+	    Integer memberId = null;
+	    Member member = MallSessionUtils.getLoginMember( request, busId );
+	    if ( member != null ) {
+		memberId = member.getId();
+	    }
+	    Boolean result = false;
+	    if ( type == 0 ) {
+		result = mallVisitorService.savePageVisitor( CommonUtil.getIpAddr( request ), memberId, id );
+	    } else {
+		result = mallVisitorService.saveProductVisitor( CommonUtil.getIpAddr( request ), memberId, id );
+	    }
+	    if ( !result ) {
+		return ServerResponse.createByErrorMessage( "新增浏览量失败" );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "新增浏览量异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "新增浏览量失败" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    /**
+     * 自动生成二维码
+     */
+    @ApiOperation( value = "生成二维码", notes = "生成二维码" )
+    @RequestMapping( value = "/generateQRCode", method = RequestMethod.GET )
+    public void generateQRCode( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "url", value = "地址", required = true ) @RequestParam String url ) {
+	try {
+	    String content = PropertiesUtil.getPhoneWebHomeUrl() + url;
+	    QRcodeKit.buildQRcode( content, 200, 200, response );
+	} catch ( Exception e ) {
+	    logger.error( "自动生成二维码异常：" + e.getMessage() );
+	    e.printStackTrace();
+	}
+    }
+
 
 }

@@ -7,9 +7,10 @@ import com.gt.api.util.KeysUtil;
 import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.constant.Constants;
+import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
-import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionMargin;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -50,7 +51,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     @Autowired
     private MallOrderDAO         orderDAO;
     @Autowired
-    private MallStoreDAO         storeDAO;
+    private MallAuctionDAO       mallAuctionDAO;
     @Autowired
     private MemberService        memberService;
     @Autowired
@@ -264,6 +265,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     }
 
     private String getWxAlipay( MallAuctionMargin mallAuctionMargin, Member member ) throws Exception {
+	MallAuction auction = mallAuctionDAO.selectById( mallAuctionMargin.getAucId() );
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
 	subQrPayParams.setTotalFee( CommonUtil.toDouble( mallAuctionMargin.getMarginMoney() ) );
 	subQrPayParams.setModel( Constants.PAY_MODEL );
@@ -274,14 +276,19 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	subQrPayParams.setMemberId( member.getId() );//会员id
 	subQrPayParams.setDesc( "商城缴纳拍卖定金" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
-	subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/phoneAuction/L6tgXlBFeK/myMargin.do" );
+	subQrPayParams.setReturnUrl(
+			PropertiesUtil.getPhoneWebHomeUrl() + "/auction/success/" + member.getBusid() + "/" + mallAuctionMargin.getProId() + "/" + mallAuctionMargin.getAucId()
+					+ "/" + auction.getShopId() + "/4" );
 	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
-			+ "/phoneAuction/L6tgXlBFeK/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
-	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/mAuction/margin.do" );//推送路径(尽量不要带参数)
+			+ "phoneAuction/L6tgXlBFeK/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+	subQrPayParams.setIsSendMessage( 0 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
+	//	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mAuction/margin.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;
-	if ( mallAuctionMargin.getPayWay() == 3 ) {
+	if ( mallAuctionMargin.getPayWay() == 3 ) {//支付宝支付
 	    payWay = 2;
+	}
+	if ( mallAuctionMargin.getPayWay() == 4 ) {
+	    payWay = 3;
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 
@@ -309,42 +316,47 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	List< Map< String,Object > > marginList = auctionMarginDAO.selectMarginByEnd();
 	if ( marginList != null && marginList.size() > 0 ) {
 	    for ( int i = 0; i < marginList.size(); i++ ) {
-		boolean isReturn = true;
-		Map< String,Object > map = marginList.get( i );
-		log.info( map );
-		String endTimes = map.get( "create_time" ).toString();
-		String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;
-		String eDate = DateTimeKit.format( new Date(), format );
-		long hour = DateTimeKit.minsBetween( endTimes, eDate, 3600000, format );
-		if ( map.get( "auc_type" ).toString().equals( "1" ) ) {//降价拍
-		    if ( hour >= 24 ) {
-			log.info( "降价拍退款进来啦" );
-			if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
-			    if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
-				isReturn = false;
+		try {
+		    boolean isReturn = true;
+		    Map< String,Object > map = marginList.get( i );
+		    log.info( map );
+		    String endTimes = map.get( "create_time" ).toString();
+		    String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;
+		    String eDate = DateTimeKit.format( new Date(), format );
+		    long hour = DateTimeKit.minsBetween( endTimes, eDate, 3600000, format );
+		    if ( map.get( "auc_type" ).toString().equals( "1" ) ) {//降价拍
+			if ( hour >= 24 ) {
+			    log.info( "降价拍退款进来啦" );
+			    if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
+				if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
+				    isReturn = false;
+				}
+			    }
+			}
+		    } else {//升价拍
+			log.info( "升价拍退款进来啦" );
+			if ( hour >= 72 ) {
+			    if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
+				if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
+				    isReturn = false;
+				}
 			    }
 			}
 		    }
-		} else {//升价拍
-		    log.info( "升价拍退款进来啦" );
-		    if ( hour >= 72 ) {
-			if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
-			    if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
-				isReturn = false;
-			    }
-			}
+		    if ( !isReturn ) {//不能退款，修改保证金的状态
+			Integer marginId = CommonUtil.toInteger( map.get( "id" ) );
+			MallAuctionMargin margin = new MallAuctionMargin();
+			margin.setId( marginId );
+			margin.setMarginStatus( -2 );
+			margin.setNoReturnReason( "拍卖没有转换成订单" );
+			auctionMarginDAO.updateById( margin );
+		    } else {
+			map.put( "isAlipay", false );
+			returnEndMargin( map );
 		    }
-		}
-		if ( !isReturn ) {//不能退款，修改保证金的状态
-		    Integer marginId = CommonUtil.toInteger( map.get( "id" ) );
-		    MallAuctionMargin margin = new MallAuctionMargin();
-		    margin.setId( marginId );
-		    margin.setMarginStatus( -2 );
-		    margin.setNoReturnReason( "拍卖没有转换成订单" );
-		    auctionMarginDAO.updateById( margin );
-		} else {
-		    map.put( "isAlipay", false );
-		    returnEndMargin( map );
+		} catch ( Exception e ) {
+		    logger.error( "扫描已结束的拍卖保证金异常" + e );
+		    e.printStackTrace();
 		}
 	    }
 	}
@@ -389,7 +401,8 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		logger.error( "微信退款的返回值：" + net.sf.json.JSONObject.fromObject( resultmap ) );
 
 		if ( resultmap != null ) {
-		    if ( resultmap.get( "code" ).toString().equals( "1" ) ) {
+		    String code = resultmap.get( "code" ).toString();
+		    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
 			//退款成功修改退款状态
 			updateReturnStatus( pUser, map, returnNo );//微信退款
 		    } else {
@@ -401,21 +414,14 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    }
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
 	    Member member = memberService.findMemberById( memberId, null );
-	    //	    Map< String,Object > returnParams = new HashMap<>();
-	    //	    returnParams.put( "busId", member.getBusid() );
-	    //	    returnParams.put( "orderNo", aucNo );
-	    //	    returnParams.put( "money", money );
-	    //	    Map< String,Object > payResultMap = memberService.refundMoney( returnParams ); //memberPayService.chargeBack(memberId,money);
 	    ErpRefundBo erpRefundBo = new ErpRefundBo();
 	    erpRefundBo.setBusId( member.getBusid() );//商家id
 	    erpRefundBo.setOrderCode( aucNo );////订单号
 	    erpRefundBo.setRefundPayType( CommonUtil.getMemberPayTypeByPresale( margin.getPayWay(), 0 ) );////退款方式 字典1198
 	    erpRefundBo.setRefundMoney( money ); //退款金额
-	    //	    erpRefundBo.setRefundJifen(0 );//退款积分
-	    //	    erpRefundBo.setRefundFenbi( 0d ); //退款粉币
 	    erpRefundBo.setRefundDate( new Date().getTime() );
 	    Map< String,Object > memberResultMap = memberService.refundMoney( erpRefundBo );
-	    if ( CommonUtil.toInteger( memberResultMap.get( "code" ) ) == -1 ) {
+	    if ( CommonUtil.toInteger( memberResultMap.get( "code" ) ) != 1 ) {
 		//同步失败，存入redis
 		JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
 

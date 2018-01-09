@@ -27,7 +27,7 @@
         term_id , bus_id , member_id, discount, buy_status , receivables_number
     </sql>
 
-    <select id="findReceivablesList" resultType="Map" parameterType="java.lang.Integer">
+    <select id="findReceivablesList" resultType="map" parameterType="java.lang.Integer">
 		select
 		r.id,
 		r.order_id as "orderId",
@@ -54,9 +54,6 @@
 		purchase_term t on t.id=r.term_id
 		where r.order_id =
 		#{orderId,jdbcType=INTEGER} and buy_status=1
-        <if test="pageFirst != null and pageLast != null">
-            limit #{pageFirst},#{pageLast}
-        </if>
 
 	</select>
     <select id="selectReceivable" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -70,7 +67,7 @@
 		left join purchase_term t on t.id=r.term_id
 		where r.order_id = #{orderId,jdbcType=INTEGER} and buy_status=1
     </select>
-    <select id="findList" resultType="Map">
+    <select id="findList" resultType="map">
         select
         r.id,
         r.order_id as "orderId",

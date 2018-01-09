@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.entityBo.ErpRefundBo;
+import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
 import com.gt.mall.bean.member.UserConsumeParams;
@@ -14,6 +15,7 @@ import com.gt.mall.utils.HttpSignUtil;
 import com.gt.mall.utils.JedisUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,18 +77,22 @@ public class MemberServiceImpl implements MemberService {
     public Member findMemberById( int memberId, Member member ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "memberId", memberId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findByMemberId" );
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByMemberId" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
-	    JSONObject memberObj = JSONObject.parseObject( data );
-	    member = isEmptyMember( memberObj, member );
-	    member.setFansCurrency( memberObj.getDouble( "fansCurrency" ) );
-	    member.setIntegral( memberObj.getInteger( "integral" ) );
+	    member = JSONObject.parseObject( data, Member.class );
+	    //	    JSONObject memberObj = JSONObject.parseObject( data );
+	    //	    member = isEmptyMember( memberObj, member );
+	    //	    member.setFansCurrency( memberObj.getDouble( "fansCurrency" ) );
+	    //	    member.setIntegral( memberObj.getInteger( "integral" ) );
+	    //	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
+	    //		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
+	    //	    }
 	}
 	return member;
     }
 
     /**
-     * 绑定手机号
+     * 绑定手机号(小程序)
      *
      * @param params 参数{memberId：会员id，code：短信校验码，phone：手机号，busId：商家id}
      * @param member member对象
@@ -100,6 +106,19 @@ public class MemberServiceImpl implements MemberService {
 	    member.setPhone( memberObj.getString( "phone" ) );
 	}
 	return member;
+    }
+
+    @Override
+    public boolean bingdingPhoneH5( Integer busId, String phone, Integer memberId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	params.put( "phone", phone );
+	params.put( "busId", busId );
+	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5" );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return result.get( "code" ).toString().equals( "1" );
+	}
+	return false;
     }
 
     /**
@@ -287,7 +306,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Map< String,Object > refundMoney( ErpRefundBo erpRefundBo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( erpRefundBo, MEMBER_URL + "refundErp", 1, -1 );
+	return HttpSignUtil.signHttpInsertOrUpdate( erpRefundBo, MEMBER_URL + "refundErp", 0, -1 );
     }
 
     @Override
@@ -364,6 +383,32 @@ public class MemberServiceImpl implements MemberService {
 	    return JSONObject.parseObject( data, JifenAndFenbiRule.class );
 	}
 	return null;
+    }
+
+    @Override
+    public List< Map< String,Object > > findMemberByIds( Map< String,Object > params ) {
+	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByIds" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    JSONArray array = JSONArray.parseArray( data );
+	    for ( int a = 0; a < array.size(); a++ ) {
+		JSONObject object = array.getJSONObject( a );
+		Map< String,Object > map = new HashMap< String,Object >();
+		map.put( "memberId", object.getInteger( "id" ) );
+		map.put( "nickname", object.getString( "nickname" ) );
+		map.put( "headimgurl", object.getString( "headimgurl" ) );
+		list.add( map );
+	    }
+	}
+	return list;
+    }
+
+    /**
+     * 会员 积分 和 粉币核销 包括优惠券
+     */
+    @Override
+    public void newPaySuccessByErpBalance( NewErpPaySuccessBo newErpPaySuccessBo ) {
+	HttpSignUtil.signHttpSelect( newErpPaySuccessBo, MEMBER_URL + "newPaySuccessByErpBalance" );
     }
 
 }

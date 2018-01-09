@@ -1,17 +1,26 @@
 package com.gt.mall.controller.api.set;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.entity.basic.MallBusMessageMember;
+import com.gt.mall.entity.basic.MallCommentGive;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.basic.MallBusMessageMemberService;
+import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -25,10 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -44,9 +50,11 @@ import java.util.Map;
 public class MallPaySetController extends BaseController {
 
     @Autowired
-    private MallPaySetService   mallPaySetService;
+    private MallPaySetService           mallPaySetService;
     @Autowired
-    private WxPublicUserService wxPublicUserService;
+    private WxPublicUserService         wxPublicUserService;
+    @Autowired
+    private MallBusMessageMemberService mallBusMessageMemberService;
 
     /**
      * 获取商城设置
@@ -91,6 +99,7 @@ public class MallPaySetController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map > msgArr = null;
+	    List< Map > busMsgArr = null;
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( user.getId() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
@@ -99,24 +108,42 @@ public class MallPaySetController extends BaseController {
 		    msgArr = JSONArray.fromObject( set.getMessageJson() );
 		}
 		if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
-		    JSONArray busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
-		    result.put( "busMsgArr", busMsgArr );
+		    busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
 		}
 	    }
 
 	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
+	    List< Map > messages = new ArrayList< Map >();//粉丝消息模板
+	    List< Map > busMessages = new ArrayList< Map >();//商家消息模板
 	    if ( messageList != null && msgArr != null && messageList.size() > 0 ) {
 		for ( Map map : messageList ) {
-		    for ( Map obj : msgArr ) {
-			map.put( "selected", "0" );
-			if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
-			    map.put( "selected", "1" );
-			    break;
+		    if ( map.get( "title" ).equals( Constants.BUY_SUCCESS_NOTICE ) ) {
+			for ( Map obj : msgArr ) {
+			    map.put( "selected", "0" );
+			    if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+				map.put( "selected", "1" );
+				break;
+			    }
+			}
+			messages.add( map );
+		    } else {
+			List< String > fauCodeList = new ArrayList< String >();
+			fauCodeList = Arrays.asList( Constants.BUS_TEMPLATE_LIST );
+			if ( fauCodeList.contains( map.get( "title" ) ) == true ) {
+			    for ( Map obj : busMsgArr ) {
+				map.put( "selected", "0" );
+				if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+				    map.put( "selected", "1" );
+				    break;
+				}
+			    }
+			    busMessages.add( map );
 			}
 		    }
 		}
 	    }
-	    result.put( "messageList", messageList );
+	    result.put( "messageList", messages );
+	    result.put( "busMessages", busMessages );
 	} catch ( Exception e ) {
 	    logger.error( "获取消息模板异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -232,18 +259,32 @@ public class MallPaySetController extends BaseController {
     @RequestMapping( value = "/isAuthService", method = RequestMethod.POST )
     public ServerResponse isAuthService( HttpServletRequest request, HttpServletResponse response ) {
 	Integer flag = null;
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( user.getId() );
+	    //商家有无授权
+	    Wrapper wrapper = new EntityWrapper<>();
+	    wrapper.where( "is_delete =0 and bus_id= {0}", user.getId() );
+	    List< MallBusMessageMember > busMessageMemberList = mallBusMessageMemberService.selectList( wrapper );
+
 	    if ( wxPublicUsers == null ) {
 		flag = -1;//未认证;
-	    } else if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
-		flag = -1;//未认证
-	    } else if ( wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
-		flag = 1; //有服务号
+	    } else if ( busMessageMemberList == null || busMessageMemberList.size() == 0 ) {
+		flag = -2;//未授权;
 	    } else {
-		flag = 0; //无服务号
+		if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
+		    flag = -1;//未认证
+		} else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
+		    flag = 1; //有服务号
+		} else {
+		    flag = 0; //无服务号
+		}
 	    }
+	    result.put( "flag", flag );
+	    result.put( "busId", user.getId() );
+	    result.put( "duofenTwoCodeUrl", PropertiesUtil.getDuofenTwoCodeUrl() );//多粉二维码地址
+	    result.put( "domain", PropertiesUtil.getWxmpDomain() );
 	} catch ( BusinessException e ) {
 	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -253,7 +294,7 @@ public class MallPaySetController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
 }

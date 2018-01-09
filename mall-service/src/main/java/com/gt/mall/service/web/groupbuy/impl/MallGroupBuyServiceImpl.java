@@ -468,6 +468,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	if ( CommonUtil.isEmpty( groupBuy ) ) {
 	    return result;
 	}
+	if ( groupBuy.getStatus() == -1 || groupBuy.getStatus() == -2 ) {
+	    result.setActivityId( 0 );
+	    result.setType( 0 );
+	    return result;
+	}
 	result.setActivityTimes( groupBuy.getTimes() );
 	result.setActivityId( groupBuy.getId() );//活动id
 	if ( CommonUtil.isNotEmpty( groupBuy.getGMaxBuyNum() ) && groupBuy.getGMaxBuyNum() > 0 ) {
@@ -672,5 +677,15 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 	}
 	int joinNum = mallGroupJoinService.selectGroupJoinPeopleNum( groupBuyid, orderId, orderDetailId );
 	return joinNum >= mallGroupBuy.getGPeopleNum();
+    }
+
+    @Override
+    public MallGroupBuy selectBuyByProductId( Integer groupBuyId ) {
+	if ( CommonUtil.isEmpty( groupBuyId ) || groupBuyId == 0 ) {
+	    return null;
+	}
+	MallGroupBuy buy = new MallGroupBuy();
+	buy.setId( groupBuyId );
+	return mallGroupBuyDAO.selectBuyByProductId( buy );
     }
 }

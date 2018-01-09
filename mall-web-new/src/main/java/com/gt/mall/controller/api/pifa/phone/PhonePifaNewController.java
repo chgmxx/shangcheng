@@ -64,7 +64,7 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "7" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    MallPaySet set = mallPaySetService.selectByMember( member );
 	    if ( CommonUtil.isNotEmpty( set ) ) {
@@ -92,7 +92,7 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< Map< String,Object > > addWholesaler( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddPifaApplyDTO pifaApplyDTO, String code ) {
 	try {
-	    userLogin( request, response, loginDTO );
+//	    userLogin( request, response, loginDTO );
 
 	    if ( CommonUtil.isEmpty( code ) ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "请输入验证码" );

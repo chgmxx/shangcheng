@@ -65,13 +65,22 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "1" ) );////判断活动是否已经过期
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );*/
 
-	    MallGroupBuy groupBuy = groupBuyService.selectById( id );
+	    MallGroupBuy groupBuy = groupBuyService.selectBuyByProductId( id );
 	    if ( CommonUtil.isEmpty( groupBuy ) ) {
-		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+		throw new BusinessException( ResponseEnums.URL_GUOQI_ERROR.getCode(), ResponseEnums.URL_GUOQI_ERROR.getDesc() );
 	    }
+	    result.put( "status", groupBuy.getStatus() );
+
+	    if ( groupBuy.getStatus() == -1 ) {
+		result.put( "statusMsg", "活动已结束" );
+	    } else if ( groupBuy.getStatus() == -2 ) {
+		result.put( "statusMsg", "活动已失效" );
+	    }
+
+	    //	    if(groupBuy.getGStartTime())
 
 	    if ( buyerUserId == null && CommonUtil.isNotEmpty( member ) ) {
 		buyerUserId = member.getId();
@@ -88,7 +97,7 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( productMap ) && CommonUtil.isNotEmpty( groupBuy.getGPeopleNum() ) ) {
 		chaPeopleNum = groupBuy.getGPeopleNum() - joinList.size();
 	    }
-	    String title = "还差" + chaPeopleNum + "人、我" + productMap.get( "price" ) + "元团了" + productMap.get( "pro_name" ) + "商品";
+	    String title = "还差" + chaPeopleNum + "人、我" + productMap.get( "price" ) + "元团了" + productMap.get( "proName" ) + "商品";
 	    double old_price = 0;
 	    double price = CommonUtil.toDouble( productMap.get( "price" ) );
 	    if ( CommonUtil.isNotEmpty( productMap.get( "oldPrice" ) ) ) {

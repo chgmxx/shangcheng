@@ -2,10 +2,13 @@ package com.gt.mall.service.web.order.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.MallPresaleRankDAO;
-import com.gt.mall.dao.product.*;
+import com.gt.mall.dao.product.MallProductDAO;
+import com.gt.mall.dao.product.MallProductInventoryDAO;
+import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.dao.seller.MallSellerIncomeDAO;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -16,14 +19,12 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerIncome;
+import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
-import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.order.QuartzOrderService;
-import com.gt.mall.utils.*;
-import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
-import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
-import com.gt.util.entity.param.fenbiFlow.UpdateFenbiReduce;
-import com.gt.util.entity.result.fenbi.FenBiCount;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.JedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,9 +44,6 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
     private MallProductInventoryDAO mallProductInventoryDAO;
 
     @Autowired
-    private FenBiFlowService fenBiFlowService;
-
-    @Autowired
     private MallPaySetDAO paySetMapper;
 
     @Autowired
@@ -56,12 +54,14 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
     private MallSellerDAO       mallSellerDAO;
     @Autowired
     private MemberService       memberService;
+    @Autowired
+    private MemberPayService    memberPayService;
 
     @Override
-    public void closeOrderNoPay( String key, String ip, String pwd ) {
+    public void closeOrderNoPay( String key ) {
 	//判断是否存在未支付的订单
-	if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-	    Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有未支付的订单
+	if ( JedisUtil.exists( key ) ) {
+	    Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有未支付的订单
 	    if ( map != null ) {
 		Set< String > set = map.keySet();
 		for ( String orderId : set ) {
@@ -75,9 +75,9 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 			long mins = DateTimeKit.minsBetween( times, eDate, 60000, format );
 			if ( mins > 30 ) {// 订单已经支付了30分钟还未退款
 			    // 恢复订单库存
-			    boolean flag = addInvNum( orderId, ip, pwd );
+			    boolean flag = addInvNum( orderId );
 			    if ( flag ) {
-				MultipleJedisUtil.mapdel( key, orderId, ip, pwd );
+				JedisUtil.mapdel( key, orderId );
 			    }
 			}
 		    }
@@ -87,11 +87,11 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
     }
 
     @Override
-    public void newCloseOrderNoPay( String key, String ip, String pwd ) {
+    public void newCloseOrderNoPay( String key ) {
 
 	//判断是否存在未支付的订单
-	if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-	    Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有未支付的订单
+	if ( JedisUtil.exists( key ) ) {
+	    Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有未支付的订单
 	    if ( map != null ) {
 		Set< String > set = map.keySet();
 		for ( String orderId : set ) {
@@ -110,11 +110,11 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 			String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;
 			String eDate = DateTimeKit.format( new Date(), format );
 			long mins = DateTimeKit.minsBetween( times, eDate, 60000, format );
-			if ( mins > orderCancel ) {// 订单已经超过设定时间还未退款
+			if ( mins >= orderCancel ) {// 订单已经超过设定时间还未退款
 			    // 恢复订单库存
-			    boolean flag = addInvNum( orderId, ip, pwd );
+			    boolean flag = addInvNum( orderId );
 			    if ( flag ) {
-				MultipleJedisUtil.mapdel( key, orderId, ip, pwd );
+				JedisUtil.mapdel( key, orderId );
 			    }
 			}
 		    }
@@ -123,7 +123,7 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	}
     }
 
-    public boolean addInvNum( String orderId, String ip, String pwd ) {
+    public boolean addInvNum( String orderId ) {
 	boolean flag = false;
 	Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "id", orderId );
@@ -131,25 +131,25 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	// 查询所有未支付的订单
 	MallOrder order = orderMapper.selectOrderById( params );
 
-	String invKey = "hSeckill";// 秒杀库存的key
+	String invKey = Constants.REDIS_SECKILL_NAME;// 秒杀库存的key
 	if ( order != null ) {
 	    if ( order.getOrderType() == 3 ) {// 秒杀订单  恢复库存
 		if ( order.getMallOrderDetail() != null ) {
 		    String seckill = order.getGroupBuyId().toString();
 		    MallOrderDetail detail = order.getMallOrderDetail().get( 0 );
 		    if ( order.getOrderStatus() == 1 ) {//未支付的才恢复库存
-			if ( MultipleJedisUtil.hExists( invKey, seckill, ip, pwd ) ) {
+			if ( JedisUtil.hExists( invKey, seckill ) ) {
 			    // 恢复商品库存
-			    int invNum = CommonUtil.toInteger( MultipleJedisUtil.maoget( invKey, seckill, ip, pwd ) );
-			    MultipleJedisUtil.map( invKey, seckill, ( invNum + 1 ) + "", ip, pwd );
+			    int invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckill ) );
+			    JedisUtil.map( invKey, seckill, ( invNum + 1 ) + "" );
 			}
 			if ( CommonUtil.isNotEmpty( detail.getProductSpecificas() ) ) {
 			    String specificas = detail.getProductSpecificas();
 			    String field = seckill + "_" + specificas;
-			    if ( MultipleJedisUtil.hExists( invKey, field, ip, pwd ) ) {
+			    if ( JedisUtil.hExists( invKey, field ) ) {
 				// 恢复商品规格库存
-				int invNum = CommonUtil.toInteger( MultipleJedisUtil.maoget( invKey, field, ip, pwd ) );
-				MultipleJedisUtil.map( invKey, field, ( invNum + 1 ) + "", ip, pwd );
+				int invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, field ) );
+				JedisUtil.map( invKey, field, ( invNum + 1 ) + "" );
 			    }
 			}
 		    } else {
@@ -310,28 +310,28 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	}
 	int orderId = CommonUtil.toInteger( map.get( "id" ) );
 	int userId = 0;//商户id
-	int publicId = 0;//公众号id
-	int integral = 0;//积分
-	double fenbi = 0;//粉币
-	int totalIntegral = 0;//历史积分
+	//	int publicId = 0;//公众号id
+	//	int integral = 0;//积分
+	//	double fenbi = 0;//粉币
+	//	int totalIntegral = 0;//历史积分
 
 	Member member1 = memberService.findMemberById( memberId, null );
 	if ( CommonUtil.isNotEmpty( member1 ) ) {
 	    if ( CommonUtil.isNotEmpty( member1.getBusid() ) ) {
 		userId = member1.getBusid();
 	    }
-	    if ( CommonUtil.isNotEmpty( member1.getPublicId() ) ) {
-		publicId = member1.getPublicId();
-	    }
-	    if ( CommonUtil.isNotEmpty( member1.getIntegral() ) ) {
-		integral = member1.getIntegral();
-	    }
-	    if ( CommonUtil.isNotEmpty( member1.getFansCurrency() ) ) {
-		fenbi = member1.getFansCurrency();
-	    }
-	    if ( CommonUtil.isNotEmpty( member1.getTotalintegral() ) ) {
-		totalIntegral = member1.getTotalintegral();
-	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getPublicId() ) ) {
+	    //		publicId = member1.getPublicId();
+	    //	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getIntegral() ) ) {
+	    //		integral = member1.getIntegral();
+	    //	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getFansCurrency() ) ) {
+	    //		fenbi = member1.getFansCurrency();
+	    //	    }
+	    //	    if ( CommonUtil.isNotEmpty( member1.getTotalintegral() ) ) {
+	    //		totalIntegral = member1.getTotalintegral();
+	    //	    }
 	}
 	boolean isOpenGive = false;//是否开启预售送礼
 	//查询是否开启了预售送礼
@@ -347,7 +347,7 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	    }
 	}
 	if ( isOpenGive ) {
-	    if ( userId > 0 && publicId > 0 ) {
+	    if ( userId > 0 ) {
 
 		MallPresaleRank rank = new MallPresaleRank();
 		rank.setOrderId( orderId );
@@ -358,18 +358,17 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 		MallPresaleRank presaleRank = rankMapper.selectByPresale( rank );
 
 		if ( CommonUtil.isNotEmpty( presaleRank ) ) {
-		    Member member = new Member();
-		    boolean flag = false;
-
 		    int giveType = presaleRank.getType();
 		    int giveNum = presaleRank.getGiveNum();
-		    if ( giveType == 1 ) {//送积分
-			member.setIntegral( integral + giveNum );
-			member.setIntegraldate( new Date() );
-			member.setTotalintegral( totalIntegral + giveNum );
-			flag = true;
-		    } else if ( giveType == 2 ) {//送粉币
-			int rec_type = 1;//1：粉币 2：流量
+		    if ( presaleRank.getGiveNum() > 0 ) {
+
+			Integer integral = 0;
+			Double fenbi = 0d;
+			if ( giveType == 1 ) {//送积分
+			    integral = giveNum;
+			} else if ( giveType == 2 ) {//送粉币
+			    fenbi = CommonUtil.toDouble( giveNum );
+			/*int rec_type = 1;//1：粉币 2：流量
 			int fre_type = 34;//冻结类型  34 商城预售送粉币
 			int fkId = 0;//外键ID
 			FenbiSurplus surplus = new FenbiSurplus();
@@ -389,9 +388,9 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 
 			    FenbiFlowRecord record = fenBiFlowService.getFenbiFlowRecord( surplus );
 			    if ( CommonUtil.isNotEmpty( record ) ) {
-				/*FenbiFlowRecord fenbiFlow = new FenbiFlowRecord();
+				*//*FenbiFlowRecord fenbiFlow = new FenbiFlowRecord();
 				fenbiFlow.setId( record.getId() );
-				fenbiFlow.setRecUseCount( Double.valueOf( record.getRecUseCount() + giveNum ) );*/
+				fenbiFlow.setRecUseCount( Double.valueOf( record.getRecUseCount() + giveNum ) );*//*
 				UpdateFenbiReduce reduce = new UpdateFenbiReduce();
 				reduce.setBusId( userId );
 				reduce.setCount( Double.valueOf( record.getRecUseCount() + giveNum ) );
@@ -401,28 +400,19 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 				flag = true;
 			    }
 
+			}*/
+			}
+			Map< String,Object > resultMap = memberPayService.updateJifenAndFenBiByPinglu( memberId, integral, fenbi );
+			if ( resultMap.get( "code" ).toString().equals( "1" ) ) {
+			    MallPresaleRank ranks = new MallPresaleRank();
+			    ranks.setId( presaleRank.getId() );
+			    ranks.setIsGive( "1" );
+			    rankMapper.updateById( ranks );
 			}
 		    }
-		    if ( flag ) {
-			member.setId( memberId );
-			//TODO  修改会员积分。粉币
-			/*memberMapper.updateByPrimaryKeySelective( member );*/
 
-			MallPresaleRank ranks = new MallPresaleRank();
-			ranks.setId( presaleRank.getId() );
-			ranks.setIsGive( "1" );
-			rankMapper.updateById( ranks );
-
-		    }
-
-		} else {
-		    //logger.info("预定送礼：没有查出评论");
 		}
-	    } else {
-		//logger.info("预定送礼：用户没有关注公众号");
 	    }
-	} else {
-	    //logger.info("预定送礼：没有开启评论送礼");
 	}
     }
 

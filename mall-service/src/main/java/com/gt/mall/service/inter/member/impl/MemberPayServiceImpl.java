@@ -8,6 +8,7 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,15 @@ public class MemberPayServiceImpl implements MemberPayService {
     @Override
     public Map< String,Object > paySuccessNewDan( NewErpPaySuccessBo paySuccessBo ) {
 	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessByErpBalance" );
+    }
+
+    @Override
+    public Map< String,Object > updateJifenAndFenBiByPinglu( Integer memberId, Integer jifen, Double fenbi ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	params.put( "jifen", jifen );
+	params.put( "fenbi", fenbi );
+	return HttpSignUtil.signHttpInsertOrUpdate( params, NEW_MEMBER_COUNT_URL + "updateJifenAndFenBiByPinglu" );
     }
 
 }

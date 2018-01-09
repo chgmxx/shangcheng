@@ -47,21 +47,6 @@ public class MallQuartzApiController {
 	return ServerResponse.createBySuccessCode();
     }
 
-    @ApiOperation( value = "统计商城信息", notes = "统计商城信息" )
-    @ResponseBody
-    @RequestMapping( value = "/mallCount", method = RequestMethod.POST )
-    public ServerResponse mallCount( HttpServletRequest request, HttpServletResponse response ) {
-	try {
-	    //晚上一点
-	    mallQuartzNewService.mallcount();
-	} catch ( Exception e ) {
-	    logger.error( "统计商城信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计商城信息异常" );
-	}
-	return ServerResponse.createBySuccessCode();
-    }
-
     @ApiOperation( value = "订单完成赠送物品", notes = "订单完成赠送物品" )
     @ResponseBody
     @RequestMapping( value = "/orderFinish", method = RequestMethod.POST )
@@ -82,14 +67,14 @@ public class MallQuartzApiController {
     @RequestMapping( value = "/closeOrderNoPay", method = RequestMethod.POST )
     public ServerResponse closeOrderNoPay( HttpServletRequest request, HttpServletResponse response ) {
 	//三十分钟更新一次
-	try {
+	/*try {
 	    //关闭未付款认单,未支付的秒杀订单
 	    mallQuartzNewService.closeOrderNoPay();
 	} catch ( Exception e ) {
 	    logger.error( "关闭30分钟内未支付的订单异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "关闭30分钟内未支付的订单异常" );
-	}
+	}*/
 	try {
 	    //关闭未付款认单
 	    mallQuartzNewService.closeNoPayOrder();
@@ -128,13 +113,13 @@ public class MallQuartzApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天营业额异常" );
 	}
-	try {
-	    mallQuartzNewService.countPageVisitorNum();
-	} catch ( Exception e ) {
-	    logger.error( "统计每天页面访问数量异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天页面访问数量异常" );
-	}
+//	try {
+//	    mallQuartzNewService.countPageVisitorNum();
+//	} catch ( Exception e ) {
+//	    logger.error( "统计每天页面访问数量异常：" + e.getMessage() );
+//	    e.printStackTrace();
+//	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天页面访问数量异常" );
+//	}
 	return ServerResponse.createBySuccessCode();
     }
 
@@ -146,7 +131,7 @@ public class MallQuartzApiController {
 	try {
 	    mallQuartzNewService.autoConfirmTakeDelivery();//自动确认收货
 	} catch ( Exception e ) {
-	    logger.error( "维权自动确认收货异常：" + e.getMessage() );
+	    logger.error( "订单自动确认收货异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "维权自动确认收货异常" );
 	}
@@ -215,6 +200,36 @@ public class MallQuartzApiController {
 	    logger.error( "预售商品开售提醒买家异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售商品开售提醒买家异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "调用会员退款接口", notes = "调用会员退款接口" )
+    @ResponseBody
+    @RequestMapping( value = "/memberRefund", method = RequestMethod.POST )
+    public ServerResponse memberRefund( HttpServletRequest request, HttpServletResponse response ) {
+	//
+	try {
+	    mallQuartzNewService.memberRefund();
+	} catch ( Exception e ) {
+	    logger.error( "调用会员退款接口异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "调用会员退款接口异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "评论送礼", notes = "评论送礼" )
+    @ResponseBody
+    @RequestMapping( value = "/commentGive", method = RequestMethod.POST )
+    public ServerResponse commentGive( HttpServletRequest request, HttpServletResponse response ) {
+	//
+	try {
+	    mallQuartzNewService.commentGive();
+	} catch ( Exception e ) {
+	    logger.error( "评论送礼异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "评论送礼异常" );
 	}
 	return ServerResponse.createBySuccessCode();
     }

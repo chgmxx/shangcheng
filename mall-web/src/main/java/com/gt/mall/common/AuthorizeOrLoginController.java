@@ -8,7 +8,6 @@ import com.gt.api.util.sign.SignHttpUtils;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.utils.*;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -33,12 +32,18 @@ public class AuthorizeOrLoginController {
 
     private static final String GETWXPULICMSG = "/8A5DA52E/busUserApi/getWxPulbicMsg.do";
 
-    public String userLogin( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO ) throws Exception {
-	Integer busId = loginDTO.getBusId();
+    public String userLogin( HttpServletRequest request, HttpServletResponse response, Map< String,Object > map ) throws Exception {
+	if ( CommonUtil.isEmpty( map.get( "busId" ) ) || CommonUtil.isEmpty( map.get( "url" ) ) ) {
+	    return null;
+	}
+	Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 	Integer browser = CommonUtil.judgeBrowser( request );
-	Integer uclogin = loginDTO.getUcLogin();
+	Integer uclogin = null;
+	if ( CommonUtil.isNotEmpty( map.get( "ucLogin" ) ) ) {
+	    uclogin = CommonUtil.toInteger( map.get( "ucLogin" ) );
+	}
+	Member member = MallSessionUtils.getLoginMember( request, busId );
 
-	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    //用户的所属商家和传进来的商家id相同不必登陆
 	    if ( member.getBusid().toString().equals( CommonUtil.toString( busId ) ) ) {
@@ -71,7 +76,7 @@ public class AuthorizeOrLoginController {
 	}
 
 	KeysUtil keysUtil = new KeysUtil();
-	String requestUrl = keysUtil.getEncString( loginDTO.getUrl() );
+	String requestUrl = keysUtil.getEncString( map.get( "url" ).toString() );
 
 	Map< String,Object > queryMap = new HashMap<>();
 	queryMap.put( "returnUrl", requestUrl );
@@ -80,9 +85,9 @@ public class AuthorizeOrLoginController {
 	if ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) {
 	    queryMap.put( "uclogin", uclogin );
 	}
-	logger.info( " ResponseEnums.NEED_LOGIN.getCode()" + ResponseEnums.NEED_LOGIN.getCode() );
-	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
-			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap ) );
+//	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
+//			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap ) );
+	return PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap );
     }
 
     private void setBusGuoqi( JSONObject json, int busId ) {

@@ -69,6 +69,28 @@ public class OrderUtil {
 	return isOpenComment;
     }
 
+    public static String getOrderTypeByOrder( Integer orderType ) {
+	String statusName = "";
+	if ( orderType == null || orderType == 0 ) {
+	    statusName = "普通订单";
+	} else if ( orderType == 1 ) {
+	    statusName = "团购订单";
+	} else if ( orderType == 2 ) {
+	    statusName = "积分订单";
+	} else if ( orderType == 3 ) {
+	    statusName = "秒杀订单";
+	} else if ( orderType == 4 ) {
+	    statusName = "拍卖订单";
+	} else if ( orderType == 5 ) {
+	    statusName = "粉币订单";
+	} else if ( orderType == 6 ) {
+	    statusName = "预售订单";
+	} else if ( orderType == 7 ) {
+	    statusName = "批发订单";
+	}
+	return statusName;
+    }
+
     /**
      * 根据订单状态和 配送方式 获取 状态名称
      *
@@ -396,7 +418,7 @@ public class OrderUtil {
 	if ( !"-3".equals( detailStatus ) && !"1".equals( detailStatus ) && !"5".equals( detailStatus ) && !"-2".equals( detailStatus ) ) {
 	    statusName = "申请退款中";
 	}
-	if ( "0".equals( detailStatus ) ) {
+	/*if ( "0".equals( detailStatus ) ) {
 	    statusName = "申请退款中";
 	} else if ( "2".equals( detailStatus ) ) {
 	    statusName = "等待买家退货给商家，请填写退货物流";
@@ -409,7 +431,7 @@ public class OrderUtil {
 	    if ( CommonUtil.isNotEmpty( mallOrderReturn.getNoReturnReason() ) ) {
 		statusName += "，理由：" + mallOrderReturn.getNoReturnReason();
 	    }
-	}
+	}*/
 	return statusName;
     }
 
@@ -417,6 +439,9 @@ public class OrderUtil {
 	String countdown = "";
 	if ( "1".equals( order.getOrderStatus().toString() ) ) {//未付款
 	    long[] times = getTimes( order.getCreateTime(), 3 );
+	    if ( times == null || times.length == 0 ) {
+		return null;
+	    }
 	    if ( times[0] > 0 || times[1] > 0 ) {
 		countdown = "还剩 ";
 		if ( times[0] > 0 ) {
@@ -429,6 +454,9 @@ public class OrderUtil {
 	    }
 	} else if ( "3".equals( order.getOrderStatus().toString() ) ) {//已发货
 	    long[] times = getTimes( order.getCreateTime(), 7 );
+	    if ( times == null || times.length == 0 ) {
+		return null;
+	    }
 	    if ( times[0] > 0 || times[1] > 0 ) {
 		countdown = "还剩 ";
 		if ( times[0] > 0 ) {
@@ -468,10 +496,17 @@ public class OrderUtil {
     }
 
     private static long[] getTimes( Date upDate, int addDate ) {
-	Date date = DateTimeKit.addDate( new Date(), addDate );
+	//	Date date = DateTimeKit.addDate( new Date(), addDate );
+	//	String startData = DateTimeKit.format( date, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	//	String endData = DateTimeKit.format( upDate, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	//	return DateTimeKit.getDistanceTimes( startData, endData );
+	Date date = DateTimeKit.addDate( upDate, addDate );
 	String startData = DateTimeKit.format( date, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	String endData = DateTimeKit.format( upDate, DateTimeKit.DEFAULT_DATETIME_FORMAT );
-	return DateTimeKit.getDistanceTimes( startData, endData );
+	String endData = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	if ( date.getTime() > new Date().getTime() ) {
+	    return DateTimeKit.getDistanceTimes( startData, endData );
+	}
+	return null;
     }
 
     public static void main( String[] args ) {

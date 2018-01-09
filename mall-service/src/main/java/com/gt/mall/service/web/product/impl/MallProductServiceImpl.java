@@ -643,6 +643,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		product.setReturnDay( 0 );
 	    }
 	    product.setIsSyncErp( 0 );
+	    product.setCheckStatus( 1 );
 	    proId = mallProductDAO.insert( product );
 	}
 	if ( proId > 0 ) {
@@ -689,11 +690,20 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 			mallProductGroupDAO.insert( mallProductGroup );
 		    }
 		}
+	    } else {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品分组不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( params.get( "imageList" ) ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品图片不能为空" );
 	    }
 	    // 批量添加商品图片
 	    mallImageAssociativeService.insertUpdBatchImage( params, product.getId() );
 
 	    Map< String,Object > specMap = new HashMap<>();
+
+	    if ( product.getIsSpecifica() == 1 && CommonUtil.isEmpty( params.get( "speList" ) ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品规格不能为空" );
+	    }
 	    // 批量添加商品规格
 	    if ( !CommonUtil.isEmpty( params.get( "speList" ) ) ) {
 		if ( params.get( "speList" ) != null ) {
@@ -1529,7 +1539,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    resultMap.put( "errorMsg", msg );
 	} else {
 	    if ( CommonUtil.isNotEmpty( proIds ) && userId > 0 ) {
-		int userPId = busUserService.getMainBusId(  userId );//通过用户名查询主账号id
+		int userPId = busUserService.getMainBusId( userId );//通过用户名查询主账号id
 		Map< String,Object > syncParams = new HashMap<>();
 		syncParams.put( "productIds", proIds.substring( 0, proIds.length() - 1 ) );
 		syncParams.put( "rootUid", userPId );
@@ -2208,6 +2218,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	flowRecord.setFlowType( flow.getType() );//流量类型
 	flowRecord.setFlowId( flow.getId() );//流量表ID
 	flowRecord.setId( product.getFlowRecordId() );
+	flowRecord.setRollStatus( 0 );
+	flowRecord.setRecUseCount( 0d );
+	flowRecord.setRecCreatetime( DateTimeKit.getDateTime() );
 	Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( flowRecord );
 	if ( CommonUtil.isNotEmpty( resultMap.get( "id" ) ) && CommonUtil.isNotEmpty( product.getId() ) ) {
 	    MallProduct pro = new MallProduct();
@@ -2350,14 +2363,14 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	Map< String,Object > proMap = new HashMap<>();
 	Integer total = ( pro.getProStockTotal() - detail.getDetProNum() );
 	Integer saleNum = ( pro.getProSaleTotal() + detail.getDetProNum() );
-	proMap.put( "total", total );
-	proMap.put( "saleNum", saleNum );
+	//	proMap.put( "total", total );
+	//	proMap.put( "saleNum", saleNum );
 	proMap.put( "proId", detail.getProductId() );
-	MallProduct mallProduct = new MallProduct();
-	mallProduct.setId( detail.getProductId() );
-	mallProduct.setProStockTotal( total );
-	mallProduct.setProSaleTotal( saleNum );
-	mallProductDAO.updateById( mallProduct );//修改商品库存
+	Map< String,Object > productParams = new HashMap<>();
+	productParams.put( "type", 2 );
+	productParams.put( "product_id", detail.getProductId() );
+	productParams.put( "pro_num", detail.getDetProNum() );
+	mallProductDAO.updateProductStock( productParams );
 	if ( null != pro.getIsSpecifica() && CommonUtil.isNotEmpty( pro.getIsSpecifica() ) ) {
 	    if ( pro.getIsSpecifica() == 1 ) {//该商品存在规格
 		if ( order.getOrderType() != 7 ) {
@@ -2397,21 +2410,11 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 
     private void diffProductInvStockNum( Map< String,Object > proMap, int proNum ) {
 	MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );//根据商品规格id查询商品库存
-	double total = 0;
-	if ( CommonUtil.isNotEmpty( proInv.getInvNum() ) ) {
-	    total = proInv.getInvNum();
-	}
-	int invSaleNum = 0;
-	if ( CommonUtil.isNotEmpty( proInv.getInvSaleNum() ) ) {
-	    invSaleNum = proInv.getInvSaleNum();
-	}
-	proMap.put( "total", total - proNum > 0 ? total - proNum : 0 );
-	proMap.put( "saleNum", invSaleNum + proNum );
-	mallProductInventoryService.updateProductInventory( proMap );//修改规格的库存
+	mallProductInventoryService.updateProductInventory( proInv, proNum, 2 );//修改规格的库存
     }
 
     /**
-     * 同步商品库存  todo  还没测
+     * 同步商品库存
      *
      * @param params
      * @param productIds
@@ -2562,6 +2565,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		}
 	    }
 	    product.setIsSyncErp( 0 );
+	    product.setCheckStatus( 1 );
+	    product.setIsPlatformCheck( 0 );//平台审核 未审核
 	    // 修改商品信息
 	    mallProductDAO.updateById( product );
 	}
@@ -2582,6 +2587,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	    }
 	}
 
+	if ( CommonUtil.isEmpty( params.get( "imageList" ) ) ) {
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品图片不能为空" );
+	}
 	// 添加或修改图片
 	mallImageAssociativeService.newInsertUpdBatchImage( params, product.getId(), 1 );
 
@@ -2595,6 +2603,10 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	}
 
 	Map< String,Object > specMap = new HashMap<>();
+
+	if ( product.getIsSpecifica() == 1 && CommonUtil.isEmpty( params.get( "speList" ) ) ) {
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品规格不能为空" );
+	}
 	// 批量添加或修改商品规格
 	if ( CommonUtil.isNotEmpty( params.get( "speList" ) ) ) {
 	    specMap = mallProductSpecificaService.newSaveOrUpdateBatch( params.get( "speList" ), product.getId(), flag );
@@ -2613,6 +2625,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	// 批量添加商品分组
 	if ( !CommonUtil.isEmpty( params.get( "groupList" ) ) ) {
 	    mallProductGroupService.saveOrUpdate( params.get( "groupList" ), product.getId() );
+	} else {
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商品分组不能为空" );
 	}
 
 	int userPId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
@@ -2634,9 +2648,12 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
 	int pageSize = CommonUtil.isEmpty( param.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( param.get( "pageSize" ) );
 
-	param.put( "curPage", curPage );
+	//	param.put( "curPage", curPage );
 	Wrapper< MallProduct > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete=0 and check_status =1  and is_platform_check = 0" );
+	wrapper.where( "is_delete=0 and is_mall_show=0" );
+	if ( CommonUtil.isNotEmpty( param.get( "checkStatus" ) ) ) {
+	    wrapper.and( "check_status ={0}", param.get( "checkStatus" ) );
+	}
 	if ( CommonUtil.isNotEmpty( param.get( "userIds" ) ) ) {
 	    wrapper.in( "user_id", param.get( "userIds" ).toString() );
 	}

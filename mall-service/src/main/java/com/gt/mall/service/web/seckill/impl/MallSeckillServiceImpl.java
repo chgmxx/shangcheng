@@ -2,9 +2,12 @@ package com.gt.mall.service.web.seckill.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.mq.MqBean;
 import com.gt.api.bean.session.BusUser;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.Member;
+import com.gt.api.util.MqUtils;
+import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.seckill.MallSeckillJoinDAO;
@@ -173,7 +176,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    int userPId = busUserService.getMainBusId( busUser.getId() );//通过用户名查询主账号id
 		    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
-		    String key = "hSeckill";
+		    String key = Constants.REDIS_SECKILL_NAME;
 		    String field = seckill.getId().toString();
 		    JedisUtil.map( key, field, seckill.getSNum() + "" );
 		    List< Map< String,Object > > productList = new ArrayList<>();
@@ -345,8 +348,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	}
 	seckill = mallSeckillDAO.selectBuyByProductId( seckill );
 	if ( seckill != null && CommonUtil.isNotEmpty( seckill.getId() ) ) {
-
-	    String key = "hSeckill";
+	    String key = Constants.REDIS_SECKILL_NAME;
 	    String field = seckill.getId().toString();
 	    if ( JedisUtil.hExists( key, field ) ) {
 		String str = JedisUtil.maoget( key, field );
@@ -396,6 +398,11 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	if ( seckill == null ) {
 	    return result;
 	}
+	if ( seckill.getStatus() == -1 || seckill.getStatus() == -2 ) {
+	    result.setType( 0 );
+	    result.setActivityId( 0 );
+	    return null;
+	}
 	result.setActivityTimes( seckill.getTimes() );
 	result.setActivityId( seckill.getId() );
 	if ( CommonUtil.isNotEmpty( seckill.getSMaxBuyNum() ) && seckill.getSMaxBuyNum() > 0 ) {
@@ -407,7 +414,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	if ( CommonUtil.isNotEmpty( seckill.getPriceList() ) ) {
 	    for ( MallSeckillPrice price : seckill.getPriceList() ) {
 		if ( price.getIsJoinGroup() == 1 ) {
-		    if ( result.getInvId() == 0 || result.getInvId() == price.getInvenId()) {
+		    if ( result.getInvId() == 0 || result.getInvId() == price.getInvenId() ) {
 			seckillPrice = CommonUtil.toDouble( price.getSeckillPrice() );
 			result.setInvId( price.getInvenId() );
 		    }
@@ -436,7 +443,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Override
     public Map< String,Object > isInvNum( Integer seckillId, String productSpecificas, Integer productNum ) {
 	Map< String,Object > result = new HashMap<>();
-	String invKey = "hSeckill";//秒杀库存的key
+	String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
 	//查询秒杀商品的库存
 	Integer invNum;
 	if ( CommonUtil.isNotEmpty( productSpecificas ) ) {
@@ -469,7 +476,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	String seckillId = mallOrder.getGroupBuyId().toString();
 	String proId = mallOrderDetail.getProductId().toString();
 	String key = "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
-	String invKey = "hSeckill";//秒杀库存的key
+	String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
 	String specificas = "";
 	//判断商品是否有规格
 	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
@@ -535,7 +542,14 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
 		try {
 		    logger.info( "mq参数：" + obj );
-		    socketService.mqSendMessage( obj.toString() );
+		    List< MqBean > mqBeanList = new ArrayList<>();
+		    MqBean mqBean = new MqBean();
+		    mqBean.setMqIp( PropertiesUtil.getMqIp() );
+		    mqBean.setPort( CommonUtil.toInteger( PropertiesUtil.getMqPort() ) );
+		    mqBeanList.add( mqBean );
+		    MqUtils mq = new MqUtils( mqBeanList, PropertiesUtil.getMqUser(), PropertiesUtil.getMqPassWord() );
+		    mq.MqMessage( PropertiesUtil.getMqSeckillExchange(), PropertiesUtil.getMqSeckillQueueName(), obj.toString() );
+		    //		    socketService.mqSendMessage( obj.toString() );
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		}
@@ -552,7 +566,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Override
     public void loadSeckill() {
 
-	String key = "hSeckill";
+	String key = Constants.REDIS_SECKILL_NAME;
 	/*List<MallSeckill> seckillList = mallSeckillDao.selectByPage(null);
 	if(seckillList != null && seckillList.size() > 0){
 		for (MallSeckill mallSeckill : seckillList) {
@@ -646,7 +660,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	}
 	if ( invId > 0 ) {
 	    List< MallSeckillPrice > mallSeckillPrices = mallSeckillPriceService.selectPriceByInvId( seckillId, invId );
-	    if ( mallSeckillPrices != null && mallSeckillPrices.size() == 0 ) {
+	    if ( mallSeckillPrices != null && mallSeckillPrices.size() > 0 ) {
 		MallSeckillPrice buyPrice = mallSeckillPrices.get( 0 );
 		if ( buyPrice.getIsJoinGroup() == 0 ) {
 		    throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), ResponseEnums.INV_NO_JOIN_ERROR.getDesc() );

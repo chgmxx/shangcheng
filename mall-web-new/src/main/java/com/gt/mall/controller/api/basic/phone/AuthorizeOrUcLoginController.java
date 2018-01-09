@@ -37,8 +37,8 @@ public class AuthorizeOrUcLoginController {
 	Integer busId = loginDTO.getBusId();
 	Integer browser = CommonUtil.judgeBrowser( request );
 	Integer uclogin = loginDTO.getUcLogin();
-
 	Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    //用户的所属商家和传进来的商家id相同不必登陆
 	    if ( member.getBusid().toString().equals( CommonUtil.toString( busId ) ) ) {

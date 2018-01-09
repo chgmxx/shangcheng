@@ -34,6 +34,7 @@ import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.basic.MallTakeTheirTimeService;
 import com.gt.mall.service.web.order.*;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductNewService;
 import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
@@ -49,9 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 订单页面相关接口
@@ -88,6 +87,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     private MallDaifuService          mallDaifuService;//代付业务处理类
     @Autowired
     private MallOrderReturnLogService mallOrderReturnLogService;//订单退款日志处理类
+    @Autowired
+    private MallPageService           mallPageService;//页面业务处理类
 
     @ApiOperation( value = "立即购买接口", notes = "用户点击立即购买", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -134,8 +135,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    //封装登陆参数
-	    loginDTO.setUcLogin( 1 );//不需要登陆
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    /*loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
 	    PhoneToOrderResult result = mallOrderSubmitService.toOrder( params, member, loginDTO, request );
 
@@ -158,10 +159,14 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    PhoneAddOrderDTO addOrderDTO = com.alibaba.fastjson.JSONObject.parseObject( params, PhoneAddOrderDTO.class );
 	    Map< String,Object > resultMap = mallOrderSubmitService.submitOrder( addOrderDTO, member, loginDTO.getBrowerType() );
+
+	    if ( CommonUtil.isNotEmpty( addOrderDTO.getShopCartIds() ) ) {
+		mallPageService.mergeShoppCart( member, request, response );
+	    }
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	} catch ( BusinessException e ) {
@@ -252,7 +257,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneOrderListResult > orderList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneOrderListDTO params,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    //查询订单列表
 	    PhoneOrderListResult result = mallOrderListService.orderList( params, loginDTO, MallSessionUtils.getLoginMember( request, loginDTO.getBusId() ) );
@@ -278,7 +283,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneOrderResult > orderDetail( HttpServletRequest request, HttpServletResponse response, Integer orderId,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    //查询订单列表
 	    PhoneOrderResult result = mallOrderListService.getOrderDetail( orderId, loginDTO.getBusId() );
@@ -304,7 +309,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneReturnProductResult > getReturnStyle( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderDetailId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    MallOrderDetail detail = mallOrderDetailService.selectById( orderDetailId );
 	    if ( CommonUtil.isEmpty( detail ) ) {
@@ -341,7 +346,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneReturnProductResult > getReturn( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderDetailId, Integer returnId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    PhoneReturnProductResult result = mallOrderReturnService.getReturn( orderDetailId, returnId );
 
@@ -366,7 +371,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneReturnResult > returnDetail( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer returnId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    PhoneReturnResult result = mallOrderReturnService.returnDetail( returnId );
 
@@ -391,7 +396,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse returnLogList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer returnId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    List< Map< String,Object > > resultList = mallOrderReturnLogService.selectReturnLogList( returnId );
 
@@ -415,7 +420,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse saveReturnContent( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnDTO orderReturnDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -445,7 +450,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< List< DictBean > > getReturnLogistics( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 	    List< DictBean > dictBeanList = dictService.getDict( "1092" );
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), dictBeanList, false );
 	} catch ( BusinessException e ) {
@@ -469,7 +474,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer returnId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    PhoneReturnWuLiuResult returnWuLiuResult = mallOrderReturnService.getReturnWuLiu( returnId );
 
@@ -493,7 +498,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse saveReturnLogistics( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    @RequestBody @Valid @ModelAttribute PhoneSubmitOrderReturnLogisticsDTO orderReturnDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    MallOrderReturn orderReturn = new MallOrderReturn();
 	    EntityDtoConverter converter = new EntityDtoConverter();
@@ -522,7 +527,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse closeReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer returnId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    MallOrderReturn orderReturn = mallOrderReturnService.selectById( returnId );
@@ -550,7 +555,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "confirmReceipt", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse confirmReceipt( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "orderId", orderId );
@@ -577,7 +582,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "deleteOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse deleteOrder( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderId ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    MallOrder order = mallOrderService.selectById( orderId );
 	    int isCanDelete = OrderUtil.getOrderIsShowMemberDeleteButton( order );//判断是否能删除订单 1 能
@@ -612,8 +617,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneGetDaiFuResult > getDaiFu( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer orderId ) {
 	try {
-	    loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    /*loginDTO.setUcLogin( 1 );
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -641,7 +646,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< String > freindDaifu( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer orderId, Integer dfPayWay ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -670,8 +675,10 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     /**
      * 代付支付成功的回调
      */
+    @ApiOperation( value = "代付支付成功回调的接口", notes = "代付支付成功回调", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, hidden = true )
     @ApiModelProperty( hidden = true )
-    @GetMapping( value = "daifuSuccess", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "daifuSuccess" )
     public ServerResponse daifuSuccess( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
 	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {

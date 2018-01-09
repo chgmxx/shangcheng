@@ -185,8 +185,8 @@ public class MallProductNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    if ( type == 1 ) {//删除
 		params.put( "isDelete", 1 );
-	    } else if ( type == 2 ) {//送审
-		params.put( "checkStatus", 0 );
+//	    } else if ( type == 2 ) {//送审
+//		params.put( "checkStatus", 0 );
 	    } else if ( type == 3 ) {//上架
 		params.put( "isPublish", 1 );
 	    } else if ( type == 4 ) {//下架
@@ -273,22 +273,24 @@ public class MallProductNewController extends BaseController {
     @SysLogAnnotation( description = "新增商品", op_function = "2" )
     @RequestMapping( value = "/add", method = RequestMethod.POST )
     public ServerResponse add( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > resultMap = null;
 	try {
 	    int code = 1;
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > resultMap = mallProductService.addProduct( params, user, request );
+	    resultMap = mallProductService.addProduct( params, user, request );
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "code" ) ) ) {
 		code = CommonUtil.toInteger( resultMap.get( "code" ) );
 	    }
 	    if ( code != 1 ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存商品失败" );
 	    }
+	    resultMap.put( "userId", user.getId() );
 	} catch ( Exception e ) {
 	    logger.error( "新增商品信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
     }
 
     /**
@@ -297,8 +299,8 @@ public class MallProductNewController extends BaseController {
     @ApiOperation( value = "修改商品信息", notes = "修改商品信息" )
     @ResponseBody
     @SysLogAnnotation( description = "修改商品", op_function = "2" )
-    @RequestMapping( value = "/updete", method = RequestMethod.POST )
-    public ServerResponse updete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @RequestMapping( value = "/update", method = RequestMethod.POST )
+    public ServerResponse update( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );

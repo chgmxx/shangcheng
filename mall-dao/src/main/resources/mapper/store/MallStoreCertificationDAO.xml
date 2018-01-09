@@ -37,4 +37,42 @@
         and sto_id=#{storeId}
     </select>
 
+    <select id="selectAllByPage" resultType="java.util.Map">
+        SELECT
+         a.id, a.sto_id as stoId, a.sto_type stoType, a.name, a.company_name as companyName, a.id_number as idNumber
+        ,a.id_card_front as idCardFront ,a.id_card_back as idCardBack , a.bus_license_img as busLicenseImg , a.bus_license_no as busLicenseNo
+        ,a.sto_category as stoCategory,a.cert_type as certType , a.cert_img_url as certImgUrl,a.trade_mark_img as tradeMarkImg
+        ,a.is_cert_doc as isCertDoc,a.create_time as createTime,a.check_status as checkStatus,s.sto_name as stoName
+        FROM t_mall_store_certification a
+        LEFT JOIN t_mall_store s ON s.id=a.`sto_id`
+        WHERE a.is_delete = 0
+        <if test="checkStatus != null and checkStatus != '' ">
+            and a.check_status =#{checkStatus}
+        </if>
+        <if test="userIds != null">
+            and s.sto_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        limit #{firstNum},#{maxNum}
+    </select>
+    <select id="selectAllCount" resultType="java.lang.Integer">
+        SELECT count(a.id)
+        FROM t_mall_store_certification a
+        LEFT JOIN t_mall_store s ON s.id=a.`sto_id`
+        WHERE a.is_delete = 0
+        <if test="userIds != null">
+            and s.sto_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="checkStatus != null and checkStatus != '' ">
+            and a.check_status =#{checkStatus}
+        </if>
+    </select>
+
 </mapper>

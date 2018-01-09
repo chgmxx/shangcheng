@@ -12,12 +12,15 @@ import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.result.phone.PhoneMemberResult;
 import com.gt.mall.result.phone.PhoneUrlResult;
 import com.gt.mall.result.phone.product.PhoneCollectProductResult;
+import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
@@ -58,6 +61,10 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     private MallOrderService     mallOrderService;
     @Autowired
     private MallCollectService   mallCollectService;
+    @Autowired
+    private MemberService        memberService;
+    @Autowired
+    private MallCommonService    mallCommonService;
 
     @ApiOperation( value = "进入我的页面的接口", notes = "查询我的页面信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -66,8 +73,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	try {
 	    PhoneMemberResult result = new PhoneMemberResult();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    loginDTO.setUcLogin( 1 );//不需要登陆
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    /*loginDTO.setUcLogin( 1 );//不需要登陆
+	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 	    if ( CommonUtil.isNotEmpty( loginDTO.getBusId() ) && loginDTO.getBusId() > 0 ) {
 		result.setBusId( loginDTO.getBusId() );
 	    }
@@ -171,7 +178,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< List< PhoneCollectProductResult > > collectList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -199,7 +206,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "deleteCollect", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse deleteCollect( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String ids ) {
 	try {
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    mallCollectService.deleteCollect( ids );
 
@@ -234,8 +241,67 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	} catch ( Exception e ) {
 	    logger.error( "获取会员中心的地址异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "获取会员中心的地址" );
+	    return ServerResponse.createByErrorMessage( "获取会员中心的地址失败" );
 	}
+    }
+
+    @ApiOperation( value = "绑定手机号码", notes = "绑定手机号码", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "code", value = "验证码", paramType = "query", required = true, dataType = "String" ) } )
+    @ResponseBody
+    @PostMapping( value = "bingdingPhoneH5", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse bingdingPhoneH5( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO, String phone, String code ) {
+	try {
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+
+	    if ( CommonUtil.isEmpty( code ) ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "请输入验证码" );
+	    } else {
+		String jedCode = JedisUtil.get( Constants.REDIS_KEY + code );
+		if ( CommonUtil.isEmpty( jedCode ) ) {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "验证码超时或错误，请重新获取验证码" );
+		}
+	    }
+	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	    boolean isSuccess = memberService.bingdingPhoneH5( loginDTO.getBusId(), phone, member.getId() );
+	    if ( isSuccess ) {
+		JedisUtil.del( Constants.REDIS_KEY + code );//删除验证码
+		return ServerResponse.createBySuccess();
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "绑定手机号码异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "绑定手机号码失败" );
+	}
+	return ServerResponse.createByErrorMessage( "绑定手机号码失败" );
+    }
+
+    /**
+     * 获取短信验证码
+     */
+    @ApiOperation( value = "获取短信验证码", notes = "获取短信验证码" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "Integer" ),
+		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "type", value = "类型，1会员绑定验证", paramType = "query", required = true, dataType = "String" ) } )
+    @ResponseBody
+    @RequestMapping( value = "/getValCode", method = RequestMethod.GET )
+    public ServerResponse getValCode( HttpServletRequest request, HttpServletResponse response, String phone, Integer busId, Integer type ) {
+	try {
+	    Member member = MallSessionUtils.getLoginMember( request, busId );
+	    String no = CommonUtil.getPhoneCode();
+	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
+	    String content = "您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。。";
+	    logger.info( content );
+	    boolean result = mallCommonService.getValCode( phone, member.getBusid(), content, null );
+	    if ( !result ) {
+		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "获取短信验证码异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取短信验证码异常" );
+	}
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
 }

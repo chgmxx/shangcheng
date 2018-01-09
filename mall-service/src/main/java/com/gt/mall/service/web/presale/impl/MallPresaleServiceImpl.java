@@ -36,10 +36,7 @@ import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.utils.*;
-import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
-import com.gt.util.entity.param.fenbiFlow.FenbiSurplus;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
-import com.gt.util.entity.result.fenbi.FenBiCount;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -405,6 +402,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( CommonUtil.isEmpty( presale ) ) {
 	    return result;
 	}
+	if ( presale.getStatus() == -1 || presale.getStatus() == -2 ) {
+	    return result;
+	}
 	result.setActivityTimes( presale.getTimes() );
 	PhonePresaleProductDetailResult presaleResult = new PhonePresaleProductDetailResult();
 	result.setActivityId( presale.getId() );
@@ -426,6 +426,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    presaleResult.setWeiMoney( CommonUtil.subtract( CommonUtil.toDouble( deposit.getOrderMoney() ), CommonUtil.toDouble( deposit.getDepositMoney() ) ) );
 		}
 	    }
+
 	    if ( CommonUtil.isNotEmpty( deposit ) ) {
 		Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( deposit.getProSpecificaIds(), deposit.getProductId() );
 		if ( CommonUtil.isNotEmpty( invMap ) ) {
@@ -435,6 +436,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		}
 
 	    }
+	}
+	if ( presale.getStatus() == 1 && ( deposit == null || !deposit.getDepositStatus().toString().equals( "1" ) ) ) {
+	    presaleResult.setDingMoney( 0 );
 	}
 	result.setIsShowLiJiBuyButton( 0 );//隐藏立即购买
 	if ( isBuyFlag ) {
@@ -602,10 +606,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	    }
 	    if ( num > 0 ) {
 		code = 1;
-		if ( fenbiFlag ) {
+		/*if ( fenbiFlag ) {
 		    saveRenbiFlowRecord( userId );
-		}
-
+		}*/
 	    }
 	}
 	return code;
@@ -647,9 +650,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
 	    if ( num > 0 ) {
 		code = 1;
-		if ( fenbiFlag ) {
+		/*if ( fenbiFlag ) {
 		    saveRenbiFlowRecord( userId );
-		}
+		}*/
 
 	    }
 	}
@@ -691,21 +694,21 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
 	    if ( num > 0 ) {
 		code = 1;
-		if ( fenbiFlag ) {
-		    saveRenbiFlowRecord( userId );
-		}
+		//		if ( fenbiFlag ) {
+		////		    saveRenbiFlowRecord( userId );
+		//		}
 
 	    }
 	}
 	return code;
     }
 
-    private void saveRenbiFlowRecord( int userId ) {
+    /*private void saveRenbiFlowRecord( int userId ) {
 	//查询资产分配
 	FenbiFlowRecord fenbi = new FenbiFlowRecord();
 	fenbi.setBusUserId( userId );
 	fenbi.setRecType( 1 );
-	/*fenbi.setRecCreatetime( DateTimeKit.getDateTime() );*/
+	fenbi.setRecCreatetime( DateTimeKit.getDateTime() );
 	fenbi.setRecDesc( "商城预售送粉币" );
 	fenbi.setRecFreezeType( 34 );
 	fenbi.setRecFkId( 0 );
@@ -722,7 +725,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 	if ( CommonUtil.isEmpty( fenBiCount ) ) {
 	    fenBiFlowService.saveFenbiFlowRecord( fenbi );
 	}
-    }
+    }*/
 
     /**
      * 发货时赠送实体物品

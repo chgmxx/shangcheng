@@ -63,7 +63,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -525,7 +524,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	obj.setCreateTime( DateTimeKit.getNow() );
 	int count = 0;
 	List< Map< String,Object > > cartList = new ArrayList< Map< String,Object > >();
-	Cookie cookie = CookieUtil.getCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
+	String cookieValue = CookieUtil.findCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    obj.setUserId( member.getId() );
 	    obj.setBusUserId( member.getBusid() );
@@ -535,8 +534,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    if ( product != null ) {
 		obj.setBusUserId( product.getUserId() );
 	    }
-	    if ( cookie != null && cookie.getValue() != null ) {
-		cartList = selectByShopCart( obj, cookie.getValue() );
+	    if ( CommonUtil.isNotEmpty( cookieValue ) ) {
+		cartList = selectByShopCart( obj, cookieValue );
 	    }
 	}
 	if ( cartList != null && cartList.size() > 0 ) {
@@ -551,8 +550,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    count = mallShopCartDAO.insert( obj );
 	    if ( CommonUtil.isEmpty( member ) ) {
 		String value = obj.getId().toString();
-		if ( cookie != null && cookie.getValue() != null ) {
-		    value = cookie.getValue() + "," + obj.getId();
+		if ( CommonUtil.isNotEmpty( cookieValue ) ) {
+		    value = cookieValue + "," + obj.getId();
 		}
 		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, value, Constants.COOKIE_SHOP_CART_TIME );
 	    }
@@ -1433,25 +1432,10 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     @Override
     public List< Map< String,Object > > productPresale( Integer stoId, Map< String,Object > params ) {
 
-	/*String sql = "SELECT distinct(a.id),a.pro_price,a.pro_name as proName,a.is_specifica,b.product_introdu as product_introdu,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id,"
-			+ " mp.sale_start_time,mp.sale_end_time,mp.id as presaleId,mp.order_num"
-			+ " from t_mall_presale mp"
-			+ " left join t_mall_product a  on a.id=mp.product_id"
-			+ " LEFT JOIN t_mall_product_detail b ON a.id=b.product_id"
-			+ " LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id"
-			+ " LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id"
-			+ " LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id "
-			+ " WHERE a.shop_id=" + stoId + " AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 "
-			+ " and ((mp.sale_start_time > now() and   mp.sale_end_time > now() ) or (mp.sale_start_time <= now() and now() < mp.sale_end_time))"
-			+ " and mp.is_use=1 and mp.is_delete=0";*/
 	params.put( "shopId", params.get( "stoId" ) );
 	if ( CommonUtil.isNotEmpty( params.get( "proName" ) ) ) {
 	    params.put( "searchName", params.get( "proName" ) );
-	    /*sql += " and a.pro_name like '%" + params.get( "proName" ) + "%'";*/
 	}
-	/*if ( CommonUtil.isNotEmpty( params.get( "groupId" ) ) ) {
-	    sql += " and a.id in (select product_id from t_mall_product_group where group_id = " + params.get( "groupId" ) + ")";
-	}*/
 	List< Map< String,Object > > list = mallPresaleDAO.selectBySearchNames( params );
 	List< Map< String,Object > > proList = new ArrayList<>();
 	if ( list != null && list.size() > 0 ) {
@@ -1664,45 +1648,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public Map< String,Object > getPublicByUserMap( Map< String,Object > userMap ) {
-	Map< String,Object > publicUserid = null;
-	if ( CommonUtil.isNotEmpty( userMap ) ) {
-	    String pid = userMap.get( "pid" ).toString();
-	    if ( pid.equals( "0" ) ) {
-		publicUserid = publicUserid( Integer.valueOf( userMap.get( "id" ).toString() ) );
-	    } else {
-		publicUserid = publicUserid( Integer.valueOf( userMap.get( "pid" ).toString() ) );
-	    }
-	}
-	return publicUserid;
-    }
-
-    private Map< String,Object > publicUserid( Integer userid ) {
-	Map< String,Object > resultMap = new HashMap<>();
-	WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( userid );
-	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-	    resultMap.put( "id", wxPublicUsers.getId() );
-	    resultMap.put( "qrcode_url", wxPublicUsers.getQrcodeUrl() );
-	    resultMap.put( "bus_user_id", wxPublicUsers.getBusUserId() );
-	}
-	return resultMap;
-    }
-
-    /**
-     * 保存地址到reids
-     */
-    @Override
-    public Map< String,Object > saveRedisByUrl( Member member, int userid, HttpServletRequest request ) {
-	Map< String,Object > loginMap = new HashMap<>();
-	String url = CommonUtil.getpath( request );
-	url = url.substring( url.indexOf( request.getServletPath() ), url.length() );
-	loginMap.put( "busId", userid );
-	loginMap.put( "requestUrl", url );
-	request.setAttribute( "userid", userid );
-	return loginMap;
-    }
-
-    @Override
     public void mergeShoppCart( Member member, HttpServletRequest request, HttpServletResponse response ) {
 	//1.得到所有cookie中的商品
 	//2.遍历，查询该商品在会员购物车中是否存在，  存在则修改数据(数量+1)，并删除cookie商品 ，不存在则新增
@@ -1711,25 +1656,29 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    return;
 	}
 	Wrapper< MallShopCart > wrapper = new EntityWrapper<>();
-	wrapper.setSqlSelect( "id,product_id,shop_id,product_specificas" );
-	wrapper.isNotNull( "user_id" );
+	wrapper.setSqlSelect( "id,product_id,shop_id,product_specificas,user_id,product_num" );
+	//	wrapper.isNotNull( "user_id" );
 	wrapper.in( "id", shoppCartIds.split( "," ) );
+	wrapper.where( "id", 0 );
 	List< Map< String,Object > > list = mallShopCartDAO.selectMaps( wrapper );
 	StringBuilder id = new StringBuilder();//购物车id
 	if ( list != null && list.size() > 0 ) {
-	    String[] ids = new String[] {};
+	    mallShopCartDAO.updateShopCarts( member.getId(), member.getBusid(), shoppCartIds.split( "," ) );
+	    List< Integer > ids = new ArrayList<>();
 	    String deletes = "";
 	    for ( Map< String,Object > map : list ) {
+		int product_num = CommonUtil.toInteger( map.get( "product_num" ) );
 		wrapper = new EntityWrapper<>();
-		wrapper.setSqlSelect( "id" );
-		wrapper.where( "t.product_id = {0} AND t.shop_id={1} AND t.product_specificas= {2} AND t.user_id={3}", map.get( "product_id" ), map.get( "shop_id" ),
+		wrapper.setSqlSelect( "id,product_num" );
+		wrapper.where( "product_id = {0} AND shop_id={1} AND product_specificas= {2} AND user_id={3}", map.get( "product_id" ), map.get( "shop_id" ),
 				map.get( "product_specificas" ), member.getId() );
 		List< Map< String,Object > > countList = mallShopCartDAO.selectMaps( wrapper );
 		if ( countList.size() > 0 ) {
+		    int num = CommonUtil.toInteger( countList.get( 0 ).get( "product_num" ) ) + product_num;
 		    //数量+1
 		    MallShopCart cart = new MallShopCart();
 		    cart.setId( CommonUtil.toInteger( countList.get( 0 ).get( "id" ) ) );
-		    cart.setProductNum( 1 );
+		    cart.setProductNum( num );
 		    mallShopCartDAO.updateByShopCart( cart );
 
 		    //记录id，删除多余记录
@@ -1738,24 +1687,16 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		    } else {
 			deletes += "," + map.get( "id" ).toString();
 		    }
-
-		} else {
-		    //记录id，变更用户
-		    ids[ids.length] = map.get( "id" ).toString();
 		}
 		id.append( map.get( "id" ).toString() ).append( "," );
-	    }
-	    if ( CommonUtil.isNotEmpty( ids ) && ids.length > 0 ) {
-		mallShopCartDAO.updateShopCarts( member.getId(), member.getBusid(), ids );
-
 	    }
 	    if ( !"".equals( deletes ) ) {
 		shoppingdelect( deletes, "", 1 );
 	    }
-	    if ( id != null && id.length() > 1 ) {
-		id = new StringBuilder( id.substring( 0, id.length() - 1 ) );
-		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, id.toString(), Constants.COOKIE_SHOP_CART_TIME );
-	    }
+	    //	    if ( id != null && id.length() > 1 ) {
+	    //		id = new StringBuilder( id.substring( 0, id.length() - 1 ) );
+	    //		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, id.toString(), Constants.COOKIE_SHOP_CART_TIME );
+	    //	    }
 	}
 
     }

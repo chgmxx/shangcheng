@@ -3,6 +3,8 @@ package com.gt.mall.service.quartz.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.entityBo.ErpRefundBo;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallCountIncomeDAO;
 import com.gt.mall.dao.order.MallLogOrderCallbackDAO;
@@ -16,9 +18,11 @@ import com.gt.mall.dao.product.MallProductMonthcountDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.store.MallShopDaycountDAO;
 import com.gt.mall.dao.store.MallShopMonthcountDAO;
+import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCountIncome;
 import com.gt.mall.entity.order.MallLogOrderCallback;
 import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.page.MallPage;
 import com.gt.mall.entity.product.MallProductDaycount;
@@ -26,16 +30,20 @@ import com.gt.mall.entity.product.MallProductMonthcount;
 import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
+import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
+import com.gt.mall.service.web.basic.MallCommentGiveService;
+import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
-import com.gt.mall.utils.MultipleJedisUtil;
-import com.gt.mall.utils.PropertiesUtil;
+import com.gt.mall.utils.JedisUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -79,9 +87,16 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallLogOrderCallbackDAO  mallLogOrderCallbackDAO;
     @Autowired
     private MallOrderService         mallOrderService;
-
-    private static String ip  = PropertiesUtil.getRedisHost();
-    private static String pwd = PropertiesUtil.getRedisPassword();
+    @Autowired
+    private MemberService            memberService;
+    @Autowired
+    private MallStoreService         mallStoreService;
+    @Autowired
+    private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private MallCommentService       mallCommentService;
+    @Autowired
+    private MallCommentGiveService   mallCommentGiveService;
 
     /**
      * 订单完成赠送物品  每天早上8点扫描
@@ -143,7 +158,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	logger.info( "开始扫描30分钟内未支付的订单" );
 	try {
 	    String key = Constants.REDIS_KEY + "hSeckill_nopay";
-	    quartzOrderService.closeOrderNoPay( key, ip, pwd );
+	    quartzOrderService.closeOrderNoPay( key );
 
 	} catch ( Exception e ) {
 	    logger.error( "扫描30分钟内未支付的秒杀订单异常" + e );
@@ -152,7 +167,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 
 	try {
 	    String key = Constants.REDIS_KEY + "hOrder_nopay";
-	    quartzOrderService.closeOrderNoPay( key, ip, pwd );
+	    quartzOrderService.closeOrderNoPay( key );
 	} catch ( Exception e ) {
 	    logger.error( "扫描30分钟内未支付的订单异常" + e );
 	    e.printStackTrace();
@@ -175,10 +190,10 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     public void endSeckill() {
 	logger.info( "开始扫描已经结束的秒杀信息" );
 	try {
-	    String key = Constants.REDIS_KEY + "hSeckill";
+	    String key = Constants.REDIS_SECKILL_NAME;
 	    int seckId = 0;
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String str : set ) {
@@ -191,7 +206,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				if ( seckill.getStatus() == -1 || seckill.getIsDelete().toString().equals( "1" ) ) {
 				    logger.error( "订单：" + str + "，已经结束" );
 				    //秒杀结束，从redis中删除对应的秒杀信息
-				    MultipleJedisUtil.mapdel( key, str, ip, pwd );
+				    JedisUtil.mapdel( key, str );
 				}
 			    }
 			}
@@ -258,6 +273,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    if ( orderType == 6 && groupBuyId > 0 ) {
 				quartzOrderService.presaleOrderGive( map );
 			    }
+
 			}
 		    }
 		}
@@ -295,8 +311,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	logger.info( "开始同步商品浏览量" );
 	try {
 	    String key = Constants.REDIS_KEY + "proViewNum";
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String str : set ) {
@@ -333,8 +349,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	try {
 	    String key = Constants.REDIS_KEY + "todayIncomeCount";
 	    //判断是否存在页面访问数量
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有店铺营业额
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有店铺营业额
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String shopId : set ) {
@@ -345,10 +361,12 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    Integer refundPrice = obj.getInteger( "refundPrice" );//当天退款金额
 			    //查询 当前时间 大于等于 7天后的时间
 			    double incomePrice = mallOrderDAO.selectOrderFinishMoneyByShopId( CommonUtil.toInteger( shopId ) );
-
+			    MallStore store = mallStoreService.selectById( shopId );
 			    //保存
 			    MallCountIncome income = new MallCountIncome();
-			    income.setBusId( 42 );
+			    if ( store != null ) {
+				income.setBusId( store.getStoUserId() );
+			    }
 			    income.setShopId( CommonUtil.toInteger( shopId ) );
 			    income.setCountDate( new Date() );
 			    income.setTradePrice( CommonUtil.toBigDecimal( tradePrice ) );
@@ -358,7 +376,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    mallCountIncomeDAO.insert( income );
 
 			    //清空统计
-			    MultipleJedisUtil.mapdel( key, shopId, ip, pwd );
+			    JedisUtil.mapdel( key, shopId );
 			}
 		    }
 		}
@@ -379,8 +397,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	try {
 	    String key = Constants.REDIS_KEY + "pageVisitor";
 	    //判断是否存在页面访问数量
-	    if ( MultipleJedisUtil.exists( key, ip, pwd ) ) {
-		Map< String,String > map = MultipleJedisUtil.mapGetAll( key, ip, pwd );//获取所有页面访问数量
+	    if ( JedisUtil.exists( key ) ) {
+		Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有页面访问数量
 		if ( map != null ) {
 		    Set< String > set = map.keySet();
 		    for ( String pageId : set ) {
@@ -397,7 +415,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				mallPageDAO.updateById( page );
 			    }
 			    //清空统计
-			    MultipleJedisUtil.mapdel( key, pageId, ip, pwd );
+			    JedisUtil.mapdel( key, pageId );
 			}
 		    }
 		}
@@ -415,7 +433,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     public void closeNoPayOrder() {
 	try {
 	    String key = Constants.REDIS_KEY + "hOrder_nopay";
-	    quartzOrderService.newCloseOrderNoPay( key, ip, pwd );
+	    quartzOrderService.newCloseOrderNoPay( key );
 	} catch ( Exception e ) {
 	    logger.error( "扫描未支付的订单异常" + e );
 	    e.printStackTrace();
@@ -451,19 +469,29 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
   /*  @Scheduled( cron = "0/10 * * * * ?" ) // 每10秒执行一次*/
     @Override
     public void cancelReturn() {
-//	Date date1 = DateTimeKit.addDays( -7 );
-//	String date3 = DateTimeKit.format( date1 );//7天后的时间日期
+	//	Date date1 = DateTimeKit.addDays( -7 );
+	//	String date3 = DateTimeKit.format( date1 );//7天后的时间日期
+	try {
+	    Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
+	    //查询 当前时间 大于等于 7天后的时间
+	    wrapper.where( "status = -1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
+	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
+	    if ( returnList != null && returnList.size() > 0 ) {
+		for ( MallOrderReturn orderReturn : returnList ) {
+		    orderReturn.setStatus( -3 );
+		    orderReturn.setUpdateTime( new Date() );
+		    mallOrderReturnDAO.updateById( orderReturn );
 
-	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
-	//查询 当前时间 大于等于 7天后的时间
-	wrapper.where( "status = -1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
-	List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
-	if ( returnList != null && returnList.size() > 0 ) {
-	    for ( MallOrderReturn orderReturn : returnList ) {
-		orderReturn.setStatus( -3 );
-		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnDAO.updateById( orderReturn );
+		    MallOrderDetail detail = new MallOrderDetail();
+		    detail.setId( orderReturn.getOrderDetailId() );
+		    detail.setStatus( -3 );
+		    orderDetailDAO.updateById( detail );
+
+		}
 	    }
+	} catch ( Exception e ) {
+	    logger.error( "取消维权异常" + e );
+	    e.printStackTrace();
 	}
     }
 
@@ -472,17 +500,28 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
      */
     @Override
     public void autoRefund() {
-	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
-	//查询  当前时间 大于等于 7天后的时间
-	wrapper.where( "status = 0 and ret_handling_way = 1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
-	List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
-	if ( returnList != null && returnList.size() > 0 ) {
-	    for ( MallOrderReturn orderReturn : returnList ) {
-		orderReturn.setStatus( 1 );
-		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnDAO.updateById( orderReturn );
-		// TODO 退款
+	try {
+	    Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
+	    //查询  当前时间 大于等于 7天后的时间
+	    wrapper.where( "status = 0 and ret_handling_way = 1 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)" );
+	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
+	    if ( returnList != null && returnList.size() > 0 ) {
+		for ( MallOrderReturn orderReturn : returnList ) {
+		    orderReturn.setStatus( 1 );
+		    orderReturn.setUpdateTime( new Date() );
+		    mallOrderReturnDAO.updateById( orderReturn );
+
+		    MallOrderDetail detail = new MallOrderDetail();
+		    detail.setId( orderReturn.getOrderDetailId() );
+		    detail.setStatus( 1 );
+		    orderDetailDAO.updateById( detail );
+
+		    // TODO 退款
+		}
 	    }
+	} catch ( Exception e ) {
+	    logger.error( "自动退款给买家异常" + e );
+	    e.printStackTrace();
 	}
 
     }
@@ -493,17 +532,27 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
      */
     @Override
     public void returnGoodsByRefund() {
-	Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
-	//查询 当前时间 大于等于 10天后的时间
-	wrapper.where( "status = 3 and ret_handling_way = 2 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 10 DAY)" );
-	List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
-	if ( returnList != null && returnList.size() > 0 ) {
-	    for ( MallOrderReturn orderReturn : returnList ) {
-		orderReturn.setStatus( 5 );
-		orderReturn.setUpdateTime( new Date() );
-		mallOrderReturnDAO.updateById( orderReturn );
-		// TODO 退款
+	try {
+	    Wrapper< MallOrderReturn > wrapper = new EntityWrapper<>();
+	    //查询 当前时间 大于等于 10天后的时间
+	    wrapper.where( "status = 3 and ret_handling_way = 2 and SYSDATE() >= DATE_ADD(update_time, INTERVAL 10 DAY)" );
+	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
+	    if ( returnList != null && returnList.size() > 0 ) {
+		for ( MallOrderReturn orderReturn : returnList ) {
+		    orderReturn.setStatus( 5 );
+		    orderReturn.setUpdateTime( new Date() );
+		    mallOrderReturnDAO.updateById( orderReturn );
+
+		    MallOrderDetail detail = new MallOrderDetail();
+		    detail.setId( orderReturn.getOrderDetailId() );
+		    detail.setStatus( 5 );
+		    orderDetailDAO.updateById( detail );
+		    // TODO 退款
+		}
 	    }
+	} catch ( Exception e ) {
+	    logger.error( "自动确认收货并退款至买家异常" + e );
+	    e.printStackTrace();
 	}
     }
 
@@ -511,79 +560,41 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     /*@Scheduled( cron = "0 0 1 * * ?" )*/
     @Override
     public void mallcount() {
-	if ( ip.equals( "183.47.242.2" ) ) {//多粉
-	    try {
-		Date date = DateTimeKit.getNow();//获取当前日期
-		Date date1 = DateTimeKit.addDays( -1 );//昨天日期
-		String date2 = DateTimeKit.format( date );//当天的时间日期
-		String date3 = DateTimeKit.format( date1 );//昨天的时间日期
+	try {
+	    Date date = DateTimeKit.getNow();//获取当前日期
+	    Date date1 = DateTimeKit.addDays( -1 );//昨天日期
+	    String date2 = DateTimeKit.format( date );//当天的时间日期
+	    String date3 = DateTimeKit.format( date1 );//昨天的时间日期
 
-		//1.当天商品- 修改商品的数量和金额
-		todayProduct( date3, date2 );
-		//2.退款商品 （单商品的退款数量与金额）
-		productReturn( date3, date2 );
-		//3.店铺退款
-		shopReturnCount( date3 );
-		//4.店铺扫码支付
-		shopScanPay( date3, date2 );
+	    //1.当天商品- 修改商品的数量和金额
+	    todayProduct( date3, date2 );
+	    //2.退款商品 （单商品的退款数量与金额）
+	    productReturn( date3, date2 );
+	    //3.店铺退款
+	    shopReturnCount( date3 );
+	    //4.店铺扫码支付
+	    shopScanPay( date3, date2 );
 
-		int day = DateTimeKit.getCurrentDay();//获取当前日
-		//如果当前日是1号，就开始统计商品每月的数据图和店铺的销售情况
-		if ( day == 1 ) {
-		    int year = DateTimeKit.getCurrentYear();//获取当前年份
-		    int month = DateTimeKit.getCurrentMonth();//获取当前月份
-		    String time = DateTimeKit.getFirstDayOfsMonth( year, month );//获取上一个月的第一天
-		    String syear = time.split( "-" )[0];//上一个月的年份
-		    String smonth = time.split( "-" )[1];//上一个月的月份
+	    int day = DateTimeKit.getCurrentDay();//获取当前日
+	    //如果当前日是1号，就开始统计商品每月的数据图和店铺的销售情况
+	    if ( day == 1 ) {
+		int year = DateTimeKit.getCurrentYear();//获取当前年份
+		int month = DateTimeKit.getCurrentMonth();//获取当前月份
+		String time = DateTimeKit.getFirstDayOfsMonth( year, month );//获取上一个月的第一天
+		String syear = time.split( "-" )[0];//上一个月的年份
+		String smonth = time.split( "-" )[1];//上一个月的月份
 
-		    //5.上月销售商品
-		    lastMonthSaleProduct( date2, time, syear, smonth );
+		//5.上月销售商品
+		lastMonthSaleProduct( date2, time, syear, smonth );
 
-		    //6.统计店铺每月销售情况
-		    getMonthShopSale( date2, time, syear, smonth );
-		}
-	    } catch ( Exception e ) {
-		System.out.println( "定时统计商城报错" );
-		e.printStackTrace();
+		//6.统计店铺每月销售情况
+		getMonthShopSale( date2, time, syear, smonth );
 	    }
-	} else {//翼粉
-	    try {
-		//TODO 多数据源
-		Date date = DateTimeKit.getNow();//获取当前日期
-		Date date1 = DateTimeKit.addDays( -1 );//昨天日期
-		String date2 = DateTimeKit.format( date );//当天的时间日期
-		String date3 = DateTimeKit.format( date1 );//昨天的时间日期
-
-		//1.当天商品- 修改商品的数量和金额
-		todayProduct( date3, date2 );
-		//2.退款商品 （单商品的退款数量与金额）
-		productReturn( date3, date2 );
-		//3.店铺退款
-		shopReturnCount( date3 );
-		//4.店铺扫码支付
-		shopScanPay( date3, date2 );
-
-		int day = DateTimeKit.getCurrentDay();//获取当前日
-		//如果当前日是1号，就开始统计商品每月的数据图和店铺的销售情况
-		if ( day == 1 ) {
-		    int year = DateTimeKit.getCurrentYear();//获取当前年份
-		    int month = DateTimeKit.getCurrentMonth();//获取当前月份
-		    String time = DateTimeKit.getFirstDayOfsMonth( year, month );//获取上一个月的第一天
-		    String syear = time.split( "-" )[0];//上一个月的年份
-		    String smonth = time.split( "-" )[1];//上一个月的月份
-
-		    //5.上月销售商品
-		    lastMonthSaleProduct( date2, time, syear, smonth );
-
-		    //6.统计店铺每月销售情况
-		    getMonthShopSale( date2, time, syear, smonth );
-		}
-	    } catch ( Exception e ) {
-		System.out.println( "定时统计商城报错" );
-		e.printStackTrace();
-	    }
+	} catch ( Exception e ) {
+	    System.out.println( "定时统计商城报错" );
+	    e.printStackTrace();
 	}
-	//
+
     }
 
     //1.当天商品
@@ -775,13 +786,72 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	List< MallLogOrderCallback > orderCallbackList = mallLogOrderCallbackDAO.selectList( wrapper );
 	if ( orderCallbackList != null && orderCallbackList.size() > 0 ) {
 	    for ( MallLogOrderCallback orderCallback : orderCallbackList ) {
-		Map< String,Object > params = new HashMap<>();
-		params.put( "out_trade_no", orderCallback.getOrderNo() );
-		params.put( "returnLogStatus", orderCallback.getLogStatus() );
-		mallOrderService.paySuccessModified( params, null );
-		orderCallback.setIsResolved( 1 );
-		mallLogOrderCallbackDAO.updateById( orderCallback );
+		//		Map< String,Object > params = new HashMap<>();
+		//		params.put( "out_trade_no", orderCallback.getOrderNo() );
+		//		params.put( "returnLogStatus", orderCallback.getLogStatus() );
+		//		mallOrderService.paySuccessModified( params, null );
+		MallOrder order = mallOrderDAO.selectOrderByOrderNo( orderCallback.getOrderNo() );
+		WxPublicUsers pbUser = wxPublicUserService.selectByMemberId( order.getBuyerUserId() );
+
+		List< MallOrder > mallOrderList = mallOrderDAO.getOrderByOrderPId( order.getId() );
+		if ( mallOrderList == null || mallOrderList.size() == 0 ) {
+		    MallOrder mallOrder = mallOrderDAO.getOrderById( order.getId() );
+		    mallOrderList.add( mallOrder );
+		}
+
+		boolean flag = mallOrderService.paySuccess( mallOrderList, pbUser, orderCallback.getLogStatus().toString(), orderCallback.getOrderNo() );//支付成功回调储值卡支付，积分支付，粉币支付
+		if ( flag ) {
+		    orderCallback.setIsResolved( 1 );
+		    mallLogOrderCallbackDAO.updateById( orderCallback );
+		}
 	    }
+	}
+    }
+
+    /**
+     * 调用会员退款接口
+     */
+    @Override
+    public void memberRefund() {
+	try {
+	    String key = Constants.REDIS_KEY + "member_return_jifen";
+	    //判断是否存在会员退款jedis
+	    if ( JedisUtil.exists( key ) ) {
+		List refundList = JedisUtil.lpoplist( key, 0, -1 );//获取所有记录
+		if ( refundList != null ) {
+		    for ( int i = 0; i < refundList.size(); i++ ) {
+			String str = refundList.get( i ).toString();
+			ErpRefundBo erpRefundBo = JSONObject.parseObject( str, ErpRefundBo.class );
+			Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
+			if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
+			    //清空统计
+			    JedisUtil.listDel( key, i, str );
+			}
+		    }
+		}
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "调用会员退款接口异常" + e );
+	    e.printStackTrace();
+	}
+    }
+
+    @Override
+    public void commentGive() {
+	try {
+	    Wrapper< MallComment > wrapper = new EntityWrapper<>();
+	    wrapper.where( "is_delete =0 and rep_p_id =0 and give_status = 1 and SYSDATE() >= give_time" );
+	    List< MallComment > commentList = mallCommentService.selectList( wrapper );
+	    if ( commentList != null && commentList.size() > 0 ) {
+		for ( MallComment comment : commentList ) {
+		    mallCommentGiveService.commentGive( comment.getId(), null, comment.getUserId() );
+		    comment.setGiveStatus( 2 );
+		    mallCommentService.updateById( comment );
+		}
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "评论送礼异常" + e );
+	    e.printStackTrace();
 	}
     }
 }

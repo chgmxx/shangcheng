@@ -59,8 +59,8 @@ public class MallCountIncomeController extends BaseController {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    Calendar end = Calendar.getInstance();//定义日期实例
 	    Calendar start = Calendar.getInstance();//定义日期实例
-	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-25" );//定义起始日期
-	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-23" );//定义起始日期
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2018-1-3" );//定义起始日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-28" );//定义起始日期
 	    end.setTime( d1 );
 	    start.setTime( d2 );
 

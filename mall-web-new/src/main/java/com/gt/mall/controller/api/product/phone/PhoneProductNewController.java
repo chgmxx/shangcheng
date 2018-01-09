@@ -174,8 +174,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    }
 		}
 		//封装登陆参数
-		loginDTO.setUcLogin( 1 );//不需要登陆
-		userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+		/*loginDTO.setUcLogin( 1 );//不需要登陆
+		userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
 		MallRedisUtils.getMallShopId( params.getShopId() );//从session获取店铺id  或  把店铺id存入session
 
@@ -256,11 +256,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 	    }
 	    //封装登陆参数
-	    Map< String,Object > loginMap = mallPageService.saveRedisByUrl( member, params.getBusId(), request );
-	    loginMap.put( "uclogin", 1 );//不需要登陆
-
-	    loginDTO.setUcLogin( 1 );//不需要登陆
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    loginDTO.setUcLogin( 1 );//不需要登陆
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    MallRedisUtils.getMallShopId( params.getShopId() );//从session获取店铺id  或  把店铺id存入session
 
@@ -407,8 +404,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     public ServerResponse collectProduct( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer productId ) {
 	try {
-	    loginDTO.setUcLogin( 1 );//不需要登陆
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 

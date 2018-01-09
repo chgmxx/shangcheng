@@ -37,10 +37,10 @@ import com.gt.mall.result.phone.order.PhoneToOrderBusResult;
 import com.gt.mall.result.phone.order.PhoneToOrderProductResult;
 import com.gt.mall.result.phone.order.PhoneToOrderResult;
 import com.gt.mall.result.phone.order.PhoneToOrderShopResult;
-import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
 import com.gt.mall.service.inter.user.MemberAddressService;
+import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
@@ -57,6 +57,7 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import com.gt.union.api.entity.param.UnionCardDiscountParam;
 import com.gt.union.api.entity.result.UnionDiscountResult;
+import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -84,8 +84,6 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 
     @Autowired
     private MallOrderDAO              mallOrderDAO;
-    @Autowired
-    private MemberPayService          memberPayService;
     @Autowired
     private MallProductService        mallProductService;
     @Autowired
@@ -122,6 +120,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
     private MallMemberAddressService  mallMemberAddressService;
     @Autowired
     private UnionCardService          UnionCardService;
+    @Autowired
+    private PayService                payService;
 
     @Transactional( rollbackFor = Exception.class )
     @Override
@@ -137,13 +137,13 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	//判断参数传值是否完整
 	params = mallCommonService.isOrderParams( params, member );
 
-	if ( params.isCalculation() ) {
+	if ( params.isCalculation() && ( CommonUtil.isEmpty( params.getOrderType() ) || params.getOrderType() <= 0 ) ) {
 	    //会员计算
 	    params = mallCalculateService.calculateOrder( params, member );
-	    if ( CommonUtil.isEmpty( browser ) || browser == 99 ) {
-		browser = 0;
-	    }
 	    logger.info( "计算后的参数：" + JSONArray.toJSON( params ) );
+	}
+	if ( CommonUtil.isEmpty( browser ) || browser == 99 ) {
+	    browser = 0;
 	}
 
 	List< MallOrder > orderList = new ArrayList<>();
@@ -197,6 +197,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    totalOrderFreightMoney = CommonUtil.add( totalOrderFreightMoney, busDTO.getProductFreightMoney() );
 	    totalOrderOldMoney = CommonUtil.add( totalOrderOldMoney, busDTO.getTotalMoney() );
 
+	}
+	if ( params.getTotalPayMoney() != totalOrderMoney ) {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "订单优惠计算异常" );
 	}
 	if ( CommonUtil.isNotEmpty( parentOrder ) ) {
 	    parentOrder.setOrderMoney( CommonUtil.toBigDecimal( totalOrderMoney ) );//订单实付金额（包含运费）
@@ -263,6 +266,12 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    net.sf.json.JSONObject objs = new net.sf.json.JSONObject();
 	    String times = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    objs.put( "times", times );
+	    MallPaySet paySet = mallPaySetService.selectByUserId( orderList.get( 0 ).getBusUserId() );
+	    if ( paySet != null ) {
+		if ( CommonUtil.isNotEmpty( paySet.getOrderCancel() ) ) {
+		    objs.put( "orderCancel", paySet.getOrderCancel() );
+		}
+	    }
 	    objs.put( "orderId", orderPId );
 	    JedisUtil.map( key, orderPId + "", objs.toString() );
 	}
@@ -296,7 +305,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	} else if ( firstOrder.getOrderPayWay() == 4 ) {
 	    returnUrlType = 3;
 	}
-	if ( totalOrderMoney > 0 && ( firstOrder.getOrderPayWay() == 1 || firstOrder.getOrderPayWay() == 9 ) ) {
+	if ( totalOrderMoney > 0 && ( firstOrder.getOrderPayWay() == 1 || firstOrder.getOrderPayWay() == 9 || firstOrder.getOrderPayWay() == 11 ) ) {
 	    returnUrlType = 4;
 	    String url = wxPayWay( totalOrderMoney, orderPNo, firstOrder, firstOrder.getOrderPayWay() );
 	    result.put( "url", url );
@@ -330,20 +339,23 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	String sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/paySuccessModified.do";
 	if ( order.getOrderPayWay() == 7 ) {
 	    sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/daifuSuccess.do";
-	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/order/daifu/" + order.getBusUserId() + "/" + order.getId();
+	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/daifu/" + order.getBusUserId() + "/" + order.getId();
 	}
 	subQrPayParams.setReturnUrl( returnUrl );
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
 	if ( orderPayWay <= 0 ) {
 	    orderPayWay = 1;
 	    if ( order.getOrderPayWay() == 9 ) {
 		orderPayWay = 2;
 	    }
-	    if ( CommonUtil.isNotEmpty( order.getIsWallet() ) && order.getIsWallet() == 1 ) {
+	    if ( order.getOrderPayWay() == 11 ) {//多粉钱包支付
 		orderPayWay = 3;
 	    }
+	    /*if ( CommonUtil.isNotEmpty( order.getIsWallet() ) && order.getIsWallet() == 1 ) {
+		orderPayWay = 3;
+	    }*/
 	}
 
 	subQrPayParams.setPayWay( orderPayWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
@@ -359,6 +371,14 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	Double memberLongitude = params.getLongitude();//会员经度
 	Double memberLangitude = params.getLangitude();//会员纬度
 	MallOrder mallOrder = null;
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    if ( CommonUtil.isEmpty( member.getPhone() ) ) {
+		member = memberService.findMemberById( member.getId(), member );
+	    }
+	    if ( CommonUtil.isNotEmpty( member.getPhone() ) ) {
+		result.setMemberPhone( member.getPhone() );
+	    }
+	}
 	if ( CommonUtil.isNotEmpty( params.getOrderId() ) && params.getOrderId() > 0 ) {
 	    mallOrder = mallOrderDAO.selectById( params.getOrderId() );
 	    if ( CommonUtil.isNotEmpty( mallOrder ) ) {
@@ -442,11 +462,10 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		result = getToOrderParams( productResultList, busUserList, freightList, mallShopList, params, result, provincesId, memberLongitude, memberLangitude );
 	    }
 	} else if ( params.getFrom() == 2 ) {//立即购买
-	    Cookie cookie = CookieUtil.getCookieByName( request, CookieUtil.TO_ORDER_KEY );
+	    String cookieValue = CookieUtil.findCookieByName( request, CookieUtil.TO_ORDER_KEY );
 	    PhoneBuyNowDTO buyNowDTO = null;
-	    if ( cookie != null && cookie.getValue() != null ) {
-		logger.error( "cookieValue" + cookie.getValue() );
-		buyNowDTO = JSONObject.parseObject( cookie.getValue(), PhoneBuyNowDTO.class );
+	    if ( CommonUtil.isNotEmpty( cookieValue ) ) {
+		buyNowDTO = JSONObject.parseObject( cookieValue, PhoneBuyNowDTO.class );
 	    }
 	    if ( CommonUtil.isEmpty( buyNowDTO ) ) {
 		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "提交订单数据为空" );
@@ -532,6 +551,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
     private PhoneToOrderResult getToOrderResult( List< Map< String,Object > > mallShopList, Member member, List< Integer > busUserList, PhoneToOrderResult result,
 		    Integer browerType, PhoneToOrderDTO params, int proTypeId, String provincesId, Integer toShop, Integer type ) {
 	Map cardMap = null;
+	JifenAndFenbiRule jifenFenbiRule = null;//积分粉币归责
 	double discount = 0;
 	//只有实体物品才去查询信息
 	if ( mallShopList != null && mallShopList.size() > 0 && proTypeId == 0 ) {
@@ -542,8 +562,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		}
 	    }
 	    wxShopIds = new StringBuilder( wxShopIds.substring( 1, wxShopIds.length() - 1 ) );
-	    if ( CommonUtil.isNotEmpty( member ) ) {
+	    if ( CommonUtil.isNotEmpty( member ) && ( CommonUtil.isEmpty( type ) || type <= 0 ) ) {
 		cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds.toString() );
+		jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
 	    }
 	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
 		if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
@@ -554,20 +575,20 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	}
 
 	UnionDiscountResult unionResult = null;
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPhone() ) && proTypeId == 0 && type == 0 ) {
+	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPhone() ) && proTypeId == 0 && ( CommonUtil.isEmpty( type ) || type <= 0 ) ) {
 	    UnionCardDiscountParam unionParams = new UnionCardDiscountParam();
 	    unionParams.setBusId( member.getBusid() );
 	    //	    unionParams.setMemberId( member.getId() );
 	    unionParams.setPhone( member.getPhone() );
 	    unionResult = UnionCardService.consumeUnionDiscount( unionParams );//获取联盟折扣
 	}
-	JifenAndFenbiRule jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
 	List< MallPaySet > mallPaySetList = mallPaySetService.selectByUserIdList( busUserList );//通过商家集合查询商城设置
 	List< Map< String,Object > > isShowTake = mallTakeTheirService.isTakeTheirByUserIdList( mallPaySetList, provincesId );//查询是否开启到店自提
 	int isDaodianPay = 0;//是否显示到店支付
 	List< PhoneOrderUserDTO > orderUserDTOList = new ArrayList<>();//集合用来算支付方式的
 	//循环结果，查询商家的支付方式和配送方式
 	if ( CommonUtil.isNotEmpty( result ) && CommonUtil.isNotEmpty( result.getBusResultList() ) ) {
+	    List< PayWay > payWayList = new ArrayList<>();
 	    for ( PhoneToOrderBusResult busResult : result.getBusResultList() ) {
 		//是否能使用会员折扣1 能
 		Integer isCanUseMemberDiscount = 0;
@@ -709,9 +730,12 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		phoneOrderUserDTO.setPublicId( busResult.getPublicId() );
 		phoneOrderUserDTO.setBusId( busResult.getBusId() );
 		orderUserDTOList.add( phoneOrderUserDTO );
+
 	    }
+	    PayWay payWay = payService.getPayWay( busUserList.get( 0 ) );
+	    payWayList.add( payWay );
 	    //获取商家的支付方式
-	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil.getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type );
+	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil.getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type, payWayList );
 	    result.setPayWayList( wayResultList );
 	    if ( CommonUtil.isNotEmpty( result.getSelectPayWayId() ) && result.getSelectPayWayId() > 0 ) {
 		for ( PhoneOrderWayDTO phoneOrderWayDTO : wayResultList ) {
