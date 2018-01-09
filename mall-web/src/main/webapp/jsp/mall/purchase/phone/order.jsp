@@ -251,14 +251,17 @@
                                     },
                                     type : "POST",
                                     dataType : "JSON",
-                                    success : function(data) {
-                                        if (data!=null) {
-                                            window.location.href = data;
+                                    success : function(result) {
+                                        alert(result);
+                                        if (result.code == 0) {
+                                            window.location.href = result.data;
                                         } else {
                                             alert("支付异常!");
                                         }
                                     }
-                                })
+                                });
+
+
             } else if ((payType == 5 || payType == "5")  && discountmoney>0) {//余额支付
                 var yue="${memberData.money}";
                 if(discountmoney-0>yue-0){
