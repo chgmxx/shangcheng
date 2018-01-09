@@ -63,7 +63,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -525,7 +524,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	obj.setCreateTime( DateTimeKit.getNow() );
 	int count = 0;
 	List< Map< String,Object > > cartList = new ArrayList< Map< String,Object > >();
-	Cookie cookie = CookieUtil.getCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
+	String cookieValue = CookieUtil.findCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    obj.setUserId( member.getId() );
 	    obj.setBusUserId( member.getBusid() );
@@ -535,8 +534,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    if ( product != null ) {
 		obj.setBusUserId( product.getUserId() );
 	    }
-	    if ( cookie != null && cookie.getValue() != null ) {
-		cartList = selectByShopCart( obj, cookie.getValue() );
+	    if ( CommonUtil.isNotEmpty( cookieValue ) ) {
+		cartList = selectByShopCart( obj, cookieValue );
 	    }
 	}
 	if ( cartList != null && cartList.size() > 0 ) {
@@ -551,8 +550,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    count = mallShopCartDAO.insert( obj );
 	    if ( CommonUtil.isEmpty( member ) ) {
 		String value = obj.getId().toString();
-		if ( cookie != null && cookie.getValue() != null ) {
-		    value = cookie.getValue() + "," + obj.getId();
+		if ( CommonUtil.isNotEmpty( cookieValue ) ) {
+		    value = cookieValue + "," + obj.getId();
 		}
 		CookieUtil.addCookie( response, CookieUtil.SHOP_CART_COOKIE_KEY, value, Constants.COOKIE_SHOP_CART_TIME );
 	    }

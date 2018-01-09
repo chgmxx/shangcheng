@@ -426,6 +426,7 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		    presaleResult.setWeiMoney( CommonUtil.subtract( CommonUtil.toDouble( deposit.getOrderMoney() ), CommonUtil.toDouble( deposit.getDepositMoney() ) ) );
 		}
 	    }
+
 	    if ( CommonUtil.isNotEmpty( deposit ) ) {
 		Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( deposit.getProSpecificaIds(), deposit.getProductId() );
 		if ( CommonUtil.isNotEmpty( invMap ) ) {
@@ -435,6 +436,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 		}
 
 	    }
+	}
+	if ( presale.getStatus() == 1 && ( deposit == null || !deposit.getDepositStatus().toString().equals( "1" ) ) ) {
+	    presaleResult.setDingMoney( 0 );
 	}
 	result.setIsShowLiJiBuyButton( 0 );//隐藏立即购买
 	if ( isBuyFlag ) {
@@ -690,9 +694,9 @@ public class MallPresaleServiceImpl extends BaseServiceImpl< MallPresaleDAO,Mall
 
 	    if ( num > 0 ) {
 		code = 1;
-//		if ( fenbiFlag ) {
-////		    saveRenbiFlowRecord( userId );
-//		}
+		//		if ( fenbiFlag ) {
+		////		    saveRenbiFlowRecord( userId );
+		//		}
 
 	    }
 	}

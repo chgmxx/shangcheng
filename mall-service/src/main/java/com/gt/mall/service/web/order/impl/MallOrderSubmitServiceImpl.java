@@ -65,7 +65,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -463,11 +462,10 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		result = getToOrderParams( productResultList, busUserList, freightList, mallShopList, params, result, provincesId, memberLongitude, memberLangitude );
 	    }
 	} else if ( params.getFrom() == 2 ) {//立即购买
-	    Cookie cookie = CookieUtil.getCookieByName( request, CookieUtil.TO_ORDER_KEY );
+	    String cookieValue = CookieUtil.findCookieByName( request, CookieUtil.TO_ORDER_KEY );
 	    PhoneBuyNowDTO buyNowDTO = null;
-	    if ( cookie != null && cookie.getValue() != null ) {
-		logger.error( "cookieValue" + cookie.getValue() );
-		buyNowDTO = JSONObject.parseObject( cookie.getValue(), PhoneBuyNowDTO.class );
+	    if ( CommonUtil.isNotEmpty( cookieValue ) ) {
+		buyNowDTO = JSONObject.parseObject( cookieValue, PhoneBuyNowDTO.class );
 	    }
 	    if ( CommonUtil.isEmpty( buyNowDTO ) ) {
 		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "提交订单数据为空" );
@@ -553,6 +551,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
     private PhoneToOrderResult getToOrderResult( List< Map< String,Object > > mallShopList, Member member, List< Integer > busUserList, PhoneToOrderResult result,
 		    Integer browerType, PhoneToOrderDTO params, int proTypeId, String provincesId, Integer toShop, Integer type ) {
 	Map cardMap = null;
+	JifenAndFenbiRule jifenFenbiRule = null;//积分粉币归责
 	double discount = 0;
 	//只有实体物品才去查询信息
 	if ( mallShopList != null && mallShopList.size() > 0 && proTypeId == 0 ) {
@@ -563,8 +562,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		}
 	    }
 	    wxShopIds = new StringBuilder( wxShopIds.substring( 1, wxShopIds.length() - 1 ) );
-	    if ( CommonUtil.isNotEmpty( member ) ) {
+	    if ( CommonUtil.isNotEmpty( member ) && ( CommonUtil.isEmpty( type ) || type <= 0 ) ) {
 		cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds.toString() );
+		jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
 	    }
 	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
 		if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
@@ -575,14 +575,13 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	}
 
 	UnionDiscountResult unionResult = null;
-	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPhone() ) && proTypeId == 0 && type == 0 ) {
+	if ( CommonUtil.isNotEmpty( member ) && CommonUtil.isNotEmpty( member.getPhone() ) && proTypeId == 0 && ( CommonUtil.isEmpty( type ) || type <= 0 ) ) {
 	    UnionCardDiscountParam unionParams = new UnionCardDiscountParam();
 	    unionParams.setBusId( member.getBusid() );
 	    //	    unionParams.setMemberId( member.getId() );
 	    unionParams.setPhone( member.getPhone() );
 	    unionResult = UnionCardService.consumeUnionDiscount( unionParams );//获取联盟折扣
 	}
-	JifenAndFenbiRule jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
 	List< MallPaySet > mallPaySetList = mallPaySetService.selectByUserIdList( busUserList );//通过商家集合查询商城设置
 	List< Map< String,Object > > isShowTake = mallTakeTheirService.isTakeTheirByUserIdList( mallPaySetList, provincesId );//查询是否开启到店自提
 	int isDaodianPay = 0;//是否显示到店支付
