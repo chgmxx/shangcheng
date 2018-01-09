@@ -252,7 +252,6 @@
                                     type : "POST",
                                     dataType : "JSON",
                                     success : function(result) {
-                                        alert(result);
                                         if (result.code == 0) {
                                             window.location.href = result.data;
                                         } else {
