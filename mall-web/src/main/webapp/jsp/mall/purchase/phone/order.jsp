@@ -285,7 +285,7 @@
                     success : function(data) {
                         if (data == true || data=="true") {
                             alert("支付成功!");
-                            window.location.href = "/purchasePhone/79B4DE7C/findOrder.do?orderId="+orderId;
+                            window.location.href = "/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do";
                         } else {
                             alert("支付失败!");
                         }
@@ -307,7 +307,7 @@
                     success : function(data) {
                         if (data == true || data=="true") {
                             alert("支付成功!");
-                            window.location.href = "/purchasePhone/79B4DE7C/findOrder.do?orderId="+orderId;
+                                  window.location.href = "/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do";
                         } else {
                             alert("支付失败!");
                         }
@@ -333,7 +333,7 @@
                     success : function(data) {
                         if (data == true || data=="true") {
                             alert("支付成功!");
-                            window.location.href = "/purchasePhone/79B4DE7C/findOrder.do?orderId="+orderId;
+                                  window.location.href = "/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do";
                         } else {
                             alert("支付失败!");
                         }
