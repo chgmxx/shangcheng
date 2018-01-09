@@ -47,21 +47,6 @@ public class MallQuartzApiController {
 	return ServerResponse.createBySuccessCode();
     }
 
-//    @ApiOperation( value = "统计商城信息", notes = "统计商城信息" )
-//    @ResponseBody
-//    @RequestMapping( value = "/mallCount", method = RequestMethod.POST )
-//    public ServerResponse mallCount( HttpServletRequest request, HttpServletResponse response ) {
-//	try {
-//	    //晚上一点
-//	    mallQuartzNewService.mallcount();
-//	} catch ( Exception e ) {
-//	    logger.error( "统计商城信息异常：" + e.getMessage() );
-//	    e.printStackTrace();
-//	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计商城信息异常" );
-//	}
-//	return ServerResponse.createBySuccessCode();
-//    }
-
     @ApiOperation( value = "订单完成赠送物品", notes = "订单完成赠送物品" )
     @ResponseBody
     @RequestMapping( value = "/orderFinish", method = RequestMethod.POST )

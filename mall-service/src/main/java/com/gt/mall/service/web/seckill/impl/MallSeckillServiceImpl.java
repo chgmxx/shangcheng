@@ -7,6 +7,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.api.util.MqUtils;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.seckill.MallSeckillJoinDAO;
@@ -175,7 +176,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    int userPId = busUserService.getMainBusId( busUser.getId() );//通过用户名查询主账号id
 		    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
-		    String key = "hSeckill";
+		    String key = Constants.REDIS_SECKILL_NAME;
 		    String field = seckill.getId().toString();
 		    JedisUtil.map( key, field, seckill.getSNum() + "" );
 		    List< Map< String,Object > > productList = new ArrayList<>();
@@ -347,7 +348,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	}
 	seckill = mallSeckillDAO.selectBuyByProductId( seckill );
 	if ( seckill != null && CommonUtil.isNotEmpty( seckill.getId() ) ) {
-	    String key = "hSeckill";
+	    String key = Constants.REDIS_SECKILL_NAME;
 	    String field = seckill.getId().toString();
 	    if ( JedisUtil.hExists( key, field ) ) {
 		String str = JedisUtil.maoget( key, field );
@@ -442,7 +443,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Override
     public Map< String,Object > isInvNum( Integer seckillId, String productSpecificas, Integer productNum ) {
 	Map< String,Object > result = new HashMap<>();
-	String invKey = "hSeckill";//秒杀库存的key
+	String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
 	//查询秒杀商品的库存
 	Integer invNum;
 	if ( CommonUtil.isNotEmpty( productSpecificas ) ) {
@@ -475,7 +476,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	String seckillId = mallOrder.getGroupBuyId().toString();
 	String proId = mallOrderDetail.getProductId().toString();
 	String key = "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
-	String invKey = "hSeckill";//秒杀库存的key
+	String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
 	String specificas = "";
 	//判断商品是否有规格
 	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
@@ -565,7 +566,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Override
     public void loadSeckill() {
 
-	String key = "hSeckill";
+	String key = Constants.REDIS_SECKILL_NAME;
 	/*List<MallSeckill> seckillList = mallSeckillDao.selectByPage(null);
 	if(seckillList != null && seckillList.size() > 0){
 		for (MallSeckill mallSeckill : seckillList) {

@@ -241,9 +241,6 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		    num = mallPifaDAO.insert( pifa );
 		}
 		if ( CommonUtil.isNotEmpty( pifa.getId() ) ) {
-		    //					String key = "hSeckill";
-		    //					String field = pifa.getId().toString();
-		    //					JedisUtil.map(key, field, pifa.getsNum()+"");
 		    if ( status != 1 ) {
 			mallPifaPriceService.editPifaPrice( pifaMap, pifa.getId(), flag );
 		    }

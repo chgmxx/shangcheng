@@ -1,8 +1,8 @@
 package com.gt.mall.controller.api.groupbuy;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
@@ -22,7 +22,10 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,7 +60,6 @@ public class MallGroupBuyNewController extends BaseController {
     private BusUserService              busUserService;
     @Autowired
     private MallProductService          mallProductService;
-
 
     @ApiOperation( value = "团购列表(分页)", notes = "团购列表(分页)" )
     @ResponseBody
@@ -269,7 +271,7 @@ public class MallGroupBuyNewController extends BaseController {
 			    seckillId = CommonUtil.toInteger( params.get( "seckillId" ) );
 			}
 			if ( seckillId > 0 ) {
-			    String key = Constants.REDIS_KEY + "hSeckill";
+			    String key = Constants.REDIS_SECKILL_NAME;
 			    String numStr = JedisUtil.maoget( key, seckillId + "" );
 			    if ( CommonUtil.isNotEmpty( numStr ) ) {
 				isSelect = false;

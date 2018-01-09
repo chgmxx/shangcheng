@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.product.MallProductInventoryDAO;
 import com.gt.mall.dao.seckill.MallSeckillPriceDAO;
 import com.gt.mall.entity.product.MallProductInventory;
@@ -55,7 +56,7 @@ public class MallSeckillPriceServiceImpl extends BaseServiceImpl< MallSeckillPri
 		    } else {
 			mallSeckillPriceDAO.updateById( mallSeckillPrice );
 		    }
-		    String key = "hSeckill";
+		    String key = Constants.REDIS_SECKILL_NAME;
 		    String field = SeckillId + "_" + mallSeckillPrice.getSpecificaIds();
 		    //					JedisUtil.mapdel(key, field);
 		    JedisUtil.map( key, field, mallSeckillPrice.getSeckillNum() + "" );
