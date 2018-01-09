@@ -316,42 +316,47 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	List< Map< String,Object > > marginList = auctionMarginDAO.selectMarginByEnd();
 	if ( marginList != null && marginList.size() > 0 ) {
 	    for ( int i = 0; i < marginList.size(); i++ ) {
-		boolean isReturn = true;
-		Map< String,Object > map = marginList.get( i );
-		log.info( map );
-		String endTimes = map.get( "create_time" ).toString();
-		String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;
-		String eDate = DateTimeKit.format( new Date(), format );
-		long hour = DateTimeKit.minsBetween( endTimes, eDate, 3600000, format );
-		if ( map.get( "auc_type" ).toString().equals( "1" ) ) {//降价拍
-		    if ( hour >= 24 ) {
-			log.info( "降价拍退款进来啦" );
-			if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
-			    if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
-				isReturn = false;
+		try {
+		    boolean isReturn = true;
+		    Map< String,Object > map = marginList.get( i );
+		    log.info( map );
+		    String endTimes = map.get( "create_time" ).toString();
+		    String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;
+		    String eDate = DateTimeKit.format( new Date(), format );
+		    long hour = DateTimeKit.minsBetween( endTimes, eDate, 3600000, format );
+		    if ( map.get( "auc_type" ).toString().equals( "1" ) ) {//降价拍
+			if ( hour >= 24 ) {
+			    log.info( "降价拍退款进来啦" );
+			    if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
+				if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
+				    isReturn = false;
+				}
+			    }
+			}
+		    } else {//升价拍
+			log.info( "升价拍退款进来啦" );
+			if ( hour >= 72 ) {
+			    if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
+				if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
+				    isReturn = false;
+				}
 			    }
 			}
 		    }
-		} else {//升价拍
-		    log.info( "升价拍退款进来啦" );
-		    if ( hour >= 72 ) {
-			if ( CommonUtil.isNotEmpty( map.get( "order_id" ) ) && CommonUtil.isNotEmpty( map.get( "order_status" ) ) ) {
-			    if ( map.get( "order_status" ).toString().equals( "1" ) ) {//未付款的不退保证金
-				isReturn = false;
-			    }
-			}
+		    if ( !isReturn ) {//不能退款，修改保证金的状态
+			Integer marginId = CommonUtil.toInteger( map.get( "id" ) );
+			MallAuctionMargin margin = new MallAuctionMargin();
+			margin.setId( marginId );
+			margin.setMarginStatus( -2 );
+			margin.setNoReturnReason( "拍卖没有转换成订单" );
+			auctionMarginDAO.updateById( margin );
+		    } else {
+			map.put( "isAlipay", false );
+			returnEndMargin( map );
 		    }
-		}
-		if ( !isReturn ) {//不能退款，修改保证金的状态
-		    Integer marginId = CommonUtil.toInteger( map.get( "id" ) );
-		    MallAuctionMargin margin = new MallAuctionMargin();
-		    margin.setId( marginId );
-		    margin.setMarginStatus( -2 );
-		    margin.setNoReturnReason( "拍卖没有转换成订单" );
-		    auctionMarginDAO.updateById( margin );
-		} else {
-		    map.put( "isAlipay", false );
-		    returnEndMargin( map );
+		} catch ( Exception e ) {
+		    logger.error( "扫描已结束的拍卖保证金异常" + e );
+		    e.printStackTrace();
 		}
 	    }
 	}

@@ -530,10 +530,15 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	if ( List != null && List.size() > 0 ) {
 	    for ( int i = 0; i < List.size(); i++ ) {
 				/*boolean isReturn = true;*/
-		Map< String,Object > map = List.get( i );
-		log.info( map );
-		map.put( "isAlipay", false );
-		returnEndPresale( map );
+		try {
+		    Map< String,Object > map = List.get( i );
+		    log.info( map );
+		    map.put( "isAlipay", false );
+		    returnEndPresale( map );
+		} catch ( Exception e ) {
+		    logger.error( "扫描已结束的预售定金异常" + e );
+		    e.printStackTrace();
+		}
 
 		/*String endTimes = map.get("create_time").toString();
 		String format = DateTimeKit.DEFAULT_DATETIME_FORMAT;

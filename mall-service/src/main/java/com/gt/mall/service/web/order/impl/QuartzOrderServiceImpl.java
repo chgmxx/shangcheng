@@ -2,6 +2,7 @@ package com.gt.mall.service.web.order.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.MallPresaleRankDAO;
@@ -130,7 +131,7 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	// 查询所有未支付的订单
 	MallOrder order = orderMapper.selectOrderById( params );
 
-	String invKey = "hSeckill";// 秒杀库存的key
+	String invKey = Constants.REDIS_SECKILL_NAME;// 秒杀库存的key
 	if ( order != null ) {
 	    if ( order.getOrderType() == 3 ) {// 秒杀订单  恢复库存
 		if ( order.getMallOrderDetail() != null ) {

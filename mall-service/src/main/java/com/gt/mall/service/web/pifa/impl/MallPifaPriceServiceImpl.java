@@ -47,9 +47,6 @@ public class MallPifaPriceServiceImpl extends BaseServiceImpl< MallPifaPriceDAO,
 		    } else {
 			mallPifaPriceDAO.updateById( price );
 		    }
-		    //		    String key = "hSeckill";
-		    //		    String field = pifaId + "_" + price.getSpecificaIds();
-		    //		    JedisUtil.map( key, field, price.getSeckillNum() + "" );
 		}
 	    }
 	}

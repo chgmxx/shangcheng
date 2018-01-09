@@ -190,7 +190,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     public void endSeckill() {
 	logger.info( "开始扫描已经结束的秒杀信息" );
 	try {
-	    String key = Constants.REDIS_KEY + "hSeckill";
+	    String key = Constants.REDIS_SECKILL_NAME;
 	    int seckId = 0;
 	    if ( JedisUtil.exists( key ) ) {
 		Map< String,String > map = JedisUtil.mapGetAll( key );

@@ -252,4 +252,6 @@ public class Constants {
     //商家消息模板
     public static final String[] BUS_TEMPLATE_LIST  = { "付款成功通知", "确认收货提醒", "申请维权通知" };
 
+    public static final String REDIS_SECKILL_NAME = "hSeckill";
+
 }

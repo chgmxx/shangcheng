@@ -32,7 +32,7 @@ public class PhoneSpecificaDTO implements Serializable {
     private int type = 0;
 
     @ApiModelProperty( name = "activityId", value = "活动id" )
-    private int activityId = 0;
+    private Integer activityId = 0;
 
     @ApiModelProperty( name = "isShowCommission", value = "是否显示佣金 1显示" )
     private int isShowCommission = 0;

@@ -1729,7 +1729,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		int userPId = busUserService.getMainBusId( product.getUserId() );//通过用户名查询主账号id
 		long isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 		int erpInvenId = product.getErpInvId();
-		String invKey = "hSeckill";//秒杀库存的key
+		String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
 		if ( isJxc == 0 || !product.getProTypeId().toString().equals( "0" ) ) {
 		    //		    MallProduct p = new MallProduct();
 		    //		    p.setId( product.getId() );

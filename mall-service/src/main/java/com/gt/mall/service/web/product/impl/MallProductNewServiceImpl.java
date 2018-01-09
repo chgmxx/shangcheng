@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.auction.MallAuction;
@@ -48,6 +49,7 @@ import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallJxcHttpClientUtil;
 import com.gt.mall.utils.ProductUtil;
 import org.slf4j.Logger;
@@ -435,6 +437,25 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		    if ( commissionMoney > 0 ) {
 			priceMap.put( "commissionMoney", df.format( commissionMoney ) );
 		    }
+		}
+		if ( params.getType() == 3 ) {//获取秒杀库存
+		    String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
+		    String productSpecificas = priceMap.get( "xsid" ).toString();
+		    //查询秒杀商品的库存
+		    Integer invNum = null;
+		    if ( CommonUtil.isNotEmpty( productSpecificas ) ) {
+			//有规格，取规格的库存
+			invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, params.getActivityId() + "_" + productSpecificas ) );
+		    }
+		    if ( CommonUtil.isEmpty( invNum ) || invNum == 0 ) {
+			invNum = CommonUtil.toInteger( priceMap.get( "inv_num" ) );
+
+			String key = Constants.REDIS_SECKILL_NAME;
+			String field = params.getActivityId() + "_" + productSpecificas;
+			JedisUtil.map( key, field, invNum.toString() );
+
+		    }
+		    priceMap.put( "inv_num", invNum );
 		}
 
 	    }
