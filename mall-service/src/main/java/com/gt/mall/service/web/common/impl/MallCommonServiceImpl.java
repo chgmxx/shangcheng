@@ -235,11 +235,11 @@ public class MallCommonServiceImpl implements MallCommonService {
 		    } else if ( orderType == 4 ) {//拍卖判断库存  ，超过了库存会抛异常
 			mallAuctionService.isMaxNum( productDTO.getActivityId(), member.getId().toString() );
 		    } else if ( orderType == 6 ) {//商品预售  ，超过了库存会抛异常
-			mallPresaleService.isMaxNum( productDTO.getActivityId(), member.getId().toString(), productDTO.getProductSpecificaValue(), productDTO.getProductNum() );
+			mallPresaleService.isMaxNum( productDTO.getActivityId(), member.getId().toString(), productDTO.getProductSpecificaValueId(), productDTO.getProductNum() );
 		    } else if ( orderType == 3 ) {//秒杀  ，超过了库存会抛异常
-			mallSeckillService.isInvNum( productDTO.getActivityId(), productDTO.getProductSpecificaValue(), productDTO.getProductNum() );
+			mallSeckillService.isInvNum( productDTO.getActivityId(), productDTO.getProductSpecificaValueId(), productDTO.getProductNum() );
 		    } else {//判断普通商品的库存是否足够，不够抛异常
-			mallProductService.calculateInventory( productDTO.getProductId(), productDTO.getProductSpecificaValue(), productDTO.getProductNum(), member.getId() );
+			mallProductService.calculateInventory( productDTO.getProductId(), productDTO.getProductSpecificaValueId(), productDTO.getProductNum(), member.getId() );
 		    }
 
 		    //卡全包购买判断是否已经过期
