@@ -170,13 +170,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     stoPicture = "${stoPicture}" || "";//店铺图片
     countproduct = "${countproduct}" || 0;//全部商品数量
     headImg = "${headImg}" || "";
+    console.log(dataJson,"-----------",picJson)
 
     var verson = 0;
     if (dataJson.length > 0) {
         dataJson.forEach(function (e, i) {
             if (e.type == 7) {
                 verson = 1;
-                picJson.splice(i, 0, {type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
+                //picJson.splice(i, 0, {type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
             }
         })
     }
@@ -184,6 +185,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         dataJson.unshift({type: 7, radio: true})
         picJson.unshift({type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
     }
+
 
     $("body").click(function () {
         $(".color-picker").hide();
@@ -230,10 +232,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     function materiallayer(param, e, editor) {
         pic_type = param;
         paramList = arguments;
-        openIframe('素材库', '820px', '500px', '/common/material.do');
+        openIframe('素材库', '820px', '500px', 'https://suc.deeptel.com.cn/common/material.do?retUrl='+window.location.href);
     }
-
     /**素材库里面返回信息**/
+    window.addEventListener("message", function (e) {
+        debugger
+        if(!e.data)return;
+        eval(e.data)
+    });
     function image(id, url) {
         //alert(url);
         imgList = url;
@@ -282,16 +288,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         }
     };
 
-    chooseGroup();
     /**
-     *选择商品
+     *选择分组
      */
-    function chooseGroup() {
-        openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+    var group_type = 0;
+    function chooseGroup(type) {
+        group_type = type;
+        if(type == 2){
+            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=1");//check==0代表多选，check==1代表单选
+        }else{
+            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+        }
     };
+    /**
+     * 分组返回数据
+     */
     function returnGroupArr(jsonArry) {
-        console.log(jsonArry,jsonArry);
+        imgList = jsonArry;
 
+        if(group_type == 2){
+            $("#editchooseGroup").click();
+        }else{
+            $("#addchooseGroup").click();
+        }
+        console.log(jsonArry,jsonArry);
     }
 
     //分类页面，选择返回相对于的数据
@@ -369,7 +389,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         var id = $("#stoId").val();
         var des = angular.toJson(dataJson);
         var pic = angular.toJson(picJson);
-        showAll();
+        console.log(des,"----",pic)
+//        showAll();
         $.ajax({
             type: "post",
             url: "/mallPage/savepage.do",
@@ -379,12 +400,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 id: id
             },
             async: true,
-            dataType: "json",
+//            dataType: "json",
             success: function (data) {
                 closeWindow();
-                var error = data.error;
-                alert(data.message);
+                console.log(data,"=====")
+//                var error = data.error;
+//                alert(data.message);
 
+                alert("保存成功");
+
+            },error:function(data){
+                console.log(data,"dataerror")
             }
         });
     }

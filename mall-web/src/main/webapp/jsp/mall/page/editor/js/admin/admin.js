@@ -128,7 +128,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $scope.dataJson.addAt(param,{
             "type":5,
             "attr":{
-                "height":21,
+                "height":27,
                 "width":294,
                 "border":1,
                 "borderColor":"#cacaca",
@@ -337,6 +337,12 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     };
     $scope.addcommoditypicone = function(){
         $scope.picJson[$scope.pageEdit].imgID[image_num] = imgList[0];        
+    };
+    $scope.addchooseGroup = function () {
+        $scope.picJson[$scope.pageEdit].imgID = $scope.picJson[$scope.pageEdit].imgID.concat(imgList);
+    };
+    $scope.editchooseGroup = function () {
+        $scope.picJson[$scope.pageEdit].imgID = imgList;
     };
     
     //轮播图片

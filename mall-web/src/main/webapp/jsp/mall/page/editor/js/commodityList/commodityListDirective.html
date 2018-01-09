@@ -1,16 +1,13 @@
 <div class="commodityDirective groupingDirective" ng-controller="groupingController">
     
-    <div class="control-group">
+    <div class="control-group" ng-if="picJson[pageEdit].imgID[0]">
     	<div class="grouping-sources">
-   			<div class="grouping-source">商品来源：<span class="text">商品组一</span><span class="btn">修改</span></div>
-	    	<div class="actions">
-	            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
-	        </div>
+   			<div class="grouping-source">商品来源：<span class="text">{{picJson[pageEdit].imgID[0].groupName}}</span><span class="btn" onclick="chooseGroup(2)">修改</span></div>
     	</div>
     </div>
     
-    <div class="control-group">
-    	<div class="add-grouping">添加一个商品分组</div>
+    <div class="control-group" ng-if="!picJson[pageEdit].imgID[0]">
+    	<div class="add-grouping" onclick="chooseGroup(2)">添加一个商品分组</div>
     </div>
     
     <div class="control-group">

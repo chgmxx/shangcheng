@@ -17,12 +17,12 @@
         module.exports = factory(
             require('./wangEditor-jquery.js')
         );
-    } else {
+    }
+    else {
         // 全局模式
         factory(window.jQuery);
     }
 })(function($){
-    
     // 验证是否引用jquery
     if (!$ || !$.fn || !$.fn.jquery) {
         alert('在引用wangEditor.js之前，先引用jQuery，否则无法使用 wangEditor');
@@ -7793,10 +7793,10 @@ _e(function (E, $) {
     });
 
 });
-// 版权提示
-_e(function (E, $) {
-    E.info('本页面富文本编辑器由 wangEditor 提供 http://wangeditor.github.io/ ');
-});
+// // 版权提示
+// _e(function (E, $) {
+//     E.info('本页面富文本编辑器由 wangEditor 提供 http://wangeditor.github.io/ ');
+// });
     
     // 最终返回wangEditor构造函数
     return window.wangEditor;
