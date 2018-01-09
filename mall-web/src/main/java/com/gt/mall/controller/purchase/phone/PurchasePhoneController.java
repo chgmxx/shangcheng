@@ -8,7 +8,9 @@ import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
 import com.gt.mall.common.AuthorizeOrLoginController;
 import com.gt.mall.dao.purchase.*;
+import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.purchase.*;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.purchase.*;
 import com.gt.mall.utils.CommonUtil;
@@ -19,10 +21,7 @@ import com.gt.util.entity.param.pay.SubQrPayParams;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,8 +77,8 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
      *
      * @return
      */
-    @RequestMapping( "/79B4DE7C/findOrder" )
-    public String findOrder( HttpServletRequest request, @RequestParam Integer orderId ) {
+    @RequestMapping( "/79B4DE7C/{orderId}/findOrder" )
+    public String findOrder( HttpServletRequest request, @PathVariable("orderId") Integer orderId ) {
 	try {
 	    String memberIds = "";//粉丝id集合
 	    String stage = ""; //期数
@@ -231,9 +230,9 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	    map.put( "busId", busId );
 	    String returnStr = userLogin( request, response, map );
 	    if ( CommonUtil.isNotEmpty( returnStr ) ) {
-			request.setAttribute("returnUrl", returnStr);
-			return "mall/purchase/phone/authorizationBack";
-		}
+		request.setAttribute( "returnUrl", returnStr );
+		return "mall/purchase/phone/authorizationBack";
+	    }
 	    //判断是否存在合同 ,如果有合同跳转合同页面待用户确认
 	    if ( request.getParameter( "haveContract" ) != null && request.getParameter( "haveContract" ).toString().equals( "0" ) ) {
 		List< Map< String,Object > > contractListMap = contractOrderDAO.findContractOrderList( Integer.parseInt( request.getParameter( "orderId" ).toString() ) );
@@ -350,8 +349,8 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	map.put( "busId", busId );
 	String returnStr = userLogin( request, response, map );
 	if ( CommonUtil.isNotEmpty( returnStr ) ) {
-		request.setAttribute("returnUrl", returnStr);
-		return "mall/purchase/phone/authorizationBack";
+	    request.setAttribute( "returnUrl", returnStr );
+	    return "mall/purchase/phone/authorizationBack";
 	}
 	PurchaseOrder order = orderService.selectById( Integer.parseInt( request.getParameter( "orderId" ) ) );
 	request.setAttribute( "orderId", order.getId() );
@@ -403,52 +402,53 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
      * @throws IOException
      */
     @RequestMapping( "/79B4DE7C/aliCgPay" )
-	@ResponseBody
-    public String cgPay( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer memberId, @RequestParam Integer busId, String termId,
+    @ResponseBody
+    public ServerResponse cgPay( HttpServletRequest request, HttpServletResponse response, @RequestParam Integer memberId, @RequestParam Integer busId, String termId,
 		    @RequestParam double money, @RequestParam double discountmoney, Double fenbi, Integer jifen, Double discount, @RequestParam String paymentType,
 		    @RequestParam Integer orderId, Integer dvId, String disCountdepict ) throws IOException {
 	try {
-		//新增收款记录
-		PurchaseReceivables receivables = new PurchaseReceivables();
-		receivables.setBusId( busId );
-		receivables.setBuyMode( paymentType );
-		receivables.setBuyTime( new Date() );
-		receivables.setCoupon( dvId != null ? dvId.toString() : null );
-		receivables.setDiscount( discount );
-		receivables.setFansCorrency( fenbi );
-		receivables.setHaveTerm( termId == null || termId.equals( "" ) ? "0" : "1" );
-		receivables.setIntegral( Double.parseDouble( jifen.toString() ) );
-		receivables.setMemberId( memberId );
-		receivables.setMoney( discountmoney );
-		String receivablesNumber = "CG" + System.currentTimeMillis();
-		receivables.setReceivablesNumber( receivablesNumber );
-		receivables.setOrderId( orderId );
-		receivables.setBuyStatus( 0 );
-		receivables.setTermId( termId == null || termId.equals( "" ) ? null : Integer.parseInt( termId ) );
-		receivablesDAO.insert( receivables );
+	    //新增收款记录
+	    PurchaseReceivables receivables = new PurchaseReceivables();
+	    receivables.setBusId( busId );
+	    receivables.setBuyMode( paymentType );
+	    receivables.setBuyTime( new Date() );
+	    receivables.setCoupon( dvId != null ? dvId.toString() : null );
+	    receivables.setDiscount( discount );
+	    receivables.setFansCorrency( fenbi );
+	    receivables.setHaveTerm( termId == null || termId.equals( "" ) ? "0" : "1" );
+	    receivables.setIntegral( Double.parseDouble( jifen.toString() ) );
+	    receivables.setMemberId( memberId );
+	    receivables.setMoney( discountmoney );
+	    String receivablesNumber = "CG" + System.currentTimeMillis();
+	    receivables.setReceivablesNumber( receivablesNumber );
+	    receivables.setOrderId( orderId );
+	    receivables.setBuyStatus( 0 );
+	    receivables.setTermId( termId == null || termId.equals( "" ) ? null : Integer.parseInt( termId ) );
+	    receivablesDAO.insert( receivables );
 
-		SubQrPayParams subQrPayParams = new SubQrPayParams();
-		subQrPayParams.setAppidType( 0 );
-		subQrPayParams.setBusId( busId );
-		subQrPayParams.setDesc( "对外报价订单支付" );
-		subQrPayParams.setIsreturn( 1 );
-		subQrPayParams.setIsSendMessage( 0 );
-		subQrPayParams.setMemberId( memberId );
-		subQrPayParams.setModel( 35 );
-		subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/payBackMethod.do" );
-		subQrPayParams.setOrderNum( receivablesNumber );
-		subQrPayParams.setPayWay(  CommonUtil.judgeBrowser( request ) == 99 ? 1 : 2  );
-		subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/findOrder.do?orderId=" + orderId );
-		subQrPayParams.setSourceType( 1 );
-		subQrPayParams.setTotalFee( discountmoney );
+	    SubQrPayParams subQrPayParams = new SubQrPayParams();
+	    subQrPayParams.setAppidType( 0 );
+	    subQrPayParams.setBusId( busId );
+	    subQrPayParams.setDesc( "对外报价订单支付" );
+	    subQrPayParams.setIsreturn( 1 );
+	    subQrPayParams.setIsSendMessage( 0 );
+	    subQrPayParams.setMemberId( memberId );
+	    subQrPayParams.setModel( 35 );
+	    subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/payBackMethod.do" );
+	    subQrPayParams.setOrderNum( receivablesNumber );
+	    subQrPayParams.setPayWay( CommonUtil.judgeBrowser( request ) == 1 ? 1 : 2 );
+	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do" );
+	    subQrPayParams.setSourceType( 1 );
+	    subQrPayParams.setTotalFee( discountmoney );
 
-		KeysUtil keysUtil=new KeysUtil();
-		String parms=keysUtil.getEncString(JSONObject.toJSONString(subQrPayParams));
-		return  PropertiesUtil.getWxmpDomain()+"/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj="+parms;
+	    KeysUtil keysUtil = new KeysUtil();
+	    String parms = keysUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
+	    String payUrl = PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + parms;
+	    return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), payUrl );
 
 	} catch ( Exception e ) {
-			e.printStackTrace();
-			return null;
+	    e.printStackTrace();
+	    return null;
 	}
     }
 
@@ -637,8 +637,8 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 		map.put( "busId", busId );
 		String returnStr = userLogin( request, response, map );
 		if ( CommonUtil.isNotEmpty( returnStr ) ) {
-			request.setAttribute("returnUrl", returnStr);
-			return "mall/purchase/phone/authorizationBack";
+		    request.setAttribute( "returnUrl", returnStr );
+		    return "mall/purchase/phone/authorizationBack";
 		}
 		request.setAttribute( "payType", 1 );
 	    }
@@ -656,7 +656,7 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	}
-	return "redirect:/purchasePhone/79B4DE7C/findOrder.do?orderId=" + orderId;
+	return "redirect:/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do";
     }
 
     /**

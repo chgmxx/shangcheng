@@ -73,7 +73,7 @@ public class CookieUtil {
      *
      * @return Cookie
      */
-    public static Cookie getCookieByName( HttpServletRequest request, String name ) {
+    /*public static Cookie getCookieByName( HttpServletRequest request, String name ) {
 	Map< String,Cookie > cookieMap = ReadCookieMap( request );
 	if ( cookieMap.containsKey( name ) ) {
 	    Cookie cookie = (Cookie) cookieMap.get( name );
@@ -82,7 +82,7 @@ public class CookieUtil {
 	} else {
 	    return null;
 	}
-    }
+    }*/
 
     /**
      * 将cookie封装到Map里面
