@@ -44,6 +44,7 @@ import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
+import com.gt.util.entity.param.fenbiFlow.WsFenbiFlowRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2208,24 +2209,28 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     private Map< String,Object > getFlowRecord( MallProduct product, BusFlowInfo flow ) {
-	FenbiFlowRecord flowRecord = new FenbiFlowRecord();
+	WsFenbiFlowRecord flowRecord = new WsFenbiFlowRecord();
 	flowRecord.setBusUserId( product.getUserId() );//用户ID
 	flowRecord.setRecType( 2 );//1：粉币 2：流量
-	flowRecord.setRecCount( CommonUtil.toDouble( product.getProStockTotal() ) );//总数量
+	flowRecord.setRecCount( CommonUtil.toDouble( product.getProStockTotal() ).doubleValue() );//总数量
 	flowRecord.setRecDesc( "商家发布流量充值（商城）" );//冻结描述
 	flowRecord.setRecFreezeType( 100 );//冻结类型
 	flowRecord.setRecFkId( product.getId() );//外键id， 商品id
 	flowRecord.setFlowType( flow.getType() );//流量类型
 	flowRecord.setFlowId( flow.getId() );//流量表ID
-	flowRecord.setId( product.getFlowRecordId() );
+	if ( CommonUtil.isNotEmpty( product.getFlowRecordId() ) && product.getFlowRecordId() > 0 ) {
+	    flowRecord.setId( product.getFlowRecordId() );
+	} else {
+	    flowRecord.setId( null );
+	}
 	flowRecord.setRollStatus( 0 );
-	flowRecord.setRecUseCount( 0d );
+	flowRecord.setRecUseCount( CommonUtil.toDouble( 0 ).doubleValue() );
 	flowRecord.setRecCreatetime( DateTimeKit.getDateTime() );
 	Map< String,Object > resultMap = fenBiFlowService.saveFenbiFlowRecord( flowRecord );
-	if ( CommonUtil.isNotEmpty( resultMap.get( "id" ) ) && CommonUtil.isNotEmpty( product.getId() ) ) {
+	if ( CommonUtil.isNotEmpty( resultMap.get( "data" ) ) && CommonUtil.isNotEmpty( product.getId() ) ) {
 	    MallProduct pro = new MallProduct();
 	    pro.setId( product.getId() );
-	    pro.setFlowRecordId( CommonUtil.toInteger( resultMap.get( "id" ) ) );
+	    pro.setFlowRecordId( CommonUtil.toInteger( resultMap.get( "data" ) ) );
 	    mallProductDAO.updateById( pro );
 	} else {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), resultMap.get( "errorMsg" ).toString() );

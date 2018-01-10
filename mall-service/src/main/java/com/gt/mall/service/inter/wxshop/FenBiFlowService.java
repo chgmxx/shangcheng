@@ -55,7 +55,7 @@ public interface FenBiFlowService {
      *
      * @return 是否冻结成功，冻结id
      */
-    Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord );
+    Map< String,Object > saveFenbiFlowRecord( WsFenbiFlowRecord fenbiFlowRecord );
 
     /**
      * 根据id查询冻结流量记录
