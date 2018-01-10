@@ -58,8 +58,7 @@
             //当你在iframe页面关闭自身时
             /*var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
              layer.close(index); //再执行关闭*/
-            parent.parent.parent.window.postMessage("closeMask()", "*");
-            parent.layer.closeAll();
+            parent.CloseParentShade();
         }
     </script>
     <style type="text/css">

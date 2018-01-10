@@ -372,7 +372,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
     /**打开一个IFRAME窗口**/
     function openIframe(title, width, height, content) {
-        parent.parent.window.postMessage("openMask()", "*");
+        openParentShade();
+
         layer.open({
             type: 2,
             title: title,
@@ -385,6 +386,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 parent.parent.window.postMessage("closeMask()", "*");
             }
         });
+    }
+    function openParentShade(){
+        parent.parent.window.postMessage("openMask()", "*");
+        parent.shadeShow();
+    }
+    function CloseParentShade(){
+        parent.parent.window.postMessage("closeMask()", "*");
+        layer.closeAll();
+        parent.shadeHide();
     }
     //数据保存或修改
 
