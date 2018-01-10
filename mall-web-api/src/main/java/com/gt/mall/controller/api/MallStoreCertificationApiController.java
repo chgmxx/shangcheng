@@ -165,6 +165,9 @@ public class MallStoreCertificationApiController extends BaseController {
 
 	    MallStoreCertification certification = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	    certification.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
+	    if ( CommonUtil.isNotEmpty( params.get( "reason" ) ) ) {
+		certification.setRefuseReason( params.get( "reason" ).toString() );
+	    }
 	    boolean flag = mallStoreCertService.updateById( certification );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证审核异常" );

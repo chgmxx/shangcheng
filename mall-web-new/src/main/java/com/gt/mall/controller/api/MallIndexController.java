@@ -17,6 +17,7 @@ import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.QRcodeKit;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.pay.PayWay;
+import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,6 +217,22 @@ public class MallIndexController extends BaseController {
 	    logger.error( "获取门店信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取门店信息异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), wxShopInfo );
+    }
+
+    @ApiOperation( value = "获取主门店信息", notes = "获取主门店信息" )
+    @ResponseBody
+    @RequestMapping( value = "/selectMainShop", method = RequestMethod.POST )
+    public ServerResponse selectMainShop( HttpServletRequest request, HttpServletResponse response ) {
+	WsWxShopInfo wxShopInfo = null;
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    wxShopInfo = wxShopService.selectMainShopByBusId( user.getId() );
+	} catch ( Exception e ) {
+	    logger.error( "获取主门店信息异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取主门店信息异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), wxShopInfo );
     }

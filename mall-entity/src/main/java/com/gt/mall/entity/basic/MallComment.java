@@ -125,6 +125,16 @@ public class MallComment extends Model< MallComment > {
      */
     @TableField( "give_status" )
     private Integer giveStatus;
+    /**
+     * 用户名称
+     */
+    @TableField( "member_name" )
+    private String memberName;
+    /**
+     * 用户头像
+     */
+    @TableField( "member_headimgurl" )
+    private String memberHeadimgurl;
 
     @Override
     protected Serializable pkVal() {
@@ -154,6 +164,8 @@ public class MallComment extends Model< MallComment > {
 			", checkStatus=" + checkStatus +
 			", giveTime=" + giveTime +
 			", giveStatus=" + giveStatus +
+			", memberName=" + memberName +
+			", memberHeadimgurl=" + memberHeadimgurl +
 			"}";
     }
 }

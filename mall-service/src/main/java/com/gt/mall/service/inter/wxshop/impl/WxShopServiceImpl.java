@@ -101,6 +101,28 @@ public class WxShopServiceImpl implements WxShopService {
     }
 
     @Override
+    public WsWxShopInfo selectMainShopByBusId( int busUserId ) {
+	if ( busUserId == 0 ) {
+	    return null;
+	}
+	String key = Constants.REDIS_KEY + "wx_shop_" + busUserId;
+	if ( JedisUtil.exists( key ) ) {
+	    Object obj = JedisUtil.get( key );
+	    if ( CommonUtil.isNotEmpty( obj ) ) {
+		return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WsWxShopInfo.class );
+	    }
+	}
+	RequestUtils< Integer > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( busUserId );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectMainShopByBusId.do", 2 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WsWxShopInfo.class );
+	}
+	return null;
+    }
+
+    @Override
     public boolean addShopSubShop( ShopSubsop shopSubsop ) {
 	if ( CommonUtil.isEmpty( shopSubsop ) ) {
 	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "参数不完整" );

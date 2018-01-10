@@ -113,6 +113,11 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
     @TableField( "check_status" )
     private Integer checkStatus;
     /**
+     * 不通过理由
+     */
+    @TableField( "refuse_reason" )
+    private String  refuseReason;
+    /**
      * 创建时间
      */
     @TableField( "create_time" )

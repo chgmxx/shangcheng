@@ -75,12 +75,16 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		StoreResult storeResult = new StoreResult();
 		converter.mapToBean( shopMap, storeResult );
 		MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
-		if ( storeCertification != null && storeCertification.getCheckStatus() == 1 ) {
+		if ( storeCertification != null ) {
+		    storeResult.setCertCheckStatus( storeCertification.getCheckStatus() );
+		    storeResult.setCertRefuseReason( storeCertification.getRefuseReason() );
 		    storeResult.setCertId( storeCertification.getId() );
-		    storeResult.setCertStoType( storeCertification.getStoType() );
-		    if ( storeCertification.getStoType() == 1 ) {
-			storeResult.setCertStoCategory( storeCertification.getStoCategory() );
-			storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
+		    if ( storeCertification.getCheckStatus() == 1 ) {
+			storeResult.setCertStoType( storeCertification.getStoType() );
+			if ( storeCertification.getStoType() == 1 ) {
+			    storeResult.setCertStoCategory( storeCertification.getStoCategory() );
+			    storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
+			}
 		    }
 		}
 		for ( Map< String,Object > maps : shopList ) {
