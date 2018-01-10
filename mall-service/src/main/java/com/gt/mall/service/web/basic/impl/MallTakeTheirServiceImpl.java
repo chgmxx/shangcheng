@@ -129,7 +129,14 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 			visitAddressDetail += cityName;
 		    }
 		}
-		visitAddressDetail+=take.getVisitAddress();
+		if ( take.getVisitAddress().contains( visitAddressDetail ) ) {
+		    String temp = take.getVisitAddress();
+		    take.setVisitAddress( take.getVisitAddress().replace( visitAddressDetail, "" ) );
+		    visitAddressDetail = temp;
+		} else {
+		    visitAddressDetail += take.getVisitAddress();
+		}
+
 		take.setVisitAddressDetail( visitAddressDetail );
 		if ( CommonUtil.isNotEmpty( take.getId() ) ) {
 		    code = mallTakeTheirDAO.updateById( take );
