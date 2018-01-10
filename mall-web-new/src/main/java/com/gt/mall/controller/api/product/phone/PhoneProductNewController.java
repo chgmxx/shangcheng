@@ -358,13 +358,23 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    if ( product.getIsSpecifica().toString().equals( "1" ) ) {
 
 		List< Map< String,Object > > specificaList = mallProductSpecificaService.getSpecificaByProductId( params.getProductId() );//获取商品规格值
-		resultMap.put( "specificaList", specificaList );
+		if ( specificaList != null && specificaList.size() > 0 ) {
+		    resultMap.put( "specificaList", specificaList );
+		}
 
 		List< Map< String,Object > > guigePrice = mallProductNewService.getProductSpecificaPrice( params, member );
-		resultMap.put( "guigePrice", guigePrice );
+		if ( guigePrice != null && guigePrice.size() > 0 ) {
+		    resultMap.put( "guigePrice", guigePrice );
+		}
 	    }
 	    resultMap.put( "proStockTotal", product.getProStockTotal() );
 	    resultMap.put( "proPrice", product.getProPrice() );
+	    resultMap.put( "busId", product.getUserId() );
+	    resultMap.put( "id", product.getId() );
+	    resultMap.put( "proTypeId", product.getProTypeId() );
+	    if ( product.getProRestrictionNum() != null && product.getProRestrictionNum() > 0 ) {
+		resultMap.put( "maxNum", product.getProRestrictionNum() );
+	    }
 	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, params.getProductId() );
 	    if ( imageList != null && imageList.size() > 0 ) {
 		resultMap.put( "imageObj", imageList.get( 0 ) );

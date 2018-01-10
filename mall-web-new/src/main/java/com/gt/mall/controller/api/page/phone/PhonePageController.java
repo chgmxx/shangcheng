@@ -160,12 +160,10 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		    }
 		    Map< String,Object > map1 = (Map) jsonobj.get( i );
 		    //		    logger.error( "map" + JSONObject.toJSON( map1 ) );
-		    if ( CommonUtil.isEmpty( map1.get( "imgID" ) ) ) {
-			if ( map1.get( "type" ).toString().equals( "7" ) ) {
-			    map1.put( "stoName", mallStore.getStoName() );
-			    map1.put( "headImg", headImg );
-			    XinJson.add( map1 );
-			}
+		    if ( map1.get( "type" ).toString().equals( "7" ) ) {
+			map1.put( "stoName", mallStore.getStoName() );
+			map1.put( "headImg", headImg );
+			XinJson.add( map1 );
 			continue;
 		    }
 		    String imaid = map1.get( "imgID" ).toString();
@@ -571,6 +569,5 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    e.printStackTrace();
 	}
     }
-
 
 }

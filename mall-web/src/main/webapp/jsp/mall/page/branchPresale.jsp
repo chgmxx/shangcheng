@@ -127,7 +127,7 @@
                         <input type="hidden" name="product_introdu" class="listb saInp" value="${pro.product_introdu}">
                         <input type="hidden" name="preId" class="listb saInp" value="${pro.preId}">
 
-                        <input type="hidden" name="url" class="listb saInp" value="/mallPage/${pro.id }/${stoId}/79B4DE7C/phoneProduct.do">
+                        <input type="hidden" name="url" class="listb saInp" value="${pro.url}">
                     </li>
                 </c:forEach>
             </div>

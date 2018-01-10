@@ -294,7 +294,7 @@
     <select id="selectBySearchNames" parameterType="Map" resultType="Map">
         SELECT DISTINCT(a.id),a.pro_price,a.pro_name AS proName,a.is_specifica,b.product_introdu AS
         product_introdu,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id,
-        mp.sale_start_time,mp.sale_end_time,mp.id AS presaleId,mp.order_num
+        mp.sale_start_time,mp.sale_end_time,mp.id AS presaleId,mp.order_num,mp.shop_id,mp.user_id
         FROM t_mall_presale mp
         LEFT JOIN t_mall_product a ON a.id=mp.product_id
         LEFT JOIN t_mall_product_detail b ON a.id=b.product_id

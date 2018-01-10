@@ -142,7 +142,7 @@
                             <input type="hidden" name="price" class="listb" value="${pro.inv_price }">
                         </c:if>
 
-                        <input type="hidden" name="url" class="listb" value="${url}/mallPage/${pro.id }/${stoId}/79B4DE7C/phoneProduct.do">
+                        <input type="hidden" name="url" class="listb" value="${pro.url}">
                     </li>
                 </c:forEach>
             </div>
