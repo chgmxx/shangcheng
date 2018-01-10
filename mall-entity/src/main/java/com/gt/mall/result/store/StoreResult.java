@@ -104,6 +104,10 @@ public class StoreResult {
 
     @ApiModelProperty( name = "certId", value = "店铺认证ID" )
     private Integer certId;
+    @ApiModelProperty( name = "certCheckStatus", value = "店铺认证审核状态" )
+    private Integer certCheckStatus;
+    @ApiModelProperty( name = "certRefuseReason", value = "店铺认证审核不通过理由" )
+    private String  certRefuseReason;
     @ApiModelProperty( name = "certStoType", value = "认证类型 0个人 1企业" )
     private Integer certStoType;
     @ApiModelProperty( name = "certStoCategory", value = "认证店铺  1 普通店铺  2旗舰店  3专卖店  4直营店" )

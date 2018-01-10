@@ -95,7 +95,9 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
-
+	if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
+	    params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
+	}
 	int count = mallCommentDAO.selectCommentCount( params );
 	PageUtil page = new PageUtil( curPage, pageSize, count, "comment/to_index.do" );
 	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
@@ -107,7 +109,7 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	}
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( Map< String,Object > map : productList ) {
-		if ( CommonUtil.isNotEmpty( map.get( "is_upload_image" ) ) ) {
+		if ( CommonUtil.isNotEmpty( map.get( "isUploadImage" ) ) ) {
 		    if ( map.get( "isUploadImage" ).toString().equals( "1" ) ) {
 			Map< String,Object > imageMap = new HashMap<>();
 			imageMap.put( "assId", map.get( "id" ) );

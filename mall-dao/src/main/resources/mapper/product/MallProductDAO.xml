@@ -194,8 +194,19 @@
             </foreach>
         </if>
         <if test="checkStatus != null and checkStatus != ''">
-            and p.check_status = #{checkStatus}
+            <if test="checkStatus == 1">
+                and p.check_status = #{checkStatus}
+                and p.is_platform_check=1
+            </if>
+            <if test="checkStatus == -1">
+                and p.check_status = #{checkStatus}
+                and p.is_platform_check=1
+            </if>
+            <if test="checkStatus == 0">
+                and p.is_platform_check=0
+            </if>
         </if>
+        and p.is_publish =1
         order by p.create_time desc
         limit #{firstNum},#{maxNum}
     </select>
