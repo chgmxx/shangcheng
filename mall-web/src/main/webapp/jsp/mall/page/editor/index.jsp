@@ -372,15 +372,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
     /**打开一个IFRAME窗口**/
     function openIframe(title, width, height, content) {
+        parent.parent.window.postMessage("openMask()", "*");
         layer.open({
             type: 2,
             title: title,
-            shadeClose: true,
             shade: 0.3,
             offset: "10%",
             shadeClose: false,
             area: [width, height],
-            content: content
+            content: content,
+            cancel: function(){
+                parent.parent.window.postMessage("closeMask()", "*");
+            }
         });
     }
     //数据保存或修改
