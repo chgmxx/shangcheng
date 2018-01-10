@@ -377,7 +377,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         layer.open({
             type: 2,
             title: title,
-            shade: 0.3,
+            shade: 0.5,
             offset: "10%",
             shadeClose: false,
             area: [width, height],
