@@ -6,7 +6,9 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.controller.api.basic.phone.AuthorizeOrUcLoginController;
 import com.gt.mall.dto.ErrorInfo;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.entity.seller.MallSellerMallset;
@@ -23,6 +25,7 @@ import com.gt.mall.service.web.applet.MallHomeAppletService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallCommentService;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -115,6 +118,8 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     private CoreService                   coreService;
     @Autowired
     private WxPublicUserService           wxPublicUserService;
+    @Autowired
+    private MallImageAssociativeService   mallImageAssociativeService;
 
     @ApiOperation( value = "商品分类接口", notes = "商品分类接口", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -339,6 +344,41 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 
     }
 
+    @ApiOperation( value = "查询商品规格和商品图片接口", notes = "在首页弹出商品规格", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    @ResponseBody
+    @PostMapping( value = "getSpecificaAndImage", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
+    public ServerResponse getSpecificaDialog( HttpServletRequest request, @RequestBody @Valid @ModelAttribute PhoneSpecificaDTO params ) {
+	Map< String,Object > resultMap = new HashMap<>();
+	try {
+
+	    Member member = MallSessionUtils.getLoginMember( request, MallRedisUtils.getUserId() );
+
+	    MallProduct product = mallProductService.selectById( params.getProductId() );
+
+	    if ( product.getIsSpecifica().toString().equals( "1" ) ) {
+
+		List< Map< String,Object > > specificaList = mallProductSpecificaService.getSpecificaByProductId( params.getProductId() );//获取商品规格值
+		resultMap.put( "specificaList", specificaList );
+
+		List< Map< String,Object > > guigePrice = mallProductNewService.getProductSpecificaPrice( params, member );
+		resultMap.put( "guigePrice", guigePrice );
+	    }
+	    resultMap.put( "proStockTotal", product.getProStockTotal() );
+	    resultMap.put( "proPrice", product.getProPrice() );
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, params.getProductId() );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		resultMap.put( "imageObj", imageList.get( 0 ) );
+	    }
+
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap );
+
+	} catch ( Exception e ) {
+	    logger.error( "查询商品规格和商品图片异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorMessage( "查询商品规格和商品图片失败" );
+	}
+    }
+
     @ApiOperation( value = "查询商品详情接口", notes = "商品详情", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( @ApiImplicitParam( name = "productId", value = "商品id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
@@ -404,7 +444,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
     public ServerResponse collectProduct( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    Integer productId ) {
 	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
