@@ -313,9 +313,9 @@
         where id = #{product_id}
     </update>
     <select id="selectProductByShopids" resultType="java.util.Map">
-        SELECT a.id,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id
+        SELECT a.id,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id,a.shop_id,a.user_id
         from (
-        SELECT DISTINCT(a.id),a.pro_price,a.pro_name,a.is_specifica,a.is_publish,a.check_status,a.is_delete
+        SELECT DISTINCT(a.id),a.pro_price,a.pro_name,a.is_specifica,a.is_publish,a.check_status,a.is_delete,a.shop_id,a.user_id
         FROM t_mall_product a
 
         <if test="groupId != null and groupId != ''">

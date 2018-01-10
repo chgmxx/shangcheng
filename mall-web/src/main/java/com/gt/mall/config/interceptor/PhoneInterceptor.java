@@ -41,6 +41,7 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	    Integer busId = CommonUtil.toInteger( params.get( "busId" ) );
 	    member = SessionUtils.getLoginMember( request, busId );
 	}
+	MallSessionUtils.setLoginMember( request, null );
 	if ( CommonUtil.isEmpty( member ) ) {
 	    if ( request.getServerName().contains( "192.168.2" ) ) {
 		member = new Member();
