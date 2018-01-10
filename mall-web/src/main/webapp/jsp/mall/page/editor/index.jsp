@@ -142,14 +142,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!-- 商品隐藏id -->
 <input type="hidden" id="stoId" value="${stoId}"/>
 
-<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
+<%--<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
     <a href="javascirpt:void(0)" onclick="save()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">保存</a>
     <a href="javascirpt:void(0)" onclick="yl()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">预览</a>
     <a href="javascirpt:void(0)" onclick="window.close()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px">关闭</a>
-</div>
+</div>--%>
 <!--修改网站名称弹出层结束-->
 <div id="fade" class="black_overlay"></div>
 <div id="moveGroupLaye" style="display: none; z-index: 1002; width: 200px; height: 200px; position: fixed; left:50%; top:50%;margin-left:-100px; margin-top:-100px">
