@@ -383,7 +383,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             area: [width, height],
             content: content,
             cancel: function(){
-                parent.parent.window.postMessage("closeMask()", "*");
+                CloseParentShade();
             }
         });
     }
@@ -392,9 +392,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         parent.shadeShow();
     }
     function CloseParentShade(){
+        parent.shadeHide();
         parent.parent.window.postMessage("closeMask()", "*");
         layer.closeAll();
-        parent.shadeHide();
     }
     //数据保存或修改
 
