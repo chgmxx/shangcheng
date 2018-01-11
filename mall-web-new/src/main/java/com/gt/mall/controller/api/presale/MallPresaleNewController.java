@@ -333,6 +333,20 @@ public class MallPresaleNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    MallPaySet paySet = new MallPaySet();
+	    paySet.setUserId( user.getId() );
+	    //通过商品id查询预售信息
+	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
+	    boolean isPresaleGive = false;
+	    if ( CommonUtil.isNotEmpty( set ) ) {
+		if ( CommonUtil.isNotEmpty( set.getIsPresale() ) ) {
+		    if ( set.getIsPresaleGive() == 1 ) {
+			isPresaleGive = true;
+		    }
+		}
+	    }
+	    result.put( "isPresaleGive", isPresaleGive );
+
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "curPage", curPage );
 	    params.put( "userId", user.getId() );
