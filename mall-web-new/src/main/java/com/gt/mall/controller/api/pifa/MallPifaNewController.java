@@ -82,7 +82,7 @@ public class MallPifaNewController extends BaseController {
 		    }
 		}
 	    }
-	    result.put( "isOpenPifa", true );
+	    result.put( "isOpenPifa", isOpenPifa );
 	    if ( isOpenPifa ) {
 		Map< String,Object > params = new HashMap<>();
 		params.put( "curPage", curPage );
