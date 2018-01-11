@@ -1,4 +1,4 @@
-package com.gt.mall.controller.api;
+package com.gt.mall.controller.api.index;
 
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseController;
@@ -7,7 +7,6 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
-import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -52,8 +51,6 @@ public class MallIndexController extends BaseController {
 
     @Autowired
     private MallOrderService       mallOrderService;
-    @Autowired
-    private MallOrderReturnService mallOrderReturnService;
     @Autowired
     private MallStoreService       mallStoreService;
     @Autowired
