@@ -2,6 +2,8 @@ package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,8 +183,9 @@ public class MallJxcHttpClientUtil {
 		    return inventoryOperation( params, false );
 		}
 	    }
-	} catch ( UnsupportedEncodingException e ) {
+	} catch ( Exception e ) {
 	    e.printStackTrace();
+	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "发货退货时调用修改库存" );
 	}
 	return false;
     }

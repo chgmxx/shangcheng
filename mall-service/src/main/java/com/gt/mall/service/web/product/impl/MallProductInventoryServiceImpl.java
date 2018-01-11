@@ -9,9 +9,10 @@ import com.gt.mall.dao.product.MallProductInventoryDAO;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.web.product.MallProductInventoryService;
-import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
+import com.gt.mall.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,8 +77,9 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 			}
 			inventory.setSpecificaIds( specId.toString() );// 规格值
 		    }
-
-		    inventory.setInvCode( map.get( "invCode" ).toString() );
+		    if ( CommonUtil.isNotEmpty( map.get( "invCode" ) ) ) {
+			inventory.setInvCode( CommonUtil.toString( map.get( "invCode" ) ) );
+		    }
 		    inventory.setInvNum( CommonUtil.toInteger( map.get( "invNum" ) ) );
 		    inventory.setInvPrice( BigDecimal.valueOf( Double.valueOf( map.get( "invPrice" ).toString() ) ) );
 		    inventory.setIsDefault( CommonUtil.toInteger( map.get( "isDefault" ) ) );
@@ -109,6 +111,80 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
+    public void newSaveOrUpdateBatch( Map< String,Object > specMap, Object obj, int proId ) {
+
+	Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
+	inventoryWrapper.where( "product_id =  {0} and is_delete = 0 ", proId );
+	List< MallProductInventory > defaultList = mallProductInventoryDAO.selectList( inventoryWrapper );
+
+	// 解析页面传值
+	List< Map > invenList = JSONArray.parseArray( (String) obj, Map.class );
+	if ( invenList != null && invenList.size() > 0 ) {
+	    for ( Map map : invenList ) {
+		MallProductInventory inventory = new MallProductInventory();
+		if ( map != null ) {
+		    // 解析规格
+		    List< MallProductSpecifica > list = JSONArray.parseArray( map.get( "specificas" ).toString(), MallProductSpecifica.class );
+		    int imgSpecId = 0;
+		    if ( list != null && list.size() > 0 ) {
+			StringBuilder specId = new StringBuilder();
+			for ( MallProductSpecifica speci : list ) {
+			    String str = speci.getSpecificaNameId() + "_" + speci.getSpecificaValueId();
+			    if ( !specId.toString().equals( "" ) ) {
+
+				specId.append( "," );
+			    }
+			    JSONObject jObj = JSONObject.parseObject( specMap.get( str ).toString() );
+			    if ( !CommonUtil.isEmpty( jObj.get( "specId" ) ) ) {
+				imgSpecId = jObj.getInteger( "specId" );
+			    }
+			    specId.append( jObj.get( "id" ) );
+			}
+			if ( defaultList != null ) {
+			    for ( MallProductInventory inventory1 : defaultList ) {
+				if ( specId.toString().equals( inventory1.getSpecificaIds() ) ) {
+				    inventory.setId( inventory1.getId() );
+				    defaultList.remove( inventory1 );
+				    break;
+				}
+			    }
+			}
+			inventory.setSpecificaIds( specId.toString() );// 规格值
+		    }
+		    if ( CommonUtil.isNotEmpty( map.get( "invCode" ) ) ) {
+			inventory.setInvCode( map.get( "invCode" ).toString() );
+		    }
+		    inventory.setInvNum( CommonUtil.toInteger( map.get( "invNum" ) ) );
+		    inventory.setInvPrice( BigDecimal.valueOf( Double.valueOf( map.get( "invPrice" ).toString() ) ) );
+		    inventory.setIsDefault( CommonUtil.toInteger( map.get( "isDefault" ) ) );
+		    if ( CommonUtil.isNotEmpty( map.get( "logisticsWeight" ) ) ) {
+			inventory.setLogisticsWeight( CommonUtil.toBigDecimal( map.get( "logisticsWeight" ) ) );
+		    }
+		    if ( imgSpecId > 0 ) {
+			inventory.setSpecificaImgId( imgSpecId );
+		    } else {
+			inventory.setSpecificaImgId( 0 );
+		    }
+		    inventory.setProductId( proId );
+
+		    if ( CommonUtil.isEmpty( inventory.getId() ) ) {
+			mallProductInventoryDAO.insert( inventory );
+		    } else {
+			mallProductInventoryDAO.updateById( inventory );
+		    }
+		}
+	    }
+	}
+	if ( defaultList != null ) {
+	    for ( MallProductInventory inventory : defaultList ) {
+		inventory.setIsDelete( 1 );
+		inventory.setIsDefault( 0 );
+		mallProductInventoryDAO.updateById( inventory );
+	    }
+	}
+    }
+
+    @Override
     public List< MallProductInventory > getInventByProductId( int productId ) {
 	Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
 	inventoryWrapper.where( "product_id =  {0} and is_delete = 0 ", productId );
@@ -128,6 +204,35 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	    List< MallProductSpecifica > specList = mallProductSpecificaService.selectBySpecIds( ids );//查询规格集合
 	    if ( specList != null ) {
 		inventory.setSpecList( specList );
+	    }
+	}
+	return inventory;
+    }
+
+    @Override
+    public MallProductInventory selectDefaultInvenNotNullStock( int productId, int invenId, PhoneProductDetailResult result ) {
+	MallProductInventory inventory;
+	if ( productId > 0 ) {
+	    inventory = mallProductInventoryDAO.selectById( invenId );
+	} else {
+	    MallProductInventory mallProductInventory = new MallProductInventory();
+	    mallProductInventory.setIsDelete( 0 );
+	    mallProductInventory.setIsDefault( 1 );
+	    mallProductInventory.setProductId( productId );
+	    inventory = mallProductInventoryDAO.selectOne( mallProductInventory );
+	}
+	if ( CommonUtil.isNotEmpty( inventory ) && CommonUtil.isNotEmpty( result.getInvIdList() ) && result.getInvIdList().size() > 0 ) {
+	    //库存为空 ，重新获取库存
+	    if ( CommonUtil.isEmpty( inventory.getInvNum() ) || inventory.getInvNum() == 0 ) {
+		for ( Integer invId : result.getInvIdList() ) {
+		    if ( CommonUtil.isEmpty( invenId ) ) {
+			continue;
+		    }
+		    inventory = mallProductInventoryDAO.selectById( invId );
+		    if ( CommonUtil.isNotEmpty( inventory.getInvNum() ) && inventory.getInvNum() > 0 ) {
+			break;
+		    }
+		}
 	    }
 	}
 	return inventory;
@@ -287,13 +392,16 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
-    public int updateProductInventory( Map< String,Object > params ) {
-	Wrapper< MallProductInventory > wrapper = new EntityWrapper<>();
-	wrapper.where( "is_delete = 0 and product_id = {0} and specifica_ids = {1}", params.get( "proId" ), params.get( "specificaIds" ) );
-	MallProductInventory inventory = new MallProductInventory();
-	inventory.setInvNum( CommonUtil.toInteger( params.get( "total" ) ) );
-	inventory.setInvSaleNum( CommonUtil.toInteger( params.get( "saleNum" ) ) );
-	return mallProductInventoryDAO.update( inventory, wrapper );
+    public int updateProductInventory( MallProductInventory inventory, Integer proNum, Integer type ) {
+	if ( CommonUtil.isEmpty( proNum ) || proNum == 0 ) {
+	    return 0;
+	}
+	Map< String,Object > params = new HashMap<>();
+	params.put( "type", type );
+	params.put( "inventory_id", inventory.getId() );
+	params.put( "product_id", inventory.getProductId() );
+	params.put( "pro_num", proNum );
+	return mallProductInventoryDAO.updateProductStock( params );
     }
 
     @Override
@@ -309,6 +417,8 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	inventoryWrapper.orderBy( "is_default", false ).orderBy( "inv_num", false );
 	List< Map< String,Object > > inventoryList = mallProductInventoryDAO.selectMaps( inventoryWrapper );
 	if ( inventoryList == null || inventoryList.size() == 0 ) {
+	    inventoryWrapper = new EntityWrapper<>();
+	    inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
 	    inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 	    inventoryWrapper.orderBy( "inv_num", false );
 	    inventoryList = mallProductInventoryDAO.selectMaps( inventoryWrapper );
@@ -317,6 +427,8 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	if ( inventoryList != null && inventoryList.size() > 0 && CommonUtil.isEmpty( inv_id ) ) {
 	    map = inventoryList.get( 0 );
 	    if ( CommonUtil.isEmpty( map.get( "inv_num" ) ) || map.get( "inv_num" ).toString().equals( "0" ) ) {
+		inventoryWrapper = new EntityWrapper<>();
+		inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
 		inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 		inventoryWrapper.andNew( " inv_num > 0 " );
 		if ( defaultHasInvNum ) {
@@ -383,11 +495,15 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 		StringBuilder xids = new StringBuilder();
 		StringBuilder values = new StringBuilder();
 		if ( specificaList != null && specificaList.size() > 0 ) {
-		    for ( int i = 0; i < specificaList.size(); i++ ) {
-			MallProductSpecifica specifica = specificaList.get( i );
-			if ( slist.contains( specifica.getId().toString() ) ) {
-			    xids.append( specifica.getSpecificaValueId() ).append( "," );
-			    values.append( specifica.getSpecificaValue() ).append( "," );
+		    for ( Object o : slist ) {
+			String ids = o.toString();
+			for ( int i = 0; i < specificaList.size(); i++ ) {
+			    MallProductSpecifica specifica = specificaList.get( i );
+			    if ( ids.equals( specifica.getId().toString() ) ) {
+				xids.append( specifica.getSpecificaValueId() ).append( "," );
+				values.append( specifica.getSpecificaValue() ).append( "," );
+				break;
+			    }
 			}
 		    }
 		}

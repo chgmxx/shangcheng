@@ -9,11 +9,13 @@
         <result column="product_detail" property="productDetail"/>
         <result column="product_introdu" property="productIntrodu"/>
         <result column="product_message" property="productMessage"/>
+        <result column="p_css" property="pCss"/>
+        <result column="p_data" property="pData"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, product_id , product_detail , product_introdu , product_message
+        id, product_id , product_detail , product_introdu , product_message,p_css,p_data
     </sql>
 
 </mapper>

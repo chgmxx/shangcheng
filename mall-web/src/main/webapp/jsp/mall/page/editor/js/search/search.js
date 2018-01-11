@@ -11,7 +11,7 @@ angular.module('search',[]).controller("searchController",["$scope",function($sc
         link: function(scope, element, attr){
             $('#picker01').farbtastic('#bgcolor');
             $('#picker02').farbtastic('#borderColor');
-            $('#picker03').farbtastic('#color');
+//            $('#picker03').farbtastic('#color');
             if(scope.dataedit == null || scope.dataedit == "")return;
             var w = 250;
             var m1 = 100;
@@ -69,12 +69,7 @@ angular.module('search',[]).controller("searchController",["$scope",function($sc
                 event.stopPropagation();
             });
 
-            $("body,html").click(function(){
-                $(".color-picker").hide();
-            });
-            $(".color-picker").click(function(){
-                event.stopPropagation();
-            })
+            
 
         }
     }

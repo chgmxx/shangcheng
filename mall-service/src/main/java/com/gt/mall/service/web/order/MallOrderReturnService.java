@@ -1,7 +1,16 @@
 package com.gt.mall.service.web.order;
 
+import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseService;
+import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
+import com.gt.mall.result.phone.order.returns.PhoneReturnProductResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWuLiuResult;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,8 +22,68 @@ import com.gt.mall.entity.order.MallOrderReturn;
  */
 public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
 
+
+    /**
+     * 申请退款
+     */
+    boolean addOrderReturn( MallOrderReturn orderReturn ,Member member);
+
     /**
      * 系统退款（不是买家申请的）
      */
-    public boolean returnEndOrder(Integer orderId,Integer orderDetailId) throws Exception;
+    boolean returnEndOrder( Integer orderId, Integer orderDetailId ) throws Exception;
+
+    /**
+     * 获取退款方式
+     *
+     * @param order 订单
+     *
+     * @return 退款方式
+     */
+    List< PhoneReturnWayResult > getReturnWayList( MallOrder order );
+
+    /**
+     * 获取退款商品
+     *
+     * @param order  订单
+     * @param detail 订单详情
+     *
+     * @return 商品信息
+     */
+    PhoneReturnProductResult getReturnProduct( MallOrder order, MallOrderDetail detail );
+
+    /**
+     * 查询退款信息
+     *
+     * @param orderDetailId 订单详情id
+     * @param returnId      退款id
+     *
+     * @return 退款信息
+     */
+    PhoneReturnProductResult getReturn( Integer orderDetailId, Integer returnId );
+
+    /**
+     * 查询退款详情
+     *
+     * @param returnId 退款id
+     *
+     * @return 退款详情
+     */
+    PhoneReturnResult returnDetail( Integer returnId );
+
+
+    /**
+     * 根据订单id和订单详情id查询退款信息
+     * @param orderId 订单id
+     * @param orderDetailId 订单详情id
+     * @return 退款信息
+     */
+    MallOrderReturn selectByOrderDetailId(Integer orderId,Integer orderDetailId);
+
+    /**
+     * 获取退货物流信息
+     * @param returnId 退款id
+     * @return 物流信息
+     */
+    PhoneReturnWuLiuResult getReturnWuLiu(Integer returnId);
 }

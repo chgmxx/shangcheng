@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.product.MallProductParamDAO;
+import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.service.web.product.MallProductParamService;
 import com.gt.mall.utils.CommonUtil;
@@ -37,8 +38,7 @@ public class MallProductParamServiceImpl extends BaseServiceImpl< MallProductPar
 		if ( param != null ) {
 		    param.setProductId( proId );
 
-		    String str = param.getParamsNameId() + "_"
-				    + param.getParamsValueId();
+		    String str = param.getParamsNameId() + "_" + param.getParamsValueId();
 		    boolean flag = true;
 		    if ( defaultMap != null ) {
 			if ( CommonUtil.isNotEmpty( defaultMap.get( str ) ) ) {
@@ -62,13 +62,53 @@ public class MallProductParamServiceImpl extends BaseServiceImpl< MallProductPar
 	    if ( defaultMap != null && isUpdate ) {//没有参加团购的商品才可以修改商品规格
 		Iterator it = defaultMap.entrySet().iterator();
 		while ( it.hasNext() ) {
-		    Map.Entry< String,Integer > entry = (Map.Entry< String,Integer >) it
-				    .next();
+		    Map.Entry< String,Integer > entry = (Map.Entry< String,Integer >) it.next();
 		    MallProductParam params = new MallProductParam();
 		    params.setId( CommonUtil.toInteger( entry.getValue() ) );
 		    params.setIsDelete( 1 );
 		    // 逻辑删除规格
 		    mallProductParamDAO.updateById( params );
+		}
+	    }
+	}
+    }
+
+    @Override
+    public void newSaveOrUpdateBatch( Object obj, int proId, boolean isUpdate ) {
+
+	Wrapper< MallProductParam > paramWrapper = new EntityWrapper<>();
+	paramWrapper.where( " product_id = {0} and is_delete = 0", proId );
+	List< MallProductParam > defaultList = mallProductParamDAO.selectList( paramWrapper );
+
+	List< MallProductParam > paramList = JSONArray.parseArray( obj.toString(), MallProductParam.class );
+	if ( paramList != null && paramList.size() > 0 ) {
+	    for ( MallProductParam param : paramList ) {
+		if ( param != null ) {
+		    param.setProductId( proId );
+		    String str = param.getParamsNameId() + "_" + param.getParamsValueId();
+		    if ( defaultList != null ) {
+			for ( MallProductParam param1 : defaultList ) {
+			    String defaultStr = param1.getParamsNameId() + "_" + param1.getParamsValueId();
+			    if ( str.equals( defaultStr ) ) {
+				param.setId( param1.getId() );
+				defaultList.remove( param1 );
+				break;
+			    }
+			}
+		    }
+		    if ( isUpdate ) {//没有参加团购的商品才可以修改商品规格
+			if ( CommonUtil.isEmpty( param.getId() ) ) {
+			    mallProductParamDAO.insert( param );// 添加商品规格
+			} else {
+			    mallProductParamDAO.updateById( param );// 修改商品规格
+			}
+		    }
+		}
+	    }
+	    if ( defaultList != null && isUpdate ) {//没有参加团购的商品才可以修改商品规格
+		for ( MallProductParam param : defaultList ) {
+		    param.setIsDelete( 1 );
+		    mallProductParamDAO.updateById( param );
 		}
 	    }
 	}

@@ -127,8 +127,9 @@ public class ImageWaterMarkUtil {
 	    e.printStackTrace();
 	} finally {
 	    try {
-		if ( null != os )
+		if ( null != os ) {
 		    os.close();
+		}
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 	    }
@@ -173,8 +174,9 @@ public class ImageWaterMarkUtil {
 	    e.printStackTrace();
 	} finally {
 	    try {
-		if ( null != os )
+		if ( null != os ) {
 		    os.close();
+		}
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 	    }
@@ -259,8 +261,9 @@ public class ImageWaterMarkUtil {
 	    e.printStackTrace();
 	} finally {
 	    try {
-		if ( null != os )
+		if ( null != os ) {
 		    os.close();
+		}
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 	    }
@@ -308,8 +311,9 @@ public class ImageWaterMarkUtil {
 	    e.printStackTrace();
 	} finally {
 	    try {
-		if ( null != os )
+		if ( null != os ) {
 		    os.close();
+		}
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 	    }
@@ -389,8 +393,9 @@ public class ImageWaterMarkUtil {
 	    e.printStackTrace();
 	} finally {
 	    try {
-		if ( null != os )
+		if ( null != os ) {
 		    os.close();
+		}
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 	    }

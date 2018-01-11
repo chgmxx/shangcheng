@@ -9,10 +9,26 @@ spring:
 # profiles: dev
  #redis配置
  redis:
-  host: 113.106.202.51
-  port: 6379
+  #host: 113.106.202.51
+  #port: 6379
   password: gt@123456
   database: 3
+  timeout: 5000
+  #redis集群配置
+  cluster:
+   nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.53:9379
+   maxRedirects: 3
+  #redis集群配置
+  sentinel:
+    #     # comma-separated list of host:port pairs  哨兵的配置列表
+    nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
+    #     # name of Redis server  哨兵监听的Redis server的名称
+    master: mymaster
+  pool:
+    max-wait: -1
+    min-idle: 0
+    max-active: 200
+    max-idle: 20
 #redis session共享
  session:
    store-type: redis
@@ -27,7 +43,7 @@ spring:
 
  datasource:
    druid:
-     url: jdbc:mysql://113.106.202.51:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+     url: jdbc:mysql://113.106.202.51:3306/gt_mall_new?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
      username: root
      password: gt123456
      # 下面为连接池的补充设置，应用到上面所有数据源中
@@ -68,6 +84,9 @@ spring:
         multi-statement-allow: true
 
 ######################## 开发环境配置 ########################
+# 是否开启Swagger接口展示
+swagger:
+  show: true
 #JedisUtil 用到的配置
 redis:
  host: 113.106.202.51
@@ -85,9 +104,19 @@ redisSession:
 
 web:
  #域名
- domain: mall.yifriend.net:8080
+ domain: mall.yifriend.net
  #网页访问路径
- homeUrl: http://mall.yifriend.net:8080/
+ homeUrl: http://localhost:8080/
+ #手机端页面路径访问
+ phoneWebHomeUrl: http://mall.yifriend.net/html/phone/index.html#
+ #商城营销路径
+ marketingUrl: http://core.yifriend.net/html/application/busAdded/index.html?dictstyle=05f8fd040284859d
+ #素材库路径
+ materialUrl: https://suc.deeptel.com.cn/common/material.do
+ #多粉二维码关注
+ duofenTwoCodeUrl: http://maint.deeptel.com.cn/image/2/gh_32251ec4c8e9/1/1509331696065.jpg
+ #多粉的公众号id（用作给商家发送消息模板）
+ duofenPublicId: 482
 
 ####图片资源ftp 配置
 static:
@@ -121,21 +150,24 @@ dianxin:
 
 #消息队列
 mq:
- #队列转换器
- exchange: gt.exchange.message
- #队列名称
- queueName: gt.queueName.message
+ ip: 113.106.202.51
+ port: 5672
+ user: guest
+ password: gt@123456@
+ seckill:
+  #队列转换器
+  exchange: mall.seckill.exchange
+  #队列名称
+  queueName: mall.seckill.queueName
 
 http:
  #总项目请求地址
  wxmp:
   domain: http://yifriend.net/
-#  domain: http://wxmp.yifriend.net:8080/
-#  domain: http://yifriend.net/
   key: WXMP2017
  #会员key 和 请求地址
  member:
-  domain: https://member.deeptel.com.cn/
+  domain: http://member.yifriend.net/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
  union:
   domain: http://union.duofee.com/
@@ -148,3 +180,8 @@ http:
   account: e_shop
   #进销存token密码
   pwx: shop12345
+ core:
+  # 增值服务域名
+  domain: http://core.yifriend.net/
+  #增值服务 key
+  key: APPLIC2017

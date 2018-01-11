@@ -24,6 +24,11 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.gt.mall</groupId>
+            <artifactId>mall-web-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 

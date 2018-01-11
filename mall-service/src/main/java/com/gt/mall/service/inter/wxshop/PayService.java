@@ -1,6 +1,7 @@
 package com.gt.mall.service.inter.wxshop;
 
 import com.gt.util.entity.param.pay.ApiEnterprisePayment;
+import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.result.pay.EnterprisePaymentResult;
@@ -36,5 +37,11 @@ public interface PayService {
      */
     EnterprisePaymentResult enterprisePayment(ApiEnterprisePayment payment);
 
+    /**
+     * 获取商家的支付方式
+     * @param busId 商家id
+     * @return 支付方式
+     */
+    PayWay getPayWay(Integer busId);
 
 }

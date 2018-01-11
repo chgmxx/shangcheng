@@ -9,10 +9,24 @@ spring:
 # profiles: dev
  #redis配置
  redis:
-  host: 113.106.202.51
-  port: 6379
+  #host: 113.106.202.51
+  #port: 6379
   password: gt@123456
   database: 3
+  timeout: 5000
+  cluster:
+   nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.53:9379
+   maxRedirects: 3
+  sentinel:
+    #     # comma-separated list of host:port pairs  哨兵的配置列表
+    nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
+    #     # name of Redis server  哨兵监听的Redis server的名称
+    master: mymaster
+  pool:
+    max-wait: -1
+    min-idle: 0
+    max-active: 200
+    max-idle: 20
 #redis session共享
  session:
    store-type: redis
@@ -69,6 +83,9 @@ spring:
 
 
 ######################## 测试环境配置 ########################
+# 是否开启Swagger接口展示
+swagger:
+  show: false
 #JedisUtil 用到的配置
 redis:
  host: 113.106.202.51
@@ -87,19 +104,29 @@ web:
  domain: mall.deeptel.com.cn
  #网页访问路径
  homeUrl: https://mall.deeptel.com.cn/
+ #手机端页面路径访问
+ phoneWebHomeUrl: https://mall.deeptel.com.cn/html/phone/index.html#
+#商城营销路径
+ marketingUrl: http://core.deeptel.net/html/application/busAdded/index.html?dictstyle=05f8fd040284859d
+#素材库路径
+ materialUrl: https://suc.deeptel.com.cn/common/material.do
+ #多粉二维码关注
+ duofenTwoCodeUrl: http://maint.deeptel.com.cn/upload/image/2/gh_32251ec4c8e9/1/1514860509267.jpg
+ #多粉的公众号id（用作给商家发送消息模板）
+ duofenPublicId: 494
 
 ####图片资源ftp 配置
 static:
  source:
   ftp:
    #FTP Ip
-   ip: 14.29.5.118
+   ip: 113.106.202.51
    #FTP 端口号
    port: 21
    #FTP 用户名
    user: picuser
    #FTP 密码
-   password: 123456
+   password: 1234566
 #访问图片资源URL
 resource:
  url:
@@ -116,10 +143,15 @@ dianxin:
 
 #消息队列
 mq:
- #队列转换器
- exchange: gt.exchange.message
- #队列名称
- queueName: gt.queueName.message
+ ip: 113.106.202.51
+ port: 5672
+ user: guest
+ password: gt@123456@
+ seckill:
+  #队列转换器
+  exchange: mall.seckill.deeptel.exchange
+  #队列名称
+  queueName: mall.seckill.deeptel.queueName
 
 
 
@@ -133,7 +165,7 @@ http:
   domain: https://member.deeptel.com.cn/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
  union:
-  domain: http://union.duofee.com/
+  domain: https://union.deeptel.com.cn/
   key: SR36E9KIYDLIU1VB6WX20HCW494QL97T
  #进销存的请求地址、token 用户名  和token密码
  jxc:
@@ -143,3 +175,8 @@ http:
   account: e_shop
   #进销存token密码
   pwx: shop12345
+ core:
+  # 增值服务域名
+  domain: https://core.deeptel.com.cn/
+  #增值服务 key
+  key: APPLIC2017

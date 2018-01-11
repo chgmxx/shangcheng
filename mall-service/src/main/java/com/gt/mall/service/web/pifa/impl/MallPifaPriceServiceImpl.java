@@ -47,9 +47,6 @@ public class MallPifaPriceServiceImpl extends BaseServiceImpl< MallPifaPriceDAO,
 		    } else {
 			mallPifaPriceDAO.updateById( price );
 		    }
-		    //		    String key = "hSeckill";
-		    //		    String field = pifaId + "_" + price.getSpecificaIds();
-		    //		    JedisUtil.map( key, field, price.getSeckillNum() + "" );
 		}
 	    }
 	}
@@ -59,6 +56,13 @@ public class MallPifaPriceServiceImpl extends BaseServiceImpl< MallPifaPriceDAO,
     @Override
     public List< MallPifaPrice > selectPriceByGroupId( int groupId ) {
 	return mallPifaPriceDAO.selectPriceByGroupId( groupId );
+    }
+
+    @Override
+    public List< MallPifaPrice > selectPriceByInvId( int pifaId, int invId ) {
+	Wrapper< MallPifaPrice > priceWrapper = new EntityWrapper<>();
+	priceWrapper.where( "inven_id = {0} and pifa_id = {1} and is_delete = 0 ", invId, pifaId );
+	return mallPifaPriceDAO.selectList( priceWrapper );
     }
 
     @Override

@@ -1,13 +1,10 @@
 package com.gt.mall.config.interceptor;
 
-import com.gt.api.bean.sign.SignEnum;
-import com.gt.api.util.sign.SignFilterUtils;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
-import net.sf.json.JSONObject;
+import com.gt.mall.utils.MallSessionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -40,10 +37,6 @@ public class MyInterceptor implements HandlerInterceptor {
 	urls.put( "/", "/user/tologin.do" );
 	urls.put( "/error/warning.jsp", "/error/warning.jsp" );
 
-	urls.put( "/user/tologin.do", "/user/tologin.do" );
-	urls.put( "/user/toregister.do", "/user/toregister.do" );
-	urls.put( "/dxuser/login.do", "/dxuser/login.do" );
-	urls.put( "/dxuser/login_success.do", "/dxuser/login_success.do" );
 	urls.put( "/swagger-resources/configuration/ui", "/swagger-resources/configuration/ui" );
 	urls.put( "/common/toLogin", "/common/toLogin" );
 
@@ -62,31 +55,14 @@ public class MyInterceptor implements HandlerInterceptor {
 
 	noIntercepor.put( "swagger-resources", "swagger-resources" );
 	noIntercepor.put( "api-docs", "api-docs" );
+	noIntercepor.put( "html/phone", "html/phone" );
     }
 
     /**
      * 在请求处理之前进行调用（Controller方法调用之前）
      */
     @Override
-    public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler )
-		    throws Exception {
-
-	/*HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-	HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-
-	// js跨域支持
-	httpServletResponse.setHeader( "Access-Control-Allow-Origin", "*" );
-	httpServletResponse.setHeader( "Access-Control-Allow-Methods", "POST, GET, PUT, DELETE" );
-	httpServletResponse.setHeader( "Access-Control-Max-Age", "3600" );
-	httpServletResponse.setHeader( "Access-Control-Allow-Headers", "Accept, Origin, XRequestedWith, Content-Type, LastModified" );*/
-
-	// 设置返回编码和类型
-	response.setCharacterEncoding( "UTF-8" );
-	response.setContentType( "application/json; charset=utf-8" );
-
-	// 在wrapper中获取新的servletRequest
-	/*request = new BodyRequestWrapper( httpServletRequest );*/
-
+    public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
 	logger.info( ">>>MyInterceptor1>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
 	logger.info( "basePath = " + CommonUtil.getpath( request ) );
 
@@ -95,12 +71,20 @@ public class MyInterceptor implements HandlerInterceptor {
 
 	// 获得在下面代码中要用的request,response,session对象
 
-	BusUser user = SessionUtils.getLoginUser( request );
+	BusUser user = MallSessionUtils.getLoginUser( request );
 	String url = request.getRequestURI();
 	if ( CommonUtil.isNotEmpty( user ) ) {
 	    request.setAttribute( "wxmpDomain", PropertiesUtil.getWxmpDomain() );//wxmp链接，前端调用js用的
 	}
 	request.setAttribute( "webUrl", PropertiesUtil.getHomeUrl() );//本项目的地址
+
+	if ( request.getServerName().contains( "192.168.2" ) && CommonUtil.isEmpty( user ) ) {
+	    user = new BusUser();
+	    user.setId( 42 );
+	    user.setName( "gt123456" );
+	    user.setPid( 0 );
+	    MallSessionUtils.setLoginUser( request, user );
+	}
 
 	String urlwx = "";
 	if ( url.length() > 0 ) {
@@ -108,48 +92,15 @@ public class MyInterceptor implements HandlerInterceptor {
 	    String tmp = url.substring( 0, url.lastIndexOf( "/" ) );
 	    urlwx = tmp.substring( tmp.lastIndexOf( "/" ) + 1, tmp.length() );
 	}
-	//请求商城接口拦截
-	if ( url.equals( "mallAPI" ) || url.contains( "mallAPI" ) ) {
-	    String signKey = "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM"; // 定义到配置文件中
-	    // 获取签名信息
-	    String code = SignFilterUtils.postByHttp( request, signKey );
-	    logger.info( "获取签名信息" + code );
-	    if ( SignEnum.TIME_OUT.getCode().equals( code ) ) {
-		// 超过指定时间
-		response.getWriter().append( "{'error':'请求超过指定时间'}" );
-		return false;
-	    } else if ( SignEnum.SIGN_ERROR.getCode().equals( code ) ) {
-		// 签名验证错误
-		response.getWriter().append( "{'error':'签名验证错误，请检查签名信息'}" );
-		return false;
-	    } else if ( SignEnum.SERVER_ERROR.getCode().equals( code ) ) {
-		// 签名系统错误
-		response.getWriter().append( "{'error':'系统错误，请检查传入参数'}" );
-		return false;
-	    }
-	}
 	//商城登陆拦截
 	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.contains( "79B4DE7C" ) ) {//移动端
-	    Member member = SessionUtils.getLoginMember( request );
+	    Member member = null;//MallSessionUtils.getLoginMember( request, MallSessionUtils.getUserId( request ) );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		request.setAttribute( "member", member );
 	    }
 	    return true;
 	} else if ( passSuffixs( url ) || passUrl( url ) || passIntercepto( url ) ) {
 	    return true;// 只有返回true才会继续向下执行，返回false取消当前请求
-	} else if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
-	    response.setCharacterEncoding( "UTF-8" );
-	    String script = "<script type='text/javascript'>"
-			    + "top.location.href='" + PropertiesUtil.getWxmpDomain() + "user/tologin.do';"
-			    + "</script>";
-	    if ( isAjax( request ) ) {
-		Map< String,Object > map = new HashMap<>();
-		map.put( "timeout", "连接超时，请重新登录！" );
-		response.getWriter().write( JSONObject.fromObject( map ).toString() );
-	    } else {
-		response.sendRedirect( "/common/toLogin" );
-	    }
-	    return false;
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
@@ -158,8 +109,7 @@ public class MyInterceptor implements HandlerInterceptor {
      * 请求处理之后进行调用，但是在视图被渲染之前（Controller方法调用之后
      */
     @Override
-    public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler,
-		    ModelAndView modelAndView ) throws Exception {
+    public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
 
 	long startTime = (Long) request.getAttribute( "runStartTime" );
 
@@ -180,8 +130,7 @@ public class MyInterceptor implements HandlerInterceptor {
      * 在整个请求结束之后被调用，也就是在DispatcherServlet 渲染了对应的视图之后执行（主要是用于进行资源清理工作
      */
     @Override
-    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex )
-		    throws Exception {
+    public void afterCompletion( HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex ) throws Exception {
     }
 
     //判断是否是可通过的url

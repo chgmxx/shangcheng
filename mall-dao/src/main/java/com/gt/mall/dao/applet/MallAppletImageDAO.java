@@ -39,4 +39,12 @@ public interface MallAppletImageDAO extends BaseMapper<MallAppletImage> {
      * @return list
      */
     List<MallAppletImage> selectByImage(Map<String, Object> params);
+
+    /**
+     * 查询单个的小程序图片信息
+     *
+     * @param id 小程序图片Id
+     * @return 小程序图片信息
+     */
+    Map<String, Object> selectAppletImageById(int id);
 }

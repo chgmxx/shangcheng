@@ -330,6 +330,16 @@ public class MallProduct extends Model< MallProduct > {
      */
     @TableField( "is_merge_pro_erp" )
     private Integer    isMergeProErp;
+    /**
+     * 商品页模板id 关联`t_mall_product_template`表的id
+     */
+    @TableField( "template_id" )
+    private Integer    templateId;
+    /**
+     * 平台是否已审核 0 未审核 1已审核
+     */
+    @TableField( "is_platform_check" )
+    private Integer    isPlatformCheck;
 
     @Override
     protected Serializable pkVal() {
@@ -397,6 +407,7 @@ public class MallProduct extends Model< MallProduct > {
 			", erpInvId=" + erpInvId +
 			", isSyncErp=" + isSyncErp +
 			", isMergeProErp=" + isMergeProErp +
+			", templateId=" + templateId +
 			"}";
     }
 }

@@ -1,0 +1,84 @@
+<div class="windowDirective" ng-controller="windowController">
+	<div class="window-body">
+		<div style="height:10px"></div>
+		<div class="oh">
+			<div class="window-body-left">橱窗标题名：</div>
+			<div class="window-body-right"><input type="text" ng-model="dataedit.title"/></div>
+		</div>
+		<!-- <div class="oh">
+			<div class="window-body-left">显示方式：</div>
+			<div class="window-body-right">
+				<input id="window-radio-1" type="radio" class="regular-radio" value="0" name="showWay" ng-model="dataedit.showWay"/>
+				<label for="window-radio-1" class="radio inline"><span></span>默认</label>
+				<input id="window-radio-2" type="radio" class="regular-radio" value="1" name="showWay" ng-model="dataedit.showWay"/>
+				<label for="window-radio-2" class="radio inline"><span></span>3 列</label>
+			</div>
+		</div> -->
+		<div class="oh">
+			<div class="window-body-left">图片间隙：</div>
+			<div class="window-body-right">
+				
+				<label class="radio inline regular-radio">
+					<input type="radio" value="0" name="picGap" ng-model="dataedit.picGap"/>
+					<span></span>保留
+				</label>
+				
+				<label class="radio inline regular-radio">
+					<input type="radio" value="1" name="picGap" ng-model="dataedit.picGap"/>
+					<span></span>消除
+				</label>
+			</div>
+		</div>
+		<div class="oh">
+			<div class="window-body-left">内容区标题：</div>
+			<div class="window-body-right"><input type="text" ng-model="dataedit.contentTitle"/></div>
+		</div>
+		<div class="oh">
+			<div class="window-body-left">内容区说明：</div>
+			<div class="window-body-right">
+				<textarea ng-model="dataedit.contentExplain"></textarea>
+			</div>
+		</div>
+		<div style="height:10px"></div>
+	</div>
+	
+	<div class="control-group picUploadNamebox">
+        <div class="choice-content">
+            <ul>
+                <li ng-repeat="data in dataedit.pic" style="margin-bottom:20px">
+                	<div class="choice-content-box cc choice-content-photo choice_pic" ng-click="swiperuploadpic($index)" onclick="materiallayer(0)"">
+                		<img ng-if="data.src" ng-src="{{data.src}}">
+                		<img ng-if="!data.src" src="http://maint.duofriend.com/upload/image/3/gt123/3/20170718/4EC7DF8219D43DC2834EF00128400247.png">
+                	</div>
+                	<div class="choice-content-box choice-content-box-r">
+	                    <!-- <div class="fl-r">
+	                        <i class="remove_btn layout_module" >×</i>
+	                    </div> -->
+	                    <div class="control-group">
+	                        <label class="swiper-label">链接：</label>
+	
+	                        <div class="control-action hsaLine" ng-show="picJson[pageEdit].imgID[$index].id">
+	                            <span class="group-title" ng-bind="picJson[pageEdit].imgID[$index].title">商品| 123456</span>
+	                            <i class="remove_btn layout_href" ng-click="removeswipername($index)">×</i>
+	                        </div>
+	
+	                        <div class="control-action">
+	                            <div class="notLine" ng-hide="picJson[pageEdit].imgID[$index].id">
+	                                <a>设置链接到的页面地址<label class="caret"></label></a>
+	                            </div>
+	                            <div class="hsaLine" ng-show="picJson[pageEdit].imgID[$index].id">
+	                                <a style="margin-left: 15px;">修改<label class="caret"></label></a>
+	                            </div>
+	                            <div class="dropdown-menu">
+	                                <div type="1" onclick="lbTypeClick(this,1)">商品</div>
+	                                <div type="2" onclick="lbTypeClick(this,1)">分类</div>
+	                                <div>自定义链接</div>
+	                            </div>
+	                        </div>
+	                    </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

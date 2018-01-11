@@ -1,17 +1,21 @@
 package com.gt.mall.service.web.groupbuy.impl;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.entity.groupbuy.MallGroupJoin;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.groupbuy.MallGroupJoinService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +39,7 @@ public class MallGroupJoinServiceImpl extends BaseServiceImpl< MallGroupJoinDAO,
 
     @Override
     public List< Map< String,Object > > getJoinGroup( Map< String,Object > params, Member member ) {
-	List< Map< String,Object > > joinList = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > joinList = new ArrayList<>();
 	try {
 	    //获取开团信息
 	    List< Map< String,Object > > list = groupJoinDAO.selectJoinGroupByProId( params );
@@ -56,6 +60,10 @@ public class MallGroupJoinServiceImpl extends BaseServiceImpl< MallGroupJoinDAO,
 		    } else {
 			flag = false;
 		    }
+		    String joinTime = map.get( "joinTime" ).toString();
+		    Date joinDate = DateTimeKit.parse( joinTime, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+		    Date endTime = DateTimeKit.addHours( joinDate, 24 );
+		    map.put( "joinTime", ( endTime.getTime() - joinDate.getTime() ) / 1000 );
 		    map.put( "count", joinGroupList.size() );
 		    int num = CommonUtil.toInteger( map.get( "pelpleNum" ) );
 		    map.put( "joinNum", num - joinGroupList.size() );
@@ -92,5 +100,34 @@ public class MallGroupJoinServiceImpl extends BaseServiceImpl< MallGroupJoinDAO,
     @Override
     public int selectCountByBuyId( Map< String,Object > params ) {
 	return groupJoinDAO.selectCountByBuyId( params );
+    }
+
+    @Override
+    public int selectGroupJoinPeopleNum( Integer groupBuyId, Integer orderId, Integer orderDetailId ) {
+	boolean groupBuyIdIsNotNull = CommonUtil.isNotEmpty( groupBuyId ) && groupBuyId > 0;
+	boolean orderIdIsNotNull = CommonUtil.isNotEmpty( orderId ) && orderId > 0;
+	boolean detailIdIsNotNull = CommonUtil.isNotEmpty( orderDetailId ) && orderDetailId > 0;
+	if ( groupBuyIdIsNotNull && orderIdIsNotNull && detailIdIsNotNull ) {
+	    MallGroupJoin groupJoin = new MallGroupJoin();
+	    groupJoin.setGroupBuyId( groupBuyId );
+	    groupJoin.setOrderId( orderId );
+	    groupJoin.setOrderDetailId( orderDetailId );
+	    MallGroupJoin join = groupJoinDAO.selectOne( groupJoin );
+	    if ( CommonUtil.isNotEmpty( join ) ) {
+		int pJoinId = join.getId();
+		if ( "0".equals( join.getJoinType().toString() ) ) {
+		    pJoinId = join.getPJoinId();
+		}
+		Wrapper< MallGroupJoin > joinWrapper = new EntityWrapper<>();
+		joinWrapper.where( "group_buy_id = {0}", groupBuyId );
+		joinWrapper.andNew( "p_join_id = {0} OR id= {0}", pJoinId );
+		Integer count = groupJoinDAO.selectCount( joinWrapper );
+		if ( CommonUtil.isNotEmpty( count ) ) {
+		    return count;
+		}
+	    }
+	}
+
+	return 0;
     }
 }

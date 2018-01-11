@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gt.mall.dao.order.MallLogOrderCallbackDAO">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.order.MallLogOrderCallback">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="log_message" property="logMessage"/>
+        <result column="log_status" property="logStatus"/>
+        <result column="is_resolved" property="isResolved"/>
+        <result column="resolved_time" property="resolvedTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_no AS orderNo, log_message AS logMessage, log_status AS logStatus, is_resolved AS isResolved, resolved_time AS resolvedTime, create_time AS createTime
+    </sql>
+
+</mapper>

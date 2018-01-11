@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.gt.mall.utils.CommonUtil;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -49,7 +50,7 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     private Integer shopId;
 
     /**
-     * 商品谷歌
+     * 商品规格
      */
     @TableField( "product_specificas" )
     private String     productSpecificas;
@@ -107,12 +108,12 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
      * 折扣数
      */
     @TableField( "discount" )
-    private Integer    discount;
+    private Integer discount   = 100;
     /**
      * 微信优惠券code
      */
     @TableField( "coupon_code" )
-    private String     couponCode;
+    private String  couponCode = "";
     /**
      * 优惠价格（产品价格-实付价格）
      */
@@ -132,73 +133,78 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
      * 使用粉币数量
      */
     @TableField( "use_fenbi" )
-    private Double     useFenbi;
+    private Double useFenbi = 0d;
     /**
      * 使用积分数量
      */
     @TableField( "use_jifen" )
-    private Double    useJifen;
+    private Double useJifen = 0d;
     /**
      * 实付商品总价（数量乘以单价）
      */
     @TableField( "total_price" )
-    private Double     totalPrice;
+    private Double totalPrice;
     /**
      * 评论状态(0 待评价 1已评价)
      */
     @TableField( "appraise_status" )
-    private Integer    appraiseStatus;
+    private Integer    appraiseStatus = 0;
     /**
      * 商品的规格（批发商品），以json方式存储{规格id:{num:数量,value:规格值,price:价格},规格id:{num:数量,value:规格值,price:价格}}
      */
     @TableField( "pro_spec_str" )
-    private String     proSpecStr;
+    private String     proSpecStr     = "";
     /**
      * 购买卡券包id  关联 t_duofen_card_receive 表的id
      */
     @TableField( "card_receive_id" )
-    private Integer    cardReceiveId;
+    private Integer    cardReceiveId  = 0;
     /**
      * 多粉优惠券{couponCode:优惠券code,fullCoupon:抵扣的money,discountCoupon:折扣,shopId:店铺Id,proDisAll:优惠商品的总价格,
      */
     @TableField( "duofen_coupon" )
-    private String     duofenCoupon;
+    private String     duofenCoupon   = "";
     /**
      * 使用优惠券的id
      */
     @TableField( "use_card_id" )
-    private Integer    useCardId;
+    private Integer    useCardId      = 0;
     /**
      * 销售佣金
      */
     @TableField( "commission" )
-    private BigDecimal commission;
+    private BigDecimal commission     = CommonUtil.toBigDecimal( 0 );
 
     /**
      * 销售员id  关联t_wx_bus_member表的id
      */
     @TableField( "sale_member_id" )
-    private Integer    saleMemberId;
+    private Integer    saleMemberId   = 0;
     /**
      * 积分优惠的价格
      */
     @TableField( "integral_youhui" )
-    private BigDecimal integralYouhui;
+    private BigDecimal integralYouhui = CommonUtil.toBigDecimal( 0 );
     /**
      * 粉币优惠的价格
      */
     @TableField( "fenbi_youhui" )
-    private BigDecimal fenbiYouhui;
+    private BigDecimal fenbiYouhui    = CommonUtil.toBigDecimal( 0 );
     /**
      * 流量id，用于流量购买
      */
     @TableField( "flow_id" )
-    private Integer    flowId;
+    private Integer    flowId         = 0;
     /**
      * 流量冻结id，用于流量购买
      */
     @TableField( "flow_record_id" )
-    private Integer    flowRecordId;
+    private Integer    flowRecordId   = 0;
+    /**
+     * 优惠券类型  1 微信优惠券  2多粉优惠券
+     */
+    @TableField( "coupon_type" )
+    private Integer    couponType     = 0;
 
     @TableField( exist = false )
     private MallOrderReturn orderReturn;//退款
@@ -215,20 +221,44 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
     @TableField( exist = false )
     private double jifenBeforeTotalPrice;//积分优惠前的价格
 
-    @TableField( exist = false )
-    private Integer userCard = 0;  //是否允许会员卡打折  0不参与 1参与 （用于计算）
+    //    @TableField( exist = false )
+    //    private Integer userCard = 0;  //是否允许会员卡打折  0不参与 1参与 （用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer useCoupon = 0;  //是否允许使用优惠券   0不参与 1参与 （用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer userJifen = 0;  //是否允许使用积分  0不参与 1参与 （用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer userFenbi = 0;//是否允许使用粉币  0不允许  1允许（用于计算）
+    //
+    //    @TableField( exist = false )
+    //    private Integer index = 0;// 生成的index 用于计算
 
+    /**
+     * 是否能使用会员折扣
+     */
     @TableField( exist = false )
-    private Integer useCoupon = 0;  //是否允许使用优惠券   0不参与 1参与 （用于计算）
+    private Integer isCanUseDiscount;
 
+    /**
+     * 是否能使用优惠券
+     */
     @TableField( exist = false )
-    private Integer userJifen = 0;  //是否允许使用积分  0不参与 1参与 （用于计算）
+    private Integer isCanUseCoupons;
 
+    /**
+     * 是否能使用积分
+     */
     @TableField( exist = false )
-    private Integer userFenbi = 0;//是否允许使用粉币  0不允许  1允许（用于计算）
+    private Integer isCanUseJifen;
 
+    /**
+     * 是否能使用粉币
+     */
     @TableField( exist = false )
-    private Integer index = 0;// 生成的index 用于计算
+    private Integer isCanUseFenbi;
 
     @Override
     protected Serializable pkVal() {

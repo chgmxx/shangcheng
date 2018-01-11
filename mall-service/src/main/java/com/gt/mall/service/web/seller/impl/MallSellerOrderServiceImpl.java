@@ -1,12 +1,14 @@
 package com.gt.mall.service.web.seller.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.dao.seller.MallSellerOrderDAO;
 import com.gt.mall.entity.seller.MallSellerOrder;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.seller.MallSellerOrderService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.OrderUtil;
+import com.gt.mall.utils.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,8 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
     private MallSellerOrderDAO mallSellerOrderDAO;
     @Autowired
     private MemberService      memberService;
+    @Autowired
+    private MallSellerDAO      mallSellerDAO;
 
     /**
      * 查询销售员的订单信息
@@ -41,17 +45,96 @@ public class MallSellerOrderServiceImpl extends BaseServiceImpl< MallSellerOrder
      * 查询客户的订单
      */
     @Override
-    public List< Map< String,Object > > selectOrderByClientId( Map< String,Object > params ) {
+    public PageUtil selectOrderByClientId( Map< String,Object > params ) {
+	int pageSize = 10;
+	int count = mallSellerOrderDAO.countOrderByClient( params );
+
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	params.put( "curPage", curPage );
+
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	params.put( "firstNum", firstNum );// 起始页
+	params.put( "maxNum", pageSize );// 每页显示商品的数量
+
 	List< Map< String,Object > > mapList = mallSellerOrderDAO.selectOrderByClientId( params );
 	if ( mapList != null && mapList.size() > 0 ) {
+	    String memberIds = "";
 	    for ( Map< String,Object > map : mapList ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( map.get( "buyer_user_id" ) ), null );
-		if ( member != null ) {
-		    map.put( "nickname", member.getNickname() );
+		if ( CommonUtil.isNotEmpty( map.get( "buyer_user_id" ) ) ) {
+		    memberIds += map.get( "buyer_user_id" ) + ",";
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( memberIds ) ) {
+		List< Map > memberList = memberService.findMemberByIds( memberIds, CommonUtil.toInteger( params.get( "busId" ) ) );
+		if ( memberList != null && memberList.size() > 0 ) {
+		    for ( Map< String,Object > rankMap : mapList ) {
+			String rMemberId = CommonUtil.toString( rankMap.get( "buyer_user_id" ) );
+			for ( Map< String,Object > member : memberList ) {
+			    String memberId = CommonUtil.toString( member.get( "id" ) );
+			    if ( rMemberId.equals( memberId ) ) {
+				rankMap.put( "headimgurl", member.get( "headimgurl" ) );
+				rankMap.put( "nickname", member.get( "nickname" ) );
+				break;
+			    }
+
+			}
+			String statusName = OrderUtil.getOrderStatusMsgByOrder( rankMap.get( "order_status" ).toString(), "1" );
+			rankMap.put( "statusName", statusName );
+		    }
+		}
+	    }
+	}
+	page.setSubList( mapList );
+
+	return page;
+    }
+
+    @Override
+    public PageUtil selectSellerByBusUserId( Map< String,Object > params ) {
+
+	List< Map< String,Object > > countList = mallSellerDAO.selectSellerByBusUserId( params );
+
+	int pageSize = 15;
+	int count = countList.size();
+
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+	params.put( "curPage", curPage );
+
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	params.put( "firstNum", firstNum );// 起始页
+	params.put( "maxNum", pageSize );// 每页显示商品的数量
+
+	List< Map< String,Object > > rankList = mallSellerOrderDAO.selectSalePricerByUserId( params );
+	if ( rankList != null && rankList.size() > 0 ) {
+	    String memberIds = "";
+	    for ( Map< String,Object > rankMap : rankList ) {
+		if ( CommonUtil.isNotEmpty( rankMap.get( "member_id" ) ) ) {
+		    memberIds += rankMap.get( "member_id" ) + ",";
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( memberIds ) ) {
+		List< Map > memberList = memberService.findMemberByIds( memberIds, CommonUtil.toInteger( params.get( "busId" ) ) );
+		if ( memberList != null && memberList.size() > 0 ) {
+		    for ( Map< String,Object > rankMap : rankList ) {
+			String rMemberId = CommonUtil.toString( rankMap.get( "member_id" ) );
+			for ( Map< String,Object > member : memberList ) {
+			    String memberId = CommonUtil.toString( member.get( "id" ) );
+			    if ( rMemberId.equals( memberId ) ) {
+				rankMap.put( "headimgurl", member.get( "headimgurl" ) );
+				rankMap.put( "nickname", member.get( "nickname" ) );
+				break;
+			    }
+
+			}
+		    }
 		}
 	    }
 	}
 
-	return mapList;
+	page.setSubList( rankList );
+
+	return page;
     }
 }

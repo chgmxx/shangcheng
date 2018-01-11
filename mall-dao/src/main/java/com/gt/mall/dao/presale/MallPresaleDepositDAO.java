@@ -78,7 +78,7 @@ public interface MallPresaleDepositDAO extends BaseMapper< MallPresaleDeposit > 
      * @param deposit
      * @return
      */
-    List<Map<String, Object>> selectListByDepositPro(MallPresaleDeposit deposit);
+    List<MallPresaleDeposit> selectListByDepositPro(MallPresaleDeposit deposit);
 
     /**
      * 查询用户是否已经缴纳了定金

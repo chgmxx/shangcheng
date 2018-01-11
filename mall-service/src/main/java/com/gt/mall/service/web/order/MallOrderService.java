@@ -1,14 +1,14 @@
 package com.gt.mall.service.web.order;
 
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
-import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.entity.order.MallDaifu;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
+import com.gt.mall.result.order.OrderResult;
 import com.gt.mall.utils.PageUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -27,9 +27,41 @@ import java.util.Map;
 public interface MallOrderService extends BaseService< MallOrder > {
 
     /**
+     * 根据状态统计总数
+     *
+     * @param params
+     *
+     * @return
+     */
+    Integer count( Map< String,Object > params );
+
+    /**
+     * 统计各状态下的数量
+     *
+     * @param params
+     *
+     * @return
+     */
+    Map< String,Object > countStatus( Map< String,Object > params );
+
+    /**
      * 分页管理
      */
-    public PageUtil findByPage( Map< String,Object > params );
+    public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shoplist );
+
+    /**
+     * 重组订单列表
+     *
+     * @param list 订单集合
+     *
+     * @return 订单集合
+     */
+    List< MallOrder > getOrderListParams( List< MallOrder > list );
+
+    /**
+     * 交易记录分页管理
+     */
+    public PageUtil findByTradePage( Map< String,Object > params );
 
     /**
      * 添加卖家备注、修改订单金额
@@ -39,27 +71,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 查询订单信息
      */
-    public Map< String,Object > selectOrderList( Map< String,Object > params );
-
-    /**
-     * 根据会员id 查询收货地址
-     */
-    public List< MemberAddress > selectShipAddress( Map< String,Object > params );
-
-    /**
-     * 关闭未付款订单
-     */
-    public void updateByNoMoney( Map< String,Object > params );
-
-    /**
-     * 根据Id查询单个订单
-     */
-    public MallOrder getOrderById( Integer orderId );
-
-    /**
-     * 根据memberId查询公众号信息
-     */
-    public WxPublicUsers getWpUser( Integer memberId );
+    public OrderResult selectOrderList( Integer orderId, List< Map< String,Object > > shoplist );
 
     /**
      * 支付成功后修改订单状态、库存、销量、规格
@@ -67,14 +79,16 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public int paySuccessModified( Map< String,Object > params, Member member );
 
     /**
-     * 手机端订单列表
+     * 成功回调
+     *
+     * @param mallOrderList   订单集合
+     * @param pbUser          公众号对象
+     * @param returnLogStatus 回调日志状态
+     * @param orderNo         订单号
+     *
+     * @return true 成功，失败会抛异常
      */
-    public PageUtil mobileOrderList( Map< String,Object > params, int busUserId ) throws Exception;
-
-    /**
-     * 申请退款
-     */
-    public boolean addOrderReturn( MallOrderReturn orderReturn );
+    boolean paySuccess( List< MallOrder > mallOrderList, WxPublicUsers pbUser, String returnLogStatus, String orderNo );
 
     /**
      * 修改申请退款
@@ -85,16 +99,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
      * 同意退款（用于支付宝退款）
      */
     public void agreanOrderReturn( Map< String,Object > params );
-
-    /**
-     * 根据订单详情id查询订单信息
-     */
-    public Map< String,Object > selectByDIdOrder( Integer detailId );
-
-    /**
-     * 查询退款信息
-     */
-    public MallOrderReturn selectByDId( Integer id );
 
     /**
      * 根据规格值Id查询规格Id
@@ -124,9 +128,11 @@ public interface MallOrderService extends BaseService< MallOrder > {
     public HSSFWorkbook exportExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist );
 
     /**
-     * 查询订单详情
+     * 导出订单
+     *
+     * @return
      */
-    public MallOrderDetail selectOrderDetailById( Integer id );
+    public HSSFWorkbook exportTradeExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist );
 
     /**
      * 支付有礼
@@ -136,7 +142,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 发送消息模板
      */
-    public void sendMsg( MallOrder order, int type );
+    public void sendMsg( MallOrder order, int type, WxPublicUsers publicUser );
 
     /**
      * 同步订单
@@ -183,11 +189,6 @@ public interface MallOrderService extends BaseService< MallOrder > {
     Map< String,Object > getMemberParams( Member member, Map< String,Object > params );
 
     /**
-     * 清空session
-     */
-    public void clearSession( HttpServletRequest request );
-
-    /**
      * 运费是否按照距离来算
      *
      * @param shopIds 店铺id
@@ -199,7 +200,16 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 查询积分订单
      */
-    List< Map< String,Object > > selectIntegralOrder( Map< String,Object > params );
+    PageUtil selectIntegralOrder( Map< String,Object > params );
+
+    /**
+     * 统计累计积分数量
+     *
+     * @param params
+     *
+     * @return
+     */
+    List< MallOrder > selectIntegeralOrder( Map< String,Object > params );
 
     /**
      * 计算库存是否足够

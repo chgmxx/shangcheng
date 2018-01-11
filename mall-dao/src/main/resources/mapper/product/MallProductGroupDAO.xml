@@ -60,10 +60,9 @@
         order by b.sort,b.id desc
     </select>
     <select id="selectGroupsByShopId"  parameterType="Map" resultType="Map">
-        SELECT DISTINCT(a.group_id) AS group_id,b.group_name,b.is_child,i.image_url,a.shop_id
+        SELECT DISTINCT(a.group_id) AS group_id,b.group_name,b.is_child,a.shop_id
         FROM t_mall_product_group a
         LEFT JOIN t_mall_group b ON a.group_id=b.id
-        LEFT JOIN t_mall_image_associative i ON i.ass_type=2 AND i.ass_id=b.id AND i.is_delete=0
         WHERE a.is_delete=0 AND b.is_delete=0
         <if test="shopId != null and shopId != ''">
             AND a.shop_id= #{shopId}

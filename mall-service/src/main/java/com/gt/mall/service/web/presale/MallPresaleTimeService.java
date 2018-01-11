@@ -21,6 +21,11 @@ public interface MallPresaleTimeService extends BaseService< MallPresaleTime > {
      */
     public void insertUpdBatchTime(Map<String, Object> map, Integer preId);
 
+    /**
+     * 批量添加或修改预售时间
+     */
+    public void newInsertUpdBatchTime(Map<String, Object> map, Integer preId);
+
 
     /**
      * 根据预售id查询预售时间

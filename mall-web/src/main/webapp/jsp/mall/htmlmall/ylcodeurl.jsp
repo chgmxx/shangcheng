@@ -28,7 +28,7 @@
 </head>
 <body>
 <div style="text-align: center">
-    <img id="img" style="width: 200px;height:200px; margin: 0 auto;vertical-align: middle;" alt="扫一扫，查看效果" src="${url}">
+    <img id="img" style="width: 200px;height:200px; margin: 0 auto;vertical-align: middle;" alt="扫一扫，查看效果" src="${http}mallStore/E9lM9uM4ct/generateQRCode?url=${url}&status=1">
 </div>
 </body>
 </html>

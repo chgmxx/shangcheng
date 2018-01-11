@@ -54,8 +54,18 @@
         <result column="flow_phone" property="flowPhone"/>
         <result column="flow_recharge_status" property="flowRechargeStatus"/>
         <result column="member_name" property="memberName" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
+        <result column="other_express_name" property="otherExpressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="union_card_id" property="unionCardId"/>
+        <result column="fenbi_discount_money" property="fenbiDiscountMoney"/>
+        <result column="jifen_discount_money" property="jifenDiscountMoney"/>
+        <result column="discount_money" property="discountMoney"/>
+        <result column="coupon_type" property="couponType"/>
+        <result column="coupon_use_num" property="couponUseNum"/>
+        <result column="member_is_delete" property="memberIsDelete"/>
+        <result column="appointment_address" property="appointmentAddress"/>
     </resultMap>
 
     <resultMap id="MoreResultMap" type="com.gt.mall.entity.order.MallOrder">
@@ -81,6 +91,7 @@
         <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
         <result column="order_status" property="orderStatus" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="order_pay_no" property="orderPayNo" jdbcType="VARCHAR"/>
         <result column="pay_time" property="payTime" jdbcType="TIMESTAMP"/>
         <result column="express_way" property="expressWay" jdbcType="INTEGER"/>
@@ -93,7 +104,7 @@
         <!-- <result column="mem_phone" property="recTelephone" jdbcType="VARCHAR" />-->
         <result column="updateDay" property="updateDay" jdbcType="INTEGER"/>
         <result column="orderPNo" property="orderPNo" jdbcType="VARCHAR"/>
-        <result column="sto_name" property="shopName" jdbcType="VARCHAR"/>
+       <!-- <result column="sto_name" property="shopName" jdbcType="VARCHAR"/>-->
         <result column="order_old_money" property="orderOldMoney" jdbcType="DECIMAL"/>
         <result column="mem_card_type" property="memCardType" jdbcType="INTEGER"/>
         <result column="group_buy_id" property="groupBuyId" jdbcType="INTEGER"/>
@@ -111,8 +122,19 @@
         <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR"/>
         <result column="flow_phone" property="flowPhone" jdbcType="VARCHAR"/>
         <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
+        <result column="other_express_name" property="otherExpressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="union_card_id" property="unionCardId"/>
+        <result column="fenbi_discount_money" property="fenbiDiscountMoney"/>
+        <result column="jifen_discount_money" property="jifenDiscountMoney"/>
+        <result column="discount_money" property="discountMoney"/>
+        <result column="coupon_type" property="couponType"/>
+        <result column="coupon_use_num" property="couponUseNum"/>
+        <result column="member_is_delete" property="memberIsDelete"/>
+        <result column="appointment_address" property="appointmentAddress"/>
+        <result column="buyer_user_type" property="buyerUserType"/>
         <collection property="mallOrderDetail" column="id" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -148,6 +170,7 @@
             <result column="pro_spec_str" property="proSpecStr"/>
             <result column="flow_id" property="flowId" jdbcType="INTEGER"/>
             <result column="flow_record_id" property="flowRecordId" jdbcType="INTEGER"/>
+            <result column="coupon_type" property="couponType"/>
             <collection property="orderReturn" column="dId" ofType="com.gt.mall.entity.order.MallOrderReturn">
                 <id column="rId" property="id" jdbcType="INTEGER"/>
                 <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -166,6 +189,7 @@
                 <result column="user_id" property="userId" jdbcType="INTEGER"/>
                 <result column="no_return_reason" property="noReturnReason" jdbcType="VARCHAR"/>
                 <result column="return_address" property="returnAddress" jdbcType="VARCHAR"/>
+                <result column="cargo_status" property="cargoStatus"/>
             </collection>
         </collection>
     </resultMap>
@@ -201,6 +225,7 @@
         <result column="express_time" property="expressTime" jdbcType="TIMESTAMP"/>
         <result column="buyer_cancel_reason" property="buyerCancelReason" jdbcType="INTEGER"/>
         <result column="seller_cancel_reason" property="sellerCancelReason" jdbcType="INTEGER"/>
+        <result column="buyer_user_type" property="buyerUserType"/>
         <!-- <result column="mem_name" property="recUserName" jdbcType="VARCHAR" />
          <result column="mem_phone" property="recTelephone" jdbcType="VARCHAR" />-->
         <result column="updateDay" property="updateDay" jdbcType="INTEGER"/>
@@ -221,8 +246,17 @@
         <result column="receive_phone" property="receivePhone" jdbcType="VARCHAR"/>
         <result column="flow_phone" property="flowPhone" jdbcType="VARCHAR"/>
         <result column="member_name" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
+        <result column="other_express_name" property="otherExpressName"/>
         <result column="use_jifen" property="useJifen"/>
         <result column="use_fenbi" property="useFenbi"/>
+        <result column="coupon_id" property="couponId"/>
+        <result column="union_card_id" property="unionCardId"/>
+        <result column="fenbi_discount_money" property="fenbiDiscountMoney"/>
+        <result column="jifen_discount_money" property="jifenDiscountMoney"/>
+        <result column="discount_money" property="discountMoney"/>
+        <result column="coupon_type" property="couponType"/>
+        <result column="coupon_use_num" property="couponUseNum"/>
+        <result column="appointment_address" property="appointmentAddress"/>
         <collection property="mallOrderDetail" ofType="com.gt.mall.entity.order.MallOrderDetail">
             <id column="dId" property="id" jdbcType="INTEGER"/>
             <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -241,6 +275,7 @@
             <result column="returnDay" property="returnDay" jdbcType="INTEGER"/>
             <result column="discount" property="discount" jdbcType="INTEGER"/>
             <result column="pro_type_id" property="proTypeId" jdbcType="INTEGER"/>
+            <result column="total_price" property="totalPrice" jdbcType="INTEGER"/>
             <result column="use_fenbi" property="useFenbi" jdbcType="INTEGER"/>
             <result column="use_jifen" property="useJifen" jdbcType="DOUBLE"/>
             <result column="coupon_code" property="couponCode" jdbcType="VARCHAR"/>
@@ -251,6 +286,7 @@
             <result column="flow_id" property="flowId" jdbcType="INTEGER"/>
             <result column="flow_record_id" property="flowRecordId" jdbcType="INTEGER"/>
             <result column="appraise_status" property="appraiseStatus" jdbcType="INTEGER"/>
+            <result column="coupon_type" property="couponType"/>
             <collection property="orderReturn" column="dId" ofType="com.gt.mall.entity.order.MallOrderReturn">
                 <id column="rId" property="id" jdbcType="INTEGER"/>
                 <result column="order_id" property="orderId" jdbcType="INTEGER"/>
@@ -269,6 +305,7 @@
                 <result column="user_id" property="userId" jdbcType="INTEGER"/>
                 <result column="no_return_reason" property="noReturnReason" jdbcType="VARCHAR"/>
                 <result column="return_address" property="returnAddress" jdbcType="VARCHAR"/>
+                <result column="cargo_status" property="cargoStatus"/>
             </collection>
         </collection>
     </resultMap>
@@ -299,6 +336,7 @@
         <result column="total_price" property="totalPrice" jdbcType="DOUBLE"/>
         <result column="appraise_status" property="appraiseStatus" jdbcType="INTEGER"/>
         <result column="pro_spec_str" property="proSpecStr"/>
+        <result column="coupon_type" property="couponType"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -307,7 +345,9 @@
         order_start, order_pay_way, delivery_method, appointment_name, appointment_telephone, appointment_time,invoice_title,
         take_their_id, is_message_notice, buyer_user_id, seller_user_id, shop_id, order_status, create_time,order_pay_no,
         pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,is_wallet,
-        order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi
+        order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi,
+        other_express_name , use_jifen , use_fenbi , coupon_id , union_card_id, fenbi_discount_money , jifen_discount_money , discount_money ,
+        coupon_type,coupon_use_num,member_is_delete,appointment_address
     </sql>
 
     <sql id="More_Column_List">
@@ -338,15 +378,20 @@
      </sql>
 
     <sql id="Order_OrderDetail_List">
-        t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,
+        t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time,
         t.order_start,t.order_pay_way,t.delivery_method,t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id,
         t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,t.pay_time,express_way,t.express_id,t.express_number,
-        t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,
+        t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,
+        t.bus_user_id,t.shop_id,t.order_old_money,t.coupon_code as couponCode,t.buyer_user_type,
+        t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time,
+        t.flow_phone,t.buyer_user_type,t.is_wallet,t.use_jifen,t.use_fenbi,t.coupon_id,t.union_card_id,t.coupon_type,t.coupon_use_num,
+
         d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,d.det_pro_name,
-        d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,t.shop_id,s.sto_name,t.order_old_money,t.coupon_code as couponCode,p.is_return,
-        d.pro_type_id,t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time
-        ,t.order_pid,d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
-        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str, t.flow_phone,t.buyer_user_type,t.is_wallet
+        d.det_pro_code,d.det_privivilege,d.status ,d.id as dId,p.is_return,
+        d.pro_type_id,
+        d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
+        d.use_card_id,d.commission,d.sale_member_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str
     </sql>
 
     <select id="selectOrderByAuctId" resultType="java.util.Map">
@@ -393,12 +438,44 @@
                 t.shop_id = #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
+        <if test="queryName != null and queryName != ''">
+            and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+        </if>
+        <if test="type != null and type != ''">
+            and t.order_type = #{type}
+        </if>
+        <if test="orderSource != null and orderSource != ''">
+            and t.buyer_user_type = #{orderSource}
+        </if>
+        <if test="orderPayWay != null and orderPayWay != ''">
+            and t.order_pay_way = #{orderPayWay}
+        </if>
+        <if test="deliveryMethod != null and deliveryMethod != ''">
+            and t.delivery_method = #{deliveryMethod}
+        </if>
+        <if test="shopId!= null and shopId != ''">
+            and t.shop_id = #{shopId}
+        </if>
     </select>
     <select id="findByPage" resultMap="PhoneResultMap" parameterType="map">
-        SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address , TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS update_time,
-        t.delivery_method,t.is_wallet,t.`shop_id`,t.buyer_user_id , t.member_name
-        FROM t_mall_order t
+        SELECT t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone, t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
+        t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
+        t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
+        t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,t.buyer_user_type,t.is_wallet,t.bus_user_id,t.shop_id,t.order_old_money,
+
+        d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,
+        d.det_pro_name, d.det_pro_code,d.det_privivilege,d.status ,d.id AS dId,
+        d.pro_type_id, d.use_fenbi,d.use_jifen,d.return_day AS returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
+        d.use_card_id,d.commission,d.sale_member_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,d.total_price
+        FROM (
+        select
+        t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone, t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
+        t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
+        t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
+        t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,t.buyer_user_type,t.is_wallet,t.bus_user_id,t.shop_id,t.order_old_money
+        from t_mall_order t
         <where>
             <if test="userId != null and userId != ''">
                 and t.bus_user_id = #{userId}
@@ -432,12 +509,32 @@
                 <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
                 <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
             </if>
+            <if test="queryName != null and queryName != ''">
+                and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+            </if>
+            <if test="type != null and type != ''">
+                and t.order_type = #{type}
+            </if>
+            <if test="orderSource != null and orderSource != ''">
+                and t.buyer_user_type = #{orderSource}
+            </if>
+            <if test="orderPayWay != null and orderPayWay != ''">
+                and t.order_pay_way = #{orderPayWay}
+            </if>
+            <if test="deliveryMethod != null and deliveryMethod != ''">
+                and t.delivery_method = #{deliveryMethod}
+            </if>
+            <if test="shopId!= null and shopId != ''">
+                and t.shop_id = #{shopId}
+            </if>
             and ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
         </where>
         ORDER BY t.id desc
         <if test="firstResult != null and maxResult != null">
             limit #{firstResult},#{maxResult}
         </if>
+        ) t
+        left join t_mall_order_detail d on d.order_id = t.id
     </select>
     <select id="countReturn" parameterType="map" resultType="java.lang.Integer">
         SELECT count(distinct t.id)
@@ -482,6 +579,24 @@
                 <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
                 <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
             </if>
+            <if test="queryName != null and queryName != ''">
+                and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+            </if>
+            <if test="type != null and type != ''">
+                and t.order_type = #{type}
+            </if>
+            <if test="orderSource != null and orderSource != ''">
+                and t.buyer_user_type = #{orderSource}
+            </if>
+            <if test="orderPayWay != null and orderPayWay != ''">
+                and t.order_pay_way = #{orderPayWay}
+            </if>
+            <if test="deliveryMethod != null and deliveryMethod != ''">
+                and t.delivery_method = #{deliveryMethod}
+            </if>
+            <if test="shopId!= null and shopId != ''">
+                and t.shop_id = #{shopId}
+            </if>
         </where>
         )
         AS t
@@ -493,7 +608,13 @@
                 d.shop_id = #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="status != null and status != ''">
+        <if test="shopId!= null and shopId != ''">
+            and d.shop_id = #{shopId}
+        </if>
+        <if test="returnStatus != null and returnStatus != ''">
+            and d.status = #{returnStatus}
+        </if>
+        <if test="(returnStatus == '' or returnStatus == null ) and status != null and status != ''">
             <if test="status == 6 || status == 8">
                 and d.status != -3 and d.status != 1 and d.status != 5 and d.status != -2
             </if>
@@ -506,18 +627,25 @@
         </if>
     </select>
     <select id="findReturnByPage" resultMap="PhoneResultMap" parameterType="map">
-        SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time AS updateDay,
-        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name
-
-        ,d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name, d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname
-
+        SELECT t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time, t.order_start,t.order_pay_way,t.delivery_method,
+        t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id, t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,
+        t.pay_time,express_way,t.express_id,t.express_number, t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,
+        t.group_buy_id,t.order_type,t.p_join_id, d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,
+        d.det_pro_name, d.det_pro_code,d.det_privivilege,d.status ,d.id AS dId,t.shop_id,t.order_old_money,
+        d.pro_type_id, t.order_pid,d.use_fenbi,d.use_jifen,d.return_day AS returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
+        d.use_card_id,d.commission,d.sale_member_id,t.bus_user_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str,
+        t.buyer_user_type,t.is_wallet,d.total_price
         FROM
         (
         SELECT
         t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time ,
-        t.delivery_method,t.is_wallet,t.buyer_user_id, t.member_name
+        t.express_time,t.order_pay_way,t.group_buy_id, t.receive_name,t.receive_phone,t.receive_address,t.update_time , t.delivery_method,
+        t.is_wallet,t.buyer_user_id, t.member_name,t.buyer_user_type,
+
+        t.receive_id,t.order_buyer_message,t.order_seller_remark,t.order_start,t.invoice_title,t.take_their_id,t.is_message_notice,
+        t.seller_user_id,t.express_way,t.express_id,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.order_type,t.p_join_id,
+        t.shop_id,t.order_old_money,t.order_pid,t.bus_user_id
         FROM t_mall_order t
         <where>
             ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) or (t.order_pay_way!=5))
@@ -553,6 +681,24 @@
                 <if test="orderFilter == 4">and t.receive_phone = #{orderNo}<!-- and t.receive_phone like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
                 <if test="orderFilter == 5">and t.member_name = #{orderNo}<!-- and t.member_name like CONCAT(CONCAT('%', #{orderNo}),'%') --></if>
             </if>
+            <if test="queryName != null and queryName != ''">
+                and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+            </if>
+            <if test="type != null and type != ''">
+                and t.order_type = #{type}
+            </if>
+            <if test="orderSource != null and orderSource != ''">
+                and t.buyer_user_type = #{orderSource}
+            </if>
+            <if test="orderPayWay != null and orderPayWay != ''">
+                and t.order_pay_way = #{orderPayWay}
+            </if>
+            <if test="deliveryMethod != null and deliveryMethod != ''">
+                and t.delivery_method = #{deliveryMethod}
+            </if>
+            <if test="shopId!= null and shopId != ''">
+                and t.shop_id = #{shopId}
+            </if>
         </where>
         )
         AS t
@@ -564,7 +710,13 @@
                 d.shop_id = #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="status != null and status != ''">
+        <if test="shopId!= null and shopId != ''">
+            and d.shop_id = #{shopId}
+        </if>
+        <if test="returnStatus != null and returnStatus != ''">
+            and d.status = #{returnStatus}
+        </if>
+        <if test="(returnStatus == '' or returnStatus == null ) and status != null and status != ''">
             <if test="status == 6 || status == 8">
                 <!-- and ( d.status = 0 or d.status = 2 or d.status = 3 or d.status = 4 or d.status = -1) -->
 
@@ -622,6 +774,9 @@
                 </if>
                 <if test="expressDelivery != '' and expressDelivery != null">
                     ,express_number = #{expressDelivery}
+                </if>
+                <if test="otherExpressName != '' and otherExpressName != null">
+                    ,other_express_name = #{otherExpressName}
                 </if>
             </when>
             <otherwise>
@@ -684,7 +839,6 @@
     <select id="getOrderById" resultMap="MoreResultMap" parameterType="java.lang.Integer">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         where t.id = #{orderId}
     </select>
@@ -692,32 +846,19 @@
     <select id="getOrderByOrderPId" resultMap="MoreResultMap" parameterType="java.lang.Integer">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         where t.order_pid = #{orderId}
     </select>
 
 
     <select id="mobileMyOrderList" resultMap="MoreResultMap" parameterType="map">
-        select
-        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,t.updateDay, t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method,t.order_pid,
-        t.is_wallet,t.bus_user_id ,t.`member_name` AS nickname,t.shop_id,
 
-        d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,
-        d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname, d.return_day AS returnDay,
-        d.pro_type_id,d.det_privivilege, d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,
-
-        re.ret_reason,re.id AS rId,re.no_return_reason,re.return_no, re.ret_reason,re.ret_handling_way,re.ret_money
-
-        FROM (
-
-        SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time, t.express_time,
+        SELECT t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,
         TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS updateDay, t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method,t.order_pid,
         t.is_wallet,t.bus_user_id ,t.`member_name` ,t.shop_id
         FROM t_mall_order t
 
-        where 1=1 and t.shop_id > 0
+        where t.member_is_delete = 0 and t.shop_id > 0
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id = #{busUserId}
         </if>
@@ -739,43 +880,36 @@
         <if test="type != null and type != '' and type != 0">
             and t.order_status = #{type}
         </if>
-        <if test="appraiseStatus != null and appraiseStatus != ''">
-            <if test="appraiseStatus == 0"><!-- 查询未评价的订单(订单状态必须为已完成) -->
-                and t.order_status = 4
-            </if>
-        </if>
         ORDER BY t.create_time desc,t.pay_time desc
         <if test="firstNum != null and maxNum != null">
             limit #{firstNum},#{maxNum}
         </if>
-        ) t
-        left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
-        left join t_mall_order_return re on re.order_detail_id=d.id
     </select>
 
     <select id="mobileOrderList" resultMap="MoreResultMap" parameterType="map">
         select
-        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
-        t.express_time,d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,
-        d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname,re.ret_reason,re.id AS rId,re.no_return_reason,re.return_no,
-        re.ret_reason,re.ret_handling_way,re.ret_money,TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS updateDay,
-        IF(t.order_pid = 0 || t.order_pid IS NULL,t.order_no,(SELECT order_no FROM t_mall_order WHERE t.order_pid=id)) AS orderPNo,d.return_day AS returnDay,
-        t.order_type,t.group_buy_id,t.order_pay_way,d.pro_type_id,t.delivery_method,t.order_pid,d.det_privivilege,
-        d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,t.is_wallet,t.bus_user_id,t.shop_id
+        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.pay_time,t.update_time,
+        t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method, t.bus_user_id,t.shop_id,
+
+        d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname,
+        d.return_day AS returnDay,d.det_privivilege, d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,d.pro_type_id
+
+        from (
+        select
+        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.pay_time,t.update_time,
+        t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method, t.bus_user_id,t.shop_id
         from t_mall_order t
-        left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
-        left join t_mall_order_return re on re.order_detail_id=d.id
-        where t.shop_id > 0
+        where t.member_is_delete = 0 and t.shop_id > 0 and t.order_pay_way != 5
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id = #{busUserId}
         </if>
         <if test="memberId != null and memberId != ''  and (oldMemberIds == null)">
             and t.buyer_user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null ">
-            and
-            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
-                t.buyer_user_id = #{item,jdbcType=INTEGER}
+        <if test="oldMemberIds != null and oldMemberIds.size > 0">
+            and t.buyer_user_id in
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
         <if test="orderType != null and orderType != ''">
@@ -787,31 +921,76 @@
         <if test="type != null and type != '' and type != 0">
             and t.order_status = #{type}
         </if>
-        <if test="appraiseStatus != null and appraiseStatus != ''">
+        ORDER BY t.id desc,t.pay_time desc
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+        ) t
+        left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
+    </select>
+
+    <select id="mobileOrderListByComment" resultMap="MoreResultMap" parameterType="map">
+        select
+        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.pay_time,t.update_time,
+        t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method, t.bus_user_id,t.shop_id,
+
+        d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,d.status,d.product_id,d.id AS dId,d.shop_id,d.product_speciname,
+        d.return_day AS returnDay,d.det_privivilege, d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id,d.pro_type_id
+
+        from t_mall_order t
+        left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
+        where t.member_is_delete = 0 and t.shop_id > 0
+        <if test="busUserId != null and busUserId != ''">
+            and t.bus_user_id = #{busUserId}
+        </if>
+        <if test="memberId != null and memberId != ''  and (oldMemberIds == null)">
+            and t.buyer_user_id = #{memberId}
+        </if>
+        <if test="oldMemberIds != null and oldMemberIds.size > 0">
+            and t.buyer_user_id in
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="orderType != null and orderType != ''">
+            and t.order_type = #{orderType}
+        </if>
+        <if test="id != null and id != ''">
+            and t.id=#{id}
+        </if>
+        <if test="type != null and type != '' and type != 0">
+            and t.order_status = #{type}
+        </if>
+        <if test="appraiseStatus != null">
             and d.appraise_status = #{appraiseStatus}
             <if test="appraiseStatus == 0"><!-- 查询未评价的订单(订单状态必须为已完成) -->
                 and t.order_status = 4
             </if>
         </if>
-        ORDER BY t.create_time desc,t.pay_time desc
+        <if test="isReturn != null">
+            and d.status > -3
+        </if>
+        ORDER BY t.id desc,t.pay_time desc
         <if test="firstNum != null and maxNum != null">
             limit #{firstNum},#{maxNum}
         </if>
     </select>
     <select id="countMobileOrderList" resultType="java.lang.Integer" parameterType="map">
         select count(t.id) from t_mall_order t
-        left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
-        where 1=1 and t.shop_id > 0
+        <if test="appraiseStatus != null or isReturn != null ">
+            left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
+        </if>
+        where t.member_is_delete = 0 and t.shop_id > 0
         <if test="busUserId != null and busUserId != ''">
             and t.bus_user_id=#{busUserId}
         </if>
         <if test="memberId != null and memberId != ''  and (oldMemberIds == null )">
             and t.buyer_user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null ">
-            and
-            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
-                t.buyer_user_id = #{item,jdbcType=INTEGER}
+        <if test="oldMemberIds != null and oldMemberIds.size > 0">
+            and t.buyer_user_id in
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
         <if test="orderType != null and orderType != ''">
@@ -820,11 +999,14 @@
         <if test="type != null and type != ''  and type != 0">
             and t.order_status = #{type}
         </if>
-        <if test="appraiseStatus != null and appraiseStatus != ''">
+        <if test="appraiseStatus != null">
             and d.appraise_status = #{appraiseStatus}
             <if test="appraiseStatus == 0"><!-- 查询未评价的订单(订单状态必须为已完成) -->
                 and t.order_status = 4
             </if>
+        </if>
+        <if test="isReturn != null">
+            and d.status > -3
         </if>
     </select>
 
@@ -843,7 +1025,7 @@
         o.order_status as orderStatus,d.shop_id as shopId ,o.order_pid,o.is_wallet,o.bus_user_id,
         if(o.order_pid = 0 || o.order_pid is null,o.order_no,(SELECT  order_no from t_mall_order where o.order_pid=id)) as orderNo,
         d.product_id as productId,d.det_pro_num as proNum,o.buyer_user_id,o.order_pay_way,o.order_no,o.order_type,o.group_buy_id,d.product_specificas
-        ,d.use_fenbi,d.use_jifen,d.total_price,o.receive_address,d.flow_id,d.flow_record_id
+        ,d.use_fenbi,d.use_jifen,d.total_price,o.receive_address,d.flow_id,d.flow_record_id,d.use_fenbi,d.use_jifen
         from t_mall_order_detail d
         left join t_mall_order o on d.order_id = o.id
         where d.id = #{detailId}
@@ -914,20 +1096,12 @@
         where  t.shop_id > 0 and t.order_status=4 and d.return_day &lt;= TIMESTAMPDIFF(DAY,t.update_time,now()) and t.give_status=0 and mem_card_type > 0 and t.order_pay_way != 4
     </select>
 
-    <select id="groupJoinPeopleNum" resultType="map" parameterType="map">
-        select count(j.id) as num,if(j.p_join_id = 0,j.id,j.p_join_id) as pId
-        from t_mall_group_join j
-        right join t_mall_group_join j1 on j1.group_buy_id = j.group_buy_id
-        and ( if(j.p_join_id > 0, j.id = j1.p_join_id  or j.id=j1.id or j.p_join_id = j1.p_join_id or j.p_join_id=j1.id,j.id = j1.p_join_id  or j.id=j1.id) )
-        where j.group_buy_id=#{groupBuyId} and j.order_id = #{orderId}
-    </select>
     <!-- 查询未支付的订单 -->
     <select id="selectNoPayOrder" parameterType="Map" resultMap="MoreResultMap">
         select
         <include refid="Order_OrderDetail_List"></include>
         from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         where t.order_status=1 and TIMESTAMPDIFF(MINUTE,t.create_time,now()) > #{times}
         <if test="orderType != null and orderType != ''">
@@ -1021,28 +1195,58 @@
                 #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
+        <if test="queryName != null and queryName != ''">
+            and (t.order_no = #{queryName} or t.receive_name = #{queryName} or t.receive_phone = #{queryName})
+        </if>
+        <if test="type != null and type != ''">
+            and t.order_type = #{orderType}
+        </if>
+        <if test="orderSource != null and orderSource != ''">
+            and t.buyer_user_type = #{orderSource}
+        </if>
+        <if test="orderPayWay != null and orderPayWay != ''">
+            and t.order_pay_way = #{orderPayWay}
+        </if>
+        <if test="deliveryMethod != null and deliveryMethod != ''">
+            and t.delivery_method = #{deliveryMethod}
+        </if>
+        <if test="shopId!= null and shopId != ''">
+            and t.shop_id = #{shopId}
+        </if>
         ORDER BY t.create_time desc,t.pay_time desc
     </select>
     <!-- 用户购买商品的数量（用于限购） -->
     <select id="selectMemberBuyProNum" parameterType="Map" resultType="Integer">
         SELECT IFNULL(SUM(d.det_pro_num),0) FROM t_mall_order o
         LEFT JOIN t_mall_order_detail d ON d.`order_id`=o.`id`
-        WHERE o.`order_status` > 1 AND o.order_status &lt; 5
-        <if test="buyerUserId != null">
-            AND o.`buyer_user_id` = #{buyerUserId}
-        </if>
-        <if test="productId != null">
-            AND d.`product_id` = #{productId}
-        </if>
-        <if test="shopId != null">
-            AND d.`shop_id` = #{shopId}
-        </if>
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="buyerUserId != null">
+                    AND o.`buyer_user_id` = #{buyerUserId}
+                </if>
+                <if test="BusId != null">
+                    AND o.bus_user_id = #{BusId}
+                </if>
+                <if test="orderType != null">
+                    and o.order_type = #{orderType}
+                </if>
+                <if test="activityId != null">
+                    and o.p_join_id = #{activityId}
+                </if>
+                and o.`order_status` > 1 AND o.order_status &lt; 5
+                <if test="productId != null">
+                    AND d.`product_id` = #{productId}
+                </if>
+                <if test="shopId != null">
+                    AND d.`shop_id` = #{shopId}
+                </if>
+            </trim>
+        </where>
     </select>
 
     <select id="getOrderByIdOrOne" resultMap="MoreResultMap" parameterType="java.lang.Integer">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_store s on s.id = t.shop_id
         left join t_mall_product p on p.id=d.product_id
         <if test="orderId != null and orderId != 0">
             where t.id = #{orderId}
@@ -1084,6 +1288,24 @@
         order by o.id desc
     </select>
 
+    <select id="selectIntegralOrderList" parameterType="Map" resultType="Map">
+        SELECT d.`det_pro_name`,d.`det_pro_num`,d.`det_pro_price`,o.`pay_time`,o.create_time,o.order_money
+        FROM (
+        select o.`pay_time`,o.create_time,o.order_money,o.id
+        from t_mall_order o
+        WHERE o.`order_type` = 2
+        <if test="buyerUserId != null and buyerUserId != ''">
+            and o.buyer_user_id=#{buyerUserId}
+        </if>
+        <if test="busUserId != null and busUserId != ''">
+            and o.bus_user_id=#{busUserId}
+        </if>
+        order by o.id desc
+        limit #{firstNum},#{maxNum}
+        ) as o
+        LEFT JOIN t_mall_order_detail d ON o.`id`=d.`order_id`
+    </select>
+
     <select id="selectOrderFlow" resultType="Map">
         SELECT o.id,flow_recharge_status FROM t_mall_order o WHERE o.flow_recharge_status in(0,2)
     </select>
@@ -1093,5 +1315,171 @@
         <include refid="Base_Column_List"/>
         FROM t_mall_order WHERE id = #{id}
     </select>
+    <select id="tradeCount" parameterType="map" resultType="java.lang.Integer">
+        select count(*)
+        FROM t_mall_order t
+        LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
+        LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id
+        WHERE d.id>0
+        <if test="userId != null and userId != ''">
+            and t.bus_user_id = #{userId}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            and t.order_no = #{orderNo}
+        </if>
+        AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
+        <if test="startTime != null and startTime != ''">
+            and t.create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and t.create_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="status != null and status != ''">
+            <if test="status == 1 "> <!-- 成功 -->
+                and t.order_status = 4
+                and r.status is null
+            </if>
+            <if test="status == 2 "><!-- 进行中-->
+                and t.order_status in (1,2,3)
+                and r.status is null
+            </if>
+            <if test="status == 3 "><!-- 退款-->
+                and (r.status is not null and r.status != 1 and r.status != 5)
+            </if>
+            <if test="status == 4 "><!-- 关闭-->
+                and t.order_status = 5
+            </if>
+        </if>
+        <if test="shoplist != null ">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="findByTradePage" parameterType="Map" resultType="Map">
+        SELECT t.id,t.`shop_id`as shopId,t.create_time as createTime,d.`det_pro_name` as proName, d.total_price as totalPrice,t.order_no as orderNo,
+        t.order_money as orderMoney, t.order_freight_money as orderFreightMoney, t.buyer_user_id as buyerUserId ,
+        t.member_name as memberName,t.order_status as orderStatus ,r.`status` AS return_status
+        FROM t_mall_order t
+        LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
+        LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id
+        WHERE d.id>0
+        <if test="userId != null and userId != ''">
+            and t.bus_user_id = #{userId}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            and t.order_no = #{orderNo}
+        </if>
+        AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
+        <if test="startTime != null and startTime != ''">
+            and t.create_time >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and t.create_time <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="status != null and status != ''">
+            <if test="status == 1 "> <!-- 成功 -->
+                and t.order_status = 4
+                and r.status is null
+            </if>
+            <if test="status == 2 "><!-- 进行中-->
+                and t.order_status in (1,2,3)
+                and r.status is null
+            </if>
+            <if test="status == 3 "><!-- 退款-->
+                and (r.status is not null and r.status != 1 and r.status != 5)
+            </if>
+            <if test="status == 4 "><!-- 关闭-->
+                and t.order_status = 5
+            </if>
+        </if>
+        <if test="shoplist != null ">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by t.id desc
+        <if test="firstResult != null and maxResult != null">
+            limit #{firstResult},#{maxResult}
+        </if>
+    </select>
+    <select id="selectRealOrder" resultType="Map">
+        select o.id,o.order_status,o.buyer_user_id,o.order_no from t_mall_order o
+        WHERE o.order_status=3  AND (TIMESTAMPDIFF(DAY,o.update_time,NOW()) > 7 OR (o.update_time IS NULL AND TIMESTAMPDIFF(DAY,o.pay_time,NOW()) > 7 ))
+    </select>
 
+    <select id="selectRealOrderDetail" resultType="Map" parameterType="Map">
+        select d.id,d.`status`,d.total_price as totalPrice,(d.det_pro_price*d.det_pro_num) as sumPrice,d.return_day,d.sale_member_id,d.commission
+        from t_mall_order_detail d
+        where  d.order_id=#{id}
+    </select>
+    <update id="updateByOrder" parameterType="Map">
+        update t_mall_order set update_time=now()
+        <if test="order_status != null and order_status != ''">
+            , order_status = #{order_status}
+        </if>
+        where id=#{id}
+    </update>
+
+    <select id="selectFinishOrder" resultType="Map">
+        select o.id,o.order_status ,o.buyer_user_id ,o.order_no ,o.update_time ,o.group_buy_id,o.order_type
+        from t_mall_order o
+        left join t_mall_presale_rank r on r.order_id=o.id
+        where o.order_status=4 and r.is_give=0
+    </select>
+
+    <select id="selectOrderNoCommisssion" resultType="Map">
+        SELECT DISTINCT o.id,o.order_status ,o.buyer_user_id ,o.order_no ,o.update_time ,o.group_buy_id,o.order_type
+        FROM t_mall_order o
+        LEFT JOIN t_mall_order_detail d ON d.`order_id`=o.`id`
+        LEFT JOIN t_mall_seller_income i ON i.`order_detail_id`=d.`id`
+        WHERE d.`sale_member_id` > 0 AND i.income_type=2 AND i.is_get=-1 AND o.`order_status`=4
+        GROUP BY o.`id`
+    </select>
+    <select id="selectOrderFinishMoneyByShopId" resultType="java.lang.Double">
+        SELECT IFNULL(SUM(order_money),0)
+        FROM t_mall_order t
+        WHERE order_status = 4
+        AND SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)
+        AND DATEDIFF(NOW(),update_time) = 7
+        AND t.`shop_id`=  #{shopId}
+    </select>
+
+    <!-- 查询未支付的订单 -->
+    <select id="selectOrderById" parameterType="Map" resultMap="MoreResultMap">
+        select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
+        left join t_mall_order_detail d on d.order_id = t.id
+        where 1=1
+        <if test="id != null and id != ''">
+            and t.id = #{id}
+        </if>
+        <if test="status != null and status != ''">
+            and t.order_status=#{status}
+        </if>
+        order by create_time
+    </select>
+    <update id="closeDaoDianOrder" parameterType="Map">
+        update t_mall_order set order_status = 5,update_time=now() where order_status=1 and TIMESTAMPDIFF(MINUTE,create_time,now()) > 30 and order_pay_way = 5
+    </update>
+    <select id="selectTodayShopByTime" resultType="Map">
+        SELECT DISTINCT(shop_id)
+        FROM t_mall_order
+        WHERE order_pay_way = 5
+        AND order_status > 1
+        AND order_status <![CDATA[<]]> 5
+        AND pay_time >= #{startTime}
+        and pay_time <![CDATA[<]]> #{endTime}
+    </select>
+    <select id="countTodayShopByTime" resultType="java.util.Map">
+        SELECT SUM(order_money) AS saleTotalprice
+        FROM t_mall_order
+        WHERE  order_pay_way=5
+        AND order_status > 1
+        AND order_status <![CDATA[<]]> 5
+        AND pay_time >= #{startTime}
+        and pay_time <![CDATA[<]]> #{endTime}
+        AND shop_id= #{shopId}
+    </select>
 </mapper>

@@ -1,4 +1,4 @@
-.ui-slider{
+.commodityDirective .ui-slider{
 	width: 250px;
     height: .8em;
     position: relative;
@@ -11,7 +11,7 @@
     text-align: left;
 }
 
-.ui-slider .ui-slider-handle{
+.commodityDirective .ui-slider .ui-slider-handle{
 	position: absolute;
     z-index: 2;
     width: 1.2em;
@@ -22,22 +22,22 @@
     -webkit-border-radius: 100%;
     -moz-border-radius: 100%;
     border-radius: 100%;
-    top: -.3em;
+    top: .1em;
     margin-left: -.6em;
     cursor: pointer;
 }
-.ui-slider .ui-slider-handle.ui-slider-handle-active{
+.commodityDirective .ui-slider .ui-slider-handle.ui-slider-handle-active{
 	background:#e3f3ee;
 	border:1px solid #008620;
 }
 
-.slider-height{
+.commodityDirective .slider-height{
 	position: absolute;
     right: 10px;
     top: 5px;
 }
 
-.interval-slider{
+.commodityDirective .interval-slider{
     margin-left: 93px;
     padding-top: 8px;
     position: relative;

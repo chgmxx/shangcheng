@@ -16,6 +16,8 @@
         <result column="join_status" property="joinStatus"/>
         <result column="product_id" property="productId"/>
         <result column="p_join_id" property="pJoinId"/>
+        <result column="join_user_name" property="joinUserName"/>
+        <result column="join_user_headimgurl" property="joinUserHeadimgurl"/>
     </resultMap>
     <resultMap id="JoinResultMap" type="Map">
         <id column="id" jdbcType="INTEGER" property="id"/>
@@ -36,14 +38,15 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         j.id, j.group_buy_id , j.specifica_ids , j.join_price , j.join_user_id , j.join_type , j.order_id ,
-        j.order_detail_id , j.join_time , j.join_status , j.product_id , j.p_join_id
+        j.order_detail_id , j.join_time , j.join_status , j.product_id , j.p_join_id,j.join_user_name,j.join_user_headimgurl
     </sql>
 
     <!-- 查询团购的发起人 -->
     <select id="selectJoinGroupByProId" parameterType="Map" resultMap="JoinResultMap">
         select j.id,j.group_buy_id as groupBuyId, j.join_user_id as joinUserId,
-        b.g_people_num as pelpleNum,j.order_id as orderId,j.order_detail_id as orderDetailId ,
-        j.join_type as joinType,j.join_time as joinTime,j.order_id as orderId,j.order_detail_id as orderDetailId
+        j.order_id as orderId,j.order_detail_id as orderDetailId ,
+        j.join_type as joinType,j.join_time as joinTime,j.order_id as orderId,j.order_detail_id as orderDetailId,
+        b.g_people_num as pelpleNum,b.user_id as busId
         from t_mall_group_join j
         left join t_mall_order o on o.id = j.order_id
         left join t_mall_group_buy b on b.id = j.group_buy_id
@@ -95,5 +98,14 @@
             and j.id=#{joinId}
         </if>
     </select>
+
+    <select id="groupJoinPeopleNum" resultType="map" parameterType="map">
+        select count(j.id) as num,if(j.p_join_id = 0,j.id,j.p_join_id) as pId
+        from t_mall_group_join j
+        right join t_mall_group_join j1 on j1.group_buy_id = j.group_buy_id
+        and ( if(j.p_join_id > 0, j.id = j1.p_join_id  or j.id=j1.id or j.p_join_id = j1.p_join_id or j.p_join_id=j1.id,j.id = j1.p_join_id  or j.id=j1.id) )
+        where j.group_buy_id=#{groupBuyId} and j.order_id = #{orderId}
+    </select>
+
 
 </mapper>

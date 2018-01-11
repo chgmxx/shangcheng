@@ -44,6 +44,15 @@ public interface WxShopService {
     List< WsWxShopInfoExtend > queryWxShopByBusId( int busUserId );
 
     /**
+     * 根据商家id查询主门店信息
+     *
+     * @param busUserId 商家id
+     *
+     * @return 门店信息
+     */
+    WsWxShopInfo selectMainShopByBusId( int busUserId );
+
+    /**
      * 新增门店中间表 （新增店铺时调用的）
      *
      * @param shopSubsop 门店中间表对象
@@ -96,4 +105,5 @@ public interface WxShopService {
      * @return 城市id
      */
     Map queryBasisByName( String name );
+
 }

@@ -8,11 +8,9 @@ package com.gt.mall.controller;
  */
 
 import com.gt.mall.annotation.SysLogAnnotation;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.QRcodeKit;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.api.bean.session.BusUser;
+import com.gt.mall.constant.Constants;
+import com.gt.mall.utils.*;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +22,10 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,21 +64,50 @@ public class CommonController {
 		    @RequestParam Map< String,Object > params ) throws Exception {
 	response.setCharacterEncoding( "UTF-8" );
 	Map< String,Object > msgMap = new HashMap<>();
+	String originalFilename = "";
 	try {
-	    BusUser user = SessionUtils.getLoginUser( request );
+	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 	    MultipartFile multipartFile = multipartRequest.getFile( "imgFile" );
-
-	    Map< String,Object > returnMap = CommonUtil.fileUploadByBusUser( multipartFile, user.getId() );
-	    if ( "1".equals( returnMap.get( "reTurn" ) ) ) {
-		msgMap.put( "error", 0 );
-		msgMap.put( "url", PropertiesUtil.getResourceUrl() + returnMap.get( "message" ) );
-
-	    } else {
-		logger.error( "该图片存在" );
+	    String userName = user.getName();
+	    // 文件名
+	    originalFilename = multipartFile.getOriginalFilename();
+	    // 后缀
+	    String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );
+	    String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
+	    // 判断上传图片是否是支持的格式
+	   /* int num = dictService.dictJsp( suffix );
+	    if ( num == 0 ) {
 		msgMap.put( "error", "1" );
-		msgMap.put( "message", "该图片可能存在风险，微信拒绝上传" );
+		String message = "上传失败，该图片格式不支持";
+		msgMap.put( "message", message );
+	    } else {*/
+	    // 文件大小
+	    Long fileSize = multipartFile.getSize();
+	    // 加上时间戳，名字就可以一样
+	    Long time = System.currentTimeMillis();
+	    // 获取1007字典类型
+	    String path = PropertiesUtil.getResImagePath() + "/2/" + userName + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/"
+			    + DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD )
+			    + "/"; // request.getSession().getServletContext().getRealPath("/")+"upload/editor/"+userName+"/";
+	    logger.error( "path:" + path );
+	    path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) )
+			    + suffix;
+	    File file = new File( path );
+	    if ( !file.exists() && !file.isDirectory() ) {
+		file.mkdirs();
 	    }
+	    /*multipartFile.transferTo( file );*/
+	    ContinueFTP myFtp = new ContinueFTP();
+	    myFtp.upload( file.getPath() );
+	    logger.info( "ftp上传图片路径:" + path );
+	    Map< String,Object > ftpResult = myFtp.upload( path );
+	    logger.info( "ftp上传结果：" + com.alibaba.fastjson.JSONObject.toJSONString( ftpResult ) );
+	    String url = PropertiesUtil.getResourceUrl() + path.split( "upload" )[1];
+
+	    /*}*/
+	    msgMap.put( "error", 0 );
+	    msgMap.put( "url", url );
 
 	} catch ( Exception e ) {
 	    logger.error( "ex:" + e.getMessage() );

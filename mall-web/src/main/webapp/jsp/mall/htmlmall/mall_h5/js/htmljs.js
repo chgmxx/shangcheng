@@ -12,7 +12,7 @@ $scope.save = function(){
 	var id = $("#id").val();
 	$.ajax({   
 		type:"post",
-		url:"/mallhtml/htmlSave.do",
+		url:"/mallhtml/E9lM9uM4ct/htmlSave.do",
 		data:{dataJson:datajson,dataBg:databg,dataTransverse:datatransverse,playerStyle:playerStyle,addres:addres,musicname:musicname,musicurl:musicurl,id:id},
 		async:false,
 		dataType:"json",
@@ -44,7 +44,7 @@ $scope.preview = function(){
 	var id = $("#id").val();
 	$.ajax({   
 		type:"post",
-		url:"/mallhtml/htmlSave.do",
+		url:"/mallhtml/E9lM9uM4ct/htmlSave.do",
 		data:{dataJson:datajson,dataBg:databg,dataTransverse:datatransverse,playerStyle:playerStyle,addres:addres,musicname:musicname,musicurl:musicurl,id:id},
 		async:false,
 		dataType:"json",
@@ -58,7 +58,7 @@ $scope.preview = function(){
 	                    shade: 0.2,
 	                     area: ['400px', '400px'],
 	                    offset : "10%",
-	                    content: '/mallhtml/ylcodeurl.do?url='+$("#codeurl").val(), //iframe的url
+	                    content: '/mallhtml/E9lM9uM4ct/ylcodeurl.do?id='+id, //iframe的url
 	              }); 
 			}else{
 				layer.alert("保存失败",{

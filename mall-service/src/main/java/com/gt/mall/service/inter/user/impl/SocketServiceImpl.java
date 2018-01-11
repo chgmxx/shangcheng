@@ -2,10 +2,8 @@ package com.gt.mall.service.inter.user.impl;
 
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.utils.HttpSignUtil;
-import com.gt.mall.utils.PropertiesUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,13 +25,13 @@ public class SocketServiceImpl implements SocketService {
 	HttpSignUtil.signHttpInsertOrUpdate( params, SOCKET_URL + "getSocketApi.do", 1 );
     }
 
-    @Override
-    public Map mqSendMessage( String message ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "exchange", PropertiesUtil.getExchange() );
-	params.put( "queueName", PropertiesUtil.getQueueName() );
-	params.put( "message", message );
-	return HttpSignUtil.signHttpInsertOrUpdate( params, MQ_UEL + "getMq.do", 1 );
-    }
+    //    @Override
+    //    public Map mqSendMessage( String message ) {
+    //	Map< String,Object > params = new HashMap<>();
+    //	params.put( "exchange", PropertiesUtil.getExchange() );
+    //	params.put( "queueName", PropertiesUtil.getQueueName() );
+    //	params.put( "message", message );
+    //	return HttpSignUtil.signHttpInsertOrUpdate( params, MQ_UEL + "getMq.do", 1 );
+    //    }
 
 }

@@ -3,6 +3,10 @@ package com.gt.mall.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.PropertiesUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
@@ -18,36 +22,70 @@ import static com.fasterxml.jackson.databind.annotation.JsonSerialize.Typing.DEF
  * @create 2017/6/16
  */
 //保证序列化json的时候,如果是null的对象,key也会消失
+@ApiModel( value = "ServerResponse", description = "统一响应返回数据格式" )
 @JsonSerialize( typing = DEFAULT_TYPING )
 public class ServerResponse< T > implements Serializable {
 
     /*状态码*/
+    @ApiModelProperty( name = "code", value = "状态码：参考响应编码说明" )
     private int code;
 
     /*返回消息*/
+    @ApiModelProperty( name = "msg", value = "返回消息" )
     private String msg;
 
+    /*图片域名*/
+    @ApiModelProperty( name = "imgUrl", value = "图片域名" )
+    private String imgUrl = PropertiesUtil.getResourceUrl();
+
+    /*本地域名*/
+    @ApiModelProperty( name = "path", value = "本地域名" )
+    private String path = PropertiesUtil.getHomeUrl();
+
+    /*前端web域名*/
+    @ApiModelProperty( name = "webPath", value = "前端web域名" )
+    private String webPath = PropertiesUtil.getPhoneWebHomeUrl();
+
     /*泛型数据*/
+    @ApiModelProperty( name = "data", value = "返回数据" )
     private T data;
 
-    protected ServerResponse( int code ) {
+    protected ServerResponse( int code, Boolean... isShowPath ) {
 	this.code = code;
+	isSowPath( isShowPath );
     }
 
-    protected ServerResponse( int code, T data ) {
+    protected ServerResponse( int code, T data, Boolean... isShowPath ) {
 	this.code = code;
 	this.data = data;
+	isSowPath( isShowPath );
     }
 
-    protected ServerResponse( int code, String msg ) {
+    protected ServerResponse( int code, String msg, Boolean... isShowPath ) {
 	this.code = code;
 	this.msg = msg;
+	isSowPath( isShowPath );
     }
 
-    protected ServerResponse( int code, String msg, T data ) {
+    protected ServerResponse( int code, String msg, T data, Boolean... isShowPath ) {
 	this.code = code;
 	this.msg = msg;
 	this.data = data;
+	isSowPath( isShowPath );
+    }
+
+    private void isSowPath( Boolean... isShowPath ) {
+	boolean isShow = CommonUtil.isEmpty( isShowPath ) || isShowPath.length == 0 ? true : isShowPath[0];
+	if ( isShow ) {
+	    this.imgUrl = PropertiesUtil.getResourceUrl();
+	    this.path = PropertiesUtil.getHomeUrl();
+	    this.webPath = PropertiesUtil.getPhoneWebHomeUrl();
+	} else {
+	    this.imgUrl = null;
+	    this.path = null;
+	    this.webPath = null;
+	}
+
     }
 
     /**
@@ -57,6 +95,15 @@ public class ServerResponse< T > implements Serializable {
      */
     public static < T > ServerResponse< T > createBySuccess() {
 	return createBySuccessMessage( ResponseEnums.SUCCESS.getDesc() );
+    }
+
+    /**
+     * 创建响应成功
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessCode() {
+	return createBySuccessMessage( ResponseEnums.SUCCESS.getCode() );
     }
 
     /**
@@ -84,6 +131,17 @@ public class ServerResponse< T > implements Serializable {
     /**
      * 创建响应成功
      *
+     * @param code 状态码
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessMessage( int code ) {
+	return createBySuccessCodeMessage( code, false );
+    }
+
+    /**
+     * 创建响应成功
+     *
      * @param msg  消息
      * @param data 数据包
      *
@@ -102,8 +160,19 @@ public class ServerResponse< T > implements Serializable {
      *
      * @return ServerResponse
      */
-    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, T data ) {
-	return new ServerResponse<>( code, msg, data );
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, T data, Boolean... isShowPath ) {
+	return new ServerResponse<>( code, msg, data, isShowPath );
+    }
+
+    /**
+     * 创建响应成功
+     *
+     * @param code 状态码
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, Boolean... isShowPath ) {
+	return new ServerResponse<>( code, isShowPath );
     }
 
     /**
@@ -114,8 +183,8 @@ public class ServerResponse< T > implements Serializable {
      *
      * @return ServerResponse
      */
-    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg ) {
-	return new ServerResponse<>( code, msg );
+    public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, Boolean... isShowPath ) {
+	return new ServerResponse<>( code, msg, isShowPath );
     }
 
     /**
@@ -126,8 +195,8 @@ public class ServerResponse< T > implements Serializable {
      *
      * @return ServerResponse
      */
-    public static < T > ServerResponse< T > createBySuccessCodeData( int code, T data ) {
-	return new ServerResponse< T >( code, data );
+    public static < T > ServerResponse< T > createBySuccessCodeData( int code, T data, Boolean... isShowPath ) {
+	return new ServerResponse< T >( code, data, isShowPath );
     }
 
     /**
@@ -159,7 +228,20 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createByErrorCodeMessage( int errorCode, String errorMessage ) {
-	return new ServerResponse<>( errorCode, errorMessage );
+	return new ServerResponse<>( errorCode, errorMessage, false );
+    }
+
+    /**
+     * 创建响应失败
+     *
+     * @param errorCode    状态码
+     * @param errorMessage 消息
+     * @param data         返回数据
+     *
+     * @return ServerResponse
+     */
+    public static < T > ServerResponse< T > createByErrorCodeMessage( int errorCode, String errorMessage, T data ) {
+	return new ServerResponse<>( errorCode, errorMessage, data, false );
     }
 
     //使之不在json序列化结果当中，作用用于判断
@@ -180,4 +262,15 @@ public class ServerResponse< T > implements Serializable {
 	return msg;
     }
 
+    public String getImgUrl() {
+	return imgUrl;
+    }
+
+    public String getPath() {
+	return path;
+    }
+
+    public String getWebPath() {
+	return webPath;
+    }
 }

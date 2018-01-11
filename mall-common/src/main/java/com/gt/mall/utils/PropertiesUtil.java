@@ -16,6 +16,16 @@ public class PropertiesUtil {
 
     private static String homeUrl;//网页地址
 
+    private static String marketingUrl; //商城营销路径
+
+    private static String materialUrl; //素材库路径
+
+    private static String duofenTwoCodeUrl; //素材库路径
+
+    private static String duofenPublicId;//多粉公众号id
+
+    private static String phoneWebHomeUrl;//手机端域名
+
     private static String jxcUrl;//进销存 地址
 
     private static String jxcAccount;//进销存token用户名
@@ -44,9 +54,17 @@ public class PropertiesUtil {
 
     private static String dbname;//电信流量订单前缀
 
-    private static String exchange;//队列转换器
+    private static String mqIp;//MQ队列Ip
 
-    private static String queueName;//队列名称
+    private static String mqPort;//MQ队列端口号
+
+    private static String mqUser;//MQ队列用户名
+
+    private static String mqPassWord;//MQ队列密码
+
+    private static String mqSeckillExchange;//队列转换器
+
+    private static String mqSeckillQueueName;//队列名称
 
     private static String wxmpDomain;//主项目域名（登陆。。）
 
@@ -60,6 +78,10 @@ public class PropertiesUtil {
 
     private static String unionSignKey;//调用联盟接口的签名key
 
+    private static String coreDomain;//调用服务增值的域名
+
+    private static String coreSignKey; //调用服务增值的签名key
+
     @Value( "${web.domain}" )
     public void setDomain( String domain ) {
 	PropertiesUtil.domain = domain;
@@ -68,6 +90,31 @@ public class PropertiesUtil {
     @Value( "${web.homeUrl}" )
     public void setHomeUrl( String homeUrl ) {
 	PropertiesUtil.homeUrl = homeUrl;
+    }
+
+    @Value( "${web.materialUrl}" )
+    public void setMaterialUrl( String materialUrl ) {
+	PropertiesUtil.materialUrl = materialUrl;
+    }
+
+    @Value( "${web.marketingUrl}" )
+    public void setMarketingUrl( String marketingUrl ) {
+	PropertiesUtil.marketingUrl = marketingUrl;
+    }
+
+    @Value( "${web.duofenTwoCodeUrl}" )
+    public void setDuofenTwoCodeUrl( String duofenTwoCodeUrl ) {
+	PropertiesUtil.duofenTwoCodeUrl = duofenTwoCodeUrl;
+    }
+
+    @Value( "${web.duofenPublicId}" )
+    public void setDuofenPublicId( String duofenPublicId ) {
+	PropertiesUtil.duofenPublicId = duofenPublicId;
+    }
+
+    @Value( "${web.phoneWebHomeUrl}" )
+    public void setPhoneWebHomeUrl( String phoneWebHomeUrl ) {
+	PropertiesUtil.phoneWebHomeUrl = phoneWebHomeUrl;
     }
 
     @Value( "${http.jxc.domain}" )
@@ -140,14 +187,34 @@ public class PropertiesUtil {
 	PropertiesUtil.dbname = dbname;
     }
 
-    @Value( "${mq.exchange}" )
-    public void setExchange( String exchange ) {
-	PropertiesUtil.exchange = exchange;
+    @Value( "${mq.ip}" )
+    public void setMqIp( String mqIp ) {
+	PropertiesUtil.mqIp = mqIp;
     }
 
-    @Value( "${mq.queueName}" )
-    public void setQueueName( String queueName ) {
-	PropertiesUtil.queueName = queueName;
+    @Value( "${mq.port}" )
+    public void setMqPort( String mqPort ) {
+	PropertiesUtil.mqPort = mqPort;
+    }
+
+    @Value( "${mq.user}" )
+    public void setMqUser( String mqUser ) {
+	PropertiesUtil.mqUser = mqUser;
+    }
+
+    @Value( "${mq.password}" )
+    public void setMqPassWord( String mqPassWord ) {
+	PropertiesUtil.mqPassWord = mqPassWord;
+    }
+
+    @Value( "${mq.seckill.exchange}" )
+    public void setMqSeckillExchange( String mqSeckillExchange ) {
+	PropertiesUtil.mqSeckillExchange = mqSeckillExchange;
+    }
+
+    @Value( "${mq.seckill.queueName}" )
+    public void setMqSeckillQueueName( String mqSeckillQueueName ) {
+	PropertiesUtil.mqSeckillQueueName = mqSeckillQueueName;
     }
 
     @Value( "${http.wxmp.domain}" )
@@ -178,6 +245,16 @@ public class PropertiesUtil {
     @Value( "${http.union.key}" )
     public void setUnionSignKey( String unionSignKey ) {
 	PropertiesUtil.unionSignKey = unionSignKey;
+    }
+
+    @Value( "${http.core.domain}" )
+    public void setCoreDomain( String coreDomain ) {
+	PropertiesUtil.coreDomain = coreDomain;
+    }
+
+    @Value( "${http.core.key}" )
+    public void setCoreSignKey( String coreSignKey ) {
+	PropertiesUtil.coreSignKey = coreSignKey;
     }
 
     /**
@@ -233,12 +310,28 @@ public class PropertiesUtil {
 	return dbname;
     }
 
-    public static String getExchange() {
-	return exchange;
+    public static String getMqIp() {
+	return mqIp;
     }
 
-    public static String getQueueName() {
-	return queueName;
+    public static String getMqPort() {
+	return mqPort;
+    }
+
+    public static String getMqUser() {
+	return mqUser;
+    }
+
+    public static String getMqPassWord() {
+	return mqPassWord;
+    }
+
+    public static String getMqSeckillExchange() {
+	return mqSeckillExchange;
+    }
+
+    public static String getMqSeckillQueueName() {
+	return mqSeckillQueueName;
     }
 
     public static String getResImagePath() {
@@ -251,6 +344,22 @@ public class PropertiesUtil {
 
     public static String getHomeUrl() {
 	return homeUrl;
+    }
+
+    public static String getMarketingUrl() {
+	return marketingUrl;
+    }
+
+    public static String getMaterialUrl() {
+	return materialUrl;
+    }
+
+    public static String getDuofenTwoCodeUrl() {
+	return duofenTwoCodeUrl;
+    }
+
+    public static String getPhoneWebHomeUrl() {
+	return phoneWebHomeUrl;
     }
 
     public static String getJxcUrl() {
@@ -295,5 +404,17 @@ public class PropertiesUtil {
 
     public static Integer getRedisDataBase() {
 	return redisDataBase;
+    }
+
+    public static String getCoreDomain() {
+	return coreDomain;
+    }
+
+    public static String getCoreSignKey() {
+	return coreSignKey;
+    }
+
+    public static String getDuofenPublicId() {
+	return duofenPublicId;
     }
 }

@@ -116,11 +116,8 @@ angular.module('classify',[]).controller("classifyController",["$scope",function
                 }
                 if(dom_imp.attr("src")){
                     element.find(".choice_pic img").attr("src",dom_imp.attr("src"));
-                    element.find(".choice_pic").show();
-                    element.find(".choice_pic").prev().hide();
                 }else{
-                    element.find(".choice_pic").hide();
-                    element.find(".choice_pic").prev().show();
+                	element.find(".choice_pic img").attr("src","http://maint.duofriend.com/upload/image/3/gt123/3/20170718/4EC7DF8219D43DC2834EF00128400247.png");
                 }
                 
                 element.find(".choice-content").show();

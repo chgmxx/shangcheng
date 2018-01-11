@@ -84,9 +84,6 @@ angular.module('dragPlan', []).directive('myPlan',['$document',function($documen
                 scope.$apply(function(){
                 	dataJson.changeAt(_index,index);
             		picJson.changeAt(_index,index); 
-            		setTimeout(function(){
-            			element.click();
-            		},150)
             	})
             	
             	element.removeClass("module-active").attr("style","").parent().addClass("app-preview-box");

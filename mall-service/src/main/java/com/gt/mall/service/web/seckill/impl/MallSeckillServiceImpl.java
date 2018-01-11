@@ -2,9 +2,12 @@ package com.gt.mall.service.web.seckill.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.mq.MqBean;
+import com.gt.api.bean.session.BusUser;
+import com.gt.api.bean.session.Member;
+import com.gt.api.util.MqUtils;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.seckill.MallSeckillJoinDAO;
@@ -18,9 +21,14 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.seckill.MallSeckillJoin;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallSearchKeywordService;
 import com.gt.mall.service.web.seckill.MallSeckillPriceService;
@@ -75,9 +83,11 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     private MallStoreService mallStoreService;
 
     @Autowired
-    private SocketService socketService;
+    private SocketService   socketService;
     @Autowired
-    private WxShopService wxShopService;
+    private WxShopService   wxShopService;
+    @Autowired
+    private MallPageService mallPageService;
 
     /**
      * 通过店铺id来查询秒杀
@@ -166,7 +176,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    int userPId = busUserService.getMainBusId( busUser.getId() );//通过用户名查询主账号id
 		    int isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 
-		    String key = "hSeckill";
+		    String key = Constants.REDIS_SECKILL_NAME;
 		    String field = seckill.getId().toString();
 		    JedisUtil.map( key, field, seckill.getSNum() + "" );
 		    List< Map< String,Object > > productList = new ArrayList<>();
@@ -329,20 +339,24 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * 根据商品id查询秒杀信息和秒杀价格
      */
     @Override
-    public MallSeckill getSeckillByProId( Integer proId, Integer shopId ) {
+    public MallSeckill getSeckillByProId( Integer proId, Integer shopId, int activityId ) {
 	MallSeckill seckill = new MallSeckill();
 	seckill.setProductId( proId );
 	seckill.setShopId( shopId );
+	if ( activityId > 0 ) {
+	    seckill.setId( activityId );
+	}
 	seckill = mallSeckillDAO.selectBuyByProductId( seckill );
 	if ( seckill != null && CommonUtil.isNotEmpty( seckill.getId() ) ) {
-
-	    String key = "hSeckill";
+	    String key = Constants.REDIS_SECKILL_NAME;
 	    String field = seckill.getId().toString();
 	    if ( JedisUtil.hExists( key, field ) ) {
 		String str = JedisUtil.maoget( key, field );
 		if ( CommonUtil.isNotEmpty( str ) ) {
 		    int invNum = CommonUtil.toInteger( str );
-		    if ( invNum > 0 ) seckill.setSNum( invNum );
+		    if ( invNum > 0 ) {
+			seckill.setSNum( invNum );
+		    }
 		}
 	    }
 
@@ -361,7 +375,9 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    field = seckill.getId() + "_" + price.getSpecificaIds();
 		    if ( CommonUtil.isNotEmpty( price.getSpecificaIds() ) && JedisUtil.hExists( key, field ) ) {
 			int invNum = CommonUtil.toInteger( JedisUtil.maoget( key, field ) );
-			if ( invNum > 0 ) price.setSeckillNum( invNum );
+			if ( invNum > 0 ) {
+			    price.setSeckillNum( invNum );
+			}
 		    }
 		    list.add( price );
 		}
@@ -370,6 +386,47 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 	    return seckill;
 	}
 	return null;
+    }
+
+    @Override
+    public PhoneProductDetailResult getSeckillProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result ) {
+	/*if ( activityId == 0 ) {
+	    return result;
+	}*/
+	//通过商品id查询秒杀信息
+	MallSeckill seckill = getSeckillByProId( proId, shopId, activityId );
+	if ( seckill == null ) {
+	    return result;
+	}
+	if ( seckill.getStatus() == -1 || seckill.getStatus() == -2 ) {
+	    result.setType( 0 );
+	    result.setActivityId( 0 );
+	    return null;
+	}
+	result.setActivityTimes( seckill.getTimes() );
+	result.setActivityId( seckill.getId() );
+	if ( CommonUtil.isNotEmpty( seckill.getSMaxBuyNum() ) && seckill.getSMaxBuyNum() > 0 ) {
+	    result.setMaxBuyNum( seckill.getSMaxBuyNum() );//限购
+	}
+	result.setProductStockTotal( seckill.getSNum() );//库存
+	double seckillPrice = CommonUtil.toDouble( seckill.getSPrice() );
+	List< Integer > invIdList = new ArrayList<>();
+	if ( CommonUtil.isNotEmpty( seckill.getPriceList() ) ) {
+	    for ( MallSeckillPrice price : seckill.getPriceList() ) {
+		if ( price.getIsJoinGroup() == 1 ) {
+		    if ( result.getInvId() == 0 || result.getInvId() == price.getInvenId() ) {
+			seckillPrice = CommonUtil.toDouble( price.getSeckillPrice() );
+			result.setInvId( price.getInvenId() );
+		    }
+		    if ( result.getInvId() > 0 ) {
+			invIdList.add( price.getInvenId() );
+		    }
+		}
+	    }
+	}
+	result.setInvIdList( invIdList );
+	result.setProductPrice( seckillPrice );
+	return result;
     }
 
     /**
@@ -384,31 +441,25 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * 判断秒杀的库存是否能够秒杀
      */
     @Override
-    public Map< String,Object > isInvNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail ) {
+    public Map< String,Object > isInvNum( Integer seckillId, String productSpecificas, Integer productNum ) {
 	Map< String,Object > result = new HashMap<>();
-	String seckillId = mallOrder.getGroupBuyId().toString();
-	String invKey = "hSeckill";//秒杀库存的key
-	String specificas = "";
-	//判断商品是否有规格
-	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
-	    specificas = mallOrderDetail.getProductSpecificas();
-	}
+	String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
 	//查询秒杀商品的库存
 	Integer invNum;
-	if ( !specificas.equals( "" ) ) {
+	if ( CommonUtil.isNotEmpty( productSpecificas ) ) {
 	    //有规格，取规格的库存
-	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId + "_" + specificas ) );
+	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId + "_" + productSpecificas ) );
 	} else {
 	    //无规格，则取商品库存
-	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId ) );
+	    invNum = CommonUtil.toInteger( JedisUtil.maoget( invKey, seckillId.toString() ) );
 	}
-	int proNum = mallOrderDetail.getDetProNum();//购买商品的用户
 	//判断库存是否够
-	if ( invNum >= proNum && invNum > 0 ) {
+	if ( invNum >= productNum && invNum > 0 ) {
 	    result.put( "result", true );
 	} else {
 	    result.put( "msg", "库存不够" );
 	    result.put( "result", false );
+	    throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "秒杀库存不够，请重新挑选商品" );
 	}
 	return result;
     }
@@ -420,11 +471,12 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
      * @param memberId        下单用户id
      * @param orderId         订单id
      */
+    @Override
     public void invNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail, String memberId, String orderId ) {
 	String seckillId = mallOrder.getGroupBuyId().toString();
 	String proId = mallOrderDetail.getProductId().toString();
 	String key = "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
-	String invKey = "hSeckill";//秒杀库存的key
+	String invKey = Constants.REDIS_SECKILL_NAME;//秒杀库存的key
 	String specificas = "";
 	//判断商品是否有规格
 	if ( CommonUtil.isNotEmpty( mallOrderDetail.getProductSpecificas() ) ) {
@@ -490,7 +542,14 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 
 		try {
 		    logger.info( "mq参数：" + obj );
-		    socketService.mqSendMessage( obj.toString() );
+		    List< MqBean > mqBeanList = new ArrayList<>();
+		    MqBean mqBean = new MqBean();
+		    mqBean.setMqIp( PropertiesUtil.getMqIp() );
+		    mqBean.setPort( CommonUtil.toInteger( PropertiesUtil.getMqPort() ) );
+		    mqBeanList.add( mqBean );
+		    MqUtils mq = new MqUtils( mqBeanList, PropertiesUtil.getMqUser(), PropertiesUtil.getMqPassWord() );
+		    mq.MqMessage( PropertiesUtil.getMqSeckillExchange(), PropertiesUtil.getMqSeckillQueueName(), obj.toString() );
+		    //		    socketService.mqSendMessage( obj.toString() );
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		}
@@ -507,7 +566,7 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Override
     public void loadSeckill() {
 
-	String key = "hSeckill";
+	String key = Constants.REDIS_SECKILL_NAME;
 	/*List<MallSeckill> seckillList = mallSeckillDao.selectByPage(null);
 	if(seckillList != null && seckillList.size() > 0){
 		for (MallSeckill mallSeckill : seckillList) {
@@ -563,6 +622,55 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
     @Override
     public MallSeckill selectSeckillBySeckillId( int id ) {
 	return mallSeckillDAO.selectById( id );
+    }
+
+    /**
+     * 获取店铺下所有的秒杀
+     */
+    @Override
+    public PageUtil searchSeckillAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	int rowCount = mallSeckillDAO.selectCountGoingSeckillProduct( searchProductDTO );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	searchProductDTO.setMaxNum( pageSize );
+
+	List< Map< String,Object > > productList = mallSeckillDAO.selectGoingSeckillProduct( searchProductDTO );
+
+	page.setSubList( mallPageService.getSearchProductParam( productList, 1, searchProductDTO ) );
+	return page;
+    }
+
+    @Override
+    public boolean seckillProductCanBuy( int seckillId, int invId, int productNum, int memberId, int memberBuyNum ) {
+	if ( seckillId == 0 ) {
+	    return false;
+	}
+	MallSeckill seckill = new MallSeckill();
+	seckill.setId( seckillId );
+	MallSeckill mallSeckill = mallSeckillDAO.selectBuyByProductId( seckill );
+	if ( CommonUtil.isEmpty( mallSeckill ) ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的秒杀商品被删除或已失效" );
+	}
+	if ( mallSeckill.getStatus() == 0 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的秒杀商品活动还未开始" );
+	} else if ( mallSeckill.getStatus() == -1 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的秒杀商品活动已结束" );
+	}
+	if ( invId > 0 ) {
+	    List< MallSeckillPrice > mallSeckillPrices = mallSeckillPriceService.selectPriceByInvId( seckillId, invId );
+	    if ( mallSeckillPrices != null && mallSeckillPrices.size() > 0 ) {
+		MallSeckillPrice buyPrice = mallSeckillPrices.get( 0 );
+		if ( buyPrice.getIsJoinGroup() == 0 ) {
+		    throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), ResponseEnums.INV_NO_JOIN_ERROR.getDesc() );
+		}
+	    } else {
+		throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), ResponseEnums.INV_NO_JOIN_ERROR.getDesc() );
+	    }
+	}
+
+	return true;
     }
 
 }

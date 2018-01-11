@@ -27,19 +27,26 @@
         <result column="is_seller" property="isSeller"/>
         <result column="is_check_seller" property="isCheckSeller"/>
         <result column="footer_json" property="footerJson"/>
+        <result column="style_key" property="styleKey"/>
+        <result column="order_cancel" property="orderCancel"/>
+        <result column="bus_message_json" property="busMessageJson"/>
+        <result column="is_securitytrade" property="isSecuritytrade"/>
+        <result column="is_footer" property="isFooter"/>
+        <result column="check_seller_phone" property="checkSellerPhone"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, is_delivery_pay , is_take_their , user_id , create_time , is_daifu , is_comment , is_comment_check,
         is_comment_give , is_message , is_presale , is_presale_give , message_json , is_sms_member, sms_message ,
-        is_pf , is_pf_check , pf_set , pf_remark , pf_apply_remark, is_seller , is_check_seller , footer_json
+        is_pf , is_pf_check , pf_set , pf_remark , pf_apply_remark, is_seller , is_check_seller , footer_json,style_key
+        ,bus_message_json,order_cancel,is_securitytrade,check_seller_phone,is_footer
     </sql>
     <!--<select id="selectByUserId" parameterType="com.gt.mall.entity.basic.MallPaySet" resultMap="BaseResultMap">-->
-        <!--select-->
-        <!--<include refid="Base_Column_List" />-->
-        <!--from t_mall_pay_set s-->
-        <!--where s.user_id= #{userId}-->
+    <!--select-->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from t_mall_pay_set s-->
+    <!--where s.user_id= #{userId}-->
     <!--</select>-->
 
 </mapper>

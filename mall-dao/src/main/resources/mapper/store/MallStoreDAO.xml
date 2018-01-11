@@ -47,8 +47,9 @@
         sto_head_img
     </sql>
     <sql id="page_Column_list">
-        o.id,o.sto_linkman,o.sto_phone,o.wx_shop_id,o.sto_name,o.sto_address,o.sto_house_member,o.sto_province,o.sto_city,o.sto_area,o.sto_longitude,o.sto_latitude,o.sto_picture,o.sto_user_id,
-        p.id as pageId
+        o.id,o.sto_linkman as stoLinkman,o.sto_phone as stoPhone ,o.wx_shop_id as wxShopId,o.sto_name as stoName,o.sto_address as stoAddress,o.sto_house_member as stoHouseMember,
+        o.sto_province as stoProvince,o.sto_city as stoCity,o.sto_area as stoArea,o.sto_longitude stoLongitude,o.sto_latitude as stoLatitude,o.sto_picture stoPicture
+        ,o.sto_user_id as stoUserId,p.id as pageId,sto_sms_telephone as stoSmsTelephone
     </sql>
     <select id="findByPage" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT

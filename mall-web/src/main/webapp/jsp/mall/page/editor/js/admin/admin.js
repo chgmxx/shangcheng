@@ -2,21 +2,27 @@
  * Created by boo on 2016/3/22.
  */
 
-angular.module('admin',[]).controller('adminController',["$scope","$timeout","$compile",function($scope,$timeout,$compile){
+angular.module('admin',[]).controller('adminController',["$scope","$timeout","$compile","$sce",function($scope,$timeout,$compile,$sce){
+	
     $scope.dataJson = dataJson;                 //样式数据
     $scope.picJson  = picJson;                  //图片编号数据
     
-    $scope.edit = null;         //当前需要显示的编辑框
-    $scope.pageEdit = 0;        //当前编辑的第几个模块
-    $scope.dataedit = null;    //当前编辑的数据
-    $scope.positionTop = 0;    //编辑器卷上去高度
+    $scope.edit = null;         				//当前需要显示的编辑框
+    $scope.pageEdit = 0;        				//当前编辑的第几个模块
+    $scope.dataedit = null;    					//当前编辑的数据
+    $scope.positionTop = 0;    					//编辑器卷上去高度
     
-    $scope.pic_index = 0; //判断选择第几张图
-
+    $scope.pic_index = 0; 						//判断选择第几张图
+    
+    $scope.dataJson.forEach(function(e){
+    	if(e.type == 18){e.dom = $sce.trustAsHtml(e.html)}
+    })
+    
+    //遮罩
     $scope.shade = {
         "shade":false,
         "commodity_shade":false
-    }; //遮罩
+    };
     
     //关闭所有遮罩
     $scope.colseShade = function(){
@@ -30,13 +36,10 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $scope.shade.shade = false;
     };
 
-    //判断显示哪个编辑框
-    $scope.showEdit = function(param){
-    	if($scope.edit == param)return true;
-    };
-
     //修改需要显示的编辑器和当前显示的第几个模块的值
     $scope.setShowEdit = function(param1,param2,$event){
+    	window.wangEditor="";
+    	
         $scope.positionTop = $($event.currentTarget).position().top + 50;
         $scope.edit = 0;
         //$scope.edit = param1.type;
@@ -44,7 +47,8 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $scope.dataedit = param1;
         $timeout(function(){
         	$scope.edit = param1.type;
-        });
+        })
+        
         $(".actions-active").removeClass("actions-active");
         $($event.target).addClass("actions-active");
     };
@@ -58,12 +62,12 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     var addpublic = function(param){
     	$scope.picJson.addAt(param,{
             "type":$scope.edit,
-            "imgID":[]
+            "imgID":[],
         });
         $timeout(function(){
             $(".module").eq(param).find(".actions").click();
-        },100)
-    };
+        },50)
+    }
     
     //商品
     $scope.addcommodity = function(param){
@@ -76,7 +80,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "btnpage": 0,
             "name": false,
             "intro":false,
-            "price": true
+            "price": true,
         });
         $scope.edit = 1;
         addpublic(param);
@@ -107,11 +111,11 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     	if(isNaN(param))param = $scope.dataJson.length;
     	$scope.dataJson.addAt(param,{
             "type":4,
-            "height":10
+            "height":20,
         });
-    	$scope.edit = 4;
+        $scope.edit = 4;
     	addpublic(param);
-    };
+    }
     
     //搜索
     $scope.addsearch = function(param){
@@ -127,17 +131,17 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $scope.dataJson.addAt(param,{
             "type":5,
             "attr":{
-                "height":40,
-                "width":300,
+                "height":27,
+                "width":294,
                 "border":1,
-                "borderColor":"#000",
-                "color":"#000",
-                "bgColor":"#fff"
-            }
+                "borderColor":"#cacaca",
+                "color":"#999",
+                "bgColor":"#fff",
+            },
         });
         $scope.edit = 5;
         addpublic(param);
-    };
+    }
     
     //预售
     $scope.addreservation = function(param){
@@ -145,18 +149,196 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     	$scope.dataJson.addAt(param,{
             "type":6,
         });
-    	$scope.edit = 6;
+        $scope.edit = 6;
         addpublic(param);
-    };
+    }
     
+    //标题
+    $scope.addtitle = function(param){
+    	if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+    		"title":"",
+            "titleWay":"0",
+            "viceTitle":"",
+            "showWay":"left",
+            "background":"#ffffff",
+            "navName":"",
+            
+            "time":"",
+            "author":"",
+            "linkName":"",
+            
+            "type":8,
+        });
+        $scope.edit = 8;
+        addpublic(param);
+    }
+    
+    //文本导航
+    $scope.addTextNav = function(param){
+    	if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+            "list":[{"title":""}],
+            "type":9,
+        });
+        $scope.edit = 9;
+        addpublic(param);
+    }
+    
+    //图片导航
+    $scope.addPicNav = function(param){
+    	if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+            "pic":[{"src":"","title":""},{"src":"","title":""},{"src":"","title":""},{"src":"","title":""}],
+            "type":10,
+        });
+        $scope.edit = 10;
+        addpublic(param);
+    }
+    
+    //橱窗
+    $scope.addWindow = function(param){
+    	if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+    		"title":"",
+    		"showWay":"0",
+    		"picGap":"0",
+    		"contentTitle":"",
+    		"contentExplain":"",
+            "pic":[
+                   {"src":""},
+                   {"src":""},
+                   {"src":""}
+               ],
+            "type":11,
+        });
+        $scope.edit = 11;
+        addpublic(param);
+    }
+    
+    //进入店铺
+    $scope.addGoShop = function(param){
+    	if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+            "type":12,
+            "stoName": stoName,
+            "name": '进入店铺'
+        });
+        $scope.edit = 12;
+        addpublic(param);
+    }
+    
+    //公告
+	$scope.addNotice = function(param){
+		if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+    		"text":"",
+            "type":13,
+        });
+        $scope.edit = 13;
+        addpublic(param);
+    }
+	
+	//辅助线
+	$scope.addGuide = function(param){
+		if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+    		"color":"#e5e5e5",
+    		"leftSide":false,
+    		"style":0,
+            "type":14,
+        });
+        $scope.edit = 14;
+        addpublic(param);
+	}
+	
+	//优惠券
+	$scope.addCoupon = function(param){
+		if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+            "type":15,
+        });
+        $scope.edit = 15;
+        addpublic(param);
+	}
+	
+	//商品分组
+	$scope.addGrouping = function(param){
+		if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+    		"nav": 0,
+            "page": 2,
+            "css":0,
+            "btn": true,
+            "btnpage": 0,
+            "name": false,
+            "intro":false,
+            "price": true,
+            "type":16,
+        });
+        $scope.edit = 16;
+        addpublic(param);
+	}
+	
+	//商品列表
+	$scope.addcommodityList = function(param){
+		if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+    		"number": "6",
+            "page": 2,
+            "css":0,
+            "btn": true,
+            "btnpage": 0,
+            "name": false,
+            "intro":false,
+            "price": true,
+            "type":17,
+        });
+        $scope.edit = 17;
+        addpublic(param);
+	}
+	
+	//富文本
+	$scope.addRichText = function(param){
+		if(isNaN(param))param = $scope.dataJson.length;
+    	$scope.dataJson.addAt(param,{
+    		"dom":"",
+            "type":18,
+        });
+        $scope.edit = 18;
+        addpublic(param);
+	}
+	
     
     /************************************/
     
     $scope.addmoduleAny = function(param,$event){
-    	var str ='<div class="app-add-field"><h4>添加内容</h4><ul><li ng-click="addcommodity('+param+')"><a>商品</a></li><li ng-click="addswiper('+param+')"><a>轮播</a></li><li ng-click="addclassify('+param+')"><a>分类</a></li><li ng-click="addinterval('+param+')"><a>间隔</a></li><li ng-click="addsearch('+param+')"><a>搜索</a></li><li ng-click="addreservation('+param+')"><a>预售</a></li></ul></div>';
+    	var str ='<div class="app-add-field">' +
+					'<h4>添加内容</h4>'+
+					'<ul>'+
+					'	 <li ng-click="addcommodity('+param+')"><a>商品</a></li>'+
+	                '    <li ng-click="addswiper('+param+')"><a>轮播</a></li>'+
+	                '    <li ng-click="addclassify('+param+')"><a>魔方</a></li>'+
+	                '    <li ng-click="addinterval('+param+')"><a>辅助<br>空白</a></li>'+
+	                '    <li ng-click="addsearch('+param+')"><a>商品<br>搜索</a></li>'+
+	                '    <li ng-click="addreservation('+param+')"><a>预售</a></li>'+
+	                '    <li ng-click="addtitle('+param+')"><a>标题</a></li>'+
+	                '    <li ng-click="addTextNav('+param+')"><a>文本<br>导航</a></li>'+
+	                '    <li ng-click="addPicNav('+param+')"><a>图片<br>导航</a></li>'+
+	                '    <li ng-click="addWindow('+param+')"><a>橱窗</a></li>'+
+	                '    <li ng-click="addGoShop('+param+')"><a>进入<br>店铺</a></li>'+
+	                '    <li ng-click="addNotice('+param+')"><a>公告</a></li>'+
+	                '    <li ng-click="addGuide('+param+')"><a>辅助线</a></li>'+
+	                //'    <li ng-click="addCoupon('+param+')"><a>优惠券</a></li>'+
+	                '    <li ng-click="addGrouping('+param+')"><a>商品<br>分组</a></li>'+
+	                /*'    <li ng-click="addcommodityList('+param+')"><a>商品<br>列表</a></li>'+*/
+	                '    <li ng-click="addRichText('+param+')"><a>富文本</a></li>'+
+					'</ul>'+
+				'</div>';
+		
     	$(".app-sidebar-inner>div").html($compile(str)($scope));
     	$event.stopPropagation();
-    };
+    }
 
     /***************************************************************************************/
 
@@ -172,6 +354,12 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     $scope.addcommoditypicone = function(){
         $scope.picJson[$scope.pageEdit].imgID[image_num] = imgList[0];        
     };
+    $scope.addchooseGroup = function () {
+        $scope.picJson[$scope.pageEdit].imgID = $scope.picJson[$scope.pageEdit].imgID.concat(imgList);
+    };
+    $scope.editchooseGroup = function () {
+        $scope.picJson[$scope.pageEdit].imgID = imgList;
+    };
     
     //轮播图片
     $scope.addswiperpic = function(){
@@ -180,7 +368,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     $scope.addswiperpic_last = function(){
         $scope.dataedit.pic.push({
         	"src":imgList,
-            "title":""
+            "title":"",
         });
         $scope.picJson[$scope.pageEdit].imgID.push({})
     };
@@ -197,14 +385,14 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $timeout(function(){
             $(".module:first").click();
         },100)
-    };
+    }
     
     /**
      * 对比数据
      */
     $scope.complete=function(param){
     	if(parseInt(param/3) == param/3)return true;
-    };
+    }
     
     /*****************************************************************************************/
     
@@ -215,39 +403,30 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     //保存分类
     $scope.saveclassify = function(){
     	$scope.dataedit.dom = $(".classifyDirective table").html().replace(/\"/g, "\'");
-    };
+    }
     
-    if(imgIds.length > 1){
-		imgIds = imgIds.substr(1,imgIds.length-2);
-		var userid = $("input.userid").val();
-		$.ajax({
-			type : "post",
-			url : "/phoneProduct/79B4DE7C/getProductByIds.do",
-			data : {
-				proIds : imgIds,
-				userid : userid
-			},
-			async : true,
-			dataType : "json",
-			success : function(data) {
-				console.log($scope.picJson)
-				if(data.code == -1){
-					return;
-				}
-				picJsonEach(data.data);
-				$timeout(function(){
-					$scope.picJson  = picJson; 
-				})
-			}
-		});
-	}
+    /************************************************************************/
+    
+    /*
+     * 保持编辑器数据
+     */
+    $scope.saverichText = function(){
+    	var html = $("#editor-trigger").html();
+    	if(html == "<p><br></p>"){
+    		$scope.dataedit.html = "";
+    		$scope.dataedit.dom = "";
+    	}else{
+    		$scope.dataedit.html = html;
+    		$scope.dataedit.dom = $sce.trustAsHtml(html);
+    	}
+    }
 
 }])
 .directive('admindraggable', ["$timeout",function ($timeout) {
     return {
         restrict:"E",
         templateUrl: "js/admin/admin.html",
-        link: function(scope){
+        link: function(){
         	$timeout(function(){
         		$(".app-preview-box>.module:eq(0) .actions").click();
         	},100)

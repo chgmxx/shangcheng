@@ -3,26 +3,30 @@ package com.gt.mall.service.web.applet.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.product.MallShopCart;
+import com.gt.mall.result.applet.AppletShopCartResult;
+import com.gt.mall.result.applet.param.AppletShopCartProductDTO;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.applet.MallProductAppletService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import com.gt.util.entity.result.shop.WsShopPhoto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -56,36 +60,38 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
     private MemberService               memberService;
     @Autowired
     private WxShopService               wxShopService;
+    @Autowired
+    private MallStoreService            mallStoreService;
 
     @Override
-    public Map< String,Object > shoppingcare( Map< String,Object > params ) {
+    public Map< String,Object > shoppingcare( Map< String,Object > params, HttpServletRequest request ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	Member member = memberService.findMemberById( memberId, null );
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	params.put( "memberList", memberList );
 	double discount = productService.getMemberDiscount( "1", member );//获取会员折扣
-	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );
+	//	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );
 	List< Map< String,Object > > list = shopCartDAO.selectAppletByParams( params );
 	/*int type = 0;
 		if(CommonUtil.isNotEmpty(params.get("type"))){
 			type = CommonUtil.toInteger(params.get("type"));
 		}*/
-	List< WsWxShopInfoExtend > wxShopList = wxShopService.queryWxShopByBusId( member.getBusid() );
-	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
-	List< Map< String,Object > > shopCartList = new ArrayList< Map< String,Object > >();
+	List< Map< String,Object > > storeList = mallStoreService.findShopByUserId( member.getBusid(), request );
+	List< AppletShopCartProductDTO > shopList = new ArrayList< AppletShopCartProductDTO >();//商品列表
+	List< AppletShopCartResult > shopCartList = new ArrayList< AppletShopCartResult >();//店铺列表
 
 	//保存失效商品
-	List< Map< String,Object > > sxCartList = new ArrayList< Map< String,Object > >();
-	List< Map< String,Object > > sxshopCartList = new ArrayList< Map< String,Object > >();
+	List< AppletShopCartProductDTO > sxCartList = new ArrayList< AppletShopCartProductDTO >();//商品列表
+	List< AppletShopCartResult > sxshopCartList = new ArrayList< AppletShopCartResult >();//店铺列表
 	int shopId = 0;
-	Map< String,Object > shopMap = new HashMap< String,Object >();
-	Map< String,Object > sxShopMap = new HashMap< String,Object >();
-	Map< String,Object > productMap = new HashMap< String,Object >();
+	AppletShopCartResult shopMap = new AppletShopCartResult();
+	AppletShopCartResult sxShopMap = new AppletShopCartResult();
+	/*Map< String,Object > productMap = new HashMap< String,Object >();*/
 	if ( list != null && list.size() > 0 ) {
 	    int j = 0;
 	    for ( Map< String,Object > map : list ) {
-		Map< String,Object > cartMap = new HashMap< String,Object >();
+		AppletShopCartProductDTO cartMap = new AppletShopCartProductDTO();
 		String proId = map.get( "product_id" ).toString();
 		int productNum = CommonUtil.toInteger( map.get( "product_num" ) );//商品数量
 		int stockNum = CommonUtil.toInteger( map.get( "pro_stock_num" ) );//库存数量
@@ -97,50 +103,52 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		DecimalFormat df = new DecimalFormat( "######0.00" );
 		MallShopCart cart = new MallShopCart();
 		cart.setId( CommonUtil.toInteger( map.get( "id" ) ) );
-		cartMap.put( "id", map.get( "id" ) );
-		cartMap.put( "product_id", map.get( "proId" ) );
-		cartMap.put( "product_name", map.get( "pro_name" ) );
-				/*String jump_url = PropertiesUtil.getWebHomeUrl()+"/mallApplet/79B4DE7C/phoneProduct.do?memberId="+memberId+"&shopId="+map.get("shop_id")+"&productId="+proId;
-				int is_return = 1;
-				if(CommonUtil.isNotEmpty(map.get("pro_type_id")) && CommonUtil.isNotEmpty(map.get("member_type"))){
-					if(CommonUtil.toInteger(map.get("pro_type_id")) == 2 && CommonUtil.toInteger(map.get("member_type")) > 0){
-						jump_url = "";
-						is_return = 0;
-						cartMap.put("return_msg", "会员卡购买正在开发。。。请耐心等待");
-					}
-				}
-				cartMap.put("jump_url", jump_url);
-				cartMap.put("is_return", is_return);*/
-		cartMap.put( "pro_type_id", map.get( "pro_type_id" ) );
-		cartMap.put( "image_url", PropertiesUtil.getResourceUrl() + map.get( "image_url" ) );
-		cartMap.put( "product_speciname", map.get( "product_speciname" ) );
-		cartMap.put( "pro_stock_num", map.get( "pro_stock_num" ) );
-		cartMap.put( "product_num", map.get( "product_num" ) );
-		cartMap.put( "shop_id", shopId );
+		cartMap.setId( CommonUtil.toInteger( map.get( "id" ) ) );
+		cartMap.setProduct_id( CommonUtil.isEmpty( map.get( "proId" ) ) ? null : CommonUtil.toInteger( map.get( "proId" ) ) );
+		cartMap.setProduct_name( map.get( "pro_name" ).toString() );
+		/*String jump_url = PropertiesUtil.getWebHomeUrl()+"/mallApplet/79B4DE7C/phoneProduct.do?memberId="+memberId+"&shopId="+map.get("shop_id")+"&productId="+proId;
+		int is_return = 1;
+		if(CommonUtil.isNotEmpty(map.get("pro_type_id")) && CommonUtil.isNotEmpty(map.get("member_type"))){
+			if(CommonUtil.toInteger(map.get("pro_type_id")) == 2 && CommonUtil.toInteger(map.get("member_type")) > 0){
+				jump_url = "";
+				is_return = 0;
+				cartMap.put("return_msg", "会员卡购买正在开发。。。请耐心等待");
+			}
+		}
+		cartMap.put("jump_url", jump_url);
+		cartMap.put("is_return", is_return);*/
+		cartMap.setPro_type_id( CommonUtil.toInteger( map.get( "pro_type_id" ) ) );
+		cartMap.setImage_url( PropertiesUtil.getResourceUrl() + map.get( "image_url" ) );
+		if ( map.containsKey( "product_speciname" ) ) {
+		    cartMap.setProduct_speciname( map.get( "product_speciname" ) + "" );
+		}
+		cartMap.setPro_stock_num( CommonUtil.toInteger( map.get( "pro_stock_num" ) ) );
+		cartMap.setProduct_num( CommonUtil.toInteger( map.get( "product_num" ) ) );
+		cartMap.setShop_id( shopId );
 		String msg = "";
 		int code = 1;
 		//判断限购和商品是否正在售卖
-		Map< String,Object > xgMap = productService.isshoppingCart( map, productNum, wxShopList );
+		Map< String,Object > xgMap = productService.isshoppingCart( map, productNum, storeList );
 		if ( xgMap.get( "code" ).toString().equals( "1" ) ) {
 		    if ( xgMap.containsKey( "product_num" ) ) {
-			cartMap.put( "product_num", xgMap.get( "product_num" ) );
+			cartMap.setProduct_num( CommonUtil.toInteger( xgMap.get( "product_num" ) ) );
 		    }
 		    if ( xgMap.containsKey( "maxBuy" ) ) {
-			cartMap.put( "maxBuy", xgMap.get( "maxBuy" ) );
+			cartMap.setMaxBuy( CommonUtil.toInteger( xgMap.get( "maxBuy" ) ) );
 		    }
-		    if ( xgMap.containsKey( "productMap" ) ) {
+		    /*if ( xgMap.containsKey( "productMap" ) ) {
 			productMap.putAll( JSONObject.parseObject( xgMap.get( "productMap" ).toString() ) );
-		    }
+		    }*/
 		    if ( xgMap.containsKey( "sto_name" ) ) {
-			cartMap.put( "sto_name", xgMap.get( "sto_name" ) );
+			cartMap.setSto_name( xgMap.get( "sto_name" ).toString() );
 		    }
 		} else {
 		    code = CommonUtil.toInteger( xgMap.get( "code" ) );
 		    msg = CommonUtil.toString( xgMap.get( "msg" ) );
 		}
-		String proSpec = CommonUtil.toString( map.get( "product_specificas" ));
+		String proSpec = CommonUtil.isEmpty( map.get( "product_specificas" ) ) ? "" : CommonUtil.toString( map.get( "product_specificas" ) );
 		if ( map.get( "isSpec" ).toString().equals( "1" ) && code == 1 && pro_type == 0 ) {//商品存在规格
-		    if ( proSpec== null || proSpec.equals( "" ) ) {
+		    if ( proSpec == null || proSpec.equals( "" ) ) {
 			code = 0;
 			msg = "商品存在规格";
 		    } else {
@@ -148,14 +156,14 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 			Map< String,Object > invPriceMap = productService.getProInvIdBySpecId( proSpec, CommonUtil.toInteger( proId ) );
 			boolean flag = false;
 			if ( CommonUtil.isNotEmpty( invPriceMap ) ) {
-			    cartMap.put( "pro_stock_num", invPriceMap.get( "inv_num" ) );
+			    cartMap.setPro_stock_num( CommonUtil.toInteger( invPriceMap.get( "inv_num" ) ) );
 			    if ( CommonUtil.isNotEmpty( invPriceMap.get( "specifica_img_url" ) ) ) {
-				cartMap.put( "image_url", PropertiesUtil.getResourceUrl() + invPriceMap.get( "specifica_img_url" ) );
+				cartMap.setImage_url( PropertiesUtil.getResourceUrl() + invPriceMap.get( "specifica_img_url" ) );
 			    }
 			    if ( CommonUtil.isNotEmpty( invPriceMap.get( "specifica_values" ) ) ) {
 				String speciname = invPriceMap.get( "specifica_values" ).toString();
 				speciname = speciname.replaceAll( ",", "/" );
-				cartMap.put( "product_speciname", speciname );
+				cartMap.setProduct_speciname( speciname );
 			    }
 			    double invPrice = CommonUtil.toDouble( invPriceMap.get( "inv_price" ) );
 			    double yhPrice = invPrice;
@@ -164,7 +172,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 				    yhPrice = invPrice * discount;
 				}
 			    }
-			    cartMap.put( "price", df.format( invPrice ) );
+			    cartMap.setPrice( df.format( invPrice ) );
 			    if ( price != invPrice || yhPrice != price ) {//同步价格
 				yhPrice = CommonUtil.toDouble( df.format( yhPrice ) );
 				if ( yhPrice <= 0 ) {
@@ -173,9 +181,9 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 				cart.setPrice( BigDecimal.valueOf( yhPrice ) );
 				cart.setPrimaryPrice( BigDecimal.valueOf( invPrice ) );
 				shopCartDAO.updateById( cart );
-				cartMap.put( "hyPrice", df.format( yhPrice ) );
+				cartMap.setHyprice( df.format( yhPrice ) );
 				//								cartMap.put("primary_price",df.format(invPrice));
-				cartMap.put( "price", df.format( yhPrice ) );
+				cartMap.setPrice( df.format( yhPrice ) );
 			    }
 			    if ( CommonUtil.isEmpty( invPriceMap.get( "inv_num" ) ) ) {
 				flag = true;
@@ -204,7 +212,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 			msg = "商品不存在规格";
 		    }
 		    double proPrice = CommonUtil.toDouble( map.get( "pro_price" ) );
-		    cartMap.put( "price", df.format( proPrice ) );
+		    cartMap.setPrice( df.format( proPrice ) );
 		    double yhPrice = proPrice;
 		    if ( CommonUtil.isNotEmpty( map.get( "is_member_discount" ) ) ) {
 			if ( map.get( "is_member_discount" ).toString().equals( "1" ) ) {//开启会员折扣
@@ -216,23 +224,23 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 			if ( yhPrice <= 0 ) {
 			    yhPrice = 0.01;
 			}
-						/*boolean isUpPro = true;
-						if(CommonUtil.isNotEmpty(map.get("sale_member_id"))){
-							if(CommonUtil.toInteger(map.get("sale_member_id")) > 0){
-								isUpPro = false;
-							}
-						}
-						if(isUpPro){*/
+			/*boolean isUpPro = true;
+			if(CommonUtil.isNotEmpty(map.get("sale_member_id"))){
+				if(CommonUtil.toInteger(map.get("sale_member_id")) > 0){
+					isUpPro = false;
+				}
+			}
+			if(isUpPro){*/
 			cart.setPrice( BigDecimal.valueOf( yhPrice ) );
 			cart.setPrimaryPrice( BigDecimal.valueOf( proPrice ) );
 			shopCartDAO.updateById( cart );
-			cartMap.put( "price", df.format( yhPrice ) );
-			cartMap.put( "hyPrice", df.format( yhPrice ) );
-			//							cartMap.put("primary_price",df.format(proPrice));
-						/*}*/
+			cartMap.setPrice( df.format( yhPrice ) );
+			cartMap.setHyprice( df.format( yhPrice ) );
+			// cartMap.put("primary_price",df.format(proPrice));
+			/*}*/
 
-						/*code = 0;
-						msg = "商品价格异常";*/
+			/*code = 0;
+			msg = "商品价格异常";*/
 		    }
 		    if ( productNum > stockNum ) {
 			code = 0;
@@ -240,7 +248,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		    }
 		}
 		if ( pro_type == 1 || pro_type == 2 ) {//批发商品
-		    cartMap.put( "pfType", 1 );
+		    cartMap.setPfType( 1 );
 		    List< MallPifa > pfList = pifaDAO.selectStartPiFaByProductId( map );
 		    if ( pfList == null || pfList.size() == 0 ) {
 			code = 0;
@@ -254,25 +262,25 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		    }
 		}
 		//批发
-				/*if(CommonUtil.isNotEmpty(map.get("pro_spec_str"))){
-					Map<String, Object> specStr = JSONObject.fromObject(map.get("pro_spec_str"));
-					Set<String> set = specStr.keySet();
-					if(set != null && set.size() > 0){
-						for (String str : set) {
-							if(CommonUtil.isNotEmpty(specStr.get(str))){
-								Map<String, Object> valMap = JSONObject.fromObject(specStr.get(str));
-								Map<String, Object> invPrice = mallProductService.getProInvIdBySpecId(str, CommonUtil.toInteger(proId));
-								if(CommonUtil.isNotEmpty(invPrice)){
-									valMap.put("invNum", invPrice.get("inv_num"));
-									specStr.put(str, valMap);
-								}
-							}
+		/*if(CommonUtil.isNotEmpty(map.get("pro_spec_str"))){
+			Map<String, Object> specStr = JSONObject.fromObject(map.get("pro_spec_str"));
+			Set<String> set = specStr.keySet();
+			if(set != null && set.size() > 0){
+				for (String str : set) {
+					if(CommonUtil.isNotEmpty(specStr.get(str))){
+						Map<String, Object> valMap = JSONObject.fromObject(specStr.get(str));
+						Map<String, Object> invPrice = mallProductService.getProInvIdBySpecId(str, CommonUtil.toInteger(proId));
+						if(CommonUtil.isNotEmpty(invPrice)){
+							valMap.put("invNum", invPrice.get("inv_num"));
+							specStr.put(str, valMap);
 						}
 					}
-					map.put("proSpecStr", specStr);
-				}*/
-		cartMap.put( "msg", msg );
-		cartMap.put( "code", code );
+				}
+			}
+			map.put("proSpecStr", specStr);
+		}*/
+		cartMap.setMsg( msg );
+		cartMap.setCode( code );
 
 		if ( code == 1 ) {
 		    shopList.add( cartMap );
@@ -289,20 +297,20 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		}
 		if ( ( !next_shop_id.equals( CommonUtil.toString( shopId ) ) && CommonUtil.isNotEmpty( next_shop_id ) ) || j + 1 == list.size() ) {
 		    if ( null != shopList && shopList.size() > 0 ) {
-			shopMap = getShopMaps( shopMap, map, pro_type, shopInfoList );
-			shopMap.put( "proList", shopList );
+			shopMap = getShopMaps( shopMap, map, pro_type, storeList );
+			shopMap.setProList( shopList );
 			shopCartList.add( shopMap );
 
-			shopList = new ArrayList< Map< String,Object > >();
-			shopMap = new HashMap< String,Object >();
+			shopList = new ArrayList<>();
+			shopMap = new AppletShopCartResult();
 		    }
 		    if ( null != sxCartList && sxCartList.size() > 0 ) {
-			sxShopMap = getShopMaps( sxShopMap, map, pro_type, shopInfoList );
-			sxShopMap.put( "proList", sxCartList );
+			sxShopMap = getShopMaps( sxShopMap, map, pro_type, storeList );
+			sxShopMap.setProList( sxCartList );
 			sxshopCartList.add( sxShopMap );
 
-			sxCartList = new ArrayList< Map< String,Object > >();
-			sxShopMap = new HashMap< String,Object >();
+			sxCartList = new ArrayList<>();
+			sxShopMap = new AppletShopCartResult();
 		    }
 		}
 		j++;
@@ -316,60 +324,63 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 	}
 
 	//混批
-		/*if(type == 1){//批发购物车
-			//通过商品id查询预售信息
-			MallPaySet set = mallPaySetService.selectByMember(member);
-			double hpMoney = 0;
-			int hpNum = 1;//混批件数
-			int spHand = 1;
-			if(CommonUtil.isNotEmpty(set)){
-				if(CommonUtil.isNotEmpty(set.getIsPf())){//是否开启批发
-					if(CommonUtil.isNotEmpty(set.getPfSet())){
-						JSONObject obj = JSONObject.fromObject(set.getPfSet());
-						if(CommonUtil.isNotEmpty(obj.get("isHpMoney"))){
-							if(obj.get("isHpMoney").toString().equals("1") && CommonUtil.isNotEmpty(obj.get("hpMoney"))){
-								hpMoney = CommonUtil.toDouble(obj.get("hpMoney"));
-							}
+	/*if(type == 1){//批发购物车
+		//通过商品id查询预售信息
+		MallPaySet set = mallPaySetService.selectByMember(member);
+		double hpMoney = 0;
+		int hpNum = 1;//混批件数
+		int spHand = 1;
+		if(CommonUtil.isNotEmpty(set)){
+			if(CommonUtil.isNotEmpty(set.getIsPf())){//是否开启批发
+				if(CommonUtil.isNotEmpty(set.getPfSet())){
+					JSONObject obj = JSONObject.fromObject(set.getPfSet());
+					if(CommonUtil.isNotEmpty(obj.get("isHpMoney"))){
+						if(obj.get("isHpMoney").toString().equals("1") && CommonUtil.isNotEmpty(obj.get("hpMoney"))){
+							hpMoney = CommonUtil.toDouble(obj.get("hpMoney"));
 						}
-						if(CommonUtil.isNotEmpty(obj.get("isHpNum"))){
-							if(obj.get("isHpNum").toString().equals("1") && CommonUtil.isNotEmpty(obj.get("hpNum"))){
-								hpNum = CommonUtil.toInteger(obj.get("hpNum"));
-							}
+					}
+					if(CommonUtil.isNotEmpty(obj.get("isHpNum"))){
+						if(obj.get("isHpNum").toString().equals("1") && CommonUtil.isNotEmpty(obj.get("hpNum"))){
+							hpNum = CommonUtil.toInteger(obj.get("hpNum"));
 						}
-						if(CommonUtil.isNotEmpty(obj.get("isSpHand"))){
-							if(obj.get("isSpHand").toString().equals("1") && CommonUtil.isNotEmpty(obj.get("spHand"))){
-								spHand = CommonUtil.toInteger(obj.get("spHand"));
-							}
+					}
+					if(CommonUtil.isNotEmpty(obj.get("isSpHand"))){
+						if(obj.get("isSpHand").toString().equals("1") && CommonUtil.isNotEmpty(obj.get("spHand"))){
+							spHand = CommonUtil.toInteger(obj.get("spHand"));
 						}
 					}
 				}
 			}
-			resultMap.put("hpMoney", hpMoney);
-			resultMap.put("hpNum", hpNum);
-			resultMap.put("spHand", spHand);
-		}*/
+		}
+		resultMap.put("hpMoney", hpMoney);
+		resultMap.put("hpNum", hpNum);
+		resultMap.put("spHand", spHand);
+	}*/
 	return resultMap;
     }
 
-    public Map< String,Object > getShopMaps( Map< String,Object > shopMap, Map< String,Object > map, int pro_type, List< WsWxShopInfoExtend > shopInfoList ) {
-	Integer wxShopId = CommonUtil.toInteger( map.get( "wx_shop_id" ) );
+    private AppletShopCartResult getShopMaps( AppletShopCartResult shopMap, Map< String,Object > map, int pro_type, List< Map< String,Object > > storeList ) {
+	String wxShopId = CommonUtil.toString( map.get( "wx_shop_id" ) );
 	String shopPicture = "";
-	for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-	    if ( wxShops.getId() == wxShopId ) {
-		if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
-		    shopMap.put( "sto_name", wxShops.getBusinessName() );
+	for ( Map< String,Object > storeMap : storeList ) {
+	    if ( storeMap.get( "wxShopId" ).toString().equals( wxShopId ) ) {
+		if ( CommonUtil.isNotEmpty( storeMap.get( "sto_name" ) ) ) {
+		    shopMap.setSto_name( storeMap.get( "sto_name" ).toString() );
 		}
-		shopPicture = wxShops.getImageUrl();
+		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( CommonUtil.toInteger( map.get( "wx_shop_id" ) ) );
+		if ( photoList != null && photoList.size() > 0 ) {
+		    shopPicture = photoList.get( 0 ).getLocalAddress();
+		}
 		break;
 	    }
 	}
-	shopMap.put( "shop_id", map.get( "shop_id" ) );
-	shopMap.put( "pageid", map.get( "pageid" ) );
-	shopMap.put( "pro_type", pro_type );
+	shopMap.setShop_id( CommonUtil.toInteger( map.get( "shop_id" ) ) );
+	shopMap.setPageid( CommonUtil.isEmpty( map.get( "pageid" ) ) ? null : CommonUtil.toInteger( map.get( "pageid" ) ) );
+	shopMap.setPro_type( pro_type );
 	if ( CommonUtil.isNotEmpty( shopPicture ) ) {
-	    shopMap.put( "sto_image", PropertiesUtil.getResourceUrl() + shopPicture );
+	    shopMap.setSto_image( PropertiesUtil.getResourceUrl() + shopPicture );
 	} else if ( CommonUtil.isNotEmpty( map.get( "stoPicture" ) ) ) {
-	    shopMap.put( "sto_image", PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
+	    shopMap.setSto_image( PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
 	}
 	return shopMap;
     }

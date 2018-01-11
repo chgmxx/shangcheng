@@ -6,12 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.api.util.KeysUtil;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
+import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
@@ -25,6 +27,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.user.MemberAddressService;
@@ -37,6 +40,7 @@ import com.gt.mall.service.web.applet.MallOrderAppletService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
+import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
@@ -115,6 +119,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private MemberAddressService        memberAddressService;
     @Autowired
     private PayService                  payService;
+    @Autowired
+    private MallOrderReturnService      mallOrderReturnService;
+    @Autowired
+    private MallGroupJoinDAO            mallGroupJoinDAO;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -137,7 +145,12 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	params.put( "maxNum", pageSize );
 
 	List< Map< String,Object > > orderList = new ArrayList< Map< String,Object > >();
-	List< MallOrder > list = orderDAO.mobileOrderList( params );
+	List< MallOrder > list = null;
+	if ( CommonUtil.isNotEmpty( params.get( "appraiseStatus" ) ) || CommonUtil.isNotEmpty( params.get( "isReturn" ) ) ) {
+	    list = orderDAO.mobileOrderListByComment( params );
+	} else {
+	    list = orderDAO.mobileOrderList( params );
+	}
 	if ( list != null && list.size() > 0 ) {
 	    for ( MallOrder order : list ) {
 
@@ -171,31 +184,25 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	if ( order.getOrderStatus() == 3 ) {
 	    isShouHuo = 1;
 	}
-	String statusName = "";
-	if ( orderStatus.equals( "1" ) ) {
-	    statusName = "待支付";
-	} else if ( orderStatus.equals( "2" ) && deliveryMethod.equals( "1" ) ) {
-	    statusName = "待发货";
-	} else if ( orderStatus.equals( "2" ) && deliveryMethod.equals( "2" ) ) {
-	    statusName = "待提货";
-	} else if ( orderStatus.equals( "3" ) ) {
-	    statusName = "待收货";
-	} else if ( orderStatus.equals( "4" ) ) {
-	    statusName = "订单已完成";
-	} else if ( orderStatus.equals( "5" ) ) {
-	    statusName = "订单已关闭";
-	}
+	//组装状态名称
+	String statusName = OrderUtil.getOrderStatusMsgByOrder( orderStatus, deliveryMethod );
 	for ( Object dObject2 : arr ) {
 	    JSONObject dObj = JSONObject.parseObject( dObject2.toString() );
 	    Map< String,Object > detailMap = new HashMap< String,Object >();
-	    int productId = dObj.getInteger( "productId" );
-	    shopId = dObj.getInteger( "shopId" );
-	    String proTypeId = CommonUtil.toString( dObj.get( "proTypeId" ) );
-	    int cardReceiveId = 0;
-	    int groupIsReturn = groupBuyService.groupIsReturn( groupBuyId, orderType, order.getId(), dObj.get( "id" ), buy );
-	    if ( CommonUtil.isNotEmpty( dObj.get( "cardReceiveId" ) ) ) {
-		cardReceiveId = CommonUtil.toInteger( dObj.get( "cardReceiveId" ) );
-	    }
+	    if ( orderPayWay.equals( "5" ) ) {
+		detailMap.put( "product_name", "扫码支付" );
+		detailMap.put( "product_num", 1 );
+		detailMap.put( "product_price", order.getOrderMoney() );
+	    } else if ( CommonUtil.isNotEmpty( dObj.get( "id" ) ) ) {
+
+		int productId = dObj.getInteger( "productId" );
+		shopId = dObj.getInteger( "shopId" );
+		String proTypeId = CommonUtil.toString( dObj.get( "proTypeId" ) );
+		int cardReceiveId = 0;
+		int groupIsReturn = groupBuyService.groupIsReturn( groupBuyId, orderType, order.getId(), dObj.get( "id" ), buy );
+		if ( CommonUtil.isNotEmpty( dObj.get( "cardReceiveId" ) ) ) {
+		    cardReceiveId = CommonUtil.toInteger( dObj.get( "cardReceiveId" ) );
+		}
 	    /*if(buy != null){
 		Map<String, Object> params = new HashMap<String, Object>();
 				params.put("orderId", orderMap.get("id"));
@@ -213,15 +220,15 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 					}
 				}
 			}*/
-	    //String url = "/mallApplet/79B4DE7C/phoneProduct.do?productId="+productId+"&shopId="+shopId;
-	    String proUnit = "";
-	    if ( orderPayWay.equals( "4" ) ) {//积分兑换商品
-		//url = "/mallApplet/79B4DE7C/phoneProduct.do?rType=1&productId="+productId+"&shopId="+shopId;
-		proUnit = "积分";
-	    } else if ( orderPayWay.equals( "8" ) ) {//粉币兑换商品
-		//url = "/mallApplet/79B4DE7C/phoneProduct.do?rType=2&productId="+productId+"&shopId="+shopId;
-		proUnit = "粉币";
-	    }
+		//String url = "/mallApplet/79B4DE7C/phoneProduct.do?productId="+productId+"&shopId="+shopId;
+		String proUnit = "";
+		if ( orderPayWay.equals( "4" ) ) {//积分兑换商品
+		    //url = "/mallApplet/79B4DE7C/phoneProduct.do?rType=1&productId="+productId+"&shopId="+shopId;
+		    proUnit = "积分";
+		} else if ( orderPayWay.equals( "8" ) ) {//粉币兑换商品
+		    //url = "/mallApplet/79B4DE7C/phoneProduct.do?rType=2&productId="+productId+"&shopId="+shopId;
+		    proUnit = "粉币";
+		}
 	    /*if(orderType.equals("4")){// 拍卖的商品，直接跳转到拍卖详情
 				url = "/mallApplet/79B4DE7C/auctiondetail.do?productId="+productId+"&shopId="+shopId+"&auctionId="+orderMap.get("groupBuyId");
 			}else if(CommonUtil.isNotEmpty(dObj.get("saleMemberId")) && !orderType.equals("4")){
@@ -230,12 +237,12 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 					url += "&saleMemberId="+saleMemberId;
 				}
 			}*/
-	    int status = -3;
+		int status = -3;
 			/*String statusMsg = "";*/
-	    int isReturn = 1;//是否可以退款  1可以退款  0 不可以退款
-	    if ( CommonUtil.isNotEmpty( dObj.get( "status" ) ) ) {
-		status = CommonUtil.toInteger( dObj.get( "status" ) );
-	    }
+		int isReturn = 1;//是否可以退款  1可以退款  0 不可以退款
+		if ( CommonUtil.isNotEmpty( dObj.get( "status" ) ) ) {
+		    status = CommonUtil.toInteger( dObj.get( "status" ) );
+		}
 
 			/*if(status == 0){
 				statusMsg = "退款中";
@@ -254,81 +261,77 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 				statusMsg = "退款中";
 			}*/
 
-	    if ( status != 1 && status != 5 && status != -2 && status != -3 ) {
-		isShouHuo = 0;
-		statusName = "退款中";
-	    }
+		if ( status != 1 && status != 5 && status != -2 && status != -3 ) {
+		    isShouHuo = 0;
+		    statusName = "退款中";
+		}
 			/*if(orderStatus.equals("2") && !orderPayWay.equals("2") && !orderPayWay.equals("6")){
 				isReturn = 0;
 			}
 			if((orderStatus.equals("2") && deliveryMethod.equals("2")) || deliveryMethod.equals("1")){
 				isReturn = 1;
 			}*/
-	    if ( orderStatus.equals( "5" ) || orderPayWay.equals( "5" ) || orderPayWay.equals( "4" ) || orderPayWay.equals( "8" ) ) {//扫码支付、积分支付、粉币支付  不可以退款
-		isReturn = 0;
-	    }
-	    if ( ( proTypeId.equals( "3" ) && cardReceiveId > 0 ) || proTypeId.equals( "2" ) || proTypeId.equals( "4" ) ) {//卡券购买,会员卡支付 不可以退款
-		isReturn = 0;
-	    }
-	    int updateDay = 0;
-	    if ( CommonUtil.isNotEmpty( order.getUpdateDay() ) ) {
-		updateDay = order.getUpdateDay();
-	    }
-	    int isReturnButton = 0;
-	    int isUpdateButton = 0;
-	    int isCancelButton = 0;
-	    int isWuliuButton = 0;
-	    int returnDay = CommonUtil.toInteger( dObj.get( "returnDay" ) );
-	    if ( isReturn == 1 && groupIsReturn == 0 ) {
-		if ( ( ( orderStatus.equals( "2" ) || orderStatus.equals( "3" ) ) && status == -3 ) || ( updateDay > 0 && updateDay < returnDay && orderStatus.equals( "4" )
-				&& status == -3 ) ) {
-		    isReturnButton = 1;//展示申请退款的按钮
+		if ( orderStatus.equals( "5" ) || orderPayWay.equals( "5" ) || orderPayWay.equals( "4" ) || orderPayWay.equals( "8" ) ) {//扫码支付、积分支付、粉币支付  不可以退款
+		    isReturn = 0;
 		}
-		if ( status == -1 ) {
-		    isUpdateButton = 1;//展示修改退款的按钮
+		if ( ( proTypeId.equals( "3" ) && cardReceiveId > 0 ) || proTypeId.equals( "2" ) || proTypeId.equals( "4" ) ) {//卡券购买,会员卡支付 不可以退款
+		    isReturn = 0;
 		}
-		if ( ( status == 0 || status == 2 || status == 3 || status == 4 || status == -1 ) && CommonUtil.isNotEmpty( dObj.get( "orderReturn" ) ) ) {
-		    isCancelButton = 1;//展示撤销退款的按钮
-		    if ( status == 2 || status == 4 ) {
-			isWuliuButton = 1;//展示填写物流的按钮
+		int updateDay = 0;
+		if ( CommonUtil.isNotEmpty( order.getUpdateDay() ) ) {
+		    updateDay = order.getUpdateDay();
+		}
+		int isReturnButton = 0;
+		int isUpdateButton = 0;
+		int isCancelButton = 0;
+		int isWuliuButton = 0;
+		int returnDay = CommonUtil.toInteger( dObj.get( "returnDay" ) );
+		if ( isReturn == 1 && groupIsReturn == 0 ) {
+		    if ( ( ( orderStatus.equals( "2" ) || orderStatus.equals( "3" ) ) && status == -3 ) || ( updateDay > 0 && updateDay < returnDay && orderStatus.equals( "4" )
+				    && status == -3 ) ) {
+			isReturnButton = 1;//展示申请退款的按钮
+		    }
+		    if ( status == -1 ) {
+			isUpdateButton = 1;//展示修改退款的按钮
+		    }
+		    if ( ( status == 0 || status == 2 || status == 3 || status == 4 || status == -1 ) && CommonUtil.isNotEmpty( dObj.get( "orderReturn" ) ) ) {
+			isCancelButton = 1;//展示撤销退款的按钮
+			if ( status == 2 || status == 4 ) {
+			    isWuliuButton = 1;//展示填写物流的按钮
+			}
 		    }
 		}
-	    }
-	    detailMap.put( "isReturnButton", isReturnButton );
-	    detailMap.put( "isUpdateButton", isUpdateButton );
-	    detailMap.put( "isCancelButton", isCancelButton );
-	    detailMap.put( "isWuliuButton", isWuliuButton );
+		detailMap.put( "isReturnButton", isReturnButton );
+		detailMap.put( "isUpdateButton", isUpdateButton );
+		detailMap.put( "isCancelButton", isCancelButton );
+		detailMap.put( "isWuliuButton", isWuliuButton );
 
-	    detailMap.put( "detail_id", dObj.get( "id" ) );
-	    detailMap.put( "product_id", productId );
-	    detailMap.put( "shop_id", shopId );
-	    detailMap.put( "product_name", dObj.get( "detProName" ) );
-	    detailMap.put( "product_image", PropertiesUtil.getResourceUrl() + dObj.get( "productImageUrl" ) );
-	    detailMap.put( "product_price", dObj.get( "detProPrice" ) );
-	    detailMap.put( "product_num", dObj.get( "detProNum" ) );
-	    if ( CommonUtil.isNotEmpty( dObj.get( "productSpecificas" ) ) ) {
-		Map< String,Object > invPriceMap = productService.getProInvIdBySpecId( CommonUtil.toString( dObj.get( "productSpecificas" ) ), productId );
-		if ( CommonUtil.isNotEmpty( invPriceMap ) ) {
-		    if ( CommonUtil.isNotEmpty( invPriceMap.get( "specifica_values" ) ) ) {
-			String speciname = invPriceMap.get( "specifica_values" ).toString();
-			speciname = speciname.replaceAll( ",", "/" );
-			detailMap.put( "product_specifica_name", speciname );
+		detailMap.put( "detail_id", dObj.get( "id" ) );
+		detailMap.put( "product_id", productId );
+		detailMap.put( "shop_id", shopId );
+		detailMap.put( "product_name", dObj.get( "detProName" ) );
+		detailMap.put( "product_image", PropertiesUtil.getResourceUrl() + dObj.get( "productImageUrl" ) );
+		detailMap.put( "product_price", dObj.get( "detProPrice" ) );
+		detailMap.put( "product_num", dObj.get( "detProNum" ) );
+		if ( CommonUtil.isNotEmpty( dObj.get( "productSpecificas" ) ) ) {
+		    Map< String,Object > invPriceMap = productService.getProInvIdBySpecId( CommonUtil.toString( dObj.get( "productSpecificas" ) ), productId );
+		    if ( CommonUtil.isNotEmpty( invPriceMap ) ) {
+			if ( CommonUtil.isNotEmpty( invPriceMap.get( "specifica_values" ) ) ) {
+			    String speciname = invPriceMap.get( "specifica_values" ).toString();
+			    speciname = speciname.replaceAll( ",", "/" );
+			    detailMap.put( "product_specifica_name", speciname );
+			}
 		    }
 		}
-	    }
 
-	    //detailMap.put("product_url", url);
-	    detailMap.put( "product_unit", proUnit );
+		//detailMap.put("product_url", url);
+		detailMap.put( "product_unit", proUnit );
 
-	    detailMap.put( "isReturn", isReturn );
+		detailMap.put( "isReturn", isReturn );
 			/*detailMap.put("statusMsg", statusMsg);*/
-	    detailMap.put( "proUnit", proUnit );
-	    if ( orderPayWay.equals( "5" ) ) {
-		detailMap.put( "product_name", "扫码支付" );
-		detailMap.put( "product_num", 1 );
-		detailMap.put( "product_price", order.getOrderMoney() );
+		detailMap.put( "proUnit", proUnit );
 	    }
-	    if ( dObj.getInteger( "id" ) > 0 || orderPayWay.equals( "5" ) ) {
+	    if ( CommonUtil.isNotEmpty( dObj.get( "id" ) ) || orderPayWay.equals( "5" ) ) {
 		detailArr.add( detailMap );
 	    }
 	}
@@ -397,7 +400,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    } else if ( orderStatus.equals( "5" ) ) {
 		statusName = "订单已关闭";
 	    }
-
+	    resultMap.put( "order_pay_way", order.getOrderPayWay() );
 	    resultMap.put( "order_no", order.getOrderNo() );
 	    resultMap.put( "order_time", dateFormat.format( new Date() ) );
 
@@ -452,7 +455,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		isShouHuo = 1;
 	    }
 	    List< Map< String,Object > > detailList = new ArrayList< Map< String,Object > >();
-	    List< MallOrderDetail > list = orderDetailDAO.selectByOrderId( params );
+	    List< MallOrderDetail > list = orderDetailDAO.selectByOrderId( order.getId() );
 	    if ( list != null && list.size() > 0 ) {
 		for ( MallOrderDetail detail : list ) {
 		    Map< String,Object > detailMap = new HashMap< String,Object >();
@@ -483,7 +486,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 			joinParams.put( "orderDetailId", detail.getId() );
 			joinParams.put( "groupBuyId", buy.getId() );
 			//查询是否已成团
-			Map< String,Object > joinMap = orderDAO.groupJoinPeopleNum( joinParams );
+			Map< String,Object > joinMap = mallGroupJoinDAO.groupJoinPeopleNum( joinParams );
 			if ( joinMap != null ) {
 			    int count = CommonUtil.toInteger( joinMap.get( "num" ) );
 			    //团购凑齐人允许退款
@@ -761,51 +764,14 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( type == 0 ) {//申请退款
 	    // 查询退款原因
-	    List< Map > reasonList = dictService.getDict( "1091" );
+	    List< DictBean > reasonList = dictService.getDict( "1091" );
 	    resultMap.put( "reasonList", reasonList );
-	    List< Map< String,Object > > handWayList = new ArrayList< Map< String,Object > >();//处理方式
-	    Map< String,Object > handWayMap = new HashMap< String,Object >();
-	    if ( orderPayWay != 2 && orderPayWay != 6 ) {//支付方式不是货到付款和到点支付
-		handWayMap.put( "id", 1 );
-		handWayMap.put( "value", "我要退款，但不退货" );
-		handWayList.add( handWayMap );
-		if ( orderStatus == 3 || orderStatus == 4 ) {
-		    handWayMap = new HashMap< String,Object >();
-		    handWayMap.put( "id", 2 );
-		    handWayMap.put( "value", "我要退款退货" );
-		    handWayList.add( handWayMap );
-		}
-	    } else {
-		if ( isWallet == 0 && orderStatus == 2 ) {
-		    handWayMap = new HashMap< String,Object >();
-		    handWayMap.put( "id", 2 );
-		    handWayMap.put( "value", "我要退货" );
-		    handWayList.add( handWayMap );
-		} else if ( isWallet == 1 && orderStatus == 2 ) {
-		    handWayMap = new HashMap< String,Object >();
-		    handWayMap.put( "id", 1 );
-		    handWayMap.put( "value", "我要退款" );
-		    handWayList.add( handWayMap );
-		}
-		if ( orderStatus == 3 || orderStatus == 4 ) {
-		    if ( isWallet == 0 ) {
-			handWayMap = new HashMap< String,Object >();
-			handWayMap.put( "id", 2 );
-			handWayMap.put( "value", "我要退货" );
-			handWayList.add( handWayMap );
-		    } else {
-			handWayMap.put( "id", 1 );
-			handWayMap = new HashMap< String,Object >();
-			handWayMap.put( "value", "我要退款，但不退货" );
-			handWayList.add( handWayMap );
-		    }
-		}
-	    }
-	    //handWayList.add(handWayMap);
-	    resultMap.put( "handWayList", handWayList );
+
+	    List< PhoneReturnWayResult > wayResultList = mallOrderReturnService.getReturnWayList( order );
+	    resultMap.put( "handWayList", wayResultList );
 	} else if ( type == 1 ) {//填写物流公司
 	    //查询物流公司
-	    List< Map > comList = dictService.getDict( "1092" );
+	    List< DictBean > comList = dictService.getDict( "1092" );
 	    resultMap.put( "comList", comList );
 	}
 	//退款id
@@ -845,7 +811,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	} else {
 	    orderReturn.setStatus( 0 );
 	}
-	boolean flag = orderService.addOrderReturn( orderReturn );
+	Member member = memberService.findMemberById( orderReturn.getUserId(), null );
+	boolean flag = mallOrderReturnService.addOrderReturn( orderReturn, member );
 	if ( flag ) {
 	    resultMap.put( "code", 1 );
 	} else {
@@ -1303,16 +1270,14 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    msg = "提交订单失败，请稍后重试";
 	}
 	if ( code > 0 ) {//提交订单成功，并且是货到付款，
-	    if ( orderPayWay == 4 ) {
-		//TODO 修改积分  memberPayService.updateMemberIntergral()
+	    /*if ( orderPayWay == 4 ) {
 		Map< String,Object > payRresult = null;
-		//                        memberPayService.updateMemberIntergral(null, member.getId(), CommonUtil.toInteger(-orderMoney));
 		if ( CommonUtil.isNotEmpty( payRresult.get( "result" ) ) ) {
 		    if ( CommonUtil.toString( payRresult.get( "result" ) ).equals( "2" ) ) {
 			orderService.paySuccessModified( params, member );//修改库存和订单状态
 		    }
 		}
-	    }
+	    }*/
 	    if ( orderPayWay == 2 ) {
 		params.put( "status", 2 );
 		params.put( "out_trade_no", orderNo );
@@ -1357,10 +1322,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	   /* subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + url );*/
 
 	//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
-	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/phoneOrder/79B4DE7C/paySuccessModified.do" );
+	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "phoneOrder/79B4DE7C/paySuccessModified.do" );
 
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
-	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "mallOrder/toIndex.do" );//推送路径(尽量不要带参数)
+	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
 	int payWay = 1;
 	/*if ( order.getOrderPayWay() == 9 ) {
 	    payWay = 2;

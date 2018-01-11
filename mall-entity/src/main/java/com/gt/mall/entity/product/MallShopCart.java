@@ -120,11 +120,6 @@ public class MallShopCart extends Model< MallShopCart > {
     @TableField( "is_check" )
     private Integer    isCheck;
     /**
-     * session标识
-     */
-    @TableField( "session_id" )
-    private String     sessionId;
-    /**
      * 商家用户id
      */
     @TableField( "bus_user_id" )
@@ -157,7 +152,6 @@ public class MallShopCart extends Model< MallShopCart > {
 			", saleMemberId=" + saleMemberId +
 			", commission=" + commission +
 			", isCheck=" + isCheck +
-			", sessionId=" + sessionId +
 			", busUserId=" + busUserId +
 			"}";
     }

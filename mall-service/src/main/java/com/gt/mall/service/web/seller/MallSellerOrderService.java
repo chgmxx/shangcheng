@@ -1,7 +1,9 @@
 package com.gt.mall.service.web.seller;
 
+import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.seller.MallSellerOrder;
+import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -28,5 +30,13 @@ public interface MallSellerOrderService extends BaseService< MallSellerOrder > {
      * @param params 参数
      * @return 订单信息
      */
-    List<Map<String, Object> > selectOrderByClientId(Map<String, Object> params);
+    PageUtil selectOrderByClientId(Map<String, Object> params);
+
+    /**
+     * 查询销售员收益积分排行榜
+     *
+     *
+     * @return 销售员收益积分排行榜
+     */
+    PageUtil selectSellerByBusUserId( Map< String,Object > params );
 }

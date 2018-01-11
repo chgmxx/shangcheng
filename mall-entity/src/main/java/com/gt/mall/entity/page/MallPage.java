@@ -86,6 +86,16 @@ public class MallPage extends Model< MallPage > {
      */
     @TableField( "codeUrl" )
     private String  codeUrl;
+    /**
+     * 访客数
+     */
+    @TableField( "visitor_num" )
+    private String  visitorNum;
+    /**
+     * 浏览量
+     */
+    @TableField( "views_num" )
+    private String  viewsNum;
 
     @Override
     protected Serializable pkVal() {
@@ -107,6 +117,8 @@ public class MallPage extends Model< MallPage > {
 			", pagIsMain=" + pagIsMain +
 			", pagHtml=" + pagHtml +
 			", codeUrl=" + codeUrl +
+                        ", visitorNum=" + visitorNum +
+                        ", viewsNum=" + viewsNum +
 			"}";
     }
 }

@@ -36,8 +36,8 @@
 .swiperDirective ul li{
     position: relative;
     border: 1px solid #e5e5e5;
-    margin: 10px 10px 0 10px;
-    padding: 14px;
+    margin: 10px;
+    padding: 18px;
     background: #fff;
     zoom: 1;
     display: inline-block;
@@ -215,12 +215,14 @@
 }
 
 .swiperDirective .addswiper{
-    border: 1px solid #e5e5e5;
+    border: 1px solid #bfcbd9;
     margin: 0 10px;
     padding: 14px;
     background: #fff;
     zoom: 1;
     cursor: pointer;
+    text-align: center;
+    color: #20a0ff;
 }
 .swiperDirective .addswiper .icon-add{
     vertical-align: middle;

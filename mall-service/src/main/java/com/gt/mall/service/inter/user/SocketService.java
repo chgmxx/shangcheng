@@ -20,5 +20,5 @@ public interface SocketService {
      * MQ 消息队列发送消息
      * @param message 消息
      */
-    Map mqSendMessage(String message);
+    //    Map mqSendMessage(String message);
 }

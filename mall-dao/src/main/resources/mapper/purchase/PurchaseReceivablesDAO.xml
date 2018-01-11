@@ -27,7 +27,7 @@
         term_id , bus_id , member_id, discount, buy_status , receivables_number
     </sql>
 
-    <select id="findReceivablesList" resultType="Map" parameterType="java.lang.Integer">
+    <select id="findReceivablesList" resultType="map" parameterType="java.lang.Integer">
 		select
 		r.id,
 		r.order_id as "orderId",
@@ -54,11 +54,49 @@
 		purchase_term t on t.id=r.term_id
 		where r.order_id =
 		#{orderId,jdbcType=INTEGER} and buy_status=1
+
 	</select>
     <select id="selectReceivable" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>
         from purchase_receivables
         where receivables_number = #{receivablesNumber}
+    </select>
+    <select id="findListCount" resultType="java.lang.Integer">
+        select COUNT(r.id) from purchase_receivables r
+		left join purchase_term t on t.id=r.term_id
+		where r.order_id = #{orderId,jdbcType=INTEGER} and buy_status=1
+    </select>
+    <select id="findList" resultType="map">
+        select
+        r.id,
+        r.order_id as "orderId",
+        r.fans_corrency as "fansCorrency",
+        r.integral as "integral",
+        r.coupon as "coupon",
+        r.have_term as
+        "haveTerm",
+        r.money as "money",
+        r.buy_time as "buyTime",
+        r.buy_mode as
+        "buyMode",
+        r.term_id as "termId",
+        r.buy_status as "buyStatus",
+        r.receivables_number as "receivablesNumber",
+        r.bus_id
+        as "busId",
+        r.member_id as "memberId",
+        r.discount as "discount",
+        t.term_money as "termMoney"
+        from purchase_receivables r
+        left
+        join
+        purchase_term t on t.id=r.term_id
+        where r.order_id =
+        #{orderId,jdbcType=INTEGER} and buy_status=1
+        <if test="pageFirst != null and pageLast != null">
+            limit #{pageFirst},#{pageLast}
+        </if>
+
     </select>
 </mapper>

@@ -1,8 +1,8 @@
 package com.gt.mall.service.web.integral.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.integral.MallIntegralDAO;
@@ -15,11 +15,12 @@ import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
-import com.gt.mall.entity.product.MallProductDetail;
 import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
@@ -54,6 +55,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     private MallIntegralDAO             integralDAO;
     @Autowired
     private MallImageAssociativeDAO     imageAssociativeDAO;
+    @Autowired
+    private MallImageAssociativeService mallImageAssociativeService;
     @Autowired
     private MallProductDAO              productDAO;
     @Autowired
@@ -96,14 +99,31 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	List< Map< String,Object > > list = integralDAO.selectIntegralByShopids( params );
+	List< Integer > proIds = new ArrayList<>();
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map : list ) {
-		if ( CommonUtil.isNotEmpty( map.get( "specifica_img_url" ) ) ) {
-		    map.put( "product_image", PropertiesUtil.getResourceUrl() + map.get( "specifica_img_url" ) );
-		} else {
-		    map.put( "product_image", PropertiesUtil.getResourceUrl() + map.get( "image_url" ) );
+		if ( CommonUtil.isNotEmpty( map.get( "product_id" ) ) && !proIds.contains( CommonUtil.toInteger( map.get( "product_id" ) ) ) ) {
+		    proIds.add( CommonUtil.toInteger( map.get( "product_id" ) ) );
 		}
 		productList.add( map );
+	    }
+	}
+	if ( proIds != null && proIds.size() > 0 ) {
+	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssIds( 1, 1, proIds );
+	    if ( imageList != null && imageList.size() > 0 ) {
+		productList = new ArrayList<>();
+		for ( Map< String,Object > map : list ) {
+		    String id = map.get( "id" ).toString();
+		    for ( int i = 0; i < imageList.size(); i++ ) {
+			MallImageAssociative imageAssociative = imageList.get( i );
+			if ( CommonUtil.isNotEmpty( imageAssociative.getImageUrl() ) && imageAssociative.getAssId().toString().equals( id ) ) {
+			    map.put( "image_url", imageAssociative.getImageUrl() );
+			    imageList.remove( i );
+			    break;
+			}
+		    }
+		    productList.add( map );
+		}
 	    }
 	}
 	page.setSubList( productList );
@@ -134,15 +154,6 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	int productId = CommonUtil.toInteger( params.get( "id" ) );
 	MallProduct product = productDAO.selectById( productId );// 根据商品id查询商品的基本信息
 	resultMap.put( "product", product );
-	// 查询商品详情
-	MallProductDetail detail = new MallProductDetail();
-	detail.setProductId( productId );
-	detail = productDetailDAO.selectOne( detail );
-	if ( CommonUtil.isNotEmpty( detail ) ) {
-	    if ( CommonUtil.isNotEmpty( detail.getProductDetail() ) ) {
-		detail.setProductDetail( detail.getProductDetail().replaceAll( "\"", "&quot;" ).replaceAll( "'", "&apos;" ).replaceAll( "(\r\n|\r|\n|\n\r)", "" ) );
-	    }
-	}
 	//查询商品规格
 	if ( product.getIsSpecifica().toString().equals( "1" ) ) {
 	    Map< String,Object > guige = productInventoryService.productSpecifications( product.getId(), null );//查询商品的默认规格
@@ -156,8 +167,6 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    resultMap.put( "guigePriceList", guigePriceList );
 	}
 
-	resultMap.put( "detail", detail );
-
 	Map< String,Object > integralParams = new HashMap< String,Object >();
 	integralParams.put( "productId", product.getId() );
 	integralParams.put( "isUse", 1 );
@@ -168,8 +177,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    resultMap.put( "integral", integral );
 	    if ( CommonUtil.isNotEmpty( integral ) ) {
 
-		Date endTime = DateTimeKit.parse( integral.getEndTime().toString(), "yyyy-MM-dd HH:mm:ss" );
-		Date startTime = DateTimeKit.parse( integral.getStartTime().toString(), "yyyy-MM-dd HH:mm:ss" );
+		Date endTime = DateTimeKit.parse( integral.getEndTime(), "yyyy-MM-dd HH:mm:ss" );
+		Date startTime = DateTimeKit.parse( integral.getStartTime(), "yyyy-MM-dd HH:mm:ss" );
 		Date nowTime = DateTimeKit.parse( DateTimeKit.getDateTime(), "yyyy-MM-dd HH:mm:ss" );
 		if ( nowTime.getTime() < startTime.getTime() ) {
 		    resultMap.put( "isNoStart", 1 );
@@ -189,12 +198,16 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	List< MallImageAssociative > imageList = imageAssociativeDAO.selectImageByAssId( params );
 	resultMap.put( "imageList", imageList );
 
-	params.put( "productId", productId );
-	List< Map< String,Object > > orderList = orderDAO.selectIntegralOrder( params );
-	int recordNum = orderList.size();
-	resultMap.put( "recordNum", recordNum );
+	if ( CommonUtil.isNotEmpty( member ) && member.getId() > 0 ) {
+	    params.put( "productId", productId );
+	    params.put( "busUserId", product.getUserId() );
+	    params.put( "buyerUserId", member.getId() );
+	    List< Map< String,Object > > orderList = orderDAO.selectIntegralOrder( params );
+	    int recordNum = orderList.size();
+	    resultMap.put( "recordNum", recordNum );
+	}
 
-	if ( CommonUtil.isNotEmpty( product.getFlowId() ) ) {
+	if ( CommonUtil.isNotEmpty( product.getFlowId() ) && product.getFlowId() > 0 ) {
 	    BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 	    if ( CommonUtil.isNotEmpty( flow ) ) {
 		resultMap.put( "flow_desc", flow.getType() + "M流量" );
@@ -252,19 +265,9 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	if ( orderPayWay == 4 ) {//积分支付
 	    Integer mIntergral = member.getIntegral();
 	    if ( mIntergral < totalPrice || mIntergral < 0 ) {
-		resultMap.put( "code", ResponseEnums.ERROR.getCode() );
-		resultMap.put( "msg", "您的积分不够，不能用积分来兑换这件商品" );
-		return resultMap;
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "您的积分不够，不能用积分来兑换这件商品" );
 	    }
 	}
-	/*if(orderPayWay == 8){//粉币支付
-	    double fenbi = member.getFansCurrency();
-			if (fenbi < totalPrice || fenbi < 0) {
-				resultMap.put("code", -1);
-				resultMap.put("msg", "您的粉币不够，不能用粉币来兑换这件商品");
-				return resultMap;
-			}
-		}*/
 	Map< String,Object > result = orderService.calculateInventory( productId + "", proSpecificas, num + "" );
 	if ( result.get( "result" ).toString().equals( "false" ) ) {
 	    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
@@ -279,15 +282,11 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	if ( CommonUtil.isNotEmpty( flowPhone ) ) {//流量充值，判断手机号码
 	    Map< String,String > map = MobileLocationUtil.getMobileLocation( flowPhone );
 	    if ( map.get( "code" ).toString().equals( "-1" ) ) {
-		resultMap.put( "code", ResponseEnums.ERROR.getCode() );
-		resultMap.put( "msg", map.get( "msg" ) );
-		return resultMap;
-	    } else if ( map.get( "code" ).toString().equals( "1" ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), map.get( "msg" ) );
+	    } else if ( map.get( "code" ).toString().equals( "1" ) && product.getFlowId() > 0 ) {
 		BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
-		    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
-		    resultMap.put( "msg", "充值失败,联通号码至少30MB" );
-		    return resultMap;
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "充值失败,联通号码至少30MB" );
 		}
 	    }
 	}
@@ -369,12 +368,16 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    if ( count > 0 ) {
 		params.put( "status", 2 );
 		params.put( "out_trade_no", order.getOrderNo() );
+		if ( detail.getProTypeId() == 3 ) {
+		    //会员卡券包查询页面
+		    resultMap.put( "url", PropertiesUtil.getWxmpDomain() + "/duofenCardPhoneController/79B4DE7C/memberCardList.do?memberId=" + member.getId() );
+		}
 		orderService.paySuccessModified( params, member );//修改库存和订单状态
 		code = 1;
 	    }
 	}
 
-	resultMap.put( "code", code );
+	//	resultMap.put( "code", code );
 
 	return resultMap;
     }
@@ -422,6 +425,18 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	if ( CommonUtil.isNotEmpty( params.get( "integral" ) ) ) {
 	    MallIntegral mallIntegral = (MallIntegral) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "integral" ).toString() ), MallIntegral.class );
+	    if ( CommonUtil.isEmpty( mallIntegral.getShopId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "店铺不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallIntegral.getProductId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "商品不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallIntegral.getMoney() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "积分不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallIntegral.getStartTime() ) || CommonUtil.isEmpty( mallIntegral.getEndTime() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "开始或结束时间不能为空" );
+	    }
 	    MallIntegral integral = null;
 	    if ( CommonUtil.isNotEmpty( mallIntegral.getProductId() ) ) {
 		Map< String,Object > map = new HashMap< String,Object >();

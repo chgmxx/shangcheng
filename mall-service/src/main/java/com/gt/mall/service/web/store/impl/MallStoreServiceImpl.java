@@ -3,20 +3,20 @@ package com.gt.mall.service.web.store.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.result.store.StoreResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
+import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.MallJxcHttpClientUtil;
-import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.shop.ShopSubsop;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,13 +47,13 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     private static Logger logger = LoggerFactory.getLogger( MallStoreServiceImpl.class );
 
     @Autowired
-    private MallStoreDAO mallStoreDao;
-
+    private MallStoreDAO                  mallStoreDao;
     @Autowired
-    private WxShopService wxShopService;
-
+    private WxShopService                 wxShopService;
     @Autowired
-    private BusUserService busUserService;
+    private BusUserService                busUserService;
+    @Autowired
+    private MallStoreCertificationService mallStoreCertService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shopList ) {
@@ -64,26 +63,43 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "store/index.do" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
 	params.put( "maxResult", pageSize );
-
 	params.put( "shopList", shopList );
+
+	List< StoreResult > storeResultList = new ArrayList<>();
+	EntityDtoConverter converter = new EntityDtoConverter();
 
 	List< Map< String,Object > > list = mallStoreDao.findByPage( params );
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > shopMap : list ) {
 		int id = CommonUtil.toInteger( shopMap.get( "id" ) );
-
+		StoreResult storeResult = new StoreResult();
+		converter.mapToBean( shopMap, storeResult );
+		MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
+		if ( storeCertification != null ) {
+		    storeResult.setCertCheckStatus( storeCertification.getCheckStatus() );
+		    storeResult.setCertRefuseReason( storeCertification.getRefuseReason() );
+		    storeResult.setCertId( storeCertification.getId() );
+		    if ( storeCertification.getCheckStatus() == 1 ) {
+			storeResult.setCertStoType( storeCertification.getStoType() );
+			if ( storeCertification.getStoType() == 1 ) {
+			    storeResult.setCertStoCategory( storeCertification.getStoCategory() );
+			    storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
+			}
+		    }
+		}
 		for ( Map< String,Object > maps : shopList ) {
 		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
 		    if ( id == shopIds ) {
-			shopMap.put( "sto_name", maps.get( "sto_name" ) );
-			shopMap.put( "sto_address", maps.get( "address" ) );
+			storeResult.setStoName( maps.get( "sto_name" ).toString() );
+			storeResult.setStoAddress( maps.get( "address" ).toString() );
 			break;
 		    }
 		}
+		storeResultList.add( storeResult );
 	    }
 	}
 
-	page.setSubList( list );
+	page.setSubList( storeResultList );
 	return page;
     }
 
@@ -148,20 +164,20 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return newStoreList;
     }
 
-    @Override
-    public int getShopBySession( HttpSession session, int shopId ) {
-	String sessionKey = Constants.SESSION_KEY + "shopId";
-	if ( CommonUtil.isEmpty( session.getAttribute( sessionKey ) ) ) {
-	    session.setAttribute( sessionKey, shopId );
-	} else {
-	    if ( !session.getAttribute( sessionKey ).toString().equals( String.valueOf( shopId ) ) ) {
-		session.setAttribute( sessionKey, shopId );
-	    } else {
-		shopId = CommonUtil.toInteger( session.getAttribute( sessionKey ) );
-	    }
-	}
-	return shopId;
-    }
+    //    @Override
+    //    public int getShopBySession( HttpSession session, int shopId ) {
+    //	String sessionKey = Constants.SESSION_KEY + "shopId";
+    //	if ( CommonUtil.isEmpty( session.getAttribute( sessionKey ) ) ) {
+    //	    session.setAttribute( sessionKey, shopId );
+    //	} else {
+    //	    if ( !session.getAttribute( sessionKey ).toString().equals( String.valueOf( shopId ) ) ) {
+    //		session.setAttribute( sessionKey, shopId );
+    //	    } else {
+    //		shopId = CommonUtil.toInteger( session.getAttribute( sessionKey ) );
+    //	    }
+    //	}
+    //	return shopId;
+    //    }
 
     @Override
     public int createCangku( int shopId, BusUser user, int uType ) {
@@ -255,6 +271,39 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return storeMap;
     }
 
+    @Override
+    public MallStore findShopByShopId( Integer shopId ) {
+	MallStore store = mallStoreDao.selectById( shopId );
+	if ( CommonUtil.isNotEmpty( store.getWxShopId() ) ) {
+	    WsWxShopInfo shopInfo = wxShopService.getShopById( store.getWxShopId() );
+	    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
+		store.setStoName( shopInfo.getBusinessName() );
+		store.setStoPhone( shopInfo.getTelephone() );
+		store.setStoLongitude( shopInfo.getLongitude() );
+		store.setStoLatitude( shopInfo.getLatitude() );
+		if ( CommonUtil.isNotEmpty( shopInfo.getProvince() ) ) {
+		    store.setStoProvince( CommonUtil.toInteger( shopInfo.getProvince() ) );
+		}
+		if ( CommonUtil.isNotEmpty( shopInfo.getCity() ) ) {
+		    store.setStoCity( CommonUtil.toInteger( shopInfo.getCity() ) );
+		}
+		if ( CommonUtil.isNotEmpty( shopInfo.getDistrict() ) ) {
+		    store.setStoArea( CommonUtil.toInteger( shopInfo.getDistrict() ) );
+		}
+		store.setStoHouseMember( shopInfo.getDetail() );
+		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( store.getWxShopId() );
+		if ( photoList != null && photoList.size() > 0 ) {
+		    store.setStoPicture( photoList.get( 0 ).getLocalAddress() );
+		}
+		store.setStoAddress( getWxShopDetailAddress( shopInfo ) );
+		if ( shopInfo.getStatus() == -1 ) {
+		    store.setIsDelete( 1 );
+		}
+	    }
+	}
+	return store;
+    }
+
     private String getWxShopDetailAddress( WsWxShopInfo shopInfo ) {
 	String cityids = shopInfo.getProvince() + "," + shopInfo.getCity() + "," + shopInfo.getDistrict();
 	List< Map > cityList = wxShopService.queryBasisCityIds( cityids );
@@ -277,40 +326,42 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     @Override
     public boolean saveOrUpdate( MallStore sto, BusUser user ) throws BusinessException {
 	try {
-	    String message = valtion( sto );
-	    if ( CommonUtil.isNotEmpty( message ) ) {
-		throw new BusinessException( ResponseEnums.ERROR.getCode(), "店铺数据不能为空" );
+	    sto.setStoIsMain( -1 );
+	    int count = 0;
+	    int id = 0;
+	    if ( CommonUtil.isNotEmpty( sto.getId() ) ) {
+		id = sto.getId();
+	    }
+	    //判断是否已经选择店铺id
+	    List< MallStore > list = findByShopId( sto.getWxShopId(), id );
+	    if ( list != null && list.size() > 0 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "请重新选择店铺，该店铺已经被添加" );
 	    } else {
-		sto.setStoIsMain( -1 );
-		int count = 0;
-		int id = 0;
-		if ( CommonUtil.isNotEmpty( sto.getId() ) ) {
-		    id = sto.getId();
-		}
-		//判断是否已经选择店铺id
-		List< MallStore > list = findByShopId( sto.getWxShopId(), id );
-		if ( list != null && list.size() > 0 ) {
-		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "请重新选择店铺，该店铺已经被添加" );
-		} else {
-		    if ( CommonUtil.isEmpty( sto.getId() ) ) {
-			count = mallStoreDao.insert( sto );
-			if ( count <= 0 ) {
-			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
-			} else {
-			    ShopSubsop shopSubsop = new ShopSubsop();
-			    shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
-			    shopSubsop.setShopId( sto.getWxShopId() );
-			    shopSubsop.setSubShop( sto.getId() );
-			    boolean flag = wxShopService.addShopSubShop( shopSubsop );
-			    if ( !flag ) {
-				throw new BusinessException( ResponseEnums.ERROR.getCode(), "添加门店中间表异常" );
-			    }
-			}
+		if ( CommonUtil.isEmpty( sto.getId() ) ) {
+		    count = mallStoreDao.insert( sto );
+		    if ( count <= 0 ) {
+			throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 		    } else {
-			count = mallStoreDao.updateById( sto );
-			if ( count <= 0 ) {
-			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
+			ShopSubsop shopSubsop = new ShopSubsop();
+			shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
+			shopSubsop.setShopId( sto.getWxShopId() );
+			shopSubsop.setSubShop( sto.getId() );
+			boolean flag = wxShopService.addShopSubShop( shopSubsop );
+			if ( !flag ) {
+			    throw new BusinessException( ResponseEnums.ERROR.getCode(), "添加门店中间表异常" );
 			}
+		    }
+		} else {
+		    MallStore store = mallStoreDao.selectById( sto.getId() );
+		    store.setStoHeadImg( sto.getStoHeadImg() );
+		    store.setStoLinkman( sto.getStoLinkman() );
+		    store.setStoPhone( sto.getStoPhone() );
+		    store.setStoIsSms( sto.getStoIsSms() );
+		    store.setStoSmsTelephone( sto.getStoSmsTelephone() );
+		    store.setStoQqCustomer( sto.getStoQqCustomer() );
+		    count = mallStoreDao.updateAllColumnById( store );
+		    if ( count <= 0 ) {
+			throw new BusinessException( ResponseEnums.ERROR.getCode(), "编辑店铺失败" );
 		    }
 		}
 	    }
@@ -343,34 +394,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     }
 
     /**
-     * 验证信息
-     */
-    private String valtion( MallStore sto ) {
-	String message = "";
-	if ( CommonUtil.isEmpty( sto.getWxShopId() ) ) {
-	    message = "请选择门店";
-	} else if ( CommonUtil.isEmpty( sto.getStoName() ) ) {
-	    message = "请填写店铺名称！";
-	} else if ( CommonUtil.isEmpty( sto.getStoPicture() ) ) {
-	    message = "请上传店铺图片！";
-	}
-	//		else if (CommonUtil.isEmpty(sto.getStoCity())) {
-	//			message = "请选择店铺所在的省市区！";
-	//		}
-	else if ( CommonUtil.isEmpty( sto.getStoAddress() ) ) {
-	    message = "请选择店铺地址！";
-	} else if ( CommonUtil.isEmpty( sto.getStoLinkman() ) ) {
-	    message = "请填写联系人！";
-	} else if ( CommonUtil.isEmpty( sto.getStoPhone() ) ) {
-	    message = "请填写联系电话！";
-	}
-	//		else if (!CommonUtil.isMobileNO(sto.getStoPhone())) {
-	//			message = "请填写正确的联系电话！";
-	//		}
-	return message;
-    }
-
-    /**
      * 获取登录人拥有的店铺集合
      */
     @Override
@@ -379,44 +402,120 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	List< Map< String,Object > > storeList = new ArrayList<>();
 	//判断session里面有没有门店集合
-	List< Map > shopList = SessionUtils.getShopListBySession( user.getId(), request );
+	List< Map > shopList = MallSessionUtils.getShopListBySession( user.getId(), request );
 	if ( shopList != null && shopList.size() > 0 ) {
 	    for ( Map shopMap : shopList ) {
 		storeList.add( shopMap );
 	    }
 	    return storeList;
 	}
-	List< WsWxShopInfoExtend > shopInfoList = busUserService.getShopIdListByUserId( user.getId() );
+	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
 	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
-	    SessionUtils.setWxShopNumBySession( user.getId(), shopInfoList.size(), request );
+	    MallSessionUtils.setWxShopNumBySession( user.getId(), shopInfoList.size(), request );
 
 	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
 		wxShopIds.add( wsWxShopInfoExtend.getId() );
 	    }
 	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
 	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
-	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude" );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,sto_picture as stoPicture" );
 
 	    storeList = mallStoreDao.selectMaps( wrapper );
-	    if ( storeList != null && storeList.size() > 0 ) {
-		for ( Map< String,Object > storeMap : storeList ) {
-		    int wxShopId = CommonUtil.toInteger( storeMap.get( "wxShopId" ) );
-		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
-			if ( wxShops.getId() == wxShopId ) {
-			    storeMap.put( "sto_name", wxShops.getBusinessName() );
-			    storeMap.put( "address", wxShops.getAddress() );
-			    storeMap.put( "wxShopId", wxShops.getId() );
-			    storeMap.put( "stoLongitude", wxShops.getLongitude() );
-			    storeMap.put( "stoLatitude", wxShops.getLatitude() );
-			    break;
-			}
-		    }
-		}
-	    }
-	    SessionUtils.setShopListBySession( user.getId(), storeList, request );
+	    storeList = getShopParams( storeList, shopInfoList );
+	    MallSessionUtils.setShopListBySession( user.getId(), storeList, request );
 	    return storeList;
 	}
 	return null;
+    }
+
+    @Override
+    public List< Map< String,Object > > findShopByUserIdAndShops( int userId, List< Integer > shopIdList ) {
+	List< Map< String,Object > > storeList = findShopByUserId( userId, null );
+	if ( storeList != null && shopIdList.size() > 0 && storeList != null && storeList.size() > 0 ) {
+	    List< Map< String,Object > > removeList = new ArrayList<>();
+	    for ( Map< String,Object > storeMap : storeList ) {
+		boolean errorFlag = false;
+		for ( Integer shopId : shopIdList ) {
+		    if ( CommonUtil.toString( storeMap.get( "id" ) ).equals( shopId.toString() ) ) {
+			errorFlag = true;
+			break;
+		    }
+		}
+		if ( !errorFlag ) {
+		    removeList.add( storeMap );
+		}
+	    }
+	    if ( removeList != null && removeList.size() > 0 ) {
+		storeList.removeAll( removeList );
+	    }
+	}
+	return storeList;
+    }
+
+    @Override
+    public List< Map< String,Object > > findShopByUserId( int userId, HttpServletRequest request ) {
+	List< Integer > wxShopIds = new ArrayList<>();
+
+	List< Map< String,Object > > storeList = new ArrayList<>();
+	//判断session里面有没有门店集合
+	List< Map > shopList = MallSessionUtils.getShopListBySession( userId, request );
+	if ( shopList != null && shopList.size() > 0 ) {
+	    for ( Map shopMap : shopList ) {
+		storeList.add( shopMap );
+	    }
+	    return storeList;
+	}
+	List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( userId );
+	if ( shopInfoList != null && shopInfoList.size() > 0 ) {
+	    MallSessionUtils.setWxShopNumBySession( userId, shopInfoList.size(), request );
+
+	    for ( WsWxShopInfoExtend wsWxShopInfoExtend : shopInfoList ) {
+		wxShopIds.add( wsWxShopInfoExtend.getId() );
+	    }
+	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
+	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,is_delete,sto_picture as stoPicture" );
+
+	    storeList = mallStoreDao.selectMaps( wrapper );
+	    storeList = getShopParams( storeList, shopInfoList );
+
+	    MallSessionUtils.setShopListBySession( userId, storeList, request );
+	    return storeList;
+	}
+	return null;
+    }
+
+    @Override
+    public List< Map< String,Object > > findShopByShopIdList( List< Integer > busIdList ) {
+	if ( busIdList == null || busIdList.size() == 0 ) {
+	    return null;
+	}
+	List< Map< String,Object > > newShopList = new ArrayList<>();
+	for ( Integer busId : busIdList ) {
+	    List< Map< String,Object > > shopList = findShopByUserId( busId, null );
+	}
+
+	return null;
+    }
+
+    private List< Map< String,Object > > getShopParams( List< Map< String,Object > > storeList, List< WsWxShopInfoExtend > shopInfoList ) {
+	if ( storeList != null && storeList.size() > 0 ) {
+	    for ( Map< String,Object > storeMap : storeList ) {
+		int wxShopId = CommonUtil.toInteger( storeMap.get( "wxShopId" ) );
+		for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
+		    if ( wxShops.getId() == wxShopId ) {
+			storeMap.put( "sto_name", wxShops.getBusinessName() );
+			storeMap.put( "address", wxShops.getAddress() );
+			storeMap.put( "wxShopId", wxShops.getId() );
+			storeMap.put( "stoLongitude", wxShops.getLongitude() );
+			storeMap.put( "stoLatitude", wxShops.getLatitude() );
+			storeMap.put( "stoPhone", wxShops.getTelephone() );
+			break;
+		    }
+		}
+	    }
+	}
+	return storeList;
     }
 
     @Override
@@ -462,17 +561,17 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
     @Override
     public int getIsErpCount( int userId, HttpServletRequest request ) {
-	int isJxc = SessionUtils.getIsJxc( userId, request );
+	int isJxc = MallSessionUtils.getIsJxc( userId, request );
 	if ( isJxc == -1 ) {//重新获取商家是否开通进销存
 	    isJxc = busUserService.getIsErpCount( 8, userId );//判断商家是否有进销存 0没有 1有
-	    SessionUtils.setIsJxc( userId, isJxc, request );
+	    MallSessionUtils.setIsJxc( userId, isJxc, request );
 	}
 	return isJxc;
     }
 
     @Override
     public boolean getIsAdminUser( int userId, HttpServletRequest request ) {
-	int isAdmin = SessionUtils.getIsAdminUser( userId, request );
+	int isAdmin = MallSessionUtils.getIsAdminUser( userId, request );
 	if ( isAdmin == -1 ) {
 	    boolean flag = busUserService.getIsAdmin( userId );
 	    if ( flag ) {
@@ -480,11 +579,19 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    } else {
 		isAdmin = 0;
 	    }
-	    SessionUtils.setIsAdminUser( userId, isAdmin, request );
+	    MallSessionUtils.setIsAdminUser( userId, isAdmin, request );
 	    return flag;
 	} else {
 	    return true;
 	}
     }
 
+    @Override
+    public boolean shopIsOpenMall( Integer shopId ) {
+	Integer count = mallStoreDao.shopIsOpenMall( shopId );
+	if ( count > 0 ) {
+	    return true;
+	}
+	return false;
+    }
 }

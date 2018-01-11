@@ -125,7 +125,7 @@ public class MallAuction extends Model< MallAuction > {
 
 
     @TableField(exist = false)
-    private int joinId;
+    private int joinId =0;
 
     @TableField(exist = false)
     private int status;//状态 0未开始 1进行中 -1已结束 -2已失效

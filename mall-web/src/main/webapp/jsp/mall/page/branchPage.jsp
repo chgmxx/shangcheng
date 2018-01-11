@@ -52,7 +52,7 @@
             //当你在iframe页面关闭自身时
 //            var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
 //            layer.close(index); //再执行关闭
-            parent.layer.closeAll();
+            parent.CloseParentShade();
         }
     </script>
 </head>
@@ -113,7 +113,7 @@
     <input type="hidden" name="stoId" value="${shopId }" class="srh"/>
 </form>
 <div style="width: 100%;height: 50px;text-align: center; position: fixed; bottom: 0">
-    <jsp:include page="/jsp/mall/pageView.jsp"></jsp:include>
+    <jsp:include page="/jsp/common/page/pageView.jsp"></jsp:include>
     <div style="position: absolute;top:10; left:50;">
         <input type="button" value="确认" onclick="fnOk()" style="width:70px;  cursor: pointer;background-color: #1aa1e7;border-radius: 3px;color: #fff;border: none;"/>
         <input type="button" value="返回" onclick="fnCancel()" style="width:70px;  cursor: pointer;background-color: #8cc717;border-radius: 3px;color: #fff;border: none;"/>

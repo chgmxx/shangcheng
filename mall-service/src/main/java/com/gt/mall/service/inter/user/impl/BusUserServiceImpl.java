@@ -1,18 +1,15 @@
 package com.gt.mall.service.inter.user.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
 import com.gt.mall.utils.JedisUtil;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +29,7 @@ public class BusUserServiceImpl implements BusUserService {
 
     private static final String USER_GUOQ_URL = "/8A5DA52E/busUserApi/";
 
-    private static final String USER_SHOP_URL = "/8A5DA52E/busCommonApi/";
+    //    private static final String USER_SHOP_URL = "/8A5DA52E/busCommonApi/";
 
     @Override
     public BusUser selectById( int busUserId ) {
@@ -150,15 +147,15 @@ public class BusUserServiceImpl implements BusUserService {
 	return null;
     }
 
-    @Override
-    public List< WsWxShopInfoExtend > getShopIdListByUserId( int userId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "userId", userId );
-	String result = HttpSignUtil.signHttpSelect( params, USER_SHOP_URL + "getShopIdList.do", 1 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
-	}
-	return null;
-    }
+    //    @Override
+    //    public List< WsWxShopInfoExtend > getShopIdListByUserId( int userId ) {
+    //	Map< String,Object > params = new HashMap<>();
+    //	params.put( "userId", userId );
+    //	String result = HttpSignUtil.signHttpSelect( params, USER_SHOP_URL + "getShopIdList.do", 1 );
+    //	if ( CommonUtil.isNotEmpty( result ) ) {
+    //	    return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
+    //	}
+    //	return null;
+    //    }
 
 }

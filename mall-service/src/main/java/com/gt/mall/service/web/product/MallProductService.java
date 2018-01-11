@@ -1,14 +1,14 @@
 package com.gt.mall.service.web.product;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
-import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
+import io.swagger.models.auth.In;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -23,6 +23,13 @@ import java.util.Map;
  * @since 2017-07-20
  */
 public interface MallProductService extends BaseService< MallProduct > {
+
+    /**
+     * 统计各状态下的数量
+     * @param params
+     * @return
+     */
+    Map< String,Object > countStatus(Map< String,Object > params);
 
     /**
      * 根据用户id来查询商品
@@ -48,6 +55,11 @@ public interface MallProductService extends BaseService< MallProduct > {
      * 修改商品信息，详情，图片，规格，库存
      */
     Map< String,Object > updateProduct( Map< String,Object > params, BusUser user, HttpServletRequest request ) throws Exception;
+
+    /**
+     * new 修改商品信息，详情，图片，规格，库存
+     */
+    boolean newUpdateProduct( Map< String,Object > params, BusUser user, HttpServletRequest request ) throws Exception;
 
     /**
      * 根据商品Id查询商品的基本信息
@@ -128,7 +140,11 @@ public interface MallProductService extends BaseService< MallProduct > {
     double getMemberDiscount( String isMemberDiscount, Member member );
 
     /**
-     * 计算库存是否足够
+     * 1 判断商品是否被删除或未上架、未审核
+     * 2 判断商品库存是否足够
+     * 3 判断是否已经超过了限购,如果不够会抛异常
+     * 4 如果是活动商品，判断活动是否正在进行 和 是否超过活动限购的数量
+     * 5 如果是卡券包购买，判断是否已过期
      *
      * @param proId         商品id
      * @param proSpecificas 商品规格
@@ -145,13 +161,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 判断购物车的商品限购
      */
-    Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< WsWxShopInfoExtend > wxShopList );
-
-    int setIsShopBySession( int toshop, int shopid, int userid, HttpServletRequest request );
-
-    int getIsShopBySession( int shopid, int userid, HttpServletRequest request );
-
-    void clearIsShopSession( int shopid, int userid, HttpServletRequest request );
+    Map< String,Object > isshoppingCart( Map< String,Object > map, int productNum, List< Map< String,Object > > shopList );
 
     /**
      * 修改商品信息 ，规格，库存
@@ -206,5 +216,10 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 扣除商品库存
      */
-    boolean diffProductStock( MallProduct pro, MallOrderDetail detail ,MallOrder order);
+    boolean diffProductStock( MallProduct pro, MallOrderDetail detail, MallOrder order );
+
+    /**
+     * 查询待审核商品列表
+     */
+    PageUtil selectWaitCheckList( Map< String,Object > params );
 }

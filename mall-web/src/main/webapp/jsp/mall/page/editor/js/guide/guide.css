@@ -1,0 +1,19 @@
+.guideModule{
+    padding: 18px 0;
+}
+.guideModule .bor{
+	height: 0px;
+    border-top-width: 1px;
+}
+
+/****************************************************************************/
+.guideDirective{
+	padding: 15px 0;
+}
+.guideDirective .oh{
+   	line-height: 50px;
+}
+
+.guideDirective .checkbox.inline,.guideDirective .radio.inline{
+	padding: 0px;
+}

@@ -57,7 +57,7 @@ public class MallPaySet extends Model< MallPaySet > {
     @TableField( "is_daifu" )
     private Integer isDaifu;
     /**
-     * 是否开启评论 0不开启   1开启
+     * 是否开启评论 0不开启   1开启 2关闭评论及买家评价
      */
     @TableField( "is_comment" )
     private Integer isComment;
@@ -142,6 +142,37 @@ public class MallPaySet extends Model< MallPaySet > {
     @TableField( "footer_json" )
     private String  footerJson;
 
+    /**
+     * 配色风格key 关联字典表k001的key
+     */
+    @TableField( "style_key" )
+    private Integer  styleKey;
+    /**
+     * 待付款订单取消时间设置
+     */
+    @TableField( "order_cancel" )
+    private Integer  orderCancel ;
+    /**
+     * 商家消息模板内容 {模板标题:模板id}
+     */
+    @TableField( "bus_message_json" )
+    private String  busMessageJson ;
+    /**
+     * 是否加入担保交易  0未加入 1已加入
+     */
+    @TableField( "is_securitytrade" )
+    private Integer isSecuritytrade;
+    /**
+     * 是否开启编辑手机端菜单 0 未开启 1已开启
+     */
+    @TableField( "is_footer" )
+    private Integer isFooter;
+    /**
+     * 接收申请审核手机
+     */
+    @TableField( "check_seller_phone" )
+    private String  checkSellerPhone;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;
@@ -173,6 +204,12 @@ public class MallPaySet extends Model< MallPaySet > {
 			", isSeller=" + isSeller +
 			", isCheckSeller=" + isCheckSeller +
 			", footerJson=" + footerJson +
+			", styleKey=" + styleKey +
+			", orderCancel=" + orderCancel +
+			", busMessageJson=" + busMessageJson +
+			", isSecuritytrade=" + isSecuritytrade +
+			", isFooter=" + isFooter +
+			", checkSellerPhone=" + checkSellerPhone +
 			"}";
     }
 }

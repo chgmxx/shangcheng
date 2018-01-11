@@ -143,7 +143,7 @@ public class MallPresaleDeposit extends Model< MallPresaleDeposit > {
     private String orderNo;
 
     @TableField( exist = false )
-    private List< String > oldUserIdList;
+    private List< Integer > oldUserIdList;
 
     @TableField( exist = false )
     private int presaleStatus;

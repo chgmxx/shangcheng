@@ -1,11 +1,14 @@
 package com.gt.mall.service.web.seckill;
 
+import com.gt.api.bean.session.BusUser;
+
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +58,18 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 根据商品id查询秒杀信息和秒杀价格
      */
-    MallSeckill getSeckillByProId( Integer proId, Integer shopId );
+    MallSeckill getSeckillByProId( Integer proId, Integer shopId, int activityId );
+
+    /**
+     * 获取商品的秒杀信息
+     *
+     * @param proId  商品id
+     * @param shopId 店铺id
+     * @param result 返回商品详细页面的结果
+     *
+     * @return 秒杀信息
+     */
+    PhoneProductDetailResult getSeckillProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result );
 
     /**
      * 查询用户参加秒杀的数量
@@ -65,7 +79,7 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
     /**
      * 判断秒杀的库存是否能够秒杀
      */
-    Map< String,Object > isInvNum( MallOrder mallOrder, MallOrderDetail mallOrderDetail );
+    Map< String,Object > isInvNum( Integer seckillId, String productSpecificas, Integer productNum );
 
     /**
      * 减商品的库存（在redis中）
@@ -92,4 +106,23 @@ public interface MallSeckillService extends BaseService< MallSeckill > {
      * 通过秒杀id查询秒杀信息
      */
     MallSeckill selectSeckillBySeckillId( int id );
+
+    /**
+     * 查询正在秒杀的商品
+     */
+    PageUtil searchSeckillAll( PhoneSearchProductDTO searchProductDTO, Member member );
+
+    /**
+     * 判断秒杀商品是否能购买
+     * 1 判断秒杀商品是否正在进行
+     * 2 判断购买的规格是否允许参团
+     * 3 判断限购
+     *
+     * @param seckillId    秒杀id
+     * @param invId        库存id
+     * @param productNum   商品数量
+     * @param memberId     粉丝id
+     * @param memberBuyNum 粉丝已购买商品数量
+     */
+    boolean seckillProductCanBuy( int seckillId, int invId, int productNum, int memberId, int memberBuyNum );
 }

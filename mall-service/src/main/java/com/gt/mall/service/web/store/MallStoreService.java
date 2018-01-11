@@ -1,12 +1,11 @@
 package com.gt.mall.service.web.store;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +72,7 @@ public interface MallStoreService extends BaseService< MallStore > {
      *
      * @return 店铺id
      */
-    int getShopBySession( HttpSession session, int shopId );
+    //    int getShopBySession( HttpSession session, int shopId );
 
     /**
      * 创建仓库  对接进销存
@@ -115,6 +114,15 @@ public interface MallStoreService extends BaseService< MallStore > {
     Map< String,Object > findShopByStoreId( Integer id );
 
     /**
+     * 根据店铺id查询店铺信息
+     *
+     * @param shopId 店铺id
+     *
+     * @return 店铺信息
+     */
+    MallStore findShopByShopId( Integer shopId );
+
+    /**
      * 保存或修改店铺
      */
     boolean saveOrUpdate( MallStore sto, BusUser user ) throws Exception;
@@ -127,7 +135,32 @@ public interface MallStoreService extends BaseService< MallStore > {
     /**
      * 获取登录人拥有的店铺集合
      */
-    public List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request );
+    List< Map< String,Object > > findAllStoByUser( BusUser user, HttpServletRequest request );
+
+    /**
+     * 根据商家id和店铺id集合查询商品店铺信息
+     *
+     * @param userId     商家id
+     * @param shopIdList 商家店铺id集合
+     *
+     * @return 店铺信息
+     */
+    List< Map< String,Object > > findShopByUserIdAndShops( int userId, List< Integer > shopIdList );
+
+    /**
+     * 查询商家的所有店铺（已删除的店铺也查出来了）
+     *
+     * @param userId  商家id
+     * @param request request
+     *
+     * @return 店铺集合
+     */
+    List< Map< String,Object > > findShopByUserId( int userId, HttpServletRequest request );
+
+    /**
+     * 查询店铺信息集合（根据店铺id）
+     */
+    List< Map< String,Object > > findShopByShopIdList( List< Integer > busIdList );
 
     /**
      * 创建所有erp仓库
@@ -155,4 +188,13 @@ public interface MallStoreService extends BaseService< MallStore > {
      * @return true 是管理员
      */
     public boolean getIsAdminUser( int userId, HttpServletRequest request );
+
+    /**
+     * 查询门店是否开通商城并拥有页面
+     *
+     * @param shopId 门店id
+     *
+     * @return true 已经开通了商城   false 没有开通商城
+     */
+    public boolean shopIsOpenMall( Integer shopId );
 }

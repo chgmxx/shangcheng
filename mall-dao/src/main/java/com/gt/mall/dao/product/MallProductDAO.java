@@ -2,6 +2,7 @@ package com.gt.mall.dao.product;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.product.MallProduct;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
     /**
      * 查询分组下的商品个数
      */
-    List<Map<String,Object>> countProductByGroup( Map< String,Object > params );
+    List< Map< String,Object > > countProductByGroup( Map< String,Object > params );
 
     /**
      * 统计用户下面的商品数量
@@ -35,6 +36,11 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
      * @Title: selectByUserId
      */
     List< Map< String,Object > > selectByUserId( Map< String,Object > params );
+
+    /**
+     * 根据用户id来查询商品信息
+     */
+    List< Map< String,Object > > selectWaitCheckList( Map< String,Object > params );
 
     /**
      * 批量修改商品信息
@@ -116,6 +122,16 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
     int selectCountAllByShopids( Map< String,Object > params );
 
     /**
+     * 搜索店铺下的商品
+     */
+    List< Map< String,Object > > selectProductAllByShopidsNew( PhoneSearchProductDTO searchProductDTO );
+
+    /**
+     * 统计搜索店铺下的商品
+     */
+    int selectCountAllByShopidsNew( PhoneSearchProductDTO searchProductDTO );
+
+    /**
      * 根据商品id查询商品信息，商品规格，商品库存和商品图片
      *
      * @param id 商品id
@@ -177,5 +193,7 @@ public interface MallProductDAO extends BaseMapper< MallProduct > {
      * @return
      */
     List< Map< String,Object > > selectProByUserIdGroupName( Integer userId );
+
+    void updateProViewNum( Map< String,Object > params );
 
 }

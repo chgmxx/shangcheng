@@ -1,11 +1,13 @@
 package com.gt.mall.service.web.html.impl;
 
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
 import com.gt.mall.dao.html.MallHtmlFromDAO;
 import com.gt.mall.entity.html.MallHtmlFrom;
-import com.gt.mall.utils.SessionUtils;
 import com.gt.mall.service.web.html.MallHtmlFromService;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,7 @@ public class MallHtmlFromServiceImpl extends BaseServiceImpl< MallHtmlFromDAO,Ma
     @Override
     public Map< String,Object > htmlListfrom( HttpServletRequest request ) {
 	Map< String,Object > map = new HashMap< String,Object >();
-	BusUser obj = SessionUtils.getLoginUser( request );//获取登录信息
+	BusUser obj = MallSessionUtils.getLoginUser( request );//获取登录信息
 	Integer id = Integer.valueOf( request.getParameter( "id" ).toString() );//获取H5id
 	map.put( "id", id );
 	//pid==0 主账户,否则是子账户
@@ -59,6 +61,23 @@ public class MallHtmlFromServiceImpl extends BaseServiceImpl< MallHtmlFromDAO,Ma
 	map.put( "pageNum", pageNum );
 	map.put( "pagetotal", pagetotal );
 	return map;
+    }
+
+    @Override
+    public PageUtil newHtmlListfrom( HttpServletRequest request, Map< String,Object > params ) {
+	int pageSize = 10;// 每页显示商品的数量
+	int htmlId = CommonUtil.toInteger( params.get( "htmlId" ) );
+	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+
+	int count = htmlFromDAO.countHtmlFromByHtmlId( htmlId );
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );// 起始页
+	if ( count > 0 ) {
+	    List< Map< String,Object > > list = htmlFromDAO.getHtmlFromByHtmlId( htmlId, firstNum, pageSize );
+	    page.setSubList( list );
+	}
+
+	return page;
     }
 
     @Override

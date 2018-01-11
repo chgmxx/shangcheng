@@ -2,8 +2,10 @@ package com.gt.mall.service.web.basic.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,7 +51,11 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
     public int editPaySet( Map< String,Object > params ) {
 	int count = 0;
 	MallPaySet set = (MallPaySet) JSONObject.toJavaObject( JSONObject.parseObject( JSON.toJSONString( params ) ), MallPaySet.class );
-
+	set.setSmsMessage( CommonUtil.urlEncode( set.getSmsMessage() ) );
+	set.setPfRemark( CommonUtil.urlEncode( set.getPfRemark() ) );
+	set.setPfApplyRemark( CommonUtil.urlEncode( set.getPfApplyRemark() ) );
+	set.setBusMessageJson( CommonUtil.urlEncode( set.getBusMessageJson() ) );
+	set.setMessageJson( CommonUtil.urlEncode( set.getMessageJson() ) );
 	MallPaySet paySet = paySetDAO.selectOne( set );
 	if ( CommonUtil.isNotEmpty( set ) && CommonUtil.isNotEmpty( paySet ) ) {
 	    if ( CommonUtil.isEmpty( set.getId() ) && CommonUtil.isNotEmpty( paySet.getId() ) ) {
@@ -72,6 +79,10 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 		    }
 		}
 	    }
+	    //修改updateById无法修改的数据
+	    mallPaySet.setOrderCancel( set.getOrderCancel() );
+	    mallPaySet.setCheckSellerPhone( set.getCheckSellerPhone() );
+	    paySetDAO.updateAllColumnById( mallPaySet );
 	}
 	if ( count < 0 ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
@@ -157,5 +168,20 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 	    }
 	}
 	return footerMap;
+    }
+
+    @Override
+    public MallPaySet selectByUserId( int busId ) {
+	MallPaySet set = new MallPaySet();
+	set.setUserId( busId );
+	return paySetDAO.selectOne( set );
+    }
+
+    @Override
+    public List< MallPaySet > selectByUserIdList( List< Integer > busIdList ) {
+	Wrapper< MallPaySet > wrapper = new EntityWrapper<>();
+	wrapper.in( "user_id", busIdList );
+
+	return paySetDAO.selectList( wrapper );
     }
 }

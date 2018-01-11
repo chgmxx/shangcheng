@@ -1,16 +1,25 @@
 package com.gt.mall.service.web.pifa.impl;
 
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.pifa.MallPifaApplyDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.pifa.MallPifaPriceDAO;
-import com.gt.mall.dao.product.MallSearchKeywordDAO;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
 import com.gt.mall.entity.pifa.MallPifaApply;
 import com.gt.mall.entity.pifa.MallPifaPrice;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.param.phone.order.PhoneToOrderPifatSpecificaDTO;
+import com.gt.mall.param.phone.order.PhoneOrderPifaSpecDTO;
+import com.gt.mall.result.phone.product.PhonePifaProductDetailResult;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
+import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaPriceService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -55,16 +64,19 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
     private MallPifaPriceService mallPifaPriceService;
 
     @Autowired
-    private MallSearchKeywordDAO mallSearchKeywordDAO;
-
-    @Autowired
     private MallSearchKeywordService mallSearchKeywordService;
 
     @Autowired
-    private MallProductService mallProductService;
+    private MallPageService mallPageService;
 
     @Autowired
-    private MallPageService mallPageService;
+    private MallPifaApplyService mallPifaApplyService;
+
+    @Autowired
+    private MallPaySetService mallPaySetService;
+
+    @Autowired
+    private MallProductService mallProductService;
 
     @Override
     @Transactional( rollbackFor = Exception.class )
@@ -126,10 +138,12 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		String str = JedisUtil.maoget( key, member_id );
 		if ( CommonUtil.isNotEmpty( str ) ) {
 		    JSONObject orderObj = JSONObject.fromObject( str );
-		    if ( CommonUtil.isNotEmpty( orderObj.get( "num" ) ) )
+		    if ( CommonUtil.isNotEmpty( orderObj.get( "num" ) ) ) {
 			obj.put( "num", orderObj.get( "num" ) );
-		    if ( CommonUtil.isNotEmpty( orderObj.get( "proPrice" ) ) )
+		    }
+		    if ( CommonUtil.isNotEmpty( orderObj.get( "proPrice" ) ) ) {
 			obj.put( "money", orderObj.get( "proPrice" ) );
+		    }
 		}
 	    }
 
@@ -227,9 +241,6 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 		    num = mallPifaDAO.insert( pifa );
 		}
 		if ( CommonUtil.isNotEmpty( pifa.getId() ) ) {
-		    //					String key = "hSeckill";
-		    //					String field = pifa.getId().toString();
-		    //					JedisUtil.map(key, field, pifa.getsNum()+"");
 		    if ( status != 1 ) {
 			mallPifaPriceService.editPifaPrice( pifaMap, pifa.getId(), flag );
 		    }
@@ -315,7 +326,7 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
 		split = specImgIds.split( "," );
 	    }
-	    productList = mallPageService.getProductImages( productList, proIds, split );
+	    productList = mallPageService.getProductImages( productList, proIds );
 	}
 	List< Map< String,Object > > list = getHomeParams( productList );
 	page.setSubList( list );
@@ -385,10 +396,13 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
      * @return
      */
     @Override
-    public MallPifa getPifaByProId( Integer proId, Integer shopId ) {
+    public MallPifa getPifaByProId( Integer proId, Integer shopId, int activityId ) {
 	MallPifa pifa = new MallPifa();
 	pifa.setProductId( proId );
 	pifa.setShopId( shopId );
+	if ( activityId > 0 ) {
+	    pifa.setId( activityId );
+	}
 	pifa = mallPifaDAO.selectBuyByProductId( pifa );
 	if ( pifa != null && CommonUtil.isNotEmpty( pifa.getId() ) ) {
 	    Date endTime = DateTimeKit.parse( pifa.getPfEndTime().toString(),
@@ -407,6 +421,17 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    return pifa;
 	}
 	return null;
+    }
+
+    @Override
+    public MallPifa selectBuyByProductId( Integer proId, Integer shopId, int activityId ) {
+	MallPifa pifa = new MallPifa();
+	pifa.setProductId( proId );
+	pifa.setShopId( shopId );
+	if ( activityId > 0 ) {
+	    pifa.setId( activityId );
+	}
+	return mallPifaDAO.selectBuyByProductId( pifa );
     }
 
     @Override
@@ -430,5 +455,204 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	    }
 	}
 	return -1;
+    }
+
+    /**
+     * 搜索店铺下所有的批发商品
+     */
+    @Override
+    public PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member ) {
+	int pageSize = 10;
+	int curPage = CommonUtil.isEmpty( searchProductDTO.getCurPage() ) ? 1 : searchProductDTO.getCurPage();
+	int rowCount = mallPifaDAO.selectCountGoingPifaProduct( searchProductDTO );
+	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
+	searchProductDTO.setFirstNum( pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
+	searchProductDTO.setMaxNum( pageSize );
+
+	List< Map< String,Object > > productList = mallPifaDAO.selectGoingPifaProduct( searchProductDTO );
+
+	page.setSubList( mallPageService.getSearchProductParam( productList, 1, searchProductDTO ) );
+	return page;
+    }
+
+    @Override
+    public PhoneProductDetailResult getPifaProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member, MallPaySet mallPaySet ) {
+	/*if ( activityId == 0 ) {
+	    return result;
+	}*/
+	PhonePifaProductDetailResult pifaResult = new PhonePifaProductDetailResult();
+	boolean isOpenPifa = false;
+	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
+	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPf() ) ) {//是否开启批发
+		if ( mallPaySet.getIsPf().toString().equals( "1" ) ) {
+		    isOpenPifa = true;
+		    if ( CommonUtil.isNotEmpty( mallPaySet.getPfSet() ) ) {
+			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject( mallPaySet.getPfSet() );
+			pifaResult.setPfSetObj( obj );
+		    }
+		}
+	    }
+	}
+	if ( !isOpenPifa ) {
+	    return result;
+	}
+	//通过商品id查询批发信息
+	MallPifa pifa = getPifaByProId( proId, shopId, activityId );
+	if ( pifa == null ) {
+	    return result;
+	}
+	if ( pifa.getStatus() == -1 || pifa.getStatus() == -2 ) {
+	    return result;
+	}
+	result.setPfPrice( CommonUtil.toDouble( pifa.getPfPrice() ) );
+	result.setActivityTimes( pifa.getTimes() );
+	result.setActivityStatus( pifa.getStatus() );
+	int pfStatus = mallPifaApplyService.getPifaApplay( member, mallPaySet );
+	pifaResult.setPfType( pifa.getPfType() );
+	pifaResult.setPfStatus( pfStatus );//批发状态
+	result.setActivityId( pifa.getId() );
+	double groupPrice = CommonUtil.toDouble( pifa.getPfPrice() );
+	List< Integer > invIdList = new ArrayList<>();
+	if ( CommonUtil.isNotEmpty( pifa.getPriceList() ) ) {
+	    for ( MallPifaPrice price : pifa.getPriceList() ) {
+		if ( price.getIsJoinGroup() == 1 ) {
+		    if ( result.getInvId() == 0 ) {
+			groupPrice = CommonUtil.toDouble( price.getSeckillPrice() );
+			result.setInvId( price.getInvenId() );
+		    }
+		    if ( result.getInvId() > 0 ) {
+			invIdList.add( price.getInvenId() );
+			if ( result.getInvId() == price.getInvenId() ) {
+			    result.setPfPrice( CommonUtil.toDouble( price.getSeckillPrice() ) );
+			}
+		    }
+		}
+	    }
+	}
+	String errorMsg = "";
+	if ( pifa.getStatus() == 0 ) {
+	    errorMsg = "该商品批发还未开始，请耐心等待";
+	} else if ( pifa.getStatus() == -1 ) {
+	    errorMsg = "该商品批发已结束，暂不能批发";
+	}
+	String msg = CommonUtil.getPifaErrorMsg( pfStatus );
+	if ( CommonUtil.isNotEmpty( msg ) ) {
+	    errorMsg = msg;
+	}
+	pifaResult.setPfErrorMsg( errorMsg );
+	result.setPifaResult( pifaResult );
+	result.setInvIdList( invIdList );
+	result.setPfPrice( groupPrice );
+	return result;
+    }
+
+    @Override
+    public boolean pifaProductCanBuy( int pifaId, int invId, int productNum, int memberId, int memberBuyNum, MallPaySet mallPaySet ) {
+	if ( CommonUtil.isEmpty( pifaId ) || pifaId == 0 ) {
+	    return false;
+	}
+	boolean isOpenPifa = false;
+	if ( CommonUtil.isNotEmpty( mallPaySet ) ) {
+	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsPf() ) ) {//是否开启批发
+		if ( mallPaySet.getIsPf().toString().equals( "1" ) ) {
+		    isOpenPifa = true;
+		}
+	    }
+	}
+	if ( !isOpenPifa ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "商家还未开启批发活动，不能购买批发" );
+	}
+	//通过商品id查询批发信息
+	MallPifa pifa = new MallPifa();
+	pifa.setId( pifaId );
+	pifa = mallPifaDAO.selectBuyByProductId( pifa );
+	if ( CommonUtil.isEmpty( pifa ) ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的批发商品被删除或已失效" );
+	}
+	if ( pifa.getStatus() == 0 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的批发商品活动还未开始" );
+	} else if ( pifa.getStatus() == -1 ) {
+	    throw new BusinessException( ResponseEnums.ACTIVITY_ERROR.getCode(), "您购买的批发商品活动已结束" );
+	}
+	if ( invId > 0 ) {
+	    List< MallPifaPrice > priceList = mallPifaPriceService.selectPriceByInvId( pifaId, invId );
+	    if ( priceList != null && priceList.size() > 0 ) {
+		MallPifaPrice buyPrice = priceList.get( 0 );
+		if ( buyPrice.getIsJoinGroup() == 0 ) {
+		    throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), "该规格未参加批发活动" );
+		}
+	    } else {
+		throw new BusinessException( ResponseEnums.INV_NO_JOIN_ERROR.getCode(), "该规格未参加批发活动" );
+	    }
+	}
+	return false;
+    }
+
+    @Override
+    public Map< String,Object > getPifaSet( int busId ) {
+	//通过商品id查询批发信息
+	MallPaySet set = mallPaySetService.selectByUserId( busId );
+	double hpMoney = 0;
+	int hpNum = 1;//混批件数
+	int spHand = 1;
+	if ( CommonUtil.isNotEmpty( set ) ) {
+	    if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {//是否开启批发
+		if ( CommonUtil.isNotEmpty( set.getPfSet() ) ) {
+		    JSONObject obj = JSONObject.fromObject( set.getPfSet() );
+		    if ( CommonUtil.isNotEmpty( obj.get( "isHpMoney" ) ) ) {
+			if ( obj.get( "isHpMoney" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( obj.get( "hpMoney" ) ) ) {
+			    hpMoney = CommonUtil.toDouble( obj.get( "hpMoney" ) );
+			}
+		    }
+		    if ( CommonUtil.isNotEmpty( obj.get( "isHpNum" ) ) ) {
+			if ( obj.get( "isHpNum" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( obj.get( "hpNum" ) ) ) {
+			    hpNum = CommonUtil.toInteger( obj.get( "hpNum" ) );
+			}
+		    }
+		    if ( CommonUtil.isNotEmpty( obj.get( "isSpHand" ) ) ) {
+			if ( obj.get( "isSpHand" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( obj.get( "spHand" ) ) ) {
+			    spHand = CommonUtil.toInteger( obj.get( "spHand" ) );
+			}
+		    }
+		}
+	    }
+	}
+	Map< String,Object > pfMap = new HashMap<>();
+	pfMap.put( "hpMoney", hpMoney );
+	pfMap.put( "hpNum", hpNum );
+	pfMap.put( "spHand", spHand );
+	return pfMap;
+    }
+
+    public List< PhoneOrderPifaSpecDTO > getPifaPrice( int proId, int shopId, int activityId, List< PhoneToOrderPifatSpecificaDTO > specificaIdsList ) {
+	List< MallPifaPrice > priceList = mallPifaPriceService.selectPriceByGroupId( activityId );
+	List< PhoneOrderPifaSpecDTO > pfSpecResultList = new ArrayList<>();
+
+	if ( CommonUtil.isNotEmpty( priceList ) && priceList.size() > 0 ) {
+
+	    for ( MallPifaPrice price : priceList ) {
+		if ( price.getIsJoinGroup() == 1 ) {
+		    PhoneOrderPifaSpecDTO pfSpecResult = new PhoneOrderPifaSpecDTO();
+		    if ( specificaIdsList != null && specificaIdsList.size() > 0 ) {
+			for ( PhoneToOrderPifatSpecificaDTO specificaDTO : specificaIdsList ) {
+			    if ( specificaDTO.getSpecificaValueIds().equals( price.getSpecificaIds() ) ) {
+
+				Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( price.getSpecificaIds(), proId );
+				if ( CommonUtil.isNotEmpty( invMap ) ) {
+				    pfSpecResult.setSpecificaValues( CommonUtil.toString( invMap.get( "specifica_values" ) ) );
+				    pfSpecResult.setSpecificaName( CommonUtil.toString( invMap.get( "specificaName" ) ) );
+				}
+				pfSpecResult.setSpecificaIds( price.getSpecificaIds() );
+				pfSpecResult.setPfPrice( CommonUtil.toDouble( price.getSeckillPrice() ) );
+				pfSpecResult.setTotalNum( specificaDTO.getProductNum() );
+				pfSpecResultList.add( pfSpecResult );
+			    }
+			}
+		    }
+		}
+	    }
+
+	}
+	return pfSpecResultList;
     }
 }

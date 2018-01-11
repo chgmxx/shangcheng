@@ -43,7 +43,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      */
     int upOrderByorderNo( Map< String,Object > params );
 
-
     /**
      * 查询订单详细信息
      */
@@ -72,6 +71,15 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * 手机端订单列表
      */
     List< MallOrder > mobileOrderList( Map< String,Object > params );
+
+    /**
+     * 查询评论订单
+     *
+     * @param params
+     *
+     * @return
+     */
+    List< MallOrder > mobileOrderListByComment( Map< String,Object > params );
 
     /**
      * 手机端订单列表
@@ -112,11 +120,6 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * 查出所有完成的订单
      */
     List< MallOrder > selectOrderByFinish();
-
-    /**
-     * 计算有多少人参团
-     */
-    Map< String,Object > groupJoinPeopleNum( Map< String,Object > params );
 
     /**
      * 查询所有未支付的订单
@@ -179,6 +182,11 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
     List< Map< String,Object > > selectIntegralOrder( Map< String,Object > params );
 
     /**
+     * 查询积分订单
+     */
+    List< Map< String,Object > > selectIntegralOrderList( Map< String,Object > params );
+
+    /**
      * 查询充值失败和未充值的订单
      */
     List< Map< String,Object > > selectOrderFlow();
@@ -197,7 +205,88 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * 根据订单id查询订单信息
      *
      * @param id 订单id
-     *
      */
     Map< String,Object > selectMapById( int id );
+
+    /**
+     * 获取条数
+     */
+    int tradeCount( Map< String,Object > params );
+
+    /**
+     * 分页查询
+     */
+    List< Map< String,Object > > findByTradePage( Map< String,Object > params );
+
+    /**
+     * 查询7天内未确认收货的订单
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectRealOrder();
+
+    List< Map< String,Object > > selectRealOrderDetail( Map< String,Object > map );
+
+    void updateByOrder( Map< String,Object > params );
+
+    /**
+     * 查询已完成的订单（并不能退款）
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectFinishOrder();
+
+    /**
+     * 查询还未发放佣金的订单
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectOrderNoCommisssion();
+
+    /**
+     * 获得订单完成7天后的 总计金额
+     *
+     * @param shopId
+     *
+     * @return
+     */
+    Double selectOrderFinishMoneyByShopId( Integer shopId );
+
+    /**
+     * 根据订单id查询订单信息
+     *
+     * @param params
+     *
+     * @return
+     */
+    MallOrder selectOrderById( Map< String,Object > params );
+
+    /**
+     * 关闭到店支付的订单
+     *
+     * @return
+     */
+    int closeDaoDianOrder();
+
+    /**
+     * 获取当天店铺扫码支付情况
+     *
+     * @param startTime
+     * @param endTime
+     *
+     * @return
+     */
+    List< Map< String,Object > > selectTodayShopByTime( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime );
+
+    /**
+     * 统计当天店铺扫码支付
+     *
+     * @param startTime
+     * @param endTime
+     * @param shopId
+     *
+     * @return
+     */
+    Map< String,Object > countTodayShopByTime( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime, @Param( "shopId" ) Integer shopId );
+
 }

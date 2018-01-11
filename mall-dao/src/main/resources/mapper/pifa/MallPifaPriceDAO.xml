@@ -44,7 +44,7 @@
                 is_delete = #{isDelete,jdbcType=TINYINT},
             </if>
         </set>
-        where pifa_id = #{seckillId,jdbcType=INTEGER}
+        where pifa_id = #{pifaId,jdbcType=INTEGER}
     </update>
 
     <select id="selectPriceByInvId" parameterType="Map" resultType="Map" >

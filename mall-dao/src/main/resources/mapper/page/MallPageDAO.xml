@@ -16,23 +16,25 @@
         <result column="pag_is_main" property="pagIsMain"/>
         <result column="pag_html" property="pagHtml"/>
         <result column="codeUrl" property="codeUrl"/>
+        <result column="visitor_num" property="visitorNum"/>
+        <result column="views_num" property="viewsNum"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, pag_name , pag_descript , pag_type_id , pag_css  , pag_data , pag_user_id , pag_sto_id ,
-        pag_create_time , pag_is_main , pag_html , codeUrl
+        pag_create_time , pag_is_main , pag_html , codeUrl,visitor_num ,views_num
     </sql>
 
     <sql id="Base_Map_Column_List">
         id, pag_name, pag_descript, pag_type_id, pag_css, pag_data, pag_user_id, pag_sto_id,
-        pag_create_time, pag_is_main, pag_html, codeUrl
+        pag_create_time, pag_is_main, pag_html, codeUrl ,visitor_num ,views_num
     </sql>
 
     <select id="findByPage" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT
         a.id, a.pag_name, a.pag_descript, a.pag_type_id, a.pag_css, a.pag_data, a.pag_user_id, a.pag_sto_id,
-        a.pag_create_time, a.pag_is_main, a.pag_html, a.codeUrl
+        a.pag_create_time, a.pag_is_main, a.pag_html, a.codeUrl, visitor_num ,views_num
         FROM t_mall_page a
         LEFT JOIN t_mall_store b ON a.pag_sto_id=b.id
         WHERE b.is_delete=0
@@ -42,10 +44,13 @@
                 #{item.id}
             </foreach>
         </if>
+        <if test="shopId != null">
+            and pag_sto_id = #{shopId}
+        </if>
         <if test="pagName != null">
             and a.pag_name like '%${pagName}%'
         </if>
-
+        ORDER BY a.`pag_create_time` DESC
         limit #{firstResult},#{maxResult}
     </select>
 
@@ -60,6 +65,9 @@
             </if>
             <if test="pagName != null">
                 and pag_name like '%${pagName}%'
+            </if>
+            <if test="shopId != null">
+                and pag_sto_id = #{shopId}
             </if>
         </where>
     </select>

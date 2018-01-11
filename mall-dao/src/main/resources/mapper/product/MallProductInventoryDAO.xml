@@ -16,17 +16,18 @@
         <result column="specifica_img_id" property="specificaImgId"/>
         <result column="erp_inv_id" property="erpInvId"/>
         <result column="erp_specvalue_id" property="erpSpecvalueId"/>
+        <result column="logistics_weight" property="logisticsWeight"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, product_id , specifica_ids , inv_price , inv_num , inv_code , inv_sale_num , is_delete ,
-        is_default, specifica_img_id, erp_inv_id, erp_specvalue_id
+        is_default, specifica_img_id, erp_inv_id, erp_specvalue_id,logistics_weight
     </sql>
     <select id="selectByUserId" resultType="java.util.Map">
-        select distinct p.id as id, i.image_url as imageUrl,p.pro_name as proName,p.pro_price,p.pro_stock_total as stockTotal,
+        select distinct p.id as id, i.image_url as imageUrl,p.pro_name as proName,p.pro_price as proPrice ,p.pro_stock_total as stockTotal,
         p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as checkStatus,
-        p.check_reason as checkReason,p.shop_id as shopId,p.two_code_path as twoCodePath
+        p.check_reason as checkReason,p.shop_id as shopId,p.two_code_path as twoCodePath,p.user_id as userId
         from t_mall_product_inventory inv
         right join t_mall_product p on inv.product_id = p.id
         left join t_mall_image_associative i on p.id=i.ass_id
@@ -44,6 +45,9 @@
         </if>
         <if test="proName != null">
             and p.pro_name like '%${proName}%'
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null">
             and
@@ -70,6 +74,9 @@
         </if>
         <if test="proName != null">
             and p.pro_name like '%${proName}%'
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null">
             and
@@ -115,6 +122,9 @@
                 <if test="item.specificaImgId != null">
                     specifica_img_id,
                 </if>
+                <if test="item.logisticsWeight != null">
+                    logistics_weight,
+                </if>
             </trim>
             <trim prefix="values (" suffix=")" suffixOverrides=",">
                 <if test="item.id != null">
@@ -146,6 +156,9 @@
                 </if>
                 <if test="item.specificaImgId != null">
                     #{item.specificaImgId,jdbcType=INTEGER},
+                </if>
+                <if test="item.logisticsWeight != null">
+                    #{item.logisticsWeight,jdbcType=DECIMAL},
                 </if>
             </trim>
         </foreach>
@@ -182,6 +195,9 @@
                 </if>
                 <if test="item.specificaImgId != null">
                     specifica_img_id=#{item.specificaImgId,jdbcType=INTEGER},
+                </if>
+                <if test="item.logisticsWeight != null">
+                    logistics_weight=#{item.logisticsWeight,jdbcType=DECIMAL},
                 </if>
             </set>
             where id = #{item.id,jdbcType=INTEGER}
@@ -224,6 +240,10 @@
             </foreach>
         </if>
         AND t.shop_id=#{shopId}
+    </select>
+
+    <select id="selectProductInvenById" parameterType="Map" resultType="Map">
+        select id,inv_num,inv_sale_num from t_mall_product_inventory where product_id = #{id} and is_delete = 0 and specifica_ids = #{specId}
     </select>
 
 </mapper>

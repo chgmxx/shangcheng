@@ -38,6 +38,7 @@
         <result column="fenbi_youhui" property="fenbiYouhui"/>
         <result column="flow_id" property="flowId"/>
         <result column="flow_record_id" property="flowRecordId"/>
+        <result column="coupon_type" property="couponType"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -45,7 +46,7 @@
         id, order_id, product_id, shop_id, product_specificas, product_image_url, det_pro_num, det_pro_price, det_pro_name,
         det_pro_code, det_privivilege, det_pro_message, product_speciname, status, return_day, discount, coupon_code,
         discounted_prices, create_time, pro_type_id, use_fenbi, use_jifen, total_price, appraise_status, pro_spec_str,
-        card_receive_id, duofen_coupon, use_card_id, commission, sale_member_id, integral_youhui, fenbi_youhui, flow_id, flow_record_id
+        card_receive_id, duofen_coupon, use_card_id, commission, sale_member_id, integral_youhui, fenbi_youhui, flow_id, flow_record_id, coupon_type
     </sql>
     <select id="countDetailByProductId" resultType="java.lang.Integer" parameterType="Map">
         select count(d.id)
@@ -65,12 +66,12 @@
         </where>
     </select>
 
-    <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="Map">
+    <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         from t_mall_order_detail
         <where>
-            order_id = #{id}
+            order_id = #{orderId}
         </where>
         order by shop_id
     </select>
@@ -114,15 +115,40 @@
         insert into t_mall_order_detail (order_id,product_id,shop_id,product_specificas,product_image_url,det_pro_num,
         det_pro_price,det_pro_name,det_pro_code,det_privivilege,det_pro_message,product_speciname,return_day,discount,coupon_code,
         discounted_prices,create_time,pro_type_id,use_fenbi,use_jifen,total_price,card_receive_id,duofen_coupon,use_card_id,
-        commission,sale_member_id, integral_youhui, fenbi_youhui,flow_id,flow_record_id)
+        commission,sale_member_id, integral_youhui, fenbi_youhui,flow_id,flow_record_id,coupon_type)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.orderId},#{item.productId},#{item.shopId},#{item.productSpecificas},#{item.productImageUrl},#{item.detProNum},
             #{item.detProPrice},#{item.detProName},#{item.detProCode},#{item.detPrivivilege},#{item.detProMessage},
             #{item.productSpeciname},#{item.returnDay},#{item.discount},#{item.couponCode},#{item.discountedPrices},#{item.createTime},
             #{item.proTypeId},#{item.useFenbi},#{item.useJifen},#{item.totalPrice},#{item.cardReceiveId},#{item.duofenCoupon},#{item.useCardId},
-            #{item.commission},#{item.saleMemberId}, #{item.integralYouhui}, #{item.fenbiYouhui}, #{item.flowId}, #{item.flowRecordId})
+            #{item.commission},#{item.saleMemberId}, #{item.integralYouhui}, #{item.fenbiYouhui}, #{item.flowId}, #{item.flowRecordId}, #{item.couponId},
+            #{item.couponType})
         </foreach>
     </insert>
+
+    <select id="selectTodayProduct" resultType="Map">
+        SELECT DISTINCT a.product_id,b.wx_shop_id
+        FROM t_mall_order_detail a
+        LEFT JOIN t_mall_store b ON a.shop_id=b.id
+        LEFT JOIN t_mall_order c ON a.order_id=c.id
+        WHERE 5 > c.order_status
+        AND c.order_status > 1
+        AND c.pay_time >= #{startTime}
+        and c.pay_time <![CDATA[<]]> #{endTime}
+        AND c.order_pay_way IN (1,3)
+    </select>
+    <select id="selectProductMoneyByWay" resultType="Map">
+        SELECT  SUM(a.det_pro_num) AS wxnum ,SUM(a.det_pro_num*a.det_pro_price) AS wxprice
+        FROM t_mall_order_detail a
+        LEFT JOIN t_mall_store b ON a.shop_id=b.id
+        LEFT JOIN t_mall_order c ON a.order_id=c.id
+        WHERE 5 > c.order_status
+        AND c.order_status > 1
+        AND c.pay_time >= #{startTime}
+        and c.pay_time <![CDATA[<]]> #{endTime}
+        AND a.product_id=#{productId}
+        AND c.order_pay_way=#{payWay}
+    </select>
 
 </mapper>

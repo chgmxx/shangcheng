@@ -100,7 +100,7 @@ public class MallPifa extends Model< MallPifa > {
     private Long startTimes;//活动开始剩余时间
 
     @TableField( exist = false )
-    private int joinId;
+    private int joinId = 0;
 
     @TableField( exist = false )
     private String twoCodePath;//商品二维码路径

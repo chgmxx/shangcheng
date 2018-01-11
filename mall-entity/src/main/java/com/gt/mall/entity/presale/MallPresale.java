@@ -100,7 +100,7 @@ public class MallPresale extends Model< MallPresale > {
     private int status;//预售状态
 
     @TableField(exist = false)
-    private int joinId;//参加用户id
+    private int joinId = 0;//参加用户id
 
     @TableField(exist = false)
     private long times;

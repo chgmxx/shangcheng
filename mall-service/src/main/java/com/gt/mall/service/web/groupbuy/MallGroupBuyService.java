@@ -1,9 +1,11 @@
 package com.gt.mall.service.web.groupbuy;
 
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseService;
-import com.gt.mall.bean.Member;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.utils.PageUtil;
 
 import java.util.List;
@@ -78,22 +80,35 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
     /**
      * 根据商品id查询团购信息和团购价格
      *
-     * @param proId  商品Id
-     * @param shopId 店铺Id
+     * @param proId      商品Id
+     * @param shopId     店铺Id
+     * @param activityId 活动Id
      *
      * @return 团购信息
      */
-    MallGroupBuy getGroupBuyByProId( Integer proId, Integer shopId );
+    MallGroupBuy getGroupBuyByProId( Integer proId, Integer shopId, int activityId );
+
+    /**
+     * 获取商品的团购信息
+     *
+     * @param proId  商品id
+     * @param shopId 店铺id
+     * @param result 返回商品详细页面的结果
+     * @param member 会员
+     *
+     * @return 团购信息
+     */
+    PhoneProductDetailResult getGroupProductDetail( int proId, int shopId, int activityId, PhoneProductDetailResult result, Member member );
 
     /**
      * 获取团购信息
      *
-     * @param memberId 用户Id
-     * @param id       团购id
+     * @param mallGroupBuy 团购对象
+     * @param proId        商品id
      *
      * @return map
      */
-    Map< String,Object > getGroupBuyById( String memberId, int id );
+    Map< String,Object > getGroupBuyById( MallGroupBuy mallGroupBuy, int proId, int joinId );
 
     /**
      * 通过团购id查询公众号信息
@@ -134,4 +149,40 @@ public interface MallGroupBuyService extends BaseService< MallGroupBuy > {
      * @return 是否可以退款
      */
     int groupIsReturn( int groupBuyId, String orderType, Object orderId, Object detailId, MallGroupBuy buy );
+
+    PageUtil searchGroupBuyProduct( PhoneSearchProductDTO searchProductDTO, Member member );
+
+    /**
+     * 判断团购商品是否能购买
+     * 1 判断团购商品是否正在进行
+     * 2 判断购买的规格是否允许参团
+     * 3 判断限购
+     *
+     * @param groupBuyId   团购id
+     * @param invId        库存id
+     * @param productNum   商品数量
+     * @param memberId     粉丝id
+     * @param memberBuyNum 粉丝已购买商品数量
+     */
+    boolean groupProductCanBuy( int groupBuyId, int invId, int productNum, int memberId, int memberBuyNum );
+
+    /**
+     * 团购订单是否能退款
+     *
+     * @param orderId       订单id
+     * @param orderDetailId 订单详情id
+     * @param groupBuyid    团购id
+     *
+     * @return true 能退款
+     */
+    boolean orderIsCanRenturn( Integer orderId, Integer orderDetailId, Integer groupBuyid );
+
+    /**
+     * 查询团购信息
+     *
+     * @param groupBuyId 团购id
+     *
+     * @return
+     */
+    MallGroupBuy selectBuyByProductId( Integer groupBuyId );
 }

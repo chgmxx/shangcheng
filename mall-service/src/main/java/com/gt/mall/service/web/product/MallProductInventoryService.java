@@ -2,6 +2,7 @@ package com.gt.mall.service.web.product;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.product.MallProductInventory;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,11 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
     void saveOrUpdateBatch( Map< String,Object > specMap, Object obj, int proId, Map< String,Object > invenMap );
 
     /**
+     * 批量保存或修改商品库存
+     */
+    void newSaveOrUpdateBatch( Map< String,Object > specMap, Object obj, int proId );
+
+    /**
      * 通过商品id查询商品库存
      */
     List< MallProductInventory > getInventByProductId( int proId );
@@ -30,6 +36,16 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
      * 查询默认显示的库存
      */
     MallProductInventory selectByIsDefault( Integer productId );
+
+    /**
+     * 查询商品大于0的默认库存（商品详细页面展示）
+     *
+     * @param productId 商品id
+     * @param invenId   库存id
+     *
+     * @return 库存
+     */
+    MallProductInventory selectDefaultInvenNotNullStock( int productId, int invenId, PhoneProductDetailResult result );
 
     /**
      * 查询默认显示的库存
@@ -82,8 +98,14 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
 
     /**
      * 根据商品ID和规格id修改库存信息
+     *
+     * @param inventory 库存对象
+     * @param proNum    数量
+     * @param type      1 加库存减销量（退款）   2减库存价销量（购买）
+     *
+     * @return
      */
-    int updateProductInventory( Map< String,Object > params );
+    int updateProductInventory( MallProductInventory inventory, Integer proNum, Integer type );
 
     /**
      * 根据商品获取产品默认规格

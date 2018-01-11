@@ -2,8 +2,8 @@ package com.gt.mall.service.web.seller.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.pifa.MallPifaDAO;
 import com.gt.mall.dao.seller.MallSellerJoinProductDAO;
@@ -13,20 +13,25 @@ import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.seller.MallSellerJoinProduct;
 import com.gt.mall.entity.seller.MallSellerMallset;
 import com.gt.mall.entity.seller.MallSellerProduct;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.sellers.PhoneAddMallSetDTO;
+import com.gt.mall.param.phone.sellers.PhoneSellerProductDTO;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
+import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.page.MallPageService;
+import com.gt.mall.service.web.pifa.MallPifaApplyService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.MallProductService;
+import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.pifa.MallPifaApplyService;
-import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -103,8 +108,7 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public Map< String,Object > saveOrUpdateSeller( Member member,
-		    Map< String,Object > params ) {
+    public Map< String,Object > saveOrUpdateSeller( Member member, Map< String,Object > params ) {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	boolean flag = false;
 	int count = 0;
@@ -192,54 +196,53 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	    }
 	    if ( productList != null && productList.size() > 0 ) {
 		double discount = mallProductService.getMemberDiscount( "1", member );//商品折扣
+		productList = mallPageService.getSearchProductParam( productList, discount, null );
 
-		boolean isPifa = mallPifaApplyService.isPifa( member );
-
-		List< Map< String,Object > > proList = new ArrayList< Map< String,Object > >();
-		for ( Map< String,Object > map : productList ) {
-		    //int proId = CommonUtil.toInteger(map.get("id"));
-		    double price = CommonUtil.toDouble( map.get( "pro_price" ) );
-		    String image_url = map.get( "image_url" ).toString();
-		    if ( map.get( "is_specifica" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( map.get( "inv_price" ) ) ) {
-			price = CommonUtil.toDouble( map.get( "inv_price" ) );
-			if ( CommonUtil.isNotEmpty( map.get( "specifica_img_url" ) ) ) {
-			    image_url = map.get( "specifica_img_url" ).toString();
-			}
-		    }
-		    /*MallSellerJoinProduct joinProduct = mallSellerJoinProductDao.selectByProId(proId);
-		    double commissionMoney = 0;
-		    if(CommonUtil.isNotEmpty(joinProduct)){
-			    double commissionRate = CommonUtil.toDouble(joinProduct.getCommissionRate());//佣金比例
-			    if(joinProduct.getCommissionType() == 1){//按百分比
-				    commissionMoney = price*(commissionRate/100);
-				    //price += CommonUtil.toDouble(df.format(commissionMoney));
-			    }else if(joinProduct.getCommissionType() == 2){//按固定金额
-				    commissionMoney = commissionRate;
-				    //price += commissionRate;
-			    }
-		    }*/
-
-		    DecimalFormat df = new DecimalFormat( "######0.00" );
-		    String is_member_discount = map.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
-		    if ( is_member_discount.equals( "1" ) ) {
-			if ( price > 0 && discount > 0 && discount < 1 ) {
-			    double hyPrice = price * discount;
-			    hyPrice = CommonUtil.toDouble( df.format( hyPrice ) );
-			    //map.put("hyPrice",df.format(hyPrice+commissionMoney));
-			    map.put( "hyPrice", df.format( hyPrice ) );
-			}
-		    }
-
-		    double pfPrice = mallPifaService.getPifaPriceByProIds( isPifa, CommonUtil.toInteger( map.get( "id" ) ) );
-		    if ( pfPrice >= 0 ) {
-			map.put( "pfPrice", df.format( pfPrice ) );
-		    }
-		    //price = commissionMoney+price;
-		    map.put( "image_url", image_url );
-		    map.put( "price", df.format( price ) );
-		    proList.add( map );
-		}
-		productList = proList;
+		//		List< Map< String,Object > > proList = new ArrayList< Map< String,Object > >();
+		//		for ( Map< String,Object > map : productList ) {
+		//		    //int proId = CommonUtil.toInteger(map.get("id"));
+		//		    double price = CommonUtil.toDouble( map.get( "pro_price" ) );
+		//		    String image_url = map.get( "image_url" ).toString();
+		//		    if ( map.get( "is_specifica" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( map.get( "inv_price" ) ) ) {
+		//			price = CommonUtil.toDouble( map.get( "inv_price" ) );
+		//			if ( CommonUtil.isNotEmpty( map.get( "specifica_img_url" ) ) ) {
+		//			    image_url = map.get( "specifica_img_url" ).toString();
+		//			}
+		//		    }
+		//		    /*MallSellerJoinProduct joinProduct = mallSellerJoinProductDao.selectByProId(proId);
+		//		    double commissionMoney = 0;
+		//		    if(CommonUtil.isNotEmpty(joinProduct)){
+		//			    double commissionRate = CommonUtil.toDouble(joinProduct.getCommissionRate());//佣金比例
+		//			    if(joinProduct.getCommissionType() == 1){//按百分比
+		//				    commissionMoney = price*(commissionRate/100);
+		//				    //price += CommonUtil.toDouble(df.format(commissionMoney));
+		//			    }else if(joinProduct.getCommissionType() == 2){//按固定金额
+		//				    commissionMoney = commissionRate;
+		//				    //price += commissionRate;
+		//			    }
+		//		    }*/
+		//
+		//		    DecimalFormat df = new DecimalFormat( "######0.00" );
+		//		    String is_member_discount = map.get( "is_member_discount" ).toString();//商品是否参加折扣,1参加折扣
+		//		    if ( is_member_discount.equals( "1" ) ) {
+		//			if ( price > 0 && discount > 0 && discount < 1 ) {
+		//			    double hyPrice = price * discount;
+		//			    hyPrice = CommonUtil.toDouble( df.format( hyPrice ) );
+		//			    //map.put("hyPrice",df.format(hyPrice+commissionMoney));
+		//			    map.put( "hyPrice", df.format( hyPrice ) );
+		//			}
+		//		    }
+		//
+		//		    double pfPrice = mallPifaService.getPifaPriceByProIds( isPifa, CommonUtil.toInteger( map.get( "id" ) ) );
+		//		    if ( pfPrice >= 0 ) {
+		//			map.put( "pfPrice", df.format( pfPrice ) );
+		//		    }
+		//		    //price = commissionMoney+price;
+		//		    map.put( "image_url", image_url );
+		//		    map.put( "price", df.format( price ) );
+		//		    proList.add( map );
+		//		}
+		//		productList = proList;
 	    }
 
 	    return productList;
@@ -281,8 +284,7 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public Map< String,Object > selectSellerByProId( int proId,
-		    MallSellerMallset mallSeller ) {
+    public Map< String,Object > selectSellerByProId( int proId, MallSellerMallset mallSeller ) {
 	Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "proId", proId );
 	params.put( "busUserId", mallSeller.getBusUserId() );
@@ -290,15 +292,15 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public List< Map< String,Object > > selectProductByBusUserId(
-		    Map< String,Object > params ) {
-	return mallSellerProductDAO.selectProductByBusUserId( params );
+    public List< Map< String,Object > > selectProductByBusUserId( Map< String,Object > params ) {
+	List< Map< String,Object > > productList = mallSellerProductDAO.selectProductByBusUserId( params );
+	return mallPageService.getSearchProductParam( productList, 1, null );
     }
 
     @Override
-    public List< Map< String,Object > > selectProductBySaleMember(
-		    Map< String,Object > params ) {
-	return mallSellerProductDAO.selectProductBySaleMember( params );
+    public List< Map< String,Object > > selectProductBySaleMember( Map< String,Object > params ) {
+	List< Map< String,Object > > productList = mallSellerProductDAO.selectProductBySaleMember( params );
+	return mallPageService.getSearchProductParam( productList, 1, null );
     }
 
     @Override
@@ -321,11 +323,14 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params, String type, int rType, double discount, boolean isPifa ) {
+    public PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params, Member member ) {
 	boolean isJoinProduct = true;
-	List< Map< String,Object > > xlist = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
 	int pageSize = 10;
+	double discount = 1;//商品折扣
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    discount = mallProductService.getMemberDiscount( "1", member );//商品折扣
+	}
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
 	PageUtil page = new PageUtil();
 	if ( CommonUtil.isNotEmpty( mallSet ) ) {
@@ -333,7 +338,7 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 		if ( mallSet.getIsOpenOptional() == 1 ) {//查询销售员自选的商品
 		    isJoinProduct = false;
 		    //					Map<String, Object> map = new HashMap<String, Object>();
-		    params.put( "id", mallSet.getId() );
+		    params.put( "mallSetId", mallSet.getId() );
 		    params.put( "saleMemberId", mallSet.getSaleMemberId() );
 		    int rowCount = mallSellerProductDAO.selectCountProductAllByMallSet( params );
 
@@ -359,13 +364,14 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 	    }
 	}
 	if ( list != null && list.size() > 0 ) {
-	    for ( int i = 0; i < list.size(); i++ ) {
-		Map< String,Object > map1 = list.get( i );
-		map1.put( "rType", params.get( "rType" ) );
-		map1 = mallPageService.productGetPrice( map1, discount, isPifa );
-		xlist.add( map1 );
-	    }
-	    page.setSubList( xlist );
+	    //	    for ( int i = 0; i < list.size(); i++ ) {
+	    //		Map< String,Object > map1 = list.get( i );
+	    //		map1.put( "rType", params.get( "rType" ) );
+	    //		map1 = mallPageService.getSearchProductParam( map1, discount, isPifa );
+	    //		xlist.add( map1 );
+	    //	    }
+	    list = mallPageService.getSearchProductParam( list, discount, null );
+	    page.setSubList( list );
 	}
 	return page;
     }
@@ -421,10 +427,12 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
     }
 
     @Override
-    public void selectSellerProduct( HttpServletRequest request, int proId,
-		    int saleMemberId, Map< String,Object > params, Member member ) {
+    public PhoneProductDetailResult selectSellerProduct( int proId, int saleMemberId, PhoneProductDetailResult result, String view, Member member ) {
 	boolean isSeller = mallSellerService.isSeller( saleMemberId );//查询该销售员是否还是销售员
 	MallSellerJoinProduct joinProduct = mallSellerJoinProductDAO.selectByProId( proId );
+	if ( CommonUtil.isEmpty( joinProduct ) ) {
+	    return result;
+	}
 	boolean isCommission = true;
 	if ( isSeller ) {
 	    MallSellerMallset mallSet = mallSellerMallsetDAO.selectBySaleMemberId( saleMemberId );
@@ -446,49 +454,170 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 		}
 	    }
 	}
-	//		if((saleMemberId == member.getId() && isSeller) || CommonUtil.isNotEmpty(params.get("view"))){
-	if ( isSeller || CommonUtil.isNotEmpty( params.get( "view" ) ) ) {
+	int commissionType = 0;//佣金类型 1按百分比  2按固定金额
+	double commission_rate = 0;
+	if ( isSeller || CommonUtil.isNotEmpty( view ) ) {
 	    if ( CommonUtil.isNotEmpty( joinProduct ) ) {
-		request.setAttribute( "productCommission", joinProduct );
+		commissionType = joinProduct.getCommissionType();
+		commission_rate = CommonUtil.toDouble( joinProduct.getCommissionRate() );
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( member ) ) {
-	    if ( ( saleMemberId == member.getId() && isSeller && isCommission ) ) {
-		request.setAttribute( "isCommission", 1 );
+	int isShowCommission = 0;//是否显示佣金
+	if ( CommonUtil.isNotEmpty( member ) && saleMemberId > 0 ) {
+	    if ( ( saleMemberId == member.getId() && isSeller && isCommission ) ) {//销售员才可以看到佣金
+		isShowCommission = 1;
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( params.get( "view" ) ) ) {
-	    request.setAttribute( "isCommission", 1 );
-	}
-	if ( saleMemberId > 0 ) {
-	    request.setAttribute( "saleMemberId", saleMemberId );
+	if ( CommonUtil.isNotEmpty( view ) ) {
+	    isShowCommission = 1;
 	}
 	//查询会员是否是销售员
-	int state = -1;
+	int status = -4;
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    MallPaySet paySet = new MallPaySet();
 	    paySet.setUserId( member.getBusid() );
 	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
 
-	    int status = mallSellerService.selectSellerStatusByMemberId( member, set );
+	    status = mallSellerService.selectSellerStatusByMemberId( member, set );
 	    String shareMsg = "您还没申请销售员,是否前往申请";
 	    if ( status == 0 ) {
-		state = -2;
+		status = -2;
 		shareMsg = "销售员正在审核中";
 	    } else if ( status == -1 ) {
-		//state = -2;
 		shareMsg = "您的销售员审核不通过,是否前往修改申请";
 	    } else if ( status == -2 ) {
 		shareMsg = "您还没申请销售员,是否前往修改申请";
 	    } else if ( status == -3 ) {
 		shareMsg = "您的销售员已暂停使用";
-		state = -2;
+		status = -2;
 	    } else if ( status == 1 ) {
-		state = 1;
+		status = 1;
 		//判断用户是否是销售员
+		shareMsg = "";
 	    }
-	    request.setAttribute( "shareState", state );
-	    request.setAttribute( "shareMsg", shareMsg );
+	    result.setShareErrorMsg( shareMsg );
+	    result.setSellerStatus( status );
+	    result.setIsShowCommission( isShowCommission );
+	    double commissionMoney = 0;//佣金
+	    if ( commissionType == 1 ) {//按百分比
+		commissionMoney = result.getProductPrice() * ( commission_rate / 100 );
+		if ( commissionMoney <= 0.01 ) {
+		    commissionMoney = 0.01;
+		}
+	    } else if ( commissionType == 2 ) {//按固定金额
+		commissionMoney = commission_rate;
+	    }
+	    result.setCommissionMoney( commissionMoney );
 	}
+	if ( saleMemberId > 0 ) {
+	    result.setIsShowShare( 1 );
+	    result.setSaleMemberId( saleMemberId );
+	}
+	return result;
     }
+
+    @Override
+    public double getCommissionMoney( int productId, double productPrice ) {
+	MallSellerJoinProduct joinProduct = mallSellerJoinProductDAO.selectByProId( productId );
+	if ( CommonUtil.isNotEmpty( joinProduct ) ) {
+	    int commissionType = joinProduct.getCommissionType();//佣金类型 1按百分比  2按固定金额
+	    double commission_rate = CommonUtil.toDouble( joinProduct.getCommissionRate() );
+	    double commissionMoney = 0;
+	    if ( commissionType == 1 ) {//按百分比
+		commissionMoney = productPrice * ( commission_rate / 100 );
+		if ( commissionMoney <= 0 ) {
+		    commissionMoney = 0.01;
+		}
+	    } else if ( commissionType == 2 ) {//按固定金额
+		commissionMoney = commission_rate;
+	    }
+	    return commissionMoney;
+	}
+	return 0;
+    }
+
+    @Override
+    public Map< String,Object > newSaveSeller( Member member, PhoneAddMallSetDTO mallSetDTO, Integer type ) {
+	Map< String,Object > resultMap = new HashMap< String,Object >();
+	EntityDtoConverter converter = new EntityDtoConverter();
+	boolean flag = false;
+	int count = 0;
+	int busUserId = member.getBusid();
+	if ( CommonUtil.isEmpty( type ) ) {
+	    type = 1;
+	}
+	if ( CommonUtil.isNotEmpty( mallSetDTO.getMallSet() ) ) {
+	    MallSellerMallset mallSet = new MallSellerMallset();
+	    converter.entityConvertDto( mallSetDTO.getMallSet(), mallSet );
+	    if ( CommonUtil.isEmpty( mallSet.getMallName() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商城名称不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getContactNumber() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "联系电话不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getQq() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "QQ不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getMallHeadPath() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "商城头像不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( mallSet.getBannerPath() ) ) {
+		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "banner不能为空" );
+	    }
+
+	    if ( CommonUtil.isEmpty( mallSet.getId() ) ) {
+		//查询是否已经对商城进行设置
+		MallSellerMallset set = mallSellerMallsetDAO.selectBySaleMemberId( member.getId() );
+		if ( CommonUtil.isNotEmpty( set ) ) {
+		    mallSet.setId( set.getId() );
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( mallSet.getId() ) ) {
+		//修改商城设置
+		count = mallSellerMallsetDAO.updateById( mallSet );
+	    } else {
+		mallSet.setSaleMemberId( member.getId() );
+		mallSet.setBusUserId( busUserId );
+		//添加商城设置
+		count = mallSellerMallsetDAO.insert( mallSet );
+	    }
+	}
+
+	if ( count > 0 || CommonUtil.isNotEmpty( mallSetDTO.getSellerProList() ) ) {
+	    if ( type == 2 ) {
+		if ( CommonUtil.isNotEmpty( mallSetDTO.getSellerProList() ) ) {
+		    //编辑自选商品信息
+		    if ( mallSetDTO.getSellerProList() != null && mallSetDTO.getSellerProList().size() > 0 ) {
+			for ( PhoneSellerProductDTO sellerPro : mallSetDTO.getSellerProList() ) {
+			    MallSellerProduct mallSellerProduct = new MallSellerProduct();
+			    converter.entityConvertDto( sellerPro, mallSellerProduct );
+
+			    if ( CommonUtil.isEmpty( mallSellerProduct.getId() ) ) {
+				Map< String,Object > param = new HashMap< String,Object >();
+				param.put( "productId", mallSellerProduct.getProductId() );
+				param.put( "saleMemberId", member.getId() );
+				MallSellerProduct product = mallSellerProductDAO.selectByProIdSale( param );
+				if ( CommonUtil.isNotEmpty( product ) ) {
+				    mallSellerProduct.setId( product.getId() );
+				}
+			    }
+			    if ( CommonUtil.isEmpty( mallSellerProduct.getId() ) ) {
+				mallSellerProduct.setSaleMemberId( member.getId() );
+				mallSellerProduct.setBusUserId( busUserId );
+				count = mallSellerProductDAO.insert( mallSellerProduct );
+			    } else {
+				count = mallSellerProductDAO.updateById( mallSellerProduct );
+			    }
+			}
+		    }
+		}
+	    }
+	    flag = true;
+	} else if ( CommonUtil.isEmpty( mallSetDTO.getSellerProList() ) && count > 0 ) {
+	    flag = true;
+	}
+	resultMap.put( "flag", flag );
+	return resultMap;
+    }
+
 }

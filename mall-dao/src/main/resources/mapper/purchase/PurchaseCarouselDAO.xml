@@ -38,8 +38,7 @@
         </if>
     </select>
     <select id="findByOrderId" parameterType="java.lang.Integer" resultType="Map">
-        select
-        <include refid="Base_Column_List"/>
+        select id, carousel_img as carouselImg ,carousel_url as carouselUrl , bus_id as busId , order_id as orderId
         from purchase_carousel where order_id=#{orderId}
     </select>
     <select id="findCarouselList" resultType="Map">

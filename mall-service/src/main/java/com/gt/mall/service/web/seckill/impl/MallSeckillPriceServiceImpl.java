@@ -1,14 +1,17 @@
 package com.gt.mall.service.web.seckill.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.product.MallProductInventoryDAO;
 import com.gt.mall.dao.seckill.MallSeckillPriceDAO;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.seckill.MallSeckillPrice;
+import com.gt.mall.service.web.seckill.MallSeckillPriceService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
-import com.gt.mall.service.web.seckill.MallSeckillPriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +56,7 @@ public class MallSeckillPriceServiceImpl extends BaseServiceImpl< MallSeckillPri
 		    } else {
 			mallSeckillPriceDAO.updateById( mallSeckillPrice );
 		    }
-		    String key = "hSeckill";
+		    String key = Constants.REDIS_SECKILL_NAME;
 		    String field = SeckillId + "_" + mallSeckillPrice.getSpecificaIds();
 		    //					JedisUtil.mapdel(key, field);
 		    JedisUtil.map( key, field, mallSeckillPrice.getSeckillNum() + "" );
@@ -79,8 +82,17 @@ public class MallSeckillPriceServiceImpl extends BaseServiceImpl< MallSeckillPri
     }
 
     @Override
-    public List< MallSeckillPrice > selectPriceByGroupId( int groupId ) {
-	return mallSeckillPriceDAO.selectPriceByGroupId( groupId );
+    public List< MallSeckillPrice > selectPriceByGroupId( int seckillId ) {
+	Wrapper< MallSeckillPrice > priceWrapper = new EntityWrapper<>();
+	priceWrapper.where( "seckill_id = {0} and is_delete = 0", seckillId );
+	return mallSeckillPriceDAO.selectList( priceWrapper );
+    }
+
+    @Override
+    public List< MallSeckillPrice > selectPriceByInvId( int seckillId, int invId ) {
+	Wrapper< MallSeckillPrice > priceWrapper = new EntityWrapper<>();
+	priceWrapper.where( "seckill_id = {0} and inven_id = {1} and is_delete = 0", seckillId, invId );
+	return mallSeckillPriceDAO.selectList( priceWrapper );
     }
 
 }

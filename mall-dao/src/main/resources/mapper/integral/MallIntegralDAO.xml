@@ -53,8 +53,8 @@
         <if test="type == 2"><!-- 已结束的积分商品-->
             and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
-        <if test="type == 3"><!-- 已失效的积分商品 -->
-            i.is_use= -1
+        <if test="type == -2"><!-- 已失效的积分商品 -->
+            and i.is_use= -1
         </if>
         <if test="shoplist != null">
             and
@@ -83,8 +83,8 @@
         <if test="type == 2"><!-- 已结束的积分商品-->
             and i.start_time &lt; now() and i.end_time &lt;= now() and i.is_use=1
         </if>
-        <if test="type == 3"><!-- 已失效的积分商品 -->
-            i.is_use= -1
+        <if test="type == -2"><!-- 已失效的积分商品 -->
+            and i.is_use= -1
         </if>
         <if test="shoplist != null ">
             and
@@ -102,9 +102,9 @@
 
     <select id="selectByIds" resultType="Map" parameterType="java.lang.Integer">
         SELECT
-        i.id, i.product_id, i.money, i.start_time, i.end_time, i.type, i.user_id, i.shop_id, i.create_time,
-        i.is_delete, i.is_use, c.image_url AS imageUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
-        ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice
+        i.id, i.product_id as productId, i.money, i.start_time as startTime, i.end_time as endTime, i.type, i.user_id as userId, i.shop_id as shopId, i.create_time as createTime,
+        i.is_delete as isDelete, i.is_use as isUse, c.image_url AS imageUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
+        ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice ,p.pro_stock_total as proStockTotal
         FROM t_mall_integral i
         LEFT JOIN t_mall_product p ON i.product_id = p.id
         LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON i.product_id=c.ass_id
@@ -135,15 +135,10 @@
     </select>
 
     <select id="selectIntegralByShopids" parameterType="Map" resultType="Map">
-        SELECT DISTINCT(a.id),a.pro_name,i.`money`,c.image_url,e.specifica_img_url
+        SELECT DISTINCT(a.id) as id,a.pro_name,i.`money`,i.shop_id,i.user_id as busId,i.product_id
         FROM t_mall_integral i
         LEFT JOIN t_mall_product a ON i.`product_id`=a.`id` AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
-        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
-        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
-        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
         <if test="shoplist != null ">
             and
@@ -163,12 +158,7 @@
         SELECT count(DISTINCT a.id)
         FROM t_mall_integral i
         LEFT JOIN t_mall_product a ON i.`product_id`=a.`id` AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
-        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
-        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
-        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0 AND i.`is_delete`=0 and i.is_use =1
+        WHERE a.is_publish=1 AND a.check_status=1 AND a.is_delete=0  AND i.`is_delete`=0 and i.is_use =1
         and i.start_time &lt;= now() and now() &lt; i.end_time
         <if test="shoplist != null ">
             and

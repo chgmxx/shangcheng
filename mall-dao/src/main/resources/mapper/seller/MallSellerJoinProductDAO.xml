@@ -21,19 +21,25 @@
         is_delete, is_use
     </sql>
 
-    <select id="selectProductByJoinSale" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <select id="selectProductByJoinSale" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller_join_product jp
         left join t_mall_product p on p.id=jp.product_id
         where jp.user_id = #{busUserId,jdbcType=INTEGER}
-        and p.is_publish=1 AND p.check_status=1 AND p.is_delete=0  and jp.is_delete=0 and jp.is_use=1
+        and p.is_publish=1 AND p.check_status=1 AND p.is_delete=0 and jp.is_delete=0 and jp.is_use=1
     </select>
-    <select id="selectCountByPage" resultType="java.lang.Integer" parameterType="Map" >
+    <select id="selectCountByPage" resultType="java.lang.Integer" parameterType="Map">
         select count(jp.id)
         from t_mall_seller_join_product jp
         left join t_mall_product p on p.id=jp.product_id
-        where p.is_publish=1 AND p.check_status=1 AND p.is_delete=0  and jp.is_delete=0
+        where p.is_publish=1 AND p.check_status=1 AND p.is_delete=0 and jp.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
+        </if>
+        <if test="isUse != null and isUse != ''">
+            and jp.is_use = #{isUse}
+        </if>
         <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
@@ -42,16 +48,22 @@
         </if>
     </select>
     <!-- 查询佣金设置的商品 -->
-    <select id="selectByPage" resultType="Map" parameterType="Map" >
-        SELECT  p.pro_name,jp.id,jp.commission_type,jp.commission_rate,jp.product_id,jp.shop_id,
-        jp.is_use,jp.create_time,p.two_code_path
+    <select id="selectByPage" resultType="Map" parameterType="Map">
+        SELECT p.pro_name,jp.id,jp.commission_type,jp.commission_rate,jp.product_id,jp.shop_id,
+        jp.is_use,jp.create_time,p.two_code_path,p.user_id
         FROM t_mall_seller_join_product jp
         LEFT JOIN t_mall_product p ON p.id= jp.product_id
-        WHERE p.is_publish=1 AND p.check_status=1 AND p.is_delete=0  AND jp.is_delete=0
+        WHERE p.is_publish=1 AND p.check_status=1 AND p.is_delete=0 AND jp.is_delete=0
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
+        </if>
+        <if test="isUse != null and isUse != ''">
+            and jp.is_use = #{isUse}
+        </if>
         <if test="shoplist != null ">
-            and
-            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
-                p.shop_id = #{item.id,jdbcType=INTEGER}
+            and p.shop_id in
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
+                 #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
         group by jp.id
@@ -63,7 +75,7 @@
         select
         jp.id, jp.product_id, jp.commission_rate, jp.commission_type, jp.user_id, jp.shop_id, jp.create_time,
         jp.is_delete, jp.is_use, c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
-        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice,p.pro_stock_total as proStockTotal
         from t_mall_seller_join_product jp
         left join t_mall_product p on jp.product_id = p.id
         LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON jp.product_id=c.ass_id
@@ -72,9 +84,9 @@
         where jp.id = #{id}
     </select>
 
-    <select id="selectByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <select id="selectByProId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller_join_product jp
         where jp.product_id = #{productId,jdbcType=INTEGER} and jp.is_delete=0 and jp.is_use=1
     </select>
@@ -85,7 +97,8 @@
         WHERE jp.product_id = #{productId} AND sp.`sale_member_id`=#{saleMemberId} AND jp.is_delete=0 AND sp.`is_delete`=0  and jp.is_use=1
     </select>
     <select id="selectSellerByProId" parameterType="Map" resultType="Map">
-        SELECT distinct p.id as id,p.shop_id,p.is_member_discount,p.pro_price,p.pro_name,p.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,p.change_integral,p.pro_cost_price,p.change_fenbi,p.pro_label,p.pro_type_id,p.member_type,p.`shop_id`
+        SELECT distinct p.id as
+        id,p.shop_id,p.is_member_discount,p.pro_price,p.pro_name,p.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,p.change_integral,p.pro_cost_price,p.change_fenbi,p.pro_label,p.pro_type_id,p.member_type,p.`shop_id`
         FROM t_mall_seller_join_product sp
         LEFT JOIN t_mall_product p ON p.id=sp.`product_id`
         LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON p.id=c.ass_id
@@ -99,7 +112,7 @@
     </select>
     <select id="selectProductByIsJoin" parameterType="Map" resultMap="BaseResultMap">
         SELECT
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         FROM `t_mall_seller_join_product` jp WHERE is_delete = 0
         <if test="shopId != null and shopId != ''">
             and shop_id = #{shopId}
@@ -112,93 +125,63 @@
         </if>
     </select>
 
-    <select id="selectProductAllByJoinSale" resultType="Map" parameterType="Map" >
-        select
-        DISTINCT a.id AS id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id
+    <select id="selectProductAllByJoinSale" resultType="Map" parameterType="Map">
+        select DISTINCT a.id AS
+        id,a.shop_id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,d.inv_num,d.inv_price,a.change_integral,a.pro_cost_price,a.change_fenbi,a.pro_label,a.pro_type_id,a.member_type,a.user_id
         from t_mall_seller_join_product jp
         left join t_mall_product a on a.id=jp.product_id
-        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
         LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
-        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+        <if test="(groupId != null and groupId != '') or (proName != null and proName != '')">
+            LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+            LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+        </if>
         where jp.user_id = #{busUserId,jdbcType=INTEGER} and jp.is_delete=0 and jp.is_use=1
-        AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0
-        <if test="shopId != null and shopId != ''">
-            and a.shop_id=#{shopId}
-        </if>
-        <if test="proName != null and proName != ''">
-            and (a.pro_name like '%${proName}%' or g.group_name like '%${proName}%')
-        </if>
-        <if test="groupId != null and groupId != ''">
-            and pg.group_id =#{groupId}
-        </if>
-        <if test="rType != null">
-            <if test="rType == 1">
-                and (a.is_integral_change_pro = 1 and a.change_integral > 0)
+        AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="(groupId != null and groupId != '') or (proName != null and proName != '')">
+            <if test="groupId != null and groupId != ''">
+                and pg.group_id =#{groupId}
             </if>
-            <if test="rType == 2">
-                and (a.is_fenbi_change_pro = 1 and a.change_fenbi > 0)
+            <if test="proName != null and proName != ''">
+                and (a.pro_name like '%${proName}%' or g.group_name like '%${proName}%')
             </if>
         </if>
         <choose>
-            <when test="type == 1">
-                ORDER BY a.id
+            <when test="sort == 'price'">
+                ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price )
+                <if test="isDesc == 1">
+                    desc
+                </if>
             </when>
-            <when test="type == 2">
-                ORDER BY a.pro_sale_total+a.sales_base
+            <when test="sort == 'sale'">
+                ORDER BY a.pro_sale_total+a.sales_base desc
             </when>
-            <when test="type == 3">
-                ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price  )
+            <when test="type == 5">
+                ORDER BY a.change_fenbi desc
             </when>
             <otherwise>
-                <if test="rType > 0">
-                    <if test="rType == 1">
-                        ORDER BY a.change_integral
-                    </if>
-                    <if test="rType == 2">
-                        ORDER BY a.change_fenbi
-                    </if>
-                </if>
-                <if test="rType == 0">
-                    ORDER BY IF(d.inv_price>0 ,d.inv_price,a.pro_price)
-                </if>
+                ORDER BY a.id desc
             </otherwise>
         </choose>
-        <if test="desc != null and desc != '' and desc == 1">
-            desc
-        </if>
         <if test="firstNum != null and maxNum != null">
             limit #{firstNum},#{maxNum}
         </if>
     </select>
-    <select id="selectCountProductAllByJoinSale" resultType="java.lang.Integer" parameterType="Map" >
-        select
-        count(DISTINCT a.id)
+    <select id="selectCountProductAllByJoinSale" resultType="java.lang.Integer" parameterType="Map">
+        select count(a.id)
         from t_mall_seller_join_product jp
         left join t_mall_product a on a.id=jp.product_id
-        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id AND e.is_delete=0
-        LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
-        LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+        <if test="(groupId != null and groupId != '') or (proName != null and proName != '')">
+            LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+            LEFT JOIN t_mall_group g ON g.id=pg.group_id AND g.is_delete=0
+        </if>
         where jp.user_id = #{busUserId,jdbcType=INTEGER} and jp.is_delete=0 and jp.is_use=1
-        AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0 AND g.is_delete=0 AND pg.is_delete=0
-        <if test="shopId != null and shopId != ''">
-            and a.shop_id=#{shopId}
-        </if>
-        <if test="proName != null and proName != ''">
-            and (a.pro_name like '%${proName}%' or g.group_name like '%${proName}%')
-        </if>
-        <if test="groupId != null and groupId != ''">
-            and pg.group_id =#{groupId}
-        </if>
-        <if test="rType != null">
-            <if test="rType == 1">
-                and (a.is_integral_change_pro = 1 and a.change_integral > 0)
+        AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="(groupId != null and groupId != '') or (proName != null and proName != '')">
+            <if test="groupId != null and groupId != ''">
+                and pg.group_id =#{groupId}
             </if>
-            <if test="rType == 2">
-                and (a.is_fenbi_change_pro = 1 and a.change_fenbi > 0)
+            <if test="proName != null and proName != ''">
+                and (a.pro_name like '%${proName}%' or g.group_name like '%${proName}%')
             </if>
         </if>
     </select>

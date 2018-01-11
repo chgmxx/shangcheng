@@ -31,8 +31,6 @@
     <select id="findAllList" resultType="Map" parameterType="java.lang.Integer">
 
         select
-        m.headimgurl,
-        m.nickname,
         l.id,
         l.language_time,
         l.order_id,
@@ -42,24 +40,19 @@
         l.language_content
         from
         purchase_language l
-        left join
-        t_wx_bus_member m on m.id = l.member_id
         where order_id =#{orderId} order by language_time desc
     </select>
     <select id="findLanguangeDetails" resultType="Map" parameterType="com.gt.mall.entity.purchase.PurchaseLanguage">
         select
         l.id,
-        m.headimgurl,
-        m.nickname,
+        l.member_id,
         l.language_time,
         l.order_id,
         l.admin_content,
         l.language_content
         from purchase_language l
-        left join
-        t_wx_bus_member m on m.id = l.member_id
-        where order_id =#{orderId} and
-        l.member_id=#{memberId}
+        where order_id =#{orderId}
+        and l.member_id=#{memberId}
         order by language_time desc
     </select>
     <select id="findLanguangeNotRead" resultMap="BaseResultMap">
@@ -74,4 +67,48 @@
 		update
 		purchase_language set is_read =1 where order_id=#{orderId}
 	</update>
+
+    <select id="findList" parameterType="Map" resultType="Map" >
+        select
+        l.id,
+        l.order_id as orderId,
+        l.member_id as memberId
+        from
+        purchase_language l
+        where order_id =#{orderId}
+        GROUP BY l.member_id
+        order by language_time desc
+
+        limit #{pageFirst},#{pageLast}
+    </select>
+
+    <select id="findListCount" resultType="java.lang.Integer">
+       select count(*) from(
+        SELECT * FROM
+        purchase_language l
+        where order_id =#{orderId}
+        GROUP BY l.member_id)a
+    </select>
+
+    <select id="findDetailList" parameterType="Map" resultType="Map" >
+        select
+        l.id,
+        l.member_id as memberId,
+        l.language_time as languageTime,
+        l.order_id as orderId,
+        l.admin_content as adminContent,
+        l.language_content as languageContent
+        from purchase_language l
+        where order_id =#{orderId}
+        and l.member_id=#{memberId}
+        order by language_time desc
+        limit #{pageFirst},#{pageLast}
+    </select>
+
+    <select id="findDetailListCount" resultType="java.lang.Integer">
+        select count(*)
+        from purchase_language l
+        where order_id =#{orderId}
+        and l.member_id=#{memberId}
+    </select>
 </mapper>

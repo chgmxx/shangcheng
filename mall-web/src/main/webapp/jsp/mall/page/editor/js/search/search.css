@@ -6,7 +6,8 @@
     margin: 0 auto;
     border-radius: 5px;
     border: 1px solid #555;
-    text-indent: 1em;
+    text-indent: 2em;
+    font-size: 12px;
 }
 .find_icon{
 	width:14px;
@@ -16,7 +17,7 @@
     position: absolute;
     top: 50%;
     margin-top: -7px;
-    right: 8px;
+    left: 8px;
     background-size: cover;
 }
 .u-colorpicker{
@@ -54,4 +55,49 @@
     background-position: 0 -471px;
     background-image: url(../../images/icon-s9fcea044bf.png);
     background-repeat: no-repeat;
+}
+
+.searchDirective .ui-slider{
+	width: 250px;
+    height: .8em;
+    position: relative;
+    background-color: #f5f5f5;
+    border: 1px solid #aaa;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.15);
+    text-align: left;
+}
+
+.searchDirective .ui-slider .ui-slider-handle{
+	position: absolute;
+    z-index: 2;
+    width: 1.2em;
+    height: 1.2em;
+    cursor: default;
+    border: 1px solid #aaa;
+    background: #ddd;
+    -webkit-border-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+    top: .1em;
+    margin-left: -.6em;
+    cursor: pointer;
+}
+.searchDirective .ui-slider .ui-slider-handle.ui-slider-handle-active{
+	background:#e3f3ee;
+	border:1px solid #008620;
+}
+
+.searchDirective .slider-height{
+	position: absolute;
+    right: 10px;
+    top: 5px;
+}
+
+.searchDirective .interval-slider{
+    margin-left: 93px;
+    padding-top: 8px;
+    position: relative;
 }

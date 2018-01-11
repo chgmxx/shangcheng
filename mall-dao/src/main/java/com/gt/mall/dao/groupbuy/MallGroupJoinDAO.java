@@ -56,4 +56,9 @@ public interface MallGroupJoinDAO extends BaseMapper<MallGroupJoin> {
      * @return 参团信息列表
      */
     List<MallGroupJoin> selectByPJoinId(Map<String, Object> params);
+
+    /**
+     * 计算有多少人参团
+     */
+    Map< String,Object > groupJoinPeopleNum( Map< String,Object > params );
 }

@@ -1,8 +1,10 @@
 package com.gt.mall.service.inter.member;
 
-import com.gt.mall.bean.Member;
+import com.gt.api.bean.session.Member;
+import com.gt.entityBo.ErpRefundBo;
+import com.gt.entityBo.NewErpPaySuccessBo;
+import com.gt.mall.bean.member.JifenAndFenbiRule;
 import com.gt.mall.bean.member.MemberCard;
-import com.gt.mall.bean.member.ReturnParams;
 import com.gt.mall.bean.member.UserConsumeParams;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public interface MemberService {
     Member findMemberById( int memberId, Member member );
 
     /**
-     * 绑定手机号
+     * 绑定手机号(小程序)
      *
      * @param params 参数{memberId：会员id，code：短信校验码，phone：手机号，busId：商家id}
      * @param member member对象
@@ -35,6 +37,17 @@ public interface MemberService {
      * @return 会员对象
      */
     Member bingdingPhone( Map< String,Object > params, Member member );
+
+    /**
+     * 绑定手机号(H5)
+     *
+     * @param busId    商家id
+     * @param phone    手机号码
+     * @param memberId 会员id
+     *
+     * @return true 成功
+     */
+    boolean bingdingPhoneH5( Integer busId, String phone, Integer memberId );
 
     /**
      * 根据粉丝id获取会员折扣
@@ -64,15 +77,6 @@ public interface MemberService {
      * @return 消费是否充足
      */
     Map< String,Object > isAdequateMoney( int memberId, double money );
-
-    /**
-     * 储值卡退款
-     *
-     * @param params {busId:商家id，orderNo：单号，ucType：消费类型，money：退款金额}
-     *
-     * @return 消费是否充足
-     */
-    Map< String,Object > refundMoney( Map< String,Object > params );
 
     /**
      * 判断粉丝是否是会员
@@ -147,13 +151,13 @@ public interface MemberService {
     boolean updateJifen( UserConsumeParams consumeParams );
 
     /**
-     * 退款包括了储值卡退款(包括积分和粉币)
+     * 订单退款
      *
-     * @param returnParams 参数
+     * @param erpRefundBo 参数
      *
-     * @return 是否退款成功
+     * @return 否退款成功
      */
-    Map< String,Object > refundMoneyAndJifenAndFenbi( ReturnParams returnParams );
+    Map< String,Object > refundMoney( ErpRefundBo erpRefundBo );
 
     /**
      * 查询会员卡信息
@@ -196,9 +200,34 @@ public interface MemberService {
 
     /**
      * 商场修改订单状态(流量充值时用到的)
+     *
      * @param params {orderNo：订单号，payType：支付方式，payStatus：支付状态}
+     *
      * @return true 成功
      */
-    boolean updateUserConsume(Map<String,Object> params);
+    boolean updateUserConsume( Map< String,Object > params );
+
+    /**
+     * 查询商家的积分和粉币规则
+     *
+     * @param busId 商家id
+     *
+     * @return 积分和粉币规则
+     */
+    JifenAndFenbiRule jifenAndFenbiRule( int busId );
+
+
+    /**
+     * 根据ids集合查询粉丝信息返回包含数据(id,昵称，手机号码,头像)
+     * @param params  busId :商家id    ids:粉丝id集合
+     * @return  粉丝信息集合  头像 昵称 等
+     */
+    List<Map< String,Object >>  findMemberByIds(Map< String,Object > params );
+
+    /**
+     * 会员 积分 和 粉币核销 包括优惠券
+     * @param newErpPaySuccessBo
+     */
+    void newPaySuccessByErpBalance(NewErpPaySuccessBo newErpPaySuccessBo);
 
 }

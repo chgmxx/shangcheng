@@ -2,18 +2,20 @@ package com.gt.mall.service.web.seller.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.Member;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.seller.*;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.seller.*;
+import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
+import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerOrderService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.*;
@@ -57,6 +59,8 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     private MemberService            memberService;
     @Autowired
     private WxPublicUserService      wxPublicUserService;
+    @Autowired
+    private MallSellerMallsetService mallSellerMallsetService;
 
     /**
      * 查询客户订单的个数
@@ -91,11 +95,39 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public List< Map< String,Object > > selectTotalIncome( Map< String,Object > params ) {
 	List< Map< String,Object > > mapList = mallSellerIncomeDAO.selectTotalIncome( params );
 	if ( mapList != null && mapList.size() > 0 ) {
+	    String memberIds = "";
 	    for ( Map< String,Object > map : mapList ) {
-		Member member = memberService.findMemberById( CommonUtil.toInteger( map.get( "buyer_user_id" ) ), null );
-		if ( member != null ) {
-		    map.put( "nickname", member.getNickname() );
-		    map.put( "headimgurl", member.getHeadimgurl() );
+		if ( CommonUtil.isNotEmpty( map.get( "buyer_user_id" ) ) ) {
+		    memberIds += map.get( "buyer_user_id" ) + ",";
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( memberIds ) ) {
+		List< Map > memberList = memberService.findMemberByIds( memberIds, CommonUtil.toInteger( params.get( "busId" ) ) );
+		if ( memberList != null && memberList.size() > 0 ) {
+		    for ( Map< String,Object > map : mapList ) {
+			String rMemberId = CommonUtil.toString( map.get( "buyer_user_id" ) );
+			for ( Map< String,Object > member1 : memberList ) {
+			    String memberId = CommonUtil.toString( member1.get( "id" ) );
+			    if ( rMemberId.equals( memberId ) ) {
+				map.put( "headimgurl", member1.get( "headimgurl" ) );
+				map.put( "nickname", member1.get( "nickname" ) );
+				break;
+			    }
+
+			}
+			String statusName = "";
+			int is_get = CommonUtil.toInteger( map.get( "is_get" ) );
+			if ( is_get == 0 ) {
+			    statusName = "待完成";
+			} else if ( is_get == 1 ) {
+			    statusName = "已完成";
+			} else if ( is_get == -1 ) {
+			    statusName = "待完成";
+			} else if ( is_get == -2 ) {
+			    statusName = "无效";
+			}
+			map.put( "statusName", statusName );
+		    }
 		}
 	    }
 	}
@@ -157,6 +189,31 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	List< Map< String,Object > > rankList = mallSellerDAO.selectSellerByBusUserId( params );
+
+	String memberIds = "";
+	for ( Map< String,Object > rankMap : rankList ) {
+	    if ( CommonUtil.isNotEmpty( rankMap.get( "member_id" ) ) ) {
+		memberIds += rankMap.get( "member_id" ) + ",";
+	    }
+	}
+	if ( CommonUtil.isNotEmpty( memberIds ) ) {
+	    List< Map > memberList = memberService.findMemberByIds( memberIds, member.getBusid() );
+	    if ( memberList != null && memberList.size() > 0 ) {
+		for ( Map< String,Object > rankMap : rankList ) {
+		    String rMemberId = CommonUtil.toString( rankMap.get( "member_id" ) );
+		    for ( Map< String,Object > member1 : memberList ) {
+			String memberId = CommonUtil.toString( member1.get( "id" ) );
+			if ( rMemberId.equals( memberId ) ) {
+			    rankMap.put( "headimgurl", member1.get( "headimgurl" ) );
+			    rankMap.put( "nickname", member1.get( "nickname" ) );
+			    break;
+			}
+
+		    }
+		}
+	    }
+	}
+
 	if ( type == 2 ) {
 	    if ( rankList != null && rankList.size() > 0 ) {
 		for ( Map< String,Object > rankMap : rankList ) {
@@ -206,16 +263,27 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
      */
     @Override
     public int getSaleMemberIdByRedis( Member member, int saleMemberId, HttpServletRequest request, int userid ) {
+	String key = "mall_mallSaleMemberId_" + userid;
 	if ( saleMemberId > 0 ) {
 	    boolean isSellers = isSeller( saleMemberId );
 	    if ( !isSellers ) {
 		saleMemberId = 0;
 	    } else {
-		SessionUtils.setSession( saleMemberId, request, "mall_mallSaleMemberId_" + userid );
+		if ( CommonUtil.isNotEmpty( request ) ) {
+		    MallSessionUtils.setSession( saleMemberId, request, key );
+		} else {
+		    JedisUtil.set( Constants.REDIS_KEY + key, saleMemberId + "", Constants.REDIS_SECONDS );
+		}
 	    }
 	}
-	if ( CommonUtil.isNotEmpty( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) ) ) {
-	    return CommonUtil.toInteger( SessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) );
+	if ( CommonUtil.isNotEmpty( request ) ) {
+	    if ( CommonUtil.isNotEmpty( MallSessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) ) ) {
+		return CommonUtil.toInteger( MallSessionUtils.getSession( request, "mall_mallSaleMemberId_" + userid ) );
+	    }
+	} else {
+	    if ( JedisUtil.exists( Constants.REDIS_KEY + key ) ) {
+		return CommonUtil.toInteger( JedisUtil.get( Constants.REDIS_KEY + key ) );
+	    }
 	}
 	return saleMemberId;
     }
@@ -223,13 +291,23 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     @Override
     public void setSaleMemberIdByRedis( Member member, int saleMemberId, HttpServletRequest request, int userid ) {
 	if ( saleMemberId > 0 ) {
-	    SessionUtils.setSession( saleMemberId, request, "mall_mallSaleMemberId_" + userid );
+	    String key = "mall_mallSaleMemberId_" + userid;
+	    if ( CommonUtil.isNotEmpty( request ) ) {
+		MallSessionUtils.setSession( saleMemberId, request, key );
+	    } else {
+		JedisUtil.set( Constants.REDIS_KEY + key, saleMemberId + "", Constants.REDIS_SECONDS );
+	    }
 	}
     }
 
     @Override
     public void clearSaleMemberIdByRedis( Member member, HttpServletRequest request, int userid ) {
-	SessionUtils.removeSession( request, "mall_mallSaleMemberId_" + userid );
+	String key = "mall_mallSaleMemberId_" + userid;
+	if ( CommonUtil.isNotEmpty( request ) ) {
+	    MallSessionUtils.removeSession( request, key );
+	} else {
+	    JedisUtil.del( Constants.REDIS_KEY + key );
+	}
     }
 
     @Override
@@ -298,6 +376,7 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	Map< String,Object > resultMap = new HashMap<>();
 	if ( CommonUtil.isNotEmpty( params.get( "sellerSet" ) ) ) {
 	    MallSellerSet sellerSet = (MallSellerSet) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "sellerSet" ).toString() ), MallSellerSet.class );
+	    sellerSet.setSellerRemark( CommonUtil.urlEncode( sellerSet.getSellerRemark() ) );
 	    if ( CommonUtil.isEmpty( sellerSet.getId() ) ) {
 		//判断用户是否已经保存了功能设置
 		MallSellerSet set = mallSellerSetDAO.selectByBusUserId( busUserId );
@@ -308,7 +387,15 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 		}
 	    }
 	    if ( CommonUtil.isNotEmpty( sellerSet.getId() ) ) {
-		count = mallSellerSetDAO.updateById( sellerSet );
+		MallSellerSet mallSellerSet = mallSellerSetDAO.selectById( sellerSet.getId() );
+		mallSellerSet.setIntegralReward( sellerSet.getIntegralReward() );
+		mallSellerSet.setConsumeMoney( sellerSet.getConsumeMoney() );
+		mallSellerSet.setWithdrawalType( sellerSet.getWithdrawalType() );
+		mallSellerSet.setWithdrawalLowestMoney( sellerSet.getWithdrawalLowestMoney() );
+		mallSellerSet.setWithdrawalMultiple( sellerSet.getWithdrawalMultiple() );
+		mallSellerSet.setSellerRemark( sellerSet.getSellerRemark() );
+
+		count = mallSellerSetDAO.updateAllColumnById( mallSellerSet );
 	    } else {
 		sellerSet.setBusUserId( busUserId );
 		count = mallSellerSetDAO.insert( sellerSet );
@@ -423,9 +510,11 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	return count > 0;
     }
 
-    public String insertTwoCode( String scene_id, WxPublicUsers wxPublicUsers ) {
+    @Override
+    public String insertTwoCode( Integer externalId, WxPublicUsers wxPublicUsers ) {
 	QrcodeCreateFinal createFinal = new QrcodeCreateFinal();
-	createFinal.setScene_id( scene_id );
+	createFinal.setModel( Constants.SELLER_FoLLOW_STATUS );
+	createFinal.setExternalId( externalId );
 	createFinal.setPublicId( wxPublicUsers.getId() );
 	return wxPublicUserService.qrcodeCreateFinal( createFinal );
     }
@@ -456,11 +545,13 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
     public int insertSelective( MallSeller seller, Member member ) {
 	WxPublicUsers wxPublicUsers = wxPublicUserService.selectById( member.getPublicId() );
 	if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-	    String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
-	    String ticket = insertTwoCode( scene_id, wxPublicUsers );
-	    seller.setQrCodeTicket( ticket );
-	    seller.setSceneKey( scene_id );
-	    seller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+	    //	    String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
+	    //	    String ticket = insertTwoCode( scene_id, wxPublicUsers );
+	    //	    seller.setQrCodeTicket( ticket );
+	    //	    seller.setSceneKey( scene_id );
+	    //	    seller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+	    String twoCodeUrl = insertTwoCode( seller.getId(), wxPublicUsers );
+	    seller.setQrCodePath( twoCodeUrl );
 	}
 	return mallSellerDAO.insert( seller );
     }
@@ -1005,17 +1096,21 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
     @Override
     public MallSeller getSellerTwoCode( MallSeller seller, Member member, int browerType ) {
-
 	if ( browerType != 1 || CommonUtil.isEmpty( member.getPublicId() ) ) {//UC版
+	    if ( CommonUtil.isNotEmpty( seller.getUcqrCodePath() ) ) {
+		String headPaths = URLConnectionDownloader.isConnect( PropertiesUtil.getResourceUrl() + seller.getUcqrCodePath() );//判断
+		if ( CommonUtil.isEmpty( headPaths ) ) {
+		    seller.setUcqrCodePath( null );
+		}
+	    }
 	    if ( CommonUtil.isEmpty( seller.getUcqrCodePath() ) ) {
-		String url = PropertiesUtil.getHomeUrl() + "/phoneSellers/" + member.getId() + "/79B4DE7C/mallIndex.do?uId=" + member.getBusid();
+		String url = PropertiesUtil.getHomeUrl() + "/seller/mallindex/" + member.getBusid() + "/" + member.getId();
 		String nowDate = DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD );
 		String codePath = QRcodeKit
 				.buildQRcode( url, PropertiesUtil.getResImagePath() + "/" + member.getPhone() + "/" + Constants.IMAGE_FOLDER_TYPE_15 + "/" + nowDate + "/", 200,
 						200 );
 		codePath = PropertiesUtil.getResourceUrl() + codePath.split( "upload/" )[1];
 		MallSeller mallSeller = new MallSeller();
-		//mallSeller.setQrCodePath(codePath);
 		mallSeller.setUcqrCodePath( codePath );
 		mallSeller.setId( seller.getId() );
 		int count = mallSellerDAO.updateById( mallSeller );
@@ -1029,18 +1124,13 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	    String newimage = seller.getQrCodePath();
 	    newimage = URLConnectionDownloader.isConnect( newimage );//判断
 	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) && CommonUtil.isEmpty( newimage ) ) {
-		String scene_id = member.getBusid() + "_" + System.currentTimeMillis() + "_3";//3代表商城
-		String ticket = insertTwoCode( scene_id, wxPublicUsers );
+		String twoCodeUrl = insertTwoCode( seller.getId(), wxPublicUsers );
 		MallSeller mallSeller = new MallSeller();
-		mallSeller.setQrCodeTicket( ticket );
-		mallSeller.setSceneKey( scene_id );
-		mallSeller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+		mallSeller.setQrCodePath( twoCodeUrl );
 		mallSeller.setId( seller.getId() );
 		int count = mallSellerDAO.updateById( mallSeller );
 		if ( count > 0 ) {
-		    seller.setQrCodeTicket( ticket );
-		    seller.setSceneKey( scene_id );
-		    seller.setQrCodePath( "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=" + ticket );
+		    seller.setQrCodePath( twoCodeUrl );
 		}
 	    }
 	}
@@ -1183,6 +1273,25 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 
 	}
 	return seller;
+    }
+
+    public PhoneProductDetailResult getSeller( PhoneProductDetailResult result, int saleMemberId, int busId, int productId, String view, Member member ) {
+	if ( saleMemberId > 0 && busId > 0 ) {
+	    setSaleMemberIdByRedis( member, saleMemberId, null, busId );
+	}
+	saleMemberId = getSaleMemberIdByRedis( member, saleMemberId, null, busId );
+	if ( saleMemberId > 0 ) {
+	    MallSeller mallSeller = selectSellerByMemberId( saleMemberId );//查询销售员的信息
+
+	    if ( saleMemberId > 0 && CommonUtil.isNotEmpty( mallSeller ) ) {//分享的用户 判断是否是销售员
+		shareSellerIsSale( member, saleMemberId, mallSeller );
+	    }
+	}
+	if ( saleMemberId > 0 || view.equals( "show" ) ) {
+	    //查询销售商品信息
+	    result = mallSellerMallsetService.selectSellerProduct( productId, saleMemberId, result, view, member );
+	}
+	return result;
     }
 
 }

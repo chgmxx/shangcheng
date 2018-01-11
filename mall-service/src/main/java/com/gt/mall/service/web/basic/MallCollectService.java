@@ -2,9 +2,10 @@ package com.gt.mall.service.web.basic;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.basic.MallCollect;
+import com.gt.mall.result.phone.product.PhoneCollectProductResult;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.List;
 
 /**
  * <p>
@@ -14,30 +15,50 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallCollectService extends BaseService<MallCollect> {
+public interface MallCollectService extends BaseService< MallCollect > {
 
     /**
      * 查询商品收藏
      *
-     * @param proId 商品id
+     * @param proId  商品id
      * @param userId 用户Id
      */
-    void getProductCollect(HttpServletRequest request, int proId, int userId);
+    void getProductCollect( HttpServletRequest request, int proId, int userId );
 
     /**
      * 收藏商品
      *
-     * @param params 收藏信息
-     * @param userId 用户Id
+     * @param productId 商品id
+     * @param userId    用户Id
+     *
      * @return boolean
      */
-    boolean collectionProduct(Map<String, Object> params, int userId);
+    boolean collectionProduct( int productId, int userId );
 
     /**
      * 删除收藏 可批量
      *
-     * @param params ids:收藏id集合，isDelete;是否删除，isCollect：是否收藏
+     * @param ids:收藏id集合
+     *
      * @return boolean
      */
-    boolean deleteCollect(Map<String, Object> params);
+    boolean deleteCollect( String ids );
+
+    /**
+     * 查询商家是否已商品收藏
+     *
+     * @param proId  商品id
+     * @param userId 用户Id
+     */
+    boolean getProductCollect( int proId, int userId );
+
+    /**
+     * 查询收藏商品集合
+     *
+     * @param memberId 会员id
+     *
+     * @return 收藏商品集合
+     */
+    List< PhoneCollectProductResult > getCollectProductList( Integer memberId );
+
 }

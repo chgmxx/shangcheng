@@ -63,12 +63,22 @@
         distinct g.id, g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
         user_id, shop_id, create_time, g.is_delete, is_use,j.id as joinId
     </sql>
+    <sql id="detail_Column_List">
+        distinct gb.id,gb.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
+        shop_id, gb.create_time, is_use,
+        case
+        when gb.is_use = -1 then -2<!--已失效  -->
+        when gb.g_start_time > now() and gb.g_end_time > now() then 0<!--未开始  -->
+        when gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time then 1<!-- 进行中 -->
+        when gb.g_start_time &lt; now() and gb.g_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status
+    </sql>
     <sql id="group_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
         shop_id, g.create_time, is_use,
         case
         when g.is_use = -1 then -2<!--已失效  -->
-        when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
+        when g.g_start_time > now() and g.g_end_time > now() then 0<!--未开始  -->
         when g.g_start_time &lt;= now() and now() &lt; g.g_end_time then 1<!-- 进行中 -->
         when g.g_start_time &lt; now() and g.g_end_time &lt;= now() then -1<!-- 已结束 -->
         end status,
@@ -76,7 +86,7 @@
     </sql>
     <sql id="group_product_Column_List">
         distinct g.id,g.product_id, g_name, g_price, g_start_time, g_end_time, g_people_num, g_max_buy_num,
-        g.shop_id, g.create_time, is_use,
+        g.shop_id, g.create_time, is_use,g.user_id,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.g_start_time &gt; now() and g.g_end_time &gt; now() then 0<!--未开始  -->
@@ -90,14 +100,20 @@
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(g.id)
         from t_mall_group_buy g where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的团购 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始团购 -->
             and g.g_start_time &gt; now() and g.g_end_time &gt; now()
+            and g.is_use = 1
         </if>
         <if test="type == 1"><!-- 进行中的团购 -->
             and g.g_start_time &lt;= now() and now() &lt; g.g_end_time
+            and g.is_use = 1
         </if>
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
+            and g.is_use = 1
         </if>
         <if test="null != shoplist and shoplist.size > 1">
             and g.shop_id in
@@ -117,14 +133,20 @@
         left join t_mall_group_join j on g.id = j.group_buy_id and j.join_type = 1
         left join t_mall_product p on p.id= g.product_id
         where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的团购 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始团购 -->
             and g.g_start_time &gt; now() and g.g_end_time &gt; now()
+            and g.is_use = 1
         </if>
         <if test="type == 1"><!-- 进行中的团购 -->
             and g.g_start_time &lt;= now() and now() &lt; g.g_end_time
+            and g.is_use = 1
         </if>
         <if test="type == 2"><!-- 已结束的团购 -->
             and g.g_start_time &lt; now() and g.g_end_time &lt;= now()
+            and g.is_use = 1
         </if>
         <if test="null != shoplist and shoplist.size > 1">
             and g.shop_id in
@@ -179,9 +201,9 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-         and ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time) or (gb.g_start_time > now() and gb.g_end_time > now())) limit 1
+        and ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time) or (gb.g_start_time > now() and gb.g_end_time > now()))
     </select>
-    <select id="selectSeckillByProId"  parameterType="java.util.List" resultType="Map">
+    <select id="selectSeckillByProId" parameterType="java.util.List" resultType="Map">
         select ms.s_start_time,ms.s_end_time,ms.product_id from t_mall_seckill ms
         where ms.is_delete = 0 and ms.is_use = 1
         <if test="products != null ">
@@ -190,21 +212,10 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        and  ((ms.s_start_time &lt;= now() and now() &lt; ms.s_end_time) or (ms.s_start_time > now() and ms.s_end_time > now())) limit 1
+        and ((ms.s_start_time &lt;= now() and now() &lt; ms.s_end_time) or (ms.s_start_time > now() and ms.s_end_time > now()))
     </select>
-    <select id="selectAuctionByProId"  parameterType="java.util.List" resultType="Map">
-        select ma.auc_start_time,ma.auc_end_time,ma.product_id  from t_mall_auction ma
-        where  ma.is_delete = 0 and ma.is_use = 1
-        <if test="products != null ">
-            and ma.product_id in
-            <foreach collection="products" index="index" item="item" open="(" separator="," close=")">
-                #{item,jdbcType=INTEGER}
-            </foreach>
-        </if>
-        and ((ma.auc_start_time &lt;= now() and now() &lt; ma.auc_end_time) or (ma.auc_start_time > now() and ma.auc_end_time > now())) limit 1
-    </select>
-    <select id="selectPresaleByProId"  parameterType="java.util.List" resultType="Map">
-        select ma.sale_start_time,ma.sale_end_time,ma.product_id  from t_mall_presale ma
+    <select id="selectAuctionByProId" parameterType="java.util.List" resultType="Map">
+        select ma.auc_start_time,ma.auc_end_time,ma.product_id from t_mall_auction ma
         where ma.is_delete = 0 and ma.is_use = 1
         <if test="products != null ">
             and ma.product_id in
@@ -212,10 +223,10 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        and  ((ma.sale_start_time &lt;= now() and now() &lt; ma.sale_end_time) or (ma.sale_start_time > now() and ma.sale_end_time > now())) limit 1
+        and ((ma.auc_start_time &lt;= now() and now() &lt; ma.auc_end_time) or (ma.auc_start_time > now() and ma.auc_end_time > now()))
     </select>
-    <select id="selectpifaByProId"  parameterType="java.util.List" resultType="Map">
-        select ma.pf_start_time,ma.pf_end_time,ma.product_id  from t_mall_pifa ma
+    <select id="selectPresaleByProId" parameterType="java.util.List" resultType="Map">
+        select ma.sale_start_time,ma.sale_end_time,ma.product_id from t_mall_presale ma
         where ma.is_delete = 0 and ma.is_use = 1
         <if test="products != null ">
             and ma.product_id in
@@ -223,7 +234,18 @@
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        and ((ma.pf_start_time &lt;= now() and now() &lt; ma.pf_end_time) or (ma.pf_start_time > now() and ma.pf_end_time > now())) limit 1
+        and ((ma.sale_start_time &lt;= now() and now() &lt; ma.sale_end_time) or (ma.sale_start_time > now() and ma.sale_end_time > now()))
+    </select>
+    <select id="selectpifaByProId" parameterType="java.util.List" resultType="Map">
+        select ma.pf_start_time,ma.pf_end_time,ma.product_id from t_mall_pifa ma
+        where ma.is_delete = 0 and ma.is_use = 1
+        <if test="products != null ">
+            and ma.product_id in
+            <foreach collection="products" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        and ((ma.pf_start_time &lt;= now() and now() &lt; ma.pf_end_time) or (ma.pf_start_time > now() and ma.pf_end_time > now()))
     </select>
     <!-- 统计未开团的商品 -->
     <select id="selectCountProByGroup" resultType="java.lang.Integer" parameterType="Map">
@@ -252,7 +274,7 @@
         b.id, b.product_id as productId, b.g_name as gName, b.g_price as gPrice,
         b.g_start_time as gStartTime, b.g_end_time as gEndTime, b.g_people_num as gPeopleNum, b.g_max_buy_num as gMaxBuyNum,
         b.shop_id as shopId, c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
-        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice,p.pro_stock_total as proStockTotal
         from t_mall_group_buy b
         left join t_mall_product p on b.product_id = p.id
         LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
@@ -299,13 +321,11 @@
         gb.id as gBuyId,gb.g_price as price ,gb.g_start_time as startTime ,gb.g_end_time as endTime,gb.g_people_num as
         peopleNum,a.shop_id as shopId,d.id as inv_id,
         a.return_day,
-        gb.g_max_buy_num as maxNum
+        gb.g_max_buy_num as maxNum,a.user_id as busId
         from t_mall_group_buy gb
         left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
-        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND
-        is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where
-        is_default=1 AND is_delete=0)d ON a.id=d.product_id
+        LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory where is_default=1 AND is_delete=0)d ON a.id=d.product_id
         LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
         left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
         left join t_mall_group g on g.id=pg.group_id and g.is_delete=0
@@ -350,13 +370,22 @@
     <!-- 根据商品id查询团购信息 -->
     <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.groupbuy.MallGroupBuy" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"></include>
+        <include refid="detail_Column_List"></include>
         from t_mall_group_buy gb
         where gb.is_delete = 0 and gb.is_use = 1
-        and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
-        and gb.product_id=#{productId,jdbcType=INTEGER}
-        and gb.shop_id=#{shopId,jdbcType=INTEGER}
-        limit 1
+        <if test="productId != null and productId > 0">
+            and gb.product_id=#{productId,jdbcType=INTEGER}
+        </if>
+        <if test="shopId != null and shopId > 0">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="id != null and id > 0">
+            and gb.id = #{id}
+        </if>
+        <if test="id == null   or id == 0">
+            and ((gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time ) or (gb.g_start_time > now() and gb.g_end_time > now()))
+            limit 1
+        </if>
     </select>
 
     <!-- 查询已结束未成团的团购信息 -->
@@ -404,5 +433,75 @@
             </foreach>
         </if>
         GROUP BY gb.`product_id`
+    </select>
+
+
+    <!-- 正在进行的团购的商品 -->
+    <select id="selectGoingGroupProduct" resultType="Map">
+        SELECT
+        a.id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica, a.shop_id , a.return_day,a.pro_sale_total,a.sales_base,
+        gb.id AS activityId,gb.g_price AS price ,gb.g_start_time AS startTime ,gb.g_end_time AS endTime,gb.g_people_num AS peopleNum
+        FROM t_mall_group_buy gb
+        LEFT JOIN t_mall_product a ON a.id = gb.product_id AND gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+        </if>
+        WHERE gb.is_delete=0 AND gb.is_use=1
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
+        <if test="searchContent != null and searchContent != ''">
+            /*and ( a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        GROUP BY a.id
+        <if test="sort == 'new'"><!-- 最新排序 -->
+            order by gb.id
+        </if>
+        <if test="sort == 'sale'"><!-- 销量排序 -->
+            order by a.pro_sale_total+a.sales_base
+        </if>
+        <if test="sort == 'price'"><!-- 价格排序 -->
+            order by gb.g_price
+        </if>
+        <if test="isDesc == 1 or sort == 'new' or sort == 'sale'">
+            desc
+        </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+
+    <select id="selectCountGoingGroupProduct" resultType="java.lang.Integer">
+        SELECT count(a.id)
+        FROM t_mall_group_buy gb
+        LEFT JOIN t_mall_product a ON a.id = gb.product_id AND gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            LEFT JOIN t_mall_product_group pg ON pg.product_id=a.id AND pg.is_delete=0
+        </if>
+        WHERE gb.is_delete=0 AND gb.is_use=1
+        and gb.g_start_time &lt;= now() and now() &lt; gb.g_end_time
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="searchContent != null and searchContent != ''">
+            /*and ( a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
     </select>
 </mapper>

@@ -130,17 +130,23 @@ public class ContinueFTP {
                         long nowProcess = localSize / step;
                         if (nowProcess > process) {
                             process = nowProcess;
-                            if (process % 10 == 0)
-                                logger.info("下载进度：" + process);
+                            if (process % 10 == 0) {
+                                {
+                                    logger.info( "下载进度：" + process );
+                                }
+                            }
+
                             //  更新文件下载进度,值存放在process变量中
                         }
                     }
                 } catch (Exception e) {
                 } finally {
-                    if (in != null)
+                    if (in != null) {
                         in.close();
-                    if (out != null)
+                    }
+                    if (out != null) {
                         out.close();
+                    }
                 }
 
                 // 确认是否全部下载完毕
@@ -167,17 +173,20 @@ public class ContinueFTP {
                         long nowProcess = localSize / step;
                         if (nowProcess > process) {
                             process = nowProcess;
-                            if (process % 10 == 0)
-                                logger.info("下载进度：" + process);
+                            if (process % 10 == 0) {
+                                logger.info( "下载进度：" + process );
+                            }
                             // 更新文件下载进度,值存放在process变量中
                         }
                     }
                 } catch (Exception e) {
                 } finally {
-                    if (in != null)
+                    if (in != null) {
                         in.close();
-                    if (out != null)
+                    }
+                    if (out != null) {
                         out.close();
+                    }
                 }
                 boolean upNewStatus = ftpClient.completePendingCommand();
                 if (upNewStatus) {

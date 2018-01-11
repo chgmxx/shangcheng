@@ -1,0 +1,56 @@
+.goShopModule{
+    
+}
+
+.goShopModule .custom-store-img {
+    position: absolute;
+    top: 11px;
+    left: 18px;
+    height: 18px;
+    width: 18px;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAMAAADW3miqAAAAe1BMVEUAAABmZmZmZmZmZmZmZmZpaWlmZmZoaGhsbGxmZmZmZmZkZGR3d3dnZ2dpaWlmZmZmZmaKiopnZ2dmZmZnZ2dnZ2dnZ2dmZmZoaGhoaGhnZ2dnZ2dpaWlqampmZmZnZ2dmZmZnZ2dmZmZmZmZnZ2dmZmZnZ2dnZ2dmZmY+hk1GAAAAKHRSTlMAHuHm+xnrKBDXyzgHWjP4zwOckonzuXRpT0dAFxS+U+/HsYKwr6Z+1CmDegAAATRJREFUOMu1ksmWgyAQRUEU0QbBeYoZe3j//4WtqejJIqQ7i9yFPk7dU7wF7P/suIfdaqhCwoss1NUJABF4EECwWAVOnHnhJxTzT4IcnwU5d4ZgTxHYsehvKXqTlOk16cwnDajWWGG4lzSgtkm6TtLNV8C838HQMXewnCK3cDlFA3f9ShpdEGKvr432c7yQLmnHJ45drMYzwiFA0kdRnyAYQpxHFXdHfN1uJeSBxY6ii9lBUlwbA420STktvdq0rtN26TOViZUNwIg5eHm/lLXf1SF/KukSC2n8TCpgS9MmEMovjaiXHbpB4Zcq/NyetvBLe4wUAkReKUVGIUH8uiQx+aQJkhENOp/UoWFEj9rkj6Tc1OjZjRKwAWEREoCYDyjZhnEhHhA6w+7RnMg+NjjX7AV+AbbXK771Kk31AAAAAElFTkSuQmCC) no-repeat;
+    background-size: 18px 18px;
+}
+.goShopModule .custom-store-name{
+    float: left;
+    padding: 0 0 0 38px;
+    height: 22px;
+    line-height: 22px;
+    font-size: 14px;
+    color: #333;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.goShopModule .custom-store-enter{
+    float: right;
+    height: 14px;
+    line-height: 14px;
+    margin: 4px 0;
+    font-size: 14px;
+    color: #999;
+    padding-right: 15px;
+}
+.custom-store-link{
+	position: relative;
+    display: block;
+    padding: 10px;
+    line-height: 1.5;
+    border: 0;
+    overflow: hidden;
+}
+.goShopModule a::after {
+    content: '';
+    position: absolute;
+    top: 17px;
+    right: 12px;
+    width: 7px;
+    height: 7px;
+    border-top: 2px solid #cbc9cc;
+    border-right: 2px solid #cbc9cc;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

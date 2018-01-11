@@ -23,6 +23,12 @@ public interface MallProductParamService extends BaseService< MallProductParam >
     void saveOrUpdateBatch(Object obj, int proId,Map<String, Object> defaultMap,boolean isUpdate);
 
     /**
+     * 批量保存商品参数
+     *
+     */
+    void newSaveOrUpdateBatch(Object obj, int proId,boolean isUpdate);
+
+    /**
      * 根据商品id来获取商品规格
      *
      * @Title: getSpecificaByProductId

@@ -7,6 +7,8 @@ import com.gt.mall.dao.applet.MallAppletImageDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.applet.MallAppletImageService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
@@ -59,36 +61,20 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl< MallAppletImage
 
     @Override
     public Map< String,Object > selectImageById( Integer id ) {
-	Map< String,Object > imageMaps = new HashMap< String,Object >();
-	MallAppletImage image = mallAppletImageDAO.selectById( id );
-	if ( CommonUtil.isNotEmpty( image.getProId() ) && image.getProId() > 0 ) {
-	    Map< String,Object > params = new HashMap< String,Object >();
-	    params.put( "id", image.getProId() );
-	    List< Map< String,Object > > imageList = mallProductDAO.selectProductAllByShopids( params );
-	    if ( imageList != null && imageList.size() > 0 ) {
-		imageMaps = imageList.get( 0 );
-		Map< String,Object > imgMaps = new HashMap< String,Object >();
-		imgMaps.put( "isMainImages", 1 );
-		imgMaps.put( "assType", 1 );
-		imgMaps.put( "assId", image.getProId() );
-		List< Map< String,Object > > proImageList = mallImageAssociativeDAO.selectByAssId( imgMaps );
-		if ( proImageList != null && proImageList.size() > 0 ) {
-		    imageMaps.put( "image_url", proImageList.get( 0 ).get( "image_url" ) );
-		}
-	    }
-	}
-	imageMaps.put( "id", image.getId() );
-	imageMaps.put( "imageUrl", image.getImageUrl() );
-	imageMaps.put( "pro_id", image.getProId() );
-	imageMaps.put( "shop_id", image.getShopId() );
-	imageMaps.put( "type", image.getType() );
+	Map< String,Object > imageMaps = mallAppletImageDAO.selectAppletImageById( id );
 	return imageMaps;
     }
 
     @Override
     public boolean editImage( Map< String,Object > params, int userId ) {
 	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallAppletImage appletImage = JSONObject.parseObject( JSON.toJSONString( params), MallAppletImage.class );
+	    MallAppletImage appletImage = JSONObject.parseObject( JSON.toJSONString( params ), MallAppletImage.class );
+	    if ( appletImage.getType() == 1 && CommonUtil.isEmpty( appletImage.getProId() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "商品不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( appletImage.getImageUrl() ) ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "图片不能为空" );
+	    }
 	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
 		int count = 0;
 		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {

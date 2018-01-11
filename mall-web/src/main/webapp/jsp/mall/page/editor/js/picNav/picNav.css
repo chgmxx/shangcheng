@@ -1,0 +1,73 @@
+
+.picNavModule ul{
+    padding: 5px;
+    text-align: center;
+    overflow: hidden;
+}
+.picNavModule ul:after,.picNavModule ul:before {
+    display: table;
+    line-height: 0;
+    content: "";
+}
+.picNavModule li {
+    width: 25%;
+    float: left;
+    overflow: hidden;
+    text-align: center;
+}
+.picNavModule li a {
+    display: block;
+    padding: 0 2px;
+}
+.picNavModule li span {
+    display: block;
+    overflow: hidden;
+    position: relative;
+}
+.picNavModule li span.title{
+    color: #333;
+    height: 24px;
+    line-height: 24px;
+    font-size: 12px;
+}
+.picNavModule li img {
+    vertical-align: middle;
+    max-width: 100%;
+}
+.picNavModule img::before {
+    position: absolute;
+    display: block;
+    content: "";
+    top: -7px;
+    left: -7px;
+    height: -webkit-calc(100% + 10px);
+    height: -moz-calc(100% + 10px);
+    height: calc(100% + 10px);
+    width: -webkit-calc(100% + 10px);
+    width: -moz-calc(100% + 10px);
+    width: calc(100% + 10px);
+    background-color: #e6e6e6;
+    border: 2px dotted #c8c8c8;
+    border-radius: 5px;
+}
+.picNavModule img::after {
+    position: absolute;
+    display: block;
+    content: "(>_<)";
+    top: 50%;
+    left: 50%;
+    margin-top: -0.5em;
+    margin-left: -1.5em;
+    height: 1em;
+    line-height: 1em;
+    width: 3em;
+    color: #646464;
+    text-align: center;
+}
+
+
+/****************************************************************************/
+.swiperDirective ul{
+    width: 100%;
+}
+

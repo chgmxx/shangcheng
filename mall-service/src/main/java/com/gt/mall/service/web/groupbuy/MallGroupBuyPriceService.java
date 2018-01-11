@@ -14,7 +14,7 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallGroupBuyPriceService extends BaseService<MallGroupBuyPrice> {
+public interface MallGroupBuyPriceService extends BaseService< MallGroupBuyPrice > {
 
     /**
      * 编辑团购价格
@@ -23,13 +23,23 @@ public interface MallGroupBuyPriceService extends BaseService<MallGroupBuyPrice>
      * @param groupBuyId 团购Id
      * @param flag       是否更换商品
      */
-    void editGroupBuyPrice(Map<String, Object> map, int groupBuyId, boolean flag);
+    void editGroupBuyPrice( Map< String,Object > map, int groupBuyId, boolean flag );
 
     /**
      * 通过团购id查询团购信息
      *
      * @param groupBuyId 团购Id
+     *
      * @return
      */
-    List<MallGroupBuyPrice> selectPriceByGroupId(int groupBuyId);
+    List< MallGroupBuyPrice > selectPriceByGroupId( int groupBuyId );
+
+    /**
+     * 根据库存id查询商品价
+     *
+     * @param invId 库存id
+     *
+     * @return 团购价
+     */
+    List< MallGroupBuyPrice > selectPriceByInvId( int groupId, int invId );
 }

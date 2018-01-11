@@ -22,12 +22,12 @@ import java.util.*;
 public class MpGenerator {
 
     // 项目的绝对路径
-    private static final  String   outPutBaseDir      = "E:/work_news/mall/mall-generator/";
+    private static final  String   outPutBaseDir      = "C:/workSpaces/Mall33/mall-generator/";
     // 生成*.java 的文件路径
     private static final  String   outPutJavaModel    = outPutBaseDir + "src/main/java";
     // 需要生成的表
     private static final  String[] generatorTableName = new String[] {
-		    "t_mall_presale_deposit"
+		    "t_mall_order_return_log"
     };
     // 去除表前缀 例如：bus_user 填入bus 生成的 user
     private static final  String[] tablePrefix        = new String[] { "t" };
@@ -49,7 +49,7 @@ public class MpGenerator {
     // 驱动
     private static final  String   driverName         = "com.mysql.jdbc.Driver";
     // url
-    private static final  String   url                = "jdbc:mysql://113.106.202.51:3306/gt_mall?characterEncoding=utf8";
+    private static final  String   url                = "jdbc:mysql://113.106.202.51:3306/gt_mall_new?characterEncoding=utf8";
     // 数据库用户名
     private static final  String   username           = "root";
     // 密码

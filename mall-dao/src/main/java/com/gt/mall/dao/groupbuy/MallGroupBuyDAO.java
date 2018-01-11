@@ -2,6 +2,7 @@ package com.gt.mall.dao.groupbuy;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -149,4 +150,16 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
     List< Map< String,Object > > selectPresaleByProId( @Param( "products" ) List< Integer > products );
 
     List< Map< String,Object > > selectpifaByProId( @Param( "products" ) List< Integer > products );
+
+    /**
+     * 查询正在进行的团购商品
+     *
+     * @return 商品列表
+     */
+    List< Map< String,Object > > selectGoingGroupProduct( PhoneSearchProductDTO searchProductDTO );
+
+    /**
+     * 统计正在进行的团购商品
+     */
+    int selectCountGoingGroupProduct(PhoneSearchProductDTO searchProductDTO);
 }

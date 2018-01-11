@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.gt.api.exception.SignException;
 import com.gt.api.util.HttpClienUtils;
 import com.gt.api.util.sign.SignHttpUtils;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,7 @@ public class HttpSignUtil {
     /**
      * @param obj   参数
      * @param url   地址
-     * @param types 0 会员  1 商家相关   2 微信相关 3 联盟
+     * @param types 0 会员  1 商家相关   2 微信相关 3 联盟  4 增值模块
      *
      * @return 返回对象
      */
@@ -35,16 +37,19 @@ public class HttpSignUtil {
 	    String signKey = CommonUtil.getHttpSignKey( type );
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
 	    if ( type == 0 ) {
-		newUrl = "http://113.106.202.53:13885/" + url;
+		newUrl = "http://113.106.202.53:13887/" + url;
+	    } else if ( type == 3 ) {
+		newUrl = "https://union.deeptel.com.cn/" + url;
 	    }
-	    /*if(type == 2){
-		newUrl = "http://192.168.2.7:8888/" + url;
-	    }*/
 	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
-	    if ( type == 1 || type == 0 ) {//商家
+	    if ( type == 1 || type == 0 || type == 4 ) {//商家 、会员、增值模块
 		result = SignHttpUtils.WxmppostByHttp( newUrl, obj, signKey );
 	    } else if ( type == 2 ) {//微信、门店、支付
 		Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( obj ), newUrl, Map.class, signKey );
+		result = JSONObject.toJSONString( map );
+	    } else if ( type == 3 ) {//商家联盟的接口
+		String params = JSONObject.toJSONString( obj );
+		Map map = HttpClienUtils.reqPost( params, newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
 	    } else {//会员、联盟
 		result = SignHttpUtils.postByHttp( newUrl, obj, signKey );
@@ -79,8 +84,10 @@ public class HttpSignUtil {
 	if ( resultObj.containsKey( "code" ) && resultObj.getInteger( "code" ) == 0 ) {
 	    logger.info( "data = " + resultObj.getString( "data" ) );
 	    return resultObj.getString( "data" );
-	} else {
-	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
+	}
+	logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
+	if ( resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.get( "msg" ) ) ) {
+	    //	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
 	}
 	return null;
     }
@@ -106,9 +113,12 @@ public class HttpSignUtil {
 	} else {
 	    resultMap.put( "code", code );
 	}
-	if ( resultObj.containsKey( "msg" ) ) {
+	if ( code != 0 && resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.getString( "msg" ) ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
 	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
+	    if ( ( type.length >= 2 && CommonUtil.isEmpty( type[1] ) ) && type.length < 2 ) {
+		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
+	    }
 	}
 	if ( resultObj.containsKey( "data" ) ) {
 	    resultMap.put( "data", resultObj.get( "data" ) );

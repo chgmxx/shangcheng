@@ -50,6 +50,16 @@ public class MallProductDetail extends Model< MallProductDetail > {
      */
     @TableField( "product_message" )
     private String  productMessage;
+    /**
+     * 样式
+     */
+    @TableField( "p_css" )
+    private String  pCss;
+    /**
+     * 数据
+     */
+    @TableField( "p_data" )
+    private String  pData;
 
     @Override
     protected Serializable pkVal() {
@@ -64,6 +74,8 @@ public class MallProductDetail extends Model< MallProductDetail > {
 			", productDetail=" + productDetail +
 			", productIntrodu=" + productIntrodu +
 			", productMessage=" + productMessage +
+			", pCss=" + pCss +
+			", pData=" + pData +
 			"}";
     }
 }

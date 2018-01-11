@@ -23,14 +23,13 @@
         <result column="sale_member_id" property="saleMemberId"/>
         <result column="commission" property="commission"/>
         <result column="is_check" property="isCheck"/>
-        <result column="session_id" property="sessionId"/>
         <result column="bus_user_id" property="busUserId"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, product_id , shop_id , product_specificas , product_num , product_message , user_id , create_time , product_speciname , price, primary_price ,
-        pro_code , user_type , discount, pro_spec_str, pro_type, sale_member_id , commission, is_check , session_id , bus_user_id
+        pro_code , user_type , discount, pro_spec_str, pro_type, sale_member_id , commission, is_check ,  bus_user_id
     </sql>
 
     <select id="selectByShopCart" parameterType="com.gt.mall.entity.product.MallShopCart" resultType="Map">
@@ -74,6 +73,12 @@
             </if>
             <if test="proSpecStr != null">
                 pro_spec_str = #{proSpecStr,jdbcType=VARCHAR},
+            </if>
+            <if test="saleMemberId != null">
+                sale_member_id = #{saleMemberId},
+            </if>
+            <if test="commission != null">
+                commission = #{commission},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -123,7 +128,7 @@
 
         LEFT JOIN t_mall_product d ON a.product_id=d.id
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
-        WHERE b.is_delete=0 and a.is_check=1 and d.is_delete=0 and d.is_publish=1 and d.check_status=1
+        WHERE b.is_delete=0 and d.is_delete=0 and d.is_publish=1 and d.check_status=1
         <if test="cartIds != null">
             and a.id in
             <foreach collection="cartIds" index="index" item="item" open="(" separator="," close=")">
@@ -214,11 +219,10 @@
     <select id="selectShopCartByMemberId" parameterType="Map" resultType="Map">
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
         a.`pro_type`,a.`sale_member_id`,a.`commission`,
-        b.sto_pid,e.image_url,f.id AS pageid ,
-        d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons as isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS
-        isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num,
-        d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id as flowId,
-        b.wx_shop_id,b.sto_name
+        e.image_url,
+        d.return_day,d.pro_name,d.is_specifica AS isSpec,d.is_coupons as isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,
+        d.pro_stock_total AS pro_stock_num,d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num,
+        d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id as flowId
         FROM
         (
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
@@ -252,16 +256,12 @@
             <if test="shopId != null and shopId != ''">
                 a.shop_id = #{shopId}
             </if>
-
         </where>
         GROUP BY a.id
         ORDER BY a.shop_id
         ) a
-        LEFT JOIN t_mall_store b ON a.shop_id=b.id
         LEFT JOIN t_mall_product d ON a.product_id=d.id
         LEFT JOIN (SELECT id,image_url,ass_id FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1)e ON a.product_id=e.ass_id
-        LEFT JOIN (SELECT id,pag_sto_id FROM t_mall_page WHERE pag_is_main=1) f ON a.shop_id=f.pag_sto_id
-        WHERE b.is_delete=0
     </select>
 
     <select id="selectMapById" parameterType="java.lang.Integer" resultType="Map">
@@ -284,19 +284,16 @@
 
     <select id="selectShopCartByCheckIds" parameterType="Map" resultType="Map">
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,
-        a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`, e.image_url, d.return_day,d.pro_name,d.is_specifica AS isSpec,
-        d.is_coupons AS isCoupons,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,
-        d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num, d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id AS flowId
+        a.`discount`, a.`pro_type`,a.`sale_member_id`,a.`commission`,
+        e.image_url,
+        d.return_day,d.pro_name,d.is_specifica ,d.is_coupons ,d.is_member_discount ,d.pro_type_id,d.is_delete AS isDelete,d.is_publish,d.check_status,d.pro_stock_total AS pro_stock_num,
+        d.pro_price,d.pro_stock_total AS stockNum,d.pro_restriction_num, d.is_integral_deduction ,d.is_fenbi_deduction,d.pro_weight,d.flow_id AS flowId,d.user_id as bus_user_id
         FROM
         (
-        SELECT distinct
-        a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
+        SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.user_type,a.`pro_spec_str`,a.`discount`,
         a.`pro_type`,a.`sale_member_id`,a.`commission`
         FROM t_mall_shop_cart a
         <where>
-            <if test="id != null">
-                and a.id = #{id}
-            </if>
             <if test="checkIds != null">
                 <if test="checkIds.length == 1">
                     and a.id = #{checkIds[0] }
@@ -330,7 +327,6 @@
             </if>
 
         </where>
-        GROUP BY a.id
         ORDER BY a.shop_id
         ) a
         LEFT JOIN t_mall_product d ON a.product_id=d.id

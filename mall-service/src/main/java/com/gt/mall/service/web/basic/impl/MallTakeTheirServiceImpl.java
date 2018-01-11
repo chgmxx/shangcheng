@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.bean.BusUser;
+import com.gt.api.bean.session.BusUser;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.basic.MallTakeTheirDAO;
@@ -15,6 +15,7 @@ import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.basic.MallTakeTheirTime;
+import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.utils.CommonUtil;
@@ -23,10 +24,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -51,6 +49,8 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
     private MallImageAssociativeDAO     imageAssociativeDAO;
     @Autowired
     private MallPaySetDAO               paySetDAO;
+    @Autowired
+    private WxShopService               wxShopService;
 
     @Override
     public PageUtil selectByUserId( Map< String,Object > param ) {
@@ -115,6 +115,89 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	}
     }
 
+    @Override
+    public boolean newEditTake( Map< String,Object > params, BusUser user ) {
+	Integer code = -1;
+	if ( CommonUtil.isNotEmpty( params ) ) {
+	    MallTakeTheir take = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "take" ).toString() ), MallTakeTheir.class );
+	    if ( CommonUtil.isNotEmpty( take ) ) {
+		List< Map > cityList = wxShopService.queryBasisCityIds( take.getVisitProvinceId() + "," + take.getVisitCityId() + "," + take.getVisitAreaId() );
+		String visitAddressDetail = "";
+		if ( cityList != null && cityList.size() > 0 ) {
+		    for ( Map map : cityList ) {
+			String cityName = CommonUtil.toString( map.get( "city_name" ) );
+			visitAddressDetail += cityName;
+		    }
+		}
+		if ( take.getVisitAddress().contains( visitAddressDetail ) ) {
+		    String temp = take.getVisitAddress();
+		    take.setVisitAddress( take.getVisitAddress().replace( visitAddressDetail, "" ) );
+		    visitAddressDetail = temp;
+		} else {
+		    visitAddressDetail += take.getVisitAddress();
+		}
+
+		take.setVisitAddressDetail( visitAddressDetail );
+		if ( CommonUtil.isNotEmpty( take.getId() ) ) {
+		    code = mallTakeTheirDAO.updateById( take );
+		} else {
+		    take.setUserId( user.getId() );
+		    take.setCreateTime( new Date() );
+		    code = mallTakeTheirDAO.insert( take );
+		}
+		if ( take.getId() > 0 ) {
+		    // 添加或修改图片
+		    imageAssociativeService.newInsertUpdBatchImage( params, take.getId(), 3 );
+		    newEditTakeTheirTime( params, take.getId() );
+		}
+	    }
+	}
+	if ( code > 0 ) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    private void newEditTakeTheirTime( Map< String,Object > params, int takeId ) {
+	Wrapper< MallTakeTheirTime > prowrapper = new EntityWrapper<>();
+	prowrapper.where( "take_id={0} and is_delete = 0 ", takeId );
+	List< MallTakeTheirTime > takeTheirTimes = takeTheirTimeDAO.selectList( prowrapper );
+
+	// 添加自提点接待时间
+	if ( !CommonUtil.isEmpty( params.get( "timeList" ) ) ) {
+	    List< MallTakeTheirTime > timeList = JSONArray.parseArray( params.get( "timeList" ).toString(), MallTakeTheirTime.class );
+	    if ( timeList != null && timeList.size() > 0 ) {
+		for ( MallTakeTheirTime time : timeList ) {
+		    if ( CommonUtil.isEmpty( time.getId() ) ) {
+			time.setTakeId( takeId );
+			time.setCreateTime( new Date() );
+			takeTheirTimeDAO.insert( time );
+		    } else {
+			if ( takeTheirTimes != null ) {
+			    int timeId = time.getId();
+			    for ( MallTakeTheirTime theirTime : takeTheirTimes ) {
+				if ( theirTime.getId() == timeId ) {
+				    takeTheirTimes.remove( theirTime );// 移除已经存在自提点接待时间
+				    break;
+				}
+			    }
+			}
+			takeTheirTimeDAO.updateById( time );
+		    }
+		}
+
+	    }
+	}
+	//删除自提点接待时间
+	if ( takeTheirTimes != null && takeTheirTimes.size() > 0 ) {
+	    for ( MallTakeTheirTime theirTime : takeTheirTimes ) {
+		theirTime.setIsDelete( 1 );
+		takeTheirTimeDAO.updateById( theirTime );
+	    }
+	}
+    }
+
     private void editTakeTheirTime( Map< String,Object > params, int takeId ) {
 	// 逻辑删除自提点接待时间
 	if ( !CommonUtil.isEmpty( params.get( "deltimeList" ) ) ) {
@@ -176,6 +259,45 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
 	    }
 	}
 	return false;
+    }
+
+    @Override
+    public List< Map< String,Object > > isTakeTheirByUserIdList( List< MallPaySet > setList, String provincesId ) {
+	if ( setList == null || setList.size() == 0 ) {
+	    return null;
+	}
+	List< Integer > userIdList = new ArrayList<>();
+	for ( MallPaySet mallPaySet : setList ) {
+	    if ( CommonUtil.isNotEmpty( mallPaySet.getIsTakeTheir() ) ) {
+		if ( mallPaySet.getIsTakeTheir().toString().equals( "1" ) ) {// 允许买家上门自提
+		    if ( !userIdList.contains( mallPaySet.getUserId() ) ) {
+			userIdList.add( mallPaySet.getUserId() );
+		    }
+		}
+	    }
+	}
+	if ( userIdList.size() == 0 ) {
+	    return null;
+	}
+	Wrapper< MallTakeTheir > wrapper = new EntityWrapper<>();
+	wrapper.setSqlSelect( "user_id,id as takeId,is_store_pay as isStorePay, visit_address_detail as visitAddressDetail" );
+	wrapper.in( "user_id", userIdList ).andNew( "is_delete = 0" );
+	if ( CommonUtil.isNotEmpty( provincesId ) && CommonUtil.toInteger( provincesId ) > 0 ) {
+	    wrapper.in( "visit_province_id", provincesId );
+	}
+	if ( userIdList.size() > 1 ) {
+	    wrapper.groupBy( "user_id" );
+	}
+	List< Map< String,Object > > mallTakeTheirList = mallTakeTheirDAO.selectMaps( wrapper );
+	if ( mallTakeTheirList == null || mallTakeTheirList.size() == 0 ) {
+	    return null;
+	}
+	List< Map< String,Object > > list = new ArrayList<>();
+	for ( Map< String,Object > map : mallTakeTheirList ) {
+	    list.add( map );
+	}
+	return list;
+
     }
 
     @Override

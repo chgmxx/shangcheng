@@ -83,7 +83,7 @@ public class PurchaseReceivables extends Model<PurchaseReceivables> {
     /**
      * 折扣
      */
-	private Integer discount;
+	private Double discount;
     /**
      * 0未支付1已支付
      */

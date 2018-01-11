@@ -29,6 +29,12 @@ public interface MallSellerOrderDAO extends BaseMapper< MallSellerOrder > {
      * @return
      */
     Map<String, Object> selectOrderByMemberId(Map<String, Object> params);
+    /**
+     * 统计客户的订单
+     * @param params
+     * @return
+     */
+    int countOrderByClient(Map<String, Object> params);
 
     /**
      * 查询客户的订单
@@ -43,4 +49,11 @@ public interface MallSellerOrderDAO extends BaseMapper< MallSellerOrder > {
      * @return
      */
     MallSellerOrder selectBySellerOrder(MallSellerOrder order);
+
+    /**
+     * 查询商家销售员排名
+     * @param params
+     * @return
+     */
+    List<Map<String, Object>> selectSalePricerByUserId(Map<String, Object> params);
 }

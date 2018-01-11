@@ -58,7 +58,7 @@
             //当你在iframe页面关闭自身时
             //var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
             //layer.close(index); //再执行关闭
-            parent.layer.closeAll();
+            parent.CloseParentShade();
         }
     </script>
     <style type="text/css">
@@ -74,7 +74,7 @@
 <div style="padding-bottom: 50px">
     <div class="txt-btn pd-bottom-15 clearfix">
         <div>
-            <form id="queryForm" method="post" action="mallPage/choosePro.do">
+            <form id="queryForm" method="get" action="mallPage/choosePro.do">
                 <input type="hidden" name="stoId" value="${stoId }" class="srh"/>
                 <input type="hidden" name="check" value="${check}" id="isCheck" class="srh"/>
                 商品名称：<input type="text" placeholder="请输商品名称(模糊匹配)" value="${proName }" class="srh"
@@ -142,7 +142,7 @@
                             <input type="hidden" name="price" class="listb" value="${pro.inv_price }">
                         </c:if>
 
-                        <input type="hidden" name="url" class="listb" value="${url}/mallPage/${pro.id }/${stoId}/79B4DE7C/phoneProduct.do">
+                        <input type="hidden" name="url" class="listb" value="${pro.url}">
                     </li>
                 </c:forEach>
             </div>
@@ -152,7 +152,7 @@
 
 </div>
 <div style="width: 100%;height: 50px;text-align: center; position: fixed; bottom: 0">
-    <jsp:include page="/jsp/mall/pageView.jsp"></jsp:include>
+    <jsp:include page="/jsp/common/page/pageView.jsp"></jsp:include>
     <div style="position: absolute;top:10; left:50;">
         <input type="button" value="确认" onclick="fnOk()" style="width:70px;  cursor: pointer;background-color: #1aa1e7;border-radius: 3px;color: #fff;border: none;"/>
         <input type="button" value="返回" onclick="fnCancel()" style="width:70px;  cursor: pointer;background-color: #8cc717;border-radius: 3px;color: #fff;border: none;"/>

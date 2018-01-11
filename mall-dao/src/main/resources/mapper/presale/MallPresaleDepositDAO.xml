@@ -218,10 +218,10 @@
     </select>
 
 
-    <select id="selectListByDepositPro" parameterType="com.gt.mall.entity.presale.MallPresaleDeposit" resultType="Map">
+    <select id="selectListByDepositPro" parameterType="com.gt.mall.entity.presale.MallPresaleDeposit" resultMap="depositMap">
         select d.id, presale_id, d.product_id, d.pro_specifica_ids, d.pro_name, d.pro_img_url, deposit_no,
         deposit_money, order_money, deposit_status, pay_way, pay_time, pay_no, return_no,
-        return_time, d.user_id, d.create_time,p.shop_id as shopId,is_submit,
+        return_time, d.user_id, d.create_time,p.shop_id,is_submit,
         d.pro_num
         from t_mall_presale_deposit d
         left join t_mall_presale p on p.id=d.presale_id

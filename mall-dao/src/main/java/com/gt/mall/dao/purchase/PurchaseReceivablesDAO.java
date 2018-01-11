@@ -26,6 +26,21 @@ public interface PurchaseReceivablesDAO extends BaseMapper<PurchaseReceivables> 
     List<Map<String, Object>> findReceivablesList(int orderId);
 
     /**
+     * 分页查询的订单的收款条数
+     *
+     * @param parms
+     * @return 数量
+     */
+    Integer findListCount(Map<String, Object> parms);
+    /**
+     * 分页查询
+     *
+     * @param parms
+     * @return list
+     */
+    List<Map<String, Object>> findList(Map<String, Object> parms);
+
+    /**
      * 根据订单号查询收款记录
      *
      * @param receivablesNumber 收款订单号

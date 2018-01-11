@@ -12,7 +12,9 @@ import com.gt.mall.utils.JedisUtil;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.param.wx.QrcodeCreateFinal;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
+import com.gt.util.entity.param.wx.WxJsSdk;
 import com.gt.util.entity.result.wx.ApiWxApplet;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -92,7 +94,7 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
     public String qrcodeCreateFinal( QrcodeCreateFinal createFinal ) {
 	RequestUtils< QrcodeCreateFinal > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( createFinal );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "qrcodeCreateFinal.do", 2 );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "newqrcodeCreateFinal.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return result;
 	}
@@ -125,6 +127,17 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectBybusIdAndindustry.do", 2 );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), ApiWxApplet.class );
+	}
+	return null;
+    }
+
+    @Override
+    public WxJsSdkResult wxjssdk( WxJsSdk wxJsSdk ) {
+	RequestUtils< WxJsSdk > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( wxJsSdk );
+	String result = HttpSignUtil.signHttpSelect( requestUtils, SHARE_URL + "wxjssdk.do", 2 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxJsSdkResult.class );
 	}
 	return null;
     }

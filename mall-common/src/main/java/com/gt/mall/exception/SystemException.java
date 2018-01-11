@@ -15,6 +15,8 @@ public class SystemException extends RuntimeException {
 
     private String message;//错误消息
 
+    private String data;//异常内容
+
     public SystemException( String message ) {
 	super( message );
 	this.message = message;
@@ -26,6 +28,13 @@ public class SystemException extends RuntimeException {
 	this.code = code;
     }
 
+    public SystemException( int code, String message, String data ) {
+	super( message );
+	this.message = message;
+	this.code = code;
+	this.data = data;
+    }
+
     public int getCode() {
 	return code;
     }
@@ -34,4 +43,9 @@ public class SystemException extends RuntimeException {
     public String getMessage() {
 	return message;
     }
+
+    public String getData() {
+	return data;
+    }
+
 }

@@ -3,6 +3,7 @@ package com.gt.mall.service.web.applet;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.applet.MallAppletImage;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public interface MallProductAppletService extends BaseService<MallAppletImage> {
      *
      * @param params
      */
-    Map<String, Object> shoppingcare(Map<String, Object> params);
+    Map<String, Object> shoppingcare(Map<String, Object> params, HttpServletRequest request);
 
     /**
      * 清空购物车内的失效商品、修改商品信息、删除商品信息

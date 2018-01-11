@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.gt.mall.bean.member.Coupons;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -273,23 +274,70 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
      */
     @TableField( "flow_recharge_status" )
     private Integer flowRechargeStatus;
-    /**
-     * 买家用户名称
-     */
-    @TableField( "member_name" )
-    private String  memberName;
 
+    @TableField( "member_name" )
+    private String memberName;
+    /**
+     * 其它快递公司的物流名称
+     */
+    @TableField( "other_express_name" )
+    private String otherExpressName;
     /**
      * 订单使用积分的数量
      */
     @TableField( "use_jifen" )
-    private double useJifen;
-
+    private Double  useJifen    = 0d;
     /**
      * 订单使用粉币的数量
      */
     @TableField( "use_fenbi" )
-    private double useFenbi;
+    private Double  useFenbi    = 0d;
+    /**
+     * 联盟卡id
+     */
+    @TableField( "union_card_id" )
+    private Integer unionCardId = 0;
+    /**
+     * 使用卡券的id
+     */
+    @TableField( "coupon_id" )
+    private Integer couponId    = 0;
+
+    /**
+     * 粉币优惠的金额
+     */
+    @TableField( "fenbi_discount_money" )
+    private Double  fenbiDiscountMoney = 0d;
+    /**
+     * 积分优惠的金额
+     */
+    @TableField( "jifen_discount_money" )
+    private Double  jifenDiscountMoney = 0d;
+    /**
+     * 总共优惠的金额
+     */
+    @TableField( "discount_money" )
+    private Double  discountMoney      = 0d;
+    /**
+     * 优惠券类型  1 微信优惠券  2多粉优惠券
+     */
+    @TableField( "coupon_type" )
+    private Integer couponType         = 0;
+    /**
+     * 优惠券使用数量
+     */
+    @TableField( "coupon_use_num" )
+    private Integer couponUseNum       = 0;
+    /**
+     * 会员是否已删除
+     */
+    @TableField( "member_is_delete" )
+    private Integer memberIsDelete     = 0;
+    /**
+     * 自提点地址
+     */
+    @TableField( "appointment_address" )
+    private String appointmentAddress;
 
     @TableField( exist = false )
     private Integer updateDay;//修改订单的天数
@@ -297,17 +345,11 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     @TableField( exist = false )
     private String orderPNo;//父类的订单编号
 
-    @TableField( exist = false )
-    private String shopName;//店铺名称
+//    @TableField( exist = false )
+    //    private String shopName;//店铺名称
 
     @TableField( exist = false )
     private List< MallOrderDetail > mallOrderDetail;        //商品详情
-
-    @TableField( exist = false )
-    double jifenDiscountMoney = 0;//使用积分总共优惠的金额
-
-    @TableField( exist = false )
-    double fenbiDiscountMoney = 0;//使用粉币总共优惠的金额
 
     @TableField( exist = false )
     double yhqDiscountMoney = 0;//使用优惠券总共优惠的金额
@@ -323,6 +365,15 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
 
     @TableField( exist = false )
     private Integer useCoupon;//是否使用优惠券  用于计算
+
+    @TableField( exist = false )
+    private Coupons selectCoupon;//选择优惠券3
+
+    //    @TableField( exist = false )
+    //    private double totalYouhuiMoney;//优惠总金额
+
+    @TableField( exist = false )
+    private double totalNewMoney;//订单优惠后的金额
 
     @Override
     protected Serializable pkVal() {

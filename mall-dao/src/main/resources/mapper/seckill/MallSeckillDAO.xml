@@ -51,7 +51,7 @@
     </sql>
     <sql id="page_Column_List">
         g.id, g.product_id, s_name, s_price, s_start_time, s_end_time, s_max_buy_num,
-        shop_id, g.create_time, is_use,
+        shop_id, g.create_time, is_use,g.user_id,
         case
         when g.is_use = -1 then -2<!--已失效  -->
         when g.s_start_time &gt; now() and g.s_end_time &gt; now() then 0<!--未开始  -->
@@ -80,6 +80,9 @@
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(g.id)
         from t_mall_seckill g where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的秒杀 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始秒杀 -->
             and g.s_start_time &gt; now() and g.s_end_time &gt; now()
         </if>
@@ -99,11 +102,15 @@
     <!-- 根据秒杀分页 -->
     <select id="selectByPage" resultMap="pageResultMap" parameterType="Map">
         select
-        <include refid="page_Column_List"/> ,s.wx_shop_id
+        <include refid="page_Column_List"/>
+        ,s.wx_shop_id
         from t_mall_seckill g
         left join t_mall_store s on g.shop_id = s.id
         left join t_mall_seckill_join j on g.id=j.seckill_id
         where g.is_delete = 0
+        <if test="type == -2"><!-- 已失效的秒杀 -->
+            and g.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始秒杀 -->
             and g.s_start_time &gt; now() and g.s_end_time &gt; now()
         </if>
@@ -169,7 +176,7 @@
         b.id, b.product_id as productId, b.s_name as sName, b.s_price as sPrice,
         b.s_start_time as sStartTime, b.s_end_time as sEndTime, b.s_max_buy_num as sMaxBuyNum,
         b.shop_id as shopId, c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
-        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice,p.pro_stock_total as proStockTotal
         from t_mall_seckill b
         left join t_mall_product p on b.product_id = p.id
         LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
@@ -268,10 +275,19 @@
         <include refid="group_Column_List"></include>
         from t_mall_seckill g
         where g.is_delete = 0 and g.is_use = 1
-        and ((g.s_start_time &lt;= now() and now() &lt; g.s_end_time ) or (g.s_start_time > now() and g.s_end_time > now()))
-        and g.product_id=#{productId}
-        and g.shop_id=#{shopId}
-        limit 1
+        <if test="productId != null">
+          and g.product_id=#{productId}
+        </if>
+        <if test="shopId != null">
+          and g.shop_id=#{shopId}
+        </if>
+        <if test="id != null and id > 0">
+            and g.id = #{id}
+        </if>
+        <if test="id == null or id == 0">
+            and ((g.s_start_time &lt;= now() and now() &lt; g.s_end_time ) or (g.s_start_time > now() and g.s_end_time > now()))
+            limit 1
+        </if>
     </select>
 
     <!-- 获取店铺下所有正在参加秒杀的商品 -->
@@ -307,6 +323,80 @@
             </foreach>
         </if>
         GROUP BY gb.`product_id`
+    </select>
+
+
+    <!-- 获取店铺下所有正在参加秒杀的商品 -->
+    <select id="selectGoingSeckillProduct" resultType="Map">
+        SELECT
+        a.id,a.is_member_discount,a.pro_price,a.pro_name,a.is_specifica,a.is_specifica, a.shop_id , a.return_day,a.pro_sale_total,a.sales_base,
+        gb.id as activityId,gb.s_price as price ,gb.s_start_time as startTime ,gb.s_end_time as endTime
+        from t_mall_seckill gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+        WHERE gb.is_delete=0 and gb.is_use=1
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        and ((gb.s_start_time &lt;= now() and now() &lt; gb.s_end_time ) or (gb.s_start_time > now() and gb.s_end_time > now()))
+
+        <if test="searchContent != null and searchContent != ''">
+            /*and (a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        GROUP BY a.id
+        <if test="sort == 'new'"><!-- 最新排序 -->
+            order by gb.id
+        </if>
+        <if test="sort == 'sale'"><!-- 销量排序 -->
+            order by a.pro_sale_total+a.sales_base
+        </if>
+        <if test="sort == 'price'"><!-- 价格排序 -->
+            order by gb.s_price
+        </if>
+        <if test="isDesc == 1 or sort == 'new' or sort == 'sale'">
+            desc
+        </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+    </select>
+
+    <!-- 统计正在参加秒杀的商品 -->
+    <select id="selectCountGoingSeckillProduct" resultType="java.lang.Integer">
+        SELECT
+        count(a.id)
+        from t_mall_seckill gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+        WHERE gb.is_delete=0 and gb.is_use=1
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        and gb.s_start_time &lt;= now() and now() &lt; gb.s_end_time
+
+        <if test="searchContent != null and searchContent != ''">
+            /*and (a.pro_name like CONCAT("%","${searchContent}","%") or g.group_name like CONCAT("%","${searchContent}","%") )*/
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
     </select>
 
 </mapper>

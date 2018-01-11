@@ -42,6 +42,7 @@ public class MallSearchKeywordServiceImpl extends BaseServiceImpl< MallSearchKey
     @Override
     public List< MallSearchKeyword > selectByUser( Map< String,Object > map ) {
 	Wrapper< MallSearchKeyword > keywordWrapper = new EntityWrapper<>();
+	keywordWrapper.setSqlSelect( "id,keyword, shop_id" );
 	keywordWrapper.where( "shop_id={0} and user_id={1} and is_delete = 0", map.get( "shopId" ), map.get( "userId" ) );
 	return mallSearchKeywordDAO.selectList( keywordWrapper );
     }
@@ -59,9 +60,9 @@ public class MallSearchKeywordServiceImpl extends BaseServiceImpl< MallSearchKey
     }
 
     @Override
-    public void insertSeachKeyWord(int memberId,int shopId,Object searchName) {
+    public void insertSeachKeyWord( int memberId, int shopId, Object searchName ) {
 
-	if ( CommonUtil.isNotEmpty( searchName)) {
+	if ( CommonUtil.isNotEmpty( searchName ) ) {
 	    //保存到搜索关键字表
 	    MallSearchKeyword keyword = selectBykeyword( shopId, searchName.toString(), memberId );
 	    if ( CommonUtil.isEmpty( keyword ) ) {

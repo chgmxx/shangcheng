@@ -2,6 +2,7 @@ package com.gt.mall.dao.pifa;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.gt.mall.entity.pifa.MallPifa;
+import com.gt.mall.param.phone.PhoneSearchProductDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -94,4 +95,17 @@ public interface MallPifaDAO extends BaseMapper< MallPifa > {
      * @return
      */
     List<MallPifa> selectStartPiFaByProductId(Map<String, Object> params);
+
+
+    /**
+     * 查询正在进行的批发商品
+     *
+     * @return 商品列表
+     */
+    List< Map< String,Object > > selectGoingPifaProduct( PhoneSearchProductDTO searchProductDTO );
+
+    /**
+     * 统计正在进行的批发商品
+     */
+    int selectCountGoingPifaProduct(PhoneSearchProductDTO searchProductDTO);
 }

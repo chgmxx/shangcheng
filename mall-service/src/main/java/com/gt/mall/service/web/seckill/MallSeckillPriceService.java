@@ -22,7 +22,7 @@ public interface MallSeckillPriceService extends BaseService< MallSeckillPrice >
      * @param map       编辑参数
      * @param seckillId 秒杀id
      * @param flag      是否更换了商品  true 更换了
-     * @param isJxc     是否已经加入金校训
+     * @param isJxc     是否已经加入进销存
      *
      * @return 商品信息
      */
@@ -36,5 +36,14 @@ public interface MallSeckillPriceService extends BaseService< MallSeckillPrice >
      * @return 秒杀信息
      */
     List< MallSeckillPrice > selectPriceByGroupId( int groupId );
+
+    /**
+     * 根据库存id查
+     *
+     * @param invId 库存id
+     *
+     * @return 秒杀价
+     */
+    List< MallSeckillPrice > selectPriceByInvId( int seckillId, int invId );
 
 }

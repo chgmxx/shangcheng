@@ -38,13 +38,13 @@
             and create_date >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and create_date <![CDATA[<=]]> #{endTime}
+            and DATE(create_date) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="status != null and status != '' and status !=10 and status !='10'">
             and order_status = #{status}
         </if>
         <if test="search !=null and search != ''">
-            and order_number=#{search}
+            and order_number like CONCAT(CONCAT('%', #{search}),'%')
         </if>
         order by id desc
         limit #{pageFirst},#{pageLast}
@@ -59,13 +59,13 @@
             and create_date >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and create_date <![CDATA[<=]]> #{endTime}
+            and DATE(create_date) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="status != null and status != '' and status !=10 and status !='10'">
             and order_status = #{status}
         </if>
         <if test="search !=null and search != ''">
-            and order_number=#{search}
+            and order_number like CONCAT(CONCAT('%', #{search}),'%')
         </if>
     </select>
 

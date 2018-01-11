@@ -2,21 +2,20 @@ package com.gt.mall.common;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.api.bean.session.Member;
+import com.gt.api.util.KeysUtil;
 import com.gt.api.util.sign.SignHttpUtils;
-import com.gt.mall.bean.Member;
-import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.JedisUtil;
-import com.gt.mall.utils.PropertiesUtil;
-import com.gt.mall.utils.SessionUtils;
+import com.gt.mall.constant.Constants;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
+import com.gt.mall.utils.*;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,88 +32,79 @@ public class AuthorizeOrLoginController {
 
     private static final String GETWXPULICMSG = "/8A5DA52E/busUserApi/getWxPulbicMsg.do";
 
-    @Autowired
-    private BusUserService busUserService;
-
-    @RequestMapping( value = "/79B4DE7C/authorizeMember" )
     public String userLogin( HttpServletRequest request, HttpServletResponse response, Map< String,Object > map ) throws Exception {
+	if ( CommonUtil.isEmpty( map.get( "busId" ) ) || CommonUtil.isEmpty( map.get( "url" ) ) ) {
+	    return null;
+	}
 	Integer busId = CommonUtil.toInteger( map.get( "busId" ) );
 	Integer browser = CommonUtil.judgeBrowser( request );
-	Object uclogin = map.get( "uclogin" );
+	Integer uclogin = null;
+	if ( CommonUtil.isNotEmpty( map.get( "ucLogin" ) ) ) {
+	    uclogin = CommonUtil.toInteger( map.get( "ucLogin" ) );
+	}
+	Member member = MallSessionUtils.getLoginMember( request, busId );
 
-	Member member = SessionUtils.getLoginMember( request );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    //用户的所属商家和传进来的商家id相同不必登陆
 	    if ( member.getBusid().toString().equals( CommonUtil.toString( busId ) ) ) {
 		return null;
 	    }
 	}
-
-	String wxmpSign = "WXMP2017";
-	Map< String,Object > getWxPublicMap = new HashMap<>();
-	getWxPublicMap.put( "busId", busId );
-	//判断商家信息 1是否过期 2公众号是否变更过
-	System.out.println( "wxmpDomain = " + PropertiesUtil.getWxmpDomain() );
-	String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + GETWXPULICMSG, getWxPublicMap, wxmpSign );
-	JSONObject json = JSONObject.parseObject( wxpublic );
-	if ( CommonUtil.isEmpty( json ) || json.size() == 0 ) {
-	    return null;
-	}
-	Integer code = CommonUtil.toInteger( json.get( "code" ) );
-	if ( code == 0 ) {
-	    Object guoqi = json.get( "guoqi" );
-	    if ( CommonUtil.isNotEmpty( guoqi ) ) {
-		//商家已过期
-		Object guoqiUrl = json.get( "guoqiUrl" );
-		return "redirect:" + guoqiUrl;
-	    }
-	    Object remoteUcLogin = json.get( "remoteUcLogin" );
-	    if ( browser == 99 && ( CommonUtil.isNotEmpty( uclogin ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
+	JSONObject guoqiJson = getBusGuoqi( busId );//获取过期json
+	if ( CommonUtil.isEmpty( guoqiJson ) ) {
+	    String wxmpSign = "WXMP2017";
+	    Map< String,Object > getWxPublicMap = new HashMap<>();
+	    getWxPublicMap.put( "busId", busId );
+	    //判断商家信息 1是否过期 2公众号是否变更过
+	    String wxpublic = SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + GETWXPULICMSG, getWxPublicMap, wxmpSign );
+	    guoqiJson = JSONObject.parseObject( wxpublic );
+	    if ( CommonUtil.isEmpty( guoqiJson ) || guoqiJson.size() == 0 ) {
 		return null;
 	    }
-
+	}
+	Integer code = CommonUtil.toInteger( guoqiJson.get( "code" ) );
+	if ( code == 0 ) {
+	    Object guoqi = guoqiJson.get( "guoqi" );
+	    if ( CommonUtil.isNotEmpty( guoqi ) ) {
+		throw new BusinessException( ResponseEnums.BUS_GUOQI_ERROR.getCode(), ResponseEnums.BUS_GUOQI_ERROR.getDesc(), guoqiJson.get( "guoqiUrl" ).toString() );
+	    }
+	    setBusGuoqi( guoqiJson, busId );
+	    Object remoteUcLogin = guoqiJson.get( "remoteUcLogin" );
+	    if ( browser == 99 && ( ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) || CommonUtil.isNotEmpty( remoteUcLogin ) ) ) {
+		return null;
+	    }
 	}
 
-	String otherRedisKey = CommonUtil.getCode();
-	String requestUrl = PropertiesUtil.getHomeUrl() + CommonUtil.toString( map.get( "requestUrl" ) );
-	Map< String,Object > redisMap = new HashMap<>();
-	redisMap.put( "redisKey", otherRedisKey );
-	redisMap.put( "redisValue", requestUrl );
-	redisMap.put( "setime", 5 * 60 );
-	SignHttpUtils.WxmppostByHttp( PropertiesUtil.getWxmpDomain() + "/8A5DA52E/redis/SetExApi.do", redisMap, PropertiesUtil.getWxmpSignKey() );
+	KeysUtil keysUtil = new KeysUtil();
+	String requestUrl = keysUtil.getEncString( map.get( "url" ).toString() );
 
-
-	/*JedisUtil.set( otherRedisKey, requestUrl, 5 * 60 );*/
 	Map< String,Object > queryMap = new HashMap<>();
-	queryMap.put( "otherRedisKey", otherRedisKey );
+	queryMap.put( "returnUrl", requestUrl );
 	queryMap.put( "browser", browser );
-	queryMap.put( "domainName", PropertiesUtil.getHomeUrl() );
 	queryMap.put( "busId", busId );
-	queryMap.put( "uclogin", uclogin );
-	String url = "redirect:" + PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMember.do?queryBody=" + JSON.toJSONString( queryMap );
-	return url;
+	if ( CommonUtil.isNotEmpty( uclogin ) && uclogin == 1 ) {
+	    queryMap.put( "uclogin", uclogin );
+	}
+//	throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(),
+//			PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap ) );
+	return PropertiesUtil.getWxmpDomain() + "remoteUserAuthoriPhoneController/79B4DE7C/authorizeMemberNew.do?queryBody=" + JSON.toJSONString( queryMap );
     }
 
-    /**
-     * 返回跳转到之前的页面
-     */
-    @RequestMapping( value = "/{redisKey}/79B4DE7C/returnJump" )
-    public String returnJump( HttpServletRequest request, HttpServletResponse response, @PathVariable( "redisKey" ) String redisKey, Map< String,Object > params ) {
-	try {
-	    Object url = JedisUtil.get( redisKey );
-	    return "redirect:" + url;
-	} catch ( Exception e ) {
-	    e.printStackTrace();
+    private void setBusGuoqi( JSONObject json, int busId ) {
+	String key = Constants.REDIS_KEY + "_bus_guoqi_" + busId;
+	Date date24 = DateTimeKit.parse( DateTimeKit.getDate() + " 24:00:00", DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	Date now = new Date();
+	Long times = ( date24.getTime() - now.getTime() ) / 1000;
+	JedisUtil.set( key, json.toJSONString(), times.intValue() );
+    }
+
+    private JSONObject getBusGuoqi( int busId ) {
+	String key = Constants.REDIS_KEY + "_bus_guoqi_" + busId;
+	if ( JedisUtil.exists( key ) ) {
+	    if ( CommonUtil.isNotEmpty( JedisUtil.get( key ) ) ) {
+		return JSONObject.parseObject( JedisUtil.get( key ) );
+	    }
 	}
 	return null;
-    }
-
-    @RequestMapping( value = "/79B4DE7C/clearMember" )
-    public void clearMember( HttpServletRequest request, HttpServletResponse response ) {
-	try {
-	    SessionUtils.setLoginMember( request, null );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
     }
 }

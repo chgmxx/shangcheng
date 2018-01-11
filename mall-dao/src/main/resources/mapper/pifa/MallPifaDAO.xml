@@ -17,21 +17,21 @@
         <result column="pf_type" property="pfType"/>
     </resultMap>
 
-    <resultMap id="pageResultMap" type="com.gt.mall.entity.pifa.MallPifa" >
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="product_id" property="productId" jdbcType="INTEGER" />
-        <result column="pf_price" property="pfPrice" jdbcType="DECIMAL" />
-        <result column="pf_start_time" property="pfStartTime" jdbcType="VARCHAR" />
-        <result column="pf_end_time" property="pfEndTime" jdbcType="VARCHAR" />
-        <result column="user_id" property="userId" jdbcType="INTEGER" />
-        <result column="shop_id" property="shopId" jdbcType="INTEGER" />
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
-        <result column="is_use" property="isUse" jdbcType="TINYINT" />
-        <result column="pf_type" property="pfType" jdbcType="INTEGER" />
-        <result column="status" property="status" jdbcType="INTEGER" />
+    <resultMap id="pageResultMap" type="com.gt.mall.entity.pifa.MallPifa">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="product_id" property="productId" jdbcType="INTEGER"/>
+        <result column="pf_price" property="pfPrice" jdbcType="DECIMAL"/>
+        <result column="pf_start_time" property="pfStartTime" jdbcType="VARCHAR"/>
+        <result column="pf_end_time" property="pfEndTime" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="shop_id" property="shopId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT"/>
+        <result column="is_use" property="isUse" jdbcType="TINYINT"/>
+        <result column="pf_type" property="pfType" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="shopName" property="shopName" jdbcType="VARCHAR"/>
-        <result column="joinId" property="joinId" jdbcType="INTEGER" />
+        <result column="joinId" property="joinId" jdbcType="INTEGER"/>
         <result column="two_code_path" property="twoCodePath" jdbcType="VARCHAR"/>
         <result column="pro_name" property="proName" jdbcType="VARCHAR"/>
     </resultMap>
@@ -46,9 +46,9 @@
         p.is_delete, p.is_use,p.pf_type,
         case
         when p.is_use = -1 then -2<!--已失效  -->
-        when p.pf_start_time > now() and   p.pf_end_time > now() then 0<!--未开始  -->
-        when p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time  then 1<!-- 进行中 -->
-        when p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
+        when p.pf_start_time > now() and p.pf_end_time > now() then 0<!--未开始  -->
+        when p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time then 1<!-- 进行中 -->
+        when p.pf_start_time &lt; now() and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
         end status,/*if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName,o.id as joinId,*/
         mp.two_code_path,mp.pro_name
     </sql>
@@ -58,25 +58,41 @@
         p.is_delete, p.is_use,p.pf_type,
         case
         when p.is_use = -1 then -2<!--已失效  -->
-        when p.pf_start_time > now() and   p.pf_end_time > now() then 0<!--未开始  -->
-        when p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time  then 1<!-- 进行中 -->
-        when p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
+        when p.pf_start_time > now() and p.pf_end_time > now() then 0<!--未开始  -->
+        when p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time then 1<!-- 进行中 -->
+        when p.pf_start_time &lt; now() and p.pf_end_time &lt;= now() then -1<!-- 已结束 -->
         end status/*,if(ws.business_name is not null ,ws.business_name, s.sto_name) as shopName*/,o.id as joinId
+    </sql>
+    <sql id="pifa_Column_List">
+        id, product_id , pf_price , pf_start_time , pf_end_time , user_id , shop_id , create_time,
+        is_delete , is_use , pf_type,
+        case
+        when is_use = -1 then -2<!--已失效  -->
+        when pf_start_time > now() and pf_end_time > now() then 0<!--未开始  -->
+        when pf_start_time &lt;= now() and now() &lt; pf_end_time then 1<!-- 进行中 -->
+        when pf_start_time &lt; now() and pf_end_time &lt;= now() then -1<!-- 已结束 -->
+        end status
     </sql>
 
 
     <!-- 统计批发 -->
-    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map" >
-        select  count(p.id)
+    <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
+        select count(p.id)
         from t_mall_pifa p where p.is_delete = 0
+        <if test="type == -2"><!-- 已失效的批发 -->
+            and p.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始批发 -->
-            and p.pf_start_time > now() and   p.pf_end_time > now()
+            and p.pf_start_time > now() and p.pf_end_time > now()
         </if>
         <if test="type == 1"><!-- 进行中的批发 -->
             and p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time
         </if>
         <if test="type == 2"><!-- 已结束的批发 -->
-            and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
+            and p.pf_start_time &lt; now() and p.pf_end_time &lt;= now()
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null ">
             and
@@ -86,20 +102,27 @@
         </if>
     </select>
     <!-- 根据批发分页 -->
-    <select id="selectByPage" resultMap="pageResultMap" parameterType="Map" >
-        select  <include refid="page_product_Column_List" />
+    <select id="selectByPage" resultMap="pageResultMap" parameterType="Map">
+        select
+        <include refid="page_product_Column_List"/>
         from t_mall_pifa p
         left join t_mall_store s on p.shop_id = s.id
         left join t_mall_product mp on mp.id= p.product_id
         where p.is_delete = 0
+        <if test="type == -2"><!-- 已失效的批发 -->
+            and p.is_use = -1
+        </if>
         <if test="type == -1"><!-- 未开始批发 -->
-            and p.pf_start_time > now() and   p.pf_end_time > now()
+            and p.pf_start_time > now() and p.pf_end_time > now()
         </if>
         <if test="type == 1"><!-- 进行中的批发 -->
             and p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time
         </if>
         <if test="type == 2"><!-- 已结束的批发 -->
-            and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
+            and p.pf_start_time &lt; now() and p.pf_end_time &lt;= now()
+        </if>
+        <if test="shopId != null and shopId != ''">
+           and   p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null ">
             and
@@ -117,7 +140,7 @@
         b.id, b.product_id as productId, pf_price, pf_start_time, pf_end_time, b.user_id, b.shop_id, b.create_time,
         b.is_delete, b.is_use,b.pf_type,
         c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
-        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice
+        ,if(p.is_specifica = 0 ,p.pro_price,d.inv_price) as proPrice,p.pro_stock_total as proStockTotal
         from t_mall_pifa b
         left join t_mall_product p on b.product_id = p.id
         LEFT JOIN (SELECT ass_id,image_url from t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
@@ -129,14 +152,14 @@
     <!-- 查询是否存在未开始和进行中的商品 -->
     <select id="selectStartPifaByProId" parameterType="Map" resultMap="BaseResultMap">
         SELECT p.id, p.product_id, pf_price, pf_start_time, pf_end_time, p.user_id, p.shop_id, p.create_time, p.is_delete, p.is_use,p.pf_type
-        from t_mall_pifa  p
+        from t_mall_pifa p
         left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
-        WHERE p.is_delete = 0 and p.is_use  =1
+        WHERE p.is_delete = 0 and p.is_use =1
         <if test="productId != null and productId != ''">
             and p.product_id = #{productId}
         </if>
         and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or
-        (p.pf_start_time > now() and  p.pf_end_time > now())
+        (p.pf_start_time > now() and p.pf_end_time > now())
         <if test="id != null and id != ''">
             and p.id != #{id}
         </if>
@@ -145,13 +168,13 @@
 
     <select id="selectPifaByProId" parameterType="Map" resultMap="BaseResultMap">
         SELECT p.id, p.product_id, pf_price, pf_start_time, pf_end_time, p.user_id, p.shop_id, p.create_time, p.is_delete, p.is_use,p.pf_type
-        from t_mall_pifa  p
-        WHERE p.is_delete = 0 and p.is_use  =1
+        from t_mall_pifa p
+        WHERE p.is_delete = 0 and p.is_use =1
         <if test="productId != null and productId != ''">
             and p.product_id = #{productId}
         </if>
         and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or
-        (p.pf_start_time > now() and  p.pf_end_time > now()))
+        (p.pf_start_time > now() and p.pf_end_time > now()))
         <if test="id != null and id != ''">
             and p.id != #{id}
         </if>
@@ -161,11 +184,12 @@
 
     <!-- 查询批发商品的状态 -->
     <select id="selecPifaByIds" parameterType="java.lang.Integer" resultMap="pageResultMap">
-        SELECT <include refid="page_Column_List"></include>
-        from t_mall_pifa  p
+        SELECT
+        <include refid="page_Column_List"></include>
+        from t_mall_pifa p
         left join t_mall_order o on p.id=o.group_buy_id and o.order_type=7
         left join t_mall_store s on p.shop_id = s.id
-        WHERE p.is_delete = 0 and p.is_use  =1 and p.id = #{id}
+        WHERE p.is_delete = 0 and p.is_use =1 and p.id = #{id}
         group by p.id
     </select>
 
@@ -177,20 +201,20 @@
         FROM (
         SELECT
         a.id,a.is_member_discount,a.pro_price,a.pro_cost_price,a.pro_name,a.is_specifica,
-        gb.id AS pifaId,gb.pf_price  ,gb.pf_start_time   ,gb.pf_end_time ,a.shop_id ,
+        gb.id AS pifaId,gb.pf_price ,gb.pf_start_time ,gb.pf_end_time ,a.shop_id ,
         a.return_day,a.pro_stock_total ,gb.pf_type
         from t_mall_pifa gb
-        left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
         <if test="groupId != null and groupId != ''">
             left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
         </if>
 
-        WHERE  gb.is_delete=0 and gb.is_use=1
+        WHERE gb.is_delete=0 and gb.is_use=1
         <if test="isPublic != 1">
             and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
         </if>
         <if test="status != null and status != ''">
-            and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time )  or (gb.pf_start_time > now() and   gb.pf_end_time > now()))
+            and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time ) or (gb.pf_start_time > now() and gb.pf_end_time > now()))
         </if>
         <if test="id != null and id != ''">
             and gb.id=#{id,jdbcType=INTEGER}
@@ -233,16 +257,16 @@
     <select id="selectCountgbProductByShopId" parameterType="Map" resultType="java.lang.Integer">
         SELECT count(gb.id)
         from t_mall_pifa gb
-        left join  t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
         <if test="groupId != null and groupId != ''">
             left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
         </if>
-        WHERE  gb.is_delete=0 and gb.is_use=1
+        WHERE gb.is_delete=0 and gb.is_use=1
         <if test="isPublic != 1">
             and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
         </if>
         <if test="status != null and status != ''">
-            and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time )  or (gb.pf_start_time > now() and   gb.pf_end_time > now()))
+            and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time ) or (gb.pf_start_time > now() and gb.pf_end_time > now()))
         </if>
         <if test="id != null and id != ''">
             and gb.id=#{id,jdbcType=INTEGER}
@@ -263,12 +287,23 @@
 
     <!-- 根据商品id查询批发信息 -->
     <select id="selectBuyByProductId" parameterType="com.gt.mall.entity.pifa.MallPifa" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"></include>
+        select
+        <include refid="pifa_Column_List"></include>
         from t_mall_pifa p
         where p.is_delete = 0 and p.is_use = 1
-        and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or (p.pf_start_time > now() and   p.pf_end_time > now()))
-        and p.product_id=#{productId} and p.shop_id=#{shopId}
-        limit 1
+        <if test="productId != null">
+            and p.product_id=#{productId}
+        </if>
+        <if test="shopId != null">
+            and p.shop_id=#{shopId}
+        </if>
+        <if test="id != null and id > 0">
+            and p.id = #{id}
+        </if>
+        <if test="id == null or id == 0">
+            and ((p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time ) or (p.pf_start_time > now() and p.pf_end_time > now()))
+            limit 1
+        </if>
     </select>
 
     <select id="selectCountJoinNum" parameterType="Map" resultType="java.lang.Integer">
@@ -278,21 +313,102 @@
     </select>
 
     <!-- 查询正在进行中的批发商品 -->
-    <select id="selectStartPiFaByProductId" resultMap="pageResultMap" parameterType="Map" >
-        select  <include refid="Base_Column_List" />
+    <select id="selectStartPiFaByProductId" resultMap="pageResultMap" parameterType="Map">
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_pifa p
         where p.is_delete = 0 and p.is_use=1
         and p.product_id=#{product_id}
+        <if test="pfType == -2"><!-- 已失效的批发 -->
+            and g.is_use = -1
+        </if>
         <if test="pfType == -1"><!-- 未开始批发 -->
-            and p.pf_start_time > now() and   p.pf_end_time > now()
+            and p.pf_start_time > now() and p.pf_end_time > now()
         </if>
         <if test="pfType == 1"><!-- 进行中的批发 -->
             and p.pf_start_time &lt;= now() and now() &lt; p.pf_end_time
         </if>
         <if test="pfType == 2"><!-- 已结束的批发 -->
-            and p.pf_start_time &lt; now()  and p.pf_end_time &lt;= now()
+            and p.pf_start_time &lt; now() and p.pf_end_time &lt;= now()
         </if>
         order by p.create_time desc
+    </select>
+
+
+    <!-- 获取店铺下所有正在参加批发的商品 -->
+    <select id="selectGoingPifaProduct" resultType="Map">
+        SELECT gb.id,gb.is_member_discount,gb.pro_price,gb.pro_name,gb.is_specifica,gb.shop_id,gb.pro_cost_price,
+        gb.activityId,gb.pf_price AS price ,gb.pf_start_time AS startTime ,gb.pf_end_time AS endTime,
+        gb.return_day,gb.pf_type,gb.pro_sale_total,gb.sales_base
+        FROM (
+        SELECT
+        a.id,a.is_member_discount,a.pro_price,a.pro_cost_price,a.pro_name,a.is_specifica,a.pro_sale_total,a.sales_base,
+        gb.id AS activityId,gb.pf_price ,gb.pf_start_time ,gb.pf_end_time ,a.shop_id ,
+        a.return_day,a.pro_stock_total ,gb.pf_type
+        from t_mall_pifa gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+
+        WHERE gb.is_delete=0 and gb.is_use=1 and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time ) or (gb.pf_start_time > now() and gb.pf_end_time > now()))
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="searchContent != null and searchContent != ''">
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
+        group by gb.id
+        <if test="sort == 'new'"><!-- 最新排序 -->
+            order by gb.id
+        </if>
+        <if test="sort == 'sale'"><!-- 销量排序 -->
+            order by a.pro_sale_total
+        </if>
+        <if test="sort == 'price'"><!-- 价格排序 -->
+            order by gb.pf_price
+        </if>
+        <if test="isDesc == 1 or sort == 'new' or sort == 'sale'">
+            desc
+        </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+        ) gb
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON gb.id=d.product_id
+    </select>
+
+
+    <select id="selectCountGoingPifaProduct" resultType="java.lang.Integer">
+        SELECT
+        count(distinct a.id)
+        from t_mall_pifa gb
+        left join t_mall_product a on a.id = gb.product_id and gb.shop_id = a.shop_id
+        <if test="groupId != null and groupId != ''">
+            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete=0
+        </if>
+
+        WHERE gb.is_delete=0 and gb.is_use=1 and a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        <if test="busId != null and busId != ''">
+            and gb.user_id = #{busId}
+        </if>
+        and ((gb.pf_start_time &lt;= now() and now() &lt; gb.pf_end_time ) or (gb.pf_start_time > now() and gb.pf_end_time > now()))
+        <if test="shopId != null and shopId != ''">
+            and gb.shop_id=#{shopId,jdbcType=INTEGER}
+        </if>
+        <if test="searchContent != null and searchContent != ''">
+            and a.pro_name like CONCAT("%","${searchContent}","%")
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and pg.group_id = #{groupId,jdbcType=INTEGER}
+        </if>
     </select>
 
 </mapper>

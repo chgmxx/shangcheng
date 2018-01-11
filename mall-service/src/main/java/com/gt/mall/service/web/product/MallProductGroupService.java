@@ -13,4 +13,9 @@ import com.gt.mall.entity.product.MallProductGroup;
  */
 public interface MallProductGroupService extends BaseService< MallProductGroup > {
 
+    /**
+     * 批量保存商品分组
+     */
+    void saveOrUpdate( Object obj, int proId );
+
 }

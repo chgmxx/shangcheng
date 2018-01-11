@@ -22,13 +22,21 @@
         <result column="createTime" property="createTime"/>
         <result column="is_delete" property="isDelete"/>
         <result column="check_status" property="checkStatus"/>
+        <result column="give_time" property="giveTime"/>
+        <result column="give_status" property="giveStatus"/>
+        <result column="member_name" property="memberName"/>
+        <result column="member_headimgurl" property="memberHeadimgurl"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="Map">
+        <result column="memberName" property="memberName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, order_id , order_detail_id , product_id , content, is_upload_image , feel, descript_start ,
         service_start , speeed_start, rep_p_id , user_id , user_type , is_rep , shop_id, createTime,
-        is_delete , check_status
+        is_delete , check_status,give_time,give_status,member_name,member_headimgurl
     </sql>
 
     <update id="batchUpdateComment" parameterType="java.util.Map">
@@ -47,57 +55,61 @@
             #{item,jdbcType=INTEGER}
         </foreach>
     </update>
-    <select id="findByPage" parameterType="map" resultType="java.util.List">
-        SELECT t.`feel`,t.`content`,t.`createTime`,t.`id`,d.`product_image_url`,d.`product_speciname`,d.`det_pro_name`
-        ,t.is_upload_image ,t.shop_id,t.product_id
-        FROM t_mall_comment t
-        LEFT JOIN t_mall_order_detail d ON d.`id`=t.`order_detail_id`
-        WHERE 1=1
+    <select id="findByPage" parameterType="map" resultType="Map">
+        SELECT t.`feel`,t.`content`,t.`createTime`,t.`id` ,t.is_upload_image ,t.shop_id,t.product_id,t.is_rep,
+        d.`product_image_url`,d.`product_speciname`,d.`det_pro_name`,d.total_price
+        FROM (
+        select t.`feel`,t.`content`,t.`createTime`,t.`id` ,t.is_upload_image ,t.shop_id,t.product_id,t.is_rep,t.order_detail_id
+        from t_mall_comment t
+        WHERE t.is_delete = 0
         <if test="memberId != null ">
             and t.`user_id` = #{memberId}
         </if>
-        <if test="oldMemberIds != null ">
-            and
-            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
-                t.`user_id` = #{item,jdbcType=INTEGER}
+        <if test="memberList != null and memberList.size > 0">
+            and t.`user_id` in
+            <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
-        <if test="type == 1">and t.is_delete = 0</if>
-        <if test="type == 2">and t.is_delete = 1</if>
-        order by t.createTime desc
+        order by t.id desc
+        <if test="firstResult != null and maxResult != null">
+            limit #{firstResult},#{maxResult}
+        </if>
+        ) t
+        LEFT JOIN t_mall_order_detail d ON d.`id`=t.`order_detail_id`
     </select>
     <select id="countAppraise" parameterType="map" resultType="java.lang.Integer">
         SELECT COUNT(id) FROM t_mall_comment WHERE is_delete = 0
         <if test="memberId != null">
             and user_id = #{memberId}
         </if>
-        <if test="oldMemberIds != null">
-            and
-            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
-                user_id = #{item,jdbcType=INTEGER}
+        <if test="memberList != null and memberList.size > 0">
+            and user_id in
+            <foreach collection="memberList" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
             </foreach>
         </if>
     </select>
-    <select id="ownerResponseList" parameterType="map" resultType="map">
+    <select id="ownerResponseList" parameterType="map" resultMap="BaseResultMap">
         SELECT t.`content`,t.`rep_p_id` FROM t_mall_comment t
 		WHERE t.rep_p_id = #{appraise};
     </select>
 
     <!--<resultMap id="commnet_maps" type="java.util.Map">-->
-        <!--<id column="id" jdbcType="INTEGER" property="id" />-->
-        <!--<result column="content" jdbcType="VARCHAR" property="content" />-->
-        <!--<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />-->
-        <!--<result column="is_upload_image" jdbcType="TINYINT" property="is_upload_image" />-->
-        <!--<result column="nickname" property="nickname" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler" />-->
-        <!--<result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />-->
-        <!--<result column="product_specificas" jdbcType="VARCHAR" property="product_specificas" />-->
-        <!--<result column="is_rep" jdbcType="INTEGER" property="is_rep" />-->
+    <!--<id column="id" jdbcType="INTEGER" property="id" />-->
+    <!--<result column="content" jdbcType="VARCHAR" property="content" />-->
+    <!--<result column="createTime" jdbcType="TIMESTAMP" property="createtime" />-->
+    <!--<result column="is_upload_image" jdbcType="TINYINT" property="is_upload_image" />-->
+    <!--<result column="nickname" property="nickname" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler" />-->
+    <!--<result column="headimgurl" jdbcType="VARCHAR" property="headimgurl" />-->
+    <!--<result column="product_specificas" jdbcType="VARCHAR" property="product_specificas" />-->
+    <!--<result column="is_rep" jdbcType="INTEGER" property="is_rep" />-->
     <!--</resultMap>-->
-    <select id="selectCommentByProId"  parameterType="map" resultType="Map">
+    <select id="selectCommentByProId" parameterType="map" resultType="Map">
         select c.id,c.content, date_format(c.createTime,'%Y-%m-%d %H:%i:%s') as createTime,c.is_upload_image,d.product_specificas ,c.is_rep,c.user_id,c.`feel`
         from t_mall_comment c
         left join t_mall_order_detail d on d.id = c.order_detail_id
-        where c.product_id= #{productId} and c.is_delete=0  and c.user_type=1
+        where c.product_id= #{productId} and c.is_delete=0 and c.user_type=1
 
         <choose>
             <when test="repPId == null">
@@ -128,16 +140,27 @@
     </select>
     <select id="selectCommentCount" parameterType="Map" resultType="java.lang.Integer">
         select count(c.id)
-        from t_mall_comment  c
+        from t_mall_comment c
         left join t_mall_order o on o.id=c.order_id
         left join t_mall_order_detail d on d.id=c.order_detail_id
-        left join t_mall_store s on s.id=c.shop_id
         where c.is_delete = 0 and c.rep_p_id = 0
         <if test="checkStatus != null and checkStatus != ''">
             and c.check_status = #{checkStatus}
         </if>
         <if test="feel != null and feel != ''">
             and c.feel = #{feel}
+        </if>
+        <if test="queryName != null and queryName != ''">
+            AND (d.det_pro_name like CONCAT(CONCAT('%', #{queryName}),'%') OR o.order_no like CONCAT(CONCAT('%', #{queryName}),'%') )
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and c.createTime >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and c.createTime <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and c.shop_id= #{shopId}
         </if>
         <if test="shoplist != null">
             and
@@ -145,14 +168,23 @@
                 c.shop_id= #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
+        <if test="userIds != null">
+            and o.bus_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
         order by c.createTime desc
     </select>
-    <select id="selectCommentList" parameterType="Map" resultType="Map">
-        select c.*,o.order_no,d.det_pro_name,s.sto_name
-        from t_mall_comment  c
+    <select id="selectCommentList" parameterType="Map" resultMap="BaseResultMap1">
+        select c.id, c.order_id as orderId , c.order_detail_id as orderDetailId , c.product_id as productId , c.content, c.is_upload_image as isUploadImage ,
+        c.feel, c.descript_start asdescriptStart , c.service_start as serviceStart , c.speeed_start as speeedStart, c.rep_p_id as repPId , c.user_id as userId
+        , c.user_type as userType ,c.is_rep as isRep ,c.shop_id as shopId, c.createTime, c.is_delete as isDelete , c.check_status as checkStatus, c.member_name as memberName
+        ,o.bus_user_id as busUserId,o.order_no as orderNo,d.det_pro_name as proName
+        from t_mall_comment c
         left join t_mall_order o on o.id=c.order_id
         left join t_mall_order_detail d on d.id=c.order_detail_id
-        left join t_mall_store s on s.id=c.shop_id
         where c.is_delete = 0 and c.rep_p_id = 0
         <if test="checkStatus != null and checkStatus != ''">
             and c.check_status = #{checkStatus}
@@ -160,22 +192,47 @@
         <if test="feel != null and feel != ''">
             and c.feel = #{feel}
         </if>
+        <if test="queryName != null and queryName != ''">
+            AND (d.det_pro_name like CONCAT(CONCAT('%', #{queryName}),'%') OR o.order_no like CONCAT(CONCAT('%', #{queryName}),'%') )
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and c.createTime >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and c.createTime <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            and c.shop_id= #{shopId}
+        </if>
         <if test="shoplist != null">
             and
             <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
                 c.shop_id= #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="userIds != null">
+            and o.bus_user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
             </foreach>
         </if>
         order by c.createTime desc
         <if test="firstNum != null and maxNum != null">
-          limit #{firstNum},#{maxNum}
+            limit #{firstNum},#{maxNum}
         </if>
     </select>
     <select id="selectByComment" parameterType="com.gt.mall.entity.basic.MallComment" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_comment
-        where order_detail_id = #{orderDetailId} and order_id= #{orderId} and user_id = #{userId}
+        where order_detail_id = #{orderDetailId}
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="orderId != null">
+            and order_id= #{orderId}
+        </if>
     </select>
 
 </mapper>

@@ -19,12 +19,13 @@
         <result column="edit_user_id" property="editUserId"/>
         <result column="edit_time" property="editTime"/>
         <result column="is_delete" property="isDelete"/>
+        <result column="sort_order" property="sortOrder"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, group_name , group_p_id , first_priority , second_priority , is_show_page , shop_id ,
-        is_first_parents , is_child , sort, user_id , create_time , edit_user_id , edit_time , is_delete
+        is_first_parents , is_child , sort, user_id , create_time , edit_user_id , edit_time , is_delete,sort_order
     </sql>
     <!--  -->
     <select id="selectGroupByCount" resultType="java.lang.Integer">
@@ -97,5 +98,27 @@
             #{item.id,jdbcType=INTEGER}
         </foreach>
     </update>
+
+    <select id="selectGroupsByShopId"  parameterType="Map" resultType="Map">
+        SELECT b.id AS group_id,b.group_name,b.is_child,b.shop_id
+        FROM t_mall_group b
+        WHERE b.is_delete=0
+        <if test="shopId != null and shopId != '' and shopId > 0">
+            AND b.shop_id= #{shopId}
+        </if>
+        <if test="shopList != null">
+            and b.shop_id in
+            <foreach collection="shopList" index="index" item="item" open="(" separator="," close=")">
+               #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="isFrist != null and isFrist != ''">
+            AND b.is_first_parents=1
+        </if>
+        <if test="classId != null and classId != ''">
+            and b.group_p_id=#{classId}
+        </if>
+        ORDER BY b.sort,b.id DESC
+    </select>
 
 </mapper>

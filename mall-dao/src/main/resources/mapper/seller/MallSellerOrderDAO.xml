@@ -47,6 +47,42 @@
         ORDER BY o.`create_time` DESC
         LIMIT 1
     </select>
+    <select id="countOrderByClient" resultType="java.lang.Integer">
+        select count(*) FROM(
+        SELECT DISTINCT so.id AS sid,d.`det_pro_name` AS proName,o.`buyer_user_id`,o.`create_time`,o.`order_status`,d.status,o.`order_money`,o.`id`
+        FROM `t_mall_seller_order` so
+        LEFT JOIN t_mall_order o ON o.id=so.`order_id`
+        LEFT JOIN t_mall_order_detail d ON d.order_id=o.`id`
+        left join t_mall_seller s on s.member_id=so.sale_member_id
+        WHERE so.is_delete=0
+        <if test="memberId != null and memberId != ''">
+            and so.sale_member_id=#{memberId}
+        </if>
+        <if test="oldMemberIds != null">
+            and
+            <foreach collection="oldMemberIds" index="index" item="item" open="(" separator="or" close=")">
+                so.sale_member_id = #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        <if test="status != null and status != 0">
+            and o.`order_status` = #{status}
+        </if>
+        <if test="custId != null and custId != ''">
+            and so.sale_member_id = #{custId}
+        </if>
+        <if test="isCheck == -1">
+            and (s.check_status = 1 or s.check_status = 0 or s.check_status = -2)
+        </if>
+        <if test="isCheck == 1 or isCheck == null">
+            <if test="fromType == 1">
+                and (s.check_status = 1 or s.check_status = -2)
+            </if>
+            <if test="fromType == null">
+                and s.check_status = 1
+            </if>
+        </if>
+        GROUP BY so.id)a
+    </select>
 
     <select id="selectOrderByClientId" parameterType="Map" resultType="Map">
         SELECT DISTINCT so.id,d.`det_pro_name` AS proName,o.`buyer_user_id`,o.`create_time`,o.`order_status`,d.status,o.`order_money`,o.`id`
@@ -83,6 +119,9 @@
         </if>
         GROUP BY so.id
         ORDER BY o.`create_time` DESC
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
     </select>
     <select id="selectBySellerOrder" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -101,6 +140,33 @@
             </if>
             limit 1
         </where>
+    </select>
+    <select id="selectSalePricerByUserId"  parameterType="Map" resultType="Map">
+        SELECT
+        s.id,
+        s.`member_id`,
+        s.`referees_member_id`,
+        s.`user_name`,
+        s.`company_name`,
+        s.`telephone`,
+        IFNULL(SUM(t.`product_price`), 0) sale_money
+        FROM
+        t_mall_seller s
+        LEFT JOIN t_mall_seller_order t
+        ON t.`sale_member_id` = s.`member_id`
+        AND t.`sale_member_id` > 0
+        <if test="startTime != null and startTime != ''">
+            AND t.`order_time` >= #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and t.order_time <![CDATA[<=]]> #{endTime}
+        </if>
+        GROUP BY s.`member_id`
+        ORDER BY SUM(t.`order_money`) DESC
+
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
     </select>
 
 </mapper>

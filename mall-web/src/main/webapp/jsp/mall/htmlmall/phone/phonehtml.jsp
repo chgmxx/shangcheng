@@ -48,12 +48,12 @@
 <div style="display: none">
     <img src="${http}${msg.bakurl}" id="bakurl" option='${msg.introduce }'/>
 </div>
-<section class="loading">
-    <div class="load3">
-        <div class="double-bounce1"></div>
-        <div class="double-bounce2"></div>
-    </div>
-</section>
+<%--<section class="loading">--%>
+    <%--<div class="load3">--%>
+        <%--<div class="double-bounce1"></div>--%>
+        <%--<div class="double-bounce2"></div>--%>
+    <%--</div>--%>
+<%--</section>--%>
 
 <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=2VBBZ-A3C3O-E7XW7-S6RWA-Q676Z-O6FGU"></script>
 <link rel="stylesheet" href="css/all.css?<%= System.currentTimeMillis()%>"/>
@@ -258,9 +258,9 @@
 <input type="hidden" id="htmlid" value="${msg.id }"><!--场景id  -->
 <script>
     var cloud = {
-        datajson: ${msg.datajson},
-        dataModuleBg:${msg.databg},
-        dataTransverse:${msg.datatransverse}
+        datajson: ${msg.dataJson},
+        dataModuleBg:${msg.dataBg},
+        dataTransverse:${msg.dataTransverse}
     };
     var shipei = false;
     var bgmusic = true;
@@ -271,7 +271,7 @@
         var link = window.location.href;
         var imgUrl = $("#backer_image_url").attr("src");
         var title = '${msg.htmlname }';
-        if (iswx == 0 && style == 0) {
+        if ( style == 0) {
             wx.config({
                 debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                 appId: "${record.get('appid')}", // 必填，公众号的唯一标识

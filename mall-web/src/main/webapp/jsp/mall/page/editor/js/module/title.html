@@ -1,0 +1,30 @@
+<div class="titleModule van-hairline--top-bottom" ng-if="data.titleWay==0" style="text-align: {{data.showWay}};background-color:{{data.background}}">
+    <div class="title">
+    	<span ng-if="data.title" ng-bind="data.title"></span>
+    	<span ng-if="!data.title">点击编辑『标题』</span>
+    	<span ng-if="data.navName" class="custom-title-link-container">
+    		<span class="custom-title-link" ng-if="data.navName">
+    			<span class="gray">-</span>
+    			<a ng-bind="data.navName"></a>
+    		</span>
+    	</span>
+    </div>
+    <div class="sub_title" ng-if="data.viceTitle" ng-bind="data.viceTitle"></div>
+</div>
+
+<div class="titleModule van-hairline--top-bottom" ng-if="data.titleWay==1">
+    <div class="title">
+    	<span ng-if="data.title" ng-bind="data.title"></span>
+    	<span ng-if="!data.title">点击编辑『标题』</span>
+    </div>
+    <div class="sub_title">
+    	<span class="sub_title_date" ng-if="data.time" ng-bind="data.time"></span>
+    	<span class="sub_title_author" ng-if="data.author" ng-bind="data.author"></span>
+    	<span class="sub_title_link" ng-if="data.linkName" ng-bind="data.linkName"></span>
+    </div>
+</div>
+
+<!-- <div style="height:10px;"></div> -->
+<div class="actions">
+    <div class="actions-wrap"><span class="action edit">编辑</span><span class="action add" ng-click="addmoduleAny($index+1,$event)">加内容</span><span class="action delete" ng-click="removemodule($index)">删除</span></div>
+</div>

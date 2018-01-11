@@ -26,14 +26,23 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         left: 0px;
         top: 0px;
     }
-
 </style>
 <head>
     <base href="<%=basePath%>">
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="css/base.css?<%=System.currentTimeMillis()%>"/>
-    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js?"></script>
+    <link rel="stylesheet" href="css/model.css?<%=System.currentTimeMillis()%>"/>
+    <link rel="stylesheet" href="css/wangEditor.min.css?<%=System.currentTimeMillis()%>"/>
+
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js?<%=System.currentTimeMillis()%>"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
+    <script type="text/javascript" src="js/jquery-ui-1.10.4.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.datepicker-zh-CN.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-timepicker-addon.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-timepicker-zh-CN.js"></script>
+
     <script src="js/angular.min.js"></script>
     <script src="js/app.js?<%=System.currentTimeMillis()%>"></script>
 
@@ -45,8 +54,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <script src="js/commodity/commodity.js?<%=System.currentTimeMillis()%>"></script>
 
     <!--轮播图-->
-    <link rel="stylesheet" href="js/swiper/swiper.css"/>
-    <script src="js/swiper/swiper.js"></script>
+    <link rel="stylesheet" href="js/swiper/swiper.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/swiper/swiper.js?<%=System.currentTimeMillis()%>"></script>
 
     <!--分类-->
     <link rel="stylesheet" href="js/classify/classify.css?<%=System.currentTimeMillis()%>"/>
@@ -66,9 +75,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <script type="text/javascript" src="js/action/myPlanDirective.js?<%=System.currentTimeMillis()%>"></script>
 
     <!--layer-->
-    <script type="text/javascript" src="/js/plugin/layer/layer.js"></script>
+    <script type="text/javascript" src="/js/plugin/layer/layer.js?<%=System.currentTimeMillis()%>"></script>
 
-    <script type="text/javascript" src="js/action/Sortable.js"></script>
+    <script type="text/javascript" src="js/action/Sortable.js?<%=System.currentTimeMillis()%>"></script>
 
     <!--搜索框-->
     <link rel="stylesheet" href="js/search/search.css?<%=System.currentTimeMillis()%>"/>
@@ -78,6 +87,50 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <link rel="stylesheet" href="js/reservation/reservation.css?<%=System.currentTimeMillis()%>"/>
     <script src="js/reservation/reservation.js"></script>
 
+    <!--标题-->
+    <link rel="stylesheet" href="js/title/title.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/title/title.js"></script>
+
+    <!--文本导航-->
+    <link rel="stylesheet" href="js/textNav/textNav.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/textNav/textNav.js"></script>
+
+    <!--图片导航-->
+    <link rel="stylesheet" href="js/picNav/picNav.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/picNav/picNav.js"></script>
+
+    <!--橱窗-->
+    <link rel="stylesheet" href="js/window/window.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/window/window.js"></script>
+
+    <!--进入店铺-->
+    <link rel="stylesheet" href="js/goShop/goShop.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/goShop/goShop.js"></script>
+
+    <!--公告-->
+    <link rel="stylesheet" href="js/notice/notice.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/notice/notice.js"></script>
+
+    <!--辅助线-->
+    <link rel="stylesheet" href="js/guide/guide.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/guide/guide.js"></script>
+
+    <!--优惠券-->
+    <link rel="stylesheet" href="js/coupon/coupon.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/coupon/coupon.js"></script>
+
+    <!--商品分组-->
+    <link rel="stylesheet" href="js/grouping/grouping.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/grouping/grouping.js"></script>
+
+    <!--商品列表-->
+    <link rel="stylesheet" href="js/commodityList/commodityList.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/commodityList/commodityList.js"></script>
+
+    <!--富文本-->
+    <link rel="stylesheet" href="js/richText/richText.css?<%=System.currentTimeMillis()%>"/>
+    <script src="js/richText/richText.js"></script>
+
     <script src="js/action/farbtastic.js?<%=System.currentTimeMillis()%>"></script>
     <script src="js/search/search.js?<%=System.currentTimeMillis()%>"></script>
 
@@ -85,20 +138,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 </head>
 <body style="overflow-y:scroll;">
-<jsp:include page="/jsp/common/headerCommon.jsp"/>
 <admindraggable></admindraggable>
 <!-- 商品隐藏id -->
 <input type="hidden" id="stoId" value="${stoId}"/>
-<input type="hidden" class="userid" value="${userid }"/>
-<div style="height:100px"></div>
-<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
+
+<%--<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
     <a href="javascirpt:void(0)" onclick="save()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">保存</a>
     <a href="javascirpt:void(0)" onclick="yl()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">预览</a>
     <a href="javascirpt:void(0)" onclick="window.close()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px">关闭</a>
-</div>
+</div>--%>
 <!--修改网站名称弹出层结束-->
 <div id="fade" class="black_overlay"></div>
 <div id="moveGroupLaye" style="display: none; z-index: 1002; width: 200px; height: 200px; position: fixed; left:50%; top:50%;margin-left:-100px; margin-top:-100px">
@@ -119,13 +170,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     stoPicture = "${stoPicture}" || "";//店铺图片
     countproduct = "${countproduct}" || 0;//全部商品数量
     headImg = "${headImg}" || "";
+    console.log(dataJson,"-----------",picJson)
 
     var verson = 0;
     if (dataJson.length > 0) {
         dataJson.forEach(function (e, i) {
             if (e.type == 7) {
                 verson = 1;
-                picJson.splice(i, 0, {type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
+                //picJson.splice(i, 0, {type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
             }
         })
     }
@@ -134,37 +186,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         picJson.unshift({type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
     }
 
-    var imgIdList = [];
-    var imgIds = ",";
-    picJson.forEach(function (e) {
-        if (e.type == 1) {
-            e.imgID.forEach(function (e) {
-                if (imgIds.indexOf("," + e.id + ",") < 0) {
-                    imgIds += e.id + ",";
-                }
-            })
-        }
+
+    $("body").click(function () {
+        $(".color-picker").hide();
+    });
+    $("body").on("click", ".color-picker", function () {
+        event.stopPropagation();
     })
-    function picJsonEach(data) {
-        picJson.forEach(function (e) {
-            if (e.type == 1) {
-                e.imgID.forEach(function (e) {
-                    data.forEach(function (data) {
-                        if (e.id == data.id) {
-                            e.price = data.price;
-                            e.src = data.src;
-                            e.title = data.title;
-                            if (data.url != null && data.url != "") {
-                                e.url = data.url;
-                            }
-                        }
-                    })
-                })
-            }
-        })
-    }
-
-
 </script>
 
 
@@ -198,38 +226,20 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             'display': 'block'
         });
     }
-    /**
-     *选择商品
-     */
-    function choosePro(type) {
-        if (type == 2) {//预售商品
-            openIframe("选择预售商品", "600px", "480px", "/mallPage/choosePresalePro.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
-        } else {
-            openIframe("选择商品", "600px", "480px", "/mallPage/choosePro.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
-        }
-        /* var json = {
-         "id":1,
-         "title":"大范甘迪",
-         "src":"fsdgfds",
-         "href":"fsdfsd",
-         "price" : "232",
-         "desc" : "gdgdgdfg5436456"
-         };
-         imgList.push(json); */
-    };
-
-
     /**打开素材库**/
     var pic_type = 0;  //0表示重新选择图片,  1表示第一次添加图片,  2表示添加分类图片
-    function materiallayer(param) {
+    var paramList = "";
+    function materiallayer(param, e, editor) {
         pic_type = param;
-
-        openIframe('素材库', '820px', '500px', crossDomainUrl + '/common/material.do?retUrl=' + window.location.href);
-
-
+        paramList = arguments;
+        openIframe('素材库', '820px', '500px', 'https://suc.deeptel.com.cn/common/material.do?retUrl='+window.location.href);
     }
-
     /**素材库里面返回信息**/
+    window.addEventListener("message", function (e) {
+        debugger
+        if(!e.data)return;
+        eval(e.data)
+    });
     function image(id, url) {
         //alert(url);
         imgList = url;
@@ -242,6 +252,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             $(".not-empty.current span").remove();
             $("#saveclassify").click();
             $(".not-empty.current").click();
+        } else if (typeof pic_type == 'function') {
+            pic_type(imgList, paramList[2], paramList[1])
         }
 
         layer.closeAll();
@@ -264,6 +276,44 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             openIframe("选择分类页", "600px", "480px", "/mallPage/branchPage.do?stoId=" + '${shopid}');//check==0代表多选，check==1代表单选
         }
     }
+
+    /**
+     *选择商品
+     */
+    function choosePro(type) {
+        if (type == 2) {//预售商品
+            openIframe("选择预售商品", "600px", "480px", "/mallPage/choosePresalePro.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+        } else {
+            openIframe("选择商品", "600px", "480px", "/mallPage/choosePro.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+        }
+    };
+
+    /**
+     *选择分组
+     */
+    var group_type = 0;
+    function chooseGroup(type) {
+        group_type = type;
+        if(type == 2){
+            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=1");//check==0代表多选，check==1代表单选
+        }else{
+            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+        }
+    };
+    /**
+     * 分组返回数据
+     */
+    function returnGroupArr(jsonArry) {
+        imgList = jsonArry;
+
+        if(group_type == 2){
+            $("#editchooseGroup").click();
+        }else{
+            $("#addchooseGroup").click();
+        }
+        console.log(jsonArry,jsonArry);
+    }
+
     //分类页面，选择返回相对于的数据
     function returnBranch(obj, style) {
         if (matter_one_type == 1) {
@@ -322,16 +372,29 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
     /**打开一个IFRAME窗口**/
     function openIframe(title, width, height, content) {
+        openParentShade();
+
         layer.open({
             type: 2,
             title: title,
-            shadeClose: true,
-            shade: 0.3,
+            shade: 0.5,
             offset: "10%",
             shadeClose: false,
             area: [width, height],
-            content: content
+            content: content,
+            cancel: function(){
+                CloseParentShade();
+            }
         });
+    }
+    function openParentShade(){
+        parent.parent.window.postMessage("openMask()", "*");
+        parent.shadeShow();
+    }
+    function CloseParentShade(){
+        parent.shadeHide();
+        parent.parent.window.postMessage("closeMask()", "*");
+        layer.closeAll();
     }
     //数据保存或修改
 
@@ -339,7 +402,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         var id = $("#stoId").val();
         var des = angular.toJson(dataJson);
         var pic = angular.toJson(picJson);
-        showAll();
+        console.log(des,"----",pic)
+//        showAll();
         $.ajax({
             type: "post",
             url: "/mallPage/savepage.do",
@@ -349,12 +413,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 id: id
             },
             async: true,
-            dataType: "json",
+//            dataType: "json",
             success: function (data) {
                 closeWindow();
-                var error = data.error;
-                alert(data.message);
+                console.log(data,"=====")
+//                var error = data.error;
+//                alert(data.message);
 
+                alert("保存成功");
+
+            },error:function(data){
+                console.log(data,"dataerror")
             }
         });
     }
@@ -384,15 +453,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 var error = data.error;
                 if (error == 0) {
                     layer.open({
-                        type: 1,
-                        title: "微商城预览",
-                        skin: 'layui-layer-rim', //加上边框
-                        area: ['200px', '240px'], //宽高
+                        type: 2,
+                        title: '微商城预览',
                         shadeClose: true,
-                        offset: "20%",
-                        shade: [0.2, "#000"],
-                        content: "<img src ='/store/79B4DE7C/getTwoCode.do?url=/mallPage/"+id+"/79B4DE7C/viewHomepage.do'/>"
-                    });
+                        shade: 0.2,
+                        area: ['400px', '400px'],
+                        offset: "10px",
+                        content: '/mallPage/ylpage.do?id=' + id,
+                    })
                 } else {
                     alert(data.message);
                 }

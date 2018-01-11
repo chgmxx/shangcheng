@@ -2,6 +2,7 @@ package com.gt.mall.service.inter.user.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.gt.mall.bean.DictBean;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.utils.CommonUtil;
@@ -25,12 +26,12 @@ public class DictServiceImpl implements DictService {
     private static final String DICT_URL = "/8A5DA52E/dictApi/";//字典链接
 
     @Override
-    public List< Map > getDict( String dictType ) {
+    public List< DictBean > getDict( String dictType ) {
 	String key = Constants.REDIS_KEY + "dict_type_" + dictType;
 	if ( JedisUtil.exists( key ) ) {
 	    Object obj = JedisUtil.get( key );
 	    if ( CommonUtil.isNotEmpty( obj ) ) {
-		return JSONArray.parseArray( obj.toString(), Map.class );
+		return JSONArray.parseArray( obj.toString(), DictBean.class );
 	    }
 	}
 	Map< String,Object > params = new HashMap<>();
@@ -40,7 +41,7 @@ public class DictServiceImpl implements DictService {
 	    JSONObject dataJson = JSONObject.parseObject( data );
 	    if ( CommonUtil.isNotEmpty( dataJson.get( "dictJSON" ) ) ) {
 		JedisUtil.set( key, dataJson.get( "dictJSON" ).toString(), Constants.REDIS_SECONDS );
-		return JSONArray.parseArray( dataJson.get( "dictJSON" ).toString(), Map.class );
+		return JSONArray.parseArray( dataJson.get( "dictJSON" ).toString(), DictBean.class );
 	    }
 	}
 	return null;
@@ -56,8 +57,8 @@ public class DictServiceImpl implements DictService {
 	    }
 	}
 	Map< String,Object > params = new HashMap<>();
-	params.put( "dictType", dictType );
-	params.put( "key", key );
+	params.put( "style", dictType );
+	params.put( "item_key", key );
 	String data = HttpSignUtil.signHttpSelect( params, DICT_URL + "getDictApi.do", 1 );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject dataJson = JSONObject.parseObject( data );
@@ -70,7 +71,7 @@ public class DictServiceImpl implements DictService {
 		}
 	    }
 	}
-	return HttpSignUtil.signHttpSelect( params, DICT_URL + "getDictApi.dood", 1 );
+	return null;
     }
 
     @Override

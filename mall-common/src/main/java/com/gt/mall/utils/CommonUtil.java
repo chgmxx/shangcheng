@@ -14,7 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -155,18 +156,20 @@ public class CommonUtil {
 	return null;
     }
 
+    private static Pattern pattern = Pattern.compile( "^[-\\+]?[\\d]*$" );
+
     /**
      * 是否为正整数
      */
     public static boolean isInteger( String str ) {
-	Pattern pattern = Pattern.compile( "^[-\\+]?[\\d]*$" );
+
 	return pattern.matcher( str ).matches();
     }
 
     public static String blob2String( Object obj ) {
 	String string = null;
 	try {
-	    if ( obj == null || obj.equals( "" ) ) {
+	    if ( obj == null || "".equals( obj ) ) {
 		return "";
 	    }
 	    byte[] bytes = (byte[]) obj;
@@ -194,7 +197,8 @@ public class CommonUtil {
     public static String urlEncode( String str ) {
 
 	try {
-	    return URLEncoder.encode( str, "UTF-8" );
+
+	    return URLDecoder.decode( str, "UTF-8" );
 	} catch ( UnsupportedEncodingException e ) {
 	    e.printStackTrace();
 	    return "";
@@ -289,6 +293,53 @@ public class CommonUtil {
 	BigDecimal b1 = new BigDecimal( Double.toString( v1 ) );
 	BigDecimal b2 = new BigDecimal( Double.toString( v2 ) );
 	return b1.divide( b2, scale, BigDecimal.ROUND_HALF_UP ).doubleValue();
+    }
+
+    private static final int DEF_DIV_SCALE = 10;
+
+    /**
+     * 除法返回 整数
+     *
+     * @param d1 d1
+     * @param d2 d2
+     *
+     * @return 整数
+     */
+    public static Integer divInteger( double d1, double d2 ) {
+	return (int) div( d1, d2, DEF_DIV_SCALE );
+
+    }
+
+    /**
+     * 保留2位小数（四舍五入）
+     */
+    public static Double getDecimal( Double d ) {
+	if ( d != null ) {
+	    if ( d.toString().split( "\\." )[1].length() > 2 ) {
+		BigDecimal bg = new BigDecimal( d );
+		return bg.setScale( 2, BigDecimal.ROUND_HALF_UP ).doubleValue();
+	    } else {
+		return d;
+	    }
+	} else {
+	    return null;
+	}
+
+    }
+
+    public static Double getDecimalStr( Double d, int len ) {
+	if ( d != null ) {
+	    if ( d.toString().split( "\\." )[1].length() > 2 ) {
+		len = len == 0 ? 2 : len;
+		if ( len > 0 ) {
+		    len = len + 1;
+		}
+		BigDecimal bg = new BigDecimal( d );
+		int index = d.toString().indexOf( "." ) + len;
+		return CommonUtil.toDouble( d.toString().substring( 0, index ) );
+	    }
+	}
+	return d;
     }
 
     private final static double PI = 3.14159265358979323; // 圆周率
@@ -412,14 +463,11 @@ public class CommonUtil {
 	String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );
 	String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
 	// 文件大小
-	Integer Size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
+	Integer size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
 	// 判断上传图片是否是支持的格式
 
 	String path = PropertiesUtil.getResImagePath() + "/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit
 			.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD ) + "/jietu/";
-	Long time = System.currentTimeMillis();
-	path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
-
 	File file = new File( path );
 	if ( !file.exists() && !file.isDirectory() ) {
 	    boolean flag = file.mkdirs();
@@ -427,9 +475,11 @@ public class CommonUtil {
 		System.out.println( "创建文件失败 " );
 	    }
 	}
+	Long time = System.currentTimeMillis();
+	path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
+
 	byte[] bytes;
 	try {
-	    multipartFile.transferTo(file);
 	    bytes = multipartFile.getBytes();
 	    InputStream is = new ByteArrayInputStream( bytes );
 	    BufferedImage bufimg = ImageIO.read( is );
@@ -486,8 +536,44 @@ public class CommonUtil {
 	    case 8://粉币支付
 		payType = 12;
 		break;
+	    case 9://支付宝
+		payType = 0;
+		break;
+	    case 10://小程序支付
+		payType = 1;
+		break;
 	    default:
 		payType = 10;//现金支付
+		break;
+	}
+	if ( isWallet == 1 ) {
+	    payType = 1;
+	}
+	return payType;
+    }
+
+    /**
+     * 预售获取会员的支付方式
+     *
+     * @param payWay   支付方式  传 order.getOrderPayWay
+     * @param isWallet 是否使用钱包支付   1已使用  0未使用 -1正在支付  传 order.getIsWallet
+     *
+     * @return @return 支付方式（调用 memberPayService.paySuccess用的，不适用与其他的接口）
+     */
+    public static int getMemberPayTypeByPresale( int payWay, int isWallet ) {
+	int payType = 0;//现金支付
+	switch ( payWay ) {
+	    case 1://微信支付
+		payType = 1;
+		break;
+	    case 2://储值卡支付
+		payType = 5;
+		break;
+	    case 3://支付宝
+		payType = 0;
+		break;
+	    default:
+		payType = 1;//微信支付
 		break;
 	}
 	if ( isWallet == 1 ) {
@@ -545,6 +631,8 @@ public class CommonUtil {
 	    return PropertiesUtil.getWxmpDomain();
 	} else if ( type == 3 ) {
 	    return PropertiesUtil.getUnionDomain();
+	} else if ( type == 4 ) {
+	    return PropertiesUtil.getCoreDomain();
 	}
 	return PropertiesUtil.getMemberDomain();
     }
@@ -561,6 +649,8 @@ public class CommonUtil {
 	    return PropertiesUtil.getWxmpSignKey();
 	} else if ( type == 3 ) {
 	    return PropertiesUtil.getUnionSignKey();
+	} else if ( type == 4 ) {
+	    return PropertiesUtil.getCoreSignKey();
 	}
 	return PropertiesUtil.getMemberSignKey();
     }
@@ -568,18 +658,23 @@ public class CommonUtil {
     /**
      * 把用户集合改成用逗号隔开的字符串
      */
-    public static String getMememberIds( List< Integer > memberList, int memberId ) {
+    public static String getMememberIds( List< Integer > memberList, Integer memberId ) {
 	StringBuilder memberIds = new StringBuilder();
 	if ( memberList != null && memberList.size() > 0 ) {
 	    for ( Integer id : memberList ) {
 		memberIds.append( id ).append( "," );
 	    }
 	    memberIds = new StringBuilder( memberIds.substring( 0, memberIds.length() - 1 ) );
-	} else {
-	    memberIds = new StringBuilder( CommonUtil.toString( memberId ) );
+	} else if ( CommonUtil.isNotEmpty( memberId ) ) {
+	    memberIds = new StringBuilder( memberId.toString() );
 	}
 	return memberIds.toString();
     }
+
+    /**
+     * 手机号码验证正则表达式
+     */
+    private static Pattern phonePattern = Pattern.compile( "(^(13[0123456789][0-9]{8}|15[0123456789][0-9]{8}|18[0123456789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$)" );
 
     /**
      * 手机号验证
@@ -588,9 +683,133 @@ public class CommonUtil {
 	if ( StringUtils.isEmpty( phone ) ) {
 	    return false;
 	}
-	Pattern pattern = Pattern.compile( "(^(13[0123456789][0-9]{8}|15[0123456789][0-9]{8}|18[0123456789][0-9]{8}|147[0-9]{8}|1349[0-9]{7})$)" );
-	Matcher matcher = pattern.matcher( phone );
+
+	Matcher matcher = phonePattern.matcher( phone );
 	return matcher.matches();
+    }
+
+    public static String getPifaErrorMsg( int pfStatus ) {
+	String errorMsg = "";
+	if ( pfStatus == -2 ) {
+	    errorMsg = "您还没申请批发商，是否前往我的批发进行申请";
+	} else if ( pfStatus == -1 ) {
+	    errorMsg = "您的批发商申请不通过,是否前往我的批发进行重新申请";
+	} else if ( pfStatus == 0 ) {
+	    errorMsg = "您的批发商申请在审核中请耐心等待1-3个工作日";
+	}
+	return errorMsg;
+    }
+
+    public static String getSellerErrorMsg( int sellerStatus, double consumeMoney, double minCosumeMoney ) {
+	String errorMsg = "";
+	if ( sellerStatus == -2 || sellerStatus == -4 ) {
+	    if ( ( consumeMoney > 0 || minCosumeMoney > 0 ) && consumeMoney < minCosumeMoney ) {
+		errorMsg = "加入超级销售员消费额必须要达到" + minCosumeMoney + "元，您的消费额只有" + consumeMoney + "元";
+	    }
+	} else if ( sellerStatus == 0 ) {
+	    errorMsg = "您的超级销售员申请在审核中请耐心等待1-3个工作日";
+	} else if ( sellerStatus == -1 ) {
+	    if ( ( consumeMoney > 0 || minCosumeMoney > 0 ) && consumeMoney < minCosumeMoney ) {
+		errorMsg = "您的超级销售员申请不通过，且消费额没有达到" + minCosumeMoney + "元，不能继续申请，您的消费额只有" + consumeMoney + "元";
+	    } else {
+		//		errorMsg = "您的超级销售员申请不通过，确认要重新申请？";
+		errorMsg = "您的审核不通过不可重复发起申请";
+	    }
+	} else if ( sellerStatus == -3 ) {
+	    errorMsg = "您的超级销售员已经被暂停了，不能继续使用";
+	}
+	return errorMsg;
+    }
+
+    /**
+     * 在提交订单页面运费
+     *
+     * @param storeMap        店铺对象
+     * @param memberLangitude 纬度
+     * @param memberLongitude 经度
+     *
+     * @return 运费
+     */
+    public static double getRaill( Map< String,Object > storeMap, Double memberLangitude, Double memberLongitude ) {
+	if ( CommonUtil.isEmpty( memberLangitude ) || CommonUtil.isEmpty( memberLongitude ) || CommonUtil.isEmpty( storeMap ) ) {
+	    return 0;
+	}
+	double shopLongitude = CommonUtil.toDouble( storeMap.get( "stoLongitude" ) );//店铺经度
+	double shopLangitude = CommonUtil.toDouble( storeMap.get( "stoLatitude" ) );//店铺纬度
+	double raill = 0;//粉丝到店铺的距离
+	if ( shopLangitude > 0 && shopLongitude > 0 && memberLangitude > 0 && memberLongitude > 0 ) {
+	    raill = CommonUtil.getDistance( memberLongitude, memberLangitude, shopLongitude, shopLangitude );
+	    raill = raill / 1000;
+	}
+	return raill;
+    }
+
+    /**
+     * 小数处理（格式化）
+     */
+    public static Double formatDoubleNumber( Double number ) {
+	DecimalFormat df = new DecimalFormat( "######0.00" );
+	return CommonUtil.toDouble( df.format( number ) );
+    }
+
+    /**
+     * 获取联盟的支付方式
+     *
+     * @param payWay 订单的支付方式
+     */
+    public static int getUnionType( int payWay ) {
+	int orderType = payWay;
+	if ( payWay == 9 ) {//支付宝
+	    orderType = 2;
+	} else if ( payWay == 2 ) {//货到付款
+	    orderType = 3;
+	} else if ( payWay == 6 ) {//到店支付
+	    orderType = 0;
+	}
+	return orderType;
+    }
+
+    /**
+     * 获取增值服务的模块（增值服务用到）
+     *
+     * @param type 1.团购商品 2积分 3.秒杀商品 4.拍卖商品 5 粉币商品 6预售商品 7批发商品 8 销售员
+     *
+     * @return 增值服务模块
+     */
+    public static String getAddedStyle( String type ) {
+	String model_style = "";
+	switch ( type ) {
+	    case "1": //团购
+		model_style = "Z002";
+		break;
+	    case "2": //积分商城
+		model_style = "Z005";
+		break;
+	    case "3": //秒杀
+		model_style = "Z001";
+		break;
+	    case "4": //拍卖
+		model_style = "Z009";
+		break;
+	    case "6": //预售
+		model_style = "Z006";
+		break;
+	    case "7": //批发
+		model_style = "Z007";
+		break;
+	    case "8": //超级销售员
+		model_style = "Z003";
+		break;
+	    case "报价":
+		model_style = "Z008";
+		break;
+	    case "H5商城":
+		model_style = "Z004";
+		break;
+	    default:
+		break;
+	}
+	return model_style;
     }
 
 }

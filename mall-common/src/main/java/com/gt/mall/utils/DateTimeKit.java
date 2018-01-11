@@ -26,6 +26,8 @@ public class DateTimeKit {
 
     public static final String DEFAULT_DATE_FORMAT_YYYYMMDD = "yyyyMMdd";
 
+    public static final String DATE_FORMAT_YYYYMMDD_1 = "yyyy/MM/dd";
+
 
     public static final String DEFAULT_DATE_FORMAT_YYYYMM = "yyyyMM";
 
@@ -33,6 +35,10 @@ public class DateTimeKit {
      * 缺省的日期时间显示格式：yyyy-MM-dd HH:mm:ss
      */
     public static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    /**
+     * 缺省的日期时间显示格式：yyyy.MM.dd HH:mm:ss
+     */
+    public static final String DEFAULT_DATETIME_FORMAT_2 = "yyyy.MM.dd HH:mm:ss";
 
     /**
      * 缺省的日期时间显示格式：yyyy-MM-dd HH:mm:ss
@@ -883,7 +889,9 @@ public class DateTimeKit {
      * @return 大于或等于当前时间返回true其他返回false
      */
     public static boolean laterThanNow(String sDate) {
-        if (StringUtils.isEmpty(sDate) || sDate.length() != 14) return false;
+        if (StringUtils.isEmpty(sDate) || sDate.length() != 14) {
+	    return false;
+	}
         Calendar calendar0 = Calendar.getInstance(Locale.CHINESE);
         calendar0.set(Integer.parseInt(sDate.substring(0, 4)), Integer.parseInt(sDate.substring(4, 6)) - 1, Integer.parseInt(sDate.substring(6, 8)), Integer.parseInt(sDate.substring(8, 10)), Integer.parseInt(sDate.substring(10, 12)), Integer.parseInt(sDate.substring(10, 12)));
         Calendar calendar = Calendar.getInstance(Locale.CHINESE);

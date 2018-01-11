@@ -60,8 +60,15 @@ public class MallGroupBuyPriceServiceImpl extends BaseServiceImpl< MallGroupBuyP
 
 	Wrapper< MallGroupBuyPrice > groupWrapper = new EntityWrapper<>();
 	groupWrapper.where( "group_buy_id = {0} and is_delete = 0", groupBuyId );
-
 	return groupBuyPriceDAO.selectList( groupWrapper );
-
     }
+
+    @Override
+    public List< MallGroupBuyPrice > selectPriceByInvId( int groupId, int invId ) {
+
+	Wrapper< MallGroupBuyPrice > groupWrapper = new EntityWrapper<>();
+	groupWrapper.where( "group_buy_id = {0}  and inven_id = {1}  and is_delete = 0", groupId, invId );
+	return groupBuyPriceDAO.selectList( groupWrapper );
+    }
+
 }

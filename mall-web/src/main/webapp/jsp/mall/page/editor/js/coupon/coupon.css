@@ -1,0 +1,94 @@
+.couponModule{
+	height: 73px;
+    padding: 12px 0;
+    text-align: center;
+}
+.coupon-list{
+	width:308px;
+	height:216px;
+	font-size: 0px;
+	color: #fff;
+	background-image: url(../../images/coupon_bg.png);
+    display: inline-block;
+    margin-right: 3px;
+}
+.coupon-list-t{
+	padding: 25px 22px 8px 22px;
+}
+.coupon-list-t-l{
+	width: 88px;
+	height: 88px;
+	border-radius: 7px;
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 8px;
+}
+.coupon-list-t-r{
+	display: inline-block;
+	vertical-align: top;
+}
+.coupon-list-t-r-name{
+	font-size: 19px;
+	line-height: 19px;
+}
+.coupon-list-t-r-price{
+	font-size: 62px;
+	line-height: 77px;
+}
+.coupon-list-t-r-price span{
+	font-size: 31px;
+	line-height: 31px;
+}
+.coupon-list-t-r-time{
+	font-size: 16px;
+	line-height: 16px;
+}
+.coupon-list-fgx{
+	height: 0px;
+	border-top: 3px dashed #fff;
+	margin: 0 17px;
+}
+.coupon-list-btn{
+	width: 194px;
+	height: 47px;
+	line-height: 47px;
+	font-size: 20px;
+	color: #ff4e47;
+	background-color: #fde8e8;
+	border-radius: 47px;
+	margin: 11px auto; 
+	text-align: center;
+}
+
+/******************************************************/
+
+.couponDirective .coupon-btn{
+	padding-left:25px;
+	padding-right:158px;
+	color: #51adfc;
+   	box-sizing: border-box;
+   	cursor: pointer;
+}
+.couponDirective .coupon-prompt{
+	color: #999999;
+	font-size: 13px;
+}
+.couponDirective .control-group-right{
+	display: inline-block;
+}
+.couponDirective .control-group-list{
+	margin-bottom: 17px;
+}
+.couponDirective .control-group-list label{
+	width: 229px;
+    padding-left: 25px;
+    padding-right: 54px;
+    display: inline-block;
+}
+.couponDirective .control-group-list span{
+	cursor: pointer;
+	color: #51adfc;
+}
+
+
+

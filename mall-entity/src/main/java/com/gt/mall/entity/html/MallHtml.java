@@ -33,14 +33,17 @@ public class MallHtml extends Model< MallHtml > {
     /**
      * 模块所有信息
      */
+    @TableField( "dataJson" )
     private String  dataJson;
     /**
      * 模块背景信息
      */
+    @TableField( "dataBg" )
     private String  dataBg;
     /**
      * 每一页的所有信息
      */
+    @TableField( "dataTransverse" )
     private String  dataTransverse;
     /**
      * 背景音乐url
@@ -71,6 +74,7 @@ public class MallHtml extends Model< MallHtml > {
     /**
      * 二维码图片url
      */
+    @TableField( "codeUrl" )
     private String  codeUrl;
     /**
      * 状态：0是发布，1：未发布
@@ -106,6 +110,12 @@ public class MallHtml extends Model< MallHtml > {
      */
     private String  bakurl;
 
+    /**
+     * 是否删除 0 未删除  1已删除
+     */
+    @TableField( "is_delete" )
+    private Integer    isDelete;
+
     @Override
     protected Serializable pkVal() {
 	return this.id;
@@ -133,6 +143,7 @@ public class MallHtml extends Model< MallHtml > {
 			", modelid=" + modelid +
 			", introduce=" + introduce +
 			", bakurl=" + bakurl +
+			", isDelete=" + isDelete +
 			"}";
     }
 }

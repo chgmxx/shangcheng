@@ -2,12 +2,14 @@ package com.gt.mall.service.inter.member.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.entityBo.MallAllEntity;
-import com.gt.entityBo.PaySuccessBo;
+import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +23,8 @@ public class MemberPayServiceImpl implements MemberPayService {
 
     private static final String MEMBER_COUNT_URL = "/memberAPI/memberCountApi/";//会员计算链接
 
+    private static final String NEW_MEMBER_COUNT_URL = "/memberAPI/member/";
+
     /**
      * 会员计算 （还未调试）
      *
@@ -28,6 +32,7 @@ public class MemberPayServiceImpl implements MemberPayService {
      *
      * @return 对象
      */
+    @Override
     public MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity ) {
 	String data = HttpSignUtil.signHttpSelect( mallAllEntity, MEMBER_COUNT_URL + "memberCountMoneyByShop" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
@@ -43,7 +48,27 @@ public class MemberPayServiceImpl implements MemberPayService {
      *
      * @return 对象
      */
-    public Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
+    //    @Override
+    //    public Map< String,Object > paySuccess( PaySuccessBo paySuccessBo ) {
+    //	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, MEMBER_COUNT_URL + "paySuccess" );
+    //    }
+    @Override
+    public Map< String,Object > paySuccessNew( List< NewErpPaySuccessBo > paySuccessBo ) {
+	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessShopsByErpBalance" );
     }
+
+    @Override
+    public Map< String,Object > paySuccessNewDan( NewErpPaySuccessBo paySuccessBo ) {
+	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessByErpBalance" );
+    }
+
+    @Override
+    public Map< String,Object > updateJifenAndFenBiByPinglu( Integer memberId, Integer jifen, Double fenbi ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	params.put( "jifen", jifen );
+	params.put( "fenbi", fenbi );
+	return HttpSignUtil.signHttpInsertOrUpdate( params, NEW_MEMBER_COUNT_URL + "updateJifenAndFenBiByPinglu" );
+    }
+
 }

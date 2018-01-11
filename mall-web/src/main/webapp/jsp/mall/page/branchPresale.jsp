@@ -58,7 +58,7 @@
             //当你在iframe页面关闭自身时
             /*var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
              layer.close(index); //再执行关闭*/
-            parent.layer.closeAll();
+            parent.CloseParentShade();
         }
     </script>
     <style type="text/css">
@@ -98,7 +98,6 @@
             <div class="t2" style="width: 40%;">商品名称</div>
             <div class="t3" style="width: 40%;">状态</div>
         </div>
-
         <div class="msg-list">
             <div class="txt-tle2" id="list">
                 <c:forEach items="${presaleList}" var="pro">
@@ -128,7 +127,7 @@
                         <input type="hidden" name="product_introdu" class="listb saInp" value="${pro.product_introdu}">
                         <input type="hidden" name="preId" class="listb saInp" value="${pro.preId}">
 
-                        <input type="hidden" name="url" class="listb saInp" value="/mallPage/${pro.id }/${stoId}/79B4DE7C/phoneProduct.do">
+                        <input type="hidden" name="url" class="listb saInp" value="${pro.url}">
                     </li>
                 </c:forEach>
             </div>
