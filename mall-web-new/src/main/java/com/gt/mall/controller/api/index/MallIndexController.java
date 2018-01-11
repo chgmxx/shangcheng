@@ -44,7 +44,7 @@ import java.util.Map;
  * @author maoyl
  * @since 2017-09-18
  */
-@Api( value = "mall", description = "商城概况", produces = MediaType.APPLICATION_JSON_VALUE )
+@Api( value = "mallIndex", description = "商城概况", produces = MediaType.APPLICATION_JSON_VALUE )
 @Controller
 @RequestMapping( "/mallIndex/E9lM9uM4ct" )
 public class MallIndexController extends BaseController {
