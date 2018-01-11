@@ -735,7 +735,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    PayWay payWay = payService.getPayWay( busUserList.get( 0 ) );
 	    payWayList.add( payWay );
 	    //获取商家的支付方式
-	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil.getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type, payWayList );
+	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil
+			    .getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type, payWayList, toShop );
 	    result.setPayWayList( wayResultList );
 	    if ( CommonUtil.isNotEmpty( result.getSelectPayWayId() ) && result.getSelectPayWayId() > 0 ) {
 		for ( PhoneOrderWayDTO phoneOrderWayDTO : wayResultList ) {
