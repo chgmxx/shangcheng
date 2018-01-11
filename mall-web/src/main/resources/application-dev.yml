@@ -43,7 +43,7 @@ spring:
 
  datasource:
    druid:
-     url: jdbc:mysql://113.106.202.51:3306/gt_mall_new?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+     url: jdbc:mysql://113.106.202.51:3306/gt_aliyuan?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
      username: root
      password: gt123456
      # 下面为连接池的补充设置，应用到上面所有数据源中
@@ -130,10 +130,6 @@ static:
    user: picuser
    #FTP 密码
    password: 123456
-#访问文章资源URL
-article:
- url:
-  prefix: http://mall.yifriend.net:8080/
 #访问资源URL
 resource:
  url:
