@@ -43,7 +43,6 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
-import com.gt.util.entity.param.fenbiFlow.FenbiFlowRecord;
 import com.gt.util.entity.param.fenbiFlow.WsFenbiFlowRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2241,7 +2240,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     }
 
     @Override
-    public List< BusFlow > selectCountByFlowIds( int userId ) {
+    public List< BusFlow > selectCountByFlowIds( int userId, Integer productId, Integer flowId ) {
 	List< BusFlow > flowList = fenBiFlowService.getBusFlowsByUserId( userId );
 	if ( flowList == null || flowList.size() == 0 ) {
 	    return null;
@@ -2265,6 +2264,14 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		for ( Map< String,Object > productMap : productList ) {
 		    if ( productMap.get( "flow_id" ).toString().equals( busFlow.getId().toString() ) ) {
 			flag = false;
+		    }
+		    if ( CommonUtil.isNotEmpty( productId ) && CommonUtil.isNotEmpty( flowId ) ) {
+			if ( productId.toString().equals( productMap.get( "id" ).toString() ) && flowId.toString().equals( productMap.get( "flow_id" ).toString() ) ) {
+			    flag = true;
+			}
+		    }
+		    if ( !flag ) {
+			break;
 		    }
 		}
 		if ( flag ) {

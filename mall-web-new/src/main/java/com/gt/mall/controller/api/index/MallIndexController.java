@@ -50,17 +50,17 @@ import java.util.Map;
 public class MallIndexController extends BaseController {
 
     @Autowired
-    private MallOrderService       mallOrderService;
+    private MallOrderService   mallOrderService;
     @Autowired
-    private MallStoreService       mallStoreService;
+    private MallStoreService   mallStoreService;
     @Autowired
-    private WxShopService          wxShopService;
+    private WxShopService      wxShopService;
     @Autowired
-    private CardService            cardService;
+    private CardService        cardService;
     @Autowired
-    private MallProductService     mallProductService;
+    private MallProductService mallProductService;
     @Autowired
-    private PayService             payService;
+    private PayService         payService;
 
     @ApiOperation( value = "获取商城的统计概况", notes = "获取商城的统计概况" )
     @ResponseBody
@@ -283,13 +283,15 @@ public class MallIndexController extends BaseController {
     }
 
     @ApiOperation( value = "获取商家流量列表", notes = "获取商家流量列表" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "productId", value = "商品id", paramType = "query", dataType = "int" ),
+		    @ApiImplicitParam( name = "flowId", value = "流量id", paramType = "query", dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/flowList", method = RequestMethod.POST )
-    public ServerResponse flowList( HttpServletRequest request, HttpServletResponse response ) {
+    public ServerResponse flowList( HttpServletRequest request, HttpServletResponse response, Integer productId, Integer flowId ) {
 	BusUser user = MallSessionUtils.getLoginUser( request );
 	List< BusFlow > flowList = null;
 	try {
-	    flowList = mallProductService.selectCountByFlowIds( user.getId() );
+	    flowList = mallProductService.selectCountByFlowIds( user.getId(), productId, flowId );
 	} catch ( Exception e ) {
 	    logger.error( "获取商家流量列表异常：" + e.getMessage() );
 	    e.printStackTrace();

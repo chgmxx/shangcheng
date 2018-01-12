@@ -199,7 +199,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 根据流量id查询商品数量
      */
-    List< BusFlow > selectCountByFlowIds( int userId );
+    List< BusFlow > selectCountByFlowIds( int userId , Integer productId, Integer flowId);
 
     /**
      * 根据erp的商品id查询

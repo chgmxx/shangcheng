@@ -338,7 +338,10 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( freightMoney > 0 ) {
 	    result.setFreightMoney( freightMoney );
 	}
-
+	//到店购买不能加入购物车
+	if ( CommonUtil.isNotEmpty( params.getToShop() ) && params.getToShop() == 1 ) {
+	    isShowAddShop = 0;
+	}
 	result.setIsShowAddShopButton( isShowAddShop );//是否显示加入购物车的按钮 1显示
 	return result;
     }
