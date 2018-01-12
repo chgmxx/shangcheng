@@ -84,9 +84,19 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );
 	Map< String,Object > params = new HashMap<>();
 	params.put( "addid", addressId );
-	params.put( "memberids",  CommonUtil.getMememberIds( memberList, memberId ) );
+	params.put( "memberids", CommonUtil.getMememberIds( memberList, memberId ) );
 	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, url + "updateDefault.do", 1 );
 	return result.get( "code" ).toString().equals( "1" );
+    }
+
+    @Override
+    public List< Map > areaPhoneList() {
+	Map< String,Object > params = new HashMap<>();
+	String result = HttpSignUtil.signHttpSelect( params, "/8A5DA52E/areaPhoneApi/selectList.do", 1 );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return JSONArray.parseArray( result, Map.class );
+	}
+	return null;
     }
 
 }
