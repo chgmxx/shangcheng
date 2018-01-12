@@ -66,4 +66,7 @@ public class PhoneToOrderResult implements Serializable {
     @ApiModelProperty( name = "memberPhone", value = "会员手机号码" )
     private String memberPhone;
 
+    @ApiModelProperty( name = "toShop", value = "是否是到店购买 1到店购买" )
+    private Integer toShop;
+
 }

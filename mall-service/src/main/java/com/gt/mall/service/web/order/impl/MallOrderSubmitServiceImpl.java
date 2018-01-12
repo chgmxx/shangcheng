@@ -432,7 +432,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	List< Map< String,Object > > mallShopList = new ArrayList<>();//商城店铺集合
 	List< Integer > busUserList = new ArrayList<>();//保存商家id集合
 	List< Integer > shopList = new ArrayList<>();//保存店铺id集合
-	Integer toShop = null;
+	Integer toShop = 0;
 	Integer type = 0;//订单类型
 	if ( params.getFrom() == 1 && CommonUtil.isNotEmpty( params.getCartIds() ) ) {//购物车
 	    Map< String,Object > shopcartParams = new HashMap<>();
@@ -541,8 +541,14 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    type = mallOrder.getOrderType();
 	    result.setType( mallOrder.getOrderType() );
 	    result.setActivityId( mallOrder.getGroupBuyId() );
+	    if ( CommonUtil.isNotEmpty( mallOrder.getDeliveryMethod() ) && mallOrder.getDeliveryMethod() == 3 ) {
+		toShop = 1;
+	    }
 	}
-
+	if ( CommonUtil.isNotEmpty( toShop ) && toShop == 1 ) {
+	    result.setMemberAddressDTO( null );
+	}
+	result.setToShop( toShop );
 	result = getToOrderResult( mallShopList, member, busUserList, result, loginDTO.getBrowerType(), params, proTypeId, provincesId, toShop, type );
 	logger.info( "result=======" + JSON.toJSONString( result ) );
 	return result;
@@ -553,24 +559,29 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	Map cardMap = null;
 	JifenAndFenbiRule jifenFenbiRule = null;//积分粉币归责
 	double discount = 0;
+	StringBuilder wxShopIds = new StringBuilder( "," );
 	//只有实体物品才去查询信息
-	if ( mallShopList != null && mallShopList.size() > 0 && proTypeId == 0 ) {
-	    StringBuilder wxShopIds = new StringBuilder( "," );
+	if ( mallShopList != null && mallShopList.size() > 0 ) {
 	    for ( Map< String,Object > maps : mallShopList ) {
 		if ( CommonUtil.isNotEmpty( maps.get( "wxShopId" ) ) && !wxShopIds.toString().contains( "," + maps.get( "wxShopId" ) + "," ) ) {
 		    wxShopIds.append( maps.get( "wxShopId" ).toString() ).append( "," );
 		}
 	    }
 	    wxShopIds = new StringBuilder( wxShopIds.substring( 1, wxShopIds.length() - 1 ) );
-	    if ( CommonUtil.isNotEmpty( member ) && ( CommonUtil.isEmpty( type ) || type <= 0 ) ) {
+	    if ( CommonUtil.isNotEmpty( member ) ) {
 		cardMap = memberService.findCardAndShopIdsByMembeId( member.getId(), wxShopIds.toString() );
-		jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
 	    }
-	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
-		if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
-		    discount = CommonUtil.toDouble( cardMap.get( "discount" ) );
+	    if ( proTypeId == 0 ) {
+		if ( CommonUtil.isNotEmpty( member ) && ( CommonUtil.isEmpty( type ) || type <= 0 ) ) {
+		    jifenFenbiRule = memberService.jifenAndFenbiRule( busUserList.get( 0 ) );//通过商家id查询积分和粉币规则
+		}
+		if ( CommonUtil.isNotEmpty( cardMap ) ) {
+		    if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
+			discount = CommonUtil.toDouble( cardMap.get( "discount" ) );
+		    }
 		}
 	    }
+
 	    logger.info( "cardMap:" + cardMap );
 	}
 
@@ -656,7 +667,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		    int isCanUseYhqDiscount = 0;
 
 		    List< Coupons > couponsList = new ArrayList<>();
-		    if ( CommonUtil.isNotEmpty( cardMap ) ) {
+		    if ( CommonUtil.isNotEmpty( cardMap ) && proTypeId == 0 ) {
 			//多粉优惠券
 			if ( cardMap.containsKey( "duofenCards" + shopResult.getWxShopId() ) ) {
 			    Object obj = cardMap.get( "duofenCards" + shopResult.getWxShopId() );
@@ -735,7 +746,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    PayWay payWay = payService.getPayWay( busUserList.get( 0 ) );
 	    payWayList.add( payWay );
 	    //获取商家的支付方式
-	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil.getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type, payWayList );
+	    List< PhoneOrderWayDTO > wayResultList = ToOrderUtil
+			    .getPayWay( browerType, orderUserDTOList, params, isDaodianPay, mallPaySetList, proTypeId, type, payWayList, toShop );
 	    result.setPayWayList( wayResultList );
 	    if ( CommonUtil.isNotEmpty( result.getSelectPayWayId() ) && result.getSelectPayWayId() > 0 ) {
 		for ( PhoneOrderWayDTO phoneOrderWayDTO : wayResultList ) {

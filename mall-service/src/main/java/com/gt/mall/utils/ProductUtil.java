@@ -26,7 +26,10 @@ public class ProductUtil {
 	    return "商品未审核或审核中";
 	}
 	if ( CommonUtil.isNotEmpty( product.getIsPublish() ) && product.getIsPublish() != 1 ) {
-	    return "商品还未发布或未商家";
+	    return "商品还未发布或未上架";
+	}
+	if(CommonUtil.isNotEmpty( product.getProTypeId() ) && product.getProTypeId() == 3){
+	    return "商品已下架";
 	}
 	return null;
     }

@@ -5,6 +5,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.wxshop.SmsService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.HttpSignUtil;
+import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,15 @@ public class SmsServiceImpl implements SmsService {
 	oldApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
 	RequestUtils< OldApiSms > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( oldApiSms );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, SMS_URL + "sendSmsOld.do", 2 );
+	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+    }
+
+    @Override
+    public boolean sendSmsNew( NewApiSms newApiSms ) {
+	newApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
+	RequestUtils< NewApiSms > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( newApiSms );
 	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, SMS_URL + "sendSmsOld.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }

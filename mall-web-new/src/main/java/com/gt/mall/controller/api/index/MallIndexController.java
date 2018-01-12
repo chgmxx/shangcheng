@@ -5,6 +5,7 @@ import com.gt.mall.base.BaseController;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.CardService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.order.MallOrderService;
@@ -50,17 +51,19 @@ import java.util.Map;
 public class MallIndexController extends BaseController {
 
     @Autowired
-    private MallOrderService       mallOrderService;
+    private MallOrderService     mallOrderService;
     @Autowired
-    private MallStoreService       mallStoreService;
+    private MallStoreService     mallStoreService;
     @Autowired
-    private WxShopService          wxShopService;
+    private WxShopService        wxShopService;
     @Autowired
-    private CardService            cardService;
+    private CardService          cardService;
     @Autowired
-    private MallProductService     mallProductService;
+    private MallProductService   mallProductService;
     @Autowired
-    private PayService             payService;
+    private PayService           payService;
+    @Autowired
+    private MemberAddressService memberAddressService;
 
     @ApiOperation( value = "获取商城的统计概况", notes = "获取商城的统计概况" )
     @ResponseBody
@@ -283,13 +286,15 @@ public class MallIndexController extends BaseController {
     }
 
     @ApiOperation( value = "获取商家流量列表", notes = "获取商家流量列表" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "productId", value = "商品id", paramType = "query", dataType = "int" ),
+		    @ApiImplicitParam( name = "flowId", value = "流量id", paramType = "query", dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/flowList", method = RequestMethod.POST )
-    public ServerResponse flowList( HttpServletRequest request, HttpServletResponse response ) {
+    public ServerResponse flowList( HttpServletRequest request, HttpServletResponse response, Integer productId, Integer flowId ) {
 	BusUser user = MallSessionUtils.getLoginUser( request );
 	List< BusFlow > flowList = null;
 	try {
-	    flowList = mallProductService.selectCountByFlowIds( user.getId() );
+	    flowList = mallProductService.selectCountByFlowIds( user.getId(), productId, flowId );
 	} catch ( Exception e ) {
 	    logger.error( "获取商家流量列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -331,6 +336,21 @@ public class MallIndexController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取地区列表异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), areaList );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), areaList, false );
+    }
+
+    @ApiOperation( value = "获取所有国家区号列表", notes = "获取所有国家区号列表" )
+    @ResponseBody
+    @RequestMapping( value = "/areaPhoneList", method = RequestMethod.POST )
+    public ServerResponse areaPhoneList( HttpServletRequest request, HttpServletResponse response ) {
+	List< Map > list = null;
+	try {
+	    list = memberAddressService.areaPhoneList();
+	} catch ( Exception e ) {
+	    logger.error( "获取所有国家区号列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取所有国家区号列表异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list, false );
     }
 }

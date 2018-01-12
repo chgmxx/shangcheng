@@ -19,6 +19,7 @@ import com.gt.mall.param.phone.PhoneLoginDTO;
 import com.gt.mall.result.phone.PhoneCommonResult;
 import com.gt.mall.result.phone.PhonePageResult;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallVisitorService;
@@ -89,6 +90,8 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     private MallProductDAO           mallProductDAO;
     @Autowired
     private MallVisitorService       mallVisitorService;
+    @Autowired
+    private MemberAddressService     memberAddressService;
 
     /**
      * 手机访问商家主页面接口
@@ -570,4 +573,18 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	}
     }
 
+    @ApiOperation( value = "获取所有国家区号列表", notes = "获取所有国家区号列表" )
+    @ResponseBody
+    @RequestMapping( value = "/areaPhoneList", method = RequestMethod.POST )
+    public ServerResponse areaPhoneList( HttpServletRequest request, HttpServletResponse response ) {
+	List< Map > list = null;
+	try {
+	    list = memberAddressService.areaPhoneList();
+	} catch ( Exception e ) {
+	    logger.error( "获取所有国家区号列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取所有国家区号列表异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list, false );
+    }
 }
