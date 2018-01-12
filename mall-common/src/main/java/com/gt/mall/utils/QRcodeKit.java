@@ -117,6 +117,7 @@ public final class QRcodeKit {
 	hints.put( EncodeHintType.CHARACTER_SET, "UTF-8" );
 	// 设置QR二维码的纠错级别（H为最高级别）具体级别信息
 	hints.put( EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H );
+//	hints.put(EncodeHintType.MARGIN, 1);//白边缩小
 	try {
 	    BitMatrix bitMatrix = multiFormatWriter.encode( contents, BarcodeFormat.QR_CODE, width, height, hints );
 	    OutputStream stream = response.getOutputStream();
@@ -128,7 +129,29 @@ public final class QRcodeKit {
 	}
     }
 
-    public static BufferedImage toBufferedImage( BitMatrix matrix ) {
+    /**
+     * 去白边
+     */
+    private static BitMatrix deleteWhite( BitMatrix matrix ) {
+	int[] rec = matrix.getEnclosingRectangle();
+	int resWidth = rec[2] + 1;
+	int resHeight = rec[3] + 1;
+
+	BitMatrix resMatrix = new BitMatrix( resWidth, resHeight );
+	resMatrix.clear();
+	for ( int i = 0; i < resWidth; i++ ) {
+	    for ( int j = 0; j < resHeight; j++ ) {
+		if ( matrix.get( i + rec[0], j + rec[1] ) )
+		    resMatrix.set( i, j );
+	    }
+	}
+	return resMatrix;
+    }
+
+    private static BufferedImage toBufferedImage( BitMatrix matrix ) {
+	//1.1去白边
+//	matrix = deleteWhite( matrix );
+
 	int width = matrix.getWidth();
 	int height = matrix.getHeight();
 	BufferedImage image = new BufferedImage( width,

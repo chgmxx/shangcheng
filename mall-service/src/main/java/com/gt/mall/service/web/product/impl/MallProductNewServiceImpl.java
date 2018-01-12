@@ -30,6 +30,7 @@ import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.MemberAddressService;
+import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.web.auction.MallAuctionService;
 import com.gt.mall.service.web.basic.MallCollectService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
@@ -52,6 +53,7 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallJxcHttpClientUtil;
 import com.gt.mall.utils.ProductUtil;
+import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,15 +122,17 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
     @Autowired
     private MallOrderDAO                mallOrderDAO;//订单DAO
     @Autowired
-    private MallPaySetService           mallPaySetService;//商城设置业务处类类
+    private MallPaySetService           mallPaySetService;//商城设置业务处类
     @Autowired
-    private MemberService               memberService;
+    private MemberService               memberService;//会员业务处理类
     @Autowired
-    private MemberAddressService        memberAddressService;
+    private MemberAddressService        memberAddressService;//买家收货地址业务处理类
     @Autowired
-    private MallPageService             mallPageService;
+    private MallPageService             mallPageService;//页面业务处理类
     @Autowired
-    private CardService                 cardService;
+    private CardService                 cardService;//会员卡业务处理类
+    @Autowired
+    private FenBiFlowService            fenBiFlowService;//粉币流量业务处理类
 
     @Override
     public PhoneProductDetailResult selectProductDetail( PhoneProductDetailDTO params, Member member, MallPaySet mallPaySet ) {
@@ -297,25 +301,32 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( CommonUtil.isEmpty( provinces ) && CommonUtil.isNotEmpty( params.getIp() ) ) {
 	    provinces = mallPageService.getProvince( params.getIp() );
 	}
-	//查询卡券包信息
-	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) && product.getProTypeId() == 3 && CommonUtil.isNotEmpty( product.getCardType() ) && product.getCardType() > 0 ) {
-	    Map< String,Object > cardMap = cardService.findDuofenCardByReceiveId( product.getCardType() );
-	    logger.info( "卡券包：" + JSON.toJSONString( cardMap ) );
-	    if ( CommonUtil.isNotEmpty( cardMap ) ) {
-		JSONObject obj = ProductUtil.getCardReceive( cardMap );
-		if ( CommonUtil.isNotEmpty( obj ) ) {
-		    result.setIsShowCardRecevie( 1 );
-		    result.setIsShowLiJiBuyButton( 1 );
-		    isShowAddShop = 0;
-		    if ( obj.containsKey( "cardRecevieId" ) ) {//卡券包id
-			result.setCardRecevieId( obj.getInteger( "cardRecevieId" ) );
+	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
+	    //查询卡券包信息
+	    if ( product.getProTypeId() == 3 && CommonUtil.isNotEmpty( product.getCardType() ) && product.getCardType() > 0 ) {
+		Map< String,Object > cardMap = cardService.findDuofenCardByReceiveId( product.getCardType() );
+		logger.info( "卡券包：" + JSON.toJSONString( cardMap ) );
+		if ( CommonUtil.isNotEmpty( cardMap ) ) {
+		    JSONObject obj = ProductUtil.getCardReceive( cardMap );
+		    if ( CommonUtil.isNotEmpty( obj ) ) {
+			result.setIsShowCardRecevie( 1 );
+			result.setIsShowLiJiBuyButton( 1 );
+			isShowAddShop = 0;
+			if ( obj.containsKey( "cardRecevieId" ) ) {//卡券包id
+			    result.setCardRecevieId( obj.getInteger( "cardRecevieId" ) );
+			}
+			if ( obj.containsKey( "cardmessage" ) ) {//卡券集合
+			    result.setCardRecevieArr( obj.getJSONArray( "cardmessage" ) );
+			}
+			if ( obj.containsKey( "cardMoney" ) ) {//卡券包金额
+			    result.setProductPrice( obj.getDouble( "cardMoney" ) );
+			}
 		    }
-		    if ( obj.containsKey( "cardmessage" ) ) {//卡券集合
-			result.setCardRecevieArr( obj.getJSONArray( "cardmessage" ) );
-		    }
-		    if ( obj.containsKey( "cardMoney" ) ) {//卡券包金额
-			result.setProductPrice( obj.getDouble( "cardMoney" ) );
-		    }
+		}
+	    } else if ( product.getProTypeId() == 4 && CommonUtil.isNotEmpty( product.getFlowId() ) && product.getFlowId() > 0 ) {
+		BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
+		if ( CommonUtil.isNotEmpty( flow ) ) {
+		    result.setFlowDesc( flow.getType() + "M流量" );
 		}
 	    }
 	}
