@@ -432,7 +432,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	List< Map< String,Object > > mallShopList = new ArrayList<>();//商城店铺集合
 	List< Integer > busUserList = new ArrayList<>();//保存商家id集合
 	List< Integer > shopList = new ArrayList<>();//保存店铺id集合
-	Integer toShop = null;
+	Integer toShop = 0;
 	Integer type = 0;//订单类型
 	if ( params.getFrom() == 1 && CommonUtil.isNotEmpty( params.getCartIds() ) ) {//购物车
 	    Map< String,Object > shopcartParams = new HashMap<>();
@@ -541,8 +541,14 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    type = mallOrder.getOrderType();
 	    result.setType( mallOrder.getOrderType() );
 	    result.setActivityId( mallOrder.getGroupBuyId() );
+	    if ( CommonUtil.isNotEmpty( mallOrder.getDeliveryMethod() ) && mallOrder.getDeliveryMethod() == 3 ) {
+		toShop = 1;
+	    }
 	}
-
+	if ( CommonUtil.isNotEmpty( toShop ) && toShop == 1 ) {
+	    result.setMemberAddressDTO( null );
+	}
+	result.setToShop( toShop );
 	result = getToOrderResult( mallShopList, member, busUserList, result, loginDTO.getBrowerType(), params, proTypeId, provincesId, toShop, type );
 	logger.info( "result=======" + JSON.toJSONString( result ) );
 	return result;

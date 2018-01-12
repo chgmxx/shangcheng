@@ -101,6 +101,7 @@ public class ToOrderUtil {
 	}
 	if ( CommonUtil.isNotEmpty( toShop ) && toShop == 1 ) {
 	    isHuodao = 0;
+	    isDaifu = 0;
 	}
 	/*if ( isHaveAlipay == 1 && isOpenDanbao == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 11, "多粉钱包支付", "duofenlogoyuanwenjian-" );
@@ -151,13 +152,13 @@ public class ToOrderUtil {
 	    toshop = toShop;
 	}
 	if ( toshop == 1 ) {
-	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "到店购买", "daodian" );
+	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 3, "到店购买", "daodianziti" );
 	    wayResultList.add( result );
 	} else {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "快递配送", "miankuaidi" );
 	    wayResultList.add( result );
 	}
-	if ( proTypeId == 0 && CommonUtil.isNotEmpty( isShowTake ) && isShowTake > 0 ) {
+	if ( proTypeId == 0 && CommonUtil.isNotEmpty( isShowTake ) && isShowTake > 0 && toshop == 0 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 2, "到店自提", "daodianziti" );
 	    wayResultList.add( result );
 	}
