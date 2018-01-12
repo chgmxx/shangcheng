@@ -115,14 +115,16 @@ public class MallPaySetController extends BaseController {
 	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
 	    List< Map > messages = new ArrayList< Map >();//粉丝消息模板
 	    List< Map > busMessages = new ArrayList< Map >();//商家消息模板
-	    if ( messageList != null && msgArr != null && messageList.size() > 0 ) {
+	    if ( messageList != null && messageList.size() > 0 ) {
 		for ( Map map : messageList ) {
 		    if ( map.get( "title" ).equals( Constants.BUY_SUCCESS_NOTICE ) ) {
-			for ( Map obj : msgArr ) {
-			    map.put( "selected", "0" );
-			    if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
-				map.put( "selected", "1" );
-				break;
+			if ( msgArr != null && msgArr.size() > 0 ) {
+			    for ( Map obj : msgArr ) {
+				map.put( "selected", "0" );
+				if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+				    map.put( "selected", "1" );
+				    break;
+				}
 			    }
 			}
 			messages.add( map );
@@ -130,11 +132,13 @@ public class MallPaySetController extends BaseController {
 			List< String > fauCodeList = new ArrayList< String >();
 			fauCodeList = Arrays.asList( Constants.BUS_TEMPLATE_LIST );
 			if ( fauCodeList.contains( map.get( "title" ) ) == true ) {
-			    for ( Map obj : busMsgArr ) {
-				map.put( "selected", "0" );
-				if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
-				    map.put( "selected", "1" );
-				    break;
+			    if ( busMsgArr != null && busMsgArr.size() > 0 ) {
+				for ( Map obj : busMsgArr ) {
+				    map.put( "selected", "0" );
+				    if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+					map.put( "selected", "1" );
+					break;
+				    }
 				}
 			    }
 			    busMessages.add( map );
