@@ -84,15 +84,14 @@ public class MallStoreCertificationController extends BaseController {
 	    MallStoreCertification storeCert = new MallStoreCertification();
 	    EntityDtoConverter converter = new EntityDtoConverter();
 	    converter.entityConvertDto( storeCertDTO, storeCert );
-
+	    List< ImageAssociativeDTO > imgageList = JSONArray.parseArray( storeCertDTO.getImageList(), ImageAssociativeDTO.class );
 	    if ( CommonUtil.isEmpty( storeCert.getId() ) ) {
 		storeCert.setCreateTime( new Date() );
 		mallStoreCertService.insert( storeCert );
-
-		if ( storeCertDTO.getImageList() != null && storeCertDTO.getImageList().size() > 0 ) {
-		    for ( int i = 0; i < storeCertDTO.getImageList().size(); i++ ) {
+		if ( imgageList != null && imgageList.size() > 0 ) {
+		    for ( int i = 0; i < imgageList.size(); i++ ) {
 			MallImageAssociative associative = new MallImageAssociative();
-			converter.entityConvertDto( storeCertDTO.getImageList().get( i ), associative );
+			converter.entityConvertDto( imgageList.get( i ), associative );
 			associative.setAssId( storeCert.getId() );
 			associative.setAssType( 6 );
 			associative.setAssSort( i );
@@ -102,7 +101,7 @@ public class MallStoreCertificationController extends BaseController {
 	    } else {
 		mallStoreCertService.updateById( storeCert );
 
-		imageAssociativeService.newSaveImage( storeCertDTO.getImageList(), storeCert.getId(), 6 );
+		imageAssociativeService.newSaveImage( imgageList, storeCert.getId(), 6 );
 	    }
 	    JedisUtil.del( Constants.REDIS_KEY + code );//保存成功，删除验证码
 	} catch ( Exception e ) {
