@@ -400,13 +400,13 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    proCostPrice = CommonUtil.toDouble( product.getProCostPrice() );
 	}
 	Member member = null;
-	if(params.containsKey( "memberId" ) && CommonUtil.isNotEmpty( params.get( "memberId" ) )){
+	if ( params.containsKey( "memberId" ) && CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 	    member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	}
 	//计算会员价
 	double discount = 1;//商品折扣
-	long isJxc = 0 ;
-	if(CommonUtil.isNotEmpty( member )){
+	long isJxc = 0;
+	if ( CommonUtil.isNotEmpty( member ) ) {
 	    int userPId = busUserService.getMainBusId( member.getBusid() );//通过用户名查询主账号id
 	    isJxc = busUserService.getIsErpCount( 8, userPId );//判断商家是否有进销存 0没有 1有
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) && CommonUtil.isNotEmpty( product.getIsMemberDiscount() ) ) {
@@ -569,7 +569,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< MallProductParam > paramList = productParamService.getParamByProductId( productId );
 	productMap.setParamList( paramList );
 
-	if(CommonUtil.isNotEmpty( member )){
+	if ( CommonUtil.isNotEmpty( member ) ) {
 	    //查询用户id
 	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
 	    params.put( "memberList", memberList );
@@ -915,7 +915,11 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     public Map< String,Object > bindPhones( Map< String,Object > params ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-	member = memberService.bingdingPhone( params, member );
+	if ( params.containsKey( "areaId" ) && params.containsKey( "areaCode" ) ) {
+	    member = memberService.bingdingPhoneAreaCode( params, member );
+	} else {
+	    member = memberService.bingdingPhone( params, member );
+	}
 	if ( !"".equals( member.getPhone() ) ) {
 	    resultMap.put( "result", true );
 	    resultMap.put( "message", "绑定成功" );

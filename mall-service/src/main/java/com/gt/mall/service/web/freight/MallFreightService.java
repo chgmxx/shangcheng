@@ -85,7 +85,7 @@ public interface MallFreightService extends BaseService< MallFreight > {
      *
      * @return 物流列表
      */
-    MallFreight selectFreightByShopId( Integer shopId );
+    List< MallFreight > selectFreightByShopId( Integer shopId );
 
     List< MallFreight > selectFreightByShopIdList( List< Integer > shopIdList );
 

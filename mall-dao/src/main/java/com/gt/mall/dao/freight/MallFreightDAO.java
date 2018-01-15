@@ -51,5 +51,5 @@ public interface MallFreightDAO extends BaseMapper<MallFreight> {
      *
      * @param: shopId 店铺id
      */
-    MallFreight selectFreightByShopId(Integer shopId);
+    List<MallFreight> selectFreightByShopId(Integer shopId);
 }
