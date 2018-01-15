@@ -25,18 +25,6 @@ public class MallSessionUtils {
 
     }
 
-    /*
-      存入 用户bus_user  的值
-     */
-    public static void setLoginUser( HttpServletRequest request, BusUser busUser ) {
-	try {
-	    request.getSession().setAttribute( Constants.SESSION_BUSINESS_KEY, JSONObject.toJSON( busUser ) );
-	} catch ( Exception e ) {
-	    log.info( e.getLocalizedMessage() );
-	    e.printStackTrace();
-	}
-    }
-
     /**
      * 获取session中的t_wx_public_user登录用户
      */
@@ -64,18 +52,6 @@ public class MallSessionUtils {
 	    MallRedisUtils.setUserId( busId );
 	}
 	return SessionUtils.getLoginMember( request, busId );
-    }
-
-    /**
-     * 设置session中的商家member会员信息
-     */
-    public static void setLoginMember( HttpServletRequest request, Member member ) {
-	try {
-	    request.getSession().setAttribute( Constants.SESSION_MEMBER_KEY, JSONObject.toJSON( member ) );
-	} catch ( Exception e ) {
-	    log.info( e.getLocalizedMessage() );
-	    e.printStackTrace();
-	}
     }
 
     /**
