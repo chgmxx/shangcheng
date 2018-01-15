@@ -2119,7 +2119,9 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 	product.setShopId( shopId );
 	product.setProSaleTotal( 0 );
 	product.setIsPublish( 0 );
-	product.setCheckStatus( -2 );
+	product.setCheckStatus( 1 );
+	product.setIsPlatformCheck( 0 );
+	product.setIsSyncErp( 0 );
 	product.setViewsNum( 0 );
 	product.setId( null );
 	product.setCreateTime( new Date() );

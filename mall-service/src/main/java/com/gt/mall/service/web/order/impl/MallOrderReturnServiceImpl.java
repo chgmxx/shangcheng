@@ -138,7 +138,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 		orderReturn.setStatus( 0 );
 		num = mallOrderReturnDAO.insert( orderReturn );
 		try {
-		    mallBusMessageMemberService.buyerOrderReturn( orderReturn, member.getBusid(), 0 );
+		    mallBusMessageMemberService.buyerOrderReturn( orderReturn, member, 0 );
 		} catch ( Exception e ) {
 		    e.printStackTrace();
 		    logger.error( "提醒商家消息失败异常" + e.getMessage() );
