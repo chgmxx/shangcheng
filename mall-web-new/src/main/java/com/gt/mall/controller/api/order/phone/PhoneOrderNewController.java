@@ -89,6 +89,8 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
     private MallOrderReturnLogService mallOrderReturnLogService;//订单退款日志处理类
     @Autowired
     private MallPageService           mallPageService;//页面业务处理类
+    @Autowired
+    private QuartzOrderService        quartzOrderService;//以前定时任务的业务处理类
 
     @ApiOperation( value = "立即购买接口", notes = "用户点击立即购买", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -692,9 +694,35 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    }
 	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
-	    logger.error( "代付支付成功回调异常异常：" + e.getMessage() );
+	    logger.error( "代付支付成功回调异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "代付支付成功回调异常" );
+	}
+    }
+
+    /**
+     * 流量充值成功回调
+     */
+    @ApiOperation( value = "流量充值成功回调的接口", notes = "流量充值成功回调", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, hidden = true )
+    @ApiModelProperty( hidden = true )
+    @ResponseBody
+    @PostMapping( value = "flowSuccess" )
+    public ServerResponse flowSuccess( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    if ( CommonUtil.isEmpty( params.get( "id" ) ) && CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
+		return ErrorInfo.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+	    }
+	    quartzOrderService.rollbackOrderByFlow( params );
+	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	} catch ( BusinessException e ) {
+	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+	    }
+	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
+	} catch ( Exception e ) {
+	    logger.error( "流量充值成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "流量充值成功回调异常" );
 	}
     }
 

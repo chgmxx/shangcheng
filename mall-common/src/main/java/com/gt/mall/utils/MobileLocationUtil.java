@@ -62,7 +62,7 @@ public class MobileLocationUtil {
             Pattern pattern = Pattern.compile("1\\d{10}");
             Matcher matcher = pattern.matcher(tel);
             if (matcher.matches()) {
-                String url = "http://api.k780.com:88/?app=phone.get&phone=" + tel + "&appkey=21451&sign=95be9e6f1c8efe0d890c64f3ae54cd62&format=json";
+                String url = "http://api.k780.com:88/?app=phone.get&phone="+tel+"&appkey=29824&sign=60be97ade8de1c69193e3ddae965b73b&format=json" ;
                 String result = callUrlByGet(url, "utf-8");
                 Map<String, Object> s = (Map<String, Object>) JSONObject.parse(result);
                 if (s.get("success").equals("1")) {

@@ -800,7 +800,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 		    flowId = orderDetail.getFlowId();
 		    flowRecordId = orderDetail.getFlowRecordId();
-		    discountMoney += CommonUtil.toDouble( orderDetail.getDiscountedPrices() );
+
+		    if ( CommonUtil.isNotEmpty( orderDetail.getDiscountedPrices() ) ) {
+			discountMoney += CommonUtil.toDouble( orderDetail.getDiscountedPrices() );
+		    }
 		    //优惠券code
 		    if ( CommonUtil.isNotEmpty( orderDetail.getCouponCode() ) ) {
 			if ( CommonUtil.isNotEmpty( codes ) ) {
@@ -1224,6 +1227,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		adcServicesInfo.setPublicId( pbUser.getId() );//商家公众号Id
 		adcServicesInfo.setBusId( orders.getBusUserId() ); //根据平台用户Id获取微信订阅号用户信息
 		adcServicesInfo.setId( orders.getId() );//订单id
+		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl()+"phoneOrder/L6tgXlBFeK/flowSuccess.do" );
 		boolean isFlow = fenBiFlowService.adcServices( adcServicesInfo );//流量充值
 		if ( isFlow ) {//充值成功
 		    MallOrder order = new MallOrder();
@@ -1232,13 +1236,15 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    mallOrderDAO.upOrderNoById( order );
 		} else {
 		    //充值失败的加入缓存中
-		    throw new BusinessException( "流量充值异常" );
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "流量充值异常" );
 		}
 	    } catch ( Exception e ) {
 		logger.error( "流量充值异常" + e.getMessage() );
 		e.printStackTrace();
-		throw new BusinessException( "流量充值异常" );
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "流量充值异常" );
 	    }
+	} else {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "流量充值请输入要充值的手机号码" );
 	}
 	return null;
     }
