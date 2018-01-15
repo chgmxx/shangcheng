@@ -279,19 +279,19 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    resultMap.put( "proTypeId", proTypeId );
 	    return resultMap;
 	}
-	if ( CommonUtil.isNotEmpty( flowPhone ) ) {//流量充值，判断手机号码
+	/*if ( CommonUtil.isNotEmpty( flowPhone ) ) {//流量充值，判断手机号码
 	    Map< String,String > map = MobileLocationUtil.getMobileLocation( flowPhone );
-	    if ( map.get( "code" ).toString().equals( "-1" ) ) {
+	    if ( map.get( "code" ).equals( "-1" ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), map.get( "msg" ) );
-	    } else if ( map.get( "code" ).toString().equals( "1" ) && product.getFlowId() > 0 ) {
+	    } else if ( map.get( "code" ).equals( "1" ) && product.getFlowId() > 0 ) {
 		BusFlowInfo flow = fenBiFlowService.getFlowInfoById( product.getFlowId() );
 		if ( map.get( "supplier" ).equals( "中国联通" ) && flow.getType() == 10 ) {
 		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "充值失败,联通号码至少30MB" );
 		}
 	    }
-	}
+	}*/
 
-	int code = -1;
+//	int code = -1;
 	MallOrder order = new MallOrder();
 	order.setOrderNo( "SC" + System.currentTimeMillis() );
 	order.setOrderMoney( BigDecimal.valueOf( totalPrice ) );
@@ -373,7 +373,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 		    resultMap.put( "url", PropertiesUtil.getWxmpDomain() + "/duofenCardPhoneController/79B4DE7C/memberCardList.do?memberId=" + member.getId() );
 		}
 		orderService.paySuccessModified( params, member );//修改库存和订单状态
-		code = 1;
+//		code = 1;
 	    }
 	}
 

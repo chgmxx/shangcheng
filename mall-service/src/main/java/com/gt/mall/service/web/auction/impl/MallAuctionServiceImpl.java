@@ -297,12 +297,12 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		DecimalFormat df = new DecimalFormat( "######0.00" );
 		map2.put( "nowPrice", df.format( nowPrice ) );
 
-		String is_member_discount = map2.get( "is_member_discount" ).toString();// 商品是否参加折扣,1参加折扣
-		if ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) {
-
-					/*map2.put("price", Math.ceil((Double.parseDouble(map2.get(
-			    "price").toString()) * discount) * 100) / 100);*/
-		}
+		//		String is_member_discount = map2.get( "is_member_discount" ).toString();// 商品是否参加折扣,1参加折扣
+		//		if ( is_member_discount == "1" || is_member_discount.equals( "1" ) ) {
+		//
+		//					/*map2.put("price", Math.ceil((Double.parseDouble(map2.get(
+		//			    "price").toString()) * discount) * 100) / 100);*/
+		//		}
 		list.add( map2 );
 	    }
 	}

@@ -178,7 +178,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< List< PhoneCollectProductResult > > collectList( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
@@ -206,7 +206,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "deleteCollect", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse deleteCollect( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String ids ) {
 	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    mallCollectService.deleteCollect( ids );
 
@@ -247,12 +247,15 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 
     @ApiOperation( value = "绑定手机号码", notes = "绑定手机号码", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( { @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "code", value = "验证码", paramType = "query", required = true, dataType = "String" ) } )
+		    @ApiImplicitParam( name = "code", value = "验证码", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "areaCode", value = "区号", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "areaId", value = "区号Id", paramType = "query", required = true, dataType = "Integer" ) } )
     @ResponseBody
     @PostMapping( value = "bingdingPhoneH5", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse bingdingPhoneH5( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO, String phone, String code ) {
+    public ServerResponse bingdingPhoneH5( HttpServletRequest request, HttpServletResponse response, PhoneLoginDTO loginDTO, String phone, String code, Integer areaId,
+		    String areaCode ) {
 	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
 	    if ( CommonUtil.isEmpty( code ) ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "请输入验证码" );
@@ -263,6 +266,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 		}
 	    }
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+	    //todo 区号
+	    //	    boolean isSuccess = memberService.bingdingPhoneH5AreaPhone( loginDTO.getBusId(), phone, member.getId(), areaId, areaCode );
 	    boolean isSuccess = memberService.bingdingPhoneH5( loginDTO.getBusId(), phone, member.getId() );
 	    if ( isSuccess ) {
 		JedisUtil.del( Constants.REDIS_KEY + code );//删除验证码
@@ -282,10 +287,11 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     @ApiOperation( value = "获取短信验证码", notes = "获取短信验证码" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id", paramType = "query", required = true, dataType = "Integer" ),
 		    @ApiImplicitParam( name = "phone", value = "手机号码", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "type", value = "类型，1会员绑定验证", paramType = "query", required = true, dataType = "String" ) } )
+		    @ApiImplicitParam( name = "type", value = "类型，1会员绑定验证", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "areaCode", value = "区号", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/getValCode", method = RequestMethod.GET )
-    public ServerResponse getValCode( HttpServletRequest request, HttpServletResponse response, String phone, Integer busId, Integer type ) {
+    public ServerResponse getValCode( HttpServletRequest request, HttpServletResponse response, String phone, Integer busId, Integer type, String areaCode ) {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    String no = CommonUtil.getPhoneCode();

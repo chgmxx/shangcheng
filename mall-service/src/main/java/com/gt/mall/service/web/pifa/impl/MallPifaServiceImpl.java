@@ -112,42 +112,48 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	params.put( "maxResult", pageSize );
 	//查询批发商列表
 	List< Map< String,Object > > list = mallPifaApplyDAO.wholesalerList( params );
-	List list1 = new ArrayList();
+	List< Map< String,Object > > list1 = new ArrayList<>();
 	for ( Map< String,Object > pifaMap : list ) {
 	    //微信昵称转换
 	    String nickname = CommonUtil.blob2String( pifaMap.get( "nickname" ) );
-	    JSONObject obj = JSONObject.fromObject( pifaMap );
+//	    JSONObject obj = JSONObject.fromObject( pifaMap );
 	    SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd hh:mm:ss" );
-	    JSONObject jsonObj = JSONObject.fromObject( obj.get( "create_time" ) );
-	    JSONObject jsonObj1 = JSONObject.fromObject( obj.get( "check_time" ) );
+	    JSONObject jsonObj = JSONObject.fromObject( pifaMap.get( "create_time" ) );
+	    JSONObject jsonObj1 = JSONObject.fromObject( pifaMap.get( "check_time" ) );
 	    //申请时间转换
 	    if ( jsonObj.containsKey( "time" ) ) {
 		long time = Long.valueOf( ( jsonObj.get( "time" ).toString() ) );
-		obj.put( "create_time", sdf.format( new Date( time ) ) );
+		pifaMap.put( "create_time", sdf.format( new Date( time ) ) );
 	    }
 	    //审核时间转换
 	    if ( jsonObj1.containsKey( "time" ) ) {
 		long time = Long.valueOf( ( jsonObj1.get( "time" ).toString() ) );
-		obj.put( "check_time", sdf.format( new Date( time ) ) );
+		pifaMap.put( "check_time", sdf.format( new Date( time ) ) );
 	    }
-	    obj.put( "nickname", nickname );
+	    pifaMap.put( "nickname", nickname );
 
 	    String key = Constants.REDIS_KEY + "syncOrderCount";
-	    String member_id = obj.get( "member_id" ).toString();
+	    String member_id = pifaMap.get( "member_id" ).toString();
 	    if ( JedisUtil.hExists( key, member_id ) ) {
 		String str = JedisUtil.maoget( key, member_id );
 		if ( CommonUtil.isNotEmpty( str ) ) {
 		    JSONObject orderObj = JSONObject.fromObject( str );
 		    if ( CommonUtil.isNotEmpty( orderObj.get( "num" ) ) ) {
-			obj.put( "num", orderObj.get( "num" ) );
+			pifaMap.put( "num", orderObj.get( "num" ) );
 		    }
 		    if ( CommonUtil.isNotEmpty( orderObj.get( "proPrice" ) ) ) {
-			obj.put( "money", orderObj.get( "proPrice" ) );
+			pifaMap.put( "money", orderObj.get( "proPrice" ) );
 		    }
 		}
 	    }
+	    if ( pifaMap.containsKey( "telephone" ) && CommonUtil.isNotEmpty( pifaMap.get( "telephone" ) ) ) {
+		String[] telephone = pifaMap.get( "telephone" ).toString().split( "," );
+		if ( telephone.length == 2 ) {
+		    pifaMap.put( "telephone", "+" + telephone[0] + " " + telephone[1] );
+		}
+	    }
 
-	    list1.add( obj );
+	    list1.add( pifaMap );
 	}
 	page.setSubList( list1 );
 	return page;

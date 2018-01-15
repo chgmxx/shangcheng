@@ -39,6 +39,16 @@ public interface MemberService {
     Member bingdingPhone( Map< String,Object > params, Member member );
 
     /**
+     * 绑定手机号(小程序)（加世界区号）
+     *
+     * @param params 参数{memberId：会员id，code：短信校验码，phone：手机号，busId：商家id,areaId:区号id,areaCode:区号code}
+     * @param member member对象
+     *
+     * @return 会员对象
+     */
+    Member bingdingPhoneAreaCode( Map< String,Object > params, Member member );
+
+    /**
      * 绑定手机号(H5)
      *
      * @param busId    商家id
@@ -48,6 +58,19 @@ public interface MemberService {
      * @return true 成功
      */
     boolean bingdingPhoneH5( Integer busId, String phone, Integer memberId );
+
+    /**
+     * 绑定手机号(H5)（加世界区号）
+     *
+     * @param busId    商家id
+     * @param phone    手机号码
+     * @param memberId 会员id
+     * @param areaId   区号id
+     * @param areaCode 区号code
+     *
+     * @return true 成功
+     */
+    boolean bingdingPhoneH5AreaPhone( Integer busId, String phone, Integer memberId, Integer areaId, String areaCode );
 
     /**
      * 根据粉丝id获取会员折扣
@@ -216,18 +239,20 @@ public interface MemberService {
      */
     JifenAndFenbiRule jifenAndFenbiRule( int busId );
 
-
     /**
      * 根据ids集合查询粉丝信息返回包含数据(id,昵称，手机号码,头像)
-     * @param params  busId :商家id    ids:粉丝id集合
-     * @return  粉丝信息集合  头像 昵称 等
+     *
+     * @param params busId :商家id    ids:粉丝id集合
+     *
+     * @return 粉丝信息集合  头像 昵称 等
      */
-    List<Map< String,Object >>  findMemberByIds(Map< String,Object > params );
+    List< Map< String,Object > > findMemberByIds( Map< String,Object > params );
 
     /**
      * 会员 积分 和 粉币核销 包括优惠券
+     *
      * @param newErpPaySuccessBo
      */
-    void newPaySuccessByErpBalance(NewErpPaySuccessBo newErpPaySuccessBo);
+    void newPaySuccessByErpBalance( NewErpPaySuccessBo newErpPaySuccessBo );
 
 }

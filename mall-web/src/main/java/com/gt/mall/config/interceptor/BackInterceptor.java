@@ -22,8 +22,8 @@ public class BackInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
-	logger.info( ">>>BackInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.info( "basePath = " + CommonUtil.getpath( request ) );
+	//	logger.info( ">>>BackInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+	logger.info( ">>>BackInterceptor>>basePath = " + CommonUtil.getpath( request ) );
 
 	// 获得在下面代码中要用的request,response,session对象
 

@@ -99,8 +99,19 @@ public class MemberServiceImpl implements MemberService {
      *
      * @return 会员对象
      */
+    @Override
     public Member bingdingPhone( Map< String,Object > params, Member member ) {
 	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "bingdingPhone" );
+	if ( CommonUtil.isNotEmpty( data ) ) {
+	    JSONObject memberObj = JSONObject.parseObject( data );
+	    member.setPhone( memberObj.getString( "phone" ) );
+	}
+	return member;
+    }
+
+    @Override
+    public Member bingdingPhoneAreaCode( Map< String,Object > params, Member member ) {
+	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "bingdingPhoneAreaPhone" );
 	if ( CommonUtil.isNotEmpty( data ) ) {
 	    JSONObject memberObj = JSONObject.parseObject( data );
 	    member.setPhone( memberObj.getString( "phone" ) );
@@ -115,6 +126,21 @@ public class MemberServiceImpl implements MemberService {
 	params.put( "phone", phone );
 	params.put( "busId", busId );
 	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5" );
+	if ( CommonUtil.isNotEmpty( result ) ) {
+	    return result.get( "code" ).toString().equals( "1" );
+	}
+	return false;
+    }
+
+    @Override
+    public boolean bingdingPhoneH5AreaPhone( Integer busId, String phone, Integer memberId, Integer areaId, String areaCode ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "memberId", memberId );
+	params.put( "phone", phone );
+	params.put( "busId", busId );
+	params.put( "areaId", areaId );
+	params.put( "areaCode", areaCode );
+	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5AreaPhone" );
 	if ( CommonUtil.isNotEmpty( result ) ) {
 	    return result.get( "code" ).toString().equals( "1" );
 	}

@@ -27,9 +27,9 @@ public class ApiInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle( HttpServletRequest servletRequest, HttpServletResponse servletResponse, Object handler ) throws Exception {
-	logger.info( "进入拦截器" );
-	logger.info( ">>>ApiInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.info( "basePath = " + CommonUtil.getpath( servletRequest ) );
+	//	logger.info( "进入拦截器" );
+	//	logger.info( ">>>ApiInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+	logger.info( ">>>ApiInterceptor>>>  basePath = " + CommonUtil.getpath( servletRequest ) );
 	boolean isSuccess = true;
 
 	String signKey = "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM"; // 定义到配置文件中
