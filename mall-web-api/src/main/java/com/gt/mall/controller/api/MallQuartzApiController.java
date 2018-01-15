@@ -159,7 +159,7 @@ public class MallQuartzApiController {
 	return ServerResponse.createBySuccessCode();
     }
 
-    @ApiOperation( value = "退款流量充值", notes = "退款流量充值" )
+    /*@ApiOperation( value = "退款流量充值", notes = "退款流量充值" )
     @ResponseBody
     @RequestMapping( value = "/returnFlow", method = RequestMethod.POST )
     public ServerResponse returnFlow( HttpServletRequest request, HttpServletResponse response ) {
@@ -172,7 +172,7 @@ public class MallQuartzApiController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退款流量充值异常" );
 	}
 	return ServerResponse.createBySuccessCode();
-    }
+    }*/
 
     @ApiOperation( value = "已结束未成团的订单进行退款", notes = "已结束未成团的订单进行退款" )
     @ResponseBody

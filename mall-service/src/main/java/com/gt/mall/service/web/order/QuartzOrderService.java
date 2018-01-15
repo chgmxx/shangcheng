@@ -49,6 +49,6 @@ public interface QuartzOrderService {
      *
      * @return code  1 修改成功 -1 修改失败   ，  msg 修改失败信息
      */
-    Map< String,Object > rollbackOrderByFlow( Map< String,Object > params );
+    boolean rollbackOrderByFlow( Map< String,Object > params );
 
 }

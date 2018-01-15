@@ -19,6 +19,8 @@ import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.seller.MallSeller;
 import com.gt.mall.entity.seller.MallSellerIncome;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.web.order.QuartzOrderService;
@@ -27,6 +29,7 @@ import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.JedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -536,53 +539,24 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 	return flag;
     }
 
+    @Transactional( rollbackFor = Exception.class )
     @Override
-    public Map< String,Object > rollbackOrderByFlow( Map< String,Object > params ) {
-	Map< String,Object > resultMap = new HashMap< String,Object >();
-	int code = 1;
-	String msg = "";
-	int dataSource = 1;
-	if ( CommonUtil.isEmpty( params ) || CommonUtil.isEmpty( params.get( "orderCode" ) ) ) {
-	    resultMap.put( "code", -1 );
-	    resultMap.put( "msg", "缺少参数" );
-	    return resultMap;
-	}
-	if ( CommonUtil.isNotEmpty( params.get( "dataSource" ) ) ) {
-	    dataSource = CommonUtil.toInteger( params.get( "dataSource" ) );
-	}
-	//查询订单id
-	String sql = "SELECT orderId FROM t_wx_user_consume WHERE orderCode =" + params.get( "orderCode" );
-	Map< String,Object > consumeMap = null;
-	//TODO 多数据源
-	/*if ( dataSource == 1 ) {
-	    consumeMap = daoUtil.queryForMap( sql );
-	} else {
-	    consumeMap = daoUtilYF.queryForMap( sql );
-	}*/
-	int orderId = 0;
-	if ( CommonUtil.isNotEmpty( consumeMap ) ) {
-	    orderId = CommonUtil.toInteger( consumeMap.get( "orderId" ) );
-	} else {
-	    resultMap.put( "code", -1 );
-	    resultMap.put( "msg", "无法查询会员交易记录" );
-	    return resultMap;
+    public boolean rollbackOrderByFlow( Map< String,Object > params ) {
+	int orderId = CommonUtil.toInteger( params.get( "id" ) );
+
+	MallOrder mallOrder = new MallOrder();
+	mallOrder.setId( orderId );
+	if ( params.get( "status" ).toString().equals( "0" ) ) {//成功
+	    mallOrder.setFlowRechargeStatus( 1 );
+	} else {//失败
+	    mallOrder.setFlowRechargeStatus( 2 );
 	}
 	//修改订单状态
-	sql = "update t_mall_order set flow_recharge_status = 2 where id =" + orderId;
-	int count = 0;
-	//TODO 多数据源
-	/*if ( dataSource == 1 ) {
-	    count = daoUtil.update( sql );
-	} else {
-	    count = daoUtilYF.update( sql );
-	}*/
+	int count = orderMapper.updateById( mallOrder );
 	if ( count <= 0 ) {
-	    code = -1;
-	    msg = "修改订单状态失败";
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "修改订单状态失败" );
 	}
-	resultMap.put( "code", code );
-	resultMap.put( "msg", msg );
-	return resultMap;
+	return true;
     }
 
 }
