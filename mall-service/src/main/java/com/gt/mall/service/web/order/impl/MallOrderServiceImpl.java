@@ -708,7 +708,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		logger.error( "购买成功消息模板发送异常" + e.getMessage() );
 	    }
 	    try {
-		mallBusMessageMemberService.buyerPaySuccess( order, busUser, 0, telePhone.toString() );
+		mallBusMessageMemberService.buyerPaySuccess( order, member, 0, telePhone.toString() );
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 		logger.error( "提醒商家消息失败异常" + e.getMessage() );
