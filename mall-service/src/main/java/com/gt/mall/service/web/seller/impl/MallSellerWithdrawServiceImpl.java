@@ -222,7 +222,16 @@ public class MallSellerWithdrawServiceImpl extends BaseServiceImpl< MallSellerWi
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	List< Map< String,Object > > withdrawList = mallSellerWithdrawDAO.selectWithdrawList( params );
-
+	if ( withdrawList != null && withdrawList.size() > 0 ) {
+	    for ( Map< String,Object > map : withdrawList ) {
+		if ( CommonUtil.isNotEmpty( map.get( "telephone" ) ) ) {
+		    String[] telePhone =  map.get( "telephone" ).toString().split( "," );
+		    if(telePhone.length == 2){
+			map.put( "telephone", "+"+telePhone[0]+" "+telePhone[1] );
+		    }
+		}
+	    }
+	}
 	page.setSubList( withdrawList );
 	return page;
     }

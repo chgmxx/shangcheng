@@ -428,6 +428,16 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	List< Map< String,Object > > sellerList = mallSellerDAO.selectPageCheckByBusUserId( params );
 
 	//	sellerList = getSellerMemberNick( sellerList, busUserId, memberList );
+	if ( sellerList != null && sellerList.size() > 0 ) {
+	    for ( Map< String,Object > map : sellerList ) {
+		if ( CommonUtil.isNotEmpty( map.get( "telephone" ) ) ) {
+		    String[] telePhone =  map.get( "telephone" ).toString().split( "," );
+		    if(telePhone.length == 2){
+			map.put( "telephone", "+"+telePhone[0]+" "+telePhone[1] );
+		    }
+		}
+	    }
+	}
 
 	page.setSubList( sellerList );
 	return page;
@@ -536,7 +546,16 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	List< Map< String,Object > > sellerList = mallSellerDAO.selectPageSellerByBusUserId( params );
-
+	if ( sellerList != null && sellerList.size() > 0 ) {
+	    for ( Map< String,Object > map : sellerList ) {
+		if ( CommonUtil.isNotEmpty( map.get( "telephone" ) ) ) {
+		    String[] telePhone =  map.get( "telephone" ).toString().split( "," );
+		    if(telePhone.length == 2){
+			map.put( "telephone", "+"+telePhone[0]+" "+telePhone[1] );
+		    }
+		}
+	    }
+	}
 	page.setSubList( sellerList );
 	return page;
     }
