@@ -461,12 +461,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    }
 		    if ( returnStatus == null && ( orderStatus == 1 || orderStatus == 2 || orderStatus == 3 ) ) {
 			order.put( "status", "2" );
-		    } else if ( orderStatus == 4 ) {
-			order.put( "status", "1" );
-		    } else if ( orderStatus == 5 || returnStatus == 1 || returnStatus == 5 ) {
-			order.put( "status", "4" );
 		    } else if ( returnStatus != null && returnStatus != 1 && returnStatus != 5 ) {
 			order.put( "status", "3" );
+		    } else if ( orderStatus == 4 ) {
+			order.put( "status", "1" );
+		    } else if ( orderStatus == 5 ) {
+			order.put( "status", "4" );
 		    }
 		}
 	    }
