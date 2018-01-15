@@ -78,7 +78,15 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl< MallAppletImage
 	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
 		int count = 0;
 		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {
-		    count = mallAppletImageDAO.updateById( appletImage );
+		    MallAppletImage mallAppletImage = mallAppletImageDAO.selectById( appletImage.getId() );
+		    mallAppletImage.setImageUrl( appletImage.getImageUrl() );
+		    mallAppletImage.setType( appletImage.getType() );
+		    if ( mallAppletImage.getType() == 1 ) {
+			mallAppletImage.setProId( appletImage.getProId() );
+		    } else {
+			mallAppletImage.setProId( null );
+		    }
+		    count = mallAppletImageDAO.updateAllColumnById( mallAppletImage );
 		} else {
 		    appletImage.setCreateTime( new Date() );
 		    appletImage.setBusUserId( userId );
