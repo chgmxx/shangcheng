@@ -154,8 +154,10 @@ public class MallMemberController extends AuthorizeOrLoginController {
 	    }
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		Map gradeType = memberService.findGradeType( member.getId() );//会员卡名称
-		MemberCard card = memberService.findMemberCardByMcId( member.getMcId() );//会员卡号
-		request.setAttribute( "card", card );
+		if(CommonUtil.isNotEmpty( member.getMcId() )){
+		    MemberCard card = memberService.findMemberCardByMcId( member.getMcId() );//会员卡号
+		    request.setAttribute( "card", card );
+		}
 		request.setAttribute( "gradeType", gradeType );
 	    }
 	    request.setAttribute( "member", member );

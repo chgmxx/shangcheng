@@ -1,7 +1,7 @@
 $(function () {
     //初始化省市区
     var pid = $("#visitProvinceId").val() == 0 ? "-1" : $("#visitProvinceId").val();
-    areaChange(pid, 1, 1);
+    areaChange(pid, 1, 1,0);
     $("#visitCityId").val($("#city").val());
     areaChange($("#city").val(), 2, 1);
     $("#visitAreaId").val($("#area").val());
@@ -54,7 +54,7 @@ $(function () {
     }
 //	console.log(daysObjs)
 
-    parent.loadWindow();
+    // parent.loadWindow();
 });
 /**
  * 验证输入框
@@ -178,10 +178,10 @@ function delImg(obj) {
 }
 
 /**城市联动**/
-function areaChange(pid, isquery, o) {
+function areaChange(pid, isquery, o,tag) {
     if (isquery == 1 || isquery == 2) {
         var options = {
-            url: "restaurant/getArea.do",
+            url: "/phoneOrder/"+pid+"/79B4DE7C/queryCity.do",
             dataType: "json",
             data: {pid: pid},
             async: false,
@@ -199,7 +199,12 @@ function areaChange(pid, isquery, o) {
                     for (var i = 0; i < data.length; i++) {
                         html += "<option value='" + data[i].id + "'>" + data[i].city_name + "</option>";
                     }
-                    if (isquery == 1) {
+                    if(tag == 0){
+                        $("#visitProvinceId option").remove();
+                        $("#visitProvinceId").append(html);
+                        $("#visitCityId").val("");
+                        $("#visitAreaId").val("");
+                    }else if (isquery == 1) {
                         $("#visitCityId option").remove();
                         $("#visitCityId").append(html);
                         $("#visitAreaId").val("");
@@ -283,6 +288,15 @@ function openMap() {
         }
     );
 }
+window.addEventListener("message", function (event) {
+    // 把父窗口发送过来的数据显示在子窗口中
+    var data = event.data;
+    if(data.poiaddress != null ){
+        $("#visitAddress").val(data.poiaddress);
+        $("#longitude").val(data.latlng.lng);
+        $("#latitude").val(data.latlng.lat);
+    }
+}, false);
 
 
 /**
@@ -290,6 +304,7 @@ function openMap() {
  * @param loc
  */
 function setAddress(loc) {
+    console.log(loc,"sss")
     $("#visitAddress").val(loc.poiname);
     $("#longitude").val(loc.latlng.lng);
     $("#latitude").val(loc.latlng.lat);

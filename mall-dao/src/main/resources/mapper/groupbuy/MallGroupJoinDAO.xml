@@ -47,7 +47,7 @@
         from t_mall_group_join j
         left join t_mall_order o on o.id = j.order_id
         left join t_mall_group_buy b on b.id = j.group_buy_id
-        where j.join_type = 1 and o.order_status = 2
+        where j.join_type = 1
         and j.group_buy_id = #{groupBuyId,jdbcType=INTEGER}
         <if test="joinUserId != null and joinUserId != ''">
             and j.join_user_id != #{joinUserId}

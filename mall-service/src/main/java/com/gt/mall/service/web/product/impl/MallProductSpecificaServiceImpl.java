@@ -61,6 +61,9 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
     @Override
     public Map< String,Object > saveOrUpdateBatch( Object obj, int proId, Map< String,Object > defaultMap, boolean isUpdate ) {
+        if(CommonUtil.isEmpty( obj )){
+            return null;
+	}
 	Map< String,Object > specMap = new HashMap< String,Object >();
 	List< MallProductSpecifica > speList = JSONArray.parseArray( obj.toString(), MallProductSpecifica.class );
 	if ( speList != null && speList.size() > 0 ) {

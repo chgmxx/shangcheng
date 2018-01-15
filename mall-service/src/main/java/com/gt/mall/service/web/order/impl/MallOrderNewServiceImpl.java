@@ -79,92 +79,92 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
     @Autowired
     private PayService                payService;
 
-    @Override
-    public MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList ) {
-
-	List< Map > couponList = null;
-	if ( CommonUtil.isNotEmpty( params.get( "couponArr" ) ) ) {
-	    couponList = JSONArray.parseArray( params.get( "couponArr" ).toString(), Map.class );
-	}
-
-	if ( CommonUtil.isEmpty( orderList ) ) {
-	    return null;
-	}
-
-	Map< Integer,MallShopEntity > mallShops = new HashMap<>();
-	for ( MallOrder mallOrder : orderList ) {
-	    Map< Integer,MallEntity > productMap = new HashMap<>();
-	    MallShopEntity shopEntity = new MallShopEntity();
-	    if ( mallOrder.getMallOrderDetail() != null && mallOrder.getMallOrderDetail().size() > 0 ) {
-		for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
-		    MallEntity entity = new MallEntity();
-		    entity.setMallId( orderDetail.getIndex() );
-		    entity.setNumber( orderDetail.getDetProNum() );
-		    entity.setTotalMoneyOne( CommonUtil.toDouble( orderDetail.getDetProPrice() ) );
-		    entity.setTotalMoneyAll( orderDetail.getTotalPrice() );
-		    entity.setUserCard( orderDetail.getUserCard() );
-		    entity.setUseCoupon( orderDetail.getUseCoupon() );
-		    entity.setUseFenbi( orderDetail.getUserFenbi() );
-		    entity.setUserJifen( orderDetail.getUserJifen() );
-
-		    productMap.put( orderDetail.getIndex(), entity );
-
-		}
-	    }
-	    shopEntity.setShopId( mallOrder.getWxShopId() );
-	    shopEntity.setMalls( productMap );
-	    if ( mallOrder.getUseCoupon() == 1 && couponList != null && couponList.size() > 0 ) {
-		shopEntity.setUseCoupon( mallOrder.getUseCoupon() );
-
-		for ( Map map : couponList ) {
-		    String wxShopId = map.get( "wxShopId" ).toString();
-		    if ( wxShopId.equals( mallOrder.getWxShopId().toString() ) ) {
-			int couponType = CommonUtil.toInteger( map.get( "couponType" ) );
-			couponType = couponType == 2 ? 1 : 0;
-			shopEntity.setCouponType( couponType );
-			shopEntity.setCoupondId( CommonUtil.toInteger( map.get( "coupondId" ) ) );
-			break;
-		    }
-		}
-	    }
-	    mallShops.put( mallOrder.getWxShopId(), shopEntity );
-	}
-
-	MallAllEntity allEntity = new MallAllEntity();
-	allEntity.setMemberId( member.getId() );
-	allEntity.setTotalMoney( CommonUtil.toDouble( params.get( "productAll" ) ) );
-	if ( CommonUtil.isNotEmpty( params.get( "useFenbi" ) ) ) {
-	    allEntity.setUseFenbi( CommonUtil.toInteger( params.get( "useFenbi" ) ) );
-	}
-	if ( CommonUtil.isNotEmpty( params.get( "useJifen" ) ) ) {
-	    allEntity.setUserJifen( CommonUtil.toInteger( params.get( "useJifen" ) ) );
-	}
-	allEntity.setMallShops( mallShops );
-
-	return memberPayService.memberCountMoneyByShop( allEntity );
-    }
-
-    @Override
-    public Map< String,Object > getCalculateData( MallAllEntity mallAllEntity ) {
-	Map< String,Object > result = new HashMap<>();
-	result.put( "discountMemberMoney", mallAllEntity.getDiscountMemberMoney() );
-	result.put( "discountConponMoney", mallAllEntity.getDiscountConponMoney() );
-	result.put( "discountfenbiMoney", mallAllEntity.getDiscountfenbiMoney() );
-	result.put( "discountjifenMoney", mallAllEntity.getDiscountjifenMoney() );
-	result.put( "leagueMoney", mallAllEntity.getLeagueMoney() );
-
-	result.put( "balanceMoney", mallAllEntity.getBalanceMoney() );
-
-	result.put( "userJifen", mallAllEntity.getUserJifen() );
-	result.put( "useFenbi", mallAllEntity.getUseFenbi() );
-
-	result.put( "canUsefenbi", mallAllEntity.getCanUsefenbi() );
-	result.put( "canUseJifen", mallAllEntity.getCanUseJifen() );
-
-	result.put( "fenbiNum", mallAllEntity.getFenbiNum() );
-	result.put( "jifenNum", mallAllEntity.getJifenNum() );
-	return result;
-    }
+//    @Override
+//    public MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList ) {
+//
+//	List< Map > couponList = null;
+//	if ( CommonUtil.isNotEmpty( params.get( "couponArr" ) ) ) {
+//	    couponList = JSONArray.parseArray( params.get( "couponArr" ).toString(), Map.class );
+//	}
+//
+//	if ( CommonUtil.isEmpty( orderList ) ) {
+//	    return null;
+//	}
+//
+//	Map< Integer,MallShopEntity > mallShops = new HashMap<>();
+//	for ( MallOrder mallOrder : orderList ) {
+//	    Map< Integer,MallEntity > productMap = new HashMap<>();
+//	    MallShopEntity shopEntity = new MallShopEntity();
+//	    if ( mallOrder.getMallOrderDetail() != null && mallOrder.getMallOrderDetail().size() > 0 ) {
+//		for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
+//		    MallEntity entity = new MallEntity();
+//		    entity.setMallId( orderDetail.getIndex() );
+//		    entity.setNumber( orderDetail.getDetProNum() );
+//		    entity.setTotalMoneyOne( CommonUtil.toDouble( orderDetail.getDetProPrice() ) );
+//		    entity.setTotalMoneyAll( orderDetail.getTotalPrice() );
+//		    entity.setUserCard( orderDetail.getUserCard() );
+//		    entity.setUseCoupon( orderDetail.getUseCoupon() );
+//		    entity.setUseFenbi( orderDetail.getUserFenbi() );
+//		    entity.setUserJifen( orderDetail.getUserJifen() );
+//
+//		    productMap.put( orderDetail.getIndex(), entity );
+//
+//		}
+//	    }
+//	    shopEntity.setShopId( mallOrder.getWxShopId() );
+//	    shopEntity.setMalls( productMap );
+//	    if ( mallOrder.getUseCoupon() == 1 && couponList != null && couponList.size() > 0 ) {
+//		shopEntity.setUseCoupon( mallOrder.getUseCoupon() );
+//
+//		for ( Map map : couponList ) {
+//		    String wxShopId = map.get( "wxShopId" ).toString();
+//		    if ( wxShopId.equals( mallOrder.getWxShopId().toString() ) ) {
+//			int couponType = CommonUtil.toInteger( map.get( "couponType" ) );
+//			couponType = couponType == 2 ? 1 : 0;
+//			shopEntity.setCouponType( couponType );
+//			shopEntity.setCoupondId( CommonUtil.toInteger( map.get( "coupondId" ) ) );
+//			break;
+//		    }
+//		}
+//	    }
+//	    mallShops.put( mallOrder.getWxShopId(), shopEntity );
+//	}
+//
+//	MallAllEntity allEntity = new MallAllEntity();
+//	allEntity.setMemberId( member.getId() );
+//	allEntity.setTotalMoney( CommonUtil.toDouble( params.get( "productAll" ) ) );
+//	if ( CommonUtil.isNotEmpty( params.get( "useFenbi" ) ) ) {
+//	    allEntity.setUseFenbi( CommonUtil.toInteger( params.get( "useFenbi" ) ) );
+//	}
+//	if ( CommonUtil.isNotEmpty( params.get( "useJifen" ) ) ) {
+//	    allEntity.setUserJifen( CommonUtil.toInteger( params.get( "useJifen" ) ) );
+//	}
+//	allEntity.setMallShops( mallShops );
+//
+//	return memberPayService.memberCountMoneyByShop( allEntity );
+//    }
+//
+//    @Override
+//    public Map< String,Object > getCalculateData( MallAllEntity mallAllEntity ) {
+//	Map< String,Object > result = new HashMap<>();
+//	result.put( "discountMemberMoney", mallAllEntity.getDiscountMemberMoney() );
+//	result.put( "discountConponMoney", mallAllEntity.getDiscountConponMoney() );
+//	result.put( "discountfenbiMoney", mallAllEntity.getDiscountfenbiMoney() );
+//	result.put( "discountjifenMoney", mallAllEntity.getDiscountjifenMoney() );
+//	result.put( "leagueMoney", mallAllEntity.getLeagueMoney() );
+//
+//	result.put( "balanceMoney", mallAllEntity.getBalanceMoney() );
+//
+//	result.put( "userJifen", mallAllEntity.getUserJifen() );
+//	result.put( "useFenbi", mallAllEntity.getUseFenbi() );
+//
+//	result.put( "canUsefenbi", mallAllEntity.getCanUsefenbi() );
+//	result.put( "canUseJifen", mallAllEntity.getCanUseJifen() );
+//
+//	result.put( "fenbiNum", mallAllEntity.getFenbiNum() );
+//	result.put( "jifenNum", mallAllEntity.getJifenNum() );
+//	return result;
+//    }
 
     @Transactional( rollbackFor = Exception.class )
     @Override
@@ -188,7 +188,7 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	MallAllEntity allEntity = null;
 	if ( ( params.containsKey( "useFenbi" ) || params.containsKey( "useJifen" ) || params.containsKey( "couponArr" ) ) && ( CommonUtil.isEmpty( order.getOrderType() )
 			|| order.getOrderType() == 0 ) ) {
-	    allEntity = calculateOrder( params, member, orderList );
+//	    allEntity = calculateOrder( params, member, orderList );
 	}
 	MemberAddress memberAddress = null;
 	//根据地址id查询地址信息
@@ -381,7 +381,6 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    url = "/phoneIntegral/" + shopId + "/79B4DE7C/recordList.do?uId=" + member.getBusid() + "&&orderId=" + orderPId;
 	}
 	if ( orderAllMoney > 0 && ( order.getOrderPayWay() == 1 || order.getOrderPayWay() == 9 ) ) {
-
 	    url = wxPayWay( orderAllMoney, orderNo, order, 0 );
 	}
 	result.put( "url", url );
@@ -479,38 +478,38 @@ public class MallOrderNewServiceImpl extends BaseServiceImpl< MallOrderDAO,MallO
 	    orderDetail.setFlowRecordId( product.getFlowRecordId() );
 	}
 	//查询计算后的商品价格
-	if ( CommonUtil.isNotEmpty( shopEntity ) ) {
-	    Map< Integer,MallEntity > malls = shopEntity.getMalls();
-	    MallEntity mallEntity = malls.get( orderDetail.getIndex() );
-	    if ( CommonUtil.isNotEmpty( mallEntity ) ) {
-		orderDetail.setDetProPrice( CommonUtil.toBigDecimal( mallEntity.getUnitPrice() ) );
-		orderDetail.setDetPrivivilege( CommonUtil.toBigDecimal( mallEntity.getTotalMoneyOne() ) );
-		orderDetail.setDiscountedPrices( CommonUtil.toBigDecimal( CommonUtil.subtract( orderDetail.getTotalPrice(), mallEntity.getBalanceMoney() ) ) );
-		orderDetail.setTotalPrice( mallEntity.getBalanceMoney() );
-
-		if ( mallEntity.getUseFenbi() == 1 ) {
-		    orderDetail.setUseFenbi( mallEntity.getFenbiNum() );
-		    orderDetail.setFenbiYouhui( CommonUtil.toBigDecimal( mallEntity.getDiscountfenbiMoney() ) );
-		}
-		if ( mallEntity.getUserJifen() == 1 ) {
-		    orderDetail.setUseJifen( mallEntity.getJifenNum() );
-		    orderDetail.setIntegralYouhui( CommonUtil.toBigDecimal( mallEntity.getDiscountjifenMoney() ) );
-		}
-
-		if ( orderDetail.getUseCoupon() == 1 && couponList != null && couponList.size() > 0 ) {
-		    orderDetail.setCouponCode( shopEntity.getCodes() );
-		    for ( Map couponMap : couponList ) {
-			String wxShopId = couponMap.get( "wxShopId" ).toString();
-			if ( wxShopId.equals( mallOrder.getWxShopId().toString() ) ) {
-			    couponMap.put( "couponCode", shopEntity.getCodes() );
-			    orderDetail.setDuofenCoupon( JSONObject.toJSONString( couponMap ) );
-			    orderDetail.setUseCardId( CommonUtil.toInteger( couponMap.get( "coupondId" ) ) );
-			    break;
-			}
-		    }
-		}
-	    }
-	}
+//	if ( CommonUtil.isNotEmpty( shopEntity ) ) {
+//	    Map< Integer,MallEntity > malls = shopEntity.getMalls();
+//	    MallEntity mallEntity = malls.get( orderDetail.getIndex() );
+//	    if ( CommonUtil.isNotEmpty( mallEntity ) ) {
+//		orderDetail.setDetProPrice( CommonUtil.toBigDecimal( mallEntity.getUnitPrice() ) );
+//		orderDetail.setDetPrivivilege( CommonUtil.toBigDecimal( mallEntity.getTotalMoneyOne() ) );
+//		orderDetail.setDiscountedPrices( CommonUtil.toBigDecimal( CommonUtil.subtract( orderDetail.getTotalPrice(), mallEntity.getBalanceMoney() ) ) );
+//		orderDetail.setTotalPrice( mallEntity.getBalanceMoney() );
+//
+//		if ( mallEntity.getUseFenbi() == 1 ) {
+//		    orderDetail.setUseFenbi( mallEntity.getFenbiNum() );
+//		    orderDetail.setFenbiYouhui( CommonUtil.toBigDecimal( mallEntity.getDiscountfenbiMoney() ) );
+//		}
+//		if ( mallEntity.getUserJifen() == 1 ) {
+//		    orderDetail.setUseJifen( mallEntity.getJifenNum() );
+//		    orderDetail.setIntegralYouhui( CommonUtil.toBigDecimal( mallEntity.getDiscountjifenMoney() ) );
+//		}
+//
+//		if ( orderDetail.getUseCoupon() == 1 && couponList != null && couponList.size() > 0 ) {
+//		    orderDetail.setCouponCode( shopEntity.getCodes() );
+//		    for ( Map couponMap : couponList ) {
+//			String wxShopId = couponMap.get( "wxShopId" ).toString();
+//			if ( wxShopId.equals( mallOrder.getWxShopId().toString() ) ) {
+//			    couponMap.put( "couponCode", shopEntity.getCodes() );
+//			    orderDetail.setDuofenCoupon( JSONObject.toJSONString( couponMap ) );
+//			    orderDetail.setUseCardId( CommonUtil.toInteger( couponMap.get( "coupondId" ) ) );
+//			    break;
+//			}
+//		    }
+//		}
+//	    }
+//	}
 	return orderDetail;
     }
 

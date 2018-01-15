@@ -1,8 +1,5 @@
 package com.gt.mall.service.inter.union;
 
-import com.gt.union.api.entity.param.UnionConsumeParam;
-import com.gt.union.api.entity.param.UnionRefundParam;
-
 /**
  * 调用联盟卡核销接口
  * User : yangqian
@@ -11,17 +8,17 @@ import com.gt.union.api.entity.param.UnionRefundParam;
  */
 public interface UnionConsumeService {
 
-    /**
-     * 联盟卡核销
-     *
-     * @return true 成功
-     */
-    boolean unionConsume( UnionConsumeParam unionConsumeParam );
-
-    /**
-     * 联盟卡核销后退款
-     *
-     * @return true 成功
-     */
-    boolean unionRefund( UnionRefundParam unionRefundParam );
+//    /**
+    //     * 联盟卡核销
+    //     *
+    //     * @return true 成功
+    //     */
+    //    boolean unionConsume( UnionConsumeParam unionConsumeParam );
+    //
+    //    /**
+    //     * 联盟卡核销后退款
+    //     *
+    //     * @return true 成功
+    //     */
+    //    boolean unionRefund( UnionRefundParam unionRefundParam );
 }

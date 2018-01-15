@@ -21,12 +21,12 @@ public interface MallOrderNewService extends BaseService< MallOrder > {
     /**
      * 计算订单
      */
-    MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList );
-
-    /**
-     * 计算值
-     */
-    Map< String,Object > getCalculateData( MallAllEntity allEntity );
+//    MallAllEntity calculateOrder( Map< String,Object > params, Member member, List< MallOrder > orderList );
+//
+//    /**
+//     * 计算值
+//     */
+//    Map< String,Object > getCalculateData( MallAllEntity allEntity );
 
     /**
      * 提交订单

@@ -4,6 +4,8 @@ import com.gt.api.bean.sign.SignEnum;
 import com.gt.api.util.sign.SignFilterUtils;
 import com.gt.mall.bean.BusUser;
 import com.gt.mall.bean.Member;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PropertiesUtil;
 import com.gt.mall.utils.SessionUtils;
@@ -131,6 +133,18 @@ public class MyInterceptor implements HandlerInterceptor {
 	//商城登陆拦截
 	if ( urlwx.equals( "webservice" ) || urlwx.equals( "79B4DE7C" ) || url.contains( "79B4DE7C" ) ) {//移动端
 	    Member member = SessionUtils.getLoginMember( request );
+	    member = new Member();
+//	    member.setId( 366 );//销售员测试
+	    //	    member.setId( 220 );
+	    //	    	    member.setId( 1225352 );
+	    	    member.setId( 1225542 );//储值卡
+	    member.setBusid( 42 );
+	    member.setPublicId( 482 );
+	    member.setPhone( "15017934717" );
+	    member.setNickname( "杨倩" );
+	    member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
+	    //	    member.setOldid( "1225352,1225358,1225449" );
+	    SessionUtils.setLoginMember( request, member );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		request.setAttribute( "member", member );
 	    }
@@ -149,7 +163,8 @@ public class MyInterceptor implements HandlerInterceptor {
 	    } else {
 		response.sendRedirect( "/common/toLogin" );
 	    }
-	    return false;
+	    throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), "http://yifriend.net/user/tologin.do" );
+	    //	    return false;
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }

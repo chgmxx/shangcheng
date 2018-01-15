@@ -91,7 +91,7 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 		List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 		if ( shoplist != null && shoplist.size() > 0 ) {
 		    params.put( "shoplist", shoplist );
-		    PageUtil page = groupBuyService.selectGroupBuyByShopId( params, user.getId() ,shoplist);
+		    PageUtil page = groupBuyService.selectGroupBuyByShopId( params, user.getId(), shoplist );
 		    request.setAttribute( "page", page );
 		    request.setAttribute( "shoplist", shoplist );
 		}
@@ -492,41 +492,13 @@ public class MallGroupBuyController extends AuthorizeOrLoginController {
 	    }
 
 	    Map< String,Object > productMap = groupBuyService.getGroupBuyById( buyerUserId, id );// 通过团购id查询团购信息
+	    logger.info( "productMap"+ com.alibaba.fastjson.JSONObject.toJSON( productMap ) );
 
 	    Map< String,Object > maps = new HashMap<>();
 	    maps.put( "groupBuyId", id );
 	    maps.put( "joinId", joinId );
 	    List< Map< String,Object > > joinList = groupJoinService.selectJoinByjoinId( maps );//查询参团人
 
-	    //公众号分享
-	    /*if ( CommonUtil.isNotEmpty( publicMap ) && CommonUtil.judgeBrowser( request ) == 99 && CommonUtil.isEmpty( request.getParameter( "isShare" ) ) ) {
-		int chaPeopleNum = 0;
-		if ( CommonUtil.isNotEmpty( productMap ) && CommonUtil.isNotEmpty( productMap.get( "peopleNum" ) ) ) {
-		    chaPeopleNum = CommonUtil.toInteger( productMap.get( "peopleNum" ) ) - joinList.size();
-		}
-		String title = "还差" + chaPeopleNum + "人、我" + productMap.get( "price" ) + "元团了" + productMap.get( "pro_name" ) + "商品";
-		double old_price = 0;
-		double price = CommonUtil.toDouble( productMap.get( "price" ) );
-		if ( CommonUtil.isNotEmpty( productMap.get( "old_price" ) ) ) {
-		    old_price = CommonUtil.toDouble( productMap.get( "old_price" ) ) - price;
-		}
-		if ( old_price > 0 ) {
-		    title += "、立省" + old_price + "元";
-		}
-		Map< String,Object > shareParam = new HashMap<>();
-		shareParam.put( "share", "showAllNonBaseMenuItem,onMenuShareTimeline,onMenuShareAppMessage" );
-		String imagesUrl = productMap.get( "image_url" ).toString();
-		if ( imagesUrl.substring( 0, 1 ).equals( "/" ) ) {
-		    imagesUrl = imagesUrl.substring( 1, imagesUrl.length() );
-		}
-		shareParam.put( "imagesUrl", PropertiesUtil.getResourceUrl() + imagesUrl );
-		shareParam.put( "title", title );
-		shareParam.put( "url", CommonUtil.getpath( request ) + "&isShare=1" );
-		shareParam.put( "userid", userid );
-		String url = mallPageService.wxShare( userid, request, shareParam );
-		response.sendRedirect( url );
-		return null;
-	    }*/
 	    Map< String,Object > loginMap = pageService.saveRedisByUrl( member, userid, request );
 	    loginMap.put( "uclogin", 1 );
 	    String returnUrl = userLogin( request, response, loginMap );

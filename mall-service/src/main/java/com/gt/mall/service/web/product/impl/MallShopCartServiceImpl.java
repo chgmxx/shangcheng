@@ -22,8 +22,6 @@ import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.product.MallShopCartService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.SessionUtils;
-import com.gt.union.api.entity.param.UnionCardDiscountParam;
-import com.gt.union.api.entity.result.UnionDiscountResult;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,13 +76,6 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	int index = 1;
 	List< Map< String,Object > > shoplist = mallShopCartDAO.selectCheckShopByParam( params );//获取所有的店铺
 	if ( shoplist != null && shoplist.size() > 0 ) {
-	    /*String shopIds = "";
-	    for ( Map< String,Object > shopMap : shoplist ) {
-		if ( CommonUtil.isNotEmpty( shopIds ) ) {
-		    shopIds += ",";
-		}
-		shopIds += shopMap.get( "shop_id" ).toString();
-	    }*/
 	    Map< String,Object > shopcartParams = new HashMap<>();
 	    /*shopcartParams.put( "shopIds", shopIds.split( "," ) );*/
 	    shopcartParams.put( "checkIds", shopcards.split( "," ) );
@@ -532,10 +523,10 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		    int wxShopId = CommonUtil.toInteger( shopMap.get( "wxShopId" ) );
 		    if ( cardMap != null ) {
 			if ( cardMap.containsKey( "cardList" + wxShopId ) ) {
-			    shopMap.put( "coupon", cardMap.get( "cardList" + wxShopId ) );
+			    shopMap.put( "coupon", JSONArray.parseArray( cardMap.get( "cardList" + wxShopId ).toString() )  );
 			}
 			if ( cardMap.containsKey( "duofenCards" + wxShopId ) ) {
-			    shopMap.put( "duofenCoupon", cardMap.get( "duofenCards" + wxShopId ) );
+			    shopMap.put( "duofenCoupon", JSONArray.parseArray( cardMap.get( "duofenCards" + wxShopId ).toString() ) );
 			}
 		    }
 		}
@@ -543,16 +534,16 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	    }
 
 	    //查询商家是否已经开启了商家联盟
-	    UnionCardDiscountParam param = new UnionCardDiscountParam();
-	    param.setBusId( member.getBusid() );
-	    param.setMemberId( member.getId() );
-	    param.setPhone( member.getPhone() );
-	    UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( param );
-	    if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
-		if ( unionDiscountResult.getCode() != -1 ) {
-		    request.setAttribute( "unionMap", unionDiscountResult );
-		}
-	    }
+//	    UnionCardDiscountParam param = new UnionCardDiscountParam();
+//	    param.setBusId( member.getBusid() );
+//	    param.setMemberId( member.getId() );
+//	    param.setPhone( member.getPhone() );
+//	    UnionDiscountResult unionDiscountResult = unionCardService.consumeUnionDiscount( param );
+//	    if ( CommonUtil.isNotEmpty( unionDiscountResult ) ) {
+//		if ( unionDiscountResult.getCode() != -1 ) {
+//		    request.setAttribute( "unionMap", unionDiscountResult );
+//		}
+//	    }
 	}
 
     }

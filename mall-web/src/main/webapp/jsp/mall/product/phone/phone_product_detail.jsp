@@ -779,7 +779,7 @@
         </c:if>
     </c:if>
     <c:if test="${!empty recevieMap }">
-        <c:set var="money" value="${recevieMap.buymoney }"></c:set>
+        <c:set var="money" value="${recevieMap.buyMoney }"></c:set>
         <c:if test="${!empty cardList && recevieMap.cardtype == 1}">
             <c:forEach var="card" items="${cardList }">
                 <c:if test="${card.cardType == 4 }">
@@ -1754,7 +1754,9 @@
             }
         }, 5000); //5s为推荐值，业务调用方可根据自己的需求设置改时间，不建议太短
     }
-
+function ClearTimeout(index){
+    clearTimeout(index)
+}
     function getFreight(province) {
         var shopId = $("input#shopid").val();
         var arr = [];

@@ -55,6 +55,11 @@ public class MallHtmlController extends BaseController {
     @Autowired
     private BusUserService        busUserService;
 
+    public static void main( String[] args ) {
+	double a = 2.6101694913;
+	System.out.println( " = " + ( 1.4779645837d / 5.57d * 5.75d ) );
+    }
+
     /**
      * h5 商城列表页
      *

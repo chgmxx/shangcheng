@@ -212,7 +212,7 @@ function queryurl(type,desc,style){
 }
 var $container = $('.productList');
 if($("input.curPage").length > 0 && $("input.isLoading").length > 0){
-	$container.scroll(function () {
+	$container.bind("scroll", function() {
 		var curPage = $("input.curPage").val();//当前页
 		var pageCount = $("input.pageCount").val();//总共的页数
 		var isLoading = $("input.isLoading").val();//是否继续加载

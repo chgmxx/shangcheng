@@ -97,12 +97,14 @@ function getSubmitParams() {
             delete orderObj.appointmentTime;
             delete orderObj.appointmentStartTime;
             delete orderObj.appointmentEndTime;
+            delete orderObj.takeTheirId;
         } else {
             orderObj.appointmentName = $("#appointName").val();
             orderObj.appointmentTelephone = $("#appointTelphone").val();
-            orderObj.appointmentTime = $("#appointTime").val();
+            orderObj.appointmentTime = $("#appointTime").val().substr(0,10);
             orderObj.appointmentStartTime = $("#appStartTime").val();
             orderObj.appointmentEndTime = $("#appEndTime").val();
+            orderObj.takeTheirId=$("#takeTheirId").val();
         }
         var proPrimaryPrice = $(this).find(".primaryPrice").val();
         if (proPrimaryPrice !== null && proPrimaryPrice !== "") {

@@ -842,8 +842,8 @@ public class MallPageController extends AuthorizeOrLoginController {
 			    if ( CommonUtil.isNotEmpty( cardMap.get( "recevieMap" ) ) ) {
 				request.setAttribute( "recevieMap", cardMap.get( "recevieMap" ) );
 				JSONObject cardObj = JSONObject.fromObject( cardMap.get( "recevieMap" ) );
-				if ( CommonUtil.isNotEmpty( cardObj.get( "cardmessage" ) ) ) {
-				    request.setAttribute( "cardmessage", JSONArray.fromObject( cardObj.get( "cardmessage" ) ) );
+				if ( CommonUtil.isNotEmpty( cardObj.get( "cardMessage" ) ) ) {
+				    request.setAttribute( "cardmessage", JSONArray.fromObject( cardObj.get( "cardMessage" ) ) );
 				}
 			    }
 			    if ( CommonUtil.isNotEmpty( cardMap.get( "returnDuofencardList" ) ) ) {
@@ -992,6 +992,13 @@ public class MallPageController extends AuthorizeOrLoginController {
 			}
 		    }
 		}
+		if ( CommonUtil.isNotEmpty( publicUserid ) && CommonUtil.isNotEmpty( member ) && CommonUtil.judgeBrowser( request ) == 1 ) {
+		    WxJsSdk wxJsSdk = new WxJsSdk();
+		    wxJsSdk.setPublicId( member.getPublicId() );
+		    wxJsSdk.setUrl( CommonUtil.getpath( request ) );
+		    WxJsSdkResult result = wxPublicUserService.wxjssdk( wxJsSdk );
+		    request.setAttribute( "record", result );
+		}
 		//商品已下架或者已删除
 	    } else if ( is_delete.equals( "1" ) || is_publish.equals( "-1" ) ) {
 		jsp = "mall/product/phone/shopdelect";
@@ -1079,6 +1086,15 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    request.setAttribute( "discount", discount );
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		request.setAttribute( "memberId", member.getId() );
+	    }
+	    if ( CommonUtil.isNotEmpty( member ) && CommonUtil.judgeBrowser( request ) == 1 ) {
+		if ( CommonUtil.isNotEmpty( member.getPublicId() ) ) {
+		    WxJsSdk wxJsSdk = new WxJsSdk();
+		    wxJsSdk.setPublicId( member.getPublicId() );
+		    wxJsSdk.setUrl( CommonUtil.getpath( request ) );
+		    WxJsSdkResult result = wxPublicUserService.wxjssdk( wxJsSdk );
+		    request.setAttribute( "record", result );
+		}
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "购物车异常：" + e.getMessage() );
@@ -1253,6 +1269,13 @@ public class MallPageController extends AuthorizeOrLoginController {
 	    Map< String,Object > footerMenuMap = mallPaySetService.getFooterMenu( userid );//查询商城底部菜单
 	    request.setAttribute( "footerMenuMap", footerMenuMap );
 	    mallPageService.getCustomer( request, userid );
+	    if ( CommonUtil.isNotEmpty( publicUserid ) && CommonUtil.isNotEmpty( member ) && CommonUtil.judgeBrowser( request ) == 1 ) {
+		WxJsSdk wxJsSdk = new WxJsSdk();
+		wxJsSdk.setPublicId( member.getPublicId() );
+		wxJsSdk.setUrl( CommonUtil.getpath( request ) );
+		WxJsSdkResult result = wxPublicUserService.wxjssdk( wxJsSdk );
+		request.setAttribute( "record", result );
+	    }
 	} catch ( Exception e ) {
 	    e.printStackTrace();
 	    logger.error( "商品搜索页面异常：" + e.getMessage() );

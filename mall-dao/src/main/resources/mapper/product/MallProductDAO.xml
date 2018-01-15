@@ -466,7 +466,7 @@
     </select>
 
     <select id="selectFenbiNumByWxShopId" parameterType="java.lang.Integer" resultType="Map">
-        SELECT p.id
+        SELECT p.shop
         FROM t_mall_product p
         LEFT JOIN t_mall_store s ON p.shop_id = s.id
         WHERE s.is_delete=0 AND p.is_fenbi_change_pro=1 AND p.change_fenbi>0 AND p.is_delete=0 AND p.is_publish=1 AND p.check_status=1 AND s.wx_shop_id=#{wxShopId}

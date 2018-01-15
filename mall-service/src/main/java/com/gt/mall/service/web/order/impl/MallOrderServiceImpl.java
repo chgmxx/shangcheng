@@ -56,8 +56,6 @@ import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
-import com.gt.union.api.entity.param.UnionConsumeParam;
-import com.gt.union.api.entity.param.UnionRefundParam;
 import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
@@ -220,9 +218,15 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	} else {
 	    list = mallOrderDAO.findReturnByPage( params );
 	}
-	List< Integer > orderIdList = new ArrayList< Integer >();
-	List< Integer > detailIdList = new ArrayList< Integer >();
-	List< MallOrder > orderList = new ArrayList< MallOrder >();
+
+	page.setSubList( getOrderListParams( list ) );
+	return page;
+    }
+
+    public List< MallOrder > getOrderListParams( List< MallOrder > list ) {
+	List< Integer > orderIdList = new ArrayList<>();
+	List< Integer > detailIdList = new ArrayList<>();
+	List< MallOrder > orderList = new ArrayList<>();
 	boolean isHaveDetail = true;
 	if ( list != null && list.size() > 0 ) {
 	    for ( MallOrder order : list ) {
@@ -235,7 +239,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			}
 		    }
 		}
-		boolean flag = false;
+		boolean flag = false;//没有查询出订单详情
 		if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
 			if ( CommonUtil.isNotEmpty( detail.getId() ) ) {
@@ -325,8 +329,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	}
-	page.setSubList( orderList );
-	return page;
+	return orderList;
     }
 
     @Transactional( rollbackFor = Exception.class )
@@ -763,12 +766,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	successBo.setDelay( 0 ); //会员赠送物品 0延迟送 1立即送  -1 不赠送物品
 	successBo.setDataSource( order.getBuyerUserType() );
 	if ( memberService.isMember( order.getBuyerUserId() ) ) {
-	    Map< String,Object > payMap = memberPayService.paySuccess( successBo );
+	   /* Map< String,Object > payMap = memberPayService.paySuccess( successBo );
 	    if ( CommonUtil.isNotEmpty( payMap ) ) {
 		if ( CommonUtil.toInteger( payMap.get( "code" ) ) == -1 ) {
 		    throw new BusinessException( CommonUtil.toInteger( payMap.get( "code" ) ), CommonUtil.toString( payMap.get( "errorMsg" ) ) );
 		}
-	    }
+	    }*/
 	}
     }
 
@@ -1077,24 +1080,24 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 		double freightMoney = CommonUtil.toDouble( order.getOrderFreightMoney() );
 
-		UnionConsumeParam unionConsumeParam = new UnionConsumeParam();
-		unionConsumeParam.setBusId( member.getBusid() );//消费的商家id
-		unionConsumeParam.setModel( Constants.UNION_MODEL );//行业模型，商城：1
-		unionConsumeParam.setModelDesc( "商城下单" );//消费的订单描述
-		unionConsumeParam.setOrderNo( order.getOrderNo() );//订单号
-		unionConsumeParam.setGiveIntegralNow( false );//是否可以立刻赠送积分，默认立刻赠送，否则请填0
-		unionConsumeParam.setType( 2 );//线上或线下使用联盟卡 1：线下 2：线上
-		unionConsumeParam.setTotalMoney( totalMoney );//使用联盟卡打折前的价格
-		unionConsumeParam.setPayMoney( CommonUtil.subtract( CommonUtil.toDouble( order.getOrderMoney() ), freightMoney ) );//使用联盟卡打折后的价格
-		unionConsumeParam.setOrderType( orderType );//支付方式：0：现金 1：微信 2：支付宝， 若有其他支付方式，请告知
-		unionConsumeParam.setUnionId( CommonUtil.toInteger( unionObj.get( "union_id" ) ) );
-		unionConsumeParam.setUnionCardId( CommonUtil.toInteger( unionObj.get( "cardId" ) ) );
-		try {
-		    unionConsumeService.unionConsume( unionConsumeParam );
-		} catch ( Exception e ) {
-		    logger.error( "商家联盟线上核销异常：" + e.getMessage() );
-		    e.printStackTrace();
-		}
+//		UnionConsumeParam unionConsumeParam = new UnionConsumeParam();
+//		unionConsumeParam.setBusId( member.getBusid() );//消费的商家id
+//		unionConsumeParam.setModel( Constants.UNION_MODEL );//行业模型，商城：1
+//		unionConsumeParam.setModelDesc( "商城下单" );//消费的订单描述
+//		unionConsumeParam.setOrderNo( order.getOrderNo() );//订单号
+//		unionConsumeParam.setGiveIntegralNow( false );//是否可以立刻赠送积分，默认立刻赠送，否则请填0
+//		unionConsumeParam.setType( 2 );//线上或线下使用联盟卡 1：线下 2：线上
+//		unionConsumeParam.setTotalMoney( totalMoney );//使用联盟卡打折前的价格
+//		unionConsumeParam.setPayMoney( CommonUtil.subtract( CommonUtil.toDouble( order.getOrderMoney() ), freightMoney ) );//使用联盟卡打折后的价格
+//		unionConsumeParam.setOrderType( orderType );//支付方式：0：现金 1：微信 2：支付宝， 若有其他支付方式，请告知
+//		unionConsumeParam.setUnionId( CommonUtil.toInteger( unionObj.get( "union_id" ) ) );
+//		unionConsumeParam.setUnionCardId( CommonUtil.toInteger( unionObj.get( "cardId" ) ) );
+//		try {
+//		    unionConsumeService.unionConsume( unionConsumeParam );
+//		} catch ( Exception e ) {
+//		    logger.error( "商家联盟线上核销异常：" + e.getMessage() );
+//		    e.printStackTrace();
+//		}
 	    }
 	}
 	if ( productList != null && productList.size() > 0 && isJxc == 1 ) {
@@ -1167,7 +1170,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	List< Map< String,Object > > orderList = new ArrayList<>();
 	int pageSize = 10;
 	int countOrder = mallOrderDAO.countMobileOrderList( params );
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil
+	Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil
 			.toInteger( params.get( "curPage" ) );
 	params.put( "curPage", curPage );
 
@@ -1729,11 +1732,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    MallOrder order = mallOrderDAO.getOrderById( orderReturn.getOrderId() );
 		    boolean flag = isReturnSuccess( order );
 		    if ( flag ) {
-			UnionRefundParam unionRefundParam = new UnionRefundParam();
-			unionRefundParam.setOrderNo( order.getOrderNo() );
-			unionRefundParam.setModel( Constants.UNION_MODEL );
-
-			unionConsumeService.unionRefund( unionRefundParam );
+//			UnionRefundParam unionRefundParam = new UnionRefundParam();
+//			unionRefundParam.setOrderNo( order.getOrderNo() );
+//			unionRefundParam.setModel( Constants.UNION_MODEL );
+//
+//			unionConsumeService.unionRefund( unionRefundParam );
 
 			//修改父类订单的状态
 			updateOrderStatus( order );
@@ -2494,7 +2497,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    createCell( row, 16, order.getOrderSellerRemark(), valueStyle );
 	    i++;
 	}
-	if ( order.getMallOrderDetail().size() < 1 && orderPayWay != 5 ) i++;
+	if ( order.getMallOrderDetail().size() < 1 && orderPayWay != 5 ) {
+	    i++;
+	}
 	return i;
     }
 

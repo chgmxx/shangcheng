@@ -106,6 +106,7 @@
         <input type="hidden" name="appointmentTime" id="appointTime" value="${mallTakeTheir.timeList[0].times}"/>
         <input type="hidden" name="appointmentStartTime" id="appStartTime" value="${mallTakeTheir.timeList[0].startTime}"/>
         <input type="hidden" name="appointmentEndTime" id="appEndTime" value="${mallTakeTheir.timeList[0].endTime}"/>
+        <input type="hidden" name="takeTheirId" id="takeTheirId" value="${mallTakeTheir.id}"/>
         <input type="hidden" name="memCardType" id="memCardType" value="${memType }"/>
         <input type="hidden" name="flowPhone" class="flowCzPhone" value="${flowPhone }"/><!-- 流量充值手机号 -->
 
@@ -404,8 +405,8 @@
                                 </div>
                             </c:forEach>
                             <c:forEach var="coupon" items="${order.coupon}">
-                                <div class="lay-item" onclick="jisuan(1,this,1);" wxShopId="${order.wxShopId}">
-                                    <input type="hidden" id="cardId" value="${coupon.id}"/>
+                              <div class="lay-item" onclick="jisuan(1,this,1);" wxShopId="${order.wxShopId}">
+                                   <input type="hidden" id="cardId" value="${coupon.id}"/>
                                     <input type="hidden" id="cardCode" value="${coupon.user_card_code }"/>
                                     <input type="hidden" id="couponType" value="1"/>
                                     <img src="${coupon.image }" width="100px;" height="65px;"/>
@@ -795,10 +796,10 @@
 <script>
     wx.config({
         debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-        appId: "${record.get('appid')}", // 必填，公众号的唯一标识
-        timestamp: "${record.get('timestamp')}", // 必填，生成签名的时间戳
-        nonceStr: "${record.get('nonce_str')}", // 必填，生成签名的随机串
-        signature: "${record.get('signature')}",// 必填，签名，见附录1
+        appId: "${record.appid}", // 必填，公众号的唯一标识
+        timestamp: "${record.timestamp}", // 必填，生成签名的时间戳
+        nonceStr: "${record.nonce_str}", // 必填，生成签名的随机串
+        signature: "${record.signature}",// 必填，签名，见附录1
         jsApiList: ['hideOptionMenu'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
     });
 

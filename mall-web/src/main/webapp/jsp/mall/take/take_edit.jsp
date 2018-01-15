@@ -61,18 +61,18 @@
                 <input type="hidden" id="city" value="${take.visitCityId }"/>
                 <input type="hidden" id="area" value="${take.visitAreaId }"/>
                 <select class="abc" style="width: 98px;height: 25px;" name="visitProvinceId" id="visitProvinceId"
-                        onchange="areaChange(this.value,1,2)">
+                        onchange="areaChange(this.value,1,2,1)">
                     <option value="0">请选择省份</option>
                     <c:forEach items="${areaLs }" var="area">
                         <option ${area.id eq take.visitProvinceId?'selected':'' } value="${area.id }">${area.city_name }</option>
                     </c:forEach>
                 </select>
                 <select class="abc" style="width: 97px;height: 25px;" name="visitCityId" id="visitCityId"
-                        onchange="areaChange(this.value,2,2)">
+                        onchange="areaChange(this.value,2,3)">
                     <option value="0">请选择市</option>
                 </select>
                 <select class="abc" style="width: 97px;height: 25px;" name="visitAreaId" id="visitAreaId"
-                        onchange="areaChange(this.value,3,2)">
+                        onchange="areaChange(this.value,3,4)">
                     <option value="0">请选择区</option>
                 </select>
             </td>
@@ -187,8 +187,8 @@
                         </c:forEach>
                     </c:if>
                 </ul>
-                <input type="hidden" value="${take.imagesUrl }" name="imagesUrl" id="imagesUrl"/>
-                <input type="hidden" value="${http }" class="imgHttp"/>
+                <input type="hidden" value="${take.imagesUrl }" name="imagesUrl" id="imagesUrl" />
+                <input type="hidden" value="${http != null ? http : "http://maint.yifriend.net/upload/"}" class="imgHttp"/>
             </td>
             <td><span id="picCodePrompt" class="tColor"></span></td>
         </tr>

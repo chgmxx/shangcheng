@@ -514,7 +514,7 @@ function addOffer() {
         var addOffer = $(".addOffer").val();
         var nowPrice = $(".nowPrice").val();
         var addPrice = $("#addPrice").val();
-        var test = /^[0-9]{1,6}(\.\d{1,2})?$/;
+            var test = /^[0-9]{1,6}(\.\d{1,2})?$/;
         if (!test.test(addOffer)) {
             alert("请输入大于0的6小位数");
         } else if (addOffer * 1 == 0) {

@@ -40,8 +40,6 @@ import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
-import com.gt.union.api.entity.param.BindCardParam;
-import com.gt.union.api.entity.param.UnionPhoneCodeParam;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -456,7 +454,13 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
     @RequestMapping( value = "/{pid}/79B4DE7C/queryCity" )
     public void queryCity( HttpServletRequest request, HttpServletResponse response, @PathVariable( "pid" ) Integer pid ) {
 	try {
-	    List< Map > maps = wxShopService.queryCityByParentId( pid );
+	    List< Map > maps = null;
+	    if(pid <= 0){
+		maps = wxShopService.queryCityByLevel( 2 );
+	    }else{
+		maps = wxShopService.queryCityByParentId( pid );
+	    }
+
 	    CommonUtil.write( response, maps );
 	} catch ( Exception e ) {
 	    e.printStackTrace();
@@ -1229,13 +1233,13 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	try {
 	    Member member = SessionUtils.getLoginMember( request );
 	    List< MallOrder > orderList = com.alibaba.fastjson.JSONArray.parseArray( params.get( "order" ).toString(), MallOrder.class );
-	    MallAllEntity mallAllEntity = mallOrderNewService.calculateOrder( params, member, orderList );
-
-	    if ( CommonUtil.isNotEmpty( mallAllEntity ) ) {
-		result = mallOrderNewService.getCalculateData( mallAllEntity );
-	    } else {
-		code = ResponseEnums.NULL_ERROR.getCode();
-	    }
+//	    MallAllEntity mallAllEntity = mallOrderNewService.calculateOrder( params, member, orderList );
+//
+//	    if ( CommonUtil.isNotEmpty( mallAllEntity ) ) {
+//		result = mallOrderNewService.getCalculateData( mallAllEntity );
+//	    } else {
+//		code = ResponseEnums.NULL_ERROR.getCode();
+//	    }
 	} catch ( Exception e ) {
 	    code = ResponseEnums.ERROR.getCode();
 	    logger.error( "计算异常：" + e.getMessage() );
@@ -1339,14 +1343,14 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	Map< String,Object > result = new HashMap<>();
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
-	    BindCardParam bindCardParam = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), BindCardParam.class );
+	    /*BindCardParam bindCardParam = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( params ), BindCardParam.class );
 	    Map resultMap = unionCardService.uionCardBind( bindCardParam );
 	    if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 		code = ResponseEnums.ERROR.getCode();
 	    }
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
 		result.put( "errorMsg", resultMap.get( "errorMsg" ) );
-	    }
+	    }*/
 
 	} catch ( Exception e ) {
 	    code = ResponseEnums.ERROR.getCode();
@@ -1367,21 +1371,21 @@ public class PhoneOrderController extends AuthorizeOrLoginController {
 	Map< String,Object > result = new HashMap<>();
 	int code = ResponseEnums.SUCCESS.getCode();
 	try {
-	    Member member = SessionUtils.getLoginMember( request );
+	   /* Member member = SessionUtils.getLoginMember( request );
 
-	    UnionPhoneCodeParam phoneCodeParam = new UnionPhoneCodeParam();
-	    phoneCodeParam.setBusId( member.getBusid() );
-	    phoneCodeParam.setMemberId( member.getId() );
-	    phoneCodeParam.setPhone( params.get( "phone" ).toString() );
-
-	    Map resultMap = unionCardService.phoneCode( phoneCodeParam );
+//	    UnionPhoneCodeParam phoneCodeParam = new UnionPhoneCodeParam();
+//	    phoneCodeParam.setBusId( member.getBusid() );
+//	    phoneCodeParam.setMemberId( member.getId() );
+//	    phoneCodeParam.setPhone( params.get( "phone" ).toString() );
+//
+//	    Map resultMap = unionCardService.phoneCode( phoneCodeParam );
 
 	    if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 		code = ResponseEnums.ERROR.getCode();
 	    }
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
 		result.put( "errorMsg", resultMap.get( "errorMsg" ) );
-	    }
+	    }*/
 	} catch ( Exception e ) {
 	    code = ResponseEnums.ERROR.getCode();
 	    logger.error( "联盟发送手机验证码异常：" + e.getMessage() );

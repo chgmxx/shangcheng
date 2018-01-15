@@ -1273,7 +1273,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	    price = CommonUtil.toInteger( map1.get( "change_integral" ) );
 	    map1.put( "unit", "积分" );
 	} else if ( rType == 2 ) {
-	    price = CommonUtil.toInteger( map1.get( "change_fenbi" ) );
+	    price = CommonUtil.toDouble( map1.get( "change_fenbi" ) );
 	    map1.put( "unit", "粉币" );
 	}
 	if ( price > 0 ) {
@@ -1718,7 +1718,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		} else if ( map.get( "feel" ).toString().equals( "-1" ) ) {
 		    key = "cha";
 		}
-		countMap.put( key, map.get( "count" ) );
+		countMap.put( map.get( "feel" ).toString(), map.get( "count" ) );
 	    }
 	    maps.put( "countMap", countMap );
 	}

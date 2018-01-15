@@ -2156,7 +2156,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		MallStore store = storeDAO.selectById( CommonUtil.toInteger( orderObj.get( "shopId" ) ) );
 		shopId = store.getWxShopId();
 		mallShopEntity.setShopId( store.getWxShopId() );
-		mallShopEntity.setMalls( productMap );
+//		mallShopEntity.setMalls( productMap );
 
 		if ( CommonUtil.isNotEmpty( orderObj.get( "wxCoupon" ) ) ) {//已使用微信优惠券
 		    JSONObject wxCouponObj = JSONObject.parseObject( orderObj.get( "wxCoupon" ).toString() );

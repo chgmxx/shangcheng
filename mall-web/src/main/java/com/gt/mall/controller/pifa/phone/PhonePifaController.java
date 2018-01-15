@@ -109,7 +109,7 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 
 	request.setAttribute( "memberId", member.getId() );
 	request.setAttribute( "userid", userid );
-	return "mall/wholesalers/phone/applyWholesalers";
+	return "mall/wholesalers/phone/applyWholesaler";
     }
 
     /**
@@ -333,7 +333,7 @@ public class PhonePifaController extends AuthorizeOrLoginController {
 	    logger.error( "进入批发商品的列表的页面出错：" + e );
 	    e.printStackTrace();
 	}
-	return "mall/wholesalers/phone/wholesalersall";
+	return "mall/wholesalers/phone/wholesalerAll";
     }
 
     /**

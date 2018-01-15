@@ -143,12 +143,6 @@ public class MallAuctionServiceImpl extends BaseServiceImpl< MallAuctionDAO,Mall
 		if ( CommonUtil.isNotEmpty( auction.getId() ) ) {
 		    // 判断本商品是否正在拍卖中
 		    MallAuction auc = auctionDAO.selectAuctionByIds( auction.getId() );
-
-		    WsWxShopInfo wxShopInfo = wxShopService.getShopById( auc.getWx_shop_id() );
-		    if ( CommonUtil.isNotEmpty( wxShopInfo.getBusinessName() ) ) {
-			auc.setShopName( wxShopInfo.getBusinessName() );
-		    }
-
 		    int status = isJoinAuction( auc );
 		    if ( auc.getStatus() == 1 && status > 0 ) {// 正在进行拍卖的商品不能修改
 			code = -2;

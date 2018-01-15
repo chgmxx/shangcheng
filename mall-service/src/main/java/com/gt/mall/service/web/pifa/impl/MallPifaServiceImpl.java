@@ -279,8 +279,12 @@ public class MallPifaServiceImpl extends BaseServiceImpl< MallPifaDAO,MallPifa >
 	if ( CommonUtil.isNotEmpty( maps.get( "shopId" ) ) ) {
 	    shopid = CommonUtil.toInteger( maps.get( "shopId" ) );
 	}
+	int memberId = 0;
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    memberId = member.getId();
+	}
 	//新增搜索关键词
-	mallSearchKeywordService.insertSeachKeyWord( member.getId(), shopid, maps.get( "proName" ) );
+	mallSearchKeywordService.insertSeachKeyWord( memberId, shopid, maps.get( "proName" ) );
 
 	int pageSize = 10;
 	int curPage = CommonUtil.isEmpty( maps.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( maps.get( "curPage" ) );

@@ -204,7 +204,10 @@
         </div>
     </section>
 
-    <section class="dialog-wrap register-box active failedSection" style="display: none;">
+    <section class="register-btn-ok
+
+
+    dialog-wrap register-box active failedSection" style="display: none;">
         <div class="overlay"></div>
         <div class="dialog">
             <div class="dialog-bd">
@@ -263,6 +266,7 @@
         }
     });
     var detail = "${detail.productDetail}";
+    console.log(detail,"detail")
     if (detail != null && detail != '' && typeof(detail) != "undefined") {
         detail = detail.replace(/&quot;/g, "\"").replace(/&apos;/g, "'");
         $(".integral-detail-content").html(detail);

@@ -202,10 +202,18 @@ public class PhoneSellerController extends AuthorizeOrLoginController {
 		if ( CommonUtil.isNotEmpty( request.getSession().getAttribute( "shopId" ) ) ) {//获取shopId
 		    shopId = CommonUtil.toInteger( request.getSession().getAttribute( "shopId" ) );
 		}
-		List< Map< String,Object > > list1 = mallPageService.shoppage( shopId );
-		if ( list1.size() > 0 ) {
-		    Map< String,Object > map1 = list1.get( 0 );
-		    request.setAttribute( "pageId", map1.get( "id" ).toString() );
+		if(shopId > 0) {
+		    List< Map< String,Object > > list1 = mallPageService.shoppage( shopId );
+		    if ( list1.size() > 0 ) {
+			Map< String,Object > map1 = list1.get( 0 );
+			request.setAttribute( "pageId", map1.get( "id" ).toString() );
+		    }
+		}else if(userid > 0){
+//		    List<Map<String, Object>> pageId = mallOrderService.selectPageIdByUserId(userid);
+//		    if(pageId.size() > 0){//获取首页的pageId
+//			shopId = CommonUtil.toInteger(pageId.get(0).get("pag_sto_id"));
+//			request.setAttribute("pageId", pageId.get(0).get("id"));
+//		    }
 		}
 		return "mall/seller/phone/applyTip";
 	    }

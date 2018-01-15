@@ -427,10 +427,8 @@ public class CommonUtil {
 	Long time = System.currentTimeMillis();
 	path += MD5Util.getMD5( time + originalFilename.substring( 0, originalFilename.lastIndexOf( "." ) ) ) + suffix;
 
-
 	byte[] bytes;
 	try {
-	    multipartFile.transferTo(file);
 	    bytes = multipartFile.getBytes();
 	    InputStream is = new ByteArrayInputStream( bytes );
 	    BufferedImage bufimg = ImageIO.read( is );

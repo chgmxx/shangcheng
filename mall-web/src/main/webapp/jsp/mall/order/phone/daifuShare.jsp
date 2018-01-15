@@ -78,11 +78,11 @@ var desc = "你的一笔小开支，是我们关系的一大步，为我付款�
 var imgUrls = "${imgUrl}${proImgUrl}";
 var url = "${path}/phoneOrder/${order.id}/79B4DE7C/getDaiFu.do";
 wx.config({
-	debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-    appId: "${record.get('appid')}", // 必填，公众号的唯一标识
-    timestamp: "${record.get('timestamp')}", // 必填，生成签名的时间戳
-    nonceStr: "${record.get('nonce_str')}", // 必填，生成签名的随机串
-    signature: "${record.get('signature')}",// 必填，签名，见附录1
+    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: "${record.appid}", // 必填，公众号的唯一标识
+    timestamp: "${record.timestamp}", // 必填，生成签名的时间戳
+    nonceStr: "${record.nonce_str}", // 必填，生成签名的随机串
+    signature: "${record.signature}",// 必填，签名，见附录1
     jsApiList: ["onMenuShareTimeline","onMenuShareAppMessage","showOptionMenu"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
 });
 wx.ready(function(){
