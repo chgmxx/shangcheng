@@ -63,17 +63,17 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
 	if ( certification != null ) {
 	    result.put( "stoType", certification.getStoType() == 0 ? "个人认证" : "企业认证" );
 
-	    List< DictBean > categoryMap = dictService.getDict( "K002" );
-	    for ( DictBean dictBean : categoryMap ) {
-		Integer key = dictBean.getItem_key();
-		String value = dictBean.getItem_value();
-		JSONObject foorerObj = JSONObject.fromObject( value );
-
-		if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
-		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
-		    break;
-		}
-	    }
+//	    List< DictBean > categoryMap = dictService.getDict( "K002" );
+//	    for ( DictBean dictBean : categoryMap ) {
+//		Integer key = dictBean.getItem_key();
+//		String value = dictBean.getItem_value();
+//		JSONObject foorerObj = JSONObject.fromObject( value );
+//
+//		if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
+//		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
+//		    break;
+//		}
+//	    }
 	}
 	result.put( "isSecuritytrade", false );
 	MallPaySet set = new MallPaySet();
