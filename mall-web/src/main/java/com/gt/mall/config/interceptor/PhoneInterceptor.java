@@ -28,8 +28,8 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
      */
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
-	logger.info( ">>>PhoneInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.info( "basePath = " + CommonUtil.getpath( request ) );
+	//	logger.info( ">>>PhoneInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+	logger.info( ">>>PhoneInterceptor>>basePath = " + CommonUtil.getpath( request ) );
 
 	long startTime = System.currentTimeMillis();
 	request.setAttribute( "runStartTime", startTime );
@@ -47,14 +47,14 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 		member = new Member();
 		//	    member.setId( 366 );//销售员测试
 		//	    	    	    member.setId( 1225509 );
-		//		member.setId( 1225352 );//折扣卡
-		member.setId( 1225542 );//储值卡
+		member.setId( 1225352 );//折扣卡
+		//		member.setId( 1225542 );//储值卡
 		member.setBusid( 42 );
 		member.setPublicId( 482 );
 		member.setPhone( "15017934717" );
 		member.setNickname( "杨倩" );
 		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
-//		member.setOldid( "1225352,1225358,1225449" );
+		//		member.setOldid( "1225352,1225358,1225449" );
 		MallSessionUtils.setLoginMember( request, member );
 		//		MallSessionUtils.setLoginMember( request, null );
 	    } else {
