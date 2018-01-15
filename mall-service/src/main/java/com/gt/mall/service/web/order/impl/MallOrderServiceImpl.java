@@ -1230,12 +1230,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl()+"phoneOrder/L6tgXlBFeK/flowSuccess.do" );
 		boolean isFlow = fenBiFlowService.adcServices( adcServicesInfo );//流量充值
 		if ( isFlow ) {//充值成功
-		    MallOrder order = new MallOrder();
+		    /*MallOrder order = new MallOrder();
 		    order.setId( orders.getId() );
 		    order.setFlowRechargeStatus( 1 );
-		    mallOrderDAO.upOrderNoById( order );
+		    mallOrderDAO.upOrderNoById( order );*/
 		} else {
-		    //充值失败的加入缓存中
 		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "流量充值异常" );
 		}
 	    } catch ( Exception e ) {
