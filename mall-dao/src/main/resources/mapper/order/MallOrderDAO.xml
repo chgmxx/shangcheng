@@ -1388,7 +1388,7 @@
                 and r.status is null
             </if>
             <if test="status == 3 "><!-- 退款-->
-                and (r.status is not null and r.status != 1 and r.status != 5)
+                and (r.status is not null and r.status != 1 and r.status != 5 and r.status !=-2)
             </if>
             <if test="status == 4 "><!-- 关闭-->
                 and t.order_status = 5
