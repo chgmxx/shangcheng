@@ -32,7 +32,6 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.seller.MallSellerWithdrawService;
 import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
-import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -271,7 +270,8 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     @RequestMapping( value = "getValCode", method = RequestMethod.POST )
     public ServerResponse getValCode( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile,
-		    @ApiParam( name = "busId", value = "商家ID", required = true ) @RequestParam Integer busId ) {
+		    @ApiParam( name = "busId", value = "商家ID", required = true ) @RequestParam Integer busId,
+		    @ApiParam( name = "areaCode", value = "手机区号" ) @RequestParam String areaCode ) {
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    String no = CommonUtil.getPhoneCode();

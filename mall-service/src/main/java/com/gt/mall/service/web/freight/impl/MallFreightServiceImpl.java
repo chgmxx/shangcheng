@@ -142,7 +142,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     }
 
     @Override
-    public MallFreight selectFreightByShopId( Integer shopId ) {
+    public List< MallFreight > selectFreightByShopId( Integer shopId ) {
 	return freightDAO.selectFreightByShopId( shopId );
     }
 
@@ -497,7 +497,7 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 
     @Override
     public int getProvinceId( String province ) {
-        if(CommonUtil.isNotEmpty( province ) && !province.equals( "0" )){
+	if ( CommonUtil.isNotEmpty( province ) && !province.equals( "0" ) ) {
 	    Map map = wxShopService.queryBasisByName( province );
 	    if ( CommonUtil.isNotEmpty( map ) ) {
 		if ( CommonUtil.isNotEmpty( map.get( "id" ) ) ) {

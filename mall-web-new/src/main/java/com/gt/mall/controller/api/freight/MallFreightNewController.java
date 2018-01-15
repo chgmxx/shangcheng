@@ -120,7 +120,7 @@ public class MallFreightNewController extends BaseController {
     @RequestMapping( value = "/getFreightByShopId", method = RequestMethod.POST )
     public ServerResponse getFreightByShopId( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "shopId", value = "店铺ID", required = true ) @RequestParam Integer shopId ) {
-	MallFreight freight = null;
+	List< MallFreight > freight = null;
 	try {
 	    freight = freightService.selectFreightByShopId( shopId );
 	} catch ( Exception e ) {
