@@ -29,17 +29,8 @@ public class BackInterceptor implements HandlerInterceptor {
 
 	BusUser user = MallSessionUtils.getLoginUser( request );
 	String url = request.getRequestURI();
-
 	if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
-	    if ( request.getServerName().contains( "192.168.2" ) ) {
-		user = new BusUser();
-		user.setId( 42 );
-		user.setName( "gt123456" );
-		user.setPid( 0 );
-		MallSessionUtils.setLoginUser( request, user );
-	    } else {
-		throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), PropertiesUtil.getWxmpDomain() );
-	    }
+	    throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), PropertiesUtil.getWxmpDomain() );
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }

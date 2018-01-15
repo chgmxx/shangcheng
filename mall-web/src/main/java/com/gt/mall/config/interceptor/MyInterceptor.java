@@ -78,13 +78,13 @@ public class MyInterceptor implements HandlerInterceptor {
 	}
 	request.setAttribute( "webUrl", PropertiesUtil.getHomeUrl() );//本项目的地址
 
-	if ( request.getServerName().contains( "192.168.2" ) && CommonUtil.isEmpty( user ) ) {
-	    user = new BusUser();
-	    user.setId( 42 );
-	    user.setName( "gt123456" );
-	    user.setPid( 0 );
-	    MallSessionUtils.setLoginUser( request, user );
-	}
+	//	if ( request.getServerName().contains( "192.168.2" ) && CommonUtil.isEmpty( user ) ) {
+	//	    user = new BusUser();
+	//	    user.setId( 42 );
+	//	    user.setName( "gt123456" );
+	//	    user.setPid( 0 );
+	//	    MallSessionUtils.setLoginUser( request, user );
+	//	}
 
 	String urlwx = "";
 	if ( url.length() > 0 ) {
