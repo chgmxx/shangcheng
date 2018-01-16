@@ -175,8 +175,14 @@ public class MallCountIncomeController extends BaseController {
 		params.put( "shoplist", shoplist );
 	    }
 	    if ( CommonUtil.isEmpty( startDate ) ) {
-		startDate = DateTimeKit.format( DateTimeKit.addMonths( -1 ) );
-		endDate = DateTimeKit.getDate();
+		Calendar cal = Calendar.getInstance();
+		cal.add( Calendar.DATE, -1 );
+		endDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+		cal.add( Calendar.DATE, -29 );
+		startDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    } else {
+		startDate = DateTimeKit.format( DateTimeKit.parseDate( startDate ) );
+		endDate = DateTimeKit.format( DateTimeKit.parseDate( endDate ) );
 	    }
 
 	    Integer date = DateTimeKit.daysBetween( startDate, endDate );
