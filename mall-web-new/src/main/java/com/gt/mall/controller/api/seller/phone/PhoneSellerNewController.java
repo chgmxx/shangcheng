@@ -165,7 +165,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    }
 	    if ( isIndex ) {
 		resultMap.put( "index", 1 );//跳转至主页
-		return ServerResponse.createBySuccessCodeData( ResponseEnums.ERROR.getCode(), resultMap, false );
+		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	    }
 	    resultMap.put( "isApply", 1 );//可以申请
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );

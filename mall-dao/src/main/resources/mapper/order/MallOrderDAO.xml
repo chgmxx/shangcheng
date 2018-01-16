@@ -1373,10 +1373,10 @@
         </if>
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
         <if test="startTime != null and startTime != ''">
-            and t.create_time >= #{startTime}
+            and DATE(t.create_time) >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and t.create_time <![CDATA[<=]]> #{endTime}
+            and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="status != null and status != ''">
             <if test="status == 1 "> <!-- 成功 -->
