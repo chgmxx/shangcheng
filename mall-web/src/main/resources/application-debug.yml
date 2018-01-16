@@ -184,3 +184,7 @@ http:
   domain: http://core.yifriend.net/
   #增值服务 key
   key: APPLIC2017
+ #硬件
+ hardware:
+  #硬件地址
+  domain: https://yj.deeptel.com.cn
