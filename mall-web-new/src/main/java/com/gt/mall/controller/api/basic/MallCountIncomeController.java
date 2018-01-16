@@ -179,19 +179,38 @@ public class MallCountIncomeController extends BaseController {
 		endDate = DateTimeKit.getDate();
 	    }
 
-	    params.put( "startDate", DateTimeKit.format( DateTimeKit.parse( startDate, "" ) ) );
-	    params.put( "endDate", DateTimeKit.format( DateTimeKit.parse( endDate, "" ) ) );
+	    Integer date = DateTimeKit.daysBetween( startDate, endDate );
+
+	    params.put( "startDate", startDate );
+	    params.put( "endDate", endDate );
 	    List< Map< String,Object > > countList = mallCountIncomeService.getCountListByTimes( params );
-	    //	    String[] date = new String[countList.size()];
-	    String[] data = new String[countList.size()];
+	    String[] data = new String[date + 1];
+
 	    int i = 0;
-	    for ( Map map : countList ) {
-		int day = DateTimeKit.getDay( DateTimeKit.parseDate( map.get( "countDate" ).toString() ) );//日份
-		//		date[i] = day + "";
-		data[i] = map.get( "incomeCount" ).toString();
+	    Calendar end = Calendar.getInstance();//定义日期实例
+	    Calendar start = Calendar.getInstance();//定义日期实例
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( endDate );//结束日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( startDate );//起始日期
+	    end.setTime( d1 );
+	    start.setTime( d2 );
+
+	    while ( start.getTimeInMillis() <= end.getTimeInMillis() ) {
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+		String str = sdf.format( start.getTime() );
+		String count = "";
+		for ( Map map : countList ) {
+		    if ( str.equals( map.get( "countDate" ).toString() ) ) {
+			count = map.get( "incomeCount" ).toString();
+			break;
+		    }
+		}
+		if ( "".equals( count ) ) {
+		    count = "0";
+		}
+		data[i] = count;
 		i++;
+		start.add( Calendar.DATE, 1 );//进行当前日期加1
 	    }
-	    //	    result.put( "date", date );//日份列表
 	    result.put( "data", data );//数据列表
 
 	    Calendar cal = Calendar.getInstance();
