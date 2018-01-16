@@ -43,7 +43,10 @@ public enum ResponseEnums {
 
     URL_GUOQI_ERROR( 1025, "链接已过期/模块已删除" ),
     GRAND_ERROR( 1026, "请使用微信进行授权" ),
-    GRANT_MAX_ERROR( 1027, "授权人数已满" );
+    GRANT_MAX_ERROR( 1027, "授权人数已满" ),
+
+    PRO_MEMBER_ERROR(1028,"会员卡购买跳转")
+    ;
 
     private final int    code;
     private final String desc;

@@ -49,10 +49,7 @@ import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.JedisUtil;
-import com.gt.mall.utils.MallJxcHttpClientUtil;
-import com.gt.mall.utils.ProductUtil;
+import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,6 +141,12 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	String errorMsg = ProductUtil.isProductError( product );
 	if ( CommonUtil.isNotEmpty( errorMsg ) ) {
 	    throw new BusinessException( ResponseEnums.PRODUCT_NULL_ERROR.getCode(), errorMsg );
+	}
+	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
+	    if ( "2".equals( product.getProTypeId().toString() ) ) {//会员卡购买
+		String memberCenterUrl = Constants.MEMBER_URL.replace( "${userid}", params.getBusId().toString() );
+		throw new BusinessException( ResponseEnums.PRO_MEMBER_ERROR.getCode(), ResponseEnums.PRO_MEMBER_ERROR.getDesc(), memberCenterUrl );
+	    }
 	}
 	//查询商品详情
 	MallProductDetail detail = mallProductDetailService.selectByProductId( params.getProductId() );

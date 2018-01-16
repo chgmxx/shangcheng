@@ -344,7 +344,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "sellerCount", sellerCount );//查询客户的个数
 	    result.put( "sellerOrderCount", sellerOrderCount );//查询客户订单的个数
 	    result.put( "member", member );
-	    result.put( "memberUrl", PropertiesUtil.getWxmpDomain() + Constants.MEMBER_URL.replace( "${userid}", loginDTO.getBusId().toString() ) );
+	    result.put( "memberUrl", Constants.MEMBER_URL.replace( "${userid}", loginDTO.getBusId().toString() ) );
 
 	    //	    mallPageService.getCustomer( request, member.getBusid() );
 	} catch ( BusinessException be ) {

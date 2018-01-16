@@ -22,7 +22,6 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -231,10 +230,10 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneUrlResult > memberCenter( HttpServletRequest request, HttpServletResponse response, String busId, Integer type ) {
 	try {
 	    PhoneUrlResult result = new PhoneUrlResult();
-	    String memberCenterUrl = PropertiesUtil.getWxmpDomain() + Constants.MEMBER_URL.replace( "${userid}", busId );
-	    //	    String memberCenterUrl = PropertiesUtil.getMemberDomain() + Constants.MEMBER_NEW_URL.replace( "${userid}", busId.toString() );
+	    String memberCenterUrl = Constants.MEMBER_URL.replace( "${userid}", busId );
+	    //	    String memberCenterUrl =  Constants.MEMBER_NEW_URL.replace( "${userid}", busId.toString() );
 
-	    String couponUrl = PropertiesUtil.getWxmpDomain() + Constants.COUPON_URL.replace( "${userid}", busId );
+	    String couponUrl = Constants.COUPON_URL.replace( "${userid}", busId );
 	    result.setMemberCenterUrl( memberCenterUrl );
 	    result.setMemberCouponUrl( couponUrl );
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
