@@ -347,7 +347,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     public void countIncomeNum() {
 	logger.info( "统计每天营业额" );
 	try {
-	    String key = Constants.REDIS_KEY + "todayIncomeCount";
+	    String key = Constants.REDIS_KEY + Constants.INCOME_COUNT_KEY;
 	    //判断是否存在页面访问数量
 	    if ( JedisUtil.exists( key ) ) {
 		Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有店铺营业额
