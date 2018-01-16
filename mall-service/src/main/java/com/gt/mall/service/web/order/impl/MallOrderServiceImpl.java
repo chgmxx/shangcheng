@@ -2799,7 +2799,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     public boolean isJuliByFreight( String shopIds ) {
 	boolean isJuli = false;
 	String[] shopStr = shopIds.split( "," );
-	if ( CommonUtil.isEmpty( shopStr ) && shopStr.length > 0 ) {
+	if ( CommonUtil.isNotEmpty( shopStr ) && shopStr.length > 0 ) {
 	    Wrapper< MallFreight > wrapper = new EntityWrapper<>();
 	    wrapper.setSqlSelect( "is_no_money,price_type" );
 	    wrapper.where( "is_delete = 0 " );
