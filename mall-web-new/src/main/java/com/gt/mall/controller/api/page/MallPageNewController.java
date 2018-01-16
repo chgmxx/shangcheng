@@ -4,6 +4,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.page.MallPage;
@@ -72,7 +73,7 @@ public class MallPageNewController extends BaseController {
 	    PageUtil page = mallPageService.findByPage( params, user, request );
 
 	    result.put( "page", page );
-	    result.put( "videourl", busUserService.getVoiceUrl( "78" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 78 );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的页面列表异常：" + e.getMessage() );

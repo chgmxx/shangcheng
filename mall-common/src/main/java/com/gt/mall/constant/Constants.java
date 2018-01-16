@@ -239,7 +239,7 @@ public class Constants {
      */
     public static final int PRESALE_PAY_TYPE = 101;
 
-//    public static final String MEMBER_URL = PropertiesUtil.getWxmpDomain() + "phoneMemberController/${userid}/79B4DE7C/findMember_1.do";
+    //    public static final String MEMBER_URL = PropertiesUtil.getWxmpDomain() + "phoneMemberController/${userid}/79B4DE7C/findMember_1.do";
 
     public static final String MEMBER_URL = PropertiesUtil.getMemberDomain() + "html/phone/index.html#/home/${userid}";
 
@@ -255,5 +255,8 @@ public class Constants {
     public static final String[] BUS_TEMPLATE_LIST  = { "付款成功通知", "确认收货提醒", "申请维权通知" };
 
     public static final String REDIS_SECKILL_NAME = "hSeckill";
+
+    //视频教程url
+    public static final String VIDEO_URL = PropertiesUtil.getCoreDomain() + "html/video/videoindex.html?serial=";
 
 }

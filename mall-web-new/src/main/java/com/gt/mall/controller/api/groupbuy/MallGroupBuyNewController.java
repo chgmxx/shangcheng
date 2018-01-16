@@ -80,7 +80,7 @@ public class MallGroupBuyNewController extends BaseController {
 		PageUtil page = groupBuyService.selectGroupBuyByShopId( params, user.getId(), shoplist );
 		result.put( "page", page );
 	    }
-	    result.put( "videourl", busUserService.getVoiceUrl( "81" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 81 );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取团购列表异常：" + e.getMessage() );

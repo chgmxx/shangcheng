@@ -6,6 +6,7 @@ import com.gt.api.util.KeysUtil;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.presale.MallPresale;
@@ -103,7 +104,7 @@ public class MallPresaleNewController extends BaseController {
 		    PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId(), shoplist );
 		    result.put( "page", page );
 		}
-		result.put( "videourl", busUserService.getVoiceUrl( "83" ) );
+		result.put( "videourl", Constants.VIDEO_URL + 83 );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "获取预售列表异常：" + e.getMessage() );

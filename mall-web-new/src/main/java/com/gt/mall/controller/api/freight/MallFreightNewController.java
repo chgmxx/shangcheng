@@ -4,6 +4,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
@@ -84,7 +85,7 @@ public class MallFreightNewController extends BaseController {
 		PageUtil freightPage = freightService.selectFreightByShopId( shoplist, params );
 		result.put( "page", freightPage );
 	    }
-	    result.put( "videourl", busUserService.getVoiceUrl( "80" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 80 );
 	} catch ( Exception e ) {
 	    logger.error( "物流列表异常：" + e.getMessage() );
 	    e.printStackTrace();

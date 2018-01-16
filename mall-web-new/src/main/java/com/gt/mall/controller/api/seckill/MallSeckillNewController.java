@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.seckill;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
@@ -68,7 +69,7 @@ public class MallSeckillNewController extends BaseController {
 		PageUtil page = mallSeckillService.selectSeckillByShopId( params, user.getId(), shoplist );
 		result.put( "page", page );
 	    }
-	    result.put( "videourl", busUserService.getVoiceUrl( "82" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 82 );
 	} catch ( Exception e ) {
 	    logger.error( "获取秒杀列表异常：" + e.getMessage() );
 	    e.printStackTrace();

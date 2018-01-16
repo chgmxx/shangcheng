@@ -5,6 +5,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.enums.ResponseEnums;
@@ -88,8 +89,8 @@ public class MallHtmlNewController extends BaseController {
 		}
 		result.put( "iscreat", iscreat );
 	    }
-//	    result.put( "ispid", ispid );
-	    result.put( "videourl", busUserService.getVoiceUrl( "87" ) );
+	    //	    result.put( "ispid", ispid );
+	    result.put( "videourl", Constants.VIDEO_URL + 87 );
 	} catch ( Exception e ) {
 	    logger.error( "h5商城列表异常：" + e.getMessage() );
 	    e.printStackTrace();
