@@ -1227,7 +1227,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		adcServicesInfo.setPublicId( pbUser.getId() );//商家公众号Id
 		adcServicesInfo.setBusId( orders.getBusUserId() ); //根据平台用户Id获取微信订阅号用户信息
 		adcServicesInfo.setId( orders.getId() );//订单id
-		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl()+"phoneOrder/L6tgXlBFeK/flowSuccess.do" );
+		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/flowSuccess.do" );
 		boolean isFlow = fenBiFlowService.adcServices( adcServicesInfo );//流量充值
 		if ( isFlow ) {//充值成功
 		    /*MallOrder order = new MallOrder();
@@ -2686,6 +2686,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	String memberPhone = "";
 	String address = "";
 	String shopName = "";
+	Map< String,Object > resultMap = new HashMap<>();
 	//查询店铺名称
 	if ( CommonUtil.isNotEmpty( order.getShopId() ) ) {
 	    MallStore store = mallStoreDAO.selectById( order.getShopId() );
@@ -2695,6 +2696,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 			shopName = shopInfo.getBusinessName();
 		    }
+		    resultMap.put( "wxShopId", store.getWxShopId() );
 		} catch ( Exception e ) {
 		    logger.error( "获取微信门店 方法异常：" + e.getMessage() );
 		    e.printStackTrace();
@@ -2727,60 +2729,64 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 
 	//对订单详情进行分页
-	params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
+	/*params.put( "curPage", CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) ) );
 	int pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 5 : CommonUtil.toInteger( params.get( "pageSize" ) );
 	int rowCount = mallOrderDetailDAO.countByOrderId( params );
 	PageUtil page = new PageUtil( CommonUtil.toInteger( params.get( "curPage" ) ), pageSize, rowCount, "mallOrder/toIndex.do" );
 	params.put( "firstResult", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
-	params.put( "maxResult", pageSize );
+	params.put( "maxResult", pageSize );*/
 	List< MallOrderDetail > list = mallOrderDetailDAO.selectPageByOrderId( params );
 
-	Map< String,Object > resultMap = new HashMap<>();
-	resultMap.put( "orderName", "商城订单" );//订单名
-	resultMap.put( "totalPage", page.getPageCount() );//总页数
-	resultMap.put( "curPage", page.getCurPage() );//当前页数
-	resultMap.put( "phone", user.getPhone() );//手机号/商家联系方式
-	if ( CommonUtil.isNotEmpty( memberName ) ) {
-	    resultMap.put( "memberName", memberName );//客户名称
-	}
-	if ( CommonUtil.isNotEmpty( memberPhone ) ) {
-	    resultMap.put( "memberPhone", memberPhone );//客户电话
-	}
-	if ( CommonUtil.isNotEmpty( address ) ) {
-	    resultMap.put( "memberAddress", address );//客户地址
-	}
-	resultMap.put( "orderStatus", order.getOrderStatus() );
-	resultMap.put( "store", shopName );//所属店铺
-	resultMap.put( "orderNum", order.getOrderNo() );//订单编号
-	resultMap.put( "orderTime", DateTimeKit.formatDateByFormat( order.getCreateTime(), "yyyy-MM-dd HH:mm:ss" ) );//下单时间
-	if ( CommonUtil.isNotEmpty( order.getOrderBuyerMessage() ) ) {
-	    resultMap.put( "message", order.getOrderBuyerMessage() );//买家留言
-	}
-	resultMap.put( "totalAmount", order.getOrderMoney() );//应收金额
-	resultMap.put( "deliveryType", order.getDeliveryMethod() == 1 ? "快递配送" : "上门自提" );//配送方式
-	if ( CommonUtil.isNotEmpty( order.getOrderSellerRemark() ) ) {
-	    resultMap.put( "remark", order.getOrderSellerRemark() );//商家备注
-	}
-	List< Map< String,Object > > detailList = new ArrayList<>();
+	//	resultMap.put( "totalPage", page.getPageCount() );//总页数
+	//	resultMap.put( "curPage", page.getCurPage() );//当前页数
+
+	List< Map< String,Object > > plist = new ArrayList<>();
 	if ( list != null && list.size() > 0 ) {
 	    for ( MallOrderDetail detail : list ) {
 		Map< String,Object > map = new HashMap<>();
-		//map.put("barCode", "");//条形码
-		map.put( "name", detail.getDetProName() );//商品名称
-		map.put( "amount", detail.getDetPrivivilege() );//商品原价
-		map.put( "num", detail.getDetProNum() );//商品数量
-		map.put( "disount", detail.getDiscountedPrices() );//优惠
+		map.put( "productBarCode", "" );//条形码
+		map.put( "productName", detail.getDetProName() );//商品名称
+		map.put( "originalPrice", detail.getDetPrivivilege() );//商品原价
+		map.put( "quantity", detail.getDetProNum() );//商品数量
+		map.put( "discount", detail.getDiscountedPrices() );//优惠
 		double totalPrice = detail.getDetProNum() * CommonUtil.toDouble( detail.getDetProPrice() );
 		DecimalFormat df = new DecimalFormat( "######0.00" );
 		map.put( "subtotal", df.format( totalPrice ) );//小计
-		detailList.add( map );
+		plist.add( map );
 	    }
-	    resultMap.put( "lists", detailList );
+	    //	    resultMap.put( "lists", plist );
 	}
 	//页面用到的参数
 
-	resultMap.put( "nextPage", page.getCurPage() + 1 > page.getPageCount() ? page.getPageCount() : page.getCurPage() + 1 );
-	resultMap.put( "prevPage", page.getCurPage() - 1 < 1 ? 1 : page.getCurPage() - 1 );
+	//	resultMap.put( "nextPage", page.getCurPage() + 1 > page.getPageCount() ? page.getPageCount() : page.getCurPage() + 1 );
+	//	resultMap.put( "prevPage", page.getCurPage() - 1 < 1 ? 1 : page.getCurPage() - 1 );
+
+	Map< String,Object > printMap = new HashMap<>();
+	Map< String,Object > header = new HashMap<>();
+	header.put( "title", "商城订单" );//订单名
+	header.put( "phone", user.getPhone() );//手机号/商家联系方式
+	header.put( "customerName", memberName );//客户名称
+	header.put( "customerPhone", memberPhone );//客户电话
+	header.put( "customerAddr", address );//客户地址
+	header.put( "shop", shopName );//所属店铺
+	header.put( "orderNumber", order.getOrderNo() );//订单编号
+	header.put( "orderTime", DateTimeKit.formatDateByFormat( order.getCreateTime(), "yyyy-MM-dd HH:mm:ss" ) );//下单时间
+
+	Map< String,Object > content = new HashMap<>();
+	content.put( "plist", plist );//集合
+	content.put( "buyerMessage", order.getOrderBuyerMessage() );//买家留言
+	content.put( "totalReceivable", order.getOrderMoney() );//应收总额
+	Map< String,Object > footer = new HashMap<>();
+	footer.put( "deliveryMethod", order.getDeliveryMethod() == 1 ? "快递配送" : "上门自提" );//配送方式
+	footer.put( "paymentMethod", order.getOrderStatus() == 1 || order.getOrderStatus() == 5 ? "未支付" : "已支付" );//支付状态
+	footer.put( "businessNotes", order.getOrderSellerRemark() );//商家备注
+	printMap.put( "header", header );
+	printMap.put( "content", content );
+	printMap.put( "footer", footer );
+
+	resultMap.put( "print", printMap );
+	resultMap.put( "busId", order.getBusUserId() );
+	resultMap.put( "hardwareDomain", PropertiesUtil.getHardwareDomain() );
 	return resultMap;
     }
 

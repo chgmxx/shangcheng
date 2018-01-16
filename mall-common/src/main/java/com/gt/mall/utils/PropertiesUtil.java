@@ -82,6 +82,8 @@ public class PropertiesUtil {
 
     private static String coreSignKey; //调用服务增值的签名key
 
+    private static String hardwareDomain;//硬件域名
+
     @Value( "${web.domain}" )
     public void setDomain( String domain ) {
 	PropertiesUtil.domain = domain;
@@ -255,6 +257,20 @@ public class PropertiesUtil {
     @Value( "${http.core.key}" )
     public void setCoreSignKey( String coreSignKey ) {
 	PropertiesUtil.coreSignKey = coreSignKey;
+    }
+
+    @Value( "${http.hardware.domain}" )
+    public void setHardwareDomain( String hardwareDomain ) {
+	PropertiesUtil.hardwareDomain = hardwareDomain;
+    }
+
+    /**
+     * 硬件域名
+     *
+     * @return
+     */
+    public static String getHardwareDomain() {
+	return hardwareDomain;
     }
 
     /**
