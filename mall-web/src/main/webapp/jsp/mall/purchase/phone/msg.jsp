@@ -37,7 +37,7 @@
                     success: function (data) {
                         if (data == "true" || data == true) {
                             alert("留言成功!");
-                            location.href = "/purchasePhone/79B4DE7C/findOrder.do?orderId=${orderId}";
+                            location.href = "/purchasePhone/79B4DE7C/${orderId}/findOrder.do";
                         } else {
                             alert("留言失败,验证码错误!");
                         }
