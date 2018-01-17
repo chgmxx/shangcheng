@@ -40,7 +40,7 @@
     border: 0;
     overflow: hidden;
 }
-.goShopModule::after {
+.goShopModule a::after {
     content: '';
     position: absolute;
     top: 17px;

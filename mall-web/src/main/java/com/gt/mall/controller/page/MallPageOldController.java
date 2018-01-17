@@ -22,10 +22,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,7 +95,15 @@ public class MallPageOldController extends AuthorizeOrLoginController {
 	    MallStore mallStore = mallStoreService.selectById( shopid );
 	    userid = mallStore.getStoUserId();
 	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() +"/classify/" + shopid + "/" + userid + "/0/k=k";
+	if ( CommonUtil.isNotEmpty( params.get( "rType" ) ) ) {
+	    String rType = params.get( "rType" ).toString();
+	    if ( rType.equals( "1" ) ) {//跳转到积分商城页面
+
+	    } else if ( rType.equals( "2" ) ) {//跳转到粉币商城
+		return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + shopid + "/" + userid + "/5/k=k";
+	    }
+	}
+	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + shopid + "/" + userid + "/0/k=k";
     }
 
     /**
@@ -228,7 +233,8 @@ public class MallPageOldController extends AuthorizeOrLoginController {
      * 页面保存
      */
     @RequestMapping( value = "/savepage", method = RequestMethod.POST )
-    public ServerResponse savepage( HttpServletRequest request, HttpServletResponse response, @RequestParam MallPage obj ) {
+    @ResponseBody
+    public ServerResponse savepage( HttpServletRequest request, HttpServletResponse response, MallPage obj ) {
 	try {
 	    mallPageService.updateById( obj );
 	} catch ( BusinessException e ) {
@@ -265,7 +271,7 @@ public class MallPageOldController extends AuthorizeOrLoginController {
 	    request.setAttribute( "groupId", params.get( "groupId" ) );
 	    request.setAttribute( "check", params.get( "check" ) );
 	    request.setAttribute( "stoId", stoId );
-	    //	    request.setAttribute( "url", url );
+	    request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
 	} catch ( Exception e ) {
 	    logger.error( "页面设计-选择商品异常：" + e.getMessage() );
 	    e.printStackTrace();

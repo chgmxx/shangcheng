@@ -39,7 +39,7 @@ public class StoreCertDTO {
     @ApiModelProperty( name = "companyName", value = "企业名称 主体为企业必传" )
     private String companyName;
 
-    @ApiModelProperty( name = "idNumber", value = "身份证号码", required = true )
+    @ApiModelProperty( name = "idNumber", value = "身份证号码" )
     private String idNumber;
 
     @ApiModelProperty( name = "idCardFront", value = "身份证正面", required = true )
@@ -70,5 +70,5 @@ public class StoreCertDTO {
     private Integer isCertDoc;
 
     @ApiModelProperty( name = "imageList", value = " 补充资料列表" )
-    private List< ImageAssociativeDTO > imageList;
+    private String imageList;
 }

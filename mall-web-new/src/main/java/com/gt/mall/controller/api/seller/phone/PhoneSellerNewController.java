@@ -19,6 +19,7 @@ import com.gt.mall.param.phone.sellers.PhoneAddSellersDTO;
 import com.gt.mall.service.inter.core.CoreService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.common.MallCommonService;
 import com.gt.mall.service.web.order.MallOrderService;
@@ -31,6 +32,7 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.seller.MallSellerWithdrawService;
 import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
+import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -53,31 +55,33 @@ import java.util.*;
 public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
     @Autowired
-    private WxPublicUserService       wxPublicUserService;
+    private WxPublicUserService         wxPublicUserService;
     @Autowired
-    private MemberService             memberService;
+    private MemberService               memberService;
     @Autowired
-    private MallSellerService         mallSellerService;
+    private MallSellerService           mallSellerService;
     @Autowired
-    private MallPageService           mallPageService;
+    private MallPageService             mallPageService;
     @Autowired
-    private MallPaySetService         mallPaySetService;
+    private MallPaySetService           mallPaySetService;
     @Autowired
-    private MallCommonService         mallCommonService;
+    private MallCommonService           mallCommonService;
     @Autowired
-    private MallSellerMallsetService  mallSellerMallSetService;
+    private MallSellerMallsetService    mallSellerMallSetService;
     @Autowired
-    private MallProductService        mallProductService;
+    private MallProductService          mallProductService;
     @Autowired
-    private MallPifaApplyService      mallPifaApplyService;
+    private MallPifaApplyService        mallPifaApplyService;
     @Autowired
-    private MallSellerOrderService    mallSellerOrderService;
+    private MallSellerOrderService      mallSellerOrderService;
     @Autowired
-    private MallOrderService          mallOrderService;
+    private MallOrderService            mallOrderService;
     @Autowired
-    private MallSellerWithdrawService mallSellerWithdrawService;
+    private MallSellerWithdrawService   mallSellerWithdrawService;
     @Autowired
-    private CoreService               coreService;
+    private CoreService                 coreService;
+    @Autowired
+    private MallBusMessageMemberService mallBusMessageMemberService;
 
     @ApiOperation( value = "判断是否可以申请超级销售员", notes = "判断是否可以申请超级销售员", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
@@ -89,7 +93,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    Map< String,Object > resultMap = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    boolean isError = false;
 	    boolean isIndex = false;
@@ -184,7 +188,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    String msg = "";
 	    boolean result = false;
 	    int count = 0;
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    if ( CommonUtil.isEmpty( params.getUserName() ) ) {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "姓名不能为空" );
 	    } else if ( CommonUtil.isEmpty( params.getTelephone() ) ) {
@@ -230,7 +234,16 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    }
 	    if ( count > 0 ) {
 		result = true;
+		MallPaySet paySet = new MallPaySet();
+		paySet.setUserId( member.getBusid() );
+		MallPaySet set = mallPaySetService.selectByUserId( paySet );
+		if ( CommonUtil.isNotEmpty( set ) ) {
+		    if ( set.getIsSeller() == 1 && set.getIsCheckSeller() == 1 ) {
+			mallBusMessageMemberService.memberApplySeller( member, set.getCheckSellerPhone() );
+		    }
+		}
 		JedisUtil.del( code );//申请超级销售员成功，删除验证码
+
 	    }
 
 	    if ( !result ) {
@@ -291,7 +304,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    boolean isSeller = mallSellerService.isSeller( member.getId() );//判断商户是否是销售员
 	    if ( !isSeller ) {
@@ -361,7 +374,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    params.put( "busId", loginDTO.getBusId() );
 	    params.put( "type", type );
 	    params = mallOrderService.getMemberParams( member, params );
@@ -401,7 +414,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Map< String,Object > params = new HashMap<>();
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    params.put( "busUserId", member.getBusid() );
 	    params.put( "groupId", groupId );
 	    params.put( "curPage", curPage );
@@ -493,7 +506,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    if ( CommonUtil.isEmpty( type ) ) {
 		type = 1;
@@ -526,12 +539,12 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    @ApiImplicitParam( name = "mallSet", value = "商城设置", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @PostMapping( value = "addMallSet", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse addMallSet( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    String mallSet, Integer type ) {
+    public ServerResponse addMallSet( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String mallSet,
+		    Integer type ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    if ( CommonUtil.isEmpty( mallSet ) ) {
 		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
 	    }
@@ -563,7 +576,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		    Integer status ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    MallSellerMallset sellerMallset = new MallSellerMallset();
 	    sellerMallset.setId( id );
@@ -587,7 +600,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     public ServerResponse deleteMallPro( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer id ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "id", id );
 	    result = mallSellerMallSetService.deleteSellerProduct( params );
@@ -608,8 +621,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     @ApiImplicitParams( @ApiImplicitParam( name = "saleMemberId", value = "销售员id,必传", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @PostMapping( value = "mallIndex", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    public ServerResponse mallIndex( HttpServletRequest request, HttpServletResponse response, int saleMemberId,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+    public ServerResponse mallIndex( HttpServletRequest request, HttpServletResponse response, int saleMemberId, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
@@ -669,7 +681,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    if ( CommonUtil.isNotEmpty( seller ) && CommonUtil.isNotEmpty( member ) ) {
@@ -712,7 +724,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    member = memberService.findMemberById( member.getId(), member );
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -769,7 +781,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( member.getBusid() );
@@ -816,7 +828,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.getSellerTwoCode( seller, member, CommonUtil.judgeBrowser( request ) );//获取二维码
@@ -851,7 +863,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
@@ -903,7 +915,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
 	    seller = mallSellerService.mergeData( seller, member );
 	    //查询提现条件
@@ -954,7 +966,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "withdraw", "{withdrawMoney: " + withdrawMoney + "}" );
 	    result = mallSellerWithdrawService.saveWithdraw( member.getId(), params, 0 );
@@ -980,7 +992,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "busId", loginDTO.getBusId() );
 	    params.put( "types", type );
@@ -1011,7 +1023,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 
 	    //查询销售员信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );

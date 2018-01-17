@@ -58,7 +58,7 @@
             //当你在iframe页面关闭自身时
             //var index = layer.getFrameIndex(window.name); //先得到当前iframe层的索引
             //layer.close(index); //再执行关闭
-            parent.layer.closeAll();
+            parent.CloseParentShade();
         }
     </script>
     <style type="text/css">
@@ -142,7 +142,7 @@
                             <input type="hidden" name="price" class="listb" value="${pro.inv_price }">
                         </c:if>
 
-                        <input type="hidden" name="url" class="listb" value="${url}/mallPage/${pro.id }/${stoId}/79B4DE7C/phoneProduct.do">
+                        <input type="hidden" name="url" class="listb" value="${pro.url}">
                     </li>
                 </c:forEach>
             </div>

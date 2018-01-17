@@ -52,6 +52,13 @@ public interface MemberAddressService {
      *
      * @return true 成功
      */
-    boolean updateDefault( int addressId,int upMemberId );
+    boolean updateDefault( int addressId, int upMemberId );
+
+    /**
+     * 获取所有国家电话区号列表
+     *
+     * @return
+     */
+    List< Map > areaPhoneList();
 
 }

@@ -792,6 +792,11 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	params.put( "maxNum", pageSize );// 每页显示商品的数量
 
 	List< Map< String,Object > > productList = mallProductDAO.selectProductByShopids( params );
+	if ( productList != null && productList.size() > 0 ) {
+	    for ( Map< String,Object > map : productList ) {
+		map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/goods/details/" + map.get( "shop_id" ) + "/" + map.get( "user_id" ) + "/0/" + map.get( "id" ) + "/0" );
+	    }
+	}
 
 	page.setSubList( productList );
 	return page;
@@ -1259,7 +1264,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	int count = mallIntegralDAO.selectIntegralNumByShopId( stoId );
 	if ( count > 0 ) {
 	    resultMap.put( "name", "积分商品" );
-	    resultMap.put( "url", "/phoneIntegral/" + stoId + "/79B4DE7C/toIndex.do?uId=" + user.getId() );
+	    //	    resultMap.put( "url", "/phoneIntegral/" + stoId + "/79B4DE7C/toIndex.do?uId=" + user.getId() );
+	    resultMap.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/integral/index/" + user.getId() );
 	    typeList.add( resultMap );
 	}
 
@@ -1269,7 +1275,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( count > 0 ) {
 	    resultMap = new HashMap<>();
 	    resultMap.put( "name", "粉币商品" );
-	    resultMap.put( "url", "/mallPage/" + stoId + "/79B4DE7C/shoppingall.do?rType=2" );
+	    //	    resultMap.put( "url", "/mallPage/" + stoId + "/79B4DE7C/shoppingall.do?rType=2" );
+	    resultMap.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + stoId + "/" + user.getId() + "/5/k=k" );
 	    typeList.add( resultMap );
 	}
 
@@ -1277,7 +1284,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( productList != null && productList.size() > 0 ) {
 	    resultMap = new HashMap<>();
 	    resultMap.put( "name", "团购商品" );
-	    resultMap.put( "url", "/mGroupBuy/" + stoId + "/79B4DE7C/groupbuyall.do" );
+	    //	    resultMap.put( "url", "/mGroupBuy/" + stoId + "/79B4DE7C/groupbuyall.do" );
+	    resultMap.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + stoId + "/" + user.getId() + "/1/k=k" );
 	    typeList.add( resultMap );
 	}
 	//判断用户是否有正在进行中的秒杀商品
@@ -1285,7 +1293,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( seckillList != null && seckillList.size() > 0 ) {
 	    resultMap = new HashMap<>();
 	    resultMap.put( "name", "秒杀商品" );
-	    resultMap.put( "url", "/mSeckill/" + stoId + "/79B4DE7C/seckillall.do" );
+	    //	    resultMap.put( "url", "/mSeckill/" + stoId + "/79B4DE7C/seckillall.do" );
+	    resultMap.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + stoId + "/" + user.getId() + "/3/k=k" );
 	    typeList.add( resultMap );
 	}
 	//判断用户是否有正在进行中的拍卖商品
@@ -1293,7 +1302,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( auctionList != null && auctionList.size() > 0 ) {
 	    resultMap = new HashMap<>();
 	    resultMap.put( "name", "拍卖商品" );
-	    resultMap.put( "url", "/mAuction/" + stoId + "/79B4DE7C/auctionall.do" );
+	    //	    resultMap.put( "url", "/mAuction/" + stoId + "/79B4DE7C/auctionall.do" );
+	    resultMap.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + stoId + "/" + user.getId() + "/4/k=k" );
 	    typeList.add( resultMap );
 	}
 	//判断用户是否有正在进行中的预售商品
@@ -1301,14 +1311,16 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	if ( presaleList != null && presaleList.size() > 0 ) {
 	    resultMap = new HashMap<>();
 	    resultMap.put( "name", "预售商品" );
-	    resultMap.put( "url", "/phonePresale/" + stoId + "/79B4DE7C/presaleall.do" );
+	    //	    resultMap.put( "url", "/phonePresale/" + stoId + "/79B4DE7C/presaleall.do" );
+	    resultMap.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + stoId + "/" + user.getId() + "/6/k=k" );
 	    typeList.add( resultMap );
 	}
 	List< Map< String,Object > > pifaList = mallPifaService.selectgbPifaByShopId( maps );
 	if ( pifaList != null && pifaList.size() > 0 ) {
 	    resultMap = new HashMap<>();
 	    resultMap.put( "name", "批发商品" );
-	    resultMap.put( "url", "/phoneWholesaler/" + stoId + "/79B4DE7C/wholesalerall.do" );
+	    //	    resultMap.put( "url", "/phoneWholesaler/" + stoId + "/79B4DE7C/wholesalerall.do" );
+	    resultMap.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + stoId + "/" + user.getId() + "/7/k=k" );
 	    typeList.add( resultMap );
 	}
 	return typeList;
@@ -1486,7 +1498,8 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		map.put( "status", status );
 		map.put( "proPrice", proPrice );
 		map.put( "times", times );
-		//		map.put( "preId", map.get( "presaleId" ) );
+		map.put( "preId", map.get( "presaleId" ) );
+		map.put( "url", "/goods/details/" + map.get( "shop_id" ) + "/" + map.get( "user_id" ) + "/6/" + map.get( "id" ) + "/" + map.get( "presaleId" ) );
 		proList.add( map );
 	    }
 	}
@@ -1542,7 +1555,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		}
 	    }
 	    map.put( "isRemain", isRemain );
-
+	    map.put( "url", "/goods/details/" + presale.getShopId() + "/" + presale.getUserId() + "/6/" + presale.getProductId() + "/" + presale.getId() );
 	}
 
 	return map;

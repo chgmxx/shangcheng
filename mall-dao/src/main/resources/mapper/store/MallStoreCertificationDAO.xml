@@ -22,12 +22,13 @@
         <result column="is_delete" property="isDelete"/>
         <result column="create_time" property="createTime"/>
         <result column="check_status" property="checkStatus"/>
+        <result column="refuse_reason" property="refuseReason"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, sto_id, sto_type, name, company_name, id_number,id_card_front ,id_card_back , bus_license_img , bus_license_no , sto_category ,
-        cert_type , cert_img_url,trade_mark_img, is_cert_doc , is_delete,create_time,check_status
+        cert_type , cert_img_url,trade_mark_img, is_cert_doc , is_delete,create_time,check_status,refuse_reason
     </sql>
     <select id="selectByStoreId" parameterType="com.gt.mall.entity.store.MallStoreCertification" resultMap="BaseResultMap">
         select
@@ -42,7 +43,7 @@
          a.id, a.sto_id as stoId, a.sto_type stoType, a.name, a.company_name as companyName, a.id_number as idNumber
         ,a.id_card_front as idCardFront ,a.id_card_back as idCardBack , a.bus_license_img as busLicenseImg , a.bus_license_no as busLicenseNo
         ,a.sto_category as stoCategory,a.cert_type as certType , a.cert_img_url as certImgUrl,a.trade_mark_img as tradeMarkImg
-        ,a.is_cert_doc as isCertDoc,a.create_time as createTime,a.check_status as checkStatus,s.sto_name as stoName
+        ,a.is_cert_doc as isCertDoc,a.create_time as createTime,a.check_status as checkStatus,s.sto_name as stoName,a.refuse_reason as refuseReason,s.sto_user_id as userId
         FROM t_mall_store_certification a
         LEFT JOIN t_mall_store s ON s.id=a.`sto_id`
         WHERE a.is_delete = 0

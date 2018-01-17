@@ -185,8 +185,8 @@ public class MallProductNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    if ( type == 1 ) {//删除
 		params.put( "isDelete", 1 );
-//	    } else if ( type == 2 ) {//送审
-//		params.put( "checkStatus", 0 );
+		//	    } else if ( type == 2 ) {//送审
+		//		params.put( "checkStatus", 0 );
 	    } else if ( type == 3 ) {//上架
 		params.put( "isPublish", 1 );
 	    } else if ( type == 4 ) {//下架
@@ -314,5 +314,33 @@ public class MallProductNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+    }
+
+    /**
+     * 同步商品
+     */
+    @ApiOperation( value = "同步商品", notes = "同步商品" )
+    @ResponseBody
+    @SysLogAnnotation( description = "同步商品", op_function = "2" )
+    @RequestMapping( value = "/copyProduct", method = RequestMethod.POST )
+    public ServerResponse copyProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	try {
+	    Map< String,Object > result = new HashMap<>();
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    if ( CommonUtil.isNotEmpty( params.get( "id" ) ) ) {
+		result = mallProductService.copyProduct( params, user );
+	    } else if ( ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) && CommonUtil.isNotEmpty( params.get( "toShopId" ) ) ) ) {
+		result = mallProductService.copyProductByShopId( params, user );
+	    }
+	    Integer code = (Integer) result.get( "code" );
+	    if ( code != 1 ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+	    }
+	} catch ( Exception e ) {
+	    logger.error( "同步商品异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+	}
+	return ServerResponse.createBySuccessCode();
     }
 }

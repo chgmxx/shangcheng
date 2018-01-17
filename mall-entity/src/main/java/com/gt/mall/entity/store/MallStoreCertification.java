@@ -46,6 +46,7 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
     /**
      * 姓名或法人
      */
+    @TableField( "name" )
     private String  name;
     /**
      * 企业名称
@@ -113,6 +114,11 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
     @TableField( "check_status" )
     private Integer checkStatus;
     /**
+     * 不通过理由
+     */
+    @TableField( "refuse_reason" )
+    private String  refuseReason;
+    /**
      * 创建时间
      */
     @TableField( "create_time" )
@@ -129,6 +135,11 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
      */
     @TableField( exist = false )
     private List< MallImageAssociative > imageList;
+    /**
+     * 店铺名称
+     */
+    @TableField( exist = false )
+    private String stoName;
 
     @Override
     protected Serializable pkVal() {

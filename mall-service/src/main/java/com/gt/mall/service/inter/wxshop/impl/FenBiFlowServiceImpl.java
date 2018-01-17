@@ -69,8 +69,8 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
     }
 
     @Override
-    public Map< String,Object > saveFenbiFlowRecord( FenbiFlowRecord fenbiFlowRecord ) {
-	RequestUtils< FenbiFlowRecord > requestUtils = new RequestUtils<>();
+    public Map< String,Object > saveFenbiFlowRecord( WsFenbiFlowRecord fenbiFlowRecord ) {
+	RequestUtils< WsFenbiFlowRecord > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( fenbiFlowRecord );
 	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
     }

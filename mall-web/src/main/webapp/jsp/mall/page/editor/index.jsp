@@ -142,14 +142,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!-- 商品隐藏id -->
 <input type="hidden" id="stoId" value="${stoId}"/>
 
-<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
+<%--<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
     <a href="javascirpt:void(0)" onclick="save()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">保存</a>
     <a href="javascirpt:void(0)" onclick="yl()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">预览</a>
     <a href="javascirpt:void(0)" onclick="window.close()"
        style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px">关闭</a>
-</div>
+</div>--%>
 <!--修改网站名称弹出层结束-->
 <div id="fade" class="black_overlay"></div>
 <div id="moveGroupLaye" style="display: none; z-index: 1002; width: 200px; height: 200px; position: fixed; left:50%; top:50%;margin-left:-100px; margin-top:-100px">
@@ -170,13 +170,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     stoPicture = "${stoPicture}" || "";//店铺图片
     countproduct = "${countproduct}" || 0;//全部商品数量
     headImg = "${headImg}" || "";
+    console.log(dataJson,"-----------",picJson)
 
     var verson = 0;
     if (dataJson.length > 0) {
         dataJson.forEach(function (e, i) {
             if (e.type == 7) {
                 verson = 1;
-                picJson.splice(i, 0, {type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
+                //picJson.splice(i, 0, {type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
             }
         })
     }
@@ -184,6 +185,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         dataJson.unshift({type: 7, radio: true})
         picJson.unshift({type: 7, stoName: stoName, stoPicture: stoPicture, countproduct: countproduct, headImg: headImg})
     }
+
 
     $("body").click(function () {
         $(".color-picker").hide();
@@ -230,10 +232,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     function materiallayer(param, e, editor) {
         pic_type = param;
         paramList = arguments;
-        openIframe('素材库', '820px', '500px', '/common/material.do');
+        openIframe('素材库', '820px', '500px', 'https://suc.deeptel.com.cn/common/material.do?retUrl='+window.location.href);
     }
-
     /**素材库里面返回信息**/
+    window.addEventListener("message", function (e) {
+        debugger
+        if(!e.data)return;
+        eval(e.data)
+    });
     function image(id, url) {
         //alert(url);
         imgList = url;
@@ -282,16 +288,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         }
     };
 
-    chooseGroup();
     /**
-     *选择商品
+     *选择分组
      */
-    function chooseGroup() {
-        openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+    var group_type = 0;
+    function chooseGroup(type) {
+        group_type = type;
+        if(type == 2){
+            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=1");//check==0代表多选，check==1代表单选
+        }else{
+            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+        }
     };
+    /**
+     * 分组返回数据
+     */
     function returnGroupArr(jsonArry) {
-        console.log(jsonArry,jsonArry);
+        imgList = jsonArry;
 
+        if(group_type == 2){
+            $("#editchooseGroup").click();
+        }else{
+            $("#addchooseGroup").click();
+        }
+        console.log(jsonArry,jsonArry);
     }
 
     //分类页面，选择返回相对于的数据
@@ -352,16 +372,29 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
     /**打开一个IFRAME窗口**/
     function openIframe(title, width, height, content) {
+        openParentShade();
+
         layer.open({
             type: 2,
             title: title,
-            shadeClose: true,
-            shade: 0.3,
+            shade: 0.5,
             offset: "10%",
             shadeClose: false,
             area: [width, height],
-            content: content
+            content: content,
+            cancel: function(){
+                CloseParentShade();
+            }
         });
+    }
+    function openParentShade(){
+        parent.parent.window.postMessage("openMask()", "*");
+        parent.shadeShow();
+    }
+    function CloseParentShade(){
+        parent.shadeHide();
+        parent.parent.window.postMessage("closeMask()", "*");
+        layer.closeAll();
     }
     //数据保存或修改
 
@@ -369,7 +402,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         var id = $("#stoId").val();
         var des = angular.toJson(dataJson);
         var pic = angular.toJson(picJson);
-        showAll();
+        console.log(des,"----",pic)
+//        showAll();
         $.ajax({
             type: "post",
             url: "/mallPage/savepage.do",
@@ -379,12 +413,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 id: id
             },
             async: true,
-            dataType: "json",
+//            dataType: "json",
             success: function (data) {
                 closeWindow();
-                var error = data.error;
-                alert(data.message);
+                console.log(data,"=====")
+//                var error = data.error;
+//                alert(data.message);
 
+                alert("保存成功");
+
+            },error:function(data){
+                console.log(data,"dataerror")
             }
         });
     }

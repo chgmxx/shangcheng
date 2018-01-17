@@ -6,11 +6,13 @@ import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.store.MallStoreCertificationDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
+import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
@@ -46,6 +48,8 @@ public class MallStoreCertificationApiController extends BaseController {
     private DictService                   dictService;
     @Autowired
     private MallImageAssociativeService   mallImageAssociativeService;
+    @Autowired
+    private MallStoreService              mallStoreService;
 
     @ApiOperation( value = "待审核店铺认证列表", notes = "待审核店铺认证列表" )
     //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
@@ -120,7 +124,12 @@ public class MallStoreCertificationApiController extends BaseController {
 	    Map< String,Object > params = JSONObject.parseObject( param );
 
 	    storeCert = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
+	    if ( storeCert != null && storeCert.getIsDelete() == 1 ) {
+		storeCert = null;
+	    }
 	    if ( storeCert != null ) {
+		MallStore store = mallStoreService.selectById( storeCert.getStoId() );
+		storeCert.setStoName( store.getStoName() );
 		if ( storeCert.getStoType() == 1 ) {
 		    List< DictBean > categoryMap = dictService.getDict( "K002" );
 		    if ( categoryMap != null && categoryMap.size() > 0 ) {
@@ -165,6 +174,9 @@ public class MallStoreCertificationApiController extends BaseController {
 
 	    MallStoreCertification certification = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
 	    certification.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
+	    if ( CommonUtil.isNotEmpty( params.get( "reason" ) ) ) {
+		certification.setRefuseReason( params.get( "reason" ).toString() );
+	    }
 	    boolean flag = mallStoreCertService.updateById( certification );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证审核异常" );

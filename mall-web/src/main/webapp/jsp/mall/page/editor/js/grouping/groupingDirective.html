@@ -13,33 +13,17 @@
         </div>
     </div>
     
-    <div class="control-group">
+    <div class="control-group" ng-repeat="pic in picJson[pageEdit].imgID">
     	<div class="grouping-sources">
-   			<div class="grouping-source">商品来源：<span class="text">商品组一</span><span class="btn">修改</span></div>
+   			<div class="grouping-source">商品来源：<span class="text">{{pic.groupName}}</span><span class="btn">修改</span></div>
 	    	<div class="actions">
-	            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
+	            <i class="remove_btn" ng-click="removeshop($index)">×</i>
 	        </div>
     	</div>
     </div>
+
     <div class="control-group">
-    	<div class="grouping-sources">
-   			<div class="grouping-source">商品来源：<span class="text">商品组二</span><span class="btn">修改</span></div>
-	    	<div class="actions">
-	            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
-	        </div>
-    	</div>
-    </div>
-    <div class="control-group">
-    	<div class="grouping-sources">
-   			<div class="grouping-source">商品来源：<span class="text">商品组三</span><span class="btn">修改</span></div>
-	    	<div class="actions">
-	            <i class="remove_btn" ng-click="removeswiperpic($index)">×</i>
-	        </div>
-    	</div>
-    </div>
-    
-    <div class="control-group">
-    	<div class="add-grouping">添加一个商品分组</div>
+    	<div class="add-grouping" onclick="chooseGroup()">添加一个商品分组</div>
     </div>
     
     <div class="control-group">

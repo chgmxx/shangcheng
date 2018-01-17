@@ -157,6 +157,9 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 		    inventory.setInvNum( CommonUtil.toInteger( map.get( "invNum" ) ) );
 		    inventory.setInvPrice( BigDecimal.valueOf( Double.valueOf( map.get( "invPrice" ).toString() ) ) );
 		    inventory.setIsDefault( CommonUtil.toInteger( map.get( "isDefault" ) ) );
+		    if ( CommonUtil.isNotEmpty( map.get( "logisticsWeight" ) ) ) {
+			inventory.setLogisticsWeight( CommonUtil.toBigDecimal( map.get( "logisticsWeight" ) ) );
+		    }
 		    if ( imgSpecId > 0 ) {
 			inventory.setSpecificaImgId( imgSpecId );
 		    } else {

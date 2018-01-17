@@ -38,7 +38,6 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
 
     //修改需要显示的编辑器和当前显示的第几个模块的值
     $scope.setShowEdit = function(param1,param2,$event){
-    	
     	window.wangEditor="";
     	
         $scope.positionTop = $($event.currentTarget).position().top + 50;
@@ -83,6 +82,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "intro":false,
             "price": true,
         });
+        $scope.edit = 1;
         addpublic(param);
     };
     //轮播图
@@ -92,6 +92,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "type":2,
             "pic":[]
         });
+        $scope.edit = 2;
         addpublic(param);
     };
     //分类
@@ -101,6 +102,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "type":3,
             "dom":'<tr><td class="empty" data-x="0" data-y="0"></td><td class="empty" data-x="1" data-y="0"></td><td class="empty" data-x="2" data-y="0"></td><td class="empty" data-x="3" data-y="0"></td></tr><tr><td class="empty" data-x="0" data-y="1"></td><td class="empty" data-x="1" data-y="1"></td><td class="empty" data-x="2" data-y="1"></td><td class="empty" data-x="3" data-y="1"></td></tr><tr><td class="empty" data-x="0" data-y="2"></td><td class="empty" data-x="1" data-y="2"></td><td class="empty" data-x="2" data-y="2"></td><td class="empty" data-x="3" data-y="2"></td></tr><tr><td class="empty" data-x="0" data-y="3"></td><td class="empty" data-x="1" data-y="3"></td><td class="empty" data-x="2" data-y="3"></td><td class="empty" data-x="3" data-y="3"></td></tr>',
         });
+        $scope.edit = 3;
         addpublic(param);
     };
     
@@ -111,6 +113,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "type":4,
             "height":20,
         });
+        $scope.edit = 4;
     	addpublic(param);
     }
     
@@ -128,7 +131,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
         $scope.dataJson.addAt(param,{
             "type":5,
             "attr":{
-                "height":21,
+                "height":27,
                 "width":294,
                 "border":1,
                 "borderColor":"#cacaca",
@@ -136,6 +139,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
                 "bgColor":"#fff",
             },
         });
+        $scope.edit = 5;
         addpublic(param);
     }
     
@@ -145,6 +149,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     	$scope.dataJson.addAt(param,{
             "type":6,
         });
+        $scope.edit = 6;
         addpublic(param);
     }
     
@@ -165,6 +170,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             
             "type":8,
         });
+        $scope.edit = 8;
         addpublic(param);
     }
     
@@ -175,6 +181,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "list":[{"title":""}],
             "type":9,
         });
+        $scope.edit = 9;
         addpublic(param);
     }
     
@@ -185,6 +192,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "pic":[{"src":"","title":""},{"src":"","title":""},{"src":"","title":""},{"src":"","title":""}],
             "type":10,
         });
+        $scope.edit = 10;
         addpublic(param);
     }
     
@@ -204,6 +212,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
                ],
             "type":11,
         });
+        $scope.edit = 11;
         addpublic(param);
     }
     
@@ -215,6 +224,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "stoName": stoName,
             "name": '进入店铺'
         });
+        $scope.edit = 12;
         addpublic(param);
     }
     
@@ -225,6 +235,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     		"text":"",
             "type":13,
         });
+        $scope.edit = 13;
         addpublic(param);
     }
 	
@@ -237,6 +248,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     		"style":0,
             "type":14,
         });
+        $scope.edit = 14;
         addpublic(param);
 	}
 	
@@ -246,6 +258,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     	$scope.dataJson.addAt(param,{
             "type":15,
         });
+        $scope.edit = 15;
         addpublic(param);
 	}
 	
@@ -263,6 +276,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "price": true,
             "type":16,
         });
+        $scope.edit = 16;
         addpublic(param);
 	}
 	
@@ -280,6 +294,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
             "price": true,
             "type":17,
         });
+        $scope.edit = 17;
         addpublic(param);
 	}
 	
@@ -290,6 +305,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     		"dom":"",
             "type":18,
         });
+        $scope.edit = 18;
         addpublic(param);
 	}
 	
@@ -315,7 +331,7 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
 	                '    <li ng-click="addGuide('+param+')"><a>辅助线</a></li>'+
 	                //'    <li ng-click="addCoupon('+param+')"><a>优惠券</a></li>'+
 	                '    <li ng-click="addGrouping('+param+')"><a>商品<br>分组</a></li>'+
-	                '    <li ng-click="addcommodityList('+param+')"><a>商品<br>列表</a></li>'+
+	                /*'    <li ng-click="addcommodityList('+param+')"><a>商品<br>列表</a></li>'+*/
 	                '    <li ng-click="addRichText('+param+')"><a>富文本</a></li>'+
 					'</ul>'+
 				'</div>';
@@ -337,6 +353,12 @@ angular.module('admin',[]).controller('adminController',["$scope","$timeout","$c
     };
     $scope.addcommoditypicone = function(){
         $scope.picJson[$scope.pageEdit].imgID[image_num] = imgList[0];        
+    };
+    $scope.addchooseGroup = function () {
+        $scope.picJson[$scope.pageEdit].imgID = $scope.picJson[$scope.pageEdit].imgID.concat(imgList);
+    };
+    $scope.editchooseGroup = function () {
+        $scope.picJson[$scope.pageEdit].imgID = imgList;
     };
     
     //轮播图片
