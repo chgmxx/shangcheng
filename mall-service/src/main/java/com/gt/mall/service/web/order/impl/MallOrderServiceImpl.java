@@ -2756,6 +2756,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    //	    resultMap.put( "lists", plist );
 	}
+	String buyserMessage = "";
+	if ( CommonUtil.isNotEmpty( order.getOrderBuyerMessage() ) ) {
+	    buyserMessage = order.getOrderBuyerMessage();
+	}
 	//页面用到的参数
 
 	//	resultMap.put( "nextPage", page.getCurPage() + 1 > page.getPageCount() ? page.getPageCount() : page.getCurPage() + 1 );
@@ -2766,7 +2770,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	header.put( "title", "商城订单" );//订单名
 	header.put( "phone", user.getPhone() );//手机号/商家联系方式
 	header.put( "customerName", memberName );//客户名称
-	header.put( "customerPhone", memberPhone );//客户电话
+	header.put( "customerPhone", CommonUtil.isNotEmpty( memberPhone ) ? memberPhone : "" );//客户电话
 	header.put( "customerAddr", address );//客户地址
 	header.put( "shop", shopName );//所属店铺
 	header.put( "orderNumber", order.getOrderNo() );//订单编号
@@ -2774,12 +2778,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	Map< String,Object > content = new HashMap<>();
 	content.put( "plist", plist );//集合
-	content.put( "buyerMessage", order.getOrderBuyerMessage() );//买家留言
+	content.put( "buyerMessage", buyserMessage );//买家留言
 	content.put( "totalReceivable", order.getOrderMoney() );//应收总额
 	Map< String,Object > footer = new HashMap<>();
 	footer.put( "deliveryMethod", order.getDeliveryMethod() == 1 ? "快递配送" : "上门自提" );//配送方式
 	footer.put( "paymentMethod", order.getOrderStatus() == 1 || order.getOrderStatus() == 5 ? "未支付" : "已支付" );//支付状态
-	footer.put( "businessNotes", order.getOrderSellerRemark() );//商家备注
+	footer.put( "businessNotes", CommonUtil.isNotEmpty( order.getOrderSellerRemark() ) ? order.getOrderSellerRemark() : "" );//商家备注
 	printMap.put( "header", header );
 	printMap.put( "content", content );
 	printMap.put( "footer", footer );
