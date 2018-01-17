@@ -45,8 +45,8 @@
                 <div class="swiper-wrapper">
                     <c:forEach items="${carouselList}" var="img">
                         <div class="swiper-slide">
-                            <a href="${http}${img.carousel_url}">
-                                <img src="${http}${img.carousel_img}" class="carousel_pic" height="100%"/></a>
+                            <a href="${img.carouselUrl}">
+                                <img src="${img.carouselImg}" class="carousel_pic" height="100%"/></a>
                         </div>
                     </c:forEach>
                 </div>
