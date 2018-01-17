@@ -637,7 +637,6 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 		    request.setAttribute( "returnUrl", returnStr );
 		    return "mall/purchase/phone/authorizationBack";
 		}
-		request.setAttribute( "payType", 1 );
 	    }
 	    //记录统计
 	    PurchaseOrderStatistics orderStatistics = new PurchaseOrderStatistics();
