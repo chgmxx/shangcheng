@@ -2696,7 +2696,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    if ( CommonUtil.isNotEmpty( shopInfo ) ) {
 			shopName = shopInfo.getBusinessName();
 		    }
-		    resultMap.put( "wxShopId", store.getWxShopId() );
+		    resultMap.put( "wxShopId", store.getWxShopId().toString() );
 		} catch ( Exception e ) {
 		    logger.error( "获取微信门店 方法异常：" + e.getMessage() );
 		    e.printStackTrace();
