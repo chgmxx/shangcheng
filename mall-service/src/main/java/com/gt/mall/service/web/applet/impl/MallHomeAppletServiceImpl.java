@@ -40,6 +40,7 @@ import com.gt.mall.service.web.product.MallProductParamService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.utils.*;
+import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.result.shop.WsShopPhoto;
 import com.gt.util.entity.result.shop.WsWxShopInfo;
@@ -892,15 +893,25 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	String no = Constants.REDIS_KEY + CommonUtil.getPhoneCode();
 	JedisUtil.set( no, no, 10 * 60 );
 	System.out.println( no );
-
-	OldApiSms apiSms = new OldApiSms();
-	apiSms.setBusId( busId );
-	apiSms.setCompany( pbUser.getAuthorizerInfo() );
-	apiSms.setContent( "" + pbUser.getAuthorizerInfo() + "  提醒您，您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。" );
-	apiSms.setMobiles( params.get( "phoneNo" ).toString() );
-	apiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
-
-	boolean result = smsService.sendSmsOld( apiSms );
+	boolean result = false;
+	if ( params.containsKey( "areaCode" ) ) {
+	    NewApiSms newApiSms = new NewApiSms();
+	    newApiSms.setMobile( params.get( "phoneNo" ).toString() );
+	    newApiSms.setCountry( params.get( "areaCode" ).toString() );
+	    newApiSms.setBusId( busId );
+	    newApiSms.setParamsStr( no );
+	    newApiSms.setModel( Constants.SMS_MODEL );
+	    newApiSms.setTmplId( Constants.MALL_CODE_MODEL_ID ); //短信模板ID
+	    result = smsService.sendSmsNew( newApiSms );
+	} else {
+	    OldApiSms apiSms = new OldApiSms();
+	    apiSms.setBusId( busId );
+	    apiSms.setCompany( pbUser.getAuthorizerInfo() );
+	    apiSms.setContent( "" + pbUser.getAuthorizerInfo() + "  提醒您，您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。" );
+	    apiSms.setMobiles( params.get( "phoneNo" ).toString() );
+	    apiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
+	    result = smsService.sendSmsOld( apiSms );
+	}
 	if ( result ) {
 	    resultMap.put( "code", 1 );
 	    resultMap.put( "msg", "发送成功" );

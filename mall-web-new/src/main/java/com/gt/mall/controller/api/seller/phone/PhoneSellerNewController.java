@@ -276,10 +276,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 5 * 60 );
-
-	    String content = "您申请成为超级销售员的验证码为:" + no + "，5分钟内有效。";
-
-	    boolean result = mallCommonService.getValCode( mobile, member.getBusid(), content, null );
+	    boolean result = mallCommonService.getValCode( areaCode, mobile, member.getBusid(), no, Constants.APPLY_SELLER_CODE_MODEL_ID );
 	    if ( !result ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
 	    }

@@ -25,11 +25,10 @@ public interface MallCommonService {
      * @param mobile         手机号码
      * @param busId          商家ID
      * @param content        短信内容
-     * @param authorizerInfo 公司名称
      *
      * @return
      */
-    boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo );
+    boolean getValCode( String areaCode, String mobile, Integer busId, String content,Long tmplId );
 
     /**
      * 判断商家是否有技术支持

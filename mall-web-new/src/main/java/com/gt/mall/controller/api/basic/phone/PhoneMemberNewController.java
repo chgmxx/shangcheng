@@ -145,10 +145,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "是否需要登陆接口", notes = "是否需要登陆订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
-		    @ApiImplicitParam( name = "pageUrl", value = "当前页面地址", paramType = "query", required = true, dataType = "string" )
-    } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
+		    @ApiImplicitParam( name = "pageUrl", value = "当前页面地址", paramType = "query", required = true, dataType = "string" ) } )
     @ResponseBody
     @PostMapping( value = "isLogin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse isLogin( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
@@ -198,9 +196,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "删除收藏商品接口", notes = "删除收藏商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams(
-		    @ApiImplicitParam( name = "ids", value = "删除收藏id集合", paramType = "query", required = true, dataType = "string" )
-    )
+    @ApiImplicitParams( @ApiImplicitParam( name = "ids", value = "删除收藏id集合", paramType = "query", required = true, dataType = "string" ) )
     @ResponseBody
     @PostMapping( value = "deleteCollect", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse deleteCollect( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String ids ) {
@@ -295,9 +291,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
-	    String content = "您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。。";
-	    logger.info( content );
-	    boolean result = mallCommonService.getValCode( phone, member.getBusid(), content, null );
+	    boolean result = mallCommonService.getValCode( areaCode, phone, member.getBusid(), no, Constants.MALL_CODE_MODEL_ID );
 	    if ( !result ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
 	    }
