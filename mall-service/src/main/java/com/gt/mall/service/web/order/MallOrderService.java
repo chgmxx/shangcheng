@@ -142,7 +142,7 @@ public interface MallOrderService extends BaseService< MallOrder > {
     /**
      * 发送消息模板
      */
-    public void sendMsg( MallOrder order, int type, WxPublicUsers publicUser );
+    public void sendMsg( MallOrder order, int type, WxPublicUsers publicUser, Member member, BusUser busUser );
 
     /**
      * 同步订单
