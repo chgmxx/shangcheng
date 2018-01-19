@@ -114,6 +114,13 @@
                 return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
             }
         },
+        watch:{
+            dialogTableVisible:function (a,b){
+                if(!a){
+                    CloseParentShade();
+                }
+            }
+        },
         methods: {
             //关闭弹出框
             closeDialog: function () {
