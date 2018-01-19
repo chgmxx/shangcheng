@@ -35,7 +35,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <link rel="stylesheet" href="css/model.css?<%=System.currentTimeMillis()%>"/>
     <link rel="stylesheet" href="css/wangEditor.min.css?<%=System.currentTimeMillis()%>"/>
 
-    <script src="https://libs.baidu.com/jquery/1.9.0/jquery.js?<%=System.currentTimeMillis()%>"></script>
+    <script src="https://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
     <script type="text/javascript" src="js/jquery-ui-1.10.4.custom.min.js"></script>
