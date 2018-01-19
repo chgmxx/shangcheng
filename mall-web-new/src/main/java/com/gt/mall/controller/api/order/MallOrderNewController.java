@@ -5,6 +5,7 @@ import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
@@ -99,7 +100,7 @@ public class MallOrderNewController extends BaseController {
 	    if ( orderQuery.getCurPage() == null || orderQuery.getCurPage() == 1 ) {
 		Map< String,Object > count = mallOrderService.countStatus( params );
 		result.put( "count", count );
-		result.put( "videourl", busUserService.getVoiceUrl( "79" ) );
+		result.put( "videourl", Constants.VIDEO_URL + 79 );
 	    }
 
 	} catch ( BusinessException e ) {
@@ -315,7 +316,6 @@ public class MallOrderNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    params = converter.beanToMap( orderQuery );
 
-
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
@@ -457,7 +457,7 @@ public class MallOrderNewController extends BaseController {
     @RequestMapping( value = "/agreanOrderReturn", method = RequestMethod.GET )
     public ServerResponse agreanOrderReturn( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
-	    mallOrderService.agreanOrderReturn(params);
+	    mallOrderService.agreanOrderReturn( params );
 	} catch ( Exception e ) {
 	    logger.error( "订单退款回调异常：" + e.getMessage() );
 	    e.printStackTrace();

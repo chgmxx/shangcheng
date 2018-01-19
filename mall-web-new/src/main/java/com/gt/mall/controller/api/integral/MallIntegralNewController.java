@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.integral;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.integral.MallIntegralImage;
@@ -49,7 +50,6 @@ public class MallIntegralNewController extends BaseController {
     private MallStoreService         storeService;
     @Autowired
     private BusUserService           busUserService;
-
 
     @ApiOperation( value = "积分列表(分页)", notes = "积分列表(分页)" )
     @ResponseBody
@@ -164,7 +164,6 @@ public class MallIntegralNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-
     /***********************************积分商城图片***********************************************/
 
     @ApiOperation( value = "积分商城图片列表(分页)", notes = "积分商城图片列表(分页)" )
@@ -188,7 +187,7 @@ public class MallIntegralNewController extends BaseController {
 		PageUtil page = integralImageService.selectImageByShopId( params, user.getId(), shoplist );
 		result.put( "page", page );
 	    }
-	    request.setAttribute( "videourl", busUserService.getVoiceUrl( "86" ) );
+	    request.setAttribute( "videourl", Constants.VIDEO_URL + 86 );
 	} catch ( Exception e ) {
 	    logger.error( "获取积分商城图片列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -207,7 +206,7 @@ public class MallIntegralNewController extends BaseController {
 		    @ApiParam( name = "id", value = "积分商城图片Id", required = true ) @RequestParam Integer id ) {
 	MallIntegralImage imageMap = null;
 	try {
-	     imageMap = integralImageService.selectById( id );
+	    imageMap = integralImageService.selectById( id );
 	} catch ( Exception e ) {
 	    logger.error( "获取积分商城图片信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -242,7 +241,6 @@ public class MallIntegralNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
-
     /**
      * 设置积分商城图片的状态（删除，失效 ，启用）
      */
@@ -250,7 +248,8 @@ public class MallIntegralNewController extends BaseController {
     @ResponseBody
     @SysLogAnnotation( description = "设置积分商城图片的状态（删除，不显示 ，显示）", op_function = "4" )
     @RequestMapping( value = "/image/setStatus", method = RequestMethod.POST )
-    public ServerResponse setImageStatus( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "积分商城图片Id", required = true ) @RequestParam Integer id,
+    public ServerResponse setImageStatus( HttpServletRequest request, HttpServletResponse response,
+		    @ApiParam( name = "id", value = "积分商城图片Id", required = true ) @RequestParam Integer id,
 		    @ApiParam( name = "type", value = "类型 -1删除 -2不显示 1显示", required = true ) @RequestParam Integer type ) {
 	try {
 	    MallIntegralImage images = new MallIntegralImage();

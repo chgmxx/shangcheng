@@ -511,8 +511,20 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     @Override
     public double getFreightByProvinces( Map< String,Object > params, Map< String,Object > addressMap, int shopId, double totalPrice, double pro_weight ) {
 	String loginCity = "";
+	double juli = 0;
 	if ( addressMap != null && addressMap.size() > 0 ) {
 	    loginCity = addressMap.get( "memProvince" ).toString();
+	    if ( CommonUtil.isNotEmpty( params.get( "latitude" ) ) && CommonUtil.isNotEmpty( params.get( "longitude" ) )
+			    && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) ) {
+		double latitude = CommonUtil.toDouble( params.get( "latitude" ) );
+		double longitude = CommonUtil.toDouble( params.get( "longitude" ) );
+		double memLatitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+		double memLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
+		if ( latitude > 0 && longitude > 0 && memLatitude > 0 && memLongitude > 0 ) {
+		    double raill = CommonUtil.getDistance( memLongitude, memLatitude, longitude, latitude );
+		    juli = raill / 1000;
+		}
+	    }
 	} else if ( CommonUtil.isNotEmpty( params.get( "province" ) ) ) {
 	    int city = getProvinceId( params.get( "province" ).toString() );
 	    if ( city > 0 ) {
@@ -560,6 +572,9 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 	    }
 	    arr.add( obj );
 	    map.put( "orderArr", arr );
+	    if ( juli > 0 ) {
+		map.put( "juli", juli );
+	    }
 	    Map< String,Object > priceMap = getFreightMoney( map );
 	    Object freightObj = priceMap.get( CommonUtil.toString( shopId ) );
 	    if ( CommonUtil.isNotEmpty( freightObj ) ) {

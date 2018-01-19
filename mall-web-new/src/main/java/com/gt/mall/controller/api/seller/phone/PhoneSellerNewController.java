@@ -165,7 +165,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    }
 	    if ( isIndex ) {
 		resultMap.put( "index", 1 );//跳转至主页
-		return ServerResponse.createBySuccessCodeData( ResponseEnums.ERROR.getCode(), resultMap, false );
+		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
 	    }
 	    resultMap.put( "isApply", 1 );//可以申请
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), resultMap, false );
@@ -196,10 +196,10 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "验证码不能为空" );
 	    }
 
-	    String jedisCode = JedisUtil.get( Constants.REDIS_KEY + code );
+	    /*String jedisCode = JedisUtil.get( Constants.REDIS_KEY + code );
 	    if ( CommonUtil.isEmpty( jedisCode ) || !jedisCode.equals( code ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "验证码错误或超时" );
-	    }
+	    }*/
 
 	    MallSeller seller = new MallSeller();
 	    seller.setUserName( CommonUtil.urlEncode( params.getUserName() ) );
@@ -218,9 +218,9 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		if ( CommonUtil.isEmpty( member.getNickname() ) ) {
 		    seller.setUserName( member.getNickname() );
 		}
-		if ( CommonUtil.isEmpty( member.getPhone() ) ) {
+		/*if ( CommonUtil.isEmpty( member.getPhone() ) ) {
 		    seller.setTelephone( member.getPhone() );
-		}
+		}*/
 		count = mallSellerService.insertSelective( seller, member );//添加超级销售员
 	    } else {
 		if ( !isMallSeller.getCheckStatus().toString().equals( "0" ) ) {
@@ -276,10 +276,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 5 * 60 );
-
-	    String content = "您申请成为超级销售员的验证码为:" + no + "，5分钟内有效。";
-
-	    boolean result = mallCommonService.getValCode( mobile, member.getBusid(), content, null );
+	    boolean result = mallCommonService.getValCode( areaCode, mobile, member.getBusid(), no, Constants.APPLY_SELLER_CODE_MODEL_ID );
 	    if ( !result ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
 	    }
@@ -344,7 +341,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    result.put( "sellerCount", sellerCount );//查询客户的个数
 	    result.put( "sellerOrderCount", sellerOrderCount );//查询客户订单的个数
 	    result.put( "member", member );
-	    result.put( "memberUrl", PropertiesUtil.getWxmpDomain() + Constants.MEMBER_URL.replace( "${userid}", loginDTO.getBusId().toString() ) );
+	    result.put( "memberUrl", Constants.MEMBER_URL.replace( "${userid}", loginDTO.getBusId().toString() ) );
 
 	    //	    mallPageService.getCustomer( request, member.getBusid() );
 	} catch ( BusinessException be ) {

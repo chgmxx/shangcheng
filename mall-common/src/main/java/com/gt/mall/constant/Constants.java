@@ -1,5 +1,7 @@
 package com.gt.mall.constant;
 
+import com.gt.mall.utils.PropertiesUtil;
+
 /**
  * 定义常量公用类
  * User : yangqian
@@ -237,11 +239,11 @@ public class Constants {
      */
     public static final int PRESALE_PAY_TYPE = 101;
 
-    public static final String MEMBER_URL = "/phoneMemberController/${userid}/79B4DE7C/findMember_1.do";
+    //    public static final String MEMBER_URL = PropertiesUtil.getWxmpDomain() + "phoneMemberController/${userid}/79B4DE7C/findMember_1.do";
 
-    public static final String MEMBER_NEW_URL = "/html/phone/index.html#/home/${userid}";
+    public static final String MEMBER_URL = PropertiesUtil.getMemberDomain() + "html/phone/index.html#/home/${userid}";
 
-    public static final String COUPON_URL = "/phone_2MemberController/79B4DE7C/memberCardList_1.do?busId=${userid}";
+    public static final String COUPON_URL = PropertiesUtil.getWxmpDomain() + "phone_2MemberController/79B4DE7C/memberCardList_1.do?busId=${userid}";
 
     public static final String FINISH_REFUND_STATUS = "-14";
 
@@ -253,5 +255,29 @@ public class Constants {
     public static final String[] BUS_TEMPLATE_LIST  = { "付款成功通知", "确认收货提醒", "申请维权通知" };
 
     public static final String REDIS_SECKILL_NAME = "hSeckill";
+
+    //视频教程url
+    public static final String VIDEO_URL = PropertiesUtil.getCoreDomain() + "html/video/videoindex.html?serial=";
+
+    /*短信模板*/
+    //通知商家买家已付款--{1}成功购买您的商品{2}，请尽快登录商城后台发货
+    public static final Long NOTICE_BUS_PAY_SUCCESS_MODEL_ID    = 78284L;
+    //通知商家买家确认收货--{1}成功购买您的商品，并确认收货成功，查看详情请登录商城后台。
+    public static final Long NOTICE_BUS_CONFIRM_MODEL_ID        = 78286L;
+    // 通知商家买家发起维权退款--{1}发起了退款申请，请尽快登录商城后台查看并及时处理。
+    public static final Long NOTICE_BUS_ORDER_RETURN_1_MODEL_ID = 78287L;
+    //通知商家买家发起维权退货退款 -- {1}发起了退货退款申请，请尽快登录商城后台查看并及时处理。
+    public static final Long NOTICE_BUS_ORDER_RETURN_2_MODEL_ID = 78431L;
+    //通知商家粉丝申请超级销售员 --{1}正向您申请成为分销商，请及时登录后台操作审核，晚一步会被人抢走哦 ~
+    public static final Long NOTICE_BUS_APPLY_SELLER_MODEL_ID   = 78288L;
+
+    //买家购买商品付款成功  -- 支付成功，请您耐心等待，我们将稍后为您发货
+    public static final Long NOTICE_MEMBER_PAY_SUCCESS_MODEL_ID = 78291L;
+    // 商城发送验证码 -- 您的验证码：({1})，验证码10分钟内有效，请尽快完成验证。
+    public static final Long MALL_CODE_MODEL_ID                 = 78293L;
+    // 申请批发商验证码 -- 您申请成为批发商的验证码:{1}，5分钟内有效，请尽快完成验证。
+    public static final Long APPLY_PIFA_CODE_MODEL_ID           = 78295L;
+    // 申请超级销售员验证码 -- 您申请成为超级销售员的验证码为:{1}，5分钟内有效，请尽快完成验证。
+    public static final Long APPLY_SELLER_CODE_MODEL_ID         = 78297L;
 
 }

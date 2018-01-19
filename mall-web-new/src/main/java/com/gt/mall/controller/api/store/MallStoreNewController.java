@@ -107,7 +107,7 @@ public class MallStoreNewController extends BaseController {
 		result.put( "isShopAdd", countnum );//是否新增店铺 0可以 1不可以
 	    }
 
-	    result.put( "videourl", busUserService.getVoiceUrl( "8" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 8 );
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();

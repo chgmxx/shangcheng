@@ -622,15 +622,12 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
      * @param response
      * @param request
      */
-    @RequestMapping( value = "/79B4DE7C/getMemberPower" )
-    public String getMemberPower( HttpServletResponse response, HttpServletRequest request, @RequestParam Integer busId, @RequestParam Integer orderId ) {
+    @RequestMapping( value = "/79B4DE7C/{busId}/{orderId}/getMemberPower" )
+    public String getMemberPower( HttpServletResponse response, HttpServletRequest request,  @PathVariable("busId") Integer busId, @PathVariable("orderId") Integer orderId) {
 	try {
 	    //浏览器类型判断
-	    if ( CommonUtil.judgeBrowser( request ) != 1 ) {
-		request.setAttribute( "payType", 0 );
-	    } else {
-		String url = PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/getMemberPower.do?orderId=" + orderId + "&busId=" + busId;
-
+	    if ( CommonUtil.judgeBrowser( request ) == 1 ) {
+		String url = PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/"+busId+"/"+orderId+"/getMemberPower.do";
 		Map< String,Object > map = new HashMap<>();
 		map.put( "url", url );
 		map.put( "ucLogin", 0 );
@@ -640,13 +637,14 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 		    request.setAttribute( "returnUrl", returnStr );
 		    return "mall/purchase/phone/authorizationBack";
 		}
-		request.setAttribute( "payType", 1 );
 	    }
 	    //记录统计
 	    PurchaseOrderStatistics orderStatistics = new PurchaseOrderStatistics();
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    if ( member != null ) {
 		orderStatistics.setMemberId( member.getId() );
+		orderStatistics.setMemberHeadimgurl(member.getHeadimgurl());
+		orderStatistics.setMemberName(member.getNickname());
 	    }
 	    orderStatistics.setLookDate( new Date() );
 	    orderStatistics.setLookIp( CommonUtil.getIpAddr( request ) );

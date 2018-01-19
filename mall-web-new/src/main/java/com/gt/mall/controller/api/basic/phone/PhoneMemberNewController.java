@@ -22,7 +22,6 @@ import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -146,10 +145,8 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "是否需要登陆接口", notes = "是否需要登陆订单", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
-		    @ApiImplicitParam( name = "pageUrl", value = "当前页面地址", paramType = "query", required = true, dataType = "string" )
-    } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
+		    @ApiImplicitParam( name = "pageUrl", value = "当前页面地址", paramType = "query", required = true, dataType = "string" ) } )
     @ResponseBody
     @PostMapping( value = "isLogin", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse isLogin( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
@@ -199,9 +196,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     }
 
     @ApiOperation( value = "删除收藏商品接口", notes = "删除收藏商品", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
-    @ApiImplicitParams(
-		    @ApiImplicitParam( name = "ids", value = "删除收藏id集合", paramType = "query", required = true, dataType = "string" )
-    )
+    @ApiImplicitParams( @ApiImplicitParam( name = "ids", value = "删除收藏id集合", paramType = "query", required = true, dataType = "string" ) )
     @ResponseBody
     @PostMapping( value = "deleteCollect", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse deleteCollect( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String ids ) {
@@ -231,10 +226,10 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
     public ServerResponse< PhoneUrlResult > memberCenter( HttpServletRequest request, HttpServletResponse response, String busId, Integer type ) {
 	try {
 	    PhoneUrlResult result = new PhoneUrlResult();
-	    String memberCenterUrl = PropertiesUtil.getWxmpDomain() + Constants.MEMBER_URL.replace( "${userid}", busId );
-	    //	    String memberCenterUrl = PropertiesUtil.getMemberDomain() + Constants.MEMBER_NEW_URL.replace( "${userid}", busId.toString() );
+	    String memberCenterUrl = Constants.MEMBER_URL.replace( "${userid}", busId );
+	    //	    String memberCenterUrl =  Constants.MEMBER_NEW_URL.replace( "${userid}", busId.toString() );
 
-	    String couponUrl = PropertiesUtil.getWxmpDomain() + Constants.COUPON_URL.replace( "${userid}", busId );
+	    String couponUrl = Constants.COUPON_URL.replace( "${userid}", busId );
 	    result.setMemberCenterUrl( memberCenterUrl );
 	    result.setMemberCouponUrl( couponUrl );
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
@@ -266,9 +261,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 		}
 	    }
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //todo 区号
-	    //	    boolean isSuccess = memberService.bingdingPhoneH5AreaPhone( loginDTO.getBusId(), phone, member.getId(), areaId, areaCode );
-	    boolean isSuccess = memberService.bingdingPhoneH5( loginDTO.getBusId(), phone, member.getId() );
+	    boolean isSuccess = memberService.bingdingPhoneH5AreaPhone( loginDTO.getBusId(), phone, member.getId(), areaId, areaCode );
 	    if ( isSuccess ) {
 		JedisUtil.del( Constants.REDIS_KEY + code );//删除验证码
 		return ServerResponse.createBySuccess();
@@ -296,9 +289,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
-	    String content = "您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。。";
-	    logger.info( content );
-	    boolean result = mallCommonService.getValCode( phone, member.getBusid(), content, null );
+	    boolean result = mallCommonService.getValCode( areaCode, phone, member.getBusid(), no, Constants.MALL_CODE_MODEL_ID );
 	    if ( !result ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
 	    }

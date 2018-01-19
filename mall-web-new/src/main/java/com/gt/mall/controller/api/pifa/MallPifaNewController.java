@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.pifa;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.pifa.MallPifa;
@@ -97,7 +98,7 @@ public class MallPifaNewController extends BaseController {
 		    result.put( "page", page );
 		}
 	    }
-	    result.put( "videourl", busUserService.getVoiceUrl( "84" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 84 );
 	} catch ( Exception e ) {
 	    logger.error( "获取批发列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -326,8 +327,8 @@ public class MallPifaNewController extends BaseController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPaySet mallPaySet = com.alibaba.fastjson.JSONObject.parseObject( com.alibaba.fastjson.JSON.toJSONString( params ), MallPaySet.class );
-//	    mallPaySet.setPfRemark( CommonUtil.urlEncode( mallPaySet.getPfRemark() ) );
-//	    mallPaySet.setPfApplyRemark( CommonUtil.urlEncode( mallPaySet.getPfApplyRemark() ) );
+	    //	    mallPaySet.setPfRemark( CommonUtil.urlEncode( mallPaySet.getPfRemark() ) );
+	    //	    mallPaySet.setPfApplyRemark( CommonUtil.urlEncode( mallPaySet.getPfApplyRemark() ) );
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( user.getId() );
 	    MallPaySet paySet = mallPaySetService.selectByUserId( set );//查询登录者是否有设置商城
@@ -341,8 +342,8 @@ public class MallPifaNewController extends BaseController {
 		}
 	    } else {
 		params.put( "userId", user.getId() );
-//		params.put( "pfRemark", CommonUtil.urlEncode( params.get( "pfRemark" ).toString() ) );
-//		params.put( "pfApplyRemark", CommonUtil.urlEncode( params.get( "pfApplyRemark" ).toString() ) );
+		//		params.put( "pfRemark", CommonUtil.urlEncode( params.get( "pfRemark" ).toString() ) );
+		//		params.put( "pfApplyRemark", CommonUtil.urlEncode( params.get( "pfApplyRemark" ).toString() ) );
 		count = mallPifaService.updateSetWholesaler( params );//修改批发商城设置
 	    }
 

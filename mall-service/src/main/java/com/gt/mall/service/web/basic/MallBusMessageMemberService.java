@@ -33,7 +33,7 @@ public interface MallBusMessageMemberService extends BaseService< MallBusMessage
      *
      * @param order
      * @param member
-     * @param type    发送类型 0全部 1短信 2模板
+     * @param type   发送类型 0全部 1短信 2模板
      */
     void buyerPaySuccess( MallOrder order, Member member, Integer type, String telePhone );
 
@@ -60,5 +60,5 @@ public interface MallBusMessageMemberService extends BaseService< MallBusMessage
      * @param member   粉丝
      * @param telPhone 接收申请审核手机
      */
-    void memberApplySeller( Member member, String telPhone);
+    void memberApplySeller( Member member, String telPhone );
 }

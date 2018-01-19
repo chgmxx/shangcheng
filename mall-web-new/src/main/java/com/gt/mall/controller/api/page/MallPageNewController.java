@@ -4,6 +4,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.page.MallPage;
@@ -72,7 +73,7 @@ public class MallPageNewController extends BaseController {
 	    PageUtil page = mallPageService.findByPage( params, user, request );
 
 	    result.put( "page", page );
-	    result.put( "videourl", busUserService.getVoiceUrl( "78" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 78 );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的页面列表异常：" + e.getMessage() );
@@ -127,6 +128,7 @@ public class MallPageNewController extends BaseController {
     @SysLogAnnotation( description = "页面管理-保存页面信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPage page = com.alibaba.fastjson.JSONObject.parseObject( params.get( "page" ).toString(), MallPage.class );
@@ -143,6 +145,7 @@ public class MallPageNewController extends BaseController {
 	    page.setPagUserId( MallSessionUtils.getLoginUser( request ).getId() );
 	    page.setPagCreateTime( new Date() );
 	    mallPageService.saveOrUpdate( page, user );
+	    result.put( "id", page.getId() );
 	} catch ( BusinessException e ) {
 	    logger.error( "保存页面信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -152,7 +155,7 @@ public class MallPageNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**

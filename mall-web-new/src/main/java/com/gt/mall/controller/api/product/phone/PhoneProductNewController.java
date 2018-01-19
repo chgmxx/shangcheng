@@ -367,13 +367,15 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    resultMap.put( "guigePrice", guigePrice );
 		}
 	    }
+	    resultMap.put( "proCode",product.getProCode() );
+	    resultMap.put( "productName", product.getProName() );
 	    resultMap.put( "proStockTotal", product.getProStockTotal() );
 	    resultMap.put( "proPrice", product.getProPrice() );
 	    resultMap.put( "busId", product.getUserId() );
 	    resultMap.put( "id", product.getId() );
 	    resultMap.put( "proTypeId", product.getProTypeId() );
 	    if ( product.getProRestrictionNum() != null && product.getProRestrictionNum() > 0 ) {
-		resultMap.put( "maxNum", product.getProRestrictionNum() );
+		resultMap.put( "maxBuyNum", product.getProRestrictionNum() );
 	    }
 	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, params.getProductId() );
 	    if ( imageList != null && imageList.size() > 0 ) {

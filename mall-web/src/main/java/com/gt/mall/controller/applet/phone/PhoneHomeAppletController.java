@@ -6,6 +6,8 @@ import com.gt.api.bean.session.Member;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.MemberAddress;
+import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.applet.AppletAddReturnOrderDTO;
 import com.gt.mall.param.applet.AppletSubmitOrderDTO;
@@ -27,13 +29,18 @@ import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.EntityDtoConverter;
+import com.gt.mall.utils.PageUtil;
+import com.gt.mall.utils.PropertiesUtil;
+import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1055,6 +1062,21 @@ public class PhoneHomeAppletController extends BaseController {
 
 	    CommonUtil.write( response, resultMap );
 	}
+    }
+
+    @ApiOperation( value = "获取所有国家区号列表", notes = "获取所有国家区号列表" )
+    @ResponseBody
+    @RequestMapping( value = "/areaPhoneList", method = RequestMethod.GET )
+    public ServerResponse areaPhoneList( HttpServletRequest request, HttpServletResponse response ) {
+	List< Map > list = null;
+	try {
+	    list = memberAddressService.areaPhoneList();
+	} catch ( Exception e ) {
+	    logger.error( "获取所有国家区号列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取所有国家区号列表异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list, false );
     }
 
 }

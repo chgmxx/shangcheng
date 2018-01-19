@@ -3,6 +3,7 @@ package com.gt.mall.controller.api.product;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
@@ -109,7 +110,7 @@ public class MallProductNewController extends BaseController {
 		if ( isJxc == 1 ) {
 		    mallProductService.syncErpPro( user.getId(), request );//把未同步的商品进行同步
 		}
-		result.put( "videourl", busUserService.getVoiceUrl( "77" ) );
+		result.put( "videourl", Constants.VIDEO_URL + 77 );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "商品列表异常：" + e.getMessage() );

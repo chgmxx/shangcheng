@@ -410,10 +410,10 @@
         </if>
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
         <if test="startTime != null and startTime != ''">
-            and t.create_time >= #{startTime}
+            and DATE(t.create_time) >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and t.create_time <![CDATA[<=]]> #{endTime}
+            and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="status != null and status != ''">
             <if test="status &lt; 6">
@@ -487,10 +487,10 @@
                 </foreach>
             </if>
             <if test="startTime != null and startTime != ''">
-                and t.create_time >= #{startTime}
+                and DATE(t.create_time) >= #{startTime}
             </if>
             <if test="endTime != null and endTime != ''">
-                and t.create_time <![CDATA[<=]]> #{endTime}
+                and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
             </if>
             <if test="orderType != 0">
                 <if test="orderType == 1">and t.order_status = #{orderType}</if>
@@ -557,10 +557,10 @@
                 </foreach>
             </if>
             <if test="startTime != null and startTime != ''">
-                and t.create_time >= #{startTime}
+                and DATE(t.create_time) >= #{startTime}
             </if>
             <if test="endTime != null and endTime != ''">
-                and t.create_time <![CDATA[<=]]> #{endTime}
+                and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
             </if>
             <if test="orderType != 0">
                 <if test="orderType == 1">and t.order_status = #{orderType}</if>
@@ -659,10 +659,10 @@
                 </foreach>
             </if>
             <if test="startTime != null and startTime != ''">
-                and t.create_time >= #{startTime}
+                and DATE(t.create_time) >= #{startTime}
             </if>
             <if test="endTime != null and endTime != ''">
-                and t.create_time <![CDATA[<=]]> #{endTime}
+                and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
             </if>
             <if test="orderType != 0">
                 <if test="orderType == 1">and t.order_status = #{orderType}</if>
@@ -1329,10 +1329,10 @@
         </if>
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
         <if test="startTime != null and startTime != ''">
-            and t.create_time >= #{startTime}
+            and DATE(t.create_time) >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and t.create_time <![CDATA[<=]]> #{endTime}
+            and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="status != null and status != ''">
             <if test="status == 1 "> <!-- 成功 -->
@@ -1373,10 +1373,10 @@
         </if>
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
         <if test="startTime != null and startTime != ''">
-            and t.create_time >= #{startTime}
+            and DATE(t.create_time) >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and t.create_time <![CDATA[<=]]> #{endTime}
+            and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="status != null and status != ''">
             <if test="status == 1 "> <!-- 成功 -->
@@ -1388,7 +1388,7 @@
                 and r.status is null
             </if>
             <if test="status == 3 "><!-- 退款-->
-                and (r.status is not null and r.status != 1 and r.status != 5)
+                and (r.status is not null and r.status != 1 and r.status != 5 and r.status !=-2)
             </if>
             <if test="status == 4 "><!-- 关闭-->
                 and t.order_status = 5

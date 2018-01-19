@@ -214,10 +214,19 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			}
 		    }
 		    params.put( "product_num", totalNum );
-		    double freightPrice = freightService.getFreightByProvinces( params, addressMap, shopId, totalPrice, pro_weight );
-
-		    totalFreightMoney += freightPrice;
-		    shopMap.put( "freightPrice", freightPrice );
+		    boolean isError = false;
+		    if ( shopId > 0 ) {
+			boolean isJuli = orderService.isJuliByFreight( shopId + "" );
+			if ( isJuli && ( CommonUtil.isEmpty( addressMap.get( "memLatitude" ) ) || CommonUtil.isEmpty( addressMap.get( "memLongitude" ) ) ) ) {
+			    resultMap.put( "isJuliFreight", 1 );
+			    isError = true;
+			}
+		    }
+		    if ( !isError ) {
+			double freightPrice = freightService.getFreightByProvinces( params, addressMap, shopId, totalPrice, pro_weight );
+			totalFreightMoney += freightPrice;
+			shopMap.put( "freightPrice", freightPrice );
+		    }
 		    shopMap.put( "totalProPrice", df.format( totalPrice ) );
 		    shopMap.put( "proList", proList );
 		    shopMap.put( "totalNum", totalNum );
@@ -320,11 +329,21 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    totalProMoney += proTotalPrice;
 
 	    double totalPrice = proTotalPrice;
-
-	    //计算运费
-	    double freightPrice = freightService.getFreightByProvinces( params, addressMap, product.getShopId(), totalPrice, CommonUtil.toDouble( product.getProWeight() ) );
-	    totalFreightMoney += freightPrice;
-
+	    boolean isError = false;
+	    double freightPrice = 0;
+	    if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
+		boolean isJuli = orderService.isJuliByFreight( product.getShopId().toString() );
+		if ( isJuli && ( CommonUtil.isEmpty( addressMap ) || CommonUtil.isEmpty( addressMap.get( "memLatitude" ) ) || CommonUtil
+				.isEmpty( addressMap.get( "memLongitude" ) ) ) ) {
+		    resultMap.put( "isJuliFreight", 1 );
+		    isError = true;
+		}
+	    }
+	    if ( !isError ) {
+		//计算运费
+		freightPrice = freightService.getFreightByProvinces( params, addressMap, product.getShopId(), totalPrice, CommonUtil.toDouble( product.getProWeight() ) );
+		totalFreightMoney += freightPrice;
+	    }
 	    Map< String,Object > shopMap = new HashMap<>();
 	    shopMap.put( "shop_id", product.getShopId() );
 	    shopMap.put( "totalNum", totalNum );
@@ -399,9 +418,20 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 		//		double totalPrice = proTotalPrice;
 
-		//计算运费
-		double freightPrice = freightService.getFreightByProvinces( params, addressMap, mallOrder.getShopId(), totalProMoney, productWeight );
-		totalFreightMoney += freightPrice;
+		boolean isError = false;
+		double freightPrice = 0;
+		if ( CommonUtil.isNotEmpty( mallOrder.getShopId() ) ) {
+		    boolean isJuli = orderService.isJuliByFreight( mallOrder.getShopId().toString() );
+		    if ( isJuli && ( CommonUtil.isEmpty( addressMap.get( "memLatitude" ) ) || CommonUtil.isEmpty( addressMap.get( "memLongitude" ) ) ) ) {
+			resultMap.put( "isJuliFreight", 1 );
+			isError = true;
+		    }
+		}
+		if ( !isError ) {
+		    //计算运费
+		    freightPrice = freightService.getFreightByProvinces( params, addressMap, mallOrder.getShopId(), totalProMoney, productWeight );
+		    totalFreightMoney += freightPrice;
+		}
 
 		Map< String,Object > shopMap = new HashMap<>();
 		shopMap.put( "shop_id", mallOrder.getShopId() );
@@ -548,11 +578,11 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( canUseJifenMoney > 0 || canUseFenbiMoney > 0 ) {
 	    JifenAndFenbBean bean = ToOrderUtil.getJifenFenbiParams( jifenFenbiRule, canUseJifenMoney, canUseFenbiMoney, cardMap );
 	    if ( CommonUtil.isNotEmpty( bean ) ) {
-		if ( bean.getJifenMoney() > 0 && bean.getJifenNum() > 0 ) {
+		if ( CommonUtil.isNotEmpty( bean.getJifenMoney() ) && CommonUtil.isNotEmpty( bean.getJifenNum() ) && bean.getJifenMoney() > 0 && bean.getJifenNum() > 0 ) {
 		    resultMap.put( "integral_money", bean.getJifenMoney() );
 		    resultMap.put( "integral", bean.getJifenNum() );
 		}
-		if ( bean.getFenbiMoney() > 0 && bean.getFenbiNum() > 0 ) {
+		if ( CommonUtil.isNotEmpty( bean.getFenbiMoney() ) && CommonUtil.isNotEmpty( bean.getFenbiNum() ) && bean.getFenbiMoney() > 0 && bean.getFenbiNum() > 0 ) {
 		    resultMap.put( "fenbi_money", bean.getFenbiMoney() );
 		    resultMap.put( "fenbi", bean.getFenbiNum() );
 		}

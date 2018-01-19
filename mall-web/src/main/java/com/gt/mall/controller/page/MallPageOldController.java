@@ -232,7 +232,7 @@ public class MallPageOldController extends AuthorizeOrLoginController {
     /**
      * 页面保存
      */
-    @RequestMapping( value = "/savepage", method = RequestMethod.POST )
+    @RequestMapping( value = "/E9lM9uM4ct/savepage", method = RequestMethod.POST )
     @ResponseBody
     public ServerResponse savepage( HttpServletRequest request, HttpServletResponse response, MallPage obj ) {
 	try {
@@ -252,10 +252,11 @@ public class MallPageOldController extends AuthorizeOrLoginController {
     /**
      * 弹出选择商品
      */
-    //    @ApiOperation( value = "页面设计-选择商品", notes = "页面设计-选择商品" )
-    //    @ResponseBody
-    @RequestMapping( value = "/choosePro", method = RequestMethod.GET )
-    public String choosePro( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @ApiOperation( value = "页面设计-选择商品", notes = "页面设计-选择商品" )
+    @ResponseBody
+    @RequestMapping( value = "/E9lM9uM4ct/choosePro", method = RequestMethod.POST )
+    public ServerResponse choosePro( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > resultMap = new HashMap<>();
 	try {
 	    //获取店铺下的分类信息
 	    Integer stoId = CommonUtil.toInteger( params.get( "stoId" ) );//stoid代表商铺id
@@ -265,80 +266,91 @@ public class MallPageOldController extends AuthorizeOrLoginController {
 	    PageUtil page = mallPageService.product( params );
 	    /*String url = PropertiesUtil.getHomeUrl();*/
 
-	    request.setAttribute( "page", page );
-	    request.setAttribute( "groLs", groLs );
-	    request.setAttribute( "proName", params.get( "proName" ) );
-	    request.setAttribute( "groupId", params.get( "groupId" ) );
-	    request.setAttribute( "check", params.get( "check" ) );
-	    request.setAttribute( "stoId", stoId );
-	    request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
+	    resultMap.put( "page", page );
+//	    resultMap.put( "groLs", groLs );
+//	    resultMap.put( "proName", params.get( "proName" ) );
+//	    resultMap.put( "groupId", params.get( "groupId" ) );
+//	    resultMap.put( "check", params.get( "check" ) );
+//	    resultMap.put( "stoId", stoId );
+//	    resultMap.put( "http", PropertiesUtil.getResourceUrl() );
 	} catch ( Exception e ) {
 	    logger.error( "页面设计-选择商品异常：" + e.getMessage() );
 	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return "/mall/page/choosePro";
+	//	return "/mall/page/choosePro";
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), resultMap );
     }
 
     /**
      * 弹出该店铺分类页
      */
-    //    @ApiOperation( value = "页面设计-店铺分类", notes = "页面设计-店铺分类" )
-    //    @ResponseBody
-    @RequestMapping( value = "/branchPage", method = RequestMethod.GET )
-    public String branchPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @ApiOperation( value = "页面设计-店铺分类", notes = "页面设计-店铺分类" )
+    @ResponseBody
+    @RequestMapping( value = "/E9lM9uM4ct/branchPage", method = RequestMethod.POST )
+    public ServerResponse branchPage( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > resultMap = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Integer stoId = Integer.valueOf( params.get( "stoId" ).toString() );
 	    PageUtil page = mallPageService.selectListBranch( stoId, params );
-	    request.setAttribute( "page", page );
+	    resultMap.put( "page", page );
 	   /* String ym = PropertiesUtil.getHomeUrl();//域名
-	     request.setAttribute( "ym", ym );*/
+	     resultMap.put( "ym", ym );*/
 	    int pageindex = 0;
 	    if ( CommonUtil.isNotEmpty( page ) ) {
 		pageindex = page.getCurPage();
 	    }
 	    if ( pageindex == 1 ) {
 		List< Map< String,Object > > typeList = mallPageService.typePage( stoId, user );
-		request.setAttribute( "typeList", typeList );
+		resultMap.put( "typeList", typeList );
 	    }
-	    request.setAttribute( "shopId", stoId );
+	    resultMap.put( "shopId", stoId );
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺分类弹出框异常：" + e.getMessage() );
 	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return "/mall/page/branchPage";
+	//	return "/mall/page/branchPage";
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), resultMap );
     }
 
     /**
      * 弹出该店铺预售信息
      */
-    //    @ApiOperation( value = "页面设计-店铺预售信息", notes = "页面设计-店铺预售信息" )
-    //    @ResponseBody
-    @RequestMapping( value = "/choosePresalePro", method = RequestMethod.GET )
-    public String choosePresalePro( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @ApiOperation( value = "页面设计-店铺预售信息", notes = "页面设计-店铺预售信息" )
+    @ResponseBody
+    @RequestMapping( value = "/E9lM9uM4ct/choosePresalePro", method = RequestMethod.POST )
+    public ServerResponse choosePresalePro( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > resultMap = new HashMap<>();
 	try {
 	    Integer stoId = Integer.valueOf( params.get( "stoId" ).toString() );
-	    List< Map< String,Object > > presaleList = mallPageService.productPresale( stoId, params );
-	    request.setAttribute( "presaleList", presaleList );
-	    request.setAttribute( "proName", params.get( "proName" ) );
-	    request.setAttribute( "groupId", params.get( "groupId" ) );
-	    request.setAttribute( "stoId", params.get( "stoId" ) );
-	    request.setAttribute( "check", params.get( "check" ) );
-	    request.setAttribute( "http", PropertiesUtil.getResourceUrl() );
+	    PageUtil page = mallPageService.productPresale( stoId, params );
+	    resultMap.put( "page", page );
+	    /*resultMap.put( "proName", params.get( "proName" ) );*/
+	    /*resultMap.put( "groupId", params.get( "groupId" ) );*/
+	    /*resultMap.put( "stoId", params.get( "stoId" ) );
+	    resultMap.put( "check", params.get( "check" ) );
+	    resultMap.put( "http", PropertiesUtil.getResourceUrl() );*/
 
 	} catch ( Exception e ) {
 	    logger.error( "选择预售商品出错：" + e.getMessage() );
 	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return "mall/page/branchPresale";
+	//	return "mall/page/branchPresale";
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), resultMap );
 
     }
 
     /**
      * 选择分类
      */
-    @RequestMapping( value = "/chooseGroup", method = RequestMethod.GET )
-    public String chooseGroup( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+    @ApiOperation( value = "页面设计-选择分类", notes = "页面设计-选择分类" )
+    @ResponseBody
+    @RequestMapping( value = "/E9lM9uM4ct/chooseGroup", method = RequestMethod.POST )
+    public ServerResponse chooseGroup( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > resultMap = new HashMap<>();
 	try {
 	    Integer stoId = Integer.valueOf( params.get( "stoId" ).toString() );
 
@@ -351,15 +363,17 @@ public class MallPageOldController extends AuthorizeOrLoginController {
 	    params.put( "groupPId", "0" );
 	    params.put( "isLabel", 0 );
 	    params.put( "type", 1 );//显示推荐数据
-	    PageUtil page = mallGroupService.findGroupByPage( params, shopList, user.getId() );// 获取分组集合
-	    request.setAttribute( "page", page );
-	    request.setAttribute( "stoId", params.get( "stoId" ) );
-	    request.setAttribute( "check", params.get( "check" ) );
+	    PageUtil page = mallGroupService.findGroupDialogByPage( params, shopList, user.getId() );// 获取分组集合
+	    resultMap.put( "page", page );
+//	    resultMap.put( "stoId", params.get( "stoId" ) );
+//	    resultMap.put( "check", params.get( "check" ) );
 
 	} catch ( Exception e ) {
-	    logger.error( "选择预售商品出错：" + e.getMessage() );
+	    logger.error( "选择分类出错：" + e.getMessage() );
 	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return "mall/page/branchGroup";
+	//	return "mall/page/branchGroup";
+	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), resultMap );
     }
 }

@@ -127,6 +127,9 @@ public class MallProductApiController {
 
 	    params.put( "checkStatus", params.get( "status" ) );
 	    params.put( "isPlatformCheck", "1" );
+	    if ( CommonUtil.isNotEmpty( params.get( "status" ) ) && params.get( "status" ).toString().equals( "-1" ) ) {
+		params.put( "isPublish", "-1" );
+	    }
 	    //	    if ( status != 1 ) {
 	    //		params.put( "checkReason", checkReason );
 	    //	    }

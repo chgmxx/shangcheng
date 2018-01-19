@@ -4,6 +4,7 @@ import com.gt.api.bean.session.BusUser;
 import com.gt.api.util.KeysUtil;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionMargin;
@@ -76,7 +77,7 @@ public class MallAuctionNewController extends BaseController {
 		PageUtil page = auctionService.selectAuctionByShopId( params, shoplist );
 		result.put( "page", page );
 	    }
-	    result.put( "videourl", busUserService.getVoiceUrl( "86" ) );
+	    result.put( "videourl", Constants.VIDEO_URL + 86 );
 	} catch ( Exception e ) {
 	    logger.error( "拍卖管理列表异常：" + e.getMessage() );
 	    e.printStackTrace();

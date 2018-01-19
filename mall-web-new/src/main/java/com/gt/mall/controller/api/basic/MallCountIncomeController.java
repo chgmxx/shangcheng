@@ -8,6 +8,7 @@ import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.basic.MallCountIncome;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
+import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -48,8 +49,10 @@ public class MallCountIncomeController extends BaseController {
     private MallProductService     mallProductService;
     @Autowired
     private MallOrderService       mallOrderService;
+    @Autowired
+    private MallOrderReturnService mallOrderReturnService;
 
-    @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据")
+    @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
     @ResponseBody
     @RequestMapping( value = "/test", method = RequestMethod.POST )
     public ServerResponse test( HttpServletRequest request, HttpServletResponse response ) {
@@ -59,8 +62,8 @@ public class MallCountIncomeController extends BaseController {
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    Calendar end = Calendar.getInstance();//定义日期实例
 	    Calendar start = Calendar.getInstance();//定义日期实例
-	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2018-1-3" );//定义起始日期
-	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-12-28" );//定义起始日期
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );//定义结束日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-4-24" );//定义起始日期
 	    end.setTime( d1 );
 	    start.setTime( d2 );
 
@@ -69,14 +72,30 @@ public class MallCountIncomeController extends BaseController {
 		String str = sdf.format( start.getTime() );
 		System.out.println( str );//输出日期结果
 		for ( Map< String,Object > map : shoplist ) {
+		    Wrapper groupWrapper = new EntityWrapper();
+		    groupWrapper.setSqlSelect( "IFNULL(SUM(order_money),0) price" );
+		    groupWrapper.where( "DATE(create_time) ={0} AND shop_id={1}  AND order_status != 5", str, CommonUtil.toInteger( map.get( "id" ) ) );
+		    Map trade = mallOrderService.selectMap( groupWrapper );
+		    Double tradePrice = CommonUtil.toDouble( trade.get( "price" ) );//当天交易金额
+		    groupWrapper = new EntityWrapper();
+		    groupWrapper.setSqlSelect( "IFNULL(SUM(ret_money),0) price" );
+		    groupWrapper.where( "DATE(update_time) ={0} AND (status=1 OR status =5) AND shop_id={1}", str, CommonUtil.toInteger( map.get( "id" ) ) );
+		    Map refund = mallOrderReturnService.selectMap( groupWrapper );
+		    Double refundPrice = CommonUtil.toDouble( refund.get( "price" ) );//当天退款金额
+		    groupWrapper = new EntityWrapper();
+		    groupWrapper.setSqlSelect( "IFNULL(SUM(order_money),0) price" );
+		    groupWrapper.where( "DATE(DATE_ADD(update_time, INTERVAL 7 DAY)) ={0} AND order_status=4 AND shop_id={1}", str, CommonUtil.toInteger( map.get( "id" ) ) );
+		    Map income = mallOrderService.selectMap( groupWrapper );
+		    Double incomePrice = CommonUtil.toDouble( income.get( "price" ) );//收入金额
+
 		    MallCountIncome countIncome = new MallCountIncome();
 		    countIncome.setBusId( user.getId() );
-		    countIncome.setCountDate( DateTimeKit.parseDate( str ) );
-		    countIncome.setIncomePrice( new BigDecimal( ( Math.random() * 1000 ) ) );
-		    countIncome.setTradePrice( new BigDecimal( ( Math.random() * 1000 ) ) );
 		    countIncome.setShopId( CommonUtil.toInteger( map.get( "id" ) ) );
-		    countIncome.setTurnover( new BigDecimal( ( Math.random() * 1000 ) ) );
-		    countIncome.setRefundPrice( new BigDecimal( ( Math.random() * countIncome.getTradePrice().doubleValue() ) ) );
+		    countIncome.setCountDate( DateTimeKit.parseDate( str ) );
+		    countIncome.setIncomePrice( new BigDecimal( incomePrice ) );
+		    countIncome.setTradePrice( new BigDecimal( tradePrice ) );
+		    countIncome.setTurnover( new BigDecimal( tradePrice - refundPrice ) );
+		    countIncome.setRefundPrice( new BigDecimal( refundPrice ) );
 
 		    mallCountIncomeService.insert( countIncome );
 		}
@@ -156,25 +175,49 @@ public class MallCountIncomeController extends BaseController {
 		params.put( "shoplist", shoplist );
 	    }
 	    if ( CommonUtil.isEmpty( startDate ) ) {
-		startDate = DateTimeKit.format( DateTimeKit.addMonths( -1 ) );
-		endDate = DateTimeKit.getDate();
+		Calendar cal = Calendar.getInstance();
+		cal.add( Calendar.DATE, -1 );
+		endDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+		cal.add( Calendar.DATE, -29 );
+		startDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    } else {
+		startDate = DateTimeKit.format( DateTimeKit.parseDate( startDate ) );
+		endDate = DateTimeKit.format( DateTimeKit.parseDate( endDate ) );
 	    }
 
-	    params.put( "startDate", DateTimeKit.format(DateTimeKit.parse(startDate,"" )));
-	    params.put( "endDate", DateTimeKit.format(DateTimeKit.parse(endDate ,"")));
+	    Integer date = DateTimeKit.daysBetween( startDate, endDate );
+
+	    params.put( "startDate", startDate );
+	    params.put( "endDate", endDate );
 	    List< Map< String,Object > > countList = mallCountIncomeService.getCountListByTimes( params );
-	    //	    String[] date = new String[countList.size()];
-	    String[] data = new String[countList.size()];
-	    int i = 0;
-	    for ( Map map : countList ) {
-		int day = DateTimeKit.getDay( DateTimeKit.parseDate( map.get( "countDate" ).toString() ) );//日份
-		//		date[i] = day + "";
-		data[i] = map.get( "incomeCount" ).toString();
-		i++;
-	    }
-	    //	    result.put( "date", date );//日份列表
-	    result.put( "data", data );//数据列表
+	    String[] data = new String[date + 1];
 
+	    int i = 0;
+	    Calendar end = Calendar.getInstance();//定义日期实例
+	    Calendar start = Calendar.getInstance();//定义日期实例
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( endDate );//结束日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( startDate );//起始日期
+	    end.setTime( d1 );
+	    start.setTime( d2 );
+
+	    while ( start.getTimeInMillis() <= end.getTimeInMillis() ) {
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+		String str = sdf.format( start.getTime() );
+		String count = "";
+		for ( Map map : countList ) {
+		    if ( str.equals( map.get( "countDate" ).toString() ) ) {
+			count = map.get( "incomeCount" ).toString();
+			break;
+		    }
+		}
+		if ( "".equals( count ) ) {
+		    count = "0";
+		}
+		data[i] = count;
+		i++;
+		start.add( Calendar.DATE, 1 );//进行当前日期加1
+	    }
+	    result.put( "data", data );//数据列表
 
 	    Calendar cal = Calendar.getInstance();
 	    String day = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
@@ -196,7 +239,7 @@ public class MallCountIncomeController extends BaseController {
 	    params1.put( "userId", user.getId() );
 	    if ( CommonUtil.isNotEmpty( shopId ) ) {
 		params1.put( "shopId", shopId );
-	    }else {
+	    } else {
 		params1.put( "shoplist", shoplist );
 	    }
 	    params1.put( "status", "1" );
