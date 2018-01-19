@@ -702,7 +702,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	if ( CommonUtil.isNotEmpty( pbUser ) ) {
 	    try {
-		sendMsg( order, 4, pbUser );//发送消息模板
+		sendMsg( order, 4, pbUser, member, busUser );//发送消息模板
 	    } catch ( Exception e ) {
 		e.printStackTrace();
 		logger.error( "购买成功消息模板发送异常" + e.getMessage() );
@@ -715,13 +715,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 
 	}
-	try {
-	    smsMessageTel( order, member, busUser );//短信提醒买家
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	    logger.error( "短信提醒买家失败异常" + e.getMessage() );
-	}
-
 	return 1;
     }
 
@@ -2522,7 +2515,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
      * 发送消息模板
      */
     @Override
-    public void sendMsg( MallOrder order, int type, WxPublicUsers publicUser ) {
+    public void sendMsg( MallOrder order, int type, WxPublicUsers publicUser, Member member, BusUser busUser ) {
 
 	int id = 0;
 	String title = "";
@@ -2568,6 +2561,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 	    logger.info( "发送消息模板参数：" + objs );
 	    wxPublicUserService.sendWxMsgTemplate( template );
+
+	    try {
+		smsMessageTel( order, member, busUser );//短信提醒买家
+	    } catch ( Exception e ) {
+		e.printStackTrace();
+		logger.error( "短信提醒买家失败异常" + e.getMessage() );
+	    }
 	}
     }
 
