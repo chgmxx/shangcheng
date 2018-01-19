@@ -269,10 +269,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     }
     /**素材库里面返回信息**/
     window.addEventListener("message", function (e) {
-        debugger
         if (!e.data)return;
         eval(e.data)
     });
+    //素材库回调取消方法
+    function go_back() {
+        this.CloseParentShade();
+    }
     function image(id, url) {
         //alert(url);
         imgList = url;
@@ -289,7 +292,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             pic_type(imgList, paramList[2], paramList[1])
         }
 
-        layer.closeAll();
+        this.CloseParentShade();
     }
 
     /**轮播模块下拉类型点击事件**/
@@ -401,7 +404,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
      *选择商品 回调 isCheck==0 daibiao
      */
     function returnProVal(obj, type, check) {
-        console.log(obj,"obj");
+        console.log(obj, "obj");
         if (type == 1) {
             imgList = obj;
 
@@ -468,11 +471,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 console.log(data, "dataerror")
             }
         });
-    }
-
-    //素材库回调取消方法
-    function go_back() {
-        layer.closeAll();
     }
 
     function yl() {
