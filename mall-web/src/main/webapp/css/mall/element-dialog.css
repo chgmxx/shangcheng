@@ -1,6 +1,7 @@
-#el-app .el-dialog{
+#el-app .el-dialog {
     width: 660px;
 }
+
 #el-app .el-dialog__wrapper {
     z-index: 99998 !important;
 }
@@ -53,14 +54,15 @@
 #el-app .el-pagination__editor {
     padding: 4px 2px !important;
     line-height: 18px !important;
-    height: auto!important;
-    border-radius:2px !important;
+    height: auto !important;
+    border-radius: 2px !important;
 }
 
 .el-select-dropdown {
     z-index: 99999 !important;
 }
-#el-app .el-pagination{
+
+#el-app .el-pagination {
     text-align: right !important;
 }
 
@@ -77,11 +79,13 @@
     width: 100%;
     background: #eef1f6;
 }
-#el-app .el-table2 tr{
+
+#el-app .el-table2 tr {
     display: table-row;
     vertical-align: inherit;
     border-color: inherit;
 }
+
 #el-app .el-table2 td, .el-table2 th {
     text-align: left;
     border-right: 0;
@@ -99,12 +103,13 @@
     margin-top: 25px;
 }
 
-#el-app .el-table2 .dialog-list>span {
+#el-app .el-table2 .dialog-list > span {
     margin-right: 28px;
 }
 
-.shop-wrapper .shop-addpage-main {
-    padding: 22px 4%;
-} .shop-steps {
-      border-bottom: 1px solid #f3f3f3;
-  }
+#el-app .shop-addpage-main {
+    padding: 22px 2.9% 22px 3.4%;
+}
+#el-app .shop-steps {
+    border-bottom: 1px solid #f3f3f3;
+}

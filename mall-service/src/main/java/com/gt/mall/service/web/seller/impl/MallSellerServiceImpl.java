@@ -431,9 +431,9 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	if ( sellerList != null && sellerList.size() > 0 ) {
 	    for ( Map< String,Object > map : sellerList ) {
 		if ( CommonUtil.isNotEmpty( map.get( "telephone" ) ) ) {
-		    String[] telePhone =  map.get( "telephone" ).toString().split( "," );
-		    if(telePhone.length == 2){
-			map.put( "telephone", "+"+telePhone[0]+" "+telePhone[1] );
+		    String[] telePhone = map.get( "telephone" ).toString().split( "," );
+		    if ( telePhone.length == 2 ) {
+			map.put( "telephone", "+" + telePhone[0] + " " + telePhone[1] );
 		    }
 		}
 	    }
@@ -549,9 +549,9 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	if ( sellerList != null && sellerList.size() > 0 ) {
 	    for ( Map< String,Object > map : sellerList ) {
 		if ( CommonUtil.isNotEmpty( map.get( "telephone" ) ) ) {
-		    String[] telePhone =  map.get( "telephone" ).toString().split( "," );
-		    if(telePhone.length == 2){
-			map.put( "telephone", "+"+telePhone[0]+" "+telePhone[1] );
+		    String[] telePhone = map.get( "telephone" ).toString().split( "," );
+		    if ( telePhone.length == 2 ) {
+			map.put( "telephone", "+" + telePhone[0] + " " + telePhone[1] );
 		    }
 		}
 	    }
@@ -752,23 +752,23 @@ public class MallSellerServiceImpl extends BaseServiceImpl< MallSellerDAO,MallSe
 	Map< String,Object > resultMap = new HashMap<>();
 	int memberId = 0;//关注会员id
 	int refMemberId = 0;//推荐人id
-	String scene_id = "";
+	String externalId = "";//业务id
 	if ( CommonUtil.isNotEmpty( params ) ) {
 	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 		memberId = CommonUtil.toInteger( params.get( "memberId" ) );
 	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "scene_id" ) ) ) {
-		scene_id = params.get( "scene_id" ).toString();
+	    if ( CommonUtil.isNotEmpty( params.get( "externalId" ) ) ) {
+		externalId = params.get( "externalId" ).toString();
 	    }
 	}
-	if ( memberId == 0 || scene_id.equals( "" ) ) {
+	if ( memberId == 0 || externalId.equals( "" ) ) {
 	    resultMap.put( "flag", false );
 	    resultMap.put( "errorMsg", "缺少参数" );
 	    return resultMap;
 	}
 	Member member = memberService.findMemberById( memberId, null );
 	//查询关注人信息
-	MallSeller seller = mallSellerDAO.selectSellerBySecenId( scene_id );
+	MallSeller seller = mallSellerDAO.selectById( externalId );
 	if ( CommonUtil.isNotEmpty( seller ) ) {
 	    if ( CommonUtil.isNotEmpty( seller.getMemberId() ) ) {
 		refMemberId = seller.getMemberId();//推荐人id
