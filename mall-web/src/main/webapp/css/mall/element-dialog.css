@@ -102,3 +102,9 @@
 #el-app .el-table2 .dialog-list>span {
     margin-right: 28px;
 }
+
+.shop-wrapper .shop-addpage-main {
+    padding: 22px 4%;
+} .shop-steps {
+      border-bottom: 1px solid #f3f3f3;
+  }

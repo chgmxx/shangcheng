@@ -139,6 +139,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 </head>
 <body style="overflow-y:scroll;">
+<jsp:include page="element.jsp"></jsp:include>
 <admindraggable></admindraggable>
 <!-- 商品隐藏id -->
 <input type="hidden" id="stoId" value="${stoId}"/>
@@ -156,7 +157,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <div id="moveGroupLaye" style="display: none; z-index: 1002; width: 200px; height: 200px; position: fixed; left:50%; top:50%;margin-left:-100px; margin-top:-100px">
     <img src="/images/loading.gif">
 </div>
-<jsp:include page="element.jsp"></jsp:include>
 <script>
     //type 1-商品，2-轮播，3-分类
     var dataJson =
@@ -251,14 +251,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             }
         });
     }
+
+
+    /**打开一个IFRAME窗口**/
+    function openIframe(data) {
+        this.openParentShade();
+        vm.openDialog(data);
+    }
     function openParentShade() {
-//        parent.parent.window.postMessage("openMask()", "*");
-//        parent.shadeShow();
+        parent.parent.window.postMessage("openMask()", "*");
+        parent.shadeShow();
     }
     function CloseParentShade() {
         layer.closeAll();
-//        parent.shadeHide();
-//        parent.parent.window.postMessage("closeMask()", "*");
+        parent.shadeHide();
+        parent.parent.window.postMessage("closeMask()", "*");
     }
     /**素材库里面返回信息**/
     window.addEventListener("message", function (e) {
@@ -430,11 +437,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         }
     }
 
-
-    /**打开一个IFRAME窗口**/
-    function openIframe(data) {
-        vm.openDialog(data);
-    }
 
     //数据保存或修改
 
