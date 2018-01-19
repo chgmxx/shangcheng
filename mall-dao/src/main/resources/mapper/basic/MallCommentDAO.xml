@@ -154,10 +154,10 @@
             AND (d.det_pro_name like CONCAT(CONCAT('%', #{queryName}),'%') OR o.order_no like CONCAT(CONCAT('%', #{queryName}),'%') )
         </if>
         <if test="startTime != null and startTime != ''">
-            and c.createTime >= #{startTime}
+            and DATE(c.createTime) >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and c.createTime <![CDATA[<=]]> #{endTime}
+            and DATE(c.createTime) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="shopId != null and shopId != ''">
             and c.shop_id= #{shopId}
@@ -196,10 +196,10 @@
             AND (d.det_pro_name like CONCAT(CONCAT('%', #{queryName}),'%') OR o.order_no like CONCAT(CONCAT('%', #{queryName}),'%') )
         </if>
         <if test="startTime != null and startTime != ''">
-            and c.createTime >= #{startTime}
+            and DATE(c.createTime) >= #{startTime}
         </if>
         <if test="endTime != null and endTime != ''">
-            and c.createTime <![CDATA[<=]]> #{endTime}
+            and DATE(c.createTime) <![CDATA[<=]]> #{endTime}
         </if>
         <if test="shopId != null and shopId != ''">
             and c.shop_id= #{shopId}
