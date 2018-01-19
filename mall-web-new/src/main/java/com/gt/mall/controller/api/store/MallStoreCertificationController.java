@@ -225,9 +225,8 @@ public class MallStoreCertificationController extends BaseController {
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
 	    System.out.println( "店铺认证短信验证码：" + no );
-	    String content = pbUser.getAuthorizerInfo() + "  提醒您，您的验证码为：(" + no + ")" + "，验证码10分钟内有效，请尽快完成验证。";
 
-	    boolean result = mallCommonService.getValCode( mobile, user.getId(), content, pbUser.getAuthorizerInfo() );
+	    boolean result = mallCommonService.getValCode( "", mobile, user.getId(), no, Constants.MALL_CODE_MODEL_ID );
 	    if ( !result ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
 	    }

@@ -153,9 +153,7 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 5 * 60 );
 	    logger.info( "批发商短信验证码：" + no );
 
-	    String content = "您申请的批发商验证码:" + no + "，5分钟内有效。";
-
-	    boolean result = mallCommonService.getValCode( mobile, member.getBusid(), content, null );
+	    boolean result = mallCommonService.getValCode( areaCode, mobile, member.getBusid(), no, Constants.APPLY_PIFA_CODE_MODEL_ID );
 	    if ( !result ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
 	    }

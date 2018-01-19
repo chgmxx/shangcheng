@@ -40,6 +40,7 @@ import com.gt.mall.utils.AddOrderUtil;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.fenbiFlow.ReqGetMobileInfo;
+import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.result.fenbi.GetMobileInfo;
 import org.apache.log4j.Logger;
@@ -93,17 +94,21 @@ public class MallCommonServiceImpl implements MallCommonService {
     private MallOrderDAO             mallOrderDAO;
 
     @Override
-    public boolean getValCode( String mobile, Integer busId, String content, String authorizerInfo ) {
-	OldApiSms apiSms = new OldApiSms();
-	apiSms.setBusId( busId );
-	if ( CommonUtil.isNotEmpty( authorizerInfo ) ) {
-	    apiSms.setCompany( authorizerInfo );
-	}
-	apiSms.setContent( content );
-	apiSms.setMobiles( mobile );
-	apiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
+    public boolean getValCode( String areaCode, String mobile, Integer busId, String content, Long tmplId ) {
+	if ( CommonUtil.isNotEmpty( mobile ) ) {
+	    NewApiSms newApiSms = new NewApiSms();
+	    if ( CommonUtil.isNotEmpty( areaCode ) ) {
+		newApiSms.setCountry( areaCode );
+	    }
+	    newApiSms.setMobile( mobile );
+	    newApiSms.setBusId( busId );
+	    newApiSms.setParamsStr( content );
+	    newApiSms.setModel( Constants.SMS_MODEL );
+	    newApiSms.setTmplId( tmplId ); //短信模板ID
 
-	return smsService.sendSmsOld( apiSms );
+	    return smsService.sendSmsNew( newApiSms );
+	}
+	return false;
     }
 
     @Override
@@ -227,8 +232,7 @@ public class MallCommonServiceImpl implements MallCommonService {
 			throw new BusinessException( ResponseEnums.NO_SELECT_SHOUHUO_ADDRESS.getCode(), ResponseEnums.NO_SELECT_SHOUHUO_ADDRESS.getDesc() );
 		    }
 		    //以下是判断商品库存的
-		    if ( orderType == 7 && null != productDTO.getPfSpecResultList()
-				    && productDTO.getPfSpecResultList().size() > 0 ) { //判断批发商品的库存是否足够，不够抛异常
+		    if ( orderType == 7 && null != productDTO.getPfSpecResultList() && productDTO.getPfSpecResultList().size() > 0 ) { //判断批发商品的库存是否足够，不够抛异常
 			for ( PhoneOrderPifaSpecDTO pifaSpecDTO : productDTO.getPfSpecResultList() ) {
 			    mallProductService.calculateInventory( productDTO.getProductId(), pifaSpecDTO.getSpecificaIds(), pifaSpecDTO.getTotalNum(), member.getId() );
 			}
@@ -389,8 +393,8 @@ public class MallCommonServiceImpl implements MallCommonService {
 	    int discount = CommonUtil.toIntegerByDouble( CommonUtil.multiply( memberDiscount, 100 ) );
 	    detail.setDiscount( discount );//折扣数
 	}
-	double youhuiPrice = CommonUtil.getDecimal(
-			productDTO.getUseUnionDiscountYouhuiPrice() + productDTO.getUseCouponYouhuiPrice() + productDTO.getUseDiscountYouhuiPrice() + productDTO
+	double youhuiPrice = CommonUtil
+			.getDecimal( productDTO.getUseUnionDiscountYouhuiPrice() + productDTO.getUseCouponYouhuiPrice() + productDTO.getUseDiscountYouhuiPrice() + productDTO
 					.getUseFenbiYouhuiPrice() + productDTO.getUseJifenYouhuiPrice() );
 	detail.setDiscountedPrices( CommonUtil.toBigDecimal( youhuiPrice ) );//商品优惠的总价
 	detail.setCreateTime( new Date() );//创建时间

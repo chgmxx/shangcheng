@@ -109,31 +109,38 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
     }
 
     @Override
-    public void buyerPaySuccess( MallOrder order, Member member, Integer type, String telePhone ) {
+    public void buyerPaySuccess( MallOrder order, Member member, Integer type, String telPhone ) {
 	Integer id = isOpenPaySetByBusMessage( member.getBusid(), Constants.BUS_TEMPLATE_LIST[0] );
 	if ( id > 0 ) {
 	    String proName = "";
 	    List< MallOrderDetail > orderDetails = mallOrderDetailService.getOrderDetailList( order.getId() );
 	    if ( orderDetails != null && orderDetails.size() > 0 ) {
-		for ( MallOrderDetail detail : orderDetails ) {
-		    if ( !proName.equals( "" ) ) {proName += ",";}
-		    proName += detail.getDetProName();
-		}
+		proName = orderDetails.get( 0 ).getDetProName();
 	    }
-	    String messages = "用户【" + member.getNickname() + "】成功购买您的商品【" + proName + "】，请尽快登录商城后台发货";
 	    if ( type == 0 || type == 1 ) {//短信
-		if ( CommonUtil.isNotEmpty( telePhone ) ) {
-		    OldApiSms oldApiSms = new OldApiSms();
-		    oldApiSms.setMobiles( telePhone );
-		    /*oldApiSms.setCompany( member.getMerchant_name() );*/
-		    oldApiSms.setBusId( member.getBusid() );
-		    oldApiSms.setModel( Constants.SMS_MODEL );
-		    oldApiSms.setContent( CommonUtil.format( messages ) );
-		    try {
-			smsService.sendSmsOld( oldApiSms );
-		    } catch ( Exception e ) {
-			e.printStackTrace();
-			logger.error( "通知商家短信消息异常：" + e.getMessage() );
+		if ( CommonUtil.isNotEmpty( telPhone ) ) {
+		    String[] phones = telPhone.split( ";" );
+		    if ( phones.length > 0 ) {
+			for ( String phone : phones ) {
+			    String[] str = phone.split( "," );
+			    NewApiSms newApiSms = new NewApiSms();
+			    if ( str.length > 0 ) {
+				newApiSms.setMobile( str[1] );
+				newApiSms.setCountry( str[0] );
+			    } else {
+				newApiSms.setMobile( phone );
+			    }
+			    newApiSms.setBusId( member.getBusid() );
+			    newApiSms.setParamsStr( member.getNickname() + "," + proName );
+			    newApiSms.setModel( Constants.SMS_MODEL );
+			    newApiSms.setTmplId( Constants.NOTICE_BUS_PAY_SUCCESS_MODEL_ID );
+			    try {
+				smsService.sendSmsNew( newApiSms );
+			    } catch ( Exception e ) {
+				e.printStackTrace();
+				logger.error( "通知商家短信消息异常：" + e.getMessage() );
+			    }
+			}
 		    }
 		}
 	    }
@@ -176,7 +183,6 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 	    Member member = memberService.findMemberById( order.getBuyerUserId(), null );//买家
 	    Integer id = isOpenPaySetByBusMessage( member.getBusid(), Constants.BUS_TEMPLATE_LIST[1] );
 	    if ( id > 0 ) {
-		String messages = "用户【" + member.getNickname() + "】成功购买您的商品，并确认收货成功，查看详情请登录商城后台。";
 		if ( type == 0 || type == 1 ) {//短信
 		    MallStore store = mallStoreService.selectById( order.getShopId() );
 		    String telPhone = "";
@@ -186,25 +192,28 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			}
 		    }
 		    if ( CommonUtil.isNotEmpty( telPhone ) ) {
-			OldApiSms oldApiSms = new OldApiSms();
-			oldApiSms.setMobiles( telPhone );
-		   /* oldApiSms.setCompany( busUser.getMerchant_name() );*/
-			oldApiSms.setBusId( member.getBusid() );
-			oldApiSms.setModel( Constants.SMS_MODEL );
-			oldApiSms.setContent( CommonUtil.format( messages ) );
-
-			//		    NewApiSms newApiSms = new NewApiSms();
-			//		    newApiSms.setMobile( telPhone );
-			//		    newApiSms.setBusId( busUser.getId() );
-			//		    newApiSms.setParamsStr( CommonUtil.format( messages ) );
-			//		    newApiSms.setModel( Constants.SMS_MODEL );
-			//		    newApiSms.setCountry( "86" );
-			//		    newApiSms.setTmplId( 0l );
-			try {
-			    smsService.sendSmsOld( oldApiSms );
-			} catch ( Exception e ) {
-			    e.printStackTrace();
-			    logger.error( "通知商家短信消息异常：" + e.getMessage() );
+			String[] phones = telPhone.split( ";" );
+			if ( phones.length > 0 ) {
+			    for ( String phone : phones ) {
+				String[] str = phone.split( "," );
+				NewApiSms newApiSms = new NewApiSms();
+				if ( str.length > 0 ) {
+				    newApiSms.setMobile( str[1] );
+				    newApiSms.setCountry( str[0] );
+				} else {
+				    newApiSms.setMobile( phone );
+				}
+				newApiSms.setBusId( member.getBusid() );
+				newApiSms.setParamsStr( member.getNickname() );
+				newApiSms.setModel( Constants.SMS_MODEL );
+				newApiSms.setTmplId( Constants.NOTICE_BUS_CONFIRM_MODEL_ID );
+				try {
+				    smsService.sendSmsNew( newApiSms );
+				} catch ( Exception e ) {
+				    e.printStackTrace();
+				    logger.error( "通知商家短信消息异常：" + e.getMessage() );
+				}
+			    }
 			}
 		    }
 		}
@@ -237,11 +246,9 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 
     @Override
     public void buyerOrderReturn( MallOrderReturn orderReturn, Member member, Integer type ) {
-	//	BusUser busUser = busUserService.selectById( busId );
 	Integer id = isOpenPaySetByBusMessage( member.getBusid(), Constants.BUS_TEMPLATE_LIST[2] );
 	if ( id > 0 ) {
 	    if ( member != null ) {
-		String messages = "用户【" + member.getNickname() + "】发起了【" + ( orderReturn.getRetHandlingWay() == 1 ? "退款" : "退货退款" ) + "】，" + "请尽快登录商城后台查看并及时处理。";
 		if ( type == 0 || type == 1 ) {//短信
 		    MallStore store = mallStoreService.selectById( orderReturn.getShopId() );
 		    String telPhone = "";
@@ -251,17 +258,33 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			}
 		    }
 		    if ( CommonUtil.isNotEmpty( telPhone ) ) {
-			OldApiSms oldApiSms = new OldApiSms();
-			oldApiSms.setMobiles( telPhone );
-		    /*oldApiSms.setCompany( busUser.getMerchant_name() );*/
-			oldApiSms.setBusId( member.getBusid() );
-			oldApiSms.setModel( Constants.SMS_MODEL );
-			oldApiSms.setContent( CommonUtil.format( messages ) );
-			try {
-			    smsService.sendSmsOld( oldApiSms );
-			} catch ( Exception e ) {
-			    e.printStackTrace();
-			    logger.error( "通知商家短信消息异常：" + e.getMessage() );
+			String[] phones = telPhone.split( ";" );
+			if ( phones.length > 0 ) {
+			    for ( String phone : phones ) {
+				String[] str = phone.split( "," );
+				NewApiSms newApiSms = new NewApiSms();
+				if ( str.length > 0 ) {
+				    newApiSms.setMobile( str[1] );
+				    newApiSms.setCountry( str[0] );
+				} else {
+				    newApiSms.setMobile( phone );
+				}
+				newApiSms.setBusId( member.getBusid() );
+				newApiSms.setParamsStr( member.getNickname() );
+				newApiSms.setModel( Constants.SMS_MODEL );
+				if ( orderReturn.getRetHandlingWay() == 1 ) {
+				    newApiSms.setTmplId( Constants.NOTICE_BUS_ORDER_RETURN_1_MODEL_ID );
+				} else {
+				    newApiSms.setTmplId( Constants.NOTICE_BUS_ORDER_RETURN_2_MODEL_ID );
+				}
+
+				try {
+				    smsService.sendSmsNew( newApiSms );
+				} catch ( Exception e ) {
+				    e.printStackTrace();
+				    logger.error( "通知商家短信消息异常：" + e.getMessage() );
+				}
+			    }
 			}
 		    }
 		}
@@ -306,7 +329,6 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 
     @Override
     public void memberApplySeller( Member member, String telPhone ) {
-	/*String messages = "亲,【" + member.getNickname() + "】正向您申请成为您的分销商，请及时登录后台操作审核，晚一步会被人抢走哦 ~";*/
 	if ( CommonUtil.isNotEmpty( telPhone ) ) {
 	    NewApiSms newApiSms = new NewApiSms();
 	    String[] phone = telPhone.split( "," );
@@ -319,7 +341,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 	    newApiSms.setBusId( member.getBusid() );
 	    newApiSms.setParamsStr( member.getNickname() );
 	    newApiSms.setModel( Constants.SMS_MODEL );
-	    newApiSms.setTmplId( 0l ); //短信模板ID
+	    newApiSms.setTmplId( Constants.NOTICE_BUS_APPLY_SELLER_MODEL_ID ); //短信模板ID
 	    try {
 		smsService.sendSmsNew( newApiSms );
 	    } catch ( Exception e ) {
