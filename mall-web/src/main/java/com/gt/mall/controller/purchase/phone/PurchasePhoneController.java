@@ -622,12 +622,12 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
      * @param response
      * @param request
      */
-    @RequestMapping( value = "/79B4DE7C/getMemberPower" )
-    public String getMemberPower( HttpServletResponse response, HttpServletRequest request, @RequestParam Integer busId, @RequestParam Integer orderId ) {
+    @RequestMapping( value = "/79B4DE7C/{busId}/{orderId}/getMemberPower" )
+    public String getMemberPower( HttpServletResponse response, HttpServletRequest request,  @PathVariable("busId") Integer busId, @PathVariable("orderId") Integer orderId) {
 	try {
 	    //浏览器类型判断
 	    if ( CommonUtil.judgeBrowser( request ) == 1 ) {
-		String url = PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/getMemberPower.do?orderId=" + orderId + "&busId=" + busId;
+		String url = PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/"+busId+"/"+orderId+"/getMemberPower.do";
 		Map< String,Object > map = new HashMap<>();
 		map.put( "url", url );
 		map.put( "ucLogin", 0 );
