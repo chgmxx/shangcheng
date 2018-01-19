@@ -174,7 +174,7 @@
         </if>
         <if test="keyWord != null and keyWord != ''">
             and (
-            s.telephone = '${keyWord}'
+            s.telephone like '%${keyWord}%'
 
             <if test="memberList != null">
                 or s.member_id in
@@ -195,7 +195,7 @@
             and s.check_status = #{status}
         </if>
         <if test="keyWord != null and keyWord != ''">
-            and ( s.telephone = '${keyWord}' or s.user_name = '${keyWord}' )
+            and ( s.telephone like '%${keyWord}%' or s.user_name like '%${keyWord}%' )
         </if>
         order by s.id desc
         <if test="firstNum != null and maxNum != null">
@@ -220,7 +220,7 @@
             </if>
         </if>
         <if test="keyWord != null and keyWord != ''">
-            and ( s.telephone = '${keyWord}' or s.user_name = '${keyWord}' )
+            and ( s.telephone like '%${keyWord}%' or s.user_name like '%${keyWord}%' )
         </if>
         order by s.id desc
         <if test="firstNum != null and maxNum != null">

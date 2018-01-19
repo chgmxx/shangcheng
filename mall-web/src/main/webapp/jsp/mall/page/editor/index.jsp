@@ -136,6 +136,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
     <script src="js/action/countdown.js?<%=System.currentTimeMillis()%>"></script>
 
+
 </head>
 <body style="overflow-y:scroll;">
 <admindraggable></admindraggable>
@@ -155,6 +156,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <div id="moveGroupLaye" style="display: none; z-index: 1002; width: 200px; height: 200px; position: fixed; left:50%; top:50%;margin-left:-100px; margin-top:-100px">
     <img src="/images/loading.gif">
 </div>
+<jsp:include page="element.jsp"></jsp:include>
 <script>
     //type 1-商品，2-轮播，3-分类
     var dataJson =
@@ -170,7 +172,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     stoPicture = "${stoPicture}" || "";//店铺图片
     countproduct = "${countproduct}" || 0;//全部商品数量
     headImg = "${headImg}" || "";
-    console.log(dataJson,"-----------",picJson)
+    console.log(dataJson, "-----------", picJson)
 
     var verson = 0;
     if (dataJson.length > 0) {
@@ -232,12 +234,36 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     function materiallayer(param, e, editor) {
         pic_type = param;
         paramList = arguments;
-        openIframe('素材库', '820px', '500px', 'https://suc.deeptel.com.cn/common/material.do?retUrl='+window.location.href);
+        openLayer('素材库', '820px', '500px', 'https://suc.deeptel.com.cn/common/material.do?retUrl=' + window.location.href);
+    }
+    function openLayer(title, width, height, content) {
+        this.openParentShade();
+        layer.open({
+            type: 2,
+            title: title,
+            shade: 0.5,
+            offset: "10%",
+            shadeClose: false,
+            area: [width, height],
+            content: content,
+            cancel: function () {
+                CloseParentShade();
+            }
+        });
+    }
+    function openParentShade() {
+//        parent.parent.window.postMessage("openMask()", "*");
+//        parent.shadeShow();
+    }
+    function CloseParentShade() {
+        layer.closeAll();
+//        parent.shadeHide();
+//        parent.parent.window.postMessage("closeMask()", "*");
     }
     /**素材库里面返回信息**/
     window.addEventListener("message", function (e) {
         debugger
-        if(!e.data)return;
+        if (!e.data)return;
         eval(e.data)
     });
     function image(id, url) {
@@ -269,11 +295,23 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         }
         var type = $(obj).attr("type");//type 为1 代表商品
         if (type == 1) {
-            openIframe("选择商品", "600px", "480px", "/mallPage/choosePro.do?stoId=" + '${shopid}' + "&check=1");//check==0代表多选，check==1代表单选
+            openIframe({
+                title: "选择商品",
+                isCheck: 1, //isCheck==0代表多选，isCheck==1代表单选
+                shopId: ${shopid},
+                type: 1
+            });
+            <%--openIframe("选择商品", "600px", "480px", "/mallPage/choosePro.do?stoId=" + '${shopid}' + "&isCheck=1");//isCheck==0代表多选，isCheck==1代表单选--%>
         }
         //type 为2 代表分类
         if (type == 2) {
-            openIframe("选择分类页", "600px", "480px", "/mallPage/branchPage.do?stoId=" + '${shopid}');//check==0代表多选，check==1代表单选
+            openIframe({
+                title: "选择分类页",
+                isCheck: 1, //isCheck==0代表多选，isCheck==1代表单选
+                shopId: ${shopid},
+                type: 2
+            });
+            <%--openIframe("选择分类页", "600px", "480px", "/mallPage/branchPage.do?stoId=" + '${shopid}');//isCheck==0代表多选，isCheck==1代表单选--%>
         }
     }
 
@@ -282,9 +320,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
      */
     function choosePro(type) {
         if (type == 2) {//预售商品
-            openIframe("选择预售商品", "600px", "480px", "/mallPage/choosePresalePro.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+            openIframe({
+                title: "选择预售商品",
+                isCheck: 0, //isCheck==0代表多选，isCheck==1代表单选
+                shopId: ${shopid},
+                type: 3
+            });
+            <%--openIframe("选择预售商品", "600px", "480px", "/mallPage/choosePresalePro.do?stoId=" + '${shopid}' + "&isCheck=0");//isCheck==0代表多选，isCheck==1代表单选--%>
         } else {
-            openIframe("选择商品", "600px", "480px", "/mallPage/choosePro.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+            openIframe({
+                title: "选择商品",
+                isCheck: 0, //isCheck==0代表多选，isCheck==1代表单选
+                shopId: ${shopid},
+                type: 1
+            });
+            <%--openIframe("选择商品", "600px", "480px", "/mallPage/choosePro.do?stoId=" + '${shopid}' + "&isCheck=0");//isCheck==0代表多选，isCheck==1代表单选--%>
         }
     };
 
@@ -294,10 +344,22 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     var group_type = 0;
     function chooseGroup(type) {
         group_type = type;
-        if(type == 2){
-            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=1");//check==0代表多选，check==1代表单选
-        }else{
-            openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&check=0");//check==0代表多选，check==1代表单选
+        if (type == 2) {
+            openIframe({
+                title: "商品分组",
+                isCheck: 1, //isCheck==0代表多选，isCheck==1代表单选
+                shopId: ${shopid},
+                type: 4
+            });
+            <%--openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&isCheck=1");//isCheck==0代表多选，isCheck==1代表单选*/--%>
+        } else {
+            openIframe({
+                title: "商品分组",
+                isCheck: 0, //isCheck==0代表多选，isCheck==1代表单选
+                shopId: ${shopid},
+                type: 4
+            });
+            <%--openIframe("商品分组", "600px", "480px", "/mallPage/chooseGroup.do?stoId=" + '${shopid}' + "&isCheck=0");//isCheck==0代表多选，isCheck==1代表单选--%>
         }
     };
     /**
@@ -306,12 +368,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     function returnGroupArr(jsonArry) {
         imgList = jsonArry;
 
-        if(group_type == 2){
+        if (group_type == 2) {
             $("#editchooseGroup").click();
-        }else{
+        } else {
             $("#addchooseGroup").click();
         }
-        console.log(jsonArry,jsonArry);
+        console.log(jsonArry, jsonArry);
     }
 
     //分类页面，选择返回相对于的数据
@@ -329,9 +391,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         matter_one_type = 0;
     }
     /**
-     *选择商品 回调 check==0 daibiao
+     *选择商品 回调 isCheck==0 daibiao
      */
     function returnProVal(obj, type, check) {
+        console.log(obj,"obj");
         if (type == 1) {
             imgList = obj;
 
@@ -349,10 +412,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 $("#addcommoditypicone").click();
             }
 
-        } else if (type == 6) {
-
+        } else if (type == 3) {
             imgList = obj;
-
             if (matter_one_type == 2) {
                 $(".not-empty.current").css("background-color", "#ccc").find("a").attr({"href": obj[0].url, "data-name": obj[0].title});
                 $(".not-empty.current span").remove();
@@ -371,38 +432,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 
     /**打开一个IFRAME窗口**/
-    function openIframe(title, width, height, content) {
-        openParentShade();
+    function openIframe(data) {
+        vm.openDialog(data);
+    }
 
-        layer.open({
-            type: 2,
-            title: title,
-            shade: 0.5,
-            offset: "10%",
-            shadeClose: false,
-            area: [width, height],
-            content: content,
-            cancel: function(){
-                CloseParentShade();
-            }
-        });
-    }
-    function openParentShade(){
-        parent.parent.window.postMessage("openMask()", "*");
-        parent.shadeShow();
-    }
-    function CloseParentShade(){
-        parent.shadeHide();
-        parent.parent.window.postMessage("closeMask()", "*");
-        layer.closeAll();
-    }
     //数据保存或修改
 
     function save() {
         var id = $("#stoId").val();
         var des = angular.toJson(dataJson);
         var pic = angular.toJson(picJson);
-        console.log(des,"----",pic)
+        console.log(des, "----", pic)
 //        showAll();
         $.ajax({
             type: "post",
@@ -416,14 +456,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 //            dataType: "json",
             success: function (data) {
                 closeWindow();
-                console.log(data,"=====")
+                console.log(data, "=====")
 //                var error = data.error;
 //                alert(data.message);
 
                 alert("保存成功");
 
-            },error:function(data){
-                console.log(data,"dataerror")
+            }, error: function (data) {
+                console.log(data, "dataerror")
             }
         });
     }

@@ -74,6 +74,28 @@
         order by g.create_time desc
         <if test="firstNum != null and maxNum != null">limit #{firstNum},#{maxNum}</if>
     </select>
+
+
+    <select id="selectGroupDialogByPage" resultType="java.util.Map">
+        select
+        g.id as groupId ,g.group_name as groupName,g.create_time as time
+        from t_mall_group g
+        where g.is_delete=0
+        <if test="groupPId != null">
+            and g.group_p_id = #{groupPId}
+        </if>
+        <if test="groupPId == 0">
+            and g.is_first_parents = 1
+        </if>
+        <if test="shoplist != null ">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                g.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        order by g.create_time desc
+        <if test="firstNum != null and maxNum != null">limit #{firstNum},#{maxNum}</if>
+    </select>
     <select id="selectGroupByParent" resultType="java.util.Map">
         select
         g.id as id ,g.group_name as groupName,g.is_first_parents as  isFirstParents,g.is_child as isChild,g.shop_id as shopId,g.group_p_id as groupPId,s.sto_name

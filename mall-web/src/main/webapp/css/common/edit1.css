@@ -695,3 +695,26 @@ a.choosePro {
  .bianji .pause:hover{
  background:  url(/images/play-pause.png) no-repeat -25px -2px; 
  }*/
+/*两端对齐并居中 start*/
+.ik-box {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: box;
+}
+
+.ik-box-pack-justify {
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    box-pack: justify;
+}
+
+.ik-box-align_center {
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -o-box-align: center;
+    box-align: center;
+}
+
+/*两端对齐并居中 end*/
