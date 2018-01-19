@@ -190,10 +190,10 @@
 
 /**********************************************************/
 
-.el-checkbox__inner input{
+.gt-checkbox__inner input{
 	display:none;
 }
-.el-checkbox__inner input:checked + span:after {
+.gt-checkbox__inner input:checked + span:after {
     box-sizing: content-box;
     content: "";
     border: 2px solid #fff;
@@ -208,11 +208,11 @@
     transition: transform .15s cubic-bezier(.71,-.46,.88,.6) .05s;
     transform-origin: center;
 }
-.el-checkbox__inner input:checked + span{
+.gt-checkbox__inner input:checked + span{
     background-color: #20a0ff;
     border-color: #0190fe;
 }
-.el-checkbox__inner span {
+.gt-checkbox__inner span {
     display: inline-block;
     position: relative;
     border: 1px solid #bfcbd9;

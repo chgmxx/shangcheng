@@ -199,7 +199,7 @@ public interface MallPageService extends BaseService< MallPage > {
     public List< Map< String,Object > > storeList( Integer stoId, int type, int busUserId );
 
     /**
-     * 返回店面信息下面的所有商品
+     * 返回店面信息下面的所有商品 (页面设计 商品弹出框专用)
      */
     public PageUtil product( Map< String,Object > params );
 
@@ -322,9 +322,9 @@ public interface MallPageService extends BaseService< MallPage > {
     public void saveOrUpdateKeyWord( Map< String,Object > params, int shopid, int userId );
 
     /**
-     * 获取所有的预售商品
+     * 获取所有的预售商品(页面设计时调用的，不可增加和减少返回值)
      */
-    public List< Map< String,Object > > productPresale( Integer stoId, Map< String,Object > params );
+    public PageUtil productPresale( Integer stoId, Map< String,Object > params );
 
     /**
      * 获取预售商品

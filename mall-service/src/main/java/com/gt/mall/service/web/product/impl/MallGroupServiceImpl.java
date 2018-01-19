@@ -107,6 +107,30 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	return page;
     }
 
+    @Override
+    public PageUtil findGroupDialogByPage( Map< String,Object > param, List< Map< String,Object > > shoplist, int userId ) {
+	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
+	param.put( "curPage", curPage );
+	int pageSize = 10;
+	param.put( "shoplist", shoplist );
+	// 统计商品分组
+	int count = mallGroupDAO.selectGroupByCount( param );
+
+	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+	param.put( "firstNum", firstNum );// 起始页
+	param.put( "maxNum", pageSize );// 每页显示分组的数量
+
+	if ( count > 0 ) {// 判断商品分组是否有数据
+	    if ( CommonUtil.isEmpty( param.get( "type" ) ) ) {
+		param.put( "type", 0 );
+	    }
+	    List< Map< String,Object > > groupList = mallGroupDAO.selectGroupDialogByPage( param );
+	    page.setSubList( groupList );
+	}
+	return page;
+    }
+
     @Transactional( rollbackFor = Exception.class )
     @Override
     public boolean saveOrUpdateGroup( MallGroup group, List< MallImageAssociative > imageList, int userId ) {

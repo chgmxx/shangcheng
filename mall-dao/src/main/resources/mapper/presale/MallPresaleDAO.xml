@@ -171,12 +171,12 @@
             p.is_specifica      AS isSpecifica,
             p.pro_name          AS proName,
         IF (p.is_specifica = 0, p.pro_price, d.inv_price)
-            AS proPrice,p.pro_stock_total as proStockTotal
+            AS proPrice, p.pro_stock_total AS proStockTotal
             FROM t_mall_presale b
             LEFT JOIN t_mall_product p ON b.product_id = p.id
             LEFT JOIN ( SELECT ass_id, image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
-            LEFT JOIN ( SELECT product_id, specifica_img_id, inv_num, inv_price, id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0) d ON b.product_id= d.product_id
-            LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+            LEFT JOIN ( SELECT product_id, specifica_img_id, inv_num, inv_price, id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0) D ON b.product_id= D.product_id
+            LEFT JOIN t_mall_product_specifica e ON D.specifica_img_id=e.id
             WHERE b.id = #{id}
     </select>
 
@@ -187,10 +187,10 @@
         from t_mall_presale g
         where g.is_delete = 0 and g.is_use = 1
         <if test="productId != null">
-          and g.product_id=#{productId}
+            and g.product_id=#{productId}
         </if>
         <if test="shopId != null">
-          and g.shop_id=#{shopId}
+            and g.shop_id=#{shopId}
         </if>
         <if test="id != null and id > 0">
             and g.id=#{id}
@@ -291,28 +291,40 @@
         </if>
     </select>
 
-    <select id="selectBySearchNames" parameterType="Map" resultType="Map">
-        SELECT DISTINCT(a.id),a.pro_price,a.pro_name AS proName,a.is_specifica,b.product_introdu AS
-        product_introdu,a.is_specifica,c.image_url,e.specifica_img_url,d.inv_num,d.inv_price,d.specifica_img_id,
-        mp.sale_start_time,mp.sale_end_time,mp.id AS presaleId,mp.order_num,mp.shop_id,mp.user_id
+    <select id="selectCountBySearchNames" parameterType="Map" resultType="java.lang.Integer">
+        SELECT count(mp.product_id)
         FROM t_mall_presale mp
         LEFT JOIN t_mall_product a ON a.id=mp.product_id
-        LEFT JOIN t_mall_product_detail b ON a.id=b.product_id
-        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON a.id=c.ass_id
-        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON a.id=d.product_id
-        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
-        <if test="groupId != null and groupId != ''">
-            left join t_mall_product_group pg on pg.product_id=a.id and pg.is_delete = 0
-        </if>
         WHERE a.shop_id=#{shopId} AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
         AND ((mp.sale_start_time > NOW() AND mp.sale_end_time > NOW() ) OR (mp.sale_start_time &lt;= NOW() AND NOW() &lt; mp.sale_end_time))
         AND mp.is_use=1 AND mp.is_delete=0
         <if test="searchName != null and searchName != ''">
             and a.pro_name like '%${searchName}%'
         </if>
-        <if test="groupId != null and groupId != ''">
-            and pg.id=#{groupId}
+    </select>
+
+    <select id="selectBySearchNames" parameterType="Map" resultType="Map">
+        SELECT mp.id,mp.pro_price,mp.pro_name AS proName,mp.is_specifica,b.product_introdu AS product_introdu,c.image_url,d.inv_price,mp.shop_id,mp.user_id,
+        mp.sale_start_time,mp.sale_end_time,mp.preId,mp.order_num as orderNum
+        from (
+        select DISTINCT(a.id) as id,a.pro_price,a.pro_name ,a.is_specifica,mp.shop_id,mp.user_id,
+        mp.sale_start_time,mp.sale_end_time,mp.id AS preId,mp.order_num
+        FROM t_mall_presale mp
+        LEFT JOIN t_mall_product a ON a.id=mp.product_id
+        WHERE a.shop_id=#{shopId} AND a.is_publish=1 AND a.check_status=1 AND a.is_delete=0
+        AND ((mp.sale_start_time > NOW() AND mp.sale_end_time > NOW() ) OR (mp.sale_start_time &lt;= NOW() AND NOW() &lt; mp.sale_end_time))
+        AND mp.is_use=1 AND mp.is_delete=0
+        <if test="searchName != null and searchName != ''">
+            and a.pro_name like '%${searchName}%'
         </if>
+        <if test="firstNum != null and maxNum != null">
+            limit #{firstNum},#{maxNum}
+        </if>
+        )
+        as mp
+        LEFT JOIN t_mall_product_detail b ON mp.id=b.product_id
+        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON mp.id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON mp.id=d.product_id
     </select>
 
     <select id="selectGoingPresaleProduct" resultType="Map">

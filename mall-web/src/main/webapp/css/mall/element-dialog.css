@@ -1,0 +1,104 @@
+#el-app .el-dialog{
+    width: 660px;
+}
+#el-app .el-dialog__wrapper {
+    z-index: 99998 !important;
+}
+
+#el-app .form-inline input {
+    height: 36px !important;
+    line-height: 1 !important;
+    padding: 3px 10px !important;
+}
+
+#el-app .footer_fixed {
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    background-color: #fff;
+    margin-top: 15px;
+}
+
+#el-app .footer_fixed_left {
+    width: 24%;
+    height: 100%;
+}
+
+#el-app .footer_fixed_right {
+    width: 65%;
+    height: 100%;
+}
+
+#el-app .ik-box {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: box;
+}
+
+#el-app .ik-box-pack-justify {
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -o-box-pack: justify;
+    box-pack: justify;
+}
+
+#el-app .ik-box-align_center {
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    -o-box-align: center;
+    box-align: center;
+}
+
+#el-app .el-pagination__editor {
+    padding: 4px 2px !important;
+    line-height: 18px !important;
+    height: auto!important;
+    border-radius:2px !important;
+}
+
+.el-select-dropdown {
+    z-index: 99999 !important;
+}
+#el-app .el-pagination{
+    text-align: right !important;
+}
+
+/*公用tab 仿饿了么样式*/
+#el-app .el-table2 {
+    width: 100%;
+    border-color: #dfe6ec;
+    border: 1px solid #dfe6ec;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+#el-app .el-table2 .el-table2_header {
+    width: 100%;
+    background: #eef1f6;
+}
+#el-app .el-table2 tr{
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+}
+#el-app .el-table2 td, .el-table2 th {
+    text-align: left;
+    border-right: 0;
+    border-left: 0;
+    padding: 10px 0;
+}
+
+#el-app .el-table2 tr:hover {
+/ / transition: background-color .25 s ease;
+    background: #eef1f6;
+}
+
+#el-app .el-table2 .dialog-list {
+    width: 100%;
+    margin-top: 25px;
+}
+
+#el-app .el-table2 .dialog-list>span {
+    margin-right: 28px;
+}

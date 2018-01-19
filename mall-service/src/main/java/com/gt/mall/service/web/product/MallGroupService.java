@@ -31,6 +31,16 @@ public interface MallGroupService extends BaseService< MallGroup > {
     PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist, int userId );
 
     /**
+     * 分页查询商品分组(设计页面时调用，其中返回值不能动)
+     *
+     * @param param
+     * @param shoplist 店铺列表
+     *
+     * @return
+     */
+    PageUtil findGroupDialogByPage( Map< String,Object > param, List< Map< String,Object > > shoplist, int userId );
+
+    /**
      * 编辑商品分组
      *
      * @param group     商品分组信息

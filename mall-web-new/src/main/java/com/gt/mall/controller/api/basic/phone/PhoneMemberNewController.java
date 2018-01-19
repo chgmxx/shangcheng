@@ -261,9 +261,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 		}
 	    }
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //todo 区号
-	    //	    boolean isSuccess = memberService.bingdingPhoneH5AreaPhone( loginDTO.getBusId(), phone, member.getId(), areaId, areaCode );
-	    boolean isSuccess = memberService.bingdingPhoneH5( loginDTO.getBusId(), phone, member.getId() );
+	    boolean isSuccess = memberService.bingdingPhoneH5AreaPhone( loginDTO.getBusId(), phone, member.getId(), areaId, areaCode );
 	    if ( isSuccess ) {
 		JedisUtil.del( Constants.REDIS_KEY + code );//删除验证码
 		return ServerResponse.createBySuccess();
