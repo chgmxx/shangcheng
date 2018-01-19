@@ -94,7 +94,7 @@
 }
 
 #el-app .el-table2 tr:hover {
-/ / transition: background-color .25 s ease;
+// transition: background-color .25 s ease;
     background: #eef1f6;
 }
 
