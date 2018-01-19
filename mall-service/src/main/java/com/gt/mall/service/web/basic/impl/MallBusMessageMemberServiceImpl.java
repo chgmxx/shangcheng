@@ -124,7 +124,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			for ( String phone : phones ) {
 			    String[] str = phone.split( "," );
 			    NewApiSms newApiSms = new NewApiSms();
-			    if ( str.length > 0 ) {
+			    if ( str.length > 1 ) {
 				newApiSms.setMobile( str[1] );
 				newApiSms.setCountry( str[0] );
 			    } else {
@@ -197,7 +197,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			    for ( String phone : phones ) {
 				String[] str = phone.split( "," );
 				NewApiSms newApiSms = new NewApiSms();
-				if ( str.length > 0 ) {
+				if ( str.length > 1 ) {
 				    newApiSms.setMobile( str[1] );
 				    newApiSms.setCountry( str[0] );
 				} else {
@@ -263,7 +263,7 @@ public class MallBusMessageMemberServiceImpl extends BaseServiceImpl< MallBusMes
 			    for ( String phone : phones ) {
 				String[] str = phone.split( "," );
 				NewApiSms newApiSms = new NewApiSms();
-				if ( str.length > 0 ) {
+				if ( str.length > 1 ) {
 				    newApiSms.setMobile( str[1] );
 				    newApiSms.setCountry( str[0] );
 				} else {

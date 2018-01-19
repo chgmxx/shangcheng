@@ -37,7 +37,7 @@ public class SmsServiceImpl implements SmsService {
 	newApiSms.setModel( CommonUtil.toInteger( Constants.SMS_MODEL ) );
 	RequestUtils< NewApiSms > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( newApiSms );
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, SMS_URL + "sendSmsOld.do", 2 );
+	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, SMS_URL + "sendSmsNew.do", 2 );
 	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }
