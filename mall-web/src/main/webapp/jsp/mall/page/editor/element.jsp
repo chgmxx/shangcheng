@@ -15,6 +15,16 @@
 </head>
 <body>
 <div id="el-app" style="display: none">
+    <div class="shop-addpage-main" id="shop1">
+        <div class="shop-steps">
+            <el-steps :active="2"  center  >
+                <el-step title="编辑页面信息">
+                </el-step>
+                <el-step title="编辑微页面"></el-step>
+                <el-step title="成功"></el-step>
+            </el-steps>
+        </div>
+    </div>
     <el-dialog :title="paramsData.title" :visible.sync="dialogTableVisible">
         <div v-if="paramsData.type != null">
             <el-form :inline="true" :model="formInline" class="form-inline" v-if="paramsData.type == 1 || paramsData.type == 3">
