@@ -128,6 +128,7 @@ public class MallPageNewController extends BaseController {
     @SysLogAnnotation( description = "页面管理-保存页面信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
+	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    MallPage page = com.alibaba.fastjson.JSONObject.parseObject( params.get( "page" ).toString(), MallPage.class );
@@ -144,6 +145,7 @@ public class MallPageNewController extends BaseController {
 	    page.setPagUserId( MallSessionUtils.getLoginUser( request ).getId() );
 	    page.setPagCreateTime( new Date() );
 	    mallPageService.saveOrUpdate( page, user );
+	    result.put( "id", page.getId() );
 	} catch ( BusinessException e ) {
 	    logger.error( "保存页面信息异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -153,7 +155,7 @@ public class MallPageNewController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
 	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
