@@ -215,6 +215,20 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 	    if ( groupList != null && groupList.size() > 0 ) {
 		mallGroupDAO.updateByGroupId( groupList );// 删除父类商品分组
 	    }
+
+	    //查询父类下有没有子类列表
+	    MallGroup mallGroup = mallGroupDAO.selectById( id );
+	    if ( mallGroup != null ) {
+		Wrapper< MallGroup > wrapper = new EntityWrapper<>();
+		wrapper.where( "is_delete =0 and group_p_id = {0}", mallGroup.getGroupPId() );
+		List< MallGroup > groupPList = mallGroupDAO.selectList( wrapper );
+		if ( groupPList != null && groupPList.size() == 0 ) {
+		    MallGroup groupP = new MallGroup();
+		    groupP.setId( mallGroup.getGroupPId() );
+		    groupP.setIsChild( 0 );
+		    mallGroupDAO.updateById( groupP );//逻辑删除商品分组
+		}
+	    }
 	    if ( count > 0 ) {
 		return true;
 	    }

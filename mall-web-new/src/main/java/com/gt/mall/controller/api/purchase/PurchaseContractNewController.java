@@ -102,8 +102,14 @@ public class PurchaseContractNewController extends BaseController {
 	    BusUser busUser = MallSessionUtils.getLoginUser( request );
 	    PurchaseContract contract = new PurchaseContract();
 	    contract.setBusId( busUser.getId() );
-	    contract.setContractContent( CommonUtil.urlEncode( params.get( "contractContent" ).toString() ) );
-	    contract.setContractTitle( CommonUtil.urlEncode( params.get( "contractTitle" ).toString() ) );
+	    if ( CommonUtil.isEmpty( params.get( "contractTitle" ) ) ) {
+		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "合同标题不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( params.get( "contractContent" ) ) ) {
+		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "合同内容不能为空" );
+	    }
+	    contract.setContractContent( params.get( "contractContent" ).toString() );
+	    contract.setContractTitle( params.get( "contractTitle" ).toString() );
 	    if ( params.get( "id" ) != null && CommonUtil.isNotEmpty( params.get( "id" ).toString() ) ) {
 		contract.setId( Integer.parseInt( params.get( "id" ).toString() ) );
 		contractService.updateById( contract );
