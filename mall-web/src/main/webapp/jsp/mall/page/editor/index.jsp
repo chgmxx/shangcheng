@@ -292,7 +292,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             pic_type(imgList, paramList[2], paramList[1])
         }
 
-        layer.closeAll();
+        this.CloseParentShade();
     }
 
     /**轮播模块下拉类型点击事件**/
