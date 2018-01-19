@@ -251,14 +251,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             }
         });
     }
+
+
+    /**打开一个IFRAME窗口**/
+    function openIframe(data) {
+        this.openParentShade();
+        vm.openDialog(data);
+    }
     function openParentShade() {
-//        parent.parent.window.postMessage("openMask()", "*");
-//        parent.shadeShow();
+        parent.parent.window.postMessage("openMask()", "*");
+        parent.shadeShow();
     }
     function CloseParentShade() {
         layer.closeAll();
-//        parent.shadeHide();
-//        parent.parent.window.postMessage("closeMask()", "*");
+        parent.shadeHide();
+        parent.parent.window.postMessage("closeMask()", "*");
     }
     /**素材库里面返回信息**/
     window.addEventListener("message", function (e) {
@@ -430,11 +437,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         }
     }
 
-
-    /**打开一个IFRAME窗口**/
-    function openIframe(data) {
-        vm.openDialog(data);
-    }
 
     //数据保存或修改
 
