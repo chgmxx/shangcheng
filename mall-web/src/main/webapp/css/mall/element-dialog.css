@@ -107,9 +107,9 @@
     margin-right: 28px;
 }
 
-.shop-addpage-main {
-    padding: 22px 4%;
+#el-app .shop-addpage-main {
+    padding: 22px 2.9% 22px 3.4%;
 }
-.shop-steps {
+#el-app .shop-steps {
     border-bottom: 1px solid #f3f3f3;
 }
