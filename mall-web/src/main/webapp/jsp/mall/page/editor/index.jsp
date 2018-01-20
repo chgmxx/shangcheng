@@ -203,11 +203,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
      * type 1 保存 2 预览
      */
     function savePage(type){
-
         var pagCss = angular.toJson(dataJson);
         var pagData = angular.toJson(picJson);
 
-        parent.savePage(type,pagCss,pagData);
+        parent.addPageSave(type,pagCss,pagData);
     }
     //返回
     function addPageBack(type){
