@@ -116,7 +116,7 @@
 }
 
 #el-app .common-nav {
-    width: 100%;
+    /*width: 100%;*/
     padding: 16px 4%;
     border: 1px solid #eee;
     font-size: 14px;
