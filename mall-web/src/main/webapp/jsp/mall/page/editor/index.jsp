@@ -148,7 +148,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <div data-v-12ec9b42="" id="shop2" class="shop-addpage-main shop-textc">
         <button type="button" class="gt-button gt-button--primary" onclick="savePage(1)"><span>保存</span></button>
         <button type="button" class="gt-button gt-button--primary" style="" onclick="addPageSave(2)"><span>预览</span></button>
-        <button type="button" class="gt-button gt-button--default" style="margin-top: 12px;" onclick="addPageBack()"><span>返回</span></button>
+        <button type="button" class="gt-button gt-button--default" style="margin-top: 12px;" onclick="addPageBack(2)"><span>返回</span></button>
     </div>
 </div>
 <!--修改网站名称弹出层结束-->
@@ -210,8 +210,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         parent.savePage(type,pagCss,pagData);
     }
     //返回
-    function addPageBack(){
-        parent.addPageBack();
+    function addPageBack(type){
+        parent.addPageBack(type);
     }
     //弹出遮罩层
     function showFade() {

@@ -17,7 +17,7 @@
 <div id="el-app" style="display: none">
     <div class="common-nav" >
         <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/page' }">页面管理</el-breadcrumb-item>
+            <el-breadcrumb-item ><a href="javascript:void(0);" @click="toPageIndex">页面管理</a></el-breadcrumb-item>
             <el-breadcrumb-item >修改微页面</el-breadcrumb-item>
         </el-breadcrumb>
     </div>
@@ -138,8 +138,8 @@
             }
         },
         methods: {
-            toPage:function(){
-
+            toPageIndex:function(){
+                addPageBack(1);
             },
             //关闭弹出框
             closeDialog: function () {
