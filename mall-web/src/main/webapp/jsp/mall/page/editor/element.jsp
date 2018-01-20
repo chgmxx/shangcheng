@@ -10,11 +10,18 @@
 <head>
     <title>Title</title>
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4/lib/theme-default/index.css">
+    <link rel="stylesheet" href="/js/plugin/element/eleme-index.css">
+    <%--<link rel="stylesheet" href="https://unpkg.com/element-ui@1.4/lib/theme-default/index.css">--%>
     <link rel="stylesheet" href="/css/mall/element-dialog.css?<%=System.currentTimeMillis()%>">
 </head>
 <body>
 <div id="el-app" style="display: none">
+    <div class="common-nav" >
+        <el-breadcrumb separator="/">
+            <el-breadcrumb-item ><a href="javascript:void(0);" @click="toPageIndex">页面管理</a></el-breadcrumb-item>
+            <el-breadcrumb-item >修改微页面</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
     <div class="shop-addpage-main" id="shop1">
         <div class="shop-steps">
             <el-steps :active="2"  center  >
@@ -84,9 +91,10 @@
     </el-dialog>
 </div>
 <!-- 先引入 Vue -->
-<script src="https://unpkg.com/vue@2.5/dist/vue.js"></script>
+<script src="/js/plugin/element/vue.min.js"></script>
 <!-- 引入组件库 -->
-<script src="https://unpkg.com/element-ui@1.4/lib/index.js"></script>
+<script src="/js/plugin/element/eleme-index.js"></script>
+<%--<script src="https://unpkg.com/element-ui@1.4/lib/index.js"></script>--%>
 <script>
     var vm = new Vue({
         el: '#el-app',
@@ -132,6 +140,9 @@
             }
         },
         methods: {
+            toPageIndex:function(){
+                addPageBack(1);
+            },
             //关闭弹出框
             closeDialog: function () {
                 vm.dialogTableVisible = false;
