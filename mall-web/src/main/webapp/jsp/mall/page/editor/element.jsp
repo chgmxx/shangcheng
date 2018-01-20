@@ -10,8 +10,7 @@
 <head>
     <title>Title</title>
     <!-- 引入样式 -->
-    <%--<link rel="stylesheet" href="js/eleme-index.css">--%>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4/lib/theme-default/index.css">
+    <link rel="stylesheet" href="js/eleme-index.css">
     <link rel="stylesheet" href="/css/mall/element-dialog.css?<%=System.currentTimeMillis()%>">
 </head>
 <body>
