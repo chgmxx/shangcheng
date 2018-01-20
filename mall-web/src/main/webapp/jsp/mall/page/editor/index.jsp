@@ -144,14 +144,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <!-- 商品隐藏id -->
 <input type="hidden" id="stoId" value="${stoId}"/>
 
-<%--<div style="width:100%;margin:0 auto;padding-top:3px;position:fixed;text-align:center;bottom:0;background-color:#ffc;padding:10px;z-index:10001;">
-    <a href="javascirpt:void(0)" onclick="save()"
-       style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">保存</a>
-    <a href="javascirpt:void(0)" onclick="yl()"
-       style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px; margin-right: 20px">预览</a>
-    <a href="javascirpt:void(0)" onclick="window.close()"
-       style="background-color: #1aa1e7; border-radius: 3px; color: #fff; display: inline-block; font-size: 14px; height: 15px; line-height: 15px; text-align: center; width: 70px; cursor: pointer; padding: 8px">关闭</a>
-</div>--%>
+<div class="div_position_fixed">
+    <div data-v-12ec9b42="" id="shop2" class="shop-addpage-main shop-textc">
+        <button type="button" class="gt-button gt-button--primary" onclick="savePage(1)"><span>保存</span></button>
+        <button type="button" class="gt-button gt-button--primary" style="" onclick="addPageSave(2)"><span>预览</span></button>
+        <button type="button" class="gt-button gt-button--default" style="margin-top: 12px;" onclick="addPageBack()"><span>返回</span></button>
+    </div>
+</div>
 <!--修改网站名称弹出层结束-->
 <div id="fade" class="black_overlay"></div>
 <div id="moveGroupLaye" style="display: none; z-index: 1002; width: 200px; height: 200px; position: fixed; left:50%; top:50%;margin-left:-100px; margin-top:-100px">
@@ -199,6 +198,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 
 <script type="text/javascript">
+    /**
+     * 保存和预览
+     * type 1 保存 2 预览
+     */
+    function savePage(type){
+
+        var pagCss = angular.toJson(dataJson);
+        var pagData = angular.toJson(picJson);
+
+        parent.savePage(type,pagCss,pagData);
+    }
+    //返回
+    function addPageBack(){
+        parent.addPageBack();
+    }
     //弹出遮罩层
     function showFade() {
         document.getElementById('fade').style.display = 'block';

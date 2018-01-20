@@ -95,7 +95,7 @@ public class PhoneMemberNewController extends AuthorizeOrUcLoginController {
 		    result.setIsOpenPf( 1 );
 		    result.setPfStatus( pfStatus );
 		}
-		if ( set.getIsSeller().toString().equals( "1" ) ) {
+		if ( set.getIsSeller().toString().equals( "1" ) && CommonUtil.isNotEmpty( member ) ) {
 		    sellerStatus = mallSellerService.selectSellerStatusByMemberId( member, set );
 		    result.setIsOpenSeller( 1 );
 		    result.setSellerStatus( sellerStatus );

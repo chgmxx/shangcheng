@@ -94,7 +94,7 @@
 }
 
 #el-app .el-table2 tr:hover {
-// transition: background-color .25 s ease;
+/ / transition: background-color .25 s ease;
     background: #eef1f6;
 }
 
@@ -110,6 +110,75 @@
 #el-app .shop-addpage-main {
     padding: 22px 2.9% 22px 3.4%;
 }
+
 #el-app .shop-steps {
     border-bottom: 1px solid #f3f3f3;
+}
+
+#el-app .common-nav {
+    width: 100%;
+    padding: 16px 4%;
+    border: 1px solid #eee;
+    font-size: 14px;
+}
+
+#el-app .common-nav span > span:first-child {
+    color: #20a0ff;
+}
+
+#el-app span:last-child > span:first-child {
+    color: #666;
+}
+
+.div_position_fixed {
+
+    width: 100%;
+    background: #fff;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+.div_position_fixed .shop-addpage-main {
+    /*padding: 22px 4%;*/
+    width: 100%;
+}
+
+.shop-textc {
+    text-align: center;
+}
+
+.gt-button--primary {
+    color: #fff !important;
+    background-color: #20a0ff !important;
+    border-color: #20a0ff !important;
+}
+
+.gt-button--primary:hover {
+    background: #4db3ff !important;
+    border-color: #4db3ff !important;
+    color: #fff;
+}
+
+.gt-button--default:hover {
+    border-color: #4db3ff !important;
+    color: #4db3ff !important;
+}
+
+.gt-button {
+    display: inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #c4c4c4;
+    color: #1f2d3d;
+    margin: 0;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.gt-button, .gt-textarea__inner {
+    font-size: 14px;
+    box-sizing: border-box;
 }

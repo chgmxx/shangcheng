@@ -15,6 +15,12 @@
 </head>
 <body>
 <div id="el-app" style="display: none">
+    <div class="common-nav" >
+        <el-breadcrumb separator="/">
+            <el-breadcrumb-item :to="{ path: '/page' }">页面管理</el-breadcrumb-item>
+            <el-breadcrumb-item >修改微页面</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
     <div class="shop-addpage-main" id="shop1">
         <div class="shop-steps">
             <el-steps :active="2"  center  >
@@ -132,6 +138,9 @@
             }
         },
         methods: {
+            toPage:function(){
+
+            },
             //关闭弹出框
             closeDialog: function () {
                 vm.dialogTableVisible = false;
