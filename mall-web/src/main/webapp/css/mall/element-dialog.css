@@ -84,6 +84,7 @@
     display: table-row;
     vertical-align: inherit;
     border-color: inherit;
+    cursor: pointer;
 }
 
 #el-app .el-table2 td, .el-table2 th {

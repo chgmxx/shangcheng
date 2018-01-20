@@ -146,7 +146,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <div class="div_position_fixed">
     <div data-v-12ec9b42="" id="shop2" class="shop-addpage-main shop-textc">
-        <button type="button" class="gt-button gt-button--primary" onclick="savePage(1)"><span>保存</span></button>
+        <button type="button" class="gt-button gt-button--primary" onclick="addPageSave(1)"><span>保存</span></button>
         <button type="button" class="gt-button gt-button--primary" style="" onclick="addPageSave(2)"><span>预览</span></button>
         <button type="button" class="gt-button gt-button--default" style="margin-top: 12px;" onclick="addPageBack(2)"><span>返回</span></button>
     </div>
@@ -202,7 +202,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
      * 保存和预览
      * type 1 保存 2 预览
      */
-    function savePage(type){
+    function addPageSave(type){
         var pagCss = angular.toJson(dataJson);
         var pagData = angular.toJson(picJson);
 
