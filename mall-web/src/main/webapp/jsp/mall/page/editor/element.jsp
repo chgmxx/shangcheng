@@ -90,7 +90,7 @@
     </el-dialog>
 </div>
 <!-- 先引入 Vue -->
-<script src="https://unpkg.com/vue@2.5/dist/vue.js"></script>
+<script src="js/vue.min.js"></script>
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/element-ui@1.4/lib/index.js"></script>
 <script>
