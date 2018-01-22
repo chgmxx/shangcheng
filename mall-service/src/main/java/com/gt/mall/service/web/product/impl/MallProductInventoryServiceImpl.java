@@ -409,7 +409,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	Map< String,Object > map = new HashMap<>();
 	boolean defaultHasInvNum = true;
 	Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
-	inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
+	inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code,logistics_weight" );
 	inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 	if ( CommonUtil.isNotEmpty( inv_id ) ) {
 	    inventoryWrapper.andNew( "id={0} and inv_num > 0", inv_id );
@@ -418,7 +418,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	List< Map< String,Object > > inventoryList = mallProductInventoryDAO.selectMaps( inventoryWrapper );
 	if ( inventoryList == null || inventoryList.size() == 0 ) {
 	    inventoryWrapper = new EntityWrapper<>();
-	    inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
+	    inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code,logistics_weight" );
 	    inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 	    inventoryWrapper.orderBy( "inv_num", false );
 	    inventoryList = mallProductInventoryDAO.selectMaps( inventoryWrapper );
@@ -428,7 +428,7 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 	    map = inventoryList.get( 0 );
 	    if ( CommonUtil.isEmpty( map.get( "inv_num" ) ) || map.get( "inv_num" ).toString().equals( "0" ) ) {
 		inventoryWrapper = new EntityWrapper<>();
-		inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code" );
+		inventoryWrapper.setSqlSelect( "id,specifica_ids,inv_price,inv_num,inv_code,logistics_weight" );
 		inventoryWrapper.where( "is_delete = 0 and product_id = {0}", id );
 		inventoryWrapper.andNew( " inv_num > 0 " );
 		if ( defaultHasInvNum ) {
@@ -459,9 +459,9 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
 		    xids.append( specifica.getSpecificaValueId() ).append( "," );
 		}
 	    }
-
 	    map.put( "specifica_name", specifica_names.toString() );
 	    map.put( "xids", xids.toString().substring( 0, xids.length() - 1 ) );
+	    map.put( "weight", map.get( "logistics_weight" ) );
 	}
 	return map;
     }

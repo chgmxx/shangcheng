@@ -122,7 +122,7 @@
         SELECT a.id,a.`product_id`,a.`shop_id`,a.`product_specificas`,a.`product_num`,a.`product_speciname`,a.`price`,a.`primary_price`,a.`discount`,a.`pro_spec_str`,
         a.`pro_type`,a.`sale_member_id`,a.`commission`,
         e.image_url,d.is_specifica,
-        d.pro_name,d.return_day,d.is_coupons,d.is_member_discount,d.pro_weight,d.is_integral_deduction,d.is_fenbi_deduction,d.pro_type_id
+        d.pro_name,d.return_day,d.is_coupons,d.is_member_discount,d.pro_weight,d.is_integral_deduction,d.is_fenbi_deduction,d.pro_type_id,d.pro_freight_temp_id,d.pro_freight_price
         FROM t_mall_shop_cart a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
 

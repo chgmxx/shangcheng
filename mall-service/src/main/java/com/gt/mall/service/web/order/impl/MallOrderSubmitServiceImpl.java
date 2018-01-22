@@ -532,14 +532,16 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    Integer freightId = 0;
 	    Double freightPrice = 0d;
 	    double productWeight = 0;
-	    if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
-		productWeight = CommonUtil.toDouble( product.getProWeight() );
+	    if ( CommonUtil.isNotEmpty( productResult.getProductWeight() ) ) {
+		productWeight = CommonUtil.toDouble( productResult.getProductWeight() );
 	    }
 	    if ( CommonUtil.isNotEmpty( product.getProFreightPrice() ) ) {
 		freightPrice = CommonUtil.toDouble( product.getProFreightPrice() );
 	    }
 	    if ( CommonUtil.isNotEmpty( product.getProFreightTempId() ) && product.getProFreightTempId() > 0 ) {
 		freightId = product.getProFreightTempId();
+	    } else {
+		freightPrice = 0d;
 	    }
 	    //到店购买不用计算运费
 	    if ( CommonUtil.isNotEmpty( buyNowDTO.getToShop() ) && buyNowDTO.getToShop() == 1 && product.getProTypeId() > 0 ) {
@@ -846,8 +848,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		shopResult.setWxShopId( CommonUtil.toInteger( storeMap.get( "wxShopId" ) ) );
 		int totalNum = 0;//店铺商品总数
 		double totalPrice = 0;//店铺商品总额
-		double productWeight = 0;//商品重量
-		int proTypeId = 0;//商品类型id
+		//		double productWeight = 0;//商品重量
+		//		int proTypeId = 0;//商品类型id
 		double totalFreightPrice = 0;//商品运费
 		List< PhoneFreightProductDTO > freightDTOList = new ArrayList<>();
 
@@ -857,8 +859,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 			newProductResultList.add( productResult );
 			totalNum += productResult.getProductNum();
 			totalPrice += productResult.getTotalPrice();
-			productWeight += productResult.getProductWeight();
-			proTypeId = productResult.getProTypeId();
+			//			productWeight += productResult.getProductWeight();
+			//			proTypeId = productResult.getProTypeId();
 			if ( CommonUtil.isNotEmpty( productResult.getProductFreightPrice() ) ) {
 			    totalFreightPrice += productResult.getProductFreightPrice();
 			}
@@ -1170,13 +1172,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    //计算运费
 	    Integer freightId = 0;
 	    Double freightPrice = 0d;
-	    double productWeight = 0;
-	    if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
-		productWeight = CommonUtil.toDouble( product.getProWeight() );
-	    }
 	    if ( CommonUtil.isNotEmpty( product.getProFreightPrice() ) ) {
 		freightPrice = CommonUtil.toDouble( product.getProFreightPrice() );
-		totalFreightPrice += freightPrice;
+
 	    }
 	    if ( CommonUtil.isNotEmpty( product.getProFreightTempId() ) && product.getProFreightTempId() > 0 ) {
 		freightId = product.getProFreightTempId();
@@ -1187,17 +1185,20 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		freightProductDTO.setProductId( product.getId() );
 		freightProductDTO.setFreightId( freightId );
 		freightProductDTO.setTotalProductNum( productResult.getProductNum() );
-		freightProductDTO.setTotalProductPrice( totalPrice );
-		freightProductDTO.setTotalProductWeight( productWeight );
+		freightProductDTO.setTotalProductPrice( productResult.getTotalPrice() );
+		freightProductDTO.setTotalProductWeight( productResult.getProductWeight() );
 		freightProductDTO.setMallFreight( mallFreight );
 		freightDTOList.add( freightProductDTO );
+	    } else if ( freightPrice > 0 ) {
+		totalFreightPrice += freightPrice;
 	    }
 
 	}
 	if ( freightDTOList != null && freightDTOList.size() > 0 && toShop == 0 ) {
 
 	    Double juli = CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude );
-	    totalFreightPrice += mallFreightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provincesId ) );
+	    double freightPrice = mallFreightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provincesId ) );
+	    totalFreightPrice += freightPrice;
 	}
 	//	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
 	//	paramsDto.setProvinceId( CommonUtil.toInteger( provincesId ) );
@@ -1286,6 +1287,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( imageList != null && imageList.size() > 0 ) {
 	    result.setProductImageUrl( CommonUtil.toString( imageList.get( 0 ).get( "image_url" ) ) );//商品图片
 	}
+	if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
+	    result.setProductWeight( CommonUtil.toDouble( product.getProWeight() ) );
+	}
 	if ( CommonUtil.isNotEmpty( detail.getProductSpecificas() ) ) {
 	    //获取商品规格和规格价
 	    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( detail.getProductSpecificas(), productId );
@@ -1293,6 +1297,11 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		result.setProductSpecificaValueId( detail.getProductSpecificas() );
 		result.setProductSpecificaValue( CommonUtil.toString( invMap.get( "specifica_values" ) ).replace( ",", "/" ) );
 		price = CommonUtil.toDouble( invMap.get( "inv_price" ) );//商品规格价
+		if ( CommonUtil.isNotEmpty( invMap.get( "weight" ) ) ) {
+		    if ( CommonUtil.toDouble( invMap.get( "weight" ) ) > 0 ) {
+			result.setProductWeight( CommonUtil.toDouble( invMap.get( "weight" ) ) );
+		    }
+		}
 	    }
 	}
 	double totalPrice = price * productNum;
@@ -1345,9 +1354,6 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	result.setIsCanUseYhq( CommonUtil.toInteger( product.getIsCoupons() ) );//是否能使用优惠券
 	result.setIsCanUseJifen( CommonUtil.toInteger( product.getIsIntegralDeduction() ) );//是否能使用积分抵扣
 	result.setIsCanUseFenbi( CommonUtil.toInteger( product.getIsFenbiDeduction() ) );//是否能使用粉币抵扣
-	if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
-	    result.setProductWeight( CommonUtil.toDouble( product.getProWeight() ) );//商品重量
-	}
 	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
 	    result.setProTypeId( CommonUtil.toInteger( product.getProTypeId() ) );
 	}

@@ -448,7 +448,13 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    MallFreight freight = new MallFreight();
 		    freight.setShopId( shopId );
 		    freight.setIsDelete( 0 );
-		    freight = freightDAO.selectOne( freight );
+		    Wrapper< MallFreight > freightWrapper = new EntityWrapper<>();
+		    freightWrapper.where( "shop_id={0} and is_delete = 0", shopId );
+
+		    List< MallFreight > freightList = freightDAO.selectList( freightWrapper );
+		    if ( freightList != null && freightList.size() > 0 ) {
+			freight = freightList.get( 0 );
+		    }
 		    if ( freight != null && toshop == 0 ) {
 			freightPrice = getFreightPrice( freight, orderPrice, proNum, weight, juli, provinceId );
 		    }

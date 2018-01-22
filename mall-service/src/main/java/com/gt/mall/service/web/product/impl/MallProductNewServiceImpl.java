@@ -374,7 +374,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    freightPrice = 0d;
 	} else {
 	    if ( freightId > 0 ) {
-		MallFreight mallFreight = mallFreightService.selectById( product.getProFreightTempId() );
+		MallFreight mallFreight = mallFreightService.selectById( freightId );
 		List< PhoneFreightProductDTO > freightDTOList = new ArrayList<>();
 		PhoneFreightProductDTO freightProductDTO = new PhoneFreightProductDTO();
 		freightProductDTO.setProductId( product.getId() );
