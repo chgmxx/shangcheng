@@ -257,9 +257,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    }
 	    //判断店铺和门店是否已经被删除
 	    boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
-	    if ( !isShop ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
-	    }
+	    //	    if ( !isShop ) {
+	    //		return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
+	    //	    }
+
 	    //封装登陆参数
 	    //	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
@@ -307,6 +308,10 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		if ( CommonUtil.isNotEmpty( publicUser.getQrcodeUrl() ) ) {
 		    result.setQrcodeUrl( PropertiesUtil.getResourceUrl() + publicUser.getQrcodeUrl() );
 		}
+	    }
+	    if ( !isShop ) {
+		result.setProductError( ResponseEnums.SHOP_NULL_ERROR.getCode() );
+		result.setProductErrorMsg( ResponseEnums.SHOP_NULL_ERROR.getDesc() );
 	    }
 	} catch ( BusinessException be ) {
 	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
@@ -367,7 +372,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		    resultMap.put( "guigePrice", guigePrice );
 		}
 	    }
-	    resultMap.put( "proCode",product.getProCode() );
+	    resultMap.put( "proCode", product.getProCode() );
 	    resultMap.put( "productName", product.getProName() );
 	    resultMap.put( "proStockTotal", product.getProStockTotal() );
 	    resultMap.put( "proPrice", product.getProPrice() );

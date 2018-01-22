@@ -24,6 +24,12 @@ public class PhoneProductDetailResult implements Serializable {
 
     private static final long serialVersionUID = -1254979092945866546L;
 
+    @ApiModelProperty( name = "productError", value = "商品错误状态码" )
+    private Integer productError;
+
+    @ApiModelProperty( name = "productErrorMsg", value = "商品错误状态说明" )
+    private String productErrorMsg;
+
     @ApiModelProperty( name = "productName", value = "商品名称" )
     private String productName;
 

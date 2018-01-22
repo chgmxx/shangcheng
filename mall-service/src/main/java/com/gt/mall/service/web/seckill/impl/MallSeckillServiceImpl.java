@@ -421,6 +421,8 @@ public class MallSeckillServiceImpl extends BaseServiceImpl< MallSeckillDAO,Mall
 		    if ( result.getInvId() > 0 ) {
 			invIdList.add( price.getInvenId() );
 		    }
+		} else if ( result.getInvId() == price.getInvenId() && result.getInvId() > 0 ) {//默认的规格没有选中
+		    result.setInvId( 0 );
 		}
 	    }
 	}
