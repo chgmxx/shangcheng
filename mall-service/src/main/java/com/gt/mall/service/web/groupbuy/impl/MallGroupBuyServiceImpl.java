@@ -487,10 +487,11 @@ public class MallGroupBuyServiceImpl extends BaseServiceImpl< MallGroupBuyDAO,Ma
 			groupPrice = CommonUtil.toDouble( price.getGroupPrice() );
 			result.setInvId( price.getInvenId() );
 		    }
-		    //		    result.setInvId( price.getInvenId() );
 		    if ( result.getInvId() > 0 ) {
 			invIdList.add( price.getInvenId() );
 		    }
+		} else if ( result.getInvId() == price.getInvenId() && result.getInvId() > 0 ) {//默认的规格没有选中
+		    result.setInvId( 0 );
 		}
 	    }
 	}

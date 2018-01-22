@@ -61,6 +61,12 @@ public class PhoneToOrderProductResult implements Serializable {
     @ApiModelProperty( name = "productNum", value = "商品数量" )
     private int productNum;
 
+    @ApiModelProperty( name = "freightId", value = "运费id" )
+    private Integer freightId = 0;
+
+    @ApiModelProperty( name = "productFreightPrice", value = "单个商品的运费" )
+    private double productFreightPrice = 0;
+
     //是否能使用积分
     @ApiModelProperty( name = "isCanUseJifen", value = "是否能使用积分1 能使用 0不能使用" )
     private int isCanUseJifen = 0;

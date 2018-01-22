@@ -1,9 +1,9 @@
 package com.gt.mall.service.web.freight;
 
-import com.alibaba.fastjson.JSONArray;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.param.phone.freight.PhoneFreightDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightProductDTO;
 import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
 import com.gt.mall.utils.PageUtil;
 
@@ -87,7 +87,7 @@ public interface MallFreightService extends BaseService< MallFreight > {
      */
     List< MallFreight > selectFreightByShopId( Integer shopId );
 
-    List< MallFreight > selectFreightByShopIdList( List< Integer > shopIdList );
+    List< MallFreight > selectFreightByFreightIds( List< Integer > freightIds );
 
     /**
      * 手机端获取运费
@@ -100,7 +100,7 @@ public interface MallFreightService extends BaseService< MallFreight > {
      *
      * @return 价格 [{店铺id：运费}]
      */
-    Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli, double weight );
+    //    Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli, double weight );
 
     /**
      * 计算运费（多个店铺）
@@ -123,6 +123,15 @@ public interface MallFreightService extends BaseService< MallFreight > {
      * @return 运费
      */
     public double getFreightMoneyByShopList( List< MallFreight > freightList, PhoneFreightDTO paramsDto, PhoneFreightShopDTO shopDto );
+
+    /**
+     * 计算运费（单个店铺）
+     *
+     * @param freightDTOList 运费集合
+     *
+     * @return 运费
+     */
+    public double getFreightMoneyByProductList( List< PhoneFreightProductDTO > freightDTOList ,Double juli,Integer provinces);
 
     /**
      * 获取运费

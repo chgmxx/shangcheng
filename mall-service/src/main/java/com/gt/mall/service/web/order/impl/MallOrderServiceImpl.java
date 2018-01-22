@@ -2158,7 +2158,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    cellTitle.setCellStyle( styleTitle );//给标题加样式
 	}
 	sheet.setDefaultColumnWidth( 20 );
-	sheet.setColumnWidth( 14, 60 * 256 );
+	sheet.setColumnWidth( 14, 100 * 256 );
 	HSSFCellStyle centerStyle = workbook.createCellStyle();
 	centerStyle.setAlignment( HSSFCellStyle.ALIGN_CENTER );// 设置单元格左右居中
 

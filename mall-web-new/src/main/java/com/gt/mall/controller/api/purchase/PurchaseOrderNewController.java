@@ -130,7 +130,8 @@ public class PurchaseOrderNewController extends BaseController {
 	    //订单的报价单
 	    List< Map< String,Object > > contractListMap = contractOrderDAO.findContractOrderList( id );
 	    if ( contractListMap.size() > 0 ) {
-		result.put( "orderContract", contractListMap.get( 0 ) );
+//		result.put( "orderContract", contractListMap.get( 0 ) );
+		order.setContractId( contractListMap.get( 0 ).get( "contract_id" ).toString() );
 	    }
 	    //查询轮播图
 	    List< Map< String,Object > > carouselList = carouselDAO.findByOrderId( order.getId() );
@@ -143,8 +144,7 @@ public class PurchaseOrderNewController extends BaseController {
 	    logger.error( "获取报价单信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取报价单信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	} return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     @ApiOperation( value = "获取所有店铺的商品(分页)", notes = "获取所有店铺的商品(分页)" )
@@ -357,7 +357,7 @@ public class PurchaseOrderNewController extends BaseController {
 		    @ApiImplicitParam( name = "memberId", value = "用户ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/languageDetails", method = RequestMethod.POST )
-    public ServerResponse languageDetails( HttpServletRequest request, HttpServletResponse response,Integer curPage, Integer orderId, Integer memberId ) {
+    public ServerResponse languageDetails( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer orderId, Integer memberId ) {
 
 	Map< String,Object > result = new HashMap<>();
 	try {

@@ -10,6 +10,7 @@ import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.basic.MallPaySet;
+import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.groupbuy.MallGroupBuyPrice;
 import com.gt.mall.entity.pifa.MallPifaPrice;
 import com.gt.mall.entity.presale.MallPresaleTime;
@@ -23,8 +24,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.PhoneProductDetailDTO;
 import com.gt.mall.param.phone.PhoneSpecificaDTO;
-import com.gt.mall.param.phone.freight.PhoneFreightDTO;
-import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightProductDTO;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.inter.member.CardService;
 import com.gt.mall.service.inter.member.MemberService;
@@ -49,7 +49,10 @@ import com.gt.mall.service.web.seckill.MallSeckillService;
 import com.gt.mall.service.web.seller.MallSellerMallsetService;
 import com.gt.mall.service.web.seller.MallSellerService;
 import com.gt.mall.service.web.store.MallStoreService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.JedisUtil;
+import com.gt.mall.utils.MallJxcHttpClientUtil;
+import com.gt.mall.utils.ProductUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +60,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,7 +144,9 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	MallProduct product = mallProductDAO.selectById( params.getProductId() );
 	String errorMsg = ProductUtil.isProductError( product );
 	if ( CommonUtil.isNotEmpty( errorMsg ) ) {
-	    throw new BusinessException( ResponseEnums.PRODUCT_NULL_ERROR.getCode(), errorMsg );
+	    result.setProductError( ResponseEnums.PRODUCT_NULL_ERROR.getCode() );
+	    result.setProductErrorMsg( errorMsg );
+	    //	    throw new BusinessException( ResponseEnums.PRODUCT_NULL_ERROR.getCode(), errorMsg );
 	}
 	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
 	    if ( "2".equals( product.getProTypeId().toString() ) ) {//会员卡购买
@@ -170,6 +176,10 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 
 	double productPrice = CommonUtil.toDouble( product.getProPrice() );//商品价格
 	double productCostPrice = CommonUtil.toDouble( product.getProCostPrice() );//商品原价
+	double productWeight = 0;//商品重量
+	if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
+	    productWeight = CommonUtil.toDouble( product.getProWeight() );
+	}
 
 	if ( "1".equals( product.getIsSpecifica().toString() ) ) {//商品有规格
 	    //查询规格价
@@ -177,6 +187,9 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	    if ( inven != null ) {
 		result.setInvId( inven.getId() );
 		productPrice = CommonUtil.toDouble( inven.getInvPrice() );
+		if ( CommonUtil.isNotEmpty( inven.getLogisticsWeight() ) ) {
+		    productWeight = CommonUtil.toDouble( inven.getLogisticsWeight() );
+		}
 	    } else {
 		product.setIsSpecifica( 0 );
 	    }
@@ -277,33 +290,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( isCollect ) {
 	    result.setIsCollect( 1 );//是否已收藏
 	}
-	Double memberLongitude = params.getLongitude();//会员经度
-	Double memberLangitude = params.getLangitude();//会员纬度
-	if ( CommonUtil.isNotEmpty( member ) ) {
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
-		//获取会员的默认地址
-		Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
-		if ( CommonUtil.isNotEmpty( addressMap ) && addressMap.size() > 0 ) {
-		    String address = addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
-				    .get( "memAddress" ).toString();
-		    if ( CommonUtil.isNotEmpty( addressMap.get( "memZipCode" ) ) ) {
-			address += addressMap.get( "memZipCode" ).toString();
-		    }
-		    result.setMemberAddress( address );
-		    if ( CommonUtil.isNotEmpty( addressMap.get( "memProvince" ) ) ) {
-			provinces = addressMap.get( "memProvince" ).toString();
-		    }
-		    if ( CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) ) {
-			memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
-			memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
-		    }
-		}
-	    }
-	}
-	if ( CommonUtil.isEmpty( provinces ) && CommonUtil.isNotEmpty( params.getIp() ) ) {
-	    provinces = mallPageService.getProvince( params.getIp() );
-	}
 	if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
 	    //查询卡券包信息
 	    if ( product.getProTypeId() == 3 && CommonUtil.isNotEmpty( product.getCardType() ) && product.getCardType() > 0 ) {
@@ -336,21 +322,76 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	if ( product.getProTypeId() != 0 ) {
 	    isShowAddShop = 0;
 	}
-	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
-	if ( CommonUtil.isNotEmpty( provinces ) ) {
-	    paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );
+	//	PhoneFreightDTO paramsDto = new PhoneFreightDTO();//运费传参
+	//	if ( CommonUtil.isNotEmpty( provinces ) ) {
+	//	    paramsDto.setProvinceId( CommonUtil.toInteger( provinces ) );
+	//	}
+	//	paramsDto.setToshop( params.getToShop() );
+	//	paramsDto.setJuli( CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude ) );
+	//	PhoneFreightShopDTO freightShopDTO = new PhoneFreightShopDTO();//运费店铺传参
+	//	freightShopDTO.setProTypeId( product.getProTypeId() );
+	//	freightShopDTO.setShopId( product.getShopId() );
+	//	freightShopDTO.setTotalProductNum( 1 );
+	//	freightShopDTO.setTotalProductPrice( productPrice );
+	//	freightShopDTO.setTotalProductWeight( CommonUtil.toDouble( product.getProWeight() ) );
+	//	double freightMoney = mallFreightService.getFreightMoneyByShopList( null, paramsDto, freightShopDTO ); //计算运费
+
+	Integer freightId = 0;
+	Double freightPrice = 0d;
+	if ( CommonUtil.isNotEmpty( product.getProFreightPrice() ) ) {
+	    freightPrice = CommonUtil.toDouble( product.getProFreightPrice() );
 	}
-	paramsDto.setToshop( params.getToShop() );
-	paramsDto.setJuli( CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude ) );
-	PhoneFreightShopDTO freightShopDTO = new PhoneFreightShopDTO();//运费店铺传参
-	freightShopDTO.setProTypeId( product.getProTypeId() );
-	freightShopDTO.setShopId( product.getShopId() );
-	freightShopDTO.setTotalProductNum( 1 );
-	freightShopDTO.setTotalProductPrice( productPrice );
-	freightShopDTO.setTotalProductWeight( CommonUtil.toDouble( product.getProWeight() ) );
-	double freightMoney = mallFreightService.getFreightMoneyByShopList( null, paramsDto, freightShopDTO ); //计算运费
-	if ( freightMoney > 0 ) {
-	    result.setFreightMoney( freightMoney );
+	if ( CommonUtil.isNotEmpty( product.getProFreightTempId() ) && product.getProFreightTempId() > 0 ) {
+	    freightId = product.getProFreightTempId();
+	}
+	Double memberLongitude = params.getLongitude();//会员经度
+	Double memberLangitude = params.getLangitude();//会员纬度
+	if ( CommonUtil.isNotEmpty( member ) ) {
+	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
+	    //获取会员的默认地址
+	    Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, member.getId() ) );
+	    if ( CommonUtil.isNotEmpty( addressMap ) && addressMap.size() > 0 ) {
+		String address = addressMap.get( "provincename" ).toString() + addressMap.get( "cityname" ).toString() + addressMap.get( "areaname" ).toString() + addressMap
+				.get( "memAddress" ).toString();
+		if ( CommonUtil.isNotEmpty( addressMap.get( "memZipCode" ) ) ) {
+		    address += addressMap.get( "memZipCode" ).toString();
+		}
+		result.setMemberAddress( address );
+		if ( CommonUtil.isNotEmpty( addressMap.get( "memProvince" ) ) ) {
+		    provinces = addressMap.get( "memProvince" ).toString();
+		}
+		if ( CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) ) {
+		    memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
+		    memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+		}
+	    }
+	}
+	if ( CommonUtil.isEmpty( provinces ) && CommonUtil.isNotEmpty( params.getIp() ) && freightId > 0 ) {
+	    provinces = mallPageService.getProvince( params.getIp() );
+	}
+	//到店购买不用计算运费
+	if ( params.getToShop() == 1 && product.getProTypeId() > 0 ) {
+	    freightPrice = 0d;
+	} else {
+	    if ( freightId > 0 ) {
+		MallFreight mallFreight = mallFreightService.selectById( product.getProFreightTempId() );
+		List< PhoneFreightProductDTO > freightDTOList = new ArrayList<>();
+		PhoneFreightProductDTO freightProductDTO = new PhoneFreightProductDTO();
+		freightProductDTO.setProductId( product.getId() );
+		freightProductDTO.setFreightId( freightId );
+		freightProductDTO.setTotalProductNum( 1 );
+		freightProductDTO.setTotalProductPrice( productPrice );
+		freightProductDTO.setTotalProductWeight( productWeight );
+		freightProductDTO.setMallFreight( mallFreight );
+		freightDTOList.add( freightProductDTO );
+
+		Double juli = CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude );
+		freightPrice = mallFreightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provinces ) );
+	    }
+	}
+
+	if ( freightPrice > 0 ) {
+	    result.setFreightMoney( freightPrice );
 	}
 	//到店购买不能加入购物车
 	if ( CommonUtil.isNotEmpty( params.getToShop() ) && params.getToShop() == 1 ) {

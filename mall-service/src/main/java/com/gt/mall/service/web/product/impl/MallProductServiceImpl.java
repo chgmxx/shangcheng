@@ -1215,6 +1215,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    if ( CommonUtil.isNotEmpty( specificaImageUrl ) ) {
 			maps.put( "specifica_img_url", specificaImageUrl );
 		    }
+		    maps.put( "weight",inventory.getLogisticsWeight() );
 
 		}
 	    }

@@ -10,6 +10,7 @@ import com.gt.mall.dao.freight.MallFreightDetailDAO;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.freight.MallFreightDetail;
 import com.gt.mall.param.phone.freight.PhoneFreightDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightProductDTO;
 import com.gt.mall.param.phone.freight.PhoneFreightShopDTO;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.freight.MallFreightDetailService;
@@ -147,30 +148,30 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
     }
 
     @Override
-    public List< MallFreight > selectFreightByShopIdList( List< Integer > shopIdList ) {
+    public List< MallFreight > selectFreightByFreightIds( List< Integer > freightIds ) {
 	Wrapper< MallFreight > wrapper = new EntityWrapper<>();
-	wrapper.in( "shop_id", shopIdList ).andNew( "is_delete = 0" );
+	wrapper.in( "id", freightIds ).andNew( "is_delete = 0" );
 	return freightDAO.selectList( wrapper );
     }
 
-    @Override
-    public Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli, double weight ) {
-	if ( CommonUtil.isEmpty( provinceId ) ) {
-	    provinceId = mallPageService.getProvince( ip );
-	}
-
-	Map< String,Object > map = new HashMap<>();
-	map.put( "province_id", provinceId );
-	map.put( "orderArr", productArr );
-	map.put( "toshop", toshop );
-	if ( juli > 0 ) {
-	    map.put( "juli", juli );
-	}
-	if ( weight > 0 ) {
-	    map.put( "pro_weight", weight );
-	}
-	return getFreightMoney( map );
-    }
+    //    @Override
+    //    public Map< String,Object > getFreightByParams( String ip, String provinceId, int toshop, JSONArray productArr, double juli, double weight ) {
+    //	if ( CommonUtil.isEmpty( provinceId ) ) {
+    //	    provinceId = mallPageService.getProvince( ip );
+    //	}
+    //
+    //	Map< String,Object > map = new HashMap<>();
+    //	map.put( "province_id", provinceId );
+    //	map.put( "orderArr", productArr );
+    //	map.put( "toshop", toshop );
+    //	if ( juli > 0 ) {
+    //	    map.put( "juli", juli );
+    //	}
+    //	if ( weight > 0 ) {
+    //	    map.put( "pro_weight", weight );
+    //	}
+    //	return getFreightMoney( map );
+    //    }
 
     @Override
     public Map< String,Object > getFreightMoneyByShopList( List< MallFreight > freightList, PhoneFreightDTO paramsDto, List< PhoneFreightShopDTO > shopFreightList ) {
@@ -296,6 +297,29 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    freightPrice = CommonUtil.toDouble( df.format( freightPrice ) );
 		}
 	    }
+	}
+	return freightPrice;
+    }
+
+    @Override
+    public double getFreightMoneyByProductList( List< PhoneFreightProductDTO > freightDTOList, Double juli, Integer provinceId ) {
+	double freightPrice = 0;
+	if ( freightDTOList != null && freightDTOList.size() > 0 ) {
+	    for ( PhoneFreightProductDTO freightProductDTO : freightDTOList ) {
+		if ( CommonUtil.isEmpty( freightProductDTO ) ) {
+		    continue;
+		}
+		MallFreight mallFreight = freightProductDTO.getMallFreight();
+		if ( CommonUtil.isNotEmpty( mallFreight ) && mallFreight.getIsDelete() == 0 ) {
+		    freightPrice += getFreightPrice( mallFreight, freightProductDTO.getTotalProductPrice(), freightProductDTO.getTotalProductNum(),
+				    freightProductDTO.getTotalProductWeight(), juli, provinceId );
+
+		}
+	    }
+	}
+	if ( freightPrice > 0 ) {
+	    DecimalFormat df = new DecimalFormat( "######0.00" );
+	    freightPrice = CommonUtil.toDouble( df.format( freightPrice ) );
 	}
 	return freightPrice;
     }

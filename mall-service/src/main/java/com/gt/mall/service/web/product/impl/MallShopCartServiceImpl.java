@@ -483,7 +483,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 	mallShopCart.setBusUserId( product.getUserId() );
 
 	int count;
-	List< Map< String,Object > > cartList = mallShopCartDAO.selectByShopCart( mallShopCart );
+	List< Map< String,Object > > cartList = null;
 	String cookieVales = CookieUtil.findCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    cartList = mallShopCartDAO.selectByShopCart( mallShopCart );
