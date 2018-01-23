@@ -36,6 +36,7 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
+import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -75,6 +76,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallOrderDAO             mallOrderDAO;
     @Autowired
     private MallOrderDetailDAO       orderDetailDAO;
+    @Autowired
+    private MallOrderReturnService   mallOrderReturnService;
     @Autowired
     private MallProductDaycountDAO   mallProductDaycountDAO;
     @Autowired
@@ -507,16 +510,17 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
 	    if ( returnList != null && returnList.size() > 0 ) {
 		for ( MallOrderReturn orderReturn : returnList ) {
-		    orderReturn.setStatus( 1 );
-		    orderReturn.setUpdateTime( new Date() );
-		    mallOrderReturnDAO.updateById( orderReturn );
+		    boolean flag = mallOrderReturnService.returnEndOrder( orderReturn.getOrderId(), orderReturn.getOrderDetailId() );
+		    if ( flag ) {
+			orderReturn.setStatus( 1 );
+			orderReturn.setUpdateTime( new Date() );
+			mallOrderReturnDAO.updateById( orderReturn );
 
-		    MallOrderDetail detail = new MallOrderDetail();
-		    detail.setId( orderReturn.getOrderDetailId() );
-		    detail.setStatus( 1 );
-		    orderDetailDAO.updateById( detail );
-
-		    // TODO 退款
+			MallOrderDetail detail = new MallOrderDetail();
+			detail.setId( orderReturn.getOrderDetailId() );
+			detail.setStatus( 1 );
+			orderDetailDAO.updateById( detail );
+		    }
 		}
 	    }
 	} catch ( Exception e ) {
@@ -539,15 +543,17 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
 	    if ( returnList != null && returnList.size() > 0 ) {
 		for ( MallOrderReturn orderReturn : returnList ) {
-		    orderReturn.setStatus( 5 );
-		    orderReturn.setUpdateTime( new Date() );
-		    mallOrderReturnDAO.updateById( orderReturn );
+		    boolean flag = mallOrderReturnService.returnEndOrder( orderReturn.getOrderId(), orderReturn.getOrderDetailId() );
+		    if ( flag ) {
+			orderReturn.setStatus( 5 );
+			orderReturn.setUpdateTime( new Date() );
+			mallOrderReturnDAO.updateById( orderReturn );
 
-		    MallOrderDetail detail = new MallOrderDetail();
-		    detail.setId( orderReturn.getOrderDetailId() );
-		    detail.setStatus( 5 );
-		    orderDetailDAO.updateById( detail );
-		    // TODO 退款
+			MallOrderDetail detail = new MallOrderDetail();
+			detail.setId( orderReturn.getOrderDetailId() );
+			detail.setStatus( 5 );
+			orderDetailDAO.updateById( detail );
+		    }
 		}
 	    }
 	} catch ( Exception e ) {
