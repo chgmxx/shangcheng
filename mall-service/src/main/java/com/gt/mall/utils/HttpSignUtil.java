@@ -38,9 +38,9 @@ public class HttpSignUtil {
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
 	    /*if ( type == 0 ) {
 		newUrl = "http://113.106.202.53:13887/" + url;
-	    } else */if ( type == 3 ) {
+	    } else if ( type == 3 ) {
 		newUrl = "https://union.deeptel.com.cn/" + url;
-	    }
+	    }*/
 	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 	    if ( type == 1 || type == 0 || type == 4 ) {//商家 、会员、增值模块
 		result = SignHttpUtils.WxmppostByHttp( newUrl, obj, signKey );
