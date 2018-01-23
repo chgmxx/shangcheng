@@ -56,47 +56,6 @@ public class MallQuartzServiceImpl implements MallQuartzService {
     /**
      * 对已结束未成团的订单进行退款
      */
-   /* @Scheduled( cron = "0 0 3 * * ?" )*///每天早上3点扫描
-    //	@Scheduled(cron = "0 0 17 * * ?")//每天下午2点点扫描
-    //	@Scheduled(cron = "0 0/2 * * * ?")//每隔2分钟扫描
-   /* @Override
-    @Transactional( rollbackFor = Exception.class )
-    public void returnFlow() {
-
-	logger.info( "开始扫描充值失败的订单" );
-	try {
-	    List< Map< String,Object > > orderList = mallOrderDAO.selectOrderFlow();
-	    if ( orderList != null && orderList.size() > 0 ) {
-		for ( Map< String,Object > map : orderList ) {
-		    if ( CommonUtil.isNotEmpty( map.get( "id" ) ) ) {
-			List< MallOrderDetail > detailList = mallOrderDetailDAO.selectByOrderId( CommonUtil.toInteger( map.get( "id" ) ) );
-			if ( detailList != null && detailList.size() > 0 ) {
-			    MallOrderDetail mallOrderDetail = detailList.get( 0 );
-			    boolean flag = mallOrderReturnService.returnEndOrder( mallOrderDetail.getOrderId(), mallOrderDetail.getId() );
-			    if ( flag ) {
-				if ( CommonUtil.isNotEmpty( map.get( "flow_recharge_status" ) ) ) {
-				    if ( map.get( "flow_recharge_status" ).toString().equals( "2" ) ) {
-
-					//todo 调用小屁孩的接口
-					*//*String sql = "UPDATE t_wx_fenbi_flow_record t SET t.rec_use_count = t.rec_use_count - " + mallOrderDetail.getDetProNum() + " WHERE id="
-							+ mallOrderDetail.getFlowRecordId();
-					daoUtil.update( sql );*//*
-				    }
-				}
-			    }
-			}
-		    }
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "开始扫描充值失败的订单异常" + e );
-	    e.printStackTrace();
-	}
-    }*/
-
-    /**
-     * 对已结束未成团的订单进行退款
-     */
     /*@Scheduled( cron = "0 0 1 * * ?" )*///每天早上1点扫描
     //	@Scheduled(cron = "0 0 17 * * ?")//每天下午2点点扫描
     //	@Scheduled(cron = "0 0/2 * * * ?")//每隔2分钟扫描

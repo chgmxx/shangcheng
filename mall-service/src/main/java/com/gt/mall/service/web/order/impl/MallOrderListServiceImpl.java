@@ -378,7 +378,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	if ( CommonUtil.isNotEmpty( order.getOrderFreightMoney() ) ) {
 	    freightMoney = CommonUtil.toDouble( order.getOrderFreightMoney() );
 	}
-	result.setProductTotalMoney( CommonUtil.subtract( orderMoney, freightMoney ) );
+	result.setProductTotalMoney( CommonUtil.add( CommonUtil.subtract( orderMoney, freightMoney ), orderYouhuiMoney ) );
 	result.setOrderFreightMoney( freightMoney );
 	result.setOrderYouhuiMoney( orderYouhuiMoney );
 	result.setOrderFenbiYouhuiMoney( order.getFenbiDiscountMoney() );

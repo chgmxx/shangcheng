@@ -3,27 +3,24 @@ package com.gt.mall.controller.api;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.bean.DictBean;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.page.MallPageDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.page.MallPage;
-import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.PropertiesUtil;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +53,7 @@ public class MallPageApiController {
     /**
      * 获取页面列表
      */
-    @ApiOperation( value = "获取页面列表", notes = "获取页面列表" )
+    @ApiOperation( value = "根据商家id获取页面列表", notes = "获取页面列表" )
     @ResponseBody
     @RequestMapping( value = "/pageList", method = RequestMethod.POST )
     public ServerResponse pageList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
@@ -64,13 +61,26 @@ public class MallPageApiController {
 	try {
 	    logger.info( "接收到的参数：" + param );
 	    Map< String,Object > params = JSONObject.parseObject( param );
-	    Wrapper wrapper = new EntityWrapper();
-	    wrapper.where( "pag_user_id = {0}  ", CommonUtil.toInteger( params.get( "userId" ) ) );
+	    if ( CommonUtil.isEmpty( params.get( "userId" ) ) ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+	    }
+	    Integer userId = CommonUtil.toInteger( params.get( "userId" ) );
+	    List< Map< String,Object > > shoplist = mallStoreService.findShopByUserId( userId, request );// 查询登陆人拥有的店铺
+	    if ( CommonUtil.isEmpty( shoplist ) ) {
+		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), null, false );
+	    }
+	    List< Integer > shopIds = new ArrayList<>();
+	    for ( Map< String,Object > map : shoplist ) {
+		shopIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+	    }
+
+	    Wrapper< MallPage > wrapper = new EntityWrapper<>();
+	    wrapper.in( "pag_sto_id", shopIds );
 	    List< MallPage > list = mallPageService.selectList( wrapper );
 	    if ( list != null && list.size() > 0 ) {
 		pageList = new ArrayList<>();
 		for ( MallPage page : list ) {
-		    Map map = new HashMap();
+		    Map< String,Object > map = new HashMap<>();
 		    map.put( "id", page.getId() );
 		    map.put( "name", page.getPagName() );
 		    map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + page.getId() );

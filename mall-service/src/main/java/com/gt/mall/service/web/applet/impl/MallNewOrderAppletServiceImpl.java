@@ -18,6 +18,7 @@ import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
@@ -26,6 +27,7 @@ import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.applet.AppletSubmitOrderDTO;
 import com.gt.mall.param.applet.AppletSubmitOrderProductDTO;
 import com.gt.mall.param.applet.AppletSubmitOrderShopDTO;
+import com.gt.mall.param.phone.freight.PhoneFreightProductDTO;
 import com.gt.mall.service.inter.member.MemberPayService;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.union.UnionCardService;
@@ -134,12 +136,20 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    from = CommonUtil.toInteger( params.get( "from" ) );
 	}
 	DecimalFormat df = new DecimalFormat( "######0.00" );
+	Double memberLongitude = 0d;//会员经度
+	Double memberLangitude = 0d;//会员纬度
+	Integer provincesId = null;
 	//查询用户默认的地址
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, memberId ) );
 	if ( addressMap != null && addressMap.size() > 0 ) {
 	    resultMap.put( "addressMap", getAddressParams( addressMap ) );
 	    params.put( "mem_province", addressMap.get( "memProvince" ) );
+	    if ( CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) ) {
+		memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
+		memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
+	    }
+	    provincesId = CommonUtil.toInteger( addressMap.get( "memProvince" ) );
 	}
 
 	double totalProMoney = 0;//	商品总价
@@ -157,17 +167,19 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 		params.put( "cartIds", cartArrs );
 	    }
+	    double totalFreightPrice = 0;
+	    List< Integer > freightIds = new ArrayList<>();
 	    List< Map< String,Object > > shopList = shopCartDAO.selectCheckShopByParam( params );
 	    if ( shopList != null && shopList.size() > 0 ) {
 		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );//查询商家的所有门店集合
 		for ( Map< String,Object > shopMap : shopList ) {
 		    int shopId = CommonUtil.toInteger( shopMap.get( "shop_id" ) );
 		    params.put( "shopId", shopId );
-		    double pro_weight = 0;
 		    double totalPrice = 0;
 		    totalNum = 0;
 		    List< Map< String,Object > > proList = new ArrayList< Map< String,Object > >();
 		    List< Map< String,Object > > productList = shopCartDAO.selectCheckCartByParams( params );
+		    List< PhoneFreightProductDTO > freightDTOList = new ArrayList<>();
 		    if ( productList != null && productList.size() > 0 ) {
 			for ( Map< String,Object > map : productList ) {
 			    Map< String,Object > productMap = new HashMap< String,Object >();
@@ -184,6 +196,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    productMap.put( "is_fenbi_deduction", map.get( "is_fenbi_deduction" ) );
 			    productMap.put( "product_id", map.get( "product_id" ) );
 			    productMap.put( "product_type_id", map.get( "pro_type_id" ) );
+			    double weight = CommonUtil.toDouble( map.get( "pro_weight" ) );
 			    productMap.put( "total_price", CommonUtil.multiply( CommonUtil.toDouble( productMap.get( "product_price" ) ),
 					    CommonUtil.toInteger( productMap.get( "product_num" ) ) ) );
 			    totalNum += CommonUtil.toInteger( map.get( "product_num" ) );
@@ -201,6 +214,11 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 				if ( CommonUtil.isNotEmpty( invMap ) && CommonUtil.isNotEmpty( invMap.get( "specifica_values" ) ) ) {
 				    String speciname = invMap.get( "specifica_values" ).toString().replaceAll( ",", "/" );
 				    productMap.put( "product_specificaname", speciname );
+				    if ( CommonUtil.isNotEmpty( invMap.get( "weight" ) ) ) {
+					if ( CommonUtil.toDouble( invMap.get( "weight" ) ) > 0 ) {
+					    weight = CommonUtil.toDouble( invMap.get( "weight" ) );
+					}
+				    }
 				}
 			    }
 
@@ -209,7 +227,28 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 					    CommonUtil.toInteger( productMap.get( "product_num" ) ) );
 			    totalPrice += proTotalPrice;
 			    totalProMoney += proTotalPrice;
-			    pro_weight += CommonUtil.toDouble( map.get( "pro_weight" ) );
+
+			    double freightPrice = 0;
+			    if ( CommonUtil.isNotEmpty( map.get( "pro_freight_price" ) ) ) {
+				freightPrice = CommonUtil.toDouble( map.get( "pro_freight_price" ) );
+			    }
+
+			    if ( CommonUtil.isNotEmpty( map.get( "pro_freight_temp_id" ) ) ) {
+				int freightId = CommonUtil.toInteger( map.get( "pro_freight_temp_id" ) );
+				if ( freightId > 0 ) {
+				    MallFreight freight = freightService.selectById( freightId );
+				    PhoneFreightProductDTO freightProductDTO = new PhoneFreightProductDTO();
+				    freightProductDTO.setProductId( CommonUtil.toInteger( map.get( "product_id" ) ) );
+				    freightProductDTO.setFreightId( freightId );
+				    freightProductDTO.setTotalProductNum( CommonUtil.toInteger( map.get( "product_num" ) ) );
+				    freightProductDTO.setTotalProductPrice( proTotalPrice );
+				    freightProductDTO.setTotalProductWeight( weight );
+				    freightProductDTO.setMallFreight( freight );
+				    freightDTOList.add( freightProductDTO );
+				} else if ( freightPrice > 0 ) {
+				    totalFreightMoney += freightPrice;
+				}
+			    }
 
 			}
 		    }
@@ -222,11 +261,11 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    isError = true;
 			}
 		    }
-		    if ( !isError ) {
-			double freightPrice = freightService.getFreightByProvinces( params, addressMap, shopId, totalPrice, pro_weight );
-			totalFreightMoney += freightPrice;
-			shopMap.put( "freightPrice", freightPrice );
-		    }
+		    //		    if ( !isError ) {
+		    //			double freightPrice = freightService.getFreightByProvinces( params, addressMap, shopId, totalPrice, pro_weight );
+		    //			totalFreightMoney += freightPrice;
+		    //			shopMap.put( "freightPrice", freightPrice );
+		    //		    }
 		    shopMap.put( "totalProPrice", df.format( totalPrice ) );
 		    shopMap.put( "proList", proList );
 		    shopMap.put( "totalNum", totalNum );
@@ -234,16 +273,33 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    if ( CommonUtil.isNotEmpty( shopMap.get( "wx_shop_id" ) ) ) {
 			wxShopId = CommonUtil.toInteger( shopMap.get( "wx_shop_id" ) );
 		    }
-		    String shopPicture = "";
+		    double shopLongitude = 0;//店铺经度
+		    double shopLangitude = 0;//店铺纬度
+		    String shopPicture = "";//店铺图片
 		    for ( WsWxShopInfoExtend wxShops : shopInfoList ) {
 			if ( wxShops.getId() == wxShopId ) {
 			    if ( CommonUtil.isNotEmpty( wxShops.getBusinessName() ) ) {
 				shopMap.put( "sto_name", wxShops.getBusinessName() );
 			    }
 			    shopPicture = wxShops.getImageUrl();
+			    if ( CommonUtil.isNotEmpty( wxShops.getLongitude() ) ) {
+				shopLongitude = CommonUtil.toDouble( wxShops.getLongitude() );
+			    }
+			    if ( CommonUtil.isNotEmpty( wxShops.getLatitude() ) ) {
+				shopLangitude = CommonUtil.toDouble( wxShops.getLatitude() );
+			    }
 			    break;
 			}
 		    }
+		    if ( freightDTOList != null && freightDTOList.size() > 0 && !isError ) {
+			Double juli = 0d;
+			if ( memberLongitude > 0 && memberLangitude > 0 && shopLongitude > 0 && shopLangitude > 0 ) {
+			    juli = CommonUtil.getDistance( memberLongitude, memberLangitude, shopLongitude, shopLangitude ) / 100;
+			}
+			double freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, provincesId );
+			totalFreightMoney += freightPrice;
+		    }
+		    shopMap.put( "freightPrice", totalFreightMoney );
 		    if ( !wxShopIds.toString().contains( "," + wxShopId + "," ) ) {
 			wxShopIds.append( wxShopId ).append( "," );
 		    }
@@ -265,15 +321,28 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    String specificaIds = "";
 	    String specificaNames = "";
 	    String imageUrl = "";
+	    double productWeight = 0;
+	    if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
+		productWeight = CommonUtil.toDouble( product.getProWeight() );
+	    }
 	    if ( CommonUtil.isNotEmpty( params.get( "product_specificas" ) ) ) {
 		specificaIds = CommonUtil.toString( params.get( "product_specificas" ) );
-
 		Map< String,Object > specMap = productService.getSpecNameBySPecId( specificaIds, productId );
 		if ( CommonUtil.isNotEmpty( specMap.get( "product_speciname" ) ) ) {
 		    specificaNames = CommonUtil.toString( specMap.get( "product_speciname" ) );
 		}
 		if ( CommonUtil.isNotEmpty( specMap.get( "imageUrl" ) ) ) {
 		    imageUrl = CommonUtil.toString( specMap.get( "imageUrl" ) );
+		}
+		Map< String,Object > invMap = productService.getProInvIdBySpecId( specificaIds, productId );
+		if ( CommonUtil.isNotEmpty( invMap ) ) {
+		    double invPrice = CommonUtil.toDouble( invMap.get( "inv_price" ) );//商品规格价
+		    if ( CommonUtil.isNotEmpty( invMap.get( "weight" ) ) ) {
+			double weight = CommonUtil.toDouble( invMap.get( "weight" ) );
+			if ( weight > 0 ) {
+			    productWeight = weight;
+			}
+		    }
 		}
 	    }
 	    if ( CommonUtil.isEmpty( imageUrl ) ) {
@@ -339,10 +408,34 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    isError = true;
 		}
 	    }
+	    Map< String,Object > storeMaps = mallStoreService.findShopByStoreId( product.getShopId() );
 	    if ( !isError ) {
 		//计算运费
-		freightPrice = freightService.getFreightByProvinces( params, addressMap, product.getShopId(), totalPrice, CommonUtil.toDouble( product.getProWeight() ) );
-		totalFreightMoney += freightPrice;
+		//		freightPrice = freightService.getFreightByProvinces( params, addressMap, product.getShopId(), totalPrice, CommonUtil.toDouble( product.getProWeight() ) );
+		//		totalFreightMoney += freightPrice;
+		Integer freightId = 0;
+		if ( CommonUtil.isNotEmpty( product.getProFreightPrice() ) ) {
+		    freightPrice = CommonUtil.toDouble( product.getProFreightPrice() );
+		}
+		if ( CommonUtil.isNotEmpty( product.getProFreightTempId() ) && product.getProFreightTempId() > 0 ) {
+		    freightId = product.getProFreightTempId();
+		}
+		if ( freightId > 0 ) {
+		    MallFreight mallFreight = freightService.selectById( freightId );
+		    List< PhoneFreightProductDTO > freightDTOList = new ArrayList<>();
+		    PhoneFreightProductDTO freightProductDTO = new PhoneFreightProductDTO();
+		    freightProductDTO.setProductId( product.getId() );
+		    freightProductDTO.setFreightId( freightId );
+		    freightProductDTO.setTotalProductNum( CommonUtil.toInteger( params.get( "product_num" ) ) );
+		    freightProductDTO.setTotalProductPrice( totalPrice );
+		    freightProductDTO.setTotalProductWeight( productWeight );
+		    freightProductDTO.setMallFreight( mallFreight );
+		    freightDTOList.add( freightProductDTO );
+
+		    Double juli = CommonUtil.getRaill( storeMaps, memberLangitude, memberLongitude );
+		    freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, provincesId );
+		    totalFreightMoney += freightPrice;
+		}
 	    }
 	    Map< String,Object > shopMap = new HashMap<>();
 	    shopMap.put( "shop_id", product.getShopId() );
@@ -351,7 +444,6 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    shopMap.put( "proList", proList );
 	    shopMap.put( "totalProPrice", df.format( totalPrice ) );
 
-	    Map< String,Object > storeMaps = mallStoreService.findShopByStoreId( product.getShopId() );
 	    int wxShopId = 0;
 	    if ( CommonUtil.isNotEmpty( storeMaps ) ) {
 		wxShopId = CommonUtil.toInteger( storeMaps.get( "wxShopId" ) );
@@ -371,7 +463,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		List< MallOrderDetail > detailList = orderDetailDAO.selectByOrderId( mallOrder.getId() );
 		List< Map< String,Object > > proList = new ArrayList< Map< String,Object > >();
 		double productWeight = 0;
-
+		double totalFreightPrice = 0;
+		List< PhoneFreightProductDTO > freightDTOList = new ArrayList<>();//计算运费参数
 		if ( detailList != null && detailList.size() > 0 ) {
 		    for ( MallOrderDetail detail : detailList ) {
 			MallProduct product = productService.selectById( detail.getProductId() );
@@ -408,9 +501,42 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			if ( CommonUtil.isNotEmpty( product.getProWeight() ) ) {
 			    productWeight = CommonUtil.add( productWeight, CommonUtil.toDouble( product.getProWeight() ) );
 			}
+			if ( CommonUtil.isNotEmpty( detail.getProductSpecificas() ) ) {
+			    Map< String,Object > invMap = productService.getProInvIdBySpecId( detail.getProductSpecificas(), detail.getProductId() );
+			    if ( CommonUtil.isNotEmpty( invMap ) ) {
+				if ( CommonUtil.isNotEmpty( invMap.get( "weight" ) ) ) {
+				    if ( CommonUtil.toDouble( invMap.get( "weight" ) ) > 0 ) {
+					productWeight = CommonUtil.toDouble( invMap.get( "weight" ) );
+				    }
+				}
+			    }
+			}
 
 			if ( product.getIsIntegralDeduction().toString().equals( "1" ) || product.getIsFenbiDeduction().toString().equals( "1" ) ) {
 			    isCanJifenFenbi = true;
+			}
+
+			//计算运费
+			Integer freightId = 0;
+			Double freightPrice = 0d;
+			if ( CommonUtil.isNotEmpty( product.getProFreightPrice() ) ) {
+			    freightPrice = CommonUtil.toDouble( product.getProFreightPrice() );
+			}
+			if ( CommonUtil.isNotEmpty( product.getProFreightTempId() ) && product.getProFreightTempId() > 0 ) {
+			    freightId = product.getProFreightTempId();
+			}
+			if ( freightId > 0 ) {
+			    MallFreight mallFreight = freightService.selectById( freightId );
+			    PhoneFreightProductDTO freightProductDTO = new PhoneFreightProductDTO();
+			    freightProductDTO.setProductId( product.getId() );
+			    freightProductDTO.setFreightId( freightId );
+			    freightProductDTO.setTotalProductNum( detail.getDetProNum() );
+			    freightProductDTO.setTotalProductPrice( detail.getTotalPrice() );
+			    freightProductDTO.setTotalProductWeight( productWeight );
+			    freightProductDTO.setMallFreight( mallFreight );
+			    freightDTOList.add( freightProductDTO );
+			} else if ( freightPrice > 0 ) {
+			    totalFreightPrice += freightPrice;
 			}
 
 		    }
@@ -418,6 +544,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
 		//		double totalPrice = proTotalPrice;
 
+		Map< String,Object > storeMaps = mallStoreService.findShopByStoreId( mallOrder.getShopId() );
 		boolean isError = false;
 		double freightPrice = 0;
 		if ( CommonUtil.isNotEmpty( mallOrder.getShopId() ) ) {
@@ -431,6 +558,14 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    //计算运费
 		    freightPrice = freightService.getFreightByProvinces( params, addressMap, mallOrder.getShopId(), totalProMoney, productWeight );
 		    totalFreightMoney += freightPrice;
+
+		    if ( freightDTOList != null && freightDTOList.size() > 0 ) {
+
+			Double juli = CommonUtil.getRaill( storeMaps, memberLangitude, memberLongitude );
+			freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, provincesId );
+			totalFreightPrice += freightPrice;
+			totalFreightMoney = totalFreightPrice;
+		    }
 		}
 
 		Map< String,Object > shopMap = new HashMap<>();
@@ -441,7 +576,6 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		shopMap.put( "totalProPrice", df.format( totalProMoney ) );
 		shopMap.put( "orderId", mallOrder.getId() );
 
-		Map< String,Object > storeMaps = mallStoreService.findShopByStoreId( mallOrder.getShopId() );
 		int wxShopId = 0;
 		if ( CommonUtil.isNotEmpty( storeMaps ) ) {
 		    wxShopId = CommonUtil.toInteger( storeMaps.get( "wxShopId" ) );

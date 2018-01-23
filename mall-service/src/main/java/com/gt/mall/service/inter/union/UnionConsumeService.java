@@ -24,4 +24,14 @@ public interface UnionConsumeService {
      * @return true 成功
      */
     boolean unionRefund( UnionRefundParam unionRefundParam );
+
+    /**
+     * 赠送积分
+     *
+     * @param model   model
+     * @param orderId 订单id
+     *
+     * @return true 成功
+     */
+    boolean giveIntegral( Integer model, Integer orderId );
 }

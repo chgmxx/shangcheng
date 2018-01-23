@@ -107,7 +107,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    //根据页面id查询页面信息
 	    MallPage page = mallPageService.selectById( pageId );
 	    if ( CommonUtil.isEmpty( page ) ) {
-		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面已删除" );
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面已删除a" );
 	    }
 	    int userid = page.getPagUserId();
 	    //从session中获取member信息
@@ -115,13 +115,14 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    //根据商家id获取公众号信息
 	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( page.getPagUserId() );
 	    MallStore mallStore = mallStoreService.findShopByShopId( page.getPagStoId() );
-
-	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
-	    loginDTO.setBusId( page.getPagUserId() );
-	    loginDTO.setUcLogin( 1 );
-	    loginDTO.setUrl( CommonUtil.isNotEmpty( url ) ? url : CommonUtil.getpath( request ) );
-	    loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
-	    userLogin( request, response, loginDTO );
+	    if(CommonUtil.isEmpty( member )){
+		PhoneLoginDTO loginDTO = new PhoneLoginDTO();
+		loginDTO.setBusId( page.getPagUserId() );
+		loginDTO.setUcLogin( 1 );
+		loginDTO.setUrl( CommonUtil.isNotEmpty( url ) ? url : CommonUtil.getpath( request ) );
+		loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
+		userLogin( request, response, loginDTO );
+	    }
 	    mallSellerService.clearSaleMemberIdByRedis( member, request, userid );
 
 	    if ( CommonUtil.isEmpty( mallStore ) || CommonUtil.isEmpty( mallStore.getIsDelete() ) || "1".equals( mallStore.getIsDelete().toString() ) ) {

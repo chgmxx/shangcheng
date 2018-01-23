@@ -187,7 +187,7 @@ public class MallIntegralNewController extends BaseController {
 		PageUtil page = integralImageService.selectImageByShopId( params, user.getId(), shoplist );
 		result.put( "page", page );
 	    }
-	    request.setAttribute( "videourl", Constants.VIDEO_URL + 86 );
+	    result.put( "videourl", Constants.VIDEO_URL + 86 );
 	} catch ( Exception e ) {
 	    logger.error( "获取积分商城图片列表异常：" + e.getMessage() );
 	    e.printStackTrace();

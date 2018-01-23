@@ -437,4 +437,12 @@ public class MemberServiceImpl implements MemberService {
 	HttpSignUtil.signHttpSelect( newErpPaySuccessBo, MEMBER_URL + "newPaySuccessByErpBalance" );
     }
 
+    @Override
+    public boolean findGiveRuleDelay( String orderNo ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "orderNo", orderNo );
+	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateUserConsume" );
+	return result.get( "code" ).toString().equals( "1" );
+    }
+
 }

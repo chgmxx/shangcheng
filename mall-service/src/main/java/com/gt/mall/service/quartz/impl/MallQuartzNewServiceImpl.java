@@ -31,11 +31,14 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.union.UnionConsumeService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
+import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -76,6 +79,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     @Autowired
     private MallOrderDetailDAO       orderDetailDAO;
     @Autowired
+    private MallOrderReturnService   mallOrderReturnService;
+    @Autowired
     private MallProductDaycountDAO   mallProductDaycountDAO;
     @Autowired
     private MallProductMonthcountDAO mallProductMonthcountDAO;
@@ -97,6 +102,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallCommentService       mallCommentService;
     @Autowired
     private MallCommentGiveService   mallCommentGiveService;
+    @Autowired
+    private UnionConsumeService      unionConsumeService;
 
     /**
      * 订单完成赠送物品  每天早上8点扫描
@@ -127,16 +134,22 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    }
 			    if ( flag ) {
 				String orderNo = order.getOrderNo();
-				//TODO 发送赠送物品给用户
-				/*memberPayService.giveGood( orderNo );//赠送状态*/
-
-				//修改赠送状态
-				order.setGiveStatus( 1 );
-				mallOrderDAO.upOrderNoById( order );
-
-				//mOrderService.insertPayLog(order);//添加支付有礼的日志信息
-				//TODO 联盟积分赠送
-				/*unionQuartzService.updateUnionMemberCardIntegral( 1, order.getId() );*/
+				try {
+				    boolean isSuccess = memberService.findGiveRuleDelay( orderNo );
+				    if ( isSuccess ) {
+					//修改赠送状态
+					order.setGiveStatus( 1 );
+					mallOrderDAO.upOrderNoById( order );
+				    }
+				} catch ( BusinessException be ) {
+				    logger.error( "赠送物品失败，原因：" + be.getMessage() );
+				} catch ( Exception e ) {
+				    logger.error( "赠送物品失败：" + orderNo );
+				    e.printStackTrace();
+				}
+				//mOrderService.insertPayLog(order);//todo 添加支付有礼的日志信息
+				// 联盟积分赠送
+				unionConsumeService.giveIntegral( 1, order.getId() );
 			    }
 			}
 
@@ -507,16 +520,17 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
 	    if ( returnList != null && returnList.size() > 0 ) {
 		for ( MallOrderReturn orderReturn : returnList ) {
-		    orderReturn.setStatus( 1 );
-		    orderReturn.setUpdateTime( new Date() );
-		    mallOrderReturnDAO.updateById( orderReturn );
+		    boolean flag = mallOrderReturnService.returnEndOrder( orderReturn.getOrderId(), orderReturn.getOrderDetailId() );
+		    if ( flag ) {
+			orderReturn.setStatus( 1 );
+			orderReturn.setUpdateTime( new Date() );
+			mallOrderReturnDAO.updateById( orderReturn );
 
-		    MallOrderDetail detail = new MallOrderDetail();
-		    detail.setId( orderReturn.getOrderDetailId() );
-		    detail.setStatus( 1 );
-		    orderDetailDAO.updateById( detail );
-
-		    // TODO 退款
+			MallOrderDetail detail = new MallOrderDetail();
+			detail.setId( orderReturn.getOrderDetailId() );
+			detail.setStatus( 1 );
+			orderDetailDAO.updateById( detail );
+		    }
 		}
 	    }
 	} catch ( Exception e ) {
@@ -539,15 +553,17 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    List< MallOrderReturn > returnList = mallOrderReturnDAO.selectList( wrapper );
 	    if ( returnList != null && returnList.size() > 0 ) {
 		for ( MallOrderReturn orderReturn : returnList ) {
-		    orderReturn.setStatus( 5 );
-		    orderReturn.setUpdateTime( new Date() );
-		    mallOrderReturnDAO.updateById( orderReturn );
+		    boolean flag = mallOrderReturnService.returnEndOrder( orderReturn.getOrderId(), orderReturn.getOrderDetailId() );
+		    if ( flag ) {
+			orderReturn.setStatus( 5 );
+			orderReturn.setUpdateTime( new Date() );
+			mallOrderReturnDAO.updateById( orderReturn );
 
-		    MallOrderDetail detail = new MallOrderDetail();
-		    detail.setId( orderReturn.getOrderDetailId() );
-		    detail.setStatus( 5 );
-		    orderDetailDAO.updateById( detail );
-		    // TODO 退款
+			MallOrderDetail detail = new MallOrderDetail();
+			detail.setId( orderReturn.getOrderDetailId() );
+			detail.setStatus( 5 );
+			orderDetailDAO.updateById( detail );
+		    }
 		}
 	    }
 	} catch ( Exception e ) {
@@ -799,10 +815,18 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		    mallOrderList.add( mallOrder );
 		}
 
-		boolean flag = mallOrderService.paySuccess( mallOrderList, pbUser, orderCallback.getLogStatus().toString(), orderCallback.getOrderNo() );//支付成功回调储值卡支付，积分支付，粉币支付
-		if ( flag ) {
-		    orderCallback.setIsResolved( 1 );
-		    mallLogOrderCallbackDAO.updateById( orderCallback );
+		try {
+		    boolean flag = mallOrderService.paySuccess( mallOrderList, pbUser, orderCallback.getLogStatus().toString(), orderCallback.getOrderNo() );//支付成功回调储值卡支付，积分支付，粉币支付
+		    if ( flag ) {
+			orderCallback.setIsResolved( 1 );
+			mallLogOrderCallbackDAO.updateById( orderCallback );
+		    }
+		} catch ( BusinessException be ) {
+		    logger.error( "修改支付成功回调失败的订单异常:" + be.getMessage() );
+		    be.printStackTrace();
+		} catch ( Exception e ) {
+		    logger.error( "修改支付成功回调失败的订单异常:" );
+		    e.printStackTrace();
 		}
 	    }
 	}

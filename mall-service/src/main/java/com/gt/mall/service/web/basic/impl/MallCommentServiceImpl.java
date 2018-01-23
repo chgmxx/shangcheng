@@ -346,8 +346,8 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 	    PhoneCommentListCommentResult commentResult = new PhoneCommentListCommentResult();
 	    commentResult.setFeel( CommonUtil.toInteger( map.get( "feel" ) ) );
 	    commentResult.setContent( CommonUtil.toString( map.get( "content" ) ) );
-	    Date createTime = DateTimeKit.parseDate( map.get( "createTime" ).toString() );
-	    commentResult.setCommentTime( DateTimeKit.format( createTime, DateTimeKit.DEFAULT_DATETIME_FORMAT_YYYYMMDD_MMSS ) );
+	    Date createTime = DateTimeKit.parse( map.get( "createTime" ).toString(), DateTimeKit.DEFAULT_DATETIME_FORMAT_YYYYMMDD_MMSS );
+	    commentResult.setCommentTime( DateTimeKit.formatDateByFormat( createTime, DateTimeKit.DEFAULT_DATETIME_FORMAT_YYYYMMDD_MMSS ) );
 	    if ( CommonUtil.isNotEmpty( map.get( "product_speciname" ) ) ) {
 		commentResult.setProductSpecifica( CommonUtil.toString( map.get( "product_speciname" ) ) );
 	    }

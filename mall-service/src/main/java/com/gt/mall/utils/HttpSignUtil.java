@@ -38,20 +38,20 @@ public class HttpSignUtil {
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
 	    /*if ( type == 0 ) {
 		newUrl = "http://113.106.202.53:13887/" + url;
-	    } else if ( type == 3 ) {
+	    } else */if ( type == 3 ) {
 		newUrl = "https://union.deeptel.com.cn/" + url;
-	    }*/
+	    }
 	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 	    if ( type == 1 || type == 0 || type == 4 ) {//商家 、会员、增值模块
 		result = SignHttpUtils.WxmppostByHttp( newUrl, obj, signKey );
-	    } else if ( type == 2 ) {//微信、门店、支付
+	    } else if ( type == 2 || type == 3 ) {//微信、门店、支付
 		Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( obj ), newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
-	    } else if ( type == 3 ) {//商家联盟的接口
+	    }/* else if ( type == 3 ) {//商家联盟的接口
 		String params = JSONObject.toJSONString( obj );
 		Map map = HttpClienUtils.reqPost( params, newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
-	    } else {//会员、联盟
+	    }*/ else {//会员、联盟
 		result = SignHttpUtils.postByHttp( newUrl, obj, signKey );
 	    }
 	    long endTime = System.currentTimeMillis();
@@ -116,7 +116,7 @@ public class HttpSignUtil {
 	if ( code != 0 && resultObj.containsKey( "msg" ) && CommonUtil.isNotEmpty( resultObj.getString( "msg" ) ) ) {
 	    resultMap.put( "errorMsg", resultObj.getString( "msg" ) );
 	    logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
-	    if ( ( type.length >= 2 && CommonUtil.isEmpty( type[1] ) ) && type.length < 2 ) {
+	    if ( ( type.length >= 2 && CommonUtil.isEmpty( type[1] ) ) || type.length < 2 ) {
 		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), resultObj.get( "msg" ).toString() );
 	    }
 	}

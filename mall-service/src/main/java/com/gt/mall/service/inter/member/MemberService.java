@@ -255,4 +255,13 @@ public interface MemberService {
      */
     void newPaySuccessByErpBalance( NewErpPaySuccessBo newErpPaySuccessBo );
 
+    /**
+     * 赠送物品
+     *
+     * @param orderNo 订单号
+     *
+     * @return true 赠送成功 false 赠送失败
+     */
+    boolean findGiveRuleDelay( String orderNo );
+
 }

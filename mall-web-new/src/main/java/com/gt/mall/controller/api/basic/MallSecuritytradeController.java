@@ -96,8 +96,8 @@ public class MallSecuritytradeController extends BaseController {
 
 			//申请中的退出担保交易信息
 			Wrapper< MallSecuritytradeQuit > quitWrapper = new EntityWrapper<>();
-			quitWrapper.where( "check_status =0" );
 			quitWrapper.and( "user_id= {0}", user.getId() );
+			quitWrapper.orderBy( "id",false );
 			MallSecuritytradeQuit securitytradeQuit = mallSecuritytradeQuitService.selectOne( quitWrapper );
 			result.put( "securitytradeQuit", securitytradeQuit );
 		    }
