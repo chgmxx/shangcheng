@@ -448,27 +448,10 @@ public class QuartzOrderServiceImpl implements QuartzOrderService {
 			    double integral = Double.valueOf( incomeMap.get( "income_integral" ).toString() );
 			    if ( integral > 0 ) {
 				params.put( "incomeIntegral", incomeMap.get( "income_integral" ) );
-				//TODO 修改会员积分
-				/*orderMapper.updateMemberInteger( params );*/
-
-				//				Map< String,Object > memberMap = orderMapper.selectMemberById( saleMemberId );
-				Member member1 = memberService.findMemberById( saleMemberId, null );
-				if ( CommonUtil.isNotEmpty( member1 ) ) {
-				    if ( CommonUtil.isNotEmpty( member1.getMcId() ) ) {
-					int mc_id = member1.getMcId();
-					if ( mc_id > 0 ) {
-
-					    //TODO 商城销售积分奖励
-					   /* CardRecord record = new CardRecord();
-					    record.setCardid( mc_id );
-					    record.setRecordtype( Byte.valueOf( "2" ) );
-					    record.setNumber( integral + "" );
-					    record.setCreatedate( new Date() );
-					    record.setItemname( "商城销售积分奖励" );
-					    cardRecordMapper.insertSelective( record );*/
-					}
-				    }
-				}
+				Map< String,Object > jifenParams = new HashMap<>();
+				jifenParams.put( "memberId", saleMemberId );
+				jifenParams.put( "jifen", incomeMap.get( "income_integral" ) );
+				memberService.updateJifen( jifenParams );//新增积分记录
 			    }
 			}
 			if ( CommonUtil.isNotEmpty( incomeMap.get( "income_commission" ) ) || CommonUtil.isNotEmpty( incomeMap.get( "income_integral" ) ) ) {

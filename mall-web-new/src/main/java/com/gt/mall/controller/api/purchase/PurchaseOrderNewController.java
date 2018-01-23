@@ -20,7 +20,6 @@ import com.gt.mall.service.web.purchase.PurchaseReceivablesService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
-import com.gt.mall.utils.OrderUtil;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,21 +228,6 @@ public class PurchaseOrderNewController extends BaseController {
 	    order.setId( orderId );
 	    order.setOrderStatus( status.toString() );
 	    purchaseOrderService.updateById( order );
-	    if ( status.equals( "2" ) || status == 2 ) {
-		PurchaseOrder orderEntity = purchaseOrderService.selectById( orderId );
-		// 添加会员记录
-		/*UserConsume uc = new UserConsume();
-		uc.setRecordtype( (byte) 2 );
-		uc.setTotalmoney( orderEntity.getAllMoney() );
-		uc.setOrderid( orderEntity.getId() );
-		uc.setUctable( "purchase_order" );
-		uc.setCreatedate( new Date() );
-		uc.setPaystatus( (byte) 0 );
-		uc.setOrdercode( orderEntity.getOrderNumber() );
-		uc.setFreightmoney( orderEntity.getFreight() );*/
-		//TODO 添加会员记录  UserConsume
-		//		userConsumeMapper.insertSelective(uc);
-	    }
 	} catch ( Exception e ) {
 	    logger.error( "修改报价单状态异常：" + e.getMessage() );
 	    e.printStackTrace();
