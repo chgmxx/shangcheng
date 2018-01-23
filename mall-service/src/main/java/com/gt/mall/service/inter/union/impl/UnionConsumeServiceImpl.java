@@ -41,7 +41,7 @@ public class UnionConsumeServiceImpl implements UnionConsumeService {
     }
 
     @Override
-    public boolean giveIntegral( String model, Integer orderId ) {
+    public boolean giveIntegral( Integer model, Integer orderId ) {
 	Map< String,Object > params = new HashMap<>();
 	params.put( "model", model );
 	params.put( "orderId", orderId );

@@ -513,7 +513,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	Map addressMap = null;
 	Double memberLongitude = 0d;//会员经度
 	Double memberLangitude = 0d;//会员纬度
-	String provinces = "";
+	Integer provinces = null;
 	//获取收货地址
 	if ( CommonUtil.isNotEmpty( member ) ) {
 	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
@@ -539,7 +539,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		    memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
 		}
 		if ( CommonUtil.isNotEmpty( addressMap.get( "memProvince" ) ) ) {
-		    provinces = addressMap.get( "memProvince" ).toString();
+		    provinces = CommonUtil.toInteger( addressMap.get( "memProvince" ) );
 		}
 	    }
 
@@ -567,7 +567,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    freightDTOList.add( freightProductDTO );
 
 	    Double juli = CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude );
-	    freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provinces ) );
+	    freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, provinces );
 	}
 	//	productMap.setFreightPrice(
 	//			freightService.getFreightByProvinces( params, addressMap, product.getShopId(), proPrice * discount, CommonUtil.toDouble( product.getProWeight() ) ) );

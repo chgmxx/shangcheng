@@ -281,7 +281,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 
 	result.setImageList( imageList );//商品图片集合
 
-	String provinces = "";//省份id
+	Integer provincesId = null;//省份id
 	if ( CommonUtil.isNotEmpty( storeMap ) ) {
 	    result.setShopName( storeMap.get( "stoName" ).toString() );//店铺名称
 	    result.setShopImageUrl( storeMap.get( "stoPicture" ).toString() );//店铺图片
@@ -358,7 +358,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		}
 		result.setMemberAddress( address );
 		if ( CommonUtil.isNotEmpty( addressMap.get( "memProvince" ) ) ) {
-		    provinces = addressMap.get( "memProvince" ).toString();
+		    provincesId = CommonUtil.toInteger( addressMap.get( "memProvince" ) );
 		}
 		if ( CommonUtil.isNotEmpty( addressMap.get( "memLongitude" ) ) && CommonUtil.isNotEmpty( addressMap.get( "memLatitude" ) ) ) {
 		    memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
@@ -366,8 +366,11 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		}
 	    }
 	}
-	if ( CommonUtil.isEmpty( provinces ) && CommonUtil.isNotEmpty( params.getIp() ) && freightId > 0 ) {
-	    provinces = mallPageService.getProvince( params.getIp() );
+	if ( CommonUtil.isEmpty( provincesId ) && CommonUtil.isNotEmpty( params.getIp() ) && freightId > 0 ) {
+	    String province = mallPageService.getProvince( params.getIp() );
+	    if(CommonUtil.isNotEmpty( province )){
+	        provincesId = CommonUtil.toInteger( provincesId );
+	    }
 	}
 	//到店购买不用计算运费
 	if ( params.getToShop() == 1 && product.getProTypeId() > 0 ) {
@@ -386,7 +389,7 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		freightDTOList.add( freightProductDTO );
 
 		Double juli = CommonUtil.getRaill( storeMap, memberLangitude, memberLongitude );
-		freightPrice = mallFreightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provinces ) );
+		freightPrice = mallFreightService.getFreightMoneyByProductList( freightDTOList, juli, provincesId );
 	    }
 	}
 

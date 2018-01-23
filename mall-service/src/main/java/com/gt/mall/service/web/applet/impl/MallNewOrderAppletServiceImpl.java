@@ -138,7 +138,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	Double memberLongitude = 0d;//会员经度
 	Double memberLangitude = 0d;//会员纬度
-	String provinces = "";
+	Integer provincesId = null;
 	//查询用户默认的地址
 	List< Integer > memberList = memberService.findMemberListByIds( memberId );//查询会员信息
 	Map addressMap = memberAddressService.addressDefault( CommonUtil.getMememberIds( memberList, memberId ) );
@@ -149,7 +149,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		memberLongitude = CommonUtil.toDouble( addressMap.get( "memLongitude" ) );
 		memberLangitude = CommonUtil.toDouble( addressMap.get( "memLatitude" ) );
 	    }
-	    provinces = addressMap.get( "memProvince" ).toString();
+	    provincesId = CommonUtil.toInteger( addressMap.get( "memProvince" ) );
 	}
 
 	double totalProMoney = 0;//	商品总价
@@ -296,7 +296,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			if ( memberLongitude > 0 && memberLangitude > 0 && shopLongitude > 0 && shopLangitude > 0 ) {
 			    juli = CommonUtil.getDistance( memberLongitude, memberLangitude, shopLongitude, shopLangitude ) / 100;
 			}
-			double freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provinces ) );
+			double freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, provincesId );
 			totalFreightMoney += freightPrice;
 		    }
 		    shopMap.put( "freightPrice", totalFreightMoney );
@@ -433,7 +433,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    freightDTOList.add( freightProductDTO );
 
 		    Double juli = CommonUtil.getRaill( storeMaps, memberLangitude, memberLongitude );
-		    freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provinces ) );
+		    freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, provincesId );
 		    totalFreightMoney += freightPrice;
 		}
 	    }
@@ -562,7 +562,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		    if ( freightDTOList != null && freightDTOList.size() > 0 ) {
 
 			Double juli = CommonUtil.getRaill( storeMaps, memberLangitude, memberLongitude );
-			freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, CommonUtil.toInteger( provinces ) );
+			freightPrice = freightService.getFreightMoneyByProductList( freightDTOList, juli, provincesId );
 			totalFreightPrice += freightPrice;
 			totalFreightMoney = totalFreightPrice;
 		    }

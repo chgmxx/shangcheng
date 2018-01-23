@@ -33,6 +33,7 @@ import com.gt.mall.entity.store.MallShopMonthcount;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.union.UnionConsumeService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
@@ -101,6 +102,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallCommentService       mallCommentService;
     @Autowired
     private MallCommentGiveService   mallCommentGiveService;
+    @Autowired
+    private UnionConsumeService      unionConsumeService;
 
     /**
      * 订单完成赠送物品  每天早上8点扫描
@@ -144,10 +147,9 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				    logger.error( "赠送物品失败：" + orderNo );
 				    e.printStackTrace();
 				}
-
 				//mOrderService.insertPayLog(order);//todo 添加支付有礼的日志信息
-				//TODO 联盟积分赠送
-				/*unionQuartzService.updateUnionMemberCardIntegral( 1, order.getId() );*/
+				// 联盟积分赠送
+				unionConsumeService.giveIntegral( 1, order.getId() );
 			    }
 			}
 
