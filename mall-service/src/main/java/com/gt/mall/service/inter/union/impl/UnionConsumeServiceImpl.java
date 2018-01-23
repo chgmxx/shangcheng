@@ -7,6 +7,7 @@ import com.gt.union.api.entity.param.UnionConsumeParam;
 import com.gt.union.api.entity.param.UnionRefundParam;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,6 +20,8 @@ import java.util.Map;
 public class UnionConsumeServiceImpl implements UnionConsumeService {
 
     public static final String url = "/api/consume/8A5DA52E/";
+
+    public static final String giveURL = "/schedule/8A5DA52E/";
 
     @Override
     public boolean unionConsume( UnionConsumeParam unionConsumeParam ) {
@@ -34,6 +37,17 @@ public class UnionConsumeServiceImpl implements UnionConsumeService {
 	RequestApiParam< UnionRefundParam > requestApiParam = new RequestApiParam<>();
 	requestApiParam.setReqdata( unionRefundParam );
 	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "unionRefund", 3 );
+	return result.get( "code" ).toString().equals( "1" );
+    }
+
+    @Override
+    public boolean giveIntegral( String model, Integer orderId ) {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "model", model );
+	params.put( "orderId", orderId );
+	RequestApiParam< Map< String,Object > > requestApiParam = new RequestApiParam<>();
+	requestApiParam.setReqdata( params );
+	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, giveURL + "giveIntegral", 3 );
 	return result.get( "code" ).toString().equals( "1" );
     }
 }

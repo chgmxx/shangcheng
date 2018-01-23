@@ -45,14 +45,14 @@ public class HttpSignUtil {
 	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 	    if ( type == 1 || type == 0 || type == 4 ) {//商家 、会员、增值模块
 		result = SignHttpUtils.WxmppostByHttp( newUrl, obj, signKey );
-	    } else if ( type == 2 ) {//微信、门店、支付
+	    } else if ( type == 2 || type == 3 ) {//微信、门店、支付
 		Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( obj ), newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
-	    } else if ( type == 3 ) {//商家联盟的接口
+	    }/* else if ( type == 3 ) {//商家联盟的接口
 		String params = JSONObject.toJSONString( obj );
 		Map map = HttpClienUtils.reqPost( params, newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
-	    } else {//会员、联盟
+	    }*/ else {//会员、联盟
 		result = SignHttpUtils.postByHttp( newUrl, obj, signKey );
 	    }
 	    long endTime = System.currentTimeMillis();
