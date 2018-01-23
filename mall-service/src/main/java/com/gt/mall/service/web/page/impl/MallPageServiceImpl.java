@@ -1475,14 +1475,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	return false;
     }
 
-    /**
-     * TODo 待优化
-     *
-     * @param stoId
-     * @param params
-     *
-     * @return
-     */
     @Override
     public PageUtil productPresale( Integer stoId, Map< String,Object > params ) {
 
