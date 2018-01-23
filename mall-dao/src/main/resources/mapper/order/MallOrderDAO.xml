@@ -1023,7 +1023,7 @@
         select
         o.id as oId, d.id as dId ,d.det_pro_name as proName , d.det_pro_price*d.det_pro_num as proPrice,o.order_money as orderMoney,o.pay_time as payTime ,
         o.order_status as orderStatus,d.shop_id as shopId ,o.order_pid,o.is_wallet,o.bus_user_id,
-        if(o.order_pid = 0 || o.order_pid is null,o.order_no,(SELECT  order_no from t_mall_order where o.order_pid=id)) as orderNo,
+        if(o.order_pid = 0 || o.order_pid is null,o.order_no,(SELECT  order_no from t_mall_order where o.order_pid=id)) as orderNo,o.order_no as order_no,
         d.product_id as productId,d.det_pro_num as proNum,o.buyer_user_id,o.order_pay_way,o.order_no,o.order_type,o.group_buy_id,d.product_specificas
         ,d.use_fenbi,d.use_jifen,d.total_price,o.receive_address,d.flow_id,d.flow_record_id,d.use_fenbi,d.use_jifen
         from t_mall_order_detail d

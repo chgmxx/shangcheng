@@ -259,7 +259,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			}
 			ErpRefundBo erpRefundBo = new ErpRefundBo();
 			erpRefundBo.setBusId( busUserId );//商家id
-			erpRefundBo.setOrderCode( orderNo );////订单号
+			erpRefundBo.setOrderCode( detailMap.get( "order_no" ).toString() );////订单号
 			erpRefundBo.setRefundPayType( CommonUtil.getMemberPayType( orderPayWay, is_wallet ) );////退款方式 字典1198
 			erpRefundBo.setRefundMoney( orderMoney ); //退款金额
 			erpRefundBo.setRefundJifen( CommonUtil.toIntegerByDouble( use_jifen ) );//退款积分

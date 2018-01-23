@@ -1,7 +1,6 @@
 package com.gt.mall;
 
-import com.gt.mall.service.inter.user.BusUserService;
-import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.quartz.MallQuartzNewService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,27 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class UserControllerTest extends BasicTest {
     @Autowired
-    private BusUserService busUserService;
-
-    @Autowired
-    private DictService dictService;
-
+    private MallQuartzNewService mallQuartzNewService;
 
     @Test
-    public void user(){
-        System.out.println("user = " + busUserService.selectById( 42 ));
-
-        System.out.println("isAdmin = " + busUserService.getIsAdmin( 22091 ));
-
-        System.out.println("isJxc = " + busUserService.getIsErpCount( 8,42 ));
-
-        System.out.println("MainBusId = " + busUserService.getMainBusId( 22091 ));
-
-        System.out.println("VoiceUrl = " + busUserService.getVoiceUrl( "77" ));
+    public void user() {
+	mallQuartzNewService.orderCallback();
     }
 
     @Test
-    public void dict(){
+    public void dict() {
 
     }
 }

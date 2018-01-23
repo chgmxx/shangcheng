@@ -767,7 +767,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    //会员回调
 	    NewErpPaySuccessBo successBo = new NewErpPaySuccessBo();
-	    successBo.setMemberId( order.getBuyerUserId() );//会员id
+	    successBo.setMemberId( mallOrder.getBuyerUserId() );//会员id
 	    if ( mallOrder.getMallOrderDetail() != null ) {
 		for ( MallOrderDetail orderDetail : mallOrder.getMallOrderDetail() ) {
 		    if ( CommonUtil.isEmpty( store ) || store.getId().toString().equals( orderDetail.getShopId() ) ) {
@@ -825,25 +825,25 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    }
 		}
 	    }
-	    int orderPayWay = order.getOrderPayWay();
+	    int orderPayWay = mallOrder.getOrderPayWay();
 	    if ( orderPayWay == 4 ) {//积分支付
 		isJifen = true;
-		jifenNum += CommonUtil.toDouble( order.getOrderMoney() );
+		jifenNum += CommonUtil.toDouble( mallOrder.getOrderMoney() );
 	    } else if ( orderPayWay == 8 ) {//粉币支付
 		isFenbi = true;
-		fenbiNum += CommonUtil.toDouble( order.getOrderMoney() );
+		fenbiNum += CommonUtil.toDouble( mallOrder.getOrderMoney() );
 	    }
 
-	    successBo.setOrderCode( order.getOrderNo() );//订单号
-	    successBo.setTotalMoney( CommonUtil.add( CommonUtil.toDouble( order.getOrderMoney() ), discountMoney ) );//应付金额
+	    successBo.setOrderCode( mallOrder.getOrderNo() );//订单号
+	    successBo.setTotalMoney( CommonUtil.add( CommonUtil.toDouble( mallOrder.getOrderMoney() ), discountMoney ) );//应付金额
 	    successBo.setDiscountMoney( discountMoney );//优惠金额
-	    successBo.setDiscountAfterMoney( CommonUtil.toDouble( order.getOrderMoney() ) );//优惠后金额
-	    successBo.setUcType( CommonUtil.getMemberUcType( order.getOrderType() ) );//消费类型 字典1197
+	    successBo.setDiscountAfterMoney( CommonUtil.toDouble( mallOrder.getOrderMoney() ) );//优惠后金额
+	    successBo.setUcType( CommonUtil.getMemberUcType( mallOrder.getOrderType() ) );//消费类型 字典1197
 	    if ( CommonUtil.isNotEmpty( mallOrder.getCouponId() ) && mallOrder.getCouponId() > 0 ) {
 		successBo.setUseCoupon( 1 );//是否使用优惠券  0不使用 1使用
 		successBo.setCouponType( couponType );//优惠券类型 0微信 1多粉优惠券
-		successBo.setCardId( order.getCouponId() ); //卡券id
-		successBo.setNumber( order.getCouponUseNum() );//卡券使用数量
+		successBo.setCardId( mallOrder.getCouponId() ); //卡券id
+		successBo.setNumber( mallOrder.getCouponUseNum() );//卡券使用数量
 	    }
 	    if ( isFenbi ) {
 		successBo.setUserFenbi( 1 );
@@ -855,16 +855,16 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    PayTypeBo payTypeBo = new PayTypeBo();
 	    int isWallet = 0;
-	    if ( CommonUtil.isNotEmpty( order.getIsWallet() ) ) {
-		isWallet = order.getIsWallet();
+	    if ( CommonUtil.isNotEmpty( mallOrder.getIsWallet() ) ) {
+		isWallet = mallOrder.getIsWallet();
 	    }
-	    payTypeBo.setPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), isWallet ) );//支付方式 查询看字典1198
-	    payTypeBo.setPayMoney( CommonUtil.toDouble( order.getOrderMoney() ) );
+	    payTypeBo.setPayType( CommonUtil.getMemberPayType( mallOrder.getOrderPayWay(), isWallet ) );//支付方式 查询看字典1198
+	    payTypeBo.setPayMoney( CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
 	    List< PayTypeBo > typeBoList = new ArrayList<>();
 	    typeBoList.add( payTypeBo );
 	    successBo.setPayTypeBos( typeBoList );
 
-	    successBo.setDataSource( order.getBuyerUserType() );//数据来源 0:pc端 1:微信 2:uc端 3:小程序 4魔盒 5:ERP
+	    successBo.setDataSource( mallOrder.getBuyerUserType() );//数据来源 0:pc端 1:微信 2:uc端 3:小程序 4魔盒 5:ERP
 	    successBo.setIsDiatelyGive( 1 );////是否立即赠送 0延迟送 1立即送
 	    successBoList.add( successBo );
 	}
@@ -921,7 +921,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	}
-	if ( CommonUtil.isEmpty( returnLogStatus ) || returnLogStatus.equals( 3 ) ) {
+	if ( CommonUtil.isEmpty( returnLogStatus ) || returnLogStatus.equals( "3" ) ) {
 	    if ( erpList != null && erpList.size() > 0 && isJxc == 1 ) {
 		try {
 		    Map< String,Object > erpMap = new HashMap<>();
@@ -949,7 +949,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		}
 	    }
 	}
-	if ( CommonUtil.isEmpty( returnLogStatus ) || returnLogStatus.equals( 4 ) ) {
+	if ( CommonUtil.isEmpty( returnLogStatus ) || returnLogStatus.equals( "4" ) ) {
 	    if ( memberService.isMember( order.getBuyerUserId() ) || isFenbi || isJifen || CommonUtil.isNotEmpty( order.getCouponId() ) ) {
 		Map< String,Object > payMap = memberPayService.paySuccessNew( successBoList );
 		if ( CommonUtil.isNotEmpty( payMap ) ) {
@@ -1827,7 +1827,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 		ErpRefundBo erpRefundBo = new ErpRefundBo();
 		erpRefundBo.setBusId( order.getBusUserId() );//商家id
-		erpRefundBo.setOrderCode( detailMap.get( "orderNo" ).toString() );////订单号
+		erpRefundBo.setOrderCode( detailMap.get( "order_no" ).toString() );////订单号
 		erpRefundBo.setRefundPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );////退款方式 字典1198
 		erpRefundBo.setRefundMoney( returnMoney ); //退款金额
 		erpRefundBo.setRefundJifen( CommonUtil.toIntegerByDouble( returnJifen ) );//退款积分

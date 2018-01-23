@@ -815,10 +815,18 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		    mallOrderList.add( mallOrder );
 		}
 
-		boolean flag = mallOrderService.paySuccess( mallOrderList, pbUser, orderCallback.getLogStatus().toString(), orderCallback.getOrderNo() );//支付成功回调储值卡支付，积分支付，粉币支付
-		if ( flag ) {
-		    orderCallback.setIsResolved( 1 );
-		    mallLogOrderCallbackDAO.updateById( orderCallback );
+		try {
+		    boolean flag = mallOrderService.paySuccess( mallOrderList, pbUser, orderCallback.getLogStatus().toString(), orderCallback.getOrderNo() );//支付成功回调储值卡支付，积分支付，粉币支付
+		    if ( flag ) {
+			orderCallback.setIsResolved( 1 );
+			mallLogOrderCallbackDAO.updateById( orderCallback );
+		    }
+		} catch ( BusinessException be ) {
+		    logger.error( "修改支付成功回调失败的订单异常:" + be.getMessage() );
+		    be.printStackTrace();
+		} catch ( Exception e ) {
+		    logger.error( "修改支付成功回调失败的订单异常:" );
+		    e.printStackTrace();
 		}
 	    }
 	}
