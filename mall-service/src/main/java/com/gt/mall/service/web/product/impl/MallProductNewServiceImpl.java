@@ -455,7 +455,10 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 			for ( MallSeckillPrice seckillPrice : priceList ) {
 			    if ( seckillPrice.getInvenId().toString().equals( priceMap.get( "id" ).toString() ) ) {
 				oldPrice = invPrice;
-				invPrice = CommonUtil.toDouble( seckillPrice.getSeckillPrice() );
+				invPrice = 0;
+				if(CommonUtil.isNotEmpty( seckillPrice.getSeckillPrice() )){
+				    invPrice =  CommonUtil.toDouble( seckillPrice.getSeckillPrice() );
+				}
 				priceList.remove( seckillPrice );
 				isJoin = seckillPrice.getIsJoinGroup();
 				break;
