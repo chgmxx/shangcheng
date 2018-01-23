@@ -31,6 +31,7 @@ import com.gt.mall.entity.seckill.MallSeckill;
 import com.gt.mall.entity.store.MallShopDaycount;
 import com.gt.mall.entity.store.MallShopMonthcount;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
@@ -130,14 +131,21 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    }
 			    if ( flag ) {
 				String orderNo = order.getOrderNo();
-				//TODO 发送赠送物品给用户
-				/*memberPayService.giveGood( orderNo );//赠送状态*/
+				try {
+				    boolean isSuccess = memberService.findGiveRuleDelay( orderNo );
+				    if ( isSuccess ) {
+					//修改赠送状态
+					order.setGiveStatus( 1 );
+					mallOrderDAO.upOrderNoById( order );
+				    }
+				} catch ( BusinessException be ) {
+				    logger.error( "赠送物品失败，原因：" + be.getMessage() );
+				} catch ( Exception e ) {
+				    logger.error( "赠送物品失败：" + orderNo );
+				    e.printStackTrace();
+				}
 
-				//修改赠送状态
-				order.setGiveStatus( 1 );
-				mallOrderDAO.upOrderNoById( order );
-
-				//mOrderService.insertPayLog(order);//添加支付有礼的日志信息
+				//mOrderService.insertPayLog(order);//todo 添加支付有礼的日志信息
 				//TODO 联盟积分赠送
 				/*unionQuartzService.updateUnionMemberCardIntegral( 1, order.getId() );*/
 			    }
