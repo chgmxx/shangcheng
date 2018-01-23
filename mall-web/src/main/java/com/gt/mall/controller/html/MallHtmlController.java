@@ -17,12 +17,16 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.html.MallHtmlFromService;
 import com.gt.mall.service.web.html.MallHtmlReportService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
+import com.gt.util.entity.param.wx.WxJsSdk;
+import com.gt.util.entity.result.wx.WxJsSdkResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -170,15 +174,15 @@ public class MallHtmlController extends BaseController {
 	if ( obj.getReportstate() == 1 ) {
 	    jsp = "error/ban";
 	} else {
-	    String ua = ( (HttpServletRequest) request ).getHeader( "user-agent" ).toLowerCase();
-	    if ( ua.indexOf( "micromessenger" ) > 0 ) {// 是否来自于微信浏览器打开
-		//来自于商家这边
-		if ( obj.getSourceType() == 2 ) {
-		    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( obj.getBusUserId() );
-		    if ( wxPublicUsers != null ) {
-			style = 0;
-			//TODO CommonUtil.getWxParams
-			//			CommonUtil.getWxParams( publicUsers, request );
+	    if ( CommonUtil.judgeBrowser( request ) == 1 ) {//微信浏览器
+		WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( obj.getBusUserId() );
+		if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+		    WxJsSdk wxJsSdk = new WxJsSdk();
+		    wxJsSdk.setPublicId( wxPublicUsers.getId() );
+		    wxJsSdk.setUrl( CommonUtil.getpath( request ) );
+		    WxJsSdkResult result = wxPublicUserService.wxjssdk( wxJsSdk );
+		    if ( CommonUtil.isNotEmpty( result ) ) {
+			request.setAttribute( "record", result );
 		    }
 		}
 	    }
@@ -187,6 +191,7 @@ public class MallHtmlController extends BaseController {
 	String http = PropertiesUtil.getResourceUrl();
 	request.setAttribute( "msg", obj );
 	request.setAttribute( "http", http );
+
 	return "/mall/htmlmall/phone/phonehtml";
 
     }

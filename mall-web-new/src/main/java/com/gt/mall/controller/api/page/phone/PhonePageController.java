@@ -107,7 +107,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    //根据页面id查询页面信息
 	    MallPage page = mallPageService.selectById( pageId );
 	    if ( CommonUtil.isEmpty( page ) ) {
-		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面已删除" );
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "页面已删除a" );
 	    }
 	    int userid = page.getPagUserId();
 	    //从session中获取member信息
