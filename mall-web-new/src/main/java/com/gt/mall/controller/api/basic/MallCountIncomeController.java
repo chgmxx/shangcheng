@@ -139,9 +139,6 @@ public class MallCountIncomeController extends BaseController {
 	    countParams.put( "endDate", yesterday );
 	    String sevenCount = mallCountIncomeService.getCountByTimes( countParams );
 	    result.put( "sevenCount", sevenCount );//7天营业额
-	    //TODO 待结算金额  可用金额
-	    result.put( "settlementCount", 0 );//待结算金额
-	    result.put( "usableBalance", 0 );//可用余额
 	} catch ( Exception e ) {
 	    logger.error( "获取交易记录的营业额统计异常：" + e.getMessage() );
 	    e.printStackTrace();

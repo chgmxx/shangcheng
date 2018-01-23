@@ -133,7 +133,7 @@ public class MallSecuritytradeApiController {
 		quit.setRefuseReason( params.get( "reason" ).toString() );
 	    }
 	    boolean flag = mallSecuritytradeQuitService.updateById( quit );
-
+	    //TODO 审核失败 不通过理由通过 通知中心通知商家
 	    if ( CommonUtil.toInteger( params.get( "status" ) )  == 1 ) {
 		MallPaySet set = new MallPaySet();
 		set.setUserId( quit.getUserId() );
