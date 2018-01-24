@@ -18,7 +18,7 @@ public class DictBean implements Serializable {
 
     private static final long serialVersionUID = -3463779241417759317L;
 
-    private Integer item_key;//key
+    private String item_key;//key
     private String  item_value; //值
 
     private String    value;//名称

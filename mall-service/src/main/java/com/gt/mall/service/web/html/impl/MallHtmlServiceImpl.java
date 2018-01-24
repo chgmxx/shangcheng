@@ -109,14 +109,14 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
 			    " [{'data':[[],[],[]],'bg':[{ 'background':'#fff',},{ 'background':'#fff',},{ 'background':'#fff',}],'attr':{'width': 380,'height': 500,'top': 62,'left': 0,},'dataTransverse_on':false},]" );
 
 	    htmlDAO.insert( obj );
-	    MallHtml obj1 = new MallHtml();
+//	    MallHtml obj1 = new MallHtml();
 //	    String url = PropertiesUtil.getHomeUrl() + "mallhtml/" + obj.getId() + "/79B4DE7C/phoneHtml.do";
 //	    String code = PropertiesUtil.getResourceUrl() + "/2/" + user.getName() + "/" + Constants.IMAGE_FOLDER_TYPE_20 + "/" + System.currentTimeMillis();
 //	    String codeurl = QRcodeKit.buildQRcode( url, code, 180, 180 );
 //	    codeurl = codeurl.replaceAll( "\\\\", "/" );
 //	    obj1.setCodeUrl( codeurl.split( "upload" )[1] );
-	    obj1.setId( obj.getId() );
-	    htmlDAO.updateById( obj1 );
+//	    obj1.setId( obj.getId() );
+//	    htmlDAO.updateById( obj1 );
 	} else {
 	    htmlDAO.updateById( obj );
 	}
@@ -209,14 +209,14 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
 	obj.setModelid( htmlid );
 	obj.setCreattime( DateTimeKit.getDateTime() );
 	htmlDAO.insert( obj );//新增数据
-	MallHtml obj1 = new MallHtml();
+//	MallHtml obj1 = new MallHtml();
 //	String url = PropertiesUtil.getHomeUrl() + "mallhtml/" + obj.getId() + "/79B4DE7C/phoneHtml.do";
 //	String code = PropertiesUtil.getResourceUrl() + "/2/" + user.getName() + "/" + Constants.IMAGE_FOLDER_TYPE_20 + "/" + System.currentTimeMillis();
 //	String codeurl = QRcodeKit.buildQRcode( url, code, 180, 180 );
 //	codeurl = codeurl.replaceAll( "\\\\", "/" );
 //	obj1.setCodeUrl( codeurl.split( "upload" )[1] );
-	obj1.setId( obj.getId() );
-	htmlDAO.updateById( obj1 );//修改二维码
+//	obj1.setId( obj.getId() );
+//	htmlDAO.updateById( obj1 );//修改二维码
 	return obj.getId();
     }
 }
