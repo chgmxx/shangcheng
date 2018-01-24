@@ -58,8 +58,8 @@ public class HttpSignUtil {
 	    long endTime = System.currentTimeMillis();
 	    long executeTime = endTime - startTime;
 
-	    logger.info( "请求接口的执行时间 : " + executeTime + "ms" );
-	    logger.info( "接口返回result:" + result );
+	    logger.info( "请求接口URL：" + newUrl + "------接口返回result:" + result + "------请求接口的执行时间 : " + executeTime + "ms" );
+	    //	    logger.info( "接口返回result:" + result );
 
 	    if ( CommonUtil.isNotEmpty( result ) ) {
 		return JSONObject.parseObject( result );
@@ -83,7 +83,7 @@ public class HttpSignUtil {
 	JSONObject resultObj = SignHttpJson( params, url, type );
 
 	if ( resultObj.containsKey( "code" ) && resultObj.getInteger( "code" ) == 0 ) {
-	    logger.info( "data = " + resultObj.getString( "data" ) );
+	    /*logger.info( "data = " + resultObj.getString( "data" ) );*/
 	    return resultObj.getString( "data" );
 	}
 	logger.info( "调用接口异常：" + resultObj.getString( "msg" ) );
