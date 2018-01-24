@@ -139,7 +139,7 @@
         stockTotal, p.pro_sale_total as saleTotal,p.create_time as createTime, p.is_publish as isPublish , p.check_status as
         checkStatus, p.check_reason as checkReason,p.shop_id as shopId ,p.two_code_path as twoCodePath,p.return_day as returnDay,
         views_num as viewsNum, is_show_views as isShowView, is_integral_deduction as isIntegralDeduction,is_fenbi_deduction as isFenbiDeduction,p.is_specifica as isSpecifica,
-        p.sales_base as salesBase ,p.erp_pro_id as erpProId,p.erp_inv_id as erpInvId,s.wx_shop_id as wxShopId,p.user_id as userId
+        p.sales_base as salesBase ,p.erp_pro_id as erpProId,p.erp_inv_id as erpInvId,s.wx_shop_id as wxShopId,p.user_id as userId,p.pro_type_id as proTypeId
         from t_mall_product p
         left join t_mall_image_associative i on p.id=i.ass_id and i.is_main_images=1 and i.is_delete=0 and i.ass_type =
         1
