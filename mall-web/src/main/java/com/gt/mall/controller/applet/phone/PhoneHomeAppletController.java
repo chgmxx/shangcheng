@@ -7,6 +7,7 @@ import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.dto.ServerResponse;
+import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.applet.AppletAddReturnOrderDTO;
@@ -146,14 +147,26 @@ public class PhoneHomeAppletController extends BaseController {
 	    //查询商品活动
 	    Map< String,Object > activityMap = mallHomeAppletService.getActivityList( params );
 	    converter.mapToBean( activityMap, indexResult );
-	    if ( CommonUtil.isNotEmpty( memberId ) ) {
+	    int busUserId = 0;
+	    if ( CommonUtil.isNotEmpty( params.get( "memberId" ) ) ) {
 		if ( memberId > 0 ) {
 		    Member member = memberService.findMemberById( memberId, null );
-		    params.put( "userId", member.getBusid() );
-		    //查询首页轮播图
-		    List< AppletImageDTO > imageList = mallHomeAppletService.getAppletImageByBusUser( params );
-		    indexResult.setImageList( imageList );
+		    if ( CommonUtil.isNotEmpty( member ) ) {
+			busUserId = member.getBusid();
+		    }
 		}
+	    }
+	    if ( busUserId == 0 && shopId > 0 ) {
+		MallStore store = storeService.selectById( shopId );
+		if ( CommonUtil.isNotEmpty( store ) ) {
+		    busUserId = store.getStoUserId();
+		}
+	    }
+	    if ( busUserId > 0 ) {
+		params.put( "userId", busUserId );
+		//查询首页轮播图
+		List< AppletImageDTO > imageList = mallHomeAppletService.getAppletImageByBusUser( params );
+		indexResult.setImageList( imageList );
 	    }
 	    indexResult.setImageHttp( PropertiesUtil.getResourceUrl() );
 	} catch ( Exception e ) {
@@ -519,7 +532,7 @@ public class PhoneHomeAppletController extends BaseController {
      *
      * @throws IOException
      */
-    @RequestMapping( value = "toSubmitOrder" ,method = RequestMethod.GET)
+    @RequestMapping( value = "toSubmitOrder", method = RequestMethod.GET )
     public void toSubmitOrder( HttpServletRequest request, HttpServletResponse response, AppletToSubmitOrderDTO toSubmitOrderDTO ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {

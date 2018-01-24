@@ -38,6 +38,8 @@ public class ProductResult {
     private String     imageUrl;
     @ApiModelProperty( name = "proName", value = "商品名称" )
     private String     proName;
+    @ApiModelProperty( name = "proTypeId", value = "商品类型 0,实物商品 1,虚拟商品非会员卡 2虚拟商品（会员卡） 3 虚拟商品（卡券包） 4虚拟商品（流量包）" )
+    private Integer    proTypeId;
     @ApiModelProperty( name = "proPrice", value = "商品价格" )
     private BigDecimal proPrice;
     @ApiModelProperty( name = "stockTotal", value = "库存总数" )
