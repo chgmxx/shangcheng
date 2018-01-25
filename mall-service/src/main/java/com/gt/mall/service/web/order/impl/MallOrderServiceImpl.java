@@ -1616,14 +1616,15 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		//查询订单详情是否已经全部退款
 		if ( !CommonUtil.isEmpty( orderReturn.getOrderId() ) && rFlag ) {
 		    MallOrder order = mallOrderDAO.getOrderById( orderReturn.getOrderId() );
+
 		    boolean flag = isReturnSuccess( order );
 		    if ( flag ) {
-			UnionRefundParam unionRefundParam = new UnionRefundParam();
-			unionRefundParam.setOrderNo( order.getOrderNo() );
-			unionRefundParam.setModel( Constants.UNION_MODEL );
-
-			unionConsumeService.unionRefund( unionRefundParam );
-
+			if ( order.getUnionCardId() > 0 ) {
+			    UnionRefundParam unionRefundParam = new UnionRefundParam();
+			    unionRefundParam.setOrderNo( order.getOrderNo() );
+			    unionRefundParam.setModel( Constants.UNION_MODEL );
+			    unionConsumeService.unionRefund( unionRefundParam );
+			}
 			//修改父类订单的状态
 			updateOrderStatus( order );
 		    }
