@@ -265,17 +265,14 @@ public class MallAuctionNewController extends BaseController {
 	    Map< String,Object > result = auctionMarginService.returnEndMargin( map );
 	    if ( result.size() == 0 ) {
 		result.put( "result", false );
-		result.put( "msg", "退保证金失败" );
 	    }
-	    if ( !result.containsKey( "msg" ) ) {
-		result.put( "msg", "退保证金失败" );
-	    }
-	    Boolean flag = (Boolean) result.get( "result" );
-	    if ( CommonUtil.isEmpty( flag ) ) {
-		flag = true;
-	    }
+	    boolean flag = (boolean) result.get( "result" );
 	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+		if ( CommonUtil.isNotEmpty( result.get( "msg" ) ) ) {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+		} else {
+		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金失败" );
+		}
 	    }
 	} catch ( BusinessException be ) {
 	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
