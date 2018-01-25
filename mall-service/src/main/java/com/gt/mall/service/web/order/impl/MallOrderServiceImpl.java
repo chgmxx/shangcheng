@@ -1909,6 +1909,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
     }
 
+
     @Override
     public Integer selectSpeBySpeValueId( Map< String,Object > params ) {
 	MallProductSpecifica spe = mallProductSpecificaService.selectByNameValueId( params );

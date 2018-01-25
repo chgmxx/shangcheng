@@ -17,6 +17,7 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
+import com.gt.mall.param.phone.integral.PhoneAddIntegralDTO;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
@@ -243,22 +244,22 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     }
 
     @Override
-    public Map< String,Object > recordIntegral( Map< String,Object > params, Member member, Integer browser, HttpServletRequest request ) {
+    public Map< String,Object > recordIntegral( PhoneAddIntegralDTO integralDTO, Member member, Integer browser, HttpServletRequest request ) {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 	Map< String,Object > resultMap = new HashMap< String,Object >();
-	int productId = CommonUtil.toInteger( params.get( "productId" ) );
+	int productId = integralDTO.getProductId();
 	MallProduct product = productDAO.selectById( productId );
-	int integralId = CommonUtil.toInteger( params.get( "integralId" ) );
+	int integralId = integralDTO.getIntegralId();
 	MallIntegral integral = integralDAO.selectById( integralId );
 	double price = CommonUtil.toDouble( integral.getMoney() );
-	int num = CommonUtil.toInteger( params.get( "productNum" ) );
+	Integer num = integralDTO.getProductNum();
+	if ( CommonUtil.isEmpty( num ) || num == 0 ) {
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "购买积分商品的数量不能小于1件" );
+	}
 	double totalPrice = CommonUtil.toDouble( df.format( price * num ) );
 	int orderPayWay = 4;
-	Object proSpecificas = params.get( "productSpecificas" );
-	String flowPhone = "";
-	if ( CommonUtil.isNotEmpty( params.get( "flowPhone" ) ) ) {
-	    flowPhone = CommonUtil.toString( params.get( "flowPhone" ) );
-	}
+	String proSpecificas = integralDTO.getProductSpecificas();
+	String flowPhone = integralDTO.getFlowPhone();
 	int proTypeId = product.getProTypeId();
 
 	int memType = memberService.isCardType( member.getId() );
@@ -275,7 +276,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    //	    resultMap.put( "msg", result.get( "msg" ) );
 	    //	    return resultMap;
 	}
-	if ( proTypeId == 0 && CommonUtil.isEmpty( params.get( "receiveId" ) ) ) {
+	if ( proTypeId == 0 && CommonUtil.isEmpty( integralDTO.getReceiveId() ) ) {
 	    resultMap.put( "code", 1 );
 	    resultMap.put( "proTypeId", proTypeId );
 	    return resultMap;
@@ -315,8 +316,8 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    order.setFlowPhone( flowPhone );
 	    order.setFlowRechargeStatus( 0 );
 	}
-	if ( CommonUtil.isNotEmpty( params.get( "receiveId" ) ) ) {
-	    order.setReceiveId( CommonUtil.toInteger( params.get( "receiveId" ) ) );
+	if ( CommonUtil.isNotEmpty( integralDTO.getReceiveId() ) ) {
+	    order.setReceiveId( integralDTO.getReceiveId() );
 	}
 	if ( CommonUtil.isNotEmpty( browser ) ) {
 	    order.setBuyerUserType( browser );
@@ -329,6 +330,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    detail.setOrderId( order.getId() );
 	    detail.setProductId( productId );
 	    detail.setShopId( product.getShopId() );
+	    Map< String,Object > params = new HashMap<>();
 	    params.put( "assId", productId );
 	    params.put( "isMainImages", 1 );
 	    params.put( "assType", 1 );
@@ -352,7 +354,12 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 		detail.setDetProCode( product.getProCode() );
 	    }
 	    detail.setDetPrivivilege( BigDecimal.valueOf( price ) );
-	    detail.setReturnDay( product.getReturnDay() );
+	    //	    detail.setReturnDay( product.getReturnDay() );
+	    if ( CommonUtil.isNotEmpty( product.getIsReturn() ) ) {
+		if ( product.getIsReturn().toString().equals( "1" ) ) {
+		    detail.setReturnDay( 7 );//完成订单后在有效天数内退款
+		}
+	    }
 	    detail.setCreateTime( new Date() );
 	    detail.setProTypeId( CommonUtil.toInteger( product.getProTypeId() ) );
 	    detail.setTotalPrice( totalPrice );

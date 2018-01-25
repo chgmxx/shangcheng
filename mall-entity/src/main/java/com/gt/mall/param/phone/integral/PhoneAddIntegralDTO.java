@@ -43,4 +43,7 @@ public class PhoneAddIntegralDTO implements Serializable {
     @ApiModelProperty( name = "flowPhone", value = "手机号码" )
     private String flowPhone;
 
+    @ApiModelProperty( name = "receiveId", value = "地址id" )
+    private Integer receiveId;
+
 }

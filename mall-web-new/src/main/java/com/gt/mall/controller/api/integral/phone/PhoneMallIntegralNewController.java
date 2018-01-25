@@ -302,16 +302,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	    if ( browser != 1 ) {
 		browser = 2;
 	    }
-
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "productId", integralDTO.getProductId() );
-	    params.put( "integralId", integralDTO.getIntegralId() );
-	    params.put( "productNum", integralDTO.getProductNum() );
-	    params.put( "productSpecificas", integralDTO.getProductSpecificas() );
-	    params.put( "flowPhone", integralDTO.getFlowPhone() );
-	    params.put( "uId", loginDTO.getBusId() );
-
-	    result = integralService.recordIntegral( params, member, browser, request );
+	    result = integralService.recordIntegral( integralDTO, member, browser, request );
 	} catch ( BusinessException be ) {
 	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
 	} catch ( Exception e ) {

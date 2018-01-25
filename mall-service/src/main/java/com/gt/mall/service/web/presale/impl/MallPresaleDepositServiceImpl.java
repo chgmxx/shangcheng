@@ -601,6 +601,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		if ( resultmap != null ) {
 		    String code = resultmap.get( "code" ).toString();
 		    if ( code.equals( "1" ) || code.equals( Constants.FINISH_REFUND_STATUS ) ) {
+			resultMap.put( "result", true );
 			//退款成功修改退款状态
 			updateReturnStatus( pUser, map, returnNo );//微信退款
 		    } else {
