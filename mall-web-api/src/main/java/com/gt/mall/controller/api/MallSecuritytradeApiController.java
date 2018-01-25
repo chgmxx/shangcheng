@@ -1,29 +1,19 @@
 package com.gt.mall.controller.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.api.bean.session.BusUser;
 import com.gt.mall.bean.DictBean;
 import com.gt.mall.dao.basic.MallSecuritytradeQuitDAO;
 import com.gt.mall.dto.ServerResponse;
-import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallSecuritytradeQuit;
-import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.web.basic.MallCommentService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallSecuritytradeQuitService;
-import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
-import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,9 +63,8 @@ public class MallSecuritytradeApiController {
     public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
-	    Map< String,Object > params = new HashMap<>();
 	    logger.info( "接收到的参数：" + param );
-	    params = JSONObject.parseObject( param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
 
 	    List< Map< String,Object > > securitytradeList = null;
 	    Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );

@@ -73,9 +73,8 @@ public class MallProductApiController {
 	    //	    if ( CommonUtil.isNotEmpty( userIds ) ) {
 	    //		params.put( "userIds", userIds );
 	    //	    }
-	    Map< String,Object > params = new HashMap<>();
 	    logger.info( "接收到的参数：" + param );
-	    params = JSONObject.parseObject( param );
+	    Map< String,Object > params = JSONObject.parseObject( param );
 	    PageUtil page = mallProductService.selectWaitCheckList( params );
 	    result.put( "page", page );
 	} catch ( Exception e ) {

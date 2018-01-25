@@ -14,15 +14,15 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.web.html.MallHtmlService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.PageUtil;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -352,6 +352,8 @@ public class MallHtmlApiController {
 			case 7:
 			    styleName = "其他原因";
 			    break;
+			default:
+			    styleName = "";
 		    }
 		    report.put( "styleName", styleName );
 		}
