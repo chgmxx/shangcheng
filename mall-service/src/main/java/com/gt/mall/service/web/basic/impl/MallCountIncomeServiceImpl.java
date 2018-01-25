@@ -41,6 +41,7 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 
     @Override
     public Integer saveTurnover( Integer shopId, BigDecimal tradePrice, BigDecimal refundPrice ) {
+	logger.info( "进入保存当天营业额方法，接收参数：" + shopId + "tradePrice=" + tradePrice + "refundPrice=" + refundPrice );
 	Integer count = 0;
 	try {
 	    if ( tradePrice == null ) {
@@ -50,6 +51,7 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 		refundPrice = CommonUtil.toBigDecimal( 0 );
 	    }
 	    if ( tradePrice.doubleValue() > 0 || refundPrice.doubleValue() > 0 ) {
+		logger.info( "提交营业额" );
 		MallCountIncome income = new MallCountIncome();
 		income.setShopId( shopId );
 		Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
