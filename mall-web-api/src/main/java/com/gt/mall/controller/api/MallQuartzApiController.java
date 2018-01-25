@@ -113,13 +113,13 @@ public class MallQuartzApiController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天营业额异常" );
 	}
-//	try {
-//	    mallQuartzNewService.countPageVisitorNum();
-//	} catch ( Exception e ) {
-//	    logger.error( "统计每天页面访问数量异常：" + e.getMessage() );
-//	    e.printStackTrace();
-//	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天页面访问数量异常" );
-//	}
+	//	try {
+	//	    mallQuartzNewService.countPageVisitorNum();
+	//	} catch ( Exception e ) {
+	//	    logger.error( "统计每天页面访问数量异常：" + e.getMessage() );
+	//	    e.printStackTrace();
+	//	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天页面访问数量异常" );
+	//	}
 	return ServerResponse.createBySuccessCode();
     }
 

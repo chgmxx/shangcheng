@@ -43,7 +43,13 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
     public Integer saveTurnover( Integer shopId, BigDecimal tradePrice, BigDecimal refundPrice ) {
 	Integer count = 0;
 	try {
-	    if ( ( tradePrice != null && tradePrice.doubleValue() > 0 ) || ( refundPrice != null && refundPrice.doubleValue() > 0 ) ) {
+	    if ( tradePrice == null ) {
+		tradePrice = CommonUtil.toBigDecimal( 0 );
+	    }
+	    if ( refundPrice == null ) {
+		refundPrice = CommonUtil.toBigDecimal( 0 );
+	    }
+	    if ( tradePrice.doubleValue() > 0 || refundPrice.doubleValue() > 0 ) {
 		MallCountIncome income = new MallCountIncome();
 		income.setShopId( shopId );
 		Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
@@ -56,6 +62,7 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 		    if ( CommonUtil.isNotEmpty( refundPrice ) ) {
 			countIncome.setRefundPrice( countIncome.getRefundPrice().add( refundPrice ) );
 		    }
+		    countIncome.setTurnover( countIncome.getTradePrice().subtract( countIncome.getRefundPrice() ) );
 		    count = mallCountIncomeDAO.updateById( countIncome );
 		} else {
 		    MallStore store = mallStoreService.selectById( shopId );
@@ -64,10 +71,11 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 			countIncome.setBusId( store.getStoUserId() );
 		    }
 		    countIncome.setShopId( CommonUtil.toInteger( shopId ) );
-		    countIncome.setCountDate( new Date() );
+		    countIncome.setCountDate( d1 );
 		    countIncome.setTradePrice( tradePrice );
 		    countIncome.setRefundPrice( refundPrice );
 		    countIncome.setTurnover( tradePrice.subtract( refundPrice ) );
+
 		    count = mallCountIncomeDAO.insert( countIncome );
 		}
 	    }

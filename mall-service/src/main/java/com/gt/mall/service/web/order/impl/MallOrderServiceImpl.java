@@ -1342,7 +1342,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    if ( ( order.getOrderPayWay() == 1 || order.getIsWallet() == 1 ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 				if ( Double.parseDouble( oReturn.getRetMoney().toString() ) > 0 ) {//退款金额大于0，则进行微信退款
 				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( order.getOrderNo() );
-				    if (CommonUtil.isNotEmpty( wxPayOrder ) && wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
+				    if ( CommonUtil.isNotEmpty( wxPayOrder ) && wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 					WxmemberPayRefund refund = new WxmemberPayRefund();
 					refund.setMchid( pUser.getMchId() );// 商户号
 					refund.setAppid( pUser.getAppid() );// 公众号
@@ -1616,14 +1616,15 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		//查询订单详情是否已经全部退款
 		if ( !CommonUtil.isEmpty( orderReturn.getOrderId() ) && rFlag ) {
 		    MallOrder order = mallOrderDAO.getOrderById( orderReturn.getOrderId() );
+
 		    boolean flag = isReturnSuccess( order );
 		    if ( flag ) {
-			UnionRefundParam unionRefundParam = new UnionRefundParam();
-			unionRefundParam.setOrderNo( order.getOrderNo() );
-			unionRefundParam.setModel( Constants.UNION_MODEL );
-
-			unionConsumeService.unionRefund( unionRefundParam );
-
+			if ( order.getUnionCardId() > 0 ) {
+			    UnionRefundParam unionRefundParam = new UnionRefundParam();
+			    unionRefundParam.setOrderNo( order.getOrderNo() );
+			    unionRefundParam.setModel( Constants.UNION_MODEL );
+			    unionConsumeService.unionRefund( unionRefundParam );
+			}
 			//修改父类订单的状态
 			updateOrderStatus( order );
 		    }
@@ -2965,18 +2966,18 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    if ( CommonUtil.isNotEmpty( ids.toString() ) ) {
 		if ( CommonUtil.isNotEmpty( ids ) ) {
-		    invParams.put( "specificaIds", ids );
+		    invParams.put( "valueId", ids );
 		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( invParams );
 		    if ( CommonUtil.isNotEmpty( proInv ) ) {
 			if ( proInv.getInvNum() < Integer.parseInt( proNum ) ) {
 			    result.put( "result", false );
-			    result.put( "msg", "库存不够" );
+			    result.put( "msg", ResponseEnums.STOCK_NULL_ERROR.getDesc() );
 			} else {
 			    result.put( "result", true );
 			}
 		    } else {
 			result.put( "result", false );
-			result.put( "msg", "库存不够" );
+			result.put( "msg", ResponseEnums.STOCK_NULL_ERROR.getDesc() );
 		    }
 		} else {
 		    isSpe = 0;
@@ -2988,7 +2989,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( isSpe == 0 ) {
 	    if ( pro.getProStockTotal() < Integer.parseInt( proNum ) ) {
 		result.put( "result", false );
-		result.put( "msg", "库存不够" );
+		result.put( "msg", ResponseEnums.STOCK_NULL_ERROR.getDesc() );
 	    } else {
 		result.put( "result", true );
 	    }
