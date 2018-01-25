@@ -1215,7 +1215,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		    if ( CommonUtil.isNotEmpty( specificaImageUrl ) ) {
 			maps.put( "specifica_img_url", specificaImageUrl );
 		    }
-		    maps.put( "weight",inventory.getLogisticsWeight() );
+		    maps.put( "weight", inventory.getLogisticsWeight() );
 
 		}
 	    }
@@ -1442,7 +1442,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		if ( shopMap.get( "id" ).toString().equals( shopId ) ) {
 		    isSxShop = true;
 		    resultMap.put( "sto_name", shopMap.get( "sto_name" ) );
-		    if ( shopMap.get( "is_delete" ).toString().equals( "1" ) ) {
+		    if ( CommonUtil.isEmpty( shopMap.get( "is_delete" ) ) || shopMap.get( "is_delete" ).toString().equals( "1" ) ) {
 			code = 0;
 			msg = "店铺或门店已被删除";
 		    }

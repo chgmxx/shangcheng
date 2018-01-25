@@ -1,8 +1,9 @@
 package com.gt.mall.service.web.integral;
 
-import com.gt.mall.base.BaseService;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.integral.MallIntegral;
+import com.gt.mall.param.phone.integral.PhoneAddIntegralDTO;
 import com.gt.mall.utils.PageUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,14 +51,14 @@ public interface MallIntegralService extends BaseService< MallIntegral > {
     /**
      * 兑换积分
      *
-     * @param params  productId:商品id,integralId:积分商品Id,productNum：商品数量，
+     * @param integralDTO  productId:商品id,integralId:积分商品Id,productNum：商品数量，
      *                productSpecificas：商品规格，flowPhone：号码， receiveId：收货id
      * @param member  用户
      * @param browser 买家 数据来源
      *
      * @return 积分
      */
-    Map< String,Object > recordIntegral( Map< String,Object > params, Member member, Integer browser, HttpServletRequest request );
+    Map< String,Object > recordIntegral( PhoneAddIntegralDTO integralDTO , Member member, Integer browser, HttpServletRequest request );
 
     /**
      * 查询用户下面所有的积分商品

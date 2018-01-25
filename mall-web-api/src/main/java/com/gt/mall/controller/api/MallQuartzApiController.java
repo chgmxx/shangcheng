@@ -101,7 +101,7 @@ public class MallQuartzApiController {
 	return ServerResponse.createBySuccessCode();
     }
 
-    @ApiOperation( value = "统计每天营业额,页面访问数量", notes = "统计每天营业额,页面访问数量" )
+    @ApiOperation( value = "统计每天的收入金额", notes = "统计每天的收入金额" )
     @ResponseBody
     @RequestMapping( value = "/countNum", method = RequestMethod.POST )
     public ServerResponse countNum( HttpServletRequest request, HttpServletResponse response ) {
@@ -109,9 +109,9 @@ public class MallQuartzApiController {
 	try {
 	    mallQuartzNewService.countIncomeNum();
 	} catch ( Exception e ) {
-	    logger.error( "统计每天营业额异常：" + e.getMessage() );
+	    logger.error( "统计每天的收入金额异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天营业额异常" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "统计每天的收入金额异常" );
 	}
 	//	try {
 	//	    mallQuartzNewService.countPageVisitorNum();

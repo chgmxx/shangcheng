@@ -301,12 +301,16 @@ public class MallPresaleNewController extends BaseController {
 	    map.put( "deposit_money", deposit.getDepositMoney() );
 	    map.put( "deposit_no", deposit.getDepositNo() );
 	    result = mallPresaleDepositService.returnEndPresale( map );
-	    if ( !result.containsKey( "result" ) ) {
-		result.put( "result", true );
+	    if ( result.size() == 0 ) {
+		result.put( "result", false );
+		result.put( "msg", "退保证金失败" );
+	    }
+	    if ( !result.containsKey( "msg" ) ) {
+		result.put( "msg", "退保证金失败" );
 	    }
 	    boolean flag = (boolean) result.get( "result" );
 	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金异常" );
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
 	    }
 
 	} catch ( BusinessException e ) {

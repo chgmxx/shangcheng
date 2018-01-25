@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +42,7 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 
     @Override
     public Integer saveTurnover( Integer shopId, BigDecimal tradePrice, BigDecimal refundPrice ) {
+	logger.info( "进入保存当天营业额方法，接收参数：" + shopId + "tradePrice=" + tradePrice + "refundPrice=" + refundPrice );
 	Integer count = 0;
 	try {
 	    if ( tradePrice == null ) {
@@ -50,6 +52,7 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 		refundPrice = CommonUtil.toBigDecimal( 0 );
 	    }
 	    if ( tradePrice.doubleValue() > 0 || refundPrice.doubleValue() > 0 ) {
+		logger.info( "提交营业额" );
 		MallCountIncome income = new MallCountIncome();
 		income.setShopId( shopId );
 		Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
@@ -96,36 +99,26 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
      */
 
     @Override
-    public Integer getTodayCount( List< Map< String,Object > > shoplist, Integer shopId ) {
-	Integer incomeCount = 0;
-
-	if ( shopId != null ) {
-	    incomeCount += todayCount( shopId );
-	} else {
-	    for ( Map< String,Object > shopMaps : shoplist ) {
-		int id = CommonUtil.toInteger( shopMaps.get( "id" ) );
-		incomeCount += todayCount( id );
+    public Double getTodayCount( List< Map< String,Object > > shoplist, Integer shopId ) {
+	Double incomeCount = 0d;
+	try {
+	    Map< String,Object > params = new HashMap<>();
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
+	    params.put( "date", d1 );
+	    params.put( "type", "2" );
+	    if ( shopId != null ) {
+		params.put( "shopId", shopId );
+	    } else {
+		params.put( "shoplist", shoplist );
 	    }
+	    String price = getCountByTimes( params );
+	    incomeCount = CommonUtil.toDouble( price );
+	} catch ( Exception e ) {
+	    logger.error( "获取当天店铺的营业额异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "获取当天店铺的营业额异常" );
 	}
 	return incomeCount;
-    }
-
-    public Integer todayCount( Integer shopId ) {
-	String key = Constants.REDIS_KEY + Constants.INCOME_COUNT_KEY;
-	Integer tradePrice = 0;
-	Integer refundPrice = 0;
-	if ( JedisUtil.hExists( key, shopId.toString() ) ) {
-	    List< String > maps = JedisUtil.hmgetByKeys( key, shopId.toString() );
-	    if ( CommonUtil.isNotEmpty( maps ) ) {
-		JSONObject obj = JSONObject.parseObject( maps.get( 0 ) );
-		if ( CommonUtil.isNotEmpty( obj ) ) {
-		    refundPrice = obj.getInteger( "refundPrice" );
-		    tradePrice = obj.getInteger( "tradePrice" );
-		}
-	    }
-	}
-
-	return tradePrice - refundPrice;
     }
 
     @Override

@@ -51,6 +51,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -327,9 +328,39 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     /*@Scheduled( cron = "0 59 23 * * ?" )*///每天23:59点扫描
     @Override
     public void countIncomeNum() {
-	logger.info( "统计每天营业额" );
+	logger.info( "统计每天的收入金额" );
 	try {
-	    String key = Constants.REDIS_KEY + Constants.INCOME_COUNT_KEY;
+	    Wrapper wrapper = new EntityWrapper();
+	    wrapper.where( "is_delete=0 " );
+	    List< MallStore > storeList = mallStoreService.selectList( wrapper );
+	    if ( storeList != null && storeList.size() > 0 ) {
+		for ( MallStore store : storeList ) {
+		    //统计订单完成7天后的金额
+		    double incomePrice = mallOrderDAO.selectOrderFinishMoneyByShopId( store.getId() );
+		    if ( CommonUtil.isNotEmpty( incomePrice ) && incomePrice > 0 ) {
+			MallCountIncome income = new MallCountIncome();
+			income.setShopId( store.getId() );
+			Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
+			income.setCountDate( d1 );
+			MallCountIncome countIncome = mallCountIncomeDAO.selectOne( income );
+			if ( countIncome != null ) {
+			    countIncome.setIncomePrice( countIncome.getIncomePrice().add( CommonUtil.toBigDecimal( incomePrice ) ) );
+			    mallCountIncomeDAO.updateById( countIncome );
+			} else {
+			    countIncome = new MallCountIncome();
+			    countIncome.setBusId( store.getStoUserId() );
+			    countIncome.setShopId( store.getId() );
+			    countIncome.setCountDate( d1 );
+			    countIncome.setTradePrice( CommonUtil.toBigDecimal( 0 ) );
+			    countIncome.setRefundPrice( CommonUtil.toBigDecimal( 0 ) );
+			    countIncome.setTurnover( CommonUtil.toBigDecimal( 0 ) );
+			    countIncome.setIncomePrice( CommonUtil.toBigDecimal( incomePrice ) );
+			    mallCountIncomeDAO.insert( countIncome );
+			}
+		    }
+		}
+	    }
+	   /* String key = Constants.REDIS_KEY + Constants.INCOME_COUNT_KEY;
 	    //判断是否存在页面访问数量
 	    if ( JedisUtil.exists( key ) ) {
 		Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有店铺营业额
@@ -362,7 +393,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			}
 		    }
 		}
-	    }
+	    }*/
 	} catch ( Exception e ) {
 	    logger.error( "统计每天页面访问数量异常" + e );
 	    e.printStackTrace();
@@ -847,14 +878,20 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    //判断是否存在会员退款jedis
 	    if ( JedisUtil.exists( key ) ) {
 		List refundList = JedisUtil.lpoplist( key, 0, -1 );//获取所有记录
+//		List refundList = JedisUtil.lpoplist( key, 28, 29 );//获取所有记录
 		if ( refundList != null ) {
 		    for ( int i = 0; i < refundList.size(); i++ ) {
-			String str = refundList.get( i ).toString();
-			ErpRefundBo erpRefundBo = JSONObject.parseObject( str, ErpRefundBo.class );
-			Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
-			if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
-			    //清空统计
-			    JedisUtil.listDel( key, i, str );
+			try {
+			    String str = refundList.get( i ).toString();
+			    ErpRefundBo erpRefundBo = JSONObject.parseObject( str, ErpRefundBo.class );
+			    Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
+			    if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
+				//清空统计
+				JedisUtil.listDel( key, i, str );
+			    }
+			} catch ( Exception e ) {
+			    this.logger.error( "MallQuartzNewServiceImpl.memberRefund方法异常：" + e.getMessage() );
+			    e.printStackTrace();
 			}
 		    }
 		}

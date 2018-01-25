@@ -909,7 +909,12 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( CommonUtil.isNotEmpty( productObj.getDetProMessage() ) ) {
 	    detail.setDetProMessage( productObj.getDetProMessage() );
 	}
-	detail.setReturnDay( product.getReturnDay() );
+//	detail.setReturnDay( product.getReturnDay() );
+	if(CommonUtil.isNotEmpty( product.getIsReturn() )){
+	    if(product.getIsReturn().toString().equals( "1" )){
+		detail.setReturnDay( 7);//完成订单后在有效天数内退款
+	    }
+	}
 	if ( CommonUtil.isNotEmpty( productObj.getDiscount() ) ) {
 	    detail.setDiscount( CommonUtil.toIntegerByDouble( productObj.getDiscount() * 100 ) );
 	}

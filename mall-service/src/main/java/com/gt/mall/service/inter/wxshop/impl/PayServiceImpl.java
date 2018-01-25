@@ -44,7 +44,7 @@ public class PayServiceImpl implements PayService {
     public EnterprisePaymentResult enterprisePayment( ApiEnterprisePayment payment ) {
 	RequestUtils< ApiEnterprisePayment > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( payment );
-	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2 );
+	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "enterprisePayment.do", 2 );
 	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
 	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
 	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), EnterprisePaymentResult.class );
