@@ -2958,7 +2958,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		if ( CommonUtil.isNotEmpty( aSpecifica ) ) {
 		    invParams.put( "specificaValueId", aSpecifica );
 		    int num = selectSpeBySpeValueId( invParams );
-		    if ( CommonUtil.isNotEmpty( ids ) ) {
+		    if ( CommonUtil.isNotEmpty( ids ) && ids.length() > 0) {
 			ids.append( "," );
 		    }
 		    ids.append( num );
@@ -2966,7 +2966,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    if ( CommonUtil.isNotEmpty( ids.toString() ) ) {
 		if ( CommonUtil.isNotEmpty( ids ) ) {
-		    invParams.put( "valueId", ids );
+		    invParams.put( "specificaIds", ids );
 		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( invParams );
 		    if ( CommonUtil.isNotEmpty( proInv ) ) {
 			if ( proInv.getInvNum() < Integer.parseInt( proNum ) ) {
