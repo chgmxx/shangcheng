@@ -27,7 +27,7 @@ public interface MallQuartzNewService {
 
     /******************************************/
 
-   /*统计每天营业额*/
+   /*统计每天的收入金额*/
     void countIncomeNum();
 
     /*统计每天页面访问数量*/

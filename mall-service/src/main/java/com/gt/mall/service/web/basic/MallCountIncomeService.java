@@ -31,7 +31,7 @@ public interface MallCountIncomeService extends BaseService< MallCountIncome > {
      *
      * @return
      */
-    Integer getTodayCount( List< Map< String,Object > > shoplist, Integer shopId );
+    Double getTodayCount( List< Map< String,Object > > shoplist, Integer shopId );
 
     /**
      * 获取时间段内的统计金额
