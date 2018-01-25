@@ -232,37 +232,6 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    e.printStackTrace();
 	}
 
-	logger.info( "开始扫描已发货未确认收货的订单信息" );
-	try {
-	    List< Map< String,Object > > list = mallOrderDAO.selectRealOrder();
-	    if ( list != null && list.size() > 0 ) {
-		for ( int i = 0; i < list.size(); i++ ) {
-		    Map< String,Object > map = list.get( i );
-		    List< Map< String,Object > > dList = mallOrderDAO.selectRealOrderDetail( map );
-		    boolean flag = false;
-		    if ( dList != null && dList.size() > 0 ) {
-			for ( int j = 0; j < dList.size(); j++ ) {
-			    Map< String,Object > dMap = dList.get( j );
-			    String status = dMap.get( "status" ).toString();
-			    if ( status.equals( "-3" ) || status.equals( "1" ) || status.equals( "5" ) || status.equals( "-2" ) ) {
-				flag = true;
-			    } else {
-				flag = false;
-				break;
-			    }
-			}
-			if ( flag ) {
-			    map.put( "order_status", 4 );
-			    mallOrderDAO.updateByOrder( map );
-			}
-		    }
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "扫描已发货未确认收货的订单信息异常" + e );
-	    e.printStackTrace();
-	}
-
 	logger.info( "开始扫描完成的订单预售送礼" );
 	try {
 	    List< Map< String,Object > > list = mallOrderDAO.selectFinishOrder();
@@ -460,19 +429,55 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     @Override
     public void autoConfirmTakeDelivery() {
 	//TODO 签收状态 签收时间
-	boolean isSign = true;//物流是否已签收
-	String signTime = "";//物流签收时间
+	//	boolean isSign = true;//物流是否已签收
+	//	String signTime = "";//物流签收时间
+	//
+	//	Wrapper< MallOrder > wrapper = new EntityWrapper<>();
+	//	//查询 当前时间 大于等于 7天后的时间
+	//	wrapper.where( "order_status = 3 and SYSDATE() >= DATE_ADD({0}, INTERVAL 7 DAY)", signTime );
+	//	List< MallOrder > orderList = mallOrderDAO.selectList( wrapper );
+	//	if ( orderList != null && orderList.size() > 0 ) {
+	//	    for ( MallOrder order : orderList ) {
+	//		order.setOrderStatus( 4 );
+	//		order.setUpdateTime( new Date() );
+	//		mallOrderDAO.updateById( order );
+	//	    }
+	//	}
 
-	Wrapper< MallOrder > wrapper = new EntityWrapper<>();
-	//查询 当前时间 大于等于 7天后的时间
-	wrapper.where( "order_status = 3 and SYSDATE() >= DATE_ADD({0}, INTERVAL 7 DAY)", signTime );
-	List< MallOrder > orderList = mallOrderDAO.selectList( wrapper );
-	if ( orderList != null && orderList.size() > 0 ) {
-	    for ( MallOrder order : orderList ) {
-		order.setOrderStatus( 4 );
-		order.setUpdateTime( new Date() );
-		mallOrderDAO.updateById( order );
+	logger.info( "开始扫描已发货未确认收货的订单信息" );
+	try {
+	    List< Map< String,Object > > list = mallOrderDAO.selectRealOrder();
+	    if ( list != null && list.size() > 0 ) {
+		for ( int i = 0; i < list.size(); i++ ) {
+		    Map< String,Object > map = list.get( i );
+		    List< Map< String,Object > > dList = mallOrderDAO.selectRealOrderDetail( map );
+		    boolean flag = false;
+		    if ( dList != null && dList.size() > 0 ) {
+			for ( int j = 0; j < dList.size(); j++ ) {
+			    Map< String,Object > dMap = dList.get( j );
+			    String status = dMap.get( "status" ).toString();
+			    if ( status.equals( "-3" ) || status.equals( "1" ) || status.equals( "5" ) || status.equals( "-2" ) ) {
+				flag = true;
+			    } else {
+				flag = false;
+				break;
+			    }
+			}
+			if ( flag ) {
+			    map.put( "order_status", 4 );
+			    try {
+				mallOrderDAO.updateByOrder( map );
+			    } catch ( Exception e ) {
+				logger.error( "扫描已发货未确认收货的订单信息异常" + e );
+				e.printStackTrace();
+			    }
+			}
+		    }
+		}
 	    }
+	} catch ( Exception e ) {
+	    logger.error( "扫描已发货未确认收货的订单信息异常" + e );
+	    e.printStackTrace();
 	}
     }
 
