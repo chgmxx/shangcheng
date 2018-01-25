@@ -44,6 +44,7 @@ import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
+import com.gt.mall.service.web.basic.MallCountIncomeService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallTakeTheirService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
@@ -211,6 +212,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallOrderReturnLogService   mallOrderReturnLogService;
     @Autowired
     private MallBusMessageMemberService mallBusMessageMemberService;
+    @Autowired
+    private MallCountIncomeService      mallCountIncomeService;
 
     @Override
     public Integer count( Map< String,Object > params ) {
@@ -612,6 +615,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		updateStatusStock( mallOrder, params, member, pbUser );
 		mallOrderList.add( mallOrder );
 	    }
+	    //退款成功，添加当天营业额记录
+	    mallCountIncomeService.saveTurnover( order.getShopId(), order.getOrderMoney(), null );
+
 	} catch ( BusinessException e ) {
 	    throw new BusinessException( ResponseEnums.ERROR.getCode(), e.getMessage() );//订单状态和库存未执行，抛异常
 	} catch ( Exception e ) {
@@ -1361,6 +1367,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				    } else if ( wxPayOrder.getTradeState().equals( "NOTPAY" ) ) {
 					msg = "订单：" + wxPayOrder.getOutTradeNo() + "未支付";
 					throw new BusinessException( ResponseEnums.ERROR.getCode(), msg );
+				    } else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+					rFlag = true;
+					msg = "退款成功";
+					//退款成功修改退款状态
+					updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
 				    }
 				} else {//退款金额等于0，则直接修改退款状态
 				    //退款成功修改退款状态
@@ -1455,6 +1466,24 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					} else if ( wxPayOrder.getTradeState().equals( "NOTPAY" ) ) {
 					    msg = "订单：" + wxPayOrder.getOutTradeNo() + "未支付";
 					    throw new BusinessException( ResponseEnums.ERROR.getCode(), msg );
+					} else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+					    //退款成功修改退款状态
+					    updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
+					    if ( order.getOrderPayWay() == 7 ) {//找人代付
+						MallDaifu daifus = new MallDaifu();
+						daifus.setId( daifu.getId() );
+						daifus.setDfReturnNo( oReturn.getReturnNo() );
+						daifus.setDfReturnMoney( BigDecimal.valueOf( returnMoneys ) );
+						daifus.setDfReturnTime( new Date() );
+						if ( returnMoneys == CommonUtil.toDouble( daifu.getDfPayMoney() ) ) {
+						    daifus.setDfReturnStatus( 2 );
+						} else if ( returnMoneys < CommonUtil.toDouble( daifu.getDfPayMoney() ) ) {
+						    daifus.setDfReturnStatus( 1 );
+						}
+						mallDaifuDAO.updateById( daifus );
+					    }
+					    rFlag = true;
+					    msg = "退款成功";
 					}
 				    } else if ( daifu.getDfPayWay().toString().equals( "2" ) ) {//支付宝退款
 					rFlag = false;
@@ -1499,6 +1528,24 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 							msg = "退款成功";
 						    }
 						}
+					    } else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+						//退款成功修改退款状态
+						updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
+						if ( order.getOrderPayWay() == 7 ) {//找人代付
+						    MallDaifu daifus = new MallDaifu();
+						    daifus.setId( daifu.getId() );
+						    daifus.setDfReturnNo( oReturn.getReturnNo() );
+						    daifus.setDfReturnMoney( BigDecimal.valueOf( returnMoneys ) );
+						    daifus.setDfReturnTime( new Date() );
+						    if ( returnMoneys == CommonUtil.toDouble( daifu.getDfPayMoney() ) ) {
+							daifus.setDfReturnStatus( 2 );
+						    } else if ( returnMoneys < CommonUtil.toDouble( daifu.getDfPayMoney() ) ) {
+							daifus.setDfReturnStatus( 0 );
+						    }
+						    mallDaifuDAO.updateById( daifus );
+						}
+						rFlag = true;
+						msg = "退款成功";
 					    }
 
 					} else {//退款金额等于0，则直接修改退款状态
@@ -1544,6 +1591,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				    } else if ( wxPayOrder.getTradeState().equals( "NOTPAY" ) ) {
 					msg = "订单：" + wxPayOrder.getOutTradeNo() + "未支付";
 					throw new BusinessException( ResponseEnums.ERROR.getCode(), msg );
+				    } else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+					//退款成功修改退款状态
+					updateReturnStatus( pUser, oReturn, orderReturn, order );//微信退款
+
+					rFlag = true;
+					msg = "退款成功";
 				    }
 				} else {//退款金额等于0，则直接修改退款状态
 				    //退款成功修改退款状态
@@ -1626,6 +1679,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private void updateReturnStatus( WxPublicUsers pUser, MallOrderReturn oReturn, MallOrderReturn orderReturn, MallOrder order ) throws Exception {
 	//退款成功修改商品的库存和销量
 	updateInvenNum( orderReturn, oReturn, order, null );
+	//退款成功，添加当天营业额记录
+	mallCountIncomeService.saveTurnover( order.getShopId(), null, oReturn.getRetMoney() );
     }
 
     @Override

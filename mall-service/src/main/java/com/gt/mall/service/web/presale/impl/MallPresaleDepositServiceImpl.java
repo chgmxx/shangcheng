@@ -22,6 +22,7 @@ import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
+import com.gt.mall.service.web.basic.MallCountIncomeService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
@@ -83,7 +84,9 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     private PayOrderService payOrderService;
 
     @Autowired
-    private PayService payService;
+    private PayService             payService;
+    @Autowired
+    private MallCountIncomeService mallCountIncomeService;
 
     /**
      * 通过店铺id来查询拍定金
@@ -143,6 +146,9 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    dep.setPayTime( new Date() );
 	    num = mallPresaleDepositDAO.updateById( dep );
 	    if ( num > 0 ) {
+		//支付成功，添加当天营业额记录
+		mallCountIncomeService.saveTurnover( deposit.getShopId(), deposit.getDepositMoney(), null );
+
 		diffInvNum( deposit );//从redis扣除商品库存
 		Map< String,Object > maps = new HashMap< String,Object >();
 		maps.put( "presaleId", deposit.getPresaleId() );
@@ -579,7 +585,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	map.put( "return_no", returnNo );
 
 	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( depNo );
-
+	map.put( "shop_id", deposit.getShopId() );
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 
 	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( depNo );
@@ -602,6 +608,10 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 			resultMap.put( "msg", resultmap.get( "errorMsg" ) );
 		    }
 		}
+	    } else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+		resultMap.put( "result", true );
+		//退款成功修改退款状态
+		updateReturnStatus( pUser, map, returnNo );//微信退款
 	    }
 
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
@@ -667,6 +677,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	int num = mallPresaleDepositDAO.updateById( deposit );
 
 	if ( num > 0 ) {
+	    //退款成功，添加当天营业额记录
+	    mallCountIncomeService.saveTurnover( CommonUtil.toInteger( map.get( "shop_id" ) ), null, CommonUtil.toBigDecimal( map.get( "deposit_money" ) ) );
 	    //储值卡添加退款记录
 	    /*if(map.get("pay_way").toString().equals("2")){
 		    //查询该定金的消费记录

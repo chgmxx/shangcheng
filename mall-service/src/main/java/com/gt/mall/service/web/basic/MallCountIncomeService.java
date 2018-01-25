@@ -3,6 +3,7 @@ package com.gt.mall.service.web.basic;
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.basic.MallCountIncome;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +18,13 @@ import java.util.Map;
 public interface MallCountIncomeService extends BaseService< MallCountIncome > {
 
     /**
-     * 保存到jedis
+     * 保存当天营业额
      *
      * @param shopId
      * @param tradePrice
      * @param refundPrice
      */
-    void incomeJedis( Integer shopId, Integer tradePrice, Integer refundPrice );
+    Integer saveTurnover( Integer shopId, BigDecimal tradePrice, BigDecimal refundPrice );
 
     /**
      * 获取今天的营业额
