@@ -88,11 +88,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 进入店铺列表页面
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "shopList", method = RequestMethod.GET )
     public void shopList( HttpServletRequest request, HttpServletResponse response, Integer userId, String longitude, String latitude ) throws IOException {
@@ -118,12 +113,8 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 商城首页
      *
-     * @param request
-     * @param response
      * @param shopId   店铺ID
      * @param memberId 会员ID
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "pageIndex", method = RequestMethod.GET )
     public void pageIndex( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId ) throws IOException {
@@ -179,10 +170,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 分页查询商品
-     *
-     * @param request
-     * @param response
-     * @param searchDTO
      */
     @RequestMapping( value = "productPage", method = RequestMethod.GET )
     public void productPage( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) {
@@ -205,13 +192,9 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 全部分类
      *
-     * @param request
-     * @param response
      * @param shopId   店铺ID
      * @param memberId 会员ID
      * @param classId  父级分类ID
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "classAll", method = RequestMethod.GET )
     public void classAll( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer classId ) throws IOException {
@@ -242,12 +225,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 全部商品
-     *
-     * @param request
-     * @param response
-     * @param searchDTO
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "productAll", method = RequestMethod.GET )
     public void productAll( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) throws IOException {
@@ -275,12 +252,6 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 查询商品的规格
      * 无效接口
-     *
-     * @param request
-     * @param response
-     * @param params
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "getProductSpecifica", method = RequestMethod.GET )
     public void getProductSpecifica( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -301,14 +272,10 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 商品详细页面
      *
-     * @param request
-     * @param response
      * @param shopId    店铺ID
      * @param memberId  会员ID
      * @param productId 商品ID
      * @param province  默认为0
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "phoneProduct", method = RequestMethod.GET )
     public void phoneProduct( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer productId, Integer province ) throws IOException {
@@ -334,13 +301,9 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 查询商品的评价
      *
-     * @param request
-     * @param response
      * @param memberId 会员ID
      * @param proId    商品ID
      * @param feel     评论状态
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "getProductComment", method = RequestMethod.GET )
     public void getProductComment( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer proId, String feel ) throws IOException {
@@ -362,12 +325,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 商品加入到购物车里
-     *
-     * @param request
-     * @param response
-     * @param params
-     *
-     * @throws IOException
      */
     @SysLogAnnotation( description = "商城小程序-商品购物车保存", op_function = "2" )
     @RequestMapping( value = "addshopping", method = RequestMethod.GET )
@@ -389,13 +346,9 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 进入购物车页面
      *
-     * @param request
-     * @param response
      * @param shopId    店铺ID
      * @param memberId  会员ID
      * @param busUserId 商家ID
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "shopCart", method = RequestMethod.GET )
     public void shopCart( HttpServletRequest request, HttpServletResponse response, Integer shopId, Integer memberId, Integer busUserId ) throws IOException {
@@ -420,12 +373,8 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 清空购物车信息
      *
-     * @param request
-     * @param response
      * @param memberId 会员ID
      * @param ids      购物车ID集合
-     *
-     * @throws IOException
      */
     @SuppressWarnings( { "deprecation", "unchecked" } )
     @SysLogAnnotation( description = "小程序购物车页面-删除购物车内的商品", op_function = "3" )
@@ -452,11 +401,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 去结算购物车信息
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @SysLogAnnotation( description = "小程序购物车页面-结算购物车内的商品", op_function = "3" )
     @RequestMapping( value = "shoppingorder", method = RequestMethod.GET )
@@ -479,11 +423,7 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 我的页面
      *
-     * @param request
-     * @param response
      * @param memberId 会员ID
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "memberIndex", method = RequestMethod.GET )
     public void memberIndex( HttpServletRequest request, HttpServletResponse response, Integer memberId ) throws IOException {
@@ -501,11 +441,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 立即购买 无效接口
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "productBuyNow", method = RequestMethod.GET )
     public void productBuyNow( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -526,11 +461,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 进入提交订单的页面
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( value = "toSubmitOrder", method = RequestMethod.GET )
     public void toSubmitOrder( HttpServletRequest request, HttpServletResponse response, AppletToSubmitOrderDTO toSubmitOrderDTO ) throws IOException {
@@ -561,11 +491,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 提交订单
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( "submitOrder" )
     public void submitOrder( HttpServletRequest request, HttpServletResponse response, AppletSubmitOrderDTO submitOrderDTO ) throws IOException {
@@ -603,14 +528,10 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 订单列表页面
      *
-     * @param request
-     * @param response
      * @param memberId  会员ID
      * @param curPage   页数
      * @param busUserId 商家ID
      * @param type      0 全部 1待支付 2待发货 3待收货  4已完成
-     *
-     * @throws IOException
      */
     @RequestMapping( "orderList" )
     public void orderList( HttpServletRequest request, HttpServletResponse response, Integer memberId, Integer curPage, Integer busUserId, Integer type ) throws IOException {
@@ -636,12 +557,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 订单详情 页面
-     *
-     * @param request
-     * @param response
-     * @param params
-     *
-     * @throws IOException
      */
     @RequestMapping( "orderDetail" )
     public void orderDetail( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -661,13 +576,9 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 微信订单支付
      *
-     * @param request
-     * @param response
      * @param orderNo  订单号
      * @param memberId 会员ID
      * @param appid    appid
-     *
-     * @throws IOException
      */
     @RequestMapping( "appletWxOrder" )
 
@@ -692,13 +603,9 @@ public class PhoneHomeAppletController extends BaseController {
     /**
      * 订单去支付
      *
-     * @param request
-     * @param response
      * @param order_id 订单ID
      * @param memberId 会员ID
      * @param appid    appid
-     *
-     * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-去支付", op_function = "3" )
     @RequestMapping( "orderGoPay" )
@@ -723,11 +630,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 确认收货
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-确认收货", op_function = "3" )
     @RequestMapping( "confirmReceipt" )
@@ -749,11 +651,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 进入退款页面
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( "toReturnOrder" )
     public void toReturnOrder( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -773,11 +670,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 提交退款信息
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-提交退款信息", op_function = "3" )
     @RequestMapping( "submitReturnOrder" )
@@ -802,11 +694,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 撤销退款
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @SysLogAnnotation( description = "小程序我的订单页面-撤销退款", op_function = "3" )
     @RequestMapping( "closeReturnOrder" )
@@ -828,11 +715,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 进入我的地址页面
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( "addressList" )
     public void addressList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -851,11 +733,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 设置默认地址
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( "addressDefault" )
     public void addressDefault( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -885,11 +762,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 删除地址
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( "addressDelete" )
     public void addressDelete( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -910,11 +782,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 进入修改地址的页面
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( "toAddress" )
     public void toAddress( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -950,11 +817,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 提交地址信息
-     *
-     * @param request
-     * @param response
-     *
-     * @throws IOException
      */
     @RequestMapping( "addressSubmit" )
     public void addressSubmit( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -984,8 +846,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 查询城市数据
-     *
-     * @param params
      */
     @RequestMapping( value = "queryCity" )
     public void queryCity( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
@@ -1000,11 +860,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 获取短信验证码
-     *
-     * @param response
-     * @param params
-     *
-     * @throws IOException
      */
     @RequestMapping( "getValCode" )
     public void getValCode( HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
@@ -1026,12 +881,6 @@ public class PhoneHomeAppletController extends BaseController {
 
     /**
      * 绑定手机号码
-     *
-     * @param request
-     * @param response
-     * @param params
-     *
-     * @throws IOException
      */
     @RequestMapping( "bindPhone" )
     public void bindPhone( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {

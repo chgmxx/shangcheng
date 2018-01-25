@@ -228,13 +228,12 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	int rowCount = productDAO.selectCountAllByShopids( params );
 	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
 	params.put( "firstNum", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
-	params.put( "maxNum", pageSize );
+	params.put( "maxNum", pageSize  );
 
 	List< Map< String,Object > > xlist = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > list = productDAO.selectProductAllByShopids( params );
 
 	List< Integer > proIds = new ArrayList< Integer >();
-	String specImgIds = "";
 
 	if ( list != null && list.size() > 0 ) {
 	    for ( int i = 0; i < list.size(); i++ ) {
@@ -242,22 +241,10 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		map1 = productGetPrice( map1, params, discount );
 		xlist.add( map1 );
 
-		if ( CommonUtil.isNotEmpty( map1.get( "specifica_img_id" ) ) ) {
-		    if ( !map1.get( "specifica_img_id" ).toString().equals( "0" ) ) {
-			if ( CommonUtil.isNotEmpty( specImgIds ) ) {
-			    specImgIds += ",";
-			}
-			specImgIds += map1.get( "specifica_img_id" ).toString();
-		    }
-		}
 		if ( CommonUtil.isNotEmpty( map1.get( "id" ) ) ) {
 		    proIds.add( CommonUtil.toInteger( map1.get( "id" ) ) );
 		}
 	    }
-	    /*String[] split = null;
-	    if ( CommonUtil.isNotEmpty( specImgIds ) ) {
-		split = specImgIds.split( "," );
-	    }*/
 	    xlist = pageService.getProductImages( xlist, proIds );
 	}
 	List< AppletIndexProductDTO > phoneProducts = new ArrayList< AppletIndexProductDTO >();
@@ -275,7 +262,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	String is_specifica = map1.get( "is_specifica" ).toString();//是否有规格，1有规格，有规格取规格里面的值
 	double price = 0;
 	String imageUrl = "";
-	if ( is_specifica == "1" || is_specifica.equals( "1" ) ) {
+	if ( is_specifica.equals( "1" ) ) {
 	    if ( CommonUtil.isNotEmpty( map1.get( "inv_price" ) ) ) {
 		price = CommonUtil.toDouble( map1.get( "inv_price" ) );
 	    }
@@ -967,6 +954,26 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     @Override
     public Map< String,Object > bindPhones( Map< String,Object > params ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
+	if(CommonUtil.isEmpty( params.get( "memberId" ) )){
+	    resultMap.put( "result", false );
+	    resultMap.put( "message", "参数不完整" );
+	    return resultMap;
+	}
+	if(CommonUtil.isEmpty(params.get("phone"))){
+	    resultMap.put("result", false);
+	    resultMap.put("message", "请填写手机号码");
+	    return resultMap;
+	}
+	if(CommonUtil.isEmpty(params.get("code"))){
+	    resultMap.put("result", false);
+	    resultMap.put("message", "请填写短信校验码");
+	    return resultMap;
+	}
+	if (CommonUtil.isEmpty(JedisUtil.get(params.get("code").toString()))) {
+	    resultMap.put("result", false);
+	    resultMap.put("message", "短信校验码不正确");
+	    return resultMap;
+	}
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	if ( params.containsKey( "areaId" ) && params.containsKey( "areaCode" ) ) {
 	    member = memberService.bingdingPhoneAreaCode( params, member );

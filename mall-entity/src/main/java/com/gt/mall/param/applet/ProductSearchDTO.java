@@ -1,13 +1,8 @@
 package com.gt.mall.param.applet;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.gt.mall.param.basic.ImageAssociativeDTO;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * <p>
@@ -48,5 +43,11 @@ public class ProductSearchDTO {
      * 页数
      */
     private Integer curPage;
+
+    /**
+     * 商品类型类型，0.普通商品   1.团购 3.秒杀 4.拍卖 5 粉币 6预售 7批发
+     */
+    @ApiModelProperty( name = "productType", value = "商品类型类型，0.普通商品   1.团购 3.秒杀 4.拍卖 5 粉币 6预售 7批发" )
+    private Integer productType = 0;
 
 }
