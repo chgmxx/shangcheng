@@ -99,7 +99,7 @@ public class MallSecuritytradeApiController {
 		    for ( Map< String,Object > map : securitytradeList ) {
 			Integer quitReasonId = CommonUtil.toInteger( map.get( "quit_reason_id" ) );
 			for ( DictBean bean : typeMap ) {
-			    if ( quitReasonId == bean.getItem_key() ) {
+			    if ( bean.getItem_key().equals( quitReasonId.toString() ) ) {
 				map.put( "reasonName", bean.getItem_value() );
 			    }
 			}

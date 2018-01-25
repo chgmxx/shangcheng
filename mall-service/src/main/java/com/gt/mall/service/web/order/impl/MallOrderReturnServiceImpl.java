@@ -530,7 +530,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	List< DictBean > dictBeanList = dictService.getDict( "1091" );
 	if ( dictBeanList != null && dictBeanList.size() > 0 ) {
 	    for ( DictBean bean : dictBeanList ) {
-		if ( bean.getItem_key() == orderReturn.getRetReasonId() ) {
+		if ( bean.getItem_key().equals( orderReturn.getRetReasonId().toString() ) ) {
 		    result.setRetReasonName( bean.getItem_value() );
 		    break;
 		}

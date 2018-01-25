@@ -93,9 +93,9 @@ public class MallIndexController extends BaseController {
 	    calendar.add( Calendar.DATE, -1 );    //得到前一天
 	    String yestedayDate = new SimpleDateFormat( "yyyy-MM-dd" ).format( calendar.getTime() );
 
-	    params.put( "status", "0" );
+	    params.remove( "status" );
 	    params.put( "startTime", yestedayDate );
-	    params.put( "endTime", mallOrderService + "23:59:59" );
+	    params.put( "endTime", yestedayDate + " 23:59:59" );
 	    yesterday_orders_num = mallOrderService.count( params );
 
 	    result.put( "unfilled_orders_num", unfilled_orders_num );
