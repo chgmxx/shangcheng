@@ -270,9 +270,10 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	}
 	Map< String,Object > result = orderService.calculateInventory( productId + "", proSpecificas, num + "" );
 	if ( result.get( "result" ).toString().equals( "false" ) ) {
-	    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
-	    resultMap.put( "msg", result.get( "msg" ) );
-	    return resultMap;
+	    throw new BusinessException( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+	    //	    resultMap.put( "code", ResponseEnums.ERROR.getCode() );
+	    //	    resultMap.put( "msg", result.get( "msg" ) );
+	    //	    return resultMap;
 	}
 	if ( proTypeId == 0 && CommonUtil.isEmpty( params.get( "receiveId" ) ) ) {
 	    resultMap.put( "code", 1 );
@@ -291,7 +292,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    }
 	}*/
 
-//	int code = -1;
+	//	int code = -1;
 	MallOrder order = new MallOrder();
 	order.setOrderNo( "SC" + System.currentTimeMillis() );
 	order.setOrderMoney( BigDecimal.valueOf( totalPrice ) );
@@ -373,7 +374,7 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 		    resultMap.put( "url", PropertiesUtil.getWxmpDomain() + "/duofenCardPhoneController/79B4DE7C/memberCardList.do?memberId=" + member.getId() );
 		}
 		orderService.paySuccessModified( params, member );//修改库存和订单状态
-//		code = 1;
+		//		code = 1;
 	    }
 	}
 

@@ -1,6 +1,8 @@
 package com.gt.mall;
 
+import com.gt.mall.constant.Constants;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.union.UnionConsumeService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.SmsService;
@@ -9,6 +11,7 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.union.api.entity.param.UnionRefundParam;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,10 +48,23 @@ public class BaseControllerTest extends BasicTest {
     @Autowired
     private MallOrderService mallOrderService;
 
+    @Autowired
+    private UnionConsumeService unionConsumeService;
+
     @Test
     public void tests() {
-	try {
+	/*try {
 	    mallOrderService.walletReturnOrder( "SC1514268652699" );
+	} catch ( Exception e ) {
+	    this.logger.error( "BaseControllerTest.tests方法异常：" + e.getMessage() );
+	    e.printStackTrace();
+	}*/
+
+	try {
+	    UnionRefundParam unionRefundParam = new UnionRefundParam();
+	    unionRefundParam.setOrderNo( "SC1483432262742" );
+	    unionRefundParam.setModel( Constants.UNION_MODEL );
+	    unionConsumeService.unionRefund( unionRefundParam );
 	} catch ( Exception e ) {
 	    this.logger.error( "BaseControllerTest.tests方法异常：" + e.getMessage() );
 	    e.printStackTrace();

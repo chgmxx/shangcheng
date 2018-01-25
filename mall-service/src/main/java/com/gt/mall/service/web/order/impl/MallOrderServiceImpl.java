@@ -2966,18 +2966,18 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    }
 	    if ( CommonUtil.isNotEmpty( ids.toString() ) ) {
 		if ( CommonUtil.isNotEmpty( ids ) ) {
-		    invParams.put( "specificaIds", ids );
+		    invParams.put( "valueId", ids );
 		    MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( invParams );
 		    if ( CommonUtil.isNotEmpty( proInv ) ) {
 			if ( proInv.getInvNum() < Integer.parseInt( proNum ) ) {
 			    result.put( "result", false );
-			    result.put( "msg", "库存不够" );
+			    result.put( "msg", ResponseEnums.STOCK_NULL_ERROR.getDesc() );
 			} else {
 			    result.put( "result", true );
 			}
 		    } else {
 			result.put( "result", false );
-			result.put( "msg", "库存不够" );
+			result.put( "msg", ResponseEnums.STOCK_NULL_ERROR.getDesc() );
 		    }
 		} else {
 		    isSpe = 0;
@@ -2989,7 +2989,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( isSpe == 0 ) {
 	    if ( pro.getProStockTotal() < Integer.parseInt( proNum ) ) {
 		result.put( "result", false );
-		result.put( "msg", "库存不够" );
+		result.put( "msg", ResponseEnums.STOCK_NULL_ERROR.getDesc() );
 	    } else {
 		result.put( "result", true );
 	    }

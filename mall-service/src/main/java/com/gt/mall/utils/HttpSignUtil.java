@@ -30,7 +30,8 @@ public class HttpSignUtil {
      * @return 返回对象
      */
     private static JSONObject SignHttpJson( Object obj, String url, int... types ) {
-	long startTime = System.currentTimeMillis();
+	long startTime = 0;
+	long endTime = 0;
 	try {
 	    String result = null;
 	    int type = CommonUtil.isNotEmpty( types ) && types.length > 0 ? types[0] : 0;
@@ -38,24 +39,28 @@ public class HttpSignUtil {
 	    String newUrl = CommonUtil.getHttpSignUrl( type ) + url;
 	    /*if ( type == 0 ) {
 		newUrl = "http://113.106.202.53:13887/" + url;
-	    } else */
-	    if ( type == 3 ) {
+	    } else if ( type == 3 ) {
 		newUrl = "https://union.deeptel.com.cn/" + url;
-	    }
+	    }*/
 	    logger.info( "请求接口URL：" + newUrl + "---参数：" + JSONObject.toJSONString( obj ) + "---签名key：" + signKey );
 	    if ( type == 1 || type == 0 || type == 4 ) {//商家 、会员、增值模块
+		startTime = System.currentTimeMillis();
 		result = SignHttpUtils.WxmppostByHttp( newUrl, obj, signKey );
-	    } else if ( type == 2 || type == 3 ) {//微信、门店、支付
+		endTime = System.currentTimeMillis();
+	    } else if ( type == 2 ) {//微信、门店、支付
+		startTime = System.currentTimeMillis();
 		Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( obj ), newUrl, Map.class, signKey );
+		endTime = System.currentTimeMillis();
 		result = JSONObject.toJSONString( map );
-	    }/* else if ( type == 3 ) {//商家联盟的接口
+	    } else if ( type == 3 ) {//商家联盟的接口
 		String params = JSONObject.toJSONString( obj );
 		Map map = HttpClienUtils.reqPost( params, newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );
-	    }*/ else {//会员、联盟
+	    } else {//会员、联盟
+		startTime = System.currentTimeMillis();
 		result = SignHttpUtils.postByHttp( newUrl, obj, signKey );
+		endTime = System.currentTimeMillis();
 	    }
-	    long endTime = System.currentTimeMillis();
 	    long executeTime = endTime - startTime;
 
 	    logger.info( "请求接口URL：" + newUrl + "------接口返回result:" + result + "------请求接口的执行时间 : " + executeTime + "ms" );
