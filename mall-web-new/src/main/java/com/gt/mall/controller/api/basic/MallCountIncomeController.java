@@ -53,17 +53,20 @@ public class MallCountIncomeController extends BaseController {
     private MallOrderReturnService mallOrderReturnService;
 
     @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/test", method = RequestMethod.POST )
-    public ServerResponse test( HttpServletRequest request, HttpServletResponse response ) {
+    public ServerResponse test( HttpServletRequest request, HttpServletResponse response, String startDate, String endDate ) {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    Calendar end = Calendar.getInstance();//定义日期实例
 	    Calendar start = Calendar.getInstance();//定义日期实例
-	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );//定义结束日期
-	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( "2017-4-24" );//定义起始日期
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( endDate );//定义结束日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( startDate );//定义起始日期
 	    end.setTime( d1 );
 	    start.setTime( d2 );
 
@@ -74,7 +77,7 @@ public class MallCountIncomeController extends BaseController {
 		for ( Map< String,Object > map : shoplist ) {
 		    Wrapper groupWrapper = new EntityWrapper();
 		    groupWrapper.setSqlSelect( "IFNULL(SUM(order_money),0) price" );
-		    groupWrapper.where( "DATE(create_time) ={0} AND shop_id={1}  AND order_status != 5", str, CommonUtil.toInteger( map.get( "id" ) ) );
+		    groupWrapper.where( "DATE(pay_time) ={0} AND shop_id={1}  AND order_status != 5", str, CommonUtil.toInteger( map.get( "id" ) ) );
 		    Map trade = mallOrderService.selectMap( groupWrapper );
 		    Double tradePrice = CommonUtil.toDouble( trade.get( "price" ) );//当天交易金额
 		    groupWrapper = new EntityWrapper();
