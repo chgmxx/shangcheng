@@ -102,6 +102,9 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		memberId = member.getId();
 	    }
+	    if ( CommonUtil.isEmpty( params.getProductNum() ) || params.getProductNum() <= 0 ) {
+		throw new BusinessException( ResponseEnums.ERROR.getCode(), "购买数量最少是1" );
+	    }
 	    JSONObject obj = JSONObject.fromObject( params );
 	    mallProductNewService
 			    .calculateInventory( params.getProductId(), params.getProductSpecificas(), params.getProductNum(), params.getType(), params.getActivityId(), memberId );

@@ -36,7 +36,7 @@ public class CommonUtil {
     public static boolean isEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if ( obj == null || "".equals( obj ) ) {
+	    if ( obj == null || "".equals( obj ) || "null".equals( obj )) {
 		b = true;
 	    } else {
 		b = false;
@@ -54,7 +54,7 @@ public class CommonUtil {
     public static boolean isNotEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if ( obj == null || "".equals( obj ) ) {
+	    if ( obj == null || "".equals( obj ) || "null".equals( obj )) {
 		b = false;
 	    } else {
 		b = true;

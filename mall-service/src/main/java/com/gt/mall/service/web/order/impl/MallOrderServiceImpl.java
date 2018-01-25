@@ -1336,7 +1336,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    if ( ( order.getOrderPayWay() == 1 || order.getIsWallet() == 1 ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 				if ( Double.parseDouble( oReturn.getRetMoney().toString() ) > 0 ) {//退款金额大于0，则进行微信退款
 				    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( order.getOrderNo() );
-				    if ( wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
+				    if (CommonUtil.isNotEmpty( wxPayOrder ) && wxPayOrder.getTradeState().equals( "SUCCESS" ) ) {
 					WxmemberPayRefund refund = new WxmemberPayRefund();
 					refund.setMchid( pUser.getMchId() );// 商户号
 					refund.setAppid( pUser.getAppid() );// 公众号

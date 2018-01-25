@@ -39,8 +39,7 @@ public class PhoneBuyNowDTO implements Serializable {
 
     @ApiModelProperty( name = "productNum", value = "商品数量，必传", required = true )
     @NotNull( message = "商品数量不能为空" )
-    @Min( value = 1, message = "商品数量不能小于1" )
-    private Integer productNum = 1;
+    private Integer productNum = 0;
 
     @ApiModelProperty( name = "price", value = "商品价格，必传", required = true )
     @NotNull( message = "商品价格不能为空" )
