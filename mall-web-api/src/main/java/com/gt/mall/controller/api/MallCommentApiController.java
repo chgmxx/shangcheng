@@ -85,7 +85,7 @@ public class MallCommentApiController {
     @RequestMapping( value = "/commentInfo", method = RequestMethod.POST )
     public ServerResponse commentInfo( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
 	//	@ApiParam( name = "id", value = "评论Id", required = true ) @RequestParam Integer id )
-	Map< String,Object > comment = new HashMap<>();
+	Map< String,Object > comment = null;
 	try {
 	    logger.info( "接收到的参数：" + param );
 	    Map< String,Object > params = JSONObject.parseObject( param );
