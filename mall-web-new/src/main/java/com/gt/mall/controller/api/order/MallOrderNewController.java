@@ -263,7 +263,7 @@ public class MallOrderNewController extends BaseController {
 		    mallOrderReturnLogService.refundSuccess( orderReturn.getId(), payWay, orderReturn1.getRetMoney().toString() );
 		}
 	    } else {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改退款状态异常" );
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), map.get( "msg" ).toString() );
 	    }
 	} catch ( BusinessException e ) {
 	    logger.error( "修改退款状态异常：" + e.getMessage() );
