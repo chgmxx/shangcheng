@@ -27,8 +27,8 @@ public class JedisUtil {
 	    config.setMaxWaitMillis( 3000 * 100 );
 	    // 在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
 	    config.setTestOnBorrow( true );
-	    //	    pool = new JedisPool( config, "113.106.202.51", 6379, 60000, "gt@123456",
-	    //			    3 );
+	    //	    	    pool = new JedisPool( config, "113.106.202.51", 6379, 60000, "gt@123456",
+	    //	    			    3 );
 	    if ( CommonUtil.isNotEmpty( PropertiesUtil.getRedisPassword() ) ) {
 		pool = new JedisPool( config, PropertiesUtil.getRedisHost(), CommonUtil.toInteger( PropertiesUtil.getRedisPort() ), 60000, PropertiesUtil.getRedisPassword(),
 				PropertiesUtil.getRedisDataBase() );

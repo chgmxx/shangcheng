@@ -847,14 +847,20 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    //判断是否存在会员退款jedis
 	    if ( JedisUtil.exists( key ) ) {
 		List refundList = JedisUtil.lpoplist( key, 0, -1 );//获取所有记录
+//		List refundList = JedisUtil.lpoplist( key, 28, 29 );//获取所有记录
 		if ( refundList != null ) {
 		    for ( int i = 0; i < refundList.size(); i++ ) {
-			String str = refundList.get( i ).toString();
-			ErpRefundBo erpRefundBo = JSONObject.parseObject( str, ErpRefundBo.class );
-			Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
-			if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
-			    //清空统计
-			    JedisUtil.listDel( key, i, str );
+			try {
+			    String str = refundList.get( i ).toString();
+			    ErpRefundBo erpRefundBo = JSONObject.parseObject( str, ErpRefundBo.class );
+			    Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
+			    if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
+				//清空统计
+				JedisUtil.listDel( key, i, str );
+			    }
+			} catch ( Exception e ) {
+			    this.logger.error( "MallQuartzNewServiceImpl.memberRefund方法异常：" + e.getMessage() );
+			    e.printStackTrace();
 			}
 		    }
 		}

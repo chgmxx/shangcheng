@@ -41,7 +41,6 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.fenbiFlow.ReqGetMobileInfo;
 import com.gt.util.entity.param.sms.NewApiSms;
-import com.gt.util.entity.param.sms.OldApiSms;
 import com.gt.util.entity.result.fenbi.GetMobileInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -388,7 +387,12 @@ public class MallCommonServiceImpl implements MallCommonService {
 	detail.setDetProCode( product.getProCode() );//商品编码
 	double oldPrice = CommonUtil.div( productDTO.getTotalPrice(), CommonUtil.toDouble( productDTO.getProductNum() ), 2 );
 	detail.setDetPrivivilege( CommonUtil.toBigDecimal( oldPrice ) );//商品原价
-	detail.setReturnDay( product.getReturnDay() );//完成订单后在有效天数内退款
+	if(CommonUtil.isNotEmpty( product.getIsReturn() )){
+	    if(product.getIsReturn().toString().equals( "1" )){
+		detail.setReturnDay( 7);//完成订单后在有效天数内退款
+	    }
+	}
+//	detail.setReturnDay( product.getReturnDay() );//完成订单后在有效天数内退款
 	if ( CommonUtil.isNotEmpty( memberDiscount ) ) {
 	    int discount = CommonUtil.toIntegerByDouble( CommonUtil.multiply( memberDiscount, 100 ) );
 	    detail.setDiscount( discount );//折扣数
