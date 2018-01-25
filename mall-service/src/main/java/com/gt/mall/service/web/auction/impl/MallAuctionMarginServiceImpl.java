@@ -21,6 +21,7 @@ import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
+import com.gt.mall.service.web.basic.MallCountIncomeService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
@@ -47,21 +48,23 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     private Logger log = Logger.getLogger( MallAuctionMarginServiceImpl.class );
 
     @Autowired
-    private MallAuctionMarginDAO auctionMarginDAO;
+    private MallAuctionMarginDAO   auctionMarginDAO;
     @Autowired
-    private MallOrderDAO         orderDAO;
+    private MallOrderDAO           orderDAO;
     @Autowired
-    private MallAuctionDAO       mallAuctionDAO;
+    private MallAuctionDAO         mallAuctionDAO;
     @Autowired
-    private MemberService        memberService;
+    private MemberService          memberService;
     @Autowired
-    private WxShopService        wxShopService;
+    private WxShopService          wxShopService;
     @Autowired
-    private WxPublicUserService  wxPublicUserService;
+    private WxPublicUserService    wxPublicUserService;
     @Autowired
-    private PayOrderService      payOrderService;
+    private PayOrderService        payOrderService;
     @Autowired
-    private PayService           payService;
+    private PayService             payService;
+    @Autowired
+    private MallCountIncomeService mallCountIncomeService;
 
     @Override
     public PageUtil selectMarginByShopId( Map< String,Object > params, int userId ) {
@@ -159,6 +162,10 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    aucMargin.setMarginStatus( 1 );
 	    aucMargin.setPayTime( new Date() );
 	    num = auctionMarginDAO.updateById( aucMargin );
+	    if ( num > 0 ) {
+		//支付成功，添加当天营业额记录
+		mallCountIncomeService.saveTurnover( margin.getShopId(), margin.getMarginMoney(), null );
+	    }
 	    if ( num > 0 && margin.getPayWay().toString().equals( "2" ) ) {
 		//添加总的消费记录  暂不加记录
 		//addUserConsume(margin);
@@ -380,7 +387,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	map.put( "return_no", returnNo );
 
 	MallAuctionMargin margin = auctionMarginDAO.selectByAucNo( aucNo );
-
+	map.put( "shop_id", margin.getShopId() );
 	if ( payWay.toString().equals( "1" ) && CommonUtil.isNotEmpty( pUser ) ) {//微信退款
 	    WxPayOrder wxPayOrder = payOrderService.selectWxOrdByOutTradeNo( aucNo );
 	    if ( CommonUtil.isEmpty( wxPayOrder ) ) {
@@ -411,6 +418,10 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		    }
 		}
 
+	    } else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+		resultMap.put( "result", true );
+		//退款成功修改退款状态
+		updateReturnStatus( pUser, map, returnNo );//微信退款
 	    }
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
 	    Member member = memberService.findMemberById( memberId, null );
@@ -455,6 +466,10 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	margin.setReturnNo( map.get( "return_no" ).toString() );
 	margin.setReturnTime( new Date() );
 	int num = auctionMarginDAO.updateById( margin );
+	if ( num > 0 ) {
+	    //退款成功，添加当天营业额记录
+	    mallCountIncomeService.saveTurnover( CommonUtil.toInteger( map.get( "shop_id" ) ), null, CommonUtil.toBigDecimal( map.get( "margin_money" ) ) );
+	}
 
     }
 

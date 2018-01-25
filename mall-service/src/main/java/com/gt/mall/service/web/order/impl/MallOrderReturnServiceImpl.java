@@ -29,6 +29,7 @@ import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
+import com.gt.mall.service.web.basic.MallCountIncomeService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderReturnLogService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
@@ -93,6 +94,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private MallOrderReturnLogService   mallOrderReturnLogService;
     @Autowired
     private MallBusMessageMemberService mallBusMessageMemberService;
+    @Autowired
+    private MallCountIncomeService      mallCountIncomeService;
 
     /**
      * 申请订单退款
@@ -227,6 +230,10 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			    }
 			} else if ( wxPayOrder.getTradeState().equals( "NOTPAY" ) ) {
 			    logger.info( "订单：" + wxPayOrder.getOutTradeNo() + "未支付" );
+			} else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+			    resultFlag = true;
+			    //退款成功修改退款状态
+			    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
 			}
 
 		    } else if ( orderPayWay == 3 && CommonUtil.isNotEmpty( pUser ) ) {//储值卡退款
@@ -330,6 +337,10 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 				updateReturnStatus( pUser, detailMap, returnNo );//微信退款
 			    }
 			}
+		    } else if ( wxPayOrder.getTradeState().equals( "REVOKED" ) ) {
+			resultFlag = true;
+			//退款成功修改退款状态
+			updateReturnStatus( pUser, detailMap, returnNo );//微信退款
 		    }
 		}
 	    }
@@ -348,9 +359,12 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	detail.setId( detailId );// 修改订单详情的状态
 	detail.setStatus( 1 );
 	mallOrderDetailDAO.updateById( detail );
-
 	//退款成功修改商品的库存和销量
 	updateInvenNum( detailMap );
+
+	//退款成功，添加当天营业额记录
+	mallCountIncomeService.saveTurnover( CommonUtil.toInteger( detailMap.get( "shopId" ) ), null, CommonUtil.toBigDecimal( detailMap.get( "orderMoney" ) ) );
+
     }
 
     /**
