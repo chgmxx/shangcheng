@@ -263,13 +263,19 @@ public class MallAuctionNewController extends BaseController {
 	    map.put( "margin_money", margin.getMarginMoney() );
 	    map.put( "auc_no", margin.getAucNo() );
 	    Map< String,Object > result = auctionMarginService.returnEndMargin( map );
-
+	    if ( result.size() == 0 ) {
+		result.put( "result", false );
+		result.put( "msg", "退保证金失败" );
+	    }
+	    if ( !result.containsKey( "msg" ) ) {
+		result.put( "msg", "退保证金失败" );
+	    }
 	    Boolean flag = (Boolean) result.get( "result" );
 	    if ( CommonUtil.isEmpty( flag ) ) {
 		flag = true;
 	    }
 	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金异常" );
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
 	    }
 	} catch ( BusinessException be ) {
 	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
