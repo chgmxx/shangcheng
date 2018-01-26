@@ -2378,8 +2378,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     @Override
     public boolean diffProductStock( MallProduct pro, MallOrderDetail detail, MallOrder order ) {
 	Map< String,Object > proMap = new HashMap<>();
-	Integer total = ( pro.getProStockTotal() - detail.getDetProNum() );
-	Integer saleNum = ( pro.getProSaleTotal() + detail.getDetProNum() );
+	//	Integer total = ( pro.getProStockTotal() - detail.getDetProNum() );
+	//	Integer saleNum = ( pro.getProSaleTotal() + detail.getDetProNum() );
 	//	proMap.put( "total", total );
 	//	proMap.put( "saleNum", saleNum );
 	proMap.put( "proId", detail.getProductId() );

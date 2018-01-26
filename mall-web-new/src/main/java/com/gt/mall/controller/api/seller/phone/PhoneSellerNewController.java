@@ -196,10 +196,10 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "验证码不能为空" );
 	    }
 
-	    /*String jedisCode = JedisUtil.get( Constants.REDIS_KEY + code );
+	    String jedisCode = JedisUtil.get( Constants.REDIS_KEY + code );
 	    if ( CommonUtil.isEmpty( jedisCode ) || !jedisCode.equals( code ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "验证码错误或超时" );
-	    }*/
+	    }
 
 	    MallSeller seller = new MallSeller();
 	    seller.setUserName( CommonUtil.urlEncode( params.getUserName() ) );
@@ -538,7 +538,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "addMallSet", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse addMallSet( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, String mallSet,
 		    Integer type ) {
-	Map< String,Object > result = new HashMap<>();
+	Map< String,Object > result = null;
 	try {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    //	    userLogin( request, response, loginDTO );
@@ -571,7 +571,6 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "openOptional", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse openOptional( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer id,
 		    Integer status ) {
-	Map< String,Object > result = new HashMap<>();
 	try {
 	    //	    userLogin( request, response, loginDTO );
 
@@ -595,12 +594,11 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "deleteMallPro", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse deleteMallPro( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer id ) {
-	Map< String,Object > result = new HashMap<>();
 	try {
 	    //	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "id", id );
-	    result = mallSellerMallSetService.deleteSellerProduct( params );
+	    Map< String,Object > result = mallSellerMallSetService.deleteSellerProduct( params );
 	    boolean flag = (boolean) result.get( "flag" );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorMessage( result.get( "msg" ).toString() );
@@ -958,7 +956,6 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
     @PostMapping( value = "addWithdrawal", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Map< String,Object > > addWithdrawal( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer withdrawMoney ) {
-	Map< String,Object > result = new HashMap<>();
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "8" ) );////判断活动是否已经过期
 
@@ -966,7 +963,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    //	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "withdraw", "{withdrawMoney: " + withdrawMoney + "}" );
-	    result = mallSellerWithdrawService.saveWithdraw( member.getId(), params, 0 );
+	    Map< String,Object > result = mallSellerWithdrawService.saveWithdraw( member.getId(), params, 0 );
 	    boolean flag = (boolean) result.get( "flag" );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorMessage( result.get( "msg" ).toString() );

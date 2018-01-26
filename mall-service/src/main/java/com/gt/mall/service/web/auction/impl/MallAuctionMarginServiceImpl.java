@@ -67,7 +67,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     private MallCountIncomeService mallCountIncomeService;
 
     @Override
-    public PageUtil selectMarginByShopId( Map< String,Object > params, int userId ) {
+    public PageUtil selectMarginByShopId( Map< String,Object > params, int userId ) throws Exception {
 	int pageSize = 10;
 
 	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
@@ -256,7 +256,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		result.put( "payWay", margin.getPayWay() );
 		result.put( "busId", member.getBusid() );
 
-		if ( margin.getPayWay() == 1 || margin.getPayWay() == 3 ) {
+		if ( margin.getPayWay() == 1 || margin.getPayWay() == 3 || margin.getPayWay() == 4 ) {
 		    String url = getWxAlipay( margin, member );
 		    result.put( "payUrl", url );
 		} else if ( margin.getPayWay() == 2 ) {
@@ -426,6 +426,9 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    }
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
 	    Member member = memberService.findMemberById( memberId, null );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "粉丝不存在" );
+	    }
 	    ErpRefundBo erpRefundBo = new ErpRefundBo();
 	    erpRefundBo.setBusId( member.getBusid() );//商家id
 	    erpRefundBo.setOrderCode( aucNo );////订单号

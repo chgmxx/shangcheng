@@ -330,6 +330,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     public void countIncomeNum() {
 	logger.info( "统计每天的收入金额" );
 	try {
+	    Date newDate = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
 	    Wrapper wrapper = new EntityWrapper();
 	    wrapper.where( "is_delete=0 " );
 	    List< MallStore > storeList = mallStoreService.selectList( wrapper );
@@ -340,8 +341,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 		    if ( CommonUtil.isNotEmpty( incomePrice ) && incomePrice > 0 ) {
 			MallCountIncome income = new MallCountIncome();
 			income.setShopId( store.getId() );
-			Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
-			income.setCountDate( d1 );
+			income.setCountDate( newDate );
 			MallCountIncome countIncome = mallCountIncomeDAO.selectOne( income );
 			if ( countIncome != null ) {
 			    countIncome.setIncomePrice( countIncome.getIncomePrice().add( CommonUtil.toBigDecimal( incomePrice ) ) );
@@ -350,52 +350,15 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    countIncome = new MallCountIncome();
 			    countIncome.setBusId( store.getStoUserId() );
 			    countIncome.setShopId( store.getId() );
-			    countIncome.setCountDate( d1 );
-			    countIncome.setTradePrice( CommonUtil.toBigDecimal( 0 ) );
-			    countIncome.setRefundPrice( CommonUtil.toBigDecimal( 0 ) );
-			    countIncome.setTurnover( CommonUtil.toBigDecimal( 0 ) );
+			    countIncome.setCountDate( newDate );
 			    countIncome.setIncomePrice( CommonUtil.toBigDecimal( incomePrice ) );
 			    mallCountIncomeDAO.insert( countIncome );
 			}
 		    }
 		}
 	    }
-	   /* String key = Constants.REDIS_KEY + Constants.INCOME_COUNT_KEY;
-	    //判断是否存在页面访问数量
-	    if ( JedisUtil.exists( key ) ) {
-		Map< String,String > map = JedisUtil.mapGetAll( key );//获取所有店铺营业额
-		if ( map != null ) {
-		    Set< String > set = map.keySet();
-		    for ( String shopId : set ) {
-			String oStr = map.get( shopId );//店铺营业额
-			if ( CommonUtil.isNotEmpty( oStr ) ) {
-			    JSONObject obj = JSONObject.parseObject( oStr );
-			    Integer tradePrice = obj.getInteger( "tradePrice" ); //当天交易金额
-			    Integer refundPrice = obj.getInteger( "refundPrice" );//当天退款金额
-			    //查询 当前时间 大于等于 7天后的时间
-			    double incomePrice = mallOrderDAO.selectOrderFinishMoneyByShopId( CommonUtil.toInteger( shopId ) );
-			    MallStore store = mallStoreService.selectById( shopId );
-			    //保存
-			    MallCountIncome income = new MallCountIncome();
-			    if ( store != null ) {
-				income.setBusId( store.getStoUserId() );
-			    }
-			    income.setShopId( CommonUtil.toInteger( shopId ) );
-			    income.setCountDate( new Date() );
-			    income.setTradePrice( CommonUtil.toBigDecimal( tradePrice ) );
-			    income.setRefundPrice( CommonUtil.toBigDecimal( refundPrice ) );
-			    income.setTurnover( CommonUtil.toBigDecimal( tradePrice ).subtract( CommonUtil.toBigDecimal( refundPrice ) ) );
-			    income.setIncomePrice( CommonUtil.toBigDecimal( incomePrice ) );//统计订单完成7天后的金额
-			    mallCountIncomeDAO.insert( income );
-
-			    //清空统计
-			    JedisUtil.mapdel( key, shopId );
-			}
-		    }
-		}
-	    }*/
 	} catch ( Exception e ) {
-	    logger.error( "统计每天页面访问数量异常" + e );
+	    logger.error( "统计每天的收入金额异常" + e );
 	    e.printStackTrace();
 	}
     }
@@ -878,7 +841,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    //判断是否存在会员退款jedis
 	    if ( JedisUtil.exists( key ) ) {
 		List refundList = JedisUtil.lpoplist( key, 0, -1 );//获取所有记录
-//		List refundList = JedisUtil.lpoplist( key, 28, 29 );//获取所有记录
+		//		List refundList = JedisUtil.lpoplist( key, 28, 29 );//获取所有记录
 		if ( refundList != null ) {
 		    for ( int i = 0; i < refundList.size(); i++ ) {
 			try {

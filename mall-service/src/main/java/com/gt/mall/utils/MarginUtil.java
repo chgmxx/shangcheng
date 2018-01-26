@@ -28,7 +28,7 @@ public class MarginUtil {
 	    /*if ( payWay.getDfpay() == 0 ) {
 		PhoneOrderWayDTO result = new PhoneOrderWayDTO( 4, "多粉钱包支付", "duofenlogoyuanwenjian-" );
 		payWayList.add( result );
-	    } else */if ( payWay.getWxpay() == 0 && browserType == 1 ) {
+	    } else*/ if ( payWay.getWxpay() == 0 && browserType == 1 ) {
 		PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
 		payWayList.add( result );
 	    } else if ( payWay.getAlipay() == 0 && browserType != 1 ) {

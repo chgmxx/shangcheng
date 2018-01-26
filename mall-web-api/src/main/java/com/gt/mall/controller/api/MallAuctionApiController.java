@@ -38,22 +38,6 @@ public class MallAuctionApiController {
     @Autowired
     private MallAuctionMarginService mallAuctionMarginService;
 
-    @ApiOperation( value = "交纳保证金成功回调", notes = "交纳保证金成功回调" )
-    @ResponseBody
-    @RequestMapping( value = "/paySuccessAuction", method = RequestMethod.POST )
-    public ServerResponse paySuccessAuction( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	try {
-	    //params 传参 out_trade_no：保证金编号 transaction_id：支付单号
-	    logger.info( "交纳保证金成功回调参数：" + JSONObject.fromObject( param ) );
-	    Map< String,Object > params = JSONObject.fromObject( param );
-	    mallAuctionMarginService.paySuccessAuction( params );
-	} catch ( Exception e ) {
-	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金成功回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
-    }
 
     @ApiOperation( value = "退保证金成功回调", notes = "退保证金成功回调接口" )
     @ResponseBody

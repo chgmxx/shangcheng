@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -16,9 +15,7 @@ import java.util.List;
  */
 @ApiModel( value = "PhoneRemoveShopCartDTO", description = "删除购物车验证" )
 @Data
-public class PhoneRemoveShopCartDTO implements Serializable {
-
-    private static final long serialVersionUID = -1424109806117433065L;
+public class PhoneRemoveShopCartDTO  {
 
     @ApiModelProperty( name = "ids", value = "购物车id,多个用逗号隔开", required = true )
     @NotNull( message = "删除购物车id不能为空" )

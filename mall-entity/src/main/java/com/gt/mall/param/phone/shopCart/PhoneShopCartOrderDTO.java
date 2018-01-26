@@ -6,7 +6,6 @@ import lombok.Data;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,9 +16,7 @@ import java.util.List;
  */
 @ApiModel( value = "PhoneShopCartOrderDTO", description = "去结算验证" )
 @Data
-public class PhoneShopCartOrderDTO implements Serializable {
-
-    private static final long serialVersionUID = -1424109806117433065L;
+public class PhoneShopCartOrderDTO {
 
     @ApiModelProperty( name = "ids", value = "购物车id ", required = true )
     @NotNull( message = "购物车id不能为空" )

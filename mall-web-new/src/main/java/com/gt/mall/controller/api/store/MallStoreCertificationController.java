@@ -2,7 +2,6 @@ package com.gt.mall.controller.api.store;
 
 import com.alibaba.fastjson.JSONArray;
 import com.gt.api.bean.session.BusUser;
-import com.gt.api.bean.session.WxPublicUsers;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
@@ -12,7 +11,6 @@ import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.param.basic.ImageAssociativeDTO;
-import com.gt.mall.param.phone.PhoneBuyNowDTO;
 import com.gt.mall.param.store.StoreCertDTO;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
@@ -221,7 +219,7 @@ public class MallStoreCertificationController extends BaseController {
 		    @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile ) {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
+//	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
 	    System.out.println( "店铺认证短信验证码：" + no );

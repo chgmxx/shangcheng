@@ -280,11 +280,14 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    }*/
 	}
 	//	busCanUseDiscountProductPrice = CommonUtil.formatDoubleNumber( busCanUseDiscountProductPrice );
-	Double busDiscountYouhui = null;//保存商家下  折扣卡优惠的总额
+	/*Double busDiscountYouhui = null;//保存商家下  折扣卡优惠的总额
 	if ( busCanUseDiscountProductPrice > 0 && memberDiscount > 0 && memberDiscount < 1 ) {
 	    double discountYouhuiHouPrice = CommonUtil.multiply( busCanUseDiscountProductPrice, memberDiscount );
 	    busDiscountYouhui = CommonUtil.subtract( busCanUseDiscountProductPrice, discountYouhuiHouPrice );
 	} else {
+	    return shopDTOList;
+	}*/
+	if(!(busCanUseDiscountProductPrice > 0 && memberDiscount > 0 && memberDiscount < 1 )){
 	    return shopDTOList;
 	}
 	//	double proUnionYouhuiTotal = 0;//已经优惠的联盟总额

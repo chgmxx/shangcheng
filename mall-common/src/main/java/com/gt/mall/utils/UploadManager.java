@@ -156,7 +156,10 @@ public class UploadManager {
 	    String secondDir = id + "//" + DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD );
 	    File dir = new File( rootDir + "//" + secondDir );
 	    if ( !dir.exists() ) {
-		dir.mkdirs();
+		boolean flag = dir.mkdirs();
+		if(!flag){
+		    logger.error( "创建路径失败" );
+		}
 	    }
 	    String newFileName = UUID.randomUUID().toString().replaceAll( "-", "" ).toUpperCase() + "." + originalFileExtension;
 
@@ -215,7 +218,10 @@ public class UploadManager {
 	    // create new file by date
 	    File dir = new File( rootDir );
 	    if ( !dir.exists() ) {
-		dir.mkdirs();
+		boolean flag = dir.mkdirs();
+		if(!flag){
+		    logger.error( "创建路径失败" );
+		}
 	    }
 
 	    String newFileName = UUID.randomUUID().toString().replaceAll( "-", "" ).toUpperCase() + "." + originalFileExtension.toLowerCase();

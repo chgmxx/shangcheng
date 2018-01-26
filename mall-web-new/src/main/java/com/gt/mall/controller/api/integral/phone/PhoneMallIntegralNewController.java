@@ -292,7 +292,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     @RequestMapping( value = "recordIntegral", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > recordIntegral( HttpServletRequest request, HttpServletResponse response,
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddIntegralDTO integralDTO ) {
-	Map< String,Object > result = new HashMap<>();
+	Map< String,Object > result = null;
 	try {
 //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );

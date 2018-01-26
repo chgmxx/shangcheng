@@ -291,7 +291,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    }
 	}
 	//货到付款或支付金额为0的订单，直接修改订单状态为已支付，且修改商品库存和销量
-	if ( totalOrderMoney == 0 || ( firstOrder.getOrderPayWay() != 1 && firstOrder.getOrderPayWay() != 9 ) ) {
+	if ( totalOrderMoney == 0 || ( firstOrder.getOrderPayWay() != 1 && firstOrder.getOrderPayWay() != 9 && firstOrder.getOrderPayWay() != 11 ) ) {
 	    Map< String,Object > payParams = new HashMap<>();
 	    payParams.put( "status", 2 );
 	    payParams.put( "out_trade_no", orderPNo );
@@ -344,7 +344,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
-	if ( orderPayWay <= 0 ) {
+	if ( orderPayWay >= 0 ) {
 	    orderPayWay = 1;
 	    if ( order.getOrderPayWay() == 9 ) {
 		orderPayWay = 2;

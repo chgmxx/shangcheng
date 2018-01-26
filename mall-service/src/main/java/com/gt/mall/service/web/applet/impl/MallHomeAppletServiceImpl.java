@@ -616,7 +616,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     @Transactional( rollbackFor = Exception.class )
     @Override
     public Map< String,Object > addshopping( Map< String,Object > params ) {
-	MallShopCart cart = new MallShopCart();
+	MallShopCart cart = null;
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	if ( CommonUtil.isNotEmpty( params.get( "shopCart" ) ) ) {
 	    cart = (MallShopCart) JSONObject.toJavaObject( JSONObject.parseObject( params.get( "shopCart" ).toString() ), MallShopCart.class );
@@ -849,12 +849,12 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	List< Map< String,Object > > list = storeDAO.findByUserId( userId );
 	DecimalFormat df = new DecimalFormat( "0.00" );
 	List< AppletShopResult > shopResultList = new ArrayList<>();
-	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
+//	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map : list ) {
 		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( map.get( "wx_shop_id" ) ) );
 		List< WsShopPhoto > shopPhotoList = wxShopService.getShopPhotoByShopId( wxShopInfo.getId() );
-		Map< String,Object > shopMap = new HashMap< String,Object >();
+//		Map< String,Object > shopMap = new HashMap< String,Object >();
 		AppletShopResult shopResult = new AppletShopResult();
 		if ( longitude > 0 && latitude > 0 ) {
 		    Double raill = CommonUtil.getDistance( longitude, latitude, CommonUtil.toDouble( wxShopInfo.getLongitude() ), CommonUtil.toDouble( wxShopInfo.getLatitude() ) );

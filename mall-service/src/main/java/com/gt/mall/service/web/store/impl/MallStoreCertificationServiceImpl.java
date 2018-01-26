@@ -6,6 +6,7 @@ import com.gt.mall.dao.store.MallStoreCertificationDAO;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.wxshop.MemberAuthService;
 import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.utils.CommonUtil;
@@ -34,6 +35,8 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
     private DictService               dictService;
     @Autowired
     private MallPaySetService         mallPaySetService;
+    @Autowired
+    private MemberAuthService         memberAuthService;
 
     @Override
     public MallStoreCertification selectByStoreId( Integer storeId ) {
@@ -59,22 +62,29 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
     @Override
     public Map< String,Object > getStoreServiceByShopId( Integer shopId, Integer userId ) {
 	Map< String,Object > result = new HashMap<>();
-	MallStoreCertification certification = mallStoreCertificationDAO.selectByStoreId( shopId );
+	Integer auth = memberAuthService.getMemberAuth( userId );
+	if ( CommonUtil.isNotEmpty( auth ) ) {
+	    if ( auth == 2 ) {
+		result.put( "stoType", "企业认证" );
+	    } else if ( auth == 3 ) {
+		result.put( "stoType", "个人认证" );
+	    }
+	}
+	/*MallStoreCertification certification = mallStoreCertificationDAO.selectByStoreId( shopId );
 	if ( certification != null ) {
 	    result.put( "stoType", certification.getStoType() == 0 ? "个人认证" : "企业认证" );
+	    List< DictBean > categoryMap = dictService.getDict( "K002" );
+	    for ( DictBean dictBean : categoryMap ) {
+		Integer key = dictBean.getItem_key();
+		String value = dictBean.getItem_value();
+		JSONObject foorerObj = JSONObject.fromObject( value );
 
-//	    List< DictBean > categoryMap = dictService.getDict( "K002" );
-//	    for ( DictBean dictBean : categoryMap ) {
-//		Integer key = dictBean.getItem_key();
-//		String value = dictBean.getItem_value();
-//		JSONObject foorerObj = JSONObject.fromObject( value );
-//
-//		if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
-//		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
-//		    break;
-//		}
-//	    }
-	}
+		if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
+		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
+		    break;
+		}
+	    }
+	}*/
 	result.put( "isSecuritytrade", false );
 	MallPaySet set = new MallPaySet();
 	set.setUserId( userId );

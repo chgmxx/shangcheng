@@ -13,6 +13,7 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.result.store.StoreResult;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.inter.wxshop.MemberAuthService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.store.MallStoreCertificationService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -54,6 +55,8 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     private BusUserService                busUserService;
     @Autowired
     private MallStoreCertificationService mallStoreCertService;
+    @Autowired
+    private MemberAuthService             memberAuthService;
 
     @Override
     public PageUtil findByPage( Map< String,Object > params, List< Map< String,Object > > shopList ) {
@@ -70,11 +73,19 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 
 	List< Map< String,Object > > list = mallStoreDao.findByPage( params );
 	if ( list != null && list.size() > 0 ) {
+	    Integer auth = memberAuthService.getMemberAuth( CommonUtil.toInteger( params.get( "userId" ) ) );
 	    for ( Map< String,Object > shopMap : list ) {
 		int id = CommonUtil.toInteger( shopMap.get( "id" ) );
 		StoreResult storeResult = new StoreResult();
 		converter.mapToBean( shopMap, storeResult );
-		MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
+		if ( CommonUtil.isNotEmpty( auth ) ) {
+		    if ( auth == 2 ) {
+			storeResult.setCertStoType( 1 );
+		    } else if ( auth == 3 ) {
+			storeResult.setCertStoType( 0 );
+		    }
+		}
+		/*MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
 		if ( storeCertification != null ) {
 		    storeResult.setCertCheckStatus( storeCertification.getCheckStatus() );
 		    storeResult.setCertRefuseReason( storeCertification.getRefuseReason() );
@@ -86,7 +97,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
 			}
 		    }
-		}
+		}*/
 		for ( Map< String,Object > maps : shopList ) {
 		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
 		    if ( id == shopIds ) {
@@ -482,19 +493,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    MallSessionUtils.setShopListBySession( userId, storeList, request );
 	    return storeList;
 	}
-	return null;
-    }
-
-    @Override
-    public List< Map< String,Object > > findShopByShopIdList( List< Integer > busIdList ) {
-	if ( busIdList == null || busIdList.size() == 0 ) {
-	    return null;
-	}
-	List< Map< String,Object > > newShopList = new ArrayList<>();
-	for ( Integer busId : busIdList ) {
-	    List< Map< String,Object > > shopList = findShopByUserId( busId, null );
-	}
-
 	return null;
     }
 

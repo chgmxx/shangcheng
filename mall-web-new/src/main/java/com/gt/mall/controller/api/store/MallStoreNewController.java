@@ -17,7 +17,6 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
@@ -159,7 +158,7 @@ public class MallStoreNewController extends BaseController {
     @RequestMapping( value = "/storeInfo", method = RequestMethod.POST )
     public ServerResponse storeInfo( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "店铺ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > sto = new HashMap<>();
+	Map< String,Object > sto = null;
 	try {
 	    sto = mallStoreService.findShopByStoreId( id );
 	    if ( CommonUtil.isNotEmpty( sto.get( "stoSmsTelephone" ) ) ) {

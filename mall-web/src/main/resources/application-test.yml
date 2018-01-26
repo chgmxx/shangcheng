@@ -186,3 +186,9 @@ http:
  hardware:
   #硬件地址
   domain: https://yj.deeptel.com.cn/
+ #钱包支付
+ dfPay:
+  #钱包支付域名
+  domain: https://dfpay.deeptel.com.cn/
+  #钱包支付 key
+  key: WALLET2017

@@ -26,7 +26,7 @@ public interface MallAuctionMarginService extends BaseService< MallAuctionMargin
      *
      * @return 保证金列表
      */
-    PageUtil selectMarginByShopId( Map< String,Object > param, int userId );
+    PageUtil selectMarginByShopId( Map< String,Object > param, int userId ) throws Exception;
 
     /**
      * 交纳保证金成功返回

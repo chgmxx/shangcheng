@@ -106,8 +106,7 @@ public class ToOrderUtil {
 	/*if ( isHaveAlipay == 1 && isOpenDanbao == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 11, "多粉钱包支付", "duofenlogoyuanwenjian-" );
 	    phoneOrderWayList.add( result );
-	} else*/
-	if ( browerType == 1 && isHaveWx == 1 ) {
+	} else*/ if ( browerType == 1 && isHaveWx == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
 	    phoneOrderWayList.add( result );
 	} else if ( browerType != 1 && isHaveAlipay == 1 ) {
@@ -311,7 +310,7 @@ public class ToOrderUtil {
 	}
 	if ( jifenProductMoney > 0 ) {
 	    System.out.println( "能使用积分抵扣的商家总额 = " + jifenProductMoney + "---" + CommonUtil.getDecimal( jifenProductMoney ) );
-	    jifenProductMoney = CommonUtil.getDecimal( jifenProductMoney );
+	    //	    jifenProductMoney = CommonUtil.getDecimal( jifenProductMoney );
 	}
 	//粉币起兑金额  小于 能兑换粉币的商品金额  且 能兑换粉币的商品金额  小于 会员传来的粉币
 	if ( jifenFenbiRule.getFenbiStartMoney() > 0 && jifenFenbiRule.getFenbiStartMoney() < fenbiProductMoney && fenbiProductMoney > 0 ) {//显示积分抵扣的按钮

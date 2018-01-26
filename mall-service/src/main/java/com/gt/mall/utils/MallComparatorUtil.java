@@ -1,9 +1,12 @@
 package com.gt.mall.utils;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Map;
 
-public class MallComparatorUtil implements Comparator< Map< String,Object > > {
+public class MallComparatorUtil implements Comparator< Map< String,Object > > ,Serializable{
+
+    private static final long serialVersionUID = 6097332167797692035L;
 
     private String key;
 

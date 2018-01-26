@@ -1728,7 +1728,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	StringBuilder id = new StringBuilder();//购物车id
 	if ( list != null && list.size() > 0 ) {
 	    mallShopCartDAO.updateShopCarts( member.getId(), member.getBusid(), shoppCartIds.split( "," ) );
-	    List< Integer > ids = new ArrayList<>();
+//	    List< Integer > ids = new ArrayList<>();
 	    String deletes = "";
 	    for ( Map< String,Object > map : list ) {
 		int product_num = CommonUtil.toInteger( map.get( "product_num" ) );

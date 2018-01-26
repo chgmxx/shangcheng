@@ -175,8 +175,7 @@ public class PhoneHomeAppletController extends BaseController {
     public void productPage( HttpServletRequest request, HttpServletResponse response, ProductSearchDTO searchDTO ) {
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( searchDTO );
+	    Map< String,Object > params = converter.beanToMap( searchDTO );
 	    logger.info( "分页查询商品参数：" + params );
 	    //分页查询商品
 	    PageUtil productPage = mallHomeAppletService.productAllList( params );
@@ -231,8 +230,7 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( searchDTO );
+	    Map< String,Object > params = converter.beanToMap( searchDTO );
 	    logger.info( "进入全部商品页面参数：" + params );
 	    //查询商品信息
 	    PageUtil productPage = mallHomeAppletService.productAllList( params );
@@ -472,9 +470,8 @@ public class PhoneHomeAppletController extends BaseController {
 		version = toSubmitOrderDTO.getVersion();
 	    }
 
-	    Map< String,Object > params = new HashMap<>();
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    params = converter.beanToMap( toSubmitOrderDTO );
+	    Map< String,Object > params = converter.beanToMap( toSubmitOrderDTO );
 	    if ( version.equals( "1.1.0" ) ) {
 		resultMap = mallNewOrderAppletService.toSubmitOrder( params );
 	    } else {
@@ -497,8 +494,7 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( submitOrderDTO );
+	    Map< String,Object > params = converter.beanToMap( submitOrderDTO );
 	    logger.info( "提交订单的参数：" + params );
 	    String version = "";//保存版本号
 	    if ( CommonUtil.isNotEmpty( submitOrderDTO.getVersion() ) ) {
@@ -677,8 +673,7 @@ public class PhoneHomeAppletController extends BaseController {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( addReturnOrderDTO );
+	    Map< String,Object > params = converter.beanToMap( addReturnOrderDTO );
 	    logger.info( "提交退款信息的参数：" + addReturnOrderDTO );
 	    resultMap = mallOrderAppletService.submitReturnOrder( params );
 

@@ -3,13 +3,13 @@ package com.gt.mall.service.web.integral.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.base.BaseServiceImpl;
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.integral.MallIntegralDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.product.MallProductDAO;
-import com.gt.mall.dao.product.MallProductDetailDAO;
 import com.gt.mall.entity.basic.MallImageAssociative;
 import com.gt.mall.entity.integral.MallIntegral;
 import com.gt.mall.entity.order.MallOrder;
@@ -19,12 +19,11 @@ import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.integral.PhoneAddIntegralDTO;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.FenBiFlowService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.basic.MallImageAssociativeService;
 import com.gt.mall.service.web.integral.MallIntegralService;
 import com.gt.mall.service.web.order.MallOrderService;
-import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
@@ -63,8 +62,6 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     @Autowired
     private MallProductService          productService;
     @Autowired
-    private MallProductDetailDAO        productDetailDAO;
-    @Autowired
     private MallProductInventoryService productInventoryService;
     @Autowired
     private MallOrderDAO                orderDAO;
@@ -73,15 +70,13 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
     @Autowired
     private MallOrderDetailDAO          orderDetailDAO;
     @Autowired
-    private MallPageService             pageService;
-    @Autowired
     private MallProductSpecificaService productSpecificaService;
     @Autowired
     private MemberService               memberService;
     @Autowired
-    private WxShopService               wxShopService;
-    @Autowired
     private FenBiFlowService            fenBiFlowService;
+    @Autowired
+    private MemberAddressService        memberAddressService;
 
     @Override
     public PageUtil selectIntegralByUserId( Map< String,Object > params ) {
@@ -316,8 +311,22 @@ public class MallIntegralServiceImpl extends BaseServiceImpl< MallIntegralDAO,Ma
 	    order.setFlowPhone( flowPhone );
 	    order.setFlowRechargeStatus( 0 );
 	}
-	if ( CommonUtil.isNotEmpty( integralDTO.getReceiveId() ) ) {
-	    order.setReceiveId( integralDTO.getReceiveId() );
+	if ( CommonUtil.isNotEmpty( integralDTO.getReceiveId() ) && integralDTO.getReceiveId() > 0 ) {
+	    MemberAddress memberAddress = memberAddressService.addreSelectId( integralDTO.getReceiveId() );
+	    if ( CommonUtil.isNotEmpty( memberAddress ) ) {
+		String address = CommonUtil.toString( memberAddress.getProvincename() ) + CommonUtil.toString( memberAddress.getCityname() );
+		if ( CommonUtil.isNotEmpty( memberAddress.getAreaname() ) ) {
+		    address += CommonUtil.toString( memberAddress.getAreaname() );
+		}
+		address += CommonUtil.toString( memberAddress.getMemAddress() );
+		if ( CommonUtil.isNotEmpty( memberAddress.getMemZipCode() ) ) {
+		    address += CommonUtil.toInteger( memberAddress.getMemZipCode() );
+		}
+		order.setReceiveName( memberAddress.getMemName() );
+		order.setReceivePhone( memberAddress.getMemPhone() );
+		order.setReceiveAddress( address );
+		order.setReceiveId( integralDTO.getReceiveId() );
+	    }
 	}
 	if ( CommonUtil.isNotEmpty( browser ) ) {
 	    order.setBuyerUserType( browser );

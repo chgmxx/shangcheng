@@ -2,6 +2,7 @@ package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.constant.Constants;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -36,7 +37,7 @@ public class CommonUtil {
     public static boolean isEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if ( obj == null || "".equals( obj ) || "null".equals( obj )) {
+	    if ( obj == null || "".equals( obj ) || "null".equals( obj ) ) {
 		b = true;
 	    } else {
 		b = false;
@@ -54,7 +55,7 @@ public class CommonUtil {
     public static boolean isNotEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if ( obj == null || "".equals( obj ) || "null".equals( obj )) {
+	    if ( obj == null || "".equals( obj ) || "null".equals( obj ) ) {
 		b = false;
 	    } else {
 		b = true;
@@ -334,7 +335,7 @@ public class CommonUtil {
 		if ( len > 0 ) {
 		    len = len + 1;
 		}
-		BigDecimal bg = new BigDecimal( d );
+		//		BigDecimal bg = new BigDecimal( d );
 		int index = d.toString().indexOf( "." ) + len;
 		return CommonUtil.toDouble( d.toString().substring( 0, index ) );
 	    }
@@ -463,7 +464,7 @@ public class CommonUtil {
 	String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );
 	String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
 	// 文件大小
-	Integer size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
+	//	Integer size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
 	// 判断上传图片是否是支持的格式
 
 	String path = PropertiesUtil.getResImagePath() + "/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit
@@ -542,6 +543,9 @@ public class CommonUtil {
 	    case 10://小程序支付
 		payType = 1;
 		break;
+	    case 11://多粉钱包支付
+		payType = 15;
+		break;
 	    default:
 		payType = 10;//现金支付
 		break;
@@ -571,6 +575,9 @@ public class CommonUtil {
 		break;
 	    case 3://支付宝
 		payType = 0;
+		break;
+	    case 4://多粉钱包支付
+		payType = 15;
 		break;
 	    default:
 		payType = 1;//微信支付
@@ -622,7 +629,7 @@ public class CommonUtil {
     /**
      * 获取接口的域名
      *
-     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟
+     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟  4 增值模块  5 钱包支付
      *
      * @return 域名
      */
@@ -633,6 +640,8 @@ public class CommonUtil {
 	    return PropertiesUtil.getUnionDomain();
 	} else if ( type == 4 ) {
 	    return PropertiesUtil.getCoreDomain();
+	} else if ( type == 5 ) {
+	    return PropertiesUtil.getDfPayDomain();
 	}
 	return PropertiesUtil.getMemberDomain();
     }
@@ -640,7 +649,7 @@ public class CommonUtil {
     /**
      * 获取接口的签名key
      *
-     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟
+     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟   4 增值模块  5 钱包支付
      *
      * @return 签名key
      */
@@ -651,6 +660,8 @@ public class CommonUtil {
 	    return PropertiesUtil.getUnionSignKey();
 	} else if ( type == 4 ) {
 	    return PropertiesUtil.getCoreSignKey();
+	} else if ( type == 5 ) {
+	    return PropertiesUtil.getDfPaySignKey();
 	}
 	return PropertiesUtil.getMemberSignKey();
     }
@@ -810,6 +821,32 @@ public class CommonUtil {
 		break;
 	}
 	return model_style;
+    }
+
+    /**
+     * 获取退款链接
+     *
+     * @param orderNo     订单号
+     * @param busId       商家id
+     * @param desc        描述
+     * @param returnMoney 退款金额
+     * @param notifyUrl   异步回调接口(成功返回：outTradeNo系统订单号 （不可带参数,接收参数时,@requestBody Map<String,Object> ）
+     *
+     * @return 链接
+     */
+    public static String getAliReturnUrl( String orderNo, Integer busId, String desc, Double returnMoney, String notifyUrl ) throws Exception {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "out_trade_no", orderNo );
+	params.put( "busId", busId );
+	params.put( "desc", desc );
+	params.put( "fee", returnMoney );
+	//	    KeysUtil keysUtil = new KeysUtil();
+	//	    String notifyUrl = keysUtil.getEncString( notifyUrl );
+	params.put( "notifyUrl", notifyUrl );
+	KeysUtil keyUtil = new KeysUtil();
+	String obj = keyUtil.getEncString( com.alibaba.fastjson.JSONObject.toJSONString( params ) );
+	log.error( "支付宝退款参数解密 = " + keyUtil.getDesStr( obj ) );
+	return PropertiesUtil.getWxmpDomain() + Constants.ALIPAY_RETURN_URL + "?obj=" + obj;
     }
 
 }

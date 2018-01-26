@@ -85,8 +85,7 @@ public class MallOrderNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( orderQuery );
+	    Map< String,Object > params  = converter.beanToMap( orderQuery );
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
@@ -313,8 +312,7 @@ public class MallOrderNewController extends BaseController {
 	HSSFWorkbook workbook = null;
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( orderQuery );
+	    Map< String,Object > params = converter.beanToMap( orderQuery );
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
@@ -452,18 +450,5 @@ public class MallOrderNewController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "订单退款回调", notes = "订单退款回调" )
-    @ResponseBody
-    @RequestMapping( value = "/agreanOrderReturn", method = RequestMethod.GET )
-    public ServerResponse agreanOrderReturn( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    mallOrderService.agreanOrderReturn( params );
-	} catch ( Exception e ) {
-	    logger.error( "订单退款回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "订单退款回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
-    }
 
 }

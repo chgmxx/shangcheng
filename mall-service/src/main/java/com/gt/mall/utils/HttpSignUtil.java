@@ -25,7 +25,7 @@ public class HttpSignUtil {
     /**
      * @param obj   参数
      * @param url   地址
-     * @param types 0 会员  1 商家相关   2 微信相关 3 联盟  4 增值模块
+     * @param types 0 会员  1 商家相关   2 微信相关 3 联盟  4 增值模块  5 钱包支付
      *
      * @return 返回对象
      */
@@ -52,7 +52,7 @@ public class HttpSignUtil {
 		Map map = HttpClienUtils.reqPostUTF8( JSONObject.toJSONString( obj ), newUrl, Map.class, signKey );
 		endTime = System.currentTimeMillis();
 		result = JSONObject.toJSONString( map );
-	    } else if ( type == 3 ) {//商家联盟的接口
+	    } else if ( type == 3 || type == 5) {//商家联盟的接口、钱包支付
 		String params = JSONObject.toJSONString( obj );
 		Map map = HttpClienUtils.reqPost( params, newUrl, Map.class, signKey );
 		result = JSONObject.toJSONString( map );

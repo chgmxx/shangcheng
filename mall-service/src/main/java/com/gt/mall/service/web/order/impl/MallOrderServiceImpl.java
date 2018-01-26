@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.api.util.KeysUtil;
 import com.gt.entityBo.ErpRefundBo;
 import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
@@ -1133,7 +1132,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 	MallOrder orders = mallOrderDAO.selectById( order.getId() );
 
-	MallStore store = mallStoreDAO.selectById( orders.getShopId() );
+	//	MallStore store = mallStoreDAO.selectById( orders.getShopId() );
 
 	List< Map< String,Object > > productList = new ArrayList<>();
 
@@ -1908,7 +1907,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    mallSellerService.updateSellerIncome( orderDetail );
 	}
     }
-
 
     @Override
     public Integer selectSpeBySpeValueId( Map< String,Object > params ) {
@@ -2959,7 +2957,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		if ( CommonUtil.isNotEmpty( aSpecifica ) ) {
 		    invParams.put( "specificaValueId", aSpecifica );
 		    int num = selectSpeBySpeValueId( invParams );
-		    if ( CommonUtil.isNotEmpty( ids ) && ids.length() > 0) {
+		    if ( CommonUtil.isNotEmpty( ids ) && ids.length() > 0 ) {
 			ids.append( "," );
 		    }
 		    ids.append( num );
@@ -3166,6 +3164,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    if ( returnStatus != -2 && returnStatus != -3 && returnStatus != 1 && returnStatus != 5 ) {
 				//是否显示发货按钮  1显示
 				result.setIsShowDeliveryButton( 0 );
+				result.setIsShowPickUpGoodsButton( 0 );
 			    }
 			}
 			//维权日志列表
@@ -3191,11 +3190,12 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    if ( ( result.getOrderPayWay() == 2 || result.getOrderPayWay() == 6 ) && result.getIsWallet() == 0 ) {
 				money = 0d;
 			    }
-			    KeysUtil keysUtil = new KeysUtil();
-
-			    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallOrder/E9lM9uM4ct/agreanOrderReturn" );
-			    String url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refund.do?out_trade_no=" + result.getOrderNo() + "&busId=" + order.getBusUserId()
-					    + "&desc=订单退款&fee=" + money + "&notifyUrl=" + notifyUrl;
+			    //			    KeysUtil keysUtil = new KeysUtil();
+			    //			    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallOrder/E9lM9uM4ct/agreanOrderReturn" );
+			    //			    String url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refundVer2.do?out_trade_no=" + result.getOrderNo() + "&busId=" + order.getBusUserId()
+			    //					    + "&desc=订单退款&fee=" + money + "&notifyUrl=" + notifyUrl;
+			    String notifyUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK//agreanOrderReturn";
+			    String url = CommonUtil.getAliReturnUrl( result.getOrderNo(), order.getBusUserId(), "订单退款", money, notifyUrl );
 			    detailResult.getReturnResult().setRefundUrl( url );
 			} catch ( Exception e ) {
 			    e.printStackTrace();

@@ -74,7 +74,7 @@ public class CommonController {
 	    originalFilename = multipartFile.getOriginalFilename();
 	    // 后缀
 	    String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );
-	    String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
+//	    String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
 	    // 判断上传图片是否是支持的格式
 	   /* int num = dictService.dictJsp( suffix );
 	    if ( num == 0 ) {
@@ -83,7 +83,7 @@ public class CommonController {
 		msgMap.put( "message", message );
 	    } else {*/
 	    // 文件大小
-	    Long fileSize = multipartFile.getSize();
+//	    Long fileSize = multipartFile.getSize();
 	    // 加上时间戳，名字就可以一样
 	    Long time = System.currentTimeMillis();
 	    // 获取1007字典类型
@@ -95,7 +95,10 @@ public class CommonController {
 			    + suffix;
 	    File file = new File( path );
 	    if ( !file.exists() && !file.isDirectory() ) {
-		file.mkdirs();
+		boolean flag = file.mkdirs();
+		if(!flag){
+		    logger.error( "创建路径失败" );
+		}
 	    }
 	    /*multipartFile.transferTo( file );*/
 	    ContinueFTP myFtp = new ContinueFTP();
