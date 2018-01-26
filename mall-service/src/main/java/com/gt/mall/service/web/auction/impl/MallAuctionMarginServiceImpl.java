@@ -426,6 +426,9 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    }
 	} else if ( payWay.toString().equals( "2" ) ) {//储值卡退款
 	    Member member = memberService.findMemberById( memberId, null );
+	    if ( CommonUtil.isEmpty( member ) ) {
+		throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), "粉丝不存在" );
+	    }
 	    ErpRefundBo erpRefundBo = new ErpRefundBo();
 	    erpRefundBo.setBusId( member.getBusid() );//商家id
 	    erpRefundBo.setOrderCode( aucNo );////订单号
