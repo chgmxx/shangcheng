@@ -2,6 +2,7 @@ package com.gt.mall.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.gt.api.util.KeysUtil;
 import com.gt.mall.constant.Constants;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
@@ -820,6 +821,31 @@ public class CommonUtil {
 		break;
 	}
 	return model_style;
+    }
+
+    /**
+     * 获取退款链接
+     *
+     * @param orderNo     订单号
+     * @param busId       商家id
+     * @param desc        描述
+     * @param returnMoney 退款金额
+     * @param notifyUrl   异步回调接口(成功返回：outTradeNo系统订单号 （不可带参数,接收参数时,@requestBody Map<String,Object> ）
+     *
+     * @return 链接
+     */
+    public static String getAliReturnUrl( String orderNo, Integer busId, String desc, Double returnMoney, String notifyUrl ) throws Exception {
+	Map< String,Object > params = new HashMap<>();
+	params.put( "out_trade_no", orderNo );
+	params.put( "busId", busId );
+	params.put( "desc", desc );
+	params.put( "fee", returnMoney );
+	//	    KeysUtil keysUtil = new KeysUtil();
+	//	    String notifyUrl = keysUtil.getEncString( notifyUrl );
+	params.put( "notifyUrl", notifyUrl );
+	KeysUtil keyUtil = new KeysUtil();
+	String obj = keyUtil.getEncString( com.alibaba.fastjson.JSONObject.toJSONString( params ) );
+	return PropertiesUtil.getWxmpDomain() + Constants.ALIPAY_RETURN_URL + "?obj=" + obj;
     }
 
 }

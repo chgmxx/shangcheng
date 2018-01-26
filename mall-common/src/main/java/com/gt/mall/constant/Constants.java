@@ -280,4 +280,6 @@ public class Constants {
     // 申请超级销售员验证码 -- 您申请成为超级销售员的验证码为:{1}，5分钟内有效，请尽快完成验证。
     public static final Long APPLY_SELLER_CODE_MODEL_ID         = 78297L;
 
+    public static final String ALIPAY_RETURN_URL = "alipay/79B4DE7C/refundVer2.do";
+
 }

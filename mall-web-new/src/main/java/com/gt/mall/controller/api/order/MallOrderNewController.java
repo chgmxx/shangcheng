@@ -450,18 +450,5 @@ public class MallOrderNewController extends BaseController {
 	}
     }
 
-    @ApiOperation( value = "订单退款回调", notes = "订单退款回调" )
-    @ResponseBody
-    @RequestMapping( value = "/agreanOrderReturn", method = RequestMethod.GET )
-    public ServerResponse agreanOrderReturn( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    mallOrderService.agreanOrderReturn( params );
-	} catch ( Exception e ) {
-	    logger.error( "订单退款回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "订单退款回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
-    }
 
 }

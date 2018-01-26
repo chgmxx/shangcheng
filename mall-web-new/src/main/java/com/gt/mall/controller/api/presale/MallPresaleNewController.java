@@ -2,7 +2,6 @@ package com.gt.mall.controller.api.presale;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.BusUser;
-import com.gt.api.util.KeysUtil;
 import com.gt.mall.annotation.SysLogAnnotation;
 import com.gt.mall.base.BaseController;
 import com.gt.mall.bean.DictBean;
@@ -29,10 +28,7 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -226,7 +222,6 @@ public class MallPresaleNewController extends BaseController {
 		result.put( "page", page );
 	    }
 	    result.put( "busId", user.getId() );
-	    result.put( "alipayUrl", PropertiesUtil.getWxmpDomain() + "alipay/79B4DE7C/refund.do" );
 	} catch ( Exception e ) {
 	    logger.error( "获取拍卖定金管理列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -266,11 +261,10 @@ public class MallPresaleNewController extends BaseController {
 	try {
 	    MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    KeysUtil keysUtil = new KeysUtil();
-	    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallPresale/mallAPI/returnSuccessBack.do" );
 
-	    url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refund.do?out_trade_no=" + deposit.getDepositNo() + "&busId=" + user.getId() + "&desc=退保证金&fee=" + deposit
-			    .getDepositMoney() + "&notifyUrl=" + notifyUrl;
+	    String notifyUrl = PropertiesUtil.getHomeUrl() + "/mallPresale/E9lM9uM4ct/returnSuccessBack";
+
+	    url = CommonUtil.getAliReturnUrl( deposit.getDepositNo(), user.getId(), "退保证金", CommonUtil.toDouble( deposit.getDepositMoney() ), notifyUrl );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取支付宝退款地址异常：" + e.getMessage() );
@@ -278,6 +272,22 @@ public class MallPresaleNewController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取支付宝退款地址异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
+    }
+
+    @ApiOperation( value = "交纳保证金成功回调", notes = "交纳保证金成功回调" )
+    @ResponseBody
+    @RequestMapping( value = "/paySuccessPresale", method = RequestMethod.POST )
+    public ServerResponse paySuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    //params 传参 out_trade_no：保证金编号
+	    logger.info( "交纳保证金成功回调参数：" + params );
+	    mallPresaleDepositService.paySuccessPresale( params );
+	} catch ( Exception e ) {
+	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金成功回调异常" );
+	}
+	return ServerResponse.createBySuccessCode();
     }
 
     /**
