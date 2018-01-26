@@ -291,7 +291,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    }
 	}
 	//货到付款或支付金额为0的订单，直接修改订单状态为已支付，且修改商品库存和销量
-	if ( totalOrderMoney == 0 || ( firstOrder.getOrderPayWay() != 1 && firstOrder.getOrderPayWay() != 9 ) ) {
+	if ( totalOrderMoney == 0 || ( firstOrder.getOrderPayWay() != 1 && firstOrder.getOrderPayWay() != 9 && firstOrder.getOrderPayWay() != 11 ) ) {
 	    Map< String,Object > payParams = new HashMap<>();
 	    payParams.put( "status", 2 );
 	    payParams.put( "out_trade_no", orderPNo );

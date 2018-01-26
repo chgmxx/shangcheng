@@ -256,7 +256,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		result.put( "payWay", margin.getPayWay() );
 		result.put( "busId", member.getBusid() );
 
-		if ( margin.getPayWay() == 1 || margin.getPayWay() == 3 ) {
+		if ( margin.getPayWay() == 1 || margin.getPayWay() == 3  || margin.getPayWay() == 4) {
 		    String url = getWxAlipay( margin, member );
 		    result.put( "payUrl", url );
 		} else if ( margin.getPayWay() == 2 ) {
