@@ -78,10 +78,12 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 		int id = CommonUtil.toInteger( shopMap.get( "id" ) );
 		StoreResult storeResult = new StoreResult();
 		converter.mapToBean( shopMap, storeResult );
-		if ( auth == 2 ) {
-		    storeResult.setCertStoType( 1 );
-		} else if ( auth == 3 ) {
-		    storeResult.setCertStoType( 0 );
+		if ( CommonUtil.isNotEmpty( auth ) ) {
+		    if ( auth == 2 ) {
+			storeResult.setCertStoType( 1 );
+		    } else if ( auth == 3 ) {
+			storeResult.setCertStoType( 0 );
+		    }
 		}
 		/*MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
 		if ( storeCertification != null ) {

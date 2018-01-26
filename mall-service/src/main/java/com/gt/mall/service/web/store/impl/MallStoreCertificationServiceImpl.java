@@ -63,10 +63,12 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
     public Map< String,Object > getStoreServiceByShopId( Integer shopId, Integer userId ) {
 	Map< String,Object > result = new HashMap<>();
 	Integer auth = memberAuthService.getMemberAuth( userId );
-	if ( auth == 2 ) {
-	    result.put( "stoType", "企业认证" );
-	} else if ( auth == 3 ) {
-	    result.put( "stoType", "个人认证" );
+	if ( CommonUtil.isNotEmpty( auth ) ) {
+	    if ( auth == 2 ) {
+		result.put( "stoType", "企业认证" );
+	    } else if ( auth == 3 ) {
+		result.put( "stoType", "个人认证" );
+	    }
 	}
 	/*MallStoreCertification certification = mallStoreCertificationDAO.selectByStoreId( shopId );
 	if ( certification != null ) {
