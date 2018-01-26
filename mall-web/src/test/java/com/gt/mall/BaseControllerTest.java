@@ -1,8 +1,10 @@
 package com.gt.mall;
 
+import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
+import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
@@ -45,9 +47,12 @@ public class BaseControllerTest extends BasicTest {
     @Autowired
     private MemberAuthService memberAuthService;
 
+    @Autowired
+    private MemberAddressService memberAddressService;
+
     @Test
     public void tests() {
-	System.out.println( "memberAuthService = " + memberAuthService.getMemberAuth( 42 ) );
+	MemberAddress memberAddress = memberAddressService.addreSelectId( 146 );
     }
 }
 
