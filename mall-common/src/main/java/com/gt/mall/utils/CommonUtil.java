@@ -542,6 +542,9 @@ public class CommonUtil {
 	    case 10://小程序支付
 		payType = 1;
 		break;
+	    case 11://多粉钱包支付
+		payType = 15;
+		break;
 	    default:
 		payType = 10;//现金支付
 		break;
@@ -571,6 +574,9 @@ public class CommonUtil {
 		break;
 	    case 3://支付宝
 		payType = 0;
+		break;
+	    case 4://多粉钱包支付
+		payType = 15;
 		break;
 	    default:
 		payType = 1;//微信支付
