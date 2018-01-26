@@ -845,6 +845,7 @@ public class CommonUtil {
 	params.put( "notifyUrl", notifyUrl );
 	KeysUtil keyUtil = new KeysUtil();
 	String obj = keyUtil.getEncString( com.alibaba.fastjson.JSONObject.toJSONString( params ) );
+	log.error( "支付宝退款参数解密 = " + keyUtil.getDesStr( obj ) );
 	return PropertiesUtil.getWxmpDomain() + Constants.ALIPAY_RETURN_URL + "?obj=" + obj;
     }
 

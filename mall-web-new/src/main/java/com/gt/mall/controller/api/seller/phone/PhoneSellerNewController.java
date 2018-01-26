@@ -196,10 +196,10 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "验证码不能为空" );
 	    }
 
-	    /*String jedisCode = JedisUtil.get( Constants.REDIS_KEY + code );
+	    String jedisCode = JedisUtil.get( Constants.REDIS_KEY + code );
 	    if ( CommonUtil.isEmpty( jedisCode ) || !jedisCode.equals( code ) ) {
 		throw new BusinessException( ResponseEnums.ERROR.getCode(), "验证码错误或超时" );
-	    }*/
+	    }
 
 	    MallSeller seller = new MallSeller();
 	    seller.setUserName( CommonUtil.urlEncode( params.getUserName() ) );
@@ -598,7 +598,7 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    //	    userLogin( request, response, loginDTO );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "id", id );
-	    Map< String,Object > result  = mallSellerMallSetService.deleteSellerProduct( params );
+	    Map< String,Object > result = mallSellerMallSetService.deleteSellerProduct( params );
 	    boolean flag = (boolean) result.get( "flag" );
 	    if ( !flag ) {
 		return ServerResponse.createByErrorMessage( result.get( "msg" ).toString() );
