@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gt.api.bean.session.Member;
 import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.entityBo.MallEntity;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.bean.member.Coupons;
@@ -167,8 +166,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 		params.put( "cartIds", cartArrs );
 	    }
-	    double totalFreightPrice = 0;
-	    List< Integer > freightIds = new ArrayList<>();
+//	    double totalFreightPrice = 0;
+//	    List< Integer > freightIds = new ArrayList<>();
 	    List< Map< String,Object > > shopList = shopCartDAO.selectCheckShopByParam( params );
 	    if ( shopList != null && shopList.size() > 0 ) {
 		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );//查询商家的所有门店集合
@@ -1016,7 +1015,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		code = CommonUtil.toInteger( result.get( "code" ) );
 		if ( code == -1 ) {
 		    if ( CommonUtil.isNotEmpty( result.get( "errorMsg" ) ) ) {
-			msg = result.get( "errorMsg" ).toString();
+//			msg = result.get( "errorMsg" ).toString();
 			throw new BusinessException( ResponseEnums.ERROR.getCode(), result.get( "errorMsg" ).toString() );
 		    }
 		    break;
@@ -1389,7 +1388,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	//	}
 	if ( orderList != null && orderList.size() > 0 ) {
 	    for ( AppletSubmitOrderShopDTO orderObj : orderList ) {
-		Map< Object,MallEntity > productMap = new HashMap<>();
+//		Map< Object,MallEntity > productMap = new HashMap<>();
 
 		if ( CommonUtil.isNotEmpty( orderObj.getOrderDetail() ) ) {
 		    for ( AppletSubmitOrderProductDTO orderDetail : orderObj.getOrderDetail() ) {
@@ -1400,14 +1399,14 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    }
 	}
 
-	int isUseFenbi = 0;
-	int isUseJifen = 0;
-	if ( CommonUtil.isNotEmpty( params.getIsUseFenbi() ) ) {
-	    isUseFenbi = params.getIsUseFenbi();
-	}
-	if ( CommonUtil.isNotEmpty( params.getIsUseJifen() ) ) {
-	    isUseJifen = params.getIsUseJifen();
-	}
+//	int isUseFenbi = 0;
+//	int isUseJifen = 0;
+//	if ( CommonUtil.isNotEmpty( params.getIsUseFenbi() ) ) {
+//	    isUseFenbi = params.getIsUseFenbi();
+//	}
+//	if ( CommonUtil.isNotEmpty( params.getIsUseJifen() ) ) {
+//	    isUseJifen = params.getIsUseJifen();
+//	}
 
 	return resultMap;
     }

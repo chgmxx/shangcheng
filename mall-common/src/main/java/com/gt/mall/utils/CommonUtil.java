@@ -36,7 +36,7 @@ public class CommonUtil {
     public static boolean isEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if ( obj == null || "".equals( obj ) || "null".equals( obj )) {
+	    if ( obj == null || "".equals( obj ) || "null".equals( obj ) ) {
 		b = true;
 	    } else {
 		b = false;
@@ -54,7 +54,7 @@ public class CommonUtil {
     public static boolean isNotEmpty( Object obj ) {
 	boolean b = false;
 	try {
-	    if ( obj == null || "".equals( obj ) || "null".equals( obj )) {
+	    if ( obj == null || "".equals( obj ) || "null".equals( obj ) ) {
 		b = false;
 	    } else {
 		b = true;
@@ -334,7 +334,7 @@ public class CommonUtil {
 		if ( len > 0 ) {
 		    len = len + 1;
 		}
-		BigDecimal bg = new BigDecimal( d );
+		//		BigDecimal bg = new BigDecimal( d );
 		int index = d.toString().indexOf( "." ) + len;
 		return CommonUtil.toDouble( d.toString().substring( 0, index ) );
 	    }
@@ -463,7 +463,7 @@ public class CommonUtil {
 	String suffix = originalFilename.substring( originalFilename.lastIndexOf( "." ) );
 	String phonejsp = originalFilename.substring( originalFilename.lastIndexOf( "." ) + 1 );
 	// 文件大小
-	Integer size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
+	//	Integer size = Integer.parseInt( String.valueOf( multipartFile.getSize() ) );
 	// 判断上传图片是否是支持的格式
 
 	String path = PropertiesUtil.getResImagePath() + "/2/" + userId + "/" + Constants.IMAGE_FOLDER_TYPE_4 + "/" + DateTimeKit
@@ -622,7 +622,7 @@ public class CommonUtil {
     /**
      * 获取接口的域名
      *
-     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟
+     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟  4 增值模块  5 钱包支付
      *
      * @return 域名
      */
@@ -633,6 +633,8 @@ public class CommonUtil {
 	    return PropertiesUtil.getUnionDomain();
 	} else if ( type == 4 ) {
 	    return PropertiesUtil.getCoreDomain();
+	} else if ( type == 5 ) {
+	    return PropertiesUtil.getDfPayDomain();
 	}
 	return PropertiesUtil.getMemberDomain();
     }
@@ -640,7 +642,7 @@ public class CommonUtil {
     /**
      * 获取接口的签名key
      *
-     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟
+     * @param type 0 会员  1 商家相关   2 微信相关 3 联盟   4 增值模块  5 钱包支付
      *
      * @return 签名key
      */
@@ -651,6 +653,8 @@ public class CommonUtil {
 	    return PropertiesUtil.getUnionSignKey();
 	} else if ( type == 4 ) {
 	    return PropertiesUtil.getCoreSignKey();
+	} else if ( type == 5 ) {
+	    return PropertiesUtil.getDfPaySignKey();
 	}
 	return PropertiesUtil.getMemberSignKey();
     }

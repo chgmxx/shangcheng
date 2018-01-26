@@ -85,8 +85,7 @@ public class MallOrderNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( orderQuery );
+	    Map< String,Object > params  = converter.beanToMap( orderQuery );
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
@@ -313,8 +312,7 @@ public class MallOrderNewController extends BaseController {
 	HSSFWorkbook workbook = null;
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params = new HashMap<>();
-	    params = converter.beanToMap( orderQuery );
+	    Map< String,Object > params = converter.beanToMap( orderQuery );
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );

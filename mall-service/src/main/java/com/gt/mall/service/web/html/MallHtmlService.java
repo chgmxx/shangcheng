@@ -120,5 +120,5 @@ public interface MallHtmlService extends BaseService< MallHtml > {
      *
      * @return 数量
      */
-    Integer SetmallHtml( Integer htmlid, BusUser user );
+    Integer setmallHtml( Integer htmlid, BusUser user );
 }

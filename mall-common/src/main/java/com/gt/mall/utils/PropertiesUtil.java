@@ -84,6 +84,10 @@ public class PropertiesUtil {
 
     private static String hardwareDomain;//硬件域名
 
+    private static String dfPayDomain;//多粉支付域名
+
+    private static String dfPaySignKey;//钱包支付的签名key
+
     @Value( "${web.domain}" )
     public void setDomain( String domain ) {
 	PropertiesUtil.domain = domain;
@@ -262,6 +266,24 @@ public class PropertiesUtil {
     @Value( "${http.hardware.domain}" )
     public void setHardwareDomain( String hardwareDomain ) {
 	PropertiesUtil.hardwareDomain = hardwareDomain;
+    }
+
+    @Value( "${http.dfPay.domain}" )
+    public void setDfPayDomain( String dfPayDomain ) {
+	PropertiesUtil.dfPayDomain = dfPayDomain;
+    }
+
+    @Value( "${http.dfPay.key}" )
+    public void setDfPaySignKey( String dfPaySignKey ) {
+	PropertiesUtil.dfPaySignKey = dfPaySignKey;
+    }
+
+    public static String getDfPaySignKey() {
+	return dfPaySignKey;
+    }
+
+    public static String getDfPayDomain() {
+	return dfPayDomain;
     }
 
     /**

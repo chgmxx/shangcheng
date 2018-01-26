@@ -150,7 +150,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     @RequestMapping( value = "addMargin", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > addMargin( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    PhoneAddAuctionMarginDTO marginDTO ) {
-	Map< String,Object > result = new HashMap<>();
+	Map< String,Object > result = null;
 	try {
 	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
@@ -254,7 +254,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     @RequestMapping( value = "addOffer", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > addOffer( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    PhoneAddAuctionBiddingDTO biddingDTO ) {
-	Map< String,Object > result = new HashMap<>();
+	Map< String,Object > result = null;
 	try {
 	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );

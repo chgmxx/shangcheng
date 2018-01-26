@@ -260,7 +260,7 @@ public class MallPageOldController extends AuthorizeOrLoginController {
 	try {
 	    //获取店铺下的分类信息
 	    Integer stoId = CommonUtil.toInteger( params.get( "stoId" ) );//stoid代表商铺id
-	    List groLs = mallPageService.storeList( stoId, 0, 0 );
+//	    List groLs = mallPageService.storeList( stoId, 0, 0 );
 	    //	    String check = request.getParameter( "check" ).toString();
 	    //获取店铺下的商品
 	    PageUtil page = mallPageService.product( params );

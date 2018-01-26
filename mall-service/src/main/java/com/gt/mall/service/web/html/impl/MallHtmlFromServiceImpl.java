@@ -36,7 +36,7 @@ public class MallHtmlFromServiceImpl extends BaseServiceImpl< MallHtmlFromDAO,Ma
     @Override
     public Map< String,Object > htmlListfrom( HttpServletRequest request ) {
 	Map< String,Object > map = new HashMap< String,Object >();
-	BusUser obj = MallSessionUtils.getLoginUser( request );//获取登录信息
+//	BusUser obj = MallSessionUtils.getLoginUser( request );//获取登录信息
 	Integer id = Integer.valueOf( request.getParameter( "id" ).toString() );//获取H5id
 	map.put( "id", id );
 	//pid==0 主账户,否则是子账户

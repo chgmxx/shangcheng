@@ -144,10 +144,10 @@ public class URLConnectionDownloader {
 	File _file = fileName;
 	boolean flag = _file.setReadOnly();
 	if ( flag ) {
-	    File srcFile = _file;
-	    String fileSuffix = _file.getName().substring(
-			    ( _file.getName().indexOf( "." ) + 1 ),
-			    ( _file.getName().length() ) );
+	    //	    File srcFile = _file;
+	    //	    String fileSuffix = _file.getName().substring(
+	    //			    ( _file.getName().indexOf( "." ) + 1 ),
+	    //			    ( _file.getName().length() ) );
 	    destFile = new File( path );
 	    srcImage = javax.imageio.ImageIO.read( _file );
 	    //得到图片的原始大小， 以便按比例压缩。
@@ -169,10 +169,10 @@ public class URLConnectionDownloader {
     public static void resize( int w, int h ) throws IOException {
 	//得到合适的压缩大小，按比例。
 	if ( imageWidth >= imageHeight ) {
-	    w = w;
+	    //	    w = w;
 	    h = (int) Math.round( ( imageHeight * w * 1.0 / imageWidth ) );
 	} else {
-	    h = h;
+	    //	    h = h;
 	    w = (int) Math.round( ( imageWidth * h * 1.0 / imageHeight ) );
 	}
 

@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -20,9 +19,7 @@ import java.util.List;
 @ApiModel( value = "PhoneToOrderBusResult", description = "商家（进入提交订单页面返回结果）" )
 @Getter
 @Setter
-public class PhoneToOrderBusResult implements Serializable {
-
-    private static final long serialVersionUID = 1650253331649286295L;
+public class PhoneToOrderBusResult  {
 
     @ApiModelProperty( name = "busId", value = "商家id" )
     private Integer busId;

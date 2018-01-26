@@ -485,19 +485,6 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	return null;
     }
 
-    @Override
-    public List< Map< String,Object > > findShopByShopIdList( List< Integer > busIdList ) {
-	if ( busIdList == null || busIdList.size() == 0 ) {
-	    return null;
-	}
-	List< Map< String,Object > > newShopList = new ArrayList<>();
-	for ( Integer busId : busIdList ) {
-	    List< Map< String,Object > > shopList = findShopByUserId( busId, null );
-	}
-
-	return null;
-    }
-
     private List< Map< String,Object > > getShopParams( List< Map< String,Object > > storeList, List< WsWxShopInfoExtend > shopInfoList ) {
 	if ( storeList != null && storeList.size() > 0 ) {
 	    for ( Map< String,Object > storeMap : storeList ) {

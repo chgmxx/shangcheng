@@ -14,7 +14,6 @@ import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.html.MallHtmlFromService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
 import io.swagger.annotations.*;
@@ -137,7 +136,7 @@ public class MallHtmlNewController extends BaseController {
 	    if ( ycj >= maxcj ) {
 		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "等级不够，不能创建h5商城" );
 	    } else {
-		Integer xid = htmlService.SetmallHtml( id, user );
+		Integer xid = htmlService.setmallHtml( id, user );
 	    }
 	} catch ( Exception e ) {
 	    logger.error( "添加H5商城选中模板异常：" + e.getMessage() );
@@ -266,7 +265,7 @@ public class MallHtmlNewController extends BaseController {
     @RequestMapping( value = "/htmlFromView", method = RequestMethod.POST )
     public ServerResponse htmlFromView( HttpServletRequest request, HttpServletResponse response,
 		    @ApiParam( name = "id", value = "h5表单id", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > map = new HashMap<>();
+	Map< String,Object > map = null;
 	try {
 	    map = htmlFromService.htmlfromview( request );
 	} catch ( Exception e ) {

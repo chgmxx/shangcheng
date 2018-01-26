@@ -4,7 +4,6 @@ import com.gt.mall.bean.member.Coupons;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,9 +16,8 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AppletSubmitOrderShopDTO implements Serializable {
+public class AppletSubmitOrderShopDTO  {
 
-    private static final long serialVersionUID = 4521974190766891350L;
     /**
      * 收货地址
      */

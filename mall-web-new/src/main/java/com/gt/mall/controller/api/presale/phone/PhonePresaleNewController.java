@@ -159,7 +159,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     @RequestMapping( value = "addDeposit", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > addDeposit( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
 		    PhoneAddDepositDTO depositDTO ) {
-	Map< String,Object > result = new HashMap<>();
+	Map< String,Object > result = null;
 	try {
 	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );

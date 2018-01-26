@@ -1133,7 +1133,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	}
 	MallOrder orders = mallOrderDAO.selectById( order.getId() );
 
-	MallStore store = mallStoreDAO.selectById( orders.getShopId() );
+	//	MallStore store = mallStoreDAO.selectById( orders.getShopId() );
 
 	List< Map< String,Object > > productList = new ArrayList<>();
 
@@ -1908,7 +1908,6 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    mallSellerService.updateSellerIncome( orderDetail );
 	}
     }
-
 
     @Override
     public Integer selectSpeBySpeValueId( Map< String,Object > params ) {
@@ -2959,7 +2958,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		if ( CommonUtil.isNotEmpty( aSpecifica ) ) {
 		    invParams.put( "specificaValueId", aSpecifica );
 		    int num = selectSpeBySpeValueId( invParams );
-		    if ( CommonUtil.isNotEmpty( ids ) && ids.length() > 0) {
+		    if ( CommonUtil.isNotEmpty( ids ) && ids.length() > 0 ) {
 			ids.append( "," );
 		    }
 		    ids.append( num );

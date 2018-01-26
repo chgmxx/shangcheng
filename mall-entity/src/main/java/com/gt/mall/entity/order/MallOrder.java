@@ -25,9 +25,7 @@ import java.util.List;
 @Data
 @Accessors( chain = true )
 @TableName( "t_mall_order" )
-public class MallOrder extends Model< MallOrder > implements Serializable, Cloneable {
-
-    private static final long serialVersionUID = 4083441605166952158L;
+public class MallOrder extends Model< MallOrder > implements Cloneable {
     /**
      * 订单标识
      */
@@ -345,7 +343,7 @@ public class MallOrder extends Model< MallOrder > implements Serializable, Clone
     @TableField( exist = false )
     private String orderPNo;//父类的订单编号
 
-//    @TableField( exist = false )
+    //    @TableField( exist = false )
     //    private String shopName;//店铺名称
 
     @TableField( exist = false )

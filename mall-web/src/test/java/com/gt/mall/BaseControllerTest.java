@@ -3,11 +3,7 @@ package com.gt.mall;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
-import com.gt.mall.service.inter.wxshop.SmsService;
-import com.gt.mall.service.inter.wxshop.WxAppletService;
-import com.gt.mall.service.inter.wxshop.WxPublicUserService;
-import com.gt.mall.service.inter.wxshop.WxShopService;
-import com.gt.mall.service.quartz.MallQuartzNewService;
+import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.store.MallStoreService;
 import org.junit.Test;
@@ -47,11 +43,11 @@ public class BaseControllerTest extends BasicTest {
     private MallOrderService mallOrderService;
 
     @Autowired
-    private MallQuartzNewService mallQuartzNewService;
+    private MemberAuthService memberAuthService;
 
     @Test
     public void tests() {
-	mallQuartzNewService.memberRefund();
+	System.out.println( "memberAuthService = " + memberAuthService.getMemberAuth( 42 ) );
     }
 }
 

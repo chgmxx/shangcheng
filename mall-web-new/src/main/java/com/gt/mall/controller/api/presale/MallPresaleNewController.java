@@ -291,7 +291,6 @@ public class MallPresaleNewController extends BaseController {
 		    @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
 	try {
 
-	    Map< String,Object > result = new HashMap<>();
 	    MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
 
 	    Map< String,Object > map = new HashMap<>();
@@ -300,7 +299,7 @@ public class MallPresaleNewController extends BaseController {
 	    map.put( "pay_way", deposit.getPayWay() );
 	    map.put( "deposit_money", deposit.getDepositMoney() );
 	    map.put( "deposit_no", deposit.getDepositNo() );
-	    result = mallPresaleDepositService.returnEndPresale( map );
+	    Map< String,Object > result = mallPresaleDepositService.returnEndPresale( map );
 	    if ( result.size() == 0 ) {
 		result.put( "result", false );
 	    }

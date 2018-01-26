@@ -30,7 +30,7 @@ public class IPKit {
 	return ip;
     }
 
-    public static String IpByAddress( String ip ) {
+    public static String getIpByAddress( String ip ) {
 	Document doc = null;
 	String regex = "((?:(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d)))\\.){3}(?:25[0-5]|2[0-4]\\d|((1\\d{2})|([1-9]?\\d))))";
 	if ( !ip.matches( regex ) ) {

@@ -1,13 +1,12 @@
 package com.gt.mall.result.phone.order;
 
-import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import com.gt.mall.param.phone.order.PhoneOrderMemberAddressDTO;
+import com.gt.mall.param.phone.order.PhoneOrderWayDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +19,7 @@ import java.util.Map;
 @ApiModel( value = "PhoneToOrderResult", description = "进入提交订单页面返回结果" )
 @Getter
 @Setter
-public class PhoneToOrderResult implements Serializable {
-
-    private static final long serialVersionUID = 1650253331649286295L;
+public class PhoneToOrderResult {
 
     @ApiModelProperty( name = "memberAddressDTO", value = "会员地址集合" )
     private PhoneOrderMemberAddressDTO memberAddressDTO;

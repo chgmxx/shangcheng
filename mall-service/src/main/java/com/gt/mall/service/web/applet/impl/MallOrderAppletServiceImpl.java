@@ -744,8 +744,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( CommonUtil.isNotEmpty( order ) ) {
 	    orderPayWay = order.getOrderPayWay();
-	    orderStatus = order.getOrderStatus();
-	    isWallet = order.getIsWallet();
+//	    orderStatus = order.getOrderStatus();
+//	    isWallet = order.getIsWallet();
 	    resultMap.put( "order_money", order.getOrderMoney() );
 	    resultMap.put( "order_no", order.getOrderNo() );
 	    if ( CommonUtil.isNotEmpty( order.getPayTime() ) ) {

@@ -344,7 +344,7 @@ public class MallHtmlController extends BaseController {
 	Map< String,Object > map = new HashMap< String,Object >();
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );//获取登录信息
-	    Integer iscreat = 0;//是否还可以创建h5商城0 可以，1不可以
+//	    Integer iscreat = 0;//是否还可以创建h5商城0 可以，1不可以
 	    Integer ispid = 0;//是否是主账号，0是主账号，1不是
 	    //pid==0 主账户,否则是子账户
 	    if ( user.getPid() == 0 ) {
@@ -362,7 +362,7 @@ public class MallHtmlController extends BaseController {
 	    } else {
 		user = MallSessionUtils.getLoginUser( request );//获取登录信息
 		Integer id = Integer.valueOf( request.getParameter( "id" ).toString() );//获取模板id
-		Integer xid = htmlService.SetmallHtml( id, user );
+		Integer xid = htmlService.setmallHtml( id, user );
 		map.put( "error", "0" );
 		map.put( "xid", xid );
 	    }

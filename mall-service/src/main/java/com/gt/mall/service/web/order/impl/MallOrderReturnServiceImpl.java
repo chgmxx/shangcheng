@@ -193,7 +193,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     @Override
     public boolean returnEndOrder( Integer orderId, Integer orderDetailId ) throws Exception {
 	boolean resultFlag = false;
-	Map< String,Object > map = new HashMap<>();//存放退款信息
+	//	Map< String,Object > map = new HashMap<>();//存放退款信息
 	if ( orderId > 0 && orderDetailId > 0 ) {
 	    Map< String,Object > detailMap = mallOrderDAO.selectByDIdOrder( orderDetailId );
 	    if ( CommonUtil.isNotEmpty( detailMap ) ) {

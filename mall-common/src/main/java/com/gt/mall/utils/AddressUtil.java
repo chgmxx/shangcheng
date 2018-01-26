@@ -76,6 +76,8 @@ public class AddressUtil {
 			isp = ( temp[i].split( ":" ) )[1].replaceAll( "\"", "" );
 			isp = decodeUnicode( isp ); // ISP公司
 			break;
+		    default:
+			isp = "";
 		}
 	    }
 

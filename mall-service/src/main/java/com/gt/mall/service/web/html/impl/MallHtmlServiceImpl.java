@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.api.bean.session.BusUser;
 import com.gt.mall.base.BaseServiceImpl;
-import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.html.MallHtmlDAO;
 import com.gt.mall.entity.html.MallHtml;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.html.MallHtmlService;
-import com.gt.mall.utils.*;
+import com.gt.mall.utils.CommonUtil;
+import com.gt.mall.utils.DateTimeKit;
+import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PageUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -200,7 +202,7 @@ public class MallHtmlServiceImpl extends BaseServiceImpl< MallHtmlDAO,MallHtml >
     }
 
     @Override
-    public Integer SetmallHtml( Integer htmlid, BusUser user ) {
+    public Integer setmallHtml( Integer htmlid, BusUser user ) {
 	MallHtml obj = htmlDAO.selectById( htmlid );//查询原数据
 	obj.setId( null );
 	obj.setSourceType( 2 );

@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,9 +17,7 @@ import java.util.List;
 @ApiModel( value = "PhoneAddOrderShopResult", description = "店铺（提交订单参数）" )
 @Getter
 @Setter
-public class PhoneAddOrderShopDTO implements Serializable {
-
-    private static final long serialVersionUID = 1650253331649286295L;
+public class PhoneAddOrderShopDTO  {
 
     @ApiModelProperty( name = "shopId", value = "店铺id" )
     private int shopId;

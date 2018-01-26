@@ -158,11 +158,6 @@ public interface MallStoreService extends BaseService< MallStore > {
     List< Map< String,Object > > findShopByUserId( int userId, HttpServletRequest request );
 
     /**
-     * 查询店铺信息集合（根据店铺id）
-     */
-    List< Map< String,Object > > findShopByShopIdList( List< Integer > busIdList );
-
-    /**
      * 创建所有erp仓库
      *
      * @param user 用户信息
