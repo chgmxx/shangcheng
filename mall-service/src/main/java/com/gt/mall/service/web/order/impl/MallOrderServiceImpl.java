@@ -3165,6 +3165,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    if ( returnStatus != -2 && returnStatus != -3 && returnStatus != 1 && returnStatus != 5 ) {
 				//是否显示发货按钮  1显示
 				result.setIsShowDeliveryButton( 0 );
+				result.setIsShowPickUpGoodsButton( 0 );
 			    }
 			}
 			//维权日志列表
