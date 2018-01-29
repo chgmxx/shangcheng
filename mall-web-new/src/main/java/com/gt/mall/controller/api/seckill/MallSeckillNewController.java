@@ -134,28 +134,7 @@ public class MallSeckillNewController extends BaseController {
 	}
 	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
-
-    /**
-     * 获取链接
-     */
-    @ApiOperation( value = "获取链接", notes = "获取链接" )
-    @ResponseBody
-    @RequestMapping( value = "/link", method = RequestMethod.POST )
-    public ServerResponse link( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "商品ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    MallProduct product = mallProductService.selectById( id );
-	    String url = PropertiesUtil.getHomeUrl() + "mallPage/" + product.getId() + "/" + product.getShopId() + "/79B4DE7C/phoneProduct.do";
-	    result.put( "link", url );//链接
-
-	} catch ( Exception e ) {
-	    logger.error( "获取链接：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-    }
-
+    
     /**
      * 删除秒杀信息
      */
