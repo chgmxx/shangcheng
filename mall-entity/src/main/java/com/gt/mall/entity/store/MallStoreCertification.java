@@ -38,46 +38,46 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
      */
     @TableField( "sto_id" )
     private Integer stoId;
-    /**
+  /*  *//**
      * 主体类型 0个人 1企业
-     */
+     *//*
     @TableField( "sto_type" )
     private Integer stoType;
-    /**
+    *//**
      * 姓名或法人
-     */
+     *//*
     @TableField( "name" )
     private String  name;
-    /**
+    *//**
      * 企业名称
-     */
+     *//*
     @TableField( "company_name" )
     private String  companyName;
-    /**
+    *//**
      * 身份证号码
-     */
+     *//*
     @TableField( "id_number" )
     private String  idNumber;
-    /**
+    *//**
      * 身份证正面
-     */
+     *//*
     @TableField( "id_card_front" )
     private String  idCardFront;
-    /**
+    *//**
      * 身份证反面
-     */
+     *//*
     @TableField( "id_card_back" )
     private String  idCardBack;
-    /**
+    *//**
      * 营业执照
-     */
+     *//*
     @TableField( "bus_license_img" )
     private String  busLicenseImg;
-    /**
+    *//**
      * 营业执照号
-     */
+     *//*
     @TableField( "bus_license_no" )
-    private String  busLicenseNo;
+    private String  busLicenseNo;*/
     /**
      * 店铺类型  1 普通店铺  2旗舰店  3专卖店  4直营店
      */
@@ -139,7 +139,7 @@ public class MallStoreCertification extends Model< MallStoreCertification > {
      * 店铺名称
      */
     @TableField( exist = false )
-    private String stoName;
+    private String                       stoName;
 
     @Override
     protected Serializable pkVal() {

@@ -41,7 +41,7 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
     @Override
     public MallStoreCertification selectByStoreId( Integer storeId ) {
 	MallStoreCertification storeCert = mallStoreCertificationDAO.selectByStoreId( storeId );
-	if ( storeCert != null && storeCert.getStoType() == 1 ) {
+	if ( storeCert != null ) {
 	    List< DictBean > categoryMap = dictService.getDict( "K002" );
 	    if ( categoryMap != null && categoryMap.size() > 0 ) {
 		for ( DictBean dictBean : categoryMap ) {
@@ -70,21 +70,19 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
 		result.put( "stoType", "个人认证" );
 	    }
 	}
-	/*MallStoreCertification certification = mallStoreCertificationDAO.selectByStoreId( shopId );
+	MallStoreCertification certification = mallStoreCertificationDAO.selectByStoreId( shopId );
 	if ( certification != null ) {
-	    result.put( "stoType", certification.getStoType() == 0 ? "个人认证" : "企业认证" );
 	    List< DictBean > categoryMap = dictService.getDict( "K002" );
 	    for ( DictBean dictBean : categoryMap ) {
-		Integer key = dictBean.getItem_key();
+		String key = dictBean.getItem_key();
 		String value = dictBean.getItem_value();
 		JSONObject foorerObj = JSONObject.fromObject( value );
-
 		if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
 		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
 		    break;
 		}
 	    }
-	}*/
+	}
 	result.put( "isSecuritytrade", false );
 	MallPaySet set = new MallPaySet();
 	set.setUserId( userId );
