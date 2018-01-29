@@ -85,7 +85,7 @@ public class MallOrderNewController extends BaseController {
 	Map< String,Object > result = new HashMap<>();
 	try {
 	    EntityDtoConverter converter = new EntityDtoConverter();
-	    Map< String,Object > params  = converter.beanToMap( orderQuery );
+	    Map< String,Object > params = converter.beanToMap( orderQuery );
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    params.put( "userId", user.getId() );
@@ -99,9 +99,8 @@ public class MallOrderNewController extends BaseController {
 	    if ( orderQuery.getCurPage() == null || orderQuery.getCurPage() == 1 ) {
 		Map< String,Object > count = mallOrderService.countStatus( params );
 		result.put( "count", count );
-		result.put( "videourl", Constants.VIDEO_URL + 79 );
 	    }
-
+	    result.put( "videourl", Constants.VIDEO_URL + 79 );
 	} catch ( BusinessException e ) {
 	    logger.error( "订单列表异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -449,6 +448,5 @@ public class MallOrderNewController extends BaseController {
 	    }
 	}
     }
-
 
 }
