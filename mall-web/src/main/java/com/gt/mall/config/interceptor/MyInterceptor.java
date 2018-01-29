@@ -80,7 +80,7 @@ public class MyInterceptor implements HandlerInterceptor {
 
 	if ( request.getServerName().contains( "192.168.2" ) && CommonUtil.isEmpty( user ) ) {
 	    user = new BusUser();
-	    user.setId( 42 );
+	    user.setId( 36 );
 	    user.setName( "gt123456" );
 	    user.setPid( 0 );
 	    MallSessionUtils.setLoginUser( request, user );
@@ -121,7 +121,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	Method method = handlerMethod.getMethod();
 	/*if ( logger.isDebugEnabled() ) {*/
 	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
-	logger.error( "访问的执行时间 : " + executeTime + "ms" );
+	logger.error( "访问的执行时间 : " + executeTime + "ms----页面："+ CommonUtil.getpath( request ) );
 	/*}*/
 
     }

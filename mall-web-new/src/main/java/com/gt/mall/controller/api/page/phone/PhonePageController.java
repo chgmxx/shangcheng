@@ -115,7 +115,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    //根据商家id获取公众号信息
 	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( page.getPagUserId() );
 	    MallStore mallStore = mallStoreService.findShopByShopId( page.getPagStoId() );
-	    if(CommonUtil.isEmpty( member )){
+	    if ( CommonUtil.isEmpty( member ) ) {
 		PhoneLoginDTO loginDTO = new PhoneLoginDTO();
 		loginDTO.setBusId( page.getPagUserId() );
 		loginDTO.setUcLogin( 1 );
@@ -304,8 +304,13 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		    pageId = mallPageService.getPageIdByShopId( shopId );
 		}
 		result.put( "pageId", pageId );
+		if ( pageId == 0 ) {
+		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "暂无首页" );
+		}
 	    }
 
+	} catch ( BusinessException be ) {
+	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
 	} catch ( Exception e ) {
 	    logger.error( "获取店铺首页id异常：" + e.getMessage() );
 	    e.printStackTrace();

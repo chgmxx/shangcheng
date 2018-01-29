@@ -2851,6 +2851,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Override
     public Map< String,Object > getMemberParams( Member member, Map< String,Object > params ) {
+	if ( CommonUtil.isEmpty( member ) ) {
+	    return params;
+	}
 	List< Integer > memberList = memberService.findMemberListByIds( member.getId() );
 	if ( memberList != null && memberList.size() > 1 ) {
 	    params.put( "oldMemberIds", memberList );
