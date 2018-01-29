@@ -56,12 +56,9 @@ public class MallQuartzServiceImpl implements MallQuartzService {
     /**
      * 对已结束未成团的订单进行退款
      */
-    /*@Scheduled( cron = "0 0 1 * * ?" )*///每天早上1点扫描
-    //	@Scheduled(cron = "0 0 17 * * ?")//每天下午2点点扫描
-    //	@Scheduled(cron = "0 0/2 * * * ?")//每隔2分钟扫描
     @Override
     @Transactional( rollbackFor = Exception.class )
-    public void endGroupReturn() {
+    public void activityRefund() {
 	logger.info( "开始扫描已结束未成团的订单" );
 	try {
 	    List< Map< String,Object > > groupList = mallGroupBuyDAO.selectEndGroupByAll();// 查询已结束未成团的团购信息

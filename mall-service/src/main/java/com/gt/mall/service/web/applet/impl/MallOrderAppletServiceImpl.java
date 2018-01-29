@@ -614,7 +614,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
 	    if ( order.getOrderType() == 3 ) {//秒杀订单
 		JSONObject detailObj = new JSONObject();
-		String key = Constants.REDIS_KEY + "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
+		String key = Constants.REDIS_KEY + "hOrder_nopay";//秒杀用户(用于没有支付，恢复库存用)
 		if ( JedisUtil.hExists( key, order.getId().toString() ) ) {
 		    detailObj.put( "groupBuyId", order.getGroupBuyId() );
 		    //判断秒杀订单是否正在进行

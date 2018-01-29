@@ -164,38 +164,6 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     /**
-     * 关闭30分钟内未支付的订单
-     */
-    /*@Scheduled( cron = "0 0/30 * * * ?" )*///三十分钟更新一次
-    @Override
-    public void closeOrderNoPay() {
-	logger.info( "开始扫描30分钟内未支付的订单" );
-	try {
-	    String key = Constants.REDIS_KEY + "hSeckill_nopay";
-	    quartzOrderService.closeOrderNoPay( key );
-
-	} catch ( Exception e ) {
-	    logger.error( "扫描30分钟内未支付的秒杀订单异常" + e );
-	    e.printStackTrace();
-	}
-
-	try {
-	    String key = Constants.REDIS_KEY + "hOrder_nopay";
-	    quartzOrderService.closeOrderNoPay( key );
-	} catch ( Exception e ) {
-	    logger.error( "扫描30分钟内未支付的订单异常" + e );
-	    e.printStackTrace();
-	}
-
-	try {
-	    quartzOrderService.closeOrderByDaoDian();
-	} catch ( Exception e ) {
-	    logger.error( "关闭到店支付订单异常" + e );
-	    e.printStackTrace();
-	}
-    }
-
-    /**
      * 扫描已经结束的秒杀信息
      */
    /* @Scheduled( cron = "0 0 2 * * ?" )*///每天早上2点扫描
@@ -613,7 +581,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     //1.当天商品
-    void todayProduct( String startTime, String endTime ) {
+    private void todayProduct( String startTime, String endTime ) {
 	/* 获取当天所有的商品id*/
 	List< Map< String,Object > > list = orderDetailDAO.selectTodayProduct( startTime, endTime );
 
@@ -658,7 +626,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     //2.退款商品 （单商品的退款数量与金额）
-    void productReturn( String startTime, String endTime ) {
+    private void productReturn( String startTime, String endTime ) {
 	/*退款的所有商品*/
 	List< Map< String,Object > > tklist = mallOrderReturnDAO.selectAllReturnProduct( startTime, endTime );
 	for ( int k = 0; k < tklist.size(); k++ ) {
@@ -712,7 +680,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     //3.店铺退款
-    void shopReturnCount( String startTime ) {
+    private void shopReturnCount( String startTime ) {
 	//统计店铺每天的销售，退款情况
 	List< Map< String,Object > > shoplist = mallProductDaycountDAO.selectShopIdByDate( startTime );
 	for ( int x = 0; x < shoplist.size(); x++ ) {
@@ -729,7 +697,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     //4.店铺扫码支付
-    void shopScanPay( String startTime, String endTime ) {
+    private void shopScanPay( String startTime, String endTime ) {
 
 	/*获取当天店铺扫码支付情况，*/
 	List< Map< String,Object > > sqldisshoplist = mallOrderDAO.selectTodayShopByTime( startTime, endTime );
@@ -751,7 +719,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     //5.上月销售商品
-    void lastMonthSaleProduct( String startTime, String endTime, String syear, String smonth ) {
+    private void lastMonthSaleProduct( String startTime, String endTime, String syear, String smonth ) {
 	List< Map< String,Object > > listmonth = mallProductDaycountDAO.selectLastMonthProduct( startTime, endTime );//获取上个月的销售的所有的商品
 	for ( int i = 0; i < listmonth.size(); i++ ) {
 	    Map< String,Object > mapmonth = listmonth.get( i );//获取商品信息id
@@ -773,7 +741,7 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     }
 
     //6.店铺每月销售销售情况
-    void getMonthShopSale( String startTime, String endTime, String syear, String smonth ) {
+    private void getMonthShopSale( String startTime, String endTime, String syear, String smonth ) {
 	List< Map< String,Object > > shopmonlist = mallShopDaycountDAO.selectLastMonthShop( startTime, endTime );
 	for ( int w = 0; w < shopmonlist.size(); w++ ) {
 	    Map< String,Object > shopmonmap = shopmonlist.get( w );
