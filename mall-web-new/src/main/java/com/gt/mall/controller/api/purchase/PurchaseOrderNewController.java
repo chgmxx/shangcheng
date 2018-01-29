@@ -129,7 +129,7 @@ public class PurchaseOrderNewController extends BaseController {
 	    //订单的报价单
 	    List< Map< String,Object > > contractListMap = contractOrderDAO.findContractOrderList( id );
 	    if ( contractListMap.size() > 0 ) {
-//		result.put( "orderContract", contractListMap.get( 0 ) );
+		//		result.put( "orderContract", contractListMap.get( 0 ) );
 		order.setContractId( contractListMap.get( 0 ).get( "contract_id" ).toString() );
 	    }
 	    //查询轮播图
@@ -143,7 +143,8 @@ public class PurchaseOrderNewController extends BaseController {
 	    logger.error( "获取报价单信息异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取报价单信息异常" );
-	} return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     @ApiOperation( value = "获取所有店铺的商品(分页)", notes = "获取所有店铺的商品(分页)" )
@@ -184,6 +185,12 @@ public class PurchaseOrderNewController extends BaseController {
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    if ( CommonUtil.isEmpty( params.get( "order" ) ) ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "报价单信息不能为空" );
+	    }
+	    if ( CommonUtil.isEmpty( params.get( "orderDetailsList" ) ) ) {
+		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "报价单商品信息不能为空" );
+	    }
 	    PurchaseOrder order = JSONObject.toJavaObject( JSONObject.parseObject( params.get( "order" ).toString() ), PurchaseOrder.class );
 	    order.setOrderTitle( CommonUtil.urlEncode( order.getOrderTitle() ) );
 	    order.setOrderDescribe( CommonUtil.urlEncode( order.getOrderDescribe() ) );

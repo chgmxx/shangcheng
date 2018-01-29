@@ -206,7 +206,6 @@
                 and p.is_platform_check=0
             </if>
         </if>
-        and p.is_publish =1
         order by p.create_time desc
         limit #{firstNum},#{maxNum}
     </select>

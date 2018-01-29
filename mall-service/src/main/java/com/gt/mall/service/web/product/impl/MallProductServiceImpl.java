@@ -2686,7 +2686,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
 		wrapper.and( "is_platform_check =0" );
 	    }
 	}
-	wrapper.and( "is_publish =1" );
+//	wrapper.and( "is_publish =1" );
 	if ( CommonUtil.isNotEmpty( param.get( "userIds" ) ) ) {
 	    wrapper.in( "user_id", param.get( "userIds" ).toString() );
 	}
