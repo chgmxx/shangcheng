@@ -8,6 +8,7 @@ import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.store.MallStore;
+import com.gt.mall.entity.store.MallStoreCertification;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.result.store.StoreResult;
@@ -84,19 +85,16 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			storeResult.setCertStoType( 0 );
 		    }
 		}
-		/*MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
+		MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
 		if ( storeCertification != null ) {
 		    storeResult.setCertCheckStatus( storeCertification.getCheckStatus() );
 		    storeResult.setCertRefuseReason( storeCertification.getRefuseReason() );
 		    storeResult.setCertId( storeCertification.getId() );
 		    if ( storeCertification.getCheckStatus() == 1 ) {
-			storeResult.setCertStoType( storeCertification.getStoType() );
-			if ( storeCertification.getStoType() == 1 ) {
-			    storeResult.setCertStoCategory( storeCertification.getStoCategory() );
-			    storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
-			}
+			storeResult.setCertStoCategory( storeCertification.getStoCategory() );
+			storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
 		    }
-		}*/
+		}
 		for ( Map< String,Object > maps : shopList ) {
 		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
 		    if ( id == shopIds ) {
@@ -163,9 +161,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    storeMap.put( "telephone", shopInfo.getTelephone() );
 			    storeMap.put( "id", map.get( "id" ) );
 			    storeMap.put( "wx_shop_id", shopInfo.getId() );
-//			    storeMap.put( "province",shopInfo.getProvince() );
-//			    storeMap.put( "city",shopInfo.getCity() );
-//			    storeMap.put( "district",shopInfo.getDistrict() );
+			    //			    storeMap.put( "province",shopInfo.getProvince() );
+			    //			    storeMap.put( "city",shopInfo.getCity() );
+			    //			    storeMap.put( "district",shopInfo.getDistrict() );
 			    shopInfoList.remove( i );
 			    break;
 			}

@@ -60,8 +60,6 @@ public class MallStoreCertificationController extends BaseController {
     private MallImageAssociativeService   imageAssociativeService;
     @Autowired
     private MallCommonService             mallCommonService;
-    @Autowired
-    private WxPublicUserService           wxPublicUserService;
 
     /**
      * 保存店铺认证信息
@@ -219,7 +217,7 @@ public class MallStoreCertificationController extends BaseController {
 		    @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile ) {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-//	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
+	    //	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
 	    String no = CommonUtil.getPhoneCode();
 	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
 	    System.out.println( "店铺认证短信验证码：" + no );

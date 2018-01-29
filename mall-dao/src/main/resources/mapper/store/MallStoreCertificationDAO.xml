@@ -6,14 +6,6 @@
     <resultMap id="BaseResultMap" type="com.gt.mall.entity.store.MallStoreCertification">
         <id column="id" property="id"/>
         <result column="sto_id" property="stoId"/>
-        <result column="sto_type" property="stoType"/>
-        <result column="name" property="name"/>
-        <result column="company_name" property="companyName"/>
-        <result column="id_number" property="idNumber"/>
-        <result column="id_card_front" property="idCardFront"/>
-        <result column="id_card_back" property="idCardBack"/>
-        <result column="bus_license_img" property="busLicenseImg"/>
-        <result column="bus_license_no" property="busLicenseNo"/>
         <result column="sto_category" property="stoCategory"/>
         <result column="cert_type" property="certType"/>
         <result column="cert_img_url" property="certImgUrl"/>
@@ -27,8 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, sto_id, sto_type, name, company_name, id_number,id_card_front ,id_card_back , bus_license_img , bus_license_no , sto_category ,
-        cert_type , cert_img_url,trade_mark_img, is_cert_doc , is_delete,create_time,check_status,refuse_reason
+        id, sto_id, sto_category , cert_type , cert_img_url,trade_mark_img, is_cert_doc , is_delete,create_time,check_status,refuse_reason
     </sql>
     <select id="selectByStoreId" parameterType="com.gt.mall.entity.store.MallStoreCertification" resultMap="BaseResultMap">
         select
@@ -39,10 +30,7 @@
     </select>
 
     <select id="selectAllByPage" resultType="java.util.Map">
-        SELECT
-         a.id, a.sto_id as stoId, a.sto_type stoType, a.name, a.company_name as companyName, a.id_number as idNumber
-        ,a.id_card_front as idCardFront ,a.id_card_back as idCardBack , a.bus_license_img as busLicenseImg , a.bus_license_no as busLicenseNo
-        ,a.sto_category as stoCategory,a.cert_type as certType , a.cert_img_url as certImgUrl,a.trade_mark_img as tradeMarkImg
+        SELECT a.id, a.sto_id as stoId,a.sto_category as stoCategory,a.cert_type as certType , a.cert_img_url as certImgUrl,a.trade_mark_img as tradeMarkImg
         ,a.is_cert_doc as isCertDoc,a.create_time as createTime,a.check_status as checkStatus,s.sto_name as stoName,a.refuse_reason as refuseReason,s.sto_user_id as userId
         FROM t_mall_store_certification a
         LEFT JOIN t_mall_store s ON s.id=a.`sto_id`

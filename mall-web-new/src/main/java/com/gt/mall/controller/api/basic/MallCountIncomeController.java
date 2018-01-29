@@ -231,7 +231,7 @@ public class MallCountIncomeController extends BaseController {
 	    String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
 
 	    Wrapper groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "TO_DAYS(create_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
+	    groupWrapper.where( "TO_DAYS(pay_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
 	    if ( CommonUtil.isEmpty( shopId ) ) {
 		groupWrapper.in( "shop_id", shopIds );
 	    } else {

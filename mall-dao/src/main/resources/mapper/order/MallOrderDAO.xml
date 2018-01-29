@@ -529,7 +529,7 @@
             </if>
             and ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
         </where>
-        ORDER BY t.id desc
+        ORDER BY t.create_time desc
         <if test="firstResult != null and maxResult != null">
             limit #{firstResult},#{maxResult}
         </if>
@@ -731,7 +731,7 @@
                 and d.status != -3 and d.status != 0 and d.status != 2 and d.status != 3 and d.status != 4 and d.status != -1
             </if>
         </if>
-        ORDER BY t.id desc
+        ORDER BY t.create_time desc
         <if test="firstResult != null and maxResult != null">
             limit #{firstResult},#{maxResult}
         </if>
@@ -1090,7 +1090,7 @@
 
     <!-- 查询所有完成订单 -->
     <select id="selectOrderByFinish" resultMap="BaseResultMap">
-        select t.order_no,t.id
+        select DISTINCT t.order_no,t.id
         from t_mall_order t
         left join  t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
         where  t.shop_id > 0 and t.order_status=4 and d.return_day &lt;= TIMESTAMPDIFF(DAY,t.update_time,now()) and t.give_status=0 and mem_card_type > 0 and t.order_pay_way != 4
