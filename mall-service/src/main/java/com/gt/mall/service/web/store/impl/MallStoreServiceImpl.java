@@ -429,7 +429,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    }
 	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
 	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
-	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,sto_picture as stoPicture" );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,is_delete,sto_picture as stoPicture" );
 
 	    storeList = mallStoreDao.selectMaps( wrapper );
 	    storeList = getShopParams( storeList, shopInfoList );
