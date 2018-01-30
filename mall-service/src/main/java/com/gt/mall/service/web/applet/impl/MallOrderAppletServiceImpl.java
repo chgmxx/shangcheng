@@ -356,7 +356,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	resultMap.put( "order_freight_money", order.getOrderFreightMoney() );
 
 	int isGoPay = 0;
-	if ( order.getOrderStatus() == 1 && order.getOrderPayWay() == 10 ) {
+	if ( order.getOrderStatus() == 1 ) {
 	    isGoPay = 1;
 	}
 	resultMap.put( "isGoPay", isGoPay );
@@ -575,7 +575,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    resultMap.put( "detailList", detailList );
 
 	    int isGoPay = 0;
-	    if ( order.getOrderStatus() == 1 && order.getOrderPayWay() == 10 ) {
+	    if ( order.getOrderStatus() == 1 ) {
 		isGoPay = 1;
 	    }
 	    resultMap.put( "isGoPay", isGoPay );
@@ -744,8 +744,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( CommonUtil.isNotEmpty( order ) ) {
 	    orderPayWay = order.getOrderPayWay();
-//	    orderStatus = order.getOrderStatus();
-//	    isWallet = order.getIsWallet();
+	    //	    orderStatus = order.getOrderStatus();
+	    //	    isWallet = order.getIsWallet();
 	    resultMap.put( "order_money", order.getOrderMoney() );
 	    resultMap.put( "order_no", order.getOrderNo() );
 	    if ( CommonUtil.isNotEmpty( order.getPayTime() ) ) {
@@ -1546,10 +1546,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	if ( CommonUtil.isNotEmpty( detailObj.get( "detProMessage" ) ) ) {
 	    detail.setDetProMessage( CommonUtil.toString( detailObj.get( "detProMessage" ) ) );
 	}
-//	detail.setReturnDay( product.getReturnDay() );
-	if(CommonUtil.isNotEmpty( product.getIsReturn() )){
-	    if(product.getIsReturn().toString().equals( "1" )){
-		detail.setReturnDay( 7);//完成订单后在有效天数内退款
+	//	detail.setReturnDay( product.getReturnDay() );
+	if ( CommonUtil.isNotEmpty( product.getIsReturn() ) ) {
+	    if ( product.getIsReturn().toString().equals( "1" ) ) {
+		detail.setReturnDay( 7 );//完成订单后在有效天数内退款
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( detailObj.get( "discount" ) ) ) {

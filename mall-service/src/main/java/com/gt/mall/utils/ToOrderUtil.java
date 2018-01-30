@@ -106,7 +106,8 @@ public class ToOrderUtil {
 	/*if ( isHaveAlipay == 1 && isOpenDanbao == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 11, "多粉钱包支付", "duofenlogoyuanwenjian-" );
 	    phoneOrderWayList.add( result );
-	} else*/ if ( browerType == 1 && isHaveWx == 1 ) {
+	} else*/
+	if ( browerType == 1 && isHaveWx == 1 ) {
 	    PhoneOrderWayDTO result = new PhoneOrderWayDTO( 1, "微信支付", "weixinzhifu" );
 	    phoneOrderWayList.add( result );
 	} else if ( browerType != 1 && isHaveAlipay == 1 ) {
@@ -291,7 +292,7 @@ public class ToOrderUtil {
 	    return null;
 	}
 	JifenAndFenbBean bean = new JifenAndFenbBean();
-	if ( CommonUtil.isNotEmpty( jifenFenbiRule ) && jifenFenbiRule.getJifenStartMoney() > 0 && jifenFenbiRule.getJifenStartMoney() < jifenProductMoney
+	if ( CommonUtil.isNotEmpty( jifenFenbiRule.getJifenStartMoney() ) && jifenFenbiRule.getJifenStartMoney() > 0 && jifenFenbiRule.getJifenStartMoney() < jifenProductMoney
 			&& jifenProductMoney > 0 ) {//显示粉币抵扣的按钮
 	    if ( CommonUtil.isNotEmpty( cardMap.get( "integral" ) ) ) {
 		bean.setJifenNum( CommonUtil.toDouble( cardMap.get( "integral" ) ) );
@@ -313,7 +314,8 @@ public class ToOrderUtil {
 	    //	    jifenProductMoney = CommonUtil.getDecimal( jifenProductMoney );
 	}
 	//粉币起兑金额  小于 能兑换粉币的商品金额  且 能兑换粉币的商品金额  小于 会员传来的粉币
-	if ( jifenFenbiRule.getFenbiStartMoney() > 0 && jifenFenbiRule.getFenbiStartMoney() < fenbiProductMoney && fenbiProductMoney > 0 ) {//显示积分抵扣的按钮
+	if ( CommonUtil.isNotEmpty( jifenFenbiRule.getFenbiStartMoney() ) && jifenFenbiRule.getFenbiStartMoney() > 0 && jifenFenbiRule.getFenbiStartMoney() < fenbiProductMoney
+			&& fenbiProductMoney > 0 ) {//显示积分抵扣的按钮
 	    if ( CommonUtil.isNotEmpty( cardMap.get( "fans_currency" ) ) ) {
 		bean.setFenbiNum( CommonUtil.toDouble( cardMap.get( "fans_currency" ) ) );
 	    }

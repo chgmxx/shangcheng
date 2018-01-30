@@ -700,8 +700,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			couponsList = ToOrderUtil.getWxCouponsResult( obj, couponsList, null );
 		    }
 		    shopObj.put( "couponsList", couponsList );
-		    newShopArr.add( shopObj );
 		}
+		newShopArr.add( shopObj );
 		resultMap.put( "shopList", newShopArr );
 	    }
 	}
