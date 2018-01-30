@@ -139,7 +139,7 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	if ( couponFlag ) {//计算优惠券优惠
 	    orderList = calculateMemberCoupon( orderList, discountFlag );
 	}
-	if ( fenbiFlag && CommonUtil.isNotEmpty( jifenFenbiRule ) ) {//计算粉币优惠
+ 	if ( fenbiFlag && CommonUtil.isNotEmpty( jifenFenbiRule ) ) {//计算粉币优惠
 	    orderList = calculateMemberFenbi( orderList, busFenbiYouhui, jifenFenbiRule, cardMap );
 	}
 	if ( jifenFlag && CommonUtil.isNotEmpty( jifenFenbiRule ) ) {//计算积分优惠
@@ -148,12 +148,12 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
 	//以下参数用于避免 四舍五入 后数值 多0.1或小0.1
 	double youhuiTotalMoney = 0;
 
-	for ( MallOrder order : orderList ) {
+  	for ( MallOrder order : orderList ) {
 	    if ( CommonUtil.isNotEmpty( order.getDiscountMoney() ) ) {
 		youhuiTotalMoney = CommonUtil.add( youhuiTotalMoney, order.getDiscountMoney() );
 	    }
 	}
-	youhuiTotalMoney = CommonUtil.getDecimal( youhuiTotalMoney );
+ 	youhuiTotalMoney = CommonUtil.getDecimal( youhuiTotalMoney );
 	double youhuiMoney = 0;
 	for ( int i = 0; i < orderList.size(); i++ ) {
 	    MallOrder order = orderList.get( i );

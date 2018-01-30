@@ -7,11 +7,13 @@ import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PropertiesUtil;
 import org.apache.log4j.Logger;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 public class BackInterceptor implements HandlerInterceptor {
 
@@ -24,6 +26,9 @@ public class BackInterceptor implements HandlerInterceptor {
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
 	//	logger.info( ">>>BackInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
 	logger.info( ">>>BackInterceptor>>basePath = " + CommonUtil.getpath( request ) );
+
+	long startTime = System.currentTimeMillis();
+	request.setAttribute( "runStartTime", startTime );
 
 	// 获得在下面代码中要用的request,response,session对象
 
@@ -41,6 +46,17 @@ public class BackInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
 
+	long startTime = (Long) request.getAttribute( "runStartTime" );
+
+	long endTime = System.currentTimeMillis();
+
+	long executeTime = endTime - startTime;
+
+	HandlerMethod handlerMethod = (HandlerMethod) handler;
+	Method method = handlerMethod.getMethod();
+	/*if ( logger.isDebugEnabled() ) {*/
+	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
+	logger.error( "访问的执行时间 : " + executeTime + "ms----页面："+ CommonUtil.getpath( request ) );
     }
 
     /**

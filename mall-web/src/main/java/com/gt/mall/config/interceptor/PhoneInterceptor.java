@@ -45,6 +45,7 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	    String returnStr = userLogin( request, response, params );
 	    if ( CommonUtil.isNotEmpty( returnStr ) ) {
 		throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), returnStr );
+
 	    }
 	}
 	return true;// 只有返回true才会继续向下执行，返回false取消当前请求*/
@@ -65,7 +66,7 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	Method method = handlerMethod.getMethod();
 	/*if ( logger.isDebugEnabled() ) {*/
 	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
-	logger.error( "访问的执行时间 : " + executeTime + "ms" );
+	logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
     }
 
     private Map< String,Object > getParameterMap( HttpServletRequest request ) {

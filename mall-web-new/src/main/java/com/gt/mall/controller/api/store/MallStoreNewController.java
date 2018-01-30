@@ -107,6 +107,7 @@ public class MallStoreNewController extends BaseController {
 	    }
 
 	    result.put( "videourl", Constants.VIDEO_URL + 8 );
+	    result.put( "openDfPayUrl", PropertiesUtil.getDfPayDomain() + "html/manage/#/wallet/index" );//开通多粉钱包url
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺管理异常：" + e.getMessage() );
 	    e.printStackTrace();

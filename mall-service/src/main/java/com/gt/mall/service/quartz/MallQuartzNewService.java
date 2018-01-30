@@ -16,11 +16,6 @@ public interface MallQuartzNewService {
     void orderFinish();
 
     /**
-     * 关闭30分钟内未支付的订单
-     */
-    void closeOrderNoPay();
-
-    /**
      * 扫描已结束秒杀
      */
     void endSeckill();

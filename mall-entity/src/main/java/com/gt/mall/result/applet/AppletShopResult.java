@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public class AppletShopResult {
     @ApiModelProperty( name = "raill", value = "距离 -1不显示" )
-    private String raill;
+    private Double raill;
 
     @ApiModelProperty( name = "shopImage", value = "店铺图片" )
     private String shopImage;

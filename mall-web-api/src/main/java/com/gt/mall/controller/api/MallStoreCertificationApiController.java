@@ -130,19 +130,18 @@ public class MallStoreCertificationApiController extends BaseController {
 	    if ( storeCert != null ) {
 		MallStore store = mallStoreService.selectById( storeCert.getStoId() );
 		storeCert.setStoName( store.getStoName() );
-		if ( storeCert.getStoType() == 1 ) {
-		    List< DictBean > categoryMap = dictService.getDict( "K002" );
-		    if ( categoryMap != null && categoryMap.size() > 0 ) {
-			for ( DictBean dictBean : categoryMap ) {
-			    if ( dictBean.getItem_key().toString().equals( storeCert.getStoCategory().toString() ) ) {
-				String value = dictBean.getItem_value();
-				net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
-				storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
-				break;
-			    }
+		List< DictBean > categoryMap = dictService.getDict( "K002" );
+		if ( categoryMap != null && categoryMap.size() > 0 ) {
+		    for ( DictBean dictBean : categoryMap ) {
+			if ( dictBean.getItem_key().toString().equals( storeCert.getStoCategory().toString() ) ) {
+			    String value = dictBean.getItem_value();
+			    net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
+			    storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
+			    break;
 			}
 		    }
 		}
+
 		if ( storeCert.getIsCertDoc() == 1 ) {
 		    Map< String,Object > assParams = new HashMap<>();
 		    assParams.put( "assType", 6 );

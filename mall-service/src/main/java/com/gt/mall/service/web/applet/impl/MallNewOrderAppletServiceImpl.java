@@ -166,8 +166,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 		params.put( "cartIds", cartArrs );
 	    }
-//	    double totalFreightPrice = 0;
-//	    List< Integer > freightIds = new ArrayList<>();
+	    //	    double totalFreightPrice = 0;
+	    //	    List< Integer > freightIds = new ArrayList<>();
 	    List< Map< String,Object > > shopList = shopCartDAO.selectCheckShopByParam( params );
 	    if ( shopList != null && shopList.size() > 0 ) {
 		List< WsWxShopInfoExtend > shopInfoList = wxShopService.queryWxShopByBusId( member.getBusid() );//查询商家的所有门店集合
@@ -700,8 +700,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			couponsList = ToOrderUtil.getWxCouponsResult( obj, couponsList, null );
 		    }
 		    shopObj.put( "couponsList", couponsList );
-		    newShopArr.add( shopObj );
 		}
+		newShopArr.add( shopObj );
 		resultMap.put( "shopList", newShopArr );
 	    }
 	}
@@ -816,6 +816,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    }
 	}
 	order.setOrderMoney( CommonUtil.toBigDecimal( shopObj.getOrderMoney() ) );
+	order.setTotalNewMoney( CommonUtil.toDouble( order.getOrderMoney() ) );
 	double orderOldMoney = shopObj.getOrderMoney();
 	if ( CommonUtil.isNotEmpty( shopObj.getOrderFreightMoney() ) ) {
 	    order.setOrderFreightMoney( CommonUtil.toBigDecimal( shopObj.getOrderFreightMoney() ) );
@@ -908,10 +909,10 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	if ( CommonUtil.isNotEmpty( productObj.getDetProMessage() ) ) {
 	    detail.setDetProMessage( productObj.getDetProMessage() );
 	}
-//	detail.setReturnDay( product.getReturnDay() );
-	if(CommonUtil.isNotEmpty( product.getIsReturn() )){
-	    if(product.getIsReturn().toString().equals( "1" )){
-		detail.setReturnDay( 7);//完成订单后在有效天数内退款
+	//	detail.setReturnDay( product.getReturnDay() );
+	if ( CommonUtil.isNotEmpty( product.getIsReturn() ) ) {
+	    if ( product.getIsReturn().toString().equals( "1" ) ) {
+		detail.setReturnDay( 7 );//完成订单后在有效天数内退款
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( productObj.getDiscount() ) ) {
@@ -1015,7 +1016,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		code = CommonUtil.toInteger( result.get( "code" ) );
 		if ( code == -1 ) {
 		    if ( CommonUtil.isNotEmpty( result.get( "errorMsg" ) ) ) {
-//			msg = result.get( "errorMsg" ).toString();
+			//			msg = result.get( "errorMsg" ).toString();
 			throw new BusinessException( ResponseEnums.ERROR.getCode(), result.get( "errorMsg" ).toString() );
 		    }
 		    break;
@@ -1388,7 +1389,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	//	}
 	if ( orderList != null && orderList.size() > 0 ) {
 	    for ( AppletSubmitOrderShopDTO orderObj : orderList ) {
-//		Map< Object,MallEntity > productMap = new HashMap<>();
+		//		Map< Object,MallEntity > productMap = new HashMap<>();
 
 		if ( CommonUtil.isNotEmpty( orderObj.getOrderDetail() ) ) {
 		    for ( AppletSubmitOrderProductDTO orderDetail : orderObj.getOrderDetail() ) {
@@ -1399,14 +1400,14 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 	    }
 	}
 
-//	int isUseFenbi = 0;
-//	int isUseJifen = 0;
-//	if ( CommonUtil.isNotEmpty( params.getIsUseFenbi() ) ) {
-//	    isUseFenbi = params.getIsUseFenbi();
-//	}
-//	if ( CommonUtil.isNotEmpty( params.getIsUseJifen() ) ) {
-//	    isUseJifen = params.getIsUseJifen();
-//	}
+	//	int isUseFenbi = 0;
+	//	int isUseJifen = 0;
+	//	if ( CommonUtil.isNotEmpty( params.getIsUseFenbi() ) ) {
+	//	    isUseFenbi = params.getIsUseFenbi();
+	//	}
+	//	if ( CommonUtil.isNotEmpty( params.getIsUseJifen() ) ) {
+	//	    isUseJifen = params.getIsUseJifen();
+	//	}
 
 	return resultMap;
     }

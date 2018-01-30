@@ -53,9 +53,8 @@ public class MallCountIncomeController extends BaseController {
     private MallOrderReturnService mallOrderReturnService;
 
     @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = true, dataType = "String" ),
+		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/test", method = RequestMethod.POST )
     public ServerResponse test( HttpServletRequest request, HttpServletResponse response, String startDate, String endDate ) {
@@ -75,32 +74,37 @@ public class MallCountIncomeController extends BaseController {
 		String str = sdf.format( start.getTime() );
 		System.out.println( str );//输出日期结果
 		for ( Map< String,Object > map : shoplist ) {
+		    Integer id = CommonUtil.toInteger( map.get( "id" ) );
 		    Wrapper groupWrapper = new EntityWrapper();
 		    groupWrapper.setSqlSelect( "IFNULL(SUM(order_money),0) price" );
-		    groupWrapper.where( "DATE(pay_time) ={0} AND shop_id={1}  AND order_status != 5", str, CommonUtil.toInteger( map.get( "id" ) ) );
+		    groupWrapper.where( "DATE(pay_time) ={0} AND shop_id={1}  AND order_status != 5 AND order_status != 1", str, id );
 		    Map trade = mallOrderService.selectMap( groupWrapper );
 		    Double tradePrice = CommonUtil.toDouble( trade.get( "price" ) );//当天交易金额
+
 		    groupWrapper = new EntityWrapper();
 		    groupWrapper.setSqlSelect( "IFNULL(SUM(ret_money),0) price" );
-		    groupWrapper.where( "DATE(update_time) ={0} AND (status=1 OR status =5) AND shop_id={1}", str, CommonUtil.toInteger( map.get( "id" ) ) );
+		    groupWrapper.where( "DATE(update_time) ={0} AND (status=1 OR status =5) AND shop_id={1}", str, id );
 		    Map refund = mallOrderReturnService.selectMap( groupWrapper );
 		    Double refundPrice = CommonUtil.toDouble( refund.get( "price" ) );//当天退款金额
+
 		    groupWrapper = new EntityWrapper();
 		    groupWrapper.setSqlSelect( "IFNULL(SUM(order_money),0) price" );
-		    groupWrapper.where( "DATE(DATE_ADD(update_time, INTERVAL 7 DAY)) ={0} AND order_status=4 AND shop_id={1}", str, CommonUtil.toInteger( map.get( "id" ) ) );
+		    groupWrapper.where( "DATE(DATE_ADD(update_time, INTERVAL 7 DAY)) ={0} AND order_status=4 AND shop_id={1}", str, id );
 		    Map income = mallOrderService.selectMap( groupWrapper );
 		    Double incomePrice = CommonUtil.toDouble( income.get( "price" ) );//收入金额
 
-		    MallCountIncome countIncome = new MallCountIncome();
-		    countIncome.setBusId( user.getId() );
-		    countIncome.setShopId( CommonUtil.toInteger( map.get( "id" ) ) );
-		    countIncome.setCountDate( DateTimeKit.parseDate( str ) );
-		    countIncome.setIncomePrice( new BigDecimal( incomePrice ) );
-		    countIncome.setTradePrice( new BigDecimal( tradePrice ) );
-		    countIncome.setTurnover( new BigDecimal( tradePrice - refundPrice ) );
-		    countIncome.setRefundPrice( new BigDecimal( refundPrice ) );
+		    if ( tradePrice > 0 || refundPrice > 0 || incomePrice > 0 ) {
+			MallCountIncome countIncome = new MallCountIncome();
+			countIncome.setBusId( user.getId() );
+			countIncome.setShopId( id );
+			countIncome.setCountDate( DateTimeKit.parseDate( str ) );
+			countIncome.setIncomePrice( new BigDecimal( incomePrice ) );
+			countIncome.setTradePrice( new BigDecimal( tradePrice ) );
+			countIncome.setTurnover( new BigDecimal( tradePrice - refundPrice ) );
+			countIncome.setRefundPrice( new BigDecimal( refundPrice ) );
 
-		    mallCountIncomeService.insert( countIncome );
+			mallCountIncomeService.insert( countIncome );
+		    }
 		}
 		start.add( Calendar.DATE, 1 );//进行当前日期加1
 	    }
@@ -227,7 +231,7 @@ public class MallCountIncomeController extends BaseController {
 	    String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
 
 	    Wrapper groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "TO_DAYS(create_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
+	    groupWrapper.where( "TO_DAYS(pay_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
 	    if ( CommonUtil.isEmpty( shopId ) ) {
 		groupWrapper.in( "shop_id", shopIds );
 	    } else {

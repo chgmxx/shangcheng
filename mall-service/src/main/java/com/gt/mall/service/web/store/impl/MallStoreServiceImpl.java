@@ -85,19 +85,16 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			storeResult.setCertStoType( 0 );
 		    }
 		}
-		/*MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
+		MallStoreCertification storeCertification = mallStoreCertService.selectByStoreId( id );
 		if ( storeCertification != null ) {
 		    storeResult.setCertCheckStatus( storeCertification.getCheckStatus() );
 		    storeResult.setCertRefuseReason( storeCertification.getRefuseReason() );
 		    storeResult.setCertId( storeCertification.getId() );
 		    if ( storeCertification.getCheckStatus() == 1 ) {
-			storeResult.setCertStoType( storeCertification.getStoType() );
-			if ( storeCertification.getStoType() == 1 ) {
-			    storeResult.setCertStoCategory( storeCertification.getStoCategory() );
-			    storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
-			}
+			storeResult.setCertStoCategory( storeCertification.getStoCategory() );
+			storeResult.setCertStoCategoryName( storeCertification.getStoCategoryName() );
 		    }
-		}*/
+		}
 		for ( Map< String,Object > maps : shopList ) {
 		    int shopIds = CommonUtil.toInteger( maps.get( "id" ) );
 		    if ( id == shopIds ) {
@@ -164,6 +161,9 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 			    storeMap.put( "telephone", shopInfo.getTelephone() );
 			    storeMap.put( "id", map.get( "id" ) );
 			    storeMap.put( "wx_shop_id", shopInfo.getId() );
+			    //			    storeMap.put( "province",shopInfo.getProvince() );
+			    //			    storeMap.put( "city",shopInfo.getCity() );
+			    //			    storeMap.put( "district",shopInfo.getDistrict() );
 			    shopInfoList.remove( i );
 			    break;
 			}
@@ -429,7 +429,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
 	    }
 	    Wrapper< MallStore > wrapper = new EntityWrapper<>();
 	    wrapper.where( "is_delete = 0" ).in( "wx_shop_id", wxShopIds );
-	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,sto_picture as stoPicture" );
+	    wrapper.setSqlSelect( "id,sto_name,wx_shop_id as wxShopId,sto_longitude as stoLongitude,sto_latitude as stoLatitude,is_delete,sto_picture as stoPicture" );
 
 	    storeList = mallStoreDao.selectMaps( wrapper );
 	    storeList = getShopParams( storeList, shopInfoList );

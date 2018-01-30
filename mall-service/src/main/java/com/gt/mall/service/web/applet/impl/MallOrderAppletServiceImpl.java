@@ -356,7 +356,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	resultMap.put( "order_freight_money", order.getOrderFreightMoney() );
 
 	int isGoPay = 0;
-	if ( order.getOrderStatus() == 1 && order.getOrderPayWay() == 10 ) {
+	if ( order.getOrderStatus() == 1 ) {
 	    isGoPay = 1;
 	}
 	resultMap.put( "isGoPay", isGoPay );
@@ -575,7 +575,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	    resultMap.put( "detailList", detailList );
 
 	    int isGoPay = 0;
-	    if ( order.getOrderStatus() == 1 && order.getOrderPayWay() == 10 ) {
+	    if ( order.getOrderStatus() == 1 ) {
 		isGoPay = 1;
 	    }
 	    resultMap.put( "isGoPay", isGoPay );
@@ -614,7 +614,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
 	    if ( order.getOrderType() == 3 ) {//秒杀订单
 		JSONObject detailObj = new JSONObject();
-		String key = Constants.REDIS_KEY + "hSeckill_nopay";//秒杀用户(用于没有支付，恢复库存用)
+		String key = Constants.REDIS_KEY + "hOrder_nopay";//秒杀用户(用于没有支付，恢复库存用)
 		if ( JedisUtil.hExists( key, order.getId().toString() ) ) {
 		    detailObj.put( "groupBuyId", order.getGroupBuyId() );
 		    //判断秒杀订单是否正在进行
@@ -744,8 +744,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	if ( CommonUtil.isNotEmpty( order ) ) {
 	    orderPayWay = order.getOrderPayWay();
-//	    orderStatus = order.getOrderStatus();
-//	    isWallet = order.getIsWallet();
+	    //	    orderStatus = order.getOrderStatus();
+	    //	    isWallet = order.getIsWallet();
 	    resultMap.put( "order_money", order.getOrderMoney() );
 	    resultMap.put( "order_no", order.getOrderNo() );
 	    if ( CommonUtil.isNotEmpty( order.getPayTime() ) ) {
@@ -1546,10 +1546,10 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	if ( CommonUtil.isNotEmpty( detailObj.get( "detProMessage" ) ) ) {
 	    detail.setDetProMessage( CommonUtil.toString( detailObj.get( "detProMessage" ) ) );
 	}
-//	detail.setReturnDay( product.getReturnDay() );
-	if(CommonUtil.isNotEmpty( product.getIsReturn() )){
-	    if(product.getIsReturn().toString().equals( "1" )){
-		detail.setReturnDay( 7);//完成订单后在有效天数内退款
+	//	detail.setReturnDay( product.getReturnDay() );
+	if ( CommonUtil.isNotEmpty( product.getIsReturn() ) ) {
+	    if ( product.getIsReturn().toString().equals( "1" ) ) {
+		detail.setReturnDay( 7 );//完成订单后在有效天数内退款
 	    }
 	}
 	if ( CommonUtil.isNotEmpty( detailObj.get( "discount" ) ) ) {

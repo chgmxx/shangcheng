@@ -376,7 +376,7 @@ public class PhoneHomeAppletController extends BaseController {
      */
     @SuppressWarnings( { "deprecation", "unchecked" } )
     @SysLogAnnotation( description = "小程序购物车页面-删除购物车内的商品", op_function = "3" )
-    @RequestMapping( value = "shoppingdelete", method = RequestMethod.GET )
+    @RequestMapping( value = "shoppingdelete", method = RequestMethod.POST )
     public void shoppingdelect( HttpServletRequest request, HttpServletResponse response, Integer memberId, String ids ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {

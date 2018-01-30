@@ -77,8 +77,8 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
 		if(CommonUtil.isNotEmpty(params.get("type"))){
 			type = CommonUtil.toInteger(params.get("type"));
 		}*/
-	List< Map< String,Object > > storeList = mallStoreService.findShopByUserId( member.getBusid(), request );
-	List< AppletShopCartProductDTO > shopList = new ArrayList< AppletShopCartProductDTO >();//商品列表
+ 	List< Map< String,Object > > storeList = mallStoreService.findShopByUserId( member.getBusid(), request );
+   	List< AppletShopCartProductDTO > shopList = new ArrayList< AppletShopCartProductDTO >();//商品列表
 	List< AppletShopCartResult > shopCartList = new ArrayList< AppletShopCartResult >();//店铺列表
 
 	//保存失效商品

@@ -587,7 +587,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
 		int shopId = CommonUtil.toInteger( shopMap.get( "id" ) );
 		int errorStatus = 0;
 		String errorMsg = "";
-		if ( shopMap.get( "is_delete" ).toString().equals( "1" ) ) {
+		if (  shopMap.get( "is_delete" ).toString().equals( "1" ) ) {
 		    errorMsg = "店铺已删除";
 		    errorStatus = 1;
 		}

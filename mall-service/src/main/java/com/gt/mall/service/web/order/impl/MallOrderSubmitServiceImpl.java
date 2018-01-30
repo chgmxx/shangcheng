@@ -365,6 +365,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 
     @Override
     public PhoneToOrderResult toOrder( PhoneToOrderDTO params, Member member, PhoneLoginDTO loginDTO, HttpServletRequest request ) {
+	long startTime = System.currentTimeMillis();
 	PhoneToOrderResult result = new PhoneToOrderResult();
 	Integer provincesId = null;//省份id
 	Double memberLongitude = params.getLongitude();//会员经度
@@ -436,10 +437,15 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	List< Integer > shopList = new ArrayList<>();//保存店铺id集合
 	Integer toShop = 0;
 	Integer type = 0;//订单类型
+	long endTime = System.currentTimeMillis();
+	long endTime3=  0;
+	logger.error( "访问的执行时间 : " + ( endTime - startTime ) + "ms----1111" );
 	if ( params.getFrom() == 1 && CommonUtil.isNotEmpty( params.getCartIds() ) ) {//购物车
 	    Map< String,Object > shopcartParams = new HashMap<>();
 	    shopcartParams.put( "checkIds", params.getCartIds().split( "," ) );
 	    List< Map< String,Object > > shopCartList = mallShopCartDAO.selectShopCartByCheckIds( shopcartParams );
+	    long endTime2 = System.currentTimeMillis();
+	    logger.error( "访问的执行时间 : " + ( endTime2 - endTime ) + "ms----2222" );
 	    if ( shopCartList != null && shopCartList.size() > 0 ) {
 		List< PhoneToOrderProductResult > productResultList = new ArrayList<>();
 		List< Integer > freightIds = new ArrayList<>();
@@ -482,6 +488,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 
 		result = getToOrderParams( productResultList, busUserList, freightList, mallShopList, params, result, provincesId, memberLongitude, memberLangitude );
 	    }
+	    endTime3 = System.currentTimeMillis();
+	    logger.error( "访问的执行时间 : " + ( endTime3 - endTime2 ) + "ms----3333" );
 	} else if ( params.getFrom() == 2 ) {//立即购买
 	    String cookieValue = CookieUtil.findCookieByName( request, CookieUtil.TO_ORDER_KEY );
 	    PhoneBuyNowDTO buyNowDTO = null;
@@ -612,6 +620,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	}
 	result.setToShop( toShop );
 	result = getToOrderResult( mallShopList, member, busUserList, result, loginDTO.getBrowerType(), params, proTypeId, provincesId, toShop, type );
+
+	long endTime4 = System.currentTimeMillis();
+	logger.error( "访问的执行时间 : " + ( endTime4 - endTime3 ) + "ms----444" );
 	logger.info( "result=======" + JSON.toJSONString( result ) );
 	return result;
     }

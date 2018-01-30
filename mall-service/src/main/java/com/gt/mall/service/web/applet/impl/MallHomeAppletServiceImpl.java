@@ -13,7 +13,10 @@ import com.gt.mall.dao.auction.MallAuctionDAO;
 import com.gt.mall.dao.basic.MallImageAssociativeDAO;
 import com.gt.mall.dao.groupbuy.MallGroupBuyDAO;
 import com.gt.mall.dao.presale.MallPresaleDAO;
-import com.gt.mall.dao.product.*;
+import com.gt.mall.dao.product.MallGroupDAO;
+import com.gt.mall.dao.product.MallProductDAO;
+import com.gt.mall.dao.product.MallProductDetailDAO;
+import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
@@ -45,8 +48,6 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.sms.NewApiSms;
 import com.gt.util.entity.param.sms.OldApiSms;
-import com.gt.util.entity.result.shop.WsShopPhoto;
-import com.gt.util.entity.result.shop.WsWxShopInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -228,7 +229,7 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	int rowCount = productDAO.selectCountAllByShopids( params );
 	PageUtil page = new PageUtil( curPage, pageSize, rowCount, "" );
 	params.put( "firstNum", pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 ) );
-	params.put( "maxNum", pageSize  );
+	params.put( "maxNum", pageSize );
 
 	List< Map< String,Object > > xlist = new ArrayList< Map< String,Object > >();
 	List< Map< String,Object > > list = productDAO.selectProductAllByShopids( params );
@@ -846,50 +847,64 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 	    latitude = CommonUtil.toDouble( params.get( "latitude" ) );
 	}
 	int userId = CommonUtil.toInteger( params.get( "userId" ) );
-	List< Map< String,Object > > list = storeDAO.findByUserId( userId );
+
+	List< Map< String,Object > > list = mallStoreService.findByUserId( userId );
+	//	List< Map< String,Object > > list = storeDAO.findByUserId( userId );
 	DecimalFormat df = new DecimalFormat( "0.00" );
 	List< AppletShopResult > shopResultList = new ArrayList<>();
-//	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
+	//	List< Map< String,Object > > shopList = new ArrayList< Map< String,Object > >();
 	if ( list != null && list.size() > 0 ) {
 	    for ( Map< String,Object > map : list ) {
-		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( map.get( "wx_shop_id" ) ) );
-		List< WsShopPhoto > shopPhotoList = wxShopService.getShopPhotoByShopId( wxShopInfo.getId() );
-//		Map< String,Object > shopMap = new HashMap< String,Object >();
+		//		WsWxShopInfo wxShopInfo = wxShopService.getShopById( CommonUtil.toInteger( map.get( "wx_shop_id" ) ) );
+		//		List< WsShopPhoto > shopPhotoList = wxShopService.getShopPhotoByShopId( wxShopInfo.getId() );
+		//		Map< String,Object > shopMap = new HashMap< String,Object >();
 		AppletShopResult shopResult = new AppletShopResult();
-		if ( longitude > 0 && latitude > 0 ) {
-		    Double raill = CommonUtil.getDistance( longitude, latitude, CommonUtil.toDouble( wxShopInfo.getLongitude() ), CommonUtil.toDouble( wxShopInfo.getLatitude() ) );
+		if ( longitude > 0 && latitude > 0 && CommonUtil.isNotEmpty( map.get( "longitude" ) ) && CommonUtil.isNotEmpty( map.get( "latitude" ) ) ) {
+		    Double raill = CommonUtil.getDistance( longitude, latitude, CommonUtil.toDouble( map.get( "longitude" ) ), CommonUtil.toDouble( map.get( "latitude" ) ) );
 		    raill = raill / 1000;
-		    shopResult.setRaill( df.format( raill ) );
+		    shopResult.setRaill( CommonUtil.toDouble( df.format( raill ) ) );
 		} else {
-		    shopResult.setRaill( "-1" );
+		    shopResult.setRaill( -1d );
 		}
-		if ( shopPhotoList != null && shopPhotoList.size() > 0 ) {
-		    if ( CommonUtil.isNotEmpty( shopPhotoList.get( 0 ).getLocalAddress() ) ) {
-			shopResult.setShopImage( PropertiesUtil.getResourceUrl() + shopPhotoList.get( 0 ).getLocalAddress() );
-		    } else {
-			shopResult.setShopImage( PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
-		    }
+		if ( CommonUtil.isNotEmpty( map.get( "shopPicture" ) ) ) {
+		    shopResult.setShopImage( PropertiesUtil.getResourceUrl() + map.get( "shopPicture" ) );
 		}
+		//		if ( shopPhotoList != null && shopPhotoList.size() > 0 ) {
+		//		    if ( CommonUtil.isNotEmpty( shopPhotoList.get( 0 ).getLocalAddress() ) ) {
+		//			shopResult.setShopImage( PropertiesUtil.getResourceUrl() + shopPhotoList.get( 0 ).getLocalAddress() );
+		//		    } else {
+		//			shopResult.setShopImage( PropertiesUtil.getResourceUrl() + map.get( "stoPicture" ) );
+		//		    }
+		//		}
 
-		String cityids = wxShopInfo.getProvince() + "," + wxShopInfo.getCity() + "," + wxShopInfo.getDistrict();
-		List< Map > cityList = wxShopService.queryBasisCityIds( cityids );
-		String address = wxShopInfo.getAddress() + wxShopInfo.getDetail();
-		StringBuilder shopAddress = new StringBuilder();
-		if ( cityList != null && cityList.size() > 0 ) {
-		    for ( Map map1 : cityList ) {
-			shopAddress.append( map1.get( "city_name" ) );
-		    }
-		}
-		shopAddress.append( address );
-		shopResult.setShopName( wxShopInfo.getBusinessName() );
-		shopResult.setShopAddress( shopAddress.toString() );
-		shopResult.setTelephone( wxShopInfo.getTelephone() );
+		//		String cityids = wxShopInfo.getProvince() + "," + wxShopInfo.getCity() + "," + wxShopInfo.getDistrict();
+		//		List< Map > cityList = wxShopService.queryBasisCityIds( cityids );
+		//		String address = wxShopInfo.getAddress() + wxShopInfo.getDetail();
+		//		StringBuilder shopAddress = new StringBuilder();
+		//		if ( cityList != null && cityList.size() > 0 ) {
+		//		    for ( Map map1 : cityList ) {
+		//			shopAddress.append( map1.get( "city_name" ) );
+		//		    }
+		//		}
+		//		shopAddress.append( address );
+		shopResult.setShopName( map.get( "shopName" ).toString() );
+		shopResult.setShopAddress( map.get( "sto_address" ).toString() );
+		shopResult.setTelephone( map.get( "telephone" ).toString() );
 		shopResult.setId( CommonUtil.toInteger( map.get( "id" ) ) );
 		shopResultList.add( shopResult );
 	    }
 	    Collections.sort( shopResultList, new Comparator< AppletShopResult >() {
 		public int compare( AppletShopResult arg0, AppletShopResult arg1 ) {
-		    return arg1.getRaill().compareTo( arg0.getRaill() );
+		    double raill1 = arg1.getRaill();
+		    double raill2 = arg0.getRaill();
+		    //按照距离进行降序排列
+		    if ( raill1 < raill2 ) {
+			return 1;
+		    }
+		    if ( raill1 == raill2 ) {
+			return 0;
+		    }
+		    return -1;
 		}
 	    } );
 	}
@@ -954,24 +969,24 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
     @Override
     public Map< String,Object > bindPhones( Map< String,Object > params ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
-	if(CommonUtil.isEmpty( params.get( "memberId" ) )){
+	if ( CommonUtil.isEmpty( params.get( "memberId" ) ) ) {
 	    resultMap.put( "result", false );
 	    resultMap.put( "message", "参数不完整" );
 	    return resultMap;
 	}
-	if(CommonUtil.isEmpty(params.get("phone"))){
-	    resultMap.put("result", false);
-	    resultMap.put("message", "请填写手机号码");
+	if ( CommonUtil.isEmpty( params.get( "phone" ) ) ) {
+	    resultMap.put( "result", false );
+	    resultMap.put( "message", "请填写手机号码" );
 	    return resultMap;
 	}
-	if(CommonUtil.isEmpty(params.get("code"))){
-	    resultMap.put("result", false);
-	    resultMap.put("message", "请填写短信校验码");
+	if ( CommonUtil.isEmpty( params.get( "code" ) ) ) {
+	    resultMap.put( "result", false );
+	    resultMap.put( "message", "请填写短信校验码" );
 	    return resultMap;
 	}
-	if (CommonUtil.isEmpty(JedisUtil.get(params.get("code").toString()))) {
-	    resultMap.put("result", false);
-	    resultMap.put("message", "短信校验码不正确");
+	if ( CommonUtil.isEmpty( JedisUtil.get( params.get( "code" ).toString() ) ) ) {
+	    resultMap.put( "result", false );
+	    resultMap.put( "message", "短信校验码不正确" );
 	    return resultMap;
 	}
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );

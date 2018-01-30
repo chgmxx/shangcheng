@@ -30,7 +30,7 @@ public class StoreCertDTO {
     @Min( value = 1, message = "商品id不能小于1" )
     private Integer stoId;
 
-    @ApiModelProperty( name = "stoType", value = "主体类型 0个人 1企业", required = true )
+   /* @ApiModelProperty( name = "stoType", value = "主体类型 0个人 1企业", required = true )
     private Integer stoType;
 
     @ApiModelProperty( name = "name", value = "姓名或法人", required = true )
@@ -52,7 +52,7 @@ public class StoreCertDTO {
     private String busLicenseImg;
 
     @ApiModelProperty( name = "busLicenseNo", value = "营业执照号 主体为企业必传" )
-    private String busLicenseNo;
+    private String busLicenseNo;*/
 
     @ApiModelProperty( name = "stoCategory", value = "店铺类型  1 普通店铺  2旗舰店  3专卖店  4直营店 主体为企业必传" )
     private Integer stoCategory;

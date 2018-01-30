@@ -454,6 +454,9 @@ public class MallFreightServiceImpl extends BaseServiceImpl< MallFreightDAO,Mall
 		    List< MallFreight > freightList = freightDAO.selectList( freightWrapper );
 		    if ( freightList != null && freightList.size() > 0 ) {
 			freight = freightList.get( 0 );
+		    } else {
+			priceMap.put( shopId.toString(), 0 );
+			continue;
 		    }
 		    if ( freight != null && toshop == 0 ) {
 			freightPrice = getFreightPrice( freight, orderPrice, proNum, weight, juli, provinceId );

@@ -206,8 +206,7 @@ public class OrderUtil {
      * @return 1 显示 0 不显示
      */
     public static int getOrderIsShowShouHuoButton( MallOrder order, boolean isNowReturn ) {
-	if ( "3".equals( order.getOrderStatus().toString() ) && !"4".equals( order.getOrderPayWay().toString() ) && !"8".equals( order.getOrderPayWay().toString() )
-			&& !isNowReturn ) {
+	if ( "3".equals( order.getOrderStatus().toString() ) && !isNowReturn ) {
 	    return 1;
 	}
 	return 0;

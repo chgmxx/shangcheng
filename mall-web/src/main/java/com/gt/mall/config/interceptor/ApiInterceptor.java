@@ -8,11 +8,13 @@ import com.gt.mall.exception.ResponseEntityException;
 import com.gt.mall.utils.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 /**
  * api拦截器
@@ -30,6 +32,8 @@ public class ApiInterceptor implements HandlerInterceptor {
 	//	logger.info( "进入拦截器" );
 	//	logger.info( ">>>ApiInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
 	logger.info( ">>>ApiInterceptor>>>  basePath = " + CommonUtil.getpath( servletRequest ) );
+	long startTime = System.currentTimeMillis();
+	servletRequest.setAttribute( "runStartTime", startTime );
 	boolean isSuccess = true;
 
 	String signKey = "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM"; // 定义到配置文件中
@@ -59,6 +63,17 @@ public class ApiInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
 
+	long startTime = (Long) request.getAttribute( "runStartTime" );
+
+	long endTime = System.currentTimeMillis();
+
+	long executeTime = endTime - startTime;
+
+	HandlerMethod handlerMethod = (HandlerMethod) handler;
+	Method method = handlerMethod.getMethod();
+	/*if ( logger.isDebugEnabled() ) {*/
+	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
+	logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
     }
 
     /**
