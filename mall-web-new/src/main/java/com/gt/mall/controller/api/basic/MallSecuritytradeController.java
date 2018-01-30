@@ -15,6 +15,7 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.basic.MallSecuritytradeQuitService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
+import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -97,14 +98,14 @@ public class MallSecuritytradeController extends BaseController {
 			//申请中的退出担保交易信息
 			Wrapper< MallSecuritytradeQuit > quitWrapper = new EntityWrapper<>();
 			quitWrapper.and( "user_id= {0}", user.getId() );
-			quitWrapper.orderBy( "id",false );
+			quitWrapper.orderBy( "id", false );
 			MallSecuritytradeQuit securitytradeQuit = mallSecuritytradeQuitService.selectOne( quitWrapper );
 			result.put( "securitytradeQuit", securitytradeQuit );
 		    }
 		}
 	    }
 	    result.put( "isSecuritytrade", isSecuritytrade );
-
+	    result.put( "openDfPayUrl", PropertiesUtil.getDfPayDomain() + "html/manage/#/wallet/index" );
 	} catch ( Exception e ) {
 	    logger.error( "是否加入担保交易异常：" + e.getMessage() );
 	    e.printStackTrace();
