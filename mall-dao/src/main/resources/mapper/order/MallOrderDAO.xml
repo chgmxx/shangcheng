@@ -104,7 +104,7 @@
         <!-- <result column="mem_phone" property="recTelephone" jdbcType="VARCHAR" />-->
         <result column="updateDay" property="updateDay" jdbcType="INTEGER"/>
         <result column="orderPNo" property="orderPNo" jdbcType="VARCHAR"/>
-       <!-- <result column="sto_name" property="shopName" jdbcType="VARCHAR"/>-->
+        <!-- <result column="sto_name" property="shopName" jdbcType="VARCHAR"/>-->
         <result column="order_old_money" property="orderOldMoney" jdbcType="DECIMAL"/>
         <result column="mem_card_type" property="memCardType" jdbcType="INTEGER"/>
         <result column="group_buy_id" property="groupBuyId" jdbcType="INTEGER"/>
@@ -843,6 +843,14 @@
         where t.id = #{orderId}
     </select>
 
+    <select id="getPayOrderById" resultMap="MoreResultMap" parameterType="java.lang.Integer">
+        select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
+        left join t_mall_order_detail d on d.order_id = t.id
+        left join t_mall_product p on p.id=d.product_id
+        where t.order_status >1
+        AND t.pay_time IS NOT NULL
+    </select>
+
     <select id="getOrderByOrderPId" resultMap="MoreResultMap" parameterType="java.lang.Integer">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
@@ -1327,27 +1335,23 @@
         <if test="orderNo != null and orderNo != ''">
             and t.order_no = #{orderNo}
         </if>
+        AND t.order_status != 1
+        AND (t.`pay_time` IS NOT NULL OR r.`update_time` IS NOT NULL)
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
-        <if test="startTime != null and startTime != ''">
-            and DATE(t.create_time) >= #{startTime}
-        </if>
-        <if test="endTime != null and endTime != ''">
-            and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND(
+            ( DATE(t.pay_time)>= #{startTime} AND DATE(t.pay_time) <![CDATA[<=]]> #{endTime} )
+            OR(DATE(r.update_time)>=#{startTime} AND DATE(r.update_time) <![CDATA[<=]]> #{endTime} AND (r.status = 1 OR r.status = 5 ))
+            )
         </if>
         <if test="status != null and status != ''">
-            <if test="status == 1 "> <!-- 成功 -->
-                and t.order_status = 4
-                and r.status is null
+            <if test="status == 1 "> <!-- 已付款 -->
+                AND t.`order_status`>1
+                AND t.`order_status`!=5
+                AND (r.status IS NULL OR (r.status != 1 AND r.status != 5 AND r.status !=-2))
             </if>
-            <if test="status == 2 "><!-- 进行中-->
-                and t.order_status in (1,2,3)
-                and r.status is null
-            </if>
-            <if test="status == 3 "><!-- 退款-->
-                and (r.status is not null and r.status != 1 and r.status != 5)
-            </if>
-            <if test="status == 4 "><!-- 关闭-->
-                and t.order_status = 5
+            <if test="status == 2 "><!-- 已退款-->
+                AND (r.status = 1 OR r.status = 5 )
             </if>
         </if>
         <if test="shoplist != null ">
@@ -1360,7 +1364,7 @@
     <select id="findByTradePage" parameterType="Map" resultType="Map">
         SELECT t.id,t.`shop_id`as shopId,t.create_time as createTime,d.`det_pro_name` as proName, d.total_price as totalPrice,t.order_no as orderNo,
         t.order_money as orderMoney, t.order_freight_money as orderFreightMoney, t.buyer_user_id as buyerUserId ,
-        t.member_name as memberName,t.order_status as orderStatus ,r.`status` AS return_status
+        t.member_name as memberName,t.order_status as orderStatus ,r.`status` AS return_status,t.`pay_time` AS payTime,r.`update_time` AS updateTime
         FROM t_mall_order t
         LEFT JOIN `t_mall_order_detail` d ON t.id=d.`order_id`
         LEFT JOIN `t_mall_order_return` r ON r.`order_detail_id`=d.id
@@ -1371,27 +1375,23 @@
         <if test="orderNo != null and orderNo != ''">
             and t.order_no = #{orderNo}
         </if>
+        AND t.order_status != 1
+        AND (t.`pay_time` IS NOT NULL OR r.`update_time` IS NOT NULL)
         AND ((t.order_pay_way = 5 AND t.order_status != 1 AND t.order_status != 5) OR (t.order_pay_way!=5 ) )
-        <if test="startTime != null and startTime != ''">
-            and DATE(t.create_time) >= #{startTime}
-        </if>
-        <if test="endTime != null and endTime != ''">
-            and DATE(t.create_time) <![CDATA[<=]]> #{endTime}
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND(
+            ( DATE(t.pay_time)>= #{startTime} AND DATE(t.pay_time) <![CDATA[<=]]> #{endTime} )
+            OR(DATE(r.update_time)>=#{startTime} AND DATE(r.update_time) <![CDATA[<=]]> #{endTime} AND (r.status = 1 OR r.status = 5 ) )
+            )
         </if>
         <if test="status != null and status != ''">
-            <if test="status == 1 "> <!-- 成功 -->
-                and t.order_status = 4
-                and r.status is null
+            <if test="status == 1 "> <!-- 已付款 -->
+                AND t.`order_status`>1
+                AND t.`order_status`!=5
+                AND (r.status IS NULL OR (r.status != 1 AND r.status != 5 AND r.status !=-2))
             </if>
-            <if test="status == 2 "><!-- 进行中-->
-                and t.order_status in (1,2,3)
-                and r.status is null
-            </if>
-            <if test="status == 3 "><!-- 退款-->
-                and (r.status is not null and r.status != 1 and r.status != 5 and r.status !=-2)
-            </if>
-            <if test="status == 4 "><!-- 关闭-->
-                and t.order_status = 5
+            <if test="status == 2 "><!-- 已退款-->
+                AND (r.status = 1 OR r.status = 5 )
             </if>
         </if>
         <if test="shoplist != null ">
@@ -1436,7 +1436,7 @@
         LEFT JOIN t_mall_order_detail d ON d.`order_id`=o.`id`
         LEFT JOIN t_mall_seller_income i ON i.`order_detail_id`=d.`id`
         WHERE d.`sale_member_id` > 0 AND i.income_type=2 AND i.is_get=-1 AND o.`order_status`=4
-        GROUP BY o.`id`
+        GROUP BY o.`id``
     </select>
     <select id="selectOrderFinishMoneyByShopId" resultType="java.lang.Double">
         SELECT IFNULL(SUM(order_money),0)
@@ -1445,6 +1445,16 @@
         AND SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)
         AND DATEDIFF(NOW(),update_time) = 7
         AND t.`shop_id`=  #{shopId}
+    </select>
+
+    <select id="selectOrderFinishList" resultMap="MoreResultMap" parameterType="java.lang.Integer">
+        select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
+        left join t_mall_order_detail d on d.order_id = t.id
+        left join t_mall_product p on p.id=d.product_id
+        WHERE t.order_status = 4
+        AND SYSDATE() >= DATE_ADD(t.update_time, INTERVAL 7 DAY)
+        AND DATEDIFF(NOW(),t.update_time) = 7
+        AND t.`shop_id`= #{shopId}
     </select>
 
     <!-- 查询未支付的订单 -->

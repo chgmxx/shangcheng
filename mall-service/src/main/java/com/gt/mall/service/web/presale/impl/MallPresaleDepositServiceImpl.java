@@ -12,6 +12,7 @@ import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dao.presale.*;
 import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.entity.basic.MallIncomeList;
 import com.gt.mall.entity.presale.*;
 import com.gt.mall.entity.store.MallStore;
 import com.gt.mall.enums.ResponseEnums;
@@ -23,6 +24,7 @@ import com.gt.mall.service.inter.wxshop.PayOrderService;
 import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
+import com.gt.mall.service.web.basic.MallIncomeListService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
@@ -87,6 +89,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     private PayService             payService;
     @Autowired
     private MallCountIncomeService mallCountIncomeService;
+    @Autowired
+    private MallIncomeListService  mallIncomeListService;
 
     /**
      * 通过店铺id来查询拍定金
@@ -146,6 +150,23 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    dep.setPayTime( new Date() );
 	    num = mallPresaleDepositDAO.updateById( dep );
 	    if ( num > 0 ) {
+		Member member = memberService.findMemberById( deposit.getUserId(), null );
+		//添加交易记录
+		MallIncomeList incomeList = new MallIncomeList();
+		incomeList.setBusId( member.getBusid() );
+		incomeList.setIncomeType( 1 );
+		incomeList.setIncomeCategory( 1 );
+		incomeList.setIncomeMoney( deposit.getDepositMoney() );
+		incomeList.setShopId( deposit.getShopId() );
+		incomeList.setBuyerId( deposit.getUserId() );
+		incomeList.setBuyerName( member.getNickname() );
+		incomeList.setTradeId( deposit.getId() );
+		incomeList.setTradeType( 3 );
+		incomeList.setProName( deposit.getProName() );
+		incomeList.setProNo( deposit.getDepositNo() );
+		incomeList.setCreateTime( new Date() );
+		mallIncomeListService.insert( incomeList );
+
 		//支付成功，添加当天营业额记录
 		mallCountIncomeService.saveTurnover( deposit.getShopId(), deposit.getDepositMoney(), null );
 
@@ -158,7 +179,6 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		if ( CommonUtil.isNotEmpty( presaleRank ) ) {
 		    ranks = presaleRank.getRank() + 1;
 		}
-		Member member = memberService.findMemberById( deposit.getUserId(), null );
 		int busUserId = 0;//商家id
 		if ( CommonUtil.isNotEmpty( member ) ) {
 		    busUserId = member.getBusid();
@@ -416,7 +436,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 		result.put( "id", deposit.getId() );
 		result.put( "no", deposit.getDepositNo() );
 		result.put( "payWay", deposit.getPayWay() );
-		if ( deposit.getPayWay() == 1 || deposit.getPayWay() == 3  || deposit.getPayWay() == 4 ) {
+		if ( deposit.getPayWay() == 1 || deposit.getPayWay() == 3 || deposit.getPayWay() == 4 ) {
 		    MallPresale presale = mallPresaleDAO.selectById( deposit.getPresaleId() );
 		    deposit.setShopId( presale.getShopId() );
 		    String url = getWxAlipay( deposit, member );
@@ -678,6 +698,25 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	int num = mallPresaleDepositDAO.updateById( deposit );
 
 	if ( num > 0 ) {
+	    String depNo = CommonUtil.toString( map.get( "deposit_no" ) );
+	    MallPresaleDeposit deposit1 = mallPresaleDepositDAO.selectByPreNo( depNo );
+	    Member member = memberService.findMemberById( deposit1.getUserId(), null );
+	    //添加交易记录
+	    MallIncomeList incomeList = new MallIncomeList();
+	    incomeList.setBusId( member.getBusid() );
+	    incomeList.setIncomeType( 2 );
+	    incomeList.setIncomeCategory( 1 );
+	    incomeList.setIncomeMoney( deposit1.getDepositMoney() );
+	    incomeList.setShopId( deposit1.getShopId() );
+	    incomeList.setBuyerId( deposit1.getUserId() );
+	    incomeList.setBuyerName( member.getNickname() );
+	    incomeList.setTradeId( deposit1.getId() );
+	    incomeList.setTradeType( 3 );
+	    incomeList.setProName( deposit1.getProName() );
+	    incomeList.setProNo( deposit1.getDepositNo() );
+	    incomeList.setCreateTime( new Date() );
+	    mallIncomeListService.insert( incomeList );
+
 	    //退款成功，添加当天营业额记录
 	    mallCountIncomeService.saveTurnover( CommonUtil.toInteger( map.get( "shop_id" ) ), null, CommonUtil.toBigDecimal( map.get( "deposit_money" ) ) );
 	    //储值卡添加退款记录

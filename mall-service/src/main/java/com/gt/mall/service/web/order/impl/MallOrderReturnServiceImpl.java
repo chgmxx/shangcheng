@@ -11,6 +11,7 @@ import com.gt.mall.dao.order.MallOrderDetailDAO;
 import com.gt.mall.dao.order.MallOrderReturnDAO;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.entity.basic.MallIncomeList;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
@@ -30,6 +31,7 @@ import com.gt.mall.service.inter.wxshop.PayService;
 import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
+import com.gt.mall.service.web.basic.MallIncomeListService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderReturnLogService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
@@ -96,6 +98,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private MallBusMessageMemberService mallBusMessageMemberService;
     @Autowired
     private MallCountIncomeService      mallCountIncomeService;
+    @Autowired
+    private MallIncomeListService       mallIncomeListService;
 
     /**
      * 申请订单退款
@@ -362,6 +366,26 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	//退款成功修改商品的库存和销量
 	updateInvenNum( detailMap );
 
+	String orderNo = CommonUtil.toString( detailMap.get( "orderNo" ) );
+	MallOrder order = mallOrderDAO.selectOrderByOrderNo( orderNo );
+	List< MallOrderDetail > orderDetails = mallOrderDetailDAO.selectByOrderId( order.getId() );
+	//添加交易记录
+	MallIncomeList incomeList = new MallIncomeList();
+	incomeList.setBusId( order.getBusUserId() );
+	incomeList.setIncomeType( 2 );
+	incomeList.setIncomeCategory( 1 );
+	incomeList.setIncomeMoney( order.getOrderMoney() );
+	incomeList.setShopId( order.getShopId() );
+	incomeList.setBuyerId( order.getBuyerUserId() );
+	incomeList.setBuyerName( order.getMemberName() );
+	incomeList.setTradeId( detailId );
+	incomeList.setTradeType( 2 );
+	if ( orderDetails.size() > 0 ) {
+	    incomeList.setProName( orderDetails.get( 0 ).getDetProName() );
+	}
+	incomeList.setProNo( orderNo );
+	incomeList.setCreateTime( new Date() );
+	mallIncomeListService.insert( incomeList );
 	//退款成功，添加当天营业额记录
 	mallCountIncomeService.saveTurnover( CommonUtil.toInteger( detailMap.get( "shopId" ) ), null, CommonUtil.toBigDecimal( detailMap.get( "orderMoney" ) ) );
 

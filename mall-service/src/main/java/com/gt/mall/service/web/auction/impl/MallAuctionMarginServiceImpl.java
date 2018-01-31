@@ -12,6 +12,7 @@ import com.gt.mall.dao.auction.MallAuctionMarginDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.auction.MallAuctionMargin;
+import com.gt.mall.entity.basic.MallIncomeList;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
 import com.gt.mall.param.phone.auction.PhoneAddAuctionMarginDTO;
@@ -22,6 +23,7 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.inter.wxshop.WxShopService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
+import com.gt.mall.service.web.basic.MallIncomeListService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
@@ -65,6 +67,8 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
     private PayService             payService;
     @Autowired
     private MallCountIncomeService mallCountIncomeService;
+    @Autowired
+    private MallIncomeListService  mallIncomeListService;
 
     @Override
     public PageUtil selectMarginByShopId( Map< String,Object > params, int userId ) throws Exception {
@@ -163,6 +167,23 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    aucMargin.setPayTime( new Date() );
 	    num = auctionMarginDAO.updateById( aucMargin );
 	    if ( num > 0 ) {
+		Member member = memberService.findMemberById( margin.getUserId(), null );
+		//添加交易记录
+		MallIncomeList incomeList = new MallIncomeList();
+		incomeList.setBusId( member.getBusid() );
+		incomeList.setIncomeType( 1 );
+		incomeList.setIncomeCategory( 1 );
+		incomeList.setIncomeMoney( margin.getMarginMoney() );
+		incomeList.setShopId( margin.getShopId() );
+		incomeList.setBuyerId( margin.getUserId() );
+		incomeList.setBuyerName( member.getNickname() );
+		incomeList.setTradeId( margin.getId() );
+		incomeList.setTradeType( 4 );
+		incomeList.setProName( margin.getProName() );
+		incomeList.setProNo( margin.getAucNo() );
+		incomeList.setCreateTime( new Date() );
+		mallIncomeListService.insert( incomeList );
+
 		//支付成功，添加当天营业额记录
 		mallCountIncomeService.saveTurnover( margin.getShopId(), margin.getMarginMoney(), null );
 	    }
@@ -471,6 +492,24 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	margin.setReturnTime( new Date() );
 	int num = auctionMarginDAO.updateById( margin );
 	if ( num > 0 ) {
+	    String aucNo = CommonUtil.toString( map.get( "auc_no" ) );
+	    MallAuctionMargin margin1 = auctionMarginDAO.selectByAucNo( aucNo );
+	    Member member = memberService.findMemberById( margin1.getUserId(), null );
+	    //添加交易记录
+	    MallIncomeList incomeList = new MallIncomeList();
+	    incomeList.setBusId( member.getBusid() );
+	    incomeList.setIncomeType( 2 );
+	    incomeList.setIncomeCategory( 1 );
+	    incomeList.setIncomeMoney( margin1.getMarginMoney() );
+	    incomeList.setShopId( margin1.getShopId() );
+	    incomeList.setBuyerId( margin1.getUserId() );
+	    incomeList.setBuyerName( member.getNickname() );
+	    incomeList.setTradeId( margin1.getId() );
+	    incomeList.setTradeType( 4 );
+	    incomeList.setProName( margin1.getProName() );
+	    incomeList.setProNo( margin1.getAucNo() );
+	    incomeList.setCreateTime( new Date() );
+	    mallIncomeListService.insert( incomeList );
 	    //退款成功，添加当天营业额记录
 	    mallCountIncomeService.saveTurnover( CommonUtil.toInteger( map.get( "shop_id" ) ), null, CommonUtil.toBigDecimal( map.get( "margin_money" ) ) );
 	}
