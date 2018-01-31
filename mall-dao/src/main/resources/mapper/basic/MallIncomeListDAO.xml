@@ -30,6 +30,9 @@
         select count(*)
         FROM t_mall_income_list t
         WHERE  1=1
+        <if test="incomeCategory != null and incomeCategory != ''">
+            and t.income_category = #{incomeCategory}
+        </if>
         <if test="userId != null and userId != ''">
             and t.bus_id = #{userId}
         </if>
@@ -56,6 +59,9 @@
         select  id, income_type AS incomeType, income_category AS incomeCategory, income_money AS incomeMoney, bus_id AS busId, shop_id AS shopId, create_time AS createTime,                 pro_name AS proName, pro_no AS proNo, buyer_id AS buyerId, buyer_name AS buyerName, trade_id AS tradeId, trade_type AS tradeType
         FROM t_mall_income_list t
         WHERE  1=1
+        <if test="incomeCategory != null and incomeCategory != ''">
+            and t.income_category = #{incomeCategory}
+        </if>
         <if test="userId != null and userId != ''">
             and t.bus_id = #{userId}
         </if>

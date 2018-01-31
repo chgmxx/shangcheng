@@ -325,7 +325,9 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    incomeList.setBuyerName( order.getMemberName() );
 			    incomeList.setTradeId( order.getId() );
 			    incomeList.setTradeType( 1 );
-			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			    if ( order.getMallOrderDetail().size()>0 ) {
+				incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			    }
 			    incomeList.setProNo( order.getOrderNo() );
 			    incomeList.setCreateTime( new Date() );
 			    mallIncomeListService.insert( incomeList );

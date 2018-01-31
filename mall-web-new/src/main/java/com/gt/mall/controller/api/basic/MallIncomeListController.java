@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,11 +83,10 @@ public class MallIncomeListController extends BaseController {
     private MallProductService        mallProductService;
 
     @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
-    @ApiImplicitParams( { @ApiImplicitParam( name = "type", value = "生成数据", paramType = "query", required = true, dataType = "int" ) } )
+    @ApiImplicitParams( { @ApiImplicitParam( name = "type", value = "生成数据 1订单 2退款 3预售定金 4拍卖保证金", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "/test", method = RequestMethod.POST )
     public ServerResponse test( HttpServletRequest request, HttpServletResponse response, Integer type ) {
-	Map< String,Object > result = new HashMap<>();
 	try {
 	    if ( type == 1 ) {
 		List< MallOrder > orderList = mallOrderDAO.getPayOrderById();
@@ -111,6 +111,36 @@ public class MallIncomeListController extends BaseController {
 			mallIncomeListService.insert( incomeList );
 		    }
 		}
+	    } else if ( type == 11 ) {
+		Wrapper wrapper = new EntityWrapper();
+		wrapper.where( "order_status = 4 AND SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY) " );
+		List< MallOrder > orderList = mallOrderDAO.selectList( wrapper );
+		if ( orderList != null && orderList.size() > 0 ) {
+		    for ( MallOrder order1 : orderList ) {
+			MallOrder order = mallOrderDAO.getOrderById( order1.getId() );
+			//添加交易记录
+			MallIncomeList incomeList = new MallIncomeList();
+			incomeList.setBusId( order.getBusUserId() );
+			incomeList.setIncomeType( 1 );
+			incomeList.setIncomeCategory( 2 );
+			incomeList.setIncomeMoney( order.getOrderMoney() );
+			incomeList.setShopId( order.getShopId() );
+			incomeList.setBuyerId( order.getBuyerUserId() );
+			incomeList.setBuyerName( order.getMemberName() );
+			incomeList.setTradeId( order.getId() );
+			incomeList.setTradeType( 1 );
+			if ( order.getMallOrderDetail().size() > 0 ) {
+			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			}
+			incomeList.setProNo( order.getOrderNo() );
+//			Calendar cal = Calendar.getInstance();
+//			cal.add( Calendar.DATE, 7 );
+			//			String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+			incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(),7 ) );
+			mallIncomeListService.insert( incomeList );
+		    }
+		}
+
 	    } else if ( type == 2 ) {
 		Wrapper groupWrapper = new EntityWrapper();
 		groupWrapper.where( "(status=1 OR status=5)" );
@@ -163,18 +193,8 @@ public class MallIncomeListController extends BaseController {
 			incomeList.setCreateTime( margin.getPayTime() );
 			mallIncomeListService.insert( incomeList );
 			if ( margin.getMarginStatus() == -1 && margin.getReturnTime() != null ) {
-			    incomeList = new MallIncomeList();
-			    incomeList.setBusId( product == null ? null : product.getUserId() );
+			    incomeList.setId( null );
 			    incomeList.setIncomeType( 2 );
-			    incomeList.setIncomeCategory( 1 );
-			    incomeList.setIncomeMoney( margin.getMarginMoney() );
-			    incomeList.setShopId( product == null ? null : product.getShopId() );
-			    incomeList.setBuyerId( margin.getUserId() );
-			    incomeList.setBuyerName( member == null ? null : member.getNickname() );
-			    incomeList.setTradeId( margin.getId() );
-			    incomeList.setTradeType( 4 );
-			    incomeList.setProName( margin.getProName() );
-			    incomeList.setProNo( margin.getAucNo() );
 			    incomeList.setCreateTime( margin.getReturnTime() );
 			    mallIncomeListService.insert( incomeList );
 			}
@@ -205,18 +225,8 @@ public class MallIncomeListController extends BaseController {
 			mallIncomeListService.insert( incomeList );
 
 			if ( deposit.getDepositStatus() == -1 && deposit.getReturnTime() != null ) {
-			    incomeList = new MallIncomeList();
-			    incomeList.setBusId( product == null ? null : product.getUserId() );
+			    incomeList.setId( null );
 			    incomeList.setIncomeType( 2 );
-			    incomeList.setIncomeCategory( 1 );
-			    incomeList.setIncomeMoney( deposit.getDepositMoney() );
-			    incomeList.setShopId( product == null ? null : product.getShopId() );
-			    incomeList.setBuyerId( deposit.getUserId() );
-			    incomeList.setBuyerName( member == null ? null : member.getNickname() );
-			    incomeList.setTradeId( deposit.getId() );
-			    incomeList.setTradeType( 3 );
-			    incomeList.setProName( deposit.getProName() );
-			    incomeList.setProNo( deposit.getDepositNo() );
 			    incomeList.setCreateTime( deposit.getReturnTime() );
 			    mallIncomeListService.insert( incomeList );
 			}
@@ -228,7 +238,7 @@ public class MallIncomeListController extends BaseController {
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "生成交易记录数据异常" );
 	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+	return ServerResponse.createBySuccess();
     }
 
     @ApiOperation( value = "交易记录列表(分页)", notes = "交易记录列表(分页)" )
@@ -252,7 +262,7 @@ public class MallIncomeListController extends BaseController {
 	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
-
+	    params.put( "incomeCategory", "1" );
 	    PageUtil page = mallIncomeListService.findByTradePage( params );
 	    result.put( "page", page );
 
@@ -287,6 +297,7 @@ public class MallIncomeListController extends BaseController {
 	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
+	    params.put( "incomeCategory", "1" );
 	    String[] titles = new String[] { "时间", "订单编号", "商品名称", "买方", "支付金额", "状态" };
 	    workbook = mallIncomeListService.exportTradeExcel( params, titles, 1, shoplist );
 
