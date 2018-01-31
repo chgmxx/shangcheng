@@ -61,7 +61,10 @@
     <!-- 统计预售 -->
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(p.id)
-        from t_mall_presale p where p.is_delete = 0
+        from t_mall_presale p
+        left join t_mall_product t on t.id= p.product_id and t.is_delete=0
+        where p.is_delete = 0
+        AND t.is_delete=0
         <if test="type == -2"><!-- 已失效的预售 -->
             and g.is_use = -1
         </if>
@@ -91,6 +94,7 @@
         from t_mall_presale g
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         where g.is_delete = 0
+        AND p.is_delete=0
         <if test="type == -2"><!-- 已失效的预售 -->
             and g.is_use = -1
         </if>
