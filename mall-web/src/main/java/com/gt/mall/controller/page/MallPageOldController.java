@@ -293,18 +293,8 @@ public class MallPageOldController extends AuthorizeOrLoginController {
 	try {
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    Integer stoId = Integer.valueOf( params.get( "stoId" ).toString() );
-	    PageUtil page = mallPageService.selectListBranch( stoId, params );
+	    PageUtil page = mallPageService.selectListBranch( stoId, params ,user);
 	    resultMap.put( "page", page );
-	   /* String ym = PropertiesUtil.getHomeUrl();//域名
-	     resultMap.put( "ym", ym );*/
-	    int pageindex = 0;
-	    if ( CommonUtil.isNotEmpty( page ) ) {
-		pageindex = page.getCurPage();
-	    }
-	    if ( pageindex == 1 ) {
-		List< Map< String,Object > > typeList = mallPageService.typePage( stoId, user );
-		resultMap.put( "typeList", typeList );
-	    }
 	    resultMap.put( "shopId", stoId );
 	} catch ( Exception e ) {
 	    logger.error( "商城店铺分类弹出框异常：" + e.getMessage() );

@@ -105,7 +105,7 @@ public interface MallPageService extends BaseService< MallPage > {
      *
      * @return 分页信息
      */
-    public PageUtil selectListBranch( Integer stoId, Map< String,Object > params );
+    public PageUtil selectListBranch( Integer stoId, Map< String,Object > params, BusUser user);
 
     /**
      * 根据商品id获取商品信息

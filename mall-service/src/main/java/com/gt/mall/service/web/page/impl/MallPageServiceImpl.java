@@ -411,7 +411,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     }
 
     @Override
-    public PageUtil selectListBranch( Integer stoId, Map< String,Object > params ) {
+    public PageUtil selectListBranch( Integer stoId, Map< String,Object > params, BusUser user ) {
 	params.put( "shopId", stoId );
 	int pageSize = 10;
 
@@ -427,8 +427,13 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	List< Map< String,Object > > productList = mallPageDAO.selectByShopId( params );
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( Map< String,Object > map : productList ) {
-
 		map.put( "selecttype", 2 );
+	    }
+	}
+	if ( curPage == 1 ) {
+	    List< Map< String,Object > > typeList = typePage( stoId, user );
+	    if ( typeList != null && typeList.size() > 0 ) {
+		productList.addAll( typeList );
 	    }
 	}
 
@@ -1715,7 +1720,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
     public void mergeShoppCart( Member member, HttpServletRequest request, HttpServletResponse response ) {
 	//1.得到所有cookie中的商品
 	//2.遍历，查询该商品在会员购物车中是否存在，  存在则修改数据(数量+1)，并删除cookie商品 ，不存在则新增
- 	String shoppCartIds = CookieUtil.findCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
+	String shoppCartIds = CookieUtil.findCookieByName( request, CookieUtil.SHOP_CART_COOKIE_KEY );
 	if ( shoppCartIds == null || "".equals( shoppCartIds ) ) {
 	    return;
 	}
@@ -1728,14 +1733,14 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 	StringBuilder id = new StringBuilder();//购物车id
 	if ( list != null && list.size() > 0 ) {
 	    mallShopCartDAO.updateShopCarts( member.getId(), member.getBusid(), shoppCartIds.split( "," ) );
-//	    List< Integer > ids = new ArrayList<>();
+	    //	    List< Integer > ids = new ArrayList<>();
 	    String deletes = "";
 	    for ( Map< String,Object > map : list ) {
 		int product_num = CommonUtil.toInteger( map.get( "product_num" ) );
 		wrapper = new EntityWrapper<>();
 		wrapper.setSqlSelect( "id,product_num,user_id" );
 		wrapper.where( "product_id = {0} AND shop_id={1} AND product_specificas= {2} AND user_id={3} and id != {4}", map.get( "product_id" ), map.get( "shop_id" ),
-				map.get( "product_specificas" ), member.getId() ,map.get( "id" ));
+				map.get( "product_specificas" ), member.getId(), map.get( "id" ) );
 		List< Map< String,Object > > countList = mallShopCartDAO.selectMaps( wrapper );
 		if ( countList.size() > 0 ) {
 		    int num = CommonUtil.toInteger( countList.get( 0 ).get( "product_num" ) ) + product_num;
@@ -1744,7 +1749,6 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		    cart.setId( CommonUtil.toInteger( countList.get( 0 ).get( "id" ) ) );
 		    cart.setProductNum( num );
 		    mallShopCartDAO.updateByShopCart( cart );
-
 
 		    //记录id，删除多余记录
 		    if ( "".equals( deletes ) ) {

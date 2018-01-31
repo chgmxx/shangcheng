@@ -45,24 +45,24 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	if ( CommonUtil.isEmpty( member ) ) {
 	    if ( request.getServerName().contains( "192.168.2" ) ) {
 		member = new Member();
-		//		//	    member.setId( 366 );//销售员测试
+		//					    member.setId( 366 );//销售员测试
 		//		//	    	    	    member.setId( 1225509 );
-		//				member.setId( 1225352 );//折扣卡
-//		member.setId( 1225542 );//储值卡
-//		member.setBusid( 42 );
-//		member.setPublicId( 482 );
+		member.setId( 1225352 );//折扣卡
+		//		member.setId( 1225542 );//储值卡
+		member.setBusid( 42 );
+		member.setPublicId( 482 );
 		//		//				member.setPhone( "15017934717" );
 		//		//测试环境用户
-		////		member.setId( 1225749 );//月华
-				member.setId( 1225326 );//me
-				member.setBusid( 36 );
-				member.setPublicId( 494 );
+		//				member.setId( 1225749 );//月华
+		//				member.setId( 1225326 );//me
+		//				member.setBusid( 36 );
+		//				member.setPublicId( 494 );
 		//
 		member.setNickname( "杨倩" );
 		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );
 		//		member.setOldid( "1225352,1225358,1225449" );
 		MallSessionUtils.setLoginMember( request, member );
-//		MallSessionUtils.setLoginMember( request, null );
+		//		MallSessionUtils.setLoginMember( request, null );
 	    } else {
 		String returnStr = userLogin( request, response, params );
 		if ( CommonUtil.isNotEmpty( returnStr ) ) {
@@ -88,7 +88,7 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 	Method method = handlerMethod.getMethod();
 	/*if ( logger.isDebugEnabled() ) {*/
 	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
-	logger.error( "访问的执行时间 : " + executeTime + "ms----页面："+ CommonUtil.getpath( request ) );
+	logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
     }
 
     private Map< String,Object > getParameterMap( HttpServletRequest request ) {
