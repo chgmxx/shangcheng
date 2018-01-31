@@ -874,6 +874,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		successBo.setUserJifen( 1 );
 		successBo.setJifenNum( CommonUtil.toIntegerByDouble( jifenNum ) );
 	    }
+	    if(orderPayWay == 4 || orderPayWay == 8){
+		successBo.setTotalMoney( 0d );////应付金额
+		successBo.setDiscountMoney( 0d );//优惠金额
+		successBo.setDiscountAfterMoney( 0d);//优惠后金额
+	    }
 	    PayTypeBo payTypeBo = new PayTypeBo();
 	    int isWallet = 0;
 	    if ( CommonUtil.isNotEmpty( mallOrder.getIsWallet() ) ) {
