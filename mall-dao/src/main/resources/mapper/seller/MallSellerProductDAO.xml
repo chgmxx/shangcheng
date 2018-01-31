@@ -64,7 +64,7 @@
         </if>
         <if test="findIds != null">
             and a.id in
-            <foreach collection="findIds" index="index" item="item" open="(" separator="or" close=")">
+            <foreach collection="findIds" index="index" item="item" open="(" separator="," close=")">
                 #{item,jdbcType=INTEGER}
             </foreach>
         </if>

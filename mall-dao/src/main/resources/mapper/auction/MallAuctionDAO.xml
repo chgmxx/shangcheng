@@ -83,7 +83,10 @@
     </sql>
     <select id="selectByCount" resultType="java.lang.Integer">
         select count(g.id)
-        from t_mall_auction g where g.is_delete = 0
+        from t_mall_auction g
+        left join t_mall_product p on p.id= g.product_id and p.is_delete=0
+        where g.is_delete = 0
+        and p.is_delete=0
         <if test="type == -2"><!-- 已失效的拍卖 -->
             and g.is_use = -1
         </if>
@@ -116,6 +119,7 @@
         from t_mall_auction g
         left join t_mall_product p on p.id= g.product_id and p.is_delete=0
         where g.is_delete = 0
+        and p.is_delete=0
         <if test="type == -2"><!-- 已失效的拍卖 -->
             and g.is_use = -1
         </if>

@@ -17,6 +17,7 @@ import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.*;
 import com.gt.mall.dao.product.MallProductDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
+import com.gt.mall.entity.basic.MallIncomeList;
 import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.basic.MallTakeTheir;
 import com.gt.mall.entity.freight.MallFreight;
@@ -42,10 +43,7 @@ import com.gt.mall.service.inter.user.MemberAddressService;
 import com.gt.mall.service.inter.user.SocketService;
 import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
-import com.gt.mall.service.web.basic.MallBusMessageMemberService;
-import com.gt.mall.service.web.basic.MallCountIncomeService;
-import com.gt.mall.service.web.basic.MallPaySetService;
-import com.gt.mall.service.web.basic.MallTakeTheirService;
+import com.gt.mall.service.web.basic.*;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallDaifuService;
 import com.gt.mall.service.web.order.MallOrderReturnLogService;
@@ -213,6 +211,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallBusMessageMemberService mallBusMessageMemberService;
     @Autowired
     private MallCountIncomeService      mallCountIncomeService;
+    @Autowired
+    private MallIncomeListService       mallIncomeListService;
 
     @Override
     public Integer count( Map< String,Object > params ) {
@@ -461,14 +461,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {
 			returnStatus = CommonUtil.toInteger( order.get( "return_status" ) );
 		    }
-		    if ( returnStatus == null && ( orderStatus == 1 || orderStatus == 2 || orderStatus == 3 ) ) {
+		    if ( returnStatus != null && ( returnStatus == 1 || returnStatus == 5 ) ) {
 			order.put( "status", "2" );
-		    } else if ( returnStatus != null && returnStatus != 1 && returnStatus != 5 ) {
-			order.put( "status", "3" );
-		    } else if ( orderStatus == 4 ) {
+		    } else {
 			order.put( "status", "1" );
-		    } else if ( orderStatus == 5 ) {
-			order.put( "status", "4" );
 		    }
 		}
 	    }
@@ -585,9 +581,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     @Override
     public OrderResult selectOrderList( Integer orderId, List< Map< String,Object > > shoplist ) {
-
+	OrderResult result = null;
 	MallOrder order = mallOrderDAO.getOrderById( orderId );
-	OrderResult result = converterOrder( order, shoplist );
+	if ( order != null ) {
+	    result = converterOrder( order, shoplist );
+	}
 	return result;
     }
 
@@ -614,6 +612,24 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		updateStatusStock( mallOrder, params, member, pbUser );
 		mallOrderList.add( mallOrder );
 	    }
+	    List< MallOrderDetail > orderDetails = mallOrderDetailDAO.selectByOrderId( order.getId() );
+	    //添加交易记录
+	    MallIncomeList incomeList = new MallIncomeList();
+	    incomeList.setBusId( order.getBusUserId() );
+	    incomeList.setIncomeType( 1 );
+	    incomeList.setIncomeCategory( 1 );
+	    incomeList.setIncomeMoney( order.getOrderMoney() );
+	    incomeList.setShopId( order.getShopId() );
+	    incomeList.setBuyerId( order.getBuyerUserId() );
+	    incomeList.setBuyerName( order.getMemberName() );
+	    incomeList.setTradeId( order.getId() );
+	    incomeList.setTradeType( 1 );
+	    if ( orderDetails.size() > 0 ) {
+		incomeList.setProName( orderDetails.get( 0 ).getDetProName() );
+	    }
+	    incomeList.setProNo( orderNo );
+	    incomeList.setCreateTime( new Date() );
+	    mallIncomeListService.insert( incomeList );
 	    //退款成功，添加当天营业额记录
 	    mallCountIncomeService.saveTurnover( order.getShopId(), order.getOrderMoney(), null );
 
@@ -857,6 +873,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    if ( isJifen ) {
 		successBo.setUserJifen( 1 );
 		successBo.setJifenNum( CommonUtil.toIntegerByDouble( jifenNum ) );
+	    }
+	    if(orderPayWay == 4 || orderPayWay == 8){
+		successBo.setTotalMoney( 0d );////应付金额
+		successBo.setDiscountMoney( 0d );//优惠金额
+		successBo.setDiscountAfterMoney( 0d);//优惠后金额
 	    }
 	    PayTypeBo payTypeBo = new PayTypeBo();
 	    int isWallet = 0;
@@ -1324,7 +1345,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    if ( !CommonUtil.isEmpty( oObj ) ) {
 			Map< String,Object > payMap = com.alibaba.fastjson.JSONObject.parseObject( oObj.toString() );
 			MallOrderReturn oReturn = mallOrderReturnDAO.selectById( CommonUtil.toInteger( payMap.get( "returnId" ) ) );
-			MallOrder order = mallOrderDAO.selectById( oReturn.getOrderId() );
+			MallOrder order = mallOrderDAO.getOrderById( oReturn.getOrderId() );
 
 			boolean flags = true;
 
@@ -1679,6 +1700,24 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private void updateReturnStatus( WxPublicUsers pUser, MallOrderReturn oReturn, MallOrderReturn orderReturn, MallOrder order ) throws Exception {
 	//退款成功修改商品的库存和销量
 	updateInvenNum( orderReturn, oReturn, order, null );
+	//添加交易记录
+	MallIncomeList incomeList = new MallIncomeList();
+	incomeList.setBusId( order.getBusUserId() );
+	incomeList.setIncomeType( 2 );
+	incomeList.setIncomeCategory( 1 );
+	incomeList.setIncomeMoney( order.getOrderMoney() );
+	incomeList.setShopId( order.getShopId() );
+	incomeList.setBuyerId( order.getBuyerUserId() );
+	incomeList.setBuyerName( order.getMemberName() );
+	incomeList.setTradeType( 2 );
+	if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
+	    incomeList.setTradeId( order.getMallOrderDetail().get( 0 ).getId() );
+	    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+	}
+	incomeList.setProNo( order.getOrderNo() );
+	incomeList.setCreateTime( new Date() );
+	mallIncomeListService.insert( incomeList );
+
 	//退款成功，添加当天营业额记录
 	mallCountIncomeService.saveTurnover( order.getShopId(), null, oReturn.getRetMoney() );
     }
@@ -2477,16 +2516,20 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {
 	    returnStatus = CommonUtil.toInteger( order.get( "return_status" ) );
 	}
-	if ( returnStatus == null && ( orderStatus == 1 || orderStatus == 2 || orderStatus == 3 ) ) {
-	    state = "进行中";
-	} else if ( orderStatus == 4 ) {
-	    state = "完成";
-	} else if ( orderStatus == 5 || returnStatus == 1 || returnStatus == 5 ) {
-	    state = "关闭";
-	} else if ( returnStatus != null && returnStatus != 1 && returnStatus != 5 ) {
-	    state = "退款";
+	String date = "";
+	if ( returnStatus != null && ( returnStatus == 1 || returnStatus == 5 ) ) {
+	    state = "已退款";
+	    if ( CommonUtil.isNotEmpty( order.get( "updateTime" ) ) ) {
+		Date date1 = DateTimeKit.parseDate( order.get( "updateTime" ).toString(), "yyyy/MM/dd HH:mm" );
+		date = DateTimeKit.format( date1, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	    }
+	} else {
+	    state = "已支付";
+	    if ( CommonUtil.isNotEmpty( order.get( "payTime" ) ) ) {
+		Date date1 = DateTimeKit.parseDate( order.get( "payTime" ).toString(), "yyyy/MM/dd HH:mm" );
+		date = DateTimeKit.format( date1, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	    }
 	}
-
 	/*int start = i;*/
 	String name = "";
 	String price = "";
@@ -2496,10 +2539,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( CommonUtil.isNotEmpty( order.get( "orderMoney" ) ) ) {
 	    price = order.get( "orderMoney" ).toString();
 	}
-	Date date = DateTimeKit.parseDate( order.get( "createTime" ).toString(), "yyyy/MM/dd HH:mm" );
-	String createTime = DateTimeKit.format( date, DateTimeKit.DEFAULT_DATETIME_FORMAT );
+	/*Date date = DateTimeKit.parseDate( order.get( "createTime" ).toString(), "yyyy/MM/dd HH:mm" );
+	String createTime = DateTimeKit.format( date, DateTimeKit.DEFAULT_DATETIME_FORMAT );*/
 	HSSFRow row = sheet.createRow( i );
-	createCell( row, 0, createTime, valueStyle );
+	createCell( row, 0, date, valueStyle );
 	createCell( row, 1, order.get( "orderNo" ).toString(), valueStyle );
 	createCell( row, 2, name, valueStyle );
 	createCell( row, 3, CommonUtil.blob2String( order.get( "memberName" ) ), valueStyle );
