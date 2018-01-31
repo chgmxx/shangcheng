@@ -10,6 +10,7 @@ import com.gt.mall.dao.groupbuy.MallGroupJoinDAO;
 import com.gt.mall.dao.order.MallOrderDAO;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.order.MallOrder;
+import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
@@ -18,10 +19,7 @@ import com.gt.mall.result.order.OrderResult;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
-import com.gt.mall.service.web.order.MallDaifuService;
-import com.gt.mall.service.web.order.MallOrderReturnLogService;
-import com.gt.mall.service.web.order.MallOrderReturnService;
-import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.*;
 import io.swagger.annotations.*;
@@ -77,6 +75,8 @@ public class MallOrderNewController extends BaseController {
     private MallOrderReturnLogService mallOrderReturnLogService;
     @Autowired
     private MallGroupJoinDAO          mallGroupJoinDAO;
+    @Autowired
+    private MallOrderDetailService    mallOrderDetailService;
 
     @ApiOperation( value = "订单列表(分页)", notes = "订单列表(分页)" )
     @ResponseBody
@@ -128,7 +128,12 @@ public class MallOrderNewController extends BaseController {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "orderId", id );
 	    result = mallOrderService.selectOrderList( id, shoplist );
-
+	    if ( result == null ) {
+		MallOrderDetail detail = mallOrderDetailService.selectById( id );
+		if ( detail != null ) {
+		    result = mallOrderService.selectOrderList( detail.getOrderId(), shoplist );
+		}
+	    }
 	} catch ( Exception e ) {
 	    logger.error( "查看订单详情异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -355,7 +360,7 @@ public class MallOrderNewController extends BaseController {
     }
 
     /****************************交易记录********************************/
-
+/*
     @ApiOperation( value = "交易记录列表(分页)", notes = "交易记录列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
@@ -389,9 +394,9 @@ public class MallOrderNewController extends BaseController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
-    /**
+    *//**
      * 导出交易记录订单
-     */
+     *//*
     @ApiOperation( value = "导出交易记录订单", notes = "导出交易记录订单" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
 		    @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
@@ -412,7 +417,7 @@ public class MallOrderNewController extends BaseController {
 	    params.put( "userId", user.getId() );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
-	    String[] titles = new String[] { "时间", "订单编号", "商品名称", "买方", "支付金额", "状态" };
+	    String[] titles = new String[] { "支付/退款时间", "订单编号", "商品名称", "买方", "支付金额", "状态" };
 	    workbook = mallOrderService.exportTradeExcel( params, titles, 1, shoplist );
 
 	    String filename = "交易记录" + DateTimeKit.getDateIsLink() + ".xls";//设置下载时客户端Excel的名称
@@ -447,6 +452,6 @@ public class MallOrderNewController extends BaseController {
 		e.printStackTrace();
 	    }
 	}
-    }
+    }*/
 
 }

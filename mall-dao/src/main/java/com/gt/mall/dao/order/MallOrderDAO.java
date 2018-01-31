@@ -59,6 +59,13 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
     MallOrder getOrderById( Integer orderId );
 
     /**
+     * 查询已付款订单信息
+     *
+     * @return 订单信息
+     */
+    List< MallOrder > getPayOrderById();
+
+    /**
      * 根据父类id查询订单信息
      *
      * @param orderId 订单id
@@ -251,6 +258,15 @@ public interface MallOrderDAO extends BaseMapper< MallOrder > {
      * @return
      */
     Double selectOrderFinishMoneyByShopId( Integer shopId );
+
+    /**
+     * 获得订单完成7天后的 订单列表
+     *
+     * @param shopId 订单id
+     *
+     * @return 订单信息
+     */
+    List< MallOrder > selectOrderFinishList( Integer shopId );
 
     /**
      * 根据订单id查询订单信息

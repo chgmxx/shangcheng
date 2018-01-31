@@ -78,7 +78,10 @@
     <!-- 统计批发 -->
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">
         select count(p.id)
-        from t_mall_pifa p where p.is_delete = 0
+        from t_mall_pifa p
+        left join t_mall_product mp on mp.id= p.product_id
+        where p.is_delete = 0
+        and mp.is_delete = 0
         <if test="type == -2"><!-- 已失效的批发 -->
             and p.is_use = -1
         </if>
@@ -109,6 +112,7 @@
         left join t_mall_store s on p.shop_id = s.id
         left join t_mall_product mp on mp.id= p.product_id
         where p.is_delete = 0
+        and mp.is_delete = 0
         <if test="type == -2"><!-- 已失效的批发 -->
             and p.is_use = -1
         </if>

@@ -20,6 +20,7 @@ import com.gt.mall.dao.store.MallShopDaycountDAO;
 import com.gt.mall.dao.store.MallShopMonthcountDAO;
 import com.gt.mall.entity.basic.MallComment;
 import com.gt.mall.entity.basic.MallCountIncome;
+import com.gt.mall.entity.basic.MallIncomeList;
 import com.gt.mall.entity.order.MallLogOrderCallback;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -38,6 +39,7 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.quartz.MallQuartzNewService;
 import com.gt.mall.service.web.basic.MallCommentGiveService;
 import com.gt.mall.service.web.basic.MallCommentService;
+import com.gt.mall.service.web.basic.MallIncomeListService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.QuartzOrderService;
@@ -105,6 +107,8 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
     private MallCommentGiveService   mallCommentGiveService;
     @Autowired
     private UnionConsumeService      unionConsumeService;
+    @Autowired
+    private MallIncomeListService    mallIncomeListService;
 
     /**
      * 订单完成赠送物品  每天早上8点扫描
@@ -305,7 +309,31 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 	    if ( storeList != null && storeList.size() > 0 ) {
 		for ( MallStore store : storeList ) {
 		    //统计订单完成7天后的金额
-		    double incomePrice = mallOrderDAO.selectOrderFinishMoneyByShopId( store.getId() );
+		    //double incomePrice = mallOrderDAO.selectOrderFinishMoneyByShopId( store.getId() );
+		    double incomePrice = 0d;
+		    List< MallOrder > orderList = mallOrderDAO.selectOrderFinishList( store.getId() );
+		    if ( orderList != null && orderList.size() > 0 ) {
+			for ( MallOrder order : orderList ) {
+			    //添加交易记录
+			    MallIncomeList incomeList = new MallIncomeList();
+			    incomeList.setBusId( order.getBusUserId() );
+			    incomeList.setIncomeType( 1 );
+			    incomeList.setIncomeCategory( 2 );
+			    incomeList.setIncomeMoney( order.getOrderMoney() );
+			    incomeList.setShopId( order.getShopId() );
+			    incomeList.setBuyerId( order.getBuyerUserId() );
+			    incomeList.setBuyerName( order.getMemberName() );
+			    incomeList.setTradeId( order.getId() );
+			    incomeList.setTradeType( 1 );
+			    if ( order.getMallOrderDetail().size()>0 ) {
+				incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			    }
+			    incomeList.setProNo( order.getOrderNo() );
+			    incomeList.setCreateTime( new Date() );
+			    mallIncomeListService.insert( incomeList );
+			    incomePrice += order.getOrderMoney().doubleValue();
+			}
+		    }
 		    if ( CommonUtil.isNotEmpty( incomePrice ) && incomePrice > 0 ) {
 			MallCountIncome income = new MallCountIncome();
 			income.setShopId( store.getId() );
