@@ -53,10 +53,10 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
 		member.setPublicId( 482 );
 		//		//				member.setPhone( "15017934717" );
 		//		//测试环境用户
-		//				member.setId( 1225749 );//月华
-		//				member.setId( 1225326 );//me
-		//				member.setBusid( 36 );
-		//				member.setPublicId( 494 );
+		//		member.setId( 1225749 );//月华
+		//		member.setId( 1225326 );//me
+		//		member.setBusid( 36 );
+		//		member.setPublicId( 494 );
 		//
 		member.setNickname( "杨倩" );
 		member.setHeadimgurl( "http://wx.qlogo.cn/mmopen/SBjYnYMJXhekesFe18mYibHXhc0SsqXaxR31n8FXDK0TicZXsDjr0XFLdEtY0QgO7tdNt1w52L7aVBbke5ljuNiaoQbH1qGvXZa/0" );

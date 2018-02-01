@@ -16,6 +16,7 @@ import com.gt.mall.entity.presale.MallPresaleDeposit;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.inter.member.MemberService;
+import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.basic.MallIncomeListService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
@@ -83,6 +84,8 @@ public class MallIncomeListController extends BaseController {
     private MallProductService        mallProductService;
     @Autowired
     private MallOrderService          mallOrderService;
+    @Autowired
+    private BusUserService            busUserService;
 
     @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "type", value = "生成数据 1订单 2退款 3预售定金 4拍卖保证金", paramType = "query", required = true, dataType = "int" ) } )
@@ -275,7 +278,11 @@ public class MallIncomeListController extends BaseController {
 	    params.put( "startTime", startTime );
 	    params.put( "endTime", endTime );
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    params.put( "userId", user.getId() );
+	    int userId = user.getId();
+	    if(CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0){
+		userId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+	    }
+	    params.put( "userId", userId );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    params.put( "shoplist", shoplist );
 	    params.put( "incomeCategory", "1" );
