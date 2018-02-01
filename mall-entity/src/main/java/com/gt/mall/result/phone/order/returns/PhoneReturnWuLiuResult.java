@@ -38,4 +38,7 @@ public class PhoneReturnWuLiuResult implements Serializable {
     @ApiModelProperty( name = "wlImagesUrl", value = "物流图片" )
     private String[] wlImagesUrl;
 
+    @ApiModelProperty( name = "returnAddress", value = "退货地址" )
+    private String returnAddress;
+
 }

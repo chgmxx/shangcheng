@@ -383,9 +383,9 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	if ( orderDetails.size() > 0 ) {
 	    incomeList.setProName( orderDetails.get( 0 ).getDetProName() );
 	}
-	if ( order.getOrderPayWay()== 4){
+	if ( order.getOrderPayWay() == 4 ) {
 	    incomeList.setIncomeUnit( 3 );
-	}else if ( order.getOrderPayWay()== 8 ){
+	} else if ( order.getOrderPayWay() == 8 ) {
 	    incomeList.setIncomeUnit( 2 );
 	}
 	incomeList.setProNo( orderNo );
@@ -607,6 +607,9 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	wuLiuResult.setWlNo( orderReturn.getWlNo() );
 	wuLiuResult.setWlRemark( orderReturn.getWlRemark() );
 	wuLiuResult.setWlTelephone( orderReturn.getWlTelephone() );
+	if ( CommonUtil.isNotEmpty( orderReturn.getReturnAddress() ) ) {
+	    wuLiuResult.setReturnAddress( orderReturn.getReturnAddress() );
+	}
 	if ( CommonUtil.isNotEmpty( orderReturn.getWlImagesUrl() ) ) {
 	    wuLiuResult.setWlImagesUrl( orderReturn.getWlImagesUrl().split( "," ) );
 	}
