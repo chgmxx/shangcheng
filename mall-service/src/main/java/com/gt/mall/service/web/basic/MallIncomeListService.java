@@ -30,4 +30,22 @@ public interface MallIncomeListService extends BaseService< MallIncomeList > {
      */
     public HSSFWorkbook exportTradeExcel( Map< String,Object > params, String[] titles, int type, List< Map< String,Object > > shoplist );
 
+    /**
+     * 获取时间段内的统计金额
+     *
+     * @param params type 类型 1收入金额 2营业额  （shoplist 店铺列表 或 shopId 店铺ID）   （endDate 结束时间 startDate 开始时间 或  date：日期）
+     *
+     * @return
+     */
+    String getCountByTimes( Map< String,Object > params );
+
+    /**
+     * 获取时间段内的收入金额列表
+     *
+     * @param params shoplist 店铺列表 shopId 店铺ID endDate 结束时间 startDate 开始时间
+     *
+     * @return
+     */
+    List< Map< String,Object > > getCountListByTimes( Map< String,Object > params );
+
 }

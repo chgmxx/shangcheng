@@ -626,6 +626,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    incomeList.setTradeType( 1 );
 	    if ( orderDetails.size() > 0 ) {
 		incomeList.setProName( orderDetails.get( 0 ).getDetProName() );
+	    }else if ( order.getOrderPayWay() == 5 ) {
+		incomeList.setProName( "扫码支付" );
 	    }
 	    incomeList.setProNo( orderNo );
 	    incomeList.setCreateTime( new Date() );

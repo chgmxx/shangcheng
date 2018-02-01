@@ -347,7 +347,7 @@
         pay_time,express_way,express_id,express_number,express_time,buyer_cancel_reason,seller_cancel_reason,mem_card_type,is_wallet,
         order_old_money,order_type,coupon_code, order_type,bus_user_id,receive_address,receive_name,receive_phone, flow_phone,use_jifen,use_fenbi,
         other_express_name , use_jifen , use_fenbi , coupon_id , union_card_id, fenbi_discount_money , jifen_discount_money , discount_money ,
-        coupon_type,coupon_use_num,member_is_delete,appointment_address
+        coupon_type,coupon_use_num,member_is_delete,appointment_address,member_name
     </sql>
 
     <sql id="More_Column_List">
@@ -844,9 +844,22 @@
     </select>
 
     <select id="getPayOrderById" resultMap="MoreResultMap" parameterType="java.lang.Integer">
-        select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
+        select
+        t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
+        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time,
+        t.order_start,t.order_pay_way,t.delivery_method,t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id,
+        t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,t.pay_time,express_way,t.express_id,t.express_number,
+        t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,
+        t.bus_user_id,t.shop_id,t.order_old_money,t.coupon_code as couponCode,t.buyer_user_type,
+        t.appointment_name,t.appointment_telephone,t.appointment_time,t.appointment_start_time,t.appointment_end_time,
+        t.flow_phone,t.buyer_user_type,t.is_wallet,t.use_jifen,t.use_fenbi,t.coupon_id,t.union_card_id,t.coupon_type,t.coupon_use_num,
+
+        d.order_id,d.product_specificas,d.product_image_url,d.product_id,d.det_pro_num,d.det_pro_price,d.det_pro_name,
+        d.det_pro_code,d.det_privivilege,d.status ,d.id as dId, d.pro_type_id,
+        d.use_fenbi,d.use_jifen,d.return_day as returnDay,d.total_price,d.card_receive_id,d.duofen_coupon,d.coupon_code,
+        d.use_card_id,d.commission,d.sale_member_id,d.discounted_prices,d.flow_id,d.flow_record_id,d.pro_spec_str
+        from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
-        left join t_mall_product p on p.id=d.product_id
         where t.order_status >1
         AND t.pay_time IS NOT NULL
     </select>

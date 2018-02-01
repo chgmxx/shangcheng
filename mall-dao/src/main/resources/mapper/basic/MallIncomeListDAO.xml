@@ -88,5 +88,54 @@
             limit #{firstResult},#{maxResult}
         </if>
     </select>
-
+    <select id="getCountByTimes"  resultType="java.lang.String">
+        SELECT IFNULL(SUM(IF(t.income_type=1,t.income_money,-t.income_money)),0)
+        FROM t_mall_income_list t
+        WHERE 1=1
+        <if test="category != null and category != ''">
+            and t.income_category= #{category}
+        </if>
+        <if test="userId != null and userId != ''">
+            and t.bus_id = #{userId}
+        </if>
+        <if test="date != null and date != ''">
+            and DATE(t.create_time) = #{date}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            and DATE(t.create_time) >= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and DATE(t.create_time) <![CDATA[<=]]> #{endDate}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            AND t.shop_id = #{shopId}
+        </if>
+        <if test="shoplist != null">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+    </select>
+    <select id="getCountListByTimes" resultType="java.util.Map">
+        SELECT DATE(t.create_time) createTime,SUM(IF(t.income_type=1,t.income_money,-t.income_money)) AS incomeMoney
+        FROM `t_mall_income_list` t
+        WHERE t.income_category=2
+        <if test="startDate != null and startDate != ''">
+            and DATE(t.create_time) >= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            and DATE(t.create_time) <![CDATA[<=]]> #{endDate}
+        </if>
+        <if test="shopId != null and shopId != ''">
+            AND t.`shop_id` = #{shopId}
+        </if>
+        <if test="shoplist != null">
+            and
+            <foreach collection="shoplist" index="index" item="item" open="(" separator="or" close=")">
+                t.shop_id = #{item.id,jdbcType=INTEGER}
+            </foreach>
+        </if>
+        GROUP BY DATE(t.create_time)
+    </select>
 </mapper>

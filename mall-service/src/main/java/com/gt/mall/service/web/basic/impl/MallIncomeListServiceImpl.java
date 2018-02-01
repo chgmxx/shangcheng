@@ -130,4 +130,16 @@ public class MallIncomeListServiceImpl extends BaseServiceImpl< MallIncomeListDA
 	cell.setCellValue( value );
 	cell.setCellStyle( valueStyle );
     }
+
+    @Override
+    public String getCountByTimes( Map< String,Object > params ) {
+
+	return mallIncomeListDAO.getCountByTimes( params );
+    }
+
+    @Override
+    public List< Map< String,Object > > getCountListByTimes( Map< String,Object > params ) {
+
+	return mallIncomeListDAO.getCountListByTimes( params );
+    }
 }

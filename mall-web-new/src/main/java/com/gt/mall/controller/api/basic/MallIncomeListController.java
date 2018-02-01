@@ -20,9 +20,11 @@ import com.gt.mall.service.web.auction.MallAuctionMarginService;
 import com.gt.mall.service.web.basic.MallIncomeListService;
 import com.gt.mall.service.web.order.MallOrderDetailService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
+import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.service.web.product.MallProductService;
 import com.gt.mall.service.web.store.MallStoreService;
+import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
@@ -45,10 +47,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * <p>
@@ -81,6 +81,8 @@ public class MallIncomeListController extends BaseController {
     private MallPresaleDepositService mallPresaleDepositService;
     @Autowired
     private MallProductService        mallProductService;
+    @Autowired
+    private MallOrderService          mallOrderService;
 
     @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "type", value = "生成数据 1订单 2退款 3预售定金 4拍卖保证金", paramType = "query", required = true, dataType = "int" ) } )
@@ -105,6 +107,8 @@ public class MallIncomeListController extends BaseController {
 			incomeList.setTradeType( 1 );
 			if ( order.getMallOrderDetail().size() > 0 ) {
 			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			} else if ( order.getOrderPayWay() == 5 ) {
+			    incomeList.setProName( "扫码支付" );
 			}
 			incomeList.setProNo( order.getOrderNo() );
 			incomeList.setCreateTime( order.getPayTime() );
@@ -133,10 +137,10 @@ public class MallIncomeListController extends BaseController {
 			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
 			}
 			incomeList.setProNo( order.getOrderNo() );
-//			Calendar cal = Calendar.getInstance();
-//			cal.add( Calendar.DATE, 7 );
+			//			Calendar cal = Calendar.getInstance();
+			//			cal.add( Calendar.DATE, 7 );
 			//			String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-			incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(),7 ) );
+			incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
 			mallIncomeListService.insert( incomeList );
 		    }
 		}
@@ -335,4 +339,168 @@ public class MallIncomeListController extends BaseController {
 	}
     }
 
+    /**
+     * 获取交易记录的营业额统计
+     */
+    @ApiOperation( value = "获取交易记录的营业额统计", notes = "获取交易记录的营业额统计" )
+    @ResponseBody
+    @RequestMapping( value = "/getTurnoverCount", method = RequestMethod.POST )
+    public ServerResponse getTurnoverCount( HttpServletRequest request, HttpServletResponse response ) {
+	Map< String,Object > result = new HashMap<>();
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+
+	    Calendar cal = Calendar.getInstance();
+	    cal.add( Calendar.DATE, -1 );
+	    String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    cal.add( Calendar.DATE, -6 );
+	    String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    //昨天营业额
+	    Map< String,Object > countParams = new HashMap<>();
+	    countParams.put( "date", yesterday );
+	    countParams.put( "shoplist", shoplist );
+	    countParams.put( "userId", user.getId() );
+	    countParams.put( "category", "1" );
+	    String yesterCount = mallIncomeListService.getCountByTimes( countParams );
+	    result.put( "yesterCount", yesterCount );//昨天营业额
+	    //7日营业额（前7天-昨天）
+	    countParams.remove( "date" );
+	    countParams.put( "startDate", sevenday );
+	    countParams.put( "endDate", yesterday );
+	    String sevenCount = mallIncomeListService.getCountByTimes( countParams );
+	    result.put( "sevenCount", sevenCount );//7天营业额
+	} catch ( Exception e ) {
+	    logger.error( "获取交易记录的营业额统计异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交易记录的营业额统计异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+    }
+
+    /**
+     * 获取收入金额列表
+     */
+    @ApiOperation( value = "获取收入金额列表", notes = "获取收入金额列表" )
+    @ResponseBody
+    @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = false, dataType = "String" ),
+		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+    @RequestMapping( value = "/getCountListByDate", method = RequestMethod.POST )
+    public ServerResponse getCountListByDate( HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, Integer shopId ) {
+	Map< String,Object > result = new HashMap<>();
+	try {
+	    BusUser user = MallSessionUtils.getLoginUser( request );
+	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+	    List< Integer > shopIds = new ArrayList<>();
+	    for ( Map map : shoplist ) {
+		shopIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+	    }
+	    Map< String,Object > params = new HashMap<>();
+	    params.put( "shopId", shopId );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		params.put( "shoplist", shoplist );
+	    }
+	    if ( CommonUtil.isEmpty( startDate ) ) {
+		Calendar cal = Calendar.getInstance();
+		cal.add( Calendar.DATE, -1 );
+		endDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+		cal.add( Calendar.DATE, -29 );
+		startDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    } else {
+		startDate = DateTimeKit.format( DateTimeKit.parseDate( startDate ) );
+		endDate = DateTimeKit.format( DateTimeKit.parseDate( endDate ) );
+	    }
+
+	    Integer date = DateTimeKit.daysBetween( startDate, endDate );
+
+	    params.put( "startDate", startDate );
+	    params.put( "endDate", endDate );
+	    List< Map< String,Object > > countList = mallIncomeListService.getCountListByTimes( params );
+	    String[] data = new String[date + 1];
+
+	    int i = 0;
+	    Calendar end = Calendar.getInstance();//定义日期实例
+	    Calendar start = Calendar.getInstance();//定义日期实例
+	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( endDate );//结束日期
+	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( startDate );//起始日期
+	    end.setTime( d1 );
+	    start.setTime( d2 );
+
+	    while ( start.getTimeInMillis() <= end.getTimeInMillis() ) {
+		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+		String str = sdf.format( start.getTime() );
+		String count = "";
+		for ( Map map : countList ) {
+		    if ( str.equals( map.get( "createTime" ).toString() ) ) {
+			count = map.get( "incomeMoney" ).toString();
+			break;
+		    }
+		}
+		if ( "".equals( count ) ) {
+		    count = "0";
+		}
+		data[i] = count;
+		i++;
+		start.add( Calendar.DATE, 1 );//进行当前日期加1
+	    }
+	    result.put( "data", data );//数据列表
+
+	    Calendar cal = Calendar.getInstance();
+	    String day = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    cal.add( Calendar.DATE, -1 );
+	    String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+	    cal.add( Calendar.DATE, -6 );
+	    String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+
+	    Wrapper groupWrapper = new EntityWrapper();
+	    groupWrapper.where( "TO_DAYS(pay_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		groupWrapper.in( "shop_id", shopIds );
+	    } else {
+		groupWrapper.and( "shop_id ={0}", shopId );
+	    }
+	    Integer todayPayOrderNum = mallOrderService.selectCount( groupWrapper );
+
+	    Map< String,Object > params1 = new HashMap<>();
+	    params1.put( "userId", user.getId() );
+	    if ( CommonUtil.isNotEmpty( shopId ) ) {
+		params1.put( "shopId", shopId );
+	    } else {
+		params1.put( "shoplist", shoplist );
+	    }
+	    params1.put( "status", "1" );
+	    Integer waitPayOrderNum = mallOrderService.count( params1 );
+
+	    params1.put( "status", "2" );
+	    Integer waitDeliveryOrderNum = mallOrderService.count( params1 );
+
+	    result.put( "todayPayOrderNum", todayPayOrderNum );//今日付款订单数
+	    result.put( "waitPayOrderNum", waitPayOrderNum );//待付款订单数
+	    result.put( "waitDeliveryOrderNum", waitDeliveryOrderNum );//待发货订单数
+
+	    Map< String,Object > countParams = new HashMap<>();
+	    countParams.put( "category", "2" );
+	    if ( CommonUtil.isEmpty( shopId ) ) {
+		countParams.put( "shoplist", shoplist );
+	    } else {
+		countParams.put( "shopId", shopId );
+	    }
+	    countParams.put( "date", yesterday );
+	    String yesterPrice = mallIncomeListService.getCountByTimes( countParams );
+
+	    countParams.remove( "date" );
+	    countParams.put( "startDate", sevenday );
+	    countParams.put( "endDate", yesterday );
+	    String sevenCount = mallIncomeListService.getCountByTimes( countParams );
+	    result.put( "yesterIncomeCount", yesterPrice );//昨天总收入
+	    result.put( "sevenIncomeCount", sevenCount );//7天总收入
+
+	} catch ( Exception e ) {
+	    logger.error( "获取收入金额列表异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取收入金额列表异常" );
+	}
+	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+    }
 }
