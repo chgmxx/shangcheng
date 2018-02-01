@@ -626,8 +626,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	    incomeList.setTradeType( 1 );
 	    if ( orderDetails.size() > 0 ) {
 		incomeList.setProName( orderDetails.get( 0 ).getDetProName() );
-	    }else if ( order.getOrderPayWay() == 5 ) {
+	    } else if ( order.getOrderPayWay() == 5 ) {
 		incomeList.setProName( "扫码支付" );
+	    }
+	    if ( order.getOrderPayWay() == 4 ) {
+		incomeList.setIncomeUnit( 3 );
+	    } else if ( order.getOrderPayWay() == 8 ) {
+		incomeList.setIncomeUnit( 2 );
 	    }
 	    incomeList.setProNo( orderNo );
 	    incomeList.setCreateTime( new Date() );
@@ -876,10 +881,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		successBo.setUserJifen( 1 );
 		successBo.setJifenNum( CommonUtil.toIntegerByDouble( jifenNum ) );
 	    }
-	    if(orderPayWay == 4 || orderPayWay == 8){
+	    if ( orderPayWay == 4 || orderPayWay == 8 ) {
 		successBo.setTotalMoney( 0d );////应付金额
 		successBo.setDiscountMoney( 0d );//优惠金额
-		successBo.setDiscountAfterMoney( 0d);//优惠后金额
+		successBo.setDiscountAfterMoney( 0d );//优惠后金额
 	    }
 	    PayTypeBo payTypeBo = new PayTypeBo();
 	    int isWallet = 0;
@@ -1715,6 +1720,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 	if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 	    incomeList.setTradeId( order.getMallOrderDetail().get( 0 ).getId() );
 	    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+	}
+	if ( order.getOrderPayWay() == 4 ) {
+	    incomeList.setIncomeUnit( 3 );
+	} else if ( order.getOrderPayWay() == 8 ) {
+	    incomeList.setIncomeUnit( 2 );
 	}
 	incomeList.setProNo( order.getOrderNo() );
 	incomeList.setCreateTime( new Date() );

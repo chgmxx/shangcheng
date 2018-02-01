@@ -110,6 +110,11 @@ public class MallIncomeListController extends BaseController {
 			} else if ( order.getOrderPayWay() == 5 ) {
 			    incomeList.setProName( "扫码支付" );
 			}
+			if ( order.getOrderPayWay() == 4 ) {
+			    incomeList.setIncomeUnit( 3 );
+			} else if ( order.getOrderPayWay() == 8 ) {
+			    incomeList.setIncomeUnit( 2 );
+			}
 			incomeList.setProNo( order.getOrderNo() );
 			incomeList.setCreateTime( order.getPayTime() );
 			mallIncomeListService.insert( incomeList );
@@ -137,9 +142,11 @@ public class MallIncomeListController extends BaseController {
 			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
 			}
 			incomeList.setProNo( order.getOrderNo() );
-			//			Calendar cal = Calendar.getInstance();
-			//			cal.add( Calendar.DATE, 7 );
-			//			String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+			if ( order.getOrderPayWay() == 4 ) {
+			    incomeList.setIncomeUnit( 3 );
+			} else if ( order.getOrderPayWay() == 8 ) {
+			    incomeList.setIncomeUnit( 2 );
+			}
 			incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
 			mallIncomeListService.insert( incomeList );
 		    }
@@ -169,6 +176,11 @@ public class MallIncomeListController extends BaseController {
 			incomeList.setTradeType( 2 );
 			incomeList.setProName( orderDetails.getDetProName() );
 			incomeList.setProNo( order.getOrderNo() );
+			if ( order.getOrderPayWay() == 4 ) {
+			    incomeList.setIncomeUnit( 3 );
+			} else if ( order.getOrderPayWay() == 8 ) {
+			    incomeList.setIncomeUnit( 2 );
+			}
 			incomeList.setCreateTime( orderReturn.getUpdateTime() == null ? orderReturn.getCreateTime() : orderReturn.getUpdateTime() );
 			mallIncomeListService.insert( incomeList );
 		    }

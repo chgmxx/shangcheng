@@ -383,6 +383,11 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 	if ( orderDetails.size() > 0 ) {
 	    incomeList.setProName( orderDetails.get( 0 ).getDetProName() );
 	}
+	if ( order.getOrderPayWay()== 4){
+	    incomeList.setIncomeUnit( 3 );
+	}else if ( order.getOrderPayWay()== 8 ){
+	    incomeList.setIncomeUnit( 2 );
+	}
 	incomeList.setProNo( orderNo );
 	incomeList.setCreateTime( new Date() );
 	mallIncomeListService.insert( incomeList );
