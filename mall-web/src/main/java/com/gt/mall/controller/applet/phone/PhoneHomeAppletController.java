@@ -577,7 +577,6 @@ public class PhoneHomeAppletController extends BaseController {
      * @param appid    appid
      */
     @RequestMapping( "appletWxOrder" )
-
     public void appletWxOrder( HttpServletRequest request, HttpServletResponse response, String orderNo, Integer memberId, String appid ) throws IOException {
 	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
@@ -586,9 +585,10 @@ public class PhoneHomeAppletController extends BaseController {
 	    params.put( "memberId", memberId );//会员ID
 	    params.put( "appid", appid );//appid
 	    logger.info( "微信订单支付的参数：" + params );
-	    String obj = mallOrderAppletService.appletWxOrder( params );
-	    resultMap.put( "params", obj );
+	    resultMap = mallOrderAppletService.appletWxOrder( params );
 	} catch ( Exception e ) {
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
+	    resultMap.put( "errorMsg", "获取支付信息失败！" );
 	    logger.error( "微信订单支付异常。。。" + e.getMessage() );
 	    e.printStackTrace();
 	} finally {
@@ -606,7 +606,7 @@ public class PhoneHomeAppletController extends BaseController {
     @SysLogAnnotation( description = "小程序我的订单页面-去支付", op_function = "3" )
     @RequestMapping( "orderGoPay" )
     public void orderGoPay( HttpServletRequest request, HttpServletResponse response, Integer order_id, Integer memberId, String appid ) throws IOException {
-	Map< Object,Object > resultMap = new HashMap< Object,Object >();
+	Map< String,Object > resultMap = new HashMap< String,Object >();
 	try {
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "order_id", order_id );//订单ID
@@ -615,7 +615,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    logger.info( "去支付的参数：" + params );
 	    resultMap = mallOrderAppletService.orderGoPay( params, CommonUtil.getpath( request ) );
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "订单去支付失败" );
 	    logger.error( "订单去支付失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -636,7 +636,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    resultMap = mallOrderAppletService.confirmReceipt( params );
 
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "确认收货失败" );
 	    logger.error( "确认收货失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -678,7 +678,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    resultMap = mallOrderAppletService.submitReturnOrder( params );
 
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "提交退款失败" );
 	    logger.error( "提交退款失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -699,7 +699,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    resultMap = mallOrderAppletService.closeReturnOrder( params );
 
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "撤销退款失败" );
 	    logger.error( "撤销退款失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -746,7 +746,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    }
 
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "设置默认地址失败" );
 	    logger.error( "设置默认地址失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -766,7 +766,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    //	    resultMap = mallOrderAppletService.addressDefault( params );
 
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "设置默认地址失败" );
 	    logger.error( "设置默认地址失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -801,7 +801,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    }
 
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "提交地址失败" );
 	    logger.error( "提交地址失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -830,7 +830,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    }
 
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "保存地址失败" );
 	    logger.error( "保存地址失败：" + e.getMessage() );
 	    e.printStackTrace();
@@ -909,7 +909,7 @@ public class PhoneHomeAppletController extends BaseController {
 	    resultMap.put( "code", be.getCode() );
 	    resultMap.put( "errorMsg", be.getMessage() );
 	} catch ( Exception e ) {
-	    resultMap.put( "code", "-1" );
+	    resultMap.put( "code", ResponseEnums.APPLET_ERROR.getCode() );
 	    resultMap.put( "errorMsg", "计算订单的优惠信息失败" );
 	    logger.error( "商城小程序计算订单的优惠信息失败：" + e.getMessage() );
 	    e.printStackTrace();

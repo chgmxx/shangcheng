@@ -13,6 +13,7 @@ import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.result.pay.EnterprisePaymentResult;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,6 +27,8 @@ public class PayServiceImpl implements PayService {
 
     private static final String PAY_URL = "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/";
 
+    private static final String WX_APPLET_PAY_URL = "/wxPay/79B4DE7C/";
+
     @Override
     public Map< String,Object > payapi( SubQrPayParams payParams ) throws Exception {
 	KeysUtil keyUtil = new KeysUtil();
@@ -37,7 +40,7 @@ public class PayServiceImpl implements PayService {
     public Map< String,Object > wxmemberPayRefund( WxmemberPayRefund refund ) {
 	RequestUtils< WxmemberPayRefund > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( refund );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2,1 );
+	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2, 1 );
     }
 
     @Override
@@ -62,6 +65,15 @@ public class PayServiceImpl implements PayService {
 	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), PayWay.class );
 	}
 	return null;
+    }
+
+    @Override
+    public Map< String,Object > commonpayVerApplet2_0( SubQrPayParams subQrPayParams ) throws Exception {
+	KeysUtil keyUtil = new KeysUtil();
+	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
+	Map< String,Object > map = new HashMap<>();
+	map.put( "obj", params );
+	return HttpSignUtil.signHttpInsertOrUpdate( map, WX_APPLET_PAY_URL + "commonpayVerApplet2_0.do", 2 );
     }
 
 }

@@ -9,6 +9,7 @@ package com.gt.mall.enums;
 public enum ResponseEnums {
     SUCCESS( 0, "成功" ),
     ERROR( 1, "请求失败" ),
+    APPLET_ERROR( -1, "小程序请求失败" ),
     NULL_ERROR( 1000, "请求数据为空" ),
     NEED_LOGIN( 1001, "请前往登录" ),
     INTER_ERROR( 1002, "请求接口异常" ),
@@ -45,8 +46,7 @@ public enum ResponseEnums {
     GRAND_ERROR( 1026, "请使用微信进行授权" ),
     GRANT_MAX_ERROR( 1027, "授权人数已满" ),
 
-    PRO_MEMBER_ERROR(1028,"会员卡购买跳转")
-    ;
+    PRO_MEMBER_ERROR( 1028, "会员卡购买跳转" );
 
     private final int    code;
     private final String desc;

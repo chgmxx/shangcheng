@@ -10,7 +10,7 @@ spring:
  application:
   name: mall
  profiles:
-  active: dev
+  active: test
   # SpringMvc 配置
  mvc:
   view:
