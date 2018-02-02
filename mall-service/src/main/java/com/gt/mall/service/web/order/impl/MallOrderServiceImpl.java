@@ -45,10 +45,7 @@ import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.*;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
-import com.gt.mall.service.web.order.MallDaifuService;
-import com.gt.mall.service.web.order.MallOrderReturnLogService;
-import com.gt.mall.service.web.order.MallOrderService;
-import com.gt.mall.service.web.order.MallOrderSubmitService;
+import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -213,6 +210,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallCountIncomeService      mallCountIncomeService;
     @Autowired
     private MallIncomeListService       mallIncomeListService;
+    @Autowired
+    private MallOrderTaskService        mallOrderTaskService;
 
     @Override
     public Integer count( Map< String,Object > params ) {
@@ -529,6 +528,53 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		MallOrder order = mallOrderDAO.getOrderById( CommonUtil.toInteger( params.get( "orderId" ) ) );
 		if ( params.get( "status" ).toString().equals( "3" ) ) {//发货时赠送实体物品
 		    mallPresaleService.deliveryRank( order );//发货时赠送实体物品
+		    //添加任务
+		    mallOrderTaskService.saveOrUpdate( 2, order.getId(), order.getOrderNo(), null, 14 );//2自动确认收货
+		}
+		if ( params.get( "status" ).toString().equals( "4" ) ) {
+		    int day = 0;
+		    if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
+			for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+			    if ( detail.getReturnDay() > 0 ) {
+				if ( day == 0 ) {
+				    day = detail.getReturnDay();
+				} else if ( detail.getReturnDay() > day ) {
+				    day = detail.getReturnDay();
+				}
+			    }
+			}
+		    }
+		    //添加任务
+		    mallOrderTaskService.saveOrUpdate( 3, order.getId(), order.getOrderNo(), null, day );//赠送物品
+		    mallOrderTaskService.saveOrUpdate( 4, order.getId(), order.getOrderNo(), null, day );//联盟积分
+		    if ( day == 0 ) {//商品为不可退，直接添加收入记录
+			MallIncomeList incomeList = new MallIncomeList();
+			incomeList.setBusId( order.getBusUserId() );
+			incomeList.setIncomeType( 1 );
+			incomeList.setIncomeCategory( 2 );
+			incomeList.setIncomeMoney( order.getOrderMoney() );
+			incomeList.setShopId( order.getShopId() );
+			incomeList.setBuyerId( order.getBuyerUserId() );
+			incomeList.setBuyerName( order.getMemberName() );
+			incomeList.setTradeId( order.getId() );
+			incomeList.setTradeType( 1 );
+			if ( order.getMallOrderDetail().size() > 0 ) {
+			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			} else if ( order.getOrderPayWay() == 5 ) {
+			    incomeList.setProName( "扫码支付" );
+			}
+			if ( order.getOrderPayWay() == 4 ) {
+			    incomeList.setIncomeUnit( 3 );
+			} else if ( order.getOrderPayWay() == 8 ) {
+			    incomeList.setIncomeUnit( 2 );
+			}
+			incomeList.setProNo( order.getOrderNo() );
+			incomeList.setCreateTime( new Date() );
+			mallIncomeListService.insert( incomeList );
+		    } else {
+			mallOrderTaskService.saveOrUpdate( 5, order.getId(), order.getOrderNo(), null, day );//收入记录
+		    }
+
 		}
 		/*if ( params.get( "status" ).toString().equals( "4" ) ) {//确认收货订单已经完成
 		    if ( CommonUtil.isNotEmpty( order ) ) {

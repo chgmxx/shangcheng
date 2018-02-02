@@ -77,6 +77,8 @@ public class MallOrderNewController extends BaseController {
     private MallGroupJoinDAO          mallGroupJoinDAO;
     @Autowired
     private MallOrderDetailService    mallOrderDetailService;
+    @Autowired
+    private MallOrderTaskService      mallOrderTaskService;
 
     @ApiOperation( value = "订单列表(分页)", notes = "订单列表(分页)" )
     @ResponseBody
@@ -89,7 +91,7 @@ public class MallOrderNewController extends BaseController {
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    int userId = user.getId();
-	    if(CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0){
+	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
 		userId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 	    }
 	    //获取主账号id
@@ -254,6 +256,8 @@ public class MallOrderNewController extends BaseController {
 
 		} else if ( orderReturn.getStatus() == -1 ) {//拒绝申请
 		    mallOrderReturnLogService.sellerRefuseRefund( orderReturn.getId(), user.getId() );
+		    MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+		    mallOrderTaskService.saveOrUpdate( 6, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 7 );//取消维权
 
 		} else if ( orderReturn.getStatus() == 5 ) {//确认收货并退款
 		    mallOrderReturnLogService.sellerRefund( orderReturn.getId(), user.getId() );

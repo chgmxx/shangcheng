@@ -32,10 +32,7 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
 import com.gt.mall.service.web.basic.MallIncomeListService;
-import com.gt.mall.service.web.order.MallOrderDetailService;
-import com.gt.mall.service.web.order.MallOrderReturnLogService;
-import com.gt.mall.service.web.order.MallOrderReturnService;
-import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
@@ -100,6 +97,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private MallCountIncomeService      mallCountIncomeService;
     @Autowired
     private MallIncomeListService       mallIncomeListService;
+    @Autowired
+    private MallOrderTaskService        mallOrderTaskService;
 
     /**
      * 申请订单退款
@@ -168,15 +167,25 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
 			//默认7天不处理，自动退款（系统消息）
 			mallOrderReturnLogService.waitSellerDispose( orderReturn.getId(), DateTimeKit.addDays( 7 ) );
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 7, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 7 );//7自动退款给买家
 		    } else if ( status == -1 ) {
 			//修改申请
 			mallOrderReturnLogService.againRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 7, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 7 );//7自动退款给买家
 		    } else if ( status == 3 ) {
 			//买家已填写退货物流
 			mallOrderReturnLogService.buyerReturnGoods( orderReturn.getId(), member.getId() );
 		    } else if ( status == 4 ) {
 			//修改退货物流
 			mallOrderReturnLogService.buyerUpdateLogistics( orderReturn.getId(), member.getId() );
+
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 8, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 10 );//8自动确认收货并退款至买家
+		    } else if ( status == 2 ) {
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 8, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 10 );//8自动确认收货并退款至买家
 		    }
 
 		    return true;
