@@ -155,6 +155,9 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				//mOrderService.insertPayLog(order);//todo 添加支付有礼的日志信息
 				// 联盟积分赠送
 				unionConsumeService.giveIntegral( 1, order.getId() );
+
+
+
 			    }
 			}
 

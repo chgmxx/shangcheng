@@ -508,6 +508,22 @@ public class OrderUtil {
 	return null;
     }
 
+    /**
+     * 获取订单的单位
+     * @param orderPayWay  支付方式
+     * @return 单位
+     */
+    public static String getOrderUnit( Integer orderPayWay ) {
+	if ( CommonUtil.isNotEmpty( orderPayWay ) ) {
+	    if ( orderPayWay.toString().equals( "4" ) ) {//积分
+		return "积分";
+	    } else if ( orderPayWay.toString().equals( "8" ) ) {//粉币
+		return "粉币";
+	    }
+	}
+	return null;
+    }
+
     public static void main( String[] args ) {
 	Date upDate = DateTimeKit.parse( "2017-10-26 11:00:10", DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	long[] times = getTimes( upDate, 0 );

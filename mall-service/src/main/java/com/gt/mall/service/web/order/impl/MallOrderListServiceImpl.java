@@ -244,6 +244,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 	    orderResult.setOrderType( order.getOrderType() );
 	    orderResult.setActivityId( order.getGroupBuyId() );
 	    orderResult.setOrderPayWay( order.getOrderPayWay() );
+	    orderResult.setUnit( OrderUtil.getOrderUnit( order.getOrderPayWay() ) );//单位
 	    if ( detailResultList.size() > 0 || ( detailResultList.size() == 0 && order.getOrderPayWay() == 5 ) ) {
 		orderResultList.add( orderResult );
 	    }
@@ -450,6 +451,7 @@ public class MallOrderListServiceImpl extends BaseServiceImpl< MallOrderDAO,Mall
 
 	}
 	result.setOrderPayWay( order.getOrderPayWay() );
+	result.setUnit( OrderUtil.getOrderUnit( order.getOrderPayWay() ) );//单位
 	return result;
     }
 
