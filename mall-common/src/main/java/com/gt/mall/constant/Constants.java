@@ -105,6 +105,8 @@ public class Constants {
      */
     public static final Integer PAY_MODEL = 3;
 
+    public static final Integer PAY_SOURCE_TYPE = 1;
+
     /**
      * redis 缓存时间
      */
@@ -281,5 +283,20 @@ public class Constants {
     public static final Long APPLY_SELLER_CODE_MODEL_ID         = 78297L;
 
     public static final String ALIPAY_RETURN_URL = "alipay/79B4DE7C/refundVer2.do";
+
+    /**
+     * 拍卖保证金退款回调url
+     */
+    public static final String AUCTION_REFUND_URL = PropertiesUtil.getHomeUrl() + "/mallAuction/E9lM9uM4ct/refundSuccessAuction";
+
+    /**
+     * 预售退款回调url
+     */
+    public static final String PRESALE_REFUND_URL = PropertiesUtil.getHomeUrl() + "/mallPresale/E9lM9uM4ct/refundSuccessPresale";
+
+    /**
+     * 订单退款成功回调url
+     */
+    public static final String ORDER_REFUND_URL = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK//agreanOrderReturn";
 
 }

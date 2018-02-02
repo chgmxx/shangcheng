@@ -325,10 +325,10 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    orderNo = order.getOrderNo();
 	}
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
-	subQrPayParams.setTotalFee( orderAllMoney );
-	subQrPayParams.setModel( Constants.PAY_MODEL );
-	subQrPayParams.setBusId( order.getBusUserId() );
-	subQrPayParams.setAppidType( 0 );
+	subQrPayParams.setTotalFee( orderAllMoney );//支付金额
+	subQrPayParams.setModel( Constants.PAY_MODEL );//支付模块ID(字典:1200)
+	subQrPayParams.setBusId( order.getBusUserId() );//商家id
+	subQrPayParams.setAppidType( 0 );//appid类型(后期可能会有小程序支付),可为空默认是0：公众号支付,1:小程序支付
 	    /*subQrPayParams.setAppid( 0 );*///微信支付和支付宝支付可以不传
 	subQrPayParams.setOrderNum( orderNo );//订单号
 	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
@@ -340,7 +340,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/daifuSuccess.do";
 	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/daifu/" + order.getBusUserId() + "/" + order.getId();
 	}
-	subQrPayParams.setReturnUrl( returnUrl );
+	subQrPayParams.setReturnUrl( returnUrl );//同步返回url(支付成功后页面跳转)，注：跳转链接时，支付接口会拼接busId跟memberId这两个参数传过去，因此
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
@@ -358,6 +358,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	}
 
 	subQrPayParams.setPayWay( orderPayWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+	subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE);//墨盒默认0即啊祥不用填,其他人调用填1
+	subQrPayParams.setTakeState( 2 );//此订单是否可立即提现(1:是 2:否,不填默认为1)，不可立即提现表示此订单有担保期；注：如传值为2,各erp系统需各自写定时器将超过担保期的订单发送到指定接口
 	KeysUtil keyUtil = new KeysUtil();
 	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
 	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;

@@ -42,6 +42,7 @@ import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.OrderUtil;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.result.pay.WxPayOrder;
 import com.gt.util.entity.result.wx.ApiWxApplet;
@@ -345,6 +346,19 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			resultFlag = true;
 			//退款成功修改退款状态
 			updateReturnStatus( pUser, detailMap, returnNo );//微信退款
+		    }
+		} else if ( detailMap.get( "orderStatus" ).toString().equals( "11" ) ) {//钱包退款
+		    TRefundOrder refundOrder = new TRefundOrder();
+		    refundOrder.setBizOrderNo( returnNo );//商户退款订单号
+		    refundOrder.setOriBizOrderNo( orderNo );//商户原订单号(支付单号)
+		    refundOrder.setAmount( orderMoney );//订单金额
+		    refundOrder.setBackUrl( Constants.PRESALE_REFUND_URL );//异步回调通知
+		    refundOrder.setBusId( busUserId );//商家id
+		    Map< String,Object > refundResultMap = payService.walletRefund( refundOrder );
+		    if ( CommonUtil.toInteger( refundResultMap.get( "code" ) ) == 1 ) {
+			resultFlag = true;
+		    } else {
+			resultFlag = false;
 		    }
 		}
 	    }

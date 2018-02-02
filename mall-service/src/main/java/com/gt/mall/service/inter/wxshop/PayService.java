@@ -4,6 +4,7 @@ import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.result.pay.EnterprisePaymentResult;
 
 import java.util.Map;
@@ -29,6 +30,12 @@ public interface PayService {
      * @return 是否成功
      */
     Map<String,Object> wxmemberPayRefund(WxmemberPayRefund refund);
+
+    /**
+     * 钱包退款
+     * @return 是否成功
+     */
+    Map<String,Object> walletRefund(TRefundOrder refundOrder);
 
     /**
      * 商家提现

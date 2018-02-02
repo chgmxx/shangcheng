@@ -23,7 +23,6 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -262,9 +261,7 @@ public class MallPresaleNewController extends BaseController {
 	    MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    String notifyUrl = PropertiesUtil.getHomeUrl() + "/mallPresale/E9lM9uM4ct/returnSuccessBack";
-
-	    url = CommonUtil.getAliReturnUrl( deposit.getDepositNo(), user.getId(), "退保证金", CommonUtil.toDouble( deposit.getDepositMoney() ), notifyUrl );
+	    url = CommonUtil.getAliReturnUrl( deposit.getDepositNo(), user.getId(), "退保证金", CommonUtil.toDouble( deposit.getDepositMoney() ), Constants.PRESALE_REFUND_URL );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取支付宝退款地址异常：" + e.getMessage() );
@@ -276,7 +273,7 @@ public class MallPresaleNewController extends BaseController {
 
     @ApiOperation( value = "交纳保证金成功回调", notes = "交纳保证金成功回调" )
     @ResponseBody
-    @RequestMapping( value = "/paySuccessPresale", method = RequestMethod.POST )
+    @RequestMapping( value = "/refundSuccessPresale", method = RequestMethod.POST )
     public ServerResponse paySuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
 	try {
 	    //params 传参 out_trade_no：保证金编号
@@ -286,6 +283,22 @@ public class MallPresaleNewController extends BaseController {
 	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金成功回调异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "退保证金成功回调", notes = "退保证金成功回调" )
+    @ResponseBody
+    @RequestMapping( value = "/refundSuccessPresale", method = RequestMethod.POST )
+    public ServerResponse refundSuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    //params 传参 out_trade_no：保证金编号
+	    logger.info( "退保证金成功回调参数：" + params );
+	    mallPresaleDepositService.paySuccessPresale( params );
+	} catch ( Exception e ) {
+	    logger.error( "退保证金成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金成功回调异常" );
 	}
 	return ServerResponse.createBySuccessCode();
     }

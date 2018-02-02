@@ -29,6 +29,7 @@ import com.gt.mall.service.web.presale.MallPresaleDepositService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.result.pay.WxPayOrder;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -482,6 +483,8 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 	    payWay = 3;
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+	subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE );//墨盒默认0即啊祥不用填,其他人调用填1
+	subQrPayParams.setTakeState( 2 );//此订单是否可立即提现(1:是 2:否,不填默认为1)，不可立即提现表示此订单有担保期；注：如传值为2,各erp系统需各自写定时器将超过担保期的订单发送到指定接口
 
 	logger.info( "预售缴纳定金参数：" + com.alibaba.fastjson.JSONObject.toJSONString( subQrPayParams ) );
 	KeysUtil keyUtil = new KeysUtil();
@@ -657,7 +660,24 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 
 	    }
 	} else if ( payWay.toString().equals( "3" ) && !map.containsKey( "isAlipay" ) ) {
-	    updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
+	    //	    updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
+	} else if ( payWay.toString().equals( "4" ) ) {
+	    Member member = memberService.findMemberById( memberId, null );
+	    TRefundOrder refundOrder = new TRefundOrder();
+	    refundOrder.setBizOrderNo( returnNo );//商户退款订单号
+	    refundOrder.setOriBizOrderNo( deposit.getDepositNo() );//商户原订单号(支付单号)
+	    refundOrder.setAmount( money );//订单金额
+	    refundOrder.setBackUrl( Constants.PRESALE_REFUND_URL );//异步回调通知
+	    refundOrder.setBusId( member.getBusid() );//商家id
+	    Map< String,Object > refundResultMap = payService.walletRefund( refundOrder );
+	    if ( CommonUtil.toInteger( refundResultMap.get( "code" ) ) == 1 ) {
+		resultMap.put( "result", true );
+	    } else {
+		resultMap.put( "result", false );
+		if ( CommonUtil.isNotEmpty( refundResultMap.get( "errorMsg" ) ) ) {
+		    resultMap.put( "msg", refundResultMap.get( "errorMsg" ) );
+		}
+	    }
 	}
 	return resultMap;
     }

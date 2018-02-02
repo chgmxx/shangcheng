@@ -63,6 +63,7 @@ import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.param.sms.OldApiSms;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.pay.WxPayOrder;
@@ -1407,7 +1408,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				    msg = "退款成功";
 				}
 			    } else if ( order.getOrderPayWay() == 3 ) {//储值卡退款
-				//Double retMoney = CommonUtil.toDouble( oReturn.getRetMoney() );
+				Double retMoney = CommonUtil.toDouble( oReturn.getRetMoney() );
 				String orderNo = order.getOrderNo();
 				if ( CommonUtil.isNotEmpty( order.getOrderPid() ) ) {
 				    MallOrder pOrder = mallOrderDAO.selectById( order.getOrderPid() );
@@ -1415,7 +1416,25 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					orderNo = pOrder.getOrderNo();
 				    }
 				}
-				updateReturnStatus( pUser, oReturn, orderReturn, order );//退款成功修改退款状态
+				ErpRefundBo erpRefundBo = new ErpRefundBo();
+				erpRefundBo.setBusId( order.getBusUserId() );//商家id
+				erpRefundBo.setOrderCode( orderNo );////订单号
+				erpRefundBo.setRefundPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );////退款方式 字典1198
+				erpRefundBo.setRefundMoney( retMoney ); //退款金额
+				erpRefundBo.setRefundDate( new Date().getTime() );
+				Map< String,Object > memberResultMap = memberService.refundMoney( erpRefundBo );
+				if ( CommonUtil.toInteger( memberResultMap.get( "code" ) ) != 1 ) {
+				    //同步失败，存入redis
+				    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
+
+				    resultMap.put( "result", false );
+				    if ( CommonUtil.isNotEmpty( memberResultMap.get( "errorMsg" ) ) ) {
+					resultMap.put( "msg", memberResultMap.get( "errorMsg" ) );
+				    }
+				} else {
+				    updateReturnStatus( pUser, oReturn, orderReturn, order );//退款成功修改退款状态
+				}
+
 			    } else if ( order.getOrderPayWay() == 2 || order.getOrderPayWay() == 6 ) {//货到付款和到店支付都不用退钱
 				rFlag = true;
 				MallOrderDetail detail = new MallOrderDetail();
@@ -1631,6 +1650,22 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 				    rFlag = true;
 				    msg = "退款成功";
+				}
+			    } else if ( order.getOrderPayWay() == 11 ) {
+				TRefundOrder refundOrder = new TRefundOrder();
+				refundOrder.setBizOrderNo( oReturn.getReturnNo() );//商户退款订单号
+				refundOrder.setOriBizOrderNo( payMap.get( "orderNo" ).toString() );//商户原订单号(支付单号)
+				refundOrder.setAmount( CommonUtil.toDouble( oReturn.getRetMoney() ) );//订单金额
+				refundOrder.setBackUrl( Constants.PRESALE_REFUND_URL );//异步回调通知
+				refundOrder.setBusId( order.getBusUserId() );//商家id
+				Map< String,Object > refundResultMap = payService.walletRefund( refundOrder );
+				if ( CommonUtil.toInteger( refundResultMap.get( "code" ) ) == 1 ) {
+				    rFlag = true;
+				} else {
+				    rFlag = false;
+				    if ( CommonUtil.isNotEmpty( refundResultMap.get( "errorMsg" ) ) ) {
+					msg = refundResultMap.get( "errorMsg" ).toString();
+				    }
 				}
 			    }
 			}
@@ -3252,8 +3287,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 			    //			    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallOrder/E9lM9uM4ct/agreanOrderReturn" );
 			    //			    String url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refundVer2.do?out_trade_no=" + result.getOrderNo() + "&busId=" + order.getBusUserId()
 			    //					    + "&desc=订单退款&fee=" + money + "&notifyUrl=" + notifyUrl;
-			    String notifyUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK//agreanOrderReturn";
-			    String url = CommonUtil.getAliReturnUrl( result.getOrderNo(), order.getBusUserId(), "订单退款", money, notifyUrl );
+			    String url = CommonUtil.getAliReturnUrl( result.getOrderNo(), order.getBusUserId(), "订单退款", money, Constants.ORDER_REFUND_URL );
 			    detailResult.getReturnResult().setRefundUrl( url );
 			} catch ( Exception e ) {
 			    e.printStackTrace();

@@ -16,7 +16,6 @@ import com.gt.mall.service.web.store.MallStoreService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallSessionUtils;
 import com.gt.mall.utils.PageUtil;
-import com.gt.mall.utils.PropertiesUtil;
 import io.swagger.annotations.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -228,9 +227,7 @@ public class MallAuctionNewController extends BaseController {
 	    MallAuctionMargin margin = auctionMarginService.selectById( id );
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    String notifyUrl = PropertiesUtil.getHomeUrl() + "/mallAuction/E9lM9uM4ct/paySuccessAuction";
-
-	    url = CommonUtil.getAliReturnUrl( margin.getAucNo(), user.getId(), "退保证金", CommonUtil.toDouble( margin.getMarginMoney() ), notifyUrl );
+	    url = CommonUtil.getAliReturnUrl( margin.getAucNo(), user.getId(), "退保证金", CommonUtil.toDouble( margin.getMarginMoney() ), Constants.AUCTION_REFUND_URL );
 
 	} catch ( Exception e ) {
 	    logger.error( "获取支付宝退款地址异常：" + e.getMessage() );
@@ -252,6 +249,22 @@ public class MallAuctionNewController extends BaseController {
 	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金成功回调异常" );
+	}
+	return ServerResponse.createBySuccessCode();
+    }
+
+    @ApiOperation( value = "退保证金成功回调", notes = "退保证金成功回调" )
+    @ResponseBody
+    @RequestMapping( value = "/refundSuccessAuction", method = RequestMethod.POST )
+    public ServerResponse refundSuccessAuction( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
+	try {
+	    //params 传参 out_trade_no：保证金编号
+	    logger.info( "退保证金成功回调参数：" + JSONObject.fromObject( params ) );
+	    auctionMarginService.returnAlipayMargin( params );
+	} catch ( Exception e ) {
+	    logger.error( "退保证金成功回调异常：" + e.getMessage() );
+	    e.printStackTrace();
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金成功回调异常" );
 	}
 	return ServerResponse.createBySuccessCode();
     }

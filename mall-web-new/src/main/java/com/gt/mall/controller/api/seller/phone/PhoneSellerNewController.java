@@ -335,8 +335,9 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 
 	    //查询销售员的信息
 	    MallSeller seller = mallSellerService.selectSellerByMemberId( member.getId() );
-	    seller = mallSellerService.getSellerTwoCode( seller, member, CommonUtil.judgeBrowser( request ) );//获取二维码
+	    //	    seller = mallSellerService.getSellerTwoCode( seller, member, CommonUtil.judgeBrowser( request ) );//获取二维码
 	    seller = mallSellerService.mergeData( seller, member );
+
 	    result.put( "seller", seller );
 	    result.put( "sellerCount", sellerCount );//查询客户的个数
 	    result.put( "sellerOrderCount", sellerOrderCount );//查询客户订单的个数
@@ -624,7 +625,6 @@ public class PhoneSellerNewController extends AuthorizeOrUcLoginController {
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    /*loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );*/
-
 	    //查询商城设置
 	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
 	    result.put( "mallSet", mallSet );

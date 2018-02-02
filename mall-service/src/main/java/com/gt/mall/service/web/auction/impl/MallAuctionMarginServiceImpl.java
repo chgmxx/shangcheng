@@ -27,6 +27,7 @@ import com.gt.mall.service.web.basic.MallIncomeListService;
 import com.gt.mall.utils.*;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.result.pay.WxPayOrder;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.apache.log4j.Logger;
@@ -319,15 +320,9 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 	    payWay = 3;
 	}
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+	subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE );//墨盒默认0即啊祥不用填,其他人调用填1
+	subQrPayParams.setTakeState( 2 );//此订单是否可立即提现(1:是 2:否,不填默认为1)，不可立即提现表示此订单有担保期；注：如传值为2,各erp系统需各自写定时器将超过担保期的订单发送到指定接口
 
-	/*Map< String,Object > resultMap = payService.payapi( subQrPayParams );
-	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
-	    String errorMsg = "支付失败";
-	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
-		errorMsg = resultMap.get( "errorMsg" ).toString();
-	    }
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
-	}*/
 	logger.info( "拍卖缴纳定金参数：" + JSONObject.toJSONString( subQrPayParams ) );
 	KeysUtil keyUtil = new KeysUtil();
 	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
@@ -470,7 +465,24 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 
 	    }
 	} else if ( payWay.toString().equals( "3" ) && !map.containsKey( "isAlipay" ) ) {//支付宝退款
-	    updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
+	    //	    updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
+	} else if ( payWay.toString().equals( "4" ) ) {//多粉钱包退款
+	    Member member = memberService.findMemberById( memberId, null );
+	    TRefundOrder refundOrder = new TRefundOrder();
+	    refundOrder.setBizOrderNo( returnNo );//商户退款订单号
+	    refundOrder.setOriBizOrderNo( aucNo );//商户原订单号(支付单号)
+	    refundOrder.setAmount( money );//订单金额
+	    refundOrder.setBackUrl( Constants.AUCTION_REFUND_URL );//异步回调通知
+	    refundOrder.setBusId( member.getBusid() );//商家id
+	    Map< String,Object > refundResultMap = payService.walletRefund( refundOrder );
+	    if ( CommonUtil.toInteger( refundResultMap.get( "code" ) ) == 1 ) {
+		resultMap.put( "result", true );
+	    } else {
+		resultMap.put( "result", false );
+		if ( CommonUtil.isNotEmpty( refundResultMap.get( "errorMsg" ) ) ) {
+		    resultMap.put( "msg", refundResultMap.get( "errorMsg" ) );
+		}
+	    }
 	}
 	return resultMap;
     }
@@ -482,6 +494,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
      * @param map
      * @param returnNo
      */
+
     private void updateReturnStatus( WxPublicUsers pUser, Map< String,Object > map, String returnNo ) {
 	Integer marginId = CommonUtil.toInteger( map.get( "id" ) );
 
@@ -518,7 +531,7 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 
     @Override
     public void returnAlipayMargin( Map< String,Object > params ) {
-	String aucNo = params.get( "outTradeNo" ).toString();//订单号
+	String aucNo = params.get( "out_trade_no" ).toString();//订单号
 	//根据订单号查询订单信息
 	MallAuctionMargin margin = auctionMarginDAO.selectByAucNo( aucNo );
 	params.put( "user_id", margin.getUserId() );
