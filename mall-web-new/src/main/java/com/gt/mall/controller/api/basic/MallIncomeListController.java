@@ -141,7 +141,14 @@ public class MallIncomeListController extends BaseController {
 			incomeList.setBuyerName( order.getMemberName() );
 			incomeList.setTradeId( order.getId() );
 			incomeList.setTradeType( 1 );
+			boolean flag = false;
+			//判断订单的商品 有无允许退款天数
 			if ( order.getMallOrderDetail().size() > 0 ) {
+			    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+				if ( detail.getReturnDay() > 0 ) {
+				    flag = true;
+				}
+			    }
 			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
 			}
 			incomeList.setProNo( order.getOrderNo() );
@@ -150,6 +157,12 @@ public class MallIncomeListController extends BaseController {
 			} else if ( order.getOrderPayWay() == 8 ) {
 			    incomeList.setIncomeUnit( 2 );
 			}
+			if ( flag ) {
+			    incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
+			} else {
+			    incomeList.setCreateTime( order.getUpdateTime() );
+			}
+
 			incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
 			mallIncomeListService.insert( incomeList );
 		    }
@@ -279,7 +292,7 @@ public class MallIncomeListController extends BaseController {
 	    params.put( "endTime", endTime );
 	    BusUser user = MallSessionUtils.getLoginUser( request );
 	    int userId = user.getId();
-	    if(CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0){
+	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
 		userId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 	    }
 	    params.put( "userId", userId );
