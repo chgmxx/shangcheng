@@ -49,6 +49,7 @@ import com.gt.mall.service.web.common.MallMemberAddressService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.MallOrderSubmitService;
+import com.gt.mall.service.web.order.MallOrderTaskService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -121,6 +122,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
     private UnionCardService          UnionCardService;
     @Autowired
     private PayService                payService;
+    @Autowired
+    private MallOrderTaskService      mallOrderTaskService;
 
     @Transactional( rollbackFor = Exception.class )
     @Override
@@ -266,13 +269,17 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    String times = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    objs.put( "times", times );
 	    MallPaySet paySet = mallPaySetService.selectByUserId( orderList.get( 0 ).getBusUserId() );
+	    Integer orderCancel = 1440 * 3;
 	    if ( paySet != null ) {
 		if ( CommonUtil.isNotEmpty( paySet.getOrderCancel() ) ) {
 		    objs.put( "orderCancel", paySet.getOrderCancel() );
+		    orderCancel = paySet.getOrderCancel();
 		}
 	    }
 	    objs.put( "orderId", orderPId );
 	    JedisUtil.map( key, orderPId + "", objs.toString() );
+	    //添加任务
+	    mallOrderTaskService.saveOrUpdate( 1, orderPId, orderPNo, null, orderCancel );//1关闭订单
 	}
 	//拍卖，添加拍卖竞拍
 	if ( firstOrder.getOrderType() == 4 ) {
@@ -440,7 +447,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	Integer toShop = 0;
 	Integer type = 0;//订单类型
 	long endTime = System.currentTimeMillis();
-	long endTime3=  0;
+	long endTime3 = 0;
 	logger.error( "访问的执行时间 : " + ( endTime - startTime ) + "ms----1111" );
 	if ( params.getFrom() == 1 && CommonUtil.isNotEmpty( params.getCartIds() ) ) {//购物车
 	    Map< String,Object > shopcartParams = new HashMap<>();
@@ -840,8 +847,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
      * 重组订单参数(购物车进入提交订单页面)
      */
     private PhoneToOrderResult getToOrderParams( List< PhoneToOrderProductResult > productResultList, List< Integer > busUserList, List< MallFreight > freightList,
-		    List< Map< String,Object > > mallShopList,
-		    PhoneToOrderDTO params, PhoneToOrderResult result, Integer provincesId, Double memberLongitude, Double memberLangitude ) {
+		    List< Map< String,Object > > mallShopList, PhoneToOrderDTO params, PhoneToOrderResult result, Integer provincesId, Double memberLongitude,
+		    Double memberLangitude ) {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 
 	//查询公众号名称或商家名称以及图片
@@ -1069,8 +1076,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( imageList != null && imageList.size() > 0 ) {
 	    result.setProductImageUrl( CommonUtil.toString( imageList.get( 0 ).get( "image_url" ) ) );//商品图片
 	}
-	if ( CommonUtil.isNotEmpty( product.getIsSpecifica() ) && "1".equals( product.getIsSpecifica().toString() ) && CommonUtil
-			.isNotEmpty( buyNowDTO.getProductSpecificas() ) ) {
+	if ( CommonUtil.isNotEmpty( product.getIsSpecifica() ) && "1".equals( product.getIsSpecifica().toString() ) && CommonUtil.isNotEmpty( buyNowDTO.getProductSpecificas() ) ) {
 	    //获取商品规格和规格价
 	    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( buyNowDTO.getProductSpecificas(), productId );
 	    if ( CommonUtil.isNotEmpty( invMap ) ) {
@@ -1104,15 +1110,14 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		    if ( CommonUtil.isNotEmpty( buyNowDTO.getPifaSpecificaDTOList() ) ) {
 			List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList = JSONArray
 					.parseArray( buyNowDTO.getPifaSpecificaDTOList(), PhoneToOrderPifatSpecificaDTO.class );
-			List< PhoneOrderPifaSpecDTO > pfSpecResultsList = mallPifaService
-					.getPifaPrice( product.getId(), product.getShopId(), pifa.getId(), pifaSpecificaDTOList );
+			List< PhoneOrderPifaSpecDTO > pfSpecResultsList = mallPifaService.getPifaPrice( product.getId(), product.getShopId(), pifa.getId(), pifaSpecificaDTOList );
 			result.setPfSpecResultList( pfSpecResultsList );
 			productNum = 0;
 
-			if ( pfSpecResultsList==null || pfSpecResultsList.size()==0 ){
-			    productNum=pifaSpecificaDTOList.get( 0 ).getProductNum();
-			    pfTotalPrice=pifa.getPfPrice().doubleValue();
-			}else{
+			if ( pfSpecResultsList == null || pfSpecResultsList.size() == 0 ) {
+			    productNum = pifaSpecificaDTOList.get( 0 ).getProductNum();
+			    pfTotalPrice = pifa.getPfPrice().doubleValue();
+			} else {
 			    for ( PhoneOrderPifaSpecDTO pfSpecResult : pfSpecResultsList ) {
 				productNum += pfSpecResult.getTotalNum();
 				pfTotalPrice += pfSpecResult.getPfPrice() * pfSpecResult.getTotalNum();

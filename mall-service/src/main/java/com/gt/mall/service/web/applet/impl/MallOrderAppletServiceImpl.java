@@ -20,6 +20,7 @@ import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -43,6 +44,7 @@ import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
 import com.gt.mall.service.web.order.MallOrderReturnService;
 import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.order.MallOrderTaskService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -124,6 +126,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     private MallOrderReturnService      mallOrderReturnService;
     @Autowired
     private MallGroupJoinDAO            mallGroupJoinDAO;
+    @Autowired
+    private MallOrderTaskService        mallOrderTaskService;
 
     @Override
     public PageUtil getOrderList( Map< String,Object > params ) {
@@ -689,7 +693,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		appletParam.put( "orderNo", order.getOrderNo() );
 		appletParam.put( "appid", params.get( "appid" ) );
 		resultMap = appletWxOrder( appletParam );
-//		resultMap.put( "params", parameters );
+		//		resultMap.put( "params", parameters );
 	    }
 
 	}
@@ -1209,7 +1213,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
 	    }
 	}
-
+	Integer orderId = 0;
 	String orderNo = "";
 	BigDecimal orderMoney = new BigDecimal( 0 );
 	//保存订单信息
@@ -1253,6 +1257,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		    break;
 		} else if ( count > 0 && orderList.size() == 1 && i == 0 ) {
 		    orderNo = order.getOrderNo();
+		    orderId = order.getId();
 		}
 		orderMoney = orderMoney.add( order.getOrderMoney() );
 		if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
@@ -1285,6 +1290,16 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		orderService.paySuccessModified( params, member );//修改库存和订单状态
 	    }
 
+	    MallPaySet paySet = paySetService.selectByUserId( orderList.get( 0 ).getBusUserId() );
+	    Integer orderCancel = 1440 * 3;
+	    if ( paySet != null ) {
+		if ( CommonUtil.isNotEmpty( paySet.getOrderCancel() ) ) {
+		    orderCancel = paySet.getOrderCancel();
+		}
+	    }
+	    //添加任务
+	    mallOrderTaskService.saveOrUpdate( 1, orderId, orderNo, null, orderCancel );//1关闭订单
+
 	    if ( CommonUtil.isNotEmpty( params.get( "cartIds" ) ) ) {
 		JSONArray cartArrs = JSONArray.parseArray( params.get( "cartIds" ).toString() );
 				/*params.put("cartIds", cartArrs);*/
@@ -1305,7 +1320,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     }
 
     @Override
-    public Map< String,Object >  appletWxOrder( Map< String,Object > params ) throws Exception {
+    public Map< String,Object > appletWxOrder( Map< String,Object > params ) throws Exception {
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	MallOrder order = orderDAO.selectOrderByOrderNo( CommonUtil.toString( params.get( "orderNo" ) ) );
 

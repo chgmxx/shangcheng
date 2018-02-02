@@ -17,6 +17,7 @@ import com.gt.mall.dao.product.MallShopCartDAO;
 import com.gt.mall.dao.store.MallStoreDAO;
 import com.gt.mall.entity.applet.MallAppletImage;
 import com.gt.mall.entity.basic.MallImageAssociative;
+import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.freight.MallFreight;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -41,6 +42,7 @@ import com.gt.mall.service.web.basic.MallPaySetService;
 import com.gt.mall.service.web.common.MallAppletCalculateService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.order.MallOrderTaskService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -123,6 +125,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
     private UnionCardService           unionCardService;
     @Autowired
     private MallAppletCalculateService mallAppletCalculateService;
+    @Autowired
+    private MallOrderTaskService       mallOrderTaskService;
 
     @Override
     public Map< String,Object > toSubmitOrder( Map< String,Object > params ) {
@@ -222,8 +226,8 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			    }
 
 			    proList.add( productMap );
-			    double proTotalPrice = CommonUtil.multiply( CommonUtil.toDouble( productMap.get( "product_price" ) ),
-					    CommonUtil.toInteger( productMap.get( "product_num" ) ) );
+			    double proTotalPrice = CommonUtil
+					    .multiply( CommonUtil.toDouble( productMap.get( "product_price" ) ), CommonUtil.toInteger( productMap.get( "product_num" ) ) );
 			    totalPrice += proTotalPrice;
 			    totalProMoney += proTotalPrice;
 
@@ -481,8 +485,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 			productMap.put( "is_coupons", product.getIsCoupons() );
 			productMap.put( "is_integral_deduction", product.getIsIntegralDeduction() );
 			productMap.put( "is_fenbi_deduction", product.getIsFenbiDeduction() );
-			productMap.put( "total_price",
-					CommonUtil.multiply( CommonUtil.toDouble( detail.getDetPrivivilege() ), detail.getDetProNum() ) );
+			productMap.put( "total_price", CommonUtil.multiply( CommonUtil.toDouble( detail.getDetPrivivilege() ), detail.getDetProNum() ) );
 			productMap.put( "detailId", detail.getId() );
 			proTypeId = product.getProTypeId();
 
@@ -616,8 +619,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 
     }
 
-    private Map< String,Object > getMemberByOrders( Map< String,Object > resultMap, Integer proTypeId, Member member, String wxShopIds,
-		    boolean isCanJifenFenbi ) {
+    private Map< String,Object > getMemberByOrders( Map< String,Object > resultMap, Integer proTypeId, Member member, String wxShopIds, boolean isCanJifenFenbi ) {
 	UnionDiscountResult unionResult = null;//联盟折扣
 	JifenAndFenbiRule jifenFenbiRule = null;//积分粉币抵扣规则
 	double discount = 1;
@@ -1228,17 +1230,26 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
 		payParams.put( "out_trade_no", orderNo );
 		orderService.paySuccessModified( payParams, member );//修改库存和订单状态
 	    }
+	    MallPaySet paySet = paySetService.selectByUserId( orderList.get( 0 ).getBusUserId() );
+	    Integer orderCancel = 1440 * 3;
+	    if ( paySet != null ) {
+		if ( CommonUtil.isNotEmpty( paySet.getOrderCancel() ) ) {
+		    orderCancel = paySet.getOrderCancel();
+		}
+	    }
+	    //添加任务
+	    mallOrderTaskService.saveOrUpdate( 1, orderPId, orderNo, null, orderCancel );//1关闭订单
 	    //删除购物车的商品
-	    //	    if ( CommonUtil.isNotEmpty( params.getCartIds() ) ) {
-	    //		JSONArray cartArrs = JSONArray.parseArray( params.getCartIds() );
-	    //		if ( cartArrs != null && cartArrs.size() > 0 ) {
-	    //		    for ( Object obj : cartArrs ) {
-	    //			if ( CommonUtil.isNotEmpty( obj ) ) {
-	    //			    shopCartDAO.deleteById( CommonUtil.toInteger( obj ) );
-	    //			}
-	    //		    }
-	    //		}
-	    //	    }
+	    if ( CommonUtil.isNotEmpty( params.getCartIds() ) ) {
+		JSONArray cartArrs = JSONArray.parseArray( params.getCartIds() );
+		if ( cartArrs != null && cartArrs.size() > 0 ) {
+		    for ( Object obj : cartArrs ) {
+			if ( CommonUtil.isNotEmpty( obj ) ) {
+			    shopCartDAO.deleteById( CommonUtil.toInteger( obj ) );
+			}
+		    }
+		}
+	    }
 	    resultMap.put( "orderNo", orderNo );
 	}
 	resultMap.put( "code", code );
