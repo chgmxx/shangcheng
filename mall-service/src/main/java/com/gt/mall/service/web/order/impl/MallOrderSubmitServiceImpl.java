@@ -1106,9 +1106,15 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 					.getPifaPrice( product.getId(), product.getShopId(), pifa.getId(), pifaSpecificaDTOList );
 			result.setPfSpecResultList( pfSpecResultsList );
 			productNum = 0;
-			for ( PhoneOrderPifaSpecDTO pfSpecResult : pfSpecResultsList ) {
-			    productNum += pfSpecResult.getTotalNum();
-			    pfTotalPrice += pfSpecResult.getPfPrice() * pfSpecResult.getTotalNum();
+
+			if ( pfSpecResultsList==null || pfSpecResultsList.size()==0 ){
+			    productNum=pifaSpecificaDTOList.get( 0 ).getProductNum();
+			    pfTotalPrice=pifa.getPfPrice().doubleValue();
+			}else{
+			    for ( PhoneOrderPifaSpecDTO pfSpecResult : pfSpecResultsList ) {
+				productNum += pfSpecResult.getTotalNum();
+				pfTotalPrice += pfSpecResult.getPfPrice() * pfSpecResult.getTotalNum();
+			    }
 			}
 			if ( pfTotalPrice > 0 ) {
 			    totalPrice = CommonUtil.toDouble( df.format( pfTotalPrice ) );

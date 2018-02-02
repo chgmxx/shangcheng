@@ -155,6 +155,9 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 				//mOrderService.insertPayLog(order);//todo 添加支付有礼的日志信息
 				// 联盟积分赠送
 				unionConsumeService.giveIntegral( 1, order.getId() );
+
+
+
 			    }
 			}
 
@@ -325,8 +328,13 @@ public class MallQuartzNewServiceImpl implements MallQuartzNewService {
 			    incomeList.setBuyerName( order.getMemberName() );
 			    incomeList.setTradeId( order.getId() );
 			    incomeList.setTradeType( 1 );
-			    if ( order.getMallOrderDetail().size()>0 ) {
+			    if ( order.getMallOrderDetail().size() > 0 ) {
 				incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			    }
+			    if ( order.getOrderPayWay() == 4 ) {
+				incomeList.setIncomeUnit( 3 );
+			    } else if ( order.getOrderPayWay() == 8 ) {
+				incomeList.setIncomeUnit( 2 );
 			    }
 			    incomeList.setProNo( order.getOrderNo() );
 			    incomeList.setCreateTime( new Date() );

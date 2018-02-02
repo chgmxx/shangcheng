@@ -3,10 +3,9 @@ package com.gt.mall.service.web.applet.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.gt.api.bean.session.WxPublicUsers;
-import com.gt.api.util.KeysUtil;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.Member;
+import com.gt.api.bean.session.WxPublicUsers;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.bean.DictBean;
 import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.constant.Constants;
@@ -27,6 +26,8 @@ import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.order.MallOrderReturn;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.entity.seckill.MallSeckill;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.result.phone.order.returns.PhoneReturnWayResult;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.DictService;
@@ -588,8 +589,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 
     @Transactional( rollbackFor = Exception.class )
     @Override
-    public Map< Object,Object > orderGoPay( Map< String,Object > params, String url ) throws Exception {
-	Map< Object,Object > resultMap = new HashMap< Object,Object >();
+    public Map< String,Object > orderGoPay( Map< String,Object > params, String url ) throws Exception {
+	Map< String,Object > resultMap = new HashMap< String,Object >();
 	int error = 1;
 	String msg = "";
 	if ( CommonUtil.isEmpty( params.get( "order_id" ) ) ) {
@@ -687,8 +688,8 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		appletParam.put( "memberId", params.get( "memberId" ) );
 		appletParam.put( "orderNo", order.getOrderNo() );
 		appletParam.put( "appid", params.get( "appid" ) );
-		String parameters = appletWxOrder( appletParam );
-		resultMap.put( "params", parameters );
+		resultMap = appletWxOrder( appletParam );
+//		resultMap.put( "params", parameters );
 	    }
 
 	}
@@ -1304,7 +1305,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
     }
 
     @Override
-    public String appletWxOrder( Map< String,Object > params ) throws Exception {
+    public Map< String,Object >  appletWxOrder( Map< String,Object > params ) throws Exception {
 	Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
 	MallOrder order = orderDAO.selectOrderByOrderNo( CommonUtil.toString( params.get( "orderNo" ) ) );
 
@@ -1336,19 +1337,19 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	subQrPayParams.setPayWay( payWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 
 	logger.info( "小程序订单支付的参数：" + JSONObject.toJSONString( subQrPayParams ) );
-	KeysUtil keyUtil = new KeysUtil();
+	/*KeysUtil keyUtil = new KeysUtil();
 	String objParams = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
-	return objParams;
+	return PropertiesUtil.getDfPayDomain()+"8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj="+objParams;*/
 
-	/*Map< String,Object > resultMap = payService.payapi( subQrPayParams );
+	Map< String,Object > resultMap = payService.commonpayVerApplet2_0( subQrPayParams );
 	if ( !resultMap.get( "code" ).toString().equals( "1" ) ) {
 	    String errorMsg = "支付失败";
 	    if ( CommonUtil.isNotEmpty( resultMap.get( "errorMsg" ) ) ) {
 		errorMsg = resultMap.get( "errorMsg" ).toString();
 	    }
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), errorMsg );
+	    throw new BusinessException( ResponseEnums.APPLET_ERROR.getCode(), errorMsg );
 	}
-	return resultMap;*/
+	return resultMap;
 
     }
 

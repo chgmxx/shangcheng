@@ -109,6 +109,14 @@ public class MallIncomeListServiceImpl extends BaseServiceImpl< MallIncomeListDA
 	if ( CommonUtil.isNotEmpty( order.get( "incomeMoney" ) ) ) {
 	    price = order.get( "incomeMoney" ).toString();
 	}
+	if ( CommonUtil.isNotEmpty( order.get( "incomeUnit" ) ) ) {
+	    Integer unit = CommonUtil.toInteger( order.get( "incomeUnit" ) );
+	    if ( unit == 2 ) {
+		price += "粉币";
+	    } else if ( unit == 3 ) {
+		price += "积分";
+	    }
+	}
 	if ( CommonUtil.isNotEmpty( order.get( "buyerName" ) ) ) {
 	    buyerName = order.get( "buyerName" ).toString();
 	}
@@ -129,5 +137,17 @@ public class MallIncomeListServiceImpl extends BaseServiceImpl< MallIncomeListDA
 	HSSFCell cell = row.createCell( column );
 	cell.setCellValue( value );
 	cell.setCellStyle( valueStyle );
+    }
+
+    @Override
+    public String getCountByTimes( Map< String,Object > params ) {
+
+	return mallIncomeListDAO.getCountByTimes( params );
+    }
+
+    @Override
+    public List< Map< String,Object > > getCountListByTimes( Map< String,Object > params ) {
+
+	return mallIncomeListDAO.getCountListByTimes( params );
     }
 }

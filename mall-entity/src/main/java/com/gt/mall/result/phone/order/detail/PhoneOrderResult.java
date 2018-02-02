@@ -139,4 +139,7 @@ public class PhoneOrderResult implements Serializable {
     @ApiModelProperty( name = "orderPayWay", value = "支付方式" )
     private Integer orderPayWay = 0;
 
+    @ApiModelProperty( name = "unit", value = "单位" )
+    private String unit;
+
 }

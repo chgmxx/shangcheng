@@ -48,6 +48,11 @@ public class MallIncomeList extends Model< MallIncomeList > {
     @TableField( "income_money" )
     private BigDecimal incomeMoney;
     /**
+     * 金额单位  1人民币 2粉币 3积分
+     */
+    @TableField( "income_unit" )
+    private Integer incomeUnit;
+    /**
      * 用户id(bus_user中的id)
      */
     @TableField( "bus_id" )

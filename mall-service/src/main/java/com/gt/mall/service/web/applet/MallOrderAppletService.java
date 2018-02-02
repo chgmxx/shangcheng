@@ -39,7 +39,7 @@ public interface MallOrderAppletService extends BaseService<MallAppletImage> {
      * @param params
      * @return
      */
-    Map<Object, Object> orderGoPay(Map<String, Object> params, String url) throws Exception;
+    Map<String, Object> orderGoPay(Map<String, Object> params, String url) throws Exception;
 
     /**
      * 确认收货
@@ -104,7 +104,7 @@ public interface MallOrderAppletService extends BaseService<MallAppletImage> {
      * @param params
      * @return
      */
-    String appletWxOrder(Map<String, Object> params) throws Exception;
+    Map< String,Object >  appletWxOrder(Map<String, Object> params) throws Exception;
 
     /**
      * 商品立即购买

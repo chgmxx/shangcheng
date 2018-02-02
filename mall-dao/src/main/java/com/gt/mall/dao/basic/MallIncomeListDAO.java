@@ -25,4 +25,22 @@ public interface MallIncomeListDAO extends BaseMapper< MallIncomeList > {
      * 分页查询
      */
     List< Map< String,Object > > findByTradePage( Map< String,Object > params );
+
+    /**
+     * 获取 营业金额或收入金额
+     *
+     * @param params
+     *
+     * @return
+     */
+    String getCountByTimes( Map< String,Object > params );
+
+    /**
+     * 获取时间段的收入金额列表
+     *
+     * @param params
+     *
+     * @return
+     */
+    List< Map< String,Object > > getCountListByTimes( Map< String,Object > params );
 }

@@ -44,4 +44,11 @@ public interface PayService {
      */
     PayWay getPayWay(Integer busId);
 
+    /**
+     * 小程序支付
+     * @param subQrPayParams 支付接口参数
+     * @return 小程序支付参数
+     */
+    Map<String,Object> commonpayVerApplet2_0(SubQrPayParams subQrPayParams) throws Exception;
+
 }

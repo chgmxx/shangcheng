@@ -41,7 +41,7 @@ import java.util.*;
 @RequestMapping( "/mallCountIncome/E9lM9uM4ct" )
 public class MallCountIncomeController extends BaseController {
 
-    @Autowired
+    /*@Autowired
     private MallCountIncomeService mallCountIncomeService;
     @Autowired
     private MallStoreService       mallStoreService;
@@ -50,9 +50,9 @@ public class MallCountIncomeController extends BaseController {
     @Autowired
     private MallOrderService       mallOrderService;
     @Autowired
-    private MallOrderReturnService mallOrderReturnService;
+    private MallOrderReturnService mallOrderReturnService;*/
 
-    @ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
+    /*@ApiOperation( value = "生成交易记录数据", notes = "生成交易记录数据" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = true, dataType = "String" ),
 		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
@@ -116,9 +116,9 @@ public class MallCountIncomeController extends BaseController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
-    /**
+    *//**
      * 获取交易记录的营业额统计
-     */
+     *//*
     @ApiOperation( value = "获取交易记录的营业额统计", notes = "获取交易记录的营业额统计" )
     @ResponseBody
     @RequestMapping( value = "/getTurnoverCount", method = RequestMethod.POST )
@@ -154,9 +154,9 @@ public class MallCountIncomeController extends BaseController {
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
-    /**
+    *//**
      * 获取收入金额列表
-     */
+     *//*
     @ApiOperation( value = "获取收入金额列表", notes = "获取收入金额列表" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = false, dataType = "String" ),
@@ -279,5 +279,5 @@ public class MallCountIncomeController extends BaseController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取收入金额列表异常" );
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
-    }
+    }*/
 }

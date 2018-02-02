@@ -127,7 +127,7 @@ public class PhoneOrderNewController extends AuthorizeOrUcLoginController {
 	} catch ( Exception e ) {
 	    logger.error( "立即购买异常：" + e.getMessage() );
 	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "立即购买失败" );
+	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "立即购买失败" );
 	}
     }
 

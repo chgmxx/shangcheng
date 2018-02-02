@@ -88,7 +88,12 @@ public class MallOrderNewController extends BaseController {
 	    Map< String,Object > params = converter.beanToMap( orderQuery );
 
 	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    params.put( "userId", user.getId() );
+	    int userId = user.getId();
+	    if(CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0){
+		userId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+	    }
+	    //获取主账号id
+	    params.put( "userId", userId );
 	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 	    if ( CommonUtil.isEmpty( orderQuery.getShopId() ) ) {
 		params.put( "shoplist", shoplist );
