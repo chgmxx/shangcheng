@@ -1300,13 +1300,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		adcServicesInfo.setPublicId( pbUser.getId() );//商家公众号Id
 		adcServicesInfo.setBusId( orders.getBusUserId() ); //根据平台用户Id获取微信订阅号用户信息
 		adcServicesInfo.setId( orders.getId() );//订单id
-		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/flowSuccess.do" );
+		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/mallCallback/callbackApi/flowSuccess" );
 		boolean isFlow = fenBiFlowService.adcServices( adcServicesInfo );//流量充值
 		if ( isFlow ) {//充值成功
-		    /*MallOrder order = new MallOrder();
+		    MallOrder order = new MallOrder();
 		    order.setId( orders.getId() );
 		    order.setFlowRechargeStatus( 1 );
-		    mallOrderDAO.upOrderNoById( order );*/
+		    mallOrderDAO.upOrderNoById( order );
 		} else {
 		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "流量充值异常" );
 		}
@@ -3330,7 +3330,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				money = 0d;
 			    }
 			    //			    KeysUtil keysUtil = new KeysUtil();
-			    //			    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallOrder/E9lM9uM4ct/agreanOrderReturn" );
+			    //			    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/agreanOrderReturn" );
 			    //			    String url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refundVer2.do?out_trade_no=" + result.getOrderNo() + "&busId=" + order.getBusUserId()
 			    //					    + "&desc=订单退款&fee=" + money + "&notifyUrl=" + notifyUrl;
 			    String url = CommonUtil.getAliReturnUrl( result.getOrderNo(), order.getBusUserId(), "订单退款", money, Constants.ORDER_REFUND_URL );

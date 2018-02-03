@@ -472,7 +472,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
 			PropertiesUtil.getPhoneWebHomeUrl() + "/goods/details/" + deposit.getShopId() + "/" + member.getBusid() + "/6/" + deposit.getProductId() + "/" + deposit
 					.getPresaleId() );
 	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl()
-			+ "phonePresale/L6tgXlBFeK/payWay.do" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
+			+ "mallCallback/callbackApi/paySuccessPresale" );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 0 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	//	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "/mPresale/deposit.do" );//推送路径(尽量不要带参数)
 	int payWay = 1;//微信支付
@@ -685,7 +685,7 @@ public class MallPresaleDepositServiceImpl extends BaseServiceImpl< MallPresaleD
     @Transactional( rollbackFor = Exception.class )
     @Override
     public void returnAlipayDeposit( Map< String,Object > params ) {
-	String aucNo = params.get( "outTradeNo" ).toString();//订单号
+	String aucNo = params.get( "out_trade_no" ).toString();//订单号
 	MallPresaleDeposit deposit = mallPresaleDepositDAO.selectByPreNo( aucNo );
 	params.put( "user_id", deposit.getUserId() );
 	params.put( "id", deposit.getId() );

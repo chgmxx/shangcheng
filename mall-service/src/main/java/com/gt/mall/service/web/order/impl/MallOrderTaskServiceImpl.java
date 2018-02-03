@@ -42,7 +42,7 @@ public class MallOrderTaskServiceImpl extends BaseServiceImpl< MallOrderTaskDAO,
 	    task.setOrderNo( orderNo );
 	    task.setReturnDay( day );
 	    task.setCreateTime( new Date() );
-	    flag = mallOrderTaskService.insert( orderTask );
+	    flag = mallOrderTaskService.insert( task );
 	}
 	return flag;
     }

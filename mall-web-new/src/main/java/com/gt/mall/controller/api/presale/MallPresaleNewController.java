@@ -270,39 +270,6 @@ public class MallPresaleNewController extends BaseController {
 	}
 	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
     }
-
-    @ApiOperation( value = "交纳保证金成功回调", notes = "交纳保证金成功回调" )
-    @ResponseBody
-    @RequestMapping( value = "/refundSuccessPresale", method = RequestMethod.POST )
-    public ServerResponse paySuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    //params 传参 out_trade_no：保证金编号
-	    logger.info( "交纳保证金成功回调参数：" + params );
-	    mallPresaleDepositService.paySuccessPresale( params );
-	} catch ( Exception e ) {
-	    logger.error( "交纳保证金成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金成功回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
-    }
-
-    @ApiOperation( value = "退保证金成功回调", notes = "退保证金成功回调" )
-    @ResponseBody
-    @RequestMapping( value = "/refundSuccessPresale", method = RequestMethod.POST )
-    public ServerResponse refundSuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    //params 传参 out_trade_no：保证金编号
-	    logger.info( "退保证金成功回调参数：" + params );
-	    mallPresaleDepositService.paySuccessPresale( params );
-	} catch ( Exception e ) {
-	    logger.error( "退保证金成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金成功回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
-    }
-
     /**
      * 退保证金
      */

@@ -1338,7 +1338,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	   /* subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + url );*/
 
 	//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
-	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "phoneOrder/79B4DE7C/paySuccessModified.do" );
+	subQrPayParams.setNotifyUrl( PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/paySuccessModified.do" );
 
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)

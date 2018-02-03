@@ -287,16 +287,16 @@ public class Constants {
     /**
      * 拍卖保证金退款回调url
      */
-    public static final String AUCTION_REFUND_URL = PropertiesUtil.getHomeUrl() + "/mallAuction/E9lM9uM4ct/refundSuccessAuction";
+    public static final String AUCTION_REFUND_URL = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/refundSuccessAuction";
 
     /**
      * 预售退款回调url
      */
-    public static final String PRESALE_REFUND_URL = PropertiesUtil.getHomeUrl() + "/mallPresale/E9lM9uM4ct/refundSuccessPresale";
+    public static final String PRESALE_REFUND_URL = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/refundSuccessPresale";
 
     /**
      * 订单退款成功回调url
      */
-    public static final String ORDER_REFUND_URL = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK//agreanOrderReturn";
+    public static final String ORDER_REFUND_URL = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/agreanOrderReturn";
 
 }

@@ -342,9 +342,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	subQrPayParams.setDesc( "商城下单" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
 	String returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/order/list/" + order.getBusUserId() + "/0";
-	String sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/paySuccessModified.do";
+	String sucessUrl = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/paySuccessModified.do";
 	if ( order.getOrderPayWay() == 7 ) {
-	    sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/daifuSuccess.do";
+	    sucessUrl = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/daifuSuccess.do";
 	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/daifu/" + order.getBusUserId() + "/" + order.getId();
 	}
 	subQrPayParams.setReturnUrl( returnUrl );//同步返回url(支付成功后页面跳转)，注：跳转链接时，支付接口会拼接busId跟memberId这两个参数传过去，因此
@@ -367,6 +367,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	subQrPayParams.setPayWay( orderPayWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
 	subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE);//墨盒默认0即啊祥不用填,其他人调用填1
 	subQrPayParams.setTakeState( 2 );//此订单是否可立即提现(1:是 2:否,不填默认为1)，不可立即提现表示此订单有担保期；注：如传值为2,各erp系统需各自写定时器将超过担保期的订单发送到指定接口
+	logger.error( "------------------"+JSONObject.toJSONString( subQrPayParams ) );
 	KeysUtil keyUtil = new KeysUtil();
 	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
 	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
