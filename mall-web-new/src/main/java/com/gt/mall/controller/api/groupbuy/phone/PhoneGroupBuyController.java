@@ -110,7 +110,7 @@ public class PhoneGroupBuyController extends AuthorizeOrUcLoginController {
 	    String describe = "我参加了" + productMap.get( "proName" );
 
 	    if ( CommonUtil.isNotEmpty( productMap ) ) {
-		MallRedisUtils.getMallShopId( productMap.get( "shopId" ) );//从session获取店铺id  或  把店铺id存入session
+		MallRedisUtils.getMallShopId( productMap.get( "shopId" ), loginDTO.getBusId() );//从session获取店铺id  或  把店铺id存入session
 	    }
 	    result.put( "chaPeopleNum", chaPeopleNum );
 

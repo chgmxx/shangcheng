@@ -41,8 +41,8 @@ public class MallRedisUtils {
      *
      * @param shopIdObj 店铺id
      */
-    public static int getMallShopId( Object shopIdObj ) {
-	String redisKey = Constants.REDIS_KEY + "shopId";
+    public static int getMallShopId( Object shopIdObj ,Integer busId) {
+	String redisKey = Constants.REDIS_KEY + "shopId_"+busId;
 	boolean isSave = true;
 	if ( JedisUtil.exists( redisKey ) ) {
 	    Object idObj = JedisUtil.get( redisKey );
@@ -61,12 +61,12 @@ public class MallRedisUtils {
     /**
      * 获取商城的店铺id存到session
      */
-    public static int getShopId() {
-	String redisKey = Constants.REDIS_KEY + "shopId";
+    public static int getShopId(Integer busId) {
+	String redisKey = Constants.REDIS_KEY + "shopId_"+busId;
 	if ( JedisUtil.exists( redisKey ) ) {
 	    Object idObj = JedisUtil.get( redisKey );
 	    if ( idObj != null ) {
-		return CommonUtil.toInteger( idObj );
+//		return CommonUtil.toInteger( idObj );
 	    }
 	}
 	return 0;
