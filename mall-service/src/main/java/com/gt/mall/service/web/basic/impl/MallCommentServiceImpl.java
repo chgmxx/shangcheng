@@ -377,6 +377,21 @@ public class MallCommentServiceImpl extends BaseServiceImpl< MallCommentDAO,Mall
 		    }
 		}
 	    }
+	    if ( CommonUtil.isNotEmpty( map.get( "order_type" ) ) ) {
+		commentResult.setOrderType( CommonUtil.toInteger( map.get( "order_type" ) ) );
+		if ( commentResult.getOrderType().toString().equals( "2" ) ) {
+		    commentResult.setUnit( "积分" );
+		} else if ( commentResult.getOrderType().toString().equals( "5" ) ) {
+		    commentResult.setUnit( "粉币" );
+		}
+	    }
+	    if ( CommonUtil.isNotEmpty( map.get( "group_buy_id" ) ) ) {
+		commentResult.setActivityId( CommonUtil.toInteger( map.get( "group_buy_id" ) ) );
+	    }
+	    if ( CommonUtil.isNotEmpty( map.get( "bus_user_id" ) ) ) {
+		commentResult.setBusId( CommonUtil.toInteger( map.get( "bus_user_id" ) ) );
+	    }
+
 	    commentList.add( commentResult );
 	}
 	result.setCommentResultList( commentList );

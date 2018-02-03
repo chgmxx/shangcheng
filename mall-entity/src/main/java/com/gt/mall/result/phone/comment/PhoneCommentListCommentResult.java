@@ -54,4 +54,16 @@ public class PhoneCommentListCommentResult implements Serializable {
 
     @ApiModelProperty( name = "commentImageList", value = "评论集合" )
     private List< MallImageAssociative > commentImageList;
+
+    @ApiModelProperty( name = "unit", value = "单位" )
+    private String unit;
+
+    @ApiModelProperty( name = "orderType", value = "订单类型" )
+    private Integer orderType = 0;
+
+    @ApiModelProperty( name = "activityId", value = "活动id" )
+    private Integer activityId = 0;
+
+    @ApiModelProperty( name = "busId", value = "商家id" )
+    private Integer busId = 0;
 }

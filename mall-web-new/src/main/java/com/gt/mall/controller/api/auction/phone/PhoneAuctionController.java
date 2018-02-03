@@ -104,7 +104,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 	    int shopid = 0;
 	    if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
 		shopid = product.getShopId();
-		MallRedisUtils.getMallShopId( shopid );
+		MallRedisUtils.getMallShopId( shopid ,loginDTO.getBusId());
 	    }
 
 	    //查询商品的拍卖信息
@@ -235,7 +235,7 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
 		result.put( "aucType", auction.getAucType() );
 	    }
 
-	    MallRedisUtils.getMallShopId( auction.getShopId() );
+	    MallRedisUtils.getMallShopId( auction.getShopId() ,loginDTO.getBusId());
 	} catch ( BusinessException be ) {
 	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
 	} catch ( Exception e ) {
