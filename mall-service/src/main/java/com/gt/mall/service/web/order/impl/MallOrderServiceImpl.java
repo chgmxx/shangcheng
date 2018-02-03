@@ -547,7 +547,9 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		    }
 		    //添加任务
 		    mallOrderTaskService.saveOrUpdate( 3, order.getId(), order.getOrderNo(), null, day );//赠送物品
-		    mallOrderTaskService.saveOrUpdate( 4, order.getId(), order.getOrderNo(), null, day );//联盟积分
+		    if ( CommonUtil.isNotEmpty( order.getUnionCardId() ) && order.getUnionCardId() > 0 ) {
+			mallOrderTaskService.saveOrUpdate( 4, order.getId(), order.getOrderNo(), null, day );//联盟积分
+		    }
 		    if ( day == 0 ) {//商品为不可退，直接添加收入记录
 			MallIncomeList incomeList = new MallIncomeList();
 			incomeList.setBusId( order.getBusUserId() );

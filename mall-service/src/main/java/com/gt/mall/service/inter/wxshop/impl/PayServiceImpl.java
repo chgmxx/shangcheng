@@ -50,7 +50,7 @@ public class PayServiceImpl implements PayService {
     public Map< String,Object > walletRefund( TRefundOrder refundOrder ) {
 	RequestUtils< TRefundOrder > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( refundOrder );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "codepay", 2, 1 );
+	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "codepay", 5, 1 );
     }
 
     @Override
