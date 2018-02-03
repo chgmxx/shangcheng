@@ -100,6 +100,7 @@
         <result column="express_time" property="expressTime" jdbcType="TIMESTAMP"/>
         <result column="buyer_cancel_reason" property="buyerCancelReason" jdbcType="INTEGER"/>
         <result column="seller_cancel_reason" property="sellerCancelReason" jdbcType="INTEGER"/>
+        <result column="give_status" property="giveStatus"/>
         <!-- <result column="mem_name" property="recUserName" jdbcType="VARCHAR" />-->
         <!-- <result column="mem_phone" property="recTelephone" jdbcType="VARCHAR" />-->
         <result column="updateDay" property="updateDay" jdbcType="INTEGER"/>
@@ -379,7 +380,7 @@
 
     <sql id="Order_OrderDetail_List">
         t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
-        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time,
+        t.receive_name,t.receive_address,t.receive_phone,t.order_buyer_message,t.update_time,t.give_status,
         t.order_start,t.order_pay_way,t.delivery_method,t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id,
         t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,t.pay_time,express_way,t.express_id,t.express_number,
         t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason,t.mem_card_type,t.group_buy_id,t.order_type,t.p_join_id,t.order_pid,
@@ -1474,6 +1475,7 @@
     <select id="selectOrderById" parameterType="Map" resultMap="MoreResultMap">
         select <include refid="Order_OrderDetail_List"></include> from t_mall_order t
         left join t_mall_order_detail d on d.order_id = t.id
+        left join t_mall_product p on p.id=d.product_id
         where 1=1
         <if test="id != null and id != ''">
             and t.id = #{id}

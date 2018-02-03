@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -24,6 +26,8 @@ public class MallOrderTaskServiceImpl extends BaseServiceImpl< MallOrderTaskDAO,
 
     @Autowired
     private MallOrderTaskService mallOrderTaskService;
+    @Autowired
+    private MallOrderTaskDAO     mallOrderTaskDAO;
 
     @Override
     public boolean saveOrUpdate( Integer type, Integer orderId, String orderNo, Integer orderRerurnId, Integer day ) {
@@ -45,5 +49,10 @@ public class MallOrderTaskServiceImpl extends BaseServiceImpl< MallOrderTaskDAO,
 	    flag = mallOrderTaskService.insert( task );
 	}
 	return flag;
+    }
+
+    @Override
+    public List< MallOrderTask > findByType( Map< String,Object > params ) {
+	return mallOrderTaskDAO.findByType( params );
     }
 }

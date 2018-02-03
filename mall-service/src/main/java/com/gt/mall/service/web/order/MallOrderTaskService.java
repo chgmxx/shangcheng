@@ -2,6 +2,8 @@ package com.gt.mall.service.web.order;
 
 import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.order.MallOrderTask;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -25,5 +27,14 @@ public interface MallOrderTaskService extends BaseService< MallOrderTask > {
      * @return
      */
     boolean saveOrUpdate( Integer type, Integer orderId, String orderNo, Integer orderRerurnId, Integer day );
+
+    /**
+     * 查询数据
+     *
+     * @param params
+     *
+     * @return
+     */
+    List< MallOrderTask > findByType( Map< String,Object > params );
 
 }

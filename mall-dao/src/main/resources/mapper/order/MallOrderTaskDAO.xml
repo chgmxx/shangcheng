@@ -19,4 +19,25 @@
         id, task_type AS taskType, create_time AS createTime, order_no AS orderNo, order_id AS orderId, order_return_id AS orderReturnId, return_day AS returnDay, is_delete AS isDelete
     </sql>
 
+    <select id="findByType" resultMap="BaseResultMap" parameterType="map">
+        SELECT id, task_type , create_time, order_no , order_id , order_return_id, return_day, is_delete
+        from t_mall_order_task t
+        <where>
+            <if test="type != null and type != ''">
+                and t.task_type = #{type}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                and t.order_no = #{orderNo}
+            </if>
+            <if test="orderId != null and orderId != ''">
+                and t.order_id = #{orderId}
+            </if>
+            <if test="orderReturnId != null and orderReturnId != ''">
+                and t.order_return_id = #{orderReturnId}
+            </if>
+            and t.is_delete = 0
+        </where>
+        ORDER BY t.create_time desc
+    </select>
+
 </mapper>

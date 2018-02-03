@@ -3,6 +3,7 @@ package com.gt.mall.controller.api;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.service.quartz.MallQuartzNewService;
+import com.gt.mall.service.quartz.MallQuartzOrderTaskService;
 import com.gt.mall.service.quartz.MallQuartzService;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -29,9 +30,11 @@ public class MallQuartzApiController {
     private static Logger logger = LoggerFactory.getLogger( MallQuartzApiController.class );
 
     @Autowired
-    private MallQuartzNewService mallQuartzNewService;
+    private MallQuartzNewService       mallQuartzNewService;
     @Autowired
-    private MallQuartzService    mallQuartzService;
+    private MallQuartzService          mallQuartzService;
+    @Autowired
+    private MallQuartzOrderTaskService mallQuartzOrderTaskService;
 
     //    @ApiOperation( value = "修改支付成功回调失败的订单", notes = "修改支付成功回调失败的订单" )
     //    @ResponseBody
@@ -53,7 +56,7 @@ public class MallQuartzApiController {
     public ServerResponse orderFinish( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    //每天早上8点扫描
-	    mallQuartzNewService.orderFinish();
+	    mallQuartzOrderTaskService.orderFinish();
 	} catch ( Exception e ) {
 	    logger.error( "订单完成赠送物品异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -76,7 +79,7 @@ public class MallQuartzApiController {
     public ServerResponse closeOrderNoPay( HttpServletRequest request, HttpServletResponse response ) {
 	try {
 	    //关闭未付款认单
-	    mallQuartzNewService.closeNoPayOrder();
+	    mallQuartzOrderTaskService.newCloseOrderNoPay();
 	} catch ( Exception e ) {
 	    logger.error( "关闭未付款认单异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -116,7 +119,7 @@ public class MallQuartzApiController {
     public ServerResponse countNum( HttpServletRequest request, HttpServletResponse response ) {
 	//每天晚上23点30扫描
 	try {
-	    mallQuartzNewService.countIncomeNum();
+	    mallQuartzOrderTaskService.countIncomeNum();
 	} catch ( Exception e ) {
 	    logger.error( "统计每天的收入金额异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -131,21 +134,21 @@ public class MallQuartzApiController {
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "维权自动确认收货异常" );
 	}
 	try {
-	    mallQuartzNewService.cancelReturn();//自动取消维权
+	    mallQuartzOrderTaskService.cancelReturn();//自动取消维权
 	} catch ( Exception e ) {
 	    logger.error( "自动取消维权异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "自动取消维权异常" );
 	}
 	try {
-	    mallQuartzNewService.autoRefund();//自动退款给买家
+	    mallQuartzOrderTaskService.autoRefund();//自动退款给买家
 	} catch ( Exception e ) {
 	    logger.error( "自动退款给买家异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "自动退款给买家异常" );
 	}
 	try {
-	    mallQuartzNewService.returnGoodsByRefund();//自动确认收货并退款至买家
+	    mallQuartzOrderTaskService.returnGoodsByRefund();//自动确认收货并退款至买家
 	} catch ( Exception e ) {
 	    logger.error( "自动确认收货并退款至买家异常：" + e.getMessage() );
 	    e.printStackTrace();
