@@ -7,6 +7,7 @@ import com.gt.api.util.KeysUtil;
 import com.gt.entityBo.NewErpPaySuccessBo;
 import com.gt.entityBo.PayTypeBo;
 import com.gt.mall.common.AuthorizeOrLoginController;
+import com.gt.mall.constant.Constants;
 import com.gt.mall.dao.purchase.*;
 import com.gt.mall.dto.ServerResponse;
 import com.gt.mall.entity.purchase.*;
@@ -440,6 +441,8 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 	    subQrPayParams.setReturnUrl( PropertiesUtil.getHomeUrl() + "/purchasePhone/79B4DE7C/"+orderId+"/findOrder.do" );
 	    subQrPayParams.setSourceType( 1 );
 	    subQrPayParams.setTotalFee( discountmoney );
+	    subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE);//墨盒默认0即啊祥不用填,其他人调用填1
+	    subQrPayParams.setTakeState( 2 );//此订单是否可立即提现(1:是 2:否,不填默认为1)，不可立即提现表示此订单有担保期；注：如传值为2,各erp系统需各自写定时器将超过担保期的订单发送到指定接口
 
 	    KeysUtil keysUtil = new KeysUtil();
 	    String parms = keysUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );

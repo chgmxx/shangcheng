@@ -45,10 +45,7 @@ import com.gt.mall.service.inter.wxshop.*;
 import com.gt.mall.service.web.auction.MallAuctionBiddingService;
 import com.gt.mall.service.web.basic.*;
 import com.gt.mall.service.web.groupbuy.MallGroupBuyService;
-import com.gt.mall.service.web.order.MallDaifuService;
-import com.gt.mall.service.web.order.MallOrderReturnLogService;
-import com.gt.mall.service.web.order.MallOrderService;
-import com.gt.mall.service.web.order.MallOrderSubmitService;
+import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.presale.MallPresaleService;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -63,6 +60,7 @@ import com.gt.util.entity.param.fenbiFlow.AdcServicesInfo;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
 import com.gt.util.entity.param.sms.OldApiSms;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.param.wx.SendWxMsgTemplate;
 import com.gt.util.entity.result.pay.WxPayOrder;
@@ -213,6 +211,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
     private MallCountIncomeService      mallCountIncomeService;
     @Autowired
     private MallIncomeListService       mallIncomeListService;
+    @Autowired
+    private MallOrderTaskService        mallOrderTaskService;
 
     @Override
     public Integer count( Map< String,Object > params ) {
@@ -529,6 +529,53 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		MallOrder order = mallOrderDAO.getOrderById( CommonUtil.toInteger( params.get( "orderId" ) ) );
 		if ( params.get( "status" ).toString().equals( "3" ) ) {//发货时赠送实体物品
 		    mallPresaleService.deliveryRank( order );//发货时赠送实体物品
+		    //添加任务
+		    mallOrderTaskService.saveOrUpdate( 2, order.getId(), order.getOrderNo(), null, 14 );//2自动确认收货
+		}
+		if ( params.get( "status" ).toString().equals( "4" ) ) {
+		    int day = 0;
+		    if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
+			for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+			    if ( detail.getReturnDay() > 0 ) {
+				if ( day == 0 ) {
+				    day = detail.getReturnDay();
+				} else if ( detail.getReturnDay() > day ) {
+				    day = detail.getReturnDay();
+				}
+			    }
+			}
+		    }
+		    //添加任务
+		    mallOrderTaskService.saveOrUpdate( 3, order.getId(), order.getOrderNo(), null, day );//赠送物品
+		    mallOrderTaskService.saveOrUpdate( 4, order.getId(), order.getOrderNo(), null, day );//联盟积分
+		    if ( day == 0 ) {//商品为不可退，直接添加收入记录
+			MallIncomeList incomeList = new MallIncomeList();
+			incomeList.setBusId( order.getBusUserId() );
+			incomeList.setIncomeType( 1 );
+			incomeList.setIncomeCategory( 2 );
+			incomeList.setIncomeMoney( order.getOrderMoney() );
+			incomeList.setShopId( order.getShopId() );
+			incomeList.setBuyerId( order.getBuyerUserId() );
+			incomeList.setBuyerName( order.getMemberName() );
+			incomeList.setTradeId( order.getId() );
+			incomeList.setTradeType( 1 );
+			if ( order.getMallOrderDetail().size() > 0 ) {
+			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+			} else if ( order.getOrderPayWay() == 5 ) {
+			    incomeList.setProName( "扫码支付" );
+			}
+			if ( order.getOrderPayWay() == 4 ) {
+			    incomeList.setIncomeUnit( 3 );
+			} else if ( order.getOrderPayWay() == 8 ) {
+			    incomeList.setIncomeUnit( 2 );
+			}
+			incomeList.setProNo( order.getOrderNo() );
+			incomeList.setCreateTime( new Date() );
+			mallIncomeListService.insert( incomeList );
+		    } else {
+			mallOrderTaskService.saveOrUpdate( 5, order.getId(), order.getOrderNo(), null, day );//收入记录
+		    }
+
 		}
 		/*if ( params.get( "status" ).toString().equals( "4" ) ) {//确认收货订单已经完成
 		    if ( CommonUtil.isNotEmpty( order ) ) {
@@ -1253,13 +1300,13 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 		adcServicesInfo.setPublicId( pbUser.getId() );//商家公众号Id
 		adcServicesInfo.setBusId( orders.getBusUserId() ); //根据平台用户Id获取微信订阅号用户信息
 		adcServicesInfo.setId( orders.getId() );//订单id
-		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/flowSuccess.do" );
+		adcServicesInfo.setNotifyUrl( PropertiesUtil.getHomeUrl() + "/mallCallback/callbackApi/flowSuccess" );
 		boolean isFlow = fenBiFlowService.adcServices( adcServicesInfo );//流量充值
 		if ( isFlow ) {//充值成功
-		    /*MallOrder order = new MallOrder();
+		    MallOrder order = new MallOrder();
 		    order.setId( orders.getId() );
 		    order.setFlowRechargeStatus( 1 );
-		    mallOrderDAO.upOrderNoById( order );*/
+		    mallOrderDAO.upOrderNoById( order );
 		} else {
 		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "流量充值异常" );
 		}
@@ -1407,7 +1454,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				    msg = "退款成功";
 				}
 			    } else if ( order.getOrderPayWay() == 3 ) {//储值卡退款
-				//Double retMoney = CommonUtil.toDouble( oReturn.getRetMoney() );
+				Double retMoney = CommonUtil.toDouble( oReturn.getRetMoney() );
 				String orderNo = order.getOrderNo();
 				if ( CommonUtil.isNotEmpty( order.getOrderPid() ) ) {
 				    MallOrder pOrder = mallOrderDAO.selectById( order.getOrderPid() );
@@ -1415,7 +1462,25 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 					orderNo = pOrder.getOrderNo();
 				    }
 				}
-				updateReturnStatus( pUser, oReturn, orderReturn, order );//退款成功修改退款状态
+				ErpRefundBo erpRefundBo = new ErpRefundBo();
+				erpRefundBo.setBusId( order.getBusUserId() );//商家id
+				erpRefundBo.setOrderCode( orderNo );////订单号
+				erpRefundBo.setRefundPayType( CommonUtil.getMemberPayType( order.getOrderPayWay(), order.getIsWallet() ) );////退款方式 字典1198
+				erpRefundBo.setRefundMoney( retMoney ); //退款金额
+				erpRefundBo.setRefundDate( new Date().getTime() );
+				Map< String,Object > memberResultMap = memberService.refundMoney( erpRefundBo );
+				if ( CommonUtil.toInteger( memberResultMap.get( "code" ) ) != 1 ) {
+				    //同步失败，存入redis
+				    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
+
+				    resultMap.put( "result", false );
+				    if ( CommonUtil.isNotEmpty( memberResultMap.get( "errorMsg" ) ) ) {
+					resultMap.put( "msg", memberResultMap.get( "errorMsg" ) );
+				    }
+				} else {
+				    updateReturnStatus( pUser, oReturn, orderReturn, order );//退款成功修改退款状态
+				}
+
 			    } else if ( order.getOrderPayWay() == 2 || order.getOrderPayWay() == 6 ) {//货到付款和到店支付都不用退钱
 				rFlag = true;
 				MallOrderDetail detail = new MallOrderDetail();
@@ -1631,6 +1696,22 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
 				    rFlag = true;
 				    msg = "退款成功";
+				}
+			    } else if ( order.getOrderPayWay() == 11 ) {
+				TRefundOrder refundOrder = new TRefundOrder();
+				refundOrder.setBizOrderNo( oReturn.getReturnNo() );//商户退款订单号
+				refundOrder.setOriBizOrderNo( payMap.get( "orderNo" ).toString() );//商户原订单号(支付单号)
+				refundOrder.setAmount( CommonUtil.toDouble( oReturn.getRetMoney() ) );//订单金额
+				refundOrder.setBackUrl( Constants.PRESALE_REFUND_URL );//异步回调通知
+				refundOrder.setBusId( order.getBusUserId() );//商家id
+				Map< String,Object > refundResultMap = payService.walletRefund( refundOrder );
+				if ( CommonUtil.toInteger( refundResultMap.get( "code" ) ) == 1 ) {
+				    rFlag = true;
+				} else {
+				    rFlag = false;
+				    if ( CommonUtil.isNotEmpty( refundResultMap.get( "errorMsg" ) ) ) {
+					msg = refundResultMap.get( "errorMsg" ).toString();
+				    }
 				}
 			    }
 			}
@@ -3249,11 +3330,10 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 				money = 0d;
 			    }
 			    //			    KeysUtil keysUtil = new KeysUtil();
-			    //			    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallOrder/E9lM9uM4ct/agreanOrderReturn" );
+			    //			    String notifyUrl = keysUtil.getEncString( PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/agreanOrderReturn" );
 			    //			    String url = PropertiesUtil.getHomeUrl() + "alipay/79B4DE7C/refundVer2.do?out_trade_no=" + result.getOrderNo() + "&busId=" + order.getBusUserId()
 			    //					    + "&desc=订单退款&fee=" + money + "&notifyUrl=" + notifyUrl;
-			    String notifyUrl = PropertiesUtil.getHomeUrl() + "/phoneOrder/L6tgXlBFeK//agreanOrderReturn";
-			    String url = CommonUtil.getAliReturnUrl( result.getOrderNo(), order.getBusUserId(), "订单退款", money, notifyUrl );
+			    String url = CommonUtil.getAliReturnUrl( result.getOrderNo(), order.getBusUserId(), "订单退款", money, Constants.ORDER_REFUND_URL );
 			    detailResult.getReturnResult().setRefundUrl( url );
 			} catch ( Exception e ) {
 			    e.printStackTrace();

@@ -12,21 +12,23 @@ spring:
   #host: 113.106.202.51
   #port: 6379
   password: gt@123456
-  database: 2
-  timeout: 5000
-  cluster:
-   nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.53:9379
-   maxRedirects: 3
-  sentinel:
-    #     # comma-separated list of host:port pairs  哨兵的配置列表
-    nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
-    #     # name of Redis server  哨兵监听的Redis server的名称
-    master: mymaster
+  database: 4
+  timeout: 1000
   pool:
+    max-active: 50
     max-wait: -1
-    min-idle: 0
-    max-active: 200
     max-idle: 20
+    min-idle: 0
+    #redis集群配置
+  cluster:
+    nodes: 113.106.202.51:6379,113.106.202.50:9379,113.106.202.54:9379
+    max-attempts: 6
+    max-redirects: 6
+    #redis哨兵模式配置
+  sentinel:
+    nodes: 113.106.202.51:26379,113.106.202.50:29379,113.106.202.54:29379
+    master: mymaster
+
 #redis session共享
  session:
    store-type: redis
@@ -41,9 +43,9 @@ spring:
 
  datasource:
    druid:
-     url: jdbc:mysql://113.106.202.51:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
+     url: jdbc:mysql://183.47.242.2:3306/gt_mall?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&createDatabaseIfNotExist=true
      username: root
-     password: gt123456
+     password: gt26609632
      # 下面为连接池的补充设置，应用到上面所有数据源中
      # 初始化大小，最小，最大
      initial-size: 10
@@ -89,27 +91,27 @@ swagger:
 #JedisUtil 用到的配置
 redis:
  host: 113.106.202.51
- port: 6379
- password: gt@123456
+ port: 6381
+ password: GT@123456
  database: 0
 
 ### 设置 Redis session 共享
 redisSession:
- domainName: .yifriend.net
+ domainName: .deeptel.com.cn
  cookiePath: /
- cookieName: JSESSIONID
+ cookieName: WXMPJSESSIONID
 
 web:
  #域名
  domain: nb.mall.deeptel.com.cn
  #网页访问路径
- homeUrl: http://nb.mall.deeptel.com.cn/
+ homeUrl: https://nb.mall.deeptel.com.cn/
  #手机端页面路径访问
- phoneWebHomeUrl: http://nb.mall.deeptel.com.cn/html/phone/index.html#
+ phoneWebHomeUrl: https://nb.mall.deeptel.com.cn/html/phone/index.html#
  #商城营销路径
- marketingUrl: http://core.deeptel.net/html/application/busAdded/index.html?dictstyle=05f8fd040284859d
-#素材库路径
- materialUrl: https://suc.deeptel.com.cn/common/material.do
+ marketingUrl: https://nb.core.deeptel.com.cn/html/application/busAdded/index.html?dictstyle=05f8fd040284859d
+ #素材库路径
+ materialUrl: https://nb.suc.deeptel.com.cn/common/material.do
  #多粉二维码关注
  duofenTwoCodeUrl: http://maint.deeptel.com.cn/image/2/gh_32251ec4c8e9/1/1509331696065.jpg
  #多粉的公众号id（用作给商家发送消息模板）
@@ -120,26 +122,26 @@ static:
  source:
   ftp:
    #FTP Ip
-   ip: 120.25.154.127
+   ip: 183.47.242.3
    #FTP 端口号
    port: 21
    #FTP 用户名
    user: gt123456
    #FTP 密码
-   password: gt12345612
+   password: gt123456
 #访问文章资源URL
 article:
  url:
-  prefix: http://nb.mall.deeptel.com.cn/
+  prefix: https://nb.mall.deeptel.com.cn/
 #访问资源URL
 resource:
  url:
-  prefix: http://maint.yifriend.net/upload/
+  prefix: https://maint.duofriend.com/upload/
 
 #图片存放路径
 res:
  image:
-  path: D:/apache-tomcat-7.0.59/wtpwebapps/wxmp/upload/image
+  path: /home/server/project/staticSource/upload/image
 
 #电信流量订单前缀
 dianxin:
@@ -153,21 +155,22 @@ mq:
  password: gt@123456@
  seckill:
   #队列转换器
-  exchange: mall.seckill.exchange
+  exchange: mall.fort.seckill.exchange
   #队列名称
-  queueName: mall.seckill.queueName
+  queueName: mall.fort.seckill.queueName
 
 http:
  #总项目请求地址
  wxmp:
-  domain: http://nb.deeptel.com.cn/
+  domain: https://nb.deeptel.com.cn/
   key: WXMP2017
  #会员key 和 请求地址
  member:
-  domain: http://nb.member.deeptel.com.cn/
+  domain: https://nb.member.deeptel.com.cn/
   key: MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM
+ #联盟 key  和请求地址
  union:
-  domain: http://union.duofee.com/
+  domain: https://nb.union.deeptel.com.cn/
   key: SR36E9KIYDLIU1VB6WX20HCW494QL97T
  #进销存的请求地址、token 用户名  和token密码
  jxc:
@@ -189,6 +192,6 @@ http:
  #钱包支付
  dfPay:
   #钱包支付域名
-  domain: http://nb.dfpay.deeptel.com.cn/
+  domain: https://nb.dfpay.deeptel.com.cn/
   #钱包支付 key
   key: WALLET2017

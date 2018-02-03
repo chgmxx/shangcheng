@@ -10,6 +10,7 @@ import com.gt.util.entity.param.pay.ApiEnterprisePayment;
 import com.gt.util.entity.param.pay.PayWay;
 import com.gt.util.entity.param.pay.SubQrPayParams;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.result.pay.EnterprisePaymentResult;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,8 @@ public class PayServiceImpl implements PayService {
 
     private static final String WX_APPLET_PAY_URL = "/wxPay/79B4DE7C/";
 
+    private static final String WALLET_REFUND = "/8A5DA52E/orderApi/79B4DE7C/";
+
     @Override
     public Map< String,Object > payapi( SubQrPayParams payParams ) throws Exception {
 	KeysUtil keyUtil = new KeysUtil();
@@ -41,6 +44,13 @@ public class PayServiceImpl implements PayService {
 	RequestUtils< WxmemberPayRefund > requestUtils = new RequestUtils<>();
 	requestUtils.setReqdata( refund );
 	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2, 1 );
+    }
+
+    @Override
+    public Map< String,Object > walletRefund( TRefundOrder refundOrder ) {
+	RequestUtils< TRefundOrder > requestUtils = new RequestUtils<>();
+	requestUtils.setReqdata( refundOrder );
+	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "codepay", 2, 1 );
     }
 
     @Override

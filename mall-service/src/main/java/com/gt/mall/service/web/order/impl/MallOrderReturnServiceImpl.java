@@ -32,16 +32,14 @@ import com.gt.mall.service.inter.wxshop.WxPublicUserService;
 import com.gt.mall.service.web.basic.MallBusMessageMemberService;
 import com.gt.mall.service.web.basic.MallCountIncomeService;
 import com.gt.mall.service.web.basic.MallIncomeListService;
-import com.gt.mall.service.web.order.MallOrderDetailService;
-import com.gt.mall.service.web.order.MallOrderReturnLogService;
-import com.gt.mall.service.web.order.MallOrderReturnService;
-import com.gt.mall.service.web.order.MallOrderService;
+import com.gt.mall.service.web.order.*;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.DateTimeKit;
 import com.gt.mall.utils.JedisUtil;
 import com.gt.mall.utils.OrderUtil;
 import com.gt.util.entity.param.pay.WxmemberPayRefund;
+import com.gt.util.entity.param.wallet.TRefundOrder;
 import com.gt.util.entity.param.wx.BusIdAndindustry;
 import com.gt.util.entity.result.pay.WxPayOrder;
 import com.gt.util.entity.result.wx.ApiWxApplet;
@@ -100,6 +98,8 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
     private MallCountIncomeService      mallCountIncomeService;
     @Autowired
     private MallIncomeListService       mallIncomeListService;
+    @Autowired
+    private MallOrderTaskService        mallOrderTaskService;
 
     /**
      * 申请订单退款
@@ -168,15 +168,25 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			mallOrderReturnLogService.addBuyerRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
 			//默认7天不处理，自动退款（系统消息）
 			mallOrderReturnLogService.waitSellerDispose( orderReturn.getId(), DateTimeKit.addDays( 7 ) );
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 7, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 7 );//7自动退款给买家
 		    } else if ( status == -1 ) {
 			//修改申请
 			mallOrderReturnLogService.againRetutnApply( orderReturn.getId(), member.getId(), orderReturn.getRetHandlingWay() );
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 7, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 7 );//7自动退款给买家
 		    } else if ( status == 3 ) {
 			//买家已填写退货物流
 			mallOrderReturnLogService.buyerReturnGoods( orderReturn.getId(), member.getId() );
 		    } else if ( status == 4 ) {
 			//修改退货物流
 			mallOrderReturnLogService.buyerUpdateLogistics( orderReturn.getId(), member.getId() );
+
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 8, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 10 );//8自动确认收货并退款至买家
+		    } else if ( status == 2 ) {
+			MallOrder mallOrder = mallOrderService.selectById( orderReturn.getOrderId() );
+			mallOrderTaskService.saveOrUpdate( 8, mallOrder.getId(), mallOrder.getOrderNo(), orderReturn.getId(), 10 );//8自动确认收货并退款至买家
 		    }
 
 		    return true;
@@ -345,6 +355,19 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			resultFlag = true;
 			//退款成功修改退款状态
 			updateReturnStatus( pUser, detailMap, returnNo );//微信退款
+		    }
+		} else if ( detailMap.get( "orderStatus" ).toString().equals( "11" ) ) {//钱包退款
+		    TRefundOrder refundOrder = new TRefundOrder();
+		    refundOrder.setBizOrderNo( returnNo );//商户退款订单号
+		    refundOrder.setOriBizOrderNo( orderNo );//商户原订单号(支付单号)
+		    refundOrder.setAmount( orderMoney );//订单金额
+		    refundOrder.setBackUrl( Constants.PRESALE_REFUND_URL );//异步回调通知
+		    refundOrder.setBusId( busUserId );//商家id
+		    Map< String,Object > refundResultMap = payService.walletRefund( refundOrder );
+		    if ( CommonUtil.toInteger( refundResultMap.get( "code" ) ) == 1 ) {
+			resultFlag = true;
+		    } else {
+			resultFlag = false;
 		    }
 		}
 	    }

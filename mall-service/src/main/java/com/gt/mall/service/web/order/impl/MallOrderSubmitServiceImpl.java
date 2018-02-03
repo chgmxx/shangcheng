@@ -49,6 +49,7 @@ import com.gt.mall.service.web.common.MallMemberAddressService;
 import com.gt.mall.service.web.freight.MallFreightService;
 import com.gt.mall.service.web.order.MallOrderService;
 import com.gt.mall.service.web.order.MallOrderSubmitService;
+import com.gt.mall.service.web.order.MallOrderTaskService;
 import com.gt.mall.service.web.page.MallPageService;
 import com.gt.mall.service.web.pifa.MallPifaService;
 import com.gt.mall.service.web.product.MallProductService;
@@ -121,6 +122,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
     private UnionCardService          UnionCardService;
     @Autowired
     private PayService                payService;
+    @Autowired
+    private MallOrderTaskService      mallOrderTaskService;
 
     @Transactional( rollbackFor = Exception.class )
     @Override
@@ -266,13 +269,17 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    String times = DateTimeKit.format( new Date(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
 	    objs.put( "times", times );
 	    MallPaySet paySet = mallPaySetService.selectByUserId( orderList.get( 0 ).getBusUserId() );
+	    Integer orderCancel = 1440 * 3;
 	    if ( paySet != null ) {
 		if ( CommonUtil.isNotEmpty( paySet.getOrderCancel() ) ) {
 		    objs.put( "orderCancel", paySet.getOrderCancel() );
+		    orderCancel = paySet.getOrderCancel();
 		}
 	    }
 	    objs.put( "orderId", orderPId );
 	    JedisUtil.map( key, orderPId + "", objs.toString() );
+	    //添加任务
+	    mallOrderTaskService.saveOrUpdate( 1, orderPId, orderPNo, null, orderCancel );//1关闭订单
 	}
 	//拍卖，添加拍卖竞拍
 	if ( firstOrder.getOrderType() == 4 ) {
@@ -325,22 +332,22 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	    orderNo = order.getOrderNo();
 	}
 	SubQrPayParams subQrPayParams = new SubQrPayParams();
-	subQrPayParams.setTotalFee( orderAllMoney );
-	subQrPayParams.setModel( Constants.PAY_MODEL );
-	subQrPayParams.setBusId( order.getBusUserId() );
-	subQrPayParams.setAppidType( 0 );
+	subQrPayParams.setTotalFee( orderAllMoney );//支付金额
+	subQrPayParams.setModel( Constants.PAY_MODEL );//支付模块ID(字典:1200)
+	subQrPayParams.setBusId( order.getBusUserId() );//商家id
+	subQrPayParams.setAppidType( 0 );//appid类型(后期可能会有小程序支付),可为空默认是0：公众号支付,1:小程序支付
 	    /*subQrPayParams.setAppid( 0 );*///微信支付和支付宝支付可以不传
 	subQrPayParams.setOrderNum( orderNo );//订单号
 	subQrPayParams.setMemberId( order.getBuyerUserId() );//会员id
 	subQrPayParams.setDesc( "商城下单" );//描述
 	subQrPayParams.setIsreturn( 1 );//是否需要同步回调(支付成功后页面跳转),1:需要(returnUrl比传),0:不需要(为0时returnUrl不用传)
 	String returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/order/list/" + order.getBusUserId() + "/0";
-	String sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/paySuccessModified.do";
+	String sucessUrl = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/paySuccessModified.do";
 	if ( order.getOrderPayWay() == 7 ) {
-	    sucessUrl = PropertiesUtil.getHomeUrl() + "phoneOrder/L6tgXlBFeK/daifuSuccess.do";
+	    sucessUrl = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/daifuSuccess.do";
 	    returnUrl = PropertiesUtil.getPhoneWebHomeUrl() + "/daifu/" + order.getBusUserId() + "/" + order.getId();
 	}
-	subQrPayParams.setReturnUrl( returnUrl );
+	subQrPayParams.setReturnUrl( returnUrl );//同步返回url(支付成功后页面跳转)，注：跳转链接时，支付接口会拼接busId跟memberId这两个参数传过去，因此
 	subQrPayParams.setNotifyUrl( sucessUrl );//异步回调，注：1、会传out_trade_no--订单号,payType--支付类型(0:微信，1：支付宝2：多粉钱包),2接收到请求处理完成后，必须返回回调结果：code(0:成功,-1:失败),msg(处理结果,如:成功)
 	subQrPayParams.setIsSendMessage( 1 );//是否需要消息推送,1:需要(sendUrl比传),0:不需要(为0时sendUrl不用传)
 	subQrPayParams.setSendUrl( PropertiesUtil.getHomeUrl() + "html/back/views/order/index.html#/allOrder" );//推送路径(尽量不要带参数)
@@ -358,6 +365,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	}
 
 	subQrPayParams.setPayWay( orderPayWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
+	subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE);//墨盒默认0即啊祥不用填,其他人调用填1
+	subQrPayParams.setTakeState( 2 );//此订单是否可立即提现(1:是 2:否,不填默认为1)，不可立即提现表示此订单有担保期；注：如传值为2,各erp系统需各自写定时器将超过担保期的订单发送到指定接口
+	logger.error( "------------------"+JSONObject.toJSONString( subQrPayParams ) );
 	KeysUtil keyUtil = new KeysUtil();
 	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
 	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
@@ -438,7 +448,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	Integer toShop = 0;
 	Integer type = 0;//订单类型
 	long endTime = System.currentTimeMillis();
-	long endTime3=  0;
+	long endTime3 = 0;
 	logger.error( "访问的执行时间 : " + ( endTime - startTime ) + "ms----1111" );
 	if ( params.getFrom() == 1 && CommonUtil.isNotEmpty( params.getCartIds() ) ) {//购物车
 	    Map< String,Object > shopcartParams = new HashMap<>();
@@ -838,8 +848,8 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
      * 重组订单参数(购物车进入提交订单页面)
      */
     private PhoneToOrderResult getToOrderParams( List< PhoneToOrderProductResult > productResultList, List< Integer > busUserList, List< MallFreight > freightList,
-		    List< Map< String,Object > > mallShopList,
-		    PhoneToOrderDTO params, PhoneToOrderResult result, Integer provincesId, Double memberLongitude, Double memberLangitude ) {
+		    List< Map< String,Object > > mallShopList, PhoneToOrderDTO params, PhoneToOrderResult result, Integer provincesId, Double memberLongitude,
+		    Double memberLangitude ) {
 	DecimalFormat df = new DecimalFormat( "######0.00" );
 
 	//查询公众号名称或商家名称以及图片
@@ -1067,8 +1077,7 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	if ( imageList != null && imageList.size() > 0 ) {
 	    result.setProductImageUrl( CommonUtil.toString( imageList.get( 0 ).get( "image_url" ) ) );//商品图片
 	}
-	if ( CommonUtil.isNotEmpty( product.getIsSpecifica() ) && "1".equals( product.getIsSpecifica().toString() ) && CommonUtil
-			.isNotEmpty( buyNowDTO.getProductSpecificas() ) ) {
+	if ( CommonUtil.isNotEmpty( product.getIsSpecifica() ) && "1".equals( product.getIsSpecifica().toString() ) && CommonUtil.isNotEmpty( buyNowDTO.getProductSpecificas() ) ) {
 	    //获取商品规格和规格价
 	    Map< String,Object > invMap = mallProductService.getProInvIdBySpecId( buyNowDTO.getProductSpecificas(), productId );
 	    if ( CommonUtil.isNotEmpty( invMap ) ) {
@@ -1102,15 +1111,14 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		    if ( CommonUtil.isNotEmpty( buyNowDTO.getPifaSpecificaDTOList() ) ) {
 			List< PhoneToOrderPifatSpecificaDTO > pifaSpecificaDTOList = JSONArray
 					.parseArray( buyNowDTO.getPifaSpecificaDTOList(), PhoneToOrderPifatSpecificaDTO.class );
-			List< PhoneOrderPifaSpecDTO > pfSpecResultsList = mallPifaService
-					.getPifaPrice( product.getId(), product.getShopId(), pifa.getId(), pifaSpecificaDTOList );
+			List< PhoneOrderPifaSpecDTO > pfSpecResultsList = mallPifaService.getPifaPrice( product.getId(), product.getShopId(), pifa.getId(), pifaSpecificaDTOList );
 			result.setPfSpecResultList( pfSpecResultsList );
 			productNum = 0;
 
-			if ( pfSpecResultsList==null || pfSpecResultsList.size()==0 ){
-			    productNum=pifaSpecificaDTOList.get( 0 ).getProductNum();
-			    pfTotalPrice=pifa.getPfPrice().doubleValue();
-			}else{
+			if ( pfSpecResultsList == null || pfSpecResultsList.size() == 0 ) {
+			    productNum = pifaSpecificaDTOList.get( 0 ).getProductNum();
+			    pfTotalPrice = pifa.getPfPrice().doubleValue();
+			} else {
 			    for ( PhoneOrderPifaSpecDTO pfSpecResult : pfSpecResultsList ) {
 				productNum += pfSpecResult.getTotalNum();
 				pfTotalPrice += pfSpecResult.getPfPrice() * pfSpecResult.getTotalNum();
