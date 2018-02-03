@@ -142,7 +142,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    map.put( "busId", params.getBusId() );
 	    List< AppletGroupDTO > classList = mallHomeAppletService.selectGroupsByShopId( map );
 
-	    MallRedisUtils.getMallShopId( params.getShopId() );
+	    MallRedisUtils.getMallShopId( params.getShopId(), params.getBusId() );
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), classList );
 
@@ -182,7 +182,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 		/*loginDTO.setUcLogin( 1 );//不需要登陆
 		userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
-		MallRedisUtils.getMallShopId( params.getShopId() );//从session获取店铺id  或  把店铺id存入session
+		MallRedisUtils.getMallShopId( params.getShopId(), loginDTO.getBusId() );//从session获取店铺id  或  把店铺id存入session
 
 		if ( CommonUtil.isNotEmpty( params.getType() ) ) {
 		    if ( params.getType() == 5 ) {
@@ -265,7 +265,7 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
 	    //	    loginDTO.setUcLogin( 1 );//不需要登陆
 	    //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    MallRedisUtils.getMallShopId( params.getShopId() );//从session获取店铺id  或  把店铺id存入session
+	    MallRedisUtils.getMallShopId( params.getShopId(), loginDTO.getBusId() );//从session获取店铺id  或  把店铺id存入session
 
 	    MallPaySet set = new MallPaySet();
 	    set.setUserId( params.getBusId() );

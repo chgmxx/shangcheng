@@ -231,7 +231,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    result.setDataJson( dataJson );
 	    result.setPicJson( picJson );
 
-	    MallRedisUtils.getMallShopId( page.getPagStoId() );//从session获取店铺id  或  把店铺id存入session
+	    MallRedisUtils.getMallShopId( page.getPagStoId(), page.getPagUserId() );//从session获取店铺id  或  把店铺id存入session
 
 	    if ( CommonUtil.isEmpty( mallStore.getStoPicture() ) ) {
 		result.setStoPicture( PropertiesUtil.getResourceUrl() + mallStore.getStoPicture() );
@@ -280,7 +280,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	try {
 	    if ( shopId == 0 ) {
 		//显示首页的菜单按钮，并查询首页id
-		shopId = MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+		shopId = MallRedisUtils.getMallShopId( shopId, busId );//从session获取店铺id  或  把店铺id存入session
 	    }
 	    Member member = MallSessionUtils.getLoginMember( request, busId );
 	    int saleMemberId = mallSellerService.getSaleMemberIdByRedis( member, 0, request, busId );
@@ -298,7 +298,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 			if ( CommonUtil.isNotEmpty( pageList.get( 0 ).get( "id" ) ) ) {
 			    pageId = CommonUtil.toInteger( pageList.get( 0 ).get( "id" ) );
 			}
-			MallRedisUtils.getMallShopId( shopId );
+			MallRedisUtils.getMallShopId( shopId, busId );
 		    }
 		} else {
 		    pageId = mallPageService.getPageIdByShopId( shopId );
@@ -337,7 +337,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    if ( isAdvert ) {
 		result.setIsAdvert( 1 );
 	    }
-	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+	    MallRedisUtils.getMallShopId( shopId, store.getStoUserId() );//从session获取店铺id  或  把店铺id存入session
 	} catch ( Exception e ) {
 	    logger.error( "获取商家的客服异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -392,7 +392,6 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 		    result.put( "keywordList", keywordList );
 		}
 	    }
-	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	} catch ( Exception e ) {
 	    logger.error( "查询历史搜索和推荐搜索接口异常：" + e.getMessage() );
 	    e.printStackTrace();
@@ -419,8 +418,8 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
 	    if ( CommonUtil.isNotEmpty( member ) ) {
 		params.put( "userId", member.getId() );
 		mallGroupService.clearSearchKeyWord( params );
+		MallRedisUtils.getMallShopId( shopId, member.getBusid() );//从session获取店铺id  或  把店铺id存入session
 	    }
-	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 	} catch ( BusinessException e ) {
 	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
 	} catch ( Exception e ) {
@@ -517,7 +516,7 @@ public class PhonePageController extends AuthorizeOrUcLoginController {
     public ServerResponse getShopId( HttpServletRequest request, int busId ) {
 	Integer shopId = 0;
 	try {
-	    shopId = MallRedisUtils.getShopId();
+ 	    shopId = MallRedisUtils.getShopId( busId );
 	    if ( shopId == 0 ) {
 		BusUser user = new BusUser();
 		user.setId( busId );

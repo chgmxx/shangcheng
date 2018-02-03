@@ -194,6 +194,9 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 		product.setIsSpecifica( 0 );
 	    }
 	}
+	if ( params.getType() == 2 ) {
+	    params.setType( 0 );
+	}
 	result.setType( params.getType() );
 	double activityPrice = 0;//活动价 避免会员价用活动价来算
 	int isShowAddShop = 1;//是否显示“加入购物车按钮” 1显示
@@ -368,8 +371,8 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 	}
 	if ( CommonUtil.isEmpty( provincesId ) && CommonUtil.isNotEmpty( params.getIp() ) && freightId > 0 ) {
 	    String province = mallPageService.getProvince( params.getIp() );
-	    if(CommonUtil.isNotEmpty( province )){
-	        provincesId = CommonUtil.toInteger( provincesId );
+	    if ( CommonUtil.isNotEmpty( province ) ) {
+		provincesId = CommonUtil.toInteger( provincesId );
 	    }
 	}
 	//到店购买不用计算运费
@@ -456,8 +459,8 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
 			    if ( seckillPrice.getInvenId().toString().equals( priceMap.get( "id" ).toString() ) ) {
 				oldPrice = invPrice;
 				invPrice = 0;
-				if(CommonUtil.isNotEmpty( seckillPrice.getSeckillPrice() )){
-				    invPrice =  CommonUtil.toDouble( seckillPrice.getSeckillPrice() );
+				if ( CommonUtil.isNotEmpty( seckillPrice.getSeckillPrice() ) ) {
+				    invPrice = CommonUtil.toDouble( seckillPrice.getSeckillPrice() );
 				}
 				priceList.remove( seckillPrice );
 				isJoin = seckillPrice.getIsJoinGroup();

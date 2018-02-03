@@ -113,9 +113,9 @@ web:
  #素材库路径
  materialUrl: https://nb.suc.deeptel.com.cn/common/material.do
  #多粉二维码关注
- duofenTwoCodeUrl: http://maint.deeptel.com.cn/image/2/gh_32251ec4c8e9/1/1509331696065.jpg
+ duofenTwoCodeUrl: http://maint.deeptel.com.cn/upload/image/2/gh_32251ec4c8e9/1/1514860509267.jpg
  #多粉的公众号id（用作给商家发送消息模板）
- duofenPublicId: 482
+ duofenPublicId: 4466
 
 ####图片资源ftp 配置
 static:

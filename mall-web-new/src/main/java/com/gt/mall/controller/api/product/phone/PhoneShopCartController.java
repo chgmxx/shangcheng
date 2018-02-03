@@ -90,12 +90,12 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
 
 	    PhoneShopCartResult result = mallShopCartService.getShopCart( member, busId, type, request, response );
 
-	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+	    MallRedisUtils.getMallShopId( shopId, loginDTO.getBusId() );//从session获取店铺id  或  把店铺id存入session
 
 	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-	}  catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
-	}  catch ( Exception e ) {
+	} catch ( BusinessException be ) {
+	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+	} catch ( Exception e ) {
 	    logger.error( "查询购物车异常：" + e.getMessage() );
 	    e.printStackTrace();
 	    return ServerResponse.createByErrorMessage( "查询购物车失败" );

@@ -94,7 +94,7 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
 	    int shopid = 0;
 	    if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
 		shopid = product.getShopId();
-		MallRedisUtils.getMallShopId( shopid );
+		MallRedisUtils.getMallShopId( shopid, loginDTO.getBusId());
 	    }
 	    int proNum = 1;
 	    if ( CommonUtil.isNotEmpty( searchDTO.getNum() ) ) {
