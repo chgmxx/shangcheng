@@ -46,74 +46,74 @@ public class MallDaifuServiceImpl extends BaseServiceImpl< MallDaifuDAO,MallDaif
 
     @Override
     public MallDaifu selectByDfOrderNo( String dfOrderNo ) {
-	return mallDaifuDAO.selectByDfOrderNo( dfOrderNo );
+        return mallDaifuDAO.selectByDfOrderNo( dfOrderNo );
     }
 
     @Override
     public PhoneGetDaiFuResult getDaifuResult( Integer orderId, Member member, Integer browerType ) {
-	MallOrder mallOrder = mallOrderService.selectById( orderId );
-	if ( CommonUtil.isEmpty( mallOrder ) ) {
-	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
-	}
-	List< MallOrderDetail > detailList = mallOrderDetailService.getOrderDetailList( orderId );
-	if ( detailList == null || detailList.size() == 0 ) {
-	    throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
-	}
+        MallOrder mallOrder = mallOrderService.selectById( orderId );
+        if ( CommonUtil.isEmpty( mallOrder ) ) {
+            throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+        }
+        List< MallOrderDetail > detailList = mallOrderDetailService.getOrderDetailList( orderId );
+        if ( detailList == null || detailList.size() == 0 ) {
+            throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+        }
 
-	PhoneGetDaiFuResult daiFuResult = new PhoneGetDaiFuResult();
-	List< PhoneGetDaiFuProductResult > productResultList = new ArrayList<>();
-	for ( MallOrderDetail detail : detailList ) {
-	    PhoneGetDaiFuProductResult productResult = new PhoneGetDaiFuProductResult();
-	    productResult.setProductId( detail.getProductId() );
-	    productResult.setShopId( detail.getShopId() );
-	    productResult.setProductName( detail.getDetProName() );
-	    productResult.setProductImageUrl( detail.getProductImageUrl() );
-	    productResult.setProductNum( detail.getDetProNum() );
-	    productResult.setProductPrice( CommonUtil.toDouble( detail.getDetProPrice() ) );
-	    productResultList.add( productResult );
-	    daiFuResult.setShopId( detail.getShopId() );
-	}
-	daiFuResult.setBusId( mallOrder.getBusUserId() );
-	daiFuResult.setOrderMoney( CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
-	daiFuResult.setRecevieUserName( mallOrder.getReceiveName() );
-	daiFuResult.setProductResultList( productResultList );
-	Date endTime = mallOrder.getCreateTime();
-	Date endHourTime = DateTimeKit.addHours( endTime, 24 );
-	Date nowTime = new Date();
-	long times = ( endHourTime.getTime() - nowTime.getTime() ) / 1000;
-	if ( times > 0 && mallOrder.getOrderStatus() == 1 ) {
-	    daiFuResult.setIsShowTimes( 1 );
-	    daiFuResult.setTimes( times );
-	}
-	if ( mallOrder.getOrderStatus() == 1 && times > 0 ) {
-	    PayWay payWay = payService.getPayWay( member.getBusid() );
-	    if ( CommonUtil.isNotEmpty( payWay ) ) {
-		if ( payWay.getDfpay() == 0 ) {
-		    daiFuResult.setIsShowDuofenPay( 1 );
-		} else if ( browerType == 1 && payWay.getWxpay() == 0 ) {
-		    daiFuResult.setIsShowWxPay( 1 );
-		} else if ( browerType != 1 && payWay.getAlipay() == 0 ) {
-		    daiFuResult.setIsShowAliPay( 1 );
-		}
-	    }
-	    daiFuResult.setIsShowDaifu( 1 );
-	}
+        PhoneGetDaiFuResult daiFuResult = new PhoneGetDaiFuResult();
+        List< PhoneGetDaiFuProductResult > productResultList = new ArrayList<>();
+        for ( MallOrderDetail detail : detailList ) {
+            PhoneGetDaiFuProductResult productResult = new PhoneGetDaiFuProductResult();
+            productResult.setProductId( detail.getProductId() );
+            productResult.setShopId( detail.getShopId() );
+            productResult.setProductName( detail.getDetProName() );
+            productResult.setProductImageUrl( detail.getProductImageUrl() );
+            productResult.setProductNum( detail.getDetProNum() );
+            productResult.setProductPrice( CommonUtil.toDouble( detail.getDetProPrice() ) );
+            productResultList.add( productResult );
+            daiFuResult.setShopId( detail.getShopId() );
+        }
+        daiFuResult.setBusId( mallOrder.getBusUserId() );
+        daiFuResult.setOrderMoney( CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
+        daiFuResult.setRecevieUserName( mallOrder.getReceiveName() );
+        daiFuResult.setProductResultList( productResultList );
+        Date endTime = mallOrder.getCreateTime();
+        Date endHourTime = DateTimeKit.addHours( endTime, 24 );
+        Date nowTime = new Date();
+        long times = ( endHourTime.getTime() - nowTime.getTime() ) / 1000;
+        if ( times > 0 && mallOrder.getOrderStatus() == 1 ) {
+            daiFuResult.setIsShowTimes( 1 );
+            daiFuResult.setTimes( times );
+        }
+        if ( mallOrder.getOrderStatus() == 1 && times > 0 ) {
+            PayWay payWay = payService.getPayWay( member.getBusid() );
+            if ( CommonUtil.isNotEmpty( payWay ) ) {
+                if ( payWay.getDfpay() == 0 ) {
+                    daiFuResult.setIsShowDuofenPay( 1 );
+                } else if ( browerType == 1 && payWay.getWxpay() == 0 ) {
+                    daiFuResult.setIsShowWxPay( 1 );
+                } else if ( browerType != 1 && payWay.getAlipay() == 0 ) {
+                    daiFuResult.setIsShowAliPay( 1 );
+                }
+            }
+            daiFuResult.setIsShowDaifu( 1 );
+        }
 
-	if ( CommonUtil.isNotEmpty( member ) ) {
-	    MallDaifu daifu = new MallDaifu();
-	    daifu.setOrderId( orderId );
-	    daifu.setDfUserId( member.getId() );
-	    MallDaifu df = mallDaifuDAO.selectBydf( daifu );
-	    if ( CommonUtil.isNotEmpty( df ) ) {
-		daiFuResult.setDaifuId( df.getId() );
-	    }
-	}
-	if ( CommonUtil.isNotEmpty( mallOrder.getOrderType() ) ) {
-	    daiFuResult.setOrderType( mallOrder.getOrderType() );
-	}
-	if ( CommonUtil.isNotEmpty( mallOrder.getGroupBuyId() ) ) {
-	    daiFuResult.setActivityId( mallOrder.getGroupBuyId() );
-	}
-	return daiFuResult;
+        if ( CommonUtil.isNotEmpty( member ) ) {
+            MallDaifu daifu = new MallDaifu();
+            daifu.setOrderId( orderId );
+            daifu.setDfUserId( member.getId() );
+            MallDaifu df = mallDaifuDAO.selectBydf( daifu );
+            if ( CommonUtil.isNotEmpty( df ) ) {
+                daiFuResult.setDaifuId( df.getId() );
+            }
+        }
+        if ( CommonUtil.isNotEmpty( mallOrder.getOrderType() ) ) {
+            daiFuResult.setOrderType( mallOrder.getOrderType() );
+        }
+        if ( CommonUtil.isNotEmpty( mallOrder.getGroupBuyId() ) ) {
+            daiFuResult.setActivityId( mallOrder.getGroupBuyId() );
+        }
+        return daiFuResult;
     }
 }

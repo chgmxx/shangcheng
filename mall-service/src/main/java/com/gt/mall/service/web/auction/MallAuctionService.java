@@ -92,8 +92,8 @@ public interface MallAuctionService extends BaseService< MallAuction > {
     /**
      * 判断是否超过了限购
      *
-     * @param activityId     拍卖id
-     * @param memberId 用户id
+     * @param activityId 拍卖id
+     * @param memberId   用户id
      *
      * @return map
      */

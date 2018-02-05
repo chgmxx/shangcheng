@@ -22,7 +22,7 @@ public class SocketServiceImpl implements SocketService {
     @Override
     public void getSocketApi( Map< String,Object > params ) {
 
-	HttpSignUtil.signHttpInsertOrUpdate( params, SOCKET_URL + "getSocketApi.do", 1 );
+        HttpSignUtil.signHttpInsertOrUpdate( params, SOCKET_URL + "getSocketApi.do", 1 );
     }
 
     //    @Override

@@ -26,14 +26,14 @@ public class UploadManager {
     private static      UploadManager manager               = null;
 
     private UploadManager() {
-	super();
+        super();
     }
 
     public static UploadManager getInstall() {
-	if ( manager == null ) {
-	    manager = new UploadManager();
-	}
-	return manager;
+        if ( manager == null ) {
+            manager = new UploadManager();
+        }
+        return manager;
     }
 
     Logger logger = Logger.getLogger( UploadManager.class );
@@ -50,76 +50,76 @@ public class UploadManager {
      * @return
      */
     private List< Integer > cut( InputStream in, String path, String imageType, int width, int height ) {
-	try {
-	    BufferedImage bufImg = ImageIO.read( in );
-	    int oWidth = bufImg.getWidth();                // 原图宽
-	    int oHeight = bufImg.getHeight();                // 原图高
-	    int cWidth = width;                                        // 剪切图片宽度
-	    int cHeight = height;                                        // 剪切后图片高度
-	    int x = 0;
-	    int y = 0;
-	    double oR = CommonUtil.toDouble( oWidth ) / CommonUtil.toDouble( oHeight ); // 原图宽高比
-	    double r = CommonUtil.toDouble( width ) / CommonUtil.toDouble( height );         // 剪切宽高比
+        try {
+            BufferedImage bufImg = ImageIO.read( in );
+            int oWidth = bufImg.getWidth();                // 原图宽
+            int oHeight = bufImg.getHeight();                // 原图高
+            int cWidth = width;                                        // 剪切图片宽度
+            int cHeight = height;                                        // 剪切后图片高度
+            int x = 0;
+            int y = 0;
+            double oR = CommonUtil.toDouble( oWidth ) / CommonUtil.toDouble( oHeight ); // 原图宽高比
+            double r = CommonUtil.toDouble( width ) / CommonUtil.toDouble( height );         // 剪切宽高比
 
-	    // 当宽高都是 大于剪切宽高时, 进行压缩
-	    if ( oWidth > width && oHeight > height ) {
-		if ( oR > r ) {        // 宽度偏长
-		    cWidth = CommonUtil.toDouble( CommonUtil.toDouble( height ) / CommonUtil.toDouble( oHeight ) * oWidth ).intValue();
-		} else if ( oR < r ) { // 高度偏长
-		    cHeight = CommonUtil.toDouble( CommonUtil.toDouble( width ) / CommonUtil.toDouble( oWidth ) * oHeight ).intValue();
-		}
-		// 压缩图片
-		BufferedImage image = new BufferedImage( cWidth, cHeight, BufferedImage.TYPE_INT_RGB );
-		image.getGraphics().drawImage( bufImg, 0, 0, cWidth, cHeight, null ); // 绘制缩小后的图
-		oWidth = cWidth;
-		oHeight = cHeight;
-		bufImg = image;
-		image = null;
-	    } else if ( oHeight > height && oWidth <= width ) {        // 高偏长. 宽相等或者偏小
-		width = oWidth;
-	    } else if ( oWidth > width && oHeight <= height ) {        // 宽偏长. 高相等或者偏小
-		height = oHeight;
-	    } else {                                                                                        // 宽度长度都偏小
-		width = oWidth;
-		height = oHeight;
-	    }
+            // 当宽高都是 大于剪切宽高时, 进行压缩
+            if ( oWidth > width && oHeight > height ) {
+                if ( oR > r ) {        // 宽度偏长
+                    cWidth = CommonUtil.toDouble( CommonUtil.toDouble( height ) / CommonUtil.toDouble( oHeight ) * oWidth ).intValue();
+                } else if ( oR < r ) { // 高度偏长
+                    cHeight = CommonUtil.toDouble( CommonUtil.toDouble( width ) / CommonUtil.toDouble( oWidth ) * oHeight ).intValue();
+                }
+                // 压缩图片
+                BufferedImage image = new BufferedImage( cWidth, cHeight, BufferedImage.TYPE_INT_RGB );
+                image.getGraphics().drawImage( bufImg, 0, 0, cWidth, cHeight, null ); // 绘制缩小后的图
+                oWidth = cWidth;
+                oHeight = cHeight;
+                bufImg = image;
+                image = null;
+            } else if ( oHeight > height && oWidth <= width ) {        // 高偏长. 宽相等或者偏小
+                width = oWidth;
+            } else if ( oWidth > width && oHeight <= height ) {        // 宽偏长. 高相等或者偏小
+                height = oHeight;
+            } else {                                                                                        // 宽度长度都偏小
+                width = oWidth;
+                height = oHeight;
+            }
 
-	    // 剪切标准判断
-	    if ( width < oWidth ) {                // 宽度超出范围
-		x = ( oWidth - width ) / 2;
-		y = 0;
-	    } else if ( height < oHeight ) {        // 高度超出范围
-		y = ( oHeight - height ) / 2;
-		x = 0;
-	    } else {                                                                                        // 正常
-		x = 0;
-		y = 0;
-	    }
+            // 剪切标准判断
+            if ( width < oWidth ) {                // 宽度超出范围
+                x = ( oWidth - width ) / 2;
+                y = 0;
+            } else if ( height < oHeight ) {        // 高度超出范围
+                y = ( oHeight - height ) / 2;
+                x = 0;
+            } else {                                                                                        // 正常
+                x = 0;
+                y = 0;
+            }
 
-	    File file = new File( path );
-	    // 图片剪切
-	    BufferedImage subImg = bufImg.getSubimage( x, y, width, height );
-	    ImageIO.write( subImg, imageType, file );
-	    ContinueFTP myFtp = new ContinueFTP();
-	    try {
-		myFtp.upload( file.getPath() );
-	    } catch ( Exception e ) {
-		e.printStackTrace();
-	    }
-	    bufImg = null;
-	    subImg = null;
-	    Long l = Long.valueOf( file.length() / 1024 );
-	    int size = CommonUtil.toInteger( l.intValue() );
-	    // 封装剪切后的信息
-	    List< Integer > list = new ArrayList<>();
-	    list.add( width );
-	    list.add( height );
-	    list.add( size );
-	    return list;
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	    return null;
-	}
+            File file = new File( path );
+            // 图片剪切
+            BufferedImage subImg = bufImg.getSubimage( x, y, width, height );
+            ImageIO.write( subImg, imageType, file );
+            ContinueFTP myFtp = new ContinueFTP();
+            try {
+                myFtp.upload( file.getPath() );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
+            bufImg = null;
+            subImg = null;
+            Long l = Long.valueOf( file.length() / 1024 );
+            int size = CommonUtil.toInteger( l.intValue() );
+            // 封装剪切后的信息
+            List< Integer > list = new ArrayList<>();
+            list.add( width );
+            list.add( height );
+            list.add( size );
+            return list;
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -134,54 +134,54 @@ public class UploadManager {
      * @return
      */
     public Image paserImage( MultipartFile mpf, String rootDir, int id, int width, int height ) {
-	try {
-	    if ( logger.isDebugEnabled() ) {
-		logger.error( "paserImage called" );
-	    }
-	    // 参数验证
-	    if ( mpf.isEmpty() || StringUtils.isEmpty( rootDir ) ) {
-		throw new Exception( "paserImage invaild params" );
-	    }
-	    // file
-	    String originalFileExtension = mpf.getOriginalFilename()
-			    .substring( mpf.getOriginalFilename().lastIndexOf( "." ) + 1 );
-	    String name = mpf.getName();
+        try {
+            if ( logger.isDebugEnabled() ) {
+                logger.error( "paserImage called" );
+            }
+            // 参数验证
+            if ( mpf.isEmpty() || StringUtils.isEmpty( rootDir ) ) {
+                throw new Exception( "paserImage invaild params" );
+            }
+            // file
+            String originalFileExtension = mpf.getOriginalFilename()
+                .substring( mpf.getOriginalFilename().lastIndexOf( "." ) + 1 );
+            String name = mpf.getName();
 
-	    // extension
-	    if ( !( ALLOW_IMAGE_TYPE_JPG.equalsIgnoreCase( originalFileExtension ) || ALLOW_IMAGE_TYPE_PNG.equalsIgnoreCase( originalFileExtension )
-			    || ALLOW_IMAGE_TYPE_JPEG.equalsIgnoreCase( originalFileExtension ) || ALLOW_IMAGE_TYPE_GIF.equalsIgnoreCase( originalFileExtension ) ) ) {
-		throw new Exception( "paserImage invaild image type" );
-	    }
-	    // create new file by date an user id
-	    String secondDir = id + "//" + DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD );
-	    File dir = new File( rootDir + "//" + secondDir );
-	    if ( !dir.exists() ) {
-		boolean flag = dir.mkdirs();
-		if ( !flag ) {
-		    logger.error( "创建路径失败" );
-		}
-	    }
-	    String newFileName = UUID.randomUUID().toString().replaceAll( "-", "" ).toUpperCase() + "." + originalFileExtension;
+            // extension
+            if ( !( ALLOW_IMAGE_TYPE_JPG.equalsIgnoreCase( originalFileExtension ) || ALLOW_IMAGE_TYPE_PNG.equalsIgnoreCase( originalFileExtension )
+                || ALLOW_IMAGE_TYPE_JPEG.equalsIgnoreCase( originalFileExtension ) || ALLOW_IMAGE_TYPE_GIF.equalsIgnoreCase( originalFileExtension ) ) ) {
+                throw new Exception( "paserImage invaild image type" );
+            }
+            // create new file by date an user id
+            String secondDir = id + "//" + DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD );
+            File dir = new File( rootDir + "//" + secondDir );
+            if ( !dir.exists() ) {
+                boolean flag = dir.mkdirs();
+                if ( !flag ) {
+                    logger.error( "创建路径失败" );
+                }
+            }
+            String newFileName = UUID.randomUUID().toString().replaceAll( "-", "" ).toUpperCase() + "." + originalFileExtension;
 
-	    List< Integer > info = null;
-	    // cut image
-	    if ( ( info = cut( mpf.getInputStream(), rootDir + "//" + secondDir + "//" + newFileName, originalFileExtension, width, height ) ) == null ) {
-		throw new Exception( "cut image fail" );
-	    }
+            List< Integer > info = null;
+            // cut image
+            if ( ( info = cut( mpf.getInputStream(), rootDir + "//" + secondDir + "//" + newFileName, originalFileExtension, width, height ) ) == null ) {
+                throw new Exception( "cut image fail" );
+            }
 
-	    // init image
-	    Image image = new Image();
-	    image.setWidth( info.get( 0 ) );
-	    image.setHeight( info.get( 1 ) );
-	    image.setSize( info.get( 2 ) );
-	    image.setName( name );
-	    image.setPath( secondDir + "//" + newFileName );
+            // init image
+            Image image = new Image();
+            image.setWidth( info.get( 0 ) );
+            image.setHeight( info.get( 1 ) );
+            image.setSize( info.get( 2 ) );
+            image.setName( name );
+            image.setPath( secondDir + "//" + newFileName );
 
-	    return image;
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	    return null;
-	}
+            return image;
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -193,61 +193,61 @@ public class UploadManager {
      * @return
      */
     public Image paserImage( MultipartFile mpf, String rootDir ) {
-	try {
-	    if ( logger.isDebugEnabled() ) {
-		logger.error( "paserImage called" );
-	    }
-	    // 参数验证
-	    if ( mpf.isEmpty() || StringUtils.isEmpty( rootDir ) ) {
-		throw new Exception( "paserImage invaild params" );
-	    }
-	    // file
-	    String originalFileExtension = mpf.getOriginalFilename()
-			    .substring( mpf.getOriginalFilename().lastIndexOf( "." ) + 1 );
-	    String name = mpf.getName();
-	    long size = mpf.getSize() / 1024;
+        try {
+            if ( logger.isDebugEnabled() ) {
+                logger.error( "paserImage called" );
+            }
+            // 参数验证
+            if ( mpf.isEmpty() || StringUtils.isEmpty( rootDir ) ) {
+                throw new Exception( "paserImage invaild params" );
+            }
+            // file
+            String originalFileExtension = mpf.getOriginalFilename()
+                .substring( mpf.getOriginalFilename().lastIndexOf( "." ) + 1 );
+            String name = mpf.getName();
+            long size = mpf.getSize() / 1024;
 
-	    // extension
-	    if ( !( ALLOW_IMAGE_TYPE_JPG.equalsIgnoreCase( originalFileExtension )
-			    || ALLOW_IMAGE_TYPE_PNG.equalsIgnoreCase( originalFileExtension )
-			    || ALLOW_IMAGE_TYPE_JPEG.equalsIgnoreCase( originalFileExtension )
-			    || ALLOW_IMAGE_TYPE_GIF.equalsIgnoreCase( originalFileExtension ) ) ) {
-		throw new Exception( "paserImage invaild image type" );
-	    }
+            // extension
+            if ( !( ALLOW_IMAGE_TYPE_JPG.equalsIgnoreCase( originalFileExtension )
+                || ALLOW_IMAGE_TYPE_PNG.equalsIgnoreCase( originalFileExtension )
+                || ALLOW_IMAGE_TYPE_JPEG.equalsIgnoreCase( originalFileExtension )
+                || ALLOW_IMAGE_TYPE_GIF.equalsIgnoreCase( originalFileExtension ) ) ) {
+                throw new Exception( "paserImage invaild image type" );
+            }
 
-	    // create new file by date
-	    File dir = new File( rootDir );
-	    if ( !dir.exists() ) {
-		boolean flag = dir.mkdirs();
-		if ( !flag ) {
-		    logger.error( "创建路径失败" );
-		}
-	    }
+            // create new file by date
+            File dir = new File( rootDir );
+            if ( !dir.exists() ) {
+                boolean flag = dir.mkdirs();
+                if ( !flag ) {
+                    logger.error( "创建路径失败" );
+                }
+            }
 
-	    String newFileName = UUID.randomUUID().toString().replaceAll( "-", "" ).toUpperCase() + "." + originalFileExtension.toLowerCase();
-	    File imageFile = new File( dir, newFileName );
-	    // move image to new Image File
-	    mpf.transferTo( imageFile );
-	    ContinueFTP myFtp = new ContinueFTP();
-	    myFtp.upload( imageFile.getPath() );
-	    // get image info
-	    BufferedImage imageBuff = ImageIO.read( imageFile );
-	    int width = imageBuff.getWidth();
-	    int height = imageBuff.getHeight();
+            String newFileName = UUID.randomUUID().toString().replaceAll( "-", "" ).toUpperCase() + "." + originalFileExtension.toLowerCase();
+            File imageFile = new File( dir, newFileName );
+            // move image to new Image File
+            mpf.transferTo( imageFile );
+            ContinueFTP myFtp = new ContinueFTP();
+            myFtp.upload( imageFile.getPath() );
+            // get image info
+            BufferedImage imageBuff = ImageIO.read( imageFile );
+            int width = imageBuff.getWidth();
+            int height = imageBuff.getHeight();
 
-	    // init image
-	    Image image = new Image();
-	    image.setHeight( height );
-	    image.setWidth( width );
-	    image.setSize( size );
-	    image.setName( name );
-	    image.setPath( rootDir + "/" + newFileName );
+            // init image
+            Image image = new Image();
+            image.setHeight( height );
+            image.setWidth( width );
+            image.setSize( size );
+            image.setName( name );
+            image.setPath( rootDir + "/" + newFileName );
 
-	    return image;
-	} catch ( Exception e ) {
-	    logger.info( e.getMessage() );
-	    return null;
-	}
+            return image;
+        } catch ( Exception e ) {
+            logger.info( e.getMessage() );
+            return null;
+        }
 
     }
 
@@ -260,7 +260,7 @@ public class UploadManager {
      * @return
      */
     /*public Video parseVideo( MultipartFile mpf, String rootDir ) {
-	try {
+    try {
 	    if ( logger.isDebugEnabled() ) {
 		logger.error( "paserImage called" );
 	    }
@@ -406,78 +406,78 @@ public class UploadManager {
      * @author 伟杰
      */
     public static class Image {
-	/**
-	 * 图片路径
-	 */
-	private String path;
-	/**
-	 * 图片名字
-	 */
-	private String name;
-	/**
-	 * 图片类型
-	 */
-	private String type;
-	/**
-	 * 宽度
-	 */
-	private int    width;
-	/**
-	 * 高度
-	 */
-	private int    height;
-	/**
-	 * 大小 /kb
-	 */
-	private long   size;
+        /**
+         * 图片路径
+         */
+        private String path;
+        /**
+         * 图片名字
+         */
+        private String name;
+        /**
+         * 图片类型
+         */
+        private String type;
+        /**
+         * 宽度
+         */
+        private int    width;
+        /**
+         * 高度
+         */
+        private int    height;
+        /**
+         * 大小 /kb
+         */
+        private long   size;
 
-	public String getPath() {
-	    return path;
-	}
+        public String getPath() {
+            return path;
+        }
 
-	public void setPath( String path ) {
-	    this.path = path;
-	}
+        public void setPath( String path ) {
+            this.path = path;
+        }
 
-	public String getName() {
-	    return name;
-	}
+        public String getName() {
+            return name;
+        }
 
-	public void setName( String name ) {
-	    this.name = name;
-	}
+        public void setName( String name ) {
+            this.name = name;
+        }
 
-	public String getType() {
-	    return type;
-	}
+        public String getType() {
+            return type;
+        }
 
-	public void setType( String type ) {
-	    this.type = type;
-	}
+        public void setType( String type ) {
+            this.type = type;
+        }
 
-	public int getWidth() {
-	    return width;
-	}
+        public int getWidth() {
+            return width;
+        }
 
-	public void setWidth( int width ) {
-	    this.width = width;
-	}
+        public void setWidth( int width ) {
+            this.width = width;
+        }
 
-	public int getHeight() {
-	    return height;
-	}
+        public int getHeight() {
+            return height;
+        }
 
-	public void setHeight( int height ) {
-	    this.height = height;
-	}
+        public void setHeight( int height ) {
+            this.height = height;
+        }
 
-	public long getSize() {
-	    return size;
-	}
+        public long getSize() {
+            return size;
+        }
 
-	public void setSize( long size ) {
-	    this.size = size;
-	}
+        public void setSize( long size ) {
+            this.size = size;
+        }
     }
 
     ;
@@ -488,66 +488,66 @@ public class UploadManager {
      * @author 伟杰
      */
     public static class Video {
-	/**
-	 * 存放路径
-	 */
-	private String path;
-	/**
-	 * 视频名称
-	 */
-	private String name;
-	/**
-	 * 时长
-	 */
-	private long   duration;
-	/**
-	 * 大小 /kb
-	 */
-	private long   size;
-	/**
-	 * 数据类型
-	 */
-	private String type;
+        /**
+         * 存放路径
+         */
+        private String path;
+        /**
+         * 视频名称
+         */
+        private String name;
+        /**
+         * 时长
+         */
+        private long   duration;
+        /**
+         * 大小 /kb
+         */
+        private long   size;
+        /**
+         * 数据类型
+         */
+        private String type;
 
-	public String getPath() {
-	    return path;
-	}
+        public String getPath() {
+            return path;
+        }
 
-	public void setPath( String path ) {
-	    this.path = path;
-	}
+        public void setPath( String path ) {
+            this.path = path;
+        }
 
-	public String getName() {
-	    return name;
-	}
+        public String getName() {
+            return name;
+        }
 
-	public void setName( String name ) {
-	    this.name = name;
-	}
+        public void setName( String name ) {
+            this.name = name;
+        }
 
-	public long getDuration() {
-	    return duration;
-	}
+        public long getDuration() {
+            return duration;
+        }
 
-	public void setDuration( long duration ) {
-	    this.duration = duration;
-	}
+        public void setDuration( long duration ) {
+            this.duration = duration;
+        }
 
-	public long getSize() {
-	    return size;
-	}
+        public long getSize() {
+            return size;
+        }
 
-	public void setSize( long size ) {
-	    this.size = size;
-	}
+        public void setSize( long size ) {
+            this.size = size;
+        }
 
-	public String getType() {
-	    return type;
-	}
+        public String getType() {
+            return type;
+        }
 
-	public void setType( String type ) {
-	    this.type = type;
-	}
+        public void setType( String type ) {
+            this.type = type;
+        }
 
     }
 
@@ -559,66 +559,66 @@ public class UploadManager {
      * @author 伟杰
      */
     public static class Voice {
-	/**
-	 * 存放路径
-	 */
-	private String path;
-	/**
-	 * 音频名称
-	 */
-	private String name;
-	/**
-	 * 时长
-	 */
-	private long   duration;
-	/**
-	 * 大小 /kb
-	 */
-	private long   size;
-	/**
-	 * 数据类型
-	 */
-	private String type;
+        /**
+         * 存放路径
+         */
+        private String path;
+        /**
+         * 音频名称
+         */
+        private String name;
+        /**
+         * 时长
+         */
+        private long   duration;
+        /**
+         * 大小 /kb
+         */
+        private long   size;
+        /**
+         * 数据类型
+         */
+        private String type;
 
-	public String getPath() {
-	    return path;
-	}
+        public String getPath() {
+            return path;
+        }
 
-	public void setPath( String path ) {
-	    this.path = path;
-	}
+        public void setPath( String path ) {
+            this.path = path;
+        }
 
-	public String getName() {
-	    return name;
-	}
+        public String getName() {
+            return name;
+        }
 
-	public void setName( String name ) {
-	    this.name = name;
-	}
+        public void setName( String name ) {
+            this.name = name;
+        }
 
-	public long getDuration() {
-	    return duration;
-	}
+        public long getDuration() {
+            return duration;
+        }
 
-	public void setDuration( long duration ) {
-	    this.duration = duration;
-	}
+        public void setDuration( long duration ) {
+            this.duration = duration;
+        }
 
-	public long getSize() {
-	    return size;
-	}
+        public long getSize() {
+            return size;
+        }
 
-	public void setSize( long size ) {
-	    this.size = size;
-	}
+        public void setSize( long size ) {
+            this.size = size;
+        }
 
-	public String getType() {
-	    return type;
-	}
+        public String getType() {
+            return type;
+        }
 
-	public void setType( String type ) {
-	    this.type = type;
-	}
+        public void setType( String type ) {
+            this.type = type;
+        }
 
     }
 
@@ -630,24 +630,24 @@ public class UploadManager {
      * @return 返回 -1: 删除失败出现异常 0:该路径是管理后台的资源，不能删除，可继续下一步操作 1:删除文件(夹)成功 ,2:目录不存在
      */
     public static int delFile( String path ) {
-	int imgIndex = ( path == null || path.isEmpty() ) ? -2 : path.indexOf( "upload/1" );
-	int result = -1;
-	if ( imgIndex > 0 ) {//管理后台的图片，不能删除
-	    result = 0;
-	} else if ( imgIndex == -2 ) {//path为空
-	    result = 1;
-	} else {
-	    // String tempPth=getPath(path);
-	    File file = new File( path );
-	    if ( file.exists() && file.isDirectory() ) {//当path是一个目录时,先通过递归的方式删除目录下的所有文件
-		result = deleteDir( file ) ? 1 : -1;
-	    } else if ( file.exists() && file.isDirectory() == false ) {//当好path是一个文件时，直接删除文件
-		result = file.delete() ? 1 : -1;
-	    } else {
-		result = 2;
-	    }
-	}
-	return result;
+        int imgIndex = ( path == null || path.isEmpty() ) ? -2 : path.indexOf( "upload/1" );
+        int result = -1;
+        if ( imgIndex > 0 ) {//管理后台的图片，不能删除
+            result = 0;
+        } else if ( imgIndex == -2 ) {//path为空
+            result = 1;
+        } else {
+            // String tempPth=getPath(path);
+            File file = new File( path );
+            if ( file.exists() && file.isDirectory() ) {//当path是一个目录时,先通过递归的方式删除目录下的所有文件
+                result = deleteDir( file ) ? 1 : -1;
+            } else if ( file.exists() && file.isDirectory() == false ) {//当好path是一个文件时，直接删除文件
+                result = file.delete() ? 1 : -1;
+            } else {
+                result = 2;
+            }
+        }
+        return result;
     }
 
     /**
@@ -679,21 +679,21 @@ public class UploadManager {
      * delete and returns "false".
      */
     private static boolean deleteDir( File dir ) {
-	if ( dir.isDirectory() ) {
-	    String[] children = dir.list();
-	    if ( children != null && children.length > 0 ) {
-		//递归删除目录中的子目录下
-		for ( int i = 0; i < children.length; i++ ) {
-		    boolean success = deleteDir( new File( dir, children[i] ) );
-		    if ( !success ) {
-			return false;
-		    }
-		}
-	    }
+        if ( dir.isDirectory() ) {
+            String[] children = dir.list();
+            if ( children != null && children.length > 0 ) {
+                //递归删除目录中的子目录下
+                for ( int i = 0; i < children.length; i++ ) {
+                    boolean success = deleteDir( new File( dir, children[i] ) );
+                    if ( !success ) {
+                        return false;
+                    }
+                }
+            }
 
-	}
-	// 目录此时为空，可以删除
-	return dir.delete();
+        }
+        // 目录此时为空，可以删除
+        return dir.delete();
     }
 
     /**
@@ -704,20 +704,20 @@ public class UploadManager {
      * @return
      */
     public static String checkFile( MultipartFile file ) {
-	String result = "";
-	String contentType = file.getContentType();
-	String cType[] = contentType.split( "/" );
-	if ( file.getSize() > 0 ) {
-	    if ( !( cType[1].equals( ALLOW_IMAGE_TYPE_PNG ) || cType[1].equals( ALLOW_IMAGE_TYPE_JPG )
-			    || cType[1].equals( ALLOW_IMAGE_TYPE_GIF ) || cType[1].equals( ALLOW_IMAGE_TYPE_JPEG ) ) ) {
-		result = "1";        //图片类型只限于png、jpg、gif、jpeg。
-	    } else {
-		long size = ( file.getSize() ) / 1024;
-		if ( Math.round( size ) > 1024 ) {
-		    result = "2";        //图片不能大于1M。
-		}
-	    }
-	}
-	return result;
+        String result = "";
+        String contentType = file.getContentType();
+        String cType[] = contentType.split( "/" );
+        if ( file.getSize() > 0 ) {
+            if ( !( cType[1].equals( ALLOW_IMAGE_TYPE_PNG ) || cType[1].equals( ALLOW_IMAGE_TYPE_JPG )
+                || cType[1].equals( ALLOW_IMAGE_TYPE_GIF ) || cType[1].equals( ALLOW_IMAGE_TYPE_JPEG ) ) ) {
+                result = "1";        //图片类型只限于png、jpg、gif、jpeg。
+            } else {
+                long size = ( file.getSize() ) / 1024;
+                if ( Math.round( size ) > 1024 ) {
+                    result = "2";        //图片不能大于1M。
+                }
+            }
+        }
+        return result;
     }
 }

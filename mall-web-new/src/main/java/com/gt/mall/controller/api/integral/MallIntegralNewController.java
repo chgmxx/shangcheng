@@ -54,33 +54,33 @@ public class MallIntegralNewController extends BaseController {
     @ApiOperation( value = "积分列表(分页)", notes = "积分列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "type", value = "活动状态 -2已失效 1进行中 -1 未开始  2已结束", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+        @ApiImplicitParam( name = "type", value = "活动状态 -2已失效 1进行中 -1 未开始  2已结束", paramType = "query", required = false, dataType = "int" ),
+        @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type, Integer shopId ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "type", type );
-	    params.put( "shopId", shopId );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist != null && shoplist.size() > 0 ) {
-		if ( CommonUtil.isEmpty( shopId ) ) {
-		    params.put( "shoplist", shoplist );
-		}
-		PageUtil page = integralService.selectIntegralByPage( params, user.getId(), shoplist );
-		result.put( "page", page );
-		result.put( "userId", user.getId() );
-	    }
-	    /*request.setAttribute("videourl", course.urlquery("86"));*/
-	} catch ( Exception e ) {
-	    logger.error( "获取积分列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            params.put( "type", type );
+            params.put( "shopId", shopId );
+            List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            if ( shoplist != null && shoplist.size() > 0 ) {
+                if ( CommonUtil.isEmpty( shopId ) ) {
+                    params.put( "shoplist", shoplist );
+                }
+                PageUtil page = integralService.selectIntegralByPage( params, user.getId(), shoplist );
+                result.put( "page", page );
+                result.put( "userId", user.getId() );
+            }
+        /*request.setAttribute("videourl", course.urlquery("86"));*/
+        } catch ( Exception e ) {
+            logger.error( "获取积分列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -90,16 +90,16 @@ public class MallIntegralNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/integralInfo", method = RequestMethod.POST )
     public ServerResponse integralInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "积分ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > integralMap = null;
-	try {
-	    integralMap = integralService.selectByIds( id );
-	} catch ( Exception e ) {
-	    logger.error( "获取积分信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), integralMap );
+        @ApiParam( name = "id", value = "积分ID", required = true ) @RequestParam Integer id ) {
+        Map< String,Object > integralMap = null;
+        try {
+            integralMap = integralService.selectByIds( id );
+        } catch ( Exception e ) {
+            logger.error( "获取积分信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), integralMap );
     }
 
     /**
@@ -110,23 +110,23 @@ public class MallIntegralNewController extends BaseController {
     @SysLogAnnotation( description = "保存积分信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > resultMap = integralService.saveIntegral( user.getId(), params );
-	    boolean flag = (boolean) resultMap.get( "flag" );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), resultMap.get( "msg" ).toString() );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存积分信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存积分信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > resultMap = integralService.saveIntegral( user.getId(), params );
+            boolean flag = (boolean) resultMap.get( "flag" );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), resultMap.get( "msg" ).toString() );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存积分信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存积分信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -137,31 +137,31 @@ public class MallIntegralNewController extends BaseController {
     @SysLogAnnotation( description = "设置积分的状态（删除，失效 ，启用）", op_function = "4" )
     @RequestMapping( value = "/setStatus", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "积分Id", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "type", value = "类型 -1删除 -2失效 1启用失效商品", required = true ) @RequestParam Integer type ) {
-	try {
-	    MallIntegral integral = new MallIntegral();
-	    integral.setId( id );
-	    if ( type == -1 ) {//删除积分商品
-		integral.setIsDelete( 1 );
-	    } else if ( type == -2 ) {//使失效积分商品
-		integral.setIsUse( -1 );
-	    } else if ( type == 1 ) {//启用失效积分商品
-		integral.setIsUse( 1 );
-	    }
-	    boolean flag = integralService.updateById( integral );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分的状态异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "设置积分的状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "设置积分的状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分的状态异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        @ApiParam( name = "type", value = "类型 -1删除 -2失效 1启用失效商品", required = true ) @RequestParam Integer type ) {
+        try {
+            MallIntegral integral = new MallIntegral();
+            integral.setId( id );
+            if ( type == -1 ) {//删除积分商品
+                integral.setIsDelete( 1 );
+            } else if ( type == -2 ) {//使失效积分商品
+                integral.setIsUse( -1 );
+            } else if ( type == 1 ) {//启用失效积分商品
+                integral.setIsUse( 1 );
+            }
+            boolean flag = integralService.updateById( integral );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分的状态异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "设置积分的状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "设置积分的状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分的状态异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /***********************************积分商城图片***********************************************/
@@ -169,31 +169,31 @@ public class MallIntegralNewController extends BaseController {
     @ApiOperation( value = "积分商城图片列表(分页)", notes = "积分商城图片列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+        @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/image/list", method = RequestMethod.POST )
     public ServerResponse imageList( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer shopId ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "shopId", shopId );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist != null && shoplist.size() > 0 ) {
-		params.put( "userId", user.getId() );
-		if ( CommonUtil.isEmpty( shopId ) ) {
-		    params.put( "shoplist", shoplist );
-		}
-		PageUtil page = integralImageService.selectImageByShopId( params, user.getId(), shoplist );
-		result.put( "page", page );
-	    }
-	    result.put( "videourl", Constants.VIDEO_URL + 86 );
-	} catch ( Exception e ) {
-	    logger.error( "获取积分商城图片列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商城图片列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            params.put( "shopId", shopId );
+            List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            if ( shoplist != null && shoplist.size() > 0 ) {
+                params.put( "userId", user.getId() );
+                if ( CommonUtil.isEmpty( shopId ) ) {
+                    params.put( "shoplist", shoplist );
+                }
+                PageUtil page = integralImageService.selectImageByShopId( params, user.getId(), shoplist );
+                result.put( "page", page );
+            }
+            result.put( "videourl", Constants.VIDEO_URL + 86 );
+        } catch ( Exception e ) {
+            logger.error( "获取积分商城图片列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商城图片列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -203,16 +203,16 @@ public class MallIntegralNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/image/imageInfo", method = RequestMethod.POST )
     public ServerResponse integralImageInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "积分商城图片Id", required = true ) @RequestParam Integer id ) {
-	MallIntegralImage imageMap = null;
-	try {
-	    imageMap = integralImageService.selectById( id );
-	} catch ( Exception e ) {
-	    logger.error( "获取积分商城图片信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商城图片信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), imageMap );
+        @ApiParam( name = "id", value = "积分商城图片Id", required = true ) @RequestParam Integer id ) {
+        MallIntegralImage imageMap = null;
+        try {
+            imageMap = integralImageService.selectById( id );
+        } catch ( Exception e ) {
+            logger.error( "获取积分商城图片信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商城图片信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), imageMap );
     }
 
     /**
@@ -223,22 +223,22 @@ public class MallIntegralNewController extends BaseController {
     @SysLogAnnotation( description = "保存积分商城图片", op_function = "2" )
     @RequestMapping( value = "/image/save", method = RequestMethod.POST )
     public ServerResponse imageSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    boolean flag = integralImageService.editImage( params, user.getId() );// 编辑商品
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存积分商城图片异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存积分商城图片异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存积分商城图片异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            boolean flag = integralImageService.editImage( params, user.getId() );// 编辑商品
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存积分商城图片异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存积分商城图片异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存积分商城图片异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -249,32 +249,32 @@ public class MallIntegralNewController extends BaseController {
     @SysLogAnnotation( description = "设置积分商城图片的状态（删除，不显示 ，显示）", op_function = "4" )
     @RequestMapping( value = "/image/setStatus", method = RequestMethod.POST )
     public ServerResponse setImageStatus( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "积分商城图片Id", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "type", value = "类型 -1删除 -2不显示 1显示", required = true ) @RequestParam Integer type ) {
-	try {
-	    MallIntegralImage images = new MallIntegralImage();
-	    images.setId( id );
-	    if ( type == -1 ) {
-		images.setIsDelete( 1 );
-	    } else if ( type == -2 ) {
-		images.setIsShow( 0 );
-	    } else {
-		images.setIsShow( 1 );
-	    }
-	    boolean flag = integralImageService.updateById( images );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分商城图片的状态异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "设置积分商城图片的状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "设置积分商城图片的状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分商城图片的状态异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        @ApiParam( name = "id", value = "积分商城图片Id", required = true ) @RequestParam Integer id,
+        @ApiParam( name = "type", value = "类型 -1删除 -2不显示 1显示", required = true ) @RequestParam Integer type ) {
+        try {
+            MallIntegralImage images = new MallIntegralImage();
+            images.setId( id );
+            if ( type == -1 ) {
+                images.setIsDelete( 1 );
+            } else if ( type == -2 ) {
+                images.setIsShow( 0 );
+            } else {
+                images.setIsShow( 1 );
+            }
+            boolean flag = integralImageService.updateById( images );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分商城图片的状态异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "设置积分商城图片的状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "设置积分商城图片的状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "设置积分商城图片的状态异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
   /*  *//**
      * 获取链接

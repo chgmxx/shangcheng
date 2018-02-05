@@ -15,8 +15,10 @@ public interface MallSellerMallsetDAO extends BaseMapper< MallSellerMallset > {
 
     /**
      * 通过销售员的id查询商城设置
+     *
      * @param saleMemberId
+     *
      * @return
      */
-    MallSellerMallset selectBySaleMemberId(int saleMemberId);
+    MallSellerMallset selectBySaleMemberId( int saleMemberId );
 }

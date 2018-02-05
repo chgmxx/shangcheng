@@ -37,52 +37,52 @@ public class MallProductTemplateServiceImpl extends BaseServiceImpl< MallProduct
     @Override
     public PageUtil findTemplateByPage( Map< String,Object > param ) {
 
-	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
-	param.put( "curPage", curPage );
-	int pageSize = 10;
-	int userId = CommonUtil.toInteger( param.get( "userId" ) );
-	// 统计商品分组
-	Wrapper< MallProductTemplate > pageWrapper = new EntityWrapper<>();
-	pageWrapper.where( "is_delete = 0 and user_id={0}", userId );
-	int count = productTemplateDAO.selectCount( pageWrapper );
+        int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
+        param.put( "curPage", curPage );
+        int pageSize = 10;
+        int userId = CommonUtil.toInteger( param.get( "userId" ) );
+        // 统计商品分组
+        Wrapper< MallProductTemplate > pageWrapper = new EntityWrapper<>();
+        pageWrapper.where( "is_delete = 0 and user_id={0}", userId );
+        int count = productTemplateDAO.selectCount( pageWrapper );
 
-	PageUtil page = new PageUtil( curPage, pageSize, count, "/mallProduct/template/list.do" );
-	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
-	param.put( "firstNum", firstNum );// 起始页
-	param.put( "maxNum", pageSize );// 每页显示分组的数量
-	if ( count > 0 ) {// 判断商品分组是否有数据
-	    List< MallProductTemplate > templateList = productTemplateDAO.selectTemplateByPage( param );
-	    page.setSubList( templateList );
-	}
-	return page;
+        PageUtil page = new PageUtil( curPage, pageSize, count, "/mallProduct/template/list.do" );
+        int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+        param.put( "firstNum", firstNum );// 起始页
+        param.put( "maxNum", pageSize );// 每页显示分组的数量
+        if ( count > 0 ) {// 判断商品分组是否有数据
+            List< MallProductTemplate > templateList = productTemplateDAO.selectTemplateByPage( param );
+            page.setSubList( templateList );
+        }
+        return page;
     }
 
     @Override
     public boolean batchDelTemplate( String[] id, Integer userId ) {
-	boolean result = true;
-	if ( id != null && id.length > 0 ) {
-	    for ( String str : id ) {
-		if ( CommonUtil.isNotEmpty( str ) ) {
-		    MallProductTemplate template = productTemplateDAO.selectById( CommonUtil.toInteger( str ) );
-		    if ( template != null ) {
-			//判断有无 商品调用
-			Wrapper wrapper = new EntityWrapper();
-			wrapper.where( "user_id = {0} and is_delete = 0 and template_id ={1}", userId, template.getId() );
-			int count = mallProductDAO.selectCount( wrapper );
-			if ( count > 0 ) {
-			    result = false;
-			    break;
-			} else {
-			    template.setIsDelete( 1 );
-			    productTemplateDAO.updateById( template );
-			}
-		    } else {
-			result = false;
-		    }
-		}
-	    }
-	}
-	return result;
+        boolean result = true;
+        if ( id != null && id.length > 0 ) {
+            for ( String str : id ) {
+                if ( CommonUtil.isNotEmpty( str ) ) {
+                    MallProductTemplate template = productTemplateDAO.selectById( CommonUtil.toInteger( str ) );
+                    if ( template != null ) {
+                        //判断有无 商品调用
+                        Wrapper wrapper = new EntityWrapper();
+                        wrapper.where( "user_id = {0} and is_delete = 0 and template_id ={1}", userId, template.getId() );
+                        int count = mallProductDAO.selectCount( wrapper );
+                        if ( count > 0 ) {
+                            result = false;
+                            break;
+                        } else {
+                            template.setIsDelete( 1 );
+                            productTemplateDAO.updateById( template );
+                        }
+                    } else {
+                        result = false;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
 }

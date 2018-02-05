@@ -8,14 +8,13 @@ import java.util.Map;
 
 /**
  * <p>
-  * 订单任务表 Mapper 接口
+ * 订单任务表 Mapper 接口
  * </p>
  *
  * @author yangqian
  * @since 2018-02-02
  */
-public interface MallOrderTaskDAO extends BaseMapper<MallOrderTask > {
-
+public interface MallOrderTaskDAO extends BaseMapper< MallOrderTask > {
 
     /**
      * 查询数据

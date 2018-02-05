@@ -119,50 +119,50 @@ public class MallAuctionMargin extends Model< MallAuctionMargin > {
     @TableField( "create_time" )
     private Date       createTime;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer aucType;//拍卖类型
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer shopId; //店铺Id
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int auctionStatus; //拍卖状态
 
-    @TableField(exist = false)
-    private List<String> oldUserIdList;
+    @TableField( exist = false )
+    private List< String > oldUserIdList;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int wx_shop_id; //门店ID 关联wx_shop表的id
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String shopName;
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallAuctionMargin{" +
-			"id=" + id +
-			", aucId=" + aucId +
-			", proId=" + proId +
-			", proSpecificaIds=" + proSpecificaIds +
-			", proName=" + proName +
-			", proImgUrl=" + proImgUrl +
-			", aucNo=" + aucNo +
-			", marginMoney=" + marginMoney +
-			", marginStatus=" + marginStatus +
-			", payWay=" + payWay +
-			", payTime=" + payTime +
-			", payNo=" + payNo +
-			", returnNo=" + returnNo +
-			", returnTime=" + returnTime +
-			", isReturn=" + isReturn +
-			", noReturnReason=" + noReturnReason +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			"}";
+        return "MallAuctionMargin{" +
+            "id=" + id +
+            ", aucId=" + aucId +
+            ", proId=" + proId +
+            ", proSpecificaIds=" + proSpecificaIds +
+            ", proName=" + proName +
+            ", proImgUrl=" + proImgUrl +
+            ", aucNo=" + aucNo +
+            ", marginMoney=" + marginMoney +
+            ", marginStatus=" + marginStatus +
+            ", payWay=" + payWay +
+            ", payTime=" + payTime +
+            ", payNo=" + payNo +
+            ", returnNo=" + returnNo +
+            ", returnTime=" + returnTime +
+            ", isReturn=" + isReturn +
+            ", noReturnReason=" + noReturnReason +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            "}";
     }
 }

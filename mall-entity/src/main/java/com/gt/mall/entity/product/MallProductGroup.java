@@ -62,19 +62,19 @@ public class MallProductGroup extends Model< MallProductGroup > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallProductGroup{" +
-			"id=" + id +
-			", productId=" + productId +
-			", groupId=" + groupId +
-			", shopId=" + shopId +
-			", isDelete=" + isDelete +
-			", groupPId=" + groupPId +
-			", sort=" + sort +
-			"}";
+        return "MallProductGroup{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", groupId=" + groupId +
+            ", shopId=" + shopId +
+            ", isDelete=" + isDelete +
+            ", groupPId=" + groupPId +
+            ", sort=" + sort +
+            "}";
     }
 }

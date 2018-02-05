@@ -17,9 +17,11 @@ public interface MallSpecificaValueService extends BaseService< MallSpecificaVal
 
     /**
      * 根据规格值或erp规格id查询规格信息
+     *
      * @param params erpValueId erp的规格值
      * @param params value  规格值
+     *
      * @return
      */
-    MallSpecificaValue selectBySpecValue(Map<String,Object> params);
+    MallSpecificaValue selectBySpecValue( Map< String,Object > params );
 }

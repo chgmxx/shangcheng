@@ -42,52 +42,52 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 
     @Override
     public Integer saveTurnover( Integer shopId, BigDecimal tradePrice, BigDecimal refundPrice ) {
-	logger.info( "进入保存当天营业额方法，接收参数：" + shopId + "tradePrice=" + tradePrice + "refundPrice=" + refundPrice );
-	Integer count = 0;
-	try {
-	    if ( tradePrice == null ) {
-		tradePrice = CommonUtil.toBigDecimal( 0 );
-	    }
-	    if ( refundPrice == null ) {
-		refundPrice = CommonUtil.toBigDecimal( 0 );
-	    }
-	    if ( tradePrice.doubleValue() > 0 || refundPrice.doubleValue() > 0 ) {
-		logger.info( "提交营业额" );
-		MallCountIncome income = new MallCountIncome();
-		income.setShopId( shopId );
-		Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
-		income.setCountDate( d1 );
-		MallCountIncome countIncome = mallCountIncomeDAO.selectOne( income );
-		if ( countIncome != null ) {
-		    if ( CommonUtil.isNotEmpty( tradePrice ) ) {
-			countIncome.setTradePrice( countIncome.getTradePrice().add( tradePrice ) );
-		    }
-		    if ( CommonUtil.isNotEmpty( refundPrice ) ) {
-			countIncome.setRefundPrice( countIncome.getRefundPrice().add( refundPrice ) );
-		    }
-		    countIncome.setTurnover( countIncome.getTradePrice().subtract( countIncome.getRefundPrice() ) );
-		    count = mallCountIncomeDAO.updateById( countIncome );
-		} else {
-		    MallStore store = mallStoreService.selectById( shopId );
-		    countIncome = new MallCountIncome();
-		    if ( store != null ) {
-			countIncome.setBusId( store.getStoUserId() );
-		    }
-		    countIncome.setShopId( CommonUtil.toInteger( shopId ) );
-		    countIncome.setCountDate( d1 );
-		    countIncome.setTradePrice( tradePrice );
-		    countIncome.setRefundPrice( refundPrice );
-		    countIncome.setTurnover( tradePrice.subtract( refundPrice ) );
+        logger.info( "进入保存当天营业额方法，接收参数：" + shopId + "tradePrice=" + tradePrice + "refundPrice=" + refundPrice );
+        Integer count = 0;
+        try {
+            if ( tradePrice == null ) {
+                tradePrice = CommonUtil.toBigDecimal( 0 );
+            }
+            if ( refundPrice == null ) {
+                refundPrice = CommonUtil.toBigDecimal( 0 );
+            }
+            if ( tradePrice.doubleValue() > 0 || refundPrice.doubleValue() > 0 ) {
+                logger.info( "提交营业额" );
+                MallCountIncome income = new MallCountIncome();
+                income.setShopId( shopId );
+                Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
+                income.setCountDate( d1 );
+                MallCountIncome countIncome = mallCountIncomeDAO.selectOne( income );
+                if ( countIncome != null ) {
+                    if ( CommonUtil.isNotEmpty( tradePrice ) ) {
+                        countIncome.setTradePrice( countIncome.getTradePrice().add( tradePrice ) );
+                    }
+                    if ( CommonUtil.isNotEmpty( refundPrice ) ) {
+                        countIncome.setRefundPrice( countIncome.getRefundPrice().add( refundPrice ) );
+                    }
+                    countIncome.setTurnover( countIncome.getTradePrice().subtract( countIncome.getRefundPrice() ) );
+                    count = mallCountIncomeDAO.updateById( countIncome );
+                } else {
+                    MallStore store = mallStoreService.selectById( shopId );
+                    countIncome = new MallCountIncome();
+                    if ( store != null ) {
+                        countIncome.setBusId( store.getStoUserId() );
+                    }
+                    countIncome.setShopId( CommonUtil.toInteger( shopId ) );
+                    countIncome.setCountDate( d1 );
+                    countIncome.setTradePrice( tradePrice );
+                    countIncome.setRefundPrice( refundPrice );
+                    countIncome.setTurnover( tradePrice.subtract( refundPrice ) );
 
-		    count = mallCountIncomeDAO.insert( countIncome );
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "保存当天营业额异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "保存当天营业额异常" );
-	}
-	return count;
+                    count = mallCountIncomeDAO.insert( countIncome );
+                }
+            }
+        } catch ( Exception e ) {
+            logger.error( "保存当天营业额异常：" + e.getMessage() );
+            e.printStackTrace();
+            throw new BusinessException( ResponseEnums.ERROR.getCode(), "保存当天营业额异常" );
+        }
+        return count;
     }
 
     /**
@@ -100,36 +100,36 @@ public class MallCountIncomeServiceImpl extends BaseServiceImpl< MallCountIncome
 
     @Override
     public Double getTodayCount( List< Map< String,Object > > shoplist, Integer shopId ) {
-	Double incomeCount = 0d;
-	try {
-	    Map< String,Object > params = new HashMap<>();
-	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
-	    params.put( "date", d1 );
-	    params.put( "type", "2" );
-	    if ( shopId != null ) {
-		params.put( "shopId", shopId );
-	    } else {
-		params.put( "shoplist", shoplist );
-	    }
-	    String price = getCountByTimes( params );
-	    incomeCount = CommonUtil.toDouble( price );
-	} catch ( Exception e ) {
-	    logger.error( "获取当天店铺的营业额异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    throw new BusinessException( ResponseEnums.ERROR.getCode(), "获取当天店铺的营业额异常" );
-	}
-	return incomeCount;
+        Double incomeCount = 0d;
+        try {
+            Map< String,Object > params = new HashMap<>();
+            Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( DateTimeKit.getDate() );
+            params.put( "date", d1 );
+            params.put( "type", "2" );
+            if ( shopId != null ) {
+                params.put( "shopId", shopId );
+            } else {
+                params.put( "shoplist", shoplist );
+            }
+            String price = getCountByTimes( params );
+            incomeCount = CommonUtil.toDouble( price );
+        } catch ( Exception e ) {
+            logger.error( "获取当天店铺的营业额异常：" + e.getMessage() );
+            e.printStackTrace();
+            throw new BusinessException( ResponseEnums.ERROR.getCode(), "获取当天店铺的营业额异常" );
+        }
+        return incomeCount;
     }
 
     @Override
     public String getCountByTimes( Map< String,Object > params ) {
 
-	return mallCountIncomeDAO.getCountByTimes( params );
+        return mallCountIncomeDAO.getCountByTimes( params );
     }
 
     @Override
     public List< Map< String,Object > > getCountListByTimes( Map< String,Object > params ) {
 
-	return mallCountIncomeDAO.getCountListByTimes( params );
+        return mallCountIncomeDAO.getCountListByTimes( params );
     }
 }

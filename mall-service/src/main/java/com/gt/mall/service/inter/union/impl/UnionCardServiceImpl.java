@@ -22,31 +22,31 @@ public class UnionCardServiceImpl implements UnionCardService {
 
     @Override
     public UnionDiscountResult consumeUnionDiscount( UnionCardDiscountParam param ) {
-	RequestApiParam< UnionCardDiscountParam > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( param );
-	String result = HttpSignUtil.signHttpSelect( requestApiParam, url + "consumeUnionDiscount", 3 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    UnionDiscountResult unionDiscountResult = JSONObject.toJavaObject( JSONObject.parseObject( result ), UnionDiscountResult.class );
-	    if ( unionDiscountResult.getCode() == 1 ) {
-		unionDiscountResult.setDiscount( unionDiscountResult.getDiscount() / 10 );
-	    }
-	    return unionDiscountResult;
-	}
-	return null;
+        RequestApiParam< UnionCardDiscountParam > requestApiParam = new RequestApiParam<>();
+        requestApiParam.setReqdata( param );
+        String result = HttpSignUtil.signHttpSelect( requestApiParam, url + "consumeUnionDiscount", 3 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            UnionDiscountResult unionDiscountResult = JSONObject.toJavaObject( JSONObject.parseObject( result ), UnionDiscountResult.class );
+            if ( unionDiscountResult.getCode() == 1 ) {
+                unionDiscountResult.setDiscount( unionDiscountResult.getDiscount() / 10 );
+            }
+            return unionDiscountResult;
+        }
+        return null;
     }
 
-//    @Override
-//    public Map phoneCode( UnionPhoneCodeParam phoneCodeParam ) {
-//	RequestApiParam< UnionPhoneCodeParam > requestApiParam = new RequestApiParam<>();
-//	requestApiParam.setReqdata( phoneCodeParam );
-//	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "phoneCode", 3 );
-//    }
-//
-//    @Override
-//    public Map uionCardBind( BindCardParam bindCardParam ) {
-//	RequestApiParam< BindCardParam > requestApiParam = new RequestApiParam<>();
-//	requestApiParam.setReqdata( bindCardParam );
-//	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "uionCardBind", 3 );
-//    }
+    //    @Override
+    //    public Map phoneCode( UnionPhoneCodeParam phoneCodeParam ) {
+    //	RequestApiParam< UnionPhoneCodeParam > requestApiParam = new RequestApiParam<>();
+    //	requestApiParam.setReqdata( phoneCodeParam );
+    //	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "phoneCode", 3 );
+    //    }
+    //
+    //    @Override
+    //    public Map uionCardBind( BindCardParam bindCardParam ) {
+    //	RequestApiParam< BindCardParam > requestApiParam = new RequestApiParam<>();
+    //	requestApiParam.setReqdata( bindCardParam );
+    //	return HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "uionCardBind", 3 );
+    //    }
 
 }

@@ -17,9 +17,11 @@ public interface MallPresaleTimeDAO extends BaseMapper< MallPresaleTime > {
 
     /**
      * 通过预售id查询预售时间
+     *
      * @param preId
+     *
      * @return
      */
-    List<MallPresaleTime> selectByPreId(int preId);
+    List< MallPresaleTime > selectByPreId( int preId );
 
 }

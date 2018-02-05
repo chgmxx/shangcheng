@@ -36,25 +36,25 @@ public class URLConnectionDownloader {
      * @throws Exception 各种异常
      */
     public static void download( String urlString, String filename ) throws Exception {
-	// 构造URL
-	URL url = new URL( urlString );
-	// 打开连接
-	HttpURLConnection con = (HttpURLConnection) url.openConnection();
-	// 输入流
-	InputStream is = con.getInputStream();
-	// 1K的数据缓冲
-	byte[] bs = new byte[1024];
-	// 读取到的数据长度
-	int len;
-	// 输出的文件流
-	OutputStream os = new FileOutputStream( filename );
-	// 开始读取
-	while ( ( len = is.read( bs ) ) != -1 ) {
-	    os.write( bs, 0, len );
-	}
-	// 完毕，关闭所有链接
-	os.close();
-	is.close();
+        // 构造URL
+        URL url = new URL( urlString );
+        // 打开连接
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        // 输入流
+        InputStream is = con.getInputStream();
+        // 1K的数据缓冲
+        byte[] bs = new byte[1024];
+        // 读取到的数据长度
+        int len;
+        // 输出的文件流
+        OutputStream os = new FileOutputStream( filename );
+        // 开始读取
+        while ( ( len = is.read( bs ) ) != -1 ) {
+            os.write( bs, 0, len );
+        }
+        // 完毕，关闭所有链接
+        os.close();
+        is.close();
     }
 
     /**
@@ -66,23 +66,23 @@ public class URLConnectionDownloader {
      * @throws IOException
      */
     public static String isConnect( String url ) {
-	String succ = null;
-	try {
-	    if ( url == null || url.length() <= 0 ) {
-		return succ;
-	    }
-	    URL urlStr = new URL( url );
-	    HttpURLConnection connection = (HttpURLConnection) urlStr.openConnection();
-	    int state = connection.getResponseCode();
-	    if ( state == 200 ) {
-		succ = connection.getURL().toString();
-	    }
-	} catch ( RuntimeException e ) {
-	    return null;
-	} catch ( Exception e ) {
-	    return null;
-	}
-	return succ;
+        String succ = null;
+        try {
+            if ( url == null || url.length() <= 0 ) {
+                return succ;
+            }
+            URL urlStr = new URL( url );
+            HttpURLConnection connection = (HttpURLConnection) urlStr.openConnection();
+            int state = connection.getResponseCode();
+            if ( state == 200 ) {
+                succ = connection.getURL().toString();
+            }
+        } catch ( RuntimeException e ) {
+            return null;
+        } catch ( Exception e ) {
+            return null;
+        }
+        return succ;
     }
 
     /**
@@ -94,19 +94,19 @@ public class URLConnectionDownloader {
      * @throws Exception
      */
     public static String download( String urlString ) throws Exception {
-	String format = urlString.substring( urlString.lastIndexOf( "." ) + 1, urlString.length() );
-	System.out.println( "format:" + format );
-	String path = PropertiesUtil.getResImagePath() + "/temp";
-	String resultPath = path + "/" + System.currentTimeMillis() + "." + format;
-	File file = new File( path );
-	if ( !file.exists() ) {
-	    boolean flag = file.mkdirs();
-	    if ( !flag ) {
-		System.out.println( "创建图片失败 = " );
-	    }
-	}
-	download( urlString, resultPath );
-	return resultPath;
+        String format = urlString.substring( urlString.lastIndexOf( "." ) + 1, urlString.length() );
+        System.out.println( "format:" + format );
+        String path = PropertiesUtil.getResImagePath() + "/temp";
+        String resultPath = path + "/" + System.currentTimeMillis() + "." + format;
+        File file = new File( path );
+        if ( !file.exists() ) {
+            boolean flag = file.mkdirs();
+            if ( !flag ) {
+                System.out.println( "创建图片失败 = " );
+            }
+        }
+        download( urlString, resultPath );
+        return resultPath;
     }
 
     /**
@@ -121,43 +121,43 @@ public class URLConnectionDownloader {
      * @throws Exception
      */
     public static String downloadRqcode( String urlString, String serverurl, int w, int h ) throws Exception {
-	logger.info( "下载图片参数：" + urlString, serverurl );
-	String format = urlString.substring( urlString.lastIndexOf( "." ) + 1, urlString.length() );
-	System.out.println( "format:" + format );
-	String resultPath = serverurl + "/" + System.currentTimeMillis() + ".jpg";
-	System.out.println( resultPath );
-	File file = new File( serverurl );
-	if ( !file.exists() ) {
-	    boolean flag = file.mkdirs();
-	    if ( !flag ) {
-		System.out.println( "创建图片失败 = " );
-	    }
-	}
-	download( urlString, resultPath );
-	String url = serverurl + "/" + System.currentTimeMillis() + ".jpg";
-	init( new File( resultPath ), url );
-	resize( w, h );
-	UploadManager.delFile( resultPath );
-	System.out.println( "url:" + url );
-	return url;
+        logger.info( "下载图片参数：" + urlString, serverurl );
+        String format = urlString.substring( urlString.lastIndexOf( "." ) + 1, urlString.length() );
+        System.out.println( "format:" + format );
+        String resultPath = serverurl + "/" + System.currentTimeMillis() + ".jpg";
+        System.out.println( resultPath );
+        File file = new File( serverurl );
+        if ( !file.exists() ) {
+            boolean flag = file.mkdirs();
+            if ( !flag ) {
+                System.out.println( "创建图片失败 = " );
+            }
+        }
+        download( urlString, resultPath );
+        String url = serverurl + "/" + System.currentTimeMillis() + ".jpg";
+        init( new File( resultPath ), url );
+        resize( w, h );
+        UploadManager.delFile( resultPath );
+        System.out.println( "url:" + url );
+        return url;
     }
 
     public static void init( File fileName, String path ) throws IOException {
-	File _file = fileName;
-	boolean flag = _file.setReadOnly();
-	if ( flag ) {
-	    //	    File srcFile = _file;
-	    //	    String fileSuffix = _file.getName().substring(
-	    //			    ( _file.getName().indexOf( "." ) + 1 ),
-	    //			    ( _file.getName().length() ) );
-	    destFile = new File( path );
-	    srcImage = javax.imageio.ImageIO.read( _file );
-	    //得到图片的原始大小， 以便按比例压缩。
-	    imageWidth = srcImage.getWidth( null );
-	    imageHeight = srcImage.getHeight( null );
-	    System.out.println( "width: " + imageWidth );
-	    System.out.println( "height: " + imageHeight );
-	}
+        File _file = fileName;
+        boolean flag = _file.setReadOnly();
+        if ( flag ) {
+            //	    File srcFile = _file;
+            //	    String fileSuffix = _file.getName().substring(
+            //			    ( _file.getName().indexOf( "." ) + 1 ),
+            //			    ( _file.getName().length() ) );
+            destFile = new File( path );
+            srcImage = javax.imageio.ImageIO.read( _file );
+            //得到图片的原始大小， 以便按比例压缩。
+            imageWidth = srcImage.getWidth( null );
+            imageHeight = srcImage.getHeight( null );
+            System.out.println( "width: " + imageWidth );
+            System.out.println( "height: " + imageHeight );
+        }
     }
 
     /**
@@ -169,37 +169,37 @@ public class URLConnectionDownloader {
      * @throws IOException
      */
     public static void resize( int w, int h ) throws IOException {
-	//得到合适的压缩大小，按比例。
-	if ( imageWidth >= imageHeight ) {
-	    //	    w = w;
-	    h = (int) Math.round( ( imageHeight * w * 1.0 / imageWidth ) );
-	} else {
-	    //	    h = h;
-	    w = (int) Math.round( ( imageWidth * h * 1.0 / imageHeight ) );
-	}
+        //得到合适的压缩大小，按比例。
+        if ( imageWidth >= imageHeight ) {
+            //	    w = w;
+            h = (int) Math.round( ( imageHeight * w * 1.0 / imageWidth ) );
+        } else {
+            //	    h = h;
+            w = (int) Math.round( ( imageWidth * h * 1.0 / imageHeight ) );
+        }
 
-	//构建图片对象
-	BufferedImage _image = new BufferedImage( w, h,
-			BufferedImage.TYPE_INT_RGB );
-	//绘制缩小后的图
-	_image.getGraphics().drawImage( srcImage, 0, 0, w, h, null );
-	//输出到文件流
-	FileOutputStream out = new FileOutputStream( destFile );
-	JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder( out );
-	encoder.encode( _image );
-	out.flush();
-	out.close();
+        //构建图片对象
+        BufferedImage _image = new BufferedImage( w, h,
+            BufferedImage.TYPE_INT_RGB );
+        //绘制缩小后的图
+        _image.getGraphics().drawImage( srcImage, 0, 0, w, h, null );
+        //输出到文件流
+        FileOutputStream out = new FileOutputStream( destFile );
+        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder( out );
+        encoder.encode( _image );
+        out.flush();
+        out.close();
 
     }
 
-//    public static void main( String[] args ) {
-//	String url = "http://wx.qlogo.cn/mmopen/ajNVdqHZLLCCf4dqcCCe7dIRIOpVZvgQ5NZySGgPfsibxNiaQhunnusJMGfT7V5OZW0hvWCd6BdsE2ubLHibgVcOg/0";
-//	try {
-//	    downloadRqcode( url, "D:/tomcat/webapps/upload/temp", 40, 40 );
-//	    //			init(new File("D:/tomcat/webapps/upload/temp/1482749124521.jpg"),"D:/tomcat/webapps/upload/temp");
-//	    //			resize(40,40);
-//	} catch ( Exception e ) {
-//	    e.printStackTrace();
-//	}
-//    }
+    //    public static void main( String[] args ) {
+    //	String url = "http://wx.qlogo.cn/mmopen/ajNVdqHZLLCCf4dqcCCe7dIRIOpVZvgQ5NZySGgPfsibxNiaQhunnusJMGfT7V5OZW0hvWCd6BdsE2ubLHibgVcOg/0";
+    //	try {
+    //	    downloadRqcode( url, "D:/tomcat/webapps/upload/temp", 40, 40 );
+    //	    //			init(new File("D:/tomcat/webapps/upload/temp/1482749124521.jpg"),"D:/tomcat/webapps/upload/temp");
+    //	    //			resize(40,40);
+    //	} catch ( Exception e ) {
+    //	    e.printStackTrace();
+    //	}
+    //    }
 }

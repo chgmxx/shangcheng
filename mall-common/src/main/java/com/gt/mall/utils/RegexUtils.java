@@ -19,9 +19,9 @@ public class RegexUtils {
      * @return true/false
      */
     public static boolean matches( String INPUT, String REGEX ) {
-	Pattern pattern = Pattern.compile( REGEX );
-	Matcher matcher = pattern.matcher( INPUT );
-	return matcher.matches();
+        Pattern pattern = Pattern.compile( REGEX );
+        Matcher matcher = pattern.matcher( INPUT );
+        return matcher.matches();
     }
 
     /**
@@ -33,23 +33,23 @@ public class RegexUtils {
      * @return 匹配到的所有字符串
      */
     public static List< String > getContentByPattern( String INPUT, String REGEX ) {
-	List< String > resultList = new ArrayList<>();
-	Pattern p = Pattern.compile( REGEX ); //根据正则表达式构造一个Pattern对象
+        List< String > resultList = new ArrayList<>();
+        Pattern p = Pattern.compile( REGEX ); //根据正则表达式构造一个Pattern对象
 
-	if ( INPUT == null ) {
-	    System.out.println( "INPUT不能为NULL！" );
-	    return resultList;
-	}
+        if ( INPUT == null ) {
+            System.out.println( "INPUT不能为NULL！" );
+            return resultList;
+        }
 
 	/*if ( p == null ) {
-	    System.out.println( "构造Pattern时发生错误！" );
+        System.out.println( "构造Pattern时发生错误！" );
 	    return resultList;
 	}*/
-	Matcher m = p.matcher( INPUT );        //利用patter对象为被匹配的文本构造一个Matcher对象
-	while ( m.find() ) { //如果在任何位置中发现匹配的字符串……
-	    resultList.add( m.group() ); //保存匹配到的字符串
-	}
-	return resultList;
+        Matcher m = p.matcher( INPUT );        //利用patter对象为被匹配的文本构造一个Matcher对象
+        while ( m.find() ) { //如果在任何位置中发现匹配的字符串……
+            resultList.add( m.group() ); //保存匹配到的字符串
+        }
+        return resultList;
     }
 
     /**
@@ -61,12 +61,12 @@ public class RegexUtils {
      * @return
      */
     public static String getFirstMatch( String INPUT, String REGEX ) {
-	List< String > ss = getContentByPattern( INPUT, REGEX );
-	if ( ss.size() > 0 ) {
-	    return ss.get( 0 );
-	} else {
-	    return null;
-	}
+        List< String > ss = getContentByPattern( INPUT, REGEX );
+        if ( ss.size() > 0 ) {
+            return ss.get( 0 );
+        } else {
+            return null;
+        }
 
     }
 
@@ -78,9 +78,9 @@ public class RegexUtils {
      * @param REPLACE
      */
     public static String replaceContentByPattern( String INPUT, String REGEX, String REPLACE ) {
-	Pattern p = Pattern.compile( REGEX );
-	Matcher m = p.matcher( INPUT );
-	return m.replaceAll( REPLACE );
+        Pattern p = Pattern.compile( REGEX );
+        Matcher m = p.matcher( INPUT );
+        return m.replaceAll( REPLACE );
     }
 
     /**
@@ -91,17 +91,17 @@ public class RegexUtils {
      * @return
      */
     public static String findFirstNumber( String INPUT ) {
-	Pattern p = Pattern.compile( "\\d+" );
-	Matcher m = p.matcher( INPUT );
-	if ( m.find() ) {
-	    return m.group();
-	} else {
-	    return null;
-	}
+        Pattern p = Pattern.compile( "\\d+" );
+        Matcher m = p.matcher( INPUT );
+        if ( m.find() ) {
+            return m.group();
+        } else {
+            return null;
+        }
     }
 
     public static void main( String[] args ) {
-	System.out.println( matches( "2016", "\\d{4}" ) );
-	System.out.println( matches( "2016-03-15 20:50:00", "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$" ) );
+        System.out.println( matches( "2016", "\\d{4}" ) );
+        System.out.println( matches( "2016-03-15 20:50:00", "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$" ) );
     }
 }

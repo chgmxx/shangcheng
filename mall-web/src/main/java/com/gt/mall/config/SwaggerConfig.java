@@ -41,18 +41,18 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket devApi() {
-	return new Docket( DocumentationType.SWAGGER_2 ).apiInfo( apiInfo() ).select()
-			// 获取接口的Package包
-			.apis( RequestHandlerSelectors.basePackage( BASEPACKAGE ) ).paths( PathSelectors.any() ).build();
+        return new Docket( DocumentationType.SWAGGER_2 ).apiInfo( apiInfo() ).select()
+            // 获取接口的Package包
+            .apis( RequestHandlerSelectors.basePackage( BASEPACKAGE ) ).paths( PathSelectors.any() ).build();
     }
 
     private ApiInfo apiInfo() {
-	return new ApiInfo( TITLE, // 大标题
-			DESC, // 小标题
-			VERSION, // 版本
-			TERMS_OF_SERVICEURL, CONTACT, // 作者
-			LICENSE, // 链接显示文字
-			LICENSE_URL// 网站链接
-	);
+        return new ApiInfo( TITLE, // 大标题
+            DESC, // 小标题
+            VERSION, // 版本
+            TERMS_OF_SERVICEURL, CONTACT, // 作者
+            LICENSE, // 链接显示文字
+            LICENSE_URL// 网站链接
+        );
     }
 }

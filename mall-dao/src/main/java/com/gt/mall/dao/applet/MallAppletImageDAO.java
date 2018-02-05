@@ -14,37 +14,41 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallAppletImageDAO extends BaseMapper<MallAppletImage> {
+public interface MallAppletImageDAO extends BaseMapper< MallAppletImage > {
 
     /**
      * 统计小程序图片
      *
      * @param params userId：用户Id
+     *
      * @return 数量
      */
-    int selectByCount(Map<String, Object> params);
+    int selectByCount( Map< String,Object > params );
 
     /**
      * 分页查询小程序图片
      *
      * @param params userId：用户Id，firstNum：页数，maxNum 数量
+     *
      * @return 列表
      */
-    List<MallAppletImage> selectByPage(Map<String, Object> params);
+    List< MallAppletImage > selectByPage( Map< String,Object > params );
 
     /**
      * 查询小程序图片
      *
      * @param params userId：用户Id
+     *
      * @return list
      */
-    List<MallAppletImage> selectByImage(Map<String, Object> params);
+    List< MallAppletImage > selectByImage( Map< String,Object > params );
 
     /**
      * 查询单个的小程序图片信息
      *
      * @param id 小程序图片Id
+     *
      * @return 小程序图片信息
      */
-    Map<String, Object> selectAppletImageById(int id);
+    Map< String,Object > selectAppletImageById( int id );
 }

@@ -95,25 +95,25 @@ public class MallSellerIncome extends Model< MallSellerIncome > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSellerIncome{" +
-			"id=" + id +
-			", saleMemberId=" + saleMemberId +
-			", incomeCommission=" + incomeCommission +
-			", incomeIntegral=" + incomeIntegral +
-			", incomeMoney=" + incomeMoney +
-			", incomeTime=" + incomeTime +
-			", buyerUserId=" + buyerUserId +
-			", orderId=" + orderId +
-			", orderDetailId=" + orderDetailId +
-			", incomeType=" + incomeType +
-			", isGet=" + isGet +
-			", commissionType=" + commissionType +
-			", noReceiveCommission=" + noReceiveCommission +
-			"}";
+        return "MallSellerIncome{" +
+            "id=" + id +
+            ", saleMemberId=" + saleMemberId +
+            ", incomeCommission=" + incomeCommission +
+            ", incomeIntegral=" + incomeIntegral +
+            ", incomeMoney=" + incomeMoney +
+            ", incomeTime=" + incomeTime +
+            ", buyerUserId=" + buyerUserId +
+            ", orderId=" + orderId +
+            ", orderDetailId=" + orderDetailId +
+            ", incomeType=" + incomeType +
+            ", isGet=" + isGet +
+            ", commissionType=" + commissionType +
+            ", noReceiveCommission=" + noReceiveCommission +
+            "}";
     }
 }

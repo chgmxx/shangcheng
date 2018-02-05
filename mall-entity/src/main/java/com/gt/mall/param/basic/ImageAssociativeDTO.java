@@ -18,7 +18,7 @@ import java.util.Date;
  * @since 2017-07-20
  */
 @Data
-@JsonIgnoreProperties({ "handler","hibernateLazyInitializer" })
+@JsonIgnoreProperties( { "handler", "hibernateLazyInitializer" } )
 @ApiModel( value = "imageAssociative" )
 public class ImageAssociativeDTO {
 
@@ -35,7 +35,7 @@ public class ImageAssociativeDTO {
     /**
      * 关联id
      */
-    @JsonInclude( JsonInclude.Include.NON_NULL)
+    @JsonInclude( JsonInclude.Include.NON_NULL )
     @ApiModelProperty( value = "关联id", required = true )
     private Integer assId;
     /**

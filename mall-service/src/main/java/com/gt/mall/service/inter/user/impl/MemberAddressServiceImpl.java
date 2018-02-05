@@ -30,73 +30,73 @@ public class MemberAddressServiceImpl implements MemberAddressService {
 
     @Override
     public Map addressDefault( String memberIds ) {
-	if ( CommonUtil.isEmpty( memberIds ) ) {
-	    return null;
-	}
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberids", memberIds );
-	String result = HttpSignUtil.signHttpSelect( params, url + "addressDefault.do", 1 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), Map.class );
-	}
-	return null;
+        if ( CommonUtil.isEmpty( memberIds ) ) {
+            return null;
+        }
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberids", memberIds );
+        String result = HttpSignUtil.signHttpSelect( params, url + "addressDefault.do", 1 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), Map.class );
+        }
+        return null;
     }
 
     @Override
     public MemberAddress addreSelectId( int addresssId ) {
-	if ( addresssId == 0 ) {
-	    return null;
-	}
-	Map< String,Object > params = new HashMap<>();
-	params.put( "addid", addresssId );
-	String result = HttpSignUtil.signHttpSelect( params, url + "addreSelectId.do", 1 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAddress.class );
-	}
-	return null;
+        if ( addresssId == 0 ) {
+            return null;
+        }
+        Map< String,Object > params = new HashMap<>();
+        params.put( "addid", addresssId );
+        String result = HttpSignUtil.signHttpSelect( params, url + "addreSelectId.do", 1 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAddress.class );
+        }
+        return null;
     }
 
     @Override
     public List< MemberAddress > addressList( String memberIds ) {
-	if ( CommonUtil.isEmpty( memberIds ) ) {
-	    return null;
-	}
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberids", memberIds );
-	String result = HttpSignUtil.signHttpSelect( params, url + "addressList.do", 1 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONArray.parseArray( result, MemberAddress.class );
-	}
-	return null;
+        if ( CommonUtil.isEmpty( memberIds ) ) {
+            return null;
+        }
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberids", memberIds );
+        String result = HttpSignUtil.signHttpSelect( params, url + "addressList.do", 1 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONArray.parseArray( result, MemberAddress.class );
+        }
+        return null;
     }
 
     @Override
     public boolean addOrUpdateAddre( MemberAddress memberAddress ) {
-	Map result = HttpSignUtil.signHttpInsertOrUpdate( memberAddress, url + "AddOrUpdateAddre.do", 1 );
-	return result.get( "code" ).toString().equals( "1" );
+        Map result = HttpSignUtil.signHttpInsertOrUpdate( memberAddress, url + "AddOrUpdateAddre.do", 1 );
+        return result.get( "code" ).toString().equals( "1" );
     }
 
     @Override
     public boolean updateDefault( int addressId, int memberId ) {
-	if ( addressId == 0 || memberId == 0 ) {
-	    return false;
-	}
-	List< Integer > memberList = memberService.findMemberListByIds( memberId );
-	Map< String,Object > params = new HashMap<>();
-	params.put( "addid", addressId );
-	params.put( "memberids", CommonUtil.getMememberIds( memberList, memberId ) );
-	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, url + "updateDefault.do", 1 );
-	return result.get( "code" ).toString().equals( "1" );
+        if ( addressId == 0 || memberId == 0 ) {
+            return false;
+        }
+        List< Integer > memberList = memberService.findMemberListByIds( memberId );
+        Map< String,Object > params = new HashMap<>();
+        params.put( "addid", addressId );
+        params.put( "memberids", CommonUtil.getMememberIds( memberList, memberId ) );
+        Map result = HttpSignUtil.signHttpInsertOrUpdate( params, url + "updateDefault.do", 1 );
+        return result.get( "code" ).toString().equals( "1" );
     }
 
     @Override
     public List< Map > areaPhoneList() {
-	Map< String,Object > params = new HashMap<>();
-	String result = HttpSignUtil.signHttpSelect( params, "/8A5DA52E/areaPhoneApi/selectList.do", 1 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONArray.parseArray( result, Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        String result = HttpSignUtil.signHttpSelect( params, "/8A5DA52E/areaPhoneApi/selectList.do", 1 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONArray.parseArray( result, Map.class );
+        }
+        return null;
     }
 
 }

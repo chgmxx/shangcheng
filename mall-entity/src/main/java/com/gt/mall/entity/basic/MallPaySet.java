@@ -146,17 +146,17 @@ public class MallPaySet extends Model< MallPaySet > {
      * 配色风格key 关联字典表k001的key
      */
     @TableField( "style_key" )
-    private Integer  styleKey;
+    private Integer styleKey;
     /**
      * 待付款订单取消时间设置
      */
     @TableField( "order_cancel" )
-    private Integer  orderCancel ;
+    private Integer orderCancel;
     /**
      * 商家消息模板内容 {模板标题:模板id}
      */
     @TableField( "bus_message_json" )
-    private String  busMessageJson ;
+    private String  busMessageJson;
     /**
      * 是否加入担保交易  0未加入 1已加入
      */
@@ -175,41 +175,41 @@ public class MallPaySet extends Model< MallPaySet > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallPaySet{" +
-			"id=" + id +
-			", isDeliveryPay=" + isDeliveryPay +
-			", isTakeTheir=" + isTakeTheir +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", isDaifu=" + isDaifu +
-			", isComment=" + isComment +
-			", isCommentCheck=" + isCommentCheck +
-			", isCommentGive=" + isCommentGive +
-			", isMessage=" + isMessage +
-			", isPresale=" + isPresale +
-			", isPresaleGive=" + isPresaleGive +
-			", messageJson=" + messageJson +
-			", isSmsMember=" + isSmsMember +
-			", smsMessage=" + smsMessage +
-			", isPf=" + isPf +
-			", isPfCheck=" + isPfCheck +
-			", pfSet=" + pfSet +
-			", pfRemark=" + pfRemark +
-			", pfApplyRemark=" + pfApplyRemark +
-			", isSeller=" + isSeller +
-			", isCheckSeller=" + isCheckSeller +
-			", footerJson=" + footerJson +
-			", styleKey=" + styleKey +
-			", orderCancel=" + orderCancel +
-			", busMessageJson=" + busMessageJson +
-			", isSecuritytrade=" + isSecuritytrade +
-			", isFooter=" + isFooter +
-			", checkSellerPhone=" + checkSellerPhone +
-			"}";
+        return "MallPaySet{" +
+            "id=" + id +
+            ", isDeliveryPay=" + isDeliveryPay +
+            ", isTakeTheir=" + isTakeTheir +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", isDaifu=" + isDaifu +
+            ", isComment=" + isComment +
+            ", isCommentCheck=" + isCommentCheck +
+            ", isCommentGive=" + isCommentGive +
+            ", isMessage=" + isMessage +
+            ", isPresale=" + isPresale +
+            ", isPresaleGive=" + isPresaleGive +
+            ", messageJson=" + messageJson +
+            ", isSmsMember=" + isSmsMember +
+            ", smsMessage=" + smsMessage +
+            ", isPf=" + isPf +
+            ", isPfCheck=" + isPfCheck +
+            ", pfSet=" + pfSet +
+            ", pfRemark=" + pfRemark +
+            ", pfApplyRemark=" + pfApplyRemark +
+            ", isSeller=" + isSeller +
+            ", isCheckSeller=" + isCheckSeller +
+            ", footerJson=" + footerJson +
+            ", styleKey=" + styleKey +
+            ", orderCancel=" + orderCancel +
+            ", busMessageJson=" + busMessageJson +
+            ", isSecuritytrade=" + isSecuritytrade +
+            ", isFooter=" + isFooter +
+            ", checkSellerPhone=" + checkSellerPhone +
+            "}";
     }
 }

@@ -21,21 +21,18 @@ import java.util.Map;
 @RequestMapping( "/mPro" )
 public class MallProductController extends BaseController {
 
-
     /**
      * 获取二维码的图片
      */
     @RequestMapping( value = "/79B4DE7C/codeIframs" )
     public String codeIframs( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
-	try {
+        try {
 
-	} catch ( Exception e ) {
-	    logger.error( "获取拍卖二维码图片失败：" + e.getMessage() );
-	    e.printStackTrace();
-	}
-	return "mall/product/iframe/product_shop_buy";
+        } catch ( Exception e ) {
+            logger.error( "获取拍卖二维码图片失败：" + e.getMessage() );
+            e.printStackTrace();
+        }
+        return "mall/product/iframe/product_shop_buy";
     }
-
-
 
 }

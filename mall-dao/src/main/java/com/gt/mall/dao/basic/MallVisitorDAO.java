@@ -5,12 +5,12 @@ import com.gt.mall.entity.basic.MallVisitor;
 
 /**
  * <p>
-  * 店铺访客表 Mapper 接口
+ * 店铺访客表 Mapper 接口
  * </p>
  *
  * @author yangqian
  * @since 2017-10-26
  */
-public interface MallVisitorDAO extends BaseMapper<MallVisitor > {
+public interface MallVisitorDAO extends BaseMapper< MallVisitor > {
 
 }

@@ -64,19 +64,19 @@ public class MallSearchLabel extends Model< MallSearchLabel > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSearchLabel{" +
-			"id=" + id +
-			", labelType=" + labelType +
-			", shopId=" + shopId +
-			", groupId=" + groupId +
-			", userId=" + userId +
-			", isDelete=" + isDelete +
-			", createTime=" + createTime +
-			"}";
+        return "MallSearchLabel{" +
+            "id=" + id +
+            ", labelType=" + labelType +
+            ", shopId=" + shopId +
+            ", groupId=" + groupId +
+            ", userId=" + userId +
+            ", isDelete=" + isDelete +
+            ", createTime=" + createTime +
+            "}";
     }
 }

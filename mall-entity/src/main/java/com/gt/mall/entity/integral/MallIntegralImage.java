@@ -73,21 +73,21 @@ public class MallIntegralImage extends Model< MallIntegralImage > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallIntegralImage{" +
-			"id=" + id +
-			", shopId=" + shopId +
-			", imageUrl=" + imageUrl +
-			", type=" + type +
-			", returnUrl=" + returnUrl +
-			", busUserId=" + busUserId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isShow=" + isShow +
-			"}";
+        return "MallIntegralImage{" +
+            "id=" + id +
+            ", shopId=" + shopId +
+            ", imageUrl=" + imageUrl +
+            ", type=" + type +
+            ", returnUrl=" + returnUrl +
+            ", busUserId=" + busUserId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isShow=" + isShow +
+            "}";
     }
 }

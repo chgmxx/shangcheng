@@ -301,7 +301,7 @@ public class MallShopCartServiceImpl extends BaseServiceImpl< MallShopCartDAO,Ma
                     StringBuilder specificaValue = new StringBuilder();
                     //查询规格信息
                     if ( CommonUtil.isNotEmpty( maps.get( "productSpecificas" ) ) ) {
-			/*String specSql = "SELECT id,specifica_value,specifica_img_url FROM t_mall_product_specifica WHERE is_delete=0 AND specifica_value_id IN(" + maps
+            /*String specSql = "SELECT id,specifica_value,specifica_img_url FROM t_mall_product_specifica WHERE is_delete=0 AND specifica_value_id IN(" + maps
 					.get( "productSpecificas" ) + ")  AND product_id=" + productId + " ORDER BY sort";
 			List< Map< String,Object > > specMapList = daoUtil.queryForList( specSql );*/
                         Map< String,Object > specificaMap = mallProductService.getProInvIdBySpecId( maps.get( "productSpecificas" ).toString(), productId );

@@ -68,26 +68,26 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "commentList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneCommentListResult > collectList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
-	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
+        try {
+            //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    PhoneCommentListResult result = mallCommentService.myCommentList( member.getId(), loginDTO.getBusId(), curPage );
+            PhoneCommentListResult result = mallCommentService.myCommentList( member.getId(), loginDTO.getBusId(), curPage );
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-	} catch ( BusinessException e ) {
-	    logger.error( "查看评论列表的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "查看评论列表的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "查询我的评论失败" );
-	}
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( BusinessException e ) {
+            logger.error( "查看评论列表的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "查看评论列表的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "查询我的评论失败" );
+        }
     }
 
     @ApiOperation( value = "进入评价页面的接口", notes = "查询评论页面的商品信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -95,24 +95,24 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "toCommentProduct", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneCommentProductResult > toCommentProduct( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderDetailId ) {
-	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer orderDetailId ) {
+        try {
+            //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    PhoneCommentProductResult result = mallCommentService.getCommentProduct( orderDetailId );
+            PhoneCommentProductResult result = mallCommentService.getCommentProduct( orderDetailId );
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-	} catch ( BusinessException e ) {
-	    logger.error( "进入评价页面的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "进入评价页面的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "查询评论商品失败" );
-	}
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( BusinessException e ) {
+            logger.error( "进入评价页面的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "进入评价页面的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "查询评论商品失败" );
+        }
     }
 
     @ApiOperation( value = "保存评论接口", notes = "保存评论", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -120,72 +120,72 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "saveComment", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< Integer > saveComment( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    @RequestBody @Valid @ModelAttribute PhoneMallCommentDTO mallCommentDTO, String imageUrls ) {
-	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+        @RequestBody @Valid @ModelAttribute PhoneMallCommentDTO mallCommentDTO, String imageUrls ) {
+        try {
+            //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    MallComment mallComment = new MallComment();
-	    EntityDtoConverter converter = new EntityDtoConverter();
-	    converter.entityConvertDto( mallCommentDTO, mallComment );
+            MallComment mallComment = new MallComment();
+            EntityDtoConverter converter = new EntityDtoConverter();
+            converter.entityConvertDto( mallCommentDTO, mallComment );
 
-	    mallComment.setUserId( member.getId() );
-	    //判断用户是否已经评论了，防止重复评论
-	    MallComment isComment = mallCommentService.selectComment( mallComment );
-	    if ( CommonUtil.isEmpty( isComment ) && CommonUtil.isEmpty( mallComment.getId() ) ) {
+            mallComment.setUserId( member.getId() );
+            //判断用户是否已经评论了，防止重复评论
+            MallComment isComment = mallCommentService.selectComment( mallComment );
+            if ( CommonUtil.isEmpty( isComment ) && CommonUtil.isEmpty( mallComment.getId() ) ) {
 
-		Date giveTime = null; //可送礼时间
-		Integer giveStatus = 0; //送礼状态
-		//查询是否开启了评论送礼
-		MallPaySet set = new MallPaySet();
-		set.setUserId( loginDTO.getBusId() );
-		MallPaySet payset = mallPaySetService.selectByUserId( set );
-		if ( CommonUtil.isNotEmpty( payset ) ) {
-		    if ( payset.getIsCommentGive().toString().equals( "1" ) ) {
-			giveStatus = 1;
-		    }
-		}
-		if ( giveStatus == 1 ) {
-		    MallOrder order = mallOrderService.selectById( mallComment.getOrderId() );
-		    giveTime = DateTimeKit.addDate( order.getUpdateTime(), Constants.ORDER_FINISH_RETURN_DAY );
-		}
-		mallComment.setGiveTime( giveTime );
-		mallComment.setGiveStatus( giveStatus );
+                Date giveTime = null; //可送礼时间
+                Integer giveStatus = 0; //送礼状态
+                //查询是否开启了评论送礼
+                MallPaySet set = new MallPaySet();
+                set.setUserId( loginDTO.getBusId() );
+                MallPaySet payset = mallPaySetService.selectByUserId( set );
+                if ( CommonUtil.isNotEmpty( payset ) ) {
+                    if ( payset.getIsCommentGive().toString().equals( "1" ) ) {
+                        giveStatus = 1;
+                    }
+                }
+                if ( giveStatus == 1 ) {
+                    MallOrder order = mallOrderService.selectById( mallComment.getOrderId() );
+                    giveTime = DateTimeKit.addDate( order.getUpdateTime(), Constants.ORDER_FINISH_RETURN_DAY );
+                }
+                mallComment.setGiveTime( giveTime );
+                mallComment.setGiveStatus( giveStatus );
 
-		MallComment comment = mallCommentService.addAppraise( imageUrls, mallComment, request );
-		if ( CommonUtil.isNotEmpty( comment ) ) {
-		    if ( giveStatus == 1 ) {
-			int ret = new Date().compareTo( giveTime );
-			if ( ret == 1 ) {
-			    //评论送礼
-			    try {
-				mallCommentGiveService.commentGive( comment.getId(), request, comment.getUserId() );
-				comment.setGiveStatus( 2 );
-				mallCommentService.updateById( comment );
-			    } catch ( Exception e ) {
-				logger.error( "评论赠送商品异常：" + e.getMessage() );
-				e.printStackTrace();
-			    }
-			}
-		    }
-		    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), comment.getId() );
-		}
-	    } else {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "您已经评论过了，无需再次评论", isComment.getId() );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存评论的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存评论的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "保存评论失败" );
-	}
-	return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存评论失败" );
+                MallComment comment = mallCommentService.addAppraise( imageUrls, mallComment, request );
+                if ( CommonUtil.isNotEmpty( comment ) ) {
+                    if ( giveStatus == 1 ) {
+                        int ret = new Date().compareTo( giveTime );
+                        if ( ret == 1 ) {
+                            //评论送礼
+                            try {
+                                mallCommentGiveService.commentGive( comment.getId(), request, comment.getUserId() );
+                                comment.setGiveStatus( 2 );
+                                mallCommentService.updateById( comment );
+                            } catch ( Exception e ) {
+                                logger.error( "评论赠送商品异常：" + e.getMessage() );
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), comment.getId() );
+                }
+            } else {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "您已经评论过了，无需再次评论", isComment.getId() );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存评论的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存评论的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "保存评论失败" );
+        }
+        return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存评论失败" );
     }
 
     @ApiOperation( value = "评论成功后的接口", notes = "评论成功后的接口查询", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -193,36 +193,36 @@ public class PhoneCommentController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "commentSuccess", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneCommentSuccessResult > commentSuccess( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer id ) {
-	try {
-	    /*loginDTO.setUcLogin( 1 );
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer id ) {
+        try {
+        /*loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
-	    PhoneCommentSuccessResult result = new PhoneCommentSuccessResult();
-	    //查询商品评论
-	    MallComment comment = mallCommentService.selectById( id );
-	    //查询评论商品对象
-	    PhoneCommentProductResult productResult = mallCommentService.getCommentProduct( comment.getOrderDetailId() );
-	    result.setProductResult( productResult );
-	    result.setMallComment( comment );
+            PhoneCommentSuccessResult result = new PhoneCommentSuccessResult();
+            //查询商品评论
+            MallComment comment = mallCommentService.selectById( id );
+            //查询评论商品对象
+            PhoneCommentProductResult productResult = mallCommentService.getCommentProduct( comment.getOrderDetailId() );
+            result.setProductResult( productResult );
+            result.setMallComment( comment );
 
-	    if ( CommonUtil.isNotEmpty( comment ) && comment.getIsUploadImage() == 1 ) {
-		List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( null, 4, comment.getId() );
-		result.setImageList( imageList );
-	    }
+            if ( CommonUtil.isNotEmpty( comment ) && comment.getIsUploadImage() == 1 ) {
+                List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( null, 4, comment.getId() );
+                result.setImageList( imageList );
+            }
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-	} catch ( BusinessException e ) {
-	    logger.error( "评论成功后的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "评论成功后的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "查询评论信息失败" );
-	}
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( BusinessException e ) {
+            logger.error( "评论成功后的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "评论成功后的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "查询评论信息失败" );
+        }
     }
 
 }

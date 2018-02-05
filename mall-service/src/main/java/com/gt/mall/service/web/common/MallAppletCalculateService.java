@@ -16,6 +16,6 @@ public interface MallAppletCalculateService {
     /**
      * 手机端 提交订单计算
      */
-    AppletSubmitOrderDTO calculateOrder( AppletSubmitOrderDTO params , Member member );
+    AppletSubmitOrderDTO calculateOrder( AppletSubmitOrderDTO params, Member member );
 
 }

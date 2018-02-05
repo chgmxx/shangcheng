@@ -13,8 +13,10 @@ public interface WxAppletService {
 
     /**
      * 获取小程序用户信息
+     *
      * @param applet 参数
+     *
      * @return 小程序用户信息
      */
-    MemberAppletOpenid memberAppletByMemIdAndStyle(MemberAppletByMemIdAndStyle applet);
+    MemberAppletOpenid memberAppletByMemIdAndStyle( MemberAppletByMemIdAndStyle applet );
 }

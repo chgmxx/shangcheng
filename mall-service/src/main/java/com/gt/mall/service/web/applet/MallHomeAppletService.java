@@ -19,93 +19,104 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallHomeAppletService extends BaseService<MallAppletImage> {
+public interface MallHomeAppletService extends BaseService< MallAppletImage > {
 
     /**
      * 根据店铺id查询分组信息
      *
      * @param params shopId店铺id； groupPId 分类父id，用户查询子分类 ；  isFrist 是否只查询父类 1查询父类
+     *
      * @return List
      */
-    List<AppletGroupDTO > selectGroupsByShopId(Map<String, Object> params);
+    List< AppletGroupDTO > selectGroupsByShopId( Map< String,Object > params );
 
     /**
      * 查询所有商品信息
      *
      * @param params desc 排序 1倒序  0 正序； searchName 搜索名称；  type 排序  1时间   2销量   3价格 ；  shopId 店铺id
+     *
      * @return List
      */
-    PageUtil productAllList(Map<String, Object> params);
+    PageUtil productAllList( Map< String,Object > params );
 
     /**
      * 查询活动信息
      *
      * @param params shopId  店铺id
+     *
      * @return map
      */
-    Map<String, Object> getActivityList(Map<String, Object> params);
+    Map< String,Object > getActivityList( Map< String,Object > params );
 
     /**
      * 通过商品id查询商品详细信息
      *
      * @param params productId:商品Id,memberId：会员Id
+     *
      * @return map
      */
-    AppletProductDetailResult selectProductDetailById(Map<String, Object> params);
+    AppletProductDetailResult selectProductDetailById( Map< String,Object > params );
 
     /**
      * 加入购物车
      *
      * @param params shopCart:商品信息
+     *
      * @return map
      */
-    Map<String, Object> addshopping(Map<String, Object> params);
+    Map< String,Object > addshopping( Map< String,Object > params );
 
     /**
      * 获取我的页面需要的信息
      *
      * @param memberId：会员Id
+     *
      * @return
      */
-    Map<String, Object> getMemberPage(Integer memberId);
+    Map< String,Object > getMemberPage( Integer memberId );
 
     /**
      * 查询商家是否有技术支持
      *
      * @param params busUserId:商家id
+     *
      * @return 有无
      */
-    int getAdvert(Map<String, Object> params);
+    int getAdvert( Map< String,Object > params );
 
     /**
      * 查询店铺列表
      *
      * @param params
+     *
      * @return list
      */
-    List< AppletShopResult > getShopList(Map<String, Object> params);
+    List< AppletShopResult > getShopList( Map< String,Object > params );
 
     /**
      * 查询商家上传的轮播图
      *
      * @param params
+     *
      * @return
      */
-    List<AppletImageDTO > getAppletImageByBusUser(Map<String, Object> params);
+    List< AppletImageDTO > getAppletImageByBusUser( Map< String,Object > params );
 
     /**
      * 获取手机验证码
      *
      * @param params
+     *
      * @return
      */
-    Map<String, Object> getValCode(Map<String, Object> params) throws Exception;
+    Map< String,Object > getValCode( Map< String,Object > params ) throws Exception;
 
     /**
      * 绑定手机号码
      *
      * @param params
+     *
      * @return
      */
-    Map<String, Object> bindPhones(Map<String, Object> params) throws Exception;
+    Map< String,Object > bindPhones( Map< String,Object > params ) throws Exception;
 }

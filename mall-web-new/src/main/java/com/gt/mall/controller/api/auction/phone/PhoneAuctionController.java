@@ -87,59 +87,59 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     /*交纳保证金接口*/
     @ApiOperation( value = "获取交纳保证金信息", notes = "获取交纳保证金信息" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "invId", value = "库存ID", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "proId", value = "商品ID", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "auctionId", value = "拍卖ID", paramType = "query", required = true, dataType = "int" ) } )
+        @ApiImplicitParam( name = "proId", value = "商品ID", paramType = "query", required = true, dataType = "int" ),
+        @ApiImplicitParam( name = "auctionId", value = "拍卖ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "toAddMargin", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > toAddMargin( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer proId, Integer invId, Integer auctionId ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //	    userLogin( request, response, loginDTO );
+        Integer proId, Integer invId, Integer auctionId ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
 
-	    MallProduct product = mallProductService.selectById( proId );//获取商品信息
+            MallProduct product = mallProductService.selectById( proId );//获取商品信息
 
-	    int shopid = 0;
-	    if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
-		shopid = product.getShopId();
-		MallRedisUtils.getMallShopId( shopid ,loginDTO.getBusId());
-	    }
+            int shopid = 0;
+            if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
+                shopid = product.getShopId();
+                MallRedisUtils.getMallShopId( shopid, loginDTO.getBusId() );
+            }
 
-	    //查询商品的拍卖信息
-	    MallAuction auction = auctionService.getAuctionByProId( proId, shopid, auctionId );
-	    result.put( "aucMargin", auction.getAucMargin() );
-	    result.put( "product", product );
+            //查询商品的拍卖信息
+            MallAuction auction = auctionService.getAuctionByProId( proId, shopid, auctionId );
+            result.put( "aucMargin", auction.getAucMargin() );
+            result.put( "product", product );
 
-	    //	    List imagelist = pageService.imageProductList( proId, 1 );//获取轮播图列表
-	    //	    result.put( "imagelist", imagelist.get( 0 ) );
+            //	    List imagelist = pageService.imageProductList( proId, 1 );//获取轮播图列表
+            //	    result.put( "imagelist", imagelist.get( 0 ) );
 
-	    List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, proId );
-	    if ( imageList != null && imageList.size() > 0 ) {
-		result.put( "imageObj", imageList.get( 0 ) );
-	    }
+            List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, proId );
+            if ( imageList != null && imageList.size() > 0 ) {
+                result.put( "imageObj", imageList.get( 0 ) );
+            }
 
-	    String is_specifica = product.getIsSpecifica().toString();
-	    Map guige = new HashMap();
-	    if ( is_specifica.equals( "1" ) ) {
-		guige = pageService.productSpecifications( proId, invId + "" );
-	    }
-	    if ( guige != null && guige.size() > 0 ) {
-		result.put( "proSpecificaIds", guige.get( "xids" ) );
-	    }
+            String is_specifica = product.getIsSpecifica().toString();
+            Map guige = new HashMap();
+            if ( is_specifica.equals( "1" ) ) {
+                guige = pageService.productSpecifications( proId, invId + "" );
+            }
+            if ( guige != null && guige.size() > 0 ) {
+                result.put( "proSpecificaIds", guige.get( "xids" ) );
+            }
 
-	    int memType = memberService.isCardType( member.getId() );
-	    PayWay payWay = payService.getPayWay( loginDTO.getBusId() );
-	    result.put( "payWayList", MarginUtil.getPayWay( memType, payWay, CommonUtil.judgeBrowser( request ) ) );
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交纳保证金信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+            int memType = memberService.isCardType( member.getId() );
+            PayWay payWay = payService.getPayWay( loginDTO.getBusId() );
+            result.put( "payWayList", MarginUtil.getPayWay( memType, payWay, CommonUtil.judgeBrowser( request ) ) );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交纳保证金信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -149,20 +149,20 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "addMargin", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > addMargin( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    PhoneAddAuctionMarginDTO marginDTO ) {
-	Map< String,Object > result = null;
-	try {
-	    //	    userLogin( request, response, loginDTO );
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    result = auctionMarginService.addMargin( marginDTO, member );
-	} catch ( BusinessException be ) {
-	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "交纳保证金异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+        PhoneAddAuctionMarginDTO marginDTO ) {
+        Map< String,Object > result = null;
+        try {
+            //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            result = auctionMarginService.addMargin( marginDTO, member );
+        } catch ( BusinessException be ) {
+            return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "交纳保证金异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳保证金异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
@@ -173,22 +173,22 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "payWay", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
-		params.put( "out_trade_no", params.get( "no" ) );
-	    }
-	    auctionMarginService.paySuccessAuction( params );
-	    return ServerResponse.createBySuccessCode();
-	} catch ( BusinessException e ) {
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "拍卖缴纳定金回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖缴纳定金回调异常" );
-	}
+        try {
+            if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
+                params.put( "out_trade_no", params.get( "no" ) );
+            }
+            auctionMarginService.paySuccessAuction( params );
+            return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "拍卖缴纳定金回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖缴纳定金回调异常" );
+        }
     }
 
     /*抢拍记录 出价记录*/
@@ -197,53 +197,53 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "shopdetails", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > shopdetails( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer auctionId ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+        Integer auctionId ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
 	    /*loginDTO.setUcLogin( 1 );
-	    userLogin( request, response, loginDTO );*/
-	    MallAuction auction = auctionService.selectById( auctionId );
-	    //	    MallAuction auction = auctionService.getAuctionByProId( productId, shopId, auctionId );
+        userLogin( request, response, loginDTO );*/
+            MallAuction auction = auctionService.selectById( auctionId );
+            //	    MallAuction auction = auctionService.getAuctionByProId( productId, shopId, auctionId );
 	    /*if ( type == 1 ) {//商品详情
 		MallProductDetail obj = pageService.shopdetails( auction.getProductId() );
 		result.put( "proDetail", obj );
 	    } else if ( type == 2 ) {*/
-	    if ( auction != null ) {
-		MallAuctionBidding bid = new MallAuctionBidding();
-		bid.setAucId( auction.getId() );
-		if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
-		    //查询出价次数
-		    MallAuctionOffer offer = new MallAuctionOffer();
-		    offer.setAucId( auction.getId() );
-		    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
-		    for ( MallAuctionOffer offer1 : offerList ) {
-			Member member1 = memberService.findMemberById( offer1.getUserId(), null );
-			if ( member1 != null ) {
-			    offer1.setNickname( member1.getNickname() );
-			}
-		    }
-		    result.put( "offerList", offerList );
-		} else {//降价拍
-		    List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
-		    result.put( "bidList", bidList );
-		}
-	    }
+            if ( auction != null ) {
+                MallAuctionBidding bid = new MallAuctionBidding();
+                bid.setAucId( auction.getId() );
+                if ( auction.getAucType().toString().equals( "2" ) ) {//升价拍
+                    //查询出价次数
+                    MallAuctionOffer offer = new MallAuctionOffer();
+                    offer.setAucId( auction.getId() );
+                    List< MallAuctionOffer > offerList = auctionOfferDAO.selectListByOffer( offer );//查询拍卖的出价信息
+                    for ( MallAuctionOffer offer1 : offerList ) {
+                        Member member1 = memberService.findMemberById( offer1.getUserId(), null );
+                        if ( member1 != null ) {
+                            offer1.setNickname( member1.getNickname() );
+                        }
+                    }
+                    result.put( "offerList", offerList );
+                } else {//降价拍
+                    List< MallAuctionBidding > bidList = auctionBiddingDAO.selectListByBidding( bid );//查询用户的竞拍信息
+                    result.put( "bidList", bidList );
+                }
+            }
 	    /*}*/
-	    if ( auction != null ) {
-		result.put( "aucType", auction.getAucType() );
-	    }
+            if ( auction != null ) {
+                result.put( "aucType", auction.getAucType() );
+            }
 
-	    MallRedisUtils.getMallShopId( auction.getShopId() ,loginDTO.getBusId());
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取出价记录列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取出价记录列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+            MallRedisUtils.getMallShopId( auction.getShopId(), loginDTO.getBusId() );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取出价记录列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取出价记录列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -253,106 +253,106 @@ public class PhoneAuctionController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "addOffer", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > addOffer( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    PhoneAddAuctionBiddingDTO biddingDTO ) {
-	Map< String,Object > result = null;
-	try {
-	    //	    userLogin( request, response, loginDTO );
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+        PhoneAddAuctionBiddingDTO biddingDTO ) {
+        Map< String,Object > result = null;
+        try {
+            //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    result = auctionOfferService.addOffer( biddingDTO, member.getId().toString() );
-	    Boolean flag = (Boolean) result.get( "result" );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
-	    }
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "拍卖出价异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖出价异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+            result = auctionOfferService.addOffer( biddingDTO, member.getId().toString() );
+            Boolean flag = (Boolean) result.get( "result" );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+            }
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "拍卖出价异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖出价异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     @ApiOperation( value = "获取我的保证金列表", notes = "获取我的保证金列表" )
     @ResponseBody
     @RequestMapping( value = "myMarginList", method = RequestMethod.POST )
     public ServerResponse myMarginList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	List< MallAuctionMargin > marginList = null;
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+        List< MallAuctionMargin > marginList = null;
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
 
-	    MallAuctionMargin margin = new MallAuctionMargin();
+            MallAuctionMargin margin = new MallAuctionMargin();
 
-	    List< String > oldUserIdList = new ArrayList< String >();
-	    if ( CommonUtil.isNotEmpty( member.getOldid() ) ) {
-		for ( String oldMemberId : member.getOldid().split( "," ) ) {
-		    if ( CommonUtil.isNotEmpty( oldMemberId ) ) {
-			oldUserIdList.add( oldMemberId );
-		    }
-		}
-		margin.setOldUserIdList( oldUserIdList );
-	    } else {
-		margin.setUserId( member.getId() );
-	    }
-	    marginList = auctionMarginService.getMyAuction( margin );
+            List< String > oldUserIdList = new ArrayList< String >();
+            if ( CommonUtil.isNotEmpty( member.getOldid() ) ) {
+                for ( String oldMemberId : member.getOldid().split( "," ) ) {
+                    if ( CommonUtil.isNotEmpty( oldMemberId ) ) {
+                        oldUserIdList.add( oldMemberId );
+                    }
+                }
+                margin.setOldUserIdList( oldUserIdList );
+            } else {
+                margin.setUserId( member.getId() );
+            }
+            marginList = auctionMarginService.getMyAuction( margin );
 
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取我的保证金列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的保证金列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), marginList, true );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取我的保证金列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的保证金列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), marginList, true );
     }
 
     @ApiOperation( value = "获取我的竞拍列表", notes = "获取我的竞拍列表" )
     @ResponseBody
     @RequestMapping( value = "myBiddingList", method = RequestMethod.POST )
     public ServerResponse myBiddingList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	List< Map< String,Object > > bidList = null;
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+        List< Map< String,Object > > bidList = null;
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //	    userLogin( request, response, loginDTO );
-	    bidList = auctionBiddingService.selectMyBidding( member );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
+            bidList = auctionBiddingService.selectMyBidding( member );
 
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取我的竞拍列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的竞拍列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), bidList, true );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取我的竞拍列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的竞拍列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), bidList, true );
     }
 
     @ApiOperation( value = "获取我的获拍金列表", notes = "获取我的获拍金列表" )
     @ResponseBody
     @RequestMapping( value = "myHuoPaiList", method = RequestMethod.POST )
     public ServerResponse myHuoPaiList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	List< Map< String,Object > > bidList = null;
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
+        List< Map< String,Object > > bidList = null;
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "4" ) );////判断活动是否已经过期
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
 
-	    bidList = auctionBiddingService.selectMyHuoBid( member );
+            bidList = auctionBiddingService.selectMyHuoBid( member );
 
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取我的获拍金列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的获拍金列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), bidList, true );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取我的获拍金列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的获拍金列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), bidList, true );
     }
 }
 

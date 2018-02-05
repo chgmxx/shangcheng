@@ -87,7 +87,7 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
         int shopId = 0;
         AppletShopCartResult shopMap = new AppletShopCartResult();
         AppletShopCartResult sxShopMap = new AppletShopCartResult();
-	/*Map< String,Object > productMap = new HashMap< String,Object >();*/
+    /*Map< String,Object > productMap = new HashMap< String,Object >();*/
         if ( list != null && list.size() > 0 ) {
             int j = 0;
             for ( Map< String,Object > map : list ) {
@@ -173,7 +173,8 @@ public class MallProductAppletServiceImpl extends BaseServiceImpl< MallAppletIma
                                 }
                             }
                             cartMap.setPrice( df.format( invPrice ) );
-                            if(Double.compare( price, invPrice ) != 0 || Double.compare( price, yhPrice ) != 0 ){// 后面的写法findbug报错  if ( price != invPrice || yhPrice != price ) {//同步价格
+                            if ( Double.compare( price, invPrice ) != 0
+                                || Double.compare( price, yhPrice ) != 0 ) {// 后面的写法findbug报错  if ( price != invPrice || yhPrice != price ) {//同步价格
                                 yhPrice = CommonUtil.toDouble( df.format( yhPrice ) );
                                 if ( yhPrice <= 0 ) {
                                     yhPrice = 0.01;

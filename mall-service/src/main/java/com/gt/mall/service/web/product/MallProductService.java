@@ -26,10 +26,12 @@ public interface MallProductService extends BaseService< MallProduct > {
 
     /**
      * 统计各状态下的数量
+     *
      * @param params
+     *
      * @return
      */
-    Map< String,Object > countStatus(Map< String,Object > params);
+    Map< String,Object > countStatus( Map< String,Object > params );
 
     /**
      * 根据用户id来查询商品
@@ -199,7 +201,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 根据流量id查询商品数量
      */
-    List< BusFlow > selectCountByFlowIds( int userId , Integer productId, Integer flowId);
+    List< BusFlow > selectCountByFlowIds( int userId, Integer productId, Integer flowId );
 
     /**
      * 根据erp的商品id查询

@@ -64,19 +64,19 @@ public class MallPresaleMessageRemind extends Model< MallPresaleMessageRemind > 
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallPresaleMessageRemind{" +
-			"id=" + id +
-			", presaleId=" + presaleId +
-			", remindUserId=" + remindUserId +
-			", isRemind=" + isRemind +
-			", isOpen=" + isOpen +
-			", createTime=" + createTime +
-			", remindTime=" + remindTime +
-			"}";
+        return "MallPresaleMessageRemind{" +
+            "id=" + id +
+            ", presaleId=" + presaleId +
+            ", remindUserId=" + remindUserId +
+            ", isRemind=" + isRemind +
+            ", isOpen=" + isOpen +
+            ", createTime=" + createTime +
+            ", remindTime=" + remindTime +
+            "}";
     }
 }

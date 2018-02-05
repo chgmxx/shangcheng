@@ -49,7 +49,7 @@ public class MallComment extends Model< MallComment > {
     /**
      * 评论内容
      */
-    @TableField("content")
+    @TableField( "content" )
     private String  content;
     /**
      * 评论人是否上传图片(0 未上传  1已上传)
@@ -104,7 +104,7 @@ public class MallComment extends Model< MallComment > {
      * 创建时间
      */
     @TableField( "createTime" )
-    private Date createTime;
+    private Date    createTime;
     /**
      * 是否已经被删除（0未删除   1已删除）
      */
@@ -116,10 +116,10 @@ public class MallComment extends Model< MallComment > {
     @TableField( "check_status" )
     private Integer checkStatus;
     /**
-     *可送礼时间
+     * 可送礼时间
      */
     @TableField( "give_time" )
-    private Date giveTime;
+    private Date    giveTime;
     /**
      * 送礼状态  0无需送礼 1未送 2已送
      */
@@ -129,43 +129,43 @@ public class MallComment extends Model< MallComment > {
      * 用户名称
      */
     @TableField( "member_name" )
-    private String memberName;
+    private String  memberName;
     /**
      * 用户头像
      */
     @TableField( "member_headimgurl" )
-    private String memberHeadimgurl;
+    private String  memberHeadimgurl;
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallComment{" +
-			"id=" + id +
-			", orderId=" + orderId +
-			", orderDetailId=" + orderDetailId +
-			", productId=" + productId +
-			", content=" + content +
-			", isUploadImage=" + isUploadImage +
-			", feel=" + feel +
-			", descriptStart=" + descriptStart +
-			", serviceStart=" + serviceStart +
-			", speeedStart=" + speeedStart +
-			", repPId=" + repPId +
-			", userId=" + userId +
-			", userType=" + userType +
-			", isRep=" + isRep +
-			", shopId=" + shopId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", checkStatus=" + checkStatus +
-			", giveTime=" + giveTime +
-			", giveStatus=" + giveStatus +
-			", memberName=" + memberName +
-			", memberHeadimgurl=" + memberHeadimgurl +
-			"}";
+        return "MallComment{" +
+            "id=" + id +
+            ", orderId=" + orderId +
+            ", orderDetailId=" + orderDetailId +
+            ", productId=" + productId +
+            ", content=" + content +
+            ", isUploadImage=" + isUploadImage +
+            ", feel=" + feel +
+            ", descriptStart=" + descriptStart +
+            ", serviceStart=" + serviceStart +
+            ", speeedStart=" + speeedStart +
+            ", repPId=" + repPId +
+            ", userId=" + userId +
+            ", userType=" + userType +
+            ", isRep=" + isRep +
+            ", shopId=" + shopId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", checkStatus=" + checkStatus +
+            ", giveTime=" + giveTime +
+            ", giveStatus=" + giveStatus +
+            ", memberName=" + memberName +
+            ", memberHeadimgurl=" + memberHeadimgurl +
+            "}";
     }
 }

@@ -117,25 +117,25 @@ public class MallGroupBuy extends Model< MallGroupBuy > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallGroupBuy{" +
-			"id=" + id +
-			", productId=" + productId +
-			", gName=" + gName +
-			", gPrice=" + gPrice +
-			", gStartTime=" + gStartTime +
-			", gEndTime=" + gEndTime +
-			", gPeopleNum=" + gPeopleNum +
-			", gMaxBuyNum=" + gMaxBuyNum +
-			", userId=" + userId +
-			", shopId=" + shopId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isUse=" + isUse +
-			"}";
+        return "MallGroupBuy{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", gName=" + gName +
+            ", gPrice=" + gPrice +
+            ", gStartTime=" + gStartTime +
+            ", gEndTime=" + gEndTime +
+            ", gPeopleNum=" + gPeopleNum +
+            ", gMaxBuyNum=" + gMaxBuyNum +
+            ", userId=" + userId +
+            ", shopId=" + shopId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isUse=" + isUse +
+            "}";
     }
 }

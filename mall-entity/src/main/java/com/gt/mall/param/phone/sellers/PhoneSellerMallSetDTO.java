@@ -24,7 +24,7 @@ public class PhoneSellerMallSetDTO implements Serializable {
 
     private static final long serialVersionUID = 1650253331649286295L;
 
-    @ApiModelProperty( name = "id", value = "ID")
+    @ApiModelProperty( name = "id", value = "ID" )
     private Integer id;
 
     @ApiModelProperty( name = "mallName", value = "商城名称" )
@@ -39,7 +39,7 @@ public class PhoneSellerMallSetDTO implements Serializable {
     @ApiModelProperty( name = "mallHeadPath", value = "商城头像地址" )
     private String mallHeadPath;
 
-    @ApiModelProperty( name = "bannerPath", value = "banner地址")
+    @ApiModelProperty( name = "bannerPath", value = "banner地址" )
     private String bannerPath;
 
     @ApiModelProperty( name = "mallIntroducation", value = "商城简介" )

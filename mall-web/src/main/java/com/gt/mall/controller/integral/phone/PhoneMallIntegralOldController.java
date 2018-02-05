@@ -40,15 +40,15 @@ public class PhoneMallIntegralOldController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "{shopId}/79B4DE7C/toIndex" )
     public String toIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopId, @RequestParam Map< String,Object > params ) {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	if ( userid <= 0 ) {
-	    MallStore mallStore = mallStoreService.selectById( shopId );
-	    userid = mallStore.getStoUserId();
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/index/" + userid;
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        if ( userid <= 0 ) {
+            MallStore mallStore = mallStoreService.selectById( shopId );
+            userid = mallStore.getStoUserId();
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/index/" + userid;
     }
 
     /**
@@ -61,11 +61,11 @@ public class PhoneMallIntegralOldController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/recordList" )
     public String recordList( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/record/" + userid;
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/record/" + userid;
     }
 
     /**
@@ -78,11 +78,11 @@ public class PhoneMallIntegralOldController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/integralDetail" )
     public String integralDetail( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/detail/" + userid;
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/detail/" + userid;
     }
 
     /**
@@ -95,19 +95,19 @@ public class PhoneMallIntegralOldController extends AuthorizeOrLoginController {
      */
     @RequestMapping( value = "/79B4DE7C/integralProduct" )
     public String integralProduct( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	int productId = 0;
-	if ( CommonUtil.isNotEmpty( CommonUtil.toInteger( params.get( "id" ) ) ) ) {
-	    productId = CommonUtil.toInteger( params.get( "id" ) );
-	}
-	int shopId = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
-	    shopId = CommonUtil.toInteger( params.get( "shopId" ) );
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/product/" + userid + "/" + productId + "/" + shopId;
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        int productId = 0;
+        if ( CommonUtil.isNotEmpty( CommonUtil.toInteger( params.get( "id" ) ) ) ) {
+            productId = CommonUtil.toInteger( params.get( "id" ) );
+        }
+        int shopId = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
+            shopId = CommonUtil.toInteger( params.get( "shopId" ) );
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/integral/product/" + userid + "/" + productId + "/" + shopId;
     }
 
 }

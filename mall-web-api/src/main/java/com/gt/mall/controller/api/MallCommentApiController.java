@@ -57,72 +57,72 @@ public class MallCommentApiController {
     @ResponseBody
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    //	    params.put( "curPage", curPage );
-	    //	    params.put( "pageSize", pageSize );
-	    //	    params.put( "shoplist", shoplist );
-	    //	    params.put( "userIds", userIds );
-	    //	    params.put( "checkStatus", "0" );
-	    if ( CommonUtil.isNotEmpty( params.get( "checkStatus" ) ) ) {
-		params.put( "checkStatus", params.get( "checkStatus" ).toString() );
-	    }
-	    // 查询会员下面的评论
-	    PageUtil page = mallCommentService.selectCommentPage( params, null );
-	    result.put( "page", page );
-	} catch ( Exception e ) {
-	    logger.error( "商品评论列表的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商品评论列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            //	    params.put( "curPage", curPage );
+            //	    params.put( "pageSize", pageSize );
+            //	    params.put( "shoplist", shoplist );
+            //	    params.put( "userIds", userIds );
+            //	    params.put( "checkStatus", "0" );
+            if ( CommonUtil.isNotEmpty( params.get( "checkStatus" ) ) ) {
+                params.put( "checkStatus", params.get( "checkStatus" ).toString() );
+            }
+            // 查询会员下面的评论
+            PageUtil page = mallCommentService.selectCommentPage( params, null );
+            result.put( "page", page );
+        } catch ( Exception e ) {
+            logger.error( "商品评论列表的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商品评论列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     @ApiOperation( value = "查看商品评论信息", notes = "查看商品评论信息" )
     @ResponseBody
     @RequestMapping( value = "/commentInfo", method = RequestMethod.POST )
     public ServerResponse commentInfo( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	//	@ApiParam( name = "id", value = "评论Id", required = true ) @RequestParam Integer id )
-	Map< String,Object > comment = null;
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    Wrapper< MallComment > wrapper = new EntityWrapper<>();
-	    wrapper.where( "id={0}", params.get( "id" ) );
-	    comment = mallCommentService.selectMap( wrapper );
-	    if ( comment != null && comment.size() > 0 ) {
-		if ( CommonUtil.isNotEmpty( comment.get( "isUploadImage" ) ) ) {
-		    if ( comment.get( "isUploadImage" ).toString().equals( "1" ) ) {
-			Map< String,Object > imageMap = new HashMap<>();
-			imageMap.put( "assId", comment.get( "id" ) );
-			imageMap.put( "assType", 4 );
-			List< MallImageAssociative > imageList = mallImageAssociativeDAO.selectImageByAssId( imageMap );
-			if ( imageList != null && imageList.size() > 0 ) {
-			    comment.put( "imageList", imageList );
-			}
-		    }
-		}
-		if ( CommonUtil.isNotEmpty( comment.get( "isRep" ) ) ) {
-		    int isRep = CommonUtil.toInteger( comment.get( "isRep" ) );
-		    if ( isRep == 1 ) {
-			Map< String,Object > param1 = new HashMap<>();
-			param1.put( "appraise", comment.get( "id" ) );
-			List childList = mallCommentDAO.ownerResponseList( param1 );
-			if ( childList != null && childList.size() > 0 ) {
-			    comment.put( "chilComment", childList.get( 0 ) );
-			}
-		    }
-		}
-	    }
+        //	@ApiParam( name = "id", value = "评论Id", required = true ) @RequestParam Integer id )
+        Map< String,Object > comment = null;
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            Wrapper< MallComment > wrapper = new EntityWrapper<>();
+            wrapper.where( "id={0}", params.get( "id" ) );
+            comment = mallCommentService.selectMap( wrapper );
+            if ( comment != null && comment.size() > 0 ) {
+                if ( CommonUtil.isNotEmpty( comment.get( "isUploadImage" ) ) ) {
+                    if ( comment.get( "isUploadImage" ).toString().equals( "1" ) ) {
+                        Map< String,Object > imageMap = new HashMap<>();
+                        imageMap.put( "assId", comment.get( "id" ) );
+                        imageMap.put( "assType", 4 );
+                        List< MallImageAssociative > imageList = mallImageAssociativeDAO.selectImageByAssId( imageMap );
+                        if ( imageList != null && imageList.size() > 0 ) {
+                            comment.put( "imageList", imageList );
+                        }
+                    }
+                }
+                if ( CommonUtil.isNotEmpty( comment.get( "isRep" ) ) ) {
+                    int isRep = CommonUtil.toInteger( comment.get( "isRep" ) );
+                    if ( isRep == 1 ) {
+                        Map< String,Object > param1 = new HashMap<>();
+                        param1.put( "appraise", comment.get( "id" ) );
+                        List childList = mallCommentDAO.ownerResponseList( param1 );
+                        if ( childList != null && childList.size() > 0 ) {
+                            comment.put( "chilComment", childList.get( 0 ) );
+                        }
+                    }
+                }
+            }
 
-	} catch ( Exception e ) {
-	    logger.error( "查看商品评论信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查看商品评论信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), comment );
+        } catch ( Exception e ) {
+            logger.error( "查看商品评论信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查看商品评论信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), comment );
     }
 
     @ApiOperation( value = "评论审核", notes = "评论审核" )
@@ -131,26 +131,26 @@ public class MallCommentApiController {
     @ResponseBody
     @RequestMapping( value = "/commentCheck", method = RequestMethod.POST )
     public ServerResponse commentCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    int result = 0;
-	    if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
-		Map< String,Object > map = new HashMap<>();
-		map.put( "checkStatus", params.get( "status" ) );
-		String[] ids = params.get( "ids" ).toString().split( "," );
-		map.put( "ids", ids );
-		result = mallCommentDAO.batchUpdateComment( map );
-	    }
-	    if ( result <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "审核评论异常" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "评论审核异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "评论审核异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            int result = 0;
+            if ( CommonUtil.isNotEmpty( params.get( "ids" ) ) ) {
+                Map< String,Object > map = new HashMap<>();
+                map.put( "checkStatus", params.get( "status" ) );
+                String[] ids = params.get( "ids" ).toString().split( "," );
+                map.put( "ids", ids );
+                result = mallCommentDAO.batchUpdateComment( map );
+            }
+            if ( result <= 0 ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "审核评论异常" );
+            }
+        } catch ( Exception e ) {
+            logger.error( "评论审核异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "评论审核异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
 }

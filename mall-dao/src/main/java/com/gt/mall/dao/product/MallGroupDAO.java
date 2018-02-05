@@ -30,6 +30,7 @@ public interface MallGroupDAO extends BaseMapper< MallGroup > {
      * 分页查找商品分组 (设计页面时调用，其中返回值不能动)
      */
     List< Map< String,Object > > selectGroupDialogByPage( Map< String,Object > param );
+
     /**
      * 通过父类分组查询子类列表
      */

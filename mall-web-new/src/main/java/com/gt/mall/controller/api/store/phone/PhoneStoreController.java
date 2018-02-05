@@ -52,41 +52,41 @@ public class PhoneStoreController {
     @ResponseBody
     @RequestMapping( value = "/queryFenbiShopByBusId", method = RequestMethod.POST )
     public ServerResponse selectFenbiShopList( HttpServletRequest request, HttpServletResponse response, Integer busId ) {
-	List< Map< String,Object > > fenbiShopList = null;
-	try {
-	    Wrapper< MallProduct > prowrapper = new EntityWrapper<>();
-	    prowrapper.setSqlSelect( "DISTINCT shop_id AS shopId" );
-	    prowrapper.where( "user_id={0} AND is_delete = 0 AND is_fenbi_change_pro=1 AND change_fenbi>0  AND is_publish=1 AND check_status=1 ", busId );
-	    fenbiShopList = mallProductService.selectMaps( prowrapper );
-	    if ( fenbiShopList == null || fenbiShopList.size() == 0 ) {
-		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), fenbiShopList, false );
-	    }
-	    List< Map< String,Object > > shopList = mallStoreService.findByUserId( busId );
-	    if ( shopList != null && shopList.size() > 0 ) {
-		for ( Map< String,Object > map : fenbiShopList ) {
-		    for ( Map< String,Object > shopInfo : shopList ) {
-			if ( CommonUtil.toString( map.get( "shopId" ) ).equals( CommonUtil.toString( shopInfo.get( "id" ) ) ) ) {
-			    map.remove( "shopId" );
-			    map.put( "id", shopInfo.get( "id" ) );
-			    map.put( "shopName", shopInfo.get( "shopName" ) );
-			    map.put( "address", shopInfo.get( "sto_address" ) );
-			    //			    map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "classify/" + shopInfo.get( "id" ) + "/" + busId + "/5/k=k" );
-			    break;
-			}
-		    }
-		}
-	    }
-	    for ( Map< String,Object > map : fenbiShopList ) {
-		if ( !map.containsKey( "shopName" ) ) {
-		    fenbiShopList.remove( map );
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "根据商家id获取粉币门店异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "根据商家id获取粉币门店异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), fenbiShopList, false );
+        List< Map< String,Object > > fenbiShopList = null;
+        try {
+            Wrapper< MallProduct > prowrapper = new EntityWrapper<>();
+            prowrapper.setSqlSelect( "DISTINCT shop_id AS shopId" );
+            prowrapper.where( "user_id={0} AND is_delete = 0 AND is_fenbi_change_pro=1 AND change_fenbi>0  AND is_publish=1 AND check_status=1 ", busId );
+            fenbiShopList = mallProductService.selectMaps( prowrapper );
+            if ( fenbiShopList == null || fenbiShopList.size() == 0 ) {
+                return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), fenbiShopList, false );
+            }
+            List< Map< String,Object > > shopList = mallStoreService.findByUserId( busId );
+            if ( shopList != null && shopList.size() > 0 ) {
+                for ( Map< String,Object > map : fenbiShopList ) {
+                    for ( Map< String,Object > shopInfo : shopList ) {
+                        if ( CommonUtil.toString( map.get( "shopId" ) ).equals( CommonUtil.toString( shopInfo.get( "id" ) ) ) ) {
+                            map.remove( "shopId" );
+                            map.put( "id", shopInfo.get( "id" ) );
+                            map.put( "shopName", shopInfo.get( "shopName" ) );
+                            map.put( "address", shopInfo.get( "sto_address" ) );
+                            //			    map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "classify/" + shopInfo.get( "id" ) + "/" + busId + "/5/k=k" );
+                            break;
+                        }
+                    }
+                }
+            }
+            for ( Map< String,Object > map : fenbiShopList ) {
+                if ( !map.containsKey( "shopName" ) ) {
+                    fenbiShopList.remove( map );
+                }
+            }
+        } catch ( Exception e ) {
+            logger.error( "根据商家id获取粉币门店异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "根据商家id获取粉币门店异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), fenbiShopList, false );
     }
 
     @ApiOperation( value = "获取商家的门店列表", notes = "获取商家的门店列表", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -94,29 +94,29 @@ public class PhoneStoreController {
     @ApiImplicitParams( @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "int" ) )
     @PostMapping( value = "shopList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse shopList( HttpServletRequest request, int busId ) {
-	try {
-	    BusUser user = new BusUser();
-	    user.setId( busId );
-	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
-	    if ( shopList != null && shopList.size() > 0 ) {
+        try {
+            BusUser user = new BusUser();
+            user.setId( busId );
+            List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
+            if ( shopList != null && shopList.size() > 0 ) {
 
-		for ( Map< String,Object > shopMap : shopList ) {
-		    //获取门店图片
-		    List< WsShopPhoto > imageList = wxShopService.getShopPhotoByShopId( CommonUtil.toInteger( shopMap.get( "wxShopId" ) ) );
-		    if ( imageList != null && imageList.size() > 0 ) {
-			shopMap.put( "stoPicture", imageList.get( 0 ).getLocalAddress() );
-		    }
-		    shopMap.remove( "wxShopId" );
-		    shopMap.remove( "stoLongitude" );
-		    shopMap.remove( "stoLatitude" );
-		}
-		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopList, true );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取商家的门店列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "获取商家的门店列表失败" );
-	}
-	return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该商家没有门店列表" );
+                for ( Map< String,Object > shopMap : shopList ) {
+                    //获取门店图片
+                    List< WsShopPhoto > imageList = wxShopService.getShopPhotoByShopId( CommonUtil.toInteger( shopMap.get( "wxShopId" ) ) );
+                    if ( imageList != null && imageList.size() > 0 ) {
+                        shopMap.put( "stoPicture", imageList.get( 0 ).getLocalAddress() );
+                    }
+                    shopMap.remove( "wxShopId" );
+                    shopMap.remove( "stoLongitude" );
+                    shopMap.remove( "stoLatitude" );
+                }
+                return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopList, true );
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取商家的门店列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "获取商家的门店列表失败" );
+        }
+        return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), "该商家没有门店列表" );
     }
 }

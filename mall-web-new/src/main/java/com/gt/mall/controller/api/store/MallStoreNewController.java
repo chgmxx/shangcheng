@@ -72,48 +72,48 @@ public class MallStoreNewController extends BaseController {
     @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    WxPublicUsers wxPublicUsers = MallSessionUtils.getLoginPbUser( request );
-	    result.put( "userName", user.getName() );//商家名称
-	    if ( wxPublicUsers != null ) {
-		result.put( "userLogo", wxPublicUsers.getHeadImg() );//商家头像
-	    }
-	    MallPaySet set = new MallPaySet();
-	    set.setUserId( user.getId() );
-	    set = mallPaySetService.selectByUserId( set );
-	    result.put( "isSecuritytrade", set.getIsSecuritytrade() );//担保交易
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            WxPublicUsers wxPublicUsers = MallSessionUtils.getLoginPbUser( request );
+            result.put( "userName", user.getName() );//商家名称
+            if ( wxPublicUsers != null ) {
+                result.put( "userLogo", wxPublicUsers.getHeadImg() );//商家头像
+            }
+            MallPaySet set = new MallPaySet();
+            set.setUserId( user.getId() );
+            set = mallPaySetService.selectByUserId( set );
+            result.put( "isSecuritytrade", set.getIsSecuritytrade() );//担保交易
 
-	    int pid = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+            int pid = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
 
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "userId", user.getId() );
-	    params.put( "pid", pid );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            params.put( "userId", user.getId() );
+            params.put( "pid", pid );
 
-	    List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
-	    if ( shopList != null && shopList.size() > 0 ) {
-		PageUtil page = mallStoreService.findByPage( params, shopList );
+            List< Map< String,Object > > shopList = mallStoreService.findAllStoByUser( user, request );
+            if ( shopList != null && shopList.size() > 0 ) {
+                PageUtil page = mallStoreService.findByPage( params, shopList );
 
-		int branchCount = MallSessionUtils.getWxShopNumBySession( user.getId(), request );
-		int store = mallStoreService.countStroe( user.getId() );
-		int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
-		if ( store >= branchCount ) {
-		    countnum = 1;
-		}
-		result.put( "page", page );
-		result.put( "isShopAdd", countnum );//是否新增店铺 0可以 1不可以
-	    }
+                int branchCount = MallSessionUtils.getWxShopNumBySession( user.getId(), request );
+                int store = mallStoreService.countStroe( user.getId() );
+                int countnum = 0;//创建店铺多余本身店铺就有问题，返回1 不能添加主店铺，只能添加子店铺
+                if ( store >= branchCount ) {
+                    countnum = 1;
+                }
+                result.put( "page", page );
+                result.put( "isShopAdd", countnum );//是否新增店铺 0可以 1不可以
+            }
 
-	    result.put( "videourl", Constants.VIDEO_URL + 8 );
-	    result.put( "openDfPayUrl", PropertiesUtil.getDfPayDomain() + "html/manage/#/wallet/index" );//开通多粉钱包url
-	} catch ( Exception e ) {
-	    logger.error( "商城店铺管理异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商城店铺管理异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+            result.put( "videourl", Constants.VIDEO_URL + 8 );
+            result.put( "openDfPayUrl", PropertiesUtil.getDfPayDomain() + "html/manage/#/wallet/index" );//开通多粉钱包url
+        } catch ( Exception e ) {
+            logger.error( "商城店铺管理异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商城店铺管理异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -123,32 +123,32 @@ public class MallStoreNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getShopList", method = RequestMethod.POST )
     public ServerResponse getShopList( HttpServletRequest request, HttpServletResponse response ) {
-	BusUser user = MallSessionUtils.getLoginUser( request );
-	List< WsWxShopInfoExtend > shopInfoList = null;
-	try {
-	    //获取用户店铺集合
-	    List< Map< String,Object > > allSto = mallStoreService.findAllStore( user.getId() );
+        BusUser user = MallSessionUtils.getLoginUser( request );
+        List< WsWxShopInfoExtend > shopInfoList = null;
+        try {
+            //获取用户店铺集合
+            List< Map< String,Object > > allSto = mallStoreService.findAllStore( user.getId() );
 
-	    shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
-	    if ( allSto != null && allSto.size() > 0 && shopInfoList != null && shopInfoList.size() > 0 ) {
-		for ( Map< String,Object > shopMap : allSto ) {
-		    if ( CommonUtil.isEmpty( shopMap.get( "wx_shop_id" ) ) ) {
-			continue;
-		    }
-		    for ( WsWxShopInfoExtend wxShop : shopInfoList ) {
-			if ( CommonUtil.toString( shopMap.get( "wx_shop_id" ) ).equals( wxShop.getId().toString() ) ) {
-			    shopInfoList.remove( wxShop );
-			    break;
-			}
-		    }
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取未新增店铺的门店列表：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取未新增店铺的门店列表" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopInfoList );
+            shopInfoList = wxShopService.queryWxShopByBusId( user.getId() );
+            if ( allSto != null && allSto.size() > 0 && shopInfoList != null && shopInfoList.size() > 0 ) {
+                for ( Map< String,Object > shopMap : allSto ) {
+                    if ( CommonUtil.isEmpty( shopMap.get( "wx_shop_id" ) ) ) {
+                        continue;
+                    }
+                    for ( WsWxShopInfoExtend wxShop : shopInfoList ) {
+                        if ( CommonUtil.toString( shopMap.get( "wx_shop_id" ) ).equals( wxShop.getId().toString() ) ) {
+                            shopInfoList.remove( wxShop );
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取未新增店铺的门店列表：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取未新增店铺的门店列表" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), shopInfoList );
     }
 
     /**
@@ -158,20 +158,20 @@ public class MallStoreNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/storeInfo", method = RequestMethod.POST )
     public ServerResponse storeInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "店铺ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > sto = null;
-	try {
-	    sto = mallStoreService.findShopByStoreId( id );
-	    if ( CommonUtil.isNotEmpty( sto.get( "stoSmsTelephone" ) ) ) {
-		String[] stoSmsTelephone = sto.get( "stoSmsTelephone" ).toString().split( ";" );
-		sto.put( "stoSmsTelephone", stoSmsTelephone );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取商家店铺信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商家店铺信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), sto );
+        @ApiParam( name = "id", value = "店铺ID", required = true ) @RequestParam Integer id ) {
+        Map< String,Object > sto = null;
+        try {
+            sto = mallStoreService.findShopByStoreId( id );
+            if ( CommonUtil.isNotEmpty( sto.get( "stoSmsTelephone" ) ) ) {
+                String[] stoSmsTelephone = sto.get( "stoSmsTelephone" ).toString().split( ";" );
+                sto.put( "stoSmsTelephone", stoSmsTelephone );
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取商家店铺信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商家店铺信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), sto );
     }
 
     /**
@@ -181,16 +181,16 @@ public class MallStoreNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/storeList", method = RequestMethod.POST )
     public ServerResponse storeList( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map< String,Object > > storeList = null;
-	BusUser user = MallSessionUtils.getLoginUser( request );
-	try {
-	    storeList = mallStoreService.findAllStoByUser( user, request );
-	} catch ( Exception e ) {
-	    logger.error( "获取商家店铺列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商家店铺列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), storeList );
+        List< Map< String,Object > > storeList = null;
+        BusUser user = MallSessionUtils.getLoginUser( request );
+        try {
+            storeList = mallStoreService.findAllStoByUser( user, request );
+        } catch ( Exception e ) {
+            logger.error( "获取商家店铺列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商家店铺列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), storeList );
     }
 
     /**
@@ -201,44 +201,44 @@ public class MallStoreNewController extends BaseController {
     @SysLogAnnotation( description = "店铺管理-保存店铺信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) throws IOException {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    MallStore sto = com.alibaba.fastjson.JSONObject.parseObject( params.get( "obj" ).toString(), MallStore.class );
-	    if ( CommonUtil.isEmpty( sto.getId() ) ) {
-		WsWxShopInfo info = wxShopService.getShopById( sto.getWxShopId() );
-		List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( sto.getWxShopId() );
-		sto.setStoName( info.getBusinessName() );
-		sto.setStoHouseMember( info.getDetail() );
-		sto.setStoAddress( info.getAddress() );
-		sto.setStoProvince( CommonUtil.toInteger( info.getProvince() ) );
-		sto.setStoCity( CommonUtil.toInteger( info.getCity() ) );
-		sto.setStoArea( CommonUtil.toInteger( info.getDistrict() ) );
-		sto.setStoLongitude( info.getLongitude() );
-		sto.setStoLatitude( info.getLatitude() );
+            MallStore sto = com.alibaba.fastjson.JSONObject.parseObject( params.get( "obj" ).toString(), MallStore.class );
+            if ( CommonUtil.isEmpty( sto.getId() ) ) {
+                WsWxShopInfo info = wxShopService.getShopById( sto.getWxShopId() );
+                List< WsShopPhoto > photoList = wxShopService.getShopPhotoByShopId( sto.getWxShopId() );
+                sto.setStoName( info.getBusinessName() );
+                sto.setStoHouseMember( info.getDetail() );
+                sto.setStoAddress( info.getAddress() );
+                sto.setStoProvince( CommonUtil.toInteger( info.getProvince() ) );
+                sto.setStoCity( CommonUtil.toInteger( info.getCity() ) );
+                sto.setStoArea( CommonUtil.toInteger( info.getDistrict() ) );
+                sto.setStoLongitude( info.getLongitude() );
+                sto.setStoLatitude( info.getLatitude() );
 
-		if ( photoList != null && photoList.size() > 0 ) {
-		    sto.setStoPicture( photoList.get( 0 ).getLocalAddress() );
-		}
-		sto.setStoUserId( MallSessionUtils.getLoginUser( request ).getId() );
-		sto.setStoCreatePerson( MallSessionUtils.getLoginUser( request ).getId() );
-		sto.setStoCreateTime( new Date() );
-	    }
-	    boolean flag = mallStoreService.saveOrUpdate( sto, user );
-	    if ( flag ) {
-		MallSessionUtils.setShopListBySession( user.getId(), null, request );
-		mallStoreService.findAllStoByUser( user, request );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存店铺信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存店铺信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+                if ( photoList != null && photoList.size() > 0 ) {
+                    sto.setStoPicture( photoList.get( 0 ).getLocalAddress() );
+                }
+                sto.setStoUserId( MallSessionUtils.getLoginUser( request ).getId() );
+                sto.setStoCreatePerson( MallSessionUtils.getLoginUser( request ).getId() );
+                sto.setStoCreateTime( new Date() );
+            }
+            boolean flag = mallStoreService.saveOrUpdate( sto, user );
+            if ( flag ) {
+                MallSessionUtils.setShopListBySession( user.getId(), null, request );
+                mallStoreService.findAllStoByUser( user, request );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存店铺信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存店铺信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -249,53 +249,53 @@ public class MallStoreNewController extends BaseController {
     @SysLogAnnotation( description = "店铺管理-删除店铺信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "ids", value = "店铺ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    String id[] = ids.toString().split( "," );
-	    //必须该店铺没有未完成订单或者处于维权的订单，否则不予删除；
-	    if ( id != null && id.length > 0 ) {
-		for ( String str : id ) {
-		    Wrapper groupWrapper = new EntityWrapper();
-		    groupWrapper.where( "order_status < 4 and bus_user_id ={0}", user.getId() );
-		    groupWrapper.and( "shop_id ={0}", CommonUtil.toInteger( str ) );
-		    //未完成订单
-		    Integer num = mallOrderService.selectCount( groupWrapper );
+        @ApiParam( name = "ids", value = "店铺ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            String id[] = ids.toString().split( "," );
+            //必须该店铺没有未完成订单或者处于维权的订单，否则不予删除；
+            if ( id != null && id.length > 0 ) {
+                for ( String str : id ) {
+                    Wrapper groupWrapper = new EntityWrapper();
+                    groupWrapper.where( "order_status < 4 and bus_user_id ={0}", user.getId() );
+                    groupWrapper.and( "shop_id ={0}", CommonUtil.toInteger( str ) );
+                    //未完成订单
+                    Integer num = mallOrderService.selectCount( groupWrapper );
 
-		    Map< String,Object > params = new HashMap<>();
-		    params.put( "userId", user.getId() );
-		    params.put( "shopId", CommonUtil.toInteger( str ) );
-		    params.put( "status", "6" );
-		    Integer badNum = mallOrderService.count( params );//维权订单
-		    if ( num == 0 && badNum == 0 ) {
-			MallStore mallStore = new MallStore();
-			mallStore.setId( CommonUtil.toInteger( str ) );
-			mallStore.setIsDelete( 1 );
-			boolean count = mallStoreService.updateById( mallStore );
-			if ( count ) {
-			    ShopSubsop shopSubsop = new ShopSubsop();
-			    shopSubsop.setSubShop( CommonUtil.toInteger( str ) );
-			    shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
-			    wxShopService.updateBySubShop( shopSubsop );
+                    Map< String,Object > params = new HashMap<>();
+                    params.put( "userId", user.getId() );
+                    params.put( "shopId", CommonUtil.toInteger( str ) );
+                    params.put( "status", "6" );
+                    Integer badNum = mallOrderService.count( params );//维权订单
+                    if ( num == 0 && badNum == 0 ) {
+                        MallStore mallStore = new MallStore();
+                        mallStore.setId( CommonUtil.toInteger( str ) );
+                        mallStore.setIsDelete( 1 );
+                        boolean count = mallStoreService.updateById( mallStore );
+                        if ( count ) {
+                            ShopSubsop shopSubsop = new ShopSubsop();
+                            shopSubsop.setSubShop( CommonUtil.toInteger( str ) );
+                            shopSubsop.setModel( Constants.SHOP_SUB_SOP_MODEL );
+                            wxShopService.updateBySubShop( shopSubsop );
 
-			    MallSessionUtils.setShopListBySession( user.getId(), null, request );
-			    mallStoreService.findAllStoByUser( user, request );
-			}
-		    } else {
-			throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "该店铺还有未完成订单，无法删除！" );
-		    }
-		}
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "删除店铺信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除店铺信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "进入修改店铺页面异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+                            MallSessionUtils.setShopListBySession( user.getId(), null, request );
+                            mallStoreService.findAllStoByUser( user, request );
+                        }
+                    } else {
+                        throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "该店铺还有未完成订单，无法删除！" );
+                    }
+                }
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "删除店铺信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除店铺信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "进入修改店铺页面异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     //    /**
@@ -324,21 +324,21 @@ public class MallStoreNewController extends BaseController {
      */
     @ApiOperation( value = "生成二维码", notes = "生成二维码" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "url", value = "地址", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "status", value = "类型", paramType = "query", required = true, dataType = "int" ) } )
+        @ApiImplicitParam( name = "status", value = "类型", paramType = "query", required = true, dataType = "int" ) } )
     @RequestMapping( value = "/generateQRCode", method = RequestMethod.GET )
     public void generateQRCode( HttpServletRequest request, HttpServletResponse response, String url, Integer status ) {
-	try {
-	    String content = "";
-	    if ( CommonUtil.isNotEmpty( status ) ) {
-		content = PropertiesUtil.getHomeUrl() + url;
-	    } else {
-		content = PropertiesUtil.getPhoneWebHomeUrl() + url;
-	    }
-	    QRcodeKit.buildQRcode( content, 200, 200, response );
-	} catch ( Exception e ) {
-	    logger.error( "自动生成二维码异常：" + e.getMessage() );
-	    e.printStackTrace();
-	}
+        try {
+            String content = "";
+            if ( CommonUtil.isNotEmpty( status ) ) {
+                content = PropertiesUtil.getHomeUrl() + url;
+            } else {
+                content = PropertiesUtil.getPhoneWebHomeUrl() + url;
+            }
+            QRcodeKit.buildQRcode( content, 200, 200, response );
+        } catch ( Exception e ) {
+            logger.error( "自动生成二维码异常：" + e.getMessage() );
+            e.printStackTrace();
+        }
     }
 
     /******************************全店风格*************************************/
@@ -349,27 +349,27 @@ public class MallStoreNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getStyleList", method = RequestMethod.POST )
     public ServerResponse getStyleList( HttpServletRequest request, HttpServletResponse response ) throws IOException {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    List< DictBean > styleList = dictService.getDict( "k001" );
-	    for ( DictBean dictBean : styleList ) {
-		String[] style = dictBean.getItem_value().split( "," );
-		dictBean.setStyle( style );
-	    }
-	    result.put( "styleList", styleList );
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet set = new MallPaySet();
-	    set.setUserId( user.getId() );
-	    set = mallPaySetService.selectByUserId( set );
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		result.put( "styleKey", set.getStyleKey() );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取店铺配色风格列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            List< DictBean > styleList = dictService.getDict( "k001" );
+            for ( DictBean dictBean : styleList ) {
+                String[] style = dictBean.getItem_value().split( "," );
+                dictBean.setStyle( style );
+            }
+            result.put( "styleList", styleList );
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet set = new MallPaySet();
+            set.setUserId( user.getId() );
+            set = mallPaySetService.selectByUserId( set );
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                result.put( "styleKey", set.getStyleKey() );
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取店铺配色风格列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -380,27 +380,27 @@ public class MallStoreNewController extends BaseController {
     @SysLogAnnotation( description = "保存配色风格", op_function = "2" )
     @RequestMapping( value = "/saveStyle", method = RequestMethod.POST )
     public ServerResponse saveStyle( HttpServletRequest request, HttpServletResponse response, @ApiParam( value = "配色key", required = true ) @RequestParam Integer styleKey )
-		    throws IOException {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-	    if ( set != null ) {
-		MallPaySet mallPaySet = new MallPaySet();
-		mallPaySet.setId( set.getId() );
-		mallPaySet.setStyleKey( styleKey );
-		mallPaySetService.updateById( mallPaySet );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存配色风格异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存配色风格异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        throws IOException {
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet paySet = new MallPaySet();
+            paySet.setUserId( user.getId() );
+            MallPaySet set = mallPaySetService.selectByUserId( paySet );
+            if ( set != null ) {
+                MallPaySet mallPaySet = new MallPaySet();
+                mallPaySet.setId( set.getId() );
+                mallPaySet.setStyleKey( styleKey );
+                mallPaySetService.updateById( mallPaySet );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存配色风格异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存配色风格异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 }

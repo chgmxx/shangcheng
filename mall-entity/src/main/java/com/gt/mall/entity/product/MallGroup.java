@@ -105,7 +105,7 @@ public class MallGroup extends Model< MallGroup > {
     /**
      * 分类图片
      */
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String imageUrl;
 
     /**
@@ -114,31 +114,30 @@ public class MallGroup extends Model< MallGroup > {
     @TableField( "sort_order" )
     private Integer sortOrder;
 
-
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallGroup{" +
-			"id=" + id +
-			", groupName=" + groupName +
-			", groupPId=" + groupPId +
-			", firstPriority=" + firstPriority +
-			", secondPriority=" + secondPriority +
-			", isShowPage=" + isShowPage +
-			", shopId=" + shopId +
-			", isFirstParents=" + isFirstParents +
-			", isChild=" + isChild +
-			", sort=" + sort +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", editUserId=" + editUserId +
-			", editTime=" + editTime +
-			", isDelete=" + isDelete +
-			", sortOrder=" + sortOrder +
-			"}";
+        return "MallGroup{" +
+            "id=" + id +
+            ", groupName=" + groupName +
+            ", groupPId=" + groupPId +
+            ", firstPriority=" + firstPriority +
+            ", secondPriority=" + secondPriority +
+            ", isShowPage=" + isShowPage +
+            ", shopId=" + shopId +
+            ", isFirstParents=" + isFirstParents +
+            ", isChild=" + isChild +
+            ", sort=" + sort +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", editUserId=" + editUserId +
+            ", editTime=" + editTime +
+            ", isDelete=" + isDelete +
+            ", sortOrder=" + sortOrder +
+            "}";
     }
 }

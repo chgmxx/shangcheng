@@ -18,15 +18,16 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-31
  */
-public interface PurchaseOrderService extends BaseService<PurchaseOrder> {
+public interface PurchaseOrderService extends BaseService< PurchaseOrder > {
 
     /**
      * 分页查询数据
      *
      * @param parms
+     *
      * @return
      */
-    PageUtil findList(Map<String, Object> parms);
+    PageUtil findList( Map< String,Object > parms );
 
     /**
      * 修改订单信息
@@ -34,17 +35,18 @@ public interface PurchaseOrderService extends BaseService<PurchaseOrder> {
      * @param order
      * @param orderDetailsList
      * @param termList
+     *
      * @return
      */
-    Map<String, Object> saveOrder(PurchaseOrder order, List<PurchaseOrderDetails> orderDetailsList, List<PurchaseTerm> termList,
-                                  List<PurchaseCarousel> carouselList);
-
+    Map< String,Object > saveOrder( PurchaseOrder order, List< PurchaseOrderDetails > orderDetailsList, List< PurchaseTerm > termList,
+        List< PurchaseCarousel > carouselList );
 
     /**
      * 查询商品数据
      *
      * @param parms
+     *
      * @return
      */
-    PageUtil productList(Map<String, Object> parms);
+    PageUtil productList( Map< String,Object > parms );
 }

@@ -45,36 +45,36 @@ public class PageUtil {
      * @param url      后台地址
      */
     public PageUtil( int curPage, int pageSize, int rowCount, String url ) {
-	if ( pageSize == 0 ) {
-	    pageSize = defaultPageSize;
-	}
-	this.rowCount = rowCount;
-	this.pageSize = pageSize;
-	this.countMaxPage();
-	if ( curPage <= 0 ) {
-	    this.curPage = DEFAULT_CURRENT_PAGE;
-	} else {
-	    if ( curPage > pageCount ) {
-		this.curPage = pageCount;
-	    } else {
-		this.curPage = curPage;
-	    }
-	}
+        if ( pageSize == 0 ) {
+            pageSize = defaultPageSize;
+        }
+        this.rowCount = rowCount;
+        this.pageSize = pageSize;
+        this.countMaxPage();
+        if ( curPage <= 0 ) {
+            this.curPage = DEFAULT_CURRENT_PAGE;
+        } else {
+            if ( curPage > pageCount ) {
+                this.curPage = pageCount;
+            } else {
+                this.curPage = curPage;
+            }
+        }
 
-	if ( this.curPage <= 0 ) {
-	    this.curPage = DEFAULT_CURRENT_PAGE;
-	}
+        if ( this.curPage <= 0 ) {
+            this.curPage = DEFAULT_CURRENT_PAGE;
+        }
     }
 
     /**
      * 计算总页数
      */
     private void countMaxPage() {
-	if ( rowCount % pageSize == 0 ) {
-	    pageCount = rowCount / pageSize;
-	} else {
-	    pageCount = rowCount / pageSize + 1;
-	}
+        if ( rowCount % pageSize == 0 ) {
+            pageCount = rowCount / pageSize;
+        } else {
+            pageCount = rowCount / pageSize + 1;
+        }
 
     }
 
@@ -84,7 +84,7 @@ public class PageUtil {
      * @return
      */
     public List getSubList() {
-	return this.subList;
+        return this.subList;
     }
 
     /**
@@ -94,7 +94,7 @@ public class PageUtil {
      * @param subList [参数说明]
      */
     public void setSubList( List subList ) {
-	this.subList = subList;
+        this.subList = subList;
     }
 
     /**
@@ -103,16 +103,16 @@ public class PageUtil {
      * @return int
      */
     public int getPageSize() {
-	return pageSize;
+        return pageSize;
     }
 
     public void setPageSize( int pageSize ) {
-	this.pageSize = pageSize;
+        this.pageSize = pageSize;
 
-	this.countMaxPage();
-	if ( curPage > pageCount ) {
-	    this.curPage = pageCount;
-	}
+        this.countMaxPage();
+        if ( curPage > pageCount ) {
+            this.curPage = pageCount;
+        }
     }
 
     /**
@@ -121,11 +121,11 @@ public class PageUtil {
      * @return int
      */
     public int getCurPage() {
-	return curPage;
+        return curPage;
     }
 
     public void setCurPage( int curPage ) {
-	this.curPage = curPage;
+        this.curPage = curPage;
     }
 
     /**
@@ -134,7 +134,7 @@ public class PageUtil {
      * @return int
      */
     public int getPageCount() {
-	return pageCount;
+        return pageCount;
     }
 
     /**
@@ -143,15 +143,15 @@ public class PageUtil {
      * @return int
      */
     public int getRowCount() {
-	return rowCount;
+        return rowCount;
     }
 
     public void setPageCount( int pageCount ) {
-	this.pageCount = pageCount;
+        this.pageCount = pageCount;
     }
 
     public void setRowCount( int rowCount ) {
-	this.rowCount = rowCount;
+        this.rowCount = rowCount;
     }
 
 }

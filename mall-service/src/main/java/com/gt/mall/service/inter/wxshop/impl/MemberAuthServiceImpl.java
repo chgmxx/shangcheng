@@ -19,15 +19,15 @@ public class MemberAuthServiceImpl implements MemberAuthService {
 
     @Override
     public Integer getMemberAuth( Integer busUserId ) {
-	if ( CommonUtil.isEmpty( busUserId ) || busUserId == 0 ) {
-	    return null;
-	}
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( busUserId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, MEMBERAUTHUTL + "getMemberAuth", 5 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return CommonUtil.toInteger( result );
-	}
-	return null;
+        if ( CommonUtil.isEmpty( busUserId ) || busUserId == 0 ) {
+            return null;
+        }
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( busUserId );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, MEMBERAUTHUTL + "getMemberAuth", 5 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return CommonUtil.toInteger( result );
+        }
+        return null;
     }
 }

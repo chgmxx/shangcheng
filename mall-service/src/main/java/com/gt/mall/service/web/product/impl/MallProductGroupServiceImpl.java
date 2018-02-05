@@ -31,37 +31,37 @@ public class MallProductGroupServiceImpl extends BaseServiceImpl< MallProductGro
     @Override
     public void saveOrUpdate( Object obj, int proId ) {
 
-	Wrapper< MallProductGroup > groupWrapper = new EntityWrapper<>();
-	groupWrapper.where( " product_id = {0} and is_delete = 0", proId );
-	List< MallProductGroup > defaultList = mallProductGroupDAO.selectList( groupWrapper );
+        Wrapper< MallProductGroup > groupWrapper = new EntityWrapper<>();
+        groupWrapper.where( " product_id = {0} and is_delete = 0", proId );
+        List< MallProductGroup > defaultList = mallProductGroupDAO.selectList( groupWrapper );
 
-	List< MallProductGroup > groupList = JSONArray.parseArray( obj.toString(), MallProductGroup.class );
-	if ( groupList != null && groupList.size() > 0 ) {
-	    for ( MallProductGroup mallProductGroup : groupList ) {
-		if ( defaultList != null ) {
-		    for ( MallProductGroup group : defaultList ) {
-			if ( group.getGroupId().equals( mallProductGroup.getGroupId() ) ) {
-			    mallProductGroup.setId( group.getId() );
-			    defaultList.remove( group );
-			    break;
-			}
-		    }
-		}
-		if ( CommonUtil.isEmpty( mallProductGroup.getId() ) ) {
-		    mallProductGroup.setProductId( proId );
-		    mallProductGroupDAO.insert( mallProductGroup );
-		} else {
-		    mallProductGroupDAO.updateById( mallProductGroup );
-		}
+        List< MallProductGroup > groupList = JSONArray.parseArray( obj.toString(), MallProductGroup.class );
+        if ( groupList != null && groupList.size() > 0 ) {
+            for ( MallProductGroup mallProductGroup : groupList ) {
+                if ( defaultList != null ) {
+                    for ( MallProductGroup group : defaultList ) {
+                        if ( group.getGroupId().equals( mallProductGroup.getGroupId() ) ) {
+                            mallProductGroup.setId( group.getId() );
+                            defaultList.remove( group );
+                            break;
+                        }
+                    }
+                }
+                if ( CommonUtil.isEmpty( mallProductGroup.getId() ) ) {
+                    mallProductGroup.setProductId( proId );
+                    mallProductGroupDAO.insert( mallProductGroup );
+                } else {
+                    mallProductGroupDAO.updateById( mallProductGroup );
+                }
 
-	    }
-	}
+            }
+        }
 
-	if ( defaultList != null && defaultList.size() > 0 ) {
-	    for ( MallProductGroup group : defaultList ) {
-		group.setIsDelete( 1 );
-		mallProductGroupDAO.updateById( group );
-	    }
-	}
+        if ( defaultList != null && defaultList.size() > 0 ) {
+            for ( MallProductGroup group : defaultList ) {
+                group.setIsDelete( 1 );
+                mallProductGroupDAO.updateById( group );
+            }
+        }
     }
 }

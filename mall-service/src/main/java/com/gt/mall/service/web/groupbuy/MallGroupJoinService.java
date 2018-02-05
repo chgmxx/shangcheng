@@ -53,6 +53,6 @@ public interface MallGroupJoinService extends BaseService< MallGroupJoin > {
      *
      * @return 参团人数
      */
-    int selectGroupJoinPeopleNum( Integer groupBuyId, Integer orderId ,Integer orderDetailId);
+    int selectGroupJoinPeopleNum( Integer groupBuyId, Integer orderId, Integer orderDetailId );
 
 }

@@ -25,29 +25,29 @@ public class UnionConsumeServiceImpl implements UnionConsumeService {
 
     @Override
     public boolean unionConsume( UnionConsumeParam unionConsumeParam ) {
-	RequestApiParam< UnionConsumeParam > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( unionConsumeParam );
-	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "unionConsume", 3 );
-	return result.get( "code" ).toString().equals( "1" );
+        RequestApiParam< UnionConsumeParam > requestApiParam = new RequestApiParam<>();
+        requestApiParam.setReqdata( unionConsumeParam );
+        Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "unionConsume", 3 );
+        return result.get( "code" ).toString().equals( "1" );
     }
 
     @Override
     public boolean unionRefund( UnionRefundParam unionRefundParam ) {
 
-	RequestApiParam< UnionRefundParam > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( unionRefundParam );
-	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "unionRefund", 3 );
-	return result.get( "code" ).toString().equals( "1" );
+        RequestApiParam< UnionRefundParam > requestApiParam = new RequestApiParam<>();
+        requestApiParam.setReqdata( unionRefundParam );
+        Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, url + "unionRefund", 3 );
+        return result.get( "code" ).toString().equals( "1" );
     }
 
     @Override
     public boolean giveIntegral( Integer model, Integer orderId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "model", model );
-	params.put( "orderId", orderId );
-	RequestApiParam< Map< String,Object > > requestApiParam = new RequestApiParam<>();
-	requestApiParam.setReqdata( params );
-	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, giveURL + "giveIntegral", 3 );
-	return result.get( "code" ).toString().equals( "1" );
+        Map< String,Object > params = new HashMap<>();
+        params.put( "model", model );
+        params.put( "orderId", orderId );
+        RequestApiParam< Map< String,Object > > requestApiParam = new RequestApiParam<>();
+        requestApiParam.setReqdata( params );
+        Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( requestApiParam, giveURL + "giveIntegral", 3 );
+        return result.get( "code" ).toString().equals( "1" );
     }
 }

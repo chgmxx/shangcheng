@@ -17,7 +17,7 @@ import java.util.List;
 @ApiModel( value = "PhoneAddOrderShopResult", description = "店铺（提交订单参数）" )
 @Getter
 @Setter
-public class PhoneAddOrderShopDTO  {
+public class PhoneAddOrderShopDTO {
 
     @ApiModelProperty( name = "shopId", value = "店铺id" )
     private int shopId;
@@ -25,8 +25,8 @@ public class PhoneAddOrderShopDTO  {
     @ApiModelProperty( name = "wxShopId", value = "微信门店id" )
     private int wxShopId;
 
-//    @ApiModelProperty( name = "shopName", value = "店铺名称" )
-//    private String shopName;
+    //    @ApiModelProperty( name = "shopName", value = "店铺名称" )
+    //    private String shopName;
 
     @ApiModelProperty( name = "totalNum", value = "商品总数" )
     private int totalNum;
@@ -42,7 +42,6 @@ public class PhoneAddOrderShopDTO  {
 
     @ApiModelProperty( name = "couponList", value = "卡券集合", hidden = true )
     private List< Coupons > couponList;
-
 
     /*********************************提交订单接口，传值***************************************/
     @ApiModelProperty( name = "selectCouponsId", value = "选中优惠券的id" )

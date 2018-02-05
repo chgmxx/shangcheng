@@ -95,29 +95,29 @@ public class MallHtmlFrom extends Model< MallHtmlFrom > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallHtmlFrom{" +
-			"id=" + id +
-			", creattime=" + creattime +
-			", category=" + category +
-			", categoryname=" + categoryname +
-			", genre=" + genre +
-			", genrename=" + genrename +
-			", family=" + family +
-			", familyname=" + familyname +
-			", property=" + property +
-			", propertyname=" + propertyname +
-			", nature=" + nature +
-			", naturename=" + naturename +
-			", quality=" + quality +
-			", qualityname=" + qualityname +
-			", attribute=" + attribute +
-			", attributename=" + attributename +
-			", htmlId=" + htmlId +
-			"}";
+        return "MallHtmlFrom{" +
+            "id=" + id +
+            ", creattime=" + creattime +
+            ", category=" + category +
+            ", categoryname=" + categoryname +
+            ", genre=" + genre +
+            ", genrename=" + genrename +
+            ", family=" + family +
+            ", familyname=" + familyname +
+            ", property=" + property +
+            ", propertyname=" + propertyname +
+            ", nature=" + nature +
+            ", naturename=" + naturename +
+            ", quality=" + quality +
+            ", qualityname=" + qualityname +
+            ", attribute=" + attribute +
+            ", attributename=" + attributename +
+            ", htmlId=" + htmlId +
+            "}";
     }
 }

@@ -13,13 +13,14 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallFreightProvincesDAO extends BaseMapper<MallFreightProvinces> {
+public interface MallFreightProvincesDAO extends BaseMapper< MallFreightProvinces > {
 
     /**
      * 通过物流id查询物流配送区域id
      *
      * @param freightId 物流id
+     *
      * @return 物流配送区域id
      */
-    Map<String, Object> selectByFreightId(Integer freightId);
+    Map< String,Object > selectByFreightId( Integer freightId );
 }

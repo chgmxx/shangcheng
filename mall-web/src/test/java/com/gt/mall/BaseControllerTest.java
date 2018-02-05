@@ -51,7 +51,7 @@ public class BaseControllerTest extends BasicTest {
 
     @Test
     public void tests() {
-//	MemberAddress memberAddress = memberAddressService.addreSelectId( 146 );
+        //	MemberAddress memberAddress = memberAddressService.addreSelectId( 146 );
     }
 }
 

@@ -21,6 +21,4 @@ public class JifenAndFenbiRule {
 
     private Double jifenStartMoney;//积分起兑金额
 
-
-
 }

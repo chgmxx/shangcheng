@@ -64,19 +64,19 @@ public class MallPifaPrice extends Model< MallPifaPrice > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallPifaPrice{" +
-			"id=" + id +
-			", pifaId=" + pifaId +
-			", invenId=" + invenId +
-			", specificaIds=" + specificaIds +
-			", seckillPrice=" + seckillPrice +
-			", isJoinGroup=" + isJoinGroup +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallPifaPrice{" +
+            "id=" + id +
+            ", pifaId=" + pifaId +
+            ", invenId=" + invenId +
+            ", specificaIds=" + specificaIds +
+            ", seckillPrice=" + seckillPrice +
+            ", isJoinGroup=" + isJoinGroup +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

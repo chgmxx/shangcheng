@@ -15,6 +15,4 @@ import org.springframework.stereotype.Controller;
 /*@RequestMapping( "/mPro/inven" )*/
 public class MallProductInventoryController extends BaseController {
 
-
-
 }

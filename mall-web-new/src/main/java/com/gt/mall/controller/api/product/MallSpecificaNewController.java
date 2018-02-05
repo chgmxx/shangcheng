@@ -47,28 +47,28 @@ public class MallSpecificaNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getSpecificaList", method = RequestMethod.POST )
     public ServerResponse getSpecificaList( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "map", value = "id:不为空 则查询值 ，type:  1 规格 2参数，  shopId: 店铺ID", required = true ) @RequestParam Map< String,Object > params ) {
-	SortedMap< String,Object > map;
-	try {
-	    //id:334   不为空 则查询值
-	    //type:2  1 规格， 2 参数
-	    //shopId:177 店铺ID
-	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
+        @ApiParam( name = "map", value = "id:不为空 则查询值 ，type:  1 规格 2参数，  shopId: 店铺ID", required = true ) @RequestParam Map< String,Object > params ) {
+        SortedMap< String,Object > map;
+        try {
+            //id:334   不为空 则查询值
+            //type:2  1 规格， 2 参数
+            //shopId:177 店铺ID
+            Integer userId = MallSessionUtils.getLoginUser( request ).getId();
 
-	    if ( CommonUtil.isEmpty( params.get( "id" ) ) ) {
-		params.put( "userId", userId );
-		// 查询自定义规格名称
-		map = mallProductSpecificaService.getSpecificaByUser( params );// 查询自定义规格名称
-	    } else {
-		map = mallProductSpecificaService.getSpecificaValueById( params );
-	    }
+            if ( CommonUtil.isEmpty( params.get( "id" ) ) ) {
+                params.put( "userId", userId );
+                // 查询自定义规格名称
+                map = mallProductSpecificaService.getSpecificaByUser( params );// 查询自定义规格名称
+            } else {
+                map = mallProductSpecificaService.getSpecificaValueById( params );
+            }
 
-	} catch ( Exception e ) {
-	    logger.error( "获取规格名称和值异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取规格名称和值异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), map );
+        } catch ( Exception e ) {
+            logger.error( "获取规格名称和值异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取规格名称和值异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), map );
     }
 
     /**
@@ -78,40 +78,40 @@ public class MallSpecificaNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/addSpecifica", method = RequestMethod.POST )
     public ServerResponse addSpecifica( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "map", value = "specName:名称， specId: 值， type:  1 规格 2参数 ， shopId: 店铺ID", required = true ) @RequestParam Map< String,Object > map ) {
-	Integer id = null;
-	try {
-	    //specName:334   名称
-	    //specId:5057  值
-	    //type:2  1 规格， 2 参数
-	    //shopId:177 店铺ID
-	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
-	    if ( !CommonUtil.isEmpty( map.get( "specId" ) ) ) {// 添加规格值
-		MallSpecificaValue value = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecificaValue.class );
-		if(CommonUtil.isEmpty( value.getSpecValue() )){
-		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "值不能为空" );
-		}
-		value.setSpecValue( CommonUtil.urlEncode( value.getSpecValue() ) );
-		value.setUserId( userId );
-		mallProductSpecificaService.insertSpecificaValue( value );
-		id = value.getId();
-	    } else {// 添加规格名称
-		MallSpecifica spe = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecifica.class );
-		if(CommonUtil.isEmpty( spe.getSpecName() )){
-		    throw new BusinessException( ResponseEnums.ERROR.getCode(), "名称不能为空" );
-		}
-		spe.setSpecName( CommonUtil.urlEncode( spe.getSpecName() ) );
-		spe.setUserId( userId );
-		spe.setCreateTime( new Date() );
-		mallProductSpecificaService.insertSpecifica( spe );
-		id = spe.getId();
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "新增自定义规格异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "新增自定义规格异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), id );
+        @ApiParam( name = "map", value = "specName:名称， specId: 值， type:  1 规格 2参数 ， shopId: 店铺ID", required = true ) @RequestParam Map< String,Object > map ) {
+        Integer id = null;
+        try {
+            //specName:334   名称
+            //specId:5057  值
+            //type:2  1 规格， 2 参数
+            //shopId:177 店铺ID
+            Integer userId = MallSessionUtils.getLoginUser( request ).getId();
+            if ( !CommonUtil.isEmpty( map.get( "specId" ) ) ) {// 添加规格值
+                MallSpecificaValue value = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecificaValue.class );
+                if ( CommonUtil.isEmpty( value.getSpecValue() ) ) {
+                    throw new BusinessException( ResponseEnums.ERROR.getCode(), "值不能为空" );
+                }
+                value.setSpecValue( CommonUtil.urlEncode( value.getSpecValue() ) );
+                value.setUserId( userId );
+                mallProductSpecificaService.insertSpecificaValue( value );
+                id = value.getId();
+            } else {// 添加规格名称
+                MallSpecifica spe = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( map ), MallSpecifica.class );
+                if ( CommonUtil.isEmpty( spe.getSpecName() ) ) {
+                    throw new BusinessException( ResponseEnums.ERROR.getCode(), "名称不能为空" );
+                }
+                spe.setSpecName( CommonUtil.urlEncode( spe.getSpecName() ) );
+                spe.setUserId( userId );
+                spe.setCreateTime( new Date() );
+                mallProductSpecificaService.insertSpecifica( spe );
+                id = spe.getId();
+            }
+        } catch ( Exception e ) {
+            logger.error( "新增自定义规格异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "新增自定义规格异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), id );
     }
 
 }

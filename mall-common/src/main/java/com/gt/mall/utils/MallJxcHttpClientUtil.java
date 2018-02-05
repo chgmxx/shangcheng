@@ -20,25 +20,25 @@ public class MallJxcHttpClientUtil {
     private static String TOKEN_STR = "";
 
     private static String login() {
-	logger.info( "第一次登陆" );
-	String url = PropertiesUtil.getJxcUrl() + "/erp/b/login";
-	Map< String,Object > params = new HashMap<>();
-	params.put( "account", PropertiesUtil.getJxcAccount() );
-	params.put( "pwd", PropertiesUtil.getJxcPwd() );
-	logger.info( url );
-	logger.info( "登陆用户名和密码 = " + params );
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params ) );
-	    logger.info( "登陆返回值：" + jsonObject.toJSONString() );
-	    if ( jsonObject.getString( "code" ).equals( "1001" ) ) {
-		JSONObject tokens = jsonObject.getJSONObject( "data" );
-		TOKEN_STR = tokens.getString( "token" );
-		return TOKEN_STR;
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        logger.info( "第一次登陆" );
+        String url = PropertiesUtil.getJxcUrl() + "/erp/b/login";
+        Map< String,Object > params = new HashMap<>();
+        params.put( "account", PropertiesUtil.getJxcAccount() );
+        params.put( "pwd", PropertiesUtil.getJxcPwd() );
+        logger.info( url );
+        logger.info( "登陆用户名和密码 = " + params );
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params ) );
+            logger.info( "登陆返回值：" + jsonObject.toJSONString() );
+            if ( jsonObject.getString( "code" ).equals( "1001" ) ) {
+                JSONObject tokens = jsonObject.getJSONObject( "data" );
+                TOKEN_STR = tokens.getString( "token" );
+                return TOKEN_STR;
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -50,34 +50,34 @@ public class MallJxcHttpClientUtil {
      * @return 返回
      */
     public static JSONArray batchSave( Map< String,Object > params, boolean isFirst ) {
-	logger.info( "批量新增或修改商品和商品库存:" + params );
-	String url = PropertiesUtil.getJxcUrl() + "/erp/batchSave";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return null;
-	}
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "批量新增或修改商品和商品库存 返回值" + jsonObject.toJSONString() );
-	    if ( code.equals( "1001" ) ) {
+        logger.info( "批量新增或修改商品和商品库存:" + params );
+        String url = PropertiesUtil.getJxcUrl() + "/erp/batchSave";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return null;
+        }
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "批量新增或修改商品和商品库存 返回值" + jsonObject.toJSONString() );
+            if ( code.equals( "1001" ) ) {
 
-		return jsonObject.getJSONArray( "data" );
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return batchSave( params, false );
-		}
+                return jsonObject.getJSONArray( "data" );
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return batchSave( params, false );
+                }
 
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -89,32 +89,32 @@ public class MallJxcHttpClientUtil {
      * @return JSONArray
      */
     public static JSONArray batchAttrSave( Map< String,Object > params, boolean isFirst ) {
-	logger.info( "批量新增或修改商品规格：" + params );
-	String url = PropertiesUtil.getJxcUrl() + "/erp/attr/batchSave";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return null;
-	}
-	logger.info( "规格传参：" + JSONObject.toJSONString( params ) );
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "批量新增或修改商品规格返回值：" + jsonObject.toJSONString() );
-	    if ( code.equals( "1001" ) ) {
-		return jsonObject.getJSONArray( "data" );
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return batchAttrSave( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        logger.info( "批量新增或修改商品规格：" + params );
+        String url = PropertiesUtil.getJxcUrl() + "/erp/attr/batchSave";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return null;
+        }
+        logger.info( "规格传参：" + JSONObject.toJSONString( params ) );
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "批量新增或修改商品规格返回值：" + jsonObject.toJSONString() );
+            if ( code.equals( "1001" ) ) {
+                return jsonObject.getJSONArray( "data" );
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return batchAttrSave( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -126,31 +126,31 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static boolean saveUpdateWarehouse( Map< String,Object > params, boolean isFirst ) {
-	logger.info( "保存或修改仓库：" + params );
-	String url = PropertiesUtil.getJxcUrl() + "/erp/updateWarehouse";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return false;
-	}
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "保存或修改仓库返回值：" + jsonObject.toJSONString() );
-	    if ( code.equals( "1000" ) ) {
-		return true;
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return saveUpdateWarehouse( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return false;
+        logger.info( "保存或修改仓库：" + params );
+        String url = PropertiesUtil.getJxcUrl() + "/erp/updateWarehouse";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return false;
+        }
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "保存或修改仓库返回值：" + jsonObject.toJSONString() );
+            if ( code.equals( "1000" ) ) {
+                return true;
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return saveUpdateWarehouse( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -162,32 +162,32 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static boolean inventoryOperation( Map< String,Object > params, boolean isFirst ) {
-	logger.info( "发货退货时调用修改库存：" + params );
-	String url = PropertiesUtil.getJxcUrl() + "/erp/order/inventory/operation";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return false;
-	}
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "发货退货时调用修改库存返回值" + jsonObject.toJSONString() );
-	    if ( code.equals( "1001" ) ) {
-		return true;
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return inventoryOperation( params, false );
-		}
-	    }
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	    throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "发货退货时调用修改库存" );
-	}
-	return false;
+        logger.info( "发货退货时调用修改库存：" + params );
+        String url = PropertiesUtil.getJxcUrl() + "/erp/order/inventory/operation";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return false;
+        }
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "发货退货时调用修改库存返回值" + jsonObject.toJSONString() );
+            if ( code.equals( "1001" ) ) {
+                return true;
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return inventoryOperation( params, false );
+                }
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "发货退货时调用修改库存" );
+        }
+        return false;
     }
 
     /**
@@ -199,31 +199,31 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONArray syncProductCheck( Map< String,Object > params, boolean isFirst ) {
-	String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/product/check";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return null;
-	}
-	logger.info( "查询同步/未同步的商品参数：" + params );
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "查询同步/未同步的商品返回值：" + jsonObject.toJSONString() );
-	    if ( code.equals( "1001" ) ) {
-		return jsonObject.getJSONArray( "data" );
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return syncProductCheck( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/product/check";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return null;
+        }
+        logger.info( "查询同步/未同步的商品参数：" + params );
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "查询同步/未同步的商品返回值：" + jsonObject.toJSONString() );
+            if ( code.equals( "1001" ) ) {
+                return jsonObject.getJSONArray( "data" );
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return syncProductCheck( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -235,32 +235,32 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONObject getInventoryById( Map< String,Object > params, boolean isFirst ) {
-	String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/pro/inventory";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
+        String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/pro/inventory";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
 
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return null;
-	}
-	logger.info( "查询单个商品的规格详情和库存：" + params );
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "查询单个商品的规格详情和库存返回：" + jsonObject );
-	    if ( code.equals( "1001" ) ) {
-		return jsonObject.getJSONObject( "data" );
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return getInventoryById( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return null;
+        }
+        logger.info( "查询单个商品的规格详情和库存：" + params );
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "查询单个商品的规格详情和库存返回：" + jsonObject );
+            if ( code.equals( "1001" ) ) {
+                return jsonObject.getJSONObject( "data" );
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return getInventoryById( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -272,31 +272,31 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONArray getProductAttrs( Map< String,Object > params, boolean isFirst ) {
-	logger.info( "查询商品规格：" + params );
-	String url = PropertiesUtil.getJxcUrl() + "/erp/query/getProductAttrs/shop";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return null;
-	}
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "查询商品规格返回值：" + jsonObject.toJSONString() );
-	    if ( code.equals( "1001" ) ) {
-		return jsonObject.getJSONArray( "data" );
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return getProductAttrs( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        logger.info( "查询商品规格：" + params );
+        String url = PropertiesUtil.getJxcUrl() + "/erp/query/getProductAttrs/shop";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return null;
+        }
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "查询商品规格返回值：" + jsonObject.toJSONString() );
+            if ( code.equals( "1001" ) ) {
+                return jsonObject.getJSONArray( "data" );
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return getProductAttrs( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -308,31 +308,31 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static JSONArray inventoryByProduct( Map< String,Object > params, boolean isFirst ) {
-	String url = PropertiesUtil.getJxcUrl() + "erp/order/sync/inventoryByProduct";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return null;
-	}
-	logger.info( "根据商品id查询库存数量：" + params );
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "根据商品id查询库存数量返回:" + jsonObject );
-	    if ( code.equals( "1001" ) ) {
-		return jsonObject.getJSONArray( "data" );
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return inventoryByProduct( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        String url = PropertiesUtil.getJxcUrl() + "erp/order/sync/inventoryByProduct";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return null;
+        }
+        logger.info( "根据商品id查询库存数量：" + params );
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "根据商品id查询库存数量返回:" + jsonObject );
+            if ( code.equals( "1001" ) ) {
+                return jsonObject.getJSONArray( "data" );
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return inventoryByProduct( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -344,31 +344,31 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static Object getInvNumByInvenId( Map< String,Object > params, boolean isFirst ) {
-	String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/attrs/inventory";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return null;
-	}
-	logger.info( "根据商品详情id查询库存：" + params );
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "根据商品详情id查询库存返回：" + jsonObject );
-	    if ( code.equals( "1001" ) ) {
-		return jsonObject.get( "data" );
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return getInvNumByInvenId( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/attrs/inventory";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return null;
+        }
+        logger.info( "根据商品详情id查询库存：" + params );
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "根据商品详情id查询库存返回：" + jsonObject );
+            if ( code.equals( "1001" ) ) {
+                return jsonObject.get( "data" );
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return getInvNumByInvenId( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -380,39 +380,39 @@ public class MallJxcHttpClientUtil {
      * @return true 保存/修改成功
      */
     public static boolean syncCallback( Map< String,Object > params, boolean isFirst ) {
-	String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/product/callback";
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    TOKEN_STR = login();
-	}
-	if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
-	    logger.info( "获取进销存token失败" );
-	    return false;
-	}
-	logger.info( "同步接口回调：" + params );
-	try {
-	    JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
-	    String code = jsonObject.getString( "code" );
-	    logger.info( "同步接口回调返回：" + jsonObject );
-	    if ( code.equals( "1001" ) ) {
-		return true;
-	    } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
-		if ( isFirst ) {
-		    login();
-		    return syncCallback( params, false );
-		}
-	    }
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	}
-	return false;
+        String url = PropertiesUtil.getJxcUrl() + "/erp/order/sync/product/callback";
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            TOKEN_STR = login();
+        }
+        if ( CommonUtil.isEmpty( TOKEN_STR ) ) {
+            logger.info( "获取进销存token失败" );
+            return false;
+        }
+        logger.info( "同步接口回调：" + params );
+        try {
+            JSONObject jsonObject = JSONObject.parseObject( MallHttpClientUtil.httpPostRequest( url, params, TOKEN_STR ) );
+            String code = jsonObject.getString( "code" );
+            logger.info( "同步接口回调返回：" + jsonObject );
+            if ( code.equals( "1001" ) ) {
+                return true;
+            } else if ( code.equals( "1005" ) || code.equals( "1006" ) ) {
+                if ( isFirst ) {
+                    login();
+                    return syncCallback( params, false );
+                }
+            }
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static void main( String[] args ) {
 
-	//{orders=[{"rootUid":42,"uName":"gt123456","uType":1,"remark":"商城下单","shopId":17,"uId":42,"type":1,
-	// "products":[{"amount":1,"id":100,"price":7}]}]}
-	//减库存
-    	/*Map<String, Object> proMap = new HashMap<String, Object>();
+        //{orders=[{"rootUid":42,"uName":"gt123456","uType":1,"remark":"商城下单","shopId":17,"uId":42,"type":1,
+        // "products":[{"amount":1,"id":100,"price":7}]}]}
+        //减库存
+        /*Map<String, Object> proMap = new HashMap<String, Object>();
     	proMap.put("id", 1);
     	proMap.put("amount", 1);
     	proMap.put("price", "7");
@@ -436,7 +436,7 @@ public class MallJxcHttpClientUtil {
 			}
     	}*/
 
-	//查询商家规格
+        //查询商家规格
     	/*Map<String, Object> params = new HashMap<String, Object>();
     	params.put("rootUid", 42);
     	JSONArray arr = getProductAttrs(params, true);
@@ -463,7 +463,7 @@ public class MallJxcHttpClientUtil {
 			}
     	}*/
 
-	//查询详情库存
+        //查询详情库存
     	/*Map<String, Object> params = new HashMap<String, Object>();
     	params.put("shopId", 18);
     	params.put("productId", 29);
@@ -479,14 +479,14 @@ public class MallJxcHttpClientUtil {
     		}
     	}*/
 
-	//查询单个详情的库存
+        //查询单个详情的库存
     	/*Map<String, Object> params = new HashMap<String, Object>();
     	params.put("shopId", 17);
     	params.put("attrsId", 99);
     	Object obj = getInvNumByInvenId(params, true);
     	logger.info(obj);*/
 
-	//查询未同步的商品
+        //查询未同步的商品
 	/*Map< String,Object > params = new HashMap< String,Object >();
 	params.put( "rootUid", 42 );
 	params.put( "sync", 0 );
@@ -560,94 +560,94 @@ public class MallJxcHttpClientUtil {
     	}
     	logger.info(arr);*/
 
-	//    	//批量新增规格
-	//    	Map<String, Object> attrParams = new HashMap<String, Object>();
-	//    	JSONObject specParams = new JSONObject();
-	//    	specParams.put("uId", 42);
-	//    	specParams.put("uType", 1);
-	//    	specParams.put("uName", "gt123456");
-	//    	specParams.put("rootUid", 42);
-	//    	Map<String, Object> specParams2 = new HashMap<String, Object>();
-	//    	specParams2.put("id", "");
-	//    	specParams2.put("name", "尺码");
-	//    	specParams2.put("parentId", "");
-	//    	List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
-	//    	list.add(specParams2);
-	//    	specParams.put("norms", list);
-	//    	attrParams.put("attrs", specParams);
-	//
-	////    	logger.info(attrParams);
-	//    	JSONArray arr = batchAttrSave(attrParams,true);
-	//    	JSONObject jObj = JSONObject.parseObject(arr.get(0).toString());
-	//    	int nameId = jObj.getInteger("id") ;
-	//    	logger.info("父类规格id："+nameId);
-	//
-	//    	attrParams = new JSONObject();
-	//    	Map<String, Object> specParams3 = new HashMap<String, Object>();
-	//    	specParams3.put("id", "");
-	//    	specParams3.put("name", "iPhone 7 4.7 英寸显示屏");
-	//    	specParams3.put("parentId", nameId);
-	//
-	//    	list = new ArrayList<Map<String,Object>>();
-	//    	list.add(specParams3);
-	//    	specParams.put("norms", list);
-	//
-	//    	attrParams.put("attrs", specParams);
-	//
-	//
-	////    	System.err.println(JSONObject.toJSON(attrParams));
-	//    	arr = batchAttrSave(attrParams,true);
-	//    	jObj = JSONObject.parseObject(arr.get(0).toString());
-	//    	int valueId = jObj.getInteger("id") ;
-	//    	logger.info("子类规格id："+valueId);
-	//
-	//    	Map<String, Object> storeParams = new HashMap<String, Object>();
-	//    	storeParams.put("createUid", "42");
-	//    	storeParams.put("uidType", 1);
-	//    	List<Map<String, Object>> lists = new ArrayList<Map<String,Object>>();
-	//    	Map<String, Object> map = new HashMap<String, Object>();
-	//    	map.put("id", 17);
-	//    	map.put("name", "广东谷通科技有限公司");
-	//    	map.put("address", "广东省惠州市惠城区惠州大道赛格假日广场10楼1007-1008室");
-	//    	map.put("phone", "0752-2329043");
-	//    	map.put("principal", "小多");
-	//    	lists.add(map);
-	//    	storeParams.put("shopList", JSONArray.toJSON(lists));
-	//    	saveUpdateWarehouse(storeParams, true);
-	//
-	//
-	////    	int valueId = 136;
-	//
-	//    	Map<String, Object> params = new HashMap<String, Object>();
-	//    	params.put("uId", 42);
-	//    	params.put("uType", 1);
-	//    	params.put("uName", "gt123456");
-	//    	params.put("rootUid", 42);
-	////    	params.put("shopId", 17);
-	//    	List<Map<String, Object>> productList = new ArrayList<Map<String,Object>>();
-	//    	Map<String, Object> productParams = new HashMap<String, Object>();
-	//    	productParams.put("id", "");
-	//    	productParams.put("name", "iphone7");
-	//
-	//    	List<Map<String, Object>> invList = new ArrayList<Map<String,Object>>();
-	//    	Map<String, Object> invParams = new HashMap<String, Object>();
-	////    	invParams.put("id", "");
-	//    	invParams.put("ids", valueId);//规格id组
-	//    	invParams.put("names", "iPhone 7 4.7 英寸显示屏");
-	//    	invParams.put("amount", 45);
-	//    	invParams.put("price", 1);
-	//    	invParams.put("shopId", 17);
-	//    	invList.add(invParams);
-	//    	productParams.put("norms", invList);
-	//
-	//    	productList.add(productParams);
-	//    	params.put("pros", productList);
-	//
-	//    	Map<String, Object> proParams = new HashMap<String, Object>();
-	//    	proParams.put("pros", JSONObject.toJSON(params));
-	//
-	//    	logger.info(proParams);
-	//    	batchSave(proParams,true);
+        //    	//批量新增规格
+        //    	Map<String, Object> attrParams = new HashMap<String, Object>();
+        //    	JSONObject specParams = new JSONObject();
+        //    	specParams.put("uId", 42);
+        //    	specParams.put("uType", 1);
+        //    	specParams.put("uName", "gt123456");
+        //    	specParams.put("rootUid", 42);
+        //    	Map<String, Object> specParams2 = new HashMap<String, Object>();
+        //    	specParams2.put("id", "");
+        //    	specParams2.put("name", "尺码");
+        //    	specParams2.put("parentId", "");
+        //    	List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
+        //    	list.add(specParams2);
+        //    	specParams.put("norms", list);
+        //    	attrParams.put("attrs", specParams);
+        //
+        ////    	logger.info(attrParams);
+        //    	JSONArray arr = batchAttrSave(attrParams,true);
+        //    	JSONObject jObj = JSONObject.parseObject(arr.get(0).toString());
+        //    	int nameId = jObj.getInteger("id") ;
+        //    	logger.info("父类规格id："+nameId);
+        //
+        //    	attrParams = new JSONObject();
+        //    	Map<String, Object> specParams3 = new HashMap<String, Object>();
+        //    	specParams3.put("id", "");
+        //    	specParams3.put("name", "iPhone 7 4.7 英寸显示屏");
+        //    	specParams3.put("parentId", nameId);
+        //
+        //    	list = new ArrayList<Map<String,Object>>();
+        //    	list.add(specParams3);
+        //    	specParams.put("norms", list);
+        //
+        //    	attrParams.put("attrs", specParams);
+        //
+        //
+        ////    	System.err.println(JSONObject.toJSON(attrParams));
+        //    	arr = batchAttrSave(attrParams,true);
+        //    	jObj = JSONObject.parseObject(arr.get(0).toString());
+        //    	int valueId = jObj.getInteger("id") ;
+        //    	logger.info("子类规格id："+valueId);
+        //
+        //    	Map<String, Object> storeParams = new HashMap<String, Object>();
+        //    	storeParams.put("createUid", "42");
+        //    	storeParams.put("uidType", 1);
+        //    	List<Map<String, Object>> lists = new ArrayList<Map<String,Object>>();
+        //    	Map<String, Object> map = new HashMap<String, Object>();
+        //    	map.put("id", 17);
+        //    	map.put("name", "广东谷通科技有限公司");
+        //    	map.put("address", "广东省惠州市惠城区惠州大道赛格假日广场10楼1007-1008室");
+        //    	map.put("phone", "0752-2329043");
+        //    	map.put("principal", "小多");
+        //    	lists.add(map);
+        //    	storeParams.put("shopList", JSONArray.toJSON(lists));
+        //    	saveUpdateWarehouse(storeParams, true);
+        //
+        //
+        ////    	int valueId = 136;
+        //
+        //    	Map<String, Object> params = new HashMap<String, Object>();
+        //    	params.put("uId", 42);
+        //    	params.put("uType", 1);
+        //    	params.put("uName", "gt123456");
+        //    	params.put("rootUid", 42);
+        ////    	params.put("shopId", 17);
+        //    	List<Map<String, Object>> productList = new ArrayList<Map<String,Object>>();
+        //    	Map<String, Object> productParams = new HashMap<String, Object>();
+        //    	productParams.put("id", "");
+        //    	productParams.put("name", "iphone7");
+        //
+        //    	List<Map<String, Object>> invList = new ArrayList<Map<String,Object>>();
+        //    	Map<String, Object> invParams = new HashMap<String, Object>();
+        ////    	invParams.put("id", "");
+        //    	invParams.put("ids", valueId);//规格id组
+        //    	invParams.put("names", "iPhone 7 4.7 英寸显示屏");
+        //    	invParams.put("amount", 45);
+        //    	invParams.put("price", 1);
+        //    	invParams.put("shopId", 17);
+        //    	invList.add(invParams);
+        //    	productParams.put("norms", invList);
+        //
+        //    	productList.add(productParams);
+        //    	params.put("pros", productList);
+        //
+        //    	Map<String, Object> proParams = new HashMap<String, Object>();
+        //    	proParams.put("pros", JSONObject.toJSON(params));
+        //
+        //    	logger.info(proParams);
+        //    	batchSave(proParams,true);
     }
 
 }

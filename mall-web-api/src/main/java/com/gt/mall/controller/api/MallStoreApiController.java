@@ -37,17 +37,17 @@ public class MallStoreApiController {
     @ResponseBody
     @RequestMapping( value = "/shopIsOpenMall", method = RequestMethod.POST )
     public ServerResponse shopIsOpenMall( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	Boolean flag = true;
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    flag = mallStoreService.shopIsOpenMall( CommonUtil.toInteger( params.get( "wxShopId" ) ) );
-	} catch ( Exception e ) {
-	    logger.error( "查询门店是否开通商城异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询门店是否开通商城异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag, false );
+        Boolean flag = true;
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            flag = mallStoreService.shopIsOpenMall( CommonUtil.toInteger( params.get( "wxShopId" ) ) );
+        } catch ( Exception e ) {
+            logger.error( "查询门店是否开通商城异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询门店是否开通商城异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), flag, false );
     }
 
     //

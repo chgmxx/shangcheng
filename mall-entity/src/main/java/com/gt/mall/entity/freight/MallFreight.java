@@ -116,38 +116,38 @@ public class MallFreight extends Model< MallFreight > {
     @TableField( "add_money" )
     private BigDecimal addMoney;
 
-    @TableField(exist = false)
-    private List<MallFreightDetail> detailList;
+    @TableField( exist = false )
+    private List< MallFreightDetail > detailList;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String stoName;
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallFreight{" +
-			"id=" + id +
-			", name=" + name +
-			", userId=" + userId +
-			", shopId=" + shopId +
-			", expressId=" + expressId +
-			", express=" + express +
-			", createTime=" + createTime +
-			", editTime=" + editTime +
-			", money=" + money +
-			", isNoMoney=" + isNoMoney +
-			", noMoneyNum=" + noMoneyNum +
-			", isResultMoney=" + isResultMoney +
-			", isDelete=" + isDelete +
-			", noMoney=" + noMoney +
-			", priceType=" + priceType +
-			", firstNums=" + firstNums +
-			", addNums=" + addNums +
-			", addMoney=" + addMoney +
-			"}";
+        return "MallFreight{" +
+            "id=" + id +
+            ", name=" + name +
+            ", userId=" + userId +
+            ", shopId=" + shopId +
+            ", expressId=" + expressId +
+            ", express=" + express +
+            ", createTime=" + createTime +
+            ", editTime=" + editTime +
+            ", money=" + money +
+            ", isNoMoney=" + isNoMoney +
+            ", noMoneyNum=" + noMoneyNum +
+            ", isResultMoney=" + isResultMoney +
+            ", isDelete=" + isDelete +
+            ", noMoney=" + noMoney +
+            ", priceType=" + priceType +
+            ", firstNums=" + firstNums +
+            ", addNums=" + addNums +
+            ", addMoney=" + addMoney +
+            "}";
     }
 }

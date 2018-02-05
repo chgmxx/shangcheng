@@ -90,200 +90,200 @@ public class PropertiesUtil {
 
     @Value( "${web.domain}" )
     public void setDomain( String domain ) {
-	PropertiesUtil.domain = domain;
+        PropertiesUtil.domain = domain;
     }
 
     @Value( "${web.homeUrl}" )
     public void setHomeUrl( String homeUrl ) {
-	PropertiesUtil.homeUrl = homeUrl;
+        PropertiesUtil.homeUrl = homeUrl;
     }
 
     @Value( "${web.materialUrl}" )
     public void setMaterialUrl( String materialUrl ) {
-	PropertiesUtil.materialUrl = materialUrl;
+        PropertiesUtil.materialUrl = materialUrl;
     }
 
     @Value( "${web.marketingUrl}" )
     public void setMarketingUrl( String marketingUrl ) {
-	PropertiesUtil.marketingUrl = marketingUrl;
+        PropertiesUtil.marketingUrl = marketingUrl;
     }
 
     @Value( "${web.duofenTwoCodeUrl}" )
     public void setDuofenTwoCodeUrl( String duofenTwoCodeUrl ) {
-	PropertiesUtil.duofenTwoCodeUrl = duofenTwoCodeUrl;
+        PropertiesUtil.duofenTwoCodeUrl = duofenTwoCodeUrl;
     }
 
     @Value( "${web.duofenPublicId}" )
     public void setDuofenPublicId( String duofenPublicId ) {
-	PropertiesUtil.duofenPublicId = duofenPublicId;
+        PropertiesUtil.duofenPublicId = duofenPublicId;
     }
 
     @Value( "${web.phoneWebHomeUrl}" )
     public void setPhoneWebHomeUrl( String phoneWebHomeUrl ) {
-	PropertiesUtil.phoneWebHomeUrl = phoneWebHomeUrl;
+        PropertiesUtil.phoneWebHomeUrl = phoneWebHomeUrl;
     }
 
     @Value( "${http.jxc.domain}" )
     public void setJxcUrl( String jxcUrl ) {
-	PropertiesUtil.jxcUrl = jxcUrl;
+        PropertiesUtil.jxcUrl = jxcUrl;
     }
 
     @Value( "${http.jxc.account}" )
     public void setJxcAccount( String jxcAccount ) {
-	PropertiesUtil.jxcAccount = jxcAccount;
+        PropertiesUtil.jxcAccount = jxcAccount;
     }
 
     @Value( "${http.jxc.pwx}" )
     public void setJxcPwd( String jxcPwd ) {
-	PropertiesUtil.jxcPwd = jxcPwd;
+        PropertiesUtil.jxcPwd = jxcPwd;
     }
 
     @Value( "${static.source.ftp.ip}" )
     public void setStaticSourceFtpIp( String staticSourceFtpIp ) {
-	PropertiesUtil.staticSourceFtpIp = staticSourceFtpIp;
+        PropertiesUtil.staticSourceFtpIp = staticSourceFtpIp;
     }
 
     @Value( "${static.source.ftp.port}" )
     public void setStaticSourceFtpPort( String staticSourceFtpPort ) {
-	PropertiesUtil.staticSourceFtpPort = staticSourceFtpPort;
+        PropertiesUtil.staticSourceFtpPort = staticSourceFtpPort;
     }
 
     @Value( "${static.source.ftp.user}" )
     public void setStaticSourceFtpUser( String staticSourceFtpUser ) {
-	PropertiesUtil.staticSourceFtpUser = staticSourceFtpUser;
+        PropertiesUtil.staticSourceFtpUser = staticSourceFtpUser;
     }
 
     @Value( "${static.source.ftp.password}" )
     public void setStaticSourceFtpPwd( String staticSourceFtpPwd ) {
-	PropertiesUtil.staticSourceFtpPwd = staticSourceFtpPwd;
+        PropertiesUtil.staticSourceFtpPwd = staticSourceFtpPwd;
     }
 
     @Value( "${redis.host}" )
     public void setRedisHost( String redisHost ) {
-	PropertiesUtil.redisHost = redisHost;
+        PropertiesUtil.redisHost = redisHost;
     }
 
     @Value( "${redis.port}" )
     public void setRedisPort( String redisPort ) {
-	PropertiesUtil.redisPort = redisPort;
+        PropertiesUtil.redisPort = redisPort;
     }
 
     @Value( "${redis.password}" )
     public void setRedisPassword( String redisPassword ) {
-	PropertiesUtil.redisPassword = redisPassword;
+        PropertiesUtil.redisPassword = redisPassword;
     }
 
     @Value( "${redis.database}" )
     public void setRedisDataBase( Integer redisDataBase ) {
-	PropertiesUtil.redisDataBase = redisDataBase;
+        PropertiesUtil.redisDataBase = redisDataBase;
     }
 
     @Value( "${res.image.path}" )
     public void setResImagePath( String resImagePath ) {
-	PropertiesUtil.resImagePath = resImagePath;
+        PropertiesUtil.resImagePath = resImagePath;
     }
 
     @Value( "${resource.url.prefix}" )
     public void setResourceUrl( String resourceUrl ) {
-	PropertiesUtil.resourceUrl = resourceUrl;
+        PropertiesUtil.resourceUrl = resourceUrl;
     }
 
     @Value( "${dianxin.order}" )
     public void setDbname( String dbname ) {
-	PropertiesUtil.dbname = dbname;
+        PropertiesUtil.dbname = dbname;
     }
 
     @Value( "${mq.ip}" )
     public void setMqIp( String mqIp ) {
-	PropertiesUtil.mqIp = mqIp;
+        PropertiesUtil.mqIp = mqIp;
     }
 
     @Value( "${mq.port}" )
     public void setMqPort( String mqPort ) {
-	PropertiesUtil.mqPort = mqPort;
+        PropertiesUtil.mqPort = mqPort;
     }
 
     @Value( "${mq.user}" )
     public void setMqUser( String mqUser ) {
-	PropertiesUtil.mqUser = mqUser;
+        PropertiesUtil.mqUser = mqUser;
     }
 
     @Value( "${mq.password}" )
     public void setMqPassWord( String mqPassWord ) {
-	PropertiesUtil.mqPassWord = mqPassWord;
+        PropertiesUtil.mqPassWord = mqPassWord;
     }
 
     @Value( "${mq.seckill.exchange}" )
     public void setMqSeckillExchange( String mqSeckillExchange ) {
-	PropertiesUtil.mqSeckillExchange = mqSeckillExchange;
+        PropertiesUtil.mqSeckillExchange = mqSeckillExchange;
     }
 
     @Value( "${mq.seckill.queueName}" )
     public void setMqSeckillQueueName( String mqSeckillQueueName ) {
-	PropertiesUtil.mqSeckillQueueName = mqSeckillQueueName;
+        PropertiesUtil.mqSeckillQueueName = mqSeckillQueueName;
     }
 
     @Value( "${http.wxmp.domain}" )
     public void setWxmpDomain( String wxmpDomain ) {
-	PropertiesUtil.wxmpDomain = wxmpDomain;
+        PropertiesUtil.wxmpDomain = wxmpDomain;
     }
 
     @Value( "${http.wxmp.key}" )
     public void setWxmpSignKey( String wxmpSignKey ) {
-	PropertiesUtil.wxmpSignKey = wxmpSignKey;
+        PropertiesUtil.wxmpSignKey = wxmpSignKey;
     }
 
     @Value( "${http.member.domain}" )
     public void setMemberDomain( String memberDomain ) {
-	PropertiesUtil.memberDomain = memberDomain;
+        PropertiesUtil.memberDomain = memberDomain;
     }
 
     @Value( "${http.member.key}" )
     public void setMemberSignKey( String memberSignKey ) {
-	PropertiesUtil.memberSignKey = memberSignKey;
+        PropertiesUtil.memberSignKey = memberSignKey;
     }
 
     @Value( "${http.union.domain}" )
     public void setUnionDomain( String unionDomain ) {
-	PropertiesUtil.unionDomain = unionDomain;
+        PropertiesUtil.unionDomain = unionDomain;
     }
 
     @Value( "${http.union.key}" )
     public void setUnionSignKey( String unionSignKey ) {
-	PropertiesUtil.unionSignKey = unionSignKey;
+        PropertiesUtil.unionSignKey = unionSignKey;
     }
 
     @Value( "${http.core.domain}" )
     public void setCoreDomain( String coreDomain ) {
-	PropertiesUtil.coreDomain = coreDomain;
+        PropertiesUtil.coreDomain = coreDomain;
     }
 
     @Value( "${http.core.key}" )
     public void setCoreSignKey( String coreSignKey ) {
-	PropertiesUtil.coreSignKey = coreSignKey;
+        PropertiesUtil.coreSignKey = coreSignKey;
     }
 
     @Value( "${http.hardware.domain}" )
     public void setHardwareDomain( String hardwareDomain ) {
-	PropertiesUtil.hardwareDomain = hardwareDomain;
+        PropertiesUtil.hardwareDomain = hardwareDomain;
     }
 
     @Value( "${http.dfPay.domain}" )
     public void setDfPayDomain( String dfPayDomain ) {
-	PropertiesUtil.dfPayDomain = dfPayDomain;
+        PropertiesUtil.dfPayDomain = dfPayDomain;
     }
 
     @Value( "${http.dfPay.key}" )
     public void setDfPaySignKey( String dfPaySignKey ) {
-	PropertiesUtil.dfPaySignKey = dfPaySignKey;
+        PropertiesUtil.dfPaySignKey = dfPaySignKey;
     }
 
     public static String getDfPaySignKey() {
-	return dfPaySignKey;
+        return dfPaySignKey;
     }
 
     public static String getDfPayDomain() {
-	return dfPayDomain;
+        return dfPayDomain;
     }
 
     /**
@@ -292,167 +292,167 @@ public class PropertiesUtil {
      * @return
      */
     public static String getHardwareDomain() {
-	return hardwareDomain;
+        return hardwareDomain;
     }
 
     /**
      * 获取联盟的签名key
      */
     public static String getUnionDomain() {
-	return unionDomain;
+        return unionDomain;
     }
 
     /**
      * 获取联盟的链接
      */
     public static String getUnionSignKey() {
-	return unionSignKey;
+        return unionSignKey;
     }
 
     /**
      * 获取主项目的签名keykey
      */
     public static String getWxmpSignKey() {
-	return wxmpSignKey;
+        return wxmpSignKey;
     }
 
     /**
      * 获取主域名（登陆）
      */
     public static String getWxmpDomain() {
-	return wxmpDomain;
+        return wxmpDomain;
     }
 
     /**
      * 获取会员域名
      */
     public static String getMemberDomain() {
-	return memberDomain;
+        return memberDomain;
     }
 
     /**
      * 获取会员签名key
      */
     public static String getMemberSignKey() {
-	return memberSignKey;
+        return memberSignKey;
     }
 
     /**
      * 获取商城的域名
      */
     public static String getDomain() {
-	return domain;
+        return domain;
     }
 
     public static String getDbname() {
-	return dbname;
+        return dbname;
     }
 
     public static String getMqIp() {
-	return mqIp;
+        return mqIp;
     }
 
     public static String getMqPort() {
-	return mqPort;
+        return mqPort;
     }
 
     public static String getMqUser() {
-	return mqUser;
+        return mqUser;
     }
 
     public static String getMqPassWord() {
-	return mqPassWord;
+        return mqPassWord;
     }
 
     public static String getMqSeckillExchange() {
-	return mqSeckillExchange;
+        return mqSeckillExchange;
     }
 
     public static String getMqSeckillQueueName() {
-	return mqSeckillQueueName;
+        return mqSeckillQueueName;
     }
 
     public static String getResImagePath() {
-	return resImagePath;
+        return resImagePath;
     }
 
     public static String getResourceUrl() {
-	return resourceUrl;
+        return resourceUrl;
     }
 
     public static String getHomeUrl() {
-	return homeUrl;
+        return homeUrl;
     }
 
     public static String getMarketingUrl() {
-	return marketingUrl;
+        return marketingUrl;
     }
 
     public static String getMaterialUrl() {
-	return materialUrl;
+        return materialUrl;
     }
 
     public static String getDuofenTwoCodeUrl() {
-	return duofenTwoCodeUrl;
+        return duofenTwoCodeUrl;
     }
 
     public static String getPhoneWebHomeUrl() {
-	return phoneWebHomeUrl;
+        return phoneWebHomeUrl;
     }
 
     public static String getJxcUrl() {
-	return jxcUrl;
+        return jxcUrl;
     }
 
     public static String getJxcAccount() {
-	return jxcAccount;
+        return jxcAccount;
     }
 
     public static String getJxcPwd() {
-	return jxcPwd;
+        return jxcPwd;
     }
 
     public static String getStaticSourceFtpIp() {
-	return staticSourceFtpIp;
+        return staticSourceFtpIp;
     }
 
     public static String getStaticSourceFtpPort() {
-	return staticSourceFtpPort;
+        return staticSourceFtpPort;
     }
 
     public static String getStaticSourceFtpUser() {
-	return staticSourceFtpUser;
+        return staticSourceFtpUser;
     }
 
     public static String getStaticSourceFtpPwd() {
-	return staticSourceFtpPwd;
+        return staticSourceFtpPwd;
     }
 
     public static String getRedisHost() {
-	return redisHost;
+        return redisHost;
     }
 
     public static String getRedisPort() {
-	return redisPort;
+        return redisPort;
     }
 
     public static String getRedisPassword() {
-	return redisPassword;
+        return redisPassword;
     }
 
     public static Integer getRedisDataBase() {
-	return redisDataBase;
+        return redisDataBase;
     }
 
     public static String getCoreDomain() {
-	return coreDomain;
+        return coreDomain;
     }
 
     public static String getCoreSignKey() {
-	return coreSignKey;
+        return coreSignKey;
     }
 
     public static String getDuofenPublicId() {
-	return duofenPublicId;
+        return duofenPublicId;
     }
 }

@@ -55,5 +55,4 @@ public class Coupons {
     @ApiModelProperty( name = "isSelect", value = "是否被默认选中 0 未被默认选中" )
     private Integer isDefaultSelect = 0;
 
-
 }

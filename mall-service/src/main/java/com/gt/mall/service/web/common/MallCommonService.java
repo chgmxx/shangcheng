@@ -22,13 +22,13 @@ public interface MallCommonService {
     /**
      * 获取手机验证码
      *
-     * @param mobile         手机号码
-     * @param busId          商家ID
-     * @param content        短信内容
+     * @param mobile  手机号码
+     * @param busId   商家ID
+     * @param content 短信内容
      *
      * @return
      */
-    boolean getValCode( String areaCode, String mobile, Integer busId, String content,Long tmplId );
+    boolean getValCode( String areaCode, String mobile, Integer busId, String content, Long tmplId );
 
     /**
      * 判断商家是否有技术支持

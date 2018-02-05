@@ -27,8 +27,8 @@ public class MallOrderDetailServiceImpl extends BaseServiceImpl< MallOrderDetail
 
     @Override
     public List< MallOrderDetail > getOrderDetailList( Integer orderId ) {
-	Wrapper< MallOrderDetail > detailWrapper = new EntityWrapper<>();
-	detailWrapper.where( "order_id = {0}", orderId );
-	return mallOrderDetailDAO.selectList( detailWrapper );
+        Wrapper< MallOrderDetail > detailWrapper = new EntityWrapper<>();
+        detailWrapper.where( "order_id = {0}", orderId );
+        return mallOrderDetailDAO.selectList( detailWrapper );
     }
 }

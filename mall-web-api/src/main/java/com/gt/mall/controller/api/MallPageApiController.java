@@ -57,42 +57,42 @@ public class MallPageApiController {
     @ResponseBody
     @RequestMapping( value = "/pageList", method = RequestMethod.POST )
     public ServerResponse pageList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	List< Map > pageList = null;
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    if ( CommonUtil.isEmpty( params.get( "userId" ) ) ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
-	    }
-	    Integer userId = CommonUtil.toInteger( params.get( "userId" ) );
-	    List< Map< String,Object > > shoplist = mallStoreService.findShopByUserId( userId, request );// 查询登陆人拥有的店铺
-	    if ( CommonUtil.isEmpty( shoplist ) ) {
-		return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), null, false );
-	    }
-	    List< Integer > shopIds = new ArrayList<>();
-	    for ( Map< String,Object > map : shoplist ) {
-		shopIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
-	    }
+        List< Map > pageList = null;
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            if ( CommonUtil.isEmpty( params.get( "userId" ) ) ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+            }
+            Integer userId = CommonUtil.toInteger( params.get( "userId" ) );
+            List< Map< String,Object > > shoplist = mallStoreService.findShopByUserId( userId, request );// 查询登陆人拥有的店铺
+            if ( CommonUtil.isEmpty( shoplist ) ) {
+                return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), null, false );
+            }
+            List< Integer > shopIds = new ArrayList<>();
+            for ( Map< String,Object > map : shoplist ) {
+                shopIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+            }
 
-	    Wrapper< MallPage > wrapper = new EntityWrapper<>();
-	    wrapper.in( "pag_sto_id", shopIds );
-	    List< MallPage > list = mallPageService.selectList( wrapper );
-	    if ( list != null && list.size() > 0 ) {
-		pageList = new ArrayList<>();
-		for ( MallPage page : list ) {
-		    Map< String,Object > map = new HashMap<>();
-		    map.put( "id", page.getId() );
-		    map.put( "name", page.getPagName() );
-		    map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + page.getId() );
-		    pageList.add( map );
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取页面列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取页面列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), pageList, false );
+            Wrapper< MallPage > wrapper = new EntityWrapper<>();
+            wrapper.in( "pag_sto_id", shopIds );
+            List< MallPage > list = mallPageService.selectList( wrapper );
+            if ( list != null && list.size() > 0 ) {
+                pageList = new ArrayList<>();
+                for ( MallPage page : list ) {
+                    Map< String,Object > map = new HashMap<>();
+                    map.put( "id", page.getId() );
+                    map.put( "name", page.getPagName() );
+                    map.put( "url", PropertiesUtil.getPhoneWebHomeUrl() + "/index/" + page.getId() );
+                    pageList.add( map );
+                }
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取页面列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取页面列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), pageList, false );
     }
 
     /**
@@ -102,10 +102,10 @@ public class MallPageApiController {
     @ResponseBody
     @RequestMapping( value = "/getPageIdByShopId", method = RequestMethod.POST )
     public ServerResponse getPageIdByShopId( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	Integer pageId = 0;
-	try {
-	    //pageId = mallPageService.getPageIdByShopId( shopId );
-	  /*  Wrapper< MallStore > storeWrapper = new EntityWrapper<>();
+        Integer pageId = 0;
+        try {
+            //pageId = mallPageService.getPageIdByShopId( shopId );
+      /*  Wrapper< MallStore > storeWrapper = new EntityWrapper<>();
 	    storeWrapper.where( "is_delete = 0 and wx_shop_id = {0}", wxShopId );
 	    MallStore store = mallStoreService.selectOne( storeWrapper );
 	    if ( CommonUtil.isEmpty( store ) ) {
@@ -115,18 +115,18 @@ public class MallPageApiController {
 	    if ( shopInfo == null ) {pageId = 0;}
 	    if ( shopInfo.getStatus() == -1 ) {pageId = 0;}
 */
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    List< Map< String,Object > > pageList = mallPageDAO.selectPageByWxShopId( params );
-	    if ( pageList != null && pageList.size() > 0 ) {
-		pageId = CommonUtil.toInteger( pageList.get( 0 ).get( "id" ).toString() );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "根据门店id查询首页id异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "根据门店id查询首页id异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), pageId, false );
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            List< Map< String,Object > > pageList = mallPageDAO.selectPageByWxShopId( params );
+            if ( pageList != null && pageList.size() > 0 ) {
+                pageId = CommonUtil.toInteger( pageList.get( 0 ).get( "id" ).toString() );
+            }
+        } catch ( Exception e ) {
+            logger.error( "根据门店id查询首页id异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "根据门店id查询首页id异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), pageId, false );
     }
 
 }

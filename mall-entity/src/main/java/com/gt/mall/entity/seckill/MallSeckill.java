@@ -89,76 +89,75 @@ public class MallSeckill extends Model< MallSeckill > {
     @TableField( "is_use" )
     private Integer    isUse;
 
-
     /********************************* 以下参数不是表中字段要加注解   @TableField(exist = false) *******************************************/
     /**
      * 状态 不是表中字段
      */
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer status;
 
     /**
      * 店铺名称  不是表中字段
      */
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String shopName;
 
     /**
      * 秒杀价集合  不是表中字段
      */
-    @TableField(exist = false)
-    private List<MallSeckillPrice> priceList;
+    @TableField( exist = false )
+    private List< MallSeckillPrice > priceList;
 
     /**
      * 剩余时间   不是表中字段
      */
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Long times;
 
     /**
      * 活动开始剩余时间  不是表中字段
      */
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Long startTimes;
 
     /**
      * 数量  不是表中字段
      */
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Integer sNum;
 
     /**
      * 加入秒杀id 不是表中字段
      */
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int joinId = 0;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String twoCodePath;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int wx_shop_id; //门店ID 关联wx_shop表的id
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSeckill{" +
-			"id=" + id +
-			", productId=" + productId +
-			", sName=" + sName +
-			", sPrice=" + sPrice +
-			", sStartTime=" + sStartTime +
-			", sEndTime=" + sEndTime +
-			", sMaxBuyNum=" + sMaxBuyNum +
-			", userId=" + userId +
-			", shopId=" + shopId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isUse=" + isUse +
-			"}";
+        return "MallSeckill{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", sName=" + sName +
+            ", sPrice=" + sPrice +
+            ", sStartTime=" + sStartTime +
+            ", sEndTime=" + sEndTime +
+            ", sMaxBuyNum=" + sMaxBuyNum +
+            ", userId=" + userId +
+            ", shopId=" + shopId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isUse=" + isUse +
+            "}";
     }
 }

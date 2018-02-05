@@ -68,20 +68,20 @@ public class MallSearchKeyword extends Model< MallSearchKeyword > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSearchKeyword{" +
-			"id=" + id +
-			", keyword=" + keyword +
-			", searchNum=" + searchNum +
-			", shopId=" + shopId +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", editTime=" + editTime +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallSearchKeyword{" +
+            "id=" + id +
+            ", keyword=" + keyword +
+            ", searchNum=" + searchNum +
+            ", shopId=" + shopId +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", editTime=" + editTime +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

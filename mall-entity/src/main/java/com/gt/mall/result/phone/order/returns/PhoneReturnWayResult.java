@@ -27,7 +27,7 @@ public class PhoneReturnWayResult implements Serializable {
     private String value;
 
     public PhoneReturnWayResult( Integer id, String value ) {
-	this.id = id;
-	this.value = value;
+        this.id = id;
+        this.value = value;
     }
 }

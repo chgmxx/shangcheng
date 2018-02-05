@@ -14,22 +14,23 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-31
  */
-public interface PurchaseOrderDetailsDAO extends BaseMapper<PurchaseOrderDetails> {
+public interface PurchaseOrderDetailsDAO extends BaseMapper< PurchaseOrderDetails > {
 
     /**
      * 使用orderid查询订单详情
      *
      * @param orderId 订单id
+     *
      * @return list
      */
-    List<Map<String, Object>> findOrderDetails(Integer orderId);
-
+    List< Map< String,Object > > findOrderDetails( Integer orderId );
 
     /**
      * 删除该订单下的未用商品信息
      *
      * @param parms orderId:订单id,detailIds:详情id集合
+     *
      * @return 是否成功
      */
-    int deleteDetailsByOrderId(Map<String, Object> parms);
+    int deleteDetailsByOrderId( Map< String,Object > parms );
 }

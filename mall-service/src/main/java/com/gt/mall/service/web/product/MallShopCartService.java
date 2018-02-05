@@ -33,7 +33,7 @@ public interface MallShopCartService extends BaseService< MallShopCart > {
      * 查询商品信息（立即购买进入提交订单页面所需的）
      */
     List< Map< String,Object > > getProductByIds( Map< String,Object > maps, WxPublicUsers pbUser, Member member, int userId, List< Map< String,Object > > shopList )
-		    throws Exception;
+        throws Exception;
 
     /**
      * 加入购物车

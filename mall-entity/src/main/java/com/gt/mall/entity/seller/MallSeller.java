@@ -187,44 +187,44 @@ public class MallSeller extends Model< MallSeller > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSeller{" +
-			"id=" + id +
-			", memberId=" + memberId +
-			", refereesMemberId=" + refereesMemberId +
-			", userName=" + userName +
-			", companyName=" + companyName +
-			", telephone=" + telephone +
-			", commission=" + commission +
-			", totalCommission=" + totalCommission +
-			", freezeCommission=" + freezeCommission +
-			", canPresentedCommission=" + canPresentedCommission +
-			", alreadyPresentedCommission=" + alreadyPresentedCommission +
-			", incomeIntegral=" + incomeIntegral +
-			", saleMoney=" + saleMoney +
-			", userType=" + userType +
-			", busUserId=" + busUserId +
-			", applyTime=" + applyTime +
-			", checkTime=" + checkTime +
-			", checkStatus=" + checkStatus +
-			", checkPassReason=" + checkPassReason +
-			", qrCodePath=" + qrCodePath +
-			", addTime=" + addTime +
-			", remark=" + remark +
-			", isStartUse=" + isStartUse +
-			", sceneKey=" + sceneKey +
-			", qrCodeTicket=" + qrCodeTicket +
-			", isSendFocusIntegral=" + isSendFocusIntegral +
-			", isFocusPublic=" + isFocusPublic +
-			", promotionPosterPath=" + promotionPosterPath +
-			", headImagePath=" + headImagePath +
-			", isMergeData=" + isMergeData +
-			", ucqrCodePath=" + ucqrCodePath +
-			", ucpromotionPosterPath=" + ucpromotionPosterPath +
-			"}";
+        return "MallSeller{" +
+            "id=" + id +
+            ", memberId=" + memberId +
+            ", refereesMemberId=" + refereesMemberId +
+            ", userName=" + userName +
+            ", companyName=" + companyName +
+            ", telephone=" + telephone +
+            ", commission=" + commission +
+            ", totalCommission=" + totalCommission +
+            ", freezeCommission=" + freezeCommission +
+            ", canPresentedCommission=" + canPresentedCommission +
+            ", alreadyPresentedCommission=" + alreadyPresentedCommission +
+            ", incomeIntegral=" + incomeIntegral +
+            ", saleMoney=" + saleMoney +
+            ", userType=" + userType +
+            ", busUserId=" + busUserId +
+            ", applyTime=" + applyTime +
+            ", checkTime=" + checkTime +
+            ", checkStatus=" + checkStatus +
+            ", checkPassReason=" + checkPassReason +
+            ", qrCodePath=" + qrCodePath +
+            ", addTime=" + addTime +
+            ", remark=" + remark +
+            ", isStartUse=" + isStartUse +
+            ", sceneKey=" + sceneKey +
+            ", qrCodeTicket=" + qrCodeTicket +
+            ", isSendFocusIntegral=" + isSendFocusIntegral +
+            ", isFocusPublic=" + isFocusPublic +
+            ", promotionPosterPath=" + promotionPosterPath +
+            ", headImagePath=" + headImagePath +
+            ", isMergeData=" + isMergeData +
+            ", ucqrCodePath=" + ucqrCodePath +
+            ", ucpromotionPosterPath=" + ucpromotionPosterPath +
+            "}";
     }
 }

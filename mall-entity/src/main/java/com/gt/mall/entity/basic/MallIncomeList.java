@@ -51,7 +51,7 @@ public class MallIncomeList extends Model< MallIncomeList > {
      * 金额单位  1人民币 2粉币 3积分
      */
     @TableField( "income_unit" )
-    private Integer incomeUnit;
+    private Integer    incomeUnit;
     /**
      * 用户id(bus_user中的id)
      */
@@ -101,7 +101,7 @@ public class MallIncomeList extends Model< MallIncomeList > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
 }

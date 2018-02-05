@@ -17,12 +17,13 @@ public interface MallSpecificaService extends BaseService< MallSpecifica > {
 
     /**
      * 根据规格名称查询规格信息
+     *
      * @param params name 规格名称
      * @param params userId 商家id
      * @param params erpNameId  erp规格名称id
+     *
      * @return
      */
-    MallSpecifica selectBySpecName(Map<String, Object> params);
-
+    MallSpecifica selectBySpecName( Map< String,Object > params );
 
 }

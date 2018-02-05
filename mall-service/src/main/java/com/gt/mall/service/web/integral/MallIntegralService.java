@@ -51,14 +51,14 @@ public interface MallIntegralService extends BaseService< MallIntegral > {
     /**
      * 兑换积分
      *
-     * @param integralDTO  productId:商品id,integralId:积分商品Id,productNum：商品数量，
-     *                productSpecificas：商品规格，flowPhone：号码， receiveId：收货id
-     * @param member  用户
-     * @param browser 买家 数据来源
+     * @param integralDTO productId:商品id,integralId:积分商品Id,productNum：商品数量，
+     *                    productSpecificas：商品规格，flowPhone：号码， receiveId：收货id
+     * @param member      用户
+     * @param browser     买家 数据来源
      *
      * @return 积分
      */
-    Map< String,Object > recordIntegral( PhoneAddIntegralDTO integralDTO , Member member, Integer browser, HttpServletRequest request );
+    Map< String,Object > recordIntegral( PhoneAddIntegralDTO integralDTO, Member member, Integer browser, HttpServletRequest request );
 
     /**
      * 查询用户下面所有的积分商品
@@ -67,7 +67,7 @@ public interface MallIntegralService extends BaseService< MallIntegral > {
      *
      * @return 积分商品列表
      */
-    PageUtil selectIntegralByPage( Map< String,Object > params, int userId ,List< Map< String,Object > > shoplist);
+    PageUtil selectIntegralByPage( Map< String,Object > params, int userId, List< Map< String,Object > > shoplist );
 
     /**
      * 查询单个的积分商品信息

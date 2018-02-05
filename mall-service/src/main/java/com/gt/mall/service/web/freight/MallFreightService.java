@@ -131,7 +131,7 @@ public interface MallFreightService extends BaseService< MallFreight > {
      *
      * @return 运费
      */
-    public double getFreightMoneyByProductList( List< PhoneFreightProductDTO > freightDTOList ,Double juli,Integer provinces);
+    public double getFreightMoneyByProductList( List< PhoneFreightProductDTO > freightDTOList, Double juli, Integer provinces );
 
     /**
      * 获取运费

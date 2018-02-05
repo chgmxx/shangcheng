@@ -25,7 +25,7 @@ public class MapperAspect {
 
     @AfterReturning( "execution(* com.gt.mall.dao..*DAO.*(..))" )
     public void logServiceAccess( JoinPoint joinPoint ) {
-	logger.info( "Completed: " + joinPoint );
+        logger.info( "Completed: " + joinPoint );
     }
 
     /**
@@ -40,14 +40,14 @@ public class MapperAspect {
      */
     @Around( "pointCutMethod()" )
     public Object doAround( ProceedingJoinPoint pjp ) throws Throwable {
-	long begin = System.currentTimeMillis();
-	Object obj = pjp.proceed();
-	long end = System.currentTimeMillis();
+        long begin = System.currentTimeMillis();
+        Object obj = pjp.proceed();
+        long end = System.currentTimeMillis();
 
-	logger.info( "调用Mapper方法：{}", pjp.getSignature().toString() );
-	logger.info( "参数：{}", Arrays.toString( pjp.getArgs() ) );
-	logger.info( "执行耗时：{}毫秒", ( end - begin ) );
+        logger.info( "调用Mapper方法：{}", pjp.getSignature().toString() );
+        logger.info( "参数：{}", Arrays.toString( pjp.getArgs() ) );
+        logger.info( "执行耗时：{}毫秒", ( end - begin ) );
 
-	return obj;
+        return obj;
     }
 }

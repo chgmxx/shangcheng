@@ -937,7 +937,7 @@ public class MallNewOrderAppletServiceImpl extends BaseServiceImpl< MallAppletIm
             detail.setCardReceiveId( product.getCardType() );
         }
         /*if(CommonUtil.isNotEmpty(detailObj.get("cardReceiveId"))){
-			detail.setCardReceiveId(CommonUtil.toInteger(detailObj.get("cardReceiveId")));
+            detail.setCardReceiveId(CommonUtil.toInteger(detailObj.get("cardReceiveId")));
 		}*/
         //	if ( CommonUtil.isNotEmpty( detailObj.get( "duofenCoupon" ) ) ) {
         //	    detail.setDuofenCoupon( CommonUtil.toString( detailObj.getString( "duofenCoupon" ) ) );

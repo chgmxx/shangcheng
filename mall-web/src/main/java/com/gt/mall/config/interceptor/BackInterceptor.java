@@ -24,29 +24,29 @@ public class BackInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
-	//	logger.info( ">>>BackInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.info( ">>>BackInterceptor>>basePath = " + CommonUtil.getpath( request ) );
+        //	logger.info( ">>>BackInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+        logger.info( ">>>BackInterceptor>>basePath = " + CommonUtil.getpath( request ) );
 
-	long startTime = System.currentTimeMillis();
-	request.setAttribute( "runStartTime", startTime );
+        long startTime = System.currentTimeMillis();
+        request.setAttribute( "runStartTime", startTime );
 
-	// 获得在下面代码中要用的request,response,session对象
+        // 获得在下面代码中要用的request,response,session对象
 
-	BusUser user = MallSessionUtils.getLoginUser( request );
-	String url = request.getRequestURI();
+        BusUser user = MallSessionUtils.getLoginUser( request );
+        String url = request.getRequestURI();
 
-	if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
-	    if ( request.getServerName().contains( "192.168.2" ) ) {
-		user = new BusUser();
-		user.setId( 42 );
-		user.setName( "gt123456" );
-		user.setPid( 0 );
-		MallSessionUtils.setLoginUser( request, user );
-	    } else {
-		throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), PropertiesUtil.getWxmpDomain() );
-	    }
-	}
-	return true;// 只有返回true才会继续向下执行，返回false取消当前请求
+        if ( user == null && !url.contains( "error" ) ) {// 判断如果没有取到微信授权信息,就跳转到登陆页面
+            if ( request.getServerName().contains( "192.168.2" ) ) {
+                user = new BusUser();
+                user.setId( 42 );
+                user.setName( "gt123456" );
+                user.setPid( 0 );
+                MallSessionUtils.setLoginUser( request, user );
+            } else {
+                throw new BusinessException( ResponseEnums.NEED_LOGIN.getCode(), ResponseEnums.NEED_LOGIN.getDesc(), PropertiesUtil.getWxmpDomain() );
+            }
+        }
+        return true;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
 
     /**
@@ -55,17 +55,17 @@ public class BackInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
 
-	long startTime = (Long) request.getAttribute( "runStartTime" );
+        long startTime = (Long) request.getAttribute( "runStartTime" );
 
-	long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
-	long executeTime = endTime - startTime;
+        long executeTime = endTime - startTime;
 
-	HandlerMethod handlerMethod = (HandlerMethod) handler;
-	Method method = handlerMethod.getMethod();
-	/*if ( logger.isDebugEnabled() ) {*/
-	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
-	logger.error( "访问的执行时间 : " + executeTime + "ms----页面："+ CommonUtil.getpath( request ) );
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+    /*if ( logger.isDebugEnabled() ) {*/
+        logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
+        logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
     }
 
     /**

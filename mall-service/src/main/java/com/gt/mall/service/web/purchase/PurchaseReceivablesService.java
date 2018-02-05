@@ -16,18 +16,18 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-31
  */
-public interface PurchaseReceivablesService extends BaseService<PurchaseReceivables> {
-
+public interface PurchaseReceivablesService extends BaseService< PurchaseReceivables > {
 
     /**
      * 订单支付后回调此处进行后续操作
      *
      * @param receivablesNumber
      */
-    void addReceivables(@RequestParam String receivablesNumber) throws Exception;
+    void addReceivables( @RequestParam String receivablesNumber ) throws Exception;
 
     /**
      * 新增收款记录
+     *
      * @param request
      * @param memberId
      * @param orderId
@@ -41,13 +41,14 @@ public interface PurchaseReceivablesService extends BaseService<PurchaseReceivab
      * @param discount
      */
     String addReceivables( HttpServletRequest request, Integer memberId, Integer orderId, Integer busId, String buyMode, Double money, Double fansCurrency, Double integral,
-                    String coupon, String termId, Double discount );
+        String coupon, String termId, Double discount );
 
     /**
      * 分页查询数据
      *
      * @param parms
+     *
      * @return
      */
-    PageUtil findList(Map<String, Object> parms);
+    PageUtil findList( Map< String,Object > parms );
 }

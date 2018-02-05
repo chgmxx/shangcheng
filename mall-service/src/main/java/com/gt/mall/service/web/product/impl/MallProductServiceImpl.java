@@ -440,7 +440,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             MallProductDetail detail = mallProductDetailService.selectByProductId( product.getId() );
             // 查询商品分组
             /*List<MallProductGroup> groupList = mallProductGroupDao
-					.selectByProductId(product.getId());*/
+                    .selectByProductId(product.getId());*/
             Map< String,Object > params = new HashMap<>();
             params.put( "proId", product.getId() );
             List< Map< String,Object > > groupList = mallProductGroupDAO.selectgroupsByProductId( params );
@@ -554,7 +554,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
                 isType = 5;
             }
 
-	    map.put( "isType", isType );
+            map.put( "isType", isType );
 
             map.put( "pro", product );
             map.put( "proDetail", detail );

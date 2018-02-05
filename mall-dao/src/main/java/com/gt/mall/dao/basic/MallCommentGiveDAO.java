@@ -17,15 +17,17 @@ public interface MallCommentGiveDAO extends BaseMapper< MallCommentGive > {
 
     /**
      * 查询评论送礼信息
+     *
      * @param give userId：用户Id,isEnable:是否启用，giveStatus：送礼状态
+     *
      * @return 评论送礼
      */
-    MallCommentGive selectByGive(MallCommentGive give);
+    MallCommentGive selectByGive( MallCommentGive give );
 
     /**
      * 通过用户 查询评论送礼列表
      * @param userId userId：用户Id
      * @return 评论送礼列表
      */
-//    List<MallCommentGive> getGiveByUserId(int userId);
+    //    List<MallCommentGive> getGiveByUserId(int userId);
 }

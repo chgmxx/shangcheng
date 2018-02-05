@@ -24,52 +24,52 @@ public class ConvertBlobTypeHandler extends BaseTypeHandler< String > {
 
     @Override
     public void setNonNullParameter( PreparedStatement ps, int i,
-		    String parameter, JdbcType jdbcType ) throws SQLException {
-	ByteArrayInputStream bis;
-	try {
-	    //###把String转化成byte流
-	    bis = new ByteArrayInputStream( parameter.getBytes( DEFAULT_CHARSET ) );
-	} catch ( UnsupportedEncodingException e ) {
-	    throw new RuntimeException( "Blob Encoding Error!" );
-	}
-	ps.setBinaryStream( i, bis, parameter.length() );
+        String parameter, JdbcType jdbcType ) throws SQLException {
+        ByteArrayInputStream bis;
+        try {
+            //###把String转化成byte流
+            bis = new ByteArrayInputStream( parameter.getBytes( DEFAULT_CHARSET ) );
+        } catch ( UnsupportedEncodingException e ) {
+            throw new RuntimeException( "Blob Encoding Error!" );
+        }
+        ps.setBinaryStream( i, bis, parameter.length() );
     }
 
     @Override
     public String getNullableResult( ResultSet rs, String columnName )
-		    throws SQLException {
-	Blob blob = null;
-	blob = rs.getBlob( columnName );
-	if ( blob == null ) {
-	    return "";
-	}
-	byte[]  returnValue = blob.getBytes( 1, (int) blob.length() );
-	try {
-	    //###把byte转化成string
-	    return new String( returnValue, DEFAULT_CHARSET );
-	} catch ( UnsupportedEncodingException e ) {
-	    throw new RuntimeException( "Blob Encoding Error!" );
-	}
+        throws SQLException {
+        Blob blob = null;
+        blob = rs.getBlob( columnName );
+        if ( blob == null ) {
+            return "";
+        }
+        byte[] returnValue = blob.getBytes( 1, (int) blob.length() );
+        try {
+            //###把byte转化成string
+            return new String( returnValue, DEFAULT_CHARSET );
+        } catch ( UnsupportedEncodingException e ) {
+            throw new RuntimeException( "Blob Encoding Error!" );
+        }
     }
 
     @Override
     public String getNullableResult( CallableStatement cs, int columnIndex )
-		    throws SQLException {
-	Blob blob = cs.getBlob( columnIndex );
-	byte[] returnValue = null;
-	if ( null != blob ) {
-	    returnValue = blob.getBytes( 1, (int) blob.length() );
-	}
-	try {
-	    return new String( returnValue, DEFAULT_CHARSET );
-	} catch ( UnsupportedEncodingException e ) {
-	    throw new RuntimeException( "Blob Encoding Error!" );
-	}
+        throws SQLException {
+        Blob blob = cs.getBlob( columnIndex );
+        byte[] returnValue = null;
+        if ( null != blob ) {
+            returnValue = blob.getBytes( 1, (int) blob.length() );
+        }
+        try {
+            return new String( returnValue, DEFAULT_CHARSET );
+        } catch ( UnsupportedEncodingException e ) {
+            throw new RuntimeException( "Blob Encoding Error!" );
+        }
     }
 
     @Override
     public String getNullableResult( ResultSet arg0, int arg1 )
-		    throws SQLException {
-	return null;
+        throws SQLException {
+        return null;
     }
 }

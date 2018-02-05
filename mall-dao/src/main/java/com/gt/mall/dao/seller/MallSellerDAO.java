@@ -20,7 +20,7 @@ public interface MallSellerDAO extends BaseMapper< MallSeller > {
     /**
      * 修改销售员状态
      */
-    boolean updateStatusByUserId( @Param( "status" ) Integer status, @Param("user_id") Integer user_id );
+    boolean updateStatusByUserId( @Param( "status" ) Integer status, @Param( "user_id" ) Integer user_id );
 
     /**
      * 查询客户的数量

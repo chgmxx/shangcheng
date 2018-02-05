@@ -580,7 +580,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
                 }
         /*if ( params.get( "status" ).toString().equals( "4" ) ) {//确认收货订单已经完成
-		    if ( CommonUtil.isNotEmpty( order ) ) {
+            if ( CommonUtil.isNotEmpty( order ) ) {
 			if ( CommonUtil.isNotEmpty( order.getMallOrderDetail() ) ) {
 			    if ( CommonUtil.isEmpty( member ) ) {
 				member = memberService.findMemberById( order.getBuyerUserId() ,null);
@@ -1581,7 +1581,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
                                                 daifus.setDfReturnNo( oReturn.getReturnNo() );
                                                 daifus.setDfReturnMoney( BigDecimal.valueOf( returnMoneys ) );
                                                 daifus.setDfReturnTime( new Date() );
-                                                double daifuMoney = CommonUtil.toDouble( daifu.getDfPayMoney());
+                                                double daifuMoney = CommonUtil.toDouble( daifu.getDfPayMoney() );
                                                 //returnMoneys == CommonUtil.toDouble( daifu.getDfPayMoney() )
                                                 if ( Double.compare( returnMoneys, daifuMoney ) == 0 ) {
                                                     daifus.setDfReturnStatus( 2 );
@@ -1626,7 +1626,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
                                                             daifus.setDfReturnMoney( BigDecimal.valueOf( returnMoneys ) );
                                                             daifus.setDfReturnTime( new Date() );
                                                             Double daifuMoney = CommonUtil.toDouble( daifu.getDfPayMoney() );
-                                                            if (Double.compare( returnMoneys, daifuMoney) == 0) {// returnMoneys == CommonUtil.toDouble( daifu.getDfPayMoney() )
+                                                            if ( Double.compare( returnMoneys, daifuMoney ) == 0 ) {// returnMoneys == CommonUtil.toDouble( daifu.getDfPayMoney() )
                                                                 daifus.setDfReturnStatus( 2 );
                                                             } else if ( returnMoneys < CommonUtil.toDouble( daifu.getDfPayMoney() ) ) {
                                                                 daifus.setDfReturnStatus( 0 );
@@ -1647,7 +1647,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
                                                     daifus.setDfReturnMoney( BigDecimal.valueOf( returnMoneys ) );
                                                     daifus.setDfReturnTime( new Date() );
                                                     double daifuMoney = CommonUtil.toDouble( daifu.getDfPayMoney() );
-                                                    if (  Double.compare( returnMoneys,daifuMoney ) == 0) {//returnMoneys == CommonUtil.toDouble( daifu.getDfPayMoney() )
+                                                    if ( Double.compare( returnMoneys, daifuMoney ) == 0 ) {//returnMoneys == CommonUtil.toDouble( daifu.getDfPayMoney() )
                                                         daifus.setDfReturnStatus( 2 );
                                                     } else if ( returnMoneys < CommonUtil.toDouble( daifu.getDfPayMoney() ) ) {
                                                         daifus.setDfReturnStatus( 0 );
@@ -2621,7 +2621,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
 
     private int getTradeOrderList( HSSFSheet sheet, HSSFCellStyle valueStyle, HSSFCellStyle leftStyle, Map< String,Object > order, int i, List< Map< String,Object > > shopList ) {
         String state = "";//订单状态
-//        Integer orderStatus = CommonUtil.toInteger( order.get( "orderStatus" ) );
+        //        Integer orderStatus = CommonUtil.toInteger( order.get( "orderStatus" ) );
         Integer returnStatus = null;
 
         if ( CommonUtil.isNotEmpty( order.get( "return_status" ) ) ) {

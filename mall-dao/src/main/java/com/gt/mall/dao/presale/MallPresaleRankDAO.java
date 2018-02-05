@@ -17,15 +17,19 @@ public interface MallPresaleRankDAO extends BaseMapper< MallPresaleRank > {
 
     /**
      * 通过预售id查询预定的排名
+     *
      * @param maps
+     *
      * @return
      */
-    MallPresaleRank selectByPresaleId(Map<String, Object> maps);
+    MallPresaleRank selectByPresaleId( Map< String,Object > maps );
 
     /**
      * 根据预售id。。。查询预售送礼
+     *
      * @param rank
+     *
      * @return
      */
-    MallPresaleRank selectByPresale(MallPresaleRank rank);
+    MallPresaleRank selectByPresale( MallPresaleRank rank );
 }

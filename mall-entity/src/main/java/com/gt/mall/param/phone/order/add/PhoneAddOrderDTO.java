@@ -18,7 +18,7 @@ import java.util.Map;
 @ApiModel( value = "PhoneAddOrderResult", description = "提交订单参数" )
 @Getter
 @Setter
-public class PhoneAddOrderDTO   {
+public class PhoneAddOrderDTO {
 
     @ApiModelProperty( name = "totalMoney", value = "商品总额（优惠前的价格）" )
     private double totalMoney;

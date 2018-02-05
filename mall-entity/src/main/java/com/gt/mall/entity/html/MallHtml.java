@@ -114,36 +114,36 @@ public class MallHtml extends Model< MallHtml > {
      * 是否删除 0 未删除  1已删除
      */
     @TableField( "is_delete" )
-    private Integer    isDelete;
+    private Integer isDelete;
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallHtml{" +
-			"id=" + id +
-			", dataJson=" + dataJson +
-			", dataBg=" + dataBg +
-			", dataTransverse=" + dataTransverse +
-			", musicurl=" + musicurl +
-			", addres=" + addres +
-			", musicname=" + musicname +
-			", playerStyle=" + playerStyle +
-			", busUserId=" + busUserId +
-			", creattime=" + creattime +
-			", codeUrl=" + codeUrl +
-			", state=" + state +
-			", pid=" + pid +
-			", htmlname=" + htmlname +
-			", reportstate=" + reportstate +
-			", sourceType=" + sourceType +
-			", modelid=" + modelid +
-			", introduce=" + introduce +
-			", bakurl=" + bakurl +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallHtml{" +
+            "id=" + id +
+            ", dataJson=" + dataJson +
+            ", dataBg=" + dataBg +
+            ", dataTransverse=" + dataTransverse +
+            ", musicurl=" + musicurl +
+            ", addres=" + addres +
+            ", musicname=" + musicname +
+            ", playerStyle=" + playerStyle +
+            ", busUserId=" + busUserId +
+            ", creattime=" + creattime +
+            ", codeUrl=" + codeUrl +
+            ", state=" + state +
+            ", pid=" + pid +
+            ", htmlname=" + htmlname +
+            ", reportstate=" + reportstate +
+            ", sourceType=" + sourceType +
+            ", modelid=" + modelid +
+            ", introduce=" + introduce +
+            ", bakurl=" + bakurl +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

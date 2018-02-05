@@ -16,18 +16,21 @@ import java.util.Map;
  */
 public interface MallSearchLabelDAO extends BaseMapper< MallSearchLabel > {
 
-
     /**
      * 铜鼓店铺id和分组id查询搜索信息
+     *
      * @param label
+     *
      * @return
      */
-    MallSearchLabel selectByGroupShop(MallSearchLabel label);
+    MallSearchLabel selectByGroupShop( MallSearchLabel label );
 
     /**
      * 通过用户信息查询搜索标签
+     *
      * @param map
+     *
      * @return
      */
-    List<Map<String, Object>> selectByUser(Map<String, Object> map);
+    List< Map< String,Object > > selectByUser( Map< String,Object > map );
 }

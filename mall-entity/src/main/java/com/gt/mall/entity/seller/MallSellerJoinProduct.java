@@ -75,21 +75,21 @@ public class MallSellerJoinProduct extends Model< MallSellerJoinProduct > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSellerJoinProduct{" +
-			"id=" + id +
-			", productId=" + productId +
-			", commissionRate=" + commissionRate +
-			", commissionType=" + commissionType +
-			", userId=" + userId +
-			", shopId=" + shopId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isUse=" + isUse +
-			"}";
+        return "MallSellerJoinProduct{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", commissionRate=" + commissionRate +
+            ", commissionType=" + commissionType +
+            ", userId=" + userId +
+            ", shopId=" + shopId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isUse=" + isUse +
+            "}";
     }
 }

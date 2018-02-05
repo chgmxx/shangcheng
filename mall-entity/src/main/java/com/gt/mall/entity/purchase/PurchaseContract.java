@@ -13,56 +13,55 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ * <p>
  * </p>
  *
  * @author yangqian
  * @since 2017-07-31
  */
 @Data
-@Accessors(chain = true)
-@TableName("purchase_contract")
-public class PurchaseContract extends Model<PurchaseContract> {
+@Accessors( chain = true )
+@TableName( "purchase_contract" )
+public class PurchaseContract extends Model< PurchaseContract > {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+    @TableId( value = "id", type = IdType.AUTO )
+    private Integer id;
     /**
      * 合同标题
      */
-	@TableField("contract_title")
-	private String contractTitle;
+    @TableField( "contract_title" )
+    private String  contractTitle;
     /**
      * 合同内容
      */
-	@TableField("contract_content")
-	private String contractContent;
+    @TableField( "contract_content" )
+    private String  contractContent;
     /**
      * 商家id
      */
-	@TableField("bus_id")
-	private Integer busId;
+    @TableField( "bus_id" )
+    private Integer busId;
     /**
      * 创建时间
      */
-	@TableField("create_date")
-	private Date createDate;
+    @TableField( "create_date" )
+    private Date    createDate;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
-
-	@Override
-	public String toString() {
-		return "PurchaseContract{" +
-			"id=" + id +
-			", contractTitle=" + contractTitle +
-			", contractContent=" + contractContent +
-			", busId=" + busId +
-			", createDate=" + createDate +
-			"}";
-	}
+    @Override
+    public String toString() {
+        return "PurchaseContract{" +
+            "id=" + id +
+            ", contractTitle=" + contractTitle +
+            ", contractContent=" + contractContent +
+            ", busId=" + busId +
+            ", createDate=" + createDate +
+            "}";
+    }
 }

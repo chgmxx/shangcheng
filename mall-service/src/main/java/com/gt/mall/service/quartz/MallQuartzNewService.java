@@ -63,6 +63,7 @@ public interface MallQuartzNewService {
      * 调用会员退款接口
      */
     void memberRefund();
+
     /**
      * 评论送礼
      */

@@ -13,13 +13,13 @@ public class BaseException extends Exception {
     private boolean result = false;
 
     public BaseException() {
-	super();
+        super();
     }
 
     public BaseException( boolean result, String message ) {
-	super();
-	this.result = result;
-	this.message = message;
+        super();
+        this.result = result;
+        this.message = message;
     }
 
     /**
@@ -28,24 +28,24 @@ public class BaseException extends Exception {
      * @param errMsg
      */
     public BaseException( String errMsg ) {
-	super( errMsg );
-	this.message = errMsg;
+        super( errMsg );
+        this.message = errMsg;
     }
 
     public boolean getResult() {
 
-	return result;
+        return result;
     }
 
     public void setResult( boolean result ) {
-	this.result = result;
+        this.result = result;
     }
 
     public String getMessage() {
-	return CommonUtil.isEmpty( message ) ? "操作失败，系统异常！" : message;
+        return CommonUtil.isEmpty( message ) ? "操作失败，系统异常！" : message;
     }
 
     public void setMessage( String message ) {
-	this.message = message;
+        this.message = message;
     }
 }

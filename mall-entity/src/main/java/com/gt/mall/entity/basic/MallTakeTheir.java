@@ -113,37 +113,37 @@ public class MallTakeTheir extends Model< MallTakeTheir > {
     @TableField( "is_delete" )
     private Integer isDelete;
 
-    @TableField(exist = false)
-    private List<MallImageAssociative> imageList;
+    @TableField( exist = false )
+    private List< MallImageAssociative > imageList;
 
-    @TableField(exist = false)
-    private List<MallTakeTheirTime> timeList;
+    @TableField( exist = false )
+    private List< MallTakeTheirTime > timeList;
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallTakeTheir{" +
-			"id=" + id +
-			", visitName=" + visitName +
-			", visitProvinceId=" + visitProvinceId +
-			", visitCityId=" + visitCityId +
-			", visitAreaId=" + visitAreaId +
-			", visitAddress=" + visitAddress +
-			", visitLongitude=" + visitLongitude +
-			", visitLatitude=" + visitLatitude +
-			", visitAddressDetail=" + visitAddressDetail +
-			", visitContactNumber=" + visitContactNumber +
-			", visitRemark=" + visitRemark +
-			", isStoreReception=" + isStoreReception +
-			", isStorePay=" + isStorePay +
-			", imagesUrl=" + imagesUrl +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallTakeTheir{" +
+            "id=" + id +
+            ", visitName=" + visitName +
+            ", visitProvinceId=" + visitProvinceId +
+            ", visitCityId=" + visitCityId +
+            ", visitAreaId=" + visitAreaId +
+            ", visitAddress=" + visitAddress +
+            ", visitLongitude=" + visitLongitude +
+            ", visitLatitude=" + visitLatitude +
+            ", visitAddressDetail=" + visitAddressDetail +
+            ", visitContactNumber=" + visitContactNumber +
+            ", visitRemark=" + visitRemark +
+            ", isStoreReception=" + isStoreReception +
+            ", isStorePay=" + isStorePay +
+            ", imagesUrl=" + imagesUrl +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

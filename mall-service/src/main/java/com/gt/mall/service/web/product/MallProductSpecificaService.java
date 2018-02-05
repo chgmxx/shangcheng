@@ -39,6 +39,7 @@ public interface MallProductSpecificaService extends BaseService< MallProductSpe
      * 批量保存商品规格
      */
     Map< String,Object > newSaveOrUpdateBatch( Object obj, int proId, boolean isUpdate );
+
     /**
      * 自定义商品规格
      *

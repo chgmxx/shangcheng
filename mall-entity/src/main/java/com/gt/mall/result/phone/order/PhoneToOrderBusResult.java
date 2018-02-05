@@ -19,7 +19,7 @@ import java.util.List;
 @ApiModel( value = "PhoneToOrderBusResult", description = "商家（进入提交订单页面返回结果）" )
 @Getter
 @Setter
-public class PhoneToOrderBusResult  {
+public class PhoneToOrderBusResult {
 
     @ApiModelProperty( name = "busId", value = "商家id" )
     private Integer busId;

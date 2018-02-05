@@ -11,8 +11,10 @@ import com.gt.util.entity.result.pay.WxPayOrder;
 public interface PayOrderService {
     /**
      * 根据订单号查询微信支付订单信息
+     *
      * @param orderNo 订单号
+     *
      * @return 支付订单信息
      */
-    WxPayOrder selectWxOrdByOutTradeNo(String orderNo);
+    WxPayOrder selectWxOrdByOutTradeNo( String orderNo );
 }

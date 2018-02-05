@@ -19,43 +19,54 @@ public interface PayService {
 
     /**
      * 支付接口（微信，小程序，钱包和支付宝  支付接口）
+     *
      * @param payParams 支付接口参数
+     *
      * @return 是否成功
      */
-    Map<String,Object> payapi(SubQrPayParams payParams) throws Exception;
+    Map< String,Object > payapi( SubQrPayParams payParams ) throws Exception;
 
     /**
      * 退款接口（微信，小程序，钱包和支付宝退款接口）
+     *
      * @param refund 退款参数
+     *
      * @return 是否成功
      */
-    Map<String,Object> wxmemberPayRefund(WxmemberPayRefund refund);
+    Map< String,Object > wxmemberPayRefund( WxmemberPayRefund refund );
 
     /**
      * 钱包退款
+     *
      * @return 是否成功
      */
-    Map<String,Object> walletRefund(TRefundOrder refundOrder);
+    Map< String,Object > walletRefund( TRefundOrder refundOrder );
 
     /**
      * 商家提现
+     *
      * @param payment 提现参数
+     *
      * @return 返回值
      */
-    EnterprisePaymentResult enterprisePayment(ApiEnterprisePayment payment);
+    EnterprisePaymentResult enterprisePayment( ApiEnterprisePayment payment );
 
     /**
      * 获取商家的支付方式
+     *
      * @param busId 商家id
+     *
      * @return 支付方式
      */
-    PayWay getPayWay(Integer busId);
+    PayWay getPayWay( Integer busId );
 
     /**
      * 小程序支付
+     *
      * @param subQrPayParams 支付接口参数
+     *
      * @return 小程序支付参数
      */
-    Map<String,Object> commonpayVerApplet2_0(SubQrPayParams subQrPayParams) throws Exception;
+    Map< String,Object > commonpayVerApplet2_0( SubQrPayParams subQrPayParams ) throws Exception;
 
 }

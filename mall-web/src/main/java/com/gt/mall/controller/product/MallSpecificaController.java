@@ -15,6 +15,4 @@ import org.springframework.stereotype.Controller;
 /*@RequestMapping( value = "mPro/spec" )*/
 public class MallSpecificaController extends BaseController {
 
-
-
 }

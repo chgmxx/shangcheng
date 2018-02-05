@@ -56,30 +56,30 @@ public class PhoneHtmlController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "/htmlInfo", method = RequestMethod.POST )
     public ServerResponse htmlInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "h5ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    MallHtml obj = htmlService.selectById( id );
-	    Integer style = 1;//0代表是微信有公主号，1没有
-	    String ua = ( (HttpServletRequest) request ).getHeader( "user-agent" ).toLowerCase();
-	    if ( ua.indexOf( "micromessenger" ) > 0 ) {// 是否来自于微信浏览器打开
-		//来自于商家这边
-		if ( obj.getSourceType() == 2 ) {
-		    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( obj.getBusUserId() );
-		    if ( wxPublicUsers != null ) {
-			style = 0;
-		    }
-		}
-	    }
-	    result.put( "obj", obj );
-	    result.put( "style", style );
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取h5商城信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取h5商城信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            MallHtml obj = htmlService.selectById( id );
+            Integer style = 1;//0代表是微信有公主号，1没有
+            String ua = ( (HttpServletRequest) request ).getHeader( "user-agent" ).toLowerCase();
+            if ( ua.indexOf( "micromessenger" ) > 0 ) {// 是否来自于微信浏览器打开
+                //来自于商家这边
+                if ( obj.getSourceType() == 2 ) {
+                    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( obj.getBusUserId() );
+                    if ( wxPublicUsers != null ) {
+                        style = 0;
+                    }
+                }
+            }
+            result.put( "obj", obj );
+            result.put( "style", style );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取h5商城信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取h5商城信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -87,20 +87,20 @@ public class PhoneHtmlController extends AuthorizeOrUcLoginController {
      */
     @ApiOperation( value = "商城举报", notes = "商城举报" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "style", value = "举报ID", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "htmlId", value = "h5ID", paramType = "query", required = true, dataType = "int" ) } )
+        @ApiImplicitParam( name = "htmlId", value = "h5ID", paramType = "query", required = true, dataType = "int" ) } )
     @ResponseBody
     @RequestMapping( value = "htmlReport", method = RequestMethod.POST )
     public ServerResponse htmlReport( HttpServletRequest request, HttpServletResponse response, Integer style, Integer htmlId ) {
-	try {
-	    htmlReportService.htmlReport( htmlId, style );
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "商城举报异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商城举报异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            htmlReportService.htmlReport( htmlId, style );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "商城举报异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "商城举报异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     /**
@@ -110,21 +110,21 @@ public class PhoneHtmlController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "htmlfrom", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > htmlfrom( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneAddHtmlFromDTO htmlFromDTO ) {
-	try {
-	    MallHtmlFrom from = new MallHtmlFrom();
-	    EntityDtoConverter converter = new EntityDtoConverter();
-	    converter.entityConvertDto( htmlFromDTO, from );
-	    from.setCreattime( DateTimeKit.getDateTime() );
-	    htmlFromService.insert( from );
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "提交商城表单信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "提交商城表单信息异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        @RequestBody @Valid @ModelAttribute PhoneAddHtmlFromDTO htmlFromDTO ) {
+        try {
+            MallHtmlFrom from = new MallHtmlFrom();
+            EntityDtoConverter converter = new EntityDtoConverter();
+            converter.entityConvertDto( htmlFromDTO, from );
+            from.setCreattime( DateTimeKit.getDateTime() );
+            htmlFromService.insert( from );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "提交商城表单信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "提交商城表单信息异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
 }

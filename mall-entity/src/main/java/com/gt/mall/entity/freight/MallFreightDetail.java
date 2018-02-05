@@ -90,30 +90,30 @@ public class MallFreightDetail extends Model< MallFreightDetail > {
     @TableField( "add_money" )
     private BigDecimal addMoney;
 
-    @TableField(exist = false)
-    private List<MallFreightProvinces> provinceList;
+    @TableField( exist = false )
+    private List< MallFreightProvinces > provinceList;
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallFreightDetail{" +
-			"id=" + id +
-			", freightId=" + freightId +
-			", provincesId=" + provincesId +
-			", provinces=" + provinces +
-			", money=" + money +
-			", expressId=" + expressId +
-			", express=" + express +
-			", isDelete=" + isDelete +
-			", noMoneyNum=" + noMoneyNum +
-			", noMoney=" + noMoney +
-			", firstNums=" + firstNums +
-			", addNums=" + addNums +
-			", addMoney=" + addMoney +
-			"}";
+        return "MallFreightDetail{" +
+            "id=" + id +
+            ", freightId=" + freightId +
+            ", provincesId=" + provincesId +
+            ", provinces=" + provinces +
+            ", money=" + money +
+            ", expressId=" + expressId +
+            ", express=" + express +
+            ", isDelete=" + isDelete +
+            ", noMoneyNum=" + noMoneyNum +
+            ", noMoney=" + noMoney +
+            ", firstNums=" + firstNums +
+            ", addNums=" + addNums +
+            ", addMoney=" + addMoney +
+            "}";
     }
 }

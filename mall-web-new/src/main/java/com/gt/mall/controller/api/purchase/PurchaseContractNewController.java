@@ -49,26 +49,26 @@ public class PurchaseContractNewController extends BaseController {
     @ApiOperation( value = "合同列表(分页)", notes = "合同列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "contractTitle", value = "合同标题", paramType = "query", required = false, dataType = "String" ) } )
+        @ApiImplicitParam( name = "contractTitle", value = "合同标题", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String contractTitle ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser busUser = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "contractTitle", contractTitle );
-	    params.put( "busId", busUser.getId() );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser busUser = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            params.put( "contractTitle", contractTitle );
+            params.put( "busId", busUser.getId() );
 
-	    PageUtil page = contractService.findList( params );
-	    result.put( "page", page );
+            PageUtil page = contractService.findList( params );
+            result.put( "page", page );
 
-	} catch ( Exception e ) {
-	    logger.error( "获取合同列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取合同列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( Exception e ) {
+            logger.error( "获取合同列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取合同列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -78,16 +78,16 @@ public class PurchaseContractNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/contractInfo", method = RequestMethod.POST )
     public ServerResponse contractInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "合同ID", required = true ) @RequestParam Integer id ) {
-	PurchaseContract contract = null;
-	try {
-	    contract = contractService.selectById( id );
-	} catch ( Exception e ) {
-	    logger.error( "获取合同信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取合同信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), contract );
+        @ApiParam( name = "id", value = "合同ID", required = true ) @RequestParam Integer id ) {
+        PurchaseContract contract = null;
+        try {
+            contract = contractService.selectById( id );
+        } catch ( Exception e ) {
+            logger.error( "获取合同信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取合同信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), contract );
     }
 
     /**
@@ -98,35 +98,35 @@ public class PurchaseContractNewController extends BaseController {
     @SysLogAnnotation( description = "保存合同信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    BusUser busUser = MallSessionUtils.getLoginUser( request );
-	    PurchaseContract contract = new PurchaseContract();
-	    contract.setBusId( busUser.getId() );
-	    if ( CommonUtil.isEmpty( params.get( "contractTitle" ) ) ) {
-		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "合同标题不能为空" );
-	    }
-	    if ( CommonUtil.isEmpty( params.get( "contractContent" ) ) ) {
-		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "合同内容不能为空" );
-	    }
-	    contract.setContractContent( params.get( "contractContent" ).toString() );
-	    contract.setContractTitle( params.get( "contractTitle" ).toString() );
-	    if ( params.get( "id" ) != null && CommonUtil.isNotEmpty( params.get( "id" ).toString() ) ) {
-		contract.setId( Integer.parseInt( params.get( "id" ).toString() ) );
-		contractService.updateById( contract );
-	    } else {
-		contract.setCreateDate( new Date() );
-		contractService.insert( contract );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存合同信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存合同信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            BusUser busUser = MallSessionUtils.getLoginUser( request );
+            PurchaseContract contract = new PurchaseContract();
+            contract.setBusId( busUser.getId() );
+            if ( CommonUtil.isEmpty( params.get( "contractTitle" ) ) ) {
+                throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "合同标题不能为空" );
+            }
+            if ( CommonUtil.isEmpty( params.get( "contractContent" ) ) ) {
+                throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), "合同内容不能为空" );
+            }
+            contract.setContractContent( params.get( "contractContent" ).toString() );
+            contract.setContractTitle( params.get( "contractTitle" ).toString() );
+            if ( params.get( "id" ) != null && CommonUtil.isNotEmpty( params.get( "id" ).toString() ) ) {
+                contract.setId( Integer.parseInt( params.get( "id" ).toString() ) );
+                contractService.updateById( contract );
+            } else {
+                contract.setCreateDate( new Date() );
+                contractService.insert( contract );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存合同信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存合同信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -137,18 +137,18 @@ public class PurchaseContractNewController extends BaseController {
     @SysLogAnnotation( description = "删除合同信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "合同Id", required = true ) @RequestParam Integer id ) {
-	try {
-	    contractService.deleteById( id );
-	} catch ( BusinessException e ) {
-	    logger.error( "删除合同信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除合同信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除合同信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            contractService.deleteById( id );
+        } catch ( BusinessException e ) {
+            logger.error( "删除合同信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除合同信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除合同信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -158,15 +158,15 @@ public class PurchaseContractNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/contractList", method = RequestMethod.POST )
     public ServerResponse contractList( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map< String,Object > > contractList = null;
-	try {
-	    BusUser busUser = MallSessionUtils.getLoginUser( request );
-	    contractList = contractDAO.findAllList( busUser.getId() );
-	} catch ( Exception e ) {
-	    logger.error( "查询所有的合同异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询所有的合同异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), contractList );
+        List< Map< String,Object > > contractList = null;
+        try {
+            BusUser busUser = MallSessionUtils.getLoginUser( request );
+            contractList = contractDAO.findAllList( busUser.getId() );
+        } catch ( Exception e ) {
+            logger.error( "查询所有的合同异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询所有的合同异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), contractList );
     }
 }

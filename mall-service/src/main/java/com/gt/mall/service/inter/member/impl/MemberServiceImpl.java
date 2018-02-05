@@ -40,30 +40,30 @@ public class MemberServiceImpl implements MemberService {
      * @return 会员对象
      */
     private Member isEmptyMember( JSONObject memberObj, Member member ) {
-	if ( CommonUtil.isEmpty( member ) ) {
-	    member = new Member();
-	    member.setId( memberObj.getInteger( "id" ) );
-	    member.setBusid( memberObj.getInteger( "busId" ) );
-	    if ( CommonUtil.isNotEmpty( memberObj.get( "publicId" ) ) ) {
-		member.setPublicId( memberObj.getInteger( "publicId" ) );
-	    }
-	    if ( CommonUtil.isNotEmpty( memberObj.get( "nickname" ) ) ) {
-		member.setNickname( memberObj.getString( "nickname" ) );
-	    }
-	    if ( CommonUtil.isNotEmpty( memberObj.get( "openid" ) ) ) {
-		member.setOpenid( memberObj.getString( "openid" ) );
-	    }
-	    if ( CommonUtil.isNotEmpty( memberObj.get( "headimgurl" ) ) ) {
-		member.setHeadimgurl( memberObj.getString( "headimgurl" ) );
-	    }
-	    if ( CommonUtil.isNotEmpty( memberObj.get( "mcId" ) ) ) {
-		member.setMcId( CommonUtil.toInteger( memberObj.get( "mcId" ) ) );
-	    }
-	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
-		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
-	    }
-	}
-	return member;
+        if ( CommonUtil.isEmpty( member ) ) {
+            member = new Member();
+            member.setId( memberObj.getInteger( "id" ) );
+            member.setBusid( memberObj.getInteger( "busId" ) );
+            if ( CommonUtil.isNotEmpty( memberObj.get( "publicId" ) ) ) {
+                member.setPublicId( memberObj.getInteger( "publicId" ) );
+            }
+            if ( CommonUtil.isNotEmpty( memberObj.get( "nickname" ) ) ) {
+                member.setNickname( memberObj.getString( "nickname" ) );
+            }
+            if ( CommonUtil.isNotEmpty( memberObj.get( "openid" ) ) ) {
+                member.setOpenid( memberObj.getString( "openid" ) );
+            }
+            if ( CommonUtil.isNotEmpty( memberObj.get( "headimgurl" ) ) ) {
+                member.setHeadimgurl( memberObj.getString( "headimgurl" ) );
+            }
+            if ( CommonUtil.isNotEmpty( memberObj.get( "mcId" ) ) ) {
+                member.setMcId( CommonUtil.toInteger( memberObj.get( "mcId" ) ) );
+            }
+            if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
+                member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
+            }
+        }
+        return member;
     }
 
     /**
@@ -75,20 +75,20 @@ public class MemberServiceImpl implements MemberService {
      * @return 会员对象
      */
     public Member findMemberById( int memberId, Member member ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByMemberId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    member = JSONObject.parseObject( data, Member.class );
-	    //	    JSONObject memberObj = JSONObject.parseObject( data );
-	    //	    member = isEmptyMember( memberObj, member );
-	    //	    member.setFansCurrency( memberObj.getDouble( "fansCurrency" ) );
-	    //	    member.setIntegral( memberObj.getInteger( "integral" ) );
-	    //	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
-	    //		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
-	    //	    }
-	}
-	return member;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByMemberId" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            member = JSONObject.parseObject( data, Member.class );
+            //	    JSONObject memberObj = JSONObject.parseObject( data );
+            //	    member = isEmptyMember( memberObj, member );
+            //	    member.setFansCurrency( memberObj.getDouble( "fansCurrency" ) );
+            //	    member.setIntegral( memberObj.getInteger( "integral" ) );
+            //	    if ( CommonUtil.isNotEmpty( memberObj.get( "phone" ) ) ) {
+            //		member.setPhone( CommonUtil.toString( memberObj.get( "phone" ) ) );
+            //	    }
+        }
+        return member;
     }
 
     /**
@@ -101,50 +101,50 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public Member bingdingPhone( Map< String,Object > params, Member member ) {
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "bingdingPhone" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    JSONObject memberObj = JSONObject.parseObject( data );
-	    member.setPhone( memberObj.getString( "phone" ) );
-	}
-	return member;
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "bingdingPhone" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            JSONObject memberObj = JSONObject.parseObject( data );
+            member.setPhone( memberObj.getString( "phone" ) );
+        }
+        return member;
     }
 
     @Override
     public Member bingdingPhoneAreaCode( Map< String,Object > params, Member member ) {
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "bingdingPhoneAreaPhone" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    JSONObject memberObj = JSONObject.parseObject( data );
-	    member.setPhone( memberObj.getString( "phone" ) );
-	}
-	return member;
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "bingdingPhoneAreaPhone" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            JSONObject memberObj = JSONObject.parseObject( data );
+            member.setPhone( memberObj.getString( "phone" ) );
+        }
+        return member;
     }
 
     @Override
     public boolean bingdingPhoneH5( Integer busId, String phone, Integer memberId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	params.put( "phone", phone );
-	params.put( "busId", busId );
-	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5" );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return result.get( "code" ).toString().equals( "1" );
-	}
-	return false;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        params.put( "phone", phone );
+        params.put( "busId", busId );
+        Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5" );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return result.get( "code" ).toString().equals( "1" );
+        }
+        return false;
     }
 
     @Override
     public boolean bingdingPhoneH5AreaPhone( Integer busId, String phone, Integer memberId, Integer areaId, String areaCode ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	params.put( "phone", phone );
-	params.put( "busId", busId );
-	params.put( "areaId", areaId );
-	params.put( "areaCode", areaCode );
-	Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5AreaPhone" );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return result.get( "code" ).toString().equals( "1" );
-	}
-	return false;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        params.put( "phone", phone );
+        params.put( "busId", busId );
+        params.put( "areaId", areaId );
+        params.put( "areaCode", areaCode );
+        Map< String,Object > result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "bingdingPhoneH5AreaPhone" );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return result.get( "code" ).toString().equals( "1" );
+        }
+        return false;
     }
 
     /**
@@ -155,13 +155,13 @@ public class MemberServiceImpl implements MemberService {
      * @return 折扣数
      */
     public double getMemberDiscount( int memberId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardTypeReturnDiscount" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return CommonUtil.toDouble( data );
-	}
-	return 0;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardTypeReturnDiscount" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return CommonUtil.toDouble( data );
+        }
+        return 0;
     }
 
     /**
@@ -173,14 +173,14 @@ public class MemberServiceImpl implements MemberService {
      * @return 会员信息、优惠券信息和卡券信息
      */
     public Map findMemberCardByMemberId( int memberId, int shopId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	params.put( "shopId", shopId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardByMembeId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        params.put( "shopId", shopId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardByMembeId" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+        }
+        return null;
     }
 
     /**
@@ -192,14 +192,14 @@ public class MemberServiceImpl implements MemberService {
      * @return 消费是否充足
      */
     public Map< String,Object > isAdequateMoney( int memberId, double money ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	params.put( "money", money );
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "isAdequateMoney" );
-	if ( CommonUtil.isNotEmpty( resultMap ) ) {
-	    return resultMap;
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        params.put( "money", money );
+        Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "isAdequateMoney" );
+        if ( CommonUtil.isNotEmpty( resultMap ) ) {
+            return resultMap;
+        }
+        return null;
     }
 
     /**
@@ -210,14 +210,14 @@ public class MemberServiceImpl implements MemberService {
      * @return 是否是会员
      */
     public boolean isMember( int memberId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	String result = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isMember" );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return false;
-	} else {
-	    return true;
-	}
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        String result = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isMember" );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -229,7 +229,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public Map< String,Object > updateJifen( Map< String,Object > params ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateJifen" );
+        return HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateJifen" );
     }
 
     /**
@@ -241,24 +241,24 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public List< Integer > findMemberListByIds( int memberId ) {
-	if ( memberId == 0 ) {
-	    return null;
-	}
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	String key = Constants.REDIS_KEY + "member_list_" + memberId;
-	if ( JedisUtil.exists( key ) ) {
-	    Object obj = JedisUtil.get( key );
-	    if ( CommonUtil.isNotEmpty( obj ) ) {
-		return JSONArray.parseArray( obj.toString(), Integer.class );
-	    }
-	}
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberIdsByid" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    JedisUtil.set( key, data, Constants.REDIS_SECONDS );
-	    return JSONArray.parseArray( data, Integer.class );
-	}
-	return null;
+        if ( memberId == 0 ) {
+            return null;
+        }
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        String key = Constants.REDIS_KEY + "member_list_" + memberId;
+        if ( JedisUtil.exists( key ) ) {
+            Object obj = JedisUtil.get( key );
+            if ( CommonUtil.isNotEmpty( obj ) ) {
+                return JSONArray.parseArray( obj.toString(), Integer.class );
+            }
+        }
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberIdsByid" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            JedisUtil.set( key, data, Constants.REDIS_SECONDS );
+            return JSONArray.parseArray( data, Integer.class );
+        }
+        return null;
     }
 
     /**
@@ -270,13 +270,13 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public Integer isCardType( int memberId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isCardType" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return CommonUtil.toInteger( data );
-	}
-	return 0;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "isCardType" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return CommonUtil.toInteger( data );
+        }
+        return 0;
     }
 
     /**
@@ -288,13 +288,13 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public Map findGradeType( int memberId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findGradeType" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findGradeType" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+        }
+        return null;
     }
 
     /**
@@ -306,127 +306,127 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public List< Map > findCardrecordList( Map< String,Object > params ) {
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardrecord" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONArray.parseArray( data, Map.class );
-	}
-	return null;
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardrecord" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONArray.parseArray( data, Map.class );
+        }
+        return null;
     }
 
     @Override
     public List< Map > findBuyGradeType( int userId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "busId", userId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findBuyGradeType" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONArray.parseArray( data, Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "busId", userId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findBuyGradeType" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONArray.parseArray( data, Map.class );
+        }
+        return null;
     }
 
     @Override
     public boolean updateJifen( UserConsumeParams consumeParams ) {
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( consumeParams, MEMBER_URL + "updateJifen" );
-	return CommonUtil.toString( resultMap.get( "code" ) ).equals( "1" );
+        Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( consumeParams, MEMBER_URL + "updateJifen" );
+        return CommonUtil.toString( resultMap.get( "code" ) ).equals( "1" );
     }
 
     @Override
     public Map< String,Object > refundMoney( ErpRefundBo erpRefundBo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( erpRefundBo, MEMBER_URL + "refundErp", 0, 1 );
+        return HttpSignUtil.signHttpInsertOrUpdate( erpRefundBo, MEMBER_URL + "refundErp", 0, 1 );
     }
 
     @Override
     public MemberCard findMemberCardByMcId( int mcId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "mcId", mcId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberCardByMcId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), MemberCard.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "mcId", mcId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberCardByMcId" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( data ), MemberCard.class );
+        }
+        return null;
     }
 
     @Override
     public Map findCardAndShopIdsByMembeId( int memberId, String shopIds ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	params.put( "shopIds", shopIds );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardAndShopIdsByMembeId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    Map cardMap = JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
-	    if ( CommonUtil.isEmpty( cardMap ) ) {
-		return null;
-	    }
-	    if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
-		double discount = CommonUtil.toDouble( cardMap.get( "discount" ) ) / 10;
-		if ( CommonUtil.isNotEmpty( cardMap.get( "memberDate" ) ) && "1".equals( cardMap.get( "memberDate" ).toString() ) && CommonUtil
-				.isNotEmpty( cardMap.get( "memberDiscount" ) ) ) {//会员日
-		    discount = CommonUtil.toDouble( cardMap.get( "memberDiscount" ) ) / 10;
-		}
-		cardMap.put( "discount", discount );
-	    }
-	    return cardMap;
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        params.put( "shopIds", shopIds );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findCardAndShopIdsByMembeId" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            Map cardMap = JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+            if ( CommonUtil.isEmpty( cardMap ) ) {
+                return null;
+            }
+            if ( CommonUtil.isNotEmpty( cardMap.get( "ctId" ) ) && "2".equals( cardMap.get( "ctId" ).toString() ) ) {
+                double discount = CommonUtil.toDouble( cardMap.get( "discount" ) ) / 10;
+                if ( CommonUtil.isNotEmpty( cardMap.get( "memberDate" ) ) && "1".equals( cardMap.get( "memberDate" ).toString() ) && CommonUtil
+                    .isNotEmpty( cardMap.get( "memberDiscount" ) ) ) {//会员日
+                    discount = CommonUtil.toDouble( cardMap.get( "memberDiscount" ) ) / 10;
+                }
+                cardMap.put( "discount", discount );
+            }
+            return cardMap;
+        }
+        return null;
     }
 
     @Override
     public List< Map > findMemberByIds( String memberIds, int busId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "ids", memberIds );
-	params.put( "busId", busId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByIds" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONArray.parseArray( data, Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "ids", memberIds );
+        params.put( "busId", busId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByIds" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONArray.parseArray( data, Map.class );
+        }
+        return null;
     }
 
     @Override
     public List< Map > findMemberByPhone( String phone, int busId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "phone", phone );
-	params.put( "busId", busId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByPhone" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONArray.parseArray( data, Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "phone", phone );
+        params.put( "busId", busId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByPhone" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONArray.parseArray( data, Map.class );
+        }
+        return null;
     }
 
     @Override
     public boolean updateUserConsume( Map< String,Object > params ) {
-	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateUserConsume" );
-	return result.get( "code" ).toString().equals( "1" );
+        Map result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateUserConsume" );
+        return result.get( "code" ).toString().equals( "1" );
     }
 
     @Override
     public JifenAndFenbiRule jifenAndFenbiRule( int busId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "busId", busId );
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "jifenAndFenbiRule" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.parseObject( data, JifenAndFenbiRule.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "busId", busId );
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "jifenAndFenbiRule" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONObject.parseObject( data, JifenAndFenbiRule.class );
+        }
+        return null;
     }
 
     @Override
     public List< Map< String,Object > > findMemberByIds( Map< String,Object > params ) {
-	List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
-	String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByIds" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    JSONArray array = JSONArray.parseArray( data );
-	    for ( int a = 0; a < array.size(); a++ ) {
-		JSONObject object = array.getJSONObject( a );
-		Map< String,Object > map = new HashMap< String,Object >();
-		map.put( "memberId", object.getInteger( "id" ) );
-		map.put( "nickname", object.getString( "nickname" ) );
-		map.put( "headimgurl", object.getString( "headimgurl" ) );
-		list.add( map );
-	    }
-	}
-	return list;
+        List< Map< String,Object > > list = new ArrayList< Map< String,Object > >();
+        String data = HttpSignUtil.signHttpSelect( params, MEMBER_URL + "findMemberByIds" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            JSONArray array = JSONArray.parseArray( data );
+            for ( int a = 0; a < array.size(); a++ ) {
+                JSONObject object = array.getJSONObject( a );
+                Map< String,Object > map = new HashMap< String,Object >();
+                map.put( "memberId", object.getInteger( "id" ) );
+                map.put( "nickname", object.getString( "nickname" ) );
+                map.put( "headimgurl", object.getString( "headimgurl" ) );
+                list.add( map );
+            }
+        }
+        return list;
     }
 
     /**
@@ -434,15 +434,15 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public void newPaySuccessByErpBalance( NewErpPaySuccessBo newErpPaySuccessBo ) {
-	HttpSignUtil.signHttpSelect( newErpPaySuccessBo, MEMBER_URL + "newPaySuccessByErpBalance" );
+        HttpSignUtil.signHttpSelect( newErpPaySuccessBo, MEMBER_URL + "newPaySuccessByErpBalance" );
     }
 
     @Override
     public boolean findGiveRuleDelay( String orderNo ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "orderNo", orderNo );
-	Map result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateUserConsume" );
-	return result.get( "code" ).toString().equals( "1" );
+        Map< String,Object > params = new HashMap<>();
+        params.put( "orderNo", orderNo );
+        Map result = HttpSignUtil.signHttpInsertOrUpdate( params, MEMBER_URL + "updateUserConsume" );
+        return result.get( "code" ).toString().equals( "1" );
     }
 
 }

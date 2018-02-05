@@ -16,12 +16,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ControllerInterceptor {
 
-
     //用来记录移动端的访问记录数据
     @After( "within(com.gt.mall.controller..*) && @annotation(anno)" )
     public void conntrollerAfter( JoinPoint joinPoint, AfterAnno anno )
-		    throws Throwable {
-	/*RequestAttributes ra = RequestContextHolder.getRequestAttributes();
+        throws Throwable {
+    /*RequestAttributes ra = RequestContextHolder.getRequestAttributes();
 	ServletRequestAttributes sra = (ServletRequestAttributes) ra;
 	HttpServletRequest request =  sra.getRequest();
 	HttpServletResponse response = null;

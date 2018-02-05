@@ -48,26 +48,26 @@ public class PurchaseCompanyModeNewController extends BaseController {
     @ApiOperation( value = "公司模板列表(分页)", notes = "公司模板列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "keyWord", value = "公司名称/电话/官网", paramType = "query", required = false, dataType = "String" ) } )
+        @ApiImplicitParam( name = "keyWord", value = "公司名称/电话/官网", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String keyWord ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser busUser = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "keyWord", keyWord );
-	    params.put( "busId", busUser.getId() );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser busUser = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            params.put( "keyWord", keyWord );
+            params.put( "busId", busUser.getId() );
 
-	    PageUtil page = companyService.findList( params );
-	    result.put( "page", page );
+            PageUtil page = companyService.findList( params );
+            result.put( "page", page );
 
-	} catch ( Exception e ) {
-	    logger.error( "获取公司模板列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取公司模板列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( Exception e ) {
+            logger.error( "获取公司模板列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取公司模板列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -77,16 +77,16 @@ public class PurchaseCompanyModeNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/companyInfo", method = RequestMethod.POST )
     public ServerResponse companyInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "公司模板ID", required = true ) @RequestParam Integer id ) {
-	PurchaseCompanyMode company = null;
-	try {
-	    company = companyService.selectById( id );
-	} catch ( Exception e ) {
-	    logger.error( "获取公司模板信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取公司模板信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), company );
+        @ApiParam( name = "id", value = "公司模板ID", required = true ) @RequestParam Integer id ) {
+        PurchaseCompanyMode company = null;
+        try {
+            company = companyService.selectById( id );
+        } catch ( Exception e ) {
+            logger.error( "获取公司模板信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取公司模板信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), company );
     }
 
     /**
@@ -97,32 +97,32 @@ public class PurchaseCompanyModeNewController extends BaseController {
     @SysLogAnnotation( description = "保存公司模板信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    PurchaseCompanyMode company = new PurchaseCompanyMode();
-	    company.setBusId( user.getId() );
-	    company.setCompanyAddress( CommonUtil.urlEncode( params.get( "companyAddress" ).toString() ) );
-	    company.setCompanyInternet( params.get( "companyInternet" ).toString() );
-	    company.setCompanyName( CommonUtil.urlEncode( params.get( "companyName" ).toString() ) );
-	    company.setLatitude( params.get( "latitude" ) != null ? params.get( "latitude" ).toString() : null );
-	    company.setLongitude( params.get( "longitude" ) != null ? params.get( "longitude" ).toString() : null );
-	    company.setCompanyTel( params.get( "companyTel" ).toString() );
-	    if ( params.get( "id" ) != null && CommonUtil.isNotEmpty( params.get( "id" ).toString() ) ) {
-		company.setId( Integer.parseInt( params.get( "id" ).toString() ) );
-		companyService.updateById( company );
-	    } else {
-		companyService.insert( company );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存公司模板信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存公司模板信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            PurchaseCompanyMode company = new PurchaseCompanyMode();
+            company.setBusId( user.getId() );
+            company.setCompanyAddress( CommonUtil.urlEncode( params.get( "companyAddress" ).toString() ) );
+            company.setCompanyInternet( params.get( "companyInternet" ).toString() );
+            company.setCompanyName( CommonUtil.urlEncode( params.get( "companyName" ).toString() ) );
+            company.setLatitude( params.get( "latitude" ) != null ? params.get( "latitude" ).toString() : null );
+            company.setLongitude( params.get( "longitude" ) != null ? params.get( "longitude" ).toString() : null );
+            company.setCompanyTel( params.get( "companyTel" ).toString() );
+            if ( params.get( "id" ) != null && CommonUtil.isNotEmpty( params.get( "id" ).toString() ) ) {
+                company.setId( Integer.parseInt( params.get( "id" ).toString() ) );
+                companyService.updateById( company );
+            } else {
+                companyService.insert( company );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存公司模板信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存公司模板信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -133,18 +133,18 @@ public class PurchaseCompanyModeNewController extends BaseController {
     @SysLogAnnotation( description = "删除公司模板信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "公司模板Id", required = true ) @RequestParam Integer id ) {
-	try {
-	    companyService.deleteById( id );
-	} catch ( BusinessException e ) {
-	    logger.error( "删除公司模板信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除公司模板信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除公司模板信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            companyService.deleteById( id );
+        } catch ( BusinessException e ) {
+            logger.error( "删除公司模板信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除公司模板信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除公司模板信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -154,16 +154,16 @@ public class PurchaseCompanyModeNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/companyModeList", method = RequestMethod.POST )
     public ServerResponse companyModeList( HttpServletRequest request, HttpServletResponse response ) {
-	List< Map< String,Object > > companyModeList = null;
-	try {
-	    BusUser busUser = MallSessionUtils.getLoginUser( request );
-	    companyModeList = companyModeDAO.findAllList( busUser.getId() );
-	} catch ( Exception e ) {
-	    logger.error( "查询所有的公司模板异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询所有的公司模板异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), companyModeList );
+        List< Map< String,Object > > companyModeList = null;
+        try {
+            BusUser busUser = MallSessionUtils.getLoginUser( request );
+            companyModeList = companyModeDAO.findAllList( busUser.getId() );
+        } catch ( Exception e ) {
+            logger.error( "查询所有的公司模板异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "查询所有的公司模板异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), companyModeList );
     }
 
 }

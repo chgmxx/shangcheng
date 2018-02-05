@@ -34,11 +34,11 @@ public class MemberPayServiceImpl implements MemberPayService {
      */
     @Override
     public MallAllEntity memberCountMoneyByShop( MallAllEntity mallAllEntity ) {
-	String data = HttpSignUtil.signHttpSelect( mallAllEntity, MEMBER_COUNT_URL + "memberCountMoneyByShop" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), MallAllEntity.class );
-	}
-	return null;
+        String data = HttpSignUtil.signHttpSelect( mallAllEntity, MEMBER_COUNT_URL + "memberCountMoneyByShop" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( data ), MallAllEntity.class );
+        }
+        return null;
     }
 
     /**
@@ -54,21 +54,21 @@ public class MemberPayServiceImpl implements MemberPayService {
     //    }
     @Override
     public Map< String,Object > paySuccessNew( List< NewErpPaySuccessBo > paySuccessBo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessShopsByErpBalance" );
+        return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessShopsByErpBalance" );
     }
 
     @Override
     public Map< String,Object > paySuccessNewDan( NewErpPaySuccessBo paySuccessBo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessByErpBalance" );
+        return HttpSignUtil.signHttpInsertOrUpdate( paySuccessBo, NEW_MEMBER_COUNT_URL + "newPaySuccessByErpBalance" );
     }
 
     @Override
     public Map< String,Object > updateJifenAndFenBiByPinglu( Integer memberId, Integer jifen, Double fenbi ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "memberId", memberId );
-	params.put( "jifen", jifen );
-	params.put( "fenbi", fenbi );
-	return HttpSignUtil.signHttpInsertOrUpdate( params, NEW_MEMBER_COUNT_URL + "updateJifenAndFenBiByPinglu" );
+        Map< String,Object > params = new HashMap<>();
+        params.put( "memberId", memberId );
+        params.put( "jifen", jifen );
+        params.put( "fenbi", fenbi );
+        return HttpSignUtil.signHttpInsertOrUpdate( params, NEW_MEMBER_COUNT_URL + "updateJifenAndFenBiByPinglu" );
     }
 
 }

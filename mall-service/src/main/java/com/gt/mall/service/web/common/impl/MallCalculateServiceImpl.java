@@ -280,7 +280,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
 	    }*/
         }
         //	busCanUseDiscountProductPrice = CommonUtil.formatDoubleNumber( busCanUseDiscountProductPrice );
-	/*Double busDiscountYouhui = null;//保存商家下  折扣卡优惠的总额
+    /*Double busDiscountYouhui = null;//保存商家下  折扣卡优惠的总额
 	if ( busCanUseDiscountProductPrice > 0 && memberDiscount > 0 && memberDiscount < 1 ) {
 	    double discountYouhuiHouPrice = CommonUtil.multiply( busCanUseDiscountProductPrice, memberDiscount );
 	    busDiscountYouhui = CommonUtil.subtract( busCanUseDiscountProductPrice, discountYouhuiHouPrice );
@@ -509,7 +509,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
                 double productTotalPrice = productDTO.getProductNewTotalPrice();//商品优惠前的总价
                 double productYouHuiHouTotalPrice;//商品优惠后的总价
                 double fenbiYouhuiPrice = 0;//粉币优惠的金额
-                if (  Double.compare( useFenbiTotalNum+1, busCanUseFenbiProductNum) == 0) {//最后一个能使用粉币的商品useFenbiTotalNum + 1 == busCanUseFenbiProductNum
+                if ( Double.compare( useFenbiTotalNum + 1, busCanUseFenbiProductNum ) == 0 ) {//最后一个能使用粉币的商品useFenbiTotalNum + 1 == busCanUseFenbiProductNum
                     fenbiYouhuiPrice = CommonUtil.subtract( bean.getFenbiMoney(), useFenbiTotalPrice );//单个商品使用粉币优惠的金额 =  粉币优惠的总额 - 已使用粉币的优惠金额
                 } else {
                     //单个商品使用粉币优惠的金额 = （（商品的总价 / 能使用粉币的商品总价） * 粉币总共能优惠的金额）
@@ -585,7 +585,7 @@ public class MallCalculateServiceImpl implements MallCalculateService {
                 double productYouHuiHouTotalPrice;//商品优惠后的总价
                 double jifenYouhuiPrice = 0;//积分优惠的金额
 
-                if ( Double.compare( useJifenTotalNum + 1, busCanUseJifenProductNum ) == 0) {// useJifenTotalNum + 1 == busCanUseJifenProductNum
+                if ( Double.compare( useJifenTotalNum + 1, busCanUseJifenProductNum ) == 0 ) {// useJifenTotalNum + 1 == busCanUseJifenProductNum
 		    /*    最后一个能使用积分的商品   */
 
                     //单个商品使用积分优惠的金额 =  积分优惠的总额 - 已使用积分的优惠金额

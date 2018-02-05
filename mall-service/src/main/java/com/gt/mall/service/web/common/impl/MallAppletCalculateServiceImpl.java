@@ -344,7 +344,7 @@ public class MallAppletCalculateServiceImpl implements MallAppletCalculateServic
         }
         //	busCanUseDiscountProductPrice = CommonUtil.getDecimalStr( busCanUseDiscountProductPrice, 2 );
     /*Double busDiscountYouhui = null;//保存商家下  折扣卡优惠的总额
-	if ( busCanUseDiscountProductPrice > 0 && memberDiscount > 0 && memberDiscount < 1 ) {
+    if ( busCanUseDiscountProductPrice > 0 && memberDiscount > 0 && memberDiscount < 1 ) {
 	    double discountYouhuiHouPrice = CommonUtil.multiply( busCanUseDiscountProductPrice, memberDiscount );
 	    busDiscountYouhui = CommonUtil.subtract( busCanUseDiscountProductPrice, discountYouhuiHouPrice );
 	} else {

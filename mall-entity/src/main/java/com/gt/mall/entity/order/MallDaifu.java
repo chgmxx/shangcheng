@@ -95,24 +95,24 @@ public class MallDaifu extends Model< MallDaifu > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallDaifu{" +
-			"id=" + id +
-			", orderId=" + orderId +
-			", dfOrderNo=" + dfOrderNo +
-			", dfUserId=" + dfUserId +
-			", dfPayWay=" + dfPayWay +
-			", dfPayTime=" + dfPayTime +
-			", dfPayMoney=" + dfPayMoney +
-			", dfPayStatus=" + dfPayStatus +
-			", dfReturnNo=" + dfReturnNo +
-			", dfReturnTime=" + dfReturnTime +
-			", dfReturnStatus=" + dfReturnStatus +
-			", dfCreateTime=" + dfCreateTime +
-			"}";
+        return "MallDaifu{" +
+            "id=" + id +
+            ", orderId=" + orderId +
+            ", dfOrderNo=" + dfOrderNo +
+            ", dfUserId=" + dfUserId +
+            ", dfPayWay=" + dfPayWay +
+            ", dfPayTime=" + dfPayTime +
+            ", dfPayMoney=" + dfPayMoney +
+            ", dfPayStatus=" + dfPayStatus +
+            ", dfReturnNo=" + dfReturnNo +
+            ", dfReturnTime=" + dfReturnTime +
+            ", dfReturnStatus=" + dfReturnStatus +
+            ", dfCreateTime=" + dfCreateTime +
+            "}";
     }
 }

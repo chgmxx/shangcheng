@@ -63,19 +63,19 @@ public class MallSellerProduct extends Model< MallSellerProduct > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSellerProduct{" +
-			"id=" + id +
-			", mallsetId=" + mallsetId +
-			", saleMemberId=" + saleMemberId +
-			", busUserId=" + busUserId +
-			", productId=" + productId +
-			", shopId=" + shopId +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallSellerProduct{" +
+            "id=" + id +
+            ", mallsetId=" + mallsetId +
+            ", saleMemberId=" + saleMemberId +
+            ", busUserId=" + busUserId +
+            ", productId=" + productId +
+            ", shopId=" + shopId +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

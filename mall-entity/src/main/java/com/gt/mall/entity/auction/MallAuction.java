@@ -123,58 +123,57 @@ public class MallAuction extends Model< MallAuction > {
     @TableField( "auc_add_price" )
     private BigDecimal aucAddPrice;
 
+    @TableField( exist = false )
+    private int joinId = 0;
 
-    @TableField(exist = false)
-    private int joinId =0;
-
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int status;//状态 0未开始 1进行中 -1已结束 -2已失效
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Long times;// 剩余时间
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private Long startTimes;// 活动开始剩余时间
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private double nowPrice; //当前价格
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int wx_shop_id; //门店ID 关联wx_shop表的id
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String shopName;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String proName;
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallAuction{" +
-			"id=" + id +
-			", productId=" + productId +
-			", shopId=" + shopId +
-			", aucType=" + aucType +
-			", aucStartPrice=" + aucStartPrice +
-			", aucLowestPrice=" + aucLowestPrice +
-			", aucStartTime=" + aucStartTime +
-			", aucLowerPriceTime=" + aucLowerPriceTime +
-			", aucLowerPrice=" + aucLowerPrice +
-			", aucEndTime=" + aucEndTime +
-			", aucNum=" + aucNum +
-			", aucRestrictionNum=" + aucRestrictionNum +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isUse=" + isUse +
-			", isMargin=" + isMargin +
-			", aucMargin=" + aucMargin +
-			", aucAddPrice=" + aucAddPrice +
-			"}";
+        return "MallAuction{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", shopId=" + shopId +
+            ", aucType=" + aucType +
+            ", aucStartPrice=" + aucStartPrice +
+            ", aucLowestPrice=" + aucLowestPrice +
+            ", aucStartTime=" + aucStartTime +
+            ", aucLowerPriceTime=" + aucLowerPriceTime +
+            ", aucLowerPrice=" + aucLowerPrice +
+            ", aucEndTime=" + aucEndTime +
+            ", aucNum=" + aucNum +
+            ", aucRestrictionNum=" + aucRestrictionNum +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isUse=" + isUse +
+            ", isMargin=" + isMargin +
+            ", aucMargin=" + aucMargin +
+            ", aucAddPrice=" + aucAddPrice +
+            "}";
     }
 }

@@ -17,34 +17,34 @@ public class AddOrderUtil {
      * @param productTotalMoney 商品总价
      */
     public static void isJiFenOrFenbi( int selectPayWayId, Member member, Double productTotalMoney ) {
-	if ( selectPayWayId == 8 ) {
-	    boolean isFenbi = true;
-	    if ( CommonUtil.isNotEmpty( member.getFansCurrency() ) ) {
-		double fenbi = member.getFansCurrency();
-		if ( fenbi < productTotalMoney || fenbi < 0 ) {
-		    isFenbi = false;
-		}
-	    } else {
-		isFenbi = false;
-	    }
-	    if ( !isFenbi ) {
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
-	    }
-	}
-	if ( selectPayWayId == 4 ) {
-	    boolean isJifen = true;
-	    if ( CommonUtil.isNotEmpty( member.getIntegral() ) ) {
-		double fenbi = member.getIntegral();
-		if ( fenbi < productTotalMoney || fenbi < 0 ) {
-		    isJifen = false;
-		}
-	    } else {
-		isJifen = false;
-	    }
-	    if ( !isJifen ) {
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
-	    }
-	}
+        if ( selectPayWayId == 8 ) {
+            boolean isFenbi = true;
+            if ( CommonUtil.isNotEmpty( member.getFansCurrency() ) ) {
+                double fenbi = member.getFansCurrency();
+                if ( fenbi < productTotalMoney || fenbi < 0 ) {
+                    isFenbi = false;
+                }
+            } else {
+                isFenbi = false;
+            }
+            if ( !isFenbi ) {
+                throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
+            }
+        }
+        if ( selectPayWayId == 4 ) {
+            boolean isJifen = true;
+            if ( CommonUtil.isNotEmpty( member.getIntegral() ) ) {
+                double fenbi = member.getIntegral();
+                if ( fenbi < productTotalMoney || fenbi < 0 ) {
+                    isJifen = false;
+                }
+            } else {
+                isJifen = false;
+            }
+            if ( !isJifen ) {
+                throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
+            }
+        }
     }
 
 }

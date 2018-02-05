@@ -12,10 +12,10 @@ package com.gt.mall.exception;
 public class ResponseEntityException extends SystemException {
 
     public ResponseEntityException( String message ) {
-	super( message );
+        super( message );
     }
 
     public ResponseEntityException( int code, String message ) {
-	super( code, message );
+        super( code, message );
     }
 }

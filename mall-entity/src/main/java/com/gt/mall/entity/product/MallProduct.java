@@ -343,71 +343,71 @@ public class MallProduct extends Model< MallProduct > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallProduct{" +
-			"id=" + id +
-			", proBuyWay=" + proBuyWay +
-			", shopId=" + shopId +
-			", groupId=" + groupId +
-			", proTypeId=" + proTypeId +
-			", isPresell=" + isPresell +
-			", proPresellEnd=" + proPresellEnd +
-			", proDeliveryStart=" + proDeliveryStart +
-			", proDeliveryEnd=" + proDeliveryEnd +
-			", proStockTotal=" + proStockTotal +
-			", proSaleTotal=" + proSaleTotal +
-			", isShowStock=" + isShowStock +
-			", proCode=" + proCode +
-			", proName=" + proName +
-			", proPrice=" + proPrice +
-			", proCostPrice=" + proCostPrice +
-			", proFreightSet=" + proFreightSet +
-			", proFreightTempId=" + proFreightTempId +
-			", proFreightPrice=" + proFreightPrice +
-			", proRestrictionNum=" + proRestrictionNum +
-			", isTimingSale=" + isTimingSale +
-			", proTimeSale=" + proTimeSale +
-			", isMemberDiscount=" + isMemberDiscount +
-			", isCoupons=" + isCoupons +
-			", isInvoice=" + isInvoice +
-			", isWarranty=" + isWarranty +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", editTime=" + editTime +
-			", isPublish=" + isPublish +
-			", checkStatus=" + checkStatus +
-			", checkReason=" + checkReason +
-			", checkTime=" + checkTime +
-			", isDelete=" + isDelete +
-			", isSpecifica=" + isSpecifica +
-			", twoCodePath=" + twoCodePath +
-			", returnDay=" + returnDay +
-			", isIntegralChangePro=" + isIntegralChangePro +
-			", changeIntegral=" + changeIntegral +
-			", viewsNum=" + viewsNum +
-			", isShowViews=" + isShowViews +
-			", isReturn=" + isReturn +
-			", memberType=" + memberType +
-			", isIntegralDeduction=" + isIntegralDeduction +
-			", isFenbiDeduction=" + isFenbiDeduction +
-			", isFenbiChangePro=" + isFenbiChangePro +
-			", changeFenbi=" + changeFenbi +
-			", proLabel=" + proLabel +
-			", proWeight=" + proWeight +
-			", salesBase=" + salesBase +
-			", cardType=" + cardType +
-			", isMallShow=" + isMallShow +
-			", flowId=" + flowId +
-			", flowRecordId=" + flowRecordId +
-			", erpProId=" + erpProId +
-			", erpInvId=" + erpInvId +
-			", isSyncErp=" + isSyncErp +
-			", isMergeProErp=" + isMergeProErp +
-			", templateId=" + templateId +
-			"}";
+        return "MallProduct{" +
+            "id=" + id +
+            ", proBuyWay=" + proBuyWay +
+            ", shopId=" + shopId +
+            ", groupId=" + groupId +
+            ", proTypeId=" + proTypeId +
+            ", isPresell=" + isPresell +
+            ", proPresellEnd=" + proPresellEnd +
+            ", proDeliveryStart=" + proDeliveryStart +
+            ", proDeliveryEnd=" + proDeliveryEnd +
+            ", proStockTotal=" + proStockTotal +
+            ", proSaleTotal=" + proSaleTotal +
+            ", isShowStock=" + isShowStock +
+            ", proCode=" + proCode +
+            ", proName=" + proName +
+            ", proPrice=" + proPrice +
+            ", proCostPrice=" + proCostPrice +
+            ", proFreightSet=" + proFreightSet +
+            ", proFreightTempId=" + proFreightTempId +
+            ", proFreightPrice=" + proFreightPrice +
+            ", proRestrictionNum=" + proRestrictionNum +
+            ", isTimingSale=" + isTimingSale +
+            ", proTimeSale=" + proTimeSale +
+            ", isMemberDiscount=" + isMemberDiscount +
+            ", isCoupons=" + isCoupons +
+            ", isInvoice=" + isInvoice +
+            ", isWarranty=" + isWarranty +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", editTime=" + editTime +
+            ", isPublish=" + isPublish +
+            ", checkStatus=" + checkStatus +
+            ", checkReason=" + checkReason +
+            ", checkTime=" + checkTime +
+            ", isDelete=" + isDelete +
+            ", isSpecifica=" + isSpecifica +
+            ", twoCodePath=" + twoCodePath +
+            ", returnDay=" + returnDay +
+            ", isIntegralChangePro=" + isIntegralChangePro +
+            ", changeIntegral=" + changeIntegral +
+            ", viewsNum=" + viewsNum +
+            ", isShowViews=" + isShowViews +
+            ", isReturn=" + isReturn +
+            ", memberType=" + memberType +
+            ", isIntegralDeduction=" + isIntegralDeduction +
+            ", isFenbiDeduction=" + isFenbiDeduction +
+            ", isFenbiChangePro=" + isFenbiChangePro +
+            ", changeFenbi=" + changeFenbi +
+            ", proLabel=" + proLabel +
+            ", proWeight=" + proWeight +
+            ", salesBase=" + salesBase +
+            ", cardType=" + cardType +
+            ", isMallShow=" + isMallShow +
+            ", flowId=" + flowId +
+            ", flowRecordId=" + flowRecordId +
+            ", erpProId=" + erpProId +
+            ", erpInvId=" + erpInvId +
+            ", isSyncErp=" + isSyncErp +
+            ", isMergeProErp=" + isMergeProErp +
+            ", templateId=" + templateId +
+            "}";
     }
 }

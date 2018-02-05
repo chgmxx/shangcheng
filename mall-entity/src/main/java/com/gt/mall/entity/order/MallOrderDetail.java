@@ -262,46 +262,46 @@ public class MallOrderDetail extends Model< MallOrderDetail > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallOrderDetail{" +
-			"id=" + id +
-			", orderId=" + orderId +
-			", productId=" + productId +
-			", shopId=" + shopId +
-			", productSpecificas=" + productSpecificas +
-			", productImageUrl=" + productImageUrl +
-			", detProNum=" + detProNum +
-			", detProPrice=" + detProPrice +
-			", detProName=" + detProName +
-			", detProCode=" + detProCode +
-			", detPrivivilege=" + detPrivivilege +
-			", detProMessage=" + detProMessage +
-			", productSpeciname=" + productSpeciname +
-			", status=" + status +
-			", returnDay=" + returnDay +
-			", discount=" + discount +
-			", couponCode=" + couponCode +
-			", discountedPrices=" + discountedPrices +
-			", createTime=" + createTime +
-			", proTypeId=" + proTypeId +
-			", useFenbi=" + useFenbi +
-			", useJifen=" + useJifen +
-			", totalPrice=" + totalPrice +
-			", appraiseStatus=" + appraiseStatus +
-			", proSpecStr=" + proSpecStr +
-			", cardReceiveId=" + cardReceiveId +
-			", duofenCoupon=" + duofenCoupon +
-			", useCardId=" + useCardId +
-			", commission=" + commission +
-			", saleMemberId=" + saleMemberId +
-			", integralYouhui=" + integralYouhui +
-			", fenbiYouhui=" + fenbiYouhui +
-			", flowId=" + flowId +
-			", flowRecordId=" + flowRecordId +
-			"}";
+        return "MallOrderDetail{" +
+            "id=" + id +
+            ", orderId=" + orderId +
+            ", productId=" + productId +
+            ", shopId=" + shopId +
+            ", productSpecificas=" + productSpecificas +
+            ", productImageUrl=" + productImageUrl +
+            ", detProNum=" + detProNum +
+            ", detProPrice=" + detProPrice +
+            ", detProName=" + detProName +
+            ", detProCode=" + detProCode +
+            ", detPrivivilege=" + detPrivivilege +
+            ", detProMessage=" + detProMessage +
+            ", productSpeciname=" + productSpeciname +
+            ", status=" + status +
+            ", returnDay=" + returnDay +
+            ", discount=" + discount +
+            ", couponCode=" + couponCode +
+            ", discountedPrices=" + discountedPrices +
+            ", createTime=" + createTime +
+            ", proTypeId=" + proTypeId +
+            ", useFenbi=" + useFenbi +
+            ", useJifen=" + useJifen +
+            ", totalPrice=" + totalPrice +
+            ", appraiseStatus=" + appraiseStatus +
+            ", proSpecStr=" + proSpecStr +
+            ", cardReceiveId=" + cardReceiveId +
+            ", duofenCoupon=" + duofenCoupon +
+            ", useCardId=" + useCardId +
+            ", commission=" + commission +
+            ", saleMemberId=" + saleMemberId +
+            ", integralYouhui=" + integralYouhui +
+            ", fenbiYouhui=" + fenbiYouhui +
+            ", flowId=" + flowId +
+            ", flowRecordId=" + flowRecordId +
+            "}";
     }
 }

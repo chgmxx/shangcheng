@@ -29,60 +29,60 @@ public class MallPifaApplyServiceImpl extends BaseServiceImpl< MallPifaApplyDAO,
 
     @Override
     public int getPifaApplay( Member member, MallPaySet set ) {
-	int status = -2;
-	if ( CommonUtil.isNotEmpty( member ) ) {
+        int status = -2;
+        if ( CommonUtil.isNotEmpty( member ) ) {
 
-	    MallPifaApply applay = new MallPifaApply();
-	    applay.setMemberId( member.getId() );
-	    applay.setBusUserId( member.getBusid() );
-	    MallPifaApply pifaApplay = mallPifaApplyDAO.selectByPifaApply( applay );
-	    if ( CommonUtil.isNotEmpty( pifaApplay ) ) {
-		if ( CommonUtil.isNotEmpty( pifaApplay.getStatus() ) ) {
-		    status = CommonUtil.toInteger( pifaApplay.getStatus() );
-		    if ( CommonUtil.isNotEmpty( set.getIsPfCheck() ) ) {
-			if ( set.getIsPfCheck().toString().equals( "0" ) ) {//不开启审核所有人都能看到批发价
-			    status = 1;
-			}
-		    } else {
-			status = 1;
-		    }
-		}
-	    }
-	}
-	return status;
+            MallPifaApply applay = new MallPifaApply();
+            applay.setMemberId( member.getId() );
+            applay.setBusUserId( member.getBusid() );
+            MallPifaApply pifaApplay = mallPifaApplyDAO.selectByPifaApply( applay );
+            if ( CommonUtil.isNotEmpty( pifaApplay ) ) {
+                if ( CommonUtil.isNotEmpty( pifaApplay.getStatus() ) ) {
+                    status = CommonUtil.toInteger( pifaApplay.getStatus() );
+                    if ( CommonUtil.isNotEmpty( set.getIsPfCheck() ) ) {
+                        if ( set.getIsPfCheck().toString().equals( "0" ) ) {//不开启审核所有人都能看到批发价
+                            status = 1;
+                        }
+                    } else {
+                        status = 1;
+                    }
+                }
+            }
+        }
+        return status;
     }
 
     @Override
     public boolean isPifa( Member member ) {
-	MallPaySet set = mallPaySetService.selectByMember( member );
-	if ( CommonUtil.isEmpty( set ) ) {
-	    return false;
-	}
-	return isPifaPublic( member, set );
+        MallPaySet set = mallPaySetService.selectByMember( member );
+        if ( CommonUtil.isEmpty( set ) ) {
+            return false;
+        }
+        return isPifaPublic( member, set );
     }
 
     @Override
     public boolean isPifaPublic( Member member, MallPaySet set ) {
-	int state = getPifaApplay( member, set );
-	boolean isPifa = false;
-	if ( CommonUtil.isNotEmpty( set ) ) {
-	    if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {
-		if ( set.getIsPf().toString().equals( "1" ) ) {
-		    if ( CommonUtil.isNotEmpty( set.getIsPfCheck() ) ) {
-			if ( set.getIsPfCheck().toString().equals( "1" ) ) {
-			    if ( state == 1 ) {
-				isPifa = true;
-			    }
-			} else {
-			    isPifa = true;
-			}
-		    } else {
-			isPifa = true;
-		    }
-		}
-	    }
-	}
-	return isPifa;
+        int state = getPifaApplay( member, set );
+        boolean isPifa = false;
+        if ( CommonUtil.isNotEmpty( set ) ) {
+            if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {
+                if ( set.getIsPf().toString().equals( "1" ) ) {
+                    if ( CommonUtil.isNotEmpty( set.getIsPfCheck() ) ) {
+                        if ( set.getIsPfCheck().toString().equals( "1" ) ) {
+                            if ( state == 1 ) {
+                                isPifa = true;
+                            }
+                        } else {
+                            isPifa = true;
+                        }
+                    } else {
+                        isPifa = true;
+                    }
+                }
+            }
+        }
+        return isPifa;
     }
 
 }

@@ -92,222 +92,222 @@ public class MallIncomeListController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/test", method = RequestMethod.POST )
     public ServerResponse test( HttpServletRequest request, HttpServletResponse response, Integer type ) {
-	try {
-	    if ( type == 1 ) {
-		List< MallOrder > orderList = mallOrderDAO.getPayOrderById();
-		if ( orderList != null && orderList.size() > 0 ) {
-		    for ( MallOrder order : orderList ) {
-			//添加交易记录
-			MallIncomeList incomeList = new MallIncomeList();
-			incomeList.setBusId( order.getBusUserId() );
-			incomeList.setIncomeType( 1 );
-			incomeList.setIncomeCategory( 1 );
-			incomeList.setIncomeMoney( order.getOrderMoney() );
-			incomeList.setShopId( order.getShopId() );
-			incomeList.setBuyerId( order.getBuyerUserId() );
-			incomeList.setBuyerName( order.getMemberName() );
-			incomeList.setTradeId( order.getId() );
-			incomeList.setTradeType( 1 );
-			if ( order.getMallOrderDetail().size() > 0 ) {
-			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
-			} else if ( order.getOrderPayWay() == 5 ) {
-			    incomeList.setProName( "扫码支付" );
-			}
-			if ( order.getOrderPayWay() == 4 ) {
-			    incomeList.setIncomeUnit( 3 );
-			} else if ( order.getOrderPayWay() == 8 ) {
-			    incomeList.setIncomeUnit( 2 );
-			}
-			incomeList.setProNo( order.getOrderNo() );
-			incomeList.setCreateTime( order.getPayTime() );
-			mallIncomeListService.insert( incomeList );
-		    }
-		}
-	    } else if ( type == 11 ) {
-		Wrapper wrapper = new EntityWrapper();
-		wrapper.where( "order_status = 4 AND SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY) " );
-		List< MallOrder > orderList = mallOrderDAO.selectList( wrapper );
-		if ( orderList != null && orderList.size() > 0 ) {
-		    for ( MallOrder order1 : orderList ) {
-			MallOrder order = mallOrderDAO.getOrderById( order1.getId() );
-			//添加交易记录
-			MallIncomeList incomeList = new MallIncomeList();
-			incomeList.setBusId( order.getBusUserId() );
-			incomeList.setIncomeType( 1 );
-			incomeList.setIncomeCategory( 2 );
-			incomeList.setIncomeMoney( order.getOrderMoney() );
-			incomeList.setShopId( order.getShopId() );
-			incomeList.setBuyerId( order.getBuyerUserId() );
-			incomeList.setBuyerName( order.getMemberName() );
-			incomeList.setTradeId( order.getId() );
-			incomeList.setTradeType( 1 );
-			boolean flag = false;
-			//判断订单的商品 有无允许退款天数
-			if ( order.getMallOrderDetail().size() > 0 ) {
-			    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
-				if ( detail.getReturnDay() > 0 ) {
-				    flag = true;
-				}
-			    }
-			    incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
-			}
-			incomeList.setProNo( order.getOrderNo() );
-			if ( order.getOrderPayWay() == 4 ) {
-			    incomeList.setIncomeUnit( 3 );
-			} else if ( order.getOrderPayWay() == 8 ) {
-			    incomeList.setIncomeUnit( 2 );
-			}
-			if ( flag ) {
-			    incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
-			} else {
-			    incomeList.setCreateTime( order.getUpdateTime() );
-			}
+        try {
+            if ( type == 1 ) {
+                List< MallOrder > orderList = mallOrderDAO.getPayOrderById();
+                if ( orderList != null && orderList.size() > 0 ) {
+                    for ( MallOrder order : orderList ) {
+                        //添加交易记录
+                        MallIncomeList incomeList = new MallIncomeList();
+                        incomeList.setBusId( order.getBusUserId() );
+                        incomeList.setIncomeType( 1 );
+                        incomeList.setIncomeCategory( 1 );
+                        incomeList.setIncomeMoney( order.getOrderMoney() );
+                        incomeList.setShopId( order.getShopId() );
+                        incomeList.setBuyerId( order.getBuyerUserId() );
+                        incomeList.setBuyerName( order.getMemberName() );
+                        incomeList.setTradeId( order.getId() );
+                        incomeList.setTradeType( 1 );
+                        if ( order.getMallOrderDetail().size() > 0 ) {
+                            incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+                        } else if ( order.getOrderPayWay() == 5 ) {
+                            incomeList.setProName( "扫码支付" );
+                        }
+                        if ( order.getOrderPayWay() == 4 ) {
+                            incomeList.setIncomeUnit( 3 );
+                        } else if ( order.getOrderPayWay() == 8 ) {
+                            incomeList.setIncomeUnit( 2 );
+                        }
+                        incomeList.setProNo( order.getOrderNo() );
+                        incomeList.setCreateTime( order.getPayTime() );
+                        mallIncomeListService.insert( incomeList );
+                    }
+                }
+            } else if ( type == 11 ) {
+                Wrapper wrapper = new EntityWrapper();
+                wrapper.where( "order_status = 4 AND SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY) " );
+                List< MallOrder > orderList = mallOrderDAO.selectList( wrapper );
+                if ( orderList != null && orderList.size() > 0 ) {
+                    for ( MallOrder order1 : orderList ) {
+                        MallOrder order = mallOrderDAO.getOrderById( order1.getId() );
+                        //添加交易记录
+                        MallIncomeList incomeList = new MallIncomeList();
+                        incomeList.setBusId( order.getBusUserId() );
+                        incomeList.setIncomeType( 1 );
+                        incomeList.setIncomeCategory( 2 );
+                        incomeList.setIncomeMoney( order.getOrderMoney() );
+                        incomeList.setShopId( order.getShopId() );
+                        incomeList.setBuyerId( order.getBuyerUserId() );
+                        incomeList.setBuyerName( order.getMemberName() );
+                        incomeList.setTradeId( order.getId() );
+                        incomeList.setTradeType( 1 );
+                        boolean flag = false;
+                        //判断订单的商品 有无允许退款天数
+                        if ( order.getMallOrderDetail().size() > 0 ) {
+                            for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
+                                if ( detail.getReturnDay() > 0 ) {
+                                    flag = true;
+                                }
+                            }
+                            incomeList.setProName( order.getMallOrderDetail().get( 0 ).getDetProName() );
+                        }
+                        incomeList.setProNo( order.getOrderNo() );
+                        if ( order.getOrderPayWay() == 4 ) {
+                            incomeList.setIncomeUnit( 3 );
+                        } else if ( order.getOrderPayWay() == 8 ) {
+                            incomeList.setIncomeUnit( 2 );
+                        }
+                        if ( flag ) {
+                            incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
+                        } else {
+                            incomeList.setCreateTime( order.getUpdateTime() );
+                        }
 
-			incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
-			mallIncomeListService.insert( incomeList );
-		    }
-		}
+                        incomeList.setCreateTime( DateTimeKit.addDate( order.getUpdateTime(), 7 ) );
+                        mallIncomeListService.insert( incomeList );
+                    }
+                }
 
-	    } else if ( type == 2 ) {
-		Wrapper groupWrapper = new EntityWrapper();
-		groupWrapper.where( "(status=1 OR status=5)" );
-		List< MallOrderReturn > returnList = mallOrderReturnService.selectList( groupWrapper );
-		if ( returnList != null && returnList.size() > 0 ) {
-		    for ( MallOrderReturn orderReturn : returnList ) {
-			MallOrder order = mallOrderDAO.getOrderById( orderReturn.getOrderId() );
-			MallOrderDetail orderDetails = mallOrderDetailService.selectById( orderReturn.getOrderDetailId() );
-			if ( order == null ) {
-			    continue;
-			}
-			//添加交易记录
-			MallIncomeList incomeList = new MallIncomeList();
-			incomeList.setBusId( order.getBusUserId() );
-			incomeList.setIncomeType( 2 );
-			incomeList.setIncomeCategory( 1 );
-			incomeList.setIncomeMoney( order.getOrderMoney() );
-			incomeList.setShopId( order.getShopId() );
-			incomeList.setBuyerId( order.getBuyerUserId() );
-			incomeList.setBuyerName( order.getMemberName() );
-			incomeList.setTradeId( orderDetails.getId() );
-			incomeList.setTradeType( 2 );
-			incomeList.setProName( orderDetails.getDetProName() );
-			incomeList.setProNo( order.getOrderNo() );
-			if ( order.getOrderPayWay() == 4 ) {
-			    incomeList.setIncomeUnit( 3 );
-			} else if ( order.getOrderPayWay() == 8 ) {
-			    incomeList.setIncomeUnit( 2 );
-			}
-			incomeList.setCreateTime( orderReturn.getUpdateTime() == null ? orderReturn.getCreateTime() : orderReturn.getUpdateTime() );
-			mallIncomeListService.insert( incomeList );
-		    }
-		}
-	    } else if ( type == 4 ) {
-		Wrapper groupWrapper = new EntityWrapper();
-		groupWrapper.where( "margin_status != 0" );
-		List< MallAuctionMargin > marginList = mallAuctionMarginService.selectList( groupWrapper );
-		if ( marginList != null && marginList.size() > 0 ) {
-		    for ( MallAuctionMargin margin : marginList ) {
-			Member member = memberService.findMemberById( margin.getUserId(), null );
-			MallProduct product = mallProductService.selectById( margin.getProId() );
-			//添加交易记录
-			MallIncomeList incomeList = new MallIncomeList();
-			incomeList.setBusId( product == null ? null : product.getUserId() );
-			incomeList.setIncomeType( 1 );
-			incomeList.setIncomeCategory( 1 );
-			incomeList.setIncomeMoney( margin.getMarginMoney() );
-			incomeList.setShopId( product == null ? null : product.getShopId() );
-			incomeList.setBuyerId( margin.getUserId() );
-			incomeList.setBuyerName( member == null ? null : member.getNickname() );
-			incomeList.setTradeId( margin.getId() );
-			incomeList.setTradeType( 4 );
-			incomeList.setProName( margin.getProName() );
-			incomeList.setProNo( margin.getAucNo() );
-			incomeList.setCreateTime( margin.getPayTime() );
-			mallIncomeListService.insert( incomeList );
-			if ( margin.getMarginStatus() == -1 && margin.getReturnTime() != null ) {
-			    incomeList.setId( null );
-			    incomeList.setIncomeType( 2 );
-			    incomeList.setCreateTime( margin.getReturnTime() );
-			    mallIncomeListService.insert( incomeList );
-			}
-		    }
-		}
-	    } else if ( type == 3 ) {
-		Wrapper groupWrapper = new EntityWrapper();
-		groupWrapper.where( "deposit_status != 0" );
-		List< MallPresaleDeposit > depositList = mallPresaleDepositService.selectList( groupWrapper );
-		if ( depositList != null && depositList.size() > 0 ) {
-		    for ( MallPresaleDeposit deposit : depositList ) {
-			Member member = memberService.findMemberById( deposit.getUserId(), null );
-			MallProduct product = mallProductService.selectById( deposit.getProductId() );
-			//添加交易记录
-			MallIncomeList incomeList = new MallIncomeList();
-			incomeList.setBusId( product == null ? null : product.getUserId() );
-			incomeList.setIncomeType( 1 );
-			incomeList.setIncomeCategory( 1 );
-			incomeList.setIncomeMoney( deposit.getDepositMoney() );
-			incomeList.setShopId( product == null ? null : product.getShopId() );
-			incomeList.setBuyerId( deposit.getUserId() );
-			incomeList.setBuyerName( member == null ? null : member.getNickname() );
-			incomeList.setTradeId( deposit.getId() );
-			incomeList.setTradeType( 3 );
-			incomeList.setProName( deposit.getProName() );
-			incomeList.setProNo( deposit.getDepositNo() );
-			incomeList.setCreateTime( deposit.getPayTime() );
-			mallIncomeListService.insert( incomeList );
+            } else if ( type == 2 ) {
+                Wrapper groupWrapper = new EntityWrapper();
+                groupWrapper.where( "(status=1 OR status=5)" );
+                List< MallOrderReturn > returnList = mallOrderReturnService.selectList( groupWrapper );
+                if ( returnList != null && returnList.size() > 0 ) {
+                    for ( MallOrderReturn orderReturn : returnList ) {
+                        MallOrder order = mallOrderDAO.getOrderById( orderReturn.getOrderId() );
+                        MallOrderDetail orderDetails = mallOrderDetailService.selectById( orderReturn.getOrderDetailId() );
+                        if ( order == null ) {
+                            continue;
+                        }
+                        //添加交易记录
+                        MallIncomeList incomeList = new MallIncomeList();
+                        incomeList.setBusId( order.getBusUserId() );
+                        incomeList.setIncomeType( 2 );
+                        incomeList.setIncomeCategory( 1 );
+                        incomeList.setIncomeMoney( order.getOrderMoney() );
+                        incomeList.setShopId( order.getShopId() );
+                        incomeList.setBuyerId( order.getBuyerUserId() );
+                        incomeList.setBuyerName( order.getMemberName() );
+                        incomeList.setTradeId( orderDetails.getId() );
+                        incomeList.setTradeType( 2 );
+                        incomeList.setProName( orderDetails.getDetProName() );
+                        incomeList.setProNo( order.getOrderNo() );
+                        if ( order.getOrderPayWay() == 4 ) {
+                            incomeList.setIncomeUnit( 3 );
+                        } else if ( order.getOrderPayWay() == 8 ) {
+                            incomeList.setIncomeUnit( 2 );
+                        }
+                        incomeList.setCreateTime( orderReturn.getUpdateTime() == null ? orderReturn.getCreateTime() : orderReturn.getUpdateTime() );
+                        mallIncomeListService.insert( incomeList );
+                    }
+                }
+            } else if ( type == 4 ) {
+                Wrapper groupWrapper = new EntityWrapper();
+                groupWrapper.where( "margin_status != 0" );
+                List< MallAuctionMargin > marginList = mallAuctionMarginService.selectList( groupWrapper );
+                if ( marginList != null && marginList.size() > 0 ) {
+                    for ( MallAuctionMargin margin : marginList ) {
+                        Member member = memberService.findMemberById( margin.getUserId(), null );
+                        MallProduct product = mallProductService.selectById( margin.getProId() );
+                        //添加交易记录
+                        MallIncomeList incomeList = new MallIncomeList();
+                        incomeList.setBusId( product == null ? null : product.getUserId() );
+                        incomeList.setIncomeType( 1 );
+                        incomeList.setIncomeCategory( 1 );
+                        incomeList.setIncomeMoney( margin.getMarginMoney() );
+                        incomeList.setShopId( product == null ? null : product.getShopId() );
+                        incomeList.setBuyerId( margin.getUserId() );
+                        incomeList.setBuyerName( member == null ? null : member.getNickname() );
+                        incomeList.setTradeId( margin.getId() );
+                        incomeList.setTradeType( 4 );
+                        incomeList.setProName( margin.getProName() );
+                        incomeList.setProNo( margin.getAucNo() );
+                        incomeList.setCreateTime( margin.getPayTime() );
+                        mallIncomeListService.insert( incomeList );
+                        if ( margin.getMarginStatus() == -1 && margin.getReturnTime() != null ) {
+                            incomeList.setId( null );
+                            incomeList.setIncomeType( 2 );
+                            incomeList.setCreateTime( margin.getReturnTime() );
+                            mallIncomeListService.insert( incomeList );
+                        }
+                    }
+                }
+            } else if ( type == 3 ) {
+                Wrapper groupWrapper = new EntityWrapper();
+                groupWrapper.where( "deposit_status != 0" );
+                List< MallPresaleDeposit > depositList = mallPresaleDepositService.selectList( groupWrapper );
+                if ( depositList != null && depositList.size() > 0 ) {
+                    for ( MallPresaleDeposit deposit : depositList ) {
+                        Member member = memberService.findMemberById( deposit.getUserId(), null );
+                        MallProduct product = mallProductService.selectById( deposit.getProductId() );
+                        //添加交易记录
+                        MallIncomeList incomeList = new MallIncomeList();
+                        incomeList.setBusId( product == null ? null : product.getUserId() );
+                        incomeList.setIncomeType( 1 );
+                        incomeList.setIncomeCategory( 1 );
+                        incomeList.setIncomeMoney( deposit.getDepositMoney() );
+                        incomeList.setShopId( product == null ? null : product.getShopId() );
+                        incomeList.setBuyerId( deposit.getUserId() );
+                        incomeList.setBuyerName( member == null ? null : member.getNickname() );
+                        incomeList.setTradeId( deposit.getId() );
+                        incomeList.setTradeType( 3 );
+                        incomeList.setProName( deposit.getProName() );
+                        incomeList.setProNo( deposit.getDepositNo() );
+                        incomeList.setCreateTime( deposit.getPayTime() );
+                        mallIncomeListService.insert( incomeList );
 
-			if ( deposit.getDepositStatus() == -1 && deposit.getReturnTime() != null ) {
-			    incomeList.setId( null );
-			    incomeList.setIncomeType( 2 );
-			    incomeList.setCreateTime( deposit.getReturnTime() );
-			    mallIncomeListService.insert( incomeList );
-			}
-		    }
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "生成交易记录数据异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "生成交易记录数据异常" );
-	}
-	return ServerResponse.createBySuccess();
+                        if ( deposit.getDepositStatus() == -1 && deposit.getReturnTime() != null ) {
+                            incomeList.setId( null );
+                            incomeList.setIncomeType( 2 );
+                            incomeList.setCreateTime( deposit.getReturnTime() );
+                            mallIncomeListService.insert( incomeList );
+                        }
+                    }
+                }
+            }
+        } catch ( Exception e ) {
+            logger.error( "生成交易记录数据异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "生成交易记录数据异常" );
+        }
+        return ServerResponse.createBySuccess();
     }
 
     @ApiOperation( value = "交易记录列表(分页)", notes = "交易记录列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "startTime", value = "下单开始时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "endTime", value = "下单结束时间", paramType = "query", required = false, dataType = "String" ) } )
+        @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
+        @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
+        @ApiImplicitParam( name = "startTime", value = "下单开始时间", paramType = "query", required = false, dataType = "String" ),
+        @ApiImplicitParam( name = "endTime", value = "下单结束时间", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, String orderNo, Integer status, String startTime, String endTime ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "orderNo", orderNo );
-	    params.put( "status", status );
-	    params.put( "startTime", startTime );
-	    params.put( "endTime", endTime );
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    int userId = user.getId();
-	    if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
-		userId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
-	    }
-	    params.put( "userId", userId );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    params.put( "shoplist", shoplist );
-	    params.put( "incomeCategory", "1" );
-	    PageUtil page = mallIncomeListService.findByTradePage( params );
-	    result.put( "page", page );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            params.put( "orderNo", orderNo );
+            params.put( "status", status );
+            params.put( "startTime", startTime );
+            params.put( "endTime", endTime );
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            int userId = user.getId();
+            if ( CommonUtil.isNotEmpty( user.getPid() ) && user.getPid() > 0 ) {
+                userId = busUserService.getMainBusId( user.getId() );//通过用户名查询主账号id
+            }
+            params.put( "userId", userId );
+            List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            params.put( "shoplist", shoplist );
+            params.put( "incomeCategory", "1" );
+            PageUtil page = mallIncomeListService.findByTradePage( params );
+            result.put( "page", page );
 
-	} catch ( Exception e ) {
-	    logger.error( "交易记录列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交易记录列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( Exception e ) {
+            logger.error( "交易记录列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交易记录列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -315,60 +315,60 @@ public class MallIncomeListController extends BaseController {
      */
     @ApiOperation( value = "导出交易记录订单", notes = "导出交易记录订单" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "orderNo", value = "订单号", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "startTime", value = "下单开始时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "endTime", value = "下单结束时间", paramType = "query", required = false, dataType = "String" ) } )
+        @ApiImplicitParam( name = "status", value = "订单状态", paramType = "query", required = false, dataType = "int" ),
+        @ApiImplicitParam( name = "startTime", value = "下单开始时间", paramType = "query", required = false, dataType = "String" ),
+        @ApiImplicitParam( name = "endTime", value = "下单结束时间", paramType = "query", required = false, dataType = "String" ) } )
     @RequestMapping( value = "/exportOrder", method = RequestMethod.GET )
     public void exportOrder( HttpServletRequest request, HttpServletResponse response, String orderNo, Integer status, String startTime, String endTime ) {
-	OutputStream out = null;
-	HSSFWorkbook workbook = null;
-	try {
-	    Map< String,Object > params = new HashMap<>();
+        OutputStream out = null;
+        HSSFWorkbook workbook = null;
+        try {
+            Map< String,Object > params = new HashMap<>();
 
-	    params.put( "orderNo", orderNo );
-	    params.put( "status", status );
-	    params.put( "startTime", startTime );
-	    params.put( "endTime", endTime );
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    params.put( "userId", user.getId() );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    params.put( "shoplist", shoplist );
-	    params.put( "incomeCategory", "1" );
-	    String[] titles = new String[] { "时间", "订单编号", "商品名称", "买方", "支付金额", "状态" };
-	    workbook = mallIncomeListService.exportTradeExcel( params, titles, 1, shoplist );
+            params.put( "orderNo", orderNo );
+            params.put( "status", status );
+            params.put( "startTime", startTime );
+            params.put( "endTime", endTime );
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            params.put( "userId", user.getId() );
+            List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            params.put( "shoplist", shoplist );
+            params.put( "incomeCategory", "1" );
+            String[] titles = new String[] { "时间", "订单编号", "商品名称", "买方", "支付金额", "状态" };
+            workbook = mallIncomeListService.exportTradeExcel( params, titles, 1, shoplist );
 
-	    String filename = "交易记录" + DateTimeKit.getDateIsLink() + ".xls";//设置下载时客户端Excel的名称
-	    filename = URLEncoder.encode( filename, "UTF-8" );
+            String filename = "交易记录" + DateTimeKit.getDateIsLink() + ".xls";//设置下载时客户端Excel的名称
+            filename = URLEncoder.encode( filename, "UTF-8" );
 
-	    response.setHeader( "Content-Disposition", "attachment;filename=\"" + filename + "\"" );
-	    response.setContentType( "application/vnd.ms-excel" );
+            response.setHeader( "Content-Disposition", "attachment;filename=\"" + filename + "\"" );
+            response.setContentType( "application/vnd.ms-excel" );
 
-	    out = new BufferedOutputStream( response.getOutputStream() );
-	    workbook.write( out );
+            out = new BufferedOutputStream( response.getOutputStream() );
+            workbook.write( out );
 
-	    out.flush();
-	} catch ( UnsupportedEncodingException e ) {
-	    e.printStackTrace();
-	    logger.error( "导出交易记录订单：中文转换异常！" + e.getMessage() );
-	} catch ( IOException e ) {
-	    e.printStackTrace();
-	    logger.error( "导出交易记录订单：IO流输出异常！" + e.getMessage() );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	    logger.error( "导出交易记录订单失败" + e.getMessage() );
-	} finally {
-	    try {
-		if ( out != null ) {
-		    out.close();
-		}
-		if ( workbook != null ) {
-		    workbook.close();
-		}
-	    } catch ( IOException e ) {
-		logger.error( "导出交易记录订单：关闭输出流异常" + e );
-		e.printStackTrace();
-	    }
-	}
+            out.flush();
+        } catch ( UnsupportedEncodingException e ) {
+            e.printStackTrace();
+            logger.error( "导出交易记录订单：中文转换异常！" + e.getMessage() );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+            logger.error( "导出交易记录订单：IO流输出异常！" + e.getMessage() );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            logger.error( "导出交易记录订单失败" + e.getMessage() );
+        } finally {
+            try {
+                if ( out != null ) {
+                    out.close();
+                }
+                if ( workbook != null ) {
+                    workbook.close();
+                }
+            } catch ( IOException e ) {
+                logger.error( "导出交易记录订单：关闭输出流异常" + e );
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -378,36 +378,36 @@ public class MallIncomeListController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getTurnoverCount", method = RequestMethod.POST )
     public ServerResponse getTurnoverCount( HttpServletRequest request, HttpServletResponse response ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
 
-	    Calendar cal = Calendar.getInstance();
-	    cal.add( Calendar.DATE, -1 );
-	    String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-	    cal.add( Calendar.DATE, -6 );
-	    String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-	    //昨天营业额
-	    Map< String,Object > countParams = new HashMap<>();
-	    countParams.put( "date", yesterday );
-	    countParams.put( "shoplist", shoplist );
-	    countParams.put( "userId", user.getId() );
-	    countParams.put( "category", "1" );
-	    String yesterCount = mallIncomeListService.getCountByTimes( countParams );
-	    result.put( "yesterCount", yesterCount );//昨天营业额
-	    //7日营业额（前7天-昨天）
-	    countParams.remove( "date" );
-	    countParams.put( "startDate", sevenday );
-	    countParams.put( "endDate", yesterday );
-	    String sevenCount = mallIncomeListService.getCountByTimes( countParams );
-	    result.put( "sevenCount", sevenCount );//7天营业额
-	} catch ( Exception e ) {
-	    logger.error( "获取交易记录的营业额统计异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交易记录的营业额统计异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+            Calendar cal = Calendar.getInstance();
+            cal.add( Calendar.DATE, -1 );
+            String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+            cal.add( Calendar.DATE, -6 );
+            String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+            //昨天营业额
+            Map< String,Object > countParams = new HashMap<>();
+            countParams.put( "date", yesterday );
+            countParams.put( "shoplist", shoplist );
+            countParams.put( "userId", user.getId() );
+            countParams.put( "category", "1" );
+            String yesterCount = mallIncomeListService.getCountByTimes( countParams );
+            result.put( "yesterCount", yesterCount );//昨天营业额
+            //7日营业额（前7天-昨天）
+            countParams.remove( "date" );
+            countParams.put( "startDate", sevenday );
+            countParams.put( "endDate", yesterday );
+            String sevenCount = mallIncomeListService.getCountByTimes( countParams );
+            result.put( "sevenCount", sevenCount );//7天营业额
+        } catch ( Exception e ) {
+            logger.error( "获取交易记录的营业额统计异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交易记录的营业额统计异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
@@ -416,123 +416,123 @@ public class MallIncomeListController extends BaseController {
     @ApiOperation( value = "获取收入金额列表", notes = "获取收入金额列表" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "startDate", value = "开始时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = false, dataType = "String" ),
-		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+        @ApiImplicitParam( name = "endDate", value = "结束时间", paramType = "query", required = false, dataType = "String" ),
+        @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/getCountListByDate", method = RequestMethod.POST )
     public ServerResponse getCountListByDate( HttpServletRequest request, HttpServletResponse response, String startDate, String endDate, Integer shopId ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    List< Integer > shopIds = new ArrayList<>();
-	    for ( Map map : shoplist ) {
-		shopIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
-	    }
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "shopId", shopId );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
-		params.put( "shoplist", shoplist );
-	    }
-	    if ( CommonUtil.isEmpty( startDate ) ) {
-		Calendar cal = Calendar.getInstance();
-		cal.add( Calendar.DATE, -1 );
-		endDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-		cal.add( Calendar.DATE, -29 );
-		startDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-	    } else {
-		startDate = DateTimeKit.format( DateTimeKit.parseDate( startDate ) );
-		endDate = DateTimeKit.format( DateTimeKit.parseDate( endDate ) );
-	    }
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            List< Integer > shopIds = new ArrayList<>();
+            for ( Map map : shoplist ) {
+                shopIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+            }
+            Map< String,Object > params = new HashMap<>();
+            params.put( "shopId", shopId );
+            if ( CommonUtil.isEmpty( shopId ) ) {
+                params.put( "shoplist", shoplist );
+            }
+            if ( CommonUtil.isEmpty( startDate ) ) {
+                Calendar cal = Calendar.getInstance();
+                cal.add( Calendar.DATE, -1 );
+                endDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+                cal.add( Calendar.DATE, -29 );
+                startDate = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+            } else {
+                startDate = DateTimeKit.format( DateTimeKit.parseDate( startDate ) );
+                endDate = DateTimeKit.format( DateTimeKit.parseDate( endDate ) );
+            }
 
-	    Integer date = DateTimeKit.daysBetween( startDate, endDate );
+            Integer date = DateTimeKit.daysBetween( startDate, endDate );
 
-	    params.put( "startDate", startDate );
-	    params.put( "endDate", endDate );
-	    List< Map< String,Object > > countList = mallIncomeListService.getCountListByTimes( params );
-	    String[] data = new String[date + 1];
+            params.put( "startDate", startDate );
+            params.put( "endDate", endDate );
+            List< Map< String,Object > > countList = mallIncomeListService.getCountListByTimes( params );
+            String[] data = new String[date + 1];
 
-	    int i = 0;
-	    Calendar end = Calendar.getInstance();//定义日期实例
-	    Calendar start = Calendar.getInstance();//定义日期实例
-	    Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( endDate );//结束日期
-	    Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( startDate );//起始日期
-	    end.setTime( d1 );
-	    start.setTime( d2 );
+            int i = 0;
+            Calendar end = Calendar.getInstance();//定义日期实例
+            Calendar start = Calendar.getInstance();//定义日期实例
+            Date d1 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( endDate );//结束日期
+            Date d2 = new SimpleDateFormat( "yyyy-MM-dd" ).parse( startDate );//起始日期
+            end.setTime( d1 );
+            start.setTime( d2 );
 
-	    while ( start.getTimeInMillis() <= end.getTimeInMillis() ) {
-		SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-		String str = sdf.format( start.getTime() );
-		String count = "";
-		for ( Map map : countList ) {
-		    if ( str.equals( map.get( "createTime" ).toString() ) ) {
-			count = map.get( "incomeMoney" ).toString();
-			break;
-		    }
-		}
-		if ( "".equals( count ) ) {
-		    count = "0";
-		}
-		data[i] = count;
-		i++;
-		start.add( Calendar.DATE, 1 );//进行当前日期加1
-	    }
-	    result.put( "data", data );//数据列表
+            while ( start.getTimeInMillis() <= end.getTimeInMillis() ) {
+                SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+                String str = sdf.format( start.getTime() );
+                String count = "";
+                for ( Map map : countList ) {
+                    if ( str.equals( map.get( "createTime" ).toString() ) ) {
+                        count = map.get( "incomeMoney" ).toString();
+                        break;
+                    }
+                }
+                if ( "".equals( count ) ) {
+                    count = "0";
+                }
+                data[i] = count;
+                i++;
+                start.add( Calendar.DATE, 1 );//进行当前日期加1
+            }
+            result.put( "data", data );//数据列表
 
-	    Calendar cal = Calendar.getInstance();
-	    String day = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-	    cal.add( Calendar.DATE, -1 );
-	    String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
-	    cal.add( Calendar.DATE, -6 );
-	    String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+            Calendar cal = Calendar.getInstance();
+            String day = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+            cal.add( Calendar.DATE, -1 );
+            String yesterday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
+            cal.add( Calendar.DATE, -6 );
+            String sevenday = new SimpleDateFormat( "yyyy-MM-dd " ).format( cal.getTime() );
 
-	    Wrapper groupWrapper = new EntityWrapper();
-	    groupWrapper.where( "TO_DAYS(pay_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
-		groupWrapper.in( "shop_id", shopIds );
-	    } else {
-		groupWrapper.and( "shop_id ={0}", shopId );
-	    }
-	    Integer todayPayOrderNum = mallOrderService.selectCount( groupWrapper );
+            Wrapper groupWrapper = new EntityWrapper();
+            groupWrapper.where( "TO_DAYS(pay_time) = TO_DAYS({0}) and order_status>1 and order_status!=5", day );
+            if ( CommonUtil.isEmpty( shopId ) ) {
+                groupWrapper.in( "shop_id", shopIds );
+            } else {
+                groupWrapper.and( "shop_id ={0}", shopId );
+            }
+            Integer todayPayOrderNum = mallOrderService.selectCount( groupWrapper );
 
-	    Map< String,Object > params1 = new HashMap<>();
-	    params1.put( "userId", user.getId() );
-	    if ( CommonUtil.isNotEmpty( shopId ) ) {
-		params1.put( "shopId", shopId );
-	    } else {
-		params1.put( "shoplist", shoplist );
-	    }
-	    params1.put( "status", "1" );
-	    Integer waitPayOrderNum = mallOrderService.count( params1 );
+            Map< String,Object > params1 = new HashMap<>();
+            params1.put( "userId", user.getId() );
+            if ( CommonUtil.isNotEmpty( shopId ) ) {
+                params1.put( "shopId", shopId );
+            } else {
+                params1.put( "shoplist", shoplist );
+            }
+            params1.put( "status", "1" );
+            Integer waitPayOrderNum = mallOrderService.count( params1 );
 
-	    params1.put( "status", "2" );
-	    Integer waitDeliveryOrderNum = mallOrderService.count( params1 );
+            params1.put( "status", "2" );
+            Integer waitDeliveryOrderNum = mallOrderService.count( params1 );
 
-	    result.put( "todayPayOrderNum", todayPayOrderNum );//今日付款订单数
-	    result.put( "waitPayOrderNum", waitPayOrderNum );//待付款订单数
-	    result.put( "waitDeliveryOrderNum", waitDeliveryOrderNum );//待发货订单数
+            result.put( "todayPayOrderNum", todayPayOrderNum );//今日付款订单数
+            result.put( "waitPayOrderNum", waitPayOrderNum );//待付款订单数
+            result.put( "waitDeliveryOrderNum", waitDeliveryOrderNum );//待发货订单数
 
-	    Map< String,Object > countParams = new HashMap<>();
-	    countParams.put( "category", "2" );
-	    if ( CommonUtil.isEmpty( shopId ) ) {
-		countParams.put( "shoplist", shoplist );
-	    } else {
-		countParams.put( "shopId", shopId );
-	    }
-	    countParams.put( "date", yesterday );
-	    String yesterPrice = mallIncomeListService.getCountByTimes( countParams );
+            Map< String,Object > countParams = new HashMap<>();
+            countParams.put( "category", "2" );
+            if ( CommonUtil.isEmpty( shopId ) ) {
+                countParams.put( "shoplist", shoplist );
+            } else {
+                countParams.put( "shopId", shopId );
+            }
+            countParams.put( "date", yesterday );
+            String yesterPrice = mallIncomeListService.getCountByTimes( countParams );
 
-	    countParams.remove( "date" );
-	    countParams.put( "startDate", sevenday );
-	    countParams.put( "endDate", yesterday );
-	    String sevenCount = mallIncomeListService.getCountByTimes( countParams );
-	    result.put( "yesterIncomeCount", yesterPrice );//昨天总收入
-	    result.put( "sevenIncomeCount", sevenCount );//7天总收入
+            countParams.remove( "date" );
+            countParams.put( "startDate", sevenday );
+            countParams.put( "endDate", yesterday );
+            String sevenCount = mallIncomeListService.getCountByTimes( countParams );
+            result.put( "yesterIncomeCount", yesterPrice );//昨天总收入
+            result.put( "sevenIncomeCount", sevenCount );//7天总收入
 
-	} catch ( Exception e ) {
-	    logger.error( "获取收入金额列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取收入金额列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+        } catch ( Exception e ) {
+            logger.error( "获取收入金额列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取收入金额列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 }

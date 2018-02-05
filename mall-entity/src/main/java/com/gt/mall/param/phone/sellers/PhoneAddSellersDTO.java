@@ -34,5 +34,5 @@ public class PhoneAddSellersDTO implements Serializable {
 
     @ApiModelProperty( name = "remark", value = "销售员id" )
     private Integer memberId;
- 
+
 }

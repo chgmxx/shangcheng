@@ -46,7 +46,7 @@ public interface MallPresaleDepositService extends BaseService< MallPresaleDepos
      *
      * @return 保证金信息
      */
-    List<MallPresaleDeposit> getMyPresale( MallPresaleDeposit deposit );
+    List< MallPresaleDeposit > getMyPresale( MallPresaleDeposit deposit );
 
     /**
      * 退还保证金

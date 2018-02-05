@@ -80,23 +80,23 @@ public class MallPifaApply extends Model< MallPifaApply > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallPifaApply{" +
-			"id=" + id +
-			", name=" + name +
-			", companyName=" + companyName +
-			", telephone=" + telephone +
-			", remark=" + remark +
-			", memberId=" + memberId +
-			", busUserId=" + busUserId +
-			", createTime=" + createTime +
-			", status=" + status +
-			", checkTime=" + checkTime +
-			", isUse=" + isUse +
-			"}";
+        return "MallPifaApply{" +
+            "id=" + id +
+            ", name=" + name +
+            ", companyName=" + companyName +
+            ", telephone=" + telephone +
+            ", remark=" + remark +
+            ", memberId=" + memberId +
+            ", busUserId=" + busUserId +
+            ", createTime=" + createTime +
+            ", status=" + status +
+            ", checkTime=" + checkTime +
+            ", isUse=" + isUse +
+            "}";
     }
 }

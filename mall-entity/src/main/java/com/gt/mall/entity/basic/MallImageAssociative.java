@@ -50,7 +50,7 @@ public class MallImageAssociative extends Model< MallImageAssociative > {
     private Integer isMainImages;
     /**
      * 关联表类型 1关联商品表 t_mall_product表的id  2关联商品分组表t_mall_group的id  3关联上门自提表 t_mall_take_their表的id   4关联评价表t_mall_comment表的id
-     *         5关联店铺表t_mall_store的id 6关联店铺认证表t_mall_store_certification的id
+     * 5关联店铺表t_mall_store的id 6关联店铺认证表t_mall_store_certification的id
      */
     @TableField( "ass_type" )
     private Integer assType;
@@ -67,19 +67,19 @@ public class MallImageAssociative extends Model< MallImageAssociative > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallImageAssociative{" +
-			"id=" + id +
-			", imageUrl=" + imageUrl +
-			", assId=" + assId +
-			", isMainImages=" + isMainImages +
-			", assType=" + assType +
-			", assSort=" + assSort +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallImageAssociative{" +
+            "id=" + id +
+            ", imageUrl=" + imageUrl +
+            ", assId=" + assId +
+            ", isMainImages=" + isMainImages +
+            ", assType=" + assType +
+            ", assSort=" + assSort +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

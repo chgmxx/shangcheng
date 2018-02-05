@@ -34,7 +34,7 @@ public class MallComparatorUtil implements Comparator< Map< String,Object > >, S
         //	    return 0;
         //	}
         //	return -1;
-        return Double.compare( raill1, raill2);
+        return Double.compare( raill1, raill2 );
     }
 
 }
