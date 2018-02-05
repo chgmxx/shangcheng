@@ -898,7 +898,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
     public Map< String,Object > copyProductByShopId( Map< String,Object > params, BusUser user ) throws Exception {
 	Map< String,Object > resultMap = new HashMap<>();
 	Wrapper< MallProduct > productWrapper = new EntityWrapper<>();
-	productWrapper.where( "shop_id = {0}", params.get( "shopId" ) );
+	productWrapper.where( "is_delete = 0 and shop_id = {0}", params.get( "shopId" ) );
 	List< MallProduct > productList = mallProductDAO.selectList( productWrapper );
 	if ( productList != null && productList.size() > 0 ) {
 	    for ( MallProduct mallProduct : productList ) {

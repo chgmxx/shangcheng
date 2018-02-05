@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.basic.MallPaySetDAO;
 import com.gt.mall.dao.seller.MallSellerDAO;
 import com.gt.mall.entity.basic.MallPaySet;
@@ -51,11 +51,11 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
     public int editPaySet( Map< String,Object > params ) {
 	int count = 0;
 	MallPaySet set = (MallPaySet) JSONObject.toJavaObject( JSONObject.parseObject( JSON.toJSONString( params ) ), MallPaySet.class );
-//	set.setSmsMessage( CommonUtil.urlEncode( set.getSmsMessage() ) );
-//	set.setPfRemark( CommonUtil.urlEncode( set.getPfRemark() ) );
-//	set.setPfApplyRemark( CommonUtil.urlEncode( set.getPfApplyRemark() ) );
-//	set.setBusMessageJson( CommonUtil.urlEncode( set.getBusMessageJson() ) );
-//	set.setMessageJson( CommonUtil.urlEncode( set.getMessageJson() ) );
+	//	set.setSmsMessage( CommonUtil.urlEncode( set.getSmsMessage() ) );
+	//	set.setPfRemark( CommonUtil.urlEncode( set.getPfRemark() ) );
+	//	set.setPfApplyRemark( CommonUtil.urlEncode( set.getPfApplyRemark() ) );
+	//	set.setBusMessageJson( CommonUtil.urlEncode( set.getBusMessageJson() ) );
+	//	set.setMessageJson( CommonUtil.urlEncode( set.getMessageJson() ) );
 	MallPaySet paySet = paySetDAO.selectOne( set );
 	if ( CommonUtil.isNotEmpty( set ) && CommonUtil.isNotEmpty( paySet ) ) {
 	    if ( CommonUtil.isEmpty( set.getId() ) && CommonUtil.isNotEmpty( paySet.getId() ) ) {
@@ -158,7 +158,7 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 	MallPaySet paySet = new MallPaySet();
 	paySet.setUserId( busUserId );
 	paySet = paySetDAO.selectOne( paySet );
-	if ( CommonUtil.isNotEmpty( paySet ) ) {
+	if ( CommonUtil.isNotEmpty( paySet ) && paySet.getIsFooter() == 1 ) {
 	    if ( CommonUtil.isNotEmpty( paySet.getFooterJson() ) ) {
 		footerMap = (Map< String,Object >) JSONObject.toJavaObject( JSONObject.parseObject( paySet.getFooterJson() ), Map.class );
 		if ( CommonUtil.toString( footerMap.get( "home" ) ).equals( "0" ) && CommonUtil.toString( footerMap.get( "group" ) ).equals( "0" ) && CommonUtil
@@ -166,6 +166,8 @@ public class MallPaySetServiceImpl extends BaseServiceImpl< MallPaySetDAO,MallPa
 		    return null;
 		}
 	    }
+	} else {
+	    return null;
 	}
 	return footerMap;
     }

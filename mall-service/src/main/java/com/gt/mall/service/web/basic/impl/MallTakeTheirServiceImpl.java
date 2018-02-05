@@ -230,15 +230,15 @@ public class MallTakeTheirServiceImpl extends BaseServiceImpl< MallTakeTheirDAO,
     @Override
     public MallTakeTheir selectById( Map< String,Object > params ) {
 	MallTakeTheir take = mallTakeTheirDAO.selectByIds( params );
+	if ( take != null ) {
+	    params.put( "assType", 3 );
+	    params.put( "assId", params.get( "id" ) );
+	    // 查询商品图片
+	    List< MallImageAssociative > imageList = imageAssociativeDAO.selectImageByAssId( params );
+	    take.setImageList( imageList );
 
-	params.put( "assType", 3 );
-	params.put( "assId", params.get( "id" ) );
-	// 查询商品图片
-	List< MallImageAssociative > imageList = imageAssociativeDAO.selectImageByAssId( params );
-	take.setImageList( imageList );
-
-	take.setTimeList( takeTheirTimeDAO.selectByTakeId( take.getId() ) );
-
+	    take.setTimeList( takeTheirTimeDAO.selectByTakeId( take.getId() ) );
+	}
 	return take;
     }
 
