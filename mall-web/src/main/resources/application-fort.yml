@@ -93,7 +93,7 @@ redis:
  host: 113.106.202.51
  port: 6381
  password: GT@123456
- database: 0
+ database: 3
 
 ### 设置 Redis session 共享
 redisSession:
