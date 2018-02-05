@@ -63,7 +63,7 @@
         <if test="shoplist != null ">
             and p.shop_id in
             <foreach collection="shoplist" index="index" item="item" open="(" separator="," close=")">
-                 #{item.id,jdbcType=INTEGER}
+                #{item.id,jdbcType=INTEGER}
             </foreach>
         </if>
         group by jp.id
@@ -94,7 +94,7 @@
         SELECT COUNT(sp.id)
         FROM t_mall_seller_join_product jp
         LEFT JOIN t_mall_seller_product sp ON sp.`product_id`=jp.`product_id`
-        WHERE jp.product_id = #{productId} AND sp.`sale_member_id`=#{saleMemberId} AND jp.is_delete=0 AND sp.`is_delete`=0  and jp.is_use=1
+        WHERE jp.product_id = #{productId} AND sp.`sale_member_id`=#{saleMemberId} AND jp.is_delete=0 AND sp.`is_delete`=0 and jp.is_use=1
     </select>
     <select id="selectSellerByProId" parameterType="Map" resultType="Map">
         SELECT distinct p.id as

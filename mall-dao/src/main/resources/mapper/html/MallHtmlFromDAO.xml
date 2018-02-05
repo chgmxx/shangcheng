@@ -30,19 +30,19 @@
     </sql>
 
 
-    <select id="countHtmlFromByHtmlId"  parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        SELECT COUNT(1) FROM t_mall_html_from a  WHERE a.html_id=#{html_id}
+    <select id="countHtmlFromByHtmlId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM t_mall_html_from a WHERE a.html_id=#{html_id}
     </select>
-    <select id="getHtmlFromByHtmlId"  parameterType="java.lang.Integer" resultType="java.util.Map">
-     SELECT a.id,a.creattime,a.category,a.categoryname,b.htmlname
-     FROM t_mall_html_from a
-     LEFT JOIN t_mall_html b ON a.html_id=b.id AND b.is_delete=0
-     WHERE a.html_id  = #{htmlId}
-     ORDER BY a.id DESC
-     limit #{firstNum},#{pageSize}
+    <select id="getHtmlFromByHtmlId" parameterType="java.lang.Integer" resultType="java.util.Map">
+        SELECT a.id,a.creattime,a.category,a.categoryname,b.htmlname
+        FROM t_mall_html_from a
+        LEFT JOIN t_mall_html b ON a.html_id=b.id AND b.is_delete=0
+        WHERE a.html_id = #{htmlId}
+        ORDER BY a.id DESC
+        limit #{firstNum},#{pageSize}
 
     </select>
-    <select id="htmlFromView"  parameterType="java.lang.Integer" resultType="java.util.Map">
+    <select id="htmlFromView" parameterType="java.lang.Integer" resultType="java.util.Map">
         SELECT a.*,b.htmlname FROM t_mall_html_from a
         LEFT JOIN t_mall_html b ON a.html_id=b.id AND b.is_delete=0
         WHERE a.id=#{id}

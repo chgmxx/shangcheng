@@ -815,7 +815,7 @@ public class MallPageServiceImpl extends BaseServiceImpl< MallPageDAO,MallPage >
 		map.put( "title", map.get( "pro_name" ).toString() );
 		map.put( "selecttype", 1 + "" );
 		map.put( "genre", map.get( "id" ).toString() );
-		if ( map.get( "is_specifica" ).toString().equals( "1" ) ) {
+		if ( map.get( "is_specifica" ).toString().equals( "1" ) && CommonUtil.isNotEmpty( map.get( "inv_price" ) )) {
 		    map.put( "price", map.get( "inv_price" ).toString() );
 		} else {
 		    map.put( "price", map.get( "pro_price" ).toString() );

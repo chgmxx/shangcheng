@@ -442,7 +442,7 @@ public class MallStoreServiceImpl extends BaseServiceImpl< MallStoreDAO,MallStor
     @Override
     public List< Map< String,Object > > findShopByUserIdAndShops( int userId, List< Integer > shopIdList ) {
 	List< Map< String,Object > > storeList = findShopByUserId( userId, null );
-	if ( storeList != null && shopIdList.size() > 0 && storeList != null && storeList.size() > 0 ) {
+	if ( shopIdList != null && shopIdList.size() > 0 && storeList != null && storeList.size() > 0 ) {
 	    List< Map< String,Object > > removeList = new ArrayList<>();
 	    for ( Map< String,Object > storeMap : storeList ) {
 		boolean errorFlag = false;

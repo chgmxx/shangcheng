@@ -139,7 +139,7 @@
         AND c.order_pay_way IN (1,3)
     </select>
     <select id="selectProductMoneyByWay" resultType="Map">
-        SELECT  SUM(a.det_pro_num) AS wxnum ,SUM(a.det_pro_num*a.det_pro_price) AS wxprice
+        SELECT SUM(a.det_pro_num) AS wxnum ,SUM(a.det_pro_num*a.det_pro_price) AS wxprice
         FROM t_mall_order_detail a
         LEFT JOIN t_mall_store b ON a.shop_id=b.id
         LEFT JOIN t_mall_order c ON a.order_id=c.id

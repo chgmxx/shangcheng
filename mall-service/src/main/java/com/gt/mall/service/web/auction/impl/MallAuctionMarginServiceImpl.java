@@ -456,10 +456,10 @@ public class MallAuctionMarginServiceImpl extends BaseServiceImpl< MallAuctionMa
 		//同步失败，存入redis
 		JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
 
-		resultMap.put( "result", false );
-		if ( CommonUtil.isNotEmpty( memberResultMap.get( "errorMsg" ) ) ) {
+		resultMap.put( "result", true );
+		/*if ( CommonUtil.isNotEmpty( memberResultMap.get( "errorMsg" ) ) ) {
 		    resultMap.put( "msg", memberResultMap.get( "errorMsg" ) );
-		}
+		}*/
 	    } else {
 		updateReturnStatus( pUser, map, returnNo );//储值卡退款退款
 

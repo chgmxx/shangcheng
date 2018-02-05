@@ -20,7 +20,7 @@
 
     <select id="selectPriceByGroupId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_pifa_price
         where pifa_id = #{pifaId,jdbcType=INTEGER} and is_delete = 0
     </select>
@@ -37,7 +37,7 @@
             <if test="seckillPrice != null">
                 seckill_price = #{seckillPrice,jdbcType=DECIMAL},
             </if>
-            <if test="isJoinGroup != null" >
+            <if test="isJoinGroup != null">
                 is_join_group = #{isJoinGroup,jdbcType=TINYINT},
             </if>
             <if test="isDelete != null">
@@ -47,7 +47,7 @@
         where pifa_id = #{pifaId,jdbcType=INTEGER}
     </update>
 
-    <select id="selectPriceByInvId" parameterType="Map" resultType="Map" >
+    <select id="selectPriceByInvId" parameterType="Map" resultType="Map">
         select pr.id, pr.pifa_id , pr.inven_id , pr.specifica_ids , pr.seckill_price , pr.is_join_group , pr.is_delete
         from t_mall_pifa_price pr
         left join t_mall_pifa p on p.id=pr.pifa_id

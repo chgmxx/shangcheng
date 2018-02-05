@@ -157,7 +157,7 @@ public class UploadManager {
 	    File dir = new File( rootDir + "//" + secondDir );
 	    if ( !dir.exists() ) {
 		boolean flag = dir.mkdirs();
-		if(!flag){
+		if ( !flag ) {
 		    logger.error( "创建路径失败" );
 		}
 	    }
@@ -219,7 +219,7 @@ public class UploadManager {
 	    File dir = new File( rootDir );
 	    if ( !dir.exists() ) {
 		boolean flag = dir.mkdirs();
-		if(!flag){
+		if ( !flag ) {
 		    logger.error( "创建路径失败" );
 		}
 	    }
@@ -681,13 +681,16 @@ public class UploadManager {
     private static boolean deleteDir( File dir ) {
 	if ( dir.isDirectory() ) {
 	    String[] children = dir.list();
-	    //递归删除目录中的子目录下
-	    for ( int i = 0; i < children.length; i++ ) {
-		boolean success = deleteDir( new File( dir, children[i] ) );
-		if ( !success ) {
-		    return false;
+	    if ( children != null && children.length > 0 ) {
+		//递归删除目录中的子目录下
+		for ( int i = 0; i < children.length; i++ ) {
+		    boolean success = deleteDir( new File( dir, children[i] ) );
+		    if ( !success ) {
+			return false;
+		    }
 		}
 	    }
+
 	}
 	// 目录此时为空，可以删除
 	return dir.delete();

@@ -1,6 +1,5 @@
 package com.gt.mall.utils;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.util.StringUtils;
 
 import java.text.DateFormat;
@@ -732,7 +731,7 @@ public class DateTimeKit {
 	    d2 = swap;
 	}
 
-	int betweendays = getDaysBetween( d1, d2 );
+//	int betweendays = getDaysBetween( d1, d2 );
 
 	@SuppressWarnings( "unused" )
 	int charge_date = 0;
@@ -1371,8 +1370,8 @@ public class DateTimeKit {
 	currentTime.setHours( 0 );
 	currentTime.setMinutes( 0 );
 	currentTime.setSeconds( 0 );
-	Date backupTime = DateUtils.addDays( currentTime, -1 );
-	System.out.println( DateTimeKit.format( currentTime, yyyyMMddHHmmssms ) );
+//	Date backupTime = DateUtils.addDays( currentTime, -1 );
+//	System.out.println( DateTimeKit.format( currentTime, yyyyMMddHHmmssms ) );
 	return currentTime.getTime() / 1000;
     }
 

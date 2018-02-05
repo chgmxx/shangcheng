@@ -171,6 +171,9 @@ public class PurchasePhoneController extends AuthorizeOrLoginController {
 		request.setAttribute( "companyMode", companyMode );
 		request.setAttribute( "receivablesList", receivablesList );
 	    }
+	}catch (RuntimeException e) {
+	    logger.error( "手机端订单详情首页异常:" + e.getMessage() );
+	    e.printStackTrace();
 	} catch ( Exception e ) {
 	    logger.error( "手机端订单详情首页异常:" + e.getMessage() );
 	    e.printStackTrace();

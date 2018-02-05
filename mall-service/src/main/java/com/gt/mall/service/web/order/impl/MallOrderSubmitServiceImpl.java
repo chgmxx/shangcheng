@@ -365,9 +365,9 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 	}
 
 	subQrPayParams.setPayWay( orderPayWay );//支付方式  0----系统根据浏览器判断   1---微信支付 2---支付宝 3---多粉钱包支付
-	subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE);//墨盒默认0即啊祥不用填,其他人调用填1
+	subQrPayParams.setSourceType( Constants.PAY_SOURCE_TYPE );//墨盒默认0即啊祥不用填,其他人调用填1
 	subQrPayParams.setTakeState( 2 );//此订单是否可立即提现(1:是 2:否,不填默认为1)，不可立即提现表示此订单有担保期；注：如传值为2,各erp系统需各自写定时器将超过担保期的订单发送到指定接口
-	logger.error( "------------------"+JSONObject.toJSONString( subQrPayParams ) );
+	logger.error( "------------------" + JSONObject.toJSONString( subQrPayParams ) );
 	KeysUtil keyUtil = new KeysUtil();
 	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
 	return PropertiesUtil.getWxmpDomain() + "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/payapi.do?obj=" + params;
@@ -936,13 +936,11 @@ public class MallOrderSubmitServiceImpl extends BaseServiceImpl< MallOrderDAO,Ma
 		//计算运费
 		busTotalNum += totalNum;
 		busTotalPrice += totalPrice;
-		if ( newProductResultList != null && newProductResultList.size() > 0 ) {
-		    totalPrice = CommonUtil.toDouble( df.format( totalPrice ) );
-		    shopResult.setTotalNum( totalNum );
-		    shopResult.setTotalMoney( totalPrice );
-		    shopResult.setProductResultList( newProductResultList );
-		    productResultList.removeAll( newProductResultList );//移除商品信息
-		}
+		totalPrice = CommonUtil.toDouble( df.format( totalPrice ) );
+		shopResult.setTotalNum( totalNum );
+		shopResult.setTotalMoney( totalPrice );
+		shopResult.setProductResultList( newProductResultList );
+		productResultList.removeAll( newProductResultList );//移除商品信息
 		shopResultList.add( shopResult );
 	    }
 	    totalOrderMoney = CommonUtil.toDouble( df.format( busTotalPrice + busFreightPrice ) );//支付金额

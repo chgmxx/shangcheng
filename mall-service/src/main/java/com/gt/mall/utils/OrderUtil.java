@@ -385,8 +385,6 @@ public class OrderUtil {
 	    statusMsg = "已退货等待商家确认收货";
 	} else if ( status == 4 ) {
 	    statusMsg = "商家未收到货，不同意退款申请";
-	} else if ( status == 0 ) {
-	    statusMsg = "退款中";
 	}
 	return statusMsg;
     }

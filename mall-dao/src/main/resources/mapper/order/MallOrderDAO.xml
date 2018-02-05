@@ -356,7 +356,7 @@
         t.order_start,t.order_pay_way,t.delivery_method,t.invoice_title,t.take_their_id,t.is_message_notice, t.buyer_user_id,
         t.seller_user_id,t.order_status,t.create_time,t.order_pay_no,t.pay_time,express_way,t.express_id,t.express_number,
         t.express_time,t.buyer_cancel_reason,t.seller_cancel_reason ,t.receive_name,t.receive_phone,t.member_name,
-        d.order_id,d.product_specificas,d.product_image_url,  d.det_pro_num,d.det_pro_price,d.det_pro_name,d.det_pro_code,d.det_privivilege,
+        d.order_id,d.product_specificas,d.product_image_url, d.det_pro_num,d.det_pro_price,d.det_pro_name,d.det_pro_code,d.det_privivilege,
         d.status ,d.id as dId,d.shop_id,re.ret_reason,re.id as rId,re.no_return_reason,re.return_no,re.ret_handling_way,re.ret_reason_id,
         re.ret_reason,re.ret_money,re.ret_telephone,re.ret_remark,re.images_url,re.return_address,
         TIMESTAMPDIFF(DAY,t.update_time,now()) as updateDay,t.bus_user_id,t.use_jifen,t.use_fenbi
@@ -365,18 +365,18 @@
         t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
         t.express_time,t.order_pay_way,t.receive_name,t.receive_phone,t.member_name,
         u.nickname,TIMESTAMPDIFF(DAY,t.update_time,now()) as updateDay,
-        if(t.order_pid = 0 || t.order_pid is null,t.order_no,(SELECT  order_no from t_mall_order where t.order_pid=id)) as orderPNo
+        if(t.order_pid = 0 || t.order_pid is null,t.order_no,(SELECT order_no from t_mall_order where t.order_pid=id)) as orderPNo
     </sql>
 
     <sql id="Buyer_Order_Column_List">
-         t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
+        t.id, t.order_no,t.order_money, t.order_freight_money, t.order_status,t.create_time,t.order_pay_no,t.express_number,t.pay_time,
         t.express_time, TIMESTAMPDIFF(DAY,t.update_time,NOW()) AS updateDay,t.order_type,t.group_buy_id,t.order_pay_way,t.delivery_method,t.order_pid,
         IF(t.order_pid = 0 || t.order_pid IS NULL,t.order_no,(SELECT order_no FROM t_mall_order WHERE t.order_pid=id)) AS orderPNo,
         t.is_wallet,t.bus_user_id ,d.order_id,d.product_specificas,d.product_image_url,d.det_pro_num,d.det_pro_price,d.det_pro_name,
         d.status,d.product_id,d.id AS dId, d.shop_id, d.product_speciname,p.is_return,d.pro_type_id,d.det_privivilege,d.return_day AS returnDay,
         d.use_fenbi,d.use_fenbi,d.appraise_status,d.sale_member_id ,re.id AS rId,re.no_return_reason,re.return_no, re.ret_reason,re.ret_handling_way,
         re.ret_money, s.sto_name
-     </sql>
+    </sql>
 
     <sql id="Order_OrderDetail_List">
         t.id, t.order_no,t.receive_id,t.order_money, t.order_freight_money, t.order_buyer_message,t.order_seller_remark,t.member_name,
@@ -801,10 +801,10 @@
     <select id="selectOrderDetail" resultType="Map" parameterType="map">
         select t.*,
         (
-          select GROUP_CONCAT(s.specifica_value)
-          from t_mall_product_specifica  s
-          where CONCAT(',',t.product_specificas,',')  like CONCAT('%',CONCAT(',',s.specifica_value_id,','),'%')
-          and s.product_id=t.product_id
+        select GROUP_CONCAT(s.specifica_value)
+        from t_mall_product_specifica s
+        where CONCAT(',',t.product_specificas,',') like CONCAT('%',CONCAT(',',s.specifica_value_id,','),'%')
+        and s.product_id=t.product_id
         ) as proSpec,
         r.id as rId ,r.`status` as rStatus,r.ret_handling_way as handlingWay,
         r.ret_reason_id as reasonId,r.ret_reason as reason ,r.ret_remark as remark,r.ret_money as money,r.no_return_reason as noReason,
@@ -1045,7 +1045,7 @@
         select
         o.id as oId, d.id as dId ,d.det_pro_name as proName , d.det_pro_price*d.det_pro_num as proPrice,o.order_money as orderMoney,o.pay_time as payTime ,
         o.order_status as orderStatus,d.shop_id as shopId ,o.order_pid,o.is_wallet,o.bus_user_id,
-        if(o.order_pid = 0 || o.order_pid is null,o.order_no,(SELECT  order_no from t_mall_order where o.order_pid=id)) as orderNo,o.order_no as order_no,
+        if(o.order_pid = 0 || o.order_pid is null,o.order_no,(SELECT order_no from t_mall_order where o.order_pid=id)) as orderNo,o.order_no as order_no,
         d.product_id as productId,d.det_pro_num as proNum,o.buyer_user_id,o.order_pay_way,o.order_no,o.order_type,o.group_buy_id,d.product_specificas
         ,d.use_fenbi,d.use_jifen,d.total_price,o.receive_address,d.flow_id,d.flow_record_id,d.use_fenbi,d.use_jifen
         from t_mall_order_detail d
@@ -1105,7 +1105,7 @@
 
     <select id="selectSpecByDetailId" resultType="java.lang.String" parameterType="java.lang.Integer">
         select group_concat(Convert(s.id , char)) as specId
-        from  t_mall_order_detail d
+        from t_mall_order_detail d
         left join t_mall_product_specifica s on s.product_id=d.product_id and CONCAT(',',d.product_specificas,',') like CONCAT('%',CONCAT(',',s.specifica_value_id,','),'%')
         where d.id=#{detailId} and s.is_delete=0
     </select>
@@ -1114,8 +1114,8 @@
     <select id="selectOrderByFinish" resultMap="BaseResultMap">
         select DISTINCT t.order_no,t.id
         from t_mall_order t
-        left join  t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
-        where  t.shop_id > 0 and t.order_status=4 and d.return_day &lt;= TIMESTAMPDIFF(DAY,t.update_time,now()) and t.give_status=0 and mem_card_type > 0 and t.order_pay_way != 4
+        left join t_mall_order_detail d ON (t.`shop_id`=d.`shop_id` AND t.`id`=d.`order_id`)
+        where t.shop_id > 0 and t.order_status=4 and d.return_day &lt;= TIMESTAMPDIFF(DAY,t.update_time,now()) and t.give_status=0 and mem_card_type > 0 and t.order_pay_way != 4
     </select>
 
     <!-- 查询未支付的订单 -->
@@ -1135,7 +1135,7 @@
     <select id="selectDetailByOrderId" parameterType="java.lang.Integer" resultType="Map">
         select t.id,t.product_id,t.product_image_url,t.det_pro_name,t.det_pro_price,t.det_pro_num,t.shop_id
         from t_mall_order o
-        left join t_mall_order_detail t  on o.id=t.order_id
+        left join t_mall_order_detail t on o.id=t.order_id
         where t.id>0 and (o.id = #{orderId} or o.order_pid=#{orderId} )
     </select>
 
@@ -1421,13 +1421,13 @@
     </select>
     <select id="selectRealOrder" resultType="Map">
         select o.id,o.order_status,o.buyer_user_id,o.order_no from t_mall_order o
-        WHERE o.order_status=3  AND (TIMESTAMPDIFF(DAY,o.update_time,NOW()) > 7 OR (o.update_time IS NULL AND TIMESTAMPDIFF(DAY,o.pay_time,NOW()) > 7 ))
+        WHERE o.order_status=3 AND (TIMESTAMPDIFF(DAY,o.update_time,NOW()) > 7 OR (o.update_time IS NULL AND TIMESTAMPDIFF(DAY,o.pay_time,NOW()) > 7 ))
     </select>
 
     <select id="selectRealOrderDetail" resultType="Map" parameterType="Map">
         select d.id,d.`status`,d.total_price as totalPrice,(d.det_pro_price*d.det_pro_num) as sumPrice,d.return_day,d.sale_member_id,d.commission
         from t_mall_order_detail d
-        where  d.order_id=#{id}
+        where d.order_id=#{id}
     </select>
     <update id="updateByOrder" parameterType="Map">
         update t_mall_order set update_time=now()
@@ -1458,7 +1458,7 @@
         WHERE order_status = 4
         AND SYSDATE() >= DATE_ADD(update_time, INTERVAL 7 DAY)
         AND DATEDIFF(NOW(),update_time) = 7
-        AND t.`shop_id`=  #{shopId}
+        AND t.`shop_id`= #{shopId}
     </select>
 
     <select id="selectOrderFinishList" resultMap="MoreResultMap" parameterType="java.lang.Integer">
@@ -1500,7 +1500,7 @@
     <select id="countTodayShopByTime" resultType="java.util.Map">
         SELECT SUM(order_money) AS saleTotalprice
         FROM t_mall_order
-        WHERE  order_pay_way=5
+        WHERE order_pay_way=5
         AND order_status > 1
         AND order_status <![CDATA[<]]> 5
         AND pay_time >= #{startTime}

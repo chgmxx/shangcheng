@@ -251,21 +251,6 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			}
 
 		    } else if ( orderPayWay == 3 && CommonUtil.isNotEmpty( pUser ) ) {//储值卡退款
-			//			Map< String,Object > returnParams = new HashMap<>();
-			//			returnParams.put( "busId", busUserId );
-			//			returnParams.put( "orderNo", orderNo );
-			//			returnParams.put( "money", orderMoney );
-			//储值卡退款
-			//			Map< String,Object > payResultMap = memberService.refundMoney( returnParams );//memberPayService.chargeBack(memberId,money);
-			//			if ( payResultMap != null ) {
-			//			    if ( CommonUtil.isNotEmpty( payResultMap.get( "code" ) ) ) {
-			//				int code = CommonUtil.toInteger( payResultMap.get( "code" ) );
-			//				if ( code == 1 ) {//退款成功修改退款状态
-			//				    resultFlag = true;
-			//				    updateReturnStatus( pUser, detailMap, returnNo );//微信退款
-			//				}
-			//			    }
-			//			}
 			int is_wallet = 0;
 			double use_fenbi = 0;
 			double use_jifen = 0;
@@ -288,6 +273,7 @@ public class MallOrderReturnServiceImpl extends BaseServiceImpl< MallOrderReturn
 			erpRefundBo.setRefundDate( new Date().getTime() );
 			Map< String,Object > resultMap = memberService.refundMoney( erpRefundBo );
 			if ( CommonUtil.toInteger( resultMap.get( "code" ) ) != 1 ) {
+                resultFlag = true;
 			    //同步失败，存入redis
 			    JedisUtil.rPush( Constants.REDIS_KEY + "member_return_jifen", com.alibaba.fastjson.JSONObject.toJSONString( erpRefundBo ) );
 			} else {

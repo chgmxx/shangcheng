@@ -613,9 +613,9 @@ public class MallSellerMallsetServiceImpl extends BaseServiceImpl< MallSellerMal
 		}
 	    }
 	    flag = true;
-	} else if ( CommonUtil.isEmpty( mallSetDTO.getSellerProList() ) && count > 0 ) {
+	}/* else if ( CommonUtil.isEmpty( mallSetDTO.getSellerProList() ) && count > 0 ) {
 	    flag = true;
-	}
+	}*/
 	resultMap.put( "flag", flag );
 	return resultMap;
     }

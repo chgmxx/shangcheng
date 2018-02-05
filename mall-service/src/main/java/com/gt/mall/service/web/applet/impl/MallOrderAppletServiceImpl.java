@@ -1215,7 +1215,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 	}
 	Integer orderId = 0;
 	String orderNo = "";
-	BigDecimal orderMoney = new BigDecimal( 0 );
+//	BigDecimal orderMoney = new BigDecimal( 0 );
 	//保存订单信息
 	if ( orderList != null && orderList.size() > 0 && code > 0 ) {
 	    int orderPId = 0;
@@ -1259,7 +1259,7 @@ public class MallOrderAppletServiceImpl extends BaseServiceImpl< MallAppletImage
 		    orderNo = order.getOrderNo();
 		    orderId = order.getId();
 		}
-		orderMoney = orderMoney.add( order.getOrderMoney() );
+//		orderMoney = orderMoney.add( order.getOrderMoney() );
 		if ( order.getMallOrderDetail() != null && order.getMallOrderDetail().size() > 0 ) {
 		    for ( MallOrderDetail detail : order.getMallOrderDetail() ) {
 			detail.setOrderId( order.getId() );

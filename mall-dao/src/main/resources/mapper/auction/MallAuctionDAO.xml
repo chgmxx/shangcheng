@@ -189,7 +189,7 @@
     </select>
     <select id="selectByAuctionId" resultType="java.util.Map">
         select
-        b.id, b.product_id as productId,  b.auc_start_price as aucStartPrice,b.auc_lowest_price as aucLowestPrice,
+        b.id, b.product_id as productId, b.auc_start_price as aucStartPrice,b.auc_lowest_price as aucLowestPrice,
         b.auc_start_time as aucStartTime, b.auc_end_time as aucEndTime, b.auc_lower_price_time as aucLowerPriceTime,b.auc_lower_price as aucLowerPrice,
         b.auc_restriction_num as aucRestrictionNum,b.auc_num as aucNum,b.auc_type as aucType,
         b.shop_id as shopId, c.image_url as imageUrl,e.specifica_img_url as specImageUrl,p.is_specifica as isSpecifica,p.pro_name as proName
@@ -283,13 +283,13 @@
         from t_mall_auction g
         where g.is_delete = 0 and g.is_use = 1
         <if test="productId != null">
-        and g.product_id=#{productId}
+            and g.product_id=#{productId}
         </if>
         <if test="shopId != null">
-        and g.shop_id=#{shopId}
+            and g.shop_id=#{shopId}
         </if>
         <if test="id != null">
-        and g.id=#{id}
+            and g.id=#{id}
         </if>
         limit 1
     </select>

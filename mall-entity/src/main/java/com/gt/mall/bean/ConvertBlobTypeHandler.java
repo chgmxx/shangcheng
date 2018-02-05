@@ -38,14 +38,12 @@ public class ConvertBlobTypeHandler extends BaseTypeHandler< String > {
     @Override
     public String getNullableResult( ResultSet rs, String columnName )
 		    throws SQLException {
-	Blob blob = rs.getBlob( columnName );
+	Blob blob = null;
+	blob = rs.getBlob( columnName );
 	if ( blob == null ) {
 	    return "";
 	}
-	byte[] returnValue = null;
-	if ( null != blob ) {
-	    returnValue = blob.getBytes( 1, (int) blob.length() );
-	}
+	byte[]  returnValue = blob.getBytes( 1, (int) blob.length() );
 	try {
 	    //###把byte转化成string
 	    return new String( returnValue, DEFAULT_CHARSET );

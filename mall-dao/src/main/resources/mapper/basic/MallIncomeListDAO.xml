@@ -22,7 +22,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, income_type AS incomeType, income_category AS incomeCategory, income_money AS incomeMoney,income_unit AS incomeUnit, bus_id AS busId, shop_id AS shopId, create_time AS createTime, pro_name      AS proName, pro_no AS proNo, buyer_id AS buyerId, buyer_name AS buyerName, trade_id AS tradeId, trade_type AS tradeType
+        id, income_type AS incomeType, income_category AS incomeCategory, income_money AS incomeMoney,income_unit AS incomeUnit, bus_id AS busId, shop_id AS shopId, create_time AS
+        createTime, pro_name AS proName, pro_no AS proNo, buyer_id AS buyerId, buyer_name AS buyerName, trade_id AS tradeId, trade_type AS tradeType
     </sql>
     <resultMap id="BaseResultMap1" type="Map">
         <result column="buyerName" property="buyerName" jdbcType="VARCHAR" typeHandler="com.gt.mall.bean.ConvertBlobTypeHandler"/>
@@ -30,7 +31,7 @@
     <select id="tradeCount" parameterType="map" resultType="java.lang.Integer">
         select count(*)
         FROM t_mall_income_list t
-        WHERE  1=1
+        WHERE 1=1
         <if test="incomeCategory != null and incomeCategory != ''">
             and t.income_category = #{incomeCategory}
         </if>
@@ -57,10 +58,10 @@
         </if>
     </select>
     <select id="findByTradePage" parameterType="Map" resultMap="BaseResultMap1">
-        select  id, income_type AS incomeType, income_category AS incomeCategory, income_money AS incomeMoney,income_unit AS incomeUnit, bus_id AS busId, shop_id AS shopId,
-        create_time AS createTime,  pro_name AS proName, pro_no AS proNo, buyer_id AS buyerId, buyer_name AS buyerName, trade_id AS tradeId, trade_type AS tradeType
+        select id, income_type AS incomeType, income_category AS incomeCategory, income_money AS incomeMoney,income_unit AS incomeUnit, bus_id AS busId, shop_id AS shopId,
+        create_time AS createTime, pro_name AS proName, pro_no AS proNo, buyer_id AS buyerId, buyer_name AS buyerName, trade_id AS tradeId, trade_type AS tradeType
         FROM t_mall_income_list t
-        WHERE  1=1
+        WHERE 1=1
         <if test="incomeCategory != null and incomeCategory != ''">
             and t.income_category = #{incomeCategory}
         </if>
@@ -90,7 +91,7 @@
             limit #{firstResult},#{maxResult}
         </if>
     </select>
-    <select id="getCountByTimes"  resultType="java.lang.String">
+    <select id="getCountByTimes" resultType="java.lang.String">
         SELECT IFNULL(SUM(IF(t.income_type=1,t.income_money,-t.income_money)),0)
         FROM t_mall_income_list t
         WHERE income_unit = 1

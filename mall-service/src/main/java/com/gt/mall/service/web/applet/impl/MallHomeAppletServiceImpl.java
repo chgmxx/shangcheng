@@ -435,36 +435,34 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		    }
 		}
 		//获取进销存库存
-		if ( isJxc == 1 && CommonUtil.isNotEmpty( product.getErpProId() ) && product.getErpProId() > 0 && guigePriceList != null && guigePriceList.size() > 0 ) {
+		if ( isJxc == 1 && CommonUtil.isNotEmpty( product.getErpProId() ) && product.getErpProId() > 0 ) {
 		    List< Map< String,Object > > erpInvList = null;
 		    try {
 			erpInvList = productService.getErpInvByProId( product.getErpProId(), product.getShopId() );
 		    } catch ( Exception e ) {
 			e.printStackTrace();
 		    }
-		    if ( erpInvList != null && erpInvList.size() > 0 ) {
-			int totalInvNum = 0;
-			for ( Map< String,Object > erpMap : erpInvList ) {
-			    int erpInvId = CommonUtil.toInteger( erpMap.get( "erpInvId" ) );
-			    int invNum = CommonUtil.toInteger( erpMap.get( "invNum" ) );
-			    if ( guigePriceList != null && guigePriceList.size() > 0 ) {
-				for ( Map< String,Object > map : guigePriceList ) {
-				    int erp_inv_id = CommonUtil.toInteger( product.getErpInvId() );
-				    if ( erp_inv_id == erpInvId ) {
-					totalInvNum += invNum;
-					map.put( "inv_num", invNum );
-				    }
-				}
-			    } else {
+		    int totalInvNum = 0;
+		    for ( Map< String,Object > erpMap : erpInvList ) {
+			int erpInvId = CommonUtil.toInteger( erpMap.get( "erpInvId" ) );
+			int invNum = CommonUtil.toInteger( erpMap.get( "invNum" ) );
+			if ( guigePriceList != null && guigePriceList.size() > 0 ) {
+			    for ( Map< String,Object > map : guigePriceList ) {
 				int erp_inv_id = CommonUtil.toInteger( product.getErpInvId() );
-				if ( erp_inv_id > 0 && erp_inv_id == erpInvId ) {
-				    product.setProStockTotal( invNum );
+				if ( erp_inv_id == erpInvId ) {
+				    totalInvNum += invNum;
+				    map.put( "inv_num", invNum );
 				}
 			    }
+			} else {
+			    int erp_inv_id = CommonUtil.toInteger( product.getErpInvId() );
+			    if ( erp_inv_id > 0 && erp_inv_id == erpInvId ) {
+				product.setProStockTotal( invNum );
+			    }
 			}
-			if ( totalInvNum > 0 ) {
-			    product.setProStockTotal( totalInvNum );
-			}
+		    }
+		    if ( totalInvNum > 0 ) {
+			product.setProStockTotal( totalInvNum );
 		    }
 
 		}
@@ -897,14 +895,16 @@ public class MallHomeAppletServiceImpl extends BaseServiceImpl< MallAppletImageD
 		public int compare( AppletShopResult arg0, AppletShopResult arg1 ) {
 		    double raill1 = arg1.getRaill();
 		    double raill2 = arg0.getRaill();
-		    //按照距离进行降序排列
-		    if ( raill1 < raill2 ) {
-			return 1;
-		    }
-		    if ( raill1 == raill2 ) {
-			return 0;
-		    }
-		    return -1;
+		    //按照距离进行降序排列 以下写法findbug不支持
+		    //		    if ( raill1 < raill2 ) {
+		    //			return 1;
+		    //		    }
+		    //		    if ( raill1 == raill2 ) {
+		    //			return 0;
+		    //		    }
+		    //		    return -1;
+            int size = Double.compare( raill1, raill2);
+            return size == -1 ? 1 : size == 1 ? -1 : 0;
 		}
 	    } );
 	}

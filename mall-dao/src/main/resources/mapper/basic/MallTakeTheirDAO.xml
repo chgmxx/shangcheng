@@ -29,12 +29,13 @@
         visit_address_detail, visit_contact_number , visit_remark , is_store_reception , is_store_pay , images_url , user_id ,
         create_time , is_delete
     </sql>
- 
+
     <!--<select id="selectCount" parameterType="Map" resultType="java.lang.Integer">-->
-        <!--select count(id) from t_mall_take_their where is_delete = 0 and user_id = #{userId}-->
+    <!--select count(id) from t_mall_take_their where is_delete = 0 and user_id = #{userId}-->
     <!--</select>-->
     <select id="selectTakeTheirList" parameterType="Map" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" />
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_take_their t
         where is_delete = 0 and user_id = #{userId}
         order by id desc
@@ -44,15 +45,17 @@
     </select>
 
     <select id="selectByIds" parameterType="Map" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" />
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_take_their t
         where id = #{id} and is_delete=0
     </select>
 
     <select id="selectByUserId" parameterType="Map" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List" />
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_take_their t
-        where  t.is_delete=0
+        where t.is_delete=0
         <if test="userId != null and userId != ''">
             and t.user_id= #{userId}
         </if>

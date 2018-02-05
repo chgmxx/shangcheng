@@ -159,7 +159,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 	    Map< String,Object > params = new HashMap<>();
 	    params.put( "buyerUserId", member.getId() );
@@ -173,13 +173,11 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		PageUtil pageUtil = orderService.selectIntegralOrder( params );
 		result.put( "pageUtil", pageUtil );
 
-		if ( orderList != null && orderList.size() > 0 ) {
-		    for ( MallOrder mallOrder : orderList ) {
-			if ( CommonUtil.isEmpty( mallOrder ) || CommonUtil.isEmpty( mallOrder.getOrderMoney() ) ) {
-			    continue;
-			}
-			totalIntegral = CommonUtil.add( totalIntegral, CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
+		for ( MallOrder mallOrder : orderList ) {
+		    if ( CommonUtil.isEmpty( mallOrder ) || CommonUtil.isEmpty( mallOrder.getOrderMoney() ) ) {
+			continue;
 		    }
+		    totalIntegral = CommonUtil.add( totalIntegral, CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
 		}
 	    }
 	    result.put( "totalIntegral", totalIntegral );
@@ -206,7 +204,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 	try {
 	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    Map< String,Object > map = new HashMap<>();
@@ -294,7 +292,7 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
 		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddIntegralDTO integralDTO ) {
 	Map< String,Object > result = null;
 	try {
-//	    userLogin( request, response, loginDTO );
+	    //	    userLogin( request, response, loginDTO );
 	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    member = memberService.findMemberById( member.getId(), member );

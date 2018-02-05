@@ -332,7 +332,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Map< String,Object > refundMoney( ErpRefundBo erpRefundBo ) {
-	return HttpSignUtil.signHttpInsertOrUpdate( erpRefundBo, MEMBER_URL + "refundErp", 0, -1 );
+	return HttpSignUtil.signHttpInsertOrUpdate( erpRefundBo, MEMBER_URL + "refundErp", 0, 1 );
     }
 
     @Override

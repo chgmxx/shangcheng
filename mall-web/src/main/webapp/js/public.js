@@ -7,12 +7,12 @@
 //微信公众号还未绑定，跳转页面
 function a() {
     layer.alert("还未绑定微信公众号，请先绑定微信公众号", {
-        shade:[0.1,"#fff"],
+        shade: [0.1, "#fff"],
         offset: "30%",
         closeBtn: 0
     }, function () {
         layer.alert("绑定公众前，请先确认公众号没有授权给其他第三方平台，否则会影响正常的业务处理", {
-            shade:[0.1,"#fff"],
+            shade: [0.1, "#fff"],
             offset: "30%",
             closeBtn: 0
         }, function (index) {
@@ -122,10 +122,10 @@ $(function () {
 });
 
 /*$(function () {
-    $("#main", window.parent.document).load(function () {
-        $(this).height($("body")[0].scrollHeight + 50);
-    });
-});*/
+ $("#main", window.parent.document).load(function () {
+ $(this).height($("body")[0].scrollHeight + 50);
+ });
+ });*/
 
 
 /**

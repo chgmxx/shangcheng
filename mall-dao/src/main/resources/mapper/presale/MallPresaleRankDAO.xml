@@ -23,7 +23,7 @@
 
     <select id="selectByPresaleId" parameterType="Map" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_presale_rank
         where presale_id = #{presaleId,jdbcType=INTEGER}
         order by rank desc
@@ -32,7 +32,7 @@
 
     <select id="selectByPresale" parameterType="com.gt.mall.entity.presale.MallPresaleRank" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_presale_rank
         where 1=1
         <if test="presaleId != null">

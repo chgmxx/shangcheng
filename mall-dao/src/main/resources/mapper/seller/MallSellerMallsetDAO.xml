@@ -22,9 +22,9 @@
         id, shop_id , mall_name, contact_number , qq, mall_head_path, banner_path, mall_introducation, is_open_optional , sale_member_id , bus_user_id
     </sql>
 
-    <select id="selectBySaleMemberId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <select id="selectBySaleMemberId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller_mallset
         where sale_member_id = #{saleMemberId,jdbcType=INTEGER}
     </select>

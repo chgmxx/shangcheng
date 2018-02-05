@@ -409,95 +409,95 @@ public class ImageWaterMarkUtil {
 	}
     }
 
-    public static void main( String[] args ) {
-	try {
-	    String twoCodePath = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQHT8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZERDdUJHdEhmZzIxMDAwMHcwN3MAAgQ5g1xYAwQAAAAA";
-
-	    String headPath = "http://wx.qlogo.cn/mmopen/ajNVdqHZLLCCf4dqcCCe7dIRIOpVZvgQ5NZySGgPfsibxNiaQhunnusJMGfT7V5OZW0hvWCd6BdsE2ubLHibgVcOg/0";
-
-	    String path = "E:/images/bg-poster.png";
-
-	    String nowDate = DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD );
-
-	    //String twoCodePath = seller.getQrCodePath();
-	    String newPaths = PropertiesUtil.getResImagePath() + "/temp/mall/" + nowDate;
-	    twoCodePath = URLConnectionDownloader.downloadRqcode( twoCodePath, newPaths, 240, 240 );
-
-	    //String headPath = member.getHeadimgurl();
-	    headPath = URLConnectionDownloader.downloadRqcode( headPath, newPaths, 90, 90 );
-	    System.out.println( "headPath:" + headPath );
-
-	    JSONArray arr = new JSONArray();
-	    arr.add( twoCodePath );
-	    if ( CommonUtil.isNotEmpty( headPath ) ) {
-		arr.add( headPath );
-	    }
-	    String[] logoPathStr = (String[]) JSONArray.toArray( JSONArray.fromObject( arr ), String.class );
-			
-			/*String imagePath = PropertiesUtil.getResImagePath();
-			imagePath = imagePath.substring(0	, imagePath.indexOf("/upload"));*/
-
-	    String suffix = path.substring( path.lastIndexOf( "." ) + 1 );
-
-	    String newPath = PropertiesUtil.getResImagePath() + "/temp/mall";
-	    newPath += "/" + nowDate + "/" + System.currentTimeMillis() + "." + suffix;
-
-	    File file = new File( path );
-	    path = file.getCanonicalPath();
-	    ImageWaterMarkUtil iwm = new ImageWaterMarkUtil( path );
-
-	    int[] w = new int[logoPathStr.length];//水印图片的宽度
-	    int[] h = new int[logoPathStr.length];//水印图片的高度
-	    int[] x = new int[2];//水印的x坐标
-	    int[] y = new int[2];//水印的y左边
-	    System.out.println( "logoPathStr:" + logoPathStr.length );
-	    for ( int i = 0; i < logoPathStr.length; i++ ) {
-		String logo = logoPathStr[i];
-
-		ImageWaterMarkUtil iwmIcon = new ImageWaterMarkUtil( logo );
-
-		w[i] = iwmIcon.getImgWidth();
-		h[i] = iwmIcon.getImgHeight();
-		System.out.println( "logo:" + logo );
-		System.out.println( w[i] );
-		System.out.println( h[i] );
-	    }
-
-	    x[0] = (int) ( iwm.getImgWidth() * 0.13 );
-	    y[0] = (int) ( iwm.getImgHeight() * 0.59 );
-	    x[1] = (int) ( iwm.getImgWidth() * 0.5 );
-	    y[1] = (int) ( iwm.getImgHeight() * 0.59 );
-
-	    Float myfloat;
-	    try {
-		myfloat = new Float( 100 / 100 );
-	    } catch ( Exception e ) {
-		myfloat = null;
-	    }
-	    iwm.markImageByIconMoreImage( logoPathStr, path, 0, myfloat, x, y, w, h, newPath );
-
-	    System.out.println( newPath );
-
-	    //删除下载的二维码、用户头像和背景图片
-	    if ( logoPathStr != null && logoPathStr.length > 0 ) {
-		for ( int i = 0; i < logoPathStr.length; i++ ) {
-		    File files = new File( logoPathStr[i] );
-		    if ( files.exists() ) {
-			boolean flag = files.delete();//删除水印图片
-			if ( !flag ) {
-			    System.out.println( "删除图片失败 = " );
-			}
-		    }
-		}
-	    }
-			/*File pathFile = new File(path);
-			if(pathFile.exists()) {
-				pathFile.delete();//删除背景图片
-			}*/
-
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-    }
+//    public static void main( String[] args ) {
+//	try {
+//	    String twoCodePath = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQHT8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyZERDdUJHdEhmZzIxMDAwMHcwN3MAAgQ5g1xYAwQAAAAA";
+//
+//	    String headPath = "http://wx.qlogo.cn/mmopen/ajNVdqHZLLCCf4dqcCCe7dIRIOpVZvgQ5NZySGgPfsibxNiaQhunnusJMGfT7V5OZW0hvWCd6BdsE2ubLHibgVcOg/0";
+//
+//	    String path = "E:/images/bg-poster.png";
+//
+//	    String nowDate = DateTimeKit.getDateTime( new Date(), DateTimeKit.DEFAULT_DATE_FORMAT_YYYYMMDD );
+//
+//	    //String twoCodePath = seller.getQrCodePath();
+//	    String newPaths = PropertiesUtil.getResImagePath() + "/temp/mall/" + nowDate;
+//	    twoCodePath = URLConnectionDownloader.downloadRqcode( twoCodePath, newPaths, 240, 240 );
+//
+//	    //String headPath = member.getHeadimgurl();
+//	    headPath = URLConnectionDownloader.downloadRqcode( headPath, newPaths, 90, 90 );
+//	    System.out.println( "headPath:" + headPath );
+//
+//	    JSONArray arr = new JSONArray();
+//	    arr.add( twoCodePath );
+//	    if ( CommonUtil.isNotEmpty( headPath ) ) {
+//		arr.add( headPath );
+//	    }
+//	    String[] logoPathStr = (String[]) JSONArray.toArray( JSONArray.fromObject( arr ), String.class );
+//
+//			/*String imagePath = PropertiesUtil.getResImagePath();
+//			imagePath = imagePath.substring(0	, imagePath.indexOf("/upload"));*/
+//
+//	    String suffix = path.substring( path.lastIndexOf( "." ) + 1 );
+//
+//	    String newPath = PropertiesUtil.getResImagePath() + "/temp/mall";
+//	    newPath += "/" + nowDate + "/" + System.currentTimeMillis() + "." + suffix;
+//
+//	    File file = new File( path );
+//	    path = file.getCanonicalPath();
+//	    ImageWaterMarkUtil iwm = new ImageWaterMarkUtil( path );
+//
+//	    int[] w = new int[logoPathStr.length];//水印图片的宽度
+//	    int[] h = new int[logoPathStr.length];//水印图片的高度
+//	    int[] x = new int[2];//水印的x坐标
+//	    int[] y = new int[2];//水印的y左边
+//	    System.out.println( "logoPathStr:" + logoPathStr.length );
+//	    for ( int i = 0; i < logoPathStr.length; i++ ) {
+//		String logo = logoPathStr[i];
+//
+//		ImageWaterMarkUtil iwmIcon = new ImageWaterMarkUtil( logo );
+//
+//		w[i] = iwmIcon.getImgWidth();
+//		h[i] = iwmIcon.getImgHeight();
+//		System.out.println( "logo:" + logo );
+//		System.out.println( w[i] );
+//		System.out.println( h[i] );
+//	    }
+//
+//	    x[0] = (int) ( iwm.getImgWidth() * 0.13 );
+//	    y[0] = (int) ( iwm.getImgHeight() * 0.59 );
+//	    x[1] = (int) ( iwm.getImgWidth() * 0.5 );
+//	    y[1] = (int) ( iwm.getImgHeight() * 0.59 );
+//
+//	    Float myfloat;
+//	    try {
+//		myfloat = new Float( 100 / 100 );
+//	    } catch ( Exception e ) {
+//		myfloat = null;
+//	    }
+//	    iwm.markImageByIconMoreImage( logoPathStr, path, 0, myfloat, x, y, w, h, newPath );
+//
+//	    System.out.println( newPath );
+//
+//	    //删除下载的二维码、用户头像和背景图片
+//	    if ( logoPathStr != null && logoPathStr.length > 0 ) {
+//		for ( int i = 0; i < logoPathStr.length; i++ ) {
+//		    File files = new File( logoPathStr[i] );
+//		    if ( files.exists() ) {
+//			boolean flag = files.delete();//删除水印图片
+//			if ( !flag ) {
+//			    System.out.println( "删除图片失败 = " );
+//			}
+//		    }
+//		}
+//	    }
+//			/*File pathFile = new File(path);
+//			if(pathFile.exists()) {
+//				pathFile.delete();//删除背景图片
+//			}*/
+//
+//	} catch ( Exception e ) {
+//	    e.printStackTrace();
+//	}
+//    }
 
 }

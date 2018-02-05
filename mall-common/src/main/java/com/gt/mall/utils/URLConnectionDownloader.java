@@ -77,6 +77,8 @@ public class URLConnectionDownloader {
 	    if ( state == 200 ) {
 		succ = connection.getURL().toString();
 	    }
+	} catch ( RuntimeException e ) {
+	    return null;
 	} catch ( Exception e ) {
 	    return null;
 	}
@@ -190,14 +192,14 @@ public class URLConnectionDownloader {
 
     }
 
-    public static void main( String[] args ) {
-	String url = "http://wx.qlogo.cn/mmopen/ajNVdqHZLLCCf4dqcCCe7dIRIOpVZvgQ5NZySGgPfsibxNiaQhunnusJMGfT7V5OZW0hvWCd6BdsE2ubLHibgVcOg/0";
-	try {
-	    downloadRqcode( url, "D:/tomcat/webapps/upload/temp", 40, 40 );
-	    //			init(new File("D:/tomcat/webapps/upload/temp/1482749124521.jpg"),"D:/tomcat/webapps/upload/temp");
-	    //			resize(40,40);
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-    }
+//    public static void main( String[] args ) {
+//	String url = "http://wx.qlogo.cn/mmopen/ajNVdqHZLLCCf4dqcCCe7dIRIOpVZvgQ5NZySGgPfsibxNiaQhunnusJMGfT7V5OZW0hvWCd6BdsE2ubLHibgVcOg/0";
+//	try {
+//	    downloadRqcode( url, "D:/tomcat/webapps/upload/temp", 40, 40 );
+//	    //			init(new File("D:/tomcat/webapps/upload/temp/1482749124521.jpg"),"D:/tomcat/webapps/upload/temp");
+//	    //			resize(40,40);
+//	} catch ( Exception e ) {
+//	    e.printStackTrace();
+//	}
+//    }
 }

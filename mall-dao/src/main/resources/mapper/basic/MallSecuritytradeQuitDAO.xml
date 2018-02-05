@@ -2,53 +2,53 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gt.mall.dao.basic.MallSecuritytradeQuitDAO">
 
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallSecuritytradeQuit">
-		<id column="id" property="id" />
-		<result column="create_time" property="createTime" />
-		<result column="quit_reason_id" property="quitReasonId" />
-		<result column="remark" property="remark" />
-		<result column="user_id" property="userId" />
-		<result column="check_status" property="checkStatus" />
-		<result column="refuse_reason" property="refuseReason" />
-		<result column="check_time" property="checkTime" />
-	</resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gt.mall.entity.basic.MallSecuritytradeQuit">
+        <id column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="quit_reason_id" property="quitReasonId"/>
+        <result column="remark" property="remark"/>
+        <result column="user_id" property="userId"/>
+        <result column="check_status" property="checkStatus"/>
+        <result column="refuse_reason" property="refuseReason"/>
+        <result column="check_time" property="checkTime"/>
+    </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, create_time, quit_reason_id, remark, user_id , check_status, refuse_reason , check_time
     </sql>
-	<select id="selectAllByPage" resultType="java.util.Map">
-		SELECT
-		<include refid="Base_Column_List"/>
-		FROM t_mall_securitytrade_quit a
-		WHERE 1=1
-		<if test="checkStatus != null and checkStatus != '' ">
-			and a.check_status =#{checkStatus}
-		</if>
-		<if test="userIds != null">
-			and a.user_id in
-			<foreach collection="userIds" item="id" index="index"
-					 open="(" close=")" separator=",">
-				#{id}
-			</foreach>
-		</if>
-		limit #{firstNum},#{maxNum}
-	</select>
-	<select id="selectAllCount" resultType="java.lang.Integer">
-		SELECT count(a.id)
-		FROM t_mall_securitytrade_quit a
-		WHERE 1=1
-		<if test="userIds != null">
-			and a.user_id in
-			<foreach collection="userIds" item="id" index="index"
-					 open="(" close=")" separator=",">
-				#{id}
-			</foreach>
-		</if>
-		<if test="checkStatus != null and checkStatus != '' ">
-			and a.check_status =#{checkStatus}
-		</if>
-	</select>
+    <select id="selectAllByPage" resultType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_mall_securitytrade_quit a
+        WHERE 1=1
+        <if test="checkStatus != null and checkStatus != '' ">
+            and a.check_status =#{checkStatus}
+        </if>
+        <if test="userIds != null">
+            and a.user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        limit #{firstNum},#{maxNum}
+    </select>
+    <select id="selectAllCount" resultType="java.lang.Integer">
+        SELECT count(a.id)
+        FROM t_mall_securitytrade_quit a
+        WHERE 1=1
+        <if test="userIds != null">
+            and a.user_id in
+            <foreach collection="userIds" item="id" index="index"
+                     open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="checkStatus != null and checkStatus != '' ">
+            and a.check_status =#{checkStatus}
+        </if>
+    </select>
 
 </mapper>

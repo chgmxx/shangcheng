@@ -47,12 +47,12 @@
         </if>
     </select>
     <select id="getHtmlModelList" resultType="java.util.Map">
-      SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state FROM t_mall_html  a
-      WHERE  a.is_delete = 0 and a.source_type=1 and a.state=0
-       limit #{firstNum},#{pageSize}
+        SELECT a.id,a.htmlname,a.creattime,a.codeUrl,a.bakurl,a.state FROM t_mall_html a
+        WHERE a.is_delete = 0 and a.source_type=1 and a.state=0
+        limit #{firstNum},#{pageSize}
     </select>
     <select id="countHtmlModelList" resultType="java.lang.Integer">
-       SELECT COUNT(1) FROM t_mall_html a  WHERE a.is_delete = 0 and a.source_type=1 and a.state=0
+        SELECT COUNT(1) FROM t_mall_html a WHERE a.is_delete = 0 and a.source_type=1 and a.state=0
     </select>
 
     <select id="selectByCount" resultType="java.lang.Integer" parameterType="Map">

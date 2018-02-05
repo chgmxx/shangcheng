@@ -431,13 +431,13 @@ public class ContinueFTP {
     }
 
     public static void main(String[] args) {
-        ContinueFTP myFtp = new ContinueFTP();
+        /*ContinueFTP myFtp = new ContinueFTP();
         try {
             myFtp.upload("E:/lfx/dev/materal/4.jpg", "4.jpg");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("连接FTP出错：" + e.getMessage());
-        }
+        }*/
     }
 
     public enum DownloadStatus {

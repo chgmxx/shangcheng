@@ -87,9 +87,6 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 		if ( productList != null && productList.size() > 0 ) {
 		    for ( Map< String,Object > map : groupList ) {
 			int id = CommonUtil.toInteger( map.get( "id" ) );
-			if ( productList == null || productList.size() == 0 ) {
-			    break;
-			}
 			for ( Map< String,Object > productMap : productList ) {
 			    int groupId = CommonUtil.toInteger( productMap.get( "groupId" ) );
 			    if ( groupId == id ) {

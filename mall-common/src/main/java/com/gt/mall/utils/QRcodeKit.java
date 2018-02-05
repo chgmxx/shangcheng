@@ -218,11 +218,11 @@ public final class QRcodeKit {
 	}
     }
 
-    public static void main( String[] args ) {
-	QRcodeKit.buildQRcode(
-			"BEGIN:VCARD \n FN:小李 \n ORG:GT \n ADR;TYPE=WORK:;;广东省惠州市惠城区云山西路6号 \n TITLE:程序猿 \n ROLE:多粉 \n TEL;CELL:13528307867 \n TEL;WORK:075526609632 \n EMAIL;TYPE=PREF,INTERNET:ee@qq.com \n URL:http://duofriend.com \n END:VCARD",
-			"D://", 500, 500 );
-	//		QRcodeKit.buildQRcode("BEGIN:VCARD \n FN:小李 \n ORG:蓝光科技园;研发部 \n TITLE:程序猿 \n ROLE:多粉 \n TEL;CELL:13528307867 \n TEL;WORK:075526609632 \n EMAIL;TYPE=PREF,INTERNET:ee@qq.com \n URL:http://duofriend.com \n END:VCARD", "D://", 500, 500);
-
-    }
+//    public static void main( String[] args ) {
+//	QRcodeKit.buildQRcode(
+//			"BEGIN:VCARD \n FN:小李 \n ORG:GT \n ADR;TYPE=WORK:;;广东省惠州市惠城区云山西路6号 \n TITLE:程序猿 \n ROLE:多粉 \n TEL;CELL:13528307867 \n TEL;WORK:075526609632 \n EMAIL;TYPE=PREF,INTERNET:ee@qq.com \n URL:http://duofriend.com \n END:VCARD",
+//			"D://", 500, 500 );
+//	//		QRcodeKit.buildQRcode("BEGIN:VCARD \n FN:小李 \n ORG:蓝光科技园;研发部 \n TITLE:程序猿 \n ROLE:多粉 \n TEL;CELL:13528307867 \n TEL;WORK:075526609632 \n EMAIL;TYPE=PREF,INTERNET:ee@qq.com \n URL:http://duofriend.com \n END:VCARD", "D://", 500, 500);
+//
+//    }
 }

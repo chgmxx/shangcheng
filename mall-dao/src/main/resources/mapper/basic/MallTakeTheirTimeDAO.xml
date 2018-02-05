@@ -20,7 +20,7 @@
 
     <select id="selectByTakeId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_take_their_time
         where take_id = #{takeId,jdbcType=INTEGER} and is_delete = 0
     </select>

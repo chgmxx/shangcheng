@@ -22,7 +22,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, pag_name , pag_descript , pag_type_id , pag_css  , pag_data , pag_user_id , pag_sto_id ,
+        id, pag_name , pag_descript , pag_type_id , pag_css , pag_data , pag_user_id , pag_sto_id ,
         pag_create_time , pag_is_main , pag_html , codeUrl,visitor_num ,views_num
     </sql>
 

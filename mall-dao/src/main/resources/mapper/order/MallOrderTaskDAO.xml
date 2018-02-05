@@ -16,7 +16,8 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, task_type AS taskType, create_time AS createTime, order_no AS orderNo, order_id AS orderId, order_return_id AS orderReturnId, return_day AS returnDay, is_delete AS isDelete
+        id, task_type AS taskType, create_time AS createTime, order_no AS orderNo, order_id AS orderId, order_return_id AS orderReturnId, return_day AS returnDay, is_delete AS
+        isDelete
     </sql>
 
     <select id="findByType" resultMap="BaseResultMap" parameterType="map">

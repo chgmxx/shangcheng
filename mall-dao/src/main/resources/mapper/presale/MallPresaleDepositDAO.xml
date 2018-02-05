@@ -196,7 +196,7 @@
         from t_mall_presale_deposit m
         LEFT JOIN t_mall_presale a ON m.presale_id=a.id
         left join t_mall_order o on o.order_type=6 and o.group_buy_id = a.id and o.order_status > 1
-        WHERE a.sale_start_time &lt; now()  and a.sale_end_time &lt;= now()  and m.deposit_status=1
+        WHERE a.sale_start_time &lt; now() and a.sale_end_time &lt;= now() and m.deposit_status=1
         and m.is_submit = 0
         group by m.id
     </select>
@@ -212,9 +212,9 @@
 
     <!-- 查询预售商品订购的数量 -->
     <select id="selectBuyCountByPreId" parameterType="Map" resultType="java.lang.Integer">
-        select  count(d.id) as count
+        select count(d.id) as count
         from t_mall_presale_deposit d
-        where  d.presale_id= #{presaleId} and d.deposit_status =1
+        where d.presale_id= #{presaleId} and d.deposit_status =1
     </select>
 
 
