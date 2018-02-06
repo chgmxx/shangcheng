@@ -28,10 +28,13 @@ public interface MallProductParamService extends BaseService< MallProductParam >
 
     /**
      * 根据商品id来获取商品规格
-     *
-     * @Title: getSpecificaByProductId
      */
     List< MallProductParam > getParamByProductId( Integer proId );
+
+    /**
+     * 根据商品id来获取商品规格
+     */
+    List< MallProductParam > getParamByProductIds( List< Integer > proId );
 
     /**
      * 同步商品参数

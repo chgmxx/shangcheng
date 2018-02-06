@@ -18,4 +18,5 @@ public interface MallProductGroupService extends BaseService< MallProductGroup >
      */
     void saveOrUpdate( Object obj, int proId );
 
+
 }

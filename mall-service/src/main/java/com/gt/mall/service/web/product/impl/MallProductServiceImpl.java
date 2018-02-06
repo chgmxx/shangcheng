@@ -67,7 +67,7 @@ import java.util.*;
 @Service
 public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,MallProduct > implements MallProductService {
 
-    private static Logger logger = LoggerFactory.getLogger( MallProductServiceImpl.class );
+//    private static Logger logger = LoggerFactory.getLogger( MallProductServiceImpl.class );
 
     @Autowired
     private MallProductDAO mallProductDAO;//商品dao
@@ -480,10 +480,10 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             List< MallProductParam > paramList = mallProductParamService.getParamByProductId( product.getId() );
 
             if ( CommonUtil.isInteger( product.getShopId().toString() ) ) {
-		/*Map< String,Object > param = new HashMap<>();
-		param.put( "shopId", product.getShopId() );*/
-		/*List< MallGroup > defaultGroupList = mallGroupService.selectGroupByShopId( product.getShopId(), 0 );
-		map.put( "groupList", defaultGroupList );*/
+        /*Map< String,Object > param = new HashMap<>();
+        param.put( "shopId", product.getShopId() );*/
+        /*List< MallGroup > defaultGroupList = mallGroupService.selectGroupByShopId( product.getShopId(), 0 );
+        map.put( "groupList", defaultGroupList );*/
             }
             MallGroupBuy groupBuy = new MallGroupBuy();
             groupBuy.setProductId( product.getId() );
@@ -565,8 +565,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             map.put( "isDelSpec", isDelSpec );
             map.put( "paramList", paramList );
         }
-		/*List<JSONObject> cardReceiveMapList = new ArrayList<JSONObject>();
-		if(cardReceiveList != null && cardReceiveList.size() > 0){
+        /*List<JSONObject> cardReceiveMapList = new ArrayList<JSONObject>();
+        if(cardReceiveList != null && cardReceiveList.size() > 0){
 			//request.setAttribute("cardReceiveList", cardReceiveList);
 			for (DuofenCardReceive duofenCardReceive : cardReceiveList) {
 				if(CommonUtil.isNotEmpty(duofenCardReceive.getCardtype())){
@@ -901,11 +901,114 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
         productWrapper.where( "is_delete = 0 and shop_id = {0}", params.get( "shopId" ) );
         List< MallProduct > productList = mallProductDAO.selectList( productWrapper );
         if ( productList != null && productList.size() > 0 ) {
+            List< Integer > proIds = new ArrayList<>();
             for ( MallProduct mallProduct : productList ) {
-                resultMap = syncProduct( params, user, mallProduct, CommonUtil.toInteger( params.get( "toShopId" ) ), mallProduct.getId() );
+                proIds.add( mallProduct.getId() );
+            }
+            //查询商品详情
+            List< MallProductDetail > detailList = mallProductDetailService.selectByProductIds( proIds );
+            //查询商品图片
+            List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssIds( 1, 1, proIds );
+            // 查询商品规格
+            List< MallProductSpecifica > specList = mallProductSpecificaService.selectByProductIds( proIds );
+            // 查询商品库存
+            List< MallProductInventory > invenList = mallProductInventoryService.getInventByProductIds( proIds );
+            //查询商品参数
+            List< MallProductParam > paramList = mallProductParamService.getParamByProductIds( proIds );
+            params.put( "proIds", proIds );
+            List< Map< String,Object > > productGroupList = mallProductGroupDAO.selectgroupsByProductId( params );
+            for ( MallProduct mallProduct : productList ) {
+                resultMap = syncProduct( params, user, mallProduct, CommonUtil.toInteger( params.get( "toShopId" ) ), mallProduct.getId(), detailList, imageList, specList,
+                    invenList, paramList, productGroupList );
             }
         }
         return resultMap;
+    }
+
+    private Map< String,Object > syncProduct( Map< String,Object > params, BusUser user, MallProduct product, int shopId, int productId, List< MallProductDetail > detailList,
+        List< MallImageAssociative > imageList, List< MallProductSpecifica > specList, List< MallProductInventory > invenList, List< MallProductParam > paramList,
+        List< Map< String,Object > > productGroupList )
+        throws Exception {
+        Map< String,Object > map = new HashMap<>();
+        product.setShopId( shopId );
+        product.setProSaleTotal( 0 );
+        product.setIsPublish( 0 );
+        product.setCheckStatus( 1 );
+        product.setIsPlatformCheck( 0 );
+        product.setIsSyncErp( 0 );
+        product.setViewsNum( 0 );
+        product.setId( null );
+        product.setCreateTime( new Date() );
+        product.setUserId( user.getId() );
+        product.setEditTime( null );
+
+        int count = mallProductDAO.insert( product );//copy商品信息
+        if ( CommonUtil.isNotEmpty( product.getId() ) && count > 0 ) {
+            int newId = product.getId();
+            //同步商品详情
+            if ( ( detailList != null ) && ( detailList.size() > 0 ) ) {
+                for ( int i = 0; i < detailList.size(); i++ ) {
+                    MallProductDetail mallProductDetail = detailList.get( i );
+                    if ( !mallProductDetail.getProductId().toString().equals( product.getId().toString() ) ) {
+                        continue;
+                    }
+                    mallProductDetail.setId( null );
+                    mallProductDetail.setProductId( newId );
+                    mallProductDetailService.insert( mallProductDetail );
+                    detailList.remove( i );
+                    break;
+                }
+            }
+            //同步商品分组
+            if ( CommonUtil.isNotEmpty( params.get( "groupList" ) ) ) {
+                List< MallProductGroup > groupList = JSONArray.parseArray( params.get( "groupList" ).toString(), MallProductGroup.class );
+                if ( groupList != null ) {
+                    for ( MallProductGroup mallProductGroup : groupList ) {
+                        mallProductGroup.setProductId( newId );
+                        mallProductGroup.setShopId( product.getShopId() );
+                        mallProductGroupDAO.insert( mallProductGroup );
+                    }
+                }
+            } else if ( productGroupList != null && productGroupList.size() > 0 ) {
+                params.put( "proId", productId );
+                mallGroupService.copyProductGroupByProduct( params, product, productGroupList );
+            }
+            //同步商品图片
+            if ( imageList != null && imageList.size() > 0 ) {
+                for ( MallImageAssociative images : imageList ) {
+                    if ( !images.getAssId().toString().equals( product.getId().toString() ) ) {
+                        continue;
+                    }
+                    images.setAssId( newId );
+                    images.setId( null );
+                    mallImageAssociativeService.insert( images );
+                    break;
+                }
+            }
+
+            if ( product.getIsSpecifica().toString().equals( "1" ) ) {//商品存在规格值
+                Map< String,Object > specMap = new HashMap<>();
+                // 批量同步商品规格
+                if ( CommonUtil.isNotEmpty( specList ) ) {
+                    specMap = mallProductSpecificaService.copyProductSpecifica( specList, newId, shopId, user.getId() );
+                }
+                // 批量同步商品库存
+                if ( CommonUtil.isNotEmpty( invenList ) ) {
+                    mallProductInventoryService.copyProductInven( invenList, specMap, newId );
+                }
+            }
+
+            // 批量同步商品参数
+            if ( CommonUtil.isNotEmpty( paramList ) ) {
+                mallProductParamService.copyProductParam( paramList, newId, shopId, user.getId() );
+            }
+
+            map.put( "code", 1 );
+        } else {
+            map.put( "msg", "同步商品信息失败，请稍后重试" );
+            map.put( "code", -1 );
+        }
+        return map;
     }
 
     @Transactional( rollbackFor = Exception.class )
@@ -918,46 +1021,58 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
         // 查询商品基本信息
         MallProduct product = mallProductDAO.selectById( id );// 根据商品id查询商品的基本信息
         if ( CommonUtil.isEmpty( product ) ) {
-            throw new Exception();
+            throw new BusinessException( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
         }
         Integer shopId = CommonUtil.toInteger( params.get( "shopId" ) );
 
-        return syncProduct( params, user, product, shopId, id );
-    }
-
-    @Override
-    public List< Map< String,Object > > selectProductByWxShop( Map< String,Object > params ) throws Exception {
-        if ( CommonUtil.isNotEmpty( params ) ) {
-            if ( CommonUtil.isNotEmpty( params.get( "wxShopId" ) ) ) {
-                List< Map< String,Object > > proList = mallProductDAO.selectByShopId( params );
-                List< Map< String,Object > > productList = new ArrayList<>();
-                if ( proList != null && proList.size() > 0 ) {
-                    double discount = 1;
-                    boolean isPifa = false;
-                    if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
-                        Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
-                        discount = getMemberDiscount( "1", member );
-
-                        MallPaySet set = mallPaySetService.selectByMember( member );
-                        int state = mallPifaApplyService.getPifaApplay( member, set );
-                        if ( CommonUtil.isNotEmpty( set ) ) {
-                            if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {//是否开启批发
-                                if ( set.getIsPf().toString().equals( "1" ) && state == 1 ) {
-                                    isPifa = true;
-                                }
-                            }
-                        }
-                    }
-                    for ( Map< String,Object > productMap : proList ) {
-                        productMap = getProductPrice( productMap, discount, isPifa );
-                        productList.add( productMap );
-                    }
-                }
-                return productList;
-            }
+        List< MallProductDetail > detailList = new ArrayList<>();
+        MallProductDetail detail = mallProductDetailService.selectByProductId( id );
+        List< MallImageAssociative > imageList = mallImageAssociativeService.selectImageByAssId( 1, 1, id );
+        List< MallProductSpecifica > specList = mallProductSpecificaService.selectByProductId( id );
+        // 查询商品库存
+        List< MallProductInventory > invenList = mallProductInventoryService.getInventByProductId( id );
+        //查询商品参数
+        List< MallProductParam > paramList = mallProductParamService.getParamByProductId( id );
+        if ( detail != null ) {
+            detailList.add( detail );
         }
-        return null;
+
+        return syncProduct( params, user, product, shopId, id, detailList, imageList, specList, invenList, paramList, null );
     }
+
+    //    @Override
+    //    public List< Map< String,Object > > selectProductByWxShop( Map< String,Object > params ) throws Exception {
+    //        if ( CommonUtil.isNotEmpty( params ) ) {
+    //            if ( CommonUtil.isNotEmpty( params.get( "wxShopId" ) ) ) {
+    //                List< Map< String,Object > > proList = mallProductDAO.selectByShopId( params );
+    //                List< Map< String,Object > > productList = new ArrayList<>();
+    //                if ( proList != null && proList.size() > 0 ) {
+    //                    double discount = 1;
+    //                    boolean isPifa = false;
+    //                    if ( CommonUtil.isNotEmpty( params.get( "member_id" ) ) ) {
+    //                        Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "member_id" ) ), null );
+    //                        discount = getMemberDiscount( "1", member );
+    //
+    //                        MallPaySet set = mallPaySetService.selectByMember( member );
+    //                        int state = mallPifaApplyService.getPifaApplay( member, set );
+    //                        if ( CommonUtil.isNotEmpty( set ) ) {
+    //                            if ( CommonUtil.isNotEmpty( set.getIsPf() ) ) {//是否开启批发
+    //                                if ( set.getIsPf().toString().equals( "1" ) && state == 1 ) {
+    //                                    isPifa = true;
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                    for ( Map< String,Object > productMap : proList ) {
+    //                        productMap = getProductPrice( productMap, discount, isPifa );
+    //                        productList.add( productMap );
+    //                    }
+    //                }
+    //                return productList;
+    //            }
+    //        }
+    //        return null;
+    //    }
 
     @Override
     public int selectCountProductByWxShop( Map< String,Object > params ) throws Exception {
@@ -1432,8 +1547,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             }
         }
         boolean isSxShop = false;
-	/*if ( CommonUtil.isEmpty( map.get( "wx_shop_id" ) ) ) {
-	    code = 0;
+    /*if ( CommonUtil.isEmpty( map.get( "wx_shop_id" ) ) ) {
+        code = 0;
 	    msg = "店铺已被删除";
 	}*/
         String shopId = CommonUtil.toString( map.get( "shop_id" ) );
@@ -1844,7 +1959,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             proParams.put( "pros", com.alibaba.fastjson.JSONObject.toJSON( params ) );
 
             com.alibaba.fastjson.JSONArray proArr = MallJxcHttpClientUtil.batchSave( proParams, true );
-	    	/*System.out.println(proArr);*/
+            /*System.out.println(proArr);*/
             Map< Integer,Object > updateMap = new HashMap<>();//已经修改的商品
             if ( proArr != null && proArr.size() > 0 ) {
                 for ( Object object : proArr ) {
@@ -2112,96 +2227,6 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
         productMap.put( "pro_price", proPrice );
         productMap.put( "pro_cost_price", proCostPrice );
         return productMap;
-    }
-
-    private Map< String,Object > syncProduct( Map< String,Object > params, BusUser user, MallProduct product, int shopId, int productId ) throws Exception {
-        Map< String,Object > map = new HashMap<>();
-        product.setShopId( shopId );
-        product.setProSaleTotal( 0 );
-        product.setIsPublish( 0 );
-        product.setCheckStatus( 1 );
-        product.setIsPlatformCheck( 0 );
-        product.setIsSyncErp( 0 );
-        product.setViewsNum( 0 );
-        product.setId( null );
-        product.setCreateTime( new Date() );
-        product.setUserId( user.getId() );
-        product.setEditTime( null );
-        // 查询商品详情
-        MallProductDetail detail = mallProductDetailService.selectByProductId( productId );
-
-        Map< String,Object > imageParam = new HashMap<>();
-        imageParam.put( "assId", productId );
-        imageParam.put( "assType", 1 );
-        // 查询商品图片
-        List< MallImageAssociative > imageList = mallImageAssociativeService.getParamByProductId( imageParam );
-        // 查询商品规格
-
-        List< MallProductSpecifica > specList = mallProductSpecificaService.selectByProductId( productId );
-        // 查询商品库存
-        List< MallProductInventory > invenList = mallProductInventoryService.getInventByProductId( productId );
-        //查询商品参数
-        List< MallProductParam > paramList = mallProductParamService.getParamByProductId( productId );
-
-        int count = mallProductDAO.insert( product );//copy商品信息
-        if ( CommonUtil.isNotEmpty( product.getId() ) && count > 0 ) {
-            int newId = product.getId();
-            //同步商品详情
-            if ( CommonUtil.isNotEmpty( detail ) ) {
-                if ( detail.getId() > 0 ) {
-                    detail.setId( null );
-                    detail.setProductId( newId );
-                    mallProductDetailService.insert( detail );
-                }
-            }
-            //同步商品分组
-            if ( CommonUtil.isNotEmpty( params.get( "groupList" ) ) ) {
-                List< MallProductGroup > groupList = JSONArray.parseArray( params.get( "groupList" ).toString(), MallProductGroup.class );
-                if ( groupList != null ) {
-                    for ( MallProductGroup mallProductGroup : groupList ) {
-                        mallProductGroup.setProductId( newId );
-                        mallProductGroup.setShopId( shopId );
-                        mallProductGroupDAO.insert( mallProductGroup );
-                    }
-                }
-            } else {
-                params.put( "proId", productId );
-                mallGroupService.copyProductGroupByProduct( params, product );
-            }
-            //同步商品图片
-            if ( CommonUtil.isNotEmpty( imageList ) ) {
-                if ( imageList.size() > 0 ) {
-                    for ( MallImageAssociative images : imageList ) {
-                        images.setAssId( newId );
-                        images.setId( null );
-                        mallImageAssociativeService.insert( images );
-                    }
-                }
-            }
-
-            if ( product.getIsSpecifica().toString().equals( "1" ) ) {//商品存在规格值
-                Map< String,Object > specMap = new HashMap<>();
-                // 批量同步商品规格
-                if ( CommonUtil.isNotEmpty( specList ) ) {
-                    specMap = mallProductSpecificaService.copyProductSpecifica( specList, newId, shopId, user.getId() );
-                }
-                // 批量同步商品库存
-                if ( CommonUtil.isNotEmpty( invenList ) ) {
-                    mallProductInventoryService.copyProductInven( invenList, specMap, newId );
-                }
-            }
-
-            // 批量同步商品参数
-            if ( CommonUtil.isNotEmpty( paramList ) ) {
-                mallProductParamService.copyProductParam( paramList, newId, shopId, user.getId() );
-            }
-
-            map.put( "code", 1 );
-        } else {
-            map.put( "msg", "同步商品信息失败，请稍后重试" );
-            map.put( "code", -1 );
-        }
-        return map;
     }
 
     @Override

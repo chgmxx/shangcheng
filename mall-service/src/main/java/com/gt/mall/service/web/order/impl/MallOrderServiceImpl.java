@@ -1963,8 +1963,8 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
                     proMap.put( "proId", productId );
                     MallProductInventory proInv = mallProductInventoryService.selectInvNumByProId( proMap );
                     erpInvenId = proInv.getErpInvId();
-		    /*int total = proInv.getInvNum() + productNum;//库存
-		    if ( total < 0 ) {
+            /*int total = proInv.getInvNum() + productNum;//库存
+            if ( total < 0 ) {
 			total = 0;
 		    }
 		    int invSaleNum;
@@ -2371,9 +2371,7 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
         leftStyle.setAlignment( HSSFCellStyle.ALIGN_LEFT );// 设置单元格左右居中
         //循环数据
         if ( type == 1 ) {
-            //			getOrderList(params,sheet,valueStyle);
-            List< MallOrder > data = null;
-            //	    mallOrderDAO.explodOrder( params );
+            List< MallOrder > orderList = new ArrayList<>();
             int status = 0;
             if ( CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
                 status = CommonUtil.toInteger( params.get( "status" ) );
@@ -2381,14 +2379,27 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
                     params.remove( "status" );
                 }
             }
-            if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
-                data = mallOrderDAO.findByPage( params );
-            } else {
-                data = mallOrderDAO.findReturnByPage( params );
+            int pageSize = 20;
+            int count = mallOrderDAO.count( params );
+            int pageCount = CommonUtil.getPageCount( count, pageSize );
+            if ( pageCount > 0 ) {
+                params.put( "maxResult", pageSize );
+                for ( int i = 0; i < pageCount; i++ ) {
+                    List< MallOrder > data;
+                    params.put( "firstResult", i + 1 );
+                    if ( status != 6 && status != 7 && status != 8 && status != 9 ) {
+                        data = mallOrderDAO.findByPage( params );
+                    } else {
+                        data = mallOrderDAO.findReturnByPage( params );
+                    }
+                    if ( data != null ) {
+                        orderList.addAll( data );
+                    }
+                }
             }
 
             int j = 1;
-            for ( MallOrder order : data ) {
+            for ( MallOrder order : orderList ) {
                 j = getOrderList( sheet, centerStyle, leftStyle, order, j, shoplist );
             }
         }
@@ -2463,11 +2474,11 @@ public class MallOrderServiceImpl extends BaseServiceImpl< MallOrderDAO,MallOrde
                 }
             }
         }
-	/*int start = i;*/
+    /*int start = i;*/
         String createTime = DateTimeKit.format( order.getCreateTime(), DateTimeKit.DEFAULT_DATETIME_FORMAT );
         if ( orderPayWay != 5 ) {
-	    /*if(order.getMallOrderDetail().size() > 1){
-		    int j = order.getMallOrderDetail().size();
+        /*if(order.getMallOrderDetail().size() > 1){
+            int j = order.getMallOrderDetail().size();
 		    //合并单元格   起始行号，终止行号， 起始列号，终止列号
 		    CellRangeAddress range = new CellRangeAddress(start, start+j, 0, 0);
 		    sheet.addMergedRegion(range);

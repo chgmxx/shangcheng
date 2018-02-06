@@ -9,6 +9,8 @@ import com.gt.mall.dao.product.MallProductInventoryDAO;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.result.phone.product.PhoneProductDetailResult;
 import com.gt.mall.service.web.product.MallProductInventoryService;
 import com.gt.mall.service.web.product.MallProductSpecificaService;
@@ -192,6 +194,13 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
+    public List< MallProductInventory > getInventByProductIds( List< Integer > productId ) {
+        Wrapper< MallProductInventory > inventoryWrapper = new EntityWrapper<>();
+        inventoryWrapper.where( "is_delete = 0" ).in( "product_id", productId );
+        return mallProductInventoryDAO.selectList( inventoryWrapper );
+    }
+
+    @Override
     public MallProductInventory selectByIsDefault( Integer productId ) {
         MallProductInventory mallProductInventory = new MallProductInventory();
         mallProductInventory.setIsDelete( 0 );
@@ -283,9 +292,12 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     public void copyProductInven( List< MallProductInventory > invenList, Map< String,Object > specMap, int proId ) throws Exception {
         if ( invenList != null && invenList.size() > 0 ) {
             if ( CommonUtil.isEmpty( specMap ) ) {
-                throw new Exception();
+                throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
             }
             for ( MallProductInventory inven : invenList ) {
+                if ( !inven.getProductId().toString().equals( CommonUtil.toString( proId ) ) ) {
+                    continue;
+                }
                 inven.setInvSaleNum( 0 );
                 inven.setProductId( proId );
                 String specId = inven.getSpecificaIds();

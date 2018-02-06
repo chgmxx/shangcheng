@@ -22,8 +22,24 @@
   		pg.group_p_id as groupPId,g.group_name as groupName,g.is_child,g.is_first_parents
 		from t_mall_product_group pg
 		left join t_mall_group g on g.id=pg.group_id
-		where pg.product_id = #{proId} and pg.is_delete= 0 AND g.`is_delete`=0
+		where pg.is_delete= 0 AND g.`is_delete`=0
+		<if test="proIds != null">
+            and pg.product_id in
+            <foreach collection="proIds" index="index" item="item" open="(" separator="," close=")">
+                #{item,jdbcType=INTEGER}
+            </foreach>
+        </if>
 		order by pg.sort
+    </select>
+
+
+    <select id="selectgroupsByProductIds" resultType="java.util.Map">
+        select  pg.id, pg.product_id as productId, pg.group_id as groupId, pg.shop_id as shopId,pg.sort,
+        pg.group_p_id as groupPId,g.group_name as groupName,g.is_child,g.is_first_parents
+        from t_mall_product_group pg
+        left join t_mall_group g on g.id=pg.group_id
+        where pg.product_id = #{proId} and pg.is_delete= 0 AND g.`is_delete`=0
+        order by pg.sort
     </select>
 
     <select id="selectProductGroupByShopId" parameterType="Map" resultType="Map">

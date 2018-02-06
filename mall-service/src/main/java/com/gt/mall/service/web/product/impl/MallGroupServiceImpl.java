@@ -404,10 +404,13 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
     }
 
     @Override
-    public void copyProductGroupByProduct( Map< String,Object > params, MallProduct product ) {
-        List< Map< String,Object > > productGroupList = mallProductGroupDAO.selectgroupsByProductId( params );
+    public void copyProductGroupByProduct( Map< String,Object > params, MallProduct product, List< Map< String,Object > > productGroupList ) {
+        //List< Map< String,Object > > productGroupList = mallProductGroupDAO.selectgroupsByProductId( params );
         if ( productGroupList != null && productGroupList.size() > 0 ) {
             for ( Map< String,Object > map2 : productGroupList ) {
+                if ( !map2.get( "productId" ).toString().equals( product.getId().toString() ) ) {
+                    continue;
+                }
                 MallProductGroup productGroup = new MallProductGroup();
                 productGroup.setProductId( product.getId() );
 

@@ -21,6 +21,12 @@ public interface MallProductGroupDAO extends BaseMapper< MallProductGroup > {
      */
     List< Map< String,Object > > selectgroupsByProductId( Map< String,Object > map );
 
+
+    /**
+     * 根据商品id查询商品分组信息
+     */
+    List< Map< String,Object > > selectgroupsByProductIds( Map< String,Object > map );
+
     /**
      * 根据店铺id查询商品分组信息
      */

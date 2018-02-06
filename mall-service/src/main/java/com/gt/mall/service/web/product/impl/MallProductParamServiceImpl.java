@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.product.MallProductParamDAO;
-import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductParam;
+import com.gt.mall.enums.ResponseEnums;
+import com.gt.mall.exception.BusinessException;
 import com.gt.mall.service.web.product.MallProductParamService;
 import com.gt.mall.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,39 +123,49 @@ public class MallProductParamServiceImpl extends BaseServiceImpl< MallProductPar
     }
 
     @Override
+    public List< MallProductParam > getParamByProductIds( List< Integer > proId ) {
+        Wrapper< MallProductParam > paramWrapper = new EntityWrapper<>();
+        paramWrapper.where( "is_delete = 0" ).in( "product_id", proId ).orderBy( "sort, id", true );
+        return mallProductParamDAO.selectList( paramWrapper );
+    }
+
+    @Override
     public void copyProductParam( List< MallProductParam > paramList, int proId, int shopId, int userId ) throws Exception {
         if ( paramList != null && paramList.size() > 0 ) {
             for ( MallProductParam param : paramList ) {
+                if ( !param.getProductId().toString().equals( CommonUtil.toString( proId ) ) ) {
+                    continue;
+                }
                 //判断店铺下面是否存在商品规格值
-        /*MallSpecifica specifica = mallSpecificaMapper.selectByPrimaryKey(param.getParamsNameId());
-
-		MallSpecificaValue value = mallSpecificaValueMapper.selectByPrimaryKey(param.getParamsValueId());
-
-		if(specifica.getIsBackEnd().toString().equals("0") && specifica.getType().toString().equals("2")){
-			if(!specifica.getShopId().toString().equals(String.valueOf(shopId))){
-				specifica.setShopId(shopId);
-				specifica.setUserId(userId);
-				specifica.setCreateTime(new Date());
-				specifica.setId(null);
-				mallSpecificaMapper.insertSelective(specifica);//同步参数名称
-				if(CommonUtil.isNotEmpty(specifica.getId())){
-					param.setParamsNameId(specifica.getId());
-				}
-				if(value.getType().toString().equals("1")){
-					value.setId(null);
-					value.setUserId(userId);
-					mallSpecificaValueMapper.insertSelective(value);//同步参数值
-					if(CommonUtil.isNotEmpty(value.getId())){
-						param.setParamsValueId(value.getId());
-					}
-				}
-			}
-		}*/
+                //        MallSpecifica specifica = mallSpecificaMapper.selectByPrimaryKey(param.getParamsNameId());
+                //
+                //		MallSpecificaValue value = mallSpecificaValueMapper.selectByPrimaryKey(param.getParamsValueId());
+                //
+                //		if(specifica.getIsBackEnd().toString().equals("0") && specifica.getType().toString().equals("2")){
+                //			if(!specifica.getShopId().toString().equals(String.valueOf(shopId))){
+                //				specifica.setShopId(shopId);
+                //				specifica.setUserId(userId);
+                //				specifica.setCreateTime(new Date());
+                //				specifica.setId(null);
+                //				mallSpecificaMapper.insertSelective(specifica);//同步参数名称
+                //				if(CommonUtil.isNotEmpty(specifica.getId())){
+                //					param.setParamsNameId(specifica.getId());
+                //				}
+                //				if(value.getType().toString().equals("1")){
+                //					value.setId(null);
+                //					value.setUserId(userId);
+                //					mallSpecificaValueMapper.insertSelective(value);//同步参数值
+                //					if(CommonUtil.isNotEmpty(value.getId())){
+                //						param.setParamsValueId(value.getId());
+                //					}
+                //				}
+                //			}
+                //		}
                 param.setProductId( proId );
                 param.setId( null );
                 int count = mallProductParamDAO.insert( param );//同步商品参数
                 if ( count <= 0 ) {
-                    throw new Exception();
+                    throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
                 }
             }
         }

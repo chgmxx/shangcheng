@@ -4,22 +4,20 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.gt.mall.base.BaseServiceImpl;
 import com.gt.api.bean.session.BusUser;
+import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.product.MallProductSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaDAO;
 import com.gt.mall.dao.product.MallSpecificaValueDAO;
-import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.product.MallProductInventory;
 import com.gt.mall.entity.product.MallProductSpecifica;
 import com.gt.mall.entity.product.MallSpecifica;
 import com.gt.mall.entity.product.MallSpecificaValue;
 import com.gt.mall.service.inter.user.BusUserService;
+import com.gt.mall.service.web.product.MallProductSpecificaService;
 import com.gt.mall.service.web.product.MallSpecificaService;
+import com.gt.mall.service.web.product.MallSpecificaValueService;
 import com.gt.mall.utils.CommonUtil;
 import com.gt.mall.utils.MallJxcHttpClientUtil;
-import com.gt.mall.service.web.product.MallProductSpecificaService;
-import com.gt.mall.service.web.product.MallSpecificaValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -270,6 +268,9 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
 
         if ( specList != null && specList.size() > 0 ) {
             for ( MallProductSpecifica proSpecifica : specList ) {
+                if ( !proSpecifica.getProductId().toString().equals( CommonUtil.toString( proId ) ) ) {
+                    continue;
+                }
                 proSpecifica.setProductId( proId );
                 int oldId = proSpecifica.getId();
                 proSpecifica.setId( null );
@@ -283,6 +284,7 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
                     }
                     specMap.put( oldId + "", obj );
                 }
+
             }
         }
         return specMap;
@@ -613,6 +615,13 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
     public List< MallProductSpecifica > selectByProductId( Integer id ) {
         Wrapper< MallProductSpecifica > productSpecificaWrapper = new EntityWrapper<>();
         productSpecificaWrapper.where( "is_delete = 0 and product_id = {0}", id ).orderBy( "sort, id", true );
+        return mallProductSpecificaDAO.selectList( productSpecificaWrapper );
+    }
+
+    @Override
+    public List< MallProductSpecifica > selectByProductIds( List< Integer > ids ) {
+        Wrapper< MallProductSpecifica > productSpecificaWrapper = new EntityWrapper<>();
+        productSpecificaWrapper.where( "is_delete = 0" ).in( "product_id", ids ).orderBy( "sort, id", true );
         return mallProductSpecificaDAO.selectList( productSpecificaWrapper );
     }
 

@@ -36,4 +36,11 @@ public class MallProductDetailServiceImpl extends BaseServiceImpl< MallProductDe
         }
         return null;
     }
+
+    @Override
+    public List< MallProductDetail > selectByProductIds( List< Integer > productIds ) {
+        Wrapper< MallProductDetail > detailWrapper = new EntityWrapper<>();
+        detailWrapper.in( "product_id", productIds );
+        return mallProductDetailDAO.selectList( detailWrapper );
+    }
 }

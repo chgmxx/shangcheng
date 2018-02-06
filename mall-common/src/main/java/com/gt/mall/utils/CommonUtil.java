@@ -849,4 +849,20 @@ public class CommonUtil {
         return PropertiesUtil.getWxmpDomain() + Constants.ALIPAY_RETURN_URL + "?obj=" + obj;
     }
 
+    /**
+     * 获取页数
+     *
+     * @param rowCount 总条数
+     * @param pageSize 每页显示的数量
+     *
+     * @return 页数
+     */
+    public static Integer getPageCount( int rowCount, int pageSize ) {
+        if ( rowCount % pageSize == 0 ) {
+            return rowCount / pageSize;
+        } else {
+            return rowCount / pageSize + 1;
+        }
+    }
+
 }

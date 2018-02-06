@@ -174,6 +174,13 @@ public interface MallProductSpecificaService extends BaseService< MallProductSpe
     List< MallProductSpecifica > selectByProductId( Integer productId );
 
     /**
+     * 根据商品id查询商品规格
+     *
+     * @param ids 商品id集合
+     */
+    public List< MallProductSpecifica > selectByProductIds( List< Integer > ids );
+
+    /**
      * 根据商品和规格值id查询商品规格信息
      *
      * @param productIds 商品id

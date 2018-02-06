@@ -84,7 +84,7 @@ public interface MallImageAssociativeService extends BaseService< MallImageAssoc
      * 根据多个的关联id查询图片集合
      *
      * @param isMainImages 是否是主图  不为空 才为条件
-     * @param assType      关联表类型
+     * @param assType      关联表类型 1商品
      * @param assIds       关联id集合
      *
      * @return 图片集合

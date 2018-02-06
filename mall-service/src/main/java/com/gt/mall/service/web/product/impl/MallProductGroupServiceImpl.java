@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.gt.mall.base.BaseServiceImpl;
 import com.gt.mall.dao.product.MallProductGroupDAO;
 import com.gt.mall.entity.product.MallProductGroup;
-import com.gt.mall.entity.product.MallProductParam;
 import com.gt.mall.service.web.product.MallProductGroupService;
 import com.gt.mall.utils.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,8 @@ public class MallProductGroupServiceImpl extends BaseServiceImpl< MallProductGro
 
     @Autowired
     private MallProductGroupDAO mallProductGroupDAO;
+
+
 
     @Override
     public void saveOrUpdate( Object obj, int proId ) {
